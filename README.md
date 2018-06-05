@@ -5,12 +5,12 @@ This project helps you integrate your app with the Synapse API backend.
 It was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 ## Project Contents
-
+```
 ./src/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
 ./src/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
 ./src/App.js : Demo App component
 ./src/HTTPError.js : Error class that will be thrown on failure.
-
+```
 ## Updating to New Releases
 
 Create React App is divided into two packages:
