@@ -11,13 +11,52 @@ It was bootstrapped with [Create React App](https://github.com/facebookincubator
 ./src/App.js : Demo App component
 ./src/HTTPError.js : Error class that will be thrown on failure.
 ```
-## Updating to New Releases
 
-Create React App is divided into two packages:
+## Examples
 
-* `react-scripts` is a development dependency in the generated projects (including this one).
+#### Login
+```
+import * as SynapseClient from './SynapseClient.js';
 
-To update an existing project to a new version of `react-scripts`, [open the changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
+SynapseClient.login('username', 'password')
+    .then(response => {
+      // session token available in response.sessionToken
+    })
+```
+
+#### Query a Synapse Table/View
+```
+import * as SynapseClient from './SynapseClient.js';
+import * as SynapseConstants from './SynapseConstants.js';
+
+let request = {
+      entityId: "syn123",
+      query: {
+        sql: "SELECT * FROM syn123",
+        includeEntityEtag: true,
+        isConsistent: true,
+        offset: 0,
+        limit: 100
+      },
+
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+        | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+        | SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS
+        | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+    };
+    SynapseClient.getQueryTableResults(request, sessionToken)
+      .then(response => {
+        // query results are available
+      }).catch(function (error) {
+        // handle Error (possibly a HTTPError)
+      });
+```
+
+## Updating this Project to New Releases
+
+* `react-scripts` is a development dependency in this project.
+
+To update to a new version of `react-scripts`, [open the changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
 
 In most cases bumping the `react-scripts` version in `package.json` and running `npm install` in this folder should be enough, but it’s good to consult the [changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md) for potential breaking changes.
 
