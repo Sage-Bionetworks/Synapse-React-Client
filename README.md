@@ -44,7 +44,7 @@ let request = {
         | SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS
         | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
     };
-    SynapseClient.getQueryTableResults(request, sessionToken)
+SynapseClient.getQueryTableResults(request, sessionToken)
       .then(response => {
         // query results are available
       }).catch(function (error) {
