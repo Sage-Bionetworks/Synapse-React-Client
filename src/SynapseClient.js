@@ -62,3 +62,33 @@ export const getVersion =
   (endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doGet('/repo/v1/version', endpoint);
   }
+
+export const getQueryTableResultsFromJobId =
+  (entityId, jobId, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doGet('/repo/v1/entity/' + entityId + '/table/query/async/get/' + jobId, endpoint)
+      .then(resp => {
+        // is this the job status?
+        if (resp.jobState && resp.jobState !== 'FAILED') {
+          // still processing, wait for a second and try again
+          return delay(1000).then(function () {
+            return getQueryTableResultsFromJobId(entityId, jobId, endpoint);
+          });
+        } else {
+          // these must be the query results!
+          return resp;
+        }
+      }).catch(function (error) {
+        throw error;
+      })
+  }
+
+export const getQueryTableResults =
+  (queryBundleRequest, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/repo/v1/entity/' + queryBundleRequest.entityId + '/table/query/async/start', queryBundleRequest, endpoint)
+      .then(resp => {
+        //started query, now attempt to get the results.
+        return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, endpoint);
+      }).catch(function (error) {
+        throw error;
+      })
+  }
