@@ -21,7 +21,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    synapseClient.getVersion('https://repo-staging.prod.sagebase.org')
+    // Note, your component should have an optional property to change the endpoint (necessary for Synapse.org integration).
+    // synapseClient.getVersion('https://repo-staging.prod.sagebase.org')
+      synapseClient.getVersion()
       .then(data => this.setState(data))
       .catch(function (error) {
         // Handle HTTPError.  Has statusCode and message.
