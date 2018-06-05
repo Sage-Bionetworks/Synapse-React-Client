@@ -5,7 +5,7 @@ import * as synapseClient from './SynapseClient.js';
 
 class App extends Component {
   state = {}
-  
+
   render() {
     return (
       <div className="App">
@@ -21,14 +21,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    synapseClient.getVersion()
+    synapseClient.getVersion('https://repo-staging.prod.sagebase.org')
       .then(data => this.setState(data))
       .catch(function (error) {
         // Handle HTTPError.  Has statusCode and message.
       });
   }
 }
-
-
 
 export default App;

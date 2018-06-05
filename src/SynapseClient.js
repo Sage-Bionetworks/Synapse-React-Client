@@ -1,7 +1,5 @@
 import HttpError from './HTTPError.js';
 
-var endpoint = 'https://repo-prod.prod.sagebase.org';
-
 function delay(t, v) {
   return new Promise(function (resolve) {
     setTimeout(resolve.bind(null, v), t)
@@ -25,14 +23,14 @@ const fetch_with_exponential_timeout =
     }).catch(function (error) {
       if (retries === 1) throw error;
       return delay(delayMs).then(function () {
-        return fetch_with_exponential_timeout(url, options, delayMs*2, retries - 1);
+        return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
       });
     });
   }
 
 export const doPost =
-  (url, requestJsonObject) => {
-    return fetch_with_exponential_timeout(endpoint+url, 
+  (url, requestJsonObject, endpoint) => {
+    return fetch_with_exponential_timeout(endpoint + url,
       {
         method: 'POST',
         mode: 'cors',
@@ -47,8 +45,8 @@ export const doPost =
   }
 
 export const doGet =
-  (url) => {
-    return fetch_with_exponential_timeout(endpoint+url, 
+  (url, endpoint) => {
+    return fetch_with_exponential_timeout(endpoint + url,
       {
         method: 'GET',
         mode: 'cors',
@@ -61,6 +59,6 @@ export const doGet =
   }
 
 export const getVersion =
-  () => {
-    return doGet('/repo/v1/version');
+  (endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doGet('/repo/v1/version', endpoint);
   }
