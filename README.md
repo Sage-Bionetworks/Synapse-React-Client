@@ -15,7 +15,7 @@ It was bootstrapped with [Create React App](https://github.com/facebookincubator
 ## Examples
 
 #### Login
-```
+``` js
 import * as SynapseClient from './SynapseClient.js';
 
 SynapseClient.login('username', 'password')
@@ -25,7 +25,7 @@ SynapseClient.login('username', 'password')
 ```
 
 #### Query a Synapse Table/View
-```
+``` js
 import * as SynapseClient from './SynapseClient.js';
 import * as SynapseConstants from './SynapseConstants.js';
 
