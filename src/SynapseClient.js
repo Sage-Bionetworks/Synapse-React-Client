@@ -29,49 +29,53 @@ const fetch_with_exponential_timeout =
   }
 
 export const doPost =
-  (url, requestJsonObject, endpoint) => {
-    return fetch_with_exponential_timeout(endpoint + url,
-      {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Accept': '*/*',
-          'Content-Type': 'application/json',
-          'Access-Control-Request-Headers': 'sessiontoken'
-        },
-        body: JSON.stringify(requestJsonObject)
-      }
-      , 1000, 5);
+  (url, requestJsonObject, sessionToken, endpoint) => {
+    let options =  {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+        'Access-Control-Request-Headers': 'sessiontoken'
+      },
+      body: JSON.stringify(requestJsonObject)
+    };
+    if (sessionToken) {
+      options.headers.sessionToken = sessionToken;
+    }
+    return fetch_with_exponential_timeout(endpoint + url, options, 1000, 5);
   }
 
 export const doGet =
-  (url, endpoint) => {
-    return fetch_with_exponential_timeout(endpoint + url,
-      {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Accept': '*/*',
-          'Access-Control-Request-Headers': 'sessiontoken'
-        }
+  (url, sessionToken, endpoint) => {
+    let options = {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': '*/*',
+        'Access-Control-Request-Headers': 'sessiontoken',
       }
-      , 1000, 5);
+    };
+    if (sessionToken) {
+      options.headers.sessionToken = sessionToken;
+    }
+    return fetch_with_exponential_timeout(endpoint + url, options, 1000, 5);
   }
 
 export const getVersion =
   (endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doGet('/repo/v1/version', endpoint);
+    return doGet('/repo/v1/version', undefined, endpoint);
   }
 
 export const getQueryTableResultsFromJobId =
-  (entityId, jobId, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doGet('/repo/v1/entity/' + entityId + '/table/query/async/get/' + jobId, endpoint)
+  (entityId, jobId, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doGet('/repo/v1/entity/' + entityId + '/table/query/async/get/' + jobId, sessionToken, endpoint)
       .then(resp => {
         // is this the job status?
         if (resp.jobState && resp.jobState !== 'FAILED') {
           // still processing, wait for a second and try again
           return delay(1000).then(function () {
-            return getQueryTableResultsFromJobId(entityId, jobId, endpoint);
+            return getQueryTableResultsFromJobId(entityId, jobId, sessionToken, endpoint);
           });
         } else {
           // these must be the query results!
@@ -83,12 +87,31 @@ export const getQueryTableResultsFromJobId =
   }
 
 export const getQueryTableResults =
-  (queryBundleRequest, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doPost('/repo/v1/entity/' + queryBundleRequest.entityId + '/table/query/async/start', queryBundleRequest, endpoint)
+  (queryBundleRequest, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/repo/v1/entity/' + queryBundleRequest.entityId + '/table/query/async/start', queryBundleRequest, sessionToken, endpoint)
       .then(resp => {
         //started query, now attempt to get the results.
-        return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, endpoint);
+        return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
       }).catch(function (error) {
         throw error;
       })
+  }
+
+export const login =
+  (username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint)
+  }
+
+export const createEntity =
+  (entity, sessionToken, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/repo/v1/entity', entity, sessionToken, endpoint);
+  }
+
+export const createProject =
+  (name, sessionToken, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return createEntity(
+      {
+        concreteType : "org.sagebionetworks.repo.model.Project",
+        name : name
+      }, sessionToken, endpoint);
   }
