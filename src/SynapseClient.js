@@ -30,7 +30,7 @@ const fetch_with_exponential_timeout =
 
 export const doPost =
   (url, requestJsonObject, sessionToken, endpoint) => {
-    let options =  {
+    let options = {
       method: 'POST',
       mode: 'cors',
       headers: {
@@ -97,21 +97,36 @@ export const getQueryTableResults =
       })
   }
 
+/** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. */
 export const login =
   (username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint)
   }
 
+/** Create an entity (Project, Folder, File, Table, View) */
 export const createEntity =
   (entity, sessionToken, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost('/repo/v1/entity', entity, sessionToken, endpoint);
   }
 
+/** Create a project with the given name. */
 export const createProject =
   (name, sessionToken, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return createEntity(
       {
-        concreteType : "org.sagebionetworks.repo.model.Project",
-        name : name
+        concreteType: "org.sagebionetworks.repo.model.Project",
+        name: name
       }, sessionToken, endpoint);
+  }
+
+/** Return the User Profiles for the given list of user IDs */
+export const getUserProfiles =
+  (userIdsArray, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/repo/v1/userProfile', { list: userIdsArray }, undefined, endpoint);
+  }
+
+/** Return the children (Files/Folders) of the given entity (Project or Folder). */
+export const getEntityChildren =
+  (request, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/repo/v1/entity/children', request, sessionToken, endpoint);
   }
