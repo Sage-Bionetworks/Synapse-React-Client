@@ -74,7 +74,7 @@ export const getQueryTableResultsFromJobId =
         // is this the job status?
         if (resp.jobState && resp.jobState !== 'FAILED') {
           // still processing, wait for a second and try again
-          return delay(1000).then(function () {
+          return delay(500).then(function () {
             return getQueryTableResultsFromJobId(entityId, jobId, sessionToken, endpoint);
           });
         } else {
