@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/Sage-Bionetworks/Synapse-React-Client.svg?branch=master)](https://travis-ci.org/Sage-Bionetworks/Synapse-React-Client)
+
+
 
 ## Synapse React Client
 
