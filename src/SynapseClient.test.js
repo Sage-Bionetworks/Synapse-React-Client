@@ -47,6 +47,22 @@ it('list entity children', () => {
 });
 
 
+it('get files', () => {
+  let request = {
+    includeFileHandles: true, // set to true to get file metadata
+    includePreSignedURLs: true, // set to true to get presigned url to s3 resource (authorization required, include a session token in this case!)
+    requestedFiles: [
+      {fileHandleId: "1234", associateObjectId: "1725696", associateObjectType: "FileEntity"},
+      {fileHandleId: "5678", associateObjectId: "1725697", associateObjectType: "FileEntity"}
+    ]
+  }
+  return SynapseClient.getFiles(request)
+    .then(data => {
+      expect(data.requestedFiles).toBeDefined();
+    })
+});
+
+
 
 // ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
 // Tried increasing timeout to 30s, but still occurs.  Not sure why the signal is not being sent back
