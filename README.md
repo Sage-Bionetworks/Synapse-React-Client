@@ -55,6 +55,8 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       });
 ```
 
+#### Additional examples can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/SynapseClient.test.js)
+
 ## Updating this Project to New Releases
 
 * `react-scripts` is a development dependency in this project.
