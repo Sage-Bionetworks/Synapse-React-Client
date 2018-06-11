@@ -1,3 +1,4 @@
+import raf from './tempPolyFills.js'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as SynapseClient from './SynapseClient.js';
