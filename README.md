@@ -5,7 +5,6 @@
 ## Synapse React Client
 
 This project helps you integrate your app with the Synapse API backend.
-It was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 ## Installation
 Run the following command:
@@ -63,7 +62,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       });
 ```
 
-#### Additional examples can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/SynapseClient.test.js)
+#### Additional examples can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.test.js)
 
 ## Updating this Project to New Releases
 
