@@ -7,6 +7,13 @@
 This project helps you integrate your app with the Synapse API backend.
 It was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
+## Installation
+Run the following command:
+`npm install synapse-react-client`
+
+Or add to your dependencies in package.json:
+`"synapse-react-client": "^0.1.4"`
+
 ## Project Contents
 ```
 ./src/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
@@ -19,7 +26,8 @@ It was bootstrapped with [Create React App](https://github.com/facebookincubator
 
 #### Login
 ``` js
-import * as SynapseClient from './SynapseClient.js';
+import * as SynapseClient from 'synapse-react-client';
+import * as SynapseConstants from 'synapse-react-client';
 
 SynapseClient.login('username', 'password')
     .then(response => {
@@ -29,8 +37,8 @@ SynapseClient.login('username', 'password')
 
 #### Query a Synapse Table/View
 ``` js
-import * as SynapseClient from './SynapseClient.js';
-import * as SynapseConstants from './SynapseConstants.js';
+import * as SynapseClient from 'synapse-react-client';
+import * as SynapseConstants from 'synapse-react-client';
 
 let request = {
       entityId: "syn123",

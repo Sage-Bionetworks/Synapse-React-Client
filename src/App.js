@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import * as SynapseClient from './SynapseClient.js';
-import * as SynapseConstants from './SynapseConstants.js';
+import * as SynapseClient from './lib/components/SynapseClient.js';
+import * as SynapseConstants from './lib/components/SynapseConstants.js';
 
 class App extends Component {
   state = {}
