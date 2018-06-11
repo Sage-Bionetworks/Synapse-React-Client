@@ -62,7 +62,8 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       });
 ```
 
-#### Additional examples can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.test.js)
+#### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.js)
+#### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.test.js).
 
 ## Updating this Project to New Releases
 
