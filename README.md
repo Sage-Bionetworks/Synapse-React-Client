@@ -11,11 +11,11 @@ This project helps you integrate your app with the Synapse API backend.
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
 
 ## Installation
-Run the following command:
+Run the following command:<br>
 `npm install synapse-react-client`
 
-Or add to your dependencies in package.json:
-`"synapse-react-client": "^0.1.4"`
+Or add to your dependencies in package.json:<br>
+`"synapse-react-client": "latest"`
 
 ## Examples
 
