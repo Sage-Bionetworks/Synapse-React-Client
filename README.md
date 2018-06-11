@@ -13,14 +13,6 @@ Run the following command:
 Or add to your dependencies in package.json:
 `"synapse-react-client": "^0.1.4"`
 
-## Project Contents
-```
-./src/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
-./src/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
-./src/App.js : Demo App component
-./src/HTTPError.js : Error class that will be thrown on failure.
-```
-
 ## Examples
 
 #### Login
@@ -65,6 +57,14 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.js)
 #### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.test.js).
 
+## Project Contents
+```
+./src/lib/components/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
+./src/lib/components/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
+./src/lib/components/HTTPError.js : Error class that will be thrown on failure.
+./src/App.js : Demo App component
+```
+
 ## Updating this Project to New Releases
 
 * `react-scripts` is a development dependency in this project.
@@ -96,6 +96,10 @@ You will also see any lint errors in the console.
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.<br>
+
+### `npm test:coverage`
+
+Launches the test runner in the non-interactive mode to run all tests and calculate test coverage.<br>
 
 ### `npm run build`
 
