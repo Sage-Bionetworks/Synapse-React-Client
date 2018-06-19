@@ -86,12 +86,12 @@ export const getQueryTableResultsFromJobId =
       })
   }
 
-  /**
-   * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
-   * @param {*} queryBundleRequest 
-   * @param {*} sessionToken 
-   * @param {*} endpoint 
-   */
+/**
+ * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
+ * @param {*} queryBundleRequest 
+ * @param {*} sessionToken 
+ * @param {*} endpoint 
+ */
 export const getQueryTableResults =
   (queryBundleRequest, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost('/repo/v1/entity/' + queryBundleRequest.entityId + '/table/query/async/start', queryBundleRequest, sessionToken, endpoint)
@@ -151,6 +151,22 @@ export const getEntityChildren =
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
 */
 export const getFiles =
-(request, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-  return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint);
-}
+  (request, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint);
+  }
+
+  /**
+   * Bundled access to Entity and related data components. 
+   * An EntityBundle can be used to create, fetch, or update an Entity and associated objects with a single web service request.
+   * See SynapseClient.test.js for an example partsMask.
+   * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+   */
+export const getEntityBundleForVersion =
+  (entityId, version, partsMask, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    let url = '/repo/v1/entity/' + entityId;
+    if (version) {
+      url += '/version/' + version;
+    }
+    url += '/bundle?mask=' + partsMask;
+    return doGet(url, sessionToken, endpoint);
+  }

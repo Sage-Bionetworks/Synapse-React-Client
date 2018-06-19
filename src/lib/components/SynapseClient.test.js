@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as SynapseClient from './SynapseClient.js';
+import * as SynapseConstants from './SynapseConstants.js';
 
 it('invalid call', () => {
   return SynapseClient.doGet('/repo/v1/invalid', undefined, 'https://repo-prod.prod.sagebase.org')
@@ -59,6 +60,18 @@ it('get files', () => {
   return SynapseClient.getFiles(request)
     .then(data => {
       expect(data.requestedFiles).toBeDefined();
+    })
+});
+
+it('get entity bundle latest version', () => {
+  let partsMask = SynapseConstants.ENTITY_BUNDLE_MASK_ENTITY
+  | SynapseConstants.ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION
+  | SynapseConstants.ENTITY_BUNDLE_MASK_FILE_HANDLES;
+  return SynapseClient.getEntityBundleForVersion('syn1725696', undefined, partsMask)
+    .then(data => {
+      expect(data.entity).toBeDefined();
+      expect(data.restrictionInformation).toBeDefined();
+      expect(data.fileHandles).toBeDefined();
     })
 });
 
