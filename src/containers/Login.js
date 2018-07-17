@@ -4,7 +4,11 @@ import React from "react";
     Basic login form to demonstrate Synapse login API call and session token retrieval.
 */
 class Login extends React.Component {
-    
+
+    /*
+        Records user credentials for login information,
+        binds listeners to handle input changes accordingly.
+    */
     constructor (props) {
         super(props)
         this.state =  {
@@ -67,22 +71,26 @@ class Login extends React.Component {
     }
 
     showSignInState() {
-        if (this.state.isSignedIn) {
+        if (!this.state.isSignedIn) {
             return (
-                <p> You are currently <i> not </i> signed in to Synpase </p>
+                <p> You are currently <strong> <i> not </i> </strong> signed in to Synpase </p>
             )
         } else {
             return (
-                <p> You are currently <i> signed in. </i> to Synapse </p>
+                <p> You are currently <strong> <i> signed in </i> </strong> to Synapse </p>
             )
         }
     }
 
+    /*
+        Basic login form with conditional rendering to show if user is logged in, their
+        session token, and then an error message if the login failed.
+    */
     render () {
         return (
             <div className="container border">
                 <p className="text-left"> Sample Login with session token printed to screen </p>
-                <p> You are currently <i> {this.state.isSignedIn ? '' : 'not' } </i> {} signed in </p>
+                {this.showSignInState()}
                 {this.showToken()}
                 <form onSubmit={this.handleLogin}>
                     <div className="form-group">
