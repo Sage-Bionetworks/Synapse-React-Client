@@ -21,8 +21,7 @@ Or add to your dependencies in package.json:<br>
 
 #### Login
 ``` js
-import * as SynapseClient from 'synapse-react-client';
-import * as SynapseConstants from 'synapse-react-client';
+import {SynapseClient} from 'synapse-react-client';
 
 SynapseClient.login('username', 'password')
     .then(response => {
@@ -32,8 +31,7 @@ SynapseClient.login('username', 'password')
 
 #### Query a Synapse Table/View
 ``` js
-import * as SynapseClient from 'synapse-react-client';
-import * as SynapseConstants from 'synapse-react-client';
+import {SynapseClient, SynapseConstants} from 'synapse-react-client';
 
 let request = {
       entityId: "syn123",
@@ -58,15 +56,15 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       });
 ```
 
-#### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.js)
-#### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/components/SynapseClient.test.js).
+#### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
+#### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).
 
 ## Project Contents
 ```
-./src/lib/components/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
-./src/lib/components/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
-./src/lib/components/HTTPError.js : Error class that will be thrown on failure.
-./src/App.js : Demo App component
+./src/lib/utils/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
+./src/lib/utils/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
+./src/lib/utils/HTTPError.js : Error class that will be thrown on failure.
+./src/containers/App.js : Demo App component
 ```
 
 ## Updating this Project to New Releases
@@ -171,22 +169,22 @@ You would need to install an ESLint plugin for your editor first.
 >VS Code ESLint plugin automatically detects Create React App's configuration file. So you do not need to create `eslintrc.json` at the root directory, except when you want to add your own rules. In that case, you should include CRA's config by adding this line:
 
 >```js
-{
-  // ...
-  "extends": "react-app"
-}
-```
+>{
+>  // ...
+>  "extends": "react-app"
+>}
+>```
 
 Then add this block to the `package.json` file of your project:
 
-```js
-{
-  // ...
-  "eslintConfig": {
-    "extends": "react-app"
-  }
-}
-```
+>```js
+>{
+>  // ...
+>  "eslintConfig": {
+>    "extends": "react-app"
+>  }
+>}
+>```
 
 Finally, you will need to install some packages *globally*:
 
@@ -224,3 +222,17 @@ Then add the block below to your `launch.json` file and put it inside the `.vsco
 ```
 
 Start your app by running `npm start`, and start debugging in VS Code by pressing `F5` or by clicking the green debug icon. You can now write code, set breakpoints, make changes to the code, and debug your newly modified code—all from your editor.
+
+# jsconfig.json
+
+For improved vscode intellisense support you can optionally add a jsconfig.json to the root (it should lie at the level of `dist/ node_modules/ public/`) of the project directory. It tells vscode more about the projects settings such as where to look for relative imports (specified with the baseUrl) and the js version being used. View the full docs [here](https://code.visualstudio.com/docs/languages/jsconfig).
+
+```json
+ {
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "jsx": "react",
+        "module": "es6"
+    }
+}
+```
