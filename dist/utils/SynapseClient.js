@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getFiles = exports.getEntityChildren = exports.getUserProfiles = exports.createProject = exports.createEntity = exports.login = exports.getQueryTableResults = exports.getQueryTableResultsFromJobId = exports.getVersion = exports.doGet = exports.doPost = undefined;
+exports.getEntityBundleForVersion = exports.getFiles = exports.getEntityChildren = exports.getUserProfiles = exports.createProject = exports.createEntity = exports.login = exports.getQueryTableResults = exports.getQueryTableResultsFromJobId = exports.getVersion = exports.doGet = exports.doPost = exports.fetch_with_exponential_timeout = undefined;
 
 var _HTTPError = require('./HTTPError.js');
 
@@ -17,7 +17,7 @@ function delay(t, v) {
   });
 }
 
-var fetch_with_exponential_timeout = function fetch_with_exponential_timeout(url, options, delayMs, retries) {
+var fetch_with_exponential_timeout = exports.fetch_with_exponential_timeout = function fetch_with_exponential_timeout(url, options, delayMs, retries) {
   return fetch(url, options).then(function (resp) {
     if (resp.status > 199 && resp.status < 300) {
       // ok!
@@ -171,4 +171,22 @@ var getFiles = exports.getFiles = function getFiles(request) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
   return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint);
+};
+
+/**
+ * Bundled access to Entity and related data components. 
+ * An EntityBundle can be used to create, fetch, or update an Entity and associated objects with a single web service request.
+ * See SynapseClient.test.js for an example partsMask.
+ * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+ */
+var getEntityBundleForVersion = exports.getEntityBundleForVersion = function getEntityBundleForVersion(entityId, version, partsMask) {
+  var sessionToken = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  var endpoint = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'https://repo-prod.prod.sagebase.org';
+
+  var url = '/repo/v1/entity/' + entityId;
+  if (version) {
+    url += '/version/' + version;
+  }
+  url += '/bundle?mask=' + partsMask;
+  return doGet(url, sessionToken, endpoint);
 };
