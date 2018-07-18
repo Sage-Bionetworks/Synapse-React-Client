@@ -6,7 +6,7 @@ function delay(t, v) {
   });
 }
 
-const fetch_with_exponential_timeout =
+export const fetch_with_exponential_timeout =
   (url, options, delayMs, retries) => {
     return fetch(url, options).then(resp => {
       if (resp.status > 199 && resp.status < 300) {

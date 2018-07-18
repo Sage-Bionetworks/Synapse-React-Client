@@ -1,7 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import * as SynapseClient from './SynapseClient.js';
-import * as SynapseConstants from './SynapseConstants.js';
+import * as SynapseClient from 'lib/utils/SynapseClient';
+import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
 
 it('invalid call', () => {
   return SynapseClient.doGet('/repo/v1/invalid', undefined, 'https://repo-prod.prod.sagebase.org')

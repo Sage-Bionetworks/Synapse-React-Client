@@ -1,3 +1,4 @@
-import * as SynapseClient from './components/SynapseClient.js';
+import * as SynapseClient from './utils/SynapseClient.js';
+import * as SynapseConstants from './utils/SynapseConstants';
 
-export { SynapseClient };
+export { SynapseClient, SynapseConstants };
