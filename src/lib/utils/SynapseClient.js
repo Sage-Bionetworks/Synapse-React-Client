@@ -170,3 +170,13 @@ export const getEntityBundleForVersion =
     url += '/bundle?mask=' + partsMask;
     return doGet(url, sessionToken, endpoint);
   }
+
+  /**
+   * Get Wiki page contents:
+   *      /entity/{ownerId}/wiki/{wikiID}
+   */
+  export const getWikiEntity =
+    (sessionToken, ownerId= "syn3722562", wikiId = "219259", endpoint="https://repo-prod.prod.sagebase.org") => {
+      let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
+      return doGet(url, sessionToken, endpoint)
+    }

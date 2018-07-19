@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Login from './Login.js'
+import Markdown from './Markdown.js'
 import logo from 'images/logo.svg';
 import './App.css';
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
@@ -36,7 +37,6 @@ class App extends Component {
       offset: 0,
       limit: 100
     },
-
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
       | SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS
@@ -60,6 +60,7 @@ class App extends Component {
           Synapse production version: {this.state.version}
         </p>
         <Login loginEndpoint={SynapseClient.login} ></Login>
+        <Markdown> </Markdown>
       </div>
     );
   }

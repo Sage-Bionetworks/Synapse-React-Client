@@ -16,7 +16,8 @@ class Login extends React.Component {
             password: '',
             isSignedIn: false,
             token: '',
-            hasLoginInFailed: false
+            hasLoginInFailed: false,
+            errorMessage: ''
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
@@ -45,9 +46,9 @@ class Login extends React.Component {
             }
         ).catch(
             err => {
-                console.log('Failed to login with error\n', err)
                 this.setState({
-                    hasLoginInFailed: true
+                    hasLoginInFailed: true,
+                    errorMessage: err
                 })
             }
         );
@@ -63,7 +64,7 @@ class Login extends React.Component {
         if (this.state.hasLoginInFailed) {
             return (
                 <div>
-                    <small className="form-text text-danger">Error: Not a invalid username/password </small>
+                    <small className="form-text text-danger">  {this.state.errorMessage} </small>
                     <div className="invalid-feedback" />
                 </div>
             )
@@ -106,7 +107,7 @@ class Login extends React.Component {
                         <input placeholder="Enter password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
                     </div>
                     {this.showLoginFailure()}
-                    <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary">Submit</button>
+                    <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">Submit</button>
                 </form>
             </div>
         )
