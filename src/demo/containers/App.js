@@ -60,7 +60,7 @@ class App extends Component {
           Synapse production version: {this.state.version}
         </p>
         <Login loginEndpoint={SynapseClient.login} ></Login>
-        <Markdown> </Markdown>
+        <Markdown markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
       </div>
     );
   }

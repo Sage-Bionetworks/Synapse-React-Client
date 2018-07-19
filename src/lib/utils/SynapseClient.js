@@ -6,7 +6,7 @@ function delay(t, v) {
   });
 }
 
-export const fetch_with_exponential_timeout =
+const fetch_with_exponential_timeout =
   (url, options, delayMs, retries) => {
     return fetch(url, options).then(resp => {
       if (resp.status > 199 && resp.status < 300) {
@@ -176,7 +176,7 @@ export const getEntityBundleForVersion =
    *      /entity/{ownerId}/wiki/{wikiID}
    */
   export const getWikiEntity =
-    (sessionToken, ownerId= "syn3722562", wikiId = "219259", endpoint="https://repo-prod.prod.sagebase.org") => {
+    (sessionToken, ownerId, wikiId, endpoint="https://repo-prod.prod.sagebase.org") => {
       let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
       return doGet(url, sessionToken, endpoint)
     }
