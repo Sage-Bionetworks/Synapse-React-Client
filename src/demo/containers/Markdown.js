@@ -52,7 +52,7 @@ class Markdown extends React.Component {
         let withMathText = this.processMathJax(initText)
         let cleanText = sanitizeHtml(withMathText, 
             {   
-                allowedTags: [ 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id'],
+                allowedTags: [ 'code', 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id'],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['id']

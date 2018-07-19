@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+
 import Login from './Login.js'
 import Markdown from './Markdown.js'
+import UserFavorites from './UserFavorites.js';
+
 import logo from 'images/logo.svg';
 import './App.css';
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
@@ -10,8 +13,9 @@ class App extends Component {
   constructor () {
     super()
     this.state = {}
-    this.makeSampleQueryCall.bind(this)
-    this.getVersion.bind(this)
+    this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
+    this.getVersion = this.getVersion.bind(this)
+    this.handleTokenChange = this.handleTokenChange.bind(this)
   }
 
   getVersion () {
@@ -49,9 +53,15 @@ class App extends Component {
     });
   }
 
+  handleTokenChange(value) {
+    this.setState({
+      token: value
+    })
+  }
+
   render() {
     return (
-      <div className="App">
+      <div className="App mb-5">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Synapse React Client Demo</h2>
@@ -59,8 +69,9 @@ class App extends Component {
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        <Login loginEndpoint={SynapseClient.login} ></Login>
+        <Login onTokenChange={this.handleTokenChange} token={""} loginEndpoint={SynapseClient.login} ></Login>
         <Markdown markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
+        <UserFavorites token={this.state.token} getUserFavoritesEndpoint={SynapseClient.getUserFavorites} > </UserFavorites>
       </div>
     );
   }

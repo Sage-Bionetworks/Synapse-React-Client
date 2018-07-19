@@ -15,7 +15,6 @@ class Login extends React.Component {
             username: '',
             password: '',
             isSignedIn: false,
-            token: '',
             hasLoginInFailed: false,
             errorMessage: ''
         }
@@ -38,8 +37,8 @@ class Login extends React.Component {
         event.preventDefault()
         this.props.loginEndpoint(this.state.username, this.state.password).then(
             data => {
+                this.props.onTokenChange(data.sessionToken)
                 this.setState({
-                    token: data.sessionToken,
                     isSignedIn: true,
                     hasLoginInFailed: false
                 })
@@ -55,8 +54,8 @@ class Login extends React.Component {
     }
 
     showToken() {
-        if (this.state.isSignedIn && this.state.token !== '' && !this.state.hasLoginInFailed) {
-            return (<p> Your session token is {this.state.token} </p>)
+        if (this.state.isSignedIn && this.props.token !== '' && !this.state.hasLoginInFailed) {
+            return (<p> Your session token is {this.props.token} </p>)
         }
     }
 
@@ -90,7 +89,7 @@ class Login extends React.Component {
     render () {
         return (
             <div className="container border">
-                <p className="text-left"> Sample Login with session token printed to screen </p>
+                <h3 className="text-left"> Sample Login with session token printed to screen</h3>
                 {this.showSignInState()}
                 {this.showToken()}
                 <form onSubmit={this.handleLogin}>
@@ -106,7 +105,7 @@ class Login extends React.Component {
                         </label>
                         <input placeholder="Enter password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
                     </div>
-                    {this.showLoginFailure()}
+                    {/* {this.showLoginFailure()} */}
                     <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">Submit</button>
                 </form>
             </div>

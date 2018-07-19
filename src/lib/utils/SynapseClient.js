@@ -180,3 +180,11 @@ export const getEntityBundleForVersion =
       let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
       return doGet(url, sessionToken, endpoint)
     }
+
+
+  export const getUserFavorites =
+    (sessionToken, endpoint="https://repo-prod-232-0.prod.sagebase.org/") => {
+      let url = 'repo/v1/favorite?offset=0&limit=200'
+      console.log('token is ', sessionToken)
+      return doGet(url, sessionToken, endpoint)
+    }
