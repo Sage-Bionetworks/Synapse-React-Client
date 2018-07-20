@@ -18,7 +18,6 @@ class UserFavorites extends React.Component {
         this.props.getUserFavoritesEndpoint(this.props.token)
         .then(
             data => {
-                console.log(data)
                 this.setState({
                         favorites: data.results
                     })
@@ -37,7 +36,7 @@ class UserFavorites extends React.Component {
         let listFavorites = null
 
         if (this.props.token === '') {
-            listFavorites = <p> Sign in and click the button to get favorites! </p>
+            listFavorites = <p> Sign in and click the button to get favorites. </p>
         } else {
             listFavorites = this.state.favorites.map((fav) =>
                 <li key={fav.id}> {fav.name} </li>
@@ -47,7 +46,7 @@ class UserFavorites extends React.Component {
         return (
             <div className="container border pt-2 mt-5">
                 <h3> Demo of getting user favorites</h3>
-                <button className="btn btn-warning" onClick={this.getFavorites}> Get favorites </button>
+                <button disabled={this.props.token === "" ? true: false} className={"btn " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getFavorites}> Get favorites </button>
                 {listFavorites}
             </div>
         )

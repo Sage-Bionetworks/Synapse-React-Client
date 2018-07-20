@@ -130,6 +130,14 @@ export const createProject =
         name: name
       }, sessionToken, endpoint);
   }
+  
+/** Return this user's UserProfile
+ * http://docs.synapse.org/rest/GET/userProfile.html
+*/
+export const getUserProfile =
+(sessionToken, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+  return doGet('/repo/v1/userProfile', sessionToken, endpoint);
+}
 
 /** Return the User Profiles for the given list of user IDs 
  * http://docs.synapse.org/rest/POST/userProfile.html
@@ -183,8 +191,19 @@ export const getEntityBundleForVersion =
 
 
   export const getUserFavorites =
-    (sessionToken, endpoint="https://repo-prod-232-0.prod.sagebase.org/") => {
+    (sessionToken, endpoint="https://repo-prod.prod.sagebase.org/") => {
       let url = 'repo/v1/favorite?offset=0&limit=200'
-      console.log('token is ', sessionToken)
       return doGet(url, sessionToken, endpoint)
     }
+
+  export const getUserProjectList =
+  (sessionToken, projectDetails, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = 'repo/v1/projects/' + projectDetails + '?offset=0&limit=200'
+    return doGet(url, sessionToken, endpoint)
+  }
+
+  export const getUserTeamList =
+  (sessionToken, id, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = 'repo/v1/user/' + id + '/team?offset=0&limit=200'
+    return doGet(url, sessionToken, endpoint)
+  }

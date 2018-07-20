@@ -21,7 +21,7 @@ class Markdown extends React.Component {
         super(props)
         this.state = {
             md: require('markdown-it')({html: true}),
-            text: 'Pythagoran theorem is $$/(a^2 + b^2 = c^2/)$$ will render to:'
+            text: 'Pythagorean theorem is $$/(a^2 + b^2 = c^2/)$$ will render to:'
         }
         this.handleChange = this.handleChange.bind(this)
         this.updateDisplayText = this.updateDisplayText.bind(this)

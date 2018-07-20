@@ -37,7 +37,7 @@ class Login extends React.Component {
         event.preventDefault()
         this.props.loginEndpoint(this.state.username, this.state.password).then(
             data => {
-                this.props.onTokenChange(data.sessionToken)
+                this.props.onTokenChange({token: data.sessionToken})
                 this.setState({
                     isSignedIn: true,
                     hasLoginInFailed: false
@@ -89,7 +89,7 @@ class Login extends React.Component {
     render () {
         return (
             <div className="container border">
-                <h3 className="text-left"> Sample Login with session token printed to screen</h3>
+                <h3 className="text-left"> Demo login with session token printed to screen</h3>
                 {this.showSignInState()}
                 {this.showToken()}
                 <form onSubmit={this.handleLogin}>

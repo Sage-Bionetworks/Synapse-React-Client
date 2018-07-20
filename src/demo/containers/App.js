@@ -8,14 +8,20 @@ import logo from 'images/logo.svg';
 import './App.css';
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
+import UserProjects from './UserProjects.js';
+import UserTeam from './UserTeams.js';
+import UserProfile from './UserProfile.js';
 
 class App extends Component {
   constructor () {
     super()
-    this.state = {}
+    this.state = {
+      token: "",
+      ownerId: ""
+    }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
-    this.handleTokenChange = this.handleTokenChange.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
   getVersion () {
@@ -53,11 +59,11 @@ class App extends Component {
     });
   }
 
-  handleTokenChange(value) {
-    this.setState({
-      token: value
-    })
-  }
+  handleChange(updatedState) {
+    this.setState(
+      updatedState
+    );
+}
 
   render() {
     return (
@@ -69,9 +75,12 @@ class App extends Component {
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        <Login onTokenChange={this.handleTokenChange} token={""} loginEndpoint={SynapseClient.login} ></Login>
+        <Login onTokenChange={this.handleChange} token={this.state.token} loginEndpoint={SynapseClient.login} ></Login>
+        <UserProfile onProfileChange={this.handleChange} token={this.state.token} ownerId={this.state.ownerId} getUserProfileEndpoint={SynapseClient.getUserProfile}> </UserProfile>
         <Markdown markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
         <UserFavorites token={this.state.token} getUserFavoritesEndpoint={SynapseClient.getUserFavorites} > </UserFavorites>
+        <UserProjects token={this.state.token} getUserProjectsEndpoint={SynapseClient.getUserProjectList} > </UserProjects>
+        <UserTeam token={this.state.token} ownerId={this.state.ownerId} getUserTeamEndpoint={SynapseClient.getUserTeamList} > </UserTeam>
       </div>
     );
   }
