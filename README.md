@@ -55,6 +55,109 @@ SynapseClient.getQueryTableResults(request, sessionToken)
         // handle Error (possibly a HTTPError)
       });
 ```
+### Markdown Rendering
+
+View the demo app usage of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/Markdown.js)).
+
+Step 1: Install Synapse markdown-it and Synapse markdown-it plugins
+  + `npm install markdown-it --save`
+  + `npm install markdown-it-synapse --save`
+  + `npm install markdown-it-center-text --save`
+  + `npm install markdown-it-synapse-heading --save`
+  + `npm install markdown-it-synapse-table --save`
+  + `npm install markdown-it-strikethrough-alt --save`
+  + `npm install markdown-it-emphasis-alt --save`
+  + `npm install markdown-it-synapse-math  --save`
+  + `npm install markdown-it-sup-alt --save`
+  + `npm install markdown-it-sub-alt  --save`
+  + `npm install markdown-it-inline-comments  --save`
+  + `npm install markdown-it-br --save`
+
+Step 2: Include [katex](github.com/Khan/KaTeX) for math support by copying/pasting the CDN into index.html
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+```
+
+Step 3: Instantiate Markdown Instance Inside Component, setup Math rendering
+```js
+  import React from "react";
+  /**
+   * Import requirements for markdown
+   */
+  let markdownitSynapse = require('markdown-it-synapse')
+  let markdownSubAlt = require('markdown-it-sub-alt');
+  let markdownCenterText = require('markdown-it-center-text')
+  let markdownSynapseHeading = require('markdown-it-synapse-heading')
+  let markdownSynapseTable = require('markdown-it-synapse-table')
+  let markdownStrikethrough = require('markdown-it-strikethrough-alt')
+  let markdownContainer = require('markdown-it-container')
+  let markdownEmpahsisAlt = require('markdown-it-emphasis-alt')
+  let markdownInlineComments = require('markdown-it-inline-comments')
+  let markdownBr = require('markdown-it-br')
+  let sanitizeHtml = require('sanitize-html');
+  let synapseMath = require('markdown-it-synapse-math')
+
+  class MarkdownDemo extends React.component {
+    constructor() {
+      this.setState({md: require(""), markdownText: "# Some Sample Markdown Text"})
+      this.processMathJax = this.processMathJax.bind(this)
+    }
+
+    /**
+     * Find all math identified elements of the form [id^=\"mathjax-\"]
+     * (e.g. <dom element id="mathjax-10"> text </dom element>)
+     * and transform them to their math markedown equivalents
+     */
+    processMathJax() {
+      // use regex to grab all math identified elements
+      let mathExpressions = document.querySelectorAll("[id^=\"mathjax-\"]")
+      // go through all obtained elements and transform them with katex
+      mathExpressions.forEach(element => {
+        window.katex.render(element.textContent, element, {throwOnError: false, delimiters: 
+          [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\(", right: "\\)", display: false},
+            {left: "\\[", right: "\\]", display: true}
+          ]
+        })
+      });
+    }
+
+    // on component update find and re-render the math items accordingly
+    componentDidUpdate () {
+        this.processMathJax()
+    }
+
+    componentDidMount() {
+      markdownitSynapse.init_markdown_it(
+        this.state.md, markdownSubAlt, markdownEmpahsisAlt,
+        markdownCenterText, markdownSynapseHeading, markdownSynapseTable,
+        markdownStrikethrough, markdownContainer, markdownEmpahsisAlt,
+        markdownInlineComments, markdownBr
+      )
+      this.setState({
+        md: this.state.md.use(markdownitSynapse, '0').use(synapseMath, '0')
+      })
+
+      // process all math identified markdown items
+      this.processMathJax()
+    }
+
+    render() {
+      return (
+        <div>
+          {this.state.markdownText}
+        <div>
+      )
+    }
+  }
+```
+
+
+
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
 #### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).
@@ -64,7 +167,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 ./src/lib/utils/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
 ./src/lib/utils/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
 ./src/lib/utils/HTTPError.js : Error class that will be thrown on failure.
-./src/containers/App.js : Demo App component
+./src/demo/containers/App.js : Demo App component
 ```
 
 ## Updating this Project to New Releases
