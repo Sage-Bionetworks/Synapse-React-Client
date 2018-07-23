@@ -21,7 +21,7 @@ class Markdown extends React.Component {
         super(props)
         this.state = {
             md: require('markdown-it')({html: true}),
-            text: 'Pythagorean theorem is $$/(a^2 + b^2 = c^2/)$$ will render to:'
+            text: 'Pythagorean theorem is  $$a^2 + b^2 = c^2$$ will render to:'
         }
         this.handleChange = this.handleChange.bind(this)
         this.updateDisplayText = this.updateDisplayText.bind(this)
@@ -70,12 +70,23 @@ class Markdown extends React.Component {
         let index = 10
         let curElement = start + String(index)
         let curElementId = start + String(index)
+        let mathExpressions = document.querySelectorAll("[id^=\"mathjax-\"]")
+
+        mathExpressions.forEach(element => {
+            window.katex.render(element.textContent, element, {throwOnError: false, delimiters: 
+                [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ]
+            })
+        });
+
         while (true) {
             curElement = document.getElementById(curElementId)
             if (!curElement) {
                 break
             }
-            window.MathJax.Hub.Queue(curElement)
             index +=1
             curElementId = start + String(index)
         }
