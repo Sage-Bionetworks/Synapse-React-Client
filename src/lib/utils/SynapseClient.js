@@ -107,7 +107,7 @@ export const getQueryTableResults =
  * http://docs.synapse.org/rest/POST/login.html
 */
 export const login =
-  (username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+(username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint)
   }
 

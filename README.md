@@ -202,6 +202,17 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.<br>
 
+For the unit tests to run correctly you will need to set the following environment variables:
+
+  ```shell
+  REACT_APP_TEST_USERNAME=//<synapse username>
+  ```
+
+  ```shell
+  REACT_APP_TEST_PASS=//<synapse password>
+  ```
+
+
 ### `npm test:coverage`
 
 Launches the test runner in the non-interactive mode to run all tests and calculate test coverage.<br>
