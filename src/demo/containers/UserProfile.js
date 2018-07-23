@@ -18,6 +18,7 @@ class UserProfile extends React.Component {
         this.props.getUserProfileEndpoint(this.props.token).then(
             data => {
                 this.props.onProfileChange({ownerId: data.ownerId})
+                console.log('data is ', data)
                 this.setState({
                     userName: data.userName
                 })
@@ -34,18 +35,18 @@ class UserProfile extends React.Component {
 
     render () {
         let welcomeBanner = null
-        if (this.props.userName === '') {
-            welcomeBanner = <h2> Welcome {this.state.userName} </h2>
+        if (this.state.userName !== '') {
+            welcomeBanner = <h2> WELCOME BACK, {this.state.userName} </h2>
         } else {
-            welcomeBanner = <p> Sign in and click to get userProfile </p>
+            welcomeBanner = <p> <a href="#top"> Sign in </a> and click to get userProfile </p>
         }
 
 
         return (
             <div className="container border pt-2 mt-5">
                 <h3> Demo of getting user profile </h3>
+                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getUserProfile}> Get User Profile Information </button>
                 {welcomeBanner}
-                <button disabled={this.props.token === "" ? true: false} className={"btn " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getUserProfile}> Get User Profile Information </button>
             </div>
         )
     }

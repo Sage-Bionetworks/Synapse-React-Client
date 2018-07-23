@@ -36,7 +36,7 @@ class UserFavorites extends React.Component {
         let listFavorites = null
 
         if (this.props.token === '') {
-            listFavorites = <p> Sign in and click the button to get favorites. </p>
+            listFavorites = <p> <a href="#top"> Sign in </a> and click the button to get favorites. </p>
         } else {
             listFavorites = this.state.favorites.map((fav) =>
                 <li key={fav.id}> {fav.name} </li>
@@ -46,7 +46,7 @@ class UserFavorites extends React.Component {
         return (
             <div className="container border pt-2 mt-5">
                 <h3> Demo of getting user favorites</h3>
-                <button disabled={this.props.token === "" ? true: false} className={"btn " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getFavorites}> Get favorites </button>
+                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getFavorites}> Get favorites </button>
                 {listFavorites}
             </div>
         )

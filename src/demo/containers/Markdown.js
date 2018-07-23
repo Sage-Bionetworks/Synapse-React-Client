@@ -49,10 +49,9 @@ class Markdown extends React.Component {
 
     createMarkup(text) {
         let initText = this.state.md.render(text) 
-        let withMathText = this.processMathJax(initText)
-        let cleanText = sanitizeHtml(withMathText, 
+        let cleanText = sanitizeHtml(initText, 
             {   
-                allowedTags: [ 'code', 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id'],
+                allowedTags: [ 'span', 'code', 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id'],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['id']
@@ -62,15 +61,11 @@ class Markdown extends React.Component {
         return {__html: cleanText}
     }
 
-    processMathJax(text) {
-        window.MathJax.Hub.Queue(["Typeset",window.MathJax.Hub, "mathjax-10"]);
-
+    processMathJax() {
         /**
          * Find all math identified elements
          *  of the form <dom element id=""> text </dom element> 
-         * 
          */
-
         let start = 'mathjax-'
         let index = 10
         let curElement = start + String(index)
@@ -84,8 +79,6 @@ class Markdown extends React.Component {
             index +=1
             curElementId = start + String(index)
         }
-
-        return text
     }
 
     handleChange(event) {
@@ -106,6 +99,12 @@ class Markdown extends React.Component {
         this.setState({
             md: this.state.md.use(markdownitSynapse, '0').use(synapseMath, '0')
         })
+
+        this.processMathJax()
+    }
+
+    componentDidUpdate () {
+        this.processMathJax()
     }
 
     render() {

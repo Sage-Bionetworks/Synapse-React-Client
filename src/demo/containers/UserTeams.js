@@ -36,7 +36,7 @@ class UserTeam extends React.Component {
         let listTeam = null
 
         if (this.props.token === "" || this.props.ownerId === "") {
-            listTeam = <p> Sign in <strong> and </strong> get userProfile then click the button to get user teams. </p>
+            listTeam = <p> <a href="#top"> Sign in </a> <strong> and </strong> get userProfile then click the button to get user teams. </p>
         } else {
             listTeam = this.state.team.map((fav) =>
                 <li key={fav.id}> {fav.name} </li>
@@ -48,7 +48,7 @@ class UserTeam extends React.Component {
         return (
             <div className="container border pt-2 mt-5">
                 <h3> Demo of getting user teams</h3>
-                <button disabled={buttonIsOn ? true: false} className={"btn " + (buttonIsOn ? "btn-outline-secondary" :"btn-primary")} onClick={this.getUserTeams}> All </button>
+                <button disabled={buttonIsOn ? true: false} className={"mb-1 btn " + (buttonIsOn ? "btn-outline-secondary" :"btn-primary")} onClick={this.getUserTeams}> All </button>
                 {listTeam}
             </div>
         )
