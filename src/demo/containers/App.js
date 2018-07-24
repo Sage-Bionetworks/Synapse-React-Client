@@ -1,18 +1,40 @@
 import React, { Component } from 'react';
+
 import Login from './Login.js'
+import Markdown from './Markdown.js'
+import UserFavorites from './UserFavorites.js';
+
 import logo from 'images/logo.svg';
 import './App.css';
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
+import UserProjects from './UserProjects.js';
+import UserTeam from './UserTeams.js';
+import UserProfile from './UserProfile.js';
 
+/**
+ * Demo of features that can be used from src/demo/utils/SynapseClient
+ * module
+ */
 class App extends Component {
+
+  /**
+   * Maintain internal state of user session
+   */
   constructor () {
     super()
-    this.state = {}
-    this.makeSampleQueryCall.bind(this)
-    this.getVersion.bind(this)
+    this.state = {
+      token: "",
+      ownerId: ""
+    }
+    this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
+    this.getVersion = this.getVersion.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
+  /**
+   * Get the current version of Synapse
+   */
   getVersion () {
     // IMPORTANT: Your component should have a property (with default) to change the endpoint.  This is necessary for Synapse.org integration.
     // Pass your endpoint through to the rpc call:
@@ -25,6 +47,9 @@ class App extends Component {
       });
   }
 
+  /**
+   * Make a query on synapse
+   */
   makeSampleQueryCall () {
    // Example table (view) query
    let QUERY = {
@@ -36,7 +61,6 @@ class App extends Component {
       offset: 0,
       limit: 100
     },
-
     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
       | SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS
@@ -49,9 +73,27 @@ class App extends Component {
     });
   }
 
+  /**
+   * Update internal state
+   * @param {Object} updatedState new state to be updated by the component
+   */
+  handleChange(updatedState) {
+    this.setState(
+      updatedState
+    );
+  }
+  
+  /**
+   * Call demo synapse features
+   */
+  componentDidMount() {
+    this.getVersion()
+    this.makeSampleQueryCall()
+  }
+  
   render() {
     return (
-      <div className="App">
+      <div className="App mb-5">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Synapse React Client Demo</h2>
@@ -59,15 +101,16 @@ class App extends Component {
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        <Login loginEndpoint={SynapseClient.login} ></Login>
+        <Login onTokenChange={this.handleChange} token={this.state.token} loginEndpoint={SynapseClient.login} ></Login>
+        <UserFavorites token={this.state.token} getUserFavoritesEndpoint={SynapseClient.getUserFavorites} > </UserFavorites>
+        <UserProjects token={this.state.token} getUserProjectsEndpoint={SynapseClient.getUserProjectList} > </UserProjects>
+        <UserProfile onProfileChange={this.handleChange} token={this.state.token} ownerId={this.state.ownerId} getUserProfileEndpoint={SynapseClient.getUserProfile}> </UserProfile>
+        <UserTeam token={this.state.token} ownerId={this.state.ownerId} getUserTeamEndpoint={SynapseClient.getUserTeamList} > </UserTeam>
+        <Markdown markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
       </div>
     );
   }
 
-  componentDidMount() {
-    this.getVersion()
-    this.makeSampleQueryCall()
-  }
 }
 
 export default App;

@@ -6,7 +6,7 @@ function delay(t, v) {
   });
 }
 
-export const fetch_with_exponential_timeout =
+const fetch_with_exponential_timeout =
   (url, options, delayMs, retries) => {
     return fetch(url, options).then(resp => {
       if (resp.status > 199 && resp.status < 300) {
@@ -107,7 +107,7 @@ export const getQueryTableResults =
  * http://docs.synapse.org/rest/POST/login.html
 */
 export const login =
-  (username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+(username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint)
   }
 
@@ -130,6 +130,14 @@ export const createProject =
         name: name
       }, sessionToken, endpoint);
   }
+  
+/** Return this user's UserProfile
+ * http://docs.synapse.org/rest/GET/userProfile.html
+*/
+export const getUserProfile =
+(sessionToken, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+  return doGet('/repo/v1/userProfile', sessionToken, endpoint);
+}
 
 /** Return the User Profiles for the given list of user IDs 
  * http://docs.synapse.org/rest/POST/userProfile.html
@@ -169,4 +177,46 @@ export const getEntityBundleForVersion =
     }
     url += '/bundle?mask=' + partsMask;
     return doGet(url, sessionToken, endpoint);
+  }
+
+  /**
+   * Get Wiki page contents, call is of the form:
+   * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
+   */
+  export const getWikiEntity =
+    (sessionToken, ownerId, wikiId, endpoint="https://repo-prod.prod.sagebase.org") => {
+      let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
+      return doGet(url, sessionToken, endpoint)
+    }
+
+
+  /**
+    * Returns synapse user favorites list given their session token
+    * http://docs.synapse.org/rest/GET/favorite.html
+  */
+  export const getUserFavorites =
+    (sessionToken, endpoint="https://repo-prod.prod.sagebase.org/") => {
+      let url = 'repo/v1/favorite?offset=0&limit=200'
+      return doGet(url, sessionToken, endpoint)
+    }
+
+  /**
+   *  http://docs.synapse.org/rest/GET/projects/type.html
+   *  @param {String} projectDetails Can be "MY_PROJECTS", "MY_CREATED_PROJECTS" or "MY_PARTICIPATED_PROJECTS"
+   */
+  export const getUserProjectList =
+  (sessionToken, projectDetails, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = 'repo/v1/projects/' + projectDetails + '?offset=0&limit=200'
+    return doGet(url, sessionToken, endpoint)
+  }
+
+  /**
+   * Get the user's list of teams they are on
+   * 
+   * @param {*} id ownerID of the synapse user see - http://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
+   */
+  export const getUserTeamList =
+  (sessionToken, id, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = 'repo/v1/user/' + id + '/team?offset=0&limit=200'
+    return doGet(url, sessionToken, endpoint)
   }
