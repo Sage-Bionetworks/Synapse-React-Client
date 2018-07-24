@@ -20,6 +20,10 @@ let synapseMath = require('markdown-it-synapse-math')
 */
 class Markdown extends React.Component {    
 
+    /**
+     * Creates an instance of Markdown.
+     * @param {*} props
+     */
     constructor (props) {
         super(props)
         // Store markdown object and text to be rendered by said object
@@ -33,7 +37,9 @@ class Markdown extends React.Component {
         this.createMarkup = this.createMarkup.bind(this)
     }
 
-    // Call Synapse REST API to get AMP-AD wiki portal as demo of API call
+    /**
+     * Call Synapse REST API to get AMP-AD wiki portal as demo of API call
+     */
     updateDisplayText() {
         this.props
         .markdownEndpoint(this.props.token, "syn3722562", "219259")
@@ -92,7 +98,11 @@ class Markdown extends React.Component {
         });
     }
 
-    // handle text changes
+    /**
+     * Update state with event
+     *
+     * @param {*} event
+     */
     handleChange(event) {
         const target = event.target
         const value = target.value
@@ -102,7 +112,6 @@ class Markdown extends React.Component {
     } 
 
     componentDidMount() {
-
         // markdownitSynapse wraps around md object and uses its own dependencies
         markdownitSynapse.init_markdown_it(
             this.state.md, markdownSubAlt, markdownEmpahsisAlt,
@@ -117,6 +126,7 @@ class Markdown extends React.Component {
         })
 
         // sample API call to retrieve Synapse wiki page
+        // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/syn2580853/wiki/409840
         this.props.markdownEndpoint(this.props.token,"syn2580853","409840")
         .then(
             data => {
@@ -140,7 +150,6 @@ class Markdown extends React.Component {
     }
 
     render() {
- 
         return (
             <div className="container border mt-5 pt-3">
                 <div className="row">
@@ -153,7 +162,6 @@ class Markdown extends React.Component {
             </div>
         )
     }
-
 }
 
 export default Markdown;
