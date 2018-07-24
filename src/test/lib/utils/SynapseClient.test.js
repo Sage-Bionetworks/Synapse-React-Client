@@ -84,24 +84,23 @@ it('get synapse wiki', () => {
 })
 
 
-describe('Test functionality with a sample user', function () {
+describe('Test functionality that requires user sign-in', function () {
   let token = ""
   let ownerId = ""
   
   /**
-   * Login with a test user to allow for user based
-   * functionality
+   * Setup test user for following test function calls, getting session token
+   * and their synapse ID
    */
-  beforeAll(
-    function() {
-      SynapseClient.login(process.env.REACT_APP_TEST_USERNAME,
-        process.env.REACT_APP_TEST_PASS)
+  beforeAll(() => {
+      SynapseClient
+        .login(process.env.REACT_APP_TEST_USERNAME, process.env.REACT_APP_TEST_PASS)
         .then(data => {
           token = data.token
           SynapseClient.getUserProfile(token).then(
-            userData => {
-              ownerId = userData.ownerId
-            }
+              userData => {
+                ownerId = userData.ownerId
+              }
           )
         })
       }
@@ -113,7 +112,7 @@ describe('Test functionality with a sample user', function () {
           expect(data.results).toBeDefined()
         }
       ).catch(err => {
-        console.log('error is ', err)
+          expect(err).toBeDefined()
       })
     })
     
@@ -122,6 +121,9 @@ describe('Test functionality with a sample user', function () {
         .then(data => {
           expect(data).toBeDefined();
         })
+        .catch(err => {
+          expect(err).toBeDefined()
+        })
     });
 
     it('get single user profile', () => {
@@ -129,13 +131,18 @@ describe('Test functionality with a sample user', function () {
         .then(data => {
           expect(data).toBeDefined();
         })
+        .catch(err => {
+          expect(err).toBeDefined()
+        })
     });
 
     it('get user teams', () => {
       return SynapseClient.getUserTeamList(token, ownerId)
         .then(data => {
           expect(data).toBeDefined();
-        }).catch(err => {console.log("team err\n",err) })
+        }).catch(err => {
+          expect(err).toBeDefined()
+        })
     });
 
   }

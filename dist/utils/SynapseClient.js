@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getEntityBundleForVersion = exports.getFiles = exports.getEntityChildren = exports.getUserProfiles = exports.createProject = exports.createEntity = exports.login = exports.getQueryTableResults = exports.getQueryTableResultsFromJobId = exports.getVersion = exports.doGet = exports.doPost = exports.fetch_with_exponential_timeout = undefined;
+exports.getUserTeamList = exports.getUserProjectList = exports.getUserFavorites = exports.getWikiEntity = exports.getEntityBundleForVersion = exports.getFiles = exports.getEntityChildren = exports.getUserProfiles = exports.getUserProfile = exports.createProject = exports.createEntity = exports.login = exports.getQueryTableResults = exports.getQueryTableResultsFromJobId = exports.getVersion = exports.doGet = exports.doPost = undefined;
 
 var _HTTPError = require('./HTTPError.js');
 
@@ -17,7 +17,7 @@ function delay(t, v) {
   });
 }
 
-var fetch_with_exponential_timeout = exports.fetch_with_exponential_timeout = function fetch_with_exponential_timeout(url, options, delayMs, retries) {
+var fetch_with_exponential_timeout = function fetch_with_exponential_timeout(url, options, delayMs, retries) {
   return fetch(url, options).then(function (resp) {
     if (resp.status > 199 && resp.status < 300) {
       // ok!
@@ -144,6 +144,15 @@ var createProject = exports.createProject = function createProject(name, session
   }, sessionToken, endpoint);
 };
 
+/** Return this user's UserProfile
+ * http://docs.synapse.org/rest/GET/userProfile.html
+*/
+var getUserProfile = exports.getUserProfile = function getUserProfile(sessionToken) {
+  var endpoint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'https://repo-prod.prod.sagebase.org';
+
+  return doGet('/repo/v1/userProfile', sessionToken, endpoint);
+};
+
 /** Return the User Profiles for the given list of user IDs 
  * http://docs.synapse.org/rest/POST/userProfile.html
 */
@@ -188,5 +197,37 @@ var getEntityBundleForVersion = exports.getEntityBundleForVersion = function get
     url += '/version/' + version;
   }
   url += '/bundle?mask=' + partsMask;
+  return doGet(url, sessionToken, endpoint);
+};
+
+/**
+ * Get Wiki page contents:
+ *      /entity/{ownerId}/wiki/{wikiID}
+ */
+var getWikiEntity = exports.getWikiEntity = function getWikiEntity(sessionToken, ownerId, wikiId) {
+  var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "https://repo-prod.prod.sagebase.org";
+
+  var url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId;
+  return doGet(url, sessionToken, endpoint);
+};
+
+var getUserFavorites = exports.getUserFavorites = function getUserFavorites(sessionToken) {
+  var endpoint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "https://repo-prod.prod.sagebase.org/";
+
+  var url = 'repo/v1/favorite?offset=0&limit=200';
+  return doGet(url, sessionToken, endpoint);
+};
+
+var getUserProjectList = exports.getUserProjectList = function getUserProjectList(sessionToken, projectDetails) {
+  var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "https://repo-prod.prod.sagebase.org/";
+
+  var url = 'repo/v1/projects/' + projectDetails + '?offset=0&limit=200';
+  return doGet(url, sessionToken, endpoint);
+};
+
+var getUserTeamList = exports.getUserTeamList = function getUserTeamList(sessionToken, id) {
+  var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "https://repo-prod.prod.sagebase.org/";
+
+  var url = 'repo/v1/user/' + id + '/team?offset=0&limit=200';
   return doGet(url, sessionToken, endpoint);
 };

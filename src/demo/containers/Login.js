@@ -102,7 +102,7 @@ class Login extends React.Component {
                 {this.showSignInState()}
                 {this.showToken()}
                 
-                <form onSubmit={this.handleLogin}>
+                <form autoComplete="on" onSubmit={this.handleLogin}>
                     <div className="form-group">
                         <label className="text-left" htmlFor="exampleEmail">
                             Synapse Email/Username:
