@@ -32,7 +32,7 @@
     "babel-cli": "^6.26.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
-    "react-scripts": "0.9.5"
+    "react-scripts": "^1.1.4"
   },
   "scripts": {
     "start": "NODE_PATH=./src react-scripts start",
