@@ -12,7 +12,15 @@ import UserProjects from './UserProjects.js';
 import UserTeam from './UserTeams.js';
 import UserProfile from './UserProfile.js';
 
+/**
+ * Demo of features that can be used from src/demo/utils/SynapseClient
+ * module
+ */
 class App extends Component {
+
+  /**
+   * Maintain internal state of user session
+   */
   constructor () {
     super()
     this.state = {
@@ -24,6 +32,9 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this)
   }
 
+  /**
+   * Get the current version of Synapse
+   */
   getVersion () {
     // IMPORTANT: Your component should have a property (with default) to change the endpoint.  This is necessary for Synapse.org integration.
     // Pass your endpoint through to the rpc call:
@@ -36,6 +47,9 @@ class App extends Component {
       });
   }
 
+  /**
+   * Make a query on synapse
+   */
   makeSampleQueryCall () {
    // Example table (view) query
    let QUERY = {
@@ -59,12 +73,24 @@ class App extends Component {
     });
   }
 
+  /**
+   * Update internal state
+   * @param {Object} updatedState new state to be updated by the component
+   */
   handleChange(updatedState) {
     this.setState(
       updatedState
     );
-}
-
+  }
+  
+  /**
+   * Call demo synapse features
+   */
+  componentDidMount() {
+    this.getVersion()
+    this.makeSampleQueryCall()
+  }
+  
   render() {
     return (
       <div className="App mb-5">
@@ -85,10 +111,6 @@ class App extends Component {
     );
   }
 
-  componentDidMount() {
-    this.getVersion()
-    this.makeSampleQueryCall()
-  }
 }
 
 export default App;

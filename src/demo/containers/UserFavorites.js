@@ -32,9 +32,7 @@ class UserFavorites extends React.Component {
     }
 
     render () {
-
         let listFavorites = null
-
         if (this.props.token === '') {
             listFavorites = <p> <a href="#top"> Sign in </a> and click the button to get favorites. </p>
         } else {

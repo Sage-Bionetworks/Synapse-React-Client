@@ -55,8 +55,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
         // handle Error (possibly a HTTPError)
       });
 ```
-### Markdown Rendering
-
+##### Markdown Rendering
 View the demo app usage of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/Markdown.js)).
 
 Step 1: Install Synapse markdown-it and Synapse markdown-it plugins
@@ -202,14 +201,14 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.<br>
 
-For the unit tests to run correctly you will need to set the following environment variables:
+For the unit tests to run correctly you will need to set the following environment variables in your shell:
 
-  ```shell
-  REACT_APP_TEST_USERNAME=//<synapse username>
+  ```bash
+  export REACT_APP_TEST_USERNAME=#<synapse username>
   ```
 
-  ```shell
-  REACT_APP_TEST_PASS=//<synapse password>
+  ```bash
+  export REACT_APP_TEST_PASS=#<synapse password>
   ```
 
 
