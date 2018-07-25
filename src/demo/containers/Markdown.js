@@ -33,8 +33,9 @@ class Markdown extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this)
         this.updateDisplayText = this.updateDisplayText.bind(this)
-        this.processMathJax = this.processMathJax.bind(this)
+        this.processMath = this.processMath.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
+        this.processWidgets = this.processWidgets.bind(this)
     }
 
     /**
@@ -67,10 +68,12 @@ class Markdown extends React.Component {
         let initText = this.state.md.render(text) 
         let cleanText = sanitizeHtml(initText, 
             {   
-                allowedTags: [ 'span', 'code', 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id'],
+                allowedTags: [ 'span', 'code', 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
+            'table', 'tr', 'td', 'tbody'],
                 allowedAttributes: {
                     'a': [ 'href' ],
-                    'span': ['id']
+                    'span': ['id'],
+                    'span': ['widgetparams']
                 }
             }
         )
@@ -83,7 +86,7 @@ class Markdown extends React.Component {
      * (e.g. <dom element id="mathjax-10"> text </dom element>)
      * and transform them to their math markedown equivalents
      */
-    processMathJax() {
+    processMath() {
         // use regex to grab all elements
         let mathExpressions = document.querySelectorAll("[id^=\"mathjax-\"]")
         // go through all obtained elements and transform them with katex
@@ -96,6 +99,41 @@ class Markdown extends React.Component {
                 ]
             })
         });
+    }
+
+    
+    /**
+     * Get widgets on screen and transform into their defined compents
+     */
+    processWidgets() {
+        let widgets = document.querySelectorAll("span[widgetparams]")
+        // go through all obtained elements and transform them with katex
+        widgets.forEach(element => {
+            let widgetstring = element.getAttribute("widgetparams")
+            let questionIndex = widgetstring.indexOf("?")
+            let widgetType = widgetstring.substring(0,questionIndex)
+            window.currentElement = element
+            let widgetparamsMapped = {}
+            widgetstring.substring(questionIndex + 1).split("&").forEach(
+                (keyPair) => {
+                    let key, value;
+                    [key,value] = keyPair.split("=") // unpack the arr [,]
+                    if (key === "url") {
+                        // decode the url
+                        value = decodeURIComponent(value)
+                    } 
+                    widgetparamsMapped[key] = value
+                }
+            )
+
+            if (widgetType === "buttonlink") {
+                let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-secondary\" role=\"button\">" + widgetparamsMapped.text + "</a>"
+                element.outerHTML = button
+            } else if (widgetType === "fileName") {
+                    
+            }
+
+        });    
     }
 
     /**
@@ -120,9 +158,10 @@ class Markdown extends React.Component {
             markdownInlineComments, markdownBr
         )
 
+        const mathSuffix = ''
         // Update the internal md object with the wrapped synapse object
         this.setState({
-            md: this.state.md.use(markdownitSynapse, '0').use(synapseMath, '0')
+            md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
         })
 
         // sample API call to retrieve Synapse wiki page
@@ -141,12 +180,14 @@ class Markdown extends React.Component {
         )
 
         // process all math identified markdown items
-        this.processMathJax()
+        this.processMath()
+        this.processWidgets()
     }
 
     // on component update find and re-render the math items accordingly
     componentDidUpdate () {
-        this.processMathJax()
+        this.processMath()
+        this.processWidgets()
     }
 
     render() {

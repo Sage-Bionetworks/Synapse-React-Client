@@ -53,20 +53,25 @@ class Login extends React.Component {
         clickEvent.preventDefault()  // avoid page refresh
         this.props.loginEndpoint(this.state.username, this.state.password).then(
             data => {
-                this.props.onTokenChange({ token: data.sessionToken })
-                this.setState({
-                    isSignedIn: true,
-                    hasLoginInFailed: false
-                })
+                if (data.reason) {
+                    // error in callback
+                    throw new Error(data.reason)
+                } else {
+                    this.props.onTokenChange({ token: data.sessionToken })
+                    this.setState({
+                        isSignedIn: true,
+                        hasLoginInFailed: false
+                    })
+                }
             }
         ).catch(
             err => {
                 this.setState({
                     hasLoginInFailed: true,
-                    errorMessage: 'Invalid username/password combination'
+                    errorMessage: err.message
                 })
             }
-        );
+        )
     }
 
     /**

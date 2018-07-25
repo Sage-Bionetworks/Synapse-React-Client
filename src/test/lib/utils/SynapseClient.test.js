@@ -1,6 +1,5 @@
 import * as SynapseClient from 'lib/utils/SynapseClient';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
-import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 it('invalid call', () => {
   return SynapseClient.doGet('/repo/v1/invalid', undefined, 'https://repo-prod.prod.sagebase.org')

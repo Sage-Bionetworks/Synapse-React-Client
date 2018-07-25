@@ -8,18 +8,19 @@ function delay(t, v) {
 
 const fetch_with_exponential_timeout =
   (url, options, delayMs, retries) => {
-    return fetch(url, options).then(resp => {
-      if (resp.status > 199 && resp.status < 300) {
-        // ok!
-        return resp.json();
-      } else if (resp.status === 429 || resp.status === 0) {
-        // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        throw new HttpError(resp.status, resp.statusText);
-      } else {
-        // error status that indicates no more retries
-        retries = 1;
-        throw new HttpError(resp.status, resp.statusText);
-      }
+    return fetch(url, options).then(
+      resp => {
+        if (resp.status > 199 && resp.status < 300) {
+          // ok!
+          return resp.json();
+        } else if (resp.status === 429 || resp.status === 0) {
+          // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
+          throw new HttpError(resp.reason);
+        } else {
+          // error status that indicates no more retries
+          retries = 1;
+          return resp.json()
+        }
     }).catch(function (error) {
       if (retries === 1) throw error;
       return delay(delayMs).then(function () {
