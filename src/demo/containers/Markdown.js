@@ -30,8 +30,8 @@ class Markdown extends React.Component {
         this.state = {
             md: require('markdown-it')({html: true}),
             text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n',
-            wikiAttachments: [],
-            fileHandles: null
+            fileHandles: null,
+            fileResults: null
         }
         this.handleChange = this.handleChange.bind(this)
         this.updateDisplayText = this.updateDisplayText.bind(this)
@@ -39,6 +39,11 @@ class Markdown extends React.Component {
         this.createMarkup = this.createMarkup.bind(this)
         this.processWidgets = this.processWidgets.bind(this)
         this.matchToHandle = this.matchToHandle.bind(this)
+        this.compareById = function(fileName, key) {
+            return function(element) {
+                return element[key] === fileName
+            }
+        }
     }
 
     /**
@@ -110,6 +115,11 @@ class Markdown extends React.Component {
     processWidgets(onLoadFileHandles=null) {
         let widgets = document.querySelectorAll("span[widgetparams]")
         // go through all obtained elements and transform them with katex
+
+        // build up request 
+        let elementList = []
+        let fileHandlAssociationList = []
+        
         widgets.forEach(element => {
             let widgetstring = element.getAttribute("widgetparams")
             let questionIndex = widgetstring.indexOf("?")
@@ -131,53 +141,65 @@ class Markdown extends React.Component {
             if (widgetType === "buttonlink") {
                 let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" >" + widgetparamsMapped.text + "</a>"
                 element.outerHTML = button
-            } else if (widgetType === "image") {
-                let imageSrc = decodeURIComponent(widgetparamsMapped.fileName)
-                let match = this.matchToHandle(imageSrc, onLoadFileHandles)
-                let image=""
+            } else if (widgetType === "image" && this.state.fileHandles) {
+                let fileName = decodeURIComponent(widgetparamsMapped.fileName)
+                let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list)
                 if (match) {
-                    let request = {
-                        requestedFiles: [{
+                    fileHandlAssociationList.push(
+                        {
                             fileHandleId: match[0].id,
                             associateObjectId: "409840",
                             associateObjectType: "WikiAttachment"
-                        }],
-                        includePreSignedURLs: true,
-                        includeFileHandles: true,
-                        includePreviewPreSignedURLs: true
-                    }
-
-                    this.props.getFileURLs(request, this.props.token).then(
-                        data=> {
-                            image = "<image class=\"img-fluid\" src=" + data.requestedFiles[0].preSignedURL + "></image>"
-                            element.outerHTML = image
                         }
-                    ).catch(err =>{
-                        console.log('error on url grab ', err)
-                    })
+                    )
+                    elementList.push([element, match[0].id])
                 }
             }
-
         });    
+        
+        // Process all the files found on the page
+        // if this is the first run load the fileresults, otherwise
+        // use the already retrieved files
+        if (fileHandlAssociationList.length > 0 && this.state.fileResults === null) {
+            let request = {
+                requestedFiles: fileHandlAssociationList,
+                includePreSignedURLs: true,
+                includeFileHandles: true,
+                includePreviewPreSignedURLs: true
+            }
+
+            this.props.getFileURLs(request, this.props.token).then(
+                data=> {
+                    elementList.forEach(elementBundle => {
+                        let match = this.matchToHandle(this.compareById(elementBundle[1], "fileHandleId"), data.requestedFiles)
+                        let image = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>"
+                        elementBundle[0].outerHTML = image
+                    })
+                    this.setState({
+                        fileResults: data.requestedFiles
+                    })
+                    
+                }
+            ).catch(err =>{
+                console.log('error on url grab ', err)
+            })
+        } else {
+            elementList.forEach(elementBundle => {
+                let match = this.matchToHandle(this.compareById(elementBundle[1], "fileHandleId"), this.state.fileResults)
+                let image = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>"
+                elementBundle[0].outerHTML = image
+            })
+        }
     }
 
 
     /**
      *
-     *
-     * @param {*} imageSource
      */
-    matchToHandle(imageSource, onLoadFileHandles=null) {
-        if (this.state.fileHandles !== null) {
+    matchToHandle(comparator, objectList=null) {
+        if (objectList) {
             // make sure the files have loaded
-            let filtered =  this.state.fileHandles.list.filter((obj) => {
-                return obj.fileName === imageSource
-            })
-            return filtered
-        } else if (onLoadFileHandles != null) {
-            let filtered = this.state.onLoadFileHandles.list.filter((obj) => {
-                return obj.fileName === imageSource
-            })
+            let filtered =  objectList.filter(comparator)
             return filtered
         }
     }
