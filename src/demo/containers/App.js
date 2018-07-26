@@ -106,7 +106,7 @@ class App extends Component {
         <UserProjects token={this.state.token} getUserProjectsEndpoint={SynapseClient.getUserProjectList} > </UserProjects>
         <UserProfile onProfileChange={this.handleChange} token={this.state.token} ownerId={this.state.ownerId} getUserProfileEndpoint={SynapseClient.getUserProfile}> </UserProfile>
         <UserTeam token={this.state.token} ownerId={this.state.ownerId} getUserTeamEndpoint={SynapseClient.getUserTeamList} > </UserTeam>
-        <Markdown markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
+        <Markdown token={this.state.token} getFileURLs={SynapseClient.getFiles}  wikiAttachmentsEndpoint={SynapseClient.getWikiAttachments} markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
       </div>
     );
   }

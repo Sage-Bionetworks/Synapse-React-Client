@@ -29,13 +29,16 @@ class Markdown extends React.Component {
         // Store markdown object and text to be rendered by said object
         this.state = {
             md: require('markdown-it')({html: true}),
-            text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n'
+            text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n',
+            wikiAttachments: [],
+            fileHandles: null
         }
         this.handleChange = this.handleChange.bind(this)
         this.updateDisplayText = this.updateDisplayText.bind(this)
         this.processMath = this.processMath.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
         this.processWidgets = this.processWidgets.bind(this)
+        this.matchToHandle = this.matchToHandle.bind(this)
     }
 
     /**
@@ -72,8 +75,7 @@ class Markdown extends React.Component {
             'table', 'tr', 'td', 'tbody'],
                 allowedAttributes: {
                     'a': [ 'href' ],
-                    'span': ['id'],
-                    'span': ['widgetparams']
+                    'span': ['*'],
                 }
             }
         )
@@ -105,7 +107,7 @@ class Markdown extends React.Component {
     /**
      * Get widgets on screen and transform into their defined compents
      */
-    processWidgets() {
+    processWidgets(onLoadFileHandles=null) {
         let widgets = document.querySelectorAll("span[widgetparams]")
         // go through all obtained elements and transform them with katex
         widgets.forEach(element => {
@@ -127,13 +129,57 @@ class Markdown extends React.Component {
             )
 
             if (widgetType === "buttonlink") {
-                let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-secondary\" role=\"button\">" + widgetparamsMapped.text + "</a>"
+                let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" >" + widgetparamsMapped.text + "</a>"
                 element.outerHTML = button
-            } else if (widgetType === "fileName") {
-                    
+            } else if (widgetType === "image") {
+                let imageSrc = decodeURIComponent(widgetparamsMapped.fileName)
+                let match = this.matchToHandle(imageSrc, onLoadFileHandles)
+                let image=""
+                if (match) {
+                    let request = {
+                        requestedFiles: [{
+                            fileHandleId: match[0].id,
+                            associateObjectId: "409840",
+                            associateObjectType: "WikiAttachment"
+                        }],
+                        includePreSignedURLs: true,
+                        includeFileHandles: true,
+                        includePreviewPreSignedURLs: true
+                    }
+
+                    this.props.getFileURLs(request, this.props.token).then(
+                        data=> {
+                            image = "<image class=\"img-fluid\" src=" + data.requestedFiles[0].preSignedURL + "></image>"
+                            element.outerHTML = image
+                        }
+                    ).catch(err =>{
+                        console.log('error on url grab ', err)
+                    })
+                }
             }
 
         });    
+    }
+
+
+    /**
+     *
+     *
+     * @param {*} imageSource
+     */
+    matchToHandle(imageSource, onLoadFileHandles=null) {
+        if (this.state.fileHandles !== null) {
+            // make sure the files have loaded
+            let filtered =  this.state.fileHandles.list.filter((obj) => {
+                return obj.fileName === imageSource
+            })
+            return filtered
+        } else if (onLoadFileHandles != null) {
+            let filtered = this.state.onLoadFileHandles.list.filter((obj) => {
+                return obj.fileName === imageSource
+            })
+            return filtered
+        }
     }
 
     /**
@@ -164,6 +210,18 @@ class Markdown extends React.Component {
             md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
         })
 
+
+        // get wiki attachments
+        this.props.wikiAttachmentsEndpoint(this.props.token,"syn2580853","409840")
+        .then(data => {
+            this.setState(
+                {fileHandles: data}
+            )
+            this.processWidgets(data)
+        }).catch(
+            err => {console.log("Error on wiki attachment load ", err)}
+        )
+        
         // sample API call to retrieve Synapse wiki page
         // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/syn2580853/wiki/409840
         this.props.markdownEndpoint(this.props.token,"syn2580853","409840")
@@ -181,7 +239,6 @@ class Markdown extends React.Component {
 
         // process all math identified markdown items
         this.processMath()
-        this.processWidgets()
     }
 
     // on component update find and re-render the math items accordingly

@@ -221,3 +221,9 @@ export const getEntityBundleForVersion =
     let url = 'repo/v1/user/' + id + '/team?offset=0&limit=200'
     return doGet(url, sessionToken, endpoint)
   }
+
+  export const getWikiAttachments = 
+  (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = "repo/v1/entity/" + id + "/wiki/" + wikiId + "/attachmenthandles"
+    return doGet(url, sessionToken, endpoint)
+  }
