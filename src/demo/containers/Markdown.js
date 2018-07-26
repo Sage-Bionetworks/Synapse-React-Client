@@ -76,11 +76,16 @@ class Markdown extends React.Component {
         let initText = this.state.md.render(text) 
         let cleanText = sanitizeHtml(initText, 
             {   
-                allowedTags: [ 'span', 'code', 'h1', 'h2', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
-            'table', 'tr', 'td', 'tbody'],
+                allowedTags: [ 'span', 'code', 'h1', 'h2','h3', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
+            'table', 'tr', 'td', 'tbody', "button", "div", "image", "ol", "ul", "li"],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['*'],
+                    'button': ['class'],
+                    'div': ['class'],
+                    "ul": ["class"],
+                    "ol": ["class"],
+                    "li": ["class"]
                 }
             }
         )
@@ -144,7 +149,7 @@ class Markdown extends React.Component {
             } else if (widgetType === "image" && this.state.fileHandles) {
                 let fileName = decodeURIComponent(widgetparamsMapped.fileName)
                 let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list)
-                if (match) {
+                if (match.length > 0) {
                     fileHandlAssociationList.push(
                         {
                             fileHandleId: match[0].id,
@@ -178,7 +183,6 @@ class Markdown extends React.Component {
                     this.setState({
                         fileResults: data.requestedFiles
                     })
-                    
                 }
             ).catch(err =>{
                 console.log('error on url grab ', err)
@@ -234,7 +238,7 @@ class Markdown extends React.Component {
 
 
         // get wiki attachments
-        this.props.wikiAttachmentsEndpoint(this.props.token,"syn2580853","409840")
+        this.props.wikiAttachmentsEndpointFromEntity(this.props.token,"syn2580853","409840")
         .then(data => {
             this.setState(
                 {fileHandles: data}
@@ -245,7 +249,7 @@ class Markdown extends React.Component {
         )
         
         // sample API call to retrieve Synapse wiki page
-        // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/syn2580853/wiki/409840
+        // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/syn2580853/wiki/409840        
         this.props.markdownEndpoint(this.props.token,"syn2580853","409840")
         .then(
             data => {
@@ -263,7 +267,7 @@ class Markdown extends React.Component {
         this.processMath()
     }
 
-    // on component update find and re-render the math items accordingly
+    // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
         this.processMath()
         this.processWidgets()
