@@ -13,11 +13,15 @@ const fetch_with_exponential_timeout =
           return resp.json();
         } else if (resp.status === 429 || resp.status === 0) {
           // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-          return resp.json().then(json => {
-            // on okay response return json, o.w. reject with json and 
-            // send to catch block
-            return resp.ok ? json : Promise.reject(json)
-            })
+          if (retries === 1) {
+            return Promise.reject({
+              statusCode: resp.status,
+              reason: resp.statusText
+            });
+          }
+          return delay(delayMs).then(function () {
+            return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
+          });
         } else {
           // error status that indicates no more retries
           retries = 1;
@@ -30,28 +34,26 @@ const fetch_with_exponential_timeout =
             } 
             return resp.ok ? json : Promise.reject(error)
           }).catch(error => {
-            // call failed from above
-            if (resp.status === 404) {
-              // 404 doesn't have a json response-- it was an invalid call so read
-              // from the response directly
-              return Promise.reject({
-                statusCode: resp.status,
-                reason: resp.statusText
-              })
-            } else {
+            // call failed above
+            if (error.reason && error.status) {
+              // successfull return from server but invalid call
               // the call was recieved, but staus wasn't ok-- return the json response from above
+              // from the response directly
               return Promise.reject({
                 statusCode: error.status,
                 reason: error.reason
+              })
+            } else {
+              return Promise.reject({
+                statusCode: resp.status,
+                reason: resp.statusText
               })
             }
           })
         }
     }).catch(function (error) {
-      if (retries === 1) throw error;
-      return delay(delayMs).then(function () {
-        return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
-      });
+      // this should never happen
+      return Promise.reject(error)
     });
   }
 

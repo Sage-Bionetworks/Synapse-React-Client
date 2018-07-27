@@ -128,7 +128,6 @@ class App extends Component {
         
         <Markdown token={this.state.token}
                   getFileURLs={SynapseClient.getFiles}
-                  wikiAttachmentsEndpointFromEvaluation={SynapseClient.getWikiAttachmentsFromEvaluation}
                   wikiAttachmentsEndpointFromEntity={SynapseClient.getWikiAttachmentsFromEntity}
                   markdownEndpoint={SynapseClient.getEntityWiki}>
         </Markdown>

@@ -42,6 +42,7 @@ class Markdown extends React.Component {
         this.matchToHandle = this.matchToHandle.bind(this)
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
+        this.matchElementToResource = this.matchElementToResource.bind(this)
         this.compareById = function(fileName, key) {
             return function(element) {
                 return element[key] === fileName
@@ -109,24 +110,20 @@ class Markdown extends React.Component {
         
         widgets.forEach(element => {
             let widgetstring = element.getAttribute("widgetparams")
-            let questionIndex = widgetstring.indexOf("?")
-            let widgetType = widgetstring.substring(0,questionIndex)
-            window.currentElement = element
+            let questionIndex = widgetstring.indexOf("?") // type?
+            let widgetType = widgetstring.substring(0,questionIndex) // type
             let widgetparamsMapped = {}
-            widgetstring.substring(questionIndex + 1).split("&").forEach(
+            widgetstring.substring(questionIndex + 1).split("&").forEach( 
                 (keyPair) => {
                     let key, value;
-                    [key,value] = keyPair.split("=") // unpack the arr [,]
-                    if (key === "url") {
-                        // decode the url
-                        value = decodeURIComponent(value)
-                    } 
+                    [key,value] = keyPair.split("=")
+                    value = decodeURIComponent(value)
                     widgetparamsMapped[key] = value
                 }
             )
 
             if (widgetType === "buttonlink") {
-                let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" >" + widgetparamsMapped.text + "</a>"
+                let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>"
                 element.outerHTML = button
             } else if (widgetType === "image" && this.state.fileHandles) {
                 let fileName = decodeURIComponent(widgetparamsMapped.fileName)
@@ -145,39 +142,42 @@ class Markdown extends React.Component {
         });    
         
         // Process all the files found on the page
-        // if this is the first run load the fileresults, otherwise
+        // if this is the first run load the file results, otherwise
         // use the already retrieved files
         if (fileHandlAssociationList.length > 0 && this.state.fileResults === null) {
             let request = {
                 requestedFiles: fileHandlAssociationList,
                 includePreSignedURLs: true,
-                includeFileHandles: true,
-                includePreviewPreSignedURLs: true
+                includeFileHandles: false,
+                includePreviewPreSignedURLs: false
             }
 
             this.props.getFileURLs(request, this.props.token).then(
                 data=> {
-                    elementList.forEach(elementBundle => {
-                        let match = this.matchToHandle(this.compareById(elementBundle[1], "fileHandleId"), data.requestedFiles)
-                        let image = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>"
-                        elementBundle[0].outerHTML = image
-                    })
                     this.setState({
                         fileResults: data.requestedFiles
                     })
+                    this.matchElementToResource(elementList);
                 }
             ).catch(err =>{
                 console.log('Error on url grab ', err)
             })
         } else {
-            elementList.forEach(elementBundle => {
-                let match = this.matchToHandle(this.compareById(elementBundle[1], "fileHandleId"), this.state.fileResults)
-                let image = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>"
-                elementBundle[0].outerHTML = image
-            })
+            this.matchElementToResource(elementList);
         }
+        
     }
 
+
+    matchElementToResource(elementList) {
+        elementList.forEach(elementBundle => {
+            let match = this.matchToHandle(this.compareById(elementBundle[1], "fileHandleId"), this.state.fileResults);
+            // check match for error message
+            console.log(match)
+            let image = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
+            elementBundle[0].outerHTML = image;
+        });
+    }
 
     /**
      * Attach markdown to wiki attachments

@@ -1,5 +1,6 @@
 import * as SynapseClient from 'lib/utils/SynapseClient';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
+import { fail } from 'assert';
 
 it('invalid call', () => {
   return SynapseClient.doGet('/repo/v1/invalid', undefined, 'https://repo-prod.prod.sagebase.org')
@@ -13,6 +14,8 @@ it('version call', () => {
   return SynapseClient.getVersion()
     .then(data => {
       expect(data.version).toBeDefined();
+    }).catch(err => {
+      fail(err.reason)
     })
 });
 
@@ -21,6 +24,8 @@ it('login', function () {
     process.env.REACT_APP_TEST_PASS)
     .then(data => {
       expect(data.sessionToken).toBeDefined();
+    }).catch(err => {
+      fail(err.reason)
     })
 });
 
@@ -29,6 +34,8 @@ it('get user profiles', () => {
     .then(data => {
       expect(data.list).toBeDefined();
       expect(data.list.length).toEqual(3);
+    }).catch(err => {
+      fail(err.reason)
     })
 });
 
@@ -43,6 +50,8 @@ it('list entity children', () => {
   return SynapseClient.getEntityChildren(request)
   .then(data => {
     expect(data.page).toBeDefined();
+  }).catch(err => {
+    fail(err.reason)
   })
 });
 
@@ -57,9 +66,12 @@ it('get files', () => {
     ]
   }
   return SynapseClient.getFiles(request)
-  .then(data => {
-    expect(data.requestedFiles).toBeDefined();
-  })
+    .then(data => {
+      expect(data.requestedFiles).toBeDefined();
+    })
+    .catch(err => {
+      fail(err.reason)
+    })
 });
 
 it('get entity bundle latest version', () => {
@@ -70,8 +82,10 @@ it('get entity bundle latest version', () => {
   .then(data => {
     expect(data.entity).toBeDefined();
     expect(data.restrictionInformation).toBeDefined();
-    expect(data.fileHandles).toBeDefined();
-  })
+    expect(data.fileHandles).toBeDefined()
+  }).catch(err => {
+    fail(err.reason)
+  });
 });
 
 it('get synapse wiki', () => {
@@ -79,6 +93,8 @@ it('get synapse wiki', () => {
   let wikiId = "409840"
   return SynapseClient.getEntityWiki("", ownerId, wikiId).then(data => {
     expect(data.markdown).toBeDefined()
+  }).catch(err => {
+    fail(err.reason)
   })
 })
 
@@ -91,60 +107,61 @@ describe('Test functionality that requires user sign-in', function () {
    * and their synapse ID
    */
   beforeAll(() => {
-      SynapseClient
-        .login(process.env.REACT_APP_TEST_USERNAME, process.env.REACT_APP_TEST_PASS)
-        .then(data => {
-          token = data.token
-          SynapseClient.getUserProfile(token).then(
-              userData => {
-                ownerId = userData.ownerId
-              }
-          )
-        })
-      }
-    )
-    
-    it('get user favorites', () => {
-      SynapseClient.getUserFavorites(token).then(data =>
-        {
-          expect(data.results).toBeDefined()
-        }
-      ).catch(err => {
-          expect(err).toBeDefined()
+    SynapseClient
+      .login(process.env.REACT_APP_TEST_USERNAME, process.env.REACT_APP_TEST_PASS)
+      .then(data => {
+        token = data.token
+        SynapseClient.getUserProfile(token).then(
+            userData => {
+              ownerId = userData.ownerId
+            }
+        )
+      }).catch(err => {
+        fail(err.reason)
       })
-    })
+    }
+  )
     
-    it('get single user profile', () => {
-      return SynapseClient.getUserProfile(token)
-        .then(data => {
-          expect(data).toBeDefined();
-        })
-        .catch(err => {
-          expect(err).toBeDefined()
-        })
-    });
+  it('get user favorites', () => {
+    SynapseClient.getUserFavorites(token).then(data =>
+      {
+        expect(data.results).toBeDefined()
+      }
+    ).catch(err => {
+        fail(err.reason)
+    })
+  })
+    
+  it('get single user profile', () => {
+    return SynapseClient.getUserProfile(token)
+      .then(data => {
+        expect(data).toBeDefined();
+      })
+      .catch(err => {
+        fail(err.reason)
+      })
+  });
 
-    it('get single user profile', () => {
-      return SynapseClient.getUserProjectList(token, "MY_PROJECTS")
-        .then(data => {
-          expect(data).toBeDefined();
-        })
-        .catch(err => {
-          expect(err).toBeDefined()
-        })
-    });
-
-    it('get user teams', () => {
-      return SynapseClient.getUserTeamList(token, ownerId)
-        .then(data => {
-          expect(data).toBeDefined();
-        }).catch(err => {
-          expect(err).toBeDefined()
-        })
-    });
-
-  }
-)
+  it('get single user profile', () => {
+    return SynapseClient.getUserProjectList(token, "MY_PROJECTS")
+      .then(data => {
+        expect(data).toBeDefined();
+      })
+      .catch(err => {
+        fail(err.reason)
+      })
+  });
+      
+  it('get user teams', () => {
+    return SynapseClient.getUserTeamList(token, ownerId)
+      .then(data => {
+        expect(data).toBeDefined();
+      })
+      .catch(err => {
+        fail(err.reason)
+      })
+  });
+})
 
 // ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
 // Tried increasing timeout to 30s, but still occurs.  Not sure why the signal is not being sent back
