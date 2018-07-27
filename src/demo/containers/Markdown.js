@@ -185,7 +185,7 @@ class Markdown extends React.Component {
                     })
                 }
             ).catch(err =>{
-                console.log('error on url grab ', err)
+                console.log('Error on url grab ', err)
             })
         } else {
             elementList.forEach(elementBundle => {

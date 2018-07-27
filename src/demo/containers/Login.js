@@ -68,7 +68,7 @@ class Login extends React.Component {
             err => {
                 this.setState({
                     hasLoginInFailed: true,
-                    errorMessage: err.message
+                    errorMessage: err.reason
                 })
             }
         )
