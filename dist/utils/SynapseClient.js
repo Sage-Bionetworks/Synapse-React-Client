@@ -29,7 +29,7 @@ var fetch_with_exponential_timeout = function fetch_with_exponential_timeout(url
         return resp.ok ? json : Promise.reject(error);
       }).catch(function (error) {
         // call failed from above
-        if (resp.status == 404) {
+        if (resp.status === 404) {
           // 404 doesn't have a json response-- it was an invalid call so read
           // from the response directly
           return Promise.reject({

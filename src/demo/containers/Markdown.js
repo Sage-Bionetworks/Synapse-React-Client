@@ -31,40 +31,22 @@ class Markdown extends React.Component {
             md: require('markdown-it')({html: true}),
             text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n',
             fileHandles: null,
-            fileResults: null
+            fileResults: null,
+            ownerId: "syn2580853",
+            wikiId: "409840"
         }
         this.handleChange = this.handleChange.bind(this)
-        this.updateDisplayText = this.updateDisplayText.bind(this)
         this.processMath = this.processMath.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
         this.processWidgets = this.processWidgets.bind(this)
         this.matchToHandle = this.matchToHandle.bind(this)
+        this.getWikiAttachments = this.getWikiAttachments.bind(this)
+        this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
         this.compareById = function(fileName, key) {
             return function(element) {
                 return element[key] === fileName
             }
         }
-    }
-
-    /**
-     * Call Synapse REST API to get AMP-AD wiki portal as demo of API call
-     */
-    updateDisplayText() {
-        this.props
-        .markdownEndpoint(this.props.token, "syn3722562", "219259")
-        .then(
-            data => {
-                this.setState({
-                    text: data.markdown
-                })
-            }
-        ).catch(
-            err => {
-            this.setState({
-                text: err
-            })
-        }
-        )
     }
 
     /**
@@ -117,7 +99,7 @@ class Markdown extends React.Component {
     /**
      * Get widgets on screen and transform into their defined compents
      */
-    processWidgets(onLoadFileHandles=null) {
+    processWidgets() {
         let widgets = document.querySelectorAll("span[widgetparams]")
         // go through all obtained elements and transform them with katex
 
@@ -153,7 +135,7 @@ class Markdown extends React.Component {
                     fileHandlAssociationList.push(
                         {
                             fileHandleId: match[0].id,
-                            associateObjectId: "409840",
+                            associateObjectId: this.state.wikiId,
                             associateObjectType: "WikiAttachment"
                         }
                     )
@@ -198,9 +180,9 @@ class Markdown extends React.Component {
 
 
     /**
-     *
+     * Attach markdown to wiki attachments
      */
-    matchToHandle(comparator, objectList=null) {
+    matchToHandle(comparator, objectList) {
         if (objectList) {
             // make sure the files have loaded
             let filtered =  objectList.filter(comparator)
@@ -238,33 +220,42 @@ class Markdown extends React.Component {
 
 
         // get wiki attachments
-        this.props.wikiAttachmentsEndpointFromEntity(this.props.token,"syn2580853","409840")
-        .then(data => {
-            this.setState(
-                {fileHandles: data}
-            )
-            this.processWidgets(data)
-        }).catch(
-            err => {console.log("Error on wiki attachment load ", err)}
-        )
+        this.getWikiAttachments();
         
         // sample API call to retrieve Synapse wiki page
-        // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/syn2580853/wiki/409840        
-        this.props.markdownEndpoint(this.props.token,"syn2580853","409840")
-        .then(
-            data => {
-                // on success grab text and append to the default text
-                let initText = this.state.text
-                this.setState({
-                    text: initText + data.markdown
-                })
-            }
-        ).catch(
-            err => {console.log('Error on wiki load\n', err)}
-        )
+        // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
+        this.getWikiPageMarkdown();
 
         // process all math identified markdown items
         this.processMath()
+    }
+
+    /**
+     * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
+     */
+    getWikiPageMarkdown() {
+        this.props.markdownEndpoint(this.props.token, this.state.ownerId, this.state.wikiId)
+            .then(data => {
+                // on success grab text and append to the default text
+                let initText = this.state.text;
+                this.setState({
+                    text: initText + data.markdown
+                });
+            }).catch(err => { 
+                console.log(this.state)
+                console.log('Error on wiki load\n', err);
+            })
+    }
+
+    /**
+     * Call Synapse REST API to get AMP-AD wiki portal attachments
+     */
+    getWikiAttachments() {
+        this.props.wikiAttachmentsEndpointFromEntity(this.props.token, this.state.ownerId, this.state.wikiId)
+            .then(data => {
+                this.setState({ fileHandles: data });
+                this.processWidgets(data);
+            }).catch(err => { console.log("Error on wiki attachment load ", err); });
     }
 
     // on component update find and re-render the math/widget items accordingly

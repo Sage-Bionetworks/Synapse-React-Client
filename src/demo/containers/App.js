@@ -101,12 +101,37 @@ class App extends Component {
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        <Login onTokenChange={this.handleChange} token={this.state.token} loginEndpoint={SynapseClient.login} ></Login>
-        <UserFavorites token={this.state.token} getUserFavoritesEndpoint={SynapseClient.getUserFavorites} > </UserFavorites>
-        <UserProjects token={this.state.token} getUserProjectsEndpoint={SynapseClient.getUserProjectList} > </UserProjects>
-        <UserProfile onProfileChange={this.handleChange} token={this.state.token} ownerId={this.state.ownerId} getUserProfileEndpoint={SynapseClient.getUserProfile}> </UserProfile>
-        <UserTeam token={this.state.token} ownerId={this.state.ownerId} getUserTeamEndpoint={SynapseClient.getUserTeamList} > </UserTeam>
-        <Markdown token={this.state.token} getFileURLs={SynapseClient.getFiles} wikiAttachmentsEndpointFromEvaluation={SynapseClient.getWikiAttachmentsFromEvaluation}  wikiAttachmentsEndpointFromEntity={SynapseClient.getWikiAttachmentsFromEntity} markdownEndpoint={SynapseClient.getEntityWiki}> </Markdown>
+
+        <Login onTokenChange={this.handleChange}
+               token={this.state.token}
+               loginEndpoint={SynapseClient.login}>
+        </Login>
+        
+        <UserFavorites token={this.state.token}
+                       getUserFavoritesEndpoint={SynapseClient.getUserFavorites}>
+        </UserFavorites>
+        
+        <UserProjects token={this.state.token} 
+                      getUserProjectsEndpoint={SynapseClient.getUserProjectList}>
+        </UserProjects>
+        
+        <UserProfile onProfileChange={this.handleChange}
+                     token={this.state.token}
+                     ownerId={this.state.ownerId}
+                     getUserProfileEndpoint={SynapseClient.getUserProfile}>
+        </UserProfile>
+        
+        <UserTeam token={this.state.token} 
+                  ownerId={this.state.ownerId}
+                  getUserTeamEndpoint={SynapseClient.getUserTeamList}>
+        </UserTeam>
+        
+        <Markdown token={this.state.token}
+                  getFileURLs={SynapseClient.getFiles}
+                  wikiAttachmentsEndpointFromEvaluation={SynapseClient.getWikiAttachmentsFromEvaluation}
+                  wikiAttachmentsEndpointFromEntity={SynapseClient.getWikiAttachmentsFromEntity}
+                  markdownEndpoint={SynapseClient.getEntityWiki}>
+        </Markdown>
       </div>
     );
   }
