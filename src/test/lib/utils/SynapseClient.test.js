@@ -1,12 +1,11 @@
 import * as SynapseClient from 'lib/utils/SynapseClient';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
-import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 it('invalid call', () => {
   return SynapseClient.doGet('/repo/v1/invalid', undefined, 'https://repo-prod.prod.sagebase.org')
     .catch(function (error) {
       expect(error.statusCode).toEqual(404);
-      expect(error.message).toEqual('Not Found');
+      expect(error.reason).toEqual('Not Found');
     })
 });
 
@@ -78,11 +77,10 @@ it('get entity bundle latest version', () => {
 it('get synapse wiki', () => {
   let ownerId = "syn2580853"
   let wikiId = "409840"
-  return SynapseClient.getWikiEntity("", ownerId, wikiId).then(data => {
+  return SynapseClient.getEntityWiki("", ownerId, wikiId).then(data => {
     expect(data.markdown).toBeDefined()
   })
 })
-
 
 describe('Test functionality that requires user sign-in', function () {
   let token = ""

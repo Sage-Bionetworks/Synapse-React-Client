@@ -59,18 +59,21 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 View the demo app usage of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/Markdown.js)).
 
 Step 1: Install Synapse markdown-it and Synapse markdown-it plugins
-  + `npm install markdown-it --save`
-  + `npm install markdown-it-synapse --save`
-  + `npm install markdown-it-center-text --save`
-  + `npm install markdown-it-synapse-heading --save`
-  + `npm install markdown-it-synapse-table --save`
-  + `npm install markdown-it-strikethrough-alt --save`
-  + `npm install markdown-it-emphasis-alt --save`
-  + `npm install markdown-it-synapse-math  --save`
-  + `npm install markdown-it-sup-alt --save`
-  + `npm install markdown-it-sub-alt  --save`
-  + `npm install markdown-it-inline-comments  --save`
-  + `npm install markdown-it-br --save`
+
+```bash
+npm install markdown-it --save
+npm install markdown-it-synapse --save
+npm install markdown-it-center-text --save
+npm install markdown-it-synapse-heading --save
+npm install markdown-it-synapse-table --save
+npm install markdown-it-strikethrough-alt --save
+npm install markdown-it-emphasis-alt --save
+npm install markdown-it-synapse-math  --save
+npm install markdown-it-sup-alt --save
+npm install markdown-it-sub-alt  --save
+npm install markdown-it-inline-comments  --save
+npm install markdown-it-br --save
+```
 
 Step 2: Include [katex](github.com/Khan/KaTeX) for math support by copying/pasting the CDN into index.html
 
@@ -110,7 +113,7 @@ Step 3: Instantiate Markdown Instance Inside Component, setup Math rendering
      * (e.g. <dom element id="mathjax-10"> text </dom element>)
      * and transform them to their math markedown equivalents
      */
-    processMathJax() {
+    processMath() {
       // use regex to grab all math identified elements
       let mathExpressions = document.querySelectorAll("[id^=\"mathjax-\"]")
       // go through all obtained elements and transform them with katex
@@ -127,7 +130,7 @@ Step 3: Instantiate Markdown Instance Inside Component, setup Math rendering
 
     // on component update find and re-render the math items accordingly
     componentDidUpdate () {
-        this.processMathJax()
+        this.processMath()
     }
 
     componentDidMount() {
@@ -142,7 +145,7 @@ Step 3: Instantiate Markdown Instance Inside Component, setup Math rendering
       })
 
       // process all math identified markdown items
-      this.processMathJax()
+      this.processMath()
     }
 
     render() {

@@ -1,5 +1,3 @@
-import HttpError from './HTTPError.js';
-
 function delay(t, v) {
   return new Promise(function (resolve) {
     setTimeout(resolve.bind(null, v), t)
@@ -8,18 +6,47 @@ function delay(t, v) {
 
 const fetch_with_exponential_timeout =
   (url, options, delayMs, retries) => {
-    return fetch(url, options).then(resp => {
-      if (resp.status > 199 && resp.status < 300) {
-        // ok!
-        return resp.json();
-      } else if (resp.status === 429 || resp.status === 0) {
-        // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        throw new HttpError(resp.status, resp.statusText);
-      } else {
-        // error status that indicates no more retries
-        retries = 1;
-        throw new HttpError(resp.status, resp.statusText);
-      }
+    return fetch(url, options).then(
+      resp => {
+        if (resp.status > 199 && resp.status < 300) {
+          // ok!
+          return resp.json();
+        } else if (resp.status === 429 || resp.status === 0) {
+          // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
+          return resp.json().then(json => {
+            // on okay response return json, o.w. reject with json and 
+            // send to catch block
+            return resp.ok ? json : Promise.reject(json)
+            })
+        } else {
+          // error status that indicates no more retries
+          retries = 1;
+          return resp.json().then(json => {
+            // on okay response return json, o.w. reject with json and 
+            // send to catch block
+            let error = {
+              reason: json.reason,
+              status: resp.status
+            } 
+            return resp.ok ? json : Promise.reject(error)
+          }).catch(error => {
+            // call failed from above
+            if (resp.status === 404) {
+              // 404 doesn't have a json response-- it was an invalid call so read
+              // from the response directly
+              return Promise.reject({
+                statusCode: resp.status,
+                reason: resp.statusText
+              })
+            } else {
+              // the call was recieved, but staus wasn't ok-- return the json response from above
+              return Promise.reject({
+                statusCode: error.status,
+                reason: error.reason
+              })
+            }
+          })
+        }
     }).catch(function (error) {
       if (retries === 1) throw error;
       return delay(delayMs).then(function () {
@@ -183,7 +210,7 @@ export const getEntityBundleForVersion =
    * Get Wiki page contents, call is of the form:
    * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
    */
-  export const getWikiEntity =
+  export const getEntityWiki =
     (sessionToken, ownerId, wikiId, endpoint="https://repo-prod.prod.sagebase.org") => {
       let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
       return doGet(url, sessionToken, endpoint)
@@ -218,5 +245,17 @@ export const getEntityBundleForVersion =
   export const getUserTeamList =
   (sessionToken, id, endpoint="https://repo-prod.prod.sagebase.org/") => {
     let url = 'repo/v1/user/' + id + '/team?offset=0&limit=200'
+    return doGet(url, sessionToken, endpoint)
+  }
+
+  export const getWikiAttachmentsFromEntity = 
+  (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = "repo/v1/entity/" + id + "/wiki/" + wikiId + "/attachmenthandles"
+    return doGet(url, sessionToken, endpoint)
+  }
+
+  export const getWikiAttachmentsFromEvaluation = 
+  (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = "repo/v1/evaluation/" + id + "/wiki/" + wikiId + "/attachmenthandles"
     return doGet(url, sessionToken, endpoint)
   }
