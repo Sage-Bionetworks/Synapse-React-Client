@@ -242,8 +242,7 @@ class Markdown extends React.Component {
                     text: initText + data.markdown
                 });
             }).catch(err => { 
-                console.log(this.state)
-                console.log('Error on wiki load\n', err);
+                console.log('Error on wiki markdown load\n', err);
             })
     }
 
@@ -255,7 +254,9 @@ class Markdown extends React.Component {
             .then(data => {
                 this.setState({ fileHandles: data });
                 this.processWidgets(data);
-            }).catch(err => { console.log("Error on wiki attachment load ", err); });
+            }).catch(err => { 
+                console.log("Error on wiki attachment load ", err)
+            })
     }
 
     // on component update find and re-render the math/widget items accordingly
