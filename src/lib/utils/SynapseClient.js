@@ -98,7 +98,7 @@ export const getVersion =
 
 export const getQueryTableResultsFromJobId =
   (entityId, jobId, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doGet('/repo/v1/entity/' + entityId + '/table/query/async/get/' + jobId, sessionToken, endpoint)
+    return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, endpoint)
       .then(resp => {
         // is this the job status?
         if (resp.jobState && resp.jobState !== 'FAILED') {
@@ -123,7 +123,7 @@ export const getQueryTableResultsFromJobId =
  */
 export const getQueryTableResults =
   (queryBundleRequest, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doPost('/repo/v1/entity/' + queryBundleRequest.entityId + '/table/query/async/start', queryBundleRequest, sessionToken, endpoint)
+    return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
       .then(resp => {
         //started query, now attempt to get the results.
         return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
@@ -200,7 +200,7 @@ export const getFiles =
    */
 export const getEntityBundleForVersion =
   (entityId, version, partsMask, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    let url = '/repo/v1/entity/' + entityId;
+    let url = `/repo/v1/entity/${entityId}`;
     if (version) {
       url += '/version/' + version;
     }
@@ -214,7 +214,7 @@ export const getEntityBundleForVersion =
    */
   export const getEntityWiki =
     (sessionToken, ownerId, wikiId, endpoint="https://repo-prod.prod.sagebase.org") => {
-      let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
+      let url = `/repo/v1/entity/${ownerId}/wiki/${wikiId}`
       return doGet(url, sessionToken, endpoint)
     }
 
@@ -235,7 +235,7 @@ export const getEntityBundleForVersion =
    */
   export const getUserProjectList =
   (sessionToken, projectDetails, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = 'repo/v1/projects/' + projectDetails + '?offset=0&limit=200'
+    let url = `repo/v1/projects/${projectDetails}?offset=0&limit=200`
     return doGet(url, sessionToken, endpoint)
   }
 
@@ -246,18 +246,18 @@ export const getEntityBundleForVersion =
    */
   export const getUserTeamList =
   (sessionToken, id, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = 'repo/v1/user/' + id + '/team?offset=0&limit=200'
+    let url = `repo/v1/user/${id}/team?offset=0&limit=200`
     return doGet(url, sessionToken, endpoint)
   }
 
   export const getWikiAttachmentsFromEntity = 
   (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = "repo/v1/entity/" + id + "/wiki/" + wikiId + "/attachmenthandles"
+    let url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
     return doGet(url, sessionToken, endpoint)
   }
 
   export const getWikiAttachmentsFromEvaluation = 
   (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = "repo/v1/evaluation/" + id + "/wiki/" + wikiId + "/attachmenthandles"
+    let url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
     return doGet(url, sessionToken, endpoint)
   }

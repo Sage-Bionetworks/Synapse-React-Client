@@ -1,4 +1,7 @@
 import React from "react";
+import { renderToString } from 'react-dom/server'
+import Plot from 'react-plotly.js';
+
 /**
  * Import requirements for markdown
  */
@@ -16,9 +19,9 @@ let sanitizeHtml = require('sanitize-html');
 let synapseMath = require('markdown-it-synapse-math')
 
 /*  
-    Basic vanilla Markdownit functionality with latex support
+Basic vanilla Markdownit functionality with latex support
 */
-class Markdown extends React.Component {    
+class Markdown extends React.Component {
 
     /**
      * Creates an instance of Markdown.
@@ -43,6 +46,7 @@ class Markdown extends React.Component {
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
         this.matchElementToResource = this.matchElementToResource.bind(this)
+        this.handleWidget = this.handleWidget.bind(this)
         this.compareById = function(fileName, key) {
             return function(element) {
                 return element[key] === fileName
@@ -60,7 +64,7 @@ class Markdown extends React.Component {
         let cleanText = sanitizeHtml(initText, 
             {   
                 allowedTags: [ 'span', 'code', 'h1', 'h2','h3', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
-            'table', 'tr', 'td', 'tbody', "button", "div", "image", "ol", "ul", "li"],
+            'table', 'tr', 'td', 'tbody', "button", "div", "image", "ol", "ul", "li", "svg", "g"],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['*'],
@@ -74,7 +78,6 @@ class Markdown extends React.Component {
         )
         return {__html: cleanText}
     }
-
 
     /**
      * Find all math identified elements of the form [id^=\"mathjax-\"]
@@ -95,7 +98,6 @@ class Markdown extends React.Component {
             })
         });
     }
-
     
     /**
      * Get widgets on screen and transform into their defined compents
@@ -113,6 +115,7 @@ class Markdown extends React.Component {
             let questionIndex = widgetstring.indexOf("?") // type?
             let widgetType = widgetstring.substring(0,questionIndex) // type
             let widgetparamsMapped = {}
+            // map out params and their values
             widgetstring.substring(questionIndex + 1).split("&").forEach( 
                 (keyPair) => {
                     let key, value;
@@ -121,26 +124,9 @@ class Markdown extends React.Component {
                     widgetparamsMapped[key] = value
                 }
             )
-
-            if (widgetType === "buttonlink") {
-                let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>"
-                element.outerHTML = button
-            } else if (widgetType === "image" && this.state.fileHandles) {
-                let fileName = decodeURIComponent(widgetparamsMapped.fileName)
-                let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list)
-                if (match.length > 0) {
-                    fileHandlAssociationList.push(
-                        {
-                            fileHandleId: match[0].id,
-                            associateObjectId: this.state.wikiId,
-                            associateObjectType: "WikiAttachment"
-                        }
-                    )
-                    elementList.push([element, match[0].id])
-                }
-            }
+            this.handleWidget(widgetType, widgetparamsMapped, element, fileHandlAssociationList, elementList);
         });    
-        
+
         // Process all the files found on the page
         // if this is the first run load the file results, otherwise
         // use the already retrieved files
@@ -151,7 +137,6 @@ class Markdown extends React.Component {
                 includeFileHandles: false,
                 includePreviewPreSignedURLs: false
             }
-
             this.props.getFileURLs(request, this.props.token).then(
                 data=> {
                     this.setState({
@@ -159,23 +144,74 @@ class Markdown extends React.Component {
                     })
                     this.matchElementToResource(elementList);
                 }
-            ).catch(err =>{
+            )
+            .catch(err =>{
                 console.log('Error on url grab ', err)
             })
         } else {
             this.matchElementToResource(elementList);
         }
-        
+
     }
 
+    handleWidget(widgetType, widgetparamsMapped, element, fileHandlAssociationList, elementList) {
+        if (widgetType === "buttonlink") {
+            let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
+            element.outerHTML = button;
+        } else if (widgetType === "image" && this.state.fileHandles) {
+            let fileName = decodeURIComponent(widgetparamsMapped.fileName);
+            let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
+            if (match.length > 0) {
+                fileHandlAssociationList.push({
+                    fileHandleId: match[0].id,
+                    associateObjectId: this.state.wikiId,
+                    associateObjectType: "WikiAttachment"
+                });
+                elementList.push({element:element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+            }
+        } else if (widgetType === "plot") {
+            elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+        }
+    }
 
     matchElementToResource(elementList) {
         elementList.forEach(elementBundle => {
-            let match = this.matchToHandle(this.compareById(elementBundle[1], "fileHandleId"), this.state.fileResults);
-            // check match for error message
-            console.log(match)
-            let image = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
-            elementBundle[0].outerHTML = image;
+            let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
+            let renderedHTML = ""
+            if (elementBundle.widgetType === "image") {
+                renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
+            } else if (elementBundle.widgetType === "plot") {
+                let plot = ""
+                if (!this.state.queryData) {
+                    let queryRequest = {
+                        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                        entityId: this.state.ownerId,
+                        partsMask: 13,
+                        query: {
+                            isConsistent: false,
+                            limit: 150,
+                            offset: 0,
+                            sql: elementBundle.widgetparamsMapped.sql
+                        }
+                    }
+                    this.props.getQueryTableResults(queryRequest, this.props.token).then(data => {
+                        // match id to data retrieved
+                        console.log('data for plot is: ', data)
+                        this.setState({
+                            [elementBundle.widgetparamsMapped.id] : data
+                        })
+                    })
+                } else {
+                    // data exists already, don't regenerate
+                    let data = this.state[elementBundle.widgetparamsMapped.id]
+                    plot = <Plot
+                                data={data}
+                                layout={{width: 320, height: 240, title: 'A Fancy Plot'}}
+                            />
+                }
+                renderedHTML = "<h2> test plot </h2>"
+            }
+            elementBundle.element.outerHTML = renderedHTML
         });
     }
 
@@ -234,7 +270,7 @@ class Markdown extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
      */
     getWikiPageMarkdown() {
-        this.props.markdownEndpoint(this.props.token, this.state.ownerId, this.state.wikiId)
+        this.props.markdownEndpoint("4f26f9a0-a0bc-421d-af40-57f368ba89a4", this.state.ownerId, this.state.wikiId)
             .then(data => {
                 // on success grab text and append to the default text
                 let initText = this.state.text;
@@ -250,7 +286,7 @@ class Markdown extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal attachments
      */
     getWikiAttachments() {
-        this.props.wikiAttachmentsEndpointFromEntity(this.props.token, this.state.ownerId, this.state.wikiId)
+        this.props.wikiAttachmentsEndpointFromEntity("4f26f9a0-a0bc-421d-af40-57f368ba89a4", this.state.ownerId, this.state.wikiId)
             .then(data => {
                 this.setState({ fileHandles: data });
                 this.processWidgets(data);
