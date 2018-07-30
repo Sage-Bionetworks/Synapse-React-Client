@@ -1,5 +1,4 @@
 import React from "react";
-import { renderToString } from 'react-dom/server'
 import Plot from 'react-plotly.js';
 
 /**
@@ -35,8 +34,12 @@ class Markdown extends React.Component {
             text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n',
             fileHandles: null,
             fileResults: null,
-            ownerId: "syn2580853",
-            wikiId: "409840"
+            ownerId: "syn14568473",
+            wikiId: "582406",
+            newOwnerId: "",
+            newWikiId: "",
+            calledReset: false,
+            isLoggedIn: this.props.token !== ""
         }
         this.handleChange = this.handleChange.bind(this)
         this.processMath = this.processMath.bind(this)
@@ -47,6 +50,8 @@ class Markdown extends React.Component {
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
         this.matchElementToResource = this.matchElementToResource.bind(this)
         this.handleWidget = this.handleWidget.bind(this)
+        this.getErrorView = this.getErrorView.bind(this)
+        this.resetComponentState = this.resetComponentState.bind(this)
         this.compareById = function(fileName, key) {
             return function(element) {
                 return element[key] === fileName
@@ -105,11 +110,10 @@ class Markdown extends React.Component {
     processWidgets() {
         let widgets = document.querySelectorAll("span[widgetparams]")
         // go through all obtained elements and transform them with katex
-
+        
         // build up request 
         let elementList = []
         let fileHandlAssociationList = []
-        
         widgets.forEach(element => {
             let widgetstring = element.getAttribute("widgetparams")
             let questionIndex = widgetstring.indexOf("?") // type?
@@ -181,7 +185,6 @@ class Markdown extends React.Component {
             if (elementBundle.widgetType === "image") {
                 renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
             } else if (elementBundle.widgetType === "plot") {
-                let plot = ""
                 if (!this.state.queryData) {
                     let queryRequest = {
                         concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
@@ -191,23 +194,25 @@ class Markdown extends React.Component {
                             isConsistent: false,
                             limit: 150,
                             offset: 0,
-                            sql: elementBundle.widgetparamsMapped.sql
+                            sql: elementBundle.widgetparamsMapped.query
                         }
                     }
                     this.props.getQueryTableResults(queryRequest, this.props.token).then(data => {
                         // match id to data retrieved
-                        console.log('data for plot is: ', data)
+                        let title = elementBundle.widgetparamsMapped.title
+                        let queryData = {...this.state.queryData} // shallow copy
+                        queryData[title] = data // place property
                         this.setState({
-                            [elementBundle.widgetparamsMapped.id] : data
+                            queryData
                         })
                     })
                 } else {
                     // data exists already, don't regenerate
-                    let data = this.state[elementBundle.widgetparamsMapped.id]
-                    plot = <Plot
-                                data={data}
-                                layout={{width: 320, height: 240, title: 'A Fancy Plot'}}
-                            />
+                    let data = this.state.queryData[elementBundle.widgetparamsMapped.title]
+                    // let plot = <Plot
+                    //             data={data}
+                    //             layout={{width: 320, height: 240, title: 'A Fancy Plot'}}
+                    //         />
                 }
                 renderedHTML = "<h2> test plot </h2>"
             }
@@ -226,18 +231,54 @@ class Markdown extends React.Component {
         }
     }
 
+
     /**
-     * Update state with event
+     * Updates internal state with the event that was triggered
      *
-     * @param {*} event
+     * @param {*} event Form update
      */
     handleChange(event) {
         const target = event.target
+        const name = target.name
         const value = target.value
         this.setState(
-            { text: value}
+            { [name]: value }
         );
-    } 
+    }
+    /**
+     * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
+     */
+    getWikiPageMarkdown() {
+        this.props.markdownEndpoint(this.props.token, this.state.ownerId, this.state.wikiId)
+        .then(data => {
+            // on success grab text and append to the default text
+            let initText = this.state.text;
+            this.setState({
+                text: initText + data.markdown
+            });
+        }).catch(err => { 
+            console.log('Error on wiki markdown load\n', err);
+        })
+    }
+
+    /**
+     * Call Synapse REST API to get AMP-AD wiki portal attachments
+     */
+    getWikiAttachments() {
+        this.props.wikiAttachmentsEndpointFromEntity(this.props.token, this.state.ownerId, this.state.wikiId)
+            .then(data => {
+                this.setState({ fileHandles: data });
+                this.processWidgets(data);
+                this.setState({
+                    errorMessage: ""
+                })
+            }).catch(err => { 
+                this.setState({
+                    errorMessage: err.reason
+                })
+                console.log("Error on wiki attachment load ", err)
+            })
+    }
 
     componentDidMount() {
         // markdownitSynapse wraps around md object and uses its own dependencies
@@ -266,39 +307,44 @@ class Markdown extends React.Component {
         this.processMath()
     }
 
-    /**
-     * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
-     */
-    getWikiPageMarkdown() {
-        this.props.markdownEndpoint("4f26f9a0-a0bc-421d-af40-57f368ba89a4", this.state.ownerId, this.state.wikiId)
-            .then(data => {
-                // on success grab text and append to the default text
-                let initText = this.state.text;
-                this.setState({
-                    text: initText + data.markdown
-                });
-            }).catch(err => { 
-                console.log('Error on wiki markdown load\n', err);
-            })
-    }
-
-    /**
-     * Call Synapse REST API to get AMP-AD wiki portal attachments
-     */
-    getWikiAttachments() {
-        this.props.wikiAttachmentsEndpointFromEntity("4f26f9a0-a0bc-421d-af40-57f368ba89a4", this.state.ownerId, this.state.wikiId)
-            .then(data => {
-                this.setState({ fileHandles: data });
-                this.processWidgets(data);
-            }).catch(err => { 
-                console.log("Error on wiki attachment load ", err)
-            })
-    }
-
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
+        if (this.state.calledReset) {
+            this.setState({calledReset: false})
+            this.getWikiAttachments()
+            this.getWikiPageMarkdown()
+        }
+        if (this.props.token !== "" && !this.state.isLoggedIn) {
+            this.setState({isLoggedIn: true})
+            this.getWikiAttachments()
+            this.getWikiPageMarkdown()
+        }
         this.processMath()
         this.processWidgets()
+    }
+
+    getErrorView() {
+        if (this.state.errorMessage) {
+            return ( 
+            <div className="row">
+                <p className="text-danger"> Error: {this.state.errorMessage} </p>
+            </div>)
+        }
+    }
+
+    resetComponentState(event) {
+        event.preventDefault()
+        
+        this.setState({
+            ownerId: this.state.newOwnerId,
+            wikiId: this.state.newWikiId,
+            newOwnerId: "",
+            newWikiId: "",
+            fileHandles: null,
+            fileResults: null,
+            text: "",
+            calledReset: true
+        })
     }
 
     render() {
@@ -307,13 +353,28 @@ class Markdown extends React.Component {
                 <div className="row">
                     <p className="p-2 text-center" dangerouslySetInnerHTML={this.createMarkup('# Markdown it demo!')}/>
                 </div>
+                <div className="row mb-3">
+                    <form onSubmit={this.resetComponentState}>
+                        <div className="form-group ml-2 form-inline">
+                            <label> Enter wiki ownerId</label>
+                            <input name="newOwnerId" onChange={this.handleChange}  placeholder={this.state.ownerId} type="text" value={this.state.newOwnerId} className="ml-2 form-control"/>
+                        </div>
+                        <div className="form-group ml-2 form-inline">
+                            <label> Enter synapse wikiId</label>
+                            <input name="newWikiId" onChange={this.handleChange} placeholder={this.state.wikiId} type="text" value={this.state.newWikiId} className="ml-2 form-control"/>
+                        </div>
+                        <button onSubmit={this.resetComponentState} type="submit" className="btn ml-3 btn-large btn-primary">Get new wiki</button>
+                    </form>
+                </div>
+               {this.getErrorView()}
                 <div className="row">
-                    <textarea rows={5} value={this.state.text} onChange={this.handleChange} className="col-6 border"> </textarea>
+                    <textarea rows={5} name="text" value={this.state.text} onChange={this.handleChange} className="col-6 border"> </textarea>
                     <div className="col-6 challenge__description" ref={1} dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
                 </div>
             </div>
         )
     }
+
 }
 
 export default Markdown;
