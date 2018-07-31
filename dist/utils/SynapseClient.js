@@ -265,13 +265,13 @@ export var getUserTeamList = function getUserTeamList(sessionToken, id) {
 export var getWikiAttachmentsFromEntity = function getWikiAttachmentsFromEntity(sessionToken, id, wikiId) {
   var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "https://repo-prod.prod.sagebase.org/";
 
-  var url = "repo/v1/entity/" + id + "/wiki/" + wikiId + "/attachmenthandles";
+  var url = 'repo/v1/entity/' + id + '/wiki/' + wikiId + '/attachmenthandles';
   return doGet(url, sessionToken, endpoint);
 };
 
 export var getWikiAttachmentsFromEvaluation = function getWikiAttachmentsFromEvaluation(sessionToken, id, wikiId) {
   var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "https://repo-prod.prod.sagebase.org/";
 
-  var url = "repo/v1/evaluation/" + id + "/wiki/" + wikiId + "/attachmenthandles";
+  var url = 'repo/v1/evaluation/' + id + '/wiki/' + wikiId + '/attachmenthandles';
   return doGet(url, sessionToken, endpoint);
 };

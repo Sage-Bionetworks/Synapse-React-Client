@@ -1,6 +1,4 @@
 import React from "react";
-import ReactDOM from 'react-dom'
-import Plot from 'react-plotly.js'
 
 /**
  * Import requirements for markdown
@@ -18,9 +16,12 @@ let markdownBr = require('markdown-it-br')
 let sanitizeHtml = require('sanitize-html');
 let synapseMath = require('markdown-it-synapse-math')
 
-/*  
-Basic vanilla Markdownit functionality with latex support
-*/
+/**
+ * Basic vanilla Markdownit functionality with latex support, synapse image support, plotly support
+ *
+ * @class Markdown
+ * @extends {React.Component}
+ */
 class Markdown extends React.Component {
 
     /**
@@ -50,7 +51,7 @@ class Markdown extends React.Component {
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
         this.matchElementToResource = this.matchElementToResource.bind(this)
-        this.handleWidget = this.handleWidget.bind(this)
+        this.prepareWidget = this.prepareWidget.bind(this)
         this.getErrorView = this.getErrorView.bind(this)
         this.resetComponentState = this.resetComponentState.bind(this)
         this.compareById = function(fileName, key) {
@@ -114,7 +115,7 @@ class Markdown extends React.Component {
         
         // build up request 
         let elementList = []
-        let fileHandlAssociationList = []
+        let fileHandleAssociationList = []
         widgets.forEach(element => {
             let widgetstring = element.getAttribute("widgetparams")
             let questionIndex = widgetstring.indexOf("?") // type?
@@ -129,15 +130,15 @@ class Markdown extends React.Component {
                     widgetparamsMapped[key] = value
                 }
             )
-            this.handleWidget(widgetType, widgetparamsMapped, element, fileHandlAssociationList, elementList);
+            this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
         });    
 
         // Process all the files found on the page
         // if this is the first run load the file results, otherwise
         // use the already retrieved files
-        if (fileHandlAssociationList.length > 0 && this.state.fileResults === null) {
+        if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
             let request = {
-                requestedFiles: fileHandlAssociationList,
+                requestedFiles: fileHandleAssociationList,
                 includePreSignedURLs: true,
                 includeFileHandles: false,
                 includePreviewPreSignedURLs: false
@@ -159,7 +160,16 @@ class Markdown extends React.Component {
 
     }
 
-    handleWidget(widgetType, widgetparamsMapped, element, fileHandlAssociationList, elementList) {
+    /**
+     * Given a widget grab its required resources to push onto the growing list of elements
+     *
+     * @param {*} widgetType    type of widget, e.g. "buttonlink"
+     * @param {*} widgetparamsMapped    parameter dictionary for the given widget
+     * @param {*} element   reference to the actual DOM element this widget corresponds to
+     * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
+     * @param {*} elementList   stack of elements to be processed
+     */
+    prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
         if (widgetType === "buttonlink") {
             let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
             element.outerHTML = button;
@@ -167,7 +177,7 @@ class Markdown extends React.Component {
             let fileName = decodeURIComponent(widgetparamsMapped.fileName);
             let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
             if (match.length > 0) {
-                fileHandlAssociationList.push({
+                fileHandleAssociationList.push({
                     fileHandleId: match[0].id,
                     associateObjectId: this.state.wikiId,
                     associateObjectType: "WikiAttachment"
@@ -179,18 +189,27 @@ class Markdown extends React.Component {
         }
     }
 
+    /**
+     * match all widgets on the page to their corresponding resource
+     *
+     * @param {*} elementList dictionary of 
+     * @memberof Markdown
+     */
     matchElementToResource(elementList) {
         elementList.forEach(elementBundle => {
             let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
             let renderedHTML = ""
             if (elementBundle.widgetType === "image") {
                 renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
+                elementBundle.element.outerHTML = renderedHTML
             } else if (elementBundle.widgetType === "plot") {
                 let widgetparamsMapped = elementBundle.widgetparamsMapped 
                 let raw_plot_data = {}
 
                 if (!this.state.queryData) {
+                    // grab all the data, hasn't been loaded uet
                     let queryRequest = {
+                        // TODO: verify these parameters
                         concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
                         entityId: this.state.ownerId,
                         partsMask: 13,
@@ -212,11 +231,12 @@ class Markdown extends React.Component {
                         raw_plot_data = data
                     })
                 } else {
-                    // data exists already, don't regenerate
+                    // data already exists, don't regenerate
                     raw_plot_data = this.state.queryData[widgetparamsMapped.title]
 
                 }
                 
+                // grab all the parameters passed into the widget
                 let title = widgetparamsMapped.title
                 let xtitle = widgetparamsMapped.xtitle
                 let ytitle = widgetparamsMapped.ytitle
@@ -224,7 +244,7 @@ class Markdown extends React.Component {
                 let xaxisType = widgetparamsMapped.xaxistype
                 let isHorizontal = widgetparamsMapped.horizontal.toLowerCase()
                 let showLegend = widgetparamsMapped.showlegend
-
+                
                 let layout = {
                     title: title,
                     xaxis: {
@@ -234,7 +254,8 @@ class Markdown extends React.Component {
                     },
                     yaxis: {
                         title: ytitle
-                    }
+                    },
+                    showlegend: showLegend
                 }
 
                 let config = {
@@ -246,6 +267,7 @@ class Markdown extends React.Component {
                     return
                 }
 
+                // init plot_data
                 let plot_data = []
                 let orientation = isHorizontal ? "v" : "h"
                 let headers = raw_plot_data.queryResult.queryResults.headers
@@ -260,6 +282,7 @@ class Markdown extends React.Component {
                     plot_data[i].orientation = orientation
                 }
 
+                // grab all the data
                 for (let i = 0; i < raw_plot_data.queryResult.queryResults.rows.length; i++) {
                     let row = raw_plot_data.queryResult.queryResults.rows[i]
                     for (let j = 1; j < row.values.length; j++) {
@@ -270,8 +293,10 @@ class Markdown extends React.Component {
 
                     }
                 }
-                
-                window.Plotly.newPlot(elementBundle.element, plot_data, layout, config);
+                elementBundle.element.innerHTML = "" // clear formatting
+                // TODO: Configure class property for display and position
+                window.Plotly.react(elementBundle.element, plot_data, layout, config);
+                window.Plotly.restyle(elementBundle.element, {display: "inline-block", position: "relative", autosize: true});
             }
         });
     }
@@ -365,6 +390,11 @@ class Markdown extends React.Component {
 
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
+        // we have to carefully update the component so it doesn't encounter an infinite loop
+        /* two scenarios in which theres an update:
+            1. Submit was used to request another wiki page be rendered
+            2. User logged in and has different priveledges to see or not see a certain wiki page
+        */
         if (this.state.calledReset) {
             this.setState({calledReset: false})
             this.getWikiAttachments()
@@ -379,6 +409,14 @@ class Markdown extends React.Component {
         this.processWidgets()
     }
 
+    // If theres an error loading the wiki page show an informative message
+    // likely a priveledge issue -- (e.g. not signed-in)
+    /**
+     * If theres an error loading the wiki page show an informative message
+     * likely a priveledge issue -- (e.g. not signed-in)
+     * 
+     * @returns view that presents error message on error, otherwise null
+     */
     getErrorView() {
         if (this.state.errorMessage) {
             return ( 
@@ -388,6 +426,12 @@ class Markdown extends React.Component {
         }
     }
 
+    /**
+     *  Reset the components state to initial
+     *
+     * @param {*} event click event from submit button
+     * @memberof Markdown
+     */
     resetComponentState(event) {
         event.preventDefault()
         
