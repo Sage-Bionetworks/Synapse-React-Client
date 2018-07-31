@@ -1,5 +1,6 @@
 import React from "react";
-import Plot from 'react-plotly.js';
+import ReactDOM from 'react-dom'
+import Plot from 'react-plotly.js'
 
 /**
  * Import requirements for markdown
@@ -185,6 +186,10 @@ class Markdown extends React.Component {
             if (elementBundle.widgetType === "image") {
                 renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
             } else if (elementBundle.widgetType === "plot") {
+
+                let widgetparamsMapped = elementBundle.widgetparamsMapped 
+                let raw_plot_data = {}
+
                 if (!this.state.queryData) {
                     let queryRequest = {
                         concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
@@ -194,29 +199,119 @@ class Markdown extends React.Component {
                             isConsistent: false,
                             limit: 150,
                             offset: 0,
-                            sql: elementBundle.widgetparamsMapped.query
+                            sql: widgetparamsMapped.query
                         }
                     }
                     this.props.getQueryTableResults(queryRequest, this.props.token).then(data => {
                         // match id to data retrieved
-                        let title = elementBundle.widgetparamsMapped.title
+                        let title = widgetparamsMapped.title
                         let queryData = {...this.state.queryData} // shallow copy
                         queryData[title] = data // place property
                         this.setState({
                             queryData
                         })
+                        raw_plot_data = data
                     })
                 } else {
                     // data exists already, don't regenerate
-                    let data = this.state.queryData[elementBundle.widgetparamsMapped.title]
-                    // let plot = <Plot
-                    //             data={data}
-                    //             layout={{width: 320, height: 240, title: 'A Fancy Plot'}}
-                    //         />
+                    raw_plot_data = this.state.queryData[widgetparamsMapped.title]
+                    console.log('params ', widgetparamsMapped)
+                    console.log('data ', raw_plot_data)
+
                 }
-                renderedHTML = "<h2> test plot </h2>"
+                
+                let title = widgetparamsMapped.title
+                let xtitle = widgetparamsMapped.xtitle
+                let ytitle = widgetparamsMapped.ytitle
+                let type = widgetparamsMapped.type
+                let xaxisType = widgetparamsMapped.xaxistype
+                let isHorizontal = widgetparamsMapped.horizontal.toLowerCase()
+                let showLegend = widgetparamsMapped.showlegend
+
+                let layout = {
+                    title: title,
+                    xaxis: {
+                        title: xtitle,
+                        xaxistype: xaxisType.toLowerCase(),
+
+                    },
+                    yaxis: {
+                        title: ytitle
+                    }
+                }
+
+                let config = {
+                    displayModeBar: false
+                }
+
+                
+                if (!raw_plot_data.queryResult) {
+                    // results haven't loaded yet
+                    return
+                }
+
+                let plot_data = []
+                let orientation = isHorizontal ? "v" : "h"
+                
+                let headers = raw_plot_data.queryResult.queryResults.headers
+                for (let i = 0; i < headers.length - 1; i++) {
+                    // make an entry for each set of data points
+                    plot_data[i] = {}
+                    plot_data[i] = {}
+                    plot_data[i].x = []
+                    plot_data[i].y = []
+                    plot_data[i].name = headers[i+1].name
+                    plot_data[i].type = type.toLowerCase()
+                    plot_data[i].orientation = orientation
+                }
+
+                for (let i = 0; i < raw_plot_data.queryResult.queryResults.rows.length; i++) {
+                    let row = raw_plot_data.queryResult.queryResults.rows[i]
+
+                    for (let j = 1; j < row.values.length; j++) {
+                        // create pairs of data
+                        let row_values = row.values
+                        plot_data[j-1].x.push(row_values[0])
+                        plot_data[j-1].y.push(row_values[j])
+
+                    }
+
+                }
+                
+                console.log("plot_data ", plot_data)
+                // console.log("layout ", layout)
+                // console.log("config ", config)
+                window.Plotly.newPlot(elementBundle.element, plot_data, layout, config);
+
+
+                var trace1 = {
+                    x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                    y: [0, 3, 6, 4, 5, 2, 3, 5, 4],
+                    type: 'scatter',
+                    name:'Plot 1'
+                  };
+                  var trace2 = {
+                    x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                    y: [0, 4, 7, 8, 3, 6, 3, 3, 4],
+                    type: 'scatter',
+                    name:'Plot 2'
+                  };
+                  var trace3 = {
+                    x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                    y: [0, 5, 3, 10, 5.33, 2.24, 4.4, 5.1, 7.2],
+                    type: 'scatter',
+                    name:'Plot 3'
+                  };
+                  var data = [trace1, trace2, trace3];
+                  var layout = {
+                      showlegend: true,
+                      legend: {"orientation": "v"}
+                  };
+                   
+                //   window.Plotly.newPlot(elementBundle.element, data, layout);
+
             }
-            elementBundle.element.outerHTML = renderedHTML
+            // elementBundle.element.outerHTML = renderedHTML
         });
     }
 
