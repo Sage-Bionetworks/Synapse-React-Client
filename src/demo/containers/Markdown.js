@@ -186,7 +186,6 @@ class Markdown extends React.Component {
             if (elementBundle.widgetType === "image") {
                 renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
             } else if (elementBundle.widgetType === "plot") {
-
                 let widgetparamsMapped = elementBundle.widgetparamsMapped 
                 let raw_plot_data = {}
 
@@ -215,8 +214,6 @@ class Markdown extends React.Component {
                 } else {
                     // data exists already, don't regenerate
                     raw_plot_data = this.state.queryData[widgetparamsMapped.title]
-                    console.log('params ', widgetparamsMapped)
-                    console.log('data ', raw_plot_data)
 
                 }
                 
@@ -244,7 +241,6 @@ class Markdown extends React.Component {
                     displayModeBar: false
                 }
 
-                
                 if (!raw_plot_data.queryResult) {
                     // results haven't loaded yet
                     return
@@ -252,7 +248,6 @@ class Markdown extends React.Component {
 
                 let plot_data = []
                 let orientation = isHorizontal ? "v" : "h"
-                
                 let headers = raw_plot_data.queryResult.queryResults.headers
                 for (let i = 0; i < headers.length - 1; i++) {
                     // make an entry for each set of data points
@@ -267,7 +262,6 @@ class Markdown extends React.Component {
 
                 for (let i = 0; i < raw_plot_data.queryResult.queryResults.rows.length; i++) {
                     let row = raw_plot_data.queryResult.queryResults.rows[i]
-
                     for (let j = 1; j < row.values.length; j++) {
                         // create pairs of data
                         let row_values = row.values
@@ -275,43 +269,10 @@ class Markdown extends React.Component {
                         plot_data[j-1].y.push(row_values[j])
 
                     }
-
                 }
                 
-                console.log("plot_data ", plot_data)
-                // console.log("layout ", layout)
-                // console.log("config ", config)
                 window.Plotly.newPlot(elementBundle.element, plot_data, layout, config);
-
-
-                var trace1 = {
-                    x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-                    y: [0, 3, 6, 4, 5, 2, 3, 5, 4],
-                    type: 'scatter',
-                    name:'Plot 1'
-                  };
-                  var trace2 = {
-                    x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-                    y: [0, 4, 7, 8, 3, 6, 3, 3, 4],
-                    type: 'scatter',
-                    name:'Plot 2'
-                  };
-                  var trace3 = {
-                    x: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-                    y: [0, 5, 3, 10, 5.33, 2.24, 4.4, 5.1, 7.2],
-                    type: 'scatter',
-                    name:'Plot 3'
-                  };
-                  var data = [trace1, trace2, trace3];
-                  var layout = {
-                      showlegend: true,
-                      legend: {"orientation": "v"}
-                  };
-                   
-                //   window.Plotly.newPlot(elementBundle.element, data, layout);
-
             }
-            // elementBundle.element.outerHTML = renderedHTML
         });
     }
 
