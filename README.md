@@ -56,7 +56,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       });
 ```
 ##### Markdown Rendering
-View the demo app usage of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/Markdown.js)).
+View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
 Step 1: Install Synapse markdown-it and Synapse markdown-it plugins
 

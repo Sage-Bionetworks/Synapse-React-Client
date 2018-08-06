@@ -207,7 +207,7 @@ class Markdown extends React.Component {
                 let raw_plot_data = {}
 
                 if (!this.state.queryData) {
-                    // grab all the data, hasn't been loaded uet
+                    // grab all the data, hasn't been loaded yet
                     let queryRequest = {
                         // TODO: verify these parameters
                         concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
@@ -224,7 +224,9 @@ class Markdown extends React.Component {
                         // match id to data retrieved
                         let title = widgetparamsMapped.title
                         let queryData = {...this.state.queryData} // shallow copy
-                        queryData[title] = data // place property
+                        queryData[title] = data
+                        // set data to this plots title in the query data
+                        // user shouldn't have two plots with the same name
                         this.setState({
                             queryData
                         })
@@ -273,13 +275,13 @@ class Markdown extends React.Component {
                 let headers = raw_plot_data.queryResult.queryResults.headers
                 for (let i = 0; i < headers.length - 1; i++) {
                     // make an entry for each set of data points
-                    plot_data[i] = {}
-                    plot_data[i] = {}
-                    plot_data[i].x = []
-                    plot_data[i].y = []
-                    plot_data[i].name = headers[i+1].name
-                    plot_data[i].type = type.toLowerCase()
-                    plot_data[i].orientation = orientation
+                    plot_data[i] = {
+                        x : [],
+                        y : [],
+                        name: headers[i+1].name,
+                        type: type.toLowerCase(),
+                        orientation: orientation
+                    }
                 }
 
                 // grab all the data
@@ -293,9 +295,10 @@ class Markdown extends React.Component {
 
                     }
                 }
-                elementBundle.element.innerHTML = "" // clear formatting
+                elementBundle.element.innerHTML = "" // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
                 // TODO: Configure class property for display and position
                 window.Plotly.react(elementBundle.element, plot_data, layout, config);
+                // TODO: See if plotly offers another way to style the plot without calling restyle
                 window.Plotly.restyle(elementBundle.element, {display: "inline-block", position: "relative", autosize: true});
             }
         });
@@ -391,7 +394,7 @@ class Markdown extends React.Component {
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
         // we have to carefully update the component so it doesn't encounter an infinite loop
-        /* two scenarios in which theres an update:
+        /* two scenarios in which there is an update:
             1. Submit was used to request another wiki page be rendered
             2. User logged in and has different priveledges to see or not see a certain wiki page
         */
@@ -409,8 +412,6 @@ class Markdown extends React.Component {
         this.processWidgets()
     }
 
-    // If theres an error loading the wiki page show an informative message
-    // likely a priveledge issue -- (e.g. not signed-in)
     /**
      * If theres an error loading the wiki page show an informative message
      * likely a priveledge issue -- (e.g. not signed-in)
