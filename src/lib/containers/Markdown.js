@@ -148,6 +148,7 @@ class Markdown extends React.Component {
                     this.setState({
                         fileResults: data.requestedFiles
                     })
+                    // TODO: consider opitmizations in the future
                     this.matchElementToResource(elementList);
                 }
             )
@@ -204,62 +205,54 @@ class Markdown extends React.Component {
                 elementBundle.element.outerHTML = renderedHTML
             } else if (elementBundle.widgetType === "plot") {
                 let widgetparamsMapped = elementBundle.widgetparamsMapped 
-                let raw_plot_data = {}
+                let raw_plot_data = null
 
-                if (!this.state.queryData) {
+                if (!this.state.queryData || !this.state.queryData[widgetparamsMapped.query]) {
                     // grab all the data, hasn't been loaded yet
-                    let queryRequest = {
-                        // TODO: verify these parameters
-                        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                        entityId: this.state.ownerId,
-                        partsMask: 13,
-                        query: {
-                            isConsistent: false,
-                            limit: 150,
-                            offset: 0,
-                            sql: widgetparamsMapped.query
-                        }
-                    }
-                    this.props.getQueryTableResults(queryRequest, this.props.token).then(data => {
-                        // match id to data retrieved
-                        let title = widgetparamsMapped.title
-                        let queryData = {...this.state.queryData} // shallow copy
-                        queryData[title] = data
-                        // set data to this plots title in the query data
-                        // user shouldn't have two plots with the same name
-                        this.setState({
-                            queryData
-                        })
-                        raw_plot_data = data
-                    })
+                    raw_plot_data = this.getPlotlyData(widgetparamsMapped);
                 } else {
                     // data already exists, don't regenerate
-                    raw_plot_data = this.state.queryData[widgetparamsMapped.title]
-
+                    raw_plot_data = this.state.queryData[widgetparamsMapped.query]
                 }
                 
+                if (!raw_plot_data) {
+                    return
+                }
+
+                window.rawPlotData = raw_plot_data
                 // grab all the parameters passed into the widget
                 let title = widgetparamsMapped.title
                 let xtitle = widgetparamsMapped.xtitle
                 let ytitle = widgetparamsMapped.ytitle
                 let type = widgetparamsMapped.type
-                let xaxisType = widgetparamsMapped.xaxistype
+                let xaxisType = widgetparamsMapped.xaxistype || ""
                 let isHorizontal = widgetparamsMapped.horizontal.toLowerCase()
                 let showLegend = widgetparamsMapped.showlegend
                 
                 let layout = {
                     title: title,
-                    xaxis: {
-                        title: xtitle,
-                        xaxistype: xaxisType.toLowerCase(),
-
-                    },
-                    yaxis: {
-                        title: ytitle
-                    },
                     showlegend: showLegend
                 }
 
+                if (xtitle) {
+                    layout.xaxis = {
+                        title: xtitle
+                    }
+                }
+                
+                if (xaxisType) {
+                    layout.xaxis = {
+                        ...layout.xaxis, // if xtitle was defined
+                        xaxistype: xaxisType.toLowerCase()
+                    }
+                }
+                
+                if (ytitle) {
+                    layout.yaxis = {
+                        title: ytitle
+                    }
+                }
+                
                 let config = {
                     displayModeBar: false
                 }
@@ -302,6 +295,85 @@ class Markdown extends React.Component {
                 window.Plotly.restyle(elementBundle.element, {display: "inline-block", position: "relative", autosize: true});
             }
         });
+    }
+
+    /**
+     * Get data for plotly
+     *
+     * @param {*} widgetparamsMapped
+     * @returns
+     * @memberof Markdown
+     */
+    getPlotlyData(widgetparamsMapped) {
+
+        let raw_plot_data = {}
+
+        // step 1: get init query with maxRowsPerPage calculated
+        let queryRequest = {
+            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            entityId: this.state.ownerId,
+            query: {
+                isConsistent: false,
+                limit: 150,
+                partMask: 9,  // get query results and max rows per page
+                offset: 0,
+                sql: widgetparamsMapped.query
+            }
+        };
+
+
+        this.props.getQueryTableResults(queryRequest, this.props.token).then(initData => {
+            let maxPageSize = initData.maxRowsPerPage
+            let queryCount = initData.queryResult.queryResults.rows.length
+            let totalQueryResults = queryCount
+
+            raw_plot_data= initData;
+            // ignore complaint abount function call withing a loop, this is unavoidable
+            const getData = async (initGet) => {
+                if (queryCount !== maxPageSize && !initGet) {
+                    return raw_plot_data
+                }
+                let queryRequestWithMaxPageSize = {
+                    concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                    entityId: this.state.ownerId,
+                    partMask: 1,  // only get the results
+                    query: {
+                        isConsistent: false,
+                        limit: maxPageSize,
+                        offset: totalQueryResults,
+                        sql: widgetparamsMapped.query
+                    }
+                };
+                await this.props.getQueryTableResults(queryRequestWithMaxPageSize, this.props.token)
+                    .then(post_data => {
+                        queryCount += post_data.queryResult.queryResults.rows.length
+                        if (queryCount > 0) {
+                            totalQueryResults += queryCount
+                            raw_plot_data.queryResult.queryResults.rows.push(
+                                ...post_data.queryResult.queryResults.rows  // spread operator to push all elements on
+                            )
+                        }
+                        getData(false)
+                    }).catch(err => 
+                        {
+                            console.log('error on plotly retrieval', err)
+                            queryCount = 0
+                        }
+                    );
+            }
+            getData(true)
+            // set data to this plots sql in the query data
+            let queryData = { ...this.state.queryData }; // shallow copy
+            let query = widgetparamsMapped.query
+            queryData[query] = raw_plot_data;
+            this.setState({
+                queryData
+            });
+            return raw_plot_data;
+        }
+    );
+
+    return null
     }
 
     /**
