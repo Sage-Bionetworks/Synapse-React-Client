@@ -223,7 +223,7 @@ var Login = function (_React$Component) {
                 this.getTokenView(),
                 React.createElement(
                     'form',
-                    { autoComplete: 'on', onSubmit: this.handleLogin },
+                    { onSubmit: this.handleLogin },
                     React.createElement(
                         'div',
                         { className: 'form-group' },
@@ -232,7 +232,7 @@ var Login = function (_React$Component) {
                             { className: 'text-left', htmlFor: 'exampleEmail' },
                             'Synapse Email/Username:'
                         ),
-                        React.createElement('input', { placeholder: 'Enter email', className: 'form-control', id: 'exampleEmail', name: 'username', type: 'email', value: this.state.username, onChange: this.handleChange })
+                        React.createElement('input', { autoComplete: 'email', placeholder: 'Enter email', className: 'form-control', id: 'exampleEmail', name: 'username', type: 'email', value: this.state.username, onChange: this.handleChange })
                     ),
                     React.createElement(
                         'div',
@@ -242,7 +242,7 @@ var Login = function (_React$Component) {
                             { htmlFor: 'examplePassword' },
                             'Password:'
                         ),
-                        React.createElement('input', { placeholder: 'Enter password', className: 'form-control', id: 'examplePassword', name: 'password', type: 'password', value: this.state.password, onChange: this.handleChange })
+                        React.createElement('input', { autoComplete: 'password', placeholder: 'Enter password', className: 'form-control', id: 'examplePassword', name: 'password', type: 'password', value: this.state.password, onChange: this.handleChange })
                     ),
                     this.getLoginFailureView(),
                     React.createElement(
