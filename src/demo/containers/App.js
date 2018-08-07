@@ -5,6 +5,7 @@ import './App.css';
 
 import Login from 'lib/containers/Login.js'
 import Markdown from 'lib/containers/Markdown.js'
+import MarkdownSynapse from 'lib/containers/MarkdownSynapse.js'
 import UserFavorites from 'lib/containers/UserFavorites.js';
 import UserProjects from 'lib/containers/UserProjects.js';
 import UserTeam from 'lib/containers/UserTeams.js';
@@ -91,8 +92,30 @@ class App extends Component {
     this.getVersion()
     this.makeSampleQueryCall()
   }
+ 
   
   render() {
+    
+    const SampleErrorMessage = function (props) {
+      return (
+        <div className="text-danger">
+          {props.message}
+        </div>
+      )
+    }
+
+    const CustomMarkdownView = function (props) {
+      return (
+        <div className="container border mt-5">
+          <div className="row">
+            <div className="col-6">
+              {props.children}
+            </div>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="App mb-5">
         <div className="App-header text-center">
@@ -121,18 +144,20 @@ class App extends Component {
                      ownerId={this.state.ownerId}
                      getUserProfileEndpoint={SynapseClient.getUserProfile}>
         </UserProfile>
-        
+       
         <UserTeam token={this.state.token} 
                   ownerId={this.state.ownerId}
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
-        
-        <Markdown token={this.state.token}
-                  getFileURLs={SynapseClient.getFiles}
-                  wikiAttachmentsEndpointFromEntity={SynapseClient.getWikiAttachmentsFromEntity}
-                  markdownEndpoint={SynapseClient.getEntityWiki}
-                  getQueryTableResults={SynapseClient.getQueryTableResults}>
-        </Markdown>
+
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    errorMessageView={<SampleErrorMessage/>}>
+          </MarkdownSynapse>
+        </CustomMarkdownView>
+
       </div>
     );
   }
