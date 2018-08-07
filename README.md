@@ -62,7 +62,7 @@ To use the synapse markdown-it component you must pass it a wiki page id and an 
 
 ```jsx
 
-  import {SynpaseComponents} from 'react-synapse-client'
+  import {SynapseComponents} from 'react-synapse-client'
  
  
   const SampleErrorMessage = function (props) {
@@ -86,11 +86,11 @@ To use the synapse markdown-it component you must pass it a wiki page id and an 
   }
 
   <CustomMarkdownView>
-    <SynpaseComponents.Markdown token={this.state.token}
+    <SynapseComponents.Markdown token={this.state.token}
               ownerId={"syn14568473"}
               wikiId={"582406"}
               errorMessageView={<SampleErrorMessage/>}>
-    </SynpaseComponents.Markdown>
+    </SynapseComponents.Markdown>
   </CustomMarkdownView>
 
 ```
