@@ -43,22 +43,35 @@ class Markdown extends React.Component {
             calledReset: false,
             isLoggedIn: this.props.token !== ""
         }
-        this.handleChange = this.handleChange.bind(this)
-        this.processMath = this.processMath.bind(this)
-        this.createMarkup = this.createMarkup.bind(this)
+
+        
+        // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
-        this.matchToHandle = this.matchToHandle.bind(this)
+        this.processMath = this.processMath.bind(this)
+        // handle init calls to get wiki related items
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
-        this.matchElementToResource = this.matchElementToResource.bind(this)
+        
+        // handle pre/post processing of widgets
         this.prepareWidget = this.prepareWidget.bind(this)
-        this.getErrorView = this.getErrorView.bind(this)
-        this.resetComponentState = this.resetComponentState.bind(this)
+        this.matchElementToResource = this.matchElementToResource.bind(this)
+        this.matchToHandle = this.matchToHandle.bind(this)
         this.compareById = function(fileName, key) {
             return function(element) {
                 return element[key] === fileName
             }
         }
+        
+        // state related functions
+        this.getErrorView = this.getErrorView.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.createMarkup = this.createMarkup.bind(this)
+        this.resetComponentState = this.resetComponentState.bind(this)
+
+        // handling each of the synapse widgets
+        this.handleImageWidget = this.handleImageWidget.bind(this)
+        this.handlePlotlyWidget = this.handlePlotlyWidget.bind(this)
+
     }
 
     /**
@@ -76,7 +89,7 @@ class Markdown extends React.Component {
                     'a': [ 'href' ],
                     'span': ['*'],
                     'button': ['class'],
-                    'div': ['class'],
+                    'div': ['class', 'style'],
                     "ul": ["class"],
                     "ol": ["class"],
                     "li": ["class"]
@@ -199,102 +212,123 @@ class Markdown extends React.Component {
     matchElementToResource(elementList) {
         elementList.forEach(elementBundle => {
             let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
+            // match corresponds to filehandle that this current element needs to be connected to
             let renderedHTML = ""
             if (elementBundle.widgetType === "image") {
-                renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
-                elementBundle.element.outerHTML = renderedHTML
+                this.handleImageWidget(renderedHTML, match, elementBundle);
             } else if (elementBundle.widgetType === "plot") {
-                let widgetparamsMapped = elementBundle.widgetparamsMapped 
-                let raw_plot_data = null
-
-                if (!this.state.queryData || !this.state.queryData[widgetparamsMapped.query]) {
-                    // grab all the data, hasn't been loaded yet
-                    raw_plot_data = this.getPlotlyData(widgetparamsMapped);
-                } else {
-                    // data already exists, don't regenerate
-                    raw_plot_data = this.state.queryData[widgetparamsMapped.query]
-                }
-                
-                if (!raw_plot_data) {
-                    return
-                }
-
-                window.rawPlotData = raw_plot_data
-                // grab all the parameters passed into the widget
-                let title = widgetparamsMapped.title
-                let xtitle = widgetparamsMapped.xtitle
-                let ytitle = widgetparamsMapped.ytitle
-                let type = widgetparamsMapped.type
-                let xaxisType = widgetparamsMapped.xaxistype || ""
-                let isHorizontal = widgetparamsMapped.horizontal.toLowerCase()
-                let showLegend = widgetparamsMapped.showlegend
-                
-                let layout = {
-                    title: title,
-                    showlegend: showLegend
-                }
-
-                if (xtitle) {
-                    layout.xaxis = {
-                        title: xtitle
-                    }
-                }
-                
-                if (xaxisType) {
-                    layout.xaxis = {
-                        ...layout.xaxis, // if xtitle was defined
-                        xaxistype: xaxisType.toLowerCase()
-                    }
-                }
-                
-                if (ytitle) {
-                    layout.yaxis = {
-                        title: ytitle
-                    }
-                }
-                
-                let config = {
-                    displayModeBar: false
-                }
-
-                if (!raw_plot_data.queryResult) {
-                    // results haven't loaded yet
-                    return
-                }
-
-                // init plot_data
-                let plot_data = []
-                let orientation = isHorizontal ? "v" : "h"
-                let headers = raw_plot_data.queryResult.queryResults.headers
-                for (let i = 0; i < headers.length - 1; i++) {
-                    // make an entry for each set of data points
-                    plot_data[i] = {
-                        x : [],
-                        y : [],
-                        name: headers[i+1].name,
-                        type: type.toLowerCase(),
-                        orientation: orientation
-                    }
-                }
-
-                // grab all the data
-                for (let i = 0; i < raw_plot_data.queryResult.queryResults.rows.length; i++) {
-                    let row = raw_plot_data.queryResult.queryResults.rows[i]
-                    for (let j = 1; j < row.values.length; j++) {
-                        // create pairs of data
-                        let row_values = row.values
-                        plot_data[j-1].x.push(row_values[0])
-                        plot_data[j-1].y.push(row_values[j])
-
-                    }
-                }
-                elementBundle.element.innerHTML = "" // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
-                // TODO: Configure class property for display and position
-                window.Plotly.react(elementBundle.element, plot_data, layout, config);
-                // TODO: See if plotly offers another way to style the plot without calling restyle
-                window.Plotly.restyle(elementBundle.element, {display: "inline-block", position: "relative", autosize: true});
+                this.handlePlotlyWidget(elementBundle);
             }
         });
+    }
+
+    handleImageWidget(renderedHTML, match, elementBundle) {
+        renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
+        elementBundle.element.outerHTML = renderedHTML;
+    }
+
+    handlePlotlyWidget(elementBundle) {
+        let widgetparamsMapped = elementBundle.widgetparamsMapped;
+        let raw_plot_data = null;
+        if (!this.state.queryData || !this.state.queryData[widgetparamsMapped.query]) {
+            // grab all the data, hasn't been loaded yet
+            raw_plot_data = this.getPlotlyData(widgetparamsMapped);
+        }
+        else {
+            // data already exists, don't regenerate
+            raw_plot_data = this.state.queryData[widgetparamsMapped.query];
+        }
+        if (!raw_plot_data) {
+            return
+        }
+        // grab all the parameters passed into the widget
+        let title = widgetparamsMapped.title;
+        let xtitle = widgetparamsMapped.xtitle;
+        let ytitle = widgetparamsMapped.ytitle;
+        let type = widgetparamsMapped.type;
+        let xaxisType = widgetparamsMapped.xaxistype || "";
+        let isHorizontal = widgetparamsMapped.horizontal.toLowerCase();
+        let showLegend = widgetparamsMapped.showlegend;
+        let layout = {
+            title: title,
+            showlegend: showLegend,
+            autosize: true,
+            autorange: true
+        };
+        if (xtitle) {
+            layout.xaxis = {
+                title: xtitle
+            };
+        }
+        if (xaxisType) {
+            layout.xaxis = {
+                ...layout.xaxis,
+                xaxistype: xaxisType.toLowerCase()
+            };
+        }
+        if (ytitle) {
+            layout.yaxis = {
+                title: ytitle
+            };
+        }
+        let config = {
+            displayModeBar: false
+        };
+        if (!raw_plot_data.queryResult) {
+            // results haven't loaded yet
+            return null
+        }
+        // init plot_data
+        let plot_data = [];
+        let orientation = isHorizontal ? "v" : "h";
+        let headers = raw_plot_data.queryResult.queryResults.headers;
+        for (let i = 0; i < headers.length - 1; i++) {
+            // make an entry for each set of data points
+            plot_data[i] = {
+                x: [],
+                y: [],
+                name: headers[i + 1].name,
+                type: type.toLowerCase(),
+                orientation: orientation
+            };
+        }
+        // grab all the data
+        for (let i = 0; i < raw_plot_data.queryResult.queryResults.rows.length; i++) {
+            let row = raw_plot_data.queryResult.queryResults.rows[i];
+            for (let j = 1; j < row.values.length; j++) {
+                // create pairs of data
+                let row_values = row.values;
+                plot_data[j - 1].x.push(row_values[0]);
+                plot_data[j - 1].y.push(row_values[j]);
+            }
+        }
+        // error with clearing html - "" is not a function, wrapping in try/catch prevents the error
+        // although it doesn't catch it.
+        try {
+            elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
+        }
+        catch (e) {
+            console.log('element bundle error ', e);
+        }
+        // responsive plot
+        // https://plot.ly/javascript/responsive-fluid-layout/#responsive--fluid-layout
+        (function () {
+            var d3 = window.Plotly.d3;
+            var WIDTH_IN_PERCENT_OF_PARENT = 100, HEIGHT_IN_PERCENT_OF_PARENT = 75;
+            var gd3 = d3.select(elementBundle.element)
+                .append('div')
+                .style({
+                    width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                    'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+                    height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+                    'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
+                });
+            var gd = gd3.node();
+            window.Plotly.plot(gd, plot_data, layout, config);
+            window.onresize = function () {
+                window.Plotly.Plots.resize(gd);
+            };
+        })();
     }
 
     /**
@@ -321,16 +355,27 @@ class Markdown extends React.Component {
             }
         };
 
-
+        // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
+        // we can get, the following uses that maximum and offsets to the appropriate location to get the data
+        // afterwards, the process repeats
         this.props.getQueryTableResults(queryRequest, this.props.token).then(initData => {
             let maxPageSize = initData.maxRowsPerPage
             let queryCount = initData.queryResult.queryResults.rows.length
             let totalQueryResults = queryCount
 
-            raw_plot_data= initData;
-            // ignore complaint abount function call withing a loop, this is unavoidable
+            raw_plot_data = initData;
+
+            // Get the subsequent data, note- although the function calls itself, it runs
+            // iteratively due to the await
             const getData = async (initGet) => {
                 if (queryCount !== maxPageSize && !initGet) {
+                    // set data to this plots sql in the query data
+                    let queryData = { ...this.state.queryData }; // shallow copy
+                    let query = widgetparamsMapped.query
+                    queryData[query] = raw_plot_data;
+                    this.setState({
+                        queryData
+                    });
                     return raw_plot_data
                 }
                 let queryRequestWithMaxPageSize = {
@@ -353,27 +398,18 @@ class Markdown extends React.Component {
                                 ...post_data.queryResult.queryResults.rows  // spread operator to push all elements on
                             )
                         }
-                        getData(false)
+                        return getData(false)
                     }).catch(err => 
                         {
-                            console.log('error on plotly retrieval', err)
+                            console.log("Error on getting table results ", err)
                             queryCount = 0
                         }
                     );
             }
-            getData(true)
-            // set data to this plots sql in the query data
-            let queryData = { ...this.state.queryData }; // shallow copy
-            let query = widgetparamsMapped.query
-            queryData[query] = raw_plot_data;
-            this.setState({
-                queryData
-            });
-            return raw_plot_data;
-        }
-    );
-
-    return null
+            return getData(true)
+        });
+        // when data
+        return null
     }
 
     /**
@@ -386,7 +422,6 @@ class Markdown extends React.Component {
             return filtered
         }
     }
-
 
     /**
      * Updates internal state with the event that was triggered
@@ -542,7 +577,7 @@ class Markdown extends React.Component {
                {this.getErrorView()}
                 <div className="row">
                     <textarea rows={5} name="text" value={this.state.text} onChange={this.handleChange} className="col-6 border"> </textarea>
-                    <div className="col-6 challenge__description" ref={1} dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
+                    <div className="col-6" dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
                 </div>
             </div>
         )
