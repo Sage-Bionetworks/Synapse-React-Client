@@ -99,21 +99,21 @@ it('get synapse wiki', () => {
 })
 
 describe('Test functionality that requires user sign-in', function () {
-  let token = ""
-  let ownerId = ""
   
   /**
    * Setup test user for following test function calls, getting session token
    * and their synapse ID
    */
   beforeAll(() => {
+    this.token = ""
+    this.ownerId = ""
     SynapseClient
       .login(process.env.REACT_APP_TEST_USERNAME, process.env.REACT_APP_TEST_PASS)
       .then(data => {
-        token = data.token
-        SynapseClient.getUserProfile(token).then(
+        this.token = data.sessionToken
+        SynapseClient.getUserProfile(this.token).then(
             userData => {
-              ownerId = userData.ownerId
+              this.ownerId = userData.ownerId
             }
         )
       }).catch(err => {
@@ -123,7 +123,7 @@ describe('Test functionality that requires user sign-in', function () {
   )
     
   it('get user favorites', () => {
-    SynapseClient.getUserFavorites(token).then(data =>
+    return SynapseClient.getUserFavorites(this.token).then(data =>
       {
         expect(data.results).toBeDefined()
       }
@@ -133,7 +133,7 @@ describe('Test functionality that requires user sign-in', function () {
   })
     
   it('get single user profile', () => {
-    return SynapseClient.getUserProfile(token)
+    return SynapseClient.getUserProfile(this.token)
       .then(data => {
         expect(data).toBeDefined();
       })
@@ -143,7 +143,7 @@ describe('Test functionality that requires user sign-in', function () {
   });
 
   it('get single user profile', () => {
-    return SynapseClient.getUserProjectList(token, "MY_PROJECTS")
+    return SynapseClient.getUserProjectList(this.token, "MY_PROJECTS")
       .then(data => {
         expect(data).toBeDefined();
       })
@@ -153,7 +153,7 @@ describe('Test functionality that requires user sign-in', function () {
   });
       
   it('get user teams', () => {
-    return SynapseClient.getUserTeamList(token, ownerId)
+    return SynapseClient.getUserTeamList(this.token, this.ownerId)
       .then(data => {
         expect(data).toBeDefined();
       })

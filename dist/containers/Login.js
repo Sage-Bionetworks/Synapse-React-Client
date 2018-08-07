@@ -232,7 +232,7 @@ var Login = function (_React$Component) {
                             { className: 'text-left', htmlFor: 'exampleEmail' },
                             'Synapse Email/Username:'
                         ),
-                        React.createElement('input', { autoComplete: 'email', placeholder: 'Enter email', className: 'form-control', id: 'exampleEmail', name: 'username', type: 'email', value: this.state.username, onChange: this.handleChange })
+                        React.createElement('input', { autoComplete: 'email', placeholder: 'Enter email', className: 'form-control', id: 'exampleEmail', name: 'username', type: 'text', value: this.state.username, onChange: this.handleChange })
                     ),
                     React.createElement(
                         'div',

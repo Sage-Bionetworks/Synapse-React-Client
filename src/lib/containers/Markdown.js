@@ -211,19 +211,18 @@ class Markdown extends React.Component {
      */
     matchElementToResource(elementList) {
         elementList.forEach(elementBundle => {
-            let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
-            // match corresponds to filehandle that this current element needs to be connected to
-            let renderedHTML = ""
             if (elementBundle.widgetType === "image") {
-                this.handleImageWidget(renderedHTML, match, elementBundle);
+                // match corresponds to filehandle that this current element needs to be connected to
+                let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
+                this.handleImageWidget(match, elementBundle);
             } else if (elementBundle.widgetType === "plot") {
                 this.handlePlotlyWidget(elementBundle);
             }
         });
     }
 
-    handleImageWidget(renderedHTML, match, elementBundle) {
-        renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
+    handleImageWidget(match, elementBundle) {
+        let renderedHTML = `<image class="img-fluid" src=${match[0].preSignedURL}></image>`;
         elementBundle.element.outerHTML = renderedHTML;
     }
 
@@ -319,9 +318,9 @@ class Markdown extends React.Component {
                 .append('div')
                 .style({
                     width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-                    'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+                    'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 5 + '%',
                     height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-                    'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
+                    'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 5 + 'vh'
                 });
             var gd = gd3.node();
             window.Plotly.plot(gd, plot_data, layout, config);
@@ -335,7 +334,7 @@ class Markdown extends React.Component {
      * Get data for plotly
      *
      * @param {*} widgetparamsMapped
-     * @returns
+     * @returns data corresponding to plotly widget
      * @memberof Markdown
      */
     getPlotlyData(widgetparamsMapped) {
@@ -395,7 +394,7 @@ class Markdown extends React.Component {
                         if (queryCount > 0) {
                             totalQueryResults += queryCount
                             raw_plot_data.queryResult.queryResults.rows.push(
-                                ...post_data.queryResult.queryResults.rows  // spread operator to push all elements on
+                                ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
                             )
                         }
                         return getData(false)
@@ -436,6 +435,7 @@ class Markdown extends React.Component {
             { [name]: value }
         );
     }
+    
     /**
      * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
      */

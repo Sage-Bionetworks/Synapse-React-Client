@@ -138,7 +138,7 @@ class Login extends React.Component {
                         <label className="text-left" htmlFor="exampleEmail">
                             Synapse Email/Username:
                         </label>
-                        <input autoComplete="email" placeholder="Enter email" className="form-control" id="exampleEmail" name="username" type="email" value={this.state.username} onChange={this.handleChange} />
+                        <input autoComplete="email" placeholder="Enter email" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="examplePassword">

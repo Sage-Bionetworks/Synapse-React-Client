@@ -1,8 +1,14 @@
+import _regeneratorRuntime from 'babel-runtime/regenerator';
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59,23 +65,34 @@ var Markdown = function (_React$Component) {
             newWikiId: "",
             calledReset: false,
             isLoggedIn: _this.props.token !== ""
-        };
-        _this.handleChange = _this.handleChange.bind(_this);
+
+            // handle widgets and math markdown
+        };_this.processWidgets = _this.processWidgets.bind(_this);
         _this.processMath = _this.processMath.bind(_this);
-        _this.createMarkup = _this.createMarkup.bind(_this);
-        _this.processWidgets = _this.processWidgets.bind(_this);
-        _this.matchToHandle = _this.matchToHandle.bind(_this);
+        // handle init calls to get wiki related items
         _this.getWikiAttachments = _this.getWikiAttachments.bind(_this);
         _this.getWikiPageMarkdown = _this.getWikiPageMarkdown.bind(_this);
-        _this.matchElementToResource = _this.matchElementToResource.bind(_this);
+
+        // handle pre/post processing of widgets
         _this.prepareWidget = _this.prepareWidget.bind(_this);
-        _this.getErrorView = _this.getErrorView.bind(_this);
-        _this.resetComponentState = _this.resetComponentState.bind(_this);
+        _this.matchElementToResource = _this.matchElementToResource.bind(_this);
+        _this.matchToHandle = _this.matchToHandle.bind(_this);
         _this.compareById = function (fileName, key) {
             return function (element) {
                 return element[key] === fileName;
             };
         };
+
+        // state related functions
+        _this.getErrorView = _this.getErrorView.bind(_this);
+        _this.handleChange = _this.handleChange.bind(_this);
+        _this.createMarkup = _this.createMarkup.bind(_this);
+        _this.resetComponentState = _this.resetComponentState.bind(_this);
+
+        // handling each of the synapse widgets
+        _this.handleImageWidget = _this.handleImageWidget.bind(_this);
+        _this.handlePlotlyWidget = _this.handlePlotlyWidget.bind(_this);
+
         return _this;
     }
 
@@ -96,7 +113,7 @@ var Markdown = function (_React$Component) {
                     'a': ['href'],
                     'span': ['*'],
                     'button': ['class'],
-                    'div': ['class'],
+                    'div': ['class', 'style'],
                     "ul": ["class"],
                     "ol": ["class"],
                     "li": ["class"]
@@ -175,6 +192,7 @@ var Markdown = function (_React$Component) {
                     _this2.setState({
                         fileResults: data.requestedFiles
                     });
+                    // TODO: consider opitmizations in the future
                     _this2.matchElementToResource(elementList);
                 }).catch(function (err) {
                     console.log('Error on url grab ', err);
@@ -229,109 +247,229 @@ var Markdown = function (_React$Component) {
             var _this3 = this;
 
             elementList.forEach(function (elementBundle) {
-                var match = _this3.matchToHandle(_this3.compareById(elementBundle.id, "fileHandleId"), _this3.state.fileResults);
-                var renderedHTML = "";
                 if (elementBundle.widgetType === "image") {
-                    renderedHTML = "<image class=\"img-fluid\" src=" + match[0].preSignedURL + "></image>";
-                    elementBundle.element.outerHTML = renderedHTML;
+                    // match corresponds to filehandle that this current element needs to be connected to
+                    var match = _this3.matchToHandle(_this3.compareById(elementBundle.id, "fileHandleId"), _this3.state.fileResults);
+                    _this3.handleImageWidget(match, elementBundle);
                 } else if (elementBundle.widgetType === "plot") {
-                    var widgetparamsMapped = elementBundle.widgetparamsMapped;
-                    var raw_plot_data = {};
-
-                    if (!_this3.state.queryData) {
-                        // grab all the data, hasn't been loaded yet
-                        var queryRequest = {
-                            // TODO: verify these parameters
-                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                            entityId: _this3.state.ownerId,
-                            partsMask: 13,
-                            query: {
-                                isConsistent: false,
-                                limit: 150,
-                                offset: 0,
-                                sql: widgetparamsMapped.query
-                            }
-                        };
-                        _this3.props.getQueryTableResults(queryRequest, _this3.props.token).then(function (data) {
-                            // match id to data retrieved
-                            var title = widgetparamsMapped.title;
-                            var queryData = Object.assign({}, _this3.state.queryData); // shallow copy
-                            queryData[title] = data;
-                            // set data to this plots title in the query data
-                            // user shouldn't have two plots with the same name
-                            _this3.setState({
-                                queryData: queryData
-                            });
-                            raw_plot_data = data;
-                        });
-                    } else {
-                        // data already exists, don't regenerate
-                        raw_plot_data = _this3.state.queryData[widgetparamsMapped.title];
-                    }
-
-                    // grab all the parameters passed into the widget
-                    var title = widgetparamsMapped.title;
-                    var xtitle = widgetparamsMapped.xtitle;
-                    var ytitle = widgetparamsMapped.ytitle;
-                    var type = widgetparamsMapped.type;
-                    var xaxisType = widgetparamsMapped.xaxistype;
-                    var isHorizontal = widgetparamsMapped.horizontal.toLowerCase();
-                    var showLegend = widgetparamsMapped.showlegend;
-
-                    var layout = {
-                        title: title,
-                        xaxis: {
-                            title: xtitle,
-                            xaxistype: xaxisType.toLowerCase()
-
-                        },
-                        yaxis: {
-                            title: ytitle
-                        },
-                        showlegend: showLegend
-                    };
-
-                    var config = {
-                        displayModeBar: false
-                    };
-
-                    if (!raw_plot_data.queryResult) {
-                        // results haven't loaded yet
-                        return;
-                    }
-
-                    // init plot_data
-                    var plot_data = [];
-                    var orientation = isHorizontal ? "v" : "h";
-                    var headers = raw_plot_data.queryResult.queryResults.headers;
-                    for (var i = 0; i < headers.length - 1; i++) {
-                        // make an entry for each set of data points
-                        plot_data[i] = {
-                            x: [],
-                            y: [],
-                            name: headers[i + 1].name,
-                            type: type.toLowerCase(),
-                            orientation: orientation
-                        };
-                    }
-
-                    // grab all the data
-                    for (var _i = 0; _i < raw_plot_data.queryResult.queryResults.rows.length; _i++) {
-                        var row = raw_plot_data.queryResult.queryResults.rows[_i];
-                        for (var j = 1; j < row.values.length; j++) {
-                            // create pairs of data
-                            var row_values = row.values;
-                            plot_data[j - 1].x.push(row_values[0]);
-                            plot_data[j - 1].y.push(row_values[j]);
-                        }
-                    }
-                    elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
-                    // TODO: Configure class property for display and position
-                    window.Plotly.react(elementBundle.element, plot_data, layout, config);
-                    // TODO: See if plotly offers another way to style the plot without calling restyle
-                    window.Plotly.restyle(elementBundle.element, { display: "inline-block", position: "relative", autosize: true });
+                    _this3.handlePlotlyWidget(elementBundle);
                 }
             });
+        }
+    }, {
+        key: 'handleImageWidget',
+        value: function handleImageWidget(match, elementBundle) {
+            var renderedHTML = '<image class="img-fluid" src=' + match[0].preSignedURL + '></image>';
+            elementBundle.element.outerHTML = renderedHTML;
+        }
+    }, {
+        key: 'handlePlotlyWidget',
+        value: function handlePlotlyWidget(elementBundle) {
+            var widgetparamsMapped = elementBundle.widgetparamsMapped;
+            var raw_plot_data = null;
+            if (!this.state.queryData || !this.state.queryData[widgetparamsMapped.query]) {
+                // grab all the data, hasn't been loaded yet
+                raw_plot_data = this.getPlotlyData(widgetparamsMapped);
+            } else {
+                // data already exists, don't regenerate
+                raw_plot_data = this.state.queryData[widgetparamsMapped.query];
+            }
+            if (!raw_plot_data) {
+                return;
+            }
+            // grab all the parameters passed into the widget
+            var title = widgetparamsMapped.title;
+            var xtitle = widgetparamsMapped.xtitle;
+            var ytitle = widgetparamsMapped.ytitle;
+            var type = widgetparamsMapped.type;
+            var xaxisType = widgetparamsMapped.xaxistype || "";
+            var isHorizontal = widgetparamsMapped.horizontal.toLowerCase();
+            var showLegend = widgetparamsMapped.showlegend;
+            var layout = {
+                title: title,
+                showlegend: showLegend,
+                autosize: true,
+                autorange: true
+            };
+            if (xtitle) {
+                layout.xaxis = {
+                    title: xtitle
+                };
+            }
+            if (xaxisType) {
+                layout.xaxis = Object.assign({}, layout.xaxis, {
+                    xaxistype: xaxisType.toLowerCase()
+                });
+            }
+            if (ytitle) {
+                layout.yaxis = {
+                    title: ytitle
+                };
+            }
+            var config = {
+                displayModeBar: false
+            };
+            if (!raw_plot_data.queryResult) {
+                // results haven't loaded yet
+                return null;
+            }
+            // init plot_data
+            var plot_data = [];
+            var orientation = isHorizontal ? "v" : "h";
+            var headers = raw_plot_data.queryResult.queryResults.headers;
+            for (var i = 0; i < headers.length - 1; i++) {
+                // make an entry for each set of data points
+                plot_data[i] = {
+                    x: [],
+                    y: [],
+                    name: headers[i + 1].name,
+                    type: type.toLowerCase(),
+                    orientation: orientation
+                };
+            }
+            // grab all the data
+            for (var _i = 0; _i < raw_plot_data.queryResult.queryResults.rows.length; _i++) {
+                var row = raw_plot_data.queryResult.queryResults.rows[_i];
+                for (var j = 1; j < row.values.length; j++) {
+                    // create pairs of data
+                    var row_values = row.values;
+                    plot_data[j - 1].x.push(row_values[0]);
+                    plot_data[j - 1].y.push(row_values[j]);
+                }
+            }
+            // error with clearing html - "" is not a function, wrapping in try/catch prevents the error
+            // although it doesn't catch it.
+            try {
+                elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
+            } catch (e) {
+                console.log('element bundle error ', e);
+            }
+            // responsive plot
+            // https://plot.ly/javascript/responsive-fluid-layout/#responsive--fluid-layout
+            (function () {
+                var d3 = window.Plotly.d3;
+                var WIDTH_IN_PERCENT_OF_PARENT = 100,
+                    HEIGHT_IN_PERCENT_OF_PARENT = 75;
+                var gd3 = d3.select(elementBundle.element).append('div').style({
+                    width: WIDTH_IN_PERCENT_OF_PARENT + '%',
+                    'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 5 + '%',
+                    height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
+                    'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 5 + 'vh'
+                });
+                var gd = gd3.node();
+                window.Plotly.plot(gd, plot_data, layout, config);
+                window.onresize = function () {
+                    window.Plotly.Plots.resize(gd);
+                };
+            })();
+        }
+
+        /**
+         * Get data for plotly
+         *
+         * @param {*} widgetparamsMapped
+         * @returns data corresponding to plotly widget
+         * @memberof Markdown
+         */
+
+    }, {
+        key: 'getPlotlyData',
+        value: function getPlotlyData(widgetparamsMapped) {
+            var _this4 = this;
+
+            var raw_plot_data = {};
+
+            // step 1: get init query with maxRowsPerPage calculated
+            var queryRequest = {
+                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                entityId: this.state.ownerId,
+                query: {
+                    isConsistent: false,
+                    limit: 150,
+                    partMask: 9, // get query results and max rows per page
+                    offset: 0,
+                    sql: widgetparamsMapped.query
+                }
+            };
+
+            // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
+            // we can get, the following uses that maximum and offsets to the appropriate location to get the data
+            // afterwards, the process repeats
+            this.props.getQueryTableResults(queryRequest, this.props.token).then(function (initData) {
+                var maxPageSize = initData.maxRowsPerPage;
+                var queryCount = initData.queryResult.queryResults.rows.length;
+                var totalQueryResults = queryCount;
+
+                raw_plot_data = initData;
+
+                // Get the subsequent data, note- although the function calls itself, it runs
+                // iteratively due to the await
+                var getData = function () {
+                    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(initGet) {
+                        var queryData, query, queryRequestWithMaxPageSize;
+                        return _regeneratorRuntime.wrap(function _callee$(_context) {
+                            while (1) {
+                                switch (_context.prev = _context.next) {
+                                    case 0:
+                                        if (!(queryCount !== maxPageSize && !initGet)) {
+                                            _context.next = 6;
+                                            break;
+                                        }
+
+                                        // set data to this plots sql in the query data
+                                        queryData = Object.assign({}, _this4.state.queryData); // shallow copy
+
+                                        query = widgetparamsMapped.query;
+
+                                        queryData[query] = raw_plot_data;
+                                        _this4.setState({
+                                            queryData: queryData
+                                        });
+                                        return _context.abrupt('return', raw_plot_data);
+
+                                    case 6:
+                                        queryRequestWithMaxPageSize = {
+                                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                                            entityId: _this4.state.ownerId,
+                                            partMask: 1, // only get the results
+                                            query: {
+                                                isConsistent: false,
+                                                limit: maxPageSize,
+                                                offset: totalQueryResults,
+                                                sql: widgetparamsMapped.query
+                                            }
+                                        };
+                                        _context.next = 9;
+                                        return _this4.props.getQueryTableResults(queryRequestWithMaxPageSize, _this4.props.token).then(function (post_data) {
+                                            queryCount += post_data.queryResult.queryResults.rows.length;
+                                            if (queryCount > 0) {
+                                                var _raw_plot_data$queryR;
+
+                                                totalQueryResults += queryCount;
+                                                (_raw_plot_data$queryR = raw_plot_data.queryResult.queryResults.rows).push.apply(_raw_plot_data$queryR, _toConsumableArray(post_data.queryResult.queryResults.rows));
+                                            }
+                                            return getData(false);
+                                        }).catch(function (err) {
+                                            console.log("Error on getting table results ", err);
+                                            queryCount = 0;
+                                        });
+
+                                    case 9:
+                                    case 'end':
+                                        return _context.stop();
+                                }
+                            }
+                        }, _callee, _this4);
+                    }));
+
+                    return function getData(_x) {
+                        return _ref.apply(this, arguments);
+                    };
+                }();
+                return getData(true);
+            });
+            // when data
+            return null;
         }
 
         /**
@@ -362,6 +500,7 @@ var Markdown = function (_React$Component) {
             var value = target.value;
             this.setState(_defineProperty({}, name, value));
         }
+
         /**
          * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
          */
@@ -369,12 +508,12 @@ var Markdown = function (_React$Component) {
     }, {
         key: 'getWikiPageMarkdown',
         value: function getWikiPageMarkdown() {
-            var _this4 = this;
+            var _this5 = this;
 
             this.props.markdownEndpoint(this.props.token, this.state.ownerId, this.state.wikiId).then(function (data) {
                 // on success grab text and append to the default text
-                var initText = _this4.state.text;
-                _this4.setState({
+                var initText = _this5.state.text;
+                _this5.setState({
                     text: initText + data.markdown
                 });
             }).catch(function (err) {
@@ -389,16 +528,16 @@ var Markdown = function (_React$Component) {
     }, {
         key: 'getWikiAttachments',
         value: function getWikiAttachments() {
-            var _this5 = this;
+            var _this6 = this;
 
             this.props.wikiAttachmentsEndpointFromEntity(this.props.token, this.state.ownerId, this.state.wikiId).then(function (data) {
-                _this5.setState({ fileHandles: data });
-                _this5.processWidgets(data);
-                _this5.setState({
+                _this6.setState({ fileHandles: data });
+                _this6.processWidgets(data);
+                _this6.setState({
                     errorMessage: ""
                 });
             }).catch(function (err) {
-                _this5.setState({
+                _this6.setState({
                     errorMessage: err.reason
                 });
                 console.log("Error on wiki attachment load ", err);
@@ -552,7 +691,7 @@ var Markdown = function (_React$Component) {
                         { rows: 5, name: 'text', value: this.state.text, onChange: this.handleChange, className: 'col-6 border' },
                         ' '
                     ),
-                    React.createElement('div', { className: 'col-6 challenge__description', ref: 1, dangerouslySetInnerHTML: this.createMarkup(this.state.text) })
+                    React.createElement('div', { className: 'col-6', dangerouslySetInnerHTML: this.createMarkup(this.state.text) })
                 )
             );
         }
