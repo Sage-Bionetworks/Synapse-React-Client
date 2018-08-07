@@ -520,7 +520,7 @@ class Markdown extends React.Component {
      * @returns view that presents error message on error, otherwise null
      */
     getErrorView() {
-        if (this.state.errorMessage) {
+        if (this.state.errorMessage && this.props.errorMessageView) {
             return ( 
             <React.Fragment>
                 {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}

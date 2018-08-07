@@ -154,7 +154,7 @@ class App extends Component {
           <MarkdownSynapse token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
-                    errorMessageView={<SampleErrorMessage/>}>
+                    >
           </MarkdownSynapse>
         </CustomMarkdownView>
 

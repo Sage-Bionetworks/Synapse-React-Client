@@ -55,107 +55,44 @@ SynapseClient.getQueryTableResults(request, sessionToken)
         // handle Error (possibly a HTTPError)
       });
 ```
-##### Markdown Rendering
+##### Markdown Rendering Example
 View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
-Step 1: Install Synapse markdown-it and Synapse markdown-it plugins
+To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error message to display.
 
-```bash
-npm install markdown-it --save
-npm install markdown-it-synapse --save
-npm install markdown-it-center-text --save
-npm install markdown-it-synapse-heading --save
-npm install markdown-it-synapse-table --save
-npm install markdown-it-strikethrough-alt --save
-npm install markdown-it-emphasis-alt --save
-npm install markdown-it-synapse-math  --save
-npm install markdown-it-sup-alt --save
-npm install markdown-it-sub-alt  --save
-npm install markdown-it-inline-comments  --save
-npm install markdown-it-br --save
-```
+```jsx
 
-Step 2: Include [katex](github.com/Khan/KaTeX) for math support by copying/pasting the CDN into index.html
-
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
-
-<script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
-```
-
-Step 3: Instantiate Markdown Instance Inside Component, setup Math rendering
-```js
-  import React from "react";
-  /**
-   * Import requirements for markdown
-   */
-  let markdownitSynapse = require('markdown-it-synapse')
-  let markdownSubAlt = require('markdown-it-sub-alt');
-  let markdownCenterText = require('markdown-it-center-text')
-  let markdownSynapseHeading = require('markdown-it-synapse-heading')
-  let markdownSynapseTable = require('markdown-it-synapse-table')
-  let markdownStrikethrough = require('markdown-it-strikethrough-alt')
-  let markdownContainer = require('markdown-it-container')
-  let markdownEmpahsisAlt = require('markdown-it-emphasis-alt')
-  let markdownInlineComments = require('markdown-it-inline-comments')
-  let markdownBr = require('markdown-it-br')
-  let sanitizeHtml = require('sanitize-html');
-  let synapseMath = require('markdown-it-synapse-math')
-
-  class MarkdownDemo extends React.component {
-    constructor() {
-      this.setState({md: require(""), markdownText: "# Some Sample Markdown Text"})
-      this.processMathJax = this.processMathJax.bind(this)
-    }
-
-    /**
-     * Find all math identified elements of the form [id^=\"mathjax-\"]
-     * (e.g. <dom element id="mathjax-10"> text </dom element>)
-     * and transform them to their math markedown equivalents
-     */
-    processMath() {
-      // use regex to grab all math identified elements
-      let mathExpressions = document.querySelectorAll("[id^=\"mathjax-\"]")
-      // go through all obtained elements and transform them with katex
-      mathExpressions.forEach(element => {
-        window.katex.render(element.textContent, element, {throwOnError: false, delimiters: 
-          [
-            {left: "$$", right: "$$", display: true},
-            {left: "\\(", right: "\\)", display: false},
-            {left: "\\[", right: "\\]", display: true}
-          ]
-        })
-      });
-    }
-
-    // on component update find and re-render the math items accordingly
-    componentDidUpdate () {
-        this.processMath()
-    }
-
-    componentDidMount() {
-      markdownitSynapse.init_markdown_it(
-        this.state.md, markdownSubAlt, markdownEmpahsisAlt,
-        markdownCenterText, markdownSynapseHeading, markdownSynapseTable,
-        markdownStrikethrough, markdownContainer, markdownEmpahsisAlt,
-        markdownInlineComments, markdownBr
-      )
-      this.setState({
-        md: this.state.md.use(markdownitSynapse, '0').use(synapseMath, '0')
-      })
-
-      // process all math identified markdown items
-      this.processMath()
-    }
-
-    render() {
-      return (
-        <div>
-          {this.state.markdownText}
-        <div>
-      )
-    }
+  import {SynpaseClient} from 'react-synapse-client'
+ 
+ 
+  const SampleErrorMessage = function (props) {
+    return (
+      <div className="text-danger">
+        {props.message}
+      </div>
+    )
   }
+
+  const CustomMarkdownView = function (props) {
+    return (
+      <div className="container border mt-5">
+        <div className="row">
+          <div className="col-6">
+            {props.children}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <CustomMarkdownView>
+    <MarkdownSynapse token={this.state.token}
+              ownerId={"syn14568473"}
+              wikiId={"582406"}
+              errorMessageView={<SampleErrorMessage/>}>
+    </MarkdownSynapse>
+  </CustomMarkdownView>
+
 ```
 
 
