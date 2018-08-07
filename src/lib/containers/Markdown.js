@@ -245,7 +245,7 @@ class Markdown extends React.Component {
         let xtitle = widgetparamsMapped.xtitle;
         let ytitle = widgetparamsMapped.ytitle;
         let type = widgetparamsMapped.type;
-        let xaxisType = widgetparamsMapped.xaxistype || "";
+        let xaxisType = widgetparamsMapped.xaxistype;
         let isHorizontal = widgetparamsMapped.horizontal.toLowerCase();
         let showLegend = widgetparamsMapped.showlegend;
         let layout = {
