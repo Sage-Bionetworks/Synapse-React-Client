@@ -1,4 +1,5 @@
 import React from "react";
+import * as SynapseConstants from 'lib/utils/SynapseConstants'
 
 /**
  * Import requirements for markdown
@@ -71,7 +72,6 @@ class Markdown extends React.Component {
         // handling each of the synapse widgets
         this.handleImageWidget = this.handleImageWidget.bind(this)
         this.handlePlotlyWidget = this.handlePlotlyWidget.bind(this)
-
     }
 
     /**
@@ -214,6 +214,7 @@ class Markdown extends React.Component {
             if (elementBundle.widgetType === "image") {
                 // match corresponds to filehandle that this current element needs to be connected to
                 let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
+                console.log('found match ', match)
                 this.handleImageWidget(match, elementBundle);
             } else if (elementBundle.widgetType === "plot") {
                 this.handlePlotlyWidget(elementBundle);
@@ -251,8 +252,6 @@ class Markdown extends React.Component {
         let layout = {
             title: title,
             showlegend: showLegend,
-            autosize: true,
-            autorange: true
         };
         if (xtitle) {
             layout.xaxis = {
@@ -348,7 +347,7 @@ class Markdown extends React.Component {
             query: {
                 isConsistent: false,
                 limit: 150,
-                partMask: 9,  // get query results and max rows per page
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
                 offset: 0,
                 sql: widgetparamsMapped.query
             }
@@ -358,16 +357,45 @@ class Markdown extends React.Component {
         // we can get, the following uses that maximum and offsets to the appropriate location to get the data
         // afterwards, the process repeats
         this.props.getQueryTableResults(queryRequest, this.props.token).then(initData => {
-            let maxPageSize = initData.maxRowsPerPage
+            let maxPageSize = 150
             let queryCount = initData.queryResult.queryResults.rows.length
             let totalQueryResults = queryCount
-
+            
+            let maxPageSizePermanent = initData.maxRowsPerPage
             raw_plot_data = initData;
 
             // Get the subsequent data, note- although the function calls itself, it runs
             // iteratively due to the await
-            const getData = async (initGet) => {
-                if (queryCount !== maxPageSize && !initGet) {
+            const getData = async () => {
+                if (queryCount === maxPageSize) {
+                    maxPageSize = maxPageSizePermanent
+                    let queryRequestWithMaxPageSize = {
+                        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                        entityId: this.state.ownerId,
+                        partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                        query: {
+                            isConsistent: false,
+                            limit: maxPageSize,
+                            offset: totalQueryResults,
+                            sql: widgetparamsMapped.query
+                        }
+                    };
+                    await this.props.getQueryTableResults(queryRequestWithMaxPageSize, this.props.token)
+                        .then(post_data => {
+                            queryCount += post_data.queryResult.queryResults.rows.length
+                            if (queryCount > 0) {
+                                totalQueryResults += queryCount
+                                raw_plot_data.queryResult.queryResults.rows.push(
+                                    ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
+                                )
+                            }
+                            return getData()
+                        }).catch(err => 
+                            {
+                                console.log("Error on getting table results ", err)
+                            }
+                        );
+                } else {
                     // set data to this plots sql in the query data
                     let queryData = { ...this.state.queryData }; // shallow copy
                     let query = widgetparamsMapped.query
@@ -377,37 +405,10 @@ class Markdown extends React.Component {
                     });
                     return raw_plot_data
                 }
-                let queryRequestWithMaxPageSize = {
-                    concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                    entityId: this.state.ownerId,
-                    partMask: 1,  // only get the results
-                    query: {
-                        isConsistent: false,
-                        limit: maxPageSize,
-                        offset: totalQueryResults,
-                        sql: widgetparamsMapped.query
-                    }
-                };
-                await this.props.getQueryTableResults(queryRequestWithMaxPageSize, this.props.token)
-                    .then(post_data => {
-                        queryCount += post_data.queryResult.queryResults.rows.length
-                        if (queryCount > 0) {
-                            totalQueryResults += queryCount
-                            raw_plot_data.queryResult.queryResults.rows.push(
-                                ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
-                            )
-                        }
-                        return getData(false)
-                    }).catch(err => 
-                        {
-                            console.log("Error on getting table results ", err)
-                            queryCount = 0
-                        }
-                    );
             }
-            return getData(true)
+            return getData()
         });
-        // when data
+        // when data hasn't loaded yet
         return null
     }
 
