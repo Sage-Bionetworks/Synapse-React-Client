@@ -1,9 +1,9 @@
 import * as SynapseClient from './utils/SynapseClient';
 import * as SynapseConstants from './utils/SynapseConstants';
-import Markdown from './containers/Markdown'
+import MarkdownSynapse from './containers/MarkdownSynapse'
 
 let SynapseComponents = {
-    Markdown
+    Markdown: MarkdownSynapse
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents };

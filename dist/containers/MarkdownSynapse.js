@@ -18,6 +18,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from "react";
 import * as SynapseConstants from 'lib/utils/SynapseConstants';
+import * as SynapseClient from 'lib/utils/SynapseClient';
 
 /**
  * Import requirements for markdown
@@ -57,11 +58,9 @@ var Markdown = function (_React$Component) {
 
         _this.state = {
             md: require('markdown-it')({ html: true }),
-            text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n',
+            text: '',
             fileHandles: null,
             fileResults: null,
-            ownerId: "syn14568473",
-            wikiId: "582406",
             newOwnerId: "",
             newWikiId: "",
             calledReset: false,
@@ -88,7 +87,6 @@ var Markdown = function (_React$Component) {
         _this.getErrorView = _this.getErrorView.bind(_this);
         _this.handleChange = _this.handleChange.bind(_this);
         _this.createMarkup = _this.createMarkup.bind(_this);
-        _this.resetComponentState = _this.resetComponentState.bind(_this);
 
         // handling each of the synapse widgets
         _this.handleImageWidget = _this.handleImageWidget.bind(_this);
@@ -188,7 +186,7 @@ var Markdown = function (_React$Component) {
                     includeFileHandles: false,
                     includePreviewPreSignedURLs: false
                 };
-                this.props.getFileURLs(request, this.props.token).then(function (data) {
+                SynapseClient.getFiles(request, this.props.token).then(function (data) {
                     _this2.setState({
                         fileResults: data.requestedFiles
                     });
@@ -224,7 +222,7 @@ var Markdown = function (_React$Component) {
                 if (match.length > 0) {
                     fileHandleAssociationList.push({
                         fileHandleId: match[0].id,
-                        associateObjectId: this.state.wikiId,
+                        associateObjectId: this.props.wikiId,
                         associateObjectType: "WikiAttachment"
                     });
                     elementList.push({ element: element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
@@ -381,7 +379,7 @@ var Markdown = function (_React$Component) {
             // step 1: get init query with maxRowsPerPage calculated
             var queryRequest = {
                 concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                entityId: this.state.ownerId,
+                entityId: this.props.ownerId,
                 query: {
                     isConsistent: false,
                     limit: 150,
@@ -394,7 +392,7 @@ var Markdown = function (_React$Component) {
             // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
             // we can get, the following uses that maximum and offsets to the appropriate location to get the data
             // afterwards, the process repeats
-            this.props.getQueryTableResults(queryRequest, this.props.token).then(function (initData) {
+            SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(function (initData) {
                 var maxPageSize = 150;
                 var queryCount = initData.queryResult.queryResults.rows.length;
                 var totalQueryResults = queryCount;
@@ -419,7 +417,7 @@ var Markdown = function (_React$Component) {
                                         maxPageSize = maxPageSizePermanent;
                                         queryRequestWithMaxPageSize = {
                                             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                                            entityId: _this4.state.ownerId,
+                                            entityId: _this4.props.ownerId,
                                             partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                                             query: {
                                                 isConsistent: false,
@@ -429,7 +427,7 @@ var Markdown = function (_React$Component) {
                                             }
                                         };
                                         _context.next = 5;
-                                        return _this4.props.getQueryTableResults(queryRequestWithMaxPageSize, _this4.props.token).then(function (post_data) {
+                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, _this4.props.token).then(function (post_data) {
                                             queryCount += post_data.queryResult.queryResults.rows.length;
                                             if (queryCount > 0) {
                                                 var _raw_plot_data$queryR;
@@ -514,7 +512,7 @@ var Markdown = function (_React$Component) {
         value: function getWikiPageMarkdown() {
             var _this5 = this;
 
-            this.props.markdownEndpoint(this.props.token, this.state.ownerId, this.state.wikiId).then(function (data) {
+            SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                 // on success grab text and append to the default text
                 var initText = _this5.state.text;
                 _this5.setState({
@@ -534,7 +532,7 @@ var Markdown = function (_React$Component) {
         value: function getWikiAttachments() {
             var _this6 = this;
 
-            this.props.wikiAttachmentsEndpointFromEntity(this.props.token, this.state.ownerId, this.state.wikiId).then(function (data) {
+            SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                 _this6.setState({ fileHandles: data });
                 _this6.processWidgets(data);
                 _this6.setState({
@@ -576,15 +574,9 @@ var Markdown = function (_React$Component) {
         key: 'componentDidUpdate',
         value: function componentDidUpdate() {
             // we have to carefully update the component so it doesn't encounter an infinite loop
-            /* two scenarios in which there is an update:
-                1. Submit was used to request another wiki page be rendered
-                2. User logged in and has different priveledges to see or not see a certain wiki page
+            /* scenarios in which there is an update:
+                1. User logged in and has different priveledges to see or not see a certain wiki page
             */
-            if (this.state.calledReset) {
-                this.setState({ calledReset: false });
-                this.getWikiAttachments();
-                this.getWikiPageMarkdown();
-            }
             if (this.props.token !== "" && !this.state.isLoggedIn) {
                 this.setState({ isLoggedIn: true });
                 this.getWikiAttachments();
@@ -604,17 +596,11 @@ var Markdown = function (_React$Component) {
     }, {
         key: 'getErrorView',
         value: function getErrorView() {
-            if (this.state.errorMessage) {
+            if (this.state.errorMessage && this.props.errorMessageView) {
                 return React.createElement(
-                    'div',
-                    { className: 'row' },
-                    React.createElement(
-                        'p',
-                        { className: 'text-danger' },
-                        ' Error: ',
-                        this.state.errorMessage,
-                        ' '
-                    )
+                    React.Fragment,
+                    null,
+                    React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })
                 );
             }
         }
@@ -646,57 +632,10 @@ var Markdown = function (_React$Component) {
         key: 'render',
         value: function render() {
             return React.createElement(
-                'div',
-                { className: 'container border mt-5 pt-3' },
-                React.createElement(
-                    'div',
-                    { className: 'row' },
-                    React.createElement('p', { className: 'p-2 text-center', dangerouslySetInnerHTML: this.createMarkup('# Markdown it demo!') })
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'row mb-3' },
-                    React.createElement(
-                        'form',
-                        { onSubmit: this.resetComponentState },
-                        React.createElement(
-                            'div',
-                            { className: 'form-group ml-2 form-inline' },
-                            React.createElement(
-                                'label',
-                                null,
-                                ' Enter wiki ownerId'
-                            ),
-                            React.createElement('input', { name: 'newOwnerId', onChange: this.handleChange, placeholder: this.state.ownerId, type: 'text', value: this.state.newOwnerId, className: 'ml-2 form-control' })
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'form-group ml-2 form-inline' },
-                            React.createElement(
-                                'label',
-                                null,
-                                ' Enter synapse wikiId'
-                            ),
-                            React.createElement('input', { name: 'newWikiId', onChange: this.handleChange, placeholder: this.state.wikiId, type: 'text', value: this.state.newWikiId, className: 'ml-2 form-control' })
-                        ),
-                        React.createElement(
-                            'button',
-                            { onSubmit: this.resetComponentState, type: 'submit', className: 'btn ml-3 btn-large btn-primary' },
-                            'Get new wiki'
-                        )
-                    )
-                ),
+                React.Fragment,
+                null,
                 this.getErrorView(),
-                React.createElement(
-                    'div',
-                    { className: 'row' },
-                    React.createElement(
-                        'textarea',
-                        { rows: 5, name: 'text', value: this.state.text, onChange: this.handleChange, className: 'col-6 border' },
-                        ' '
-                    ),
-                    React.createElement('div', { className: 'col-6', dangerouslySetInnerHTML: this.createMarkup(this.state.text) })
-                )
+                React.createElement('div', { dangerouslySetInnerHTML: this.createMarkup(this.state.text) })
             );
         }
     }]);

@@ -82,13 +82,15 @@ var Login = function (_React$Component) {
                     _this2.props.onTokenChange({ token: data.sessionToken });
                     _this2.setState({
                         isSignedIn: true,
-                        hasLoginInFailed: false
+                        hasLoginInFailed: false,
+                        errorMessage: ""
                     });
                 }
             }).catch(function (err) {
                 _this2.setState({
                     hasLoginInFailed: true,
-                    errorMessage: err.reason
+                    errorMessage: err.reason,
+                    isSignedIn: false
                 });
             });
         }
@@ -168,7 +170,7 @@ var Login = function (_React$Component) {
                     ),
                     ' signed in to Synpase '
                 );
-            } else if (!this.state.dissmissButtonClicked) {
+            } else if (!this.state.dismissButtonClicked) {
                 return React.createElement(
                     'div',
                     null,

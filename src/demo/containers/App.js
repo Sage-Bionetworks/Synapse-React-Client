@@ -4,7 +4,6 @@ import logo from 'images/logo.svg';
 import './App.css';
 
 import Login from 'lib/containers/Login.js'
-import Markdown from 'lib/containers/Markdown.js'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse.js'
 import UserFavorites from 'lib/containers/UserFavorites.js';
 import UserProjects from 'lib/containers/UserProjects.js';
