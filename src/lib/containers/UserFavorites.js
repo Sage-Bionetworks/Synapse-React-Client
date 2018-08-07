@@ -19,13 +19,14 @@ class UserFavorites extends React.Component {
         .then(
             data => {
                 this.setState({
-                        favorites: data.results
+                        favorites: data.results,
+                        errorMessage: ""
                     })
                 }
         ).catch(
             err => {
                 this.setState({
-                    errorMessage: ''
+                    errorMessage: err.reason
                 })
             }
         )
@@ -46,6 +47,7 @@ class UserFavorites extends React.Component {
                 <h3> Demo of getting user favorites</h3>
                 <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getFavorites}> Get favorites </button>
                 {listFavorites}
+                {this.state.errorMessage}
             </div>
         )
     }

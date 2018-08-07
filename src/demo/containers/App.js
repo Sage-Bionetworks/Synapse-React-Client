@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 
-import Login from './Login.js'
-import Markdown from './Markdown.js'
-import UserFavorites from './UserFavorites.js';
-
 import logo from 'images/logo.svg';
 import './App.css';
+
+import Login from 'lib/containers/Login.js'
+import Markdown from 'lib/containers/Markdown.js'
+import UserFavorites from 'lib/containers/UserFavorites.js';
+import UserProjects from 'lib/containers/UserProjects.js';
+import UserTeam from 'lib/containers/UserTeams.js';
+import UserProfile from 'lib/containers/UserProfile.js';
+
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
-import UserProjects from './UserProjects.js';
-import UserTeam from './UserTeams.js';
-import UserProfile from './UserProfile.js';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -31,7 +32,7 @@ class App extends Component {
     this.getVersion = this.getVersion.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
-
+  
   /**
    * Get the current version of Synapse
    */
@@ -43,7 +44,7 @@ class App extends Component {
       .then(data => this.setState(data))
       .catch(function (error) {
         // Handle HTTPError.  Has statusCode and message.
-        console.error(error)
+        console.error("Get version failed" , error)
       });
   }
 
@@ -128,9 +129,9 @@ class App extends Component {
         
         <Markdown token={this.state.token}
                   getFileURLs={SynapseClient.getFiles}
-                  wikiAttachmentsEndpointFromEvaluation={SynapseClient.getWikiAttachmentsFromEvaluation}
                   wikiAttachmentsEndpointFromEntity={SynapseClient.getWikiAttachmentsFromEntity}
-                  markdownEndpoint={SynapseClient.getEntityWiki}>
+                  markdownEndpoint={SynapseClient.getEntityWiki}
+                  getQueryTableResults={SynapseClient.getQueryTableResults}>
         </Markdown>
       </div>
     );

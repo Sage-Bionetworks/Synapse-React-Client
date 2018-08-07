@@ -18,16 +18,16 @@ class UserProfile extends React.Component {
         this.props.getUserProfileEndpoint(this.props.token).then(
             data => {
                 this.props.onProfileChange({ownerId: data.ownerId})
-                console.log('data is ', data)
                 this.setState({
-                    userName: data.userName
+                    userName: data.userName,
+                    errorMessage: ""
                 })
             }
         ).catch(
             err => {
                 this.setState({
                     hasLoginInFailed: true,
-                    errorMessage: err
+                    errorMessage: err.reason
                 })
             }
         );
@@ -47,6 +47,7 @@ class UserProfile extends React.Component {
                 <h3> Demo of getting user profile </h3>
                 <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")} onClick={this.getUserProfile}> Get User Profile Information </button>
                 {welcomeBanner}
+                {this.state.errorMessage}
             </div>
         )
     }
