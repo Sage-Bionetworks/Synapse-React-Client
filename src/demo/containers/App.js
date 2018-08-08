@@ -10,7 +10,7 @@ import UserProjects from 'lib/containers/UserProjects.js';
 import UserTeam from 'lib/containers/UserTeams.js';
 import UserProfile from 'lib/containers/UserProfile.js';
 import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
-// import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView'
+import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView';
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
@@ -134,7 +134,7 @@ class App extends Component {
           <MarkdownSynapse token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
-                    >
+                    errorMessageView={<CustomMarkdownErrorView/>}>
           </MarkdownSynapse>
         </CustomMarkdownView>
 

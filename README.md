@@ -60,38 +60,22 @@ View the demo app incorporation of markdown [here]((https://github.com/Sage-Bion
 
 To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error message to display.
 
+*Note* the *SynapseComponents.Custom\** components serve as 
+examples of possibile ideas of configuring the markdown component, but are
+not necessarily intended to be used.
+
 ```jsx
 
-  import {SynapseComponents} from 'react-synapse-client'
+  import {SynapseComponents} from 'synapse-react-client'
  
- 
-  const SampleErrorMessage = function (props) {
-    return (
-      <div className="text-danger">
-        {props.message}
-      </div>
-    )
-  }
 
-  const CustomMarkdownView = function (props) {
-    return (
-      <div className="container border mt-5">
-        <div className="row">
-          <div className="col-6">
-            {props.children}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  <CustomMarkdownView>
+  <SynapseComponents.CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
               ownerId={"syn14568473"}
               wikiId={"582406"}
-              errorMessageView={<SampleErrorMessage/>}>
+              errorMessageView={<SynapseComponents.CustomMarkdownErrorView/>}>
     </SynapseComponents.Markdown>
-  </CustomMarkdownView>
+  </SynapseComponents.CustomMarkdownView>
 
 ```
 
