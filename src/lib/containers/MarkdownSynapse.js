@@ -440,10 +440,6 @@ class MarkdownSynapse extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
      */
     getWikiPageMarkdown() {
-        if (this.props.token === "") {
-
-        }
-
         SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
         .then(data => {
             // on success grab text and append to the default text

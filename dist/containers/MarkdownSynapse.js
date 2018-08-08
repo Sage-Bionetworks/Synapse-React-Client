@@ -512,8 +512,6 @@ var MarkdownSynapse = function (_React$Component) {
         value: function getWikiPageMarkdown() {
             var _this5 = this;
 
-            if (this.props.token === "") {}
-
             SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                 // on success grab text and append to the default text
                 var initText = _this5.state.text;
