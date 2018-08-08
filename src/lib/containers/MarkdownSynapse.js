@@ -42,7 +42,8 @@ class MarkdownSynapse extends React.Component {
             newOwnerId: "",
             newWikiId: "",
             calledReset: false,
-            isLoggedIn: this.props.token !== ""
+            isLoggedIn: this.props.token !== "",
+            loadingImgResource: false
         }
 
         
@@ -55,6 +56,7 @@ class MarkdownSynapse extends React.Component {
         
         // handle pre/post processing of widgets
         this.prepareWidget = this.prepareWidget.bind(this)
+        this.processWidgetMappings = this.processWidgetMappings.bind(this)
         this.matchElementToResource = this.matchElementToResource.bind(this)
         this.matchToHandle = this.matchToHandle.bind(this)
         this.compareById = function(fileName, key) {
@@ -117,38 +119,43 @@ class MarkdownSynapse extends React.Component {
             })
         });
     }
-    
+
+    async processWidgetMappings(widgets, fileHandleAssociationList, elementList) {
+        for (let element of widgets) {
+            let widgetstring = element.getAttribute("widgetparams");
+            let questionIndex = widgetstring.indexOf("?"); // type?
+            let widgetType = widgetstring.substring(0, questionIndex); // type
+            let widgetparamsMapped = {};
+            // map out params and their values
+            widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
+                let key, value;
+                [key, value] = keyPair.split("=");
+                value = decodeURIComponent(value);
+                widgetparamsMapped[key] = value;
+            });
+            await this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
+        };
+    }
+
     /**
      * Get widgets on screen and transform into their defined compents
      */
-    processWidgets() {
+    async processWidgets() {
         let widgets = document.querySelectorAll("span[widgetparams]")
         // go through all obtained elements and transform them with katex
         
         // build up request 
         let elementList = []
         let fileHandleAssociationList = []
-        widgets.forEach(element => {
-            let widgetstring = element.getAttribute("widgetparams")
-            let questionIndex = widgetstring.indexOf("?") // type?
-            let widgetType = widgetstring.substring(0,questionIndex) // type
-            let widgetparamsMapped = {}
-            // map out params and their values
-            widgetstring.substring(questionIndex + 1).split("&").forEach( 
-                (keyPair) => {
-                    let key, value;
-                    [key,value] = keyPair.split("=")
-                    value = decodeURIComponent(value)
-                    widgetparamsMapped[key] = value
-                }
-            )
-            this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
-        });    
+
+        // must gather resources for all widgets before making batch file call, wait till done
+        await this.processWidgetMappings(widgets, fileHandleAssociationList, elementList)
 
         // Process all the files found on the page
         // if this is the first run load the file results, otherwise
         // use the already retrieved files
         if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
+            // include length check to make sure all resources are loaded
             let request = {
                 requestedFiles: fileHandleAssociationList,
                 includePreSignedURLs: true,
@@ -170,7 +177,6 @@ class MarkdownSynapse extends React.Component {
         } else {
             this.matchElementToResource(elementList);
         }
-
     }
 
     /**
@@ -182,21 +188,36 @@ class MarkdownSynapse extends React.Component {
      * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
      * @param {*} elementList   stack of elements to be processed
      */
-    prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-        if (widgetType === "buttonlink") {
+    async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
+        if (widgetType === "buttonlink" && element) {
             let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
             element.outerHTML = button;
         } else if (widgetType === "image" && this.state.fileHandles) {
-            let fileName = decodeURIComponent(widgetparamsMapped.fileName);
-            let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
-            if (match.length > 0) {
+            let fileName = null
+            let match = null
+            if (widgetparamsMapped.fileName) {
+                fileName = widgetparamsMapped.fileName;
+                match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
                 fileHandleAssociationList.push({
                     fileHandleId: match[0].id,
                     associateObjectId: this.props.wikiId,
                     associateObjectType: "WikiAttachment"
                 });
                 elementList.push({element:element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+            } else if (widgetparamsMapped.synapseId) {
+                let synapseId = widgetparamsMapped.synapseId;
+                await SynapseClient.getEntity(this.props.token, synapseId).then(data => {
+                    fileHandleAssociationList.push({
+                        fileHandleId: data.dataFileHandleId,
+                        associateObjectId: synapseId,
+                        associateObjectType: "FileEntity"
+                    });
+                    elementList.push({element:element, id: data.dataFileHandleId, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+                }).catch(err => {
+                    console.log("Error on synapse entity image load ", err)
+                })
             }
+      
         } else if (widgetType === "plot") {
             elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
         }
@@ -213,7 +234,6 @@ class MarkdownSynapse extends React.Component {
             if (elementBundle.widgetType === "image") {
                 // match corresponds to filehandle that this current element needs to be connected to
                 let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
-                console.log('found match ', match)
                 this.handleImageWidget(match, elementBundle);
             } else if (elementBundle.widgetType === "plot") {
                 this.handlePlotlyWidget(elementBundle);
