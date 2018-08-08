@@ -20,6 +20,8 @@ import React from "react";
 import * as SynapseConstants from '../utils/SynapseConstants';
 import * as SynapseClient from '../utils/SynapseClient';
 
+import PropTypes from 'prop-types';
+
 /**
  * Import requirements for markdown
  */
@@ -64,7 +66,8 @@ var MarkdownSynapse = function (_React$Component) {
             newOwnerId: "",
             newWikiId: "",
             calledReset: false,
-            isLoggedIn: _this.props.token !== ""
+            isLoggedIn: _this.props.token !== "",
+            loadingImgResource: false
 
             // handle widgets and math markdown
         };_this.processWidgets = _this.processWidgets.bind(_this);
@@ -75,6 +78,7 @@ var MarkdownSynapse = function (_React$Component) {
 
         // handle pre/post processing of widgets
         _this.prepareWidget = _this.prepareWidget.bind(_this);
+        _this.processWidgetMappings = _this.processWidgetMappings.bind(_this);
         _this.matchElementToResource = _this.matchElementToResource.bind(_this);
         _this.matchToHandle = _this.matchToHandle.bind(_this);
         _this.compareById = function (fileName, key) {
@@ -137,6 +141,127 @@ var MarkdownSynapse = function (_React$Component) {
                 });
             });
         }
+    }, {
+        key: 'processWidgetMappings',
+        value: function () {
+            var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(widgets, fileHandleAssociationList, elementList) {
+                var _this2 = this;
+
+                var _loop, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, element;
+
+                return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                _loop = /*#__PURE__*/_regeneratorRuntime.mark(function _callee(element) {
+                                    var widgetstring, questionIndex, widgetType, widgetparamsMapped;
+                                    return _regeneratorRuntime.wrap(function _callee$(_context) {
+                                        while (1) {
+                                            switch (_context.prev = _context.next) {
+                                                case 0:
+                                                    widgetstring = element.getAttribute("widgetparams");
+                                                    questionIndex = widgetstring.indexOf("?"); // type?
+
+                                                    widgetType = widgetstring.substring(0, questionIndex); // type
+
+                                                    widgetparamsMapped = {};
+                                                    // map out params and their values
+
+                                                    widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
+                                                        var key = void 0,
+                                                            value = void 0;
+
+                                                        var _keyPair$split = keyPair.split("=");
+
+                                                        var _keyPair$split2 = _slicedToArray(_keyPair$split, 2);
+
+                                                        key = _keyPair$split2[0];
+                                                        value = _keyPair$split2[1];
+
+                                                        value = decodeURIComponent(value);
+                                                        widgetparamsMapped[key] = value;
+                                                    });
+                                                    _context.next = 7;
+                                                    return _this2.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
+
+                                                case 7:
+                                                case 'end':
+                                                    return _context.stop();
+                                            }
+                                        }
+                                    }, _callee, _this2);
+                                });
+                                _iteratorNormalCompletion = true;
+                                _didIteratorError = false;
+                                _iteratorError = undefined;
+                                _context2.prev = 4;
+                                _iterator = widgets[Symbol.iterator]();
+
+                            case 6:
+                                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+                                    _context2.next = 12;
+                                    break;
+                                }
+
+                                element = _step.value;
+                                return _context2.delegateYield(_loop(element), 't0', 9);
+
+                            case 9:
+                                _iteratorNormalCompletion = true;
+                                _context2.next = 6;
+                                break;
+
+                            case 12:
+                                _context2.next = 18;
+                                break;
+
+                            case 14:
+                                _context2.prev = 14;
+                                _context2.t1 = _context2['catch'](4);
+                                _didIteratorError = true;
+                                _iteratorError = _context2.t1;
+
+                            case 18:
+                                _context2.prev = 18;
+                                _context2.prev = 19;
+
+                                if (!_iteratorNormalCompletion && _iterator.return) {
+                                    _iterator.return();
+                                }
+
+                            case 21:
+                                _context2.prev = 21;
+
+                                if (!_didIteratorError) {
+                                    _context2.next = 24;
+                                    break;
+                                }
+
+                                throw _iteratorError;
+
+                            case 24:
+                                return _context2.finish(21);
+
+                            case 25:
+                                return _context2.finish(18);
+
+                            case 26:
+                                ;
+
+                            case 27:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this, [[4, 14, 18, 26], [19,, 21, 25]]);
+            }));
+
+            function processWidgetMappings(_x, _x2, _x3) {
+                return _ref.apply(this, arguments);
+            }
+
+            return processWidgetMappings;
+        }()
 
         /**
          * Get widgets on screen and transform into their defined compents
@@ -144,61 +269,69 @@ var MarkdownSynapse = function (_React$Component) {
 
     }, {
         key: 'processWidgets',
-        value: function processWidgets() {
-            var _this2 = this;
+        value: function () {
+            var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3() {
+                var _this3 = this;
 
-            var widgets = document.querySelectorAll("span[widgetparams]");
-            // go through all obtained elements and transform them with katex
+                var widgets, elementList, fileHandleAssociationList, request;
+                return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+                    while (1) {
+                        switch (_context3.prev = _context3.next) {
+                            case 0:
+                                widgets = document.querySelectorAll("span[widgetparams]");
+                                // go through all obtained elements and transform them with katex
 
-            // build up request 
-            var elementList = [];
-            var fileHandleAssociationList = [];
-            widgets.forEach(function (element) {
-                var widgetstring = element.getAttribute("widgetparams");
-                var questionIndex = widgetstring.indexOf("?"); // type?
-                var widgetType = widgetstring.substring(0, questionIndex); // type
-                var widgetparamsMapped = {};
-                // map out params and their values
-                widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
-                    var key = void 0,
-                        value = void 0;
+                                // build up request 
 
-                    var _keyPair$split = keyPair.split("=");
+                                elementList = [];
+                                fileHandleAssociationList = [];
 
-                    var _keyPair$split2 = _slicedToArray(_keyPair$split, 2);
+                                // must gather resources for all widgets before making batch file call, wait till done
 
-                    key = _keyPair$split2[0];
-                    value = _keyPair$split2[1];
+                                _context3.next = 5;
+                                return this.processWidgetMappings(widgets, fileHandleAssociationList, elementList);
 
-                    value = decodeURIComponent(value);
-                    widgetparamsMapped[key] = value;
-                });
-                _this2.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
-            });
+                            case 5:
 
-            // Process all the files found on the page
-            // if this is the first run load the file results, otherwise
-            // use the already retrieved files
-            if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
-                var request = {
-                    requestedFiles: fileHandleAssociationList,
-                    includePreSignedURLs: true,
-                    includeFileHandles: false,
-                    includePreviewPreSignedURLs: false
-                };
-                SynapseClient.getFiles(request, this.props.token).then(function (data) {
-                    _this2.setState({
-                        fileResults: data.requestedFiles
-                    });
-                    // TODO: consider opitmizations in the future
-                    _this2.matchElementToResource(elementList);
-                }).catch(function (err) {
-                    console.log('Error on url grab ', err);
-                });
-            } else {
-                this.matchElementToResource(elementList);
+                                // Process all the files found on the page
+                                // if this is the first run load the file results, otherwise
+                                // use the already retrieved files
+                                if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
+                                    // include length check to make sure all resources are loaded
+                                    request = {
+                                        requestedFiles: fileHandleAssociationList,
+                                        includePreSignedURLs: true,
+                                        includeFileHandles: false,
+                                        includePreviewPreSignedURLs: false
+                                    };
+
+                                    SynapseClient.getFiles(request, this.props.token).then(function (data) {
+                                        _this3.setState({
+                                            fileResults: data.requestedFiles
+                                        });
+                                        // TODO: consider opitmizations in the future
+                                        _this3.matchElementToResource(elementList);
+                                    }).catch(function (err) {
+                                        console.log('Error on url grab ', err);
+                                    });
+                                } else {
+                                    this.matchElementToResource(elementList);
+                                }
+
+                            case 6:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
+
+            function processWidgets() {
+                return _ref2.apply(this, arguments);
             }
-        }
+
+            return processWidgets;
+        }()
 
         /**
          * Given a widget grab its required resources to push onto the growing list of elements
@@ -212,25 +345,91 @@ var MarkdownSynapse = function (_React$Component) {
 
     }, {
         key: 'prepareWidget',
-        value: function prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-            if (widgetType === "buttonlink") {
-                var button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
-                element.outerHTML = button;
-            } else if (widgetType === "image" && this.state.fileHandles) {
-                var fileName = decodeURIComponent(widgetparamsMapped.fileName);
-                var match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
-                if (match.length > 0) {
-                    fileHandleAssociationList.push({
-                        fileHandleId: match[0].id,
-                        associateObjectId: this.props.wikiId,
-                        associateObjectType: "WikiAttachment"
-                    });
-                    elementList.push({ element: element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
-                }
-            } else if (widgetType === "plot") {
-                elementList.push({ element: element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
+        value: function () {
+            var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
+                var button, fileName, match, synapseId;
+                return _regeneratorRuntime.wrap(function _callee4$(_context4) {
+                    while (1) {
+                        switch (_context4.prev = _context4.next) {
+                            case 0:
+                                if (!(widgetType === "buttonlink" && element)) {
+                                    _context4.next = 5;
+                                    break;
+                                }
+
+                                button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
+
+                                element.outerHTML = button;
+                                _context4.next = 22;
+                                break;
+
+                            case 5:
+                                if (!(widgetType === "image" && this.state.fileHandles)) {
+                                    _context4.next = 21;
+                                    break;
+                                }
+
+                                fileName = null;
+                                match = null;
+
+                                if (!widgetparamsMapped.fileName) {
+                                    _context4.next = 15;
+                                    break;
+                                }
+
+                                fileName = widgetparamsMapped.fileName;
+                                match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
+                                fileHandleAssociationList.push({
+                                    fileHandleId: match[0].id,
+                                    associateObjectId: this.props.wikiId,
+                                    associateObjectType: "WikiAttachment"
+                                });
+                                elementList.push({ element: element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
+                                _context4.next = 19;
+                                break;
+
+                            case 15:
+                                if (!widgetparamsMapped.synapseId) {
+                                    _context4.next = 19;
+                                    break;
+                                }
+
+                                synapseId = widgetparamsMapped.synapseId;
+                                _context4.next = 19;
+                                return SynapseClient.getEntity(this.props.token, synapseId).then(function (data) {
+                                    fileHandleAssociationList.push({
+                                        fileHandleId: data.dataFileHandleId,
+                                        associateObjectId: synapseId,
+                                        associateObjectType: "FileEntity"
+                                    });
+                                    elementList.push({ element: element, id: data.dataFileHandleId, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
+                                }).catch(function (err) {
+                                    console.log("Error on synapse entity image load ", err);
+                                });
+
+                            case 19:
+                                _context4.next = 22;
+                                break;
+
+                            case 21:
+                                if (widgetType === "plot") {
+                                    elementList.push({ element: element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
+                                }
+
+                            case 22:
+                            case 'end':
+                                return _context4.stop();
+                        }
+                    }
+                }, _callee4, this);
+            }));
+
+            function prepareWidget(_x4, _x5, _x6, _x7, _x8) {
+                return _ref3.apply(this, arguments);
             }
-        }
+
+            return prepareWidget;
+        }()
 
         /**
          * match all widgets on the page to their corresponding resource
@@ -242,16 +441,15 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'matchElementToResource',
         value: function matchElementToResource(elementList) {
-            var _this3 = this;
+            var _this4 = this;
 
             elementList.forEach(function (elementBundle) {
                 if (elementBundle.widgetType === "image") {
                     // match corresponds to filehandle that this current element needs to be connected to
-                    var match = _this3.matchToHandle(_this3.compareById(elementBundle.id, "fileHandleId"), _this3.state.fileResults);
-                    console.log('found match ', match);
-                    _this3.handleImageWidget(match, elementBundle);
+                    var match = _this4.matchToHandle(_this4.compareById(elementBundle.id, "fileHandleId"), _this4.state.fileResults);
+                    _this4.handleImageWidget(match, elementBundle);
                 } else if (elementBundle.widgetType === "plot") {
-                    _this3.handlePlotlyWidget(elementBundle);
+                    _this4.handlePlotlyWidget(elementBundle);
                 }
             });
         }
@@ -334,8 +532,8 @@ var MarkdownSynapse = function (_React$Component) {
                     plot_data[j - 1].y.push(row_values[j]);
                 }
             }
-            // error with clearing html - "" is not a function, wrapping in try/catch prevents the error
-            // although it doesn't catch it.
+            // error with clearing html - "" is not a function 
+            // wrapping in try/catch prevents the error, although it doesn't catch it.
             try {
                 elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
             } catch (e) {
@@ -372,9 +570,10 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getPlotlyData',
         value: function getPlotlyData(widgetparamsMapped) {
-            var _this4 = this;
+            var _this5 = this;
 
             var raw_plot_data = {};
+            var maxPageSize = 150;
 
             // step 1: get init query with maxRowsPerPage calculated
             var queryRequest = {
@@ -382,7 +581,7 @@ var MarkdownSynapse = function (_React$Component) {
                 entityId: this.props.ownerId,
                 query: {
                     isConsistent: false,
-                    limit: 150,
+                    limit: maxPageSize,
                     partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
                     offset: 0,
                     sql: widgetparamsMapped.query
@@ -393,31 +592,29 @@ var MarkdownSynapse = function (_React$Component) {
             // we can get, the following uses that maximum and offsets to the appropriate location to get the data
             // afterwards, the process repeats
             SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(function (initData) {
-                var maxPageSize = 150;
                 var queryCount = initData.queryResult.queryResults.rows.length;
                 var totalQueryResults = queryCount;
 
-                var maxPageSizePermanent = initData.maxRowsPerPage;
                 raw_plot_data = initData;
 
                 // Get the subsequent data, note- although the function calls itself, it runs
                 // iteratively due to the await
                 var getData = function () {
-                    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
+                    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee5() {
                         var queryRequestWithMaxPageSize, queryData, query;
-                        return _regeneratorRuntime.wrap(function _callee$(_context) {
+                        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
                             while (1) {
-                                switch (_context.prev = _context.next) {
+                                switch (_context5.prev = _context5.next) {
                                     case 0:
                                         if (!(queryCount === maxPageSize)) {
-                                            _context.next = 7;
+                                            _context5.next = 7;
                                             break;
                                         }
 
-                                        maxPageSize = maxPageSizePermanent;
+                                        maxPageSize = initData.maxRowsPerPage;
                                         queryRequestWithMaxPageSize = {
                                             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                                            entityId: _this4.props.ownerId,
+                                            entityId: _this5.props.ownerId,
                                             partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                                             query: {
                                                 isConsistent: false,
@@ -426,8 +623,8 @@ var MarkdownSynapse = function (_React$Component) {
                                                 sql: widgetparamsMapped.query
                                             }
                                         };
-                                        _context.next = 5;
-                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, _this4.props.token).then(function (post_data) {
+                                        _context5.next = 5;
+                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, _this5.props.token).then(function (post_data) {
                                             queryCount += post_data.queryResult.queryResults.rows.length;
                                             if (queryCount > 0) {
                                                 var _raw_plot_data$queryR;
@@ -441,31 +638,31 @@ var MarkdownSynapse = function (_React$Component) {
                                         });
 
                                     case 5:
-                                        _context.next = 12;
+                                        _context5.next = 12;
                                         break;
 
                                     case 7:
                                         // set data to this plots sql in the query data
-                                        queryData = Object.assign({}, _this4.state.queryData); // shallow copy
+                                        queryData = Object.assign({}, _this5.state.queryData); // shallow copy
 
                                         query = widgetparamsMapped.query;
 
                                         queryData[query] = raw_plot_data;
-                                        _this4.setState({
+                                        _this5.setState({
                                             queryData: queryData
                                         });
-                                        return _context.abrupt('return', raw_plot_data);
+                                        return _context5.abrupt('return', raw_plot_data);
 
                                     case 12:
                                     case 'end':
-                                        return _context.stop();
+                                        return _context5.stop();
                                 }
                             }
-                        }, _callee, _this4);
+                        }, _callee5, _this5);
                     }));
 
                     return function getData() {
-                        return _ref.apply(this, arguments);
+                        return _ref4.apply(this, arguments);
                     };
                 }();
                 return getData();
@@ -510,12 +707,12 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiPageMarkdown',
         value: function getWikiPageMarkdown() {
-            var _this5 = this;
+            var _this6 = this;
 
             SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                 // on success grab text and append to the default text
-                var initText = _this5.state.text;
-                _this5.setState({
+                var initText = _this6.state.text;
+                _this6.setState({
                     text: initText + data.markdown
                 });
             }).catch(function (err) {
@@ -530,16 +727,16 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiAttachments',
         value: function getWikiAttachments() {
-            var _this6 = this;
+            var _this7 = this;
 
             SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
-                _this6.setState({ fileHandles: data });
-                _this6.processWidgets(data);
-                _this6.setState({
+                _this7.setState({ fileHandles: data });
+                _this7.processWidgets(data);
+                _this7.setState({
                     errorMessage: ""
                 });
             }).catch(function (err) {
-                _this6.setState({
+                _this7.setState({
                     errorMessage: err.reason
                 });
                 console.log("Error on wiki attachment load ", err);
@@ -642,5 +839,18 @@ var MarkdownSynapse = function (_React$Component) {
 
     return MarkdownSynapse;
 }(React.Component);
+
+// Validate props passed to the component
+
+
+MarkdownSynapse.propTypes = {
+    // optional
+    errorMessageView: PropTypes.element,
+
+    // required props
+    token: PropTypes.string.isRequired,
+    ownerId: PropTypes.string.isRequired,
+    wikiId: PropTypes.string.isRequired
+};
 
 export default MarkdownSynapse;

@@ -205,6 +205,21 @@ export var getFiles = function getFiles(request) {
  * See SynapseClient.test.js for an example partsMask.
  * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
  */
+export var getEntity = function getEntity() {
+  var sessionToken = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var entityId = arguments[1];
+  var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
+
+  var url = '/repo/v1/entity/' + entityId;
+  return doGet(url, sessionToken, endpoint);
+};
+
+/**
+ * Bundled access to Entity and related data components. 
+ * An EntityBundle can be used to create, fetch, or update an Entity and associated objects with a single web service request.
+ * See SynapseClient.test.js for an example partsMask.
+ * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+ */
 export var getEntityBundleForVersion = function getEntityBundleForVersion(entityId, version, partsMask) {
   var sessionToken = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
   var endpoint = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'https://repo-prod.prod.sagebase.org';

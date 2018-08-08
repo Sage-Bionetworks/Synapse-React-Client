@@ -359,6 +359,7 @@ class MarkdownSynapse extends React.Component {
     getPlotlyData(widgetparamsMapped) {
 
         let raw_plot_data = {}
+        let maxPageSize = 150
 
         // step 1: get init query with maxRowsPerPage calculated
         let queryRequest = {
@@ -366,7 +367,7 @@ class MarkdownSynapse extends React.Component {
             entityId: this.props.ownerId,
             query: {
                 isConsistent: false,
-                limit: 150,
+                limit: maxPageSize,
                 partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
                 offset: 0,
                 sql: widgetparamsMapped.query
@@ -377,18 +378,16 @@ class MarkdownSynapse extends React.Component {
         // we can get, the following uses that maximum and offsets to the appropriate location to get the data
         // afterwards, the process repeats
         SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(initData => {
-            let maxPageSize = 150
             let queryCount = initData.queryResult.queryResults.rows.length
             let totalQueryResults = queryCount
             
-            let maxPageSizePermanent = initData.maxRowsPerPage
             raw_plot_data = initData;
 
             // Get the subsequent data, note- although the function calls itself, it runs
             // iteratively due to the await
             const getData = async () => {
                 if (queryCount === maxPageSize) {
-                    maxPageSize = maxPageSizePermanent
+                    maxPageSize = initData.maxRowsPerPage
                     let queryRequestWithMaxPageSize = {
                         concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
                         entityId: this.props.ownerId,
