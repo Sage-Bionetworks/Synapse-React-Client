@@ -60,7 +60,8 @@ class Login extends React.Component {
                     this.props.onTokenChange({ token: data.sessionToken })
                     this.setState({
                         isSignedIn: true,
-                        hasLoginInFailed: false
+                        hasLoginInFailed: false,
+                        errorMessage: ""
                     })
                 }
             }
@@ -68,7 +69,8 @@ class Login extends React.Component {
             err => {
                 this.setState({
                     hasLoginInFailed: true,
-                    errorMessage: err.reason
+                    errorMessage: err.reason,
+                    isSignedIn: false
                 })
             }
         )
@@ -112,7 +114,7 @@ class Login extends React.Component {
             return (
                 <p> You are currently <strong> <i> not </i> </strong> signed in to Synpase </p>
             )
-        } else if (!this.state.dissmissButtonClicked){
+        } else if (!this.state.dismissButtonClicked){
             return (
                 <div>
                     <p> You are currently <strong> <i> signed in </i> </strong> to Synapse </p>

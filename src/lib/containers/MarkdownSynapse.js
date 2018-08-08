@@ -1,4 +1,8 @@
 import React from "react";
+import * as SynapseConstants from '../utils/SynapseConstants'
+import * as SynapseClient from '../utils/SynapseClient'
+
+import PropTypes from 'prop-types'
 
 /**
  * Import requirements for markdown
@@ -16,13 +20,14 @@ let markdownBr = require('markdown-it-br')
 let sanitizeHtml = require('sanitize-html');
 let synapseMath = require('markdown-it-synapse-math')
 
+
 /**
  * Basic vanilla Markdownit functionality with latex support, synapse image support, plotly support
  *
  * @class Markdown
  * @extends {React.Component}
  */
-class Markdown extends React.Component {
+class MarkdownSynapse extends React.Component {
 
     /**
      * Creates an instance of Markdown.
@@ -33,15 +38,14 @@ class Markdown extends React.Component {
         // Store markdown object and text to be rendered by said object
         this.state = {
             md: require('markdown-it')({html: true}),
-            text: '##LaTeX Rendering:\n Pythagorean theorem is  $$a^2 + b^2 = c^2$$\n##Demo of rendering Wiki\n\n',
+            text: '',
             fileHandles: null,
             fileResults: null,
-            ownerId: "syn14568473",
-            wikiId: "582406",
             newOwnerId: "",
             newWikiId: "",
             calledReset: false,
-            isLoggedIn: this.props.token !== ""
+            isLoggedIn: this.props.token !== "",
+            loadingImgResource: false
         }
 
         
@@ -54,6 +58,7 @@ class Markdown extends React.Component {
         
         // handle pre/post processing of widgets
         this.prepareWidget = this.prepareWidget.bind(this)
+        this.processWidgetMappings = this.processWidgetMappings.bind(this)
         this.matchElementToResource = this.matchElementToResource.bind(this)
         this.matchToHandle = this.matchToHandle.bind(this)
         this.compareById = function(fileName, key) {
@@ -66,12 +71,10 @@ class Markdown extends React.Component {
         this.getErrorView = this.getErrorView.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
-        this.resetComponentState = this.resetComponentState.bind(this)
 
         // handling each of the synapse widgets
         this.handleImageWidget = this.handleImageWidget.bind(this)
         this.handlePlotlyWidget = this.handlePlotlyWidget.bind(this)
-
     }
 
     /**
@@ -118,45 +121,50 @@ class Markdown extends React.Component {
             })
         });
     }
-    
+
+    async processWidgetMappings(widgets, fileHandleAssociationList, elementList) {
+        for (let element of widgets) {
+            let widgetstring = element.getAttribute("widgetparams");
+            let questionIndex = widgetstring.indexOf("?"); // type?
+            let widgetType = widgetstring.substring(0, questionIndex); // type
+            let widgetparamsMapped = {};
+            // map out params and their values
+            widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
+                let key, value;
+                [key, value] = keyPair.split("=");
+                value = decodeURIComponent(value);
+                widgetparamsMapped[key] = value;
+            });
+            await this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
+        };
+    }
+
     /**
      * Get widgets on screen and transform into their defined compents
      */
-    processWidgets() {
+    async processWidgets() {
         let widgets = document.querySelectorAll("span[widgetparams]")
         // go through all obtained elements and transform them with katex
         
         // build up request 
         let elementList = []
         let fileHandleAssociationList = []
-        widgets.forEach(element => {
-            let widgetstring = element.getAttribute("widgetparams")
-            let questionIndex = widgetstring.indexOf("?") // type?
-            let widgetType = widgetstring.substring(0,questionIndex) // type
-            let widgetparamsMapped = {}
-            // map out params and their values
-            widgetstring.substring(questionIndex + 1).split("&").forEach( 
-                (keyPair) => {
-                    let key, value;
-                    [key,value] = keyPair.split("=")
-                    value = decodeURIComponent(value)
-                    widgetparamsMapped[key] = value
-                }
-            )
-            this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
-        });    
+
+        // must gather resources for all widgets before making batch file call, wait till done
+        await this.processWidgetMappings(widgets, fileHandleAssociationList, elementList)
 
         // Process all the files found on the page
         // if this is the first run load the file results, otherwise
         // use the already retrieved files
         if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
+            // include length check to make sure all resources are loaded
             let request = {
                 requestedFiles: fileHandleAssociationList,
                 includePreSignedURLs: true,
                 includeFileHandles: false,
                 includePreviewPreSignedURLs: false
             }
-            this.props.getFileURLs(request, this.props.token).then(
+            SynapseClient.getFiles(request, this.props.token).then(
                 data=> {
                     this.setState({
                         fileResults: data.requestedFiles
@@ -171,7 +179,6 @@ class Markdown extends React.Component {
         } else {
             this.matchElementToResource(elementList);
         }
-
     }
 
     /**
@@ -183,20 +190,34 @@ class Markdown extends React.Component {
      * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
      * @param {*} elementList   stack of elements to be processed
      */
-    prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-        if (widgetType === "buttonlink") {
+    async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
+        if (widgetType === "buttonlink" && element) {
             let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
             element.outerHTML = button;
         } else if (widgetType === "image" && this.state.fileHandles) {
-            let fileName = decodeURIComponent(widgetparamsMapped.fileName);
-            let match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
-            if (match.length > 0) {
+            let fileName = null
+            let match = null
+            if (widgetparamsMapped.fileName) {
+                fileName = widgetparamsMapped.fileName;
+                match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
                 fileHandleAssociationList.push({
                     fileHandleId: match[0].id,
-                    associateObjectId: this.state.wikiId,
+                    associateObjectId: this.props.wikiId,
                     associateObjectType: "WikiAttachment"
                 });
                 elementList.push({element:element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+            } else if (widgetparamsMapped.synapseId) {
+                let synapseId = widgetparamsMapped.synapseId;
+                await SynapseClient.getEntity(this.props.token, synapseId).then(data => {
+                    fileHandleAssociationList.push({
+                        fileHandleId: data.dataFileHandleId,
+                        associateObjectId: synapseId,
+                        associateObjectType: "FileEntity"
+                    });
+                    elementList.push({element:element, id: data.dataFileHandleId, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+                }).catch(err => {
+                    console.log("Error on synapse entity image load ", err)
+                })
             }
         } else if (widgetType === "plot") {
             elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
@@ -251,8 +272,6 @@ class Markdown extends React.Component {
         let layout = {
             title: title,
             showlegend: showLegend,
-            autosize: true,
-            autorange: true
         };
         if (xtitle) {
             layout.xaxis = {
@@ -301,8 +320,8 @@ class Markdown extends React.Component {
                 plot_data[j - 1].y.push(row_values[j]);
             }
         }
-        // error with clearing html - "" is not a function, wrapping in try/catch prevents the error
-        // although it doesn't catch it.
+        // error with clearing html - "" is not a function 
+        // wrapping in try/catch prevents the error, although it doesn't catch it.
         try {
             elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
         }
@@ -340,15 +359,16 @@ class Markdown extends React.Component {
     getPlotlyData(widgetparamsMapped) {
 
         let raw_plot_data = {}
+        let maxPageSize = 150
 
         // step 1: get init query with maxRowsPerPage calculated
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            entityId: this.state.ownerId,
+            entityId: this.props.ownerId,
             query: {
                 isConsistent: false,
-                limit: 150,
-                partMask: 9,  // get query results and max rows per page
+                limit: maxPageSize,
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
                 offset: 0,
                 sql: widgetparamsMapped.query
             }
@@ -357,17 +377,45 @@ class Markdown extends React.Component {
         // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
         // we can get, the following uses that maximum and offsets to the appropriate location to get the data
         // afterwards, the process repeats
-        this.props.getQueryTableResults(queryRequest, this.props.token).then(initData => {
-            let maxPageSize = initData.maxRowsPerPage
+        SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(initData => {
             let queryCount = initData.queryResult.queryResults.rows.length
             let totalQueryResults = queryCount
-
+            
             raw_plot_data = initData;
 
             // Get the subsequent data, note- although the function calls itself, it runs
             // iteratively due to the await
-            const getData = async (initGet) => {
-                if (queryCount !== maxPageSize && !initGet) {
+            const getData = async () => {
+                if (queryCount === maxPageSize) {
+                    maxPageSize = initData.maxRowsPerPage
+                    let queryRequestWithMaxPageSize = {
+                        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                        entityId: this.props.ownerId,
+                        partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                        query: {
+                            isConsistent: false,
+                            limit: maxPageSize,
+                            offset: totalQueryResults,
+                            sql: widgetparamsMapped.query
+                        }
+                    };
+                    await SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, this.props.token)
+                        .then(post_data => {
+                            queryCount += post_data.queryResult.queryResults.rows.length
+                            if (queryCount > 0) {
+                                totalQueryResults += queryCount
+                                raw_plot_data.queryResult.queryResults.rows.push(
+                                    ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
+                                )
+                            }
+                            return getData()
+                        })
+                        .catch(err => 
+                            {
+                                console.log("Error on getting table results ", err)
+                            }
+                        );
+                } else {
                     // set data to this plots sql in the query data
                     let queryData = { ...this.state.queryData }; // shallow copy
                     let query = widgetparamsMapped.query
@@ -377,37 +425,10 @@ class Markdown extends React.Component {
                     });
                     return raw_plot_data
                 }
-                let queryRequestWithMaxPageSize = {
-                    concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                    entityId: this.state.ownerId,
-                    partMask: 1,  // only get the results
-                    query: {
-                        isConsistent: false,
-                        limit: maxPageSize,
-                        offset: totalQueryResults,
-                        sql: widgetparamsMapped.query
-                    }
-                };
-                await this.props.getQueryTableResults(queryRequestWithMaxPageSize, this.props.token)
-                    .then(post_data => {
-                        queryCount += post_data.queryResult.queryResults.rows.length
-                        if (queryCount > 0) {
-                            totalQueryResults += queryCount
-                            raw_plot_data.queryResult.queryResults.rows.push(
-                                ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
-                            )
-                        }
-                        return getData(false)
-                    }).catch(err => 
-                        {
-                            console.log("Error on getting table results ", err)
-                            queryCount = 0
-                        }
-                    );
             }
-            return getData(true)
+            return getData()
         });
-        // when data
+        // when data hasn't loaded yet
         return null
     }
 
@@ -440,7 +461,7 @@ class Markdown extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
      */
     getWikiPageMarkdown() {
-        this.props.markdownEndpoint(this.props.token, this.state.ownerId, this.state.wikiId)
+        SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
         .then(data => {
             // on success grab text and append to the default text
             let initText = this.state.text;
@@ -456,7 +477,7 @@ class Markdown extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal attachments
      */
     getWikiAttachments() {
-        this.props.wikiAttachmentsEndpointFromEntity(this.props.token, this.state.ownerId, this.state.wikiId)
+        SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
                 this.setState({ fileHandles: data });
                 this.processWidgets(data);
@@ -486,7 +507,6 @@ class Markdown extends React.Component {
             md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
         })
 
-
         // get wiki attachments
         this.getWikiAttachments();
         
@@ -501,15 +521,9 @@ class Markdown extends React.Component {
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
         // we have to carefully update the component so it doesn't encounter an infinite loop
-        /* two scenarios in which there is an update:
-            1. Submit was used to request another wiki page be rendered
-            2. User logged in and has different priveledges to see or not see a certain wiki page
+        /* scenarios in which there is an update:
+            1. User logged in and has different priveledges to see or not see a certain wiki page
         */
-        if (this.state.calledReset) {
-            this.setState({calledReset: false})
-            this.getWikiAttachments()
-            this.getWikiPageMarkdown()
-        }
         if (this.props.token !== "" && !this.state.isLoggedIn) {
             this.setState({isLoggedIn: true})
             this.getWikiAttachments()
@@ -526,11 +540,11 @@ class Markdown extends React.Component {
      * @returns view that presents error message on error, otherwise null
      */
     getErrorView() {
-        if (this.state.errorMessage) {
+        if (this.state.errorMessage && this.props.errorMessageView) {
             return ( 
-            <div className="row">
-                <p className="text-danger"> Error: {this.state.errorMessage} </p>
-            </div>)
+            <React.Fragment>
+                {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
+            </React.Fragment>)
         }
     }
 
@@ -557,32 +571,23 @@ class Markdown extends React.Component {
 
     render() {
         return (
-            <div className="container border mt-5 pt-3">
-                <div className="row">
-                    <p className="p-2 text-center" dangerouslySetInnerHTML={this.createMarkup('# Markdown it demo!')}/>
-                </div>
-                <div className="row mb-3">
-                    <form onSubmit={this.resetComponentState}>
-                        <div className="form-group ml-2 form-inline">
-                            <label> Enter wiki ownerId</label>
-                            <input name="newOwnerId" onChange={this.handleChange}  placeholder={this.state.ownerId} type="text" value={this.state.newOwnerId} className="ml-2 form-control"/>
-                        </div>
-                        <div className="form-group ml-2 form-inline">
-                            <label> Enter synapse wikiId</label>
-                            <input name="newWikiId" onChange={this.handleChange} placeholder={this.state.wikiId} type="text" value={this.state.newWikiId} className="ml-2 form-control"/>
-                        </div>
-                        <button onSubmit={this.resetComponentState} type="submit" className="btn ml-3 btn-large btn-primary">Get new wiki</button>
-                    </form>
-                </div>
+            <React.Fragment>
                {this.getErrorView()}
-                <div className="row">
-                    <textarea rows={5} name="text" value={this.state.text} onChange={this.handleChange} className="col-6 border"> </textarea>
-                    <div className="col-6" dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
-                </div>
-            </div>
+               <div dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
+            </React.Fragment>
         )
     }
-
 }
 
-export default Markdown;
+// Validate props passed to the component
+MarkdownSynapse.propTypes = {
+    // optional
+    errorMessageView: PropTypes.element,
+
+    // required props
+    token : PropTypes.string.isRequired,
+    ownerId: PropTypes.string.isRequired,
+    wikiId: PropTypes.string.isRequired
+}
+
+export default MarkdownSynapse;

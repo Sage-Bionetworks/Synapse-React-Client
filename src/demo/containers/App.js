@@ -4,11 +4,13 @@ import logo from 'images/logo.svg';
 import './App.css';
 
 import Login from 'lib/containers/Login.js'
-import Markdown from 'lib/containers/Markdown.js'
+import MarkdownSynapse from 'lib/containers/MarkdownSynapse.js'
 import UserFavorites from 'lib/containers/UserFavorites.js';
 import UserProjects from 'lib/containers/UserProjects.js';
 import UserTeam from 'lib/containers/UserTeams.js';
 import UserProfile from 'lib/containers/UserProfile.js';
+import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
+import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView';
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
@@ -91,6 +93,7 @@ class App extends Component {
     this.getVersion()
     this.makeSampleQueryCall()
   }
+ 
   
   render() {
     return (
@@ -121,18 +124,20 @@ class App extends Component {
                      ownerId={this.state.ownerId}
                      getUserProfileEndpoint={SynapseClient.getUserProfile}>
         </UserProfile>
-        
+       
         <UserTeam token={this.state.token} 
                   ownerId={this.state.ownerId}
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
-        
-        <Markdown token={this.state.token}
-                  getFileURLs={SynapseClient.getFiles}
-                  wikiAttachmentsEndpointFromEntity={SynapseClient.getWikiAttachmentsFromEntity}
-                  markdownEndpoint={SynapseClient.getEntityWiki}
-                  getQueryTableResults={SynapseClient.getQueryTableResults}>
-        </Markdown>
+
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    errorMessageView={<CustomMarkdownErrorView/>}>
+          </MarkdownSynapse>
+        </CustomMarkdownView>
+
       </div>
     );
   }
