@@ -2,6 +2,8 @@ import React from "react";
 import * as SynapseConstants from '../utils/SynapseConstants'
 import * as SynapseClient from '../utils/SynapseClient'
 
+import PropTypes from 'prop-types'
+
 /**
  * Import requirements for markdown
  */
@@ -217,7 +219,6 @@ class MarkdownSynapse extends React.Component {
                     console.log("Error on synapse entity image load ", err)
                 })
             }
-      
         } else if (widgetType === "plot") {
             elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
         }
@@ -319,8 +320,8 @@ class MarkdownSynapse extends React.Component {
                 plot_data[j - 1].y.push(row_values[j]);
             }
         }
-        // error with clearing html - "" is not a function, wrapping in try/catch prevents the error
-        // although it doesn't catch it.
+        // error with clearing html - "" is not a function 
+        // wrapping in try/catch prevents the error, although it doesn't catch it.
         try {
             elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
         }
@@ -409,7 +410,8 @@ class MarkdownSynapse extends React.Component {
                                 )
                             }
                             return getData()
-                        }).catch(err => 
+                        })
+                        .catch(err => 
                             {
                                 console.log("Error on getting table results ", err)
                             }
@@ -506,7 +508,6 @@ class MarkdownSynapse extends React.Component {
             md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
         })
 
-
         // get wiki attachments
         this.getWikiAttachments();
         
@@ -577,6 +578,17 @@ class MarkdownSynapse extends React.Component {
             </React.Fragment>
         )
     }
+}
+
+// Validate props passed to the component
+MarkdownSynapse.propTypes = {
+    // optional
+    errorMessageView: PropTypes.element,
+
+    // required props
+    token : PropTypes.string.isRequired,
+    ownerId: PropTypes.string.isRequired,
+    wikiId: PropTypes.string.isRequired
 }
 
 export default MarkdownSynapse;
