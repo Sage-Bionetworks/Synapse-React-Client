@@ -9,6 +9,8 @@ import UserFavorites from 'lib/containers/UserFavorites.js';
 import UserProjects from 'lib/containers/UserProjects.js';
 import UserTeam from 'lib/containers/UserTeams.js';
 import UserProfile from 'lib/containers/UserProfile.js';
+import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
+// import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView'
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
@@ -94,27 +96,6 @@ class App extends Component {
  
   
   render() {
-    
-    const SampleErrorMessage = function (props) {
-      return (
-        <div className="text-danger">
-          {props.message}
-        </div>
-      )
-    }
-
-    const CustomMarkdownView = function (props) {
-      return (
-        <div className="container border mt-5">
-          <div className="row">
-            <div className="col-6">
-              {props.children}
-            </div>
-          </div>
-        </div>
-      )
-    }
-
     return (
       <div className="App mb-5">
         <div className="App-header text-center">

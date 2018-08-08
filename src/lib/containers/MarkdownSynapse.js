@@ -25,7 +25,7 @@ let synapseMath = require('markdown-it-synapse-math')
  * @class Markdown
  * @extends {React.Component}
  */
-class Markdown extends React.Component {
+class MarkdownSynapse extends React.Component {
 
     /**
      * Creates an instance of Markdown.
@@ -440,6 +440,10 @@ class Markdown extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
      */
     getWikiPageMarkdown() {
+        if (this.props.token === "") {
+
+        }
+
         SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
         .then(data => {
             // on success grab text and append to the default text
@@ -559,4 +563,4 @@ class Markdown extends React.Component {
     }
 }
 
-export default Markdown;
+export default MarkdownSynapse;
