@@ -43,18 +43,18 @@ var synapseMath = require('markdown-it-synapse-math');
  * @extends {React.Component}
  */
 
-var Markdown = function (_React$Component) {
-    _inherits(Markdown, _React$Component);
+var MarkdownSynapse = function (_React$Component) {
+    _inherits(MarkdownSynapse, _React$Component);
 
     /**
      * Creates an instance of Markdown.
      * @param {*} props
      */
-    function Markdown(props) {
-        _classCallCheck(this, Markdown);
+    function MarkdownSynapse(props) {
+        _classCallCheck(this, MarkdownSynapse);
 
         // Store markdown object and text to be rendered by said object
-        var _this = _possibleConstructorReturn(this, (Markdown.__proto__ || Object.getPrototypeOf(Markdown)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (MarkdownSynapse.__proto__ || Object.getPrototypeOf(MarkdownSynapse)).call(this, props));
 
         _this.state = {
             md: require('markdown-it')({ html: true }),
@@ -101,7 +101,7 @@ var Markdown = function (_React$Component) {
      */
 
 
-    _createClass(Markdown, [{
+    _createClass(MarkdownSynapse, [{
         key: 'createMarkup',
         value: function createMarkup(text) {
             var initText = this.state.md.render(text);
@@ -512,6 +512,8 @@ var Markdown = function (_React$Component) {
         value: function getWikiPageMarkdown() {
             var _this5 = this;
 
+            if (this.props.token === "") {}
+
             SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                 // on success grab text and append to the default text
                 var initText = _this5.state.text;
@@ -640,7 +642,7 @@ var Markdown = function (_React$Component) {
         }
     }]);
 
-    return Markdown;
+    return MarkdownSynapse;
 }(React.Component);
 
-export default Markdown;
+export default MarkdownSynapse;
