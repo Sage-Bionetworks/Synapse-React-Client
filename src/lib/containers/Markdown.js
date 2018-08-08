@@ -1,5 +1,5 @@
 import React from "react";
-import * as SynapseConstants from 'lib/utils/SynapseConstants'
+import * as SynapseConstants from '../utils/SynapseConstants'
 
 /**
  * Import requirements for markdown
