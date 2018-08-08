@@ -58,7 +58,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 ##### Markdown Rendering Example
 View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
-To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error message to display.
+To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a ["CustomMarkdownView"](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownView.js) component which does this. Additionally, you can configure an error message to display (demonstrated by the [CustomMarkdownErrorView](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownErrorView.js) being passed into the Markdown component).
 
 *Note* the *SynapseComponents.Custom\** components serve as 
 examples of possibile ideas of configuring the markdown component, but are
