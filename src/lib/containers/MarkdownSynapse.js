@@ -47,9 +47,11 @@ class MarkdownSynapse extends React.Component {
             calledReset: false,
             isLoggedIn: this.props.token !== "",
             errorMessage: "",
-            hasReferences: false
+            hasFootnotes: false,
+            footnotes: ["a", "b"]
         }
 
+        this.footenoteRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
@@ -91,7 +93,8 @@ class MarkdownSynapse extends React.Component {
         let cleanText = sanitizeHtml(initText, 
             {   
                 allowedTags: [ 'span', 'code', 'h1', 'h2','h3', 'h4', 'h5', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
-            'table', 'tr', 'td', 'tbody', 'th', 'thead', "button", "div", "image", "ol", "ul", "li", "svg", "g"],
+            'table', 'tr', 'td', 'tbody', 'th', 'thead', "button", "div", "image", "ol", "ul", "li", "svg", "g",
+            "br"],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['*'],
@@ -179,9 +182,7 @@ class MarkdownSynapse extends React.Component {
                     })
                     // TODO: consider opitmizations in the future
                     this.matchElementToResource(elementList);
-                    if (this.state.hasReferences) {
-                        this.addFootnotes()
-                    }
+                    this.addFootnotes()
                 }
             )
             .catch(err =>{
@@ -189,13 +190,8 @@ class MarkdownSynapse extends React.Component {
             })
         } else {
             this.matchElementToResource(elementList);
-            if (this.state.hasReferences) {
-                this.addFootnotes()
-            }
+            this.addFootnotes()
         }
-
-
-
     }
 
     /**
@@ -375,23 +371,47 @@ class MarkdownSynapse extends React.Component {
     handleReferenceWidget(elementBundle) {
         let renderedHTML = `<span> <span style=""><div class="ReferenceWidget"><a class="gwt-Anchor link margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
         elementBundle.element.outerHTML = renderedHTML
-        if (!this.state.hasReferences) {
-            this.setState({hasReferences: true})
+        if (!this.state.hasFootnotes) {
+            this.setState({hasFootnotes: true})
         }
     }
 
 
+    // handle adding all the footnotes to the page
     addFootnotes() {
-            if (this.state.hasReferences) {
-            console.log('adding footnotes to page')
-            let footnotesDict = this.createMarkup(markdownitSynapse.footnotes())
-            
-            return (
-                <React.Fragment>
-                    <hr/>
-                    <div dangerouslySetInnerHTML={footnotesDict}></div>
-                </React.Fragment>
-            )
+        if (this.state.hasFootnotes) {
+
+            let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
+            let node = this.footenoteRef.current
+
+            window.myStringL = footnotes_html
+
+            footnotes_html = footnotes_html.replace(/Synapse widget/g,'')
+            node.appendChild(document.createRange().createContextualFragment(footnotes_html))
+
+            // this.state.footnotes.forEach(
+            //     element => {
+            //         let referenceNode = document.createElement("div")
+            //         referenceNode.setAttribute("class", "BookmarkWidget")
+
+            //         let anchor = document.createElement("a")
+            //         anchor.setAttribute("class", "link")
+            //         anchor.innerText = "[1]"
+
+            //         referenceNode.appendChild(anchor)
+
+            //         // `<div class="BookmarkWidget"><a class="gwt-Anchor link">[1]</a></div>`
+            //         node.append(
+            //             referenceNode
+            //         )
+            //     }
+            // )
+            // return (
+            //     <React.Fragment>
+            //         <hr/>
+            //         <div dangerouslySetInnerHTML={footnotesDict}></div>
+            //     </React.Fragment>
+            // )
         }
     }
 
@@ -614,11 +634,18 @@ class MarkdownSynapse extends React.Component {
     }
 
     render() {
+
+        const visibility = {
+            visibility: this.state.hasFootnotes ? "visible" : "hidden"
+        }
+
         return (
             <React.Fragment>
                {this.getErrorView()}
                <div dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
-               {this.addFootnotes()}
+               <hr style={visibility}  />
+               <p ref={this.footenoteRef} style={visibility}>
+               </p>
             </React.Fragment>
         )
     }
