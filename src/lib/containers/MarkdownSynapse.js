@@ -46,7 +46,8 @@ class MarkdownSynapse extends React.Component {
             newWikiId: "",
             calledReset: false,
             isLoggedIn: this.props.token !== "",
-            errorMessage: ""
+            errorMessage: "",
+            hasReferences: false
         }
 
         
@@ -76,6 +77,8 @@ class MarkdownSynapse extends React.Component {
         // handling each of the synapse widgets
         this.handleImageWidget = this.handleImageWidget.bind(this)
         this.handlePlotlyWidget = this.handlePlotlyWidget.bind(this)
+        this.handleReferenceWidget = this.handleReferenceWidget.bind(this)
+        this.addFootnotes = this.addFootnotes.bind(this)
     }
 
     /**
@@ -176,6 +179,9 @@ class MarkdownSynapse extends React.Component {
                     })
                     // TODO: consider opitmizations in the future
                     this.matchElementToResource(elementList);
+                    if (this.state.hasReferences) {
+                        this.addFootnotes()
+                    }
                 }
             )
             .catch(err =>{
@@ -183,7 +189,13 @@ class MarkdownSynapse extends React.Component {
             })
         } else {
             this.matchElementToResource(elementList);
+            if (this.state.hasReferences) {
+                this.addFootnotes()
+            }
         }
+
+
+
     }
 
     /**
@@ -228,6 +240,8 @@ class MarkdownSynapse extends React.Component {
             }
         } else if (widgetType === "plot") {
             elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+        } else if (widgetType === "reference") {
+            elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
         }
     }
 
@@ -245,6 +259,8 @@ class MarkdownSynapse extends React.Component {
                 this.handleImageWidget(match, elementBundle);
             } else if (elementBundle.widgetType === "plot") {
                 this.handlePlotlyWidget(elementBundle);
+            } else if (elementBundle.widgetType === "reference") {
+                this.handleReferenceWidget(elementBundle);
             }
         });
     }
@@ -354,6 +370,29 @@ class MarkdownSynapse extends React.Component {
                 window.Plotly.Plots.resize(gd);
             };
         })();
+    }
+
+    handleReferenceWidget(elementBundle) {
+        let renderedHTML = `<span> <span style=""><div class="ReferenceWidget"><a class="gwt-Anchor link margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
+        elementBundle.element.outerHTML = renderedHTML
+        if (!this.state.hasReferences) {
+            this.setState({hasReferences: true})
+        }
+    }
+
+
+    addFootnotes() {
+            if (this.state.hasReferences) {
+            console.log('adding footnotes to page')
+            let footnotesDict = this.createMarkup(markdownitSynapse.footnotes())
+            
+            return (
+                <React.Fragment>
+                    <hr/>
+                    <div dangerouslySetInnerHTML={footnotesDict}></div>
+                </React.Fragment>
+            )
+        }
     }
 
     /**
@@ -579,6 +618,7 @@ class MarkdownSynapse extends React.Component {
             <React.Fragment>
                {this.getErrorView()}
                <div dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
+               {this.addFootnotes()}
             </React.Fragment>
         )
     }
