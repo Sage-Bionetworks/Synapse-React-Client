@@ -100,7 +100,7 @@ class App extends Component {
       <div className="App mb-5">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Synapse React Client Demo</h2>
+          <h4>Synapse React Client Demo</h4>
         </div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}

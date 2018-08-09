@@ -18,3 +18,12 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.syn-example {
+  border-color: lightgray;
+  border-style: solid;
+  border-width: 1px;
+  padding: 10px;
+  margin-bottom: 10px;
+
+}

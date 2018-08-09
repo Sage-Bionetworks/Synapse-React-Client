@@ -4,6 +4,8 @@ import * as SynapseClient from '../utils/SynapseClient'
 
 import PropTypes from 'prop-types'
 
+import "../style/Portal.css"
+
 /**
  * Import requirements for markdown
  */
@@ -19,7 +21,6 @@ let markdownInlineComments = require('markdown-it-inline-comments')
 let markdownBr = require('markdown-it-br')
 let sanitizeHtml = require('sanitize-html');
 let synapseMath = require('markdown-it-synapse-math')
-
 
 /**
  * Basic vanilla Markdownit functionality with latex support, synapse image support, plotly support
@@ -45,7 +46,7 @@ class MarkdownSynapse extends React.Component {
             newWikiId: "",
             calledReset: false,
             isLoggedIn: this.props.token !== "",
-            loadingImgResource: false
+            errorMessage: ""
         }
 
         
@@ -86,8 +87,8 @@ class MarkdownSynapse extends React.Component {
         let initText = this.state.md.render(text) 
         let cleanText = sanitizeHtml(initText, 
             {   
-                allowedTags: [ 'span', 'code', 'h1', 'h2','h3', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
-            'table', 'tr', 'td', 'tbody', "button", "div", "image", "ol", "ul", "li", "svg", "g"],
+                allowedTags: [ 'span', 'code', 'h1', 'h2','h3', 'h4', 'h5', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
+            'table', 'tr', 'td', 'tbody', 'th', 'thead', "button", "div", "image", "ol", "ul", "li", "svg", "g"],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['*'],
@@ -95,7 +96,10 @@ class MarkdownSynapse extends React.Component {
                     'div': ['class', 'style'],
                     "ul": ["class"],
                     "ol": ["class"],
-                    "li": ["class"]
+                    "li": ["class"],
+                    'table': ["class"],
+                    'th': ['class'],
+                    'thead': ['class']
                 }
             }
         )
@@ -151,6 +155,7 @@ class MarkdownSynapse extends React.Component {
         let fileHandleAssociationList = []
 
         // must gather resources for all widgets before making batch file call, wait till done
+        console.log('processing widget mappings')
         await this.processWidgetMappings(widgets, fileHandleAssociationList, elementList)
 
         // Process all the files found on the page
@@ -207,6 +212,8 @@ class MarkdownSynapse extends React.Component {
                 });
                 elementList.push({element:element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
             } else if (widgetparamsMapped.synapseId) {
+                // elements with synapseIds have to have their resources loaded first, their not located
+                // with the file attachnent list
                 let synapseId = widgetparamsMapped.synapseId;
                 await SynapseClient.getEntity(this.props.token, synapseId).then(data => {
                     fileHandleAssociationList.push({
@@ -521,10 +528,8 @@ class MarkdownSynapse extends React.Component {
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
         // we have to carefully update the component so it doesn't encounter an infinite loop
-        /* scenarios in which there is an update:
-            1. User logged in and has different priveledges to see or not see a certain wiki page
-        */
         if (this.props.token !== "" && !this.state.isLoggedIn) {
+            // this is true when user just logged
             this.setState({isLoggedIn: true})
             this.getWikiAttachments()
             this.getWikiPageMarkdown()

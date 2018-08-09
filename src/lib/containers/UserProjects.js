@@ -45,11 +45,11 @@ class UserProjects extends React.Component {
         }
 
         return (
-            <div className="container border pt-2 mt-5">
+            <div className="container syn-example pt-2 mt-5">
                 <h3> Demo of getting user projects</h3>
-                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")}  onClick={() => this.getProjects('MY_PROJECTS')}> All </button>
-                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")}  onClick={() => this.getProjects('MY_CREATED_PROJECTS')}> Created By Me </button>
-                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 " + (this.props.token === "" ? "btn-outline-secondary" :"btn-primary")}  onClick={() => this.getProjects('MY_PARTICIPATED_PROJECTS')}> Shared directly with me </button>
+                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 btn-primary"}  onClick={() => this.getProjects('MY_PROJECTS')}> All </button>
+                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 btn-primary"}  onClick={() => this.getProjects('MY_CREATED_PROJECTS')}> Created By Me </button>
+                <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 btn-primary"}  onClick={() => this.getProjects('MY_PARTICIPATED_PROJECTS')}> Shared directly with me </button>
                 {listProjects}
                 {this.state.errorMessage}
             </div>
