@@ -37,6 +37,8 @@ class MarkdownSynapse extends React.Component {
     constructor (props) {
         super(props)
         // Store markdown object and text to be rendered by said object
+        // async data goes inside of state, in this way and setState calls will
+        // update those positions on the page where async requirements are needed
         this.state = {
             md: require('markdown-it')({html: true}),
             text: '',
@@ -48,7 +50,8 @@ class MarkdownSynapse extends React.Component {
             errorMessage: "",
             queryData: {}
         }
-        
+
+        // Put synchronous data in their own variables
         this.fileResults = null
         this.hasBookmarks = false
         this.bookmarksFirstSceen = false
@@ -83,7 +86,7 @@ class MarkdownSynapse extends React.Component {
         this.handleImageWidget = this.handleImageWidget.bind(this)
         this.handlePlotlyWidget = this.handlePlotlyWidget.bind(this)
         this.handleReferenceWidget = this.handleReferenceWidget.bind(this)
-        this.addFootnotes = this.addFootnotes.bind(this)
+        this.addBookmarks = this.addBookmarks.bind(this)
     }
 
     /**
@@ -183,7 +186,7 @@ class MarkdownSynapse extends React.Component {
                     // TODO: consider opitmizations in the future
                     markdownitSynapse.resetFootnoteId()
                     this.matchElementToResource(elementList);
-                    this.addFootnotes()
+                    this.addBookmarks()
                 }
             )
             .catch(err =>{
@@ -191,7 +194,7 @@ class MarkdownSynapse extends React.Component {
             })
         } else {
             this.matchElementToResource(elementList);
-            this.addFootnotes()
+            this.addBookmarks()
         }
     }
 
@@ -371,8 +374,20 @@ class MarkdownSynapse extends React.Component {
         })();
     }
 
+                
+
+    /**
+     * Handles ?{reference} synapse widgets
+     *
+     * @param {*} elementBundle
+     * @param {*} index
+     * @memberof MarkdownSynapse
+     */
     handleReferenceWidget(elementBundle, index) {
         let renderedHTML = ""
+        
+        // due to re-renering, we save the result of this method, on initial calculate the html, otherwise we just 
+        // it
         if (!this.hasProcessedReferences) {
             renderedHTML = `<span> <span><div class="ReferenceWidget"><a href="#" class="margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
             this.referenceView.push(renderedHTML)
@@ -380,53 +395,75 @@ class MarkdownSynapse extends React.Component {
             renderedHTML = this.referenceView[index]
         }
         
+        // attach an anchor tag with an event listener to jump to the appropriate bookmark at the bottom of the page
+        // note- can't save the dom element as in addBookmarks() the even listener seems to break this option
         renderedHTML= document.createRange().createContextualFragment(renderedHTML)
         renderedHTML.querySelector("a").addEventListener("click",
             event => {
                 event.preventDefault()
+                // find and go to the bookmark at the bottom of the page
                 let goTo = document.getElementById(`bookmark${index}`)
                 goTo.scrollIntoView()
             }
         )
 
-        elementBundle.element.innerText = ""
+        elementBundle.element.innerText = "" // clear the <Synapse widget> text
         elementBundle.element.appendChild(renderedHTML)
         this.hasBookmarks = true
     }
 
-    // handle adding all the footnotes to the page
-    addFootnotes() {
+    /**
+     * Process all the corresponding bookmark tags of the references made throughout the page
+     *
+     * @memberof MarkdownSynapse
+     */
+    addBookmarks() {
+        /* we have to check that:
+            1) there are bookmarks on the page
+            2) we haven't already processed bookmarks on a previous render of the page
+        */
         if (this.hasBookmarks && !this.bookmarksFirstSceen) {
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-            window.FootnotesHTML = footnotes_html
-            let node = this.footnoteRef.current
+            let node = this.footnoteRef.current // corresponds to <p> tag in render below
+            // remove the <p> tag -- we have a ref to one in render, so this has to be removed
             footnotes_html = footnotes_html.substring(3, footnotes_html.length - 5)
-
+            // find all links in the footnotes_html-- each of which contains a "text=[\d]"
             let linkOccurences = footnotes_html.match(/text=\[.\]/g).map(
                 element => { 
+                    // grab only the [\d] pieces of the text
                     return element.substring(element.indexOf("["), element.indexOf("]") + 1)
                  }
             )
 
-            // put into proper format
+            // Go through each of the [1] and format to the appropriate view
             let linkFormatted = linkOccurences.map(
                 (element, index) => {
+                    // here bookmark is used so that the references can target this anchor tag 
                     return `<span><div class="BookmarkWidget"><a id=${"bookmark" + index}>${element}</a></div></span>`
                 }
             )
 
+            // now all of the links are prepared to be inserted back into the original string
+            // all link occurences have a single location in the original string-- we go through and then 
+            // match of the link occurences to the spot it belongs into the html
             let i = 0
             let matches = footnotes_html.replace(/(<span widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm, 
-                function(match, p1, p2, p3, string) {
+                // replace using a function where p1,p2,p3 correspond to the matched groups from above
+                // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
+                // formatted text from above
+                (match, p1, p2, p3, string) => {
                     return [p1, linkFormatted[i++] , p3].join("")
                 }
             )
 
+            // create the dom element for this view and append to the ref
             let bookmarkFragment = document.createRange().createContextualFragment(matches)
             node.appendChild(bookmarkFragment)
+            // save the result of the operation from above
             this.bookmarksFirstSceen = true
             this.bookmarkFragment = bookmarkFragment
         } else if (this.hasBookmarks) {
+            // we've already computed the bookmarks, we can instead used the saved fragment
             this.footnoteRef.current.appendChild(this.bookmarkFragment)
         }
     }
@@ -616,6 +653,7 @@ class MarkdownSynapse extends React.Component {
         if (this.props.token !== "" && !this.state.isLoggedIn) {
             // this is true when user just logged
             this.setState({isLoggedIn: true})
+            // only if they didn't supply markdown should this happen
             if (!this.props.markdown) {
                 this.getWikiAttachments()
                 this.getWikiPageMarkdown()
