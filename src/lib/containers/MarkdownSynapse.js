@@ -46,7 +46,6 @@ class MarkdownSynapse extends React.Component {
             calledReset: false,
             isLoggedIn: this.props.token !== "",
             errorMessage: "",
-            footnotes: ["a", "b"],
             queryData: {}
         }
         
@@ -375,13 +374,23 @@ class MarkdownSynapse extends React.Component {
     handleReferenceWidget(elementBundle, index) {
         let renderedHTML = ""
         if (!this.hasProcessedReferences) {
-            renderedHTML = `<span> <span style=""><div class="ReferenceWidget"><a class="gwt-Anchor link margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
+            renderedHTML = `<span> <span><div class="ReferenceWidget"><a href="#" class="margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
             this.referenceView.push(renderedHTML)
         } else {
             renderedHTML = this.referenceView[index]
         }
         
-        elementBundle.element.outerHTML = renderedHTML
+        renderedHTML= document.createRange().createContextualFragment(renderedHTML)
+        renderedHTML.querySelector("a").addEventListener("click",
+            event => {
+                event.preventDefault()
+                let goTo = document.getElementById(`bookmark${index}`)
+                goTo.scrollIntoView()
+            }
+        )
+
+        elementBundle.element.innerText = ""
+        elementBundle.element.appendChild(renderedHTML)
         this.hasBookmarks = true
     }
 
@@ -401,8 +410,8 @@ class MarkdownSynapse extends React.Component {
 
             // put into proper format
             let linkFormatted = linkOccurences.map(
-                element => {
-                    return `<span><div class="BookmarkWidget"><a class="gwt-Anchor link">${element}</a></div></span>`
+                (element, index) => {
+                    return `<span><div class="BookmarkWidget"><a id=${"bookmark" + index}>${element}</a></div></span>`
                 }
             )
 
