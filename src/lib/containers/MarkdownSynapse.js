@@ -584,19 +584,28 @@ class MarkdownSynapse extends React.Component {
             markdownInlineComments, markdownBr
         )
 
+
         const mathSuffix = ''
         // Update the internal md object with the wrapped synapse object
         this.setState({
             md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
         })
 
-        // get wiki attachments
-        this.getWikiAttachments();
-        
-        // sample API call to retrieve Synapse wiki page
-        // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
-        this.getWikiPageMarkdown();
+        // TODO: if supplying only markdown then there can't be any widgets
+        // that require an owner/synapse id -- supplying markdown may not be 
+        // an option
 
+        if (this.props.markdown) {
+            this.setState({
+                text: this.props.markdown
+            })
+        } else {
+            // get wiki attachments
+            this.getWikiAttachments();
+            // sample API call to retrieve Synapse wiki page
+            // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
+            this.getWikiPageMarkdown();
+        }
         // process all math identified markdown items
         this.processMath()
     }
@@ -607,8 +616,10 @@ class MarkdownSynapse extends React.Component {
         if (this.props.token !== "" && !this.state.isLoggedIn) {
             // this is true when user just logged
             this.setState({isLoggedIn: true})
-            this.getWikiAttachments()
-            this.getWikiPageMarkdown()
+            if (!this.props.markdown) {
+                this.getWikiAttachments()
+                this.getWikiPageMarkdown()
+            }
         }
         this.processMath()
         this.processWidgets()
@@ -668,6 +679,14 @@ class MarkdownSynapse extends React.Component {
     }
 }
 
+const requiredPropsCheck = (props, propName, componentName) => {
+    if ( !props.ownerId && !props.wikiId && !props.markdown) {
+        return new Error(`Either ownerId and wikiId OR markdown is required by '${componentName}' component.`)
+    } else if (props.ownerId && props.wikiId && props.markdown) {
+        return new Error(`Either ownerId and wikiId OR markdown can be specified by '${componentName}' component.`)
+    }
+}
+
 // Validate props passed to the component
 MarkdownSynapse.propTypes = {
     // optional
@@ -675,8 +694,12 @@ MarkdownSynapse.propTypes = {
 
     // required props
     token : PropTypes.string.isRequired,
-    ownerId: PropTypes.string.isRequired,
-    wikiId: PropTypes.string.isRequired
+
+    // either owner id and wiki required
+    ownerId: requiredPropsCheck,
+    wikiId: requiredPropsCheck,
+    // OR
+    markdown: requiredPropsCheck
 }
 
 export default MarkdownSynapse;
