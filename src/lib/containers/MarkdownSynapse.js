@@ -53,6 +53,8 @@ class MarkdownSynapse extends React.Component {
         this.fileResults = null
         this.hasBookmarks = false
         this.bookmarksFirstSceen = false
+        this.hasProcessedReferences = false
+        this.referenceView = []
         this.footnoteRef = React.createRef()
         
         // handle widgets and math markdown
@@ -189,7 +191,6 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on url grab ', err)
             })
         } else {
-            markdownitSynapse.resetFootnoteId()
             this.matchElementToResource(elementList);
             this.addFootnotes()
         }
@@ -249,7 +250,8 @@ class MarkdownSynapse extends React.Component {
      * @memberof Markdown
      */
     matchElementToResource(elementList) {
-        elementList.forEach(elementBundle => {
+        let referenceCount = 0
+        elementList.forEach((elementBundle) => {
             if (elementBundle.widgetType === "image") {
                 // match corresponds to filehandle that this current element needs to be connected to
                 let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.fileResults);
@@ -257,9 +259,10 @@ class MarkdownSynapse extends React.Component {
             } else if (elementBundle.widgetType === "plot") {
                 this.handlePlotlyWidget(elementBundle);
             } else if (elementBundle.widgetType === "reference") {
-                this.handleReferenceWidget(elementBundle);
+                this.handleReferenceWidget(elementBundle, referenceCount++);
             }
         });
+        this.hasProcessedReferences = elementList.length > 0 ? true: false
     }
 
     handleImageWidget(match, elementBundle) {
@@ -369,8 +372,15 @@ class MarkdownSynapse extends React.Component {
         })();
     }
 
-    handleReferenceWidget(elementBundle) {
-        let renderedHTML = `<span> <span style=""><div class="ReferenceWidget"><a class="gwt-Anchor link margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
+    handleReferenceWidget(elementBundle, index) {
+        let renderedHTML = ""
+        if (!this.hasProcessedReferences) {
+            renderedHTML = `<span> <span style=""><div class="ReferenceWidget"><a class="gwt-Anchor link margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
+            this.referenceView.push(renderedHTML)
+        } else {
+            renderedHTML = this.referenceView[index]
+        }
+        
         elementBundle.element.outerHTML = renderedHTML
         this.hasBookmarks = true
     }
