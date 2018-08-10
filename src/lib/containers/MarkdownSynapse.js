@@ -41,17 +41,19 @@ class MarkdownSynapse extends React.Component {
             md: require('markdown-it')({html: true}),
             text: '',
             fileHandles: null,
-            fileResults: null,
             newOwnerId: "",
             newWikiId: "",
             calledReset: false,
             isLoggedIn: this.props.token !== "",
             errorMessage: "",
-            hasFootnotes: false,
-            footnotes: ["a", "b"]
+            footnotes: ["a", "b"],
+            queryData: {}
         }
-
-        this.footenoteRef = React.createRef()
+        
+        this.fileResults = null
+        this.hasBookmarks = false
+        this.bookmarksFirstSceen = false
+        this.footnoteRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
@@ -161,13 +163,12 @@ class MarkdownSynapse extends React.Component {
         let fileHandleAssociationList = []
 
         // must gather resources for all widgets before making batch file call, wait till done
-        console.log('processing widget mappings')
         await this.processWidgetMappings(widgets, fileHandleAssociationList, elementList)
 
         // Process all the files found on the page
         // if this is the first run load the file results, otherwise
         // use the already retrieved files
-        if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
+        if (fileHandleAssociationList.length > 0 && this.fileResults === null) {
             // include length check to make sure all resources are loaded
             let request = {
                 requestedFiles: fileHandleAssociationList,
@@ -177,10 +178,9 @@ class MarkdownSynapse extends React.Component {
             }
             SynapseClient.getFiles(request, this.props.token).then(
                 data=> {
-                    this.setState({
-                        fileResults: data.requestedFiles
-                    })
+                    this.fileResults = data.requestedFiles
                     // TODO: consider opitmizations in the future
+                    markdownitSynapse.resetFootnoteId()
                     this.matchElementToResource(elementList);
                     this.addFootnotes()
                 }
@@ -189,6 +189,7 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on url grab ', err)
             })
         } else {
+            markdownitSynapse.resetFootnoteId()
             this.matchElementToResource(elementList);
             this.addFootnotes()
         }
@@ -251,7 +252,7 @@ class MarkdownSynapse extends React.Component {
         elementList.forEach(elementBundle => {
             if (elementBundle.widgetType === "image") {
                 // match corresponds to filehandle that this current element needs to be connected to
-                let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
+                let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.fileResults);
                 this.handleImageWidget(match, elementBundle);
             } else if (elementBundle.widgetType === "plot") {
                 this.handlePlotlyWidget(elementBundle);
@@ -371,47 +372,43 @@ class MarkdownSynapse extends React.Component {
     handleReferenceWidget(elementBundle) {
         let renderedHTML = `<span> <span style=""><div class="ReferenceWidget"><a class="gwt-Anchor link margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
         elementBundle.element.outerHTML = renderedHTML
-        if (!this.state.hasFootnotes) {
-            this.setState({hasFootnotes: true})
-        }
+        this.hasBookmarks = true
     }
-
 
     // handle adding all the footnotes to the page
     addFootnotes() {
-        if (this.state.hasFootnotes) {
-
+        if (this.hasBookmarks && !this.bookmarksFirstSceen) {
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-            let node = this.footenoteRef.current
+            window.FootnotesHTML = footnotes_html
+            let node = this.footnoteRef.current
+            footnotes_html = footnotes_html.substring(3, footnotes_html.length - 5)
 
-            window.myStringL = footnotes_html
+            let linkOccurences = footnotes_html.match(/text=\[.\]/g).map(
+                element => { 
+                    return element.substring(element.indexOf("["), element.indexOf("]") + 1)
+                 }
+            )
 
-            footnotes_html = footnotes_html.replace(/Synapse widget/g,'')
-            node.appendChild(document.createRange().createContextualFragment(footnotes_html))
+            // put into proper format
+            let linkFormatted = linkOccurences.map(
+                element => {
+                    return `<span><div class="BookmarkWidget"><a class="gwt-Anchor link">${element}</a></div></span>`
+                }
+            )
 
-            // this.state.footnotes.forEach(
-            //     element => {
-            //         let referenceNode = document.createElement("div")
-            //         referenceNode.setAttribute("class", "BookmarkWidget")
+            let i = 0
+            let matches = footnotes_html.replace(/(<span widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm, 
+                function(match, p1, p2, p3, string) {
+                    return [p1, linkFormatted[i++] , p3].join("")
+                }
+            )
 
-            //         let anchor = document.createElement("a")
-            //         anchor.setAttribute("class", "link")
-            //         anchor.innerText = "[1]"
-
-            //         referenceNode.appendChild(anchor)
-
-            //         // `<div class="BookmarkWidget"><a class="gwt-Anchor link">[1]</a></div>`
-            //         node.append(
-            //             referenceNode
-            //         )
-            //     }
-            // )
-            // return (
-            //     <React.Fragment>
-            //         <hr/>
-            //         <div dangerouslySetInnerHTML={footnotesDict}></div>
-            //     </React.Fragment>
-            // )
+            let bookmarkFragment = document.createRange().createContextualFragment(matches)
+            node.appendChild(bookmarkFragment)
+            this.bookmarksFirstSceen = true
+            this.bookmarkFragment = bookmarkFragment
+        } else if (this.hasBookmarks) {
+            this.footnoteRef.current.appendChild(this.bookmarkFragment)
         }
     }
 
@@ -543,6 +540,7 @@ class MarkdownSynapse extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal attachments
      */
     getWikiAttachments() {
+
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
                 this.setState({ fileHandles: data });
@@ -636,7 +634,7 @@ class MarkdownSynapse extends React.Component {
     render() {
 
         const visibility = {
-            visibility: this.state.hasFootnotes ? "visible" : "hidden"
+            visibility: this.hasBookmarks ? "visible" : "hidden"
         }
 
         return (
@@ -644,7 +642,7 @@ class MarkdownSynapse extends React.Component {
                {this.getErrorView()}
                <div dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
                <hr style={visibility}  />
-               <p ref={this.footenoteRef} style={visibility}>
+               <p ref={this.footnoteRef} style={visibility}>
                </p>
             </React.Fragment>
         )
