@@ -74,7 +74,7 @@ var UserProfile = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: 'container border pt-2 mt-5' },
+                { className: 'container syn-example pt-2 mt-5' },
                 React.createElement(
                     'h3',
                     null,
@@ -82,7 +82,7 @@ var UserProfile = function (_React$Component) {
                 ),
                 React.createElement(
                     'button',
-                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 " + (this.props.token === "" ? "btn-outline-secondary" : "btn-primary"), onClick: this.getUserProfile },
+                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 btn-primary", onClick: this.getUserProfile },
                     ' Get User Profile Information '
                 ),
                 welcomeBanner,

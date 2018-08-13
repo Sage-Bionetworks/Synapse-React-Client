@@ -28,13 +28,13 @@ export var CustomMarkdownView = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "container border mt-5" },
+                { className: "container mt-5" },
                 React.createElement(
                     "div",
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-6" },
+                        { className: "col-12" },
                         this.props.children
                     )
                 )

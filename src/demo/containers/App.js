@@ -96,11 +96,14 @@ class App extends Component {
  
   
   render() {
+    const quickStyle = {
+      color: 'white'
+    }
     return (
       <div className="App mb-5">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Synapse React Client Demo</h2>
+          <h4 style={quickStyle}>Synapse React Client Demo</h4>
         </div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
@@ -134,6 +137,13 @@ class App extends Component {
           <MarkdownSynapse token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
+                    errorMessageView={<CustomMarkdownErrorView/>}>
+          </MarkdownSynapse>
+        </CustomMarkdownView>
+
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    markdown={"# my custom markdown"}
                     errorMessageView={<CustomMarkdownErrorView/>}>
           </MarkdownSynapse>
         </CustomMarkdownView>

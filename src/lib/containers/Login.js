@@ -114,11 +114,11 @@ class Login extends React.Component {
             return (
                 <p> You are currently <strong> <i> not </i> </strong> signed in to Synpase </p>
             )
-        } else if (!this.state.dismissButtonClicked){
+        } else if (!this.state.dissmissButtonClicked){
             return (
                 <div>
                     <p> You are currently <strong> <i> signed in </i> </strong> to Synapse </p>
-                    <div className="alert alert-success alert-dismissible fade show" role="alert">
+                    <div className="bg-success" role="alert">
                         Synapse login successfull
                         <button type="button" className="close" onClick={() => {this.setState({dissmissButtonClicked: true})}}>
                             <span aria-hidden="true">&times;</span>
@@ -131,7 +131,7 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div id="loginPage" className="container border">
+            <div id="loginPage" className="container syn-example">
                 <h3 className="text-left"> Demo login with session token printed to screen</h3>
                 {this.getSignInStateView()}
                 {this.getTokenView()}
