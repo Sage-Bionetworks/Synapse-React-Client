@@ -84,7 +84,7 @@ var UserTeam = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: 'container border pt-2 mt-5' },
+                { className: 'container syn-example pt-2 mt-5' },
                 React.createElement(
                     'h3',
                     null,
@@ -92,7 +92,7 @@ var UserTeam = function (_React$Component) {
                 ),
                 React.createElement(
                     'button',
-                    { disabled: buttonIsOn ? true : false, className: "mb-1 btn " + (buttonIsOn ? "btn-outline-secondary" : "btn-primary"), onClick: this.getUserTeams },
+                    { disabled: buttonIsOn ? true : false, className: "mb-1 btn btn-primary", onClick: this.getUserTeams },
                     ' All '
                 ),
                 listTeam,

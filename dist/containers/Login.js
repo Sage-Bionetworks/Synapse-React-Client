@@ -170,7 +170,7 @@ var Login = function (_React$Component) {
                     ),
                     ' signed in to Synpase '
                 );
-            } else if (!this.state.dismissButtonClicked) {
+            } else if (!this.state.dissmissButtonClicked) {
                 return React.createElement(
                     'div',
                     null,
@@ -193,7 +193,7 @@ var Login = function (_React$Component) {
                     ),
                     React.createElement(
                         'div',
-                        { className: 'alert alert-success alert-dismissible fade show', role: 'alert' },
+                        { className: 'bg-success', role: 'alert' },
                         'Synapse login successfull',
                         React.createElement(
                             'button',
@@ -215,7 +215,7 @@ var Login = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 'div',
-                { id: 'loginPage', className: 'container border' },
+                { id: 'loginPage', className: 'container syn-example' },
                 React.createElement(
                     'h3',
                     { className: 'text-left' },

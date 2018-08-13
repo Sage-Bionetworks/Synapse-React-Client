@@ -77,7 +77,7 @@ var UserProjects = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: 'container border pt-2 mt-5' },
+                { className: 'container syn-example pt-2 mt-5' },
                 React.createElement(
                     'h3',
                     null,
@@ -85,21 +85,21 @@ var UserProjects = function (_React$Component) {
                 ),
                 React.createElement(
                     'button',
-                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 ml-1 mr-1 " + (this.props.token === "" ? "btn-outline-secondary" : "btn-primary"), onClick: function onClick() {
+                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 ml-1 mr-1 btn-primary", onClick: function onClick() {
                             return _this3.getProjects('MY_PROJECTS');
                         } },
                     ' All '
                 ),
                 React.createElement(
                     'button',
-                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 ml-1 mr-1 " + (this.props.token === "" ? "btn-outline-secondary" : "btn-primary"), onClick: function onClick() {
+                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 ml-1 mr-1 btn-primary", onClick: function onClick() {
                             return _this3.getProjects('MY_CREATED_PROJECTS');
                         } },
                     ' Created By Me '
                 ),
                 React.createElement(
                     'button',
-                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 ml-1 mr-1 " + (this.props.token === "" ? "btn-outline-secondary" : "btn-primary"), onClick: function onClick() {
+                    { disabled: this.props.token === "" ? true : false, className: "btn mb-1 ml-1 mr-1 btn-primary", onClick: function onClick() {
                             return _this3.getProjects('MY_PARTICIPATED_PROJECTS');
                         } },
                     ' Shared directly with me '

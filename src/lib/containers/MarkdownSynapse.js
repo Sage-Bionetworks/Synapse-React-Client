@@ -58,6 +58,7 @@ class MarkdownSynapse extends React.Component {
         this.hasProcessedReferences = false
         this.referenceView = []
         this.footnoteRef = React.createRef()
+        this.markupRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
@@ -125,7 +126,7 @@ class MarkdownSynapse extends React.Component {
      */
     processMath() {
         // use regex to grab all elements
-        let mathExpressions = document.querySelectorAll("[id^=\"mathjax-\"]")
+        let mathExpressions = this.markupRef.current.querySelectorAll("[id^=\"mathjax-\"]")
         // go through all obtained elements and transform them with katex
         mathExpressions.forEach(element => {
             window.katex.render(element.textContent, element, {throwOnError: false, delimiters: 
@@ -208,7 +209,7 @@ class MarkdownSynapse extends React.Component {
      * @param {*} elementList   stack of elements to be processed
      */
     async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-        if (widgetType === "buttonlink" && element) {
+        if (widgetType === "buttonlink" && element && element.parentElement) {  // check parent element
             let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
             element.outerHTML = button;
         } else if (widgetType === "image" && this.state.fileHandles) {
@@ -708,10 +709,9 @@ class MarkdownSynapse extends React.Component {
         return (
             <React.Fragment>
                {this.getErrorView()}
-               <div dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
+               <div ref={this.markupRef} dangerouslySetInnerHTML={this.createMarkup(this.state.text)} />
                <hr style={visibility}  />
-               <p ref={this.footnoteRef} style={visibility}>
-               </p>
+               <p ref={this.footnoteRef} style={visibility}></p>
             </React.Fragment>
         )
     }
