@@ -19,3 +19,6 @@ yarn-error.log*
 # visual studio specific 
 jsconfig.json
 .vscode
+
+# compiled css
+src/**/*.css

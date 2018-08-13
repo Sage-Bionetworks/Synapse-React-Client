@@ -96,14 +96,11 @@ class App extends Component {
  
   
   render() {
-    const quickStyle = {
-      color: 'white'
-    }
     return (
-      <div className="App mb-5">
+      <div className="App">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h4 style={quickStyle}>Synapse React Client Demo</h4>
+          <h4 className="white-text">Synapse React Client Demo</h4>
         </div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
