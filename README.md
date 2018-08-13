@@ -79,8 +79,21 @@ not necessarily intended to be used.
 
 ```
 
+To use the markdown component with only markdown, simply pass down a prop with the markdown to be processed and rendered.
 
+```jsx
 
+  import {SynapseComponents} from 'synapse-react-client'
+ 
+
+  <SynapseComponents.CustomMarkdownView>
+    <SynapseComponents.Markdown token={this.state.token}
+              markdown={"# my own markdown! "}
+              errorMessageView={<SynapseComponents.CustomMarkdownErrorView/>}>
+    </SynapseComponents.Markdown>
+  </SynapseComponents.CustomMarkdownView>
+
+```
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
 #### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).
