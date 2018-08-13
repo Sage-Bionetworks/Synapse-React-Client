@@ -1,16 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getUserTeamList = exports.getUserProjectList = exports.getUserFavorites = exports.getWikiEntity = exports.getEntityBundleForVersion = exports.getFiles = exports.getEntityChildren = exports.getUserProfiles = exports.getUserProfile = exports.createProject = exports.createEntity = exports.login = exports.getQueryTableResults = exports.getQueryTableResultsFromJobId = exports.getVersion = exports.doGet = exports.doPost = undefined;
-
-var _HTTPError = require('./HTTPError.js');
-
-var _HTTPError2 = _interopRequireDefault(_HTTPError);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function delay(t, v) {
   return new Promise(function (resolve) {
     setTimeout(resolve.bind(null, v), t);
@@ -24,21 +11,51 @@ var fetch_with_exponential_timeout = function fetch_with_exponential_timeout(url
       return resp.json();
     } else if (resp.status === 429 || resp.status === 0) {
       // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-      throw new _HTTPError2.default(resp.status, resp.statusText);
+      if (retries === 1) {
+        return Promise.reject({
+          statusCode: resp.status,
+          reason: resp.statusText
+        });
+      }
+      return delay(delayMs).then(function () {
+        return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
+      });
     } else {
       // error status that indicates no more retries
       retries = 1;
-      throw new _HTTPError2.default(resp.status, resp.statusText);
+      return resp.json().then(function (json) {
+        // on okay response return json, o.w. reject with json and 
+        // send to catch block
+        var error = {
+          reason: json.reason,
+          status: resp.status
+        };
+        return resp.ok ? json : Promise.reject(error);
+      }).catch(function (error) {
+        // call failed above
+        if (error.reason && error.status) {
+          // successfull return from server but invalid call
+          // the call was recieved, but staus wasn't ok-- return the json response from above
+          // from the response directly
+          return Promise.reject({
+            statusCode: error.status,
+            reason: error.reason
+          });
+        } else {
+          return Promise.reject({
+            statusCode: resp.status,
+            reason: resp.statusText
+          });
+        }
+      });
     }
   }).catch(function (error) {
-    if (retries === 1) throw error;
-    return delay(delayMs).then(function () {
-      return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
-    });
+    // this should never happen
+    return Promise.reject(error);
   });
 };
 
-var doPost = exports.doPost = function doPost(url, requestJsonObject, sessionToken, endpoint) {
+export var doPost = function doPost(url, requestJsonObject, sessionToken, endpoint) {
   var options = {
     method: 'POST',
     mode: 'cors',
@@ -55,7 +72,7 @@ var doPost = exports.doPost = function doPost(url, requestJsonObject, sessionTok
   return fetch_with_exponential_timeout(endpoint + url, options, 1000, 5);
 };
 
-var doGet = exports.doGet = function doGet(url, sessionToken, endpoint) {
+export var doGet = function doGet(url, sessionToken, endpoint) {
   var options = {
     method: 'GET',
     mode: 'cors',
@@ -70,13 +87,13 @@ var doGet = exports.doGet = function doGet(url, sessionToken, endpoint) {
   return fetch_with_exponential_timeout(endpoint + url, options, 1000, 5);
 };
 
-var getVersion = exports.getVersion = function getVersion() {
+export var getVersion = function getVersion() {
   var endpoint = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'https://repo-prod.prod.sagebase.org';
 
   return doGet('/repo/v1/version', undefined, endpoint);
 };
 
-var getQueryTableResultsFromJobId = exports.getQueryTableResultsFromJobId = function getQueryTableResultsFromJobId(entityId, jobId) {
+export var getQueryTableResultsFromJobId = function getQueryTableResultsFromJobId(entityId, jobId) {
   var sessionToken = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
   var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'https://repo-prod.prod.sagebase.org';
 
@@ -102,7 +119,7 @@ var getQueryTableResultsFromJobId = exports.getQueryTableResultsFromJobId = func
  * @param {*} sessionToken 
  * @param {*} endpoint 
  */
-var getQueryTableResults = exports.getQueryTableResults = function getQueryTableResults(queryBundleRequest) {
+export var getQueryTableResults = function getQueryTableResults(queryBundleRequest) {
   var sessionToken = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
@@ -117,7 +134,7 @@ var getQueryTableResults = exports.getQueryTableResults = function getQueryTable
 /** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. 
  * http://docs.synapse.org/rest/POST/login.html
 */
-var login = exports.login = function login(username, password) {
+export var login = function login(username, password) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
   return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint);
@@ -126,7 +143,7 @@ var login = exports.login = function login(username, password) {
 /** Create an entity (Project, Folder, File, Table, View) 
  * http://docs.synapse.org/rest/POST/entity.html
 */
-var createEntity = exports.createEntity = function createEntity(entity, sessionToken) {
+export var createEntity = function createEntity(entity, sessionToken) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
   return doPost('/repo/v1/entity', entity, sessionToken, endpoint);
@@ -135,7 +152,7 @@ var createEntity = exports.createEntity = function createEntity(entity, sessionT
 /** Create a project with the given name. 
  * http://docs.synapse.org/rest/POST/entity.html
 */
-var createProject = exports.createProject = function createProject(name, sessionToken) {
+export var createProject = function createProject(name, sessionToken) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
   return createEntity({
@@ -147,7 +164,7 @@ var createProject = exports.createProject = function createProject(name, session
 /** Return this user's UserProfile
  * http://docs.synapse.org/rest/GET/userProfile.html
 */
-var getUserProfile = exports.getUserProfile = function getUserProfile(sessionToken) {
+export var getUserProfile = function getUserProfile(sessionToken) {
   var endpoint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'https://repo-prod.prod.sagebase.org';
 
   return doGet('/repo/v1/userProfile', sessionToken, endpoint);
@@ -156,7 +173,7 @@ var getUserProfile = exports.getUserProfile = function getUserProfile(sessionTok
 /** Return the User Profiles for the given list of user IDs 
  * http://docs.synapse.org/rest/POST/userProfile.html
 */
-var getUserProfiles = exports.getUserProfiles = function getUserProfiles(userIdsArray) {
+export var getUserProfiles = function getUserProfiles(userIdsArray) {
   var endpoint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'https://repo-prod.prod.sagebase.org';
 
   return doPost('/repo/v1/userProfile', { list: userIdsArray }, undefined, endpoint);
@@ -165,7 +182,7 @@ var getUserProfiles = exports.getUserProfiles = function getUserProfiles(userIds
 /** Return the children (Files/Folders) of the given entity (Project or Folder). 
  * http://docs.synapse.org/rest/POST/entity/children.html
 */
-var getEntityChildren = exports.getEntityChildren = function getEntityChildren(request) {
+export var getEntityChildren = function getEntityChildren(request) {
   var sessionToken = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
@@ -175,7 +192,7 @@ var getEntityChildren = exports.getEntityChildren = function getEntityChildren(r
 /** Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
 */
-var getFiles = exports.getFiles = function getFiles(request) {
+export var getFiles = function getFiles(request) {
   var sessionToken = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 
@@ -188,7 +205,22 @@ var getFiles = exports.getFiles = function getFiles(request) {
  * See SynapseClient.test.js for an example partsMask.
  * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
  */
-var getEntityBundleForVersion = exports.getEntityBundleForVersion = function getEntityBundleForVersion(entityId, version, partsMask) {
+export var getEntity = function getEntity() {
+  var sessionToken = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var entityId = arguments[1];
+  var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
+
+  var url = '/repo/v1/entity/' + entityId;
+  return doGet(url, sessionToken, endpoint);
+};
+
+/**
+ * Bundled access to Entity and related data components. 
+ * An EntityBundle can be used to create, fetch, or update an Entity and associated objects with a single web service request.
+ * See SynapseClient.test.js for an example partsMask.
+ * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+ */
+export var getEntityBundleForVersion = function getEntityBundleForVersion(entityId, version, partsMask) {
   var sessionToken = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
   var endpoint = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'https://repo-prod.prod.sagebase.org';
 
@@ -204,7 +236,7 @@ var getEntityBundleForVersion = exports.getEntityBundleForVersion = function get
  * Get Wiki page contents, call is of the form:
  * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
  */
-var getWikiEntity = exports.getWikiEntity = function getWikiEntity(sessionToken, ownerId, wikiId) {
+export var getEntityWiki = function getEntityWiki(sessionToken, ownerId, wikiId) {
   var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "https://repo-prod.prod.sagebase.org";
 
   var url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId;
@@ -215,7 +247,7 @@ var getWikiEntity = exports.getWikiEntity = function getWikiEntity(sessionToken,
   * Returns synapse user favorites list given their session token
   * http://docs.synapse.org/rest/GET/favorite.html
 */
-var getUserFavorites = exports.getUserFavorites = function getUserFavorites(sessionToken) {
+export var getUserFavorites = function getUserFavorites(sessionToken) {
   var endpoint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "https://repo-prod.prod.sagebase.org/";
 
   var url = 'repo/v1/favorite?offset=0&limit=200';
@@ -226,7 +258,7 @@ var getUserFavorites = exports.getUserFavorites = function getUserFavorites(sess
  *  http://docs.synapse.org/rest/GET/projects/type.html
  *  @param {String} projectDetails Can be "MY_PROJECTS", "MY_CREATED_PROJECTS" or "MY_PARTICIPATED_PROJECTS"
  */
-var getUserProjectList = exports.getUserProjectList = function getUserProjectList(sessionToken, projectDetails) {
+export var getUserProjectList = function getUserProjectList(sessionToken, projectDetails) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "https://repo-prod.prod.sagebase.org/";
 
   var url = 'repo/v1/projects/' + projectDetails + '?offset=0&limit=200';
@@ -238,9 +270,23 @@ var getUserProjectList = exports.getUserProjectList = function getUserProjectLis
  * 
  * @param {*} id ownerID of the synapse user see - http://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
  */
-var getUserTeamList = exports.getUserTeamList = function getUserTeamList(sessionToken, id) {
+export var getUserTeamList = function getUserTeamList(sessionToken, id) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "https://repo-prod.prod.sagebase.org/";
 
   var url = 'repo/v1/user/' + id + '/team?offset=0&limit=200';
+  return doGet(url, sessionToken, endpoint);
+};
+
+export var getWikiAttachmentsFromEntity = function getWikiAttachmentsFromEntity(sessionToken, id, wikiId) {
+  var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "https://repo-prod.prod.sagebase.org/";
+
+  var url = 'repo/v1/entity/' + id + '/wiki/' + wikiId + '/attachmenthandles';
+  return doGet(url, sessionToken, endpoint);
+};
+
+export var getWikiAttachmentsFromEvaluation = function getWikiAttachmentsFromEvaluation(sessionToken, id, wikiId) {
+  var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "https://repo-prod.prod.sagebase.org/";
+
+  var url = 'repo/v1/evaluation/' + id + '/wiki/' + wikiId + '/attachmenthandles';
   return doGet(url, sessionToken, endpoint);
 };

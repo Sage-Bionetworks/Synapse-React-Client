@@ -19,13 +19,14 @@ class UserTeam extends React.Component {
         .then(
             data => {
                 this.setState({
-                        team: data.results
+                        team: data.results,
+                        errorMessage: ""
                     })
                 }
         ).catch(
             err => {
                 this.setState({
-                    errorMessage: ''
+                    errorMessage: err.reason
                 })
             }
         )
@@ -46,10 +47,11 @@ class UserTeam extends React.Component {
         let buttonIsOn = (this.props.token === "" || this.props.ownerId === "") 
 
         return (
-            <div className="container border pt-2 mt-5">
+            <div className="container syn-example pt-2 mt-5">
                 <h3> Demo of getting user teams</h3>
-                <button disabled={buttonIsOn ? true: false} className={"mb-1 btn " + (buttonIsOn ? "btn-outline-secondary" :"btn-primary")} onClick={this.getUserTeams}> All </button>
+                <button disabled={buttonIsOn ? true: false} className={"mb-1 btn btn-primary"} onClick={this.getUserTeams}> All </button>
                 {listTeam}
+                {this.state.errorMessage}
             </div>
         )
     }

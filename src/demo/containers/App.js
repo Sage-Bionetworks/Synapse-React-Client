@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 
-import Login from './Login.js'
-import Markdown from './Markdown.js'
-import UserFavorites from './UserFavorites.js';
-
 import logo from 'images/logo.svg';
 import './App.css';
+
+import Login from 'lib/containers/Login.js'
+import MarkdownSynapse from 'lib/containers/MarkdownSynapse.js'
+import UserFavorites from 'lib/containers/UserFavorites.js';
+import UserProjects from 'lib/containers/UserProjects.js';
+import UserTeam from 'lib/containers/UserTeams.js';
+import UserProfile from 'lib/containers/UserProfile.js';
+import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
+import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView';
+
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
-import UserProjects from './UserProjects.js';
-import UserTeam from './UserTeams.js';
-import UserProfile from './UserProfile.js';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -31,7 +34,7 @@ class App extends Component {
     this.getVersion = this.getVersion.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
-
+  
   /**
    * Get the current version of Synapse
    */
@@ -43,7 +46,7 @@ class App extends Component {
       .then(data => this.setState(data))
       .catch(function (error) {
         // Handle HTTPError.  Has statusCode and message.
-        console.error(error)
+        console.error("Get version failed" , error)
       });
   }
 
@@ -90,23 +93,61 @@ class App extends Component {
     this.getVersion()
     this.makeSampleQueryCall()
   }
+ 
   
   render() {
+    const quickStyle = {
+      color: 'white'
+    }
     return (
       <div className="App mb-5">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Synapse React Client Demo</h2>
+          <h4 style={quickStyle}>Synapse React Client Demo</h4>
         </div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        <Login onTokenChange={this.handleChange} token={this.state.token} loginEndpoint={SynapseClient.login} ></Login>
-        <UserFavorites token={this.state.token} getUserFavoritesEndpoint={SynapseClient.getUserFavorites} > </UserFavorites>
-        <UserProjects token={this.state.token} getUserProjectsEndpoint={SynapseClient.getUserProjectList} > </UserProjects>
-        <UserProfile onProfileChange={this.handleChange} token={this.state.token} ownerId={this.state.ownerId} getUserProfileEndpoint={SynapseClient.getUserProfile}> </UserProfile>
-        <UserTeam token={this.state.token} ownerId={this.state.ownerId} getUserTeamEndpoint={SynapseClient.getUserTeamList} > </UserTeam>
-        <Markdown markdownEndpoint={SynapseClient.getWikiEntity}> </Markdown>
+
+        <Login onTokenChange={this.handleChange}
+               token={this.state.token}
+               loginEndpoint={SynapseClient.login}>
+        </Login>
+        
+        <UserFavorites token={this.state.token}
+                       getUserFavoritesEndpoint={SynapseClient.getUserFavorites}>
+        </UserFavorites>
+        
+        <UserProjects token={this.state.token} 
+                      getUserProjectsEndpoint={SynapseClient.getUserProjectList}>
+        </UserProjects>
+        
+        <UserProfile onProfileChange={this.handleChange}
+                     token={this.state.token}
+                     ownerId={this.state.ownerId}
+                     getUserProfileEndpoint={SynapseClient.getUserProfile}>
+        </UserProfile>
+       
+        <UserTeam token={this.state.token} 
+                  ownerId={this.state.ownerId}
+                  getUserTeamEndpoint={SynapseClient.getUserTeamList}>
+        </UserTeam>
+
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    errorMessageView={<CustomMarkdownErrorView/>}>
+          </MarkdownSynapse>
+        </CustomMarkdownView>
+
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    markdown={"# my custom markdown"}
+                    errorMessageView={<CustomMarkdownErrorView/>}>
+          </MarkdownSynapse>
+        </CustomMarkdownView>
+
       </div>
     );
   }

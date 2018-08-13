@@ -53,20 +53,27 @@ class Login extends React.Component {
         clickEvent.preventDefault()  // avoid page refresh
         this.props.loginEndpoint(this.state.username, this.state.password).then(
             data => {
-                this.props.onTokenChange({ token: data.sessionToken })
-                this.setState({
-                    isSignedIn: true,
-                    hasLoginInFailed: false
-                })
+                if (data.reason) {
+                    // error in callback
+                    throw new Error(data.reason)
+                } else {
+                    this.props.onTokenChange({ token: data.sessionToken })
+                    this.setState({
+                        isSignedIn: true,
+                        hasLoginInFailed: false,
+                        errorMessage: ""
+                    })
+                }
             }
         ).catch(
             err => {
                 this.setState({
                     hasLoginInFailed: true,
-                    errorMessage: 'Invalid username/password combination'
+                    errorMessage: err.reason,
+                    isSignedIn: false
                 })
             }
-        );
+        )
     }
 
     /**
@@ -111,7 +118,7 @@ class Login extends React.Component {
             return (
                 <div>
                     <p> You are currently <strong> <i> signed in </i> </strong> to Synapse </p>
-                    <div className="alert alert-success alert-dismissible fade show" role="alert">
+                    <div className="bg-success" role="alert">
                         Synapse login successfull
                         <button type="button" className="close" onClick={() => {this.setState({dissmissButtonClicked: true})}}>
                             <span aria-hidden="true">&times;</span>
@@ -124,22 +131,22 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div id="loginPage" className="container border">
+            <div id="loginPage" className="container syn-example">
                 <h3 className="text-left"> Demo login with session token printed to screen</h3>
                 {this.getSignInStateView()}
                 {this.getTokenView()}
-                <form autoComplete="on" onSubmit={this.handleLogin}>
+                <form onSubmit={this.handleLogin}>
                     <div className="form-group">
                         <label className="text-left" htmlFor="exampleEmail">
                             Synapse Email/Username:
                         </label>
-                        <input placeholder="Enter email" className="form-control" id="exampleEmail" name="username" type="email" value={this.state.username} onChange={this.handleChange} />
+                        <input autoComplete="email" placeholder="Enter email" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="examplePassword">
                             Password:
                         </label>
-                        <input placeholder="Enter password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
+                        <input autoComplete="password" placeholder="Enter password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
                     </div>
                     {this.getLoginFailureView()}
                     <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">Submit</button>

@@ -1,5 +1,3 @@
-import HttpError from './HTTPError.js';
-
 function delay(t, v) {
   return new Promise(function (resolve) {
     setTimeout(resolve.bind(null, v), t)
@@ -8,23 +6,54 @@ function delay(t, v) {
 
 const fetch_with_exponential_timeout =
   (url, options, delayMs, retries) => {
-    return fetch(url, options).then(resp => {
-      if (resp.status > 199 && resp.status < 300) {
-        // ok!
-        return resp.json();
-      } else if (resp.status === 429 || resp.status === 0) {
-        // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        throw new HttpError(resp.status, resp.statusText);
-      } else {
-        // error status that indicates no more retries
-        retries = 1;
-        throw new HttpError(resp.status, resp.statusText);
-      }
+    return fetch(url, options).then(
+      resp => {
+        if (resp.status > 199 && resp.status < 300) {
+          // ok!
+          return resp.json();
+        } else if (resp.status === 429 || resp.status === 0) {
+          // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
+          if (retries === 1) {
+            return Promise.reject({
+              statusCode: resp.status,
+              reason: resp.statusText
+            });
+          }
+          return delay(delayMs).then(function () {
+            return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
+          });
+        } else {
+          // error status that indicates no more retries
+          retries = 1;
+          return resp.json().then(json => {
+            // on okay response return json, o.w. reject with json and 
+            // send to catch block
+            let error = {
+              reason: json.reason,
+              status: resp.status
+            } 
+            return resp.ok ? json : Promise.reject(error)
+          }).catch(error => {
+            // call failed above
+            if (error.reason && error.status) {
+              // successfull return from server but invalid call
+              // the call was recieved, but staus wasn't ok-- return the json response from above
+              // from the response directly
+              return Promise.reject({
+                statusCode: error.status,
+                reason: error.reason
+              })
+            } else {
+              return Promise.reject({
+                statusCode: resp.status,
+                reason: resp.statusText
+              })
+            }
+          })
+        }
     }).catch(function (error) {
-      if (retries === 1) throw error;
-      return delay(delayMs).then(function () {
-        return fetch_with_exponential_timeout(url, options, delayMs * 2, retries - 1);
-      });
+      // this should never happen
+      return Promise.reject(error)
     });
   }
 
@@ -69,7 +98,7 @@ export const getVersion =
 
 export const getQueryTableResultsFromJobId =
   (entityId, jobId, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doGet('/repo/v1/entity/' + entityId + '/table/query/async/get/' + jobId, sessionToken, endpoint)
+    return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, endpoint)
       .then(resp => {
         // is this the job status?
         if (resp.jobState && resp.jobState !== 'FAILED') {
@@ -94,7 +123,7 @@ export const getQueryTableResultsFromJobId =
  */
 export const getQueryTableResults =
   (queryBundleRequest, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    return doPost('/repo/v1/entity/' + queryBundleRequest.entityId + '/table/query/async/start', queryBundleRequest, sessionToken, endpoint)
+    return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
       .then(resp => {
         //started query, now attempt to get the results.
         return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
@@ -169,9 +198,21 @@ export const getFiles =
    * See SynapseClient.test.js for an example partsMask.
    * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
    */
+  export const getEntity =
+  (sessionToken = undefined, entityId, endpoint = 'https://repo-prod.prod.sagebase.org') => {
+    let url = `/repo/v1/entity/${entityId}`;
+    return doGet(url, sessionToken, endpoint);
+  }
+
+  /**
+   * Bundled access to Entity and related data components. 
+   * An EntityBundle can be used to create, fetch, or update an Entity and associated objects with a single web service request.
+   * See SynapseClient.test.js for an example partsMask.
+   * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+   */
 export const getEntityBundleForVersion =
   (entityId, version, partsMask, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
-    let url = '/repo/v1/entity/' + entityId;
+    let url = `/repo/v1/entity/${entityId}`;
     if (version) {
       url += '/version/' + version;
     }
@@ -183,9 +224,9 @@ export const getEntityBundleForVersion =
    * Get Wiki page contents, call is of the form:
    * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
    */
-  export const getWikiEntity =
+  export const getEntityWiki =
     (sessionToken, ownerId, wikiId, endpoint="https://repo-prod.prod.sagebase.org") => {
-      let url = '/repo/v1/entity/' + ownerId + '/wiki/' + wikiId
+      let url = `/repo/v1/entity/${ownerId}/wiki/${wikiId}`
       return doGet(url, sessionToken, endpoint)
     }
 
@@ -206,7 +247,7 @@ export const getEntityBundleForVersion =
    */
   export const getUserProjectList =
   (sessionToken, projectDetails, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = 'repo/v1/projects/' + projectDetails + '?offset=0&limit=200'
+    let url = `repo/v1/projects/${projectDetails}?offset=0&limit=200`
     return doGet(url, sessionToken, endpoint)
   }
 
@@ -217,6 +258,18 @@ export const getEntityBundleForVersion =
    */
   export const getUserTeamList =
   (sessionToken, id, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = 'repo/v1/user/' + id + '/team?offset=0&limit=200'
+    let url = `repo/v1/user/${id}/team?offset=0&limit=200`
+    return doGet(url, sessionToken, endpoint)
+  }
+
+  export const getWikiAttachmentsFromEntity = 
+  (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
+    return doGet(url, sessionToken, endpoint)
+  }
+
+  export const getWikiAttachmentsFromEvaluation = 
+  (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
     return doGet(url, sessionToken, endpoint)
   }

@@ -1,9 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -13,16 +7,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var HTTPError = function (_Error) {
     _inherits(HTTPError, _Error);
 
-    function HTTPError(code, message, extras) {
+    function HTTPError(message) {
+        var _ref;
+
         _classCallCheck(this, HTTPError);
 
-        var _this = _possibleConstructorReturn(this, (HTTPError.__proto__ || Object.getPrototypeOf(HTTPError)).call(this, message));
+        for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            params[_key - 1] = arguments[_key];
+        }
 
-        _this.statusCode = code;
+        var _this = _possibleConstructorReturn(this, (_ref = HTTPError.__proto__ || Object.getPrototypeOf(HTTPError)).call.apply(_ref, [this].concat(params)));
+
+        _this.message = message;
+        _this.name = 'HTTP';
         return _this;
     }
 
     return HTTPError;
 }(Error);
 
-exports.default = HTTPError;
+export default HTTPError;
