@@ -54,7 +54,7 @@ class MarkdownSynapse extends React.Component {
         // Put synchronous data in their own variables
         this.fileResults = null
         this.hasBookmarks = false
-        this.bookmarksFirstSceen = false
+        this.bookmarksFirstSeen = false
         this.hasProcessedReferences = false
         this.referenceView = []
         this.footnoteRef = React.createRef()
@@ -423,11 +423,9 @@ class MarkdownSynapse extends React.Component {
             1) there are bookmarks on the page
             2) we haven't already processed bookmarks on a previous render of the page
         */
-        if (this.hasBookmarks && !this.bookmarksFirstSceen) {
+        if (this.hasBookmarks && !this.bookmarksFirstSeen) {
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
             let node = this.footnoteRef.current // corresponds to <p> tag in render below
-            // remove the <p> tag -- we have a ref to one in render, so this has to be removed
-            footnotes_html = footnotes_html.substring(3, footnotes_html.length - 5)
             // find all links in the footnotes_html-- each of which contains a "text=[\d]"
             let linkOccurences = footnotes_html.match(/text=\[.\]/g).map(
                 element => { 
@@ -461,7 +459,7 @@ class MarkdownSynapse extends React.Component {
             let bookmarkFragment = document.createRange().createContextualFragment(matches)
             node.appendChild(bookmarkFragment)
             // save the result of the operation from above
-            this.bookmarksFirstSceen = true
+            this.bookmarksFirstSeen = true
             this.bookmarkFragment = bookmarkFragment
         } else if (this.hasBookmarks) {
             // we've already computed the bookmarks, we can instead used the saved fragment
@@ -717,13 +715,13 @@ class MarkdownSynapse extends React.Component {
     }
 }
 
-const requiredPropsCheck = (props, propName, componentName) => {
-    if ( !props.ownerId && !props.wikiId && !props.markdown) {
-        return new Error(`Either ownerId and wikiId OR markdown is required by '${componentName}' component.`)
-    } else if (props.ownerId && props.wikiId && props.markdown) {
-        return new Error(`Either ownerId and wikiId OR markdown can be specified by '${componentName}' component.`)
-    }
-}
+// const requiredPropsCheck = (props, propName, componentName) => {
+//     if ( !props.ownerId && !props.wikiId && !props.markdown) {
+//         return new Error(`Either ownerId and wikiId OR markdown is required by '${componentName}' component.`)
+//     } else if (props.ownerId && props.wikiId && props.markdown) {
+//         return new Error(`Either ownerId and wikiId OR markdown can be specified by '${componentName}' component.`)
+//     }
+// }
 
 // Validate props passed to the component
 MarkdownSynapse.propTypes = {
@@ -734,10 +732,10 @@ MarkdownSynapse.propTypes = {
     token : PropTypes.string.isRequired,
 
     // either owner id and wiki required
-    ownerId: requiredPropsCheck,
-    wikiId: requiredPropsCheck,
+    ownerId: PropTypes.string,
+    wikiId: PropTypes.string,
     // OR
-    markdown: requiredPropsCheck
+    markdown: PropTypes.string
 }
 
 export default MarkdownSynapse;

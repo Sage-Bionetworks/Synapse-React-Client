@@ -170,7 +170,7 @@ var Login = function (_React$Component) {
                     ),
                     ' signed in to Synpase '
                 );
-            } else if (!this.state.dissmissButtonClicked) {
+            } else if (!this.state.dismissButtonClicked) {
                 return React.createElement(
                     'div',
                     null,

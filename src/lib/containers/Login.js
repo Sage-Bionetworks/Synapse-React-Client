@@ -114,7 +114,7 @@ class Login extends React.Component {
             return (
                 <p> You are currently <strong> <i> not </i> </strong> signed in to Synpase </p>
             )
-        } else if (!this.state.dissmissButtonClicked){
+        } else if (!this.state.dismissButtonClicked){
             return (
                 <div>
                     <p> You are currently <strong> <i> signed in </i> </strong> to Synapse </p>
