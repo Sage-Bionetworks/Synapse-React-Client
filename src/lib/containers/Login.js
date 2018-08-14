@@ -53,17 +53,12 @@ class Login extends React.Component {
         clickEvent.preventDefault()  // avoid page refresh
         this.props.loginEndpoint(this.state.username, this.state.password).then(
             data => {
-                if (data.reason) {
-                    // error in callback
-                    throw new Error(data.reason)
-                } else {
-                    this.props.onTokenChange({ token: data.sessionToken })
-                    this.setState({
-                        isSignedIn: true,
-                        hasLoginInFailed: false,
-                        errorMessage: ""
-                    })
-                }
+                this.props.onTokenChange({ token: data.sessionToken })
+                this.setState({
+                    isSignedIn: true,
+                    hasLoginInFailed: false,
+                    errorMessage: ""
+                })
             }
         ).catch(
             err => {

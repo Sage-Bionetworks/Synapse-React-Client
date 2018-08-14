@@ -10,7 +10,6 @@ import UserProjects from 'lib/containers/UserProjects.js';
 import UserTeam from 'lib/containers/UserTeams.js';
 import UserProfile from 'lib/containers/UserProfile.js';
 import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
-import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView';
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
@@ -28,7 +27,8 @@ class App extends Component {
     super()
     this.state = {
       token: "",
-      ownerId: ""
+      ownerId: "",
+      isLoading: true
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
@@ -93,9 +93,32 @@ class App extends Component {
     this.getVersion()
     this.makeSampleQueryCall()
   }
- 
+
+  getMultipleWikis() {
+    if (!this.state.token) {
+      return ""
+    }
+    let foo = Array.from(Array(4).keys())
+    return foo.map((element, index) => {
+      return (
+        <div className="container" key={index}>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    >
+          </MarkdownSynapse>
+        </div>
+      )
+   })
+  }
   
   render() {
+
+    const {isLoading} = this.state
+    const show = {
+      visibility: isLoading ? "hidden" : "visible"
+    }
+
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -130,21 +153,16 @@ class App extends Component {
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
 
-        <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14568473"}
-                    wikiId={"582406"}
-                    errorMessageView={<CustomMarkdownErrorView/>}>
-          </MarkdownSynapse>
-        </CustomMarkdownView>
+        {isLoading ? <div className="container"> Loading </div> : ""}
 
         <CustomMarkdownView>
           <MarkdownSynapse token={this.state.token}
-                    markdown={"# my custom markdown"}
-                    errorMessageView={<CustomMarkdownErrorView/>}>
+                    ownerId={"syn14306197"}
+                    wikiId={"582150"}
+                    >
           </MarkdownSynapse>
         </CustomMarkdownView>
-
+        
       </div>
     );
   }
