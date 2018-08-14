@@ -156,22 +156,23 @@ class App extends Component {
         {isLoading ? <div className="container"> Loading </div> : ""}
 
         <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14306197"}
-                    wikiId={"582150"}
+        <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
         
-
         <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn2580853"}
-                    wikiId={"409840"}
-                    hasSynapseResources={true}
+        <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
+        
 
       </div>
     );

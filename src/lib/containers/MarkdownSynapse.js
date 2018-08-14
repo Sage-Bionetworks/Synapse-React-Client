@@ -95,7 +95,6 @@ class MarkdownSynapse extends React.Component {
      * @returns {Object} Dictionary to be passed into dangerouslySetInnerHTML with markdown text
      */
     createMarkup(text) {
-        console.log('creating markup')
         let initText = this.state.md.render(text) 
         let cleanText = sanitizeHtml(initText, 
             {   
@@ -198,6 +197,7 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on url grab ', err)
             })
         } else {
+            markdownitSynapse.resetFootnoteId()
             this.matchElementToResource(elementList);
             this.addBookmarks()
         }
@@ -432,15 +432,12 @@ class MarkdownSynapse extends React.Component {
             2) we haven't already processed bookmarks on a previous render of the page
         */
         if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
-            console.log('at 433')
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-            console.log('footnotes html ', footnotes_html)
             let node = this.footnoteRef.current // corresponds to <p> tag in render below
             // find all links in the footnotes_html-- each of which contains a "text=[\d]"
             let linkOccurences = footnotes_html.match(/text=\[.\]/g).map(
                 (element, index ) => { 
                     // grab only the [\d] pieces of the text
-                    console.log(`occurence #${index}:`, element)
                     return element.substring(element.indexOf("["), element.indexOf("]") + 1)
                  }
             )
