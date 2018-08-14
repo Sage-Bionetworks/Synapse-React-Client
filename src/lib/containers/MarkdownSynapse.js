@@ -188,7 +188,7 @@ class MarkdownSynapse extends React.Component {
                         {fileResults: data.requestedFiles}
                     )
                     // TODO: consider opitmizations in the future
-                    markdownitSynapse.resetFootnoteId()
+                    markdownitSynapse.resetFootnotes()
                     this.matchElementToResource(elementList);
                     this.addBookmarks()
                 }
@@ -197,7 +197,7 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on url grab ', err)
             })
         } else {
-            markdownitSynapse.resetFootnoteId()
+            markdownitSynapse.resetFootnotes()
             this.matchElementToResource(elementList);
             this.addBookmarks()
         }

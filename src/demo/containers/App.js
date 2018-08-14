@@ -157,8 +157,8 @@ class App extends Component {
 
         <CustomMarkdownView>
         <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14568473"}
-                    wikiId={"582406"}
+                    ownerId={"syn14306197"}
+                    wikiId={"582150"}
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
@@ -172,7 +172,6 @@ class App extends Component {
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
-        
 
       </div>
     );
