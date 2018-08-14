@@ -163,6 +163,16 @@ class App extends Component {
           </MarkdownSynapse>
         </CustomMarkdownView>
         
+
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn2580853"}
+                    wikiId={"409840"}
+                    hasSynapseResources={true}
+                    >
+          </MarkdownSynapse>
+        </CustomMarkdownView>
+
       </div>
     );
   }

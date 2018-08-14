@@ -143,7 +143,6 @@ class MarkdownSynapse extends React.Component {
         for (let element of widgets) {
             let widgetstring = element.dataset.widgetparams;
             window.Elememeem = element
-            console.log("widgetstring is ", widgetstring)
             let questionIndex = widgetstring.indexOf("?"); // type?
             let widgetType = widgetstring.substring(0, questionIndex); // type
             let widgetparamsMapped = {};
@@ -273,7 +272,7 @@ class MarkdownSynapse extends React.Component {
                     this.handleReferenceWidget(elementBundle, referenceCount++, savedReferences);
                 }
             });
-            if (elementList.length > 0 && !this.state.hasProcessedReferences) {
+            if (referenceCount > 0 && !this.state.hasProcessedReferences) {
                 this.setState({hasProcessedReferences: true, savedReferences: savedReferences, hasBookmarks: true})    
             }
         }
@@ -593,16 +592,20 @@ class MarkdownSynapse extends React.Component {
      * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
      */
     getWikiPageMarkdown() {
-        SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
-        .then(data => {
-            // on success grab text and append to the default text
-            let initText = this.state.text;
-            this.setState({
-                text: initText + data.markdown
-            });
-        }).catch(err => { 
-            console.log('Error on wiki markdown load\n', err);
-        })
+        if (!this.state.text) {
+            SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
+            .then(data => {
+                // on success grab text and append to the default text
+                let initText = this.state.text;
+                this.setState({
+                    text: initText + data.markdown
+                });
+            }).catch(err => { 
+                console.log('Error on wiki markdown load\n', err);
+            })
+        }
+        // else the wiki page was retrieved accordingly, it will either work and the person has the
+        // correct 'READ' permissions or it wont
     }
 
     /**
