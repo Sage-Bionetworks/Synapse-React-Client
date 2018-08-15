@@ -188,6 +188,7 @@ class MarkdownSynapse extends React.Component {
                         {fileResults: data.requestedFiles}
                     )
                     // TODO: consider opitmizations in the future
+                    markdownitSynapse.resetFootnotes()
                     this.matchElementToResource(elementList);
                     this.addBookmarks()
                 }
@@ -196,6 +197,7 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on url grab ', err)
             })
         } else {
+            markdownitSynapse.resetFootnotes()
             this.matchElementToResource(elementList);
             this.addBookmarks()
         }
@@ -411,7 +413,12 @@ class MarkdownSynapse extends React.Component {
                 event.preventDefault()
                 // find and go to the bookmark at the bottom of the page
                 let goTo = document.getElementById(`bookmark${index}`)
-                goTo.scrollIntoView()
+                try {
+                    goTo.scrollIntoView()
+                } catch (e) {
+                    console.log('error on scroll', e)
+                }
+                
             }
         )
 
@@ -424,12 +431,11 @@ class MarkdownSynapse extends React.Component {
      *
      * @memberof MarkdownSynapse
      */
-    addBookmarks() {
+        addBookmarks() {
         /* we have to check that:
             1) there are bookmarks on the page
             2) we haven't already processed bookmarks on a previous render of the page
         */
-       markdownitSynapse.resetFootnotes()
        if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
             let node = this.footnoteRef.current // corresponds to <p> tag in render below
@@ -438,15 +444,13 @@ class MarkdownSynapse extends React.Component {
             if (!linkOccurences) {
                 return
             }
-            linkOccurences.map(
+
+            let linksFormatted = linkOccurences.map(
                 (element, index ) => { 
                     // grab only the [\d] pieces of the text
                     return element.substring(element.indexOf("["), element.indexOf("]") + 1)
                  }
-            )
-
-            // Go through each of the [1] and format to the appropriate view
-            let linkFormatted = linkOccurences.map(
+            ).map(
                 (element, index) => {
                     // here bookmark is used so that the references can target this anchor tag 
                     return `<span><div class="BookmarkWidget"><a id=${"bookmark" + index}>${element}</a></div></span>`
@@ -462,7 +466,7 @@ class MarkdownSynapse extends React.Component {
                 // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
                 // formatted text from above
                 (match, p1, p2, p3, string) => {
-                    return [p1, linkFormatted[i++] , p3].join("")
+                    return [p1, linksFormatted[i++] , p3].join("")
                 }
             )
 
@@ -604,8 +608,8 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on wiki markdown load\n', err);
             })
         }
-        // else the wiki page was retrieved accordingly, it will either work and the person has the
-        // correct 'READ' permissions or it wont
+        // else the wiki page was retrieved accordingly or it was passed down
+        // as a prop
     }
 
     /**
@@ -664,26 +668,13 @@ class MarkdownSynapse extends React.Component {
         // process all math identified markdown items
         this.processMath()
 
-        if (this.props.updateLoadState) {
+        if (this.props.updateLoadState && this.state.text) {
             this.props.updateLoadState({isLoading: false})
         }
     }
 
     // on component update find and re-render the math/widget items accordingly
-    componentDidUpdate (prevProps, prevState) {
-
-        // console.log('component did update ')
-
-        // Object.entries(this.props).forEach(([key, val]) =>
-        //     prevProps[key] !== val && console.log(`Prop '${key}' changed`)
-        // );
-
-        // Object.entries(this.state).forEach(([key, val]) =>
-        //     prevState[key] !== val && console.log(`State '${key}' changed`)
-        // );
-
-        // console.log('->>>>>>>>>>>>>><<<<<<<<<<-')
-
+    componentDidUpdate () {
         // we have to carefully update the component so it doesn't encounter an infinite loop
         if (this.props.token !== "" && !this.state.isLoggedIn) {
             // this is true when user just logged

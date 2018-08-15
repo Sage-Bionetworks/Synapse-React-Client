@@ -98,7 +98,7 @@ class App extends Component {
     if (!this.state.token) {
       return ""
     }
-    let foo = Array.from(Array(40).keys())
+    let foo = Array.from(Array(45).keys())
     return foo.map((element, index) => {
       return (
         <div className="container" key={index}>
@@ -113,12 +113,6 @@ class App extends Component {
   }
   
   render() {
-
-    const {isLoading} = this.state
-    const show = {
-      visibility: isLoading ? "hidden" : "visible"
-    }
-
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -153,19 +147,10 @@ class App extends Component {
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
 
-        {isLoading ? <div className="container"> Loading </div> : ""}
+        {this.state.isLoading ? <div className="container"> Loading </div> : ""}
 
         <CustomMarkdownView>
-        <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14306197"}
-                    wikiId={"582150"}
-                    updateLoadState={this.handleChange}
-                    >
-          </MarkdownSynapse>
-        </CustomMarkdownView>
-        
-        <CustomMarkdownView>
-        <MarkdownSynapse token={this.state.token}
+          <MarkdownSynapse token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
                     updateLoadState={this.handleChange}
@@ -173,8 +158,30 @@ class App extends Component {
           </MarkdownSynapse>
         </CustomMarkdownView>
 
-        {this.getMultipleWikis()}
+        <CustomMarkdownView>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    >
+          </MarkdownSynapse>
+        </CustomMarkdownView>
 
+        <CustomMarkdownView>
+            <MarkdownSynapse token={this.state.token}
+                      ownerId={"syn14568473"}
+                      wikiId={"582406"}
+                      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+                      >
+            </MarkdownSynapse>
+          </CustomMarkdownView>
+
+          <CustomMarkdownView>
+            <MarkdownSynapse token={this.state.token}
+                      markdown={"# custom markdown\n####no resources attached"}
+                      hasSynapseResources={false}
+                      >
+            </MarkdownSynapse>
+          </CustomMarkdownView>
       </div>
     );
   }
