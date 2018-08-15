@@ -188,7 +188,6 @@ class MarkdownSynapse extends React.Component {
                         {fileResults: data.requestedFiles}
                     )
                     // TODO: consider opitmizations in the future
-                    markdownitSynapse.resetFootnotes()
                     this.matchElementToResource(elementList);
                     this.addBookmarks()
                 }
@@ -197,7 +196,6 @@ class MarkdownSynapse extends React.Component {
                 console.log('Error on url grab ', err)
             })
         } else {
-            markdownitSynapse.resetFootnotes()
             this.matchElementToResource(elementList);
             this.addBookmarks()
         }
@@ -431,11 +429,16 @@ class MarkdownSynapse extends React.Component {
             1) there are bookmarks on the page
             2) we haven't already processed bookmarks on a previous render of the page
         */
-        if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
+       markdownitSynapse.resetFootnotes()
+       if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
             let node = this.footnoteRef.current // corresponds to <p> tag in render below
             // find all links in the footnotes_html-- each of which contains a "text=[\d]"
-            let linkOccurences = footnotes_html.match(/text=\[.\]/g).map(
+            let linkOccurences = footnotes_html.match(/text=\[.\]/g)
+            if (!linkOccurences) {
+                return
+            }
+            linkOccurences.map(
                 (element, index ) => { 
                     // grab only the [\d] pieces of the text
                     return element.substring(element.indexOf("["), element.indexOf("]") + 1)
@@ -669,17 +672,17 @@ class MarkdownSynapse extends React.Component {
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate (prevProps, prevState) {
 
-        console.log('component did update ')
+        // console.log('component did update ')
 
-        Object.entries(this.props).forEach(([key, val]) =>
-            prevProps[key] !== val && console.log(`Prop '${key}' changed`)
-        );
+        // Object.entries(this.props).forEach(([key, val]) =>
+        //     prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+        // );
 
-        Object.entries(this.state).forEach(([key, val]) =>
-            prevState[key] !== val && console.log(`State '${key}' changed`)
-        );
+        // Object.entries(this.state).forEach(([key, val]) =>
+        //     prevState[key] !== val && console.log(`State '${key}' changed`)
+        // );
 
-        console.log('->>>>>>>>>>>>>><<<<<<<<<<-')
+        // console.log('->>>>>>>>>>>>>><<<<<<<<<<-')
 
         // we have to carefully update the component so it doesn't encounter an infinite loop
         if (this.props.token !== "" && !this.state.isLoggedIn) {
