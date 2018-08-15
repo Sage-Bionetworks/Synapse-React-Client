@@ -75,17 +75,12 @@ var Login = function (_React$Component) {
 
             clickEvent.preventDefault(); // avoid page refresh
             this.props.loginEndpoint(this.state.username, this.state.password).then(function (data) {
-                if (data.reason) {
-                    // error in callback
-                    throw new Error(data.reason);
-                } else {
-                    _this2.props.onTokenChange({ token: data.sessionToken });
-                    _this2.setState({
-                        isSignedIn: true,
-                        hasLoginInFailed: false,
-                        errorMessage: ""
-                    });
-                }
+                _this2.props.onTokenChange({ token: data.sessionToken });
+                _this2.setState({
+                    isSignedIn: true,
+                    hasLoginInFailed: false,
+                    errorMessage: ""
+                });
             }).catch(function (err) {
                 _this2.setState({
                     hasLoginInFailed: true,
@@ -170,7 +165,7 @@ var Login = function (_React$Component) {
                     ),
                     ' signed in to Synpase '
                 );
-            } else if (!this.state.dissmissButtonClicked) {
+            } else if (!this.state.dismissButtonClicked) {
                 return React.createElement(
                     'div',
                     null,

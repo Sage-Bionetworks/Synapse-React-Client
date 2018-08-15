@@ -10,7 +10,6 @@ import UserProjects from 'lib/containers/UserProjects.js';
 import UserTeam from 'lib/containers/UserTeams.js';
 import UserProfile from 'lib/containers/UserProfile.js';
 import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
-import CustomMarkdownErrorView from 'lib/containers/CustomMarkdownErrorView';
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
@@ -28,7 +27,8 @@ class App extends Component {
     super()
     this.state = {
       token: "",
-      ownerId: ""
+      ownerId: "",
+      isLoading: true
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
@@ -93,17 +93,31 @@ class App extends Component {
     this.getVersion()
     this.makeSampleQueryCall()
   }
- 
+
+  getMultipleWikis() {
+    if (!this.state.token) {
+      return ""
+    }
+    let foo = Array.from(Array(45).keys())
+    return foo.map((element, index) => {
+      return (
+        <div className="container" key={index}>
+          <MarkdownSynapse token={this.state.token}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    >
+          </MarkdownSynapse>
+        </div>
+      )
+   })
+  }
   
   render() {
-    const quickStyle = {
-      color: 'white'
-    }
     return (
-      <div className="App mb-5">
+      <div className="App">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h4 style={quickStyle}>Synapse React Client Demo</h4>
+          <h4 className="white-text">Synapse React Client Demo</h4>
         </div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
@@ -133,21 +147,41 @@ class App extends Component {
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
 
+        {this.state.isLoading ? <div className="container"> Loading </div> : ""}
+
         <CustomMarkdownView>
           <MarkdownSynapse token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
-                    errorMessageView={<CustomMarkdownErrorView/>}>
+                    updateLoadState={this.handleChange}
+                    >
           </MarkdownSynapse>
         </CustomMarkdownView>
 
         <CustomMarkdownView>
           <MarkdownSynapse token={this.state.token}
-                    markdown={"# my custom markdown"}
-                    errorMessageView={<CustomMarkdownErrorView/>}>
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
+                    >
           </MarkdownSynapse>
         </CustomMarkdownView>
 
+        <CustomMarkdownView>
+            <MarkdownSynapse token={this.state.token}
+                      ownerId={"syn14568473"}
+                      wikiId={"582406"}
+                      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+                      >
+            </MarkdownSynapse>
+          </CustomMarkdownView>
+
+          <CustomMarkdownView>
+            <MarkdownSynapse token={this.state.token}
+                      markdown={"# custom markdown\n####no resources attached"}
+                      hasSynapseResources={false}
+                      >
+            </MarkdownSynapse>
+          </CustomMarkdownView>
       </div>
     );
   }
