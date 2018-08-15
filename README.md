@@ -55,7 +55,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
         // handle Error (possibly a HTTPError)
       });
 ```
-##### Markdown Rendering Example
+#### Markdown Rendering Example
 View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
 To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a ["CustomMarkdownView"](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownView.js) component which does this. Additionally, you can configure an error message to display (demonstrated by the [CustomMarkdownErrorView](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownErrorView.js) being passed into the Markdown component).
@@ -117,41 +117,43 @@ Example 3: Rendering a Synapse Wiki page with the markdown already loaded with a
 ```jsx
 
   import {SynapseComponents} from 'synapse-react-client'
- 
-   /**
-   * Update internal state
-   * @param {Object} updatedState new state to be updated by the component
-   */
+  import React from 'react'
 
-  constructor () {
-    this.state = {
-      isLoading: true
+  export default class Demo extends React.Component {
+
+    /**
+     * Update internal state
+     * @param {Object} updatedState new state to be updated by the component
+     */
+    constructor () {
+      this.state = {
+        isLoading: true
+      }
+    }
+
+    handleChange(updatedState) {
+      this.setState(
+        updatedState
+      );
+    }
+
+    render () {
+
+      {this.state.isLoading ? "Component loading..." : ""}
+      // updateLoadState will notify this that loading from
+      // componentDidMount is over
+      <SynapseComponents.CustomMarkdownView>
+        <SynapseComponents.Markdown token={this.state.token}
+                  ownerId={"syn14568473"}
+                  wikiId={"582406"}
+                  markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+                  updateLoadState={this.handleChange}
+                  >
+        </SynapseComponents.Markdown>
+      </SynapseComponents.CustomMarkdownView>
+
     }
   }
-
-  handleChange(updatedState) {
-    this.setState(
-      updatedState
-    );
-  }
-
-  render () {
-
-    {this.state.isLoading ? "Component loading..." : ""}
-    // updateLoadState will notify this that loading from
-    // componentDidMount is over
-    <SynapseComponents.CustomMarkdownView>
-      <SynapseComponents.Markdown token={this.state.token}
-                ownerId={"syn14568473"}
-                wikiId={"582406"}
-                markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
-                updateLoadState={this.handleChange}
-                >
-      </SynapseComponents.Markdown>
-    </SynapseComponents.CustomMarkdownView>
-
-  }
-
 ```
 
 Example 3: Rendering ONLY markdown (if you know that a  wiki page has no synapse resources)
