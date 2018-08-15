@@ -71,14 +71,14 @@ var MarkdownSynapse = function (_React$Component) {
             calledReset: false,
             isLoggedIn: _this.props.token !== "",
             errorMessage: "",
-            queryData: {}
+            queryData: {},
+            fileResults: null,
+            hasBookmarks: false,
+            bookmarksFirstSeen: false,
+            hasProcessedReferences: false,
+            referenceView: []
+        };
 
-            // Put synchronous data in their own variables
-        };_this.fileResults = null;
-        _this.hasBookmarks = false;
-        _this.bookmarksFirstSeen = false;
-        _this.hasProcessedReferences = false;
-        _this.referenceView = [];
         _this.footnoteRef = React.createRef();
         _this.markupRef = React.createRef();
 
@@ -177,7 +177,9 @@ var MarkdownSynapse = function (_React$Component) {
                                         while (1) {
                                             switch (_context.prev = _context.next) {
                                                 case 0:
-                                                    widgetstring = element.getAttribute("widgetparams");
+                                                    widgetstring = element.dataset.widgetparams;
+
+                                                    window.Elememeem = element;
                                                     questionIndex = widgetstring.indexOf("?"); // type?
 
                                                     widgetType = widgetstring.substring(0, questionIndex); // type
@@ -199,10 +201,10 @@ var MarkdownSynapse = function (_React$Component) {
                                                         value = decodeURIComponent(value);
                                                         widgetparamsMapped[key] = value;
                                                     });
-                                                    _context.next = 7;
+                                                    _context.next = 8;
                                                     return _this2.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
 
-                                                case 7:
+                                                case 8:
                                                 case 'end':
                                                     return _context.stop();
                                             }
@@ -296,7 +298,7 @@ var MarkdownSynapse = function (_React$Component) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
                             case 0:
-                                widgets = document.querySelectorAll("span[widgetparams]");
+                                widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]");
                                 // go through all obtained elements and transform them with katex
 
                                 // build up request 
@@ -314,7 +316,7 @@ var MarkdownSynapse = function (_React$Component) {
                                 // Process all the files found on the page
                                 // if this is the first run load the file results, otherwise
                                 // use the already retrieved files
-                                if (fileHandleAssociationList.length > 0 && this.fileResults === null) {
+                                if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
                                     // include length check to make sure all resources are loaded
                                     request = {
                                         requestedFiles: fileHandleAssociationList,
@@ -324,15 +326,16 @@ var MarkdownSynapse = function (_React$Component) {
                                     };
 
                                     SynapseClient.getFiles(request, this.props.token).then(function (data) {
-                                        _this3.fileResults = data.requestedFiles;
+                                        _this3.setState({ fileResults: data.requestedFiles });
                                         // TODO: consider opitmizations in the future
-                                        markdownitSynapse.resetFootnoteId();
+                                        markdownitSynapse.resetFootnotes();
                                         _this3.matchElementToResource(elementList);
                                         _this3.addBookmarks();
                                     }).catch(function (err) {
                                         console.log('Error on url grab ', err);
                                     });
                                 } else {
+                                    markdownitSynapse.resetFootnotes();
                                     this.matchElementToResource(elementList);
                                     this.addBookmarks();
                                 }
@@ -468,24 +471,32 @@ var MarkdownSynapse = function (_React$Component) {
             var _this4 = this;
 
             var referenceCount = 0;
-            elementList.forEach(function (elementBundle) {
-                if (elementBundle.widgetType === "image") {
-                    // match corresponds to filehandle that this current element needs to be connected to
-                    var match = _this4.matchToHandle(_this4.compareById(elementBundle.id, "fileHandleId"), _this4.fileResults);
-                    _this4.handleImageWidget(match, elementBundle);
-                } else if (elementBundle.widgetType === "plot") {
-                    _this4.handlePlotlyWidget(elementBundle);
-                } else if (elementBundle.widgetType === "reference") {
-                    _this4.handleReferenceWidget(elementBundle, referenceCount++);
+            var savedReferences = this.state.savedReferences || [];
+
+            if (elementList.length > 0) {
+                elementList.forEach(function (elementBundle) {
+                    if (elementBundle.widgetType === "image") {
+                        // match corresponds to filehandle that this current element needs to be connected to
+                        var match = _this4.matchToHandle(_this4.compareById(elementBundle.id, "fileHandleId"), _this4.state.fileResults);
+                        _this4.handleImageWidget(match, elementBundle);
+                    } else if (elementBundle.widgetType === "plot") {
+                        _this4.handlePlotlyWidget(elementBundle);
+                    } else if (elementBundle.widgetType === "reference") {
+                        _this4.handleReferenceWidget(elementBundle, referenceCount++, savedReferences);
+                    }
+                });
+                if (referenceCount > 0 && !this.state.hasProcessedReferences) {
+                    this.setState({ hasProcessedReferences: true, savedReferences: savedReferences, hasBookmarks: true });
                 }
-            });
-            this.hasProcessedReferences = elementList.length > 0 ? true : false;
+            }
         }
     }, {
         key: 'handleImageWidget',
         value: function handleImageWidget(match, elementBundle) {
-            var renderedHTML = '<image class="img-fluid" src=' + match[0].preSignedURL + '></image>';
-            elementBundle.element.outerHTML = renderedHTML;
+            if (elementBundle.element.parentElement) {
+                var renderedHTML = '<image class="img-fluid" src=' + match[0].preSignedURL + '></image>';
+                elementBundle.element.outerHTML = renderedHTML;
+            }
         }
     }, {
         key: 'handlePlotlyWidget',
@@ -597,16 +608,15 @@ var MarkdownSynapse = function (_React$Component) {
 
     }, {
         key: 'handleReferenceWidget',
-        value: function handleReferenceWidget(elementBundle, index) {
+        value: function handleReferenceWidget(elementBundle, index, savedReferences) {
             var renderedHTML = "";
-
             // due to re-renering, we save the result of this method, on initial calculate the html, otherwise we just 
-            // it
-            if (!this.hasProcessedReferences) {
+            // show it
+            if (!this.state.hasProcessedReferences) {
                 renderedHTML = '<span> <span><div class="ReferenceWidget"><a href="#" class="margin-left-5">[' + elementBundle.widgetparamsMapped.footnoteId + ']</a></div></span></span>';
-                this.referenceView.push(renderedHTML);
+                savedReferences.push(renderedHTML);
             } else {
-                renderedHTML = this.referenceView[index];
+                renderedHTML = savedReferences[index];
             }
 
             // attach an anchor tag with an event listener to jump to the appropriate bookmark at the bottom of the page
@@ -616,12 +626,15 @@ var MarkdownSynapse = function (_React$Component) {
                 event.preventDefault();
                 // find and go to the bookmark at the bottom of the page
                 var goTo = document.getElementById('bookmark' + index);
-                goTo.scrollIntoView();
+                try {
+                    goTo.scrollIntoView();
+                } catch (e) {
+                    console.log('error on scroll', e);
+                }
             });
 
             elementBundle.element.innerText = ""; // clear the <Synapse widget> text
             elementBundle.element.appendChild(renderedHTML);
-            this.hasBookmarks = true;
         }
 
         /**
@@ -637,17 +650,19 @@ var MarkdownSynapse = function (_React$Component) {
                 1) there are bookmarks on the page
                 2) we haven't already processed bookmarks on a previous render of the page
             */
-            if (this.hasBookmarks && !this.bookmarksFirstSeen) {
+            if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
                 var footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html;
                 var node = this.footnoteRef.current; // corresponds to <p> tag in render below
                 // find all links in the footnotes_html-- each of which contains a "text=[\d]"
-                var linkOccurences = footnotes_html.match(/text=\[.\]/g).map(function (element) {
+                var linkOccurences = footnotes_html.match(/text=\[.\]/g);
+                if (!linkOccurences) {
+                    return;
+                }
+
+                var linksFormatted = linkOccurences.map(function (element, index) {
                     // grab only the [\d] pieces of the text
                     return element.substring(element.indexOf("["), element.indexOf("]") + 1);
-                });
-
-                // Go through each of the [1] and format to the appropriate view
-                var linkFormatted = linkOccurences.map(function (element, index) {
+                }).map(function (element, index) {
                     // here bookmark is used so that the references can target this anchor tag 
                     return '<span><div class="BookmarkWidget"><a id=' + ("bookmark" + index) + '>' + element + '</a></div></span>';
                 });
@@ -656,23 +671,25 @@ var MarkdownSynapse = function (_React$Component) {
                 // all link occurences have a single location in the original string-- we go through and then 
                 // match of the link occurences to the spot it belongs into the html
                 var i = 0;
-                var matches = footnotes_html.replace(/(<span widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm,
+                var matches = footnotes_html.replace(/(<span data-widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm,
                 // replace using a function where p1,p2,p3 correspond to the matched groups from above
                 // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
                 // formatted text from above
                 function (match, p1, p2, p3, string) {
-                    return [p1, linkFormatted[i++], p3].join("");
+                    return [p1, linksFormatted[i++], p3].join("");
                 });
 
                 // create the dom element for this view and append to the ref
                 var bookmarkFragment = document.createRange().createContextualFragment(matches);
                 node.appendChild(bookmarkFragment);
                 // save the result of the operation from above
-                this.bookmarksFirstSeen = true;
-                this.bookmarkFragment = bookmarkFragment;
-            } else if (this.hasBookmarks) {
+                this.setState({
+                    bookmarksFirstSeen: true,
+                    bookmarkFragment: bookmarkFragment
+                });
+            } else if (this.state.hasBookmarks) {
                 // we've already computed the bookmarks, we can instead used the saved fragment
-                this.footnoteRef.current.appendChild(this.bookmarkFragment);
+                this.footnoteRef.current.appendChild(this.state.bookmarkFragment);
             }
         }
 
@@ -711,9 +728,7 @@ var MarkdownSynapse = function (_React$Component) {
             SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(function (initData) {
                 var queryCount = initData.queryResult.queryResults.rows.length;
                 var totalQueryResults = queryCount;
-
                 raw_plot_data = initData;
-
                 // Get the subsequent data, note- although the function calls itself, it runs
                 // iteratively due to the await
                 var getData = function () {
@@ -826,15 +841,19 @@ var MarkdownSynapse = function (_React$Component) {
         value: function getWikiPageMarkdown() {
             var _this6 = this;
 
-            SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
-                // on success grab text and append to the default text
-                var initText = _this6.state.text;
-                _this6.setState({
-                    text: initText + data.markdown
+            if (!this.state.text) {
+                SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
+                    // on success grab text and append to the default text
+                    var initText = _this6.state.text;
+                    _this6.setState({
+                        text: initText + data.markdown
+                    });
+                }).catch(function (err) {
+                    console.log('Error on wiki markdown load\n', err);
                 });
-            }).catch(function (err) {
-                console.log('Error on wiki markdown load\n', err);
-            });
+            }
+            // else the wiki page was retrieved accordingly or it was passed down
+            // as a prop
         }
 
         /**
@@ -848,7 +867,7 @@ var MarkdownSynapse = function (_React$Component) {
 
             SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                 _this7.setState({ fileHandles: data });
-                _this7.processWidgets(data);
+                _this7.processWidgets();
                 _this7.setState({
                     errorMessage: ""
                 });
@@ -862,6 +881,7 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
+
             // markdownitSynapse wraps around md object and uses its own dependencies
             markdownitSynapse.init_markdown_it(this.state.md, markdownSubAlt, markdownEmpahsisAlt, markdownCenterText, markdownSynapseHeading, markdownSynapseTable, markdownStrikethrough, markdownContainer, markdownEmpahsisAlt, markdownInlineComments, markdownBr);
 
@@ -879,7 +899,8 @@ var MarkdownSynapse = function (_React$Component) {
                 this.setState({
                     text: this.props.markdown
                 });
-            } else {
+            }
+            if (this.props.hasSynapseResources) {
                 // get wiki attachments
                 this.getWikiAttachments();
                 // sample API call to retrieve Synapse wiki page
@@ -888,6 +909,10 @@ var MarkdownSynapse = function (_React$Component) {
             }
             // process all math identified markdown items
             this.processMath();
+
+            if (this.props.updateLoadState && this.state.text) {
+                this.props.updateLoadState({ isLoading: false });
+            }
         }
 
         // on component update find and re-render the math/widget items accordingly
@@ -900,7 +925,7 @@ var MarkdownSynapse = function (_React$Component) {
                 // this is true when user just logged
                 this.setState({ isLoggedIn: true });
                 // only if they didn't supply markdown should this happen
-                if (!this.props.markdown) {
+                if (this.props.hasSynapseResources) {
                     this.getWikiAttachments();
                     this.getWikiPageMarkdown();
                 }
@@ -954,9 +979,8 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-
             var visibility = {
-                visibility: this.hasBookmarks ? "visible" : "hidden"
+                visibility: this.state.hasBookmarks ? "visible" : "hidden"
             };
 
             return React.createElement(
@@ -973,14 +997,6 @@ var MarkdownSynapse = function (_React$Component) {
     return MarkdownSynapse;
 }(React.Component);
 
-// const requiredPropsCheck = (props, propName, componentName) => {
-//     if ( !props.ownerId && !props.wikiId && !props.markdown) {
-//         return new Error(`Either ownerId and wikiId OR markdown is required by '${componentName}' component.`)
-//     } else if (props.ownerId && props.wikiId && props.markdown) {
-//         return new Error(`Either ownerId and wikiId OR markdown can be specified by '${componentName}' component.`)
-//     }
-// }
-
 // Validate props passed to the component
 
 
@@ -991,11 +1007,16 @@ MarkdownSynapse.propTypes = {
     // required props
     token: PropTypes.string.isRequired,
 
-    // either owner id and wiki required
     ownerId: PropTypes.string,
     wikiId: PropTypes.string,
-    // OR
-    markdown: PropTypes.string
+
+    markdown: PropTypes.string,
+    hasSynapseResources: PropTypes.bool
+
+};
+
+MarkdownSynapse.defaultProps = {
+    hasSynapseResources: true
 };
 
 export default MarkdownSynapse;

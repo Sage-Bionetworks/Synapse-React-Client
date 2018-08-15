@@ -20,5 +20,5 @@ yarn-error.log*
 jsconfig.json
 .vscode
 
-# compiled css
+# css
 src/**/*.css
