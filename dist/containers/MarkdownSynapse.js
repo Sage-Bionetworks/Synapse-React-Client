@@ -629,7 +629,11 @@ var MarkdownSynapse = function (_React$Component) {
                 // find and go to the bookmark at the right section of the page
                 var goTo = _this5.footnoteRef.current.querySelector('a#bookmark' + index);
                 try {
-                    goTo.scrollIntoView();
+                    goTo.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    });
                 } catch (e) {
                     console.log('error on scroll', e);
                 }

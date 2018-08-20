@@ -414,7 +414,11 @@ class MarkdownSynapse extends React.Component {
                 // find and go to the bookmark at the right section of the page
                 let goTo = this.footnoteRef.current.querySelector(`a#bookmark${index}`)
                 try {
-                    goTo.scrollIntoView()
+                    goTo.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    })
                 } catch (e) {
                     console.log('error on scroll', e)
                 }
