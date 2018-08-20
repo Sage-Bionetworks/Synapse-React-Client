@@ -609,6 +609,8 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'handleReferenceWidget',
         value: function handleReferenceWidget(elementBundle, index, savedReferences) {
+            var _this5 = this;
+
             var renderedHTML = "";
             // due to re-renering, we save the result of this method, on initial calculate the html, otherwise we just 
             // show it
@@ -624,10 +626,14 @@ var MarkdownSynapse = function (_React$Component) {
             renderedHTML = document.createRange().createContextualFragment(renderedHTML);
             renderedHTML.querySelector("a").addEventListener("click", function (event) {
                 event.preventDefault();
-                // find and go to the bookmark at the bottom of the page
-                var goTo = document.getElementById('bookmark' + index);
+                // find and go to the bookmark at the right section of the page
+                var goTo = _this5.footnoteRef.current.querySelector('a#bookmark' + index);
                 try {
-                    goTo.scrollIntoView();
+                    goTo.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    });
                 } catch (e) {
                     console.log('error on scroll', e);
                 }
@@ -704,7 +710,7 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getPlotlyData',
         value: function getPlotlyData(widgetparamsMapped) {
-            var _this5 = this;
+            var _this6 = this;
 
             var raw_plot_data = {};
             var maxPageSize = 150;
@@ -746,7 +752,7 @@ var MarkdownSynapse = function (_React$Component) {
                                         maxPageSize = initData.maxRowsPerPage;
                                         queryRequestWithMaxPageSize = {
                                             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                                            entityId: _this5.props.ownerId,
+                                            entityId: _this6.props.ownerId,
                                             partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                                             query: {
                                                 isConsistent: false,
@@ -756,7 +762,7 @@ var MarkdownSynapse = function (_React$Component) {
                                             }
                                         };
                                         _context5.next = 5;
-                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, _this5.props.token).then(function (post_data) {
+                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, _this6.props.token).then(function (post_data) {
                                             queryCount += post_data.queryResult.queryResults.rows.length;
                                             if (queryCount > 0) {
                                                 var _raw_plot_data$queryR;
@@ -775,12 +781,12 @@ var MarkdownSynapse = function (_React$Component) {
 
                                     case 7:
                                         // set data to this plots sql in the query data
-                                        queryData = Object.assign({}, _this5.state.queryData); // shallow copy
+                                        queryData = Object.assign({}, _this6.state.queryData); // shallow copy
 
                                         query = widgetparamsMapped.query;
 
                                         queryData[query] = raw_plot_data;
-                                        _this5.setState({
+                                        _this6.setState({
                                             queryData: queryData
                                         });
                                         return _context5.abrupt('return', raw_plot_data);
@@ -790,7 +796,7 @@ var MarkdownSynapse = function (_React$Component) {
                                         return _context5.stop();
                                 }
                             }
-                        }, _callee5, _this5);
+                        }, _callee5, _this6);
                     }));
 
                     return function getData() {
@@ -839,13 +845,13 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiPageMarkdown',
         value: function getWikiPageMarkdown() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (!this.state.text) {
                 SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                     // on success grab text and append to the default text
-                    var initText = _this6.state.text;
-                    _this6.setState({
+                    var initText = _this7.state.text;
+                    _this7.setState({
                         text: initText + data.markdown
                     });
                 }).catch(function (err) {
@@ -863,16 +869,16 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiAttachments',
         value: function getWikiAttachments() {
-            var _this7 = this;
+            var _this8 = this;
 
             SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
-                _this7.setState({ fileHandles: data });
-                _this7.processWidgets();
-                _this7.setState({
+                _this8.setState({ fileHandles: data });
+                _this8.processWidgets();
+                _this8.setState({
                     errorMessage: ""
                 });
             }).catch(function (err) {
-                _this7.setState({
+                _this8.setState({
                     errorMessage: err.reason
                 });
                 console.log("Error on wiki attachment load ", err);
