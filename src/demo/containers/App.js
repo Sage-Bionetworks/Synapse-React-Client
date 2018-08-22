@@ -90,6 +90,8 @@ class App extends Component {
    * Call demo synapse features
    */
   componentDidMount() {
+    this.getVersion()	
+    this.makeSampleQueryCall()
   }
 
   getMultipleWikis() {

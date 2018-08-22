@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import * as SynapseClient from '../utils/SynapseClient'
 import SynapsePlot from './widgets/SynapsePlot'
+import Reference from './widgets/Reference'
 
 import PropTypes from 'prop-types'
 
@@ -86,7 +87,6 @@ class MarkdownSynapse extends React.Component {
 
         // handling each of the synapse widgets
         this.handleImageWidget = this.handleImageWidget.bind(this)
-        this.handleReferenceWidget = this.handleReferenceWidget.bind(this)
         this.addBookmarks = this.addBookmarks.bind(this)
     }
 
@@ -140,6 +140,9 @@ class MarkdownSynapse extends React.Component {
     }
 
     async processWidgetMappings(widgets, fileHandleAssociationList, elementList) {
+        let referenceCountContainer = {
+            referenceCount : 1
+        }
         for (let element of widgets) {
             let widgetstring = element.dataset.widgetparams;
             let questionIndex = widgetstring.indexOf("?"); // type?
@@ -152,7 +155,7 @@ class MarkdownSynapse extends React.Component {
                 value = decodeURIComponent(value);
                 widgetparamsMapped[key] = value;
             });
-            await this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
+            await this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList, referenceCountContainer);
         };
     }
 
@@ -212,7 +215,7 @@ class MarkdownSynapse extends React.Component {
      * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
      * @param {*} elementList   stack of elements to be processed
      */
-    async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
+    async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList, referenceCountContainer) {
         if (widgetType === "buttonlink" && element && element.parentElement) {  // check parent element
             let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
             element.outerHTML = button;
@@ -251,7 +254,27 @@ class MarkdownSynapse extends React.Component {
                                 widgetparamsMapped={widgetparamsMapped} />
             ReactDOM.render(plotWidget, element)
         } else if (widgetType === "reference") {
-            elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+            let count = referenceCountContainer.referenceCount
+            let reference = <Reference
+                                footnoteId={referenceCountContainer.referenceCount}
+                                onClick={
+                                    event => {
+                                        event.preventDefault()
+                                        // find and go to the bookmark at the right section of the page
+                                        let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`)
+                                        try {
+                                            goTo.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'center',
+                                                inline: 'center'
+                                            })
+                                        } catch (e) {
+                                            console.log('error on scroll', e)
+                                        }}
+                                }
+                            />
+            ReactDOM.render(reference, element)
+            referenceCountContainer.referenceCount++
         }
     }
 
@@ -262,7 +285,7 @@ class MarkdownSynapse extends React.Component {
      * @memberof Markdown
      */
     matchElementToResource(elementList) {
-        let referenceCount = 0
+        let referenceCount = 1
         let savedReferences = this.state.savedReferences || []
 
         if (elementList.length > 0) {
@@ -271,8 +294,6 @@ class MarkdownSynapse extends React.Component {
                     // match corresponds to filehandle that this current element needs to be connected to
                     let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
                     this.handleImageWidget(match, elementBundle);
-                } else if (elementBundle.widgetType === "reference") {
-                    this.handleReferenceWidget(elementBundle, referenceCount++, savedReferences);
                 }
             });
             if (referenceCount > 0 && !this.state.hasProcessedReferences) {
@@ -287,49 +308,6 @@ class MarkdownSynapse extends React.Component {
             elementBundle.element.outerHTML = renderedHTML;
         }
     }         
-
-    /**
-     * Handles ?{reference} synapse widgets
-     *
-     * @param {*} elementBundle
-     * @param {*} index
-     * @memberof MarkdownSynapse
-     */
-    handleReferenceWidget(elementBundle, index, savedReferences) {
-        let renderedHTML = ""
-        // due to re-renering, we save the result of this method, on initial calculate the html, otherwise we just 
-        // show it
-        if (!this.state.hasProcessedReferences) {
-            renderedHTML = `<span> <span><div class="ReferenceWidget"><a href="#" class="margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
-            savedReferences.push(renderedHTML)
-        } else {
-            renderedHTML = savedReferences[index]
-        }
-        
-        // attach an anchor tag with an event listener to jump to the appropriate bookmark at the bottom of the page
-        // note- can't save the dom element as in addBookmarks() the even listener seems to break this option
-        renderedHTML= document.createRange().createContextualFragment(renderedHTML)
-        renderedHTML.querySelector("a").addEventListener("click",
-            event => {
-                event.preventDefault()
-                // find and go to the bookmark at the right section of the page
-                let goTo = this.footnoteRef.current.querySelector(`a#bookmark${index}`)
-                try {
-                    goTo.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center',
-                        inline: 'center'
-                    })
-                } catch (e) {
-                    console.log('error on scroll', e)
-                }
-                
-            }
-        )
-
-        elementBundle.element.innerText = "" // clear the <Synapse widget> text
-        elementBundle.element.appendChild(renderedHTML)
-    }
 
     /**
      * Process all the corresponding bookmark tags of the references made throughout the page
