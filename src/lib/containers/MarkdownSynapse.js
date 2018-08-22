@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import * as SynapseClient from '../utils/SynapseClient'
 import SynapsePlot from './widgets/SynapsePlot'
 import Reference from './widgets/Reference'
+import Bookmarks from './widgets/Bookmarks'
 
 import PropTypes from 'prop-types'
 
@@ -314,58 +315,17 @@ class MarkdownSynapse extends React.Component {
      *
      * @memberof MarkdownSynapse
      */
-        addBookmarks() {
-        /* we have to check that:
-            1) there are bookmarks on the page
-            2) we haven't already processed bookmarks on a previous render of the page
-        */
-       if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
+    addBookmarks() {
+       if (this.state.hasBookmarks) {
+            // if (this.footnoteRef.current) {
+            //     ReactDOM.unmountComponentAtNode(this.footnoteRef.current)
+            // }
             let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-            let node = this.footnoteRef.current // corresponds to <p> tag in render below
-            // find all links in the footnotes_html-- each of which contains a "text=[\d]"
-            let linkOccurences = footnotes_html.match(/text=\[.\]/g)
-            if (!linkOccurences) {
-                return
-            }
+            let bookmarks = <Bookmarks
+                                footnotes={footnotes_html}>
+                            </Bookmarks>
+            ReactDOM.render(bookmarks, this.footnoteRef.current)
 
-            let linksFormatted = linkOccurences.map(
-                (element, index ) => { 
-                    // grab only the [\d] pieces of the text
-                    return element.substring(element.indexOf("["), element.indexOf("]") + 1)
-                 }
-            ).map(
-                (element, index) => {
-                    // here bookmark is used so that the references can target this anchor tag 
-                    return `<span><div class="BookmarkWidget"><a id=${"bookmark" + index}>${element}</a></div></span>`
-                }
-            )
-
-            // now all of the links are prepared to be inserted back into the original string
-            // all link occurences have a single location in the original string-- we go through and then 
-            // match of the link occurences to the spot it belongs into the html
-            let i = 0
-            let matches = footnotes_html.replace(/(<span data-widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm, 
-                // replace using a function where p1,p2,p3 correspond to the matched groups from above
-                // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
-                // formatted text from above
-                (match, p1, p2, p3, string) => {
-                    return [p1, linksFormatted[i++] , p3].join("")
-                }
-            )
-
-            // create the dom element for this view and append to the ref
-            let bookmarkFragment = document.createRange().createContextualFragment(matches)
-            node.appendChild(bookmarkFragment)
-            // save the result of the operation from above
-            this.setState(
-                {
-                    bookmarksFirstSeen: true,
-                    bookmarkFragment: bookmarkFragment      
-                }
-            )
-        } else if (this.state.hasBookmarks) {
-            // we've already computed the bookmarks, we can instead used the saved fragment
-            this.footnoteRef.current.appendChild(this.state.bookmarkFragment)
         }
     }
 
@@ -477,6 +437,7 @@ class MarkdownSynapse extends React.Component {
 
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate () {
+
         // we have to carefully update the component so it doesn't encounter an infinite loop
         if (this.props.token !== "" && !this.state.isLoggedIn) {
             // this is true when user just logged
@@ -537,7 +498,7 @@ class MarkdownSynapse extends React.Component {
                 {this.getErrorView()}
                 <div ref={this.markupRef} dangerouslySetInnerHTML={this.createMarkup(this.state.text)}/>
                 <hr style={visibility}  />
-                <p ref={this.footnoteRef} style={visibility}></p>
+                <div ref={this.footnoteRef} style={visibility}></div>
             </React.Fragment>
         )
     }
