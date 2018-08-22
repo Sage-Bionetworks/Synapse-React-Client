@@ -28,6 +28,7 @@ class SynapsePlot extends React.Component {
     fetchPlotlyData() {
 
         const {ownerId, token } = this.props
+        const {query} = this.props.widgetparamsMapped
 
         let raw_plot_data = {}
         let maxPageSize = 150
@@ -41,7 +42,7 @@ class SynapsePlot extends React.Component {
                 limit: maxPageSize,
                 partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
                 offset: 0,
-                sql: this.props.widgetparamsMapped.query
+                sql: query
             }
         };
 
@@ -65,7 +66,7 @@ class SynapsePlot extends React.Component {
                             isConsistent: false,
                             limit: maxPageSize,
                             offset: totalQueryResults,
-                            sql: this.props.widgetparamsMapped.query
+                            sql: query
                         }
                     };
                     await SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, token)
