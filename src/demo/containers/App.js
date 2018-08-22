@@ -90,8 +90,6 @@ class App extends Component {
    * Call demo synapse features
    */
   componentDidMount() {
-    this.getVersion()
-    this.makeSampleQueryCall()
   }
 
   getMultipleWikis() {
@@ -157,31 +155,6 @@ class App extends Component {
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
-
-        <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14568473"}
-                    wikiId={"582406"}
-                    >
-          </MarkdownSynapse>
-        </CustomMarkdownView>
-
-        <CustomMarkdownView>
-            <MarkdownSynapse token={this.state.token}
-                      ownerId={"syn14568473"}
-                      wikiId={"582406"}
-                      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
-                      >
-            </MarkdownSynapse>
-          </CustomMarkdownView>
-
-          <CustomMarkdownView>
-            <MarkdownSynapse token={this.state.token}
-                      markdown={"# custom markdown\n####no resources attached"}
-                      hasSynapseResources={false}
-                      >
-            </MarkdownSynapse>
-          </CustomMarkdownView>
       </div>
     );
   }

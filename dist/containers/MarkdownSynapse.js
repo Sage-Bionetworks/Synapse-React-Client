@@ -6,8 +6,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -17,8 +15,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from "react";
-import * as SynapseConstants from '../utils/SynapseConstants';
+import ReactDOM from 'react-dom';
+
 import * as SynapseClient from '../utils/SynapseClient';
+import SynapsePlot from './widgets/SynapsePlot';
 
 import PropTypes from 'prop-types';
 
@@ -107,7 +107,6 @@ var MarkdownSynapse = function (_React$Component) {
 
         // handling each of the synapse widgets
         _this.handleImageWidget = _this.handleImageWidget.bind(_this);
-        _this.handlePlotlyWidget = _this.handlePlotlyWidget.bind(_this);
         _this.handleReferenceWidget = _this.handleReferenceWidget.bind(_this);
         _this.addBookmarks = _this.addBookmarks.bind(_this);
         return _this;
@@ -178,8 +177,6 @@ var MarkdownSynapse = function (_React$Component) {
                                             switch (_context.prev = _context.next) {
                                                 case 0:
                                                     widgetstring = element.dataset.widgetparams;
-
-                                                    window.Elememeem = element;
                                                     questionIndex = widgetstring.indexOf("?"); // type?
 
                                                     widgetType = widgetstring.substring(0, questionIndex); // type
@@ -201,10 +198,10 @@ var MarkdownSynapse = function (_React$Component) {
                                                         value = decodeURIComponent(value);
                                                         widgetparamsMapped[key] = value;
                                                     });
-                                                    _context.next = 8;
+                                                    _context.next = 7;
                                                     return _this2.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
 
-                                                case 8:
+                                                case 7:
                                                 case 'end':
                                                     return _context.stop();
                                             }
@@ -369,7 +366,7 @@ var MarkdownSynapse = function (_React$Component) {
         key: 'prepareWidget',
         value: function () {
             var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-                var button, fileName, match, synapseId;
+                var button, fileName, match, synapseId, plotWidget;
                 return _regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
@@ -438,7 +435,13 @@ var MarkdownSynapse = function (_React$Component) {
 
                             case 21:
                                 if (widgetType === "plot") {
-                                    elementList.push({ element: element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
+                                    plotWidget = React.createElement(SynapsePlot, {
+                                        token: this.props.token,
+                                        ownerId: this.props.ownerId,
+                                        wikiId: this.props.wikiId,
+                                        widgetparamsMapped: widgetparamsMapped });
+
+                                    ReactDOM.render(plotWidget, element);
                                 } else if (widgetType === "reference") {
                                     elementList.push({ element: element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
                                 }
@@ -479,8 +482,6 @@ var MarkdownSynapse = function (_React$Component) {
                         // match corresponds to filehandle that this current element needs to be connected to
                         var match = _this4.matchToHandle(_this4.compareById(elementBundle.id, "fileHandleId"), _this4.state.fileResults);
                         _this4.handleImageWidget(match, elementBundle);
-                    } else if (elementBundle.widgetType === "plot") {
-                        _this4.handlePlotlyWidget(elementBundle);
                     } else if (elementBundle.widgetType === "reference") {
                         _this4.handleReferenceWidget(elementBundle, referenceCount++, savedReferences);
                     }
@@ -497,105 +498,6 @@ var MarkdownSynapse = function (_React$Component) {
                 var renderedHTML = '<image class="img-fluid" src=' + match[0].preSignedURL + '></image>';
                 elementBundle.element.outerHTML = renderedHTML;
             }
-        }
-    }, {
-        key: 'handlePlotlyWidget',
-        value: function handlePlotlyWidget(elementBundle) {
-            var widgetparamsMapped = elementBundle.widgetparamsMapped;
-            var raw_plot_data = null;
-            if (!this.state.queryData || !this.state.queryData[widgetparamsMapped.query]) {
-                // grab all the data, hasn't been loaded yet
-                raw_plot_data = this.getPlotlyData(widgetparamsMapped);
-            } else {
-                // data already exists, don't regenerate
-                raw_plot_data = this.state.queryData[widgetparamsMapped.query];
-            }
-            if (!raw_plot_data) {
-                return;
-            }
-            // grab all the parameters passed into the widget
-            var title = widgetparamsMapped.title;
-            var xtitle = widgetparamsMapped.xtitle;
-            var ytitle = widgetparamsMapped.ytitle;
-            var type = widgetparamsMapped.type;
-            var xaxisType = widgetparamsMapped.xaxistype;
-            var isHorizontal = widgetparamsMapped.horizontal.toLowerCase();
-            var showLegend = widgetparamsMapped.showlegend;
-            var layout = {
-                title: title,
-                showlegend: showLegend
-            };
-            if (xtitle) {
-                layout.xaxis = {
-                    title: xtitle
-                };
-            }
-            if (xaxisType) {
-                layout.xaxis = Object.assign({}, layout.xaxis, {
-                    xaxistype: xaxisType.toLowerCase()
-                });
-            }
-            if (ytitle) {
-                layout.yaxis = {
-                    title: ytitle
-                };
-            }
-            var config = {
-                displayModeBar: false
-            };
-            if (!raw_plot_data.queryResult) {
-                // results haven't loaded yet
-                return null;
-            }
-            // init plot_data
-            var plot_data = [];
-            var orientation = isHorizontal ? "v" : "h";
-            var headers = raw_plot_data.queryResult.queryResults.headers;
-            for (var i = 0; i < headers.length - 1; i++) {
-                // make an entry for each set of data points
-                plot_data[i] = {
-                    x: [],
-                    y: [],
-                    name: headers[i + 1].name,
-                    type: type.toLowerCase(),
-                    orientation: orientation
-                };
-            }
-            // grab all the data
-            for (var _i = 0; _i < raw_plot_data.queryResult.queryResults.rows.length; _i++) {
-                var row = raw_plot_data.queryResult.queryResults.rows[_i];
-                for (var j = 1; j < row.values.length; j++) {
-                    // create pairs of data
-                    var row_values = row.values;
-                    plot_data[j - 1].x.push(row_values[0]);
-                    plot_data[j - 1].y.push(row_values[j]);
-                }
-            }
-            // error with clearing html - "" is not a function 
-            // wrapping in try/catch prevents the error, although it doesn't catch it.
-            try {
-                elementBundle.element.innerHTML = ""; // clear formatting (e.g. <Synapse Widget></SynapseWidget>)
-            } catch (e) {
-                console.log('element bundle error ', e);
-            }
-            // responsive plot
-            // https://plot.ly/javascript/responsive-fluid-layout/#responsive--fluid-layout
-            (function () {
-                var d3 = window.Plotly.d3;
-                var WIDTH_IN_PERCENT_OF_PARENT = 100,
-                    HEIGHT_IN_PERCENT_OF_PARENT = 75;
-                var gd3 = d3.select(elementBundle.element).append('div').style({
-                    width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-                    'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 5 + '%',
-                    height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-                    'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 5 + 'vh'
-                });
-                var gd = gd3.node();
-                window.Plotly.plot(gd, plot_data, layout, config);
-                window.onresize = function () {
-                    window.Plotly.Plots.resize(gd);
-                };
-            })();
         }
 
         /**
@@ -700,116 +602,6 @@ var MarkdownSynapse = function (_React$Component) {
         }
 
         /**
-         * Get data for plotly
-         *
-         * @param {*} widgetparamsMapped
-         * @returns data corresponding to plotly widget
-         * @memberof Markdown
-         */
-
-    }, {
-        key: 'getPlotlyData',
-        value: function getPlotlyData(widgetparamsMapped) {
-            var _this6 = this;
-
-            var raw_plot_data = {};
-            var maxPageSize = 150;
-
-            // step 1: get init query with maxRowsPerPage calculated
-            var queryRequest = {
-                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                entityId: this.props.ownerId,
-                query: {
-                    isConsistent: false,
-                    limit: maxPageSize,
-                    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
-                    offset: 0,
-                    sql: widgetparamsMapped.query
-                }
-            };
-
-            // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
-            // we can get, the following uses that maximum and offsets to the appropriate location to get the data
-            // afterwards, the process repeats
-            SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(function (initData) {
-                var queryCount = initData.queryResult.queryResults.rows.length;
-                var totalQueryResults = queryCount;
-                raw_plot_data = initData;
-                // Get the subsequent data, note- although the function calls itself, it runs
-                // iteratively due to the await
-                var getData = function () {
-                    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee5() {
-                        var queryRequestWithMaxPageSize, queryData, query;
-                        return _regeneratorRuntime.wrap(function _callee5$(_context5) {
-                            while (1) {
-                                switch (_context5.prev = _context5.next) {
-                                    case 0:
-                                        if (!(queryCount === maxPageSize)) {
-                                            _context5.next = 7;
-                                            break;
-                                        }
-
-                                        maxPageSize = initData.maxRowsPerPage;
-                                        queryRequestWithMaxPageSize = {
-                                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                                            entityId: _this6.props.ownerId,
-                                            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                                            query: {
-                                                isConsistent: false,
-                                                limit: maxPageSize,
-                                                offset: totalQueryResults,
-                                                sql: widgetparamsMapped.query
-                                            }
-                                        };
-                                        _context5.next = 5;
-                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, _this6.props.token).then(function (post_data) {
-                                            queryCount += post_data.queryResult.queryResults.rows.length;
-                                            if (queryCount > 0) {
-                                                var _raw_plot_data$queryR;
-
-                                                totalQueryResults += queryCount;
-                                                (_raw_plot_data$queryR = raw_plot_data.queryResult.queryResults.rows).push.apply(_raw_plot_data$queryR, _toConsumableArray(post_data.queryResult.queryResults.rows));
-                                            }
-                                            return getData();
-                                        }).catch(function (err) {
-                                            console.log("Error on getting table results ", err);
-                                        });
-
-                                    case 5:
-                                        _context5.next = 12;
-                                        break;
-
-                                    case 7:
-                                        // set data to this plots sql in the query data
-                                        queryData = Object.assign({}, _this6.state.queryData); // shallow copy
-
-                                        query = widgetparamsMapped.query;
-
-                                        queryData[query] = raw_plot_data;
-                                        _this6.setState({
-                                            queryData: queryData
-                                        });
-                                        return _context5.abrupt('return', raw_plot_data);
-
-                                    case 12:
-                                    case 'end':
-                                        return _context5.stop();
-                                }
-                            }
-                        }, _callee5, _this6);
-                    }));
-
-                    return function getData() {
-                        return _ref4.apply(this, arguments);
-                    };
-                }();
-                return getData();
-            });
-            // when data hasn't loaded yet
-            return null;
-        }
-
-        /**
          * Attach markdown to wiki attachments
          */
 
@@ -845,13 +637,13 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiPageMarkdown',
         value: function getWikiPageMarkdown() {
-            var _this7 = this;
+            var _this6 = this;
 
             if (!this.state.text) {
                 SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                     // on success grab text and append to the default text
-                    var initText = _this7.state.text;
-                    _this7.setState({
+                    var initText = _this6.state.text;
+                    _this6.setState({
                         text: initText + data.markdown
                     });
                 }).catch(function (err) {
@@ -869,16 +661,16 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiAttachments',
         value: function getWikiAttachments() {
-            var _this8 = this;
+            var _this7 = this;
 
             SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
-                _this8.setState({ fileHandles: data });
-                _this8.processWidgets();
-                _this8.setState({
+                _this7.setState({ fileHandles: data });
+                _this7.processWidgets();
+                _this7.setState({
                     errorMessage: ""
                 });
             }).catch(function (err) {
-                _this8.setState({
+                _this7.setState({
                     errorMessage: err.reason
                 });
                 console.log("Error on wiki attachment load ", err);
