@@ -9,6 +9,7 @@ import Bookmarks from './widgets/Bookmarks'
 import PropTypes from 'prop-types'
 
 import "../style/Portal.css"
+import SynapseImage from "./widgets/SynapseImage";
 
 /**
  * Import requirements for markdown
@@ -156,7 +157,7 @@ class MarkdownSynapse extends React.Component {
                 value = decodeURIComponent(value);
                 widgetparamsMapped[key] = value;
             });
-            await this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList, referenceCountContainer);
+            await this.prepareWidget(widgetType, widgetparamsMapped, element, referenceCountContainer);
         };
     }
 
@@ -216,36 +217,29 @@ class MarkdownSynapse extends React.Component {
      * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
      * @param {*} elementList   stack of elements to be processed
      */
-    async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList, referenceCountContainer) {
+    async prepareWidget(widgetType, widgetparamsMapped, element, referenceCountContainer) {
         if (widgetType === "buttonlink" && element && element.parentElement) {  // check parent element
             let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
             element.outerHTML = button;
         } else if (widgetType === "image" && this.state.fileHandles) {
-            let fileName = null
-            let match = null
             if (widgetparamsMapped.fileName) {
-                fileName = widgetparamsMapped.fileName;
-                match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
-                fileHandleAssociationList.push({
-                    fileHandleId: match[0].id,
-                    associateObjectId: this.props.wikiId,
-                    associateObjectType: "WikiAttachment"
-                });
-                elementList.push({element:element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
+                let img = <SynapseImage
+                                token={this.props.token}
+                                fileName={widgetparamsMapped.fileName}
+                                wikiId={this.props.wikiId}
+                                isAttachedToEntity={false}
+                                fileResults={this.state.fileHandles.list}
+                            />
+                ReactDOM.render(img, element)
             } else if (widgetparamsMapped.synapseId) {
                 // elements with synapseIds have to have their resources loaded first, their not located
                 // with the file attachnent list
-                let synapseId = widgetparamsMapped.synapseId;
-                await SynapseClient.getEntity(this.props.token, synapseId).then(data => {
-                    fileHandleAssociationList.push({
-                        fileHandleId: data.dataFileHandleId,
-                        associateObjectId: synapseId,
-                        associateObjectType: "FileEntity"
-                    });
-                    elementList.push({element:element, id: data.dataFileHandleId, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
-                }).catch(err => {
-                    console.log("Error on synapse entity image load ", err)
-                })
+                let img = <SynapseImage
+                                token={this.props.token}
+                                synapseId={widgetparamsMapped.synapseId}
+                                isAttachedToEntity={true}
+                            />
+                ReactDOM.render(img, element)
             }
         } else if (widgetType === "plot") {
             let plotWidget = <SynapsePlot 
@@ -255,28 +249,29 @@ class MarkdownSynapse extends React.Component {
                                 widgetparamsMapped={widgetparamsMapped} />
             ReactDOM.render(plotWidget, element)
         } else if (widgetType === "reference") {
-            let count = referenceCountContainer.referenceCount
-            let reference = <Reference
-                                footnoteId={referenceCountContainer.referenceCount}
-                                onClick={
-                                    event => {
-                                        event.preventDefault()
-                                        // find and go to the bookmark at the right section of the page
-                                        let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`)
-                                        try {
-                                            goTo.scrollIntoView({
-                                                behavior: 'smooth',
-                                                block: 'center',
-                                                inline: 'center'
-                                            })
-                                        } catch (e) {
-                                            console.log('error on scroll', e)
-                                        }}
-                                }
-                            />
-            ReactDOM.render(reference, element)
-            referenceCountContainer.referenceCount++
+            this.addSynapseReference(referenceCountContainer, element);
         }
+    }
+
+    addSynapseReference(referenceCountContainer, element) {
+        let count = referenceCountContainer.referenceCount;
+        let reference = <Reference footnoteId={referenceCountContainer.referenceCount} onClick={event => {
+            event.preventDefault();
+            // find and go to the bookmark at the right section of the page
+            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
+            try {
+                goTo.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+            catch (e) {
+                console.log('error on scroll', e);
+            }
+        } } />;
+        ReactDOM.render(reference, element);
+        referenceCountContainer.referenceCount++;
     }
 
     /**
@@ -325,7 +320,6 @@ class MarkdownSynapse extends React.Component {
                                 footnotes={footnotes_html}>
                             </Bookmarks>
             ReactDOM.render(bookmarks, this.footnoteRef.current)
-
         }
     }
 

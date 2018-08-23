@@ -1,7 +1,7 @@
 import React from 'react'
 import Plot from 'react-plotly.js';
 import * as SynapseConstants from '../../utils/SynapseConstants'
-import * as SynapseClient from '../../utils/SynapseClient'
+import {getQueryTableResults} from '../../utils/SynapseClient'
 
 
 
@@ -49,7 +49,7 @@ class SynapsePlot extends React.Component {
         // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
         // we can get, the following uses that maximum and offsets to the appropriate location to get the data
         // afterwards, the process repeats
-        SynapseClient.getQueryTableResults(queryRequest, token).then(initData => {
+        getQueryTableResults(queryRequest, token).then(initData => {
             let queryCount = initData.queryResult.queryResults.rows.length
             let totalQueryResults = queryCount
             raw_plot_data = initData;
@@ -69,7 +69,7 @@ class SynapsePlot extends React.Component {
                             sql: query
                         }
                     };
-                    await SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, token)
+                    await getQueryTableResults(queryRequestWithMaxPageSize, token)
                         .then(post_data => {
                             queryCount += post_data.queryResult.queryResults.rows.length
                             if (queryCount > 0) {
