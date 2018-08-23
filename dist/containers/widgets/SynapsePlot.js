@@ -15,7 +15,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 import React from 'react';
 import Plot from 'react-plotly.js';
 import * as SynapseConstants from '../../utils/SynapseConstants';
-import * as SynapseClient from '../../utils/SynapseClient';
+import { getQueryTableResults } from '../../utils/SynapseClient';
 
 var SynapsePlot = function (_React$Component) {
     _inherits(SynapsePlot, _React$Component);
@@ -75,7 +75,7 @@ var SynapsePlot = function (_React$Component) {
             // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
             // we can get, the following uses that maximum and offsets to the appropriate location to get the data
             // afterwards, the process repeats
-            SynapseClient.getQueryTableResults(queryRequest, token).then(function (initData) {
+            getQueryTableResults(queryRequest, token).then(function (initData) {
                 var queryCount = initData.queryResult.queryResults.rows.length;
                 var totalQueryResults = queryCount;
                 raw_plot_data = initData;
@@ -106,7 +106,7 @@ var SynapsePlot = function (_React$Component) {
                                             }
                                         };
                                         _context.next = 5;
-                                        return SynapseClient.getQueryTableResults(queryRequestWithMaxPageSize, token).then(function (post_data) {
+                                        return getQueryTableResults(queryRequestWithMaxPageSize, token).then(function (post_data) {
                                             queryCount += post_data.queryResult.queryResults.rows.length;
                                             if (queryCount > 0) {
                                                 var _raw_plot_data$queryR;
