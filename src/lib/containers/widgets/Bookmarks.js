@@ -5,9 +5,14 @@ class Bookmarks extends React.Component {
     constructor() {
         super()
         this.bookmarkRef = React.createRef()
+        this.transformProps = this.transformProps.bind(this)
     }
 
     componentDidMount() {
+        this.transformProps()
+    }
+
+    componentDidUpdate() {
         this.transformProps()
     }
 
@@ -51,8 +56,11 @@ class Bookmarks extends React.Component {
 
     render () {
         return (
-            <div ref={this.bookmarkRef}>
-            </div>  
+            <React.Fragment>
+                <hr/>
+                <div ref={this.bookmarkRef}>
+                </div>
+            </React.Fragment>  
         )
     }
 }

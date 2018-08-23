@@ -89,7 +89,7 @@ class SynapseImage extends React.Component {
     render () {
         if (this.state.isLoaded) {
             return (
-                <div></div>
+                null
             )
         } else {
             return (
