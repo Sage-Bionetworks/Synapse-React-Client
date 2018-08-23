@@ -61,32 +61,30 @@ class MarkdownSynapse extends React.Component {
             fileHandles: null,
             newOwnerId: "",
             newWikiId: "",
-            calledReset: false,
             isLoggedIn: this.props.token !== "",
-            errorMessage: "",
-            queryData: {},
+            errorMessage: ""
         }
-
 
         this.footnoteRef = React.createRef()
         this.markupRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
+        this.processWidgetMappings = this.processWidgetMappings.bind(this)
         this.processMath = this.processMath.bind(this)
         // handle init calls to get wiki related items
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
         
-        // handle pre/post processing of widgets
-        this.prepareWidget = this.prepareWidget.bind(this)
-        this.processWidgetMappings = this.processWidgetMappings.bind(this)
+        // handle rendering widgets
+        this.renderWidget = this.renderWidget.bind(this)
+        this.renderSynapseButton = this.renderSynapseButton.bind(this)
+        this.renderSynapseImage = this.renderSynapseImage.bind(this)
+        this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
+        this.renderSynapseReference = this.renderSynapseReference.bind(this)
         
-        // state related functions
         this.getErrorView = this.getErrorView.bind(this)
-        this.handleChange = this.handleChange.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
-
         this.addBookmarks = this.addBookmarks.bind(this)
     }
 
@@ -155,7 +153,7 @@ class MarkdownSynapse extends React.Component {
                 value = decodeURIComponent(value);
                 widgetparamsMapped[key] = value;
             });
-            this.prepareWidget(widgetType, widgetparamsMapped, element, referenceCountContainer);
+            this.renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer);
         };
     }
 
@@ -166,6 +164,7 @@ class MarkdownSynapse extends React.Component {
         let widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]")
         this.processWidgetMappings(widgets)
         this.addBookmarks()
+        markdownitSynapse.resetFootnotes()  
     }
 
     /**
@@ -177,43 +176,42 @@ class MarkdownSynapse extends React.Component {
      * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
      * @param {*} elementList   stack of elements to be processed
      */
-    prepareWidget(widgetType, widgetparamsMapped, element, referenceCountContainer) {
+    renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer) {
         if (widgetType === "buttonlink" && element && element.parentElement) {  // check parent element
-            let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
-            element.outerHTML = button;
+            this.renderSynapseButton(widgetparamsMapped, element);
         } else if (widgetType === "image" && this.state.fileHandles) {
-            if (widgetparamsMapped.fileName) {
-                let img = <SynapseImage
-                                token={this.props.token}
-                                fileName={widgetparamsMapped.fileName}
-                                wikiId={this.props.wikiId}
-                                isAttachedToEntity={false}
-                                fileResults={this.state.fileHandles.list}
-                            />
-                ReactDOM.render(img, element)
-            } else if (widgetparamsMapped.synapseId) {
-                // elements with synapseIds have to have their resources loaded first, their not located
-                // with the file attachnent list
-                let img = <SynapseImage
-                                token={this.props.token}
-                                synapseId={widgetparamsMapped.synapseId}
-                                isAttachedToEntity={true}
-                            />
-                ReactDOM.render(img, element)
-            }
+            this.renderSynapseImage(widgetparamsMapped, element);
         } else if (widgetType === "plot") {
-            let plotWidget = <SynapsePlot 
-                                token={this.props.token}
-                                ownerId={this.props.ownerId}
-                                wikiId={this.props.wikiId}
-                                widgetparamsMapped={widgetparamsMapped} />
-            ReactDOM.render(plotWidget, element)
+            this.renderSynapsePlot(widgetparamsMapped, element);
         } else if (widgetType === "reference") {
-            this.addSynapseReference(referenceCountContainer, element);
+            this.renderSynapseReference(referenceCountContainer, element);
         }
     }
 
-    addSynapseReference(referenceCountContainer, element) {
+    renderSynapseButton(widgetparamsMapped, element) {
+        let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
+        element.outerHTML = button;
+    }
+
+    renderSynapsePlot(widgetparamsMapped, element) {
+        let plotWidget = <SynapsePlot token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
+        ReactDOM.render(plotWidget, element);
+    }
+
+    renderSynapseImage(widgetparamsMapped, element) {
+        if (widgetparamsMapped.fileName) {
+            let img = <SynapseImage token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
+            ReactDOM.render(img, element);
+        }
+        else if (widgetparamsMapped.synapseId) {
+            // elements with synapseIds have to have their resources loaded first, their not located
+            // with the file attachnent list
+            let img = <SynapseImage token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
+            ReactDOM.render(img, element);
+        }
+    }
+
+    renderSynapseReference(referenceCountContainer, element) {
         let count = referenceCountContainer.referenceCount;
         let reference = <Reference footnoteId={referenceCountContainer.referenceCount} onClick={event => {
             event.preventDefault();
@@ -240,28 +238,13 @@ class MarkdownSynapse extends React.Component {
      * @memberof MarkdownSynapse
      */
     addBookmarks() {
-            let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-        console.log(`%c footnotes html is ${footnotes_html}`, "background: blue")
+        let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
         if (footnotes_html.length > 0) {
             let bookmarks = <Bookmarks
                                 footnotes={footnotes_html}>
                             </Bookmarks>
             ReactDOM.render(bookmarks, this.footnoteRef.current)
         }
-    }
-
-    /**
-     * Updates internal state with the event that was triggered
-     *
-     * @param {*} event Form update
-     */
-    handleChange(event) {
-        const target = event.target
-        const name = target.name
-        const value = target.value
-        this.setState(
-            { [name]: value }
-        );
     }
     
     /**
@@ -270,15 +253,15 @@ class MarkdownSynapse extends React.Component {
     getWikiPageMarkdown() {
         if (!this.state.text) {
             SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
-            .then(data => {
-                // on success grab text and append to the default text
-                let initText = this.state.text;
-                this.setState({
-                    text: initText + data.markdown
-                });
-            }).catch(err => { 
-                console.log('Error on wiki markdown load\n', err);
-            })
+                .then(data => {
+                    // on success grab text and append to the default text
+                    let initText = this.state.text;
+                    this.setState({
+                        text: initText + data.markdown
+                    });
+                }).catch(err => { 
+                    console.log('Error on wiki markdown load\n', err);
+                })
         }
         // else the wiki page was retrieved accordingly or it was passed down
         // as a prop
@@ -287,11 +270,7 @@ class MarkdownSynapse extends React.Component {
     getWikiAttachments() {
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
-                this.setState({ fileHandles: data });
-                this.processWidgets();
-                this.setState({
-                    errorMessage: ""
-                })
+                this.setState({ fileHandles: data, errorMessage: "" });
             }).catch(err => { 
                 this.setState({
                     errorMessage: err.reason
@@ -301,12 +280,6 @@ class MarkdownSynapse extends React.Component {
     }
 
     componentDidMount() {
-        // Update the internal md object with the wrapped synapse object
-
-        // TODO: if supplying only markdown then there can't be any widgets
-        // that require an owner/synapse id -- supplying markdown may not be 
-        // an option
-
         if (this.props.markdown) {
             this.setState({
                 text: this.props.markdown
@@ -349,8 +322,8 @@ class MarkdownSynapse extends React.Component {
                 this.getWikiPageMarkdown()
             }
         }
-        this.processMath()
         this.processWidgets()
+        this.processMath()
     }
 
     /**
@@ -366,26 +339,6 @@ class MarkdownSynapse extends React.Component {
                 {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
             </React.Fragment>)
         }   
-    }
-
-    /**
-     *  Reset the components state to initial
-     *
-     * @param {*} event click event from submit button
-     * @memberof Markdown
-     */
-    resetComponentState(event) {
-        event.preventDefault()
-        
-        this.setState({
-            ownerId: this.state.newOwnerId,
-            wikiId: this.state.newWikiId,
-            newOwnerId: "",
-            newWikiId: "",
-            fileHandles: null,
-            fileResults: null,
-            text: "",
-        })
     }
 
     render() {

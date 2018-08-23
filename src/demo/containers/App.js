@@ -86,14 +86,6 @@ class App extends Component {
     );
   }
   
-  /**
-   * Call demo synapse features
-   */
-  componentDidMount() {
-    this.getVersion()	
-    this.makeSampleQueryCall()
-  }
-
   getMultipleWikis() {
     if (!this.state.token) {
       return ""
@@ -157,6 +149,7 @@ class App extends Component {
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
+
       </div>
     );
   }
