@@ -90,7 +90,7 @@ class App extends Component {
     if (!this.state.token) {
       return ""
     }
-    let foo = Array.from(Array(45).keys())
+    let foo = Array.from(Array(4).keys())
     return foo.map((element, index) => {
       return (
         <div className="container" key={index}>

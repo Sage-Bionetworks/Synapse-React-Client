@@ -6,13 +6,10 @@ class Bookmarks extends React.Component {
         super()
         this.bookmarkRef = React.createRef()
         this.transformProps = this.transformProps.bind(this)
+        this.state = {}
     }
 
     componentDidMount() {
-        this.transformProps()
-    }
-
-    componentDidUpdate() {
         this.transformProps()
     }
 

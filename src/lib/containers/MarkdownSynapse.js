@@ -304,14 +304,6 @@ class MarkdownSynapse extends React.Component {
     // on component update find and re-render the math/widget items accordingly
     componentDidUpdate (prevProps, prevState) {
 
-        Object.entries(this.props).forEach(([key, val]) =>
-            prevProps[key] !== val && console.log(`%cProp '${key}' changed`, "background: yellow")
-        );
-
-        Object.entries(this.state).forEach(([key, val]) =>
-            prevState[key] !== val && console.log(`%cState '${key}' changed`, "background: green")
-        );
-
         // we have to carefully update the component so it doesn't encounter an infinite loop
         if (this.props.token !== "" && !this.state.isLoggedIn) {
             // this is true when user just logged
