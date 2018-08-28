@@ -1,5 +1,5 @@
 import React from 'react'
-import {getFiles, getEntity} from 'lib/utils/SynapseClient'
+import {getFiles, getEntity} from '../../utils/SynapseClient'
 
 class SynapseImage extends React.Component {
 
@@ -21,7 +21,7 @@ class SynapseImage extends React.Component {
             return element[key] === fileName
         }
     }
-    
+
     /**
      * Attach markdown to wiki attachments
      */

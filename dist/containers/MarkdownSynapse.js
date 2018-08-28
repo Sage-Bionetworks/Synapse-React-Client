@@ -367,13 +367,40 @@ var MarkdownSynapse = function (_React$Component) {
                 this.props.updateLoadState({ isLoading: false });
             }
         }
+    }, {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState) {
+
+            var hasDiff = false;
+
+            Object.entries(this.props).forEach(function (_ref) {
+                var _ref2 = _slicedToArray(_ref, 2),
+                    key = _ref2[0],
+                    val = _ref2[1];
+
+                if (nextProps[key] !== val) {
+                    hasDiff = true;
+                }
+            });
+
+            Object.entries(this.state).forEach(function (_ref3) {
+                var _ref4 = _slicedToArray(_ref3, 2),
+                    key = _ref4[0],
+                    val = _ref4[1];
+
+                if (nextState[key] !== val) {
+                    hasDiff = true;
+                }
+            });
+
+            return hasDiff;
+        }
 
         // on component update find and re-render the math/widget items accordingly
 
     }, {
         key: 'componentDidUpdate',
-        value: function componentDidUpdate(prevProps, prevState) {
-
+        value: function componentDidUpdate() {
             // we have to carefully update the component so it doesn't encounter an infinite loop
             if (this.props.token !== "" && !this.state.isLoggedIn) {
                 // this is true when user just logged
