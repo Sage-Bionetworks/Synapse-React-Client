@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from 'react-dom'
 
 import * as SynapseClient from '../utils/SynapseClient'
 import SynapsePlot from './widgets/SynapsePlot'
@@ -71,7 +70,7 @@ class MarkdownSynapse extends React.Component {
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
-        this.processWidgetMappings = this.processWidgetMappings.bind(this)
+        this.processWidgetOrDomElement = this.processWidgetOrDomElement.bind(this)
         this.processMath = this.processMath.bind(this)
         // handle init calls to get wiki related items
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
@@ -89,12 +88,6 @@ class MarkdownSynapse extends React.Component {
         this.addBookmarks = this.addBookmarks.bind(this)
 
 
-        this.processTextWidgets = this.processTextWidgets.bind(this)
-        this.processTextWidgetMappings = this.processTextWidgetMappings.bind(this)
-        this.processWidgetOrDomElement = this.processWidgetOrDomElement.bind(this)
-        this.renderTextSynapseImage = this.renderTextSynapseImage.bind(this)
-        this.renderTextSynapseReference = this.renderTextSynapseReference.bind(this)
-        this.renderTextWidget = this.renderTextWidget.bind(this)
     }
 
     /**
@@ -146,109 +139,6 @@ class MarkdownSynapse extends React.Component {
         });
     }
 
-    processWidgetMappings(widgets) {
-        let referenceCountContainer = {
-            referenceCount : 1
-        }
-        for (let element of widgets) {
-            let widgetstring = element.dataset.widgetparams;
-            let questionIndex = widgetstring.indexOf("?"); // type?
-            let widgetType = widgetstring.substring(0, questionIndex); // type
-            let widgetparamsMapped = {};
-            // map out params and their values
-            widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
-                let key, value;
-                [key, value] = keyPair.split("=");
-                // console.log(`splitting the widget string with key = ${key} and value = ${value}`)
-                value = decodeURIComponent(value);
-                // console.log(`decoded version has key = ${key} and value = ${value}`)
-                widgetparamsMapped[key] = value;
-            });
-            this.renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer);
-        };
-    }
-
-    componentWillUnmount() {
-        let widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]")
-        console.log(`unmounting ${widgets.length} widgets`)
-        widgets.forEach(
-            element => {
-                console.log(ReactDOM.unmountComponentAtNode(element))
-            }
-        )
-
-        let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-        if (footnotes_html.length > 0) {
-            console.log('getting rid of footenotes')
-            console.log(ReactDOM.unmountComponentAtNode(this.footnoteRef.current))
-        }
-    }
-
-    /**
-     * Given a widget grab its required resources to push onto the growing list of elements
-     *
-     * @param {*} widgetType    type of widget, e.g. "buttonlink"
-     * @param {*} widgetparamsMapped    parameter dictionary for the given widget
-     * @param {*} element   reference to the actual DOM element this widget corresponds to
-     * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
-     * @param {*} elementList   stack of elements to be processed
-     */
-    renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer) {
-        if (widgetType === "buttonlink" && element && element.parentElement) {  // check parent element
-            this.renderSynapseButton(widgetparamsMapped, element);
-        } else if (widgetType === "image" && this.state.fileHandles) {
-            this.renderSynapseImage(widgetparamsMapped, element);
-        } else if (widgetType === "plot") {
-            this.renderSynapsePlot(widgetparamsMapped, element);
-        } else if (widgetType === "reference") {
-            this.renderSynapseReference(referenceCountContainer, element);
-        }
-    }
-
-    renderSynapseButton(widgetparamsMapped, element) {
-        let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
-        element.outerHTML = button;
-    }
-
-    renderSynapsePlot(widgetparamsMapped, element) {
-        let plotWidget = <SynapsePlot token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
-        ReactDOM.render(plotWidget, element);
-    }
-
-    renderSynapseImage(widgetparamsMapped, element) {
-        if (widgetparamsMapped.fileName) {
-            let img = <SynapseImage token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
-            ReactDOM.render(img, element);
-        }
-        else if (widgetparamsMapped.synapseId) {
-            // elements with synapseIds have to have their resources loaded first, their not located
-            // with the file attachnent list
-            let img = <SynapseImage token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
-            ReactDOM.render(img, element);
-        }
-    }
-
-    renderSynapseReference(referenceCountContainer, element) {
-        let count = referenceCountContainer.referenceCount;
-        let reference = <Reference footnoteId={referenceCountContainer.referenceCount} onClick={event => {
-            event.preventDefault();
-            // find and go to the bookmark at the right section of the page
-            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
-            try {
-                goTo.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            }
-            catch (e) {
-                console.log('error on scroll', e);
-            }
-        } } />;
-        ReactDOM.render(reference, element);
-        referenceCountContainer.referenceCount++;
-    }
-
     /**
      * Process all the corresponding bookmark tags of the references made throughout the page
      *
@@ -260,7 +150,7 @@ class MarkdownSynapse extends React.Component {
             let bookmarks = <Bookmarks
                                 footnotes={footnotes_html}>
                             </Bookmarks>
-            ReactDOM.render(bookmarks, this.footnoteRef.current)
+            return bookmarks
         }
     }
     
@@ -348,7 +238,7 @@ class MarkdownSynapse extends React.Component {
         }   
     }
 
-    processTextWidgets() {
+    processWidgets() {
         let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/)
         return this.processWidgetOrDomElement(groups)
     }
@@ -367,7 +257,7 @@ class MarkdownSynapse extends React.Component {
         });
     }
 
-    processTextWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+    processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
         let widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/)
         widgetstring = this.decodeXml(widgetstring[2])
         let questionIndex = widgetstring.indexOf("?")
@@ -381,7 +271,7 @@ class MarkdownSynapse extends React.Component {
             value = decodeURIComponent(value);
             widgetparamsMapped[key] = value;
         });
-        return this.renderTextWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+        return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
     } 
 
     processWidgetOrDomElement (widgetsToBe) {
@@ -391,7 +281,7 @@ class MarkdownSynapse extends React.Component {
         return widgetsToBe.map(
             (text, index) => {
                 if (text.indexOf("<span data-widgetparams") !== -1) {
-                    let resp = this.processTextWidgetMappings(text, referenceCountContainer, index)
+                    let resp = this.processWidgetMappings(text, referenceCountContainer, index)
                     return resp
                 } else {
                     return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
@@ -400,23 +290,36 @@ class MarkdownSynapse extends React.Component {
         )
     }
 
-    renderTextWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
-        if (widgetType === "buttonlink") {  // check parent element
-            return <button key={index}> i'm a btn </button>
-        } else if (widgetType === "image" && this.state.fileHandles) {
-            return this.renderTextSynapseImage(widgetparamsMapped, index);
-        } else if (widgetType === "plot") {
-            return this.renderTextSynapsePlot(widgetparamsMapped, index);
-        } else if (widgetType === "reference") {
-            return this.renderTextSynapseReference(referenceCountContainer, index);
+    renderWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
+        switch (widgetType) {
+            case "buttonlink":
+                return this.renderSynapseButton(widgetparamsMapped, index)
+            case "image":
+                return this.renderSynapseImage(widgetparamsMapped, index);
+            case "plot":
+                return this.renderSynapsePlot(widgetparamsMapped, index);
+            case "reference":
+                return this.renderSynapseReference(referenceCountContainer, index);
+            default:
+                return
         }
     }
-    renderTextSynapsePlot(widgetparamsMapped, index) {
+
+    renderSynapseButton(widgetparamsMapped, index) {
+        return <a key={index} href={widgetparamsMapped.url} className="btn btn-lg btn-info" role="button">{widgetparamsMapped.text}</a>
+    }
+
+    renderSynapsePlot(widgetparamsMapped, index) {
         let plotWidget = <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
         return plotWidget
     }
 
-    renderTextSynapseImage(widgetparamsMapped, index) {
+    renderSynapseImage(widgetparamsMapped, index) {
+        if (!this.state.fileHandles) {
+            // ensure files are loaded
+            return
+        }
+
         if (widgetparamsMapped.fileName) {
             let img = <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
             return img
@@ -429,7 +332,7 @@ class MarkdownSynapse extends React.Component {
         }
     }
 
-    renderTextSynapseReference(referenceCountContainer, index) {
+    renderSynapseReference(referenceCountContainer, index) {
         let count = referenceCountContainer.referenceCount;
         let reference = <Reference key={index} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
             event.preventDefault();
@@ -456,9 +359,11 @@ class MarkdownSynapse extends React.Component {
             <React.Fragment>
                 {this.getErrorView()}
                 <div ref={this.markupRef}>
-                    {this.processTextWidgets()}
+                    {this.processWidgets()}
                 </div>
-                <div ref={this.footnoteRef}></div>
+                <div ref={this.footnoteRef}>
+                    {this.addBookmarks()}
+                </div>
             </React.Fragment>
         )
     }
