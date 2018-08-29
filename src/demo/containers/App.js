@@ -83,6 +83,7 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
+    console.log('handling change ', updatedState)
     this.setState(
       updatedState
     );
@@ -147,14 +148,16 @@ class App extends Component {
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
 
-        {this.state.isLoading ? <div className="container"> Loading </div> : ""}
+        {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
       
-       <button onClick={
+        <div className="container">
+           <button className="btn btn-primary" onClick={
                         () => {
                             this.removeHandler()
                         }
                         }
-                      > change the view </button>  
+                      > Toggle markdown from view </button>  
+        </div>
 
         {this.state.showMarkdown && <CustomMarkdownView>
           <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
@@ -163,7 +166,8 @@ class App extends Component {
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
-        </CustomMarkdownView>}
+        </CustomMarkdownView>
+        }
 
       </div>
     );

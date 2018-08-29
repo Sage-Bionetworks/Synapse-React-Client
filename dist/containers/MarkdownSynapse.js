@@ -159,6 +159,7 @@ var MarkdownSynapse = function (_React$Component) {
             if (footnotes_html.length > 0) {
                 var bookmarks = React.createElement(Bookmarks, {
                     footnotes: footnotes_html });
+                markdownitSynapse.resetFootnotes();
                 return bookmarks;
             }
         }

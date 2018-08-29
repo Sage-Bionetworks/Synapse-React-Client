@@ -150,6 +150,7 @@ class MarkdownSynapse extends React.Component {
             let bookmarks = <Bookmarks
                                 footnotes={footnotes_html}>
                             </Bookmarks>
+            markdownitSynapse.resetFootnotes()
             return bookmarks
         }
     }
@@ -166,6 +167,9 @@ class MarkdownSynapse extends React.Component {
                     this.setState({
                         text: initText + data.markdown
                     });
+                    if (this.props.updateLoadState) {
+                        this.props.updateLoadState({isLoading: false})
+                    }
                 }).catch(err => { 
                     console.log('Error on wiki markdown load\n', err);
                 })
@@ -196,13 +200,7 @@ class MarkdownSynapse extends React.Component {
         if (this.props.hasSynapseResources) {
             // get wiki attachments
             this.getWikiAttachments();
-            // sample API call to retrieve Synapse wiki page
-            // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
             this.getWikiPageMarkdown();
-        }
-
-        if (this.props.updateLoadState && this.state.text) {
-            this.props.updateLoadState({isLoading: false})
         }
 
         this.processMath()
