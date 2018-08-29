@@ -66,7 +66,6 @@ class MarkdownSynapse extends React.Component {
 
         this.footnoteRef = React.createRef()
         this.markupRef = React.createRef()
-        this.buttonRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)

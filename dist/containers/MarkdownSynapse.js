@@ -75,7 +75,6 @@ var MarkdownSynapse = function (_React$Component) {
 
         _this.footnoteRef = React.createRef();
         _this.markupRef = React.createRef();
-        _this.buttonRef = React.createRef();
 
         // handle widgets and math markdown
         _this.processWidgets = _this.processWidgets.bind(_this);
@@ -180,6 +179,9 @@ var MarkdownSynapse = function (_React$Component) {
                     _this2.setState({
                         text: initText + data.markdown
                     });
+                    if (_this2.props.updateLoadState) {
+                        _this2.props.updateLoadState({ isLoading: false });
+                    }
                 }).catch(function (err) {
                     console.log('Error on wiki markdown load\n', err);
                 });
@@ -213,13 +215,7 @@ var MarkdownSynapse = function (_React$Component) {
             if (this.props.hasSynapseResources) {
                 // get wiki attachments
                 this.getWikiAttachments();
-                // sample API call to retrieve Synapse wiki page
-                // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
                 this.getWikiPageMarkdown();
-            }
-
-            if (this.props.updateLoadState && this.state.text) {
-                this.props.updateLoadState({ isLoading: false });
             }
 
             this.processMath();
