@@ -67,6 +67,7 @@ class MarkdownSynapse extends React.Component {
 
         this.footnoteRef = React.createRef()
         this.markupRef = React.createRef()
+        this.buttonRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
@@ -86,6 +87,14 @@ class MarkdownSynapse extends React.Component {
         this.getErrorView = this.getErrorView.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
         this.addBookmarks = this.addBookmarks.bind(this)
+
+
+        this.processTextWidgets = this.processTextWidgets.bind(this)
+        this.processTextWidgetMappings = this.processTextWidgetMappings.bind(this)
+        this.processWidgetOrDomElement = this.processWidgetOrDomElement.bind(this)
+        this.renderTextSynapseImage = this.renderTextSynapseImage.bind(this)
+        this.renderTextSynapseReference = this.renderTextSynapseReference.bind(this)
+        this.renderTextWidget = this.renderTextWidget.bind(this)
     }
 
     /**
@@ -150,21 +159,29 @@ class MarkdownSynapse extends React.Component {
             widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
                 let key, value;
                 [key, value] = keyPair.split("=");
+                // console.log(`splitting the widget string with key = ${key} and value = ${value}`)
                 value = decodeURIComponent(value);
+                // console.log(`decoded version has key = ${key} and value = ${value}`)
                 widgetparamsMapped[key] = value;
             });
             this.renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer);
         };
     }
 
-    /**
-     * Get widgets on screen and transform into their defined compents
-     */
-    processWidgets() {
+    componentWillUnmount() {
         let widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]")
-        this.processWidgetMappings(widgets)
-        this.addBookmarks()
-        markdownitSynapse.resetFootnotes()  
+        console.log(`unmounting ${widgets.length} widgets`)
+        widgets.forEach(
+            element => {
+                console.log(ReactDOM.unmountComponentAtNode(element))
+            }
+        )
+
+        let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
+        if (footnotes_html.length > 0) {
+            console.log('getting rid of footenotes')
+            console.log(ReactDOM.unmountComponentAtNode(this.footnoteRef.current))
+        }
     }
 
     /**
@@ -293,35 +310,12 @@ class MarkdownSynapse extends React.Component {
             // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
             this.getWikiPageMarkdown();
         }
-        // process all math identified markdown items
-        this.processMath()
 
         if (this.props.updateLoadState && this.state.text) {
             this.props.updateLoadState({isLoading: false})
         }
-    }
 
-    shouldComponentUpdate(nextProps, nextState) {
-
-        let hasDiff = false
-
-        Object.entries(this.props).forEach(([key, val]) =>
-            {
-                if (nextProps[key] !== val) {
-                    hasDiff = true
-                }
-            }
-        );
-    
-        Object.entries(this.state).forEach(([key, val]) =>
-            {
-                if (nextState[key] !== val) {
-                    hasDiff = true
-                }
-            }
-        );
-
-        return hasDiff
+        this.processMath()
     }
 
     // on component update find and re-render the math/widget items accordingly
@@ -336,7 +330,6 @@ class MarkdownSynapse extends React.Component {
                 this.getWikiPageMarkdown()
             }
         }
-        this.processWidgets()
         this.processMath()
     }
 
@@ -355,11 +348,116 @@ class MarkdownSynapse extends React.Component {
         }   
     }
 
+    processTextWidgets() {
+        let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/)
+        return this.processWidgetOrDomElement(groups)
+    }
+    
+    decodeXml(string) {
+        let escaped_one_to_xml_special_map = {
+            '&amp;': '&',
+            '&quot;': '"',
+            '&lt;': '<',
+            '&gt;': '>'
+        };
+
+        return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
+            function(str, item) {
+                return escaped_one_to_xml_special_map[item];
+        });
+    }
+
+    processTextWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+        let widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/)
+        widgetstring = this.decodeXml(widgetstring[2])
+        let questionIndex = widgetstring.indexOf("?")
+        let widgetType = widgetstring.substring(0, questionIndex);
+        let widgetparamsMapped = {};
+        // map out params and their values
+        
+        widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
+            let key, value;
+            [key, value] = keyPair.split("=");
+            value = decodeURIComponent(value);
+            widgetparamsMapped[key] = value;
+        });
+        return this.renderTextWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+    } 
+
+    processWidgetOrDomElement (widgetsToBe) {
+        let referenceCountContainer = {
+            referenceCount : 1
+        }
+        return widgetsToBe.map(
+            (text, index) => {
+                if (text.indexOf("<span data-widgetparams") !== -1) {
+                    let resp = this.processTextWidgetMappings(text, referenceCountContainer, index)
+                    return resp
+                } else {
+                    return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
+                }
+            }
+        )
+    }
+
+    renderTextWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
+        if (widgetType === "buttonlink") {  // check parent element
+            return <button key={index}> i'm a btn </button>
+        } else if (widgetType === "image" && this.state.fileHandles) {
+            return this.renderTextSynapseImage(widgetparamsMapped, index);
+        } else if (widgetType === "plot") {
+            return this.renderTextSynapsePlot(widgetparamsMapped, index);
+        } else if (widgetType === "reference") {
+            return this.renderTextSynapseReference(referenceCountContainer, index);
+        }
+    }
+    renderTextSynapsePlot(widgetparamsMapped, index) {
+        let plotWidget = <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
+        return plotWidget
+    }
+
+    renderTextSynapseImage(widgetparamsMapped, index) {
+        if (widgetparamsMapped.fileName) {
+            let img = <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
+            return img
+        }
+        else if (widgetparamsMapped.synapseId) {
+            // elements with synapseIds have to have their resources loaded first, their not located
+            // with the file attachnent list
+            let img = <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
+            return img
+        }
+    }
+
+    renderTextSynapseReference(referenceCountContainer, index) {
+        let count = referenceCountContainer.referenceCount;
+        let reference = <Reference key={index} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
+            event.preventDefault();
+            // find and go to the bookmark at the right section of the page
+            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
+            try {
+                goTo.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+            catch (e) {
+                console.log('error on scroll', e);
+            }
+        } } />;
+        referenceCountContainer.referenceCount++;
+        return reference
+    }
+
+
     render() {
         return (
             <React.Fragment>
                 {this.getErrorView()}
-                <div ref={this.markupRef} dangerouslySetInnerHTML={this.createMarkup(this.state.text)}/>
+                <div ref={this.markupRef}>
+                    {this.processTextWidgets()}
+                </div>
                 <div ref={this.footnoteRef}></div>
             </React.Fragment>
         )

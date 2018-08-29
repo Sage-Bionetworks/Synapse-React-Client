@@ -28,11 +28,13 @@ class App extends Component {
     this.state = {
       token: "",
       ownerId: "",
-      isLoading: true
+      isLoading: true,
+      showMarkdown: true
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.removeHandler = this.removeHandler.bind(this)
   }
   
   /**
@@ -103,6 +105,12 @@ class App extends Component {
       )
    })
   }
+
+  removeHandler () {
+    this.setState(
+      {showMarkdown: !this.state.showMarkdown}
+    )
+  }
   
   render() {
     return (
@@ -140,15 +148,22 @@ class App extends Component {
         </UserTeam>
 
         {this.state.isLoading ? <div className="container"> Loading </div> : ""}
+      
+       <button onClick={
+                        () => {
+                            this.removeHandler()
+                        }
+                        }
+                      > change the view </button>  
 
-        <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
+        {this.state.showMarkdown && <CustomMarkdownView>
+          <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
-        </CustomMarkdownView>
+        </CustomMarkdownView>}
 
       </div>
     );

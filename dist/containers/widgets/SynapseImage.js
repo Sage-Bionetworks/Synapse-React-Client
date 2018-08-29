@@ -95,8 +95,7 @@ var SynapseImage = function (_React$Component) {
             if (!this.props.token) {
                 return;
             }
-
-            if (this.props.isAttachedToEntity) {
+            if (!this.props.hasOwnProperty("wikiId")) {
                 this.getEntity();
             } else {
                 var _props2 = this.props,

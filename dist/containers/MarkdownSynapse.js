@@ -76,6 +76,7 @@ var MarkdownSynapse = function (_React$Component) {
 
         _this.footnoteRef = React.createRef();
         _this.markupRef = React.createRef();
+        _this.buttonRef = React.createRef();
 
         // handle widgets and math markdown
         _this.processWidgets = _this.processWidgets.bind(_this);
@@ -214,7 +215,23 @@ var MarkdownSynapse = function (_React$Component) {
             var widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]");
             this.processWidgetMappings(widgets);
             this.addBookmarks();
-            markdownitSynapse.resetFootnotes();
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+
+            var widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]");
+
+            console.log('unmounting ' + widgets.length + ' widgets');
+            widgets.forEach(function (element) {
+                console.log(ReactDOM.unmountComponentAtNode(element));
+            });
+
+            var footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html;
+            if (footnotes_html.length > 0) {
+                console.log('getting rid of footenotes');
+                console.log(ReactDOM.unmountComponentAtNode(this.footnoteRef.current));
+            }
         }
 
         /**
@@ -436,12 +453,46 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var _this6 = this;
+
+            function Hello(props) {
+                return React.createElement(
+                    'p',
+                    null,
+                    ' hello world! '
+                );
+            }
             return React.createElement(
                 React.Fragment,
                 null,
                 this.getErrorView(),
                 React.createElement('div', { ref: this.markupRef, dangerouslySetInnerHTML: this.createMarkup(this.state.text) }),
-                React.createElement('div', { ref: this.footnoteRef })
+                React.createElement('div', { ref: this.footnoteRef }),
+                React.createElement(
+                    'button',
+                    { onClick: function onClick() {
+                            _this6.props.removeHandler();
+                        }
+                    },
+                    ' remove the whole thing '
+                ),
+                React.createElement(
+                    'button',
+                    { onClick: function onClick() {
+                            ReactDOM.render(React.createElement(Hello, null), _this6.buttonRef.current);
+                        }
+                    },
+                    ' add me '
+                ),
+                React.createElement(
+                    'button',
+                    { onClick: function onClick() {
+                            console.log(ReactDOM.unmountComponentAtNode(_this6.buttonRef.current));
+                        }
+                    },
+                    ' remove me '
+                ),
+                React.createElement('div', { ref: this.buttonRef })
             );
         }
     }]);

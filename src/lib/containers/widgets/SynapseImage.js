@@ -71,8 +71,7 @@ class SynapseImage extends React.Component {
         if (!this.props.token) {
             return
         }
-
-        if (this.props.isAttachedToEntity) {
+        if (!this.props.hasOwnProperty("wikiId")) {
             this.getEntity()
         } else {
             const {fileName, fileResults} = this.props
