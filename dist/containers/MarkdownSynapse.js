@@ -1,12 +1,6 @@
-import _regeneratorRuntime from 'babel-runtime/regenerator';
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -15,14 +9,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from "react";
-import ReactDOM from 'react-dom';
 
 import * as SynapseClient from '../utils/SynapseClient';
 import SynapsePlot from './widgets/SynapsePlot';
+import Reference from './widgets/Reference';
+import Bookmarks from './widgets/Bookmarks';
 
 import PropTypes from 'prop-types';
 
 import "../style/Portal.css";
+import SynapseImage from "./widgets/SynapseImage";
 
 /**
  * Import requirements for markdown
@@ -57,58 +53,49 @@ var MarkdownSynapse = function (_React$Component) {
     function MarkdownSynapse(props) {
         _classCallCheck(this, MarkdownSynapse);
 
-        // Store markdown object and text to be rendered by said object
-        // async data goes inside of state, in this way and setState calls will
-        // update those positions on the page where async requirements are needed
         var _this = _possibleConstructorReturn(this, (MarkdownSynapse.__proto__ || Object.getPrototypeOf(MarkdownSynapse)).call(this, props));
 
+        var md = require('markdown-it')({ html: true });
+        // markdownitSynapse wraps around md object and uses its own dependencies
+        markdownitSynapse.init_markdown_it(md, markdownSubAlt, markdownEmpahsisAlt, markdownCenterText, markdownSynapseHeading, markdownSynapseTable, markdownStrikethrough, markdownContainer, markdownEmpahsisAlt, markdownInlineComments, markdownBr);
+
+        var mathSuffix = '';
+        // Update the internal md object with the wrapped synapse object
+        md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix);
+
         _this.state = {
-            md: require('markdown-it')({ html: true }),
+            md: md,
             text: '',
             fileHandles: null,
             newOwnerId: "",
             newWikiId: "",
-            calledReset: false,
             isLoggedIn: _this.props.token !== "",
-            errorMessage: "",
-            queryData: {},
-            fileResults: null,
-            hasBookmarks: false,
-            bookmarksFirstSeen: false,
-            hasProcessedReferences: false,
-            referenceView: []
+            errorMessage: ""
         };
 
         _this.footnoteRef = React.createRef();
         _this.markupRef = React.createRef();
+        _this.buttonRef = React.createRef();
 
         // handle widgets and math markdown
         _this.processWidgets = _this.processWidgets.bind(_this);
+        _this.processWidgetOrDomElement = _this.processWidgetOrDomElement.bind(_this);
         _this.processMath = _this.processMath.bind(_this);
         // handle init calls to get wiki related items
         _this.getWikiAttachments = _this.getWikiAttachments.bind(_this);
         _this.getWikiPageMarkdown = _this.getWikiPageMarkdown.bind(_this);
 
-        // handle pre/post processing of widgets
-        _this.prepareWidget = _this.prepareWidget.bind(_this);
-        _this.processWidgetMappings = _this.processWidgetMappings.bind(_this);
-        _this.matchElementToResource = _this.matchElementToResource.bind(_this);
-        _this.matchToHandle = _this.matchToHandle.bind(_this);
-        _this.compareById = function (fileName, key) {
-            return function (element) {
-                return element[key] === fileName;
-            };
-        };
+        // handle rendering widgets
+        _this.renderWidget = _this.renderWidget.bind(_this);
+        _this.renderSynapseButton = _this.renderSynapseButton.bind(_this);
+        _this.renderSynapseImage = _this.renderSynapseImage.bind(_this);
+        _this.renderSynapsePlot = _this.renderSynapsePlot.bind(_this);
+        _this.renderSynapseReference = _this.renderSynapseReference.bind(_this);
 
-        // state related functions
         _this.getErrorView = _this.getErrorView.bind(_this);
-        _this.handleChange = _this.handleChange.bind(_this);
         _this.createMarkup = _this.createMarkup.bind(_this);
-
-        // handling each of the synapse widgets
-        _this.handleImageWidget = _this.handleImageWidget.bind(_this);
-        _this.handleReferenceWidget = _this.handleReferenceWidget.bind(_this);
         _this.addBookmarks = _this.addBookmarks.bind(_this);
+
         return _this;
     }
 
@@ -158,392 +145,6 @@ var MarkdownSynapse = function (_React$Component) {
                 });
             });
         }
-    }, {
-        key: 'processWidgetMappings',
-        value: function () {
-            var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(widgets, fileHandleAssociationList, elementList) {
-                var _this2 = this;
-
-                var _loop, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, element;
-
-                return _regeneratorRuntime.wrap(function _callee2$(_context2) {
-                    while (1) {
-                        switch (_context2.prev = _context2.next) {
-                            case 0:
-                                _loop = /*#__PURE__*/_regeneratorRuntime.mark(function _callee(element) {
-                                    var widgetstring, questionIndex, widgetType, widgetparamsMapped;
-                                    return _regeneratorRuntime.wrap(function _callee$(_context) {
-                                        while (1) {
-                                            switch (_context.prev = _context.next) {
-                                                case 0:
-                                                    widgetstring = element.dataset.widgetparams;
-                                                    questionIndex = widgetstring.indexOf("?"); // type?
-
-                                                    widgetType = widgetstring.substring(0, questionIndex); // type
-
-                                                    widgetparamsMapped = {};
-                                                    // map out params and their values
-
-                                                    widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
-                                                        var key = void 0,
-                                                            value = void 0;
-
-                                                        var _keyPair$split = keyPair.split("=");
-
-                                                        var _keyPair$split2 = _slicedToArray(_keyPair$split, 2);
-
-                                                        key = _keyPair$split2[0];
-                                                        value = _keyPair$split2[1];
-
-                                                        value = decodeURIComponent(value);
-                                                        widgetparamsMapped[key] = value;
-                                                    });
-                                                    _context.next = 7;
-                                                    return _this2.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
-
-                                                case 7:
-                                                case 'end':
-                                                    return _context.stop();
-                                            }
-                                        }
-                                    }, _callee, _this2);
-                                });
-                                _iteratorNormalCompletion = true;
-                                _didIteratorError = false;
-                                _iteratorError = undefined;
-                                _context2.prev = 4;
-                                _iterator = widgets[Symbol.iterator]();
-
-                            case 6:
-                                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                                    _context2.next = 12;
-                                    break;
-                                }
-
-                                element = _step.value;
-                                return _context2.delegateYield(_loop(element), 't0', 9);
-
-                            case 9:
-                                _iteratorNormalCompletion = true;
-                                _context2.next = 6;
-                                break;
-
-                            case 12:
-                                _context2.next = 18;
-                                break;
-
-                            case 14:
-                                _context2.prev = 14;
-                                _context2.t1 = _context2['catch'](4);
-                                _didIteratorError = true;
-                                _iteratorError = _context2.t1;
-
-                            case 18:
-                                _context2.prev = 18;
-                                _context2.prev = 19;
-
-                                if (!_iteratorNormalCompletion && _iterator.return) {
-                                    _iterator.return();
-                                }
-
-                            case 21:
-                                _context2.prev = 21;
-
-                                if (!_didIteratorError) {
-                                    _context2.next = 24;
-                                    break;
-                                }
-
-                                throw _iteratorError;
-
-                            case 24:
-                                return _context2.finish(21);
-
-                            case 25:
-                                return _context2.finish(18);
-
-                            case 26:
-                                ;
-
-                            case 27:
-                            case 'end':
-                                return _context2.stop();
-                        }
-                    }
-                }, _callee2, this, [[4, 14, 18, 26], [19,, 21, 25]]);
-            }));
-
-            function processWidgetMappings(_x, _x2, _x3) {
-                return _ref.apply(this, arguments);
-            }
-
-            return processWidgetMappings;
-        }()
-
-        /**
-         * Get widgets on screen and transform into their defined compents
-         */
-
-    }, {
-        key: 'processWidgets',
-        value: function () {
-            var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3() {
-                var _this3 = this;
-
-                var widgets, elementList, fileHandleAssociationList, request;
-                return _regeneratorRuntime.wrap(function _callee3$(_context3) {
-                    while (1) {
-                        switch (_context3.prev = _context3.next) {
-                            case 0:
-                                widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]");
-                                // go through all obtained elements and transform them with katex
-
-                                // build up request 
-
-                                elementList = [];
-                                fileHandleAssociationList = [];
-
-                                // must gather resources for all widgets before making batch file call, wait till done
-
-                                _context3.next = 5;
-                                return this.processWidgetMappings(widgets, fileHandleAssociationList, elementList);
-
-                            case 5:
-
-                                // Process all the files found on the page
-                                // if this is the first run load the file results, otherwise
-                                // use the already retrieved files
-                                if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
-                                    // include length check to make sure all resources are loaded
-                                    request = {
-                                        requestedFiles: fileHandleAssociationList,
-                                        includePreSignedURLs: true,
-                                        includeFileHandles: false,
-                                        includePreviewPreSignedURLs: false
-                                    };
-
-                                    SynapseClient.getFiles(request, this.props.token).then(function (data) {
-                                        _this3.setState({ fileResults: data.requestedFiles });
-                                        // TODO: consider opitmizations in the future
-                                        markdownitSynapse.resetFootnotes();
-                                        _this3.matchElementToResource(elementList);
-                                        _this3.addBookmarks();
-                                    }).catch(function (err) {
-                                        console.log('Error on url grab ', err);
-                                    });
-                                } else {
-                                    markdownitSynapse.resetFootnotes();
-                                    this.matchElementToResource(elementList);
-                                    this.addBookmarks();
-                                }
-
-                            case 6:
-                            case 'end':
-                                return _context3.stop();
-                        }
-                    }
-                }, _callee3, this);
-            }));
-
-            function processWidgets() {
-                return _ref2.apply(this, arguments);
-            }
-
-            return processWidgets;
-        }()
-
-        /**
-         * Given a widget grab its required resources to push onto the growing list of elements
-         *
-         * @param {*} widgetType    type of widget, e.g. "buttonlink"
-         * @param {*} widgetparamsMapped    parameter dictionary for the given widget
-         * @param {*} element   reference to the actual DOM element this widget corresponds to
-         * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
-         * @param {*} elementList   stack of elements to be processed
-         */
-
-    }, {
-        key: 'prepareWidget',
-        value: function () {
-            var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee4(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-                var button, fileName, match, synapseId, plotWidget;
-                return _regeneratorRuntime.wrap(function _callee4$(_context4) {
-                    while (1) {
-                        switch (_context4.prev = _context4.next) {
-                            case 0:
-                                if (!(widgetType === "buttonlink" && element && element.parentElement)) {
-                                    _context4.next = 5;
-                                    break;
-                                }
-
-                                // check parent element
-                                button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
-
-                                element.outerHTML = button;
-                                _context4.next = 22;
-                                break;
-
-                            case 5:
-                                if (!(widgetType === "image" && this.state.fileHandles)) {
-                                    _context4.next = 21;
-                                    break;
-                                }
-
-                                fileName = null;
-                                match = null;
-
-                                if (!widgetparamsMapped.fileName) {
-                                    _context4.next = 15;
-                                    break;
-                                }
-
-                                fileName = widgetparamsMapped.fileName;
-                                match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
-                                fileHandleAssociationList.push({
-                                    fileHandleId: match[0].id,
-                                    associateObjectId: this.props.wikiId,
-                                    associateObjectType: "WikiAttachment"
-                                });
-                                elementList.push({ element: element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
-                                _context4.next = 19;
-                                break;
-
-                            case 15:
-                                if (!widgetparamsMapped.synapseId) {
-                                    _context4.next = 19;
-                                    break;
-                                }
-
-                                // elements with synapseIds have to have their resources loaded first, their not located
-                                // with the file attachnent list
-                                synapseId = widgetparamsMapped.synapseId;
-                                _context4.next = 19;
-                                return SynapseClient.getEntity(this.props.token, synapseId).then(function (data) {
-                                    fileHandleAssociationList.push({
-                                        fileHandleId: data.dataFileHandleId,
-                                        associateObjectId: synapseId,
-                                        associateObjectType: "FileEntity"
-                                    });
-                                    elementList.push({ element: element, id: data.dataFileHandleId, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
-                                }).catch(function (err) {
-                                    console.log("Error on synapse entity image load ", err);
-                                });
-
-                            case 19:
-                                _context4.next = 22;
-                                break;
-
-                            case 21:
-                                if (widgetType === "plot") {
-                                    plotWidget = React.createElement(SynapsePlot, {
-                                        token: this.props.token,
-                                        ownerId: this.props.ownerId,
-                                        wikiId: this.props.wikiId,
-                                        widgetparamsMapped: widgetparamsMapped });
-
-                                    ReactDOM.render(plotWidget, element);
-                                } else if (widgetType === "reference") {
-                                    elementList.push({ element: element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped });
-                                }
-
-                            case 22:
-                            case 'end':
-                                return _context4.stop();
-                        }
-                    }
-                }, _callee4, this);
-            }));
-
-            function prepareWidget(_x4, _x5, _x6, _x7, _x8) {
-                return _ref3.apply(this, arguments);
-            }
-
-            return prepareWidget;
-        }()
-
-        /**
-         * match all widgets on the page to their corresponding resource
-         *
-         * @param {*} elementList dictionary of 
-         * @memberof Markdown
-         */
-
-    }, {
-        key: 'matchElementToResource',
-        value: function matchElementToResource(elementList) {
-            var _this4 = this;
-
-            var referenceCount = 0;
-            var savedReferences = this.state.savedReferences || [];
-
-            if (elementList.length > 0) {
-                elementList.forEach(function (elementBundle) {
-                    if (elementBundle.widgetType === "image") {
-                        // match corresponds to filehandle that this current element needs to be connected to
-                        var match = _this4.matchToHandle(_this4.compareById(elementBundle.id, "fileHandleId"), _this4.state.fileResults);
-                        _this4.handleImageWidget(match, elementBundle);
-                    } else if (elementBundle.widgetType === "reference") {
-                        _this4.handleReferenceWidget(elementBundle, referenceCount++, savedReferences);
-                    }
-                });
-                if (referenceCount > 0 && !this.state.hasProcessedReferences) {
-                    this.setState({ hasProcessedReferences: true, savedReferences: savedReferences, hasBookmarks: true });
-                }
-            }
-        }
-    }, {
-        key: 'handleImageWidget',
-        value: function handleImageWidget(match, elementBundle) {
-            if (elementBundle.element.parentElement) {
-                var renderedHTML = '<image class="img-fluid" src=' + match[0].preSignedURL + '></image>';
-                elementBundle.element.outerHTML = renderedHTML;
-            }
-        }
-
-        /**
-         * Handles ?{reference} synapse widgets
-         *
-         * @param {*} elementBundle
-         * @param {*} index
-         * @memberof MarkdownSynapse
-         */
-
-    }, {
-        key: 'handleReferenceWidget',
-        value: function handleReferenceWidget(elementBundle, index, savedReferences) {
-            var _this5 = this;
-
-            var renderedHTML = "";
-            // due to re-renering, we save the result of this method, on initial calculate the html, otherwise we just 
-            // show it
-            if (!this.state.hasProcessedReferences) {
-                renderedHTML = '<span> <span><div class="ReferenceWidget"><a href="#" class="margin-left-5">[' + elementBundle.widgetparamsMapped.footnoteId + ']</a></div></span></span>';
-                savedReferences.push(renderedHTML);
-            } else {
-                renderedHTML = savedReferences[index];
-            }
-
-            // attach an anchor tag with an event listener to jump to the appropriate bookmark at the bottom of the page
-            // note- can't save the dom element as in addBookmarks() the even listener seems to break this option
-            renderedHTML = document.createRange().createContextualFragment(renderedHTML);
-            renderedHTML.querySelector("a").addEventListener("click", function (event) {
-                event.preventDefault();
-                // find and go to the bookmark at the right section of the page
-                var goTo = _this5.footnoteRef.current.querySelector('a#bookmark' + index);
-                try {
-                    goTo.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center',
-                        inline: 'center'
-                    });
-                } catch (e) {
-                    console.log('error on scroll', e);
-                }
-            });
-
-            elementBundle.element.innerText = ""; // clear the <Synapse widget> text
-            elementBundle.element.appendChild(renderedHTML);
-        }
 
         /**
          * Process all the corresponding bookmark tags of the references made throughout the page
@@ -554,80 +155,13 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'addBookmarks',
         value: function addBookmarks() {
-            /* we have to check that:
-                1) there are bookmarks on the page
-                2) we haven't already processed bookmarks on a previous render of the page
-            */
-            if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
-                var footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html;
-                var node = this.footnoteRef.current; // corresponds to <p> tag in render below
-                // find all links in the footnotes_html-- each of which contains a "text=[\d]"
-                var linkOccurences = footnotes_html.match(/text=\[.\]/g);
-                if (!linkOccurences) {
-                    return;
-                }
-
-                var linksFormatted = linkOccurences.map(function (element, index) {
-                    // grab only the [\d] pieces of the text
-                    return element.substring(element.indexOf("["), element.indexOf("]") + 1);
-                }).map(function (element, index) {
-                    // here bookmark is used so that the references can target this anchor tag 
-                    return '<span><div class="BookmarkWidget"><a id=' + ("bookmark" + index) + '>' + element + '</a></div></span>';
-                });
-
-                // now all of the links are prepared to be inserted back into the original string
-                // all link occurences have a single location in the original string-- we go through and then 
-                // match of the link occurences to the spot it belongs into the html
-                var i = 0;
-                var matches = footnotes_html.replace(/(<span data-widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm,
-                // replace using a function where p1,p2,p3 correspond to the matched groups from above
-                // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
-                // formatted text from above
-                function (match, p1, p2, p3, string) {
-                    return [p1, linksFormatted[i++], p3].join("");
-                });
-
-                // create the dom element for this view and append to the ref
-                var bookmarkFragment = document.createRange().createContextualFragment(matches);
-                node.appendChild(bookmarkFragment);
-                // save the result of the operation from above
-                this.setState({
-                    bookmarksFirstSeen: true,
-                    bookmarkFragment: bookmarkFragment
-                });
-            } else if (this.state.hasBookmarks) {
-                // we've already computed the bookmarks, we can instead used the saved fragment
-                this.footnoteRef.current.appendChild(this.state.bookmarkFragment);
+            var footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html;
+            if (footnotes_html.length > 0) {
+                var bookmarks = React.createElement(Bookmarks, {
+                    footnotes: footnotes_html });
+                markdownitSynapse.resetFootnotes();
+                return bookmarks;
             }
-        }
-
-        /**
-         * Attach markdown to wiki attachments
-         */
-
-    }, {
-        key: 'matchToHandle',
-        value: function matchToHandle(comparator, objectList) {
-            if (objectList) {
-                // make sure the files have loaded
-                var filtered = objectList.filter(comparator);
-                return filtered;
-            }
-        }
-
-        /**
-         * Updates internal state with the event that was triggered
-         *
-         * @param {*} event Form update
-         */
-
-    }, {
-        key: 'handleChange',
-        value: function handleChange(event) {
-            var target = event.target;
-            var name = target.name;
-            var value = target.value;
-            this.setState(_defineProperty({}, name, value));
         }
 
         /**
@@ -637,13 +171,13 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiPageMarkdown',
         value: function getWikiPageMarkdown() {
-            var _this6 = this;
+            var _this2 = this;
 
             if (!this.state.text) {
                 SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                     // on success grab text and append to the default text
-                    var initText = _this6.state.text;
-                    _this6.setState({
+                    var initText = _this2.state.text;
+                    _this2.setState({
                         text: initText + data.markdown
                     });
                 }).catch(function (err) {
@@ -653,24 +187,15 @@ var MarkdownSynapse = function (_React$Component) {
             // else the wiki page was retrieved accordingly or it was passed down
             // as a prop
         }
-
-        /**
-         * Call Synapse REST API to get AMP-AD wiki portal attachments
-         */
-
     }, {
         key: 'getWikiAttachments',
         value: function getWikiAttachments() {
-            var _this7 = this;
+            var _this3 = this;
 
             SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
-                _this7.setState({ fileHandles: data });
-                _this7.processWidgets();
-                _this7.setState({
-                    errorMessage: ""
-                });
+                _this3.setState({ fileHandles: data, errorMessage: "" });
             }).catch(function (err) {
-                _this7.setState({
+                _this3.setState({
                     errorMessage: err.reason
                 });
                 console.log("Error on wiki attachment load ", err);
@@ -679,25 +204,12 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-
-            // markdownitSynapse wraps around md object and uses its own dependencies
-            markdownitSynapse.init_markdown_it(this.state.md, markdownSubAlt, markdownEmpahsisAlt, markdownCenterText, markdownSynapseHeading, markdownSynapseTable, markdownStrikethrough, markdownContainer, markdownEmpahsisAlt, markdownInlineComments, markdownBr);
-
-            var mathSuffix = '';
-            // Update the internal md object with the wrapped synapse object
-            this.setState({
-                md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
-            });
-
-            // TODO: if supplying only markdown then there can't be any widgets
-            // that require an owner/synapse id -- supplying markdown may not be 
-            // an option
-
             if (this.props.markdown) {
                 this.setState({
                     text: this.props.markdown
                 });
             }
+
             if (this.props.hasSynapseResources) {
                 // get wiki attachments
                 this.getWikiAttachments();
@@ -705,12 +217,12 @@ var MarkdownSynapse = function (_React$Component) {
                 // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
                 this.getWikiPageMarkdown();
             }
-            // process all math identified markdown items
-            this.processMath();
 
             if (this.props.updateLoadState && this.state.text) {
                 this.props.updateLoadState({ isLoading: false });
             }
+
+            this.processMath();
         }
 
         // on component update find and re-render the math/widget items accordingly
@@ -729,7 +241,6 @@ var MarkdownSynapse = function (_React$Component) {
                 }
             }
             this.processMath();
-            this.processWidgets();
         }
 
         /**
@@ -750,44 +261,155 @@ var MarkdownSynapse = function (_React$Component) {
                 );
             }
         }
-
-        /**
-         *  Reset the components state to initial
-         *
-         * @param {*} event click event from submit button
-         * @memberof Markdown
-         */
-
     }, {
-        key: 'resetComponentState',
-        value: function resetComponentState(event) {
-            event.preventDefault();
+        key: 'processWidgets',
+        value: function processWidgets() {
+            var groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/);
+            return this.processWidgetOrDomElement(groups);
+        }
+    }, {
+        key: 'decodeXml',
+        value: function decodeXml(string) {
+            var escaped_one_to_xml_special_map = {
+                '&amp;': '&',
+                '&quot;': '"',
+                '&lt;': '<',
+                '&gt;': '>'
+            };
 
-            this.setState({
-                ownerId: this.state.newOwnerId,
-                wikiId: this.state.newWikiId,
-                newOwnerId: "",
-                newWikiId: "",
-                fileHandles: null,
-                fileResults: null,
-                text: "",
-                calledReset: true
+            return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g, function (str, item) {
+                return escaped_one_to_xml_special_map[item];
             });
+        }
+    }, {
+        key: 'processWidgetMappings',
+        value: function processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+            var widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/);
+            widgetstring = this.decodeXml(widgetstring[2]);
+            var questionIndex = widgetstring.indexOf("?");
+            var widgetType = widgetstring.substring(0, questionIndex);
+            var widgetparamsMapped = {};
+            // map out params and their values
+
+            widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
+                var key = void 0,
+                    value = void 0;
+
+                var _keyPair$split = keyPair.split("=");
+
+                var _keyPair$split2 = _slicedToArray(_keyPair$split, 2);
+
+                key = _keyPair$split2[0];
+                value = _keyPair$split2[1];
+
+                value = decodeURIComponent(value);
+                widgetparamsMapped[key] = value;
+            });
+            return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+        }
+    }, {
+        key: 'processWidgetOrDomElement',
+        value: function processWidgetOrDomElement(widgetsToBe) {
+            var _this4 = this;
+
+            var referenceCountContainer = {
+                referenceCount: 1
+            };
+            return widgetsToBe.map(function (text, index) {
+                if (text.indexOf("<span data-widgetparams") !== -1) {
+                    var resp = _this4.processWidgetMappings(text, referenceCountContainer, index);
+                    return resp;
+                } else {
+                    return React.createElement('div', { key: index, dangerouslySetInnerHTML: { __html: text } });
+                }
+            });
+        }
+    }, {
+        key: 'renderWidget',
+        value: function renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index) {
+            switch (widgetType) {
+                case "buttonlink":
+                    return this.renderSynapseButton(widgetparamsMapped, index);
+                case "image":
+                    return this.renderSynapseImage(widgetparamsMapped, index);
+                case "plot":
+                    return this.renderSynapsePlot(widgetparamsMapped, index);
+                case "reference":
+                    return this.renderSynapseReference(referenceCountContainer, index);
+                default:
+                    return;
+            }
+        }
+    }, {
+        key: 'renderSynapseButton',
+        value: function renderSynapseButton(widgetparamsMapped, index) {
+            return React.createElement(
+                'a',
+                { key: index, href: widgetparamsMapped.url, className: 'btn btn-lg btn-info', role: 'button' },
+                widgetparamsMapped.text
+            );
+        }
+    }, {
+        key: 'renderSynapsePlot',
+        value: function renderSynapsePlot(widgetparamsMapped, index) {
+            return React.createElement(SynapsePlot, { key: index, token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
+        }
+    }, {
+        key: 'renderSynapseImage',
+        value: function renderSynapseImage(widgetparamsMapped, index) {
+            if (!this.state.fileHandles) {
+                // ensure files are loaded
+                return;
+            }
+
+            if (widgetparamsMapped.fileName) {
+                return React.createElement(SynapseImage, { key: index, token: this.props.token, fileName: widgetparamsMapped.fileName, wikiId: this.props.wikiId, isAttachedToEntity: false, fileResults: this.state.fileHandles.list });
+            } else if (widgetparamsMapped.synapseId) {
+                // elements with synapseIds have to have their resources loaded first, their not located
+                // with the file attachnent list
+                return React.createElement(SynapseImage, { key: index, token: this.props.token, synapseId: widgetparamsMapped.synapseId, isAttachedToEntity: true });
+            }
+        }
+    }, {
+        key: 'renderSynapseReference',
+        value: function renderSynapseReference(referenceCountContainer, index) {
+            var _this5 = this;
+
+            var count = referenceCountContainer.referenceCount;
+            var reference = React.createElement(Reference, { key: index, footnoteId: referenceCountContainer.referenceCount, onClick: function onClick(event) {
+                    event.preventDefault();
+                    // find and go to the bookmark at the right section of the page
+                    var goTo = _this5.footnoteRef.current.querySelector('a#bookmark' + (count - 1));
+                    try {
+                        goTo.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                            inline: 'center'
+                        });
+                    } catch (e) {
+                        console.log('error on scroll', e);
+                    }
+                } });
+            referenceCountContainer.referenceCount++;
+            return reference;
         }
     }, {
         key: 'render',
         value: function render() {
-            var visibility = {
-                visibility: this.state.hasBookmarks ? "visible" : "hidden"
-            };
-
             return React.createElement(
                 React.Fragment,
                 null,
                 this.getErrorView(),
-                React.createElement('div', { ref: this.markupRef, dangerouslySetInnerHTML: this.createMarkup(this.state.text) }),
-                React.createElement('hr', { style: visibility }),
-                React.createElement('p', { ref: this.footnoteRef, style: visibility })
+                React.createElement(
+                    'div',
+                    { ref: this.markupRef },
+                    this.processWidgets()
+                ),
+                React.createElement(
+                    'div',
+                    { ref: this.footnoteRef },
+                    this.addBookmarks()
+                )
             );
         }
     }]);

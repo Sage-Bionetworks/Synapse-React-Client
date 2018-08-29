@@ -28,11 +28,13 @@ class App extends Component {
     this.state = {
       token: "",
       ownerId: "",
-      isLoading: true
+      isLoading: true,
+      showMarkdown: true
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.removeHandler = this.removeHandler.bind(this)
   }
   
   /**
@@ -81,22 +83,17 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
+    console.log('handling change ', updatedState)
     this.setState(
       updatedState
     );
   }
   
-  /**
-   * Call demo synapse features
-   */
-  componentDidMount() {
-  }
-
   getMultipleWikis() {
     if (!this.state.token) {
       return ""
     }
-    let foo = Array.from(Array(45).keys())
+    let foo = Array.from(Array(4).keys())
     return foo.map((element, index) => {
       return (
         <div className="container" key={index}>
@@ -108,6 +105,12 @@ class App extends Component {
         </div>
       )
    })
+  }
+
+  removeHandler () {
+    this.setState(
+      {showMarkdown: !this.state.showMarkdown}
+    )
   }
   
   render() {
@@ -145,16 +148,27 @@ class App extends Component {
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
 
-        {this.state.isLoading ? <div className="container"> Loading </div> : ""}
+        {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
+      
+        <div className="container">
+           <button className="btn btn-primary" onClick={
+                        () => {
+                            this.removeHandler()
+                        }
+                        }
+                      > Toggle markdown from view </button>  
+        </div>
 
-        <CustomMarkdownView>
-          <MarkdownSynapse token={this.state.token}
+        {this.state.showMarkdown && <CustomMarkdownView>
+          <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
+        }
+
       </div>
     );
   }

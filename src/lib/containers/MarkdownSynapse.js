@@ -1,12 +1,14 @@
 import React from "react";
-import ReactDOM from 'react-dom'
 
 import * as SynapseClient from '../utils/SynapseClient'
 import SynapsePlot from './widgets/SynapsePlot'
+import Reference from './widgets/Reference'
+import Bookmarks from './widgets/Bookmarks'
 
 import PropTypes from 'prop-types'
 
 import "../style/Portal.css"
+import SynapseImage from "./widgets/SynapseImage";
 
 /**
  * Import requirements for markdown
@@ -38,56 +40,54 @@ class MarkdownSynapse extends React.Component {
      */
     constructor (props) {
         super(props)
-        // Store markdown object and text to be rendered by said object
-        // async data goes inside of state, in this way and setState calls will
-        // update those positions on the page where async requirements are needed
+        
+        let md = require('markdown-it')({html: true})
+        // markdownitSynapse wraps around md object and uses its own dependencies
+        markdownitSynapse.init_markdown_it(
+            md, markdownSubAlt, markdownEmpahsisAlt,
+            markdownCenterText, markdownSynapseHeading, markdownSynapseTable,
+            markdownStrikethrough, markdownContainer, markdownEmpahsisAlt,
+            markdownInlineComments, markdownBr
+        )
+
+        const mathSuffix = ''
+        // Update the internal md object with the wrapped synapse object
+        md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
+
         this.state = {
-            md: require('markdown-it')({html: true}),
+            md: md,
             text: '',
             fileHandles: null,
             newOwnerId: "",
             newWikiId: "",
-            calledReset: false,
             isLoggedIn: this.props.token !== "",
-            errorMessage: "",
-            queryData: {},
-            fileResults: null,
-            hasBookmarks: false,
-            bookmarksFirstSeen: false,
-            hasProcessedReferences: false,
-            referenceView: []
+            errorMessage: ""
         }
 
         this.footnoteRef = React.createRef()
         this.markupRef = React.createRef()
+        this.buttonRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
+        this.processWidgetOrDomElement = this.processWidgetOrDomElement.bind(this)
         this.processMath = this.processMath.bind(this)
         // handle init calls to get wiki related items
         this.getWikiAttachments = this.getWikiAttachments.bind(this)
         this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
         
-        // handle pre/post processing of widgets
-        this.prepareWidget = this.prepareWidget.bind(this)
-        this.processWidgetMappings = this.processWidgetMappings.bind(this)
-        this.matchElementToResource = this.matchElementToResource.bind(this)
-        this.matchToHandle = this.matchToHandle.bind(this)
-        this.compareById = function(fileName, key) {
-            return function(element) {
-                return element[key] === fileName
-            }
-        }
+        // handle rendering widgets
+        this.renderWidget = this.renderWidget.bind(this)
+        this.renderSynapseButton = this.renderSynapseButton.bind(this)
+        this.renderSynapseImage = this.renderSynapseImage.bind(this)
+        this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
+        this.renderSynapseReference = this.renderSynapseReference.bind(this)
         
-        // state related functions
         this.getErrorView = this.getErrorView.bind(this)
-        this.handleChange = this.handleChange.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
-
-        // handling each of the synapse widgets
-        this.handleImageWidget = this.handleImageWidget.bind(this)
-        this.handleReferenceWidget = this.handleReferenceWidget.bind(this)
         this.addBookmarks = this.addBookmarks.bind(this)
+
+
     }
 
     /**
@@ -139,281 +139,20 @@ class MarkdownSynapse extends React.Component {
         });
     }
 
-    async processWidgetMappings(widgets, fileHandleAssociationList, elementList) {
-        for (let element of widgets) {
-            let widgetstring = element.dataset.widgetparams;
-            let questionIndex = widgetstring.indexOf("?"); // type?
-            let widgetType = widgetstring.substring(0, questionIndex); // type
-            let widgetparamsMapped = {};
-            // map out params and their values
-            widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
-                let key, value;
-                [key, value] = keyPair.split("=");
-                value = decodeURIComponent(value);
-                widgetparamsMapped[key] = value;
-            });
-            await this.prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList);
-        };
-    }
-
-    /**
-     * Get widgets on screen and transform into their defined compents
-     */
-    async processWidgets() {
-
-        let widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]")
-        // go through all obtained elements and transform them with katex
-        
-        // build up request 
-        let elementList = []
-        let fileHandleAssociationList = []
-
-        // must gather resources for all widgets before making batch file call, wait till done
-        await this.processWidgetMappings(widgets, fileHandleAssociationList, elementList)
-
-        // Process all the files found on the page
-        // if this is the first run load the file results, otherwise
-        // use the already retrieved files
-        if (fileHandleAssociationList.length > 0 && this.state.fileResults === null) {
-            // include length check to make sure all resources are loaded
-            let request = {
-                requestedFiles: fileHandleAssociationList,
-                includePreSignedURLs: true,
-                includeFileHandles: false,
-                includePreviewPreSignedURLs: false
-            }
-            SynapseClient.getFiles(request, this.props.token).then(
-                data=> {
-                    this.setState(
-                        {fileResults: data.requestedFiles}
-                    )
-                    // TODO: consider opitmizations in the future
-                    markdownitSynapse.resetFootnotes()
-                    this.matchElementToResource(elementList);
-                    this.addBookmarks()
-                }
-            )
-            .catch(err =>{
-                console.log('Error on url grab ', err)
-            })
-        } else {
-            markdownitSynapse.resetFootnotes()
-            this.matchElementToResource(elementList);
-            this.addBookmarks()
-        }
-    }
-
-    /**
-     * Given a widget grab its required resources to push onto the growing list of elements
-     *
-     * @param {*} widgetType    type of widget, e.g. "buttonlink"
-     * @param {*} widgetparamsMapped    parameter dictionary for the given widget
-     * @param {*} element   reference to the actual DOM element this widget corresponds to
-     * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
-     * @param {*} elementList   stack of elements to be processed
-     */
-    async prepareWidget(widgetType, widgetparamsMapped, element, fileHandleAssociationList, elementList) {
-        if (widgetType === "buttonlink" && element && element.parentElement) {  // check parent element
-            let button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
-            element.outerHTML = button;
-        } else if (widgetType === "image" && this.state.fileHandles) {
-            let fileName = null
-            let match = null
-            if (widgetparamsMapped.fileName) {
-                fileName = widgetparamsMapped.fileName;
-                match = this.matchToHandle(this.compareById(fileName, "fileName"), this.state.fileHandles.list);
-                fileHandleAssociationList.push({
-                    fileHandleId: match[0].id,
-                    associateObjectId: this.props.wikiId,
-                    associateObjectType: "WikiAttachment"
-                });
-                elementList.push({element:element, id: match[0].id, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
-            } else if (widgetparamsMapped.synapseId) {
-                // elements with synapseIds have to have their resources loaded first, their not located
-                // with the file attachnent list
-                let synapseId = widgetparamsMapped.synapseId;
-                await SynapseClient.getEntity(this.props.token, synapseId).then(data => {
-                    fileHandleAssociationList.push({
-                        fileHandleId: data.dataFileHandleId,
-                        associateObjectId: synapseId,
-                        associateObjectType: "FileEntity"
-                    });
-                    elementList.push({element:element, id: data.dataFileHandleId, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
-                }).catch(err => {
-                    console.log("Error on synapse entity image load ", err)
-                })
-            }
-        } else if (widgetType === "plot") {
-            let plotWidget = <SynapsePlot 
-                                token={this.props.token}
-                                ownerId={this.props.ownerId}
-                                wikiId={this.props.wikiId}
-                                widgetparamsMapped={widgetparamsMapped} />
-            ReactDOM.render(plotWidget, element)
-        } else if (widgetType === "reference") {
-            elementList.push({element:element, widgetType: widgetType, widgetparamsMapped: widgetparamsMapped});
-        }
-    }
-
-    /**
-     * match all widgets on the page to their corresponding resource
-     *
-     * @param {*} elementList dictionary of 
-     * @memberof Markdown
-     */
-    matchElementToResource(elementList) {
-        let referenceCount = 0
-        let savedReferences = this.state.savedReferences || []
-
-        if (elementList.length > 0) {
-            elementList.forEach((elementBundle) => {
-                if (elementBundle.widgetType === "image") {
-                    // match corresponds to filehandle that this current element needs to be connected to
-                    let match = this.matchToHandle(this.compareById(elementBundle.id, "fileHandleId"), this.state.fileResults);
-                    this.handleImageWidget(match, elementBundle);
-                } else if (elementBundle.widgetType === "reference") {
-                    this.handleReferenceWidget(elementBundle, referenceCount++, savedReferences);
-                }
-            });
-            if (referenceCount > 0 && !this.state.hasProcessedReferences) {
-                this.setState({hasProcessedReferences: true, savedReferences: savedReferences, hasBookmarks: true})    
-            }
-        }
-    }
-
-    handleImageWidget(match, elementBundle) {
-        if (elementBundle.element.parentElement) {
-            let renderedHTML = `<image class="img-fluid" src=${match[0].preSignedURL}></image>`;
-            elementBundle.element.outerHTML = renderedHTML;
-        }
-    }         
-
-    /**
-     * Handles ?{reference} synapse widgets
-     *
-     * @param {*} elementBundle
-     * @param {*} index
-     * @memberof MarkdownSynapse
-     */
-    handleReferenceWidget(elementBundle, index, savedReferences) {
-        let renderedHTML = ""
-        // due to re-renering, we save the result of this method, on initial calculate the html, otherwise we just 
-        // show it
-        if (!this.state.hasProcessedReferences) {
-            renderedHTML = `<span> <span><div class="ReferenceWidget"><a href="#" class="margin-left-5">[${elementBundle.widgetparamsMapped.footnoteId}]</a></div></span></span>`
-            savedReferences.push(renderedHTML)
-        } else {
-            renderedHTML = savedReferences[index]
-        }
-        
-        // attach an anchor tag with an event listener to jump to the appropriate bookmark at the bottom of the page
-        // note- can't save the dom element as in addBookmarks() the even listener seems to break this option
-        renderedHTML= document.createRange().createContextualFragment(renderedHTML)
-        renderedHTML.querySelector("a").addEventListener("click",
-            event => {
-                event.preventDefault()
-                // find and go to the bookmark at the right section of the page
-                let goTo = this.footnoteRef.current.querySelector(`a#bookmark${index}`)
-                try {
-                    goTo.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center',
-                        inline: 'center'
-                    })
-                } catch (e) {
-                    console.log('error on scroll', e)
-                }
-                
-            }
-        )
-
-        elementBundle.element.innerText = "" // clear the <Synapse widget> text
-        elementBundle.element.appendChild(renderedHTML)
-    }
-
     /**
      * Process all the corresponding bookmark tags of the references made throughout the page
      *
      * @memberof MarkdownSynapse
      */
-        addBookmarks() {
-        /* we have to check that:
-            1) there are bookmarks on the page
-            2) we haven't already processed bookmarks on a previous render of the page
-        */
-       if (this.state.hasBookmarks && !this.state.bookmarksFirstSeen) {
-            let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-            let node = this.footnoteRef.current // corresponds to <p> tag in render below
-            // find all links in the footnotes_html-- each of which contains a "text=[\d]"
-            let linkOccurences = footnotes_html.match(/text=\[.\]/g)
-            if (!linkOccurences) {
-                return
-            }
-
-            let linksFormatted = linkOccurences.map(
-                (element, index ) => { 
-                    // grab only the [\d] pieces of the text
-                    return element.substring(element.indexOf("["), element.indexOf("]") + 1)
-                 }
-            ).map(
-                (element, index) => {
-                    // here bookmark is used so that the references can target this anchor tag 
-                    return `<span><div class="BookmarkWidget"><a id=${"bookmark" + index}>${element}</a></div></span>`
-                }
-            )
-
-            // now all of the links are prepared to be inserted back into the original string
-            // all link occurences have a single location in the original string-- we go through and then 
-            // match of the link occurences to the spot it belongs into the html
-            let i = 0
-            let matches = footnotes_html.replace(/(<span data-widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm, 
-                // replace using a function where p1,p2,p3 correspond to the matched groups from above
-                // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
-                // formatted text from above
-                (match, p1, p2, p3, string) => {
-                    return [p1, linksFormatted[i++] , p3].join("")
-                }
-            )
-
-            // create the dom element for this view and append to the ref
-            let bookmarkFragment = document.createRange().createContextualFragment(matches)
-            node.appendChild(bookmarkFragment)
-            // save the result of the operation from above
-            this.setState(
-                {
-                    bookmarksFirstSeen: true,
-                    bookmarkFragment: bookmarkFragment      
-                }
-            )
-        } else if (this.state.hasBookmarks) {
-            // we've already computed the bookmarks, we can instead used the saved fragment
-            this.footnoteRef.current.appendChild(this.state.bookmarkFragment)
+    addBookmarks() {
+        let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
+        if (footnotes_html.length > 0) {
+            let bookmarks = <Bookmarks
+                                footnotes={footnotes_html}>
+                            </Bookmarks>
+            markdownitSynapse.resetFootnotes()
+            return bookmarks
         }
-    }
-
-    /**
-     * Attach markdown to wiki attachments
-     */
-    matchToHandle(comparator, objectList) {
-        if (objectList) {
-            // make sure the files have loaded
-            let filtered =  objectList.filter(comparator)
-            return filtered
-        }
-    }
-
-    /**
-     * Updates internal state with the event that was triggered
-     *
-     * @param {*} event Form update
-     */
-    handleChange(event) {
-        const target = event.target
-        const name = target.name
-        const value = target.value
-        this.setState(
-            { [name]: value }
-        );
     }
     
     /**
@@ -422,32 +161,27 @@ class MarkdownSynapse extends React.Component {
     getWikiPageMarkdown() {
         if (!this.state.text) {
             SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
-            .then(data => {
-                // on success grab text and append to the default text
-                let initText = this.state.text;
-                this.setState({
-                    text: initText + data.markdown
-                });
-            }).catch(err => { 
-                console.log('Error on wiki markdown load\n', err);
-            })
+                .then(data => {
+                    // on success grab text and append to the default text
+                    let initText = this.state.text;
+                    this.setState({
+                        text: initText + data.markdown
+                    });
+                    if (this.props.updateLoadState) {
+                        this.props.updateLoadState({isLoading: false})
+                    }
+                }).catch(err => { 
+                    console.log('Error on wiki markdown load\n', err);
+                })
         }
         // else the wiki page was retrieved accordingly or it was passed down
         // as a prop
     }
               
-    /**
-     * Call Synapse REST API to get AMP-AD wiki portal attachments
-     */
     getWikiAttachments() {
-
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
-                this.setState({ fileHandles: data });
-                this.processWidgets();
-                this.setState({
-                    errorMessage: ""
-                })
+                this.setState({ fileHandles: data, errorMessage: "" });
             }).catch(err => { 
                 this.setState({
                     errorMessage: err.reason
@@ -457,44 +191,19 @@ class MarkdownSynapse extends React.Component {
     }
 
     componentDidMount() {
-
-        // markdownitSynapse wraps around md object and uses its own dependencies
-        markdownitSynapse.init_markdown_it(
-            this.state.md, markdownSubAlt, markdownEmpahsisAlt,
-            markdownCenterText, markdownSynapseHeading, markdownSynapseTable,
-            markdownStrikethrough, markdownContainer, markdownEmpahsisAlt,
-            markdownInlineComments, markdownBr
-        )
-
-        const mathSuffix = ''
-        // Update the internal md object with the wrapped synapse object
-        this.setState({
-            md: this.state.md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
-        })
-
-        // TODO: if supplying only markdown then there can't be any widgets
-        // that require an owner/synapse id -- supplying markdown may not be 
-        // an option
-
         if (this.props.markdown) {
             this.setState({
                 text: this.props.markdown
             })
-
         }
+
         if (this.props.hasSynapseResources) {
             // get wiki attachments
             this.getWikiAttachments();
-            // sample API call to retrieve Synapse wiki page
-            // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
             this.getWikiPageMarkdown();
         }
-        // process all math identified markdown items
-        this.processMath()
 
-        if (this.props.updateLoadState && this.state.text) {
-            this.props.updateLoadState({isLoading: false})
-        }
+        this.processMath()
     }
 
     // on component update find and re-render the math/widget items accordingly
@@ -510,7 +219,6 @@ class MarkdownSynapse extends React.Component {
             }
         }
         this.processMath()
-        this.processWidgets()
     }
 
     /**
@@ -528,38 +236,129 @@ class MarkdownSynapse extends React.Component {
         }   
     }
 
-    /**
-     *  Reset the components state to initial
-     *
-     * @param {*} event click event from submit button
-     * @memberof Markdown
-     */
-    resetComponentState(event) {
-        event.preventDefault()
-        
-        this.setState({
-            ownerId: this.state.newOwnerId,
-            wikiId: this.state.newWikiId,
-            newOwnerId: "",
-            newWikiId: "",
-            fileHandles: null,
-            fileResults: null,
-            text: "",
-            calledReset: true
-        })
+    processWidgets() {
+        let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/)
+        return this.processWidgetOrDomElement(groups)
+    }
+    
+    decodeXml(string) {
+        let escaped_one_to_xml_special_map = {
+            '&amp;': '&',
+            '&quot;': '"',
+            '&lt;': '<',
+            '&gt;': '>'
+        };
+
+        return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
+            function(str, item) {
+                return escaped_one_to_xml_special_map[item];
+        });
     }
 
-    render() {
-        const visibility = {
-            visibility: this.state.hasBookmarks ? "visible" : "hidden"
+    processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+        let widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/)
+        widgetstring = this.decodeXml(widgetstring[2])
+        let questionIndex = widgetstring.indexOf("?")
+        let widgetType = widgetstring.substring(0, questionIndex);
+        let widgetparamsMapped = {};
+        // map out params and their values
+        
+        widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
+            let key, value;
+            [key, value] = keyPair.split("=");
+            value = decodeURIComponent(value);
+            widgetparamsMapped[key] = value;
+        });
+        return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+    } 
+
+    processWidgetOrDomElement (widgetsToBe) {
+        let referenceCountContainer = {
+            referenceCount : 1
+        }
+        return widgetsToBe.map(
+            (text, index) => {
+                if (text.indexOf("<span data-widgetparams") !== -1) {
+                    let resp = this.processWidgetMappings(text, referenceCountContainer, index)
+                    return resp
+                } else {
+                    return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
+                }
+            }
+        )
+    }
+
+    renderWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
+        switch (widgetType) {
+            case "buttonlink":
+                return this.renderSynapseButton(widgetparamsMapped, index)
+            case "image":
+                return this.renderSynapseImage(widgetparamsMapped, index);
+            case "plot":
+                return this.renderSynapsePlot(widgetparamsMapped, index);
+            case "reference":
+                return this.renderSynapseReference(referenceCountContainer, index);
+            default:
+                return
+        }
+    }
+
+    renderSynapseButton(widgetparamsMapped, index) {
+        return <a key={index} href={widgetparamsMapped.url} className="btn btn-lg btn-info" role="button">{widgetparamsMapped.text}</a>
+    }
+
+    renderSynapsePlot(widgetparamsMapped, index) {
+        return <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
+    }
+
+    renderSynapseImage(widgetparamsMapped, index) {
+        if (!this.state.fileHandles) {
+            // ensure files are loaded
+            return
         }
 
+        if (widgetparamsMapped.fileName) {
+            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
+        }
+        else if (widgetparamsMapped.synapseId) {
+            // elements with synapseIds have to have their resources loaded first, their not located
+            // with the file attachnent list
+            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
+        }
+    }
+
+    renderSynapseReference(referenceCountContainer, index) {
+        let count = referenceCountContainer.referenceCount;
+        let reference = <Reference key={index} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
+            event.preventDefault();
+            // find and go to the bookmark at the right section of the page
+            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
+            try {
+                goTo.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+            catch (e) {
+                console.log('error on scroll', e);
+            }
+        } } />;
+        referenceCountContainer.referenceCount++;
+        return reference
+    }
+
+
+    render() {
         return (
             <React.Fragment>
                 {this.getErrorView()}
-                <div ref={this.markupRef} dangerouslySetInnerHTML={this.createMarkup(this.state.text)}/>
-                <hr style={visibility}  />
-                <p ref={this.footnoteRef} style={visibility}></p>
+                <div ref={this.markupRef}>
+                    {this.processWidgets()}
+                </div>
+                <div ref={this.footnoteRef}>
+                    {this.addBookmarks()}
+                </div>
             </React.Fragment>
         )
     }
