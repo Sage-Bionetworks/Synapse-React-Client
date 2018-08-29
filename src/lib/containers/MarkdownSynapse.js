@@ -310,8 +310,7 @@ class MarkdownSynapse extends React.Component {
     }
 
     renderSynapsePlot(widgetparamsMapped, index) {
-        let plotWidget = <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
-        return plotWidget
+        return <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
     }
 
     renderSynapseImage(widgetparamsMapped, index) {
@@ -321,14 +320,12 @@ class MarkdownSynapse extends React.Component {
         }
 
         if (widgetparamsMapped.fileName) {
-            let img = <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
-            return img
+            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
         }
         else if (widgetparamsMapped.synapseId) {
             // elements with synapseIds have to have their resources loaded first, their not located
             // with the file attachnent list
-            let img = <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
-            return img
+            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
         }
     }
 

@@ -9,7 +9,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from "react";
-import ReactDOM from 'react-dom';
 
 import * as SynapseClient from '../utils/SynapseClient';
 import SynapsePlot from './widgets/SynapsePlot';
@@ -80,7 +79,7 @@ var MarkdownSynapse = function (_React$Component) {
 
         // handle widgets and math markdown
         _this.processWidgets = _this.processWidgets.bind(_this);
-        _this.processWidgetMappings = _this.processWidgetMappings.bind(_this);
+        _this.processWidgetOrDomElement = _this.processWidgetOrDomElement.bind(_this);
         _this.processMath = _this.processMath.bind(_this);
         // handle init calls to get wiki related items
         _this.getWikiAttachments = _this.getWikiAttachments.bind(_this);
@@ -96,6 +95,7 @@ var MarkdownSynapse = function (_React$Component) {
         _this.getErrorView = _this.getErrorView.bind(_this);
         _this.createMarkup = _this.createMarkup.bind(_this);
         _this.addBookmarks = _this.addBookmarks.bind(_this);
+
         return _this;
     }
 
@@ -145,167 +145,6 @@ var MarkdownSynapse = function (_React$Component) {
                 });
             });
         }
-    }, {
-        key: 'processWidgetMappings',
-        value: function processWidgetMappings(widgets) {
-            var _this2 = this;
-
-            var referenceCountContainer = {
-                referenceCount: 1
-            };
-
-            var _loop = function _loop(element) {
-                var widgetstring = element.dataset.widgetparams;
-                var questionIndex = widgetstring.indexOf("?"); // type?
-                var widgetType = widgetstring.substring(0, questionIndex); // type
-                var widgetparamsMapped = {};
-                // map out params and their values
-                widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
-                    var key = void 0,
-                        value = void 0;
-
-                    var _keyPair$split = keyPair.split("=");
-
-                    var _keyPair$split2 = _slicedToArray(_keyPair$split, 2);
-
-                    key = _keyPair$split2[0];
-                    value = _keyPair$split2[1];
-
-                    value = decodeURIComponent(value);
-                    widgetparamsMapped[key] = value;
-                });
-                _this2.renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer);
-            };
-
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = widgets[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var element = _step.value;
-
-                    _loop(element);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            ;
-        }
-
-        /**
-         * Get widgets on screen and transform into their defined compents
-         */
-
-    }, {
-        key: 'processWidgets',
-        value: function processWidgets() {
-            var widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]");
-            this.processWidgetMappings(widgets);
-            this.addBookmarks();
-        }
-    }, {
-        key: 'componentWillUnmount',
-        value: function componentWillUnmount() {
-
-            var widgets = this.markupRef.current.querySelectorAll("span[data-widgetparams]");
-
-            console.log('unmounting ' + widgets.length + ' widgets');
-            widgets.forEach(function (element) {
-                console.log(ReactDOM.unmountComponentAtNode(element));
-            });
-
-            var footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html;
-            if (footnotes_html.length > 0) {
-                console.log('getting rid of footenotes');
-                console.log(ReactDOM.unmountComponentAtNode(this.footnoteRef.current));
-            }
-        }
-
-        /**
-         * Given a widget grab its required resources to push onto the growing list of elements
-         *
-         * @param {*} widgetType    type of widget, e.g. "buttonlink"
-         * @param {*} widgetparamsMapped    parameter dictionary for the given widget
-         * @param {*} element   reference to the actual DOM element this widget corresponds to
-         * @param {*} fileHandleAssociationList  stack of of requests to be made to batch synapse request
-         * @param {*} elementList   stack of elements to be processed
-         */
-
-    }, {
-        key: 'renderWidget',
-        value: function renderWidget(widgetType, widgetparamsMapped, element, referenceCountContainer) {
-            if (widgetType === "buttonlink" && element && element.parentElement) {
-                // check parent element
-                this.renderSynapseButton(widgetparamsMapped, element);
-            } else if (widgetType === "image" && this.state.fileHandles) {
-                this.renderSynapseImage(widgetparamsMapped, element);
-            } else if (widgetType === "plot") {
-                this.renderSynapsePlot(widgetparamsMapped, element);
-            } else if (widgetType === "reference") {
-                this.renderSynapseReference(referenceCountContainer, element);
-            }
-        }
-    }, {
-        key: 'renderSynapseButton',
-        value: function renderSynapseButton(widgetparamsMapped, element) {
-            var button = "<a href=\"" + widgetparamsMapped.url + "\"class=\"btn btn-lg btn-info\" role=\"button\" >" + widgetparamsMapped.text + "</a>";
-            element.outerHTML = button;
-        }
-    }, {
-        key: 'renderSynapsePlot',
-        value: function renderSynapsePlot(widgetparamsMapped, element) {
-            var plotWidget = React.createElement(SynapsePlot, { token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
-            ReactDOM.render(plotWidget, element);
-        }
-    }, {
-        key: 'renderSynapseImage',
-        value: function renderSynapseImage(widgetparamsMapped, element) {
-            if (widgetparamsMapped.fileName) {
-                var img = React.createElement(SynapseImage, { token: this.props.token, fileName: widgetparamsMapped.fileName, wikiId: this.props.wikiId, isAttachedToEntity: false, fileResults: this.state.fileHandles.list });
-                ReactDOM.render(img, element);
-            } else if (widgetparamsMapped.synapseId) {
-                // elements with synapseIds have to have their resources loaded first, their not located
-                // with the file attachnent list
-                var _img = React.createElement(SynapseImage, { token: this.props.token, synapseId: widgetparamsMapped.synapseId, isAttachedToEntity: true });
-                ReactDOM.render(_img, element);
-            }
-        }
-    }, {
-        key: 'renderSynapseReference',
-        value: function renderSynapseReference(referenceCountContainer, element) {
-            var _this3 = this;
-
-            var count = referenceCountContainer.referenceCount;
-            var reference = React.createElement(Reference, { footnoteId: referenceCountContainer.referenceCount, onClick: function onClick(event) {
-                    event.preventDefault();
-                    // find and go to the bookmark at the right section of the page
-                    var goTo = _this3.footnoteRef.current.querySelector('a#bookmark' + (count - 1));
-                    try {
-                        goTo.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                            inline: 'center'
-                        });
-                    } catch (e) {
-                        console.log('error on scroll', e);
-                    }
-                } });
-            ReactDOM.render(reference, element);
-            referenceCountContainer.referenceCount++;
-        }
 
         /**
          * Process all the corresponding bookmark tags of the references made throughout the page
@@ -320,7 +159,7 @@ var MarkdownSynapse = function (_React$Component) {
             if (footnotes_html.length > 0) {
                 var bookmarks = React.createElement(Bookmarks, {
                     footnotes: footnotes_html });
-                ReactDOM.render(bookmarks, this.footnoteRef.current);
+                return bookmarks;
             }
         }
 
@@ -331,13 +170,13 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiPageMarkdown',
         value: function getWikiPageMarkdown() {
-            var _this4 = this;
+            var _this2 = this;
 
             if (!this.state.text) {
                 SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
                     // on success grab text and append to the default text
-                    var initText = _this4.state.text;
-                    _this4.setState({
+                    var initText = _this2.state.text;
+                    _this2.setState({
                         text: initText + data.markdown
                     });
                 }).catch(function (err) {
@@ -350,12 +189,12 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'getWikiAttachments',
         value: function getWikiAttachments() {
-            var _this5 = this;
+            var _this3 = this;
 
             SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId).then(function (data) {
-                _this5.setState({ fileHandles: data, errorMessage: "" });
+                _this3.setState({ fileHandles: data, errorMessage: "" });
             }).catch(function (err) {
-                _this5.setState({
+                _this3.setState({
                     errorMessage: err.reason
                 });
                 console.log("Error on wiki attachment load ", err);
@@ -377,40 +216,12 @@ var MarkdownSynapse = function (_React$Component) {
                 // endpoint = https://repo-prod.prod.sagebase.org/repo/v1/entity/"{ownerId}"/wiki/"{wikiId}"        
                 this.getWikiPageMarkdown();
             }
-            // process all math identified markdown items
-            this.processMath();
 
             if (this.props.updateLoadState && this.state.text) {
                 this.props.updateLoadState({ isLoading: false });
             }
-        }
-    }, {
-        key: 'shouldComponentUpdate',
-        value: function shouldComponentUpdate(nextProps, nextState) {
 
-            var hasDiff = false;
-
-            Object.entries(this.props).forEach(function (_ref) {
-                var _ref2 = _slicedToArray(_ref, 2),
-                    key = _ref2[0],
-                    val = _ref2[1];
-
-                if (nextProps[key] !== val) {
-                    hasDiff = true;
-                }
-            });
-
-            Object.entries(this.state).forEach(function (_ref3) {
-                var _ref4 = _slicedToArray(_ref3, 2),
-                    key = _ref4[0],
-                    val = _ref4[1];
-
-                if (nextState[key] !== val) {
-                    hasDiff = true;
-                }
-            });
-
-            return hasDiff;
+            this.processMath();
         }
 
         // on component update find and re-render the math/widget items accordingly
@@ -428,7 +239,6 @@ var MarkdownSynapse = function (_React$Component) {
                     this.getWikiPageMarkdown();
                 }
             }
-            this.processWidgets();
             this.processMath();
         }
 
@@ -451,48 +261,154 @@ var MarkdownSynapse = function (_React$Component) {
             }
         }
     }, {
+        key: 'processWidgets',
+        value: function processWidgets() {
+            var groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/);
+            return this.processWidgetOrDomElement(groups);
+        }
+    }, {
+        key: 'decodeXml',
+        value: function decodeXml(string) {
+            var escaped_one_to_xml_special_map = {
+                '&amp;': '&',
+                '&quot;': '"',
+                '&lt;': '<',
+                '&gt;': '>'
+            };
+
+            return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g, function (str, item) {
+                return escaped_one_to_xml_special_map[item];
+            });
+        }
+    }, {
+        key: 'processWidgetMappings',
+        value: function processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+            var widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/);
+            widgetstring = this.decodeXml(widgetstring[2]);
+            var questionIndex = widgetstring.indexOf("?");
+            var widgetType = widgetstring.substring(0, questionIndex);
+            var widgetparamsMapped = {};
+            // map out params and their values
+
+            widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
+                var key = void 0,
+                    value = void 0;
+
+                var _keyPair$split = keyPair.split("=");
+
+                var _keyPair$split2 = _slicedToArray(_keyPair$split, 2);
+
+                key = _keyPair$split2[0];
+                value = _keyPair$split2[1];
+
+                value = decodeURIComponent(value);
+                widgetparamsMapped[key] = value;
+            });
+            return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+        }
+    }, {
+        key: 'processWidgetOrDomElement',
+        value: function processWidgetOrDomElement(widgetsToBe) {
+            var _this4 = this;
+
+            var referenceCountContainer = {
+                referenceCount: 1
+            };
+            return widgetsToBe.map(function (text, index) {
+                if (text.indexOf("<span data-widgetparams") !== -1) {
+                    var resp = _this4.processWidgetMappings(text, referenceCountContainer, index);
+                    return resp;
+                } else {
+                    return React.createElement('div', { key: index, dangerouslySetInnerHTML: { __html: text } });
+                }
+            });
+        }
+    }, {
+        key: 'renderWidget',
+        value: function renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index) {
+            switch (widgetType) {
+                case "buttonlink":
+                    return this.renderSynapseButton(widgetparamsMapped, index);
+                case "image":
+                    return this.renderSynapseImage(widgetparamsMapped, index);
+                case "plot":
+                    return this.renderSynapsePlot(widgetparamsMapped, index);
+                case "reference":
+                    return this.renderSynapseReference(referenceCountContainer, index);
+                default:
+                    return;
+            }
+        }
+    }, {
+        key: 'renderSynapseButton',
+        value: function renderSynapseButton(widgetparamsMapped, index) {
+            return React.createElement(
+                'a',
+                { key: index, href: widgetparamsMapped.url, className: 'btn btn-lg btn-info', role: 'button' },
+                widgetparamsMapped.text
+            );
+        }
+    }, {
+        key: 'renderSynapsePlot',
+        value: function renderSynapsePlot(widgetparamsMapped, index) {
+            return React.createElement(SynapsePlot, { key: index, token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
+        }
+    }, {
+        key: 'renderSynapseImage',
+        value: function renderSynapseImage(widgetparamsMapped, index) {
+            if (!this.state.fileHandles) {
+                // ensure files are loaded
+                return;
+            }
+
+            if (widgetparamsMapped.fileName) {
+                return React.createElement(SynapseImage, { key: index, token: this.props.token, fileName: widgetparamsMapped.fileName, wikiId: this.props.wikiId, isAttachedToEntity: false, fileResults: this.state.fileHandles.list });
+            } else if (widgetparamsMapped.synapseId) {
+                // elements with synapseIds have to have their resources loaded first, their not located
+                // with the file attachnent list
+                return React.createElement(SynapseImage, { key: index, token: this.props.token, synapseId: widgetparamsMapped.synapseId, isAttachedToEntity: true });
+            }
+        }
+    }, {
+        key: 'renderSynapseReference',
+        value: function renderSynapseReference(referenceCountContainer, index) {
+            var _this5 = this;
+
+            var count = referenceCountContainer.referenceCount;
+            var reference = React.createElement(Reference, { key: index, footnoteId: referenceCountContainer.referenceCount, onClick: function onClick(event) {
+                    event.preventDefault();
+                    // find and go to the bookmark at the right section of the page
+                    var goTo = _this5.footnoteRef.current.querySelector('a#bookmark' + (count - 1));
+                    try {
+                        goTo.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                            inline: 'center'
+                        });
+                    } catch (e) {
+                        console.log('error on scroll', e);
+                    }
+                } });
+            referenceCountContainer.referenceCount++;
+            return reference;
+        }
+    }, {
         key: 'render',
         value: function render() {
-            var _this6 = this;
-
-            function Hello(props) {
-                return React.createElement(
-                    'p',
-                    null,
-                    ' hello world! '
-                );
-            }
             return React.createElement(
                 React.Fragment,
                 null,
                 this.getErrorView(),
-                React.createElement('div', { ref: this.markupRef, dangerouslySetInnerHTML: this.createMarkup(this.state.text) }),
-                React.createElement('div', { ref: this.footnoteRef }),
                 React.createElement(
-                    'button',
-                    { onClick: function onClick() {
-                            _this6.props.removeHandler();
-                        }
-                    },
-                    ' remove the whole thing '
+                    'div',
+                    { ref: this.markupRef },
+                    this.processWidgets()
                 ),
                 React.createElement(
-                    'button',
-                    { onClick: function onClick() {
-                            ReactDOM.render(React.createElement(Hello, null), _this6.buttonRef.current);
-                        }
-                    },
-                    ' add me '
-                ),
-                React.createElement(
-                    'button',
-                    { onClick: function onClick() {
-                            console.log(ReactDOM.unmountComponentAtNode(_this6.buttonRef.current));
-                        }
-                    },
-                    ' remove me '
-                ),
-                React.createElement('div', { ref: this.buttonRef })
+                    'div',
+                    { ref: this.footnoteRef },
+                    this.addBookmarks()
+                )
             );
         }
     }]);
