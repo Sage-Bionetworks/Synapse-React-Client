@@ -20,9 +20,7 @@ import PropTypes from 'prop-types';
 import "../style/Portal.css";
 import SynapseImage from "./widgets/SynapseImage";
 
-/**
- * Import requirements for markdown
- */
+var md = require('markdown-it')({ html: true });
 var markdownitSynapse = require('markdown-it-synapse');
 var markdownSubAlt = require('markdown-it-sub-alt');
 var markdownCenterText = require('markdown-it-center-text');
@@ -53,10 +51,9 @@ var MarkdownSynapse = function (_React$Component) {
     function MarkdownSynapse(props) {
         _classCallCheck(this, MarkdownSynapse);
 
+        // markdownitSynapse wraps around md object and uses its own dependencies
         var _this = _possibleConstructorReturn(this, (MarkdownSynapse.__proto__ || Object.getPrototypeOf(MarkdownSynapse)).call(this, props));
 
-        var md = require('markdown-it')({ html: true });
-        // markdownitSynapse wraps around md object and uses its own dependencies
         markdownitSynapse.init_markdown_it(md, markdownSubAlt, markdownEmpahsisAlt, markdownCenterText, markdownSynapseHeading, markdownSynapseTable, markdownStrikethrough, markdownContainer, markdownEmpahsisAlt, markdownInlineComments, markdownBr);
 
         var mathSuffix = '';
@@ -94,7 +91,6 @@ var MarkdownSynapse = function (_React$Component) {
         _this.getErrorView = _this.getErrorView.bind(_this);
         _this.createMarkup = _this.createMarkup.bind(_this);
         _this.addBookmarks = _this.addBookmarks.bind(_this);
-
         return _this;
     }
 
@@ -154,11 +150,14 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'addBookmarks',
         value: function addBookmarks() {
+
+            markdownitSynapse.resetFootnotes();
+            this.createMarkup(this.state.text);
             var footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html;
+
             if (footnotes_html.length > 0) {
                 var bookmarks = React.createElement(Bookmarks, {
                     footnotes: footnotes_html });
-                markdownitSynapse.resetFootnotes();
                 return bookmarks;
             }
         }
@@ -260,7 +259,8 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'processWidgets',
         value: function processWidgets() {
-            var groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/);
+            // (<span data-widgetparams.*?span>) captures widgets
+            var groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/);
             return this.processWidgetOrDomElement(groups);
         }
     }, {
@@ -286,7 +286,6 @@ var MarkdownSynapse = function (_React$Component) {
             var widgetType = widgetstring.substring(0, questionIndex);
             var widgetparamsMapped = {};
             // map out params and their values
-
             widgetstring.substring(questionIndex + 1).split("&").forEach(function (keyPair) {
                 var key = void 0,
                     value = void 0;
@@ -313,8 +312,7 @@ var MarkdownSynapse = function (_React$Component) {
             };
             return widgetsToBe.map(function (text, index) {
                 if (text.indexOf("<span data-widgetparams") !== -1) {
-                    var resp = _this4.processWidgetMappings(text, referenceCountContainer, index);
-                    return resp;
+                    return _this4.processWidgetMappings(text, referenceCountContainer, index);
                 } else {
                     return React.createElement('div', { key: index, dangerouslySetInnerHTML: { __html: text } });
                 }
