@@ -10,9 +10,7 @@ import PropTypes from 'prop-types'
 import "../style/Portal.css"
 import SynapseImage from "./widgets/SynapseImage";
 
-/**
- * Import requirements for markdown
- */
+let md = require('markdown-it')({html: true})
 let markdownitSynapse = require('markdown-it-synapse')
 let markdownSubAlt = require('markdown-it-sub-alt');
 let markdownCenterText = require('markdown-it-center-text')
@@ -41,7 +39,6 @@ class MarkdownSynapse extends React.Component {
     constructor (props) {
         super(props)
         
-        let md = require('markdown-it')({html: true})
         // markdownitSynapse wraps around md object and uses its own dependencies
         markdownitSynapse.init_markdown_it(
             md, markdownSubAlt, markdownEmpahsisAlt,
@@ -55,7 +52,7 @@ class MarkdownSynapse extends React.Component {
         md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
 
         this.state = {
-            md: md,
+            md,
             text: '',
             fileHandles: null,
             newOwnerId: "",
@@ -66,7 +63,6 @@ class MarkdownSynapse extends React.Component {
 
         this.footnoteRef = React.createRef()
         this.markupRef = React.createRef()
-        this.buttonRef = React.createRef()
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
@@ -86,8 +82,6 @@ class MarkdownSynapse extends React.Component {
         this.getErrorView = this.getErrorView.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
         this.addBookmarks = this.addBookmarks.bind(this)
-
-
     }
 
     /**
@@ -145,12 +139,15 @@ class MarkdownSynapse extends React.Component {
      * @memberof MarkdownSynapse
      */
     addBookmarks() {
+
+        markdownitSynapse.resetFootnotes()
+        this.createMarkup(this.state.text)
         let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
+
         if (footnotes_html.length > 0) {
             let bookmarks = <Bookmarks
                                 footnotes={footnotes_html}>
                             </Bookmarks>
-            markdownitSynapse.resetFootnotes()
             return bookmarks
         }
     }
@@ -237,7 +234,8 @@ class MarkdownSynapse extends React.Component {
     }
 
     processWidgets() {
-        let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*span>)/)
+        // (<span data-widgetparams.*?span>) captures widgets
+        let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/)
         return this.processWidgetOrDomElement(groups)
     }
     
@@ -262,7 +260,6 @@ class MarkdownSynapse extends React.Component {
         let widgetType = widgetstring.substring(0, questionIndex);
         let widgetparamsMapped = {};
         // map out params and their values
-        
         widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
             let key, value;
             [key, value] = keyPair.split("=");
@@ -279,8 +276,7 @@ class MarkdownSynapse extends React.Component {
         return widgetsToBe.map(
             (text, index) => {
                 if (text.indexOf("<span data-widgetparams") !== -1) {
-                    let resp = this.processWidgetMappings(text, referenceCountContainer, index)
-                    return resp
+                    return this.processWidgetMappings(text, referenceCountContainer, index)
                 } else {
                     return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
                 }

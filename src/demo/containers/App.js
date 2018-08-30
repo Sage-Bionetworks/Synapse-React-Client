@@ -83,7 +83,6 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
-    console.log('handling change ', updatedState)
     this.setState(
       updatedState
     );
@@ -159,15 +158,32 @@ class App extends Component {
                       > Toggle markdown from view </button>  
         </div>
 
-        {this.state.showMarkdown && <CustomMarkdownView>
+        <CustomMarkdownView>
           <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
-                    ownerId={"syn14568473"}
-                    wikiId={"582406"}
+                    ownerId={"syn16593347"}
+                    wikiId={"583196"}
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
-        }
+        
+        <CustomMarkdownView>
+                  <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
+                            ownerId={"syn16593347"}
+                            wikiId={"583196"}
+                            updateLoadState={this.handleChange}
+                            >
+                  </MarkdownSynapse>
+                </CustomMarkdownView>
+        <CustomMarkdownView>
+          
+        <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
+                  ownerId={"syn16593347"}
+                  wikiId={"583196"}
+                  updateLoadState={this.handleChange}
+                  >
+        </MarkdownSynapse>
+        </CustomMarkdownView>
 
       </div>
     );
