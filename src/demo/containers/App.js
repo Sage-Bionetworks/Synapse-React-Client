@@ -159,18 +159,17 @@ class App extends Component {
         </div>
 
         <CustomMarkdownView>
-          <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
-                    ownerId={"syn16593347"}
-                    wikiId={"583196"}
-                    updateLoadState={this.handleChange}
-                    >
-          </MarkdownSynapse>
+          <MarkdownSynapse
+          token={""}
+          ownerId={"syn16779136"}
+          wikiId={"583201"}
+          />
         </CustomMarkdownView>
         
         <CustomMarkdownView>
                   <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
-                            ownerId={"syn16593347"}
-                            wikiId={"583196"}
+                            ownerId={"syn14568473"}
+                            wikiId={"582406"}
                             updateLoadState={this.handleChange}
                             >
                   </MarkdownSynapse>

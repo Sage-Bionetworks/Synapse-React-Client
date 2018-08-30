@@ -31,6 +31,7 @@
     "plotly.js": "^1.40.0",
     "prop-types": "^15.6.2",
     "react-plotly.js": "^2.2.0",
+    "react-test-renderer": "^16.4.2",
     "sanitize-html": "^1.18.4"
   },
   "devDependencies": {

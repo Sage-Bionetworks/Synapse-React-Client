@@ -1,7 +1,8 @@
 import React from "react";
 
 import * as SynapseClient from '../utils/SynapseClient'
-import SynapsePlot from './widgets/SynapsePlot'
+
+
 import Reference from './widgets/Reference'
 import Bookmarks from './widgets/Bookmarks'
 
@@ -10,6 +11,17 @@ import PropTypes from 'prop-types'
 import "../style/Portal.css"
 import SynapseImage from "./widgets/SynapseImage";
 
+// Only because in the test enviornment there is an issue with importing
+// react-plot which in turn imports mapboxgl which in turn defines a function
+// that causes an error
+let SynapsePlot
+if (process.env.NODE_ENV !== "test") {
+    import('./widgets/SynapsePlot').then(
+        data => {
+            SynapsePlot = data.default
+        }
+    )
+}
 let md = require('markdown-it')({html: true})
 let markdownitSynapse = require('markdown-it-synapse')
 let markdownSubAlt = require('markdown-it-sub-alt');

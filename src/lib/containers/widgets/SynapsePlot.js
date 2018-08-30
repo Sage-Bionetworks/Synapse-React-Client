@@ -3,8 +3,6 @@ import Plot from 'react-plotly.js';
 import * as SynapseConstants from '../../utils/SynapseConstants'
 import {getQueryTableResults} from '../../utils/SynapseClient'
 
-
-
 class SynapsePlot extends React.Component {
 
     constructor(props) {
