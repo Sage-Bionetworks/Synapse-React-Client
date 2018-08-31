@@ -191,8 +191,10 @@ class MarkdownSynapse extends React.Component {
     }
               
     getWikiAttachments() {
+        let datum
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
+                datum = data
                 this.setState({ fileHandles: data, errorMessage: "" });
             }).catch(err => { 
                 this.setState({
@@ -272,15 +274,15 @@ class MarkdownSynapse extends React.Component {
     renderWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
         switch (widgetType) {
             case "buttonlink":
-            return this.renderSynapseButton(widgetparamsMapped, index)
+                return this.renderSynapseButton(widgetparamsMapped, index)
             case "image":
-            return this.renderSynapseImage(widgetparamsMapped, index);
+                return this.renderSynapseImage(widgetparamsMapped, index);
             case "plot":
-            return this.renderSynapsePlot(widgetparamsMapped, index);
+                return this.renderSynapsePlot(widgetparamsMapped, index);
             case "reference":
-            return this.renderSynapseReference(referenceCountContainer, index);
+                return this.renderSynapseReference(referenceCountContainer, index);
             default:
-            return
+                return
         }
     }
     
