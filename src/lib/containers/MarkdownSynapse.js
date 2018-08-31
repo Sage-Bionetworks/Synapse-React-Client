@@ -1,7 +1,8 @@
 import React from "react";
 
 import * as SynapseClient from '../utils/SynapseClient'
-import SynapsePlot from './widgets/SynapsePlot'
+
+
 import Reference from './widgets/Reference'
 import Bookmarks from './widgets/Bookmarks'
 
@@ -10,6 +11,17 @@ import PropTypes from 'prop-types'
 import "../style/Portal.css"
 import SynapseImage from "./widgets/SynapseImage";
 
+// Only because in the test enviornment there is an issue with importing
+// react-plot which in turn imports mapboxgl which in turn defines a function
+// that causes an error
+let SynapsePlot
+if (process.env.NODE_ENV !== "test") {
+    import('./widgets/SynapsePlot').then(
+        data => {
+            SynapsePlot = data.default
+        }
+    )
+}
 let md = require('markdown-it')({html: true})
 let markdownitSynapse = require('markdown-it-synapse')
 let markdownSubAlt = require('markdown-it-sub-alt');
@@ -119,6 +131,9 @@ class MarkdownSynapse extends React.Component {
      * and transform them to their math markedown equivalents
      */
     processMath() {
+        if (!this.markupRef.current) {
+            return
+        }
         // use regex to grab all elements
         let mathExpressions = this.markupRef.current.querySelectorAll("[id^=\"mathjax-\"]")
         // go through all obtained elements and transform them with katex
@@ -176,8 +191,10 @@ class MarkdownSynapse extends React.Component {
     }
               
     getWikiAttachments() {
+        let datum
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
+                datum = data
                 this.setState({ fileHandles: data, errorMessage: "" });
             }).catch(err => { 
                 this.setState({
@@ -187,6 +204,133 @@ class MarkdownSynapse extends React.Component {
             })
     }
 
+    
+    /**
+     * If theres an error loading the wiki page show an informative message
+     * likely a priveledge issue -- (e.g. not signed-in)
+     * 
+     * @returns view that presents error message on error, otherwise null
+     */
+    getErrorView() {
+        if (this.state.errorMessage && this.props.errorMessageView) {
+            return ( 
+                <React.Fragment>
+                {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
+            </React.Fragment>)
+        }   
+    }
+    
+    processWidgets() {
+        // (<span data-widgetparams.*?span>) captures widgets
+        let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/)
+        return this.processWidgetOrDomElement(groups)
+    }
+    
+    decodeXml(string) {
+        let escaped_one_to_xml_special_map = {
+            '&amp;': '&',
+            '&quot;': '"',
+            '&lt;': '<',
+            '&gt;': '>'
+        };
+        
+        return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
+        function(str, item) {
+            return escaped_one_to_xml_special_map[item];
+        });
+    }
+    
+    processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+        let widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/)
+        widgetstring = this.decodeXml(widgetstring[2])
+        let questionIndex = widgetstring.indexOf("?")
+        let widgetType = widgetstring.substring(0, questionIndex);
+        let widgetparamsMapped = {};
+        // map out params and their values
+        widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
+            let key, value;
+            [key, value] = keyPair.split("=");
+            value = decodeURIComponent(value);
+            widgetparamsMapped[key] = value;
+        });
+        return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+    } 
+    
+    processWidgetOrDomElement (widgetsToBe) {
+        let referenceCountContainer = {
+            referenceCount : 1
+        }
+        return widgetsToBe.map(
+            (text, index) => {
+                if (text.indexOf("<span data-widgetparams") !== -1) {
+                    return this.processWidgetMappings(text, referenceCountContainer, index)
+                } else {
+                    return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
+                }
+            }
+        )
+    }
+    
+    renderWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
+        switch (widgetType) {
+            case "buttonlink":
+                return this.renderSynapseButton(widgetparamsMapped, index)
+            case "image":
+                return this.renderSynapseImage(widgetparamsMapped, index);
+            case "plot":
+                return this.renderSynapsePlot(widgetparamsMapped, index);
+            case "reference":
+                return this.renderSynapseReference(referenceCountContainer, index);
+            default:
+                return
+        }
+    }
+    
+    renderSynapseButton(widgetparamsMapped, index) {
+        return <a key={index} href={widgetparamsMapped.url} className="btn btn-lg btn-info" role="button">{widgetparamsMapped.text}</a>
+    }
+    
+    renderSynapsePlot(widgetparamsMapped, index) {
+        return <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
+    }
+    
+    renderSynapseImage(widgetparamsMapped, index) {
+        if (!this.state.fileHandles) {
+            // ensure files are loaded
+            return
+        }
+        
+        if (widgetparamsMapped.fileName) {
+            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} fileResults={this.state.fileHandles.list} />;
+        }
+        else if (widgetparamsMapped.synapseId) {
+            // elements with synapseIds have to have their resources loaded first, their not located
+            // with the file attachnent list
+            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} />;
+        }
+    }
+    
+    renderSynapseReference(referenceCountContainer, index) {
+        let count = referenceCountContainer.referenceCount;
+        let reference = <Reference key={index} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
+            event.preventDefault();
+            // find and go to the bookmark at the right section of the page
+            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
+            try {
+                goTo.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+            catch (e) {
+                console.log('error on scroll', e);
+            }
+        } } />;
+        referenceCountContainer.referenceCount++;
+        return reference
+    }
+    
     componentDidMount() {
         if (this.props.markdown) {
             this.setState({
@@ -217,133 +361,6 @@ class MarkdownSynapse extends React.Component {
         }
         this.processMath()
     }
-
-    /**
-     * If theres an error loading the wiki page show an informative message
-     * likely a priveledge issue -- (e.g. not signed-in)
-     * 
-     * @returns view that presents error message on error, otherwise null
-     */
-    getErrorView() {
-        if (this.state.errorMessage && this.props.errorMessageView) {
-            return ( 
-            <React.Fragment>
-                {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
-            </React.Fragment>)
-        }   
-    }
-
-    processWidgets() {
-        // (<span data-widgetparams.*?span>) captures widgets
-        let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/)
-        return this.processWidgetOrDomElement(groups)
-    }
-    
-    decodeXml(string) {
-        let escaped_one_to_xml_special_map = {
-            '&amp;': '&',
-            '&quot;': '"',
-            '&lt;': '<',
-            '&gt;': '>'
-        };
-
-        return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
-            function(str, item) {
-                return escaped_one_to_xml_special_map[item];
-        });
-    }
-
-    processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
-        let widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/)
-        widgetstring = this.decodeXml(widgetstring[2])
-        let questionIndex = widgetstring.indexOf("?")
-        let widgetType = widgetstring.substring(0, questionIndex);
-        let widgetparamsMapped = {};
-        // map out params and their values
-        widgetstring.substring(questionIndex + 1).split("&").forEach((keyPair) => {
-            let key, value;
-            [key, value] = keyPair.split("=");
-            value = decodeURIComponent(value);
-            widgetparamsMapped[key] = value;
-        });
-        return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
-    } 
-
-    processWidgetOrDomElement (widgetsToBe) {
-        let referenceCountContainer = {
-            referenceCount : 1
-        }
-        return widgetsToBe.map(
-            (text, index) => {
-                if (text.indexOf("<span data-widgetparams") !== -1) {
-                    return this.processWidgetMappings(text, referenceCountContainer, index)
-                } else {
-                    return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
-                }
-            }
-        )
-    }
-
-    renderWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
-        switch (widgetType) {
-            case "buttonlink":
-                return this.renderSynapseButton(widgetparamsMapped, index)
-            case "image":
-                return this.renderSynapseImage(widgetparamsMapped, index);
-            case "plot":
-                return this.renderSynapsePlot(widgetparamsMapped, index);
-            case "reference":
-                return this.renderSynapseReference(referenceCountContainer, index);
-            default:
-                return
-        }
-    }
-
-    renderSynapseButton(widgetparamsMapped, index) {
-        return <a key={index} href={widgetparamsMapped.url} className="btn btn-lg btn-info" role="button">{widgetparamsMapped.text}</a>
-    }
-
-    renderSynapsePlot(widgetparamsMapped, index) {
-        return <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
-    }
-
-    renderSynapseImage(widgetparamsMapped, index) {
-        if (!this.state.fileHandles) {
-            // ensure files are loaded
-            return
-        }
-
-        if (widgetparamsMapped.fileName) {
-            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
-        }
-        else if (widgetparamsMapped.synapseId) {
-            // elements with synapseIds have to have their resources loaded first, their not located
-            // with the file attachnent list
-            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
-        }
-    }
-
-    renderSynapseReference(referenceCountContainer, index) {
-        let count = referenceCountContainer.referenceCount;
-        let reference = <Reference key={index} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
-            event.preventDefault();
-            // find and go to the bookmark at the right section of the page
-            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
-            try {
-                goTo.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            }
-            catch (e) {
-                console.log('error on scroll', e);
-            }
-        } } />;
-        referenceCountContainer.referenceCount++;
-        return reference
-    }
-
 
     render() {
         return (

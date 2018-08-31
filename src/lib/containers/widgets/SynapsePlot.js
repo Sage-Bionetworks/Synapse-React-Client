@@ -1,9 +1,8 @@
 import React from 'react'
 import Plot from 'react-plotly.js';
+import PropTypes from 'prop-types'
 import * as SynapseConstants from '../../utils/SynapseConstants'
 import {getQueryTableResults} from '../../utils/SynapseClient'
-
-
 
 class SynapsePlot extends React.Component {
 
@@ -171,6 +170,12 @@ class SynapsePlot extends React.Component {
         }
     }
 
+}
+
+SynapsePlot.propTypes = {
+    ownerId: PropTypes.string,
+    wikiId: PropTypes.string,
+    widgetparamsMapped: PropTypes.object
 }
 
 export default SynapsePlot

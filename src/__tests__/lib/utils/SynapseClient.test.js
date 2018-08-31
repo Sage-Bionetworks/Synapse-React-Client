@@ -98,70 +98,39 @@ it('get synapse wiki', () => {
   })
 })
 
-describe('Test functionality that requires user sign-in', function () {
-  
-  /**
-   * Setup test user for following test function calls, getting session token
-   * and their synapse ID
-   */
-  beforeAll(() => {
-    this.token = ""
-    this.ownerId = ""
-    SynapseClient
-      .login(process.env.REACT_APP_TEST_USERNAME, process.env.REACT_APP_TEST_PASS)
-      .then(data => {
-        this.token = data.sessionToken
-        SynapseClient.getUserProfile(this.token).then(
-            userData => {
-              this.ownerId = userData.ownerId
-            }
-        )
-      }).catch(err => {
-        fail(err.reason)
-      })
+it('get user favorites', () => {
+  return SynapseClient.getUserFavorites("").then(data =>
+    {
+      expect(data.results).toBeDefined()
     }
-  )
-    
-  it('get user favorites', () => {
-    return SynapseClient.getUserFavorites(this.token).then(data =>
-      {
-        expect(data.results).toBeDefined()
-      }
-    ).catch(err => {
-        fail(err.reason)
-    })
+  ).catch(err => {
+      fail(err)
   })
-    
-  it('get single user profile', () => {
-    return SynapseClient.getUserProfile(this.token)
-      .then(data => {
-        expect(data).toBeDefined();
-      })
-      .catch(err => {
-        fail(err.reason)
-      })
-  });
+})
 
-  it('get single user profile', () => {
-    return SynapseClient.getUserProjectList(this.token, "MY_PROJECTS")
-      .then(data => {
-        expect(data).toBeDefined();
-      })
-      .catch(err => {
-        fail(err.reason)
-      })
-  });
-     
-  // AssertionError [ERR_ASSERTION]: Not Found
-  // it('get user teams', () => {
-  //   return SynapseClient.getUserTeamList(this.token, this.ownerId)
-  //     .then(data => {
-  //       expect(data).toBeDefined();
-  //     })
-  //     .catch(err => {
-  //       fail(err.reason)
-  //     })
-  // });
+it('get single user profile', () => {
+  return SynapseClient.getUserProjectList("", "MY_PROJECTS")
+    .then(data => {
+      expect(data).toBeDefined();
+    })
+    .catch(err => {
+      fail(err)
+    })
+});
+
+it('get user teams', () => {
+  return SynapseClient.getUserProfile("").then(
+    data => {
+      return SynapseClient.getUserTeamList("", data.ownerId)
+        .then(data => {
+          expect(data).toBeDefined();
+        })
+        .catch(err => {
+          fail(err)
+        })
+    }).catch(err => {
+      fail(err)
+    });
 })
 
 // ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
