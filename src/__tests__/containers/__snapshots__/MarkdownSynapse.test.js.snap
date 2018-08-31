@@ -6,8 +6,7 @@ Array [
     <div
         dangerouslySetInnerHTML={
             Object {
-                "__html": "<p>heading</p>
-            ",
+                "__html": "",
               }
         }
     />
