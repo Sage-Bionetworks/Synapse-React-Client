@@ -326,12 +326,12 @@ class MarkdownSynapse extends React.Component {
         }
 
         if (widgetparamsMapped.fileName) {
-            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} isAttachedToEntity={false} fileResults={this.state.fileHandles.list} />;
+            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} fileResults={this.state.fileHandles.list} />;
         }
         else if (widgetparamsMapped.synapseId) {
             // elements with synapseIds have to have their resources loaded first, their not located
             // with the file attachnent list
-            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} isAttachedToEntity={true} />;
+            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} />;
         }
     }
 

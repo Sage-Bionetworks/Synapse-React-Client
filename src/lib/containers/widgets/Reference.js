@@ -1,5 +1,5 @@
 import React from 'react'
-
+import PropTypes from 'prop-types'
 
 function Reference (props) {
     return (
@@ -11,7 +11,13 @@ function Reference (props) {
             </span>
         </span>
     )
+}
 
+Reference.propTypes = {
+    footnoteId: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string
+    ])
 }
 
 export default Reference

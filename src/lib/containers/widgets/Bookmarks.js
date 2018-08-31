@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class Bookmarks extends React.Component {
 
@@ -60,6 +61,10 @@ class Bookmarks extends React.Component {
             </React.Fragment>  
         )
     }
+}
+
+Bookmarks.propTypes = {
+    footnotes: PropTypes.string
 }
 
 export default Bookmarks

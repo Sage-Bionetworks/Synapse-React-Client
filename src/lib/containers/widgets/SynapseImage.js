@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {getFiles, getEntity} from '../../utils/SynapseClient'
 
 class SynapseImage extends React.Component {
@@ -99,6 +100,14 @@ class SynapseImage extends React.Component {
         }
     }
 
+}
+
+SynapseImage.propTypes = {
+    wikiId: PropTypes.string,
+    synapseId: PropTypes.string,
+    token: PropTypes.string,
+    fileName: PropTypes.string,
+    fileResults: PropTypes.array
 }
 
 export default SynapseImage
