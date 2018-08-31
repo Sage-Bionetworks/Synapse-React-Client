@@ -191,10 +191,8 @@ class MarkdownSynapse extends React.Component {
     }
               
     getWikiAttachments() {
-        let datum
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
-                datum = data
                 this.setState({ fileHandles: data, errorMessage: "" });
             }).catch(err => { 
                 this.setState({
@@ -215,14 +213,16 @@ class MarkdownSynapse extends React.Component {
         if (this.state.errorMessage && this.props.errorMessageView) {
             return ( 
                 <React.Fragment>
-                {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
-            </React.Fragment>)
+                    {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
+                </React.Fragment>)
         }   
     }
     
     processWidgets() {
         // (<span data-widgetparams.*?span>) captures widgets
+        console.log('this.createMarkup(this.state.text).__html ', this.createMarkup(this.state.text).__html)
         let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/)
+        console.log('groups are ', groups)
         return this.processWidgetOrDomElement(groups)
     }
     
@@ -260,15 +260,71 @@ class MarkdownSynapse extends React.Component {
         let referenceCountContainer = {
             referenceCount : 1
         }
-        return widgetsToBe.map(
-            (text, index) => {
-                if (text.indexOf("<span data-widgetparams") !== -1) {
-                    return this.processWidgetMappings(text, referenceCountContainer, index)
-                } else {
-                    return <div key={index} dangerouslySetInnerHTML={{__html: text}}></div>
+
+        let widgets = []
+        let text_prior = ""
+
+        for (let i = 0; i < widgetsToBe.length; i++) {
+            let text = widgetsToBe[i]
+            if (text.indexOf("data-widget-type=\"reference\"") !== -1) {
+                console.log('text prior is ', text_prior)
+                console.log('index of  ', text_prior.indexOf("<span id=\"wikiReference"))
+                console.log('without span  ', text_prior.substring(0,text_prior.indexOf("<span id=\"wikiReference")))
+                console.log({text_without_span: text_prior.substring(0,text_prior.indexOf("<span id=\"wikiReference"))})
+                // we want the last html tag prior to the <span id="wikiReference#"></span>
+                // which is of the form <.*?>
+                // everything before that can stay as it was
+                /*
+                    let text_prior.indexOf("<span id="wikiReference)
+
+                */
+
+                // find the last html element, grab the index of --
+                // need to find the remaining text and also identify what type of 
+                // element it is
+
+                let seenCloseTag = false
+                let lastTagCloseIndex = -1
+                let lastTagOpenIndex = -1
+
+                for(let j = text_prior.length; j > 0; j--) {
+                    if (text_prior[j] === ">") {
+                        lastTagCloseIndex = j
+                        seenCloseTag = true
+                    }
+                    if (seenCloseTag && text_prior[j] === "<") {
+                        lastTagOpenIndex = j
+                        break
+                    }
                 }
+
+                // text looks like this 
+                // (<beforeElement (e.g. <h1> hello </h1> <p> more random text lorem ipsum </p>)) <LastTag (e.g. <p> or <div> )> lorem ipsum> <span id="wikiReference#">
+                // we have to capture beforeElement and then the lastElement
+                // lastElement has to have its text captured prior to the span containing the wikiReference
+                // we let lastElement be its own thing and then past that we squash the last seen element and then whatever follows.
+                // edge cases
+                // last element could have more html elements (although its the end of a sentence so this is unlikely) most commoonly another reference would
+                // follow
+                
+                let FirstTag = text_prior.substring(0,text_prior.indexOf(">"))
+                let beforeElement = <span dangerouslySetInnerHTML={{__html: text_prior.substring(lastTagOpenIndex)}}></span>
+                
+                let current = this.processWidgetMappings(text, referenceCountContainer, i)
+                let LastTag = text_prior.substring(lastTagOpenIndex, lastTagCloseIndex)
+                let squash = <LastTag> {text_prior.substring(lastTagCloseIndex)}{current} </LastTag>
+                widgets.pop()
+                widgets.push(beforeElement)
+                widgets.push(squash)
             }
-        )
+            if (text.indexOf("<span data-widgetparams") !== -1) {
+                widgets.push(this.processWidgetMappings(text, referenceCountContainer, i))
+            } else {
+                widgets.push(<span key={i} dangerouslySetInnerHTML={{__html: text}}></span>)
+            }
+            text_prior = widgetsToBe[i]
+        }
+        return widgets
     }
     
     renderWidget (widgetType, widgetparamsMapped, referenceCountContainer, index) {
@@ -366,9 +422,9 @@ class MarkdownSynapse extends React.Component {
         return (
             <React.Fragment>
                 {this.getErrorView()}
-                <div ref={this.markupRef}>
+                <span ref={this.markupRef}>
                     {this.processWidgets()}
-                </div>
+                </span>
                 <div ref={this.footnoteRef}>
                     {this.addBookmarks()}
                 </div>
