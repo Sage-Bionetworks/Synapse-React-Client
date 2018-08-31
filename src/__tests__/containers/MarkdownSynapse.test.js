@@ -1,13 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import renderer from 'react-test-renderer'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse';
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(
+  const tree = renderer
+    .create(
       <MarkdownSynapse
         token={""}
         markdown={"heading"}
         hasSynapseResources={false}
-        />, div);
+        />).toJSON()
+  expect(tree).toMatchSnapshot()
 });
