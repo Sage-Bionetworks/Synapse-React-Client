@@ -220,10 +220,10 @@ class MarkdownSynapse extends React.Component {
     
     processWidgets() {
         // (<span data-widgetparams.*?span>) captures widgets
-        console.log('this.createMarkup(this.state.text).__html ', this.createMarkup(this.state.text).__html)
         let groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/)
-        console.log('groups are ', groups)
-        return this.processWidgetOrDomElement(groups)
+        if (groups.length > 0) {
+            return this.processWidgetOrDomElement(groups)
+        }
     }
     
     decodeXml(string) {
@@ -264,39 +264,24 @@ class MarkdownSynapse extends React.Component {
         let widgets = []
         let text_prior = ""
 
-        for (let i = 0; i < widgetsToBe.length; i++) {
+        let i = 0
+        console.log('widgets to be ', widgetsToBe)
+        while (i < widgetsToBe.length) {
             let text = widgetsToBe[i]
             if (text.indexOf("data-widget-type=\"reference\"") !== -1) {
+                console.log('text is ', text)
                 console.log('text prior is ', text_prior)
-                console.log('index of  ', text_prior.indexOf("<span id=\"wikiReference"))
-                console.log('without span  ', text_prior.substring(0,text_prior.indexOf("<span id=\"wikiReference")))
-                console.log({text_without_span: text_prior.substring(0,text_prior.indexOf("<span id=\"wikiReference"))})
+                let withoutReferenceSpan =  text_prior.substring(0,text_prior.indexOf("<span id=\"wikiReference"))
                 // we want the last html tag prior to the <span id="wikiReference#"></span>
-                // which is of the form <.*?>
+                // which is of the form </.*?>
                 // everything before that can stay as it was
                 /*
                     let text_prior.indexOf("<span id="wikiReference)
 
                 */
-
                 // find the last html element, grab the index of --
                 // need to find the remaining text and also identify what type of 
                 // element it is
-
-                let seenCloseTag = false
-                let lastTagCloseIndex = -1
-                let lastTagOpenIndex = -1
-
-                for(let j = text_prior.length; j > 0; j--) {
-                    if (text_prior[j] === ">") {
-                        lastTagCloseIndex = j
-                        seenCloseTag = true
-                    }
-                    if (seenCloseTag && text_prior[j] === "<") {
-                        lastTagOpenIndex = j
-                        break
-                    }
-                }
 
                 // text looks like this 
                 // (<beforeElement (e.g. <h1> hello </h1> <p> more random text lorem ipsum </p>)) <LastTag (e.g. <p> or <div> )> lorem ipsum> <span id="wikiReference#">
@@ -306,23 +291,71 @@ class MarkdownSynapse extends React.Component {
                 // edge cases
                 // last element could have more html elements (although its the end of a sentence so this is unlikely) most commoonly another reference would
                 // follow
+
+                let children = []
+                let beforeElement = <span dangerouslySetInnerHTML={{__html: withoutReferenceSpan.substring(0, withoutReferenceSpan.lastIndexOf("<"))}}></span>
+                children.push(this.processWidgetMappings(text, referenceCountContainer, i))
+                let LastTag = withoutReferenceSpan.substring(withoutReferenceSpan.lastIndexOf("<") + 1, withoutReferenceSpan.lastIndexOf(">"))
+                console.log('withoutReferenceSpan is  ', withoutReferenceSpan)
+                console.log('the text after the ending p tag is ', withoutReferenceSpan.substring(withoutReferenceSpan.lastIndexOf(">") + 1))
+                console.log('the text after-After the ending p tag is ', widgetsToBe[i+1])
+                console.log('the last tag is ', LastTag)
                 
-                let FirstTag = text_prior.substring(0,text_prior.indexOf(">"))
-                let beforeElement = <span dangerouslySetInnerHTML={{__html: text_prior.substring(lastTagOpenIndex)}}></span>
+                let squash = null
+                // afterwards there will be text of the form hello loreum ipsum .... and depending on the context it will either be 
+                // another reference OR it will end with the LastTag as it should.
+                let next = 1
+
+                let lastClosingTag = `</${LastTag}>`
+                console.log('last closing tag ', lastClosingTag)
                 
-                let current = this.processWidgetMappings(text, referenceCountContainer, i)
-                let LastTag = text_prior.substring(lastTagOpenIndex, lastTagCloseIndex)
-                let squash = <LastTag> {text_prior.substring(lastTagCloseIndex)}{current} </LastTag>
+                let isClosingTagFound = widgetsToBe[i+next].indexOf(lastClosingTag) !== -1
+
+                let isReferenceBeforeTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") < widgetsToBe[i+next].indexOf(lastClosingTag)
+                let isReferenceAfterTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") > widgetsToBe[i+next].indexOf(lastClosingTag)
+                let isBetweenTags = widgetsToBe[i + next].match("<.*?>")
+
+                while (widgetsToBe[i + next] && (isReferenceBeforeTag | isReferenceAfterTag | isBetweenTags)) {
+                    console.log("next is ", widgetsToBe[i + next])
+                    console.log('ref before tag ', isReferenceBeforeTag)
+                    console.log('ref after tag ', isReferenceAfterTag)
+                    console.log('text isBetweenTags ', isBetweenTags)
+
+                    if (isReferenceBeforeTag) {
+                        console.log('processing a widget reference')
+                        children.push(this.processWidgetMappings(widgetsToBe[i+next+1], referenceCountContainer, i))
+                        next+=2
+                    } else if (isReferenceAfterTag) {
+                        break // default case
+                    } else if (isBetweenTags) {
+                        console.log('processing regular text')
+                        next+=1
+                        children.push(widgetsToBe[i+next])
+                    } 
+
+                    if (widgetsToBe[i+next]) {
+                        isClosingTagFound = widgetsToBe[i+next].indexOf(lastClosingTag) !== -1
+                        isReferenceBeforeTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") < widgetsToBe[i+next].indexOf(lastClosingTag)
+                        isReferenceAfterTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") > widgetsToBe[i+next].indexOf(lastClosingTag)
+                        isBetweenTags = widgetsToBe[i + next].match("<.*?>")
+                    }
+                }
+
+                squash = <LastTag> {withoutReferenceSpan.substring(withoutReferenceSpan.lastIndexOf(">") + 1)} {children.map(element => {return element})} {widgetsToBe[i+next].substring(0,widgetsToBe[i+next].indexOf(lastClosingTag))}</LastTag>
+                widgetsToBe[i+next] = widgetsToBe[i+next].substring(widgetsToBe[i+next].indexOf("<"))  // cut off the remaining text
                 widgets.pop()
                 widgets.push(beforeElement)
                 widgets.push(squash)
-            }
-            if (text.indexOf("<span data-widgetparams") !== -1) {
-                widgets.push(this.processWidgetMappings(text, referenceCountContainer, i))
+                i = next + 1
             } else {
-                widgets.push(<span key={i} dangerouslySetInnerHTML={{__html: text}}></span>)
+                text_prior = widgetsToBe[i]
+                if (text.indexOf("<span data-widgetparams") !== -1) {
+                    widgets.push(this.processWidgetMappings(text, referenceCountContainer, i))
+                } else {
+                    widgets.push(<span key={i} dangerouslySetInnerHTML={{__html: text}}></span>)
+                }
             }
-            text_prior = widgetsToBe[i]
+            i+=1
         }
         return widgets
     }
