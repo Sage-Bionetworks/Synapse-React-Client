@@ -11,6 +11,8 @@ import PropTypes from 'prop-types'
 import "../style/Portal.css"
 import SynapseImage from "./widgets/SynapseImage";
 
+const uuidv4 = require('uuid/v4');
+
 // Only because in the test enviornment there is an issue with importing
 // react-plot which in turn imports mapboxgl which in turn defines a function
 // that causes an error
@@ -266,11 +268,12 @@ class MarkdownSynapse extends React.Component {
 
         let i = 0
         console.log('widgets to be ', widgetsToBe)
+
         while (i < widgetsToBe.length) {
+            console.log('i is ', i)
             let text = widgetsToBe[i]
             if (text.indexOf("data-widget-type=\"reference\"") !== -1) {
                 console.log('text is ', text)
-                console.log('text prior is ', text_prior)
                 let withoutReferenceSpan =  text_prior.substring(0,text_prior.indexOf("<span id=\"wikiReference"))
                 // we want the last html tag prior to the <span id="wikiReference#"></span>
                 // which is of the form </.*?>
@@ -296,7 +299,6 @@ class MarkdownSynapse extends React.Component {
                 let beforeElement = <span dangerouslySetInnerHTML={{__html: withoutReferenceSpan.substring(0, withoutReferenceSpan.lastIndexOf("<"))}}></span>
                 children.push(this.processWidgetMappings(text, referenceCountContainer, i))
                 let LastTag = withoutReferenceSpan.substring(withoutReferenceSpan.lastIndexOf("<") + 1, withoutReferenceSpan.lastIndexOf(">"))
-                console.log('withoutReferenceSpan is  ', withoutReferenceSpan)
                 console.log('the text after the ending p tag is ', withoutReferenceSpan.substring(withoutReferenceSpan.lastIndexOf(">") + 1))
                 console.log('the text after-After the ending p tag is ', widgetsToBe[i+1])
                 console.log('the last tag is ', LastTag)
@@ -305,15 +307,20 @@ class MarkdownSynapse extends React.Component {
                 // afterwards there will be text of the form hello loreum ipsum .... and depending on the context it will either be 
                 // another reference OR it will end with the LastTag as it should.
                 let next = 1
-
                 let lastClosingTag = `</${LastTag}>`
                 console.log('last closing tag ', lastClosingTag)
-                
                 let isClosingTagFound = widgetsToBe[i+next].indexOf(lastClosingTag) !== -1
+                let isWikiRefFound = widgetsToBe[i+next].indexOf("<span id=\"wikiReference") !== -1
+                let isReferenceBeforeTag = isClosingTagFound && isWikiRefFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") < widgetsToBe[i+next].indexOf(lastClosingTag)
+                isReferenceBeforeTag |= !isClosingTagFound && isWikiRefFound
+                let isReferenceAfterTag = isClosingTagFound && isWikiRefFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") > widgetsToBe[i+next].indexOf(lastClosingTag)
+                let isBetweenTags = widgetsToBe[i + next].match(/<.*?>/)
 
-                let isReferenceBeforeTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") < widgetsToBe[i+next].indexOf(lastClosingTag)
-                let isReferenceAfterTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") > widgetsToBe[i+next].indexOf(lastClosingTag)
-                let isBetweenTags = widgetsToBe[i + next].match("<.*?>")
+                console.log('isClosingTagFound ', isClosingTagFound)
+                console.log('isWikiRefFound ', isWikiRefFound)
+                console.log('isReferenceBeforeTag ', isReferenceBeforeTag)
+                console.log('isReferenceAfterTag ', isReferenceAfterTag)
+                console.log('isBetweenTags ', isBetweenTags)
 
                 while (widgetsToBe[i + next] && (isReferenceBeforeTag | isReferenceAfterTag | isBetweenTags)) {
                     console.log("next is ", widgetsToBe[i + next])
@@ -322,37 +329,44 @@ class MarkdownSynapse extends React.Component {
                     console.log('text isBetweenTags ', isBetweenTags)
 
                     if (isReferenceBeforeTag) {
-                        console.log('processing a widget reference')
+                        console.log('processing a widget reference ', widgetsToBe[i+next+1])
                         children.push(this.processWidgetMappings(widgetsToBe[i+next+1], referenceCountContainer, i))
                         next+=2
                     } else if (isReferenceAfterTag) {
+                        console.log('breaking out of loop')
                         break // default case
                     } else if (isBetweenTags) {
                         console.log('processing regular text')
                         next+=1
                         children.push(widgetsToBe[i+next])
-                    } 
+                    } else {
+                        break
+                    }
 
                     if (widgetsToBe[i+next]) {
                         isClosingTagFound = widgetsToBe[i+next].indexOf(lastClosingTag) !== -1
-                        isReferenceBeforeTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") < widgetsToBe[i+next].indexOf(lastClosingTag)
-                        isReferenceAfterTag = isClosingTagFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") > widgetsToBe[i+next].indexOf(lastClosingTag)
-                        isBetweenTags = widgetsToBe[i + next].match("<.*?>")
+                        isWikiRefFound = widgetsToBe[i+next].indexOf("<span id=\"wikiReference") !== -1
+                        isReferenceBeforeTag = isClosingTagFound && isWikiRefFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") < widgetsToBe[i+next].indexOf(lastClosingTag)
+                        isReferenceBeforeTag |= !isClosingTagFound && isWikiRefFound
+                        isReferenceAfterTag = isClosingTagFound && isWikiRefFound && widgetsToBe[i+next].indexOf("<span id=\"wikiReference") > widgetsToBe[i+next].indexOf(lastClosingTag)
+                        isBetweenTags = widgetsToBe[i + next].match(/<.*?>/)
                     }
                 }
 
+                console.log('making squash')
                 squash = <LastTag> {withoutReferenceSpan.substring(withoutReferenceSpan.lastIndexOf(">") + 1)} {children.map(element => {return element})} {widgetsToBe[i+next].substring(0,widgetsToBe[i+next].indexOf(lastClosingTag))}</LastTag>
                 widgetsToBe[i+next] = widgetsToBe[i+next].substring(widgetsToBe[i+next].indexOf("<"))  // cut off the remaining text
                 widgets.pop()
                 widgets.push(beforeElement)
                 widgets.push(squash)
-                i = next + 1
+                i = i + next -1
             } else {
+                console.log('went into else ')
                 text_prior = widgetsToBe[i]
                 if (text.indexOf("<span data-widgetparams") !== -1) {
                     widgets.push(this.processWidgetMappings(text, referenceCountContainer, i))
                 } else {
-                    widgets.push(<span key={i} dangerouslySetInnerHTML={{__html: text}}></span>)
+                    widgets.push(<span key={uuidv4()} dangerouslySetInnerHTML={{__html: text}}></span>)
                 }
             }
             i+=1
@@ -376,11 +390,11 @@ class MarkdownSynapse extends React.Component {
     }
     
     renderSynapseButton(widgetparamsMapped, index) {
-        return <a key={index} href={widgetparamsMapped.url} className="btn btn-lg btn-info" role="button">{widgetparamsMapped.text}</a>
+        return <a key={uuidv4()} href={widgetparamsMapped.url} className="btn btn-lg btn-info" role="button">{widgetparamsMapped.text}</a>
     }
     
     renderSynapsePlot(widgetparamsMapped, index) {
-        return <SynapsePlot key={index} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
+        return <SynapsePlot key={uuidv4()} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
     }
     
     renderSynapseImage(widgetparamsMapped, index) {
@@ -390,18 +404,18 @@ class MarkdownSynapse extends React.Component {
         }
         
         if (widgetparamsMapped.fileName) {
-            return <SynapseImage key={index} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} fileResults={this.state.fileHandles.list} />;
+            return <SynapseImage key={uuidv4()} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} fileResults={this.state.fileHandles.list} />;
         }
         else if (widgetparamsMapped.synapseId) {
             // elements with synapseIds have to have their resources loaded first, their not located
             // with the file attachnent list
-            return <SynapseImage key={index} token={this.props.token} synapseId={widgetparamsMapped.synapseId} />;
+            return <SynapseImage key={uuidv4()} token={this.props.token} synapseId={widgetparamsMapped.synapseId} />;
         }
     }
     
     renderSynapseReference(referenceCountContainer, index) {
         let count = referenceCountContainer.referenceCount;
-        let reference = <Reference key={index} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
+        let reference = <Reference key={uuidv4()} footnoteId={referenceCountContainer.referenceCount} onClick={event => {
             event.preventDefault();
             // find and go to the bookmark at the right section of the page
             let goTo = this.footnoteRef.current.querySelector(`a#bookmark${count - 1}`);
