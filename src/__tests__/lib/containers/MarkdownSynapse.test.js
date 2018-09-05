@@ -4,9 +4,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import renderer from 'react-test-renderer'; // ES6
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse';
 import SynapseImage from 'lib/containers/widgets/SynapseImage'
-import Reference from 'lib/containers/widgets/Reference'
 import Bookmark from 'lib/containers/widgets/Bookmarks'
-import { wrap } from 'module';
 
 configure({ adapter: new Adapter() });
 
