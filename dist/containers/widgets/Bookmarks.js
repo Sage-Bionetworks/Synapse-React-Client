@@ -55,16 +55,10 @@ var Bookmarks = function (_React$Component) {
             // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
             // formatted text from above
             function (match, p1, p2, p3, string) {
-                console.log('links formatted is ', linksFormatted);
                 var text = [p1, linksFormatted[i], p3].join("");
-                console.log('index is ' + i + ' amd linksFormatted is ', linksFormatted[i]);
-                console.log('text is ', linksFormatted[i]);
                 i++;
                 return text;
             });
-
-            console.log("matches is ", matches);
-
             // create the dom element for this view and append to the ref
             var bookmarkFragment = document.createRange().createContextualFragment(matches);
             this.bookmarkRef.current.appendChild(bookmarkFragment);

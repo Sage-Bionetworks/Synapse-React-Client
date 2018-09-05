@@ -158,23 +158,6 @@ class App extends Component {
                       > Toggle markdown from view </button>  
         </div>
 
-        {/* <CustomMarkdownView>
-          <MarkdownSynapse
-          token={""}
-          ownerId={"syn16779136"}
-          wikiId={"583201"}
-          />
-        </CustomMarkdownView> */}
-        
-        {/* <CustomMarkdownView>
-                  <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
-                            ownerId={"syn14568473"}
-                            wikiId={"582406"}
-                            updateLoadState={this.handleChange}
-                            >
-                  </MarkdownSynapse>
-          </CustomMarkdownView> */}
-
         <CustomMarkdownView>
           <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
                     ownerId={"syn16593347"}
