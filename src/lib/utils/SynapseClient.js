@@ -124,12 +124,101 @@ export const getQueryTableResultsFromJobId =
 export const getQueryTableResults =
   (queryBundleRequest, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
-      .then(resp => {
-        //started query, now attempt to get the results.
-        return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
-      }).catch(function (error) {
-        throw error;
+        .then(resp => {
+          //started query, now attempt to get the results.
+          return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
+        }).catch(function (error) {
+          throw error;
+        })
+      }
+
+  export const getFullQueryTableResults =
+    async (queryBundleRequest, sessionToken = undefined, onlyGetFacets = false) => {
+      
+      const {ownerId, query} = this.props
+      let data = {}
+
+      let query = queryBundleRequest.query
+      // step 1: get init query with maxRowsPerPage calculated
+      if (onlyGetFacets) {
+        let queryRequest = {
+            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            query: {
+                isConsistent: false,
+                limit: 1,
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
+                offset: 0,
+                sql: query
+            }
+        };
+        return await getQueryTableResults(queryRequest, sessionToken)
+                    .then(initData => {
+                        return initData
+                    })
+      }
+
+
+      let maxPageSize = 150
+      let queryRequest = {
+        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+        query: {
+            isConsistent: false,
+            limit: 1,
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
+            offset: 0,
+            sql: query
+        }
+      };
+
+      // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
+      // we can get, the following uses that maximum and offsets to the appropriate location to get the data
+      // afterwards, the process repeats
+      await getQueryTableResults(queryRequest, sessionToken).then(initData => {
+          let queryCount = initData.queryResult.queryResults.rows.length
+          let totalQueryResults = queryCount
+          data = initData;
+          // Get the subsequent data, note- although the function calls itself, it runs
+          // iteratively due to the await
+          const getData = async () => {
+              if (queryCount === maxPageSize) {
+                  maxPageSize = initData.maxRowsPerPage
+                  let queryRequestWithMaxPageSize = {
+                      concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                      entityId: ownerId,
+                      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                      query: {
+                          isConsistent: false,
+                          limit: maxPageSize,
+                          offset: totalQueryResults,
+                          sql: query
+                      }
+                  };
+                  await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
+                      .then(post_data => {
+                          queryCount += post_data.queryResult.queryResults.rows.length
+                          if (queryCount > 0) {
+                              totalQueryResults += queryCount
+                              data.queryResult.queryResults.rows.push(
+                                  ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
+                              )
+                          }
+                          return getData()
+                      })
+                      .catch(err => 
+                          {
+                              console.log("Error on getting table results ", err)
+                          }
+                      );
+              } else {
+                  // set data to this plots sql in the query data
+                  return data
+              }
+          }
+          return getData()
       })
+
+
+
   }
 
 /** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. 
