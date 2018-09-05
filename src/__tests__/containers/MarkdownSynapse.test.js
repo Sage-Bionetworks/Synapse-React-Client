@@ -6,6 +6,7 @@ import MarkdownSynapse from 'lib/containers/MarkdownSynapse';
 import SynapseImage from 'lib/containers/widgets/SynapseImage'
 import Reference from 'lib/containers/widgets/Reference'
 import Bookmark from 'lib/containers/widgets/Bookmarks'
+import { wrap } from 'module';
 
 configure({ adapter: new Adapter() });
 
@@ -55,7 +56,8 @@ describe('renders widgets ', () => {
        wikiId={""}
        hasSynapseResources={true}/>
    );
-   expect(wrapper.find(Reference)).toHaveLength(1)
+
+   expect(wrapper.html()).toEqual("<div><span><span><p><a href=\"\" id=\"ref1\">[1]</a></p>\n</span></span><div></div></div>")
  });
   
 })

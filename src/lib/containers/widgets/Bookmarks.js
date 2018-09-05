@@ -30,7 +30,7 @@ class Bookmarks extends React.Component {
         ).map(
             (element, index) => {
                 // here bookmark is used so that the references can target this anchor tag 
-                return `<span><div class="BookmarkWidget"><a id=${"bookmark" + index}>${element}</a></div></span>`
+                return `<span><span class="BookmarkWidget"><a id="${"bookmark" + index}">${element}</a></span></span>`
             }
         )
 
@@ -38,15 +38,16 @@ class Bookmarks extends React.Component {
         // all link occurences have a single location in the original string-- we go through and then 
         // match of the link occurences to the spot it belongs into the html
         let i = 0
-        let matches = copyFootnotes.replace(/(<span data-widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/gm, 
+        let matches = copyFootnotes.replace(/(<span data-widgetparams=.*>)(&lt;Synapse widget&gt;)(<\/span>)/g, 
             // replace using a function where p1,p2,p3 correspond to the matched groups from above
             // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
             // formatted text from above
             (match, p1, p2, p3, string) => {
-                return [p1, linksFormatted[i++] , p3].join("")
+                let text = [p1, linksFormatted[i] , p3].join("")
+                i++
+                return text
             }
         )
-
         // create the dom element for this view and append to the ref
         let bookmarkFragment = document.createRange().createContextualFragment(matches)
         this.bookmarkRef.current.appendChild(bookmarkFragment)
