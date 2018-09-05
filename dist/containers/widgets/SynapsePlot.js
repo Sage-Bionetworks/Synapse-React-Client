@@ -14,6 +14,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import Plot from 'react-plotly.js';
+import PropTypes from 'prop-types';
 import * as SynapseConstants from '../../utils/SynapseConstants';
 import { getQueryTableResults } from '../../utils/SynapseClient';
 
@@ -230,5 +231,11 @@ var SynapsePlot = function (_React$Component) {
 
     return SynapsePlot;
 }(React.Component);
+
+SynapsePlot.propTypes = {
+    ownerId: PropTypes.string,
+    wikiId: PropTypes.string,
+    widgetparamsMapped: PropTypes.object
+};
 
 export default SynapsePlot;

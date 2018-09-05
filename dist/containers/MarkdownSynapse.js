@@ -11,7 +11,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 import React from "react";
 
 import * as SynapseClient from '../utils/SynapseClient';
-import SynapsePlot from './widgets/SynapsePlot';
+
 import Reference from './widgets/Reference';
 import Bookmarks from './widgets/Bookmarks';
 
@@ -20,6 +20,17 @@ import PropTypes from 'prop-types';
 import "../style/Portal.css";
 import SynapseImage from "./widgets/SynapseImage";
 
+var uuidv4 = require('uuid/v4');
+
+// Only because in the test enviornment there is an issue with importing
+// react-plot which in turn imports mapboxgl which in turn defines a function
+// that causes an error
+var SynapsePlot = void 0;
+if (process.env.NODE_ENV !== "test") {
+    import('./widgets/SynapsePlot').then(function (data) {
+        SynapsePlot = data.default;
+    });
+}
 var md = require('markdown-it')({ html: true });
 var markdownitSynapse = require('markdown-it-synapse');
 var markdownSubAlt = require('markdown-it-sub-alt');
@@ -91,6 +102,7 @@ var MarkdownSynapse = function (_React$Component) {
         _this.getErrorView = _this.getErrorView.bind(_this);
         _this.createMarkup = _this.createMarkup.bind(_this);
         _this.addBookmarks = _this.addBookmarks.bind(_this);
+        _this.handleMarkupClick = _this.handleMarkupClick.bind(_this);
         return _this;
     }
 
@@ -132,6 +144,9 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'processMath',
         value: function processMath() {
+            if (!this.markupRef.current) {
+                return;
+            }
             // use regex to grab all elements
             var mathExpressions = this.markupRef.current.querySelectorAll("[id^=\"mathjax-\"]");
             // go through all obtained elements and transform them with katex
@@ -202,41 +217,6 @@ var MarkdownSynapse = function (_React$Component) {
                 console.log("Error on wiki attachment load ", err);
             });
         }
-    }, {
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            if (this.props.markdown) {
-                this.setState({
-                    text: this.props.markdown
-                });
-            }
-
-            if (this.props.hasSynapseResources) {
-                // get wiki attachments
-                this.getWikiAttachments();
-                this.getWikiPageMarkdown();
-            }
-
-            this.processMath();
-        }
-
-        // on component update find and re-render the math/widget items accordingly
-
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate() {
-            // we have to carefully update the component so it doesn't encounter an infinite loop
-            if (this.props.token !== "" && !this.state.isLoggedIn) {
-                // this is true when user just logged
-                this.setState({ isLoggedIn: true });
-                // only if they didn't supply markdown should this happen
-                if (this.props.hasSynapseResources) {
-                    this.getWikiAttachments();
-                    this.getWikiPageMarkdown();
-                }
-            }
-            this.processMath();
-        }
 
         /**
          * If theres an error loading the wiki page show an informative message
@@ -260,8 +240,15 @@ var MarkdownSynapse = function (_React$Component) {
         key: 'processWidgets',
         value: function processWidgets() {
             // (<span data-widgetparams.*?span>) captures widgets
-            var groups = this.createMarkup(this.state.text).__html.split(/(<span data-widgetparams.*?span>)/);
-            return this.processWidgetOrDomElement(groups);
+            var count = 1;
+            var markup = this.createMarkup(this.state.text).__html.replace(/<span id="wikiReference.*?<span data-widgetparams.*?span>/g, function () {
+                var current = count++;
+                return '<a href="" id="ref' + current + '">[' + current + ']</a>';
+            });
+            var groups = markup.split(/(<span data-widgetparams.*?span>)/);
+            if (groups.length > 0) {
+                return this.processWidgetOrDomElement(groups);
+            }
         }
     }, {
         key: 'decodeXml',
@@ -305,18 +292,20 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'processWidgetOrDomElement',
         value: function processWidgetOrDomElement(widgetsToBe) {
-            var _this4 = this;
-
             var referenceCountContainer = {
                 referenceCount: 1
             };
-            return widgetsToBe.map(function (text, index) {
+
+            var widgets = [];
+            for (var i = 0; i < widgetsToBe.length; i++) {
+                var text = widgetsToBe[i];
                 if (text.indexOf("<span data-widgetparams") !== -1) {
-                    return _this4.processWidgetMappings(text, referenceCountContainer, index);
+                    widgets.push(this.processWidgetMappings(text, referenceCountContainer, i));
                 } else {
-                    return React.createElement('div', { key: index, dangerouslySetInnerHTML: { __html: text } });
+                    widgets.push(React.createElement('span', { key: uuidv4(), dangerouslySetInnerHTML: { __html: text } }));
                 }
-            });
+            }
+            return widgets;
         }
     }, {
         key: 'renderWidget',
@@ -328,8 +317,6 @@ var MarkdownSynapse = function (_React$Component) {
                     return this.renderSynapseImage(widgetparamsMapped, index);
                 case "plot":
                     return this.renderSynapsePlot(widgetparamsMapped, index);
-                case "reference":
-                    return this.renderSynapseReference(referenceCountContainer, index);
                 default:
                     return;
             }
@@ -339,14 +326,14 @@ var MarkdownSynapse = function (_React$Component) {
         value: function renderSynapseButton(widgetparamsMapped, index) {
             return React.createElement(
                 'a',
-                { key: index, href: widgetparamsMapped.url, className: 'btn btn-lg btn-info', role: 'button' },
+                { key: uuidv4(), href: widgetparamsMapped.url, className: 'btn btn-lg btn-info', role: 'button' },
                 widgetparamsMapped.text
             );
         }
     }, {
         key: 'renderSynapsePlot',
         value: function renderSynapsePlot(widgetparamsMapped, index) {
-            return React.createElement(SynapsePlot, { key: index, token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
+            return React.createElement(SynapsePlot, { key: uuidv4(), token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
         }
     }, {
         key: 'renderSynapseImage',
@@ -357,23 +344,23 @@ var MarkdownSynapse = function (_React$Component) {
             }
 
             if (widgetparamsMapped.fileName) {
-                return React.createElement(SynapseImage, { key: index, token: this.props.token, fileName: widgetparamsMapped.fileName, wikiId: this.props.wikiId, isAttachedToEntity: false, fileResults: this.state.fileHandles.list });
+                return React.createElement(SynapseImage, { key: uuidv4(), token: this.props.token, fileName: widgetparamsMapped.fileName, wikiId: this.props.wikiId, fileResults: this.state.fileHandles.list });
             } else if (widgetparamsMapped.synapseId) {
                 // elements with synapseIds have to have their resources loaded first, their not located
                 // with the file attachnent list
-                return React.createElement(SynapseImage, { key: index, token: this.props.token, synapseId: widgetparamsMapped.synapseId, isAttachedToEntity: true });
+                return React.createElement(SynapseImage, { key: uuidv4(), token: this.props.token, synapseId: widgetparamsMapped.synapseId });
             }
         }
     }, {
         key: 'renderSynapseReference',
         value: function renderSynapseReference(referenceCountContainer, index) {
-            var _this5 = this;
+            var _this4 = this;
 
             var count = referenceCountContainer.referenceCount;
-            var reference = React.createElement(Reference, { key: index, footnoteId: referenceCountContainer.referenceCount, onClick: function onClick(event) {
+            var reference = React.createElement(Reference, { key: uuidv4(), footnoteId: referenceCountContainer.referenceCount, onClick: function onClick(event) {
                     event.preventDefault();
                     // find and go to the bookmark at the right section of the page
-                    var goTo = _this5.footnoteRef.current.querySelector('a#bookmark' + (count - 1));
+                    var goTo = _this4.footnoteRef.current.querySelector('a#bookmark' + (count - 1));
                     try {
                         goTo.scrollIntoView({
                             behavior: 'smooth',
@@ -388,15 +375,69 @@ var MarkdownSynapse = function (_React$Component) {
             return reference;
         }
     }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            if (this.props.markdown) {
+                this.setState({
+                    text: this.props.markdown
+                });
+            }
+
+            if (this.props.hasSynapseResources) {
+                // get wiki attachments
+                this.getWikiAttachments();
+                this.getWikiPageMarkdown();
+            }
+
+            this.processMath();
+        }
+
+        // on component update find and re-render the math/widget items accordingly
+
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate() {
+            // we have to carefully update the component so it doesn't encounter an infinite loop
+            if (this.props.token !== "" && !this.state.isLoggedIn) {
+                // this is true when user just logged
+                this.setState({ isLoggedIn: true });
+                // only if they didn't supply markdown should this happen
+                if (this.props.hasSynapseResources) {
+                    this.getWikiAttachments();
+                    this.getWikiPageMarkdown();
+                }
+            }
+            this.processMath();
+        }
+    }, {
+        key: 'handleMarkupClick',
+        value: function handleMarkupClick(event) {
+            event.preventDefault();
+            if (event.target.tagName.toLowerCase() === 'a' && event.target.id.substring(0, 3) === "ref") {
+                // check they clicked on anchor tag
+                var referenceNumber = Number(event.target.id.substring(3)); // e.g. ref2 => '2'
+                var goTo = this.footnoteRef.current.querySelector('a#bookmark' + (referenceNumber - 1));
+                try {
+                    goTo.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    });
+                } catch (e) {
+                    console.log('error on scroll', e);
+                }
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             return React.createElement(
-                React.Fragment,
+                'div',
                 null,
                 this.getErrorView(),
                 React.createElement(
-                    'div',
-                    { ref: this.markupRef },
+                    'span',
+                    { ref: this.markupRef, onClick: this.handleMarkupClick },
                     this.processWidgets()
                 ),
                 React.createElement(
