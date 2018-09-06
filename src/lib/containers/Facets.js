@@ -2,12 +2,14 @@ import React from 'react'
 import * as SynapseConstants from 'lib/utils/SynapseConstants'
 import { getFullQueryTableResults } from 'lib/utils/SynapseClient'
 import PropTypes from 'prop-types'
+const uuidv4 = require('uuid/v4');
 
 export default class Facets extends React.Component {
 
     constructor() {
         super()
         this.makeBundleQueryRequest = this.makeBundleQueryRequest.bind(this)
+        this.handleClick = this.handleClick.bind(this)
     }
 
     componentDidMount() {
@@ -39,15 +41,46 @@ export default class Facets extends React.Component {
     
     showFacetFilter() {
         if (this.state && this.state.isLoaded) {
-            console.log('facets data is ', this.state.data)
-            return this.state.data.facets.map(
-                (element, index) => {
+            let structuredRender = []
+            this.state.data.facets.forEach(
+                (element) => {
                     if (element.facetType === "enumeration") {
-                        return <input key={index} type="checkbox" text="click me"/>
+                        let children = []
+                        element.facetValues.forEach(
+                            facetValue => {
+                                let key = uuidv4()
+                                children.push(
+                                    <div key={key}>
+                                        <input id={key} type="checkbox"/>
+                                        <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
+                                    </div>
+                                )
+                            }
+                        )
+                        let name = <strong> {element.columnName} </strong>
+                        let formatted = (<div key={uuidv4()}>
+                                            {name}
+                                            {children.map(child => {return child})}
+                                        </div>)
+                        structuredRender.push(formatted)
                     }
                 }
             )
+            return (<div>
+                        {
+                            structuredRender.map(
+                                element => {
+                                    return element
+                                }
+                            )
+                        }
+                    </div>)
         }
+    }
+
+    handleClick(event) {
+        event.preventDefault()
+        console.log('event clicked was ', event)
     }
 
     render () {
@@ -55,11 +88,8 @@ export default class Facets extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col">
-                        <p> facets below </p>
-                    </div>
-                    <div className="col">
                         <form>
-                            <div className="form-group">
+                            <div onClick={this.handleClick} className="form-group">
                                 {this.showFacetFilter()}
                             </div>
                         </form>
