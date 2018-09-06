@@ -1,30 +1,17 @@
 import React from 'react'
-import { getQueryTableResults } from 'lib/utils/SynapseClient'
+import * as SynapseConstants from 'lib/utils/SynapseConstants'
+import { getFullQueryTableResults } from 'lib/utils/SynapseClient'
 import PropTypes from 'prop-types'
 
 export default class Facets extends React.Component {
 
     constructor() {
         super()
+        this.makeBundleQueryRequest = this.makeBundleQueryRequest.bind(this)
     }
 
     componentDidMount() {
-
-        if (this.props.makeQueryRequest) {
-              // step 1: get init query with maxRowsPerPage calculated
-            let queryRequest = {
-                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                entityId: ownerId,
-                query: {
-                    isConsistent: false,
-                    limit: 1,
-                    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
-                    offset: 0,
-                    sql: sql
-                }
-            };
-        }
-
+        this.makeBundleQueryRequest()
     }
 
     async makeBundleQueryRequest() {
@@ -33,39 +20,58 @@ export default class Facets extends React.Component {
         // step 1: get init query with maxRowsPerPage calculated
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            entityId: ownerId,
             query: {
-                isConsistent: false,
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
+                isConsistent: true,
                 offset: 0,
-                sql: sql
+                sql: sql,
+                limit:25
             }
         };
 
-        let data = await getQueryTableResults(queryRequest, this.props.token)
-        return data.map(
-            element => {
-                <input type="checbox"> click me </input>
-            }
+        let data = await getFullQueryTableResults(queryRequest, token, false)
+        this.setState(
+            {
+                isLoaded: true,
+                data
+            }    
         )
-
+    }
+    
+    showFacetFilter() {
+        if (this.state && this.state.isLoaded) {
+            console.log('facets data is ', this.state.data)
+            return this.state.data.facets.map(
+                (element, index) => {
+                    if (element.facetType === "enumeration") {
+                        return <input key={index} type="checkbox" text="click me"/>
+                    }
+                }
+            )
+        }
     }
 
     render () {
         return (
-            <form>
-                <div className="form-group">
-                    <input type="text">
-
-                    </input>
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <p> facets below </p>
+                    </div>
+                    <div className="col">
+                        <form>
+                            <div className="form-group">
+                                {this.showFacetFilter()}
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
         )
     }
 }
 
 Facets.propTypes = {
-    makeQueryRequest: PropTypes.string,
+    makeQueryRequest: PropTypes.bool,
 }
 
 Facets.defaultProps = {

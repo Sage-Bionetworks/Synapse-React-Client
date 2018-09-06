@@ -151,49 +151,53 @@ export const getQueryTableResults =
    * @returns Full dataset from synapse table query
    */
   export const getFullQueryTableResults =
-    async (queryBundleRequest, sessionToken = undefined, onlyGetFacets = false) => {
-      const  {concreteType, query} = queryBundleRequest
+    (queryBundleRequest, sessionToken = undefined, onlyGetFacets = false) => {
+      const  {query, ...rest} = queryBundleRequest
 
       // step 1: get init query with maxRowsPerPage calculated
       if (onlyGetFacets) {
         let queryRequest = {
-            concreteType: concreteType,
+            ...rest,
             query: {...query, limit: 1}
         };
-        return await getQueryTableResults(queryRequest, sessionToken)
+        return (async() => {
+           await getQueryTableResults(queryRequest, sessionToken)
                      .then(initData => {
                         return initData
                      })
+            })()
       }
 
       let data = {}
       let maxPageSize = 150
       let queryRequest = {
-        concreteType: concreteType,
-        query: {...query, limit: maxPageSize}
+        ...rest,
+        query: {...query}
       };
 
       // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
       // we can get, the following uses that maximum and offsets to the appropriate location to get the data
       // afterwards, the process repeats
-      await getQueryTableResults(queryRequest, sessionToken).then(initData => {
+      return getQueryTableResults(queryRequest, sessionToken).then(async (initData) => {
           let queryCount = initData.queryResult.queryResults.rows.length
+          maxPageSize = initData.maxRowsPerPage
           let totalQueryResults = queryCount
           data = initData;
+
           // Get the subsequent data, note- although the function calls itself, it runs
           // iteratively due to the await
           const getData = async () => {
               if (queryCount === maxPageSize) {
                   maxPageSize = initData.maxRowsPerPage
                   let queryRequestWithMaxPageSize = {
-                      concreteType: concreteType,
+                    ...rest,
                       query: {...query, limit: maxPageSize, offset: totalQueryResults}
                   };
                   await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
                       .then(post_data => {
                           queryCount += post_data.queryResult.queryResults.rows.length
                           if (queryCount > 0) {
-                              totalQueryResults += queryCount
+                            totalQueryResults += queryCount
                               data.queryResult.queryResults.rows.push(
                                   ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
                               )

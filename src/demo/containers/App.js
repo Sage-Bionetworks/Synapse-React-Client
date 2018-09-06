@@ -13,6 +13,7 @@ import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
+import Facets from 'lib/containers/Facets';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -160,12 +161,16 @@ class App extends Component {
 
         <CustomMarkdownView>
           <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
-                    ownerId={"syn16787374"}
-                    wikiId={"583303"}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
+
+
+        <Facets token={this.state.token} sql={`SELECT * FROM syn15661198`}>
+        </Facets>
 
       </div>
     );
