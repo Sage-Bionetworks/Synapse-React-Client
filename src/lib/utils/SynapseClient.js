@@ -132,42 +132,45 @@ export const getQueryTableResults =
         })
       }
 
+  
+   /**
+   *  Run and return results from queryBundleRequest, queryBundle request must be of the
+   *  form:
+   *     {
+   *        concreteType: String,
+   *        query: {
+   *           sql: String,
+   *           isConsistent: Boolean,
+   *           partMask: Number
+   *        }
+   *     }
+   * @param {*} queryBundleRequest 
+   * @param {*} [sessionToken=undefined]
+   * @param {boolean} [onlyGetFacets=false] Specify if the query only needs facets and no
+   * data-- (internally this limits the row count to 1 on the request)
+   * @returns Full dataset from synapse table query
+   */
   export const getFullQueryTableResults =
     async (queryBundleRequest, sessionToken = undefined, onlyGetFacets = false) => {
-      
-      const {ownerId, query} = this.props
-      let data = {}
+      const  {concreteType, query} = queryBundleRequest
 
-      let query = queryBundleRequest.query
       // step 1: get init query with maxRowsPerPage calculated
       if (onlyGetFacets) {
         let queryRequest = {
-            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            query: {
-                isConsistent: false,
-                limit: 1,
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
-                offset: 0,
-                sql: query
-            }
+            concreteType: concreteType,
+            query: {...query, limit: 1}
         };
         return await getQueryTableResults(queryRequest, sessionToken)
-                    .then(initData => {
+                     .then(initData => {
                         return initData
-                    })
+                     })
       }
 
-
+      let data = {}
       let maxPageSize = 150
       let queryRequest = {
-        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-        query: {
-            isConsistent: false,
-            limit: 1,
-            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
-            offset: 0,
-            sql: query
-        }
+        concreteType: concreteType,
+        query: {...query, limit: maxPageSize}
       };
 
       // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
@@ -183,15 +186,8 @@ export const getQueryTableResults =
               if (queryCount === maxPageSize) {
                   maxPageSize = initData.maxRowsPerPage
                   let queryRequestWithMaxPageSize = {
-                      concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                      entityId: ownerId,
-                      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                      query: {
-                          isConsistent: false,
-                          limit: maxPageSize,
-                          offset: totalQueryResults,
-                          sql: query
-                      }
+                      concreteType: concreteType,
+                      query: {...query, limit: maxPageSize, offset: totalQueryResults}
                   };
                   await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
                       .then(post_data => {
@@ -216,9 +212,6 @@ export const getQueryTableResults =
           }
           return getData()
       })
-
-
-
   }
 
 /** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. 
