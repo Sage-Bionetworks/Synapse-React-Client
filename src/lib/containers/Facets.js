@@ -3,6 +3,8 @@ import * as SynapseConstants from 'lib/utils/SynapseConstants'
 import { getFullQueryTableResults } from 'lib/utils/SynapseClient'
 import PropTypes from 'prop-types'
 const uuidv4 = require('uuid/v4');
+let cloneDeep = require('lodash.clonedeep');
+
 
 export default class Facets extends React.Component {
 
@@ -10,6 +12,9 @@ export default class Facets extends React.Component {
         super()
         this.makeBundleQueryRequest = this.makeBundleQueryRequest.bind(this)
         this.handleClick = this.handleClick.bind(this)
+        this.state = {
+            selectedFacets: {}
+        }
     }
 
     componentDidMount() {
@@ -32,7 +37,7 @@ export default class Facets extends React.Component {
 
         let data = await getFullQueryTableResults(queryRequest, token, false)
 
-        let selectedColumns = []
+        let selectedFacets = {}
 
         let structuredRender = []
         data.facets.forEach(
@@ -55,11 +60,11 @@ export default class Facets extends React.Component {
                         }
                     )
                     if (selection.length > 0) {
-                        selectedColumns.push({
+                        selectedFacets[element.columnName] = {
                             columnName: element.columnName,
                             facetValues: selection,
                             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest"
-                        })
+                        }
                     }
                     let name = <strong> {element.columnName} </strong>
                     let formatted = (<div key={uuidv4()}>
@@ -70,11 +75,11 @@ export default class Facets extends React.Component {
                 }
             }
         )
-        console.log("selected columns ", selectedColumns)
+        console.log("selected columns ", selectedFacets)
         this.setState({
             isLoaded: true,
             data,
-            selectedColumns
+            selectedFacets
         })
 
 
@@ -90,7 +95,6 @@ export default class Facets extends React.Component {
                         let children = []
                         element.facetValues.forEach(
                             facetValue => {
-                                console.log('facet value ', facetValue)
                                 let key = uuidv4()
                                 children.push(
                                     <div key={key}>
@@ -123,36 +127,24 @@ export default class Facets extends React.Component {
 
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     handleClick = (dict) => (event) => {
-        // be careful not to modify state-- deep copy of everything
-        let selectedColumns = {}
-        
-        this.state.selectedColumns.forEach(
-            value => {
-                if (value.name === dict.name) {
-                    selectedColumns = value
-                }
-            }
-        )
+        let selectedFacets = cloneDeep(this.state.selectedFacets)  // deep copy
 
-        if (selectedColumns === {}) {
-            selectedColumns.name = dict.name
-            
-        } else {
-            let specificColumn = selectedColumns[dict.columnName]
-            let {facetValues, ...rest} = specificColumn
-            let updatedFacetValues = (new Set(facetValues)).add(dict.value)
-            specificColumn = {
-                updatedFacetValues,
-                ...rest,
+        if (!selectedFacets.hasOwnProperty(dict.name)) {
+            let newEntry = {
+                name: dict.name,
+                facetValues: new Set()
             }
-            this.setState({
-                selectedColumns: {
-                    ...selectedColumns,
-                    specificColumn
-                }
-            })
-        }
+            selectedFacets[dict.name] = newEntry
+        }        
 
+        let specificFacet = selectedFacets[dict.name]
+        specificFacet.facetValues.add(dict.value)
+
+        selectedFacets[dict.name] = specificFacet
+        event.target.checked = !event.target.checked
+        this.setState({
+            selectedFacets: selectedFacets
+        })
     }
 
     render () {
@@ -167,9 +159,12 @@ export default class Facets extends React.Component {
                         </form>
                     </div>
                     <div className="col-xs-6">
-                        <p>
-                            {this.state ? this.state.fetchedRequest ? "": "": "" }
-                        </p>
+                        {this.state.selectedFacets  && Object.keys(this.state.selectedFacets).map(
+                            key => {
+                                let string = Array.from(this.state.selectedFacets[key].facetValues).join(", ")
+                                return <p> {key} : {string} </p>
+                            }
+                        )}
                     </div>
                 </div>
             </div>

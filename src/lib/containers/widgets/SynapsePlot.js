@@ -38,7 +38,6 @@ class SynapsePlot extends React.Component {
         };
 
         let data = await getFullQueryTableResults(queryRequest, token)
-        console.log('42 data is ',  data)
         this.setState({
             queryData: data,
             isLoaded: true

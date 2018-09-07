@@ -13,6 +13,7 @@
     "url": "https://github.com/Sage-Bionetworks/Synapse-React-Client"
   },
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "markdown-it": "^8.4.2",
     "markdown-it-br": "^1.0.0",
     "markdown-it-center-text": "^1.0.4",
