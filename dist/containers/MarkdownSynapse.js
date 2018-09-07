@@ -11,12 +11,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 import React from "react";
 
 import * as SynapseClient from '../utils/SynapseClient';
-
-import Reference from './widgets/Reference';
 import Bookmarks from './widgets/Bookmarks';
-
 import PropTypes from 'prop-types';
-
 import "../style/Portal.css";
 import SynapseImage from "./widgets/SynapseImage";
 
@@ -97,7 +93,6 @@ var MarkdownSynapse = function (_React$Component) {
         _this.renderSynapseButton = _this.renderSynapseButton.bind(_this);
         _this.renderSynapseImage = _this.renderSynapseImage.bind(_this);
         _this.renderSynapsePlot = _this.renderSynapsePlot.bind(_this);
-        _this.renderSynapseReference = _this.renderSynapseReference.bind(_this);
 
         _this.getErrorView = _this.getErrorView.bind(_this);
         _this.createMarkup = _this.createMarkup.bind(_this);
@@ -266,7 +261,7 @@ var MarkdownSynapse = function (_React$Component) {
         }
     }, {
         key: 'processWidgetMappings',
-        value: function processWidgetMappings(rawWidgetString, referenceCountContainer, index) {
+        value: function processWidgetMappings(rawWidgetString, index) {
             var widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/);
             widgetstring = this.decodeXml(widgetstring[2]);
             var questionIndex = widgetstring.indexOf("?");
@@ -287,20 +282,16 @@ var MarkdownSynapse = function (_React$Component) {
                 value = decodeURIComponent(value);
                 widgetparamsMapped[key] = value;
             });
-            return this.renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index);
+            return this.renderWidget(widgetType, widgetparamsMapped, index);
         }
     }, {
         key: 'processWidgetOrDomElement',
         value: function processWidgetOrDomElement(widgetsToBe) {
-            var referenceCountContainer = {
-                referenceCount: 1
-            };
-
             var widgets = [];
             for (var i = 0; i < widgetsToBe.length; i++) {
                 var text = widgetsToBe[i];
                 if (text.indexOf("<span data-widgetparams") !== -1) {
-                    widgets.push(this.processWidgetMappings(text, referenceCountContainer, i));
+                    widgets.push(this.processWidgetMappings(text, i));
                 } else {
                     widgets.push(React.createElement('span', { key: uuidv4(), dangerouslySetInnerHTML: { __html: text } }));
                 }
@@ -309,21 +300,21 @@ var MarkdownSynapse = function (_React$Component) {
         }
     }, {
         key: 'renderWidget',
-        value: function renderWidget(widgetType, widgetparamsMapped, referenceCountContainer, index) {
+        value: function renderWidget(widgetType, widgetparamsMapped) {
             switch (widgetType) {
                 case "buttonlink":
-                    return this.renderSynapseButton(widgetparamsMapped, index);
+                    return this.renderSynapseButton(widgetparamsMapped);
                 case "image":
-                    return this.renderSynapseImage(widgetparamsMapped, index);
+                    return this.renderSynapseImage(widgetparamsMapped);
                 case "plot":
-                    return this.renderSynapsePlot(widgetparamsMapped, index);
+                    return this.renderSynapsePlot(widgetparamsMapped);
                 default:
                     return;
             }
         }
     }, {
         key: 'renderSynapseButton',
-        value: function renderSynapseButton(widgetparamsMapped, index) {
+        value: function renderSynapseButton(widgetparamsMapped) {
             return React.createElement(
                 'a',
                 { key: uuidv4(), href: widgetparamsMapped.url, className: 'btn btn-lg btn-info', role: 'button' },
@@ -332,12 +323,12 @@ var MarkdownSynapse = function (_React$Component) {
         }
     }, {
         key: 'renderSynapsePlot',
-        value: function renderSynapsePlot(widgetparamsMapped, index) {
-            return React.createElement(SynapsePlot, { key: uuidv4(), token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
+        value: function renderSynapsePlot(widgetparamsMapped) {
+            return React.createElement(SynapsePlot, { key: uuidv4(), token: this.props.token, ownerId: "syn9872596", wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
         }
     }, {
         key: 'renderSynapseImage',
-        value: function renderSynapseImage(widgetparamsMapped, index) {
+        value: function renderSynapseImage(widgetparamsMapped) {
             if (!this.state.fileHandles) {
                 // ensure files are loaded
                 return;
@@ -350,29 +341,6 @@ var MarkdownSynapse = function (_React$Component) {
                 // with the file attachnent list
                 return React.createElement(SynapseImage, { key: uuidv4(), token: this.props.token, synapseId: widgetparamsMapped.synapseId });
             }
-        }
-    }, {
-        key: 'renderSynapseReference',
-        value: function renderSynapseReference(referenceCountContainer, index) {
-            var _this4 = this;
-
-            var count = referenceCountContainer.referenceCount;
-            var reference = React.createElement(Reference, { key: uuidv4(), footnoteId: referenceCountContainer.referenceCount, onClick: function onClick(event) {
-                    event.preventDefault();
-                    // find and go to the bookmark at the right section of the page
-                    var goTo = _this4.footnoteRef.current.querySelector('a#bookmark' + (count - 1));
-                    try {
-                        goTo.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                            inline: 'center'
-                        });
-                    } catch (e) {
-                        console.log('error on scroll', e);
-                    }
-                } });
-            referenceCountContainer.referenceCount++;
-            return reference;
         }
     }, {
         key: 'componentDidMount',

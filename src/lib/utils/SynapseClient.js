@@ -152,16 +152,17 @@ export const getQueryTableResults =
    */
   export const getFullQueryTableResults =
     (queryBundleRequest, sessionToken = undefined, onlyGetFacets = false) => {
-      const  {query, ...rest} = queryBundleRequest
 
-      // step 1: get init query with maxRowsPerPage calculated
+      // TODO: Find out why theres a bug causing the query limut 
+      const  {query, ...rest} = queryBundleRequest
+      // limit 1 row from query if only asking for facets
       if (onlyGetFacets) {
         let queryRequest = {
             ...rest,
             query: {...query, limit: 1}
         };
         return (async() => {
-           await getQueryTableResults(queryRequest, sessionToken)
+           return await getQueryTableResults(queryRequest, sessionToken)
                      .then(initData => {
                         return initData
                      })

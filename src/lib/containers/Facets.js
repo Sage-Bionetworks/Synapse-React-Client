@@ -1,10 +1,8 @@
 import React from 'react'
-import * as SynapseConstants from 'lib/utils/SynapseConstants'
-import { getFullQueryTableResults } from 'lib/utils/SynapseClient'
+import * as SynapseClient from 'lib/utils/SynapseClient'
 import PropTypes from 'prop-types'
 const uuidv4 = require('uuid/v4');
 let cloneDeep = require('lodash.clonedeep');
-
 
 export default class Facets extends React.Component {
 
@@ -13,7 +11,8 @@ export default class Facets extends React.Component {
         this.makeBundleQueryRequest = this.makeBundleQueryRequest.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.state = {
-            selectedFacets: {}
+            selectedFacets: {},
+            isLoaded: false
         }
     }
 
@@ -31,12 +30,11 @@ export default class Facets extends React.Component {
                 isConsistent: true,
                 offset: 0,
                 sql,
-                limit: 25
+                limit: 1
             }
         };
 
-        let data = await getFullQueryTableResults(queryRequest, token, false)
-
+        let data = await SynapseClient.getFullQueryTableResults(queryRequest, token, true)
         let selectedFacets = {}
         data.facets.forEach(
             (element) => {

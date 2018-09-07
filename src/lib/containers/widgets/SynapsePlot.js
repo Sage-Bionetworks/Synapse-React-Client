@@ -117,7 +117,6 @@ class SynapsePlot extends React.Component {
             )
         }
     }
-
 }
 
 SynapsePlot.propTypes = {
