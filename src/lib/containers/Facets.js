@@ -21,7 +21,7 @@ export default class Facets extends React.Component {
         this.makeBundleQueryRequest()
     }
 
-    async makeBundleQueryRequest(facets=null) {
+    async makeBundleQueryRequest() {
         const {token, sql} = this.props
 
         // step 1: get init query with maxRowsPerPage calculated
@@ -38,25 +38,15 @@ export default class Facets extends React.Component {
         let data = await getFullQueryTableResults(queryRequest, token, false)
 
         let selectedFacets = {}
-
-        let structuredRender = []
         data.facets.forEach(
             (element) => {
                 if (element.facetType === "enumeration") {
-                    let children = []
                     let selection = new Set()
                     element.facetValues.forEach(
                         facetValue => {
-                            let key = uuidv4()
                             if (facetValue.isSelected) {
                                 selection.add(facetValue.value)
                             }
-                            children.push(
-                                <div key={key}>
-                                    <input id={key} type="checkbox"/>
-                                    <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
-                                </div>
-                            )
                         }
                     )
                     if (selection.length > 0) {
@@ -66,27 +56,19 @@ export default class Facets extends React.Component {
                             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest"
                         }
                     }
-                    let name = <strong> {element.columnName} </strong>
-                    let formatted = (<div key={uuidv4()}>
-                                        {name}
-                                        {children.map(child => {return child})}
-                                    </div>)
-                    structuredRender.push(formatted)
                 }
             }
         )
-        console.log("selected columns ", selectedFacets)
         this.setState({
             isLoaded: true,
             data,
             selectedFacets
         })
-
-
-
     }
 
     showFacetFilter() {
+        // iterate through the loaded data and write out the appropriate checkboxes,
+        // filling in the state of the checkboxes according to the current selection
         if (this.state && this.state.isLoaded) {
             let structuredRender = []
             this.state.data.facets.forEach(
@@ -96,9 +78,14 @@ export default class Facets extends React.Component {
                         element.facetValues.forEach(
                             facetValue => {
                                 let key = uuidv4()
+                                let checked = false
+                                let chosen = this.state.selectedFacets[element.columnName]
+                                if (chosen && chosen.facetValues.has(facetValue.value)) {
+                                    checked = true
+                                }
                                 children.push(
                                     <div key={key}>
-                                        <input onClick={this.handleClick({name: element.columnName, value: facetValue.value})} id={key} type="checkbox"/>
+                                        <input checked={checked} onChange={this.handleClick({name: element.columnName, value: facetValue.value, isSelected: checked})} id={key} type="checkbox"/>
                                         <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
                                     </div>
                                 )
@@ -129,19 +116,26 @@ export default class Facets extends React.Component {
     handleClick = (dict) => (event) => {
         let selectedFacets = cloneDeep(this.state.selectedFacets)  // deep copy
 
+        // if there is no entry for this column name into the selection of facets
         if (!selectedFacets.hasOwnProperty(dict.name)) {
             let newEntry = {
                 name: dict.name,
                 facetValues: new Set()
             }
             selectedFacets[dict.name] = newEntry
-        }        
+        }
 
+        // grab the facet values assoicated for this column
         let specificFacet = selectedFacets[dict.name]
-        specificFacet.facetValues.add(dict.value)
+        // if its not selected then we add as having been chosen, otherwise we 
+        // have to delete it
+        if (!dict.isSelected) {
+            specificFacet.facetValues.add(dict.value)
+        } else {
+            specificFacet.facetValues.delete(dict.value)
+        }
 
         selectedFacets[dict.name] = specificFacet
-        event.target.checked = !event.target.checked
         this.setState({
             selectedFacets: selectedFacets
         })
@@ -162,7 +156,7 @@ export default class Facets extends React.Component {
                         {this.state.selectedFacets  && Object.keys(this.state.selectedFacets).map(
                             key => {
                                 let string = Array.from(this.state.selectedFacets[key].facetValues).join(", ")
-                                return <p> {key} : {string} </p>
+                                return <p key={uuidv4()}> {key} : {string} </p>
                             }
                         )}
                     </div>
