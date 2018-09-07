@@ -1,6 +1,7 @@
 import React from 'react'
 import * as SynapseClient from 'lib/utils/SynapseClient'
 import PropTypes from 'prop-types'
+import * as SynapseConstants from 'lib/utils/SynapseConstants';
 const uuidv4 = require('uuid/v4');
 let cloneDeep = require('lodash.clonedeep');
 
@@ -12,7 +13,8 @@ export default class Facets extends React.Component {
         this.handleClick = this.handleClick.bind(this)
         this.state = {
             selectedFacets: {},
-            isLoaded: false
+            isLoaded: false,
+            dataFetched: {}
         }
     }
 
@@ -20,13 +22,13 @@ export default class Facets extends React.Component {
         this.makeBundleQueryRequest()
     }
 
-    async makeBundleQueryRequest() {
+    makeBundleQueryRequest() {
         const {token, sql} = this.props
 
-        // step 1: get init query with maxRowsPerPage calculated
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
             query: {
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
                 isConsistent: true,
                 offset: 0,
                 sql,
@@ -34,34 +36,38 @@ export default class Facets extends React.Component {
             }
         };
 
-        let data = await SynapseClient.getFullQueryTableResults(queryRequest, token, true)
-        let selectedFacets = {}
-        data.facets.forEach(
-            (element) => {
-                if (element.facetType === "enumeration") {
-                    let selection = new Set()
-                    element.facetValues.forEach(
-                        facetValue => {
-                            if (facetValue.isSelected) {
-                                selection.add(facetValue.value)
+        SynapseClient.getFullQueryTableResults(queryRequest, token, true).then(
+            (data) => {
+                let selectedFacets = {}
+                console.log("initial data ", data)
+                data.facets.forEach(
+                    (element) => {
+                        if (element.facetType === "enumeration") {
+                            let selection = new Set()
+                            element.facetValues.forEach(
+                                facetValue => {
+                                    if (facetValue.isSelected) {
+                                        selection.add(facetValue.value)
+                                    }
+                                }
+                            )
+                            if (selection.length > 0) {
+                                selectedFacets[element.columnName] = {
+                                    columnName: element.columnName,
+                                    facetValues: selection,
+                                    concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest"
+                                }
                             }
                         }
-                    )
-                    if (selection.length > 0) {
-                        selectedFacets[element.columnName] = {
-                            columnName: element.columnName,
-                            facetValues: selection,
-                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest"
-                        }
                     }
-                }
+                )
+                this.setState({
+                    isLoaded: true,
+                    data,
+                    selectedFacets
+                })
             }
         )
-        this.setState({
-            isLoaded: true,
-            data,
-            selectedFacets
-        })
     }
 
     showFacetFilter() {
@@ -137,6 +143,36 @@ export default class Facets extends React.Component {
         this.setState({
             selectedFacets: selectedFacets
         })
+
+        // buggy code to fetch updated data below, extremely slow requests being made
+        let {sql, token} = this.props
+
+        let selectedFacetsFormatted = Object.keys(selectedFacets).map(
+            key => {
+                return selectedFacets[key]
+            }
+        )
+
+        let queryRequest = {
+            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            query: {
+                isConsistent: true,
+                offset: 0,
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
+                sql,
+                limit: 1,
+                selectedFacets: selectedFacetsFormatted
+            },
+        };
+
+        SynapseClient.getFullQueryTableResults(queryRequest, token, true).then(
+            data => {
+                console.log("incoming filterred data is ", data)
+                this.setState({
+                    facetDataIsFetching:  true
+                })
+            }
+        )
     }
 
     render () {
@@ -157,6 +193,7 @@ export default class Facets extends React.Component {
                                 return <p key={uuidv4()}> {key} : {string} </p>
                             }
                         )}
+                        {this.state.facetDataIsFetching ? "loading new results ": JSON.stringify(this.state.dataFetched)}
                     </div>
                 </div>
             </div>

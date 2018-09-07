@@ -212,7 +212,7 @@ export const getQueryTableResults =
                       );
               } else {
                   // set data to this plots sql in the query data
-                  return data
+                  return Promise.resolve(data)
               }
           }
           return getData()
