@@ -291,7 +291,7 @@ class MarkdownSynapse extends React.Component {
     }
     
     renderSynapsePlot(widgetparamsMapped) {
-        return <SynapsePlot key={uuidv4()} token={this.props.token} ownerId={"syn9872596"} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
+        return <SynapsePlot key={uuidv4()} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />;
     }
     
     renderSynapseImage(widgetparamsMapped) {

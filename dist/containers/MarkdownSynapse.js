@@ -324,7 +324,7 @@ var MarkdownSynapse = function (_React$Component) {
     }, {
         key: 'renderSynapsePlot',
         value: function renderSynapsePlot(widgetparamsMapped) {
-            return React.createElement(SynapsePlot, { key: uuidv4(), token: this.props.token, ownerId: "syn9872596", wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
+            return React.createElement(SynapsePlot, { key: uuidv4(), token: this.props.token, ownerId: this.props.ownerId, wikiId: this.props.wikiId, widgetparamsMapped: widgetparamsMapped });
         }
     }, {
         key: 'renderSynapseImage',
