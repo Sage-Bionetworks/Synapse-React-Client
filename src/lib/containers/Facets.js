@@ -8,7 +8,7 @@ export default class Facets extends React.Component {
 
     constructor(props) {
         super(props)
-        this.makeBundleQueryRequest = this.makeBundleQueryRequest.bind(this)
+        this.recordSelections = this.recordSelections.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.state = {
             selectedFacets: {}
@@ -16,10 +16,18 @@ export default class Facets extends React.Component {
     }
 
     componentDidMount() {
-        this.makeBundleQueryRequest()
+        if (!this.props.isLoading) {
+            this.recordSelections()
+        }
     }
 
-    makeBundleQueryRequest() {
+    componentDidUpdate() {
+        if (!this.props.isLoading) {
+            this.recordSelections()
+        }
+    }
+
+    recordSelections() {
         let selectedFacets = {}
         this.props.data.facets.forEach(
             (element) => {
@@ -47,47 +55,48 @@ export default class Facets extends React.Component {
     showFacetFilter() {
         // iterate through the loaded data and write out the appropriate checkboxes,
         // filling in the state of the checkboxes according to the current selection
-        if (this.state) {
-            let structuredRender = []
-            this.props.data.facets.forEach(
-                (element) => {
-                    if (element.facetType === "enumeration") {
-                        let children = []
-                        element.facetValues.forEach(
-                            facetValue => {
-                                let key = uuidv4()
-                                let checked = false
-                                let chosen = this.state.selectedFacets[element.columnName]
-                                if (chosen && chosen.facetValues.indexOf(facetValue.value) !== -1) {
-                                    checked = true
-                                }
-                                children.push(
-                                    <div key={key}>
-                                        <input checked={checked} onChange={this.handleClick({name: element.columnName, value: facetValue.value, isSelected: checked})} id={key} type="checkbox"/>
-                                        <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
-                                    </div>
-                                )
+        if (this.props.data.length === 0) {
+            return
+        }
+        let structuredRender = []
+        this.props.data.facets.forEach(
+            (element) => {
+                if (element.facetType === "enumeration") {
+                    let children = []
+                    element.facetValues.forEach(
+                        facetValue => {
+                            let key = uuidv4()
+                            let checked = false
+                            let chosen = this.state.selectedFacets[element.columnName]
+                            if (chosen && chosen.facetValues.indexOf(facetValue.value) !== -1) {
+                                checked = true
                             }
-                        )
-                        let name = <strong> {element.columnName} </strong>
-                        let formatted = (<div key={uuidv4()}>
-                                            {name}
-                                            {children.map(child => {return child})}
-                                        </div>)
-                        structuredRender.push(formatted)
-                    }
-                }
-            )
-            return (<div>
-                        {
-                            structuredRender.map(
-                                element => {
-                                    return element
-                                }
+                            children.push(
+                                <div key={key}>
+                                    <input checked={checked} onChange={this.handleClick({name: element.columnName, value: facetValue.value, isSelected: checked})} id={key} type="checkbox"/>
+                                    <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
+                                </div>
                             )
                         }
-                    </div>)
-        }
+                    )
+                    let name = <strong> {element.columnName} </strong>
+                    let formatted = (<div key={uuidv4()}>
+                                        {name}
+                                        {children.map(child => {return child})}
+                                    </div>)
+                    structuredRender.push(formatted)
+                }
+            }
+        )
+        return (<div>
+                    {
+                        structuredRender.map(
+                            element => {
+                                return element
+                            }
+                        )
+                    }
+                </div>)
     }
 
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
