@@ -1,3 +1,13 @@
+import _regeneratorRuntime from 'babel-runtime/regenerator';
+
+var _this = this;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 function delay(t, v) {
   return new Promise(function (resolve) {
     setTimeout(resolve.bind(null, v), t);
@@ -131,9 +141,145 @@ export var getQueryTableResults = function getQueryTableResults(queryBundleReque
   });
 };
 
+/**
+*  Run and return results from queryBundleRequest, queryBundle request must be of the
+*  form:
+*     {
+*        concreteType: String,
+*        query: {
+*           sql: String,
+*           isConsistent: Boolean,
+*           partMask: Number
+*        }
+*     }
+* @param {*} queryBundleRequest 
+* @param {*} [sessionToken=undefined]
+* @param {boolean} [onlyGetFacets=false] Specify if the query only needs facets and no
+* data-- (internally this limits the row count to 1 on the request)
+* @returns Full dataset from synapse table query
+*/
+var getFullQueryTableResults = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(queryBundleRequest) {
+    var sessionToken = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var query, rest, data, maxPageSize, queryRequest;
+    return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+
+            // TODO: Find out why theres a bug causing the query limut 
+            query = queryBundleRequest.query, rest = _objectWithoutProperties(queryBundleRequest, ['query']);
+            data = {};
+            maxPageSize = 150;
+            queryRequest = Object.assign({}, rest, {
+              query: Object.assign({}, query, { limit: maxPageSize })
+            });
+
+            // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
+            // we can get, the following uses that maximum and offsets to the appropriate location to get the data
+            // afterwards, the process repeats
+
+            _context3.next = 6;
+            return getQueryTableResults(queryRequest, sessionToken).then(function () {
+              var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(initData) {
+                var queryCount, currentQueryCount, getData;
+                return _regeneratorRuntime.wrap(function _callee2$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        queryCount = initData.queryResult.queryResults.rows.length;
+                        currentQueryCount = queryCount;
+
+                        data = initData;
+
+                        // Get the subsequent data, note- although the function calls itself, it runs
+                        // iteratively due to the await
+
+                        getData = function () {
+                          var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
+                            var queryRequestWithMaxPageSize;
+                            return _regeneratorRuntime.wrap(function _callee$(_context) {
+                              while (1) {
+                                switch (_context.prev = _context.next) {
+                                  case 0:
+                                    if (!(queryCount === maxPageSize)) {
+                                      _context.next = 7;
+                                      break;
+                                    }
+
+                                    maxPageSize = initData.maxRowsPerPage;
+                                    queryRequestWithMaxPageSize = Object.assign({}, rest, {
+                                      query: Object.assign({}, query, { limit: maxPageSize, offset: currentQueryCount })
+                                    });
+                                    _context.next = 5;
+                                    return getQueryTableResults(queryRequestWithMaxPageSize, sessionToken).then(function (post_data) {
+                                      queryCount += post_data.queryResult.queryResults.rows.length;
+                                      if (queryCount > 0) {
+                                        var _data$queryResult$que;
+
+                                        currentQueryCount += queryCount;
+                                        (_data$queryResult$que = data.queryResult.queryResults.rows).push.apply(_data$queryResult$que, _toConsumableArray(post_data.queryResult.queryResults.rows));
+                                      }
+                                      return getData();
+                                    }).catch(function (err) {
+                                      console.log("Error on getting table results ", err);
+                                    });
+
+                                  case 5:
+                                    _context.next = 8;
+                                    break;
+
+                                  case 7:
+                                    return _context.abrupt('return', data);
+
+                                  case 8:
+                                  case 'end':
+                                    return _context.stop();
+                                }
+                              }
+                            }, _callee, _this);
+                          }));
+
+                          return function getData() {
+                            return _ref3.apply(this, arguments);
+                          };
+                        }();
+
+                        return _context2.abrupt('return', getData());
+
+                      case 5:
+                      case 'end':
+                        return _context2.stop();
+                    }
+                  }
+                }, _callee2, _this);
+              }));
+
+              return function (_x8) {
+                return _ref2.apply(this, arguments);
+              };
+            }());
+
+          case 6:
+            return _context3.abrupt('return', data);
+
+          case 7:
+          case 'end':
+            return _context3.stop();
+        }
+      }
+    }, _callee3, _this);
+  }));
+
+  return function getFullQueryTableResults(_x7) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
 /** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. 
  * http://docs.synapse.org/rest/POST/login.html
 */
+export { getFullQueryTableResults };
 export var login = function login(username, password) {
   var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
 

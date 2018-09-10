@@ -13,6 +13,7 @@ import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
+import Facets from 'lib/containers/Facets';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -84,6 +85,7 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
+    console.log("upadting state ", updatedState)
     this.setState(
       updatedState
     );
@@ -161,8 +163,8 @@ class App extends Component {
 
         <CustomMarkdownView>
           <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
-                    ownerId={"syn16593347"}
-                    wikiId={"583196"}
+                    ownerId={"syn14568473"}
+                    wikiId={"582406"}
                     updateLoadState={this.handleChange}
                     >
           </MarkdownSynapse>

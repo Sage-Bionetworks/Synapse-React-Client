@@ -1,10 +1,4 @@
-import _regeneratorRuntime from 'babel-runtime/regenerator';
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -16,7 +10,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import PropTypes from 'prop-types';
 import * as SynapseConstants from '../../utils/SynapseConstants';
-import { getQueryTableResults } from '../../utils/SynapseClient';
+import { getFullQueryTableResults } from '../../utils/SynapseClient';
 
 var SynapsePlot = function (_React$Component) {
     _inherits(SynapsePlot, _React$Component);
@@ -51,105 +45,30 @@ var SynapsePlot = function (_React$Component) {
         value: function fetchPlotlyData() {
             var _this2 = this;
 
-            var _props = this.props,
-                ownerId = _props.ownerId,
-                token = _props.token;
+            console.log("making call in fetch plotly data");
+            var token = this.props.token;
             var query = this.props.widgetparamsMapped.query;
 
-
-            var raw_plot_data = {};
-            var maxPageSize = 150;
-
-            // step 1: get init query with maxRowsPerPage calculated
             var queryRequest = {
                 concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                entityId: ownerId,
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                 query: {
-                    isConsistent: false,
-                    limit: maxPageSize,
-                    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS, // 9,  // get query results and max rows per page
-                    offset: 0,
                     sql: query
                 }
             };
 
-            // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
-            // we can get, the following uses that maximum and offsets to the appropriate location to get the data
-            // afterwards, the process repeats
-            getQueryTableResults(queryRequest, token).then(function (initData) {
-                var queryCount = initData.queryResult.queryResults.rows.length;
-                var totalQueryResults = queryCount;
-                raw_plot_data = initData;
-                // Get the subsequent data, note- although the function calls itself, it runs
-                // iteratively due to the await
-                var getData = function () {
-                    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
-                        var queryRequestWithMaxPageSize;
-                        return _regeneratorRuntime.wrap(function _callee$(_context) {
-                            while (1) {
-                                switch (_context.prev = _context.next) {
-                                    case 0:
-                                        if (!(queryCount === maxPageSize)) {
-                                            _context.next = 7;
-                                            break;
-                                        }
-
-                                        maxPageSize = initData.maxRowsPerPage;
-                                        queryRequestWithMaxPageSize = {
-                                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                                            entityId: ownerId,
-                                            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                                            query: {
-                                                isConsistent: false,
-                                                limit: maxPageSize,
-                                                offset: totalQueryResults,
-                                                sql: query
-                                            }
-                                        };
-                                        _context.next = 5;
-                                        return getQueryTableResults(queryRequestWithMaxPageSize, token).then(function (post_data) {
-                                            queryCount += post_data.queryResult.queryResults.rows.length;
-                                            if (queryCount > 0) {
-                                                var _raw_plot_data$queryR;
-
-                                                totalQueryResults += queryCount;
-                                                (_raw_plot_data$queryR = raw_plot_data.queryResult.queryResults.rows).push.apply(_raw_plot_data$queryR, _toConsumableArray(post_data.queryResult.queryResults.rows));
-                                            }
-                                            return getData();
-                                        }).catch(function (err) {
-                                            console.log("Error on getting table results ", err);
-                                        });
-
-                                    case 5:
-                                        _context.next = 8;
-                                        break;
-
-                                    case 7:
-                                        // set data to this plots sql in the query data
-                                        _this2.setState({
-                                            queryData: raw_plot_data,
-                                            isLoaded: true
-                                        });
-
-                                    case 8:
-                                    case 'end':
-                                        return _context.stop();
-                                }
-                            }
-                        }, _callee, _this2);
-                    }));
-
-                    return function getData() {
-                        return _ref.apply(this, arguments);
-                    };
-                }();
-                getData();
+            getFullQueryTableResults(queryRequest, token).then(function (data) {
+                _this2.setState({
+                    queryData: data,
+                    isLoaded: true
+                });
+            }).catch(function (err) {
+                console.log("Error on full table query ", err);
             });
         }
     }, {
         key: 'showPlot',
         value: function showPlot() {
-
             if (!this.state.isLoaded) {
                 return;
             }

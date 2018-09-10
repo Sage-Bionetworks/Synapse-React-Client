@@ -124,12 +124,87 @@ export const getQueryTableResultsFromJobId =
 export const getQueryTableResults =
   (queryBundleRequest, sessionToken = undefined, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
-      .then(resp => {
-        //started query, now attempt to get the results.
-        return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
-      }).catch(function (error) {
-        throw error;
+        .then(resp => {
+          //started query, now attempt to get the results.
+          return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
+        }).catch(function (error) {
+          throw error;
+        })
+      }
+
+  
+   /**
+   *  Run and return results from queryBundleRequest, queryBundle request must be of the
+   *  form:
+   *     {
+   *        concreteType: String,
+   *        query: {
+   *           sql: String,
+   *           isConsistent: Boolean,
+   *           partMask: Number
+   *        }
+   *     }
+   * @param {*} queryBundleRequest 
+   * @param {*} [sessionToken=undefined]
+   * @param {boolean} [onlyGetFacets=false] Specify if the query only needs facets and no
+   * data-- (internally this limits the row count to 1 on the request)
+   * @returns Full dataset from synapse table query
+   */
+  export const getFullQueryTableResults =
+    async (queryBundleRequest, sessionToken = undefined) => {
+
+      // TODO: Find out why theres a bug causing the query limut 
+      const  {query, ...rest} = queryBundleRequest
+
+      let data = {}
+      let maxPageSize = 150
+      let queryRequest = {
+        ...rest,
+        query: {...query, limit: maxPageSize}
+      };
+
+      // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
+      // we can get, the following uses that maximum and offsets to the appropriate location to get the data
+      // afterwards, the process repeats
+      await getQueryTableResults(queryRequest, sessionToken).then(
+        async (initData) => {
+          let queryCount = initData.queryResult.queryResults.rows.length
+          let currentQueryCount = queryCount
+          data = initData;
+
+          // Get the subsequent data, note- although the function calls itself, it runs
+          // iteratively due to the await
+          const getData = async () => {
+              if (queryCount === maxPageSize) {
+                  maxPageSize = initData.maxRowsPerPage
+                  let queryRequestWithMaxPageSize = {
+                    ...rest,
+                      query: {...query, limit: maxPageSize, offset: currentQueryCount}
+                  };
+                  await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
+                      .then(post_data => {
+                          queryCount += post_data.queryResult.queryResults.rows.length
+                          if (queryCount > 0) {
+                            currentQueryCount += queryCount
+                              data.queryResult.queryResults.rows.push(
+                                  ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
+                              )
+                          }
+                          return getData()
+                      })
+                      .catch(err => 
+                          {
+                              console.log("Error on getting table results ", err)
+                          }
+                      );
+              } else {
+                  // set data to this plots sql in the query data
+                  return data
+              }
+          }
+          return getData()
       })
+      return data
   }
 
 /** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. 
