@@ -7,7 +7,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from 'react';
-import * as SynapseClient from 'lib/utils/SynapseClient';
 import PropTypes from 'prop-types';
 import * as SynapseConstants from 'lib/utils/SynapseConstants';
 var uuidv4 = require('uuid/v4');
@@ -16,10 +15,10 @@ var cloneDeep = require('lodash.clonedeep');
 var Facets = function (_React$Component) {
     _inherits(Facets, _React$Component);
 
-    function Facets() {
+    function Facets(props) {
         _classCallCheck(this, Facets);
 
-        var _this = _possibleConstructorReturn(this, (Facets.__proto__ || Object.getPrototypeOf(Facets)).call(this));
+        var _this = _possibleConstructorReturn(this, (Facets.__proto__ || Object.getPrototypeOf(Facets)).call(this, props));
 
         _this.handleClick = function (dict) {
             return function (event) {
@@ -42,21 +41,16 @@ var Facets = function (_React$Component) {
                 if (!dict.isSelected) {
                     specificFacet.facetValues.push(dict.value);
                 } else {
-                    specificFacet.facetValues = specificFacet.facetValues.filter(function (element) {
-                        return element !== dict.value;
-                    });
+                    // remove value
+                    specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1);
                 }
 
-                selectedFacets[dict.name] = specificFacet;
                 _this.setState({
                     selectedFacets: selectedFacets,
                     facetDataIsFetching: true
                 });
 
-                // buggy code to fetch updated data below, extremely slow requests being made
-                var _this$props = _this.props,
-                    sql = _this$props.sql,
-                    token = _this$props.token;
+                var sql = _this.props.sql;
 
 
                 var selectedFacetsFormatted = Object.keys(selectedFacets).map(function (key) {
@@ -74,21 +68,14 @@ var Facets = function (_React$Component) {
                     }
                 };
 
-                SynapseClient.getFullQueryTableResults(queryRequest, token, true).then(function (data) {
-                    _this.setState({
-                        facetDataIsFetching: false,
-                        dataFetched: data
-                    });
-                });
+                _this.props.updateQueryRequest(queryRequest);
             };
         };
 
         _this.makeBundleQueryRequest = _this.makeBundleQueryRequest.bind(_this);
         _this.handleClick = _this.handleClick.bind(_this);
         _this.state = {
-            selectedFacets: {},
-            isLoaded: false,
-            dataFetched: {}
+            selectedFacets: {}
         };
         return _this;
     }
@@ -101,73 +88,48 @@ var Facets = function (_React$Component) {
     }, {
         key: 'makeBundleQueryRequest',
         value: function makeBundleQueryRequest() {
-            var _this2 = this;
-
-            var _props = this.props,
-                token = _props.token,
-                sql = _props.sql;
-
-
-            var queryRequest = {
-                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
-                query: {
-                    isConsistent: true,
-                    offset: 0,
-                    sql: sql,
-                    limit: 1
-                }
-            };
-
-            SynapseClient.getFullQueryTableResults(queryRequest, token, true).then(function (data) {
-                var selectedFacets = {};
-                data.facets.forEach(function (element) {
-                    if (element.facetType === "enumeration") {
-                        var selection = [];
-                        element.facetValues.forEach(function (facetValue) {
-                            if (facetValue.isSelected) {
-                                selection.push(facetValue.value);
-                            }
-                        });
-                        if (selection.length > 0) {
-                            selectedFacets[element.columnName] = {
-                                columnName: element.columnName,
-                                facetValues: selection,
-                                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest"
-                            };
+            var selectedFacets = {};
+            this.props.data.facets.forEach(function (element) {
+                if (element.facetType === "enumeration") {
+                    var selection = [];
+                    element.facetValues.forEach(function (facetValue) {
+                        if (facetValue.isSelected) {
+                            selection.push(facetValue.value);
                         }
+                    });
+                    if (selection.length > 0) {
+                        selectedFacets[element.columnName] = {
+                            columnName: element.columnName,
+                            facetValues: selection,
+                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest"
+                        };
                     }
-                });
-                _this2.setState({
-                    isLoaded: true,
-                    data: data,
-                    selectedFacets: selectedFacets
-                });
+                }
             });
         }
     }, {
         key: 'showFacetFilter',
         value: function showFacetFilter() {
-            var _this3 = this;
+            var _this2 = this;
 
             // iterate through the loaded data and write out the appropriate checkboxes,
             // filling in the state of the checkboxes according to the current selection
-            if (this.state && this.state.isLoaded) {
+            if (this.state) {
                 var structuredRender = [];
-                this.state.data.facets.forEach(function (element) {
+                this.props.data.facets.forEach(function (element) {
                     if (element.facetType === "enumeration") {
                         var children = [];
                         element.facetValues.forEach(function (facetValue) {
                             var key = uuidv4();
                             var checked = false;
-                            var chosen = _this3.state.selectedFacets[element.columnName];
+                            var chosen = _this2.state.selectedFacets[element.columnName];
                             if (chosen && chosen.facetValues.indexOf(facetValue.value) !== -1) {
                                 checked = true;
                             }
                             children.push(React.createElement(
                                 'div',
                                 { key: key },
-                                React.createElement('input', { checked: checked, onChange: _this3.handleClick({ name: element.columnName, value: facetValue.value, isSelected: checked }), id: key, type: 'checkbox' }),
+                                React.createElement('input', { checked: checked, onChange: _this2.handleClick({ name: element.columnName, value: facetValue.value, isSelected: checked }), id: key, type: 'checkbox' }),
                                 React.createElement(
                                     'label',
                                     { htmlFor: key },
@@ -208,7 +170,7 @@ var Facets = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this4 = this;
+            var _this3 = this;
 
             return React.createElement(
                 'div',
@@ -243,7 +205,7 @@ var Facets = function (_React$Component) {
                             ' '
                         ),
                         this.state.selectedFacets && Object.keys(this.state.selectedFacets).map(function (key) {
-                            var string = Array.from(_this4.state.selectedFacets[key].facetValues).join(", ");
+                            var string = Array.from(_this3.state.selectedFacets[key].facetValues).join(", ");
                             return React.createElement(
                                 'p',
                                 { key: uuidv4() },
@@ -264,7 +226,7 @@ var Facets = function (_React$Component) {
                             ),
                             ' '
                         ),
-                        this.state.facetDataIsFetching ? "loading new results " : JSON.stringify(this.state.dataFetched)
+                        JSON.stringify(this.props.data)
                     )
                 )
             );

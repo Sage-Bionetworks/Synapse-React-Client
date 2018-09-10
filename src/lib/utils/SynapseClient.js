@@ -151,38 +151,25 @@ export const getQueryTableResults =
    * @returns Full dataset from synapse table query
    */
   export const getFullQueryTableResults =
-    (queryBundleRequest, sessionToken = undefined, onlyGetFacets = false) => {
+    async (queryBundleRequest, sessionToken = undefined) => {
 
       // TODO: Find out why theres a bug causing the query limut 
       const  {query, ...rest} = queryBundleRequest
-      // limit 1 row from query if only asking for facets
-      if (onlyGetFacets) {
-        let queryRequest = {
-            ...rest,
-            query: {...query, limit: 1}
-        };
-        return (async() => {
-           return await getQueryTableResults(queryRequest, sessionToken)
-                     .then(initData => {
-                        return initData
-                     })
-            })()
-      }
 
       let data = {}
       let maxPageSize = 150
       let queryRequest = {
         ...rest,
-        query: {...query}
+        query: {...query, limit: maxPageSize}
       };
 
       // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
       // we can get, the following uses that maximum and offsets to the appropriate location to get the data
       // afterwards, the process repeats
-      return getQueryTableResults(queryRequest, sessionToken).then(async (initData) => {
+      await getQueryTableResults(queryRequest, sessionToken).then(
+        async (initData) => {
           let queryCount = initData.queryResult.queryResults.rows.length
-          maxPageSize = initData.maxRowsPerPage
-          let totalQueryResults = queryCount
+          let currentQueryCount = queryCount
           data = initData;
 
           // Get the subsequent data, note- although the function calls itself, it runs
@@ -192,13 +179,13 @@ export const getQueryTableResults =
                   maxPageSize = initData.maxRowsPerPage
                   let queryRequestWithMaxPageSize = {
                     ...rest,
-                      query: {...query, limit: maxPageSize, offset: totalQueryResults}
+                      query: {...query, limit: maxPageSize, offset: currentQueryCount}
                   };
                   await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
                       .then(post_data => {
                           queryCount += post_data.queryResult.queryResults.rows.length
                           if (queryCount > 0) {
-                            totalQueryResults += queryCount
+                            currentQueryCount += queryCount
                               data.queryResult.queryResults.rows.push(
                                   ...post_data.queryResult.queryResults.rows  // ... spread operator to push all elements on
                               )
@@ -212,11 +199,12 @@ export const getQueryTableResults =
                       );
               } else {
                   // set data to this plots sql in the query data
-                  return Promise.resolve(data)
+                  return data
               }
           }
           return getData()
       })
+      return data
   }
 
 /** Log-in using the given username and password.  Will return a session token that must be used in authenticated requests. 

@@ -84,6 +84,7 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
+    console.log("upadting state ", updatedState)
     this.setState(
       updatedState
     );
@@ -167,10 +168,6 @@ class App extends Component {
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
-
-
-        <Facets token={this.state.token} sql={`SELECT * FROM syn15661198`}>
-        </Facets>
 
       </div>
     );

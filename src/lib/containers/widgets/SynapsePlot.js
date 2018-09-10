@@ -24,28 +24,34 @@ class SynapsePlot extends React.Component {
      *
      * @returns data corresponding to plotly widget
      */
-    async fetchPlotlyData() {
-
+    fetchPlotlyData() {
+        console.log("making call in fetch plotly data")
         const {token} = this.props
         const {query} = this.props.widgetparamsMapped
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
-                isConsistent: true,
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS, // 9,  // get query results and max rows per page
                 sql: query
             }
         };
 
-        let data = await getFullQueryTableResults(queryRequest, token)
-        this.setState({
-            queryData: data,
-            isLoaded: true
-        })
+        getFullQueryTableResults(queryRequest, token).then(
+            data => {
+                this.setState({
+                    queryData: data,
+                    isLoaded: true
+                })
+            }
+        ).catch(
+            err => {
+                console.log("Error on full table query " , err)
+            }
+        )
     }
 
-    showPlot() {
 
+    showPlot() {
         if (!this.state.isLoaded) {
             return
         }
