@@ -27,8 +27,8 @@ export default class Facets extends React.Component {
 
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
             query: {
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
                 isConsistent: true,
                 offset: 0,
                 sql,
@@ -39,15 +39,14 @@ export default class Facets extends React.Component {
         SynapseClient.getFullQueryTableResults(queryRequest, token, true).then(
             (data) => {
                 let selectedFacets = {}
-                console.log("initial data ", data)
                 data.facets.forEach(
                     (element) => {
                         if (element.facetType === "enumeration") {
-                            let selection = new Set()
+                            let selection = []
                             element.facetValues.forEach(
                                 facetValue => {
                                     if (facetValue.isSelected) {
-                                        selection.add(facetValue.value)
+                                        selection.push(facetValue.value)
                                     }
                                 }
                             )
@@ -84,7 +83,7 @@ export default class Facets extends React.Component {
                                 let key = uuidv4()
                                 let checked = false
                                 let chosen = this.state.selectedFacets[element.columnName]
-                                if (chosen && chosen.facetValues.has(facetValue.value)) {
+                                if (chosen && chosen.facetValues.indexOf(facetValue.value) !== -1) {
                                     checked = true
                                 }
                                 children.push(
@@ -123,8 +122,9 @@ export default class Facets extends React.Component {
         // if there is no entry for this column name into the selection of facets
         if (!selectedFacets.hasOwnProperty(dict.name)) {
             let newEntry = {
-                name: dict.name,
-                facetValues: new Set()
+                columnName: dict.name,
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: []
             }
             selectedFacets[dict.name] = newEntry
         }
@@ -134,14 +134,19 @@ export default class Facets extends React.Component {
         // if its not selected then we add as having been chosen, otherwise we 
         // have to delete it
         if (!dict.isSelected) {
-            specificFacet.facetValues.add(dict.value)
+            specificFacet.facetValues.push(dict.value)
         } else {
-            specificFacet.facetValues.delete(dict.value)
+            specificFacet.facetValues = specificFacet.facetValues.filter(
+                element => {
+                    return element !== dict.value
+                }    
+            )
         }
-
+        
         selectedFacets[dict.name] = specificFacet
         this.setState({
-            selectedFacets: selectedFacets
+            selectedFacets: selectedFacets,
+            facetDataIsFetching:  true
         })
 
         // buggy code to fetch updated data below, extremely slow requests being made
@@ -155,10 +160,9 @@ export default class Facets extends React.Component {
 
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
             query: {
                 isConsistent: true,
-                offset: 0,
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
                 sql,
                 limit: 1,
                 selectedFacets: selectedFacetsFormatted
@@ -167,9 +171,9 @@ export default class Facets extends React.Component {
 
         SynapseClient.getFullQueryTableResults(queryRequest, token, true).then(
             data => {
-                console.log("incoming filterred data is ", data)
                 this.setState({
-                    facetDataIsFetching:  true
+                    facetDataIsFetching:  false,
+                    dataFetched: data
                 })
             }
         )
@@ -187,12 +191,14 @@ export default class Facets extends React.Component {
                         </form>
                     </div>
                     <div className="col-xs-6">
+                        <h5><strong> Current selection </strong> </h5>
                         {this.state.selectedFacets  && Object.keys(this.state.selectedFacets).map(
                             key => {
                                 let string = Array.from(this.state.selectedFacets[key].facetValues).join(", ")
                                 return <p key={uuidv4()}> {key} : {string} </p>
                             }
                         )}
+                        <h5><strong> Results</strong> </h5>
                         {this.state.facetDataIsFetching ? "loading new results ": JSON.stringify(this.state.dataFetched)}
                     </div>
                 </div>
