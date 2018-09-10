@@ -255,7 +255,7 @@ var getFullQueryTableResults = function getFullQueryTableResults(queryBundleRequ
                           break;
 
                         case 7:
-                          return _context2.abrupt('return', data);
+                          return _context2.abrupt('return', Promise.resolve(data));
 
                         case 8:
                         case 'end':
