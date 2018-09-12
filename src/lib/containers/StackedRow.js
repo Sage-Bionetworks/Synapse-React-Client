@@ -1,6 +1,7 @@
 
 import React from 'react'
 import Plot from 'react-plotly.js';
+import { RSA_X931_PADDING } from 'constants';
 
 export default class StackedRow extends React.Component {
 
@@ -43,9 +44,10 @@ export default class StackedRow extends React.Component {
         '']
 
         let colors = ['rgba(38, 24, 74, 0.8)', 'rgba(71, 58, 131, 0.8)',
-            'rgba(122, 120, 168, 0.8)', 'rgba(164, 163, 204, 0.85)',
-            'rgba(190, 192, 213, 1)']
-        x_data[0] = x_data[0].map(e => {return Math.log(e)})
+            'rgba(122, 120, 168, 0.8)', 'rgba(220, 163, 204, 0.85)',
+            'rgba(220, 163, 204, 0.85)']
+
+        // x_data[0] = x_data[0].map(e => {return Math.log(e)})
 
         let y_data = [' ']
 
@@ -61,9 +63,6 @@ export default class StackedRow extends React.Component {
                         y:[yd],
                         orientation:'h',
                         type: "bar",
-                        hoverinfo: "all",
-                        hovertext: "all",
-                        text: "all",
                         marker : {
                                     color : colors[i],
                                     line : {
@@ -93,8 +92,8 @@ export default class StackedRow extends React.Component {
             barmode: 'stack',
             paper_bgcolor: 'rgb(248, 248, 255)',
             plot_bgcolor: 'rgb(248, 248, 255)',
-            height: 200,
-            width: 500,
+            height: 100,
+            width: 600,
             margin: {
                 l: 0,
                 r: 0,
@@ -134,7 +133,7 @@ export default class StackedRow extends React.Component {
                             yref: 'y',
                             x: xd[0] / 2,
                             y: yd,
-                            text: String(Math.round(Math.exp(xd[0]))),
+                            text: String(Math.round(xd[0])),
                             font: {
                                 family: 'Arial',
                                 size: 14,
@@ -170,7 +169,7 @@ export default class StackedRow extends React.Component {
                         yref:'y',
                         x:space+ (xd[i] / 2),
                         y:yd, 
-                        text:String(Math.round(Math.exp(xd[i]))),
+                        text:String(Math.round(xd[i])),
                         font:{
                             family:'Arial',
                             size:14,
