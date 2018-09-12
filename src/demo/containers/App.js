@@ -17,6 +17,7 @@ import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
 import QueryWrapper from 'lib/containers/QueryWrapper'
 import Facets from 'lib/containers/Facets';
 import StackedRow from 'lib/containers/StackedRow';
+import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -186,8 +187,8 @@ class App extends Component {
         >
           <Facets>
           </Facets>
-          <StackedRow>
-          </StackedRow>
+          <StackedRowHomebrew>
+          </StackedRowHomebrew>
         </QueryWrapper>
 
 

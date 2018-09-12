@@ -9,12 +9,7 @@ class CheckboxGroup extends React.Component {
         super(props)
     }
 
-    componentWillUnmount() {
-        console.log("%c unmouning checkbox ", "background: cyan")
-    }
-
     render() {
-        console.log("%cfacets being rendered", "background: green")
         const {element} = this.props
         let children = []
         let selectedFacets = this.props.selectedFacets
@@ -111,7 +106,6 @@ export default class Facets extends React.Component {
     handleClick = (dict) => (event) => {
         let selectedFacets = dict.selectedFacets
         // if there is no entry for this column name into the selection of facets
-        console.log("dict is ", dict)
         if (!selectedFacets.hasOwnProperty(dict.columnName)) {
             let newEntry = {
                 columnName: dict.columnName,

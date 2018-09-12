@@ -20,7 +20,6 @@ export default class QueryWrapper extends React.Component {
     }
 
     makeQueryRequest(queryRequest) {
-        console.log("query requested")
         this.setState({isLoading: true})
         if (queryRequest === INIT_REQUEST) {
             SynapseClient.getQueryTableResults(this.props.initQueryRequest, this.props.token).then(
@@ -32,7 +31,6 @@ export default class QueryWrapper extends React.Component {
                 }
             )   
         } else {
-            console.log("%ccalled get query", "background: purple")
             SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(
                 data => {
                     this.setState({
@@ -45,7 +43,6 @@ export default class QueryWrapper extends React.Component {
     }
 
     render () {
-        console.log("%cre-render from wrapper", "background: cyan")
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{

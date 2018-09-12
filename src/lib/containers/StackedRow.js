@@ -1,7 +1,6 @@
 
 import React from 'react'
 import Plot from 'react-plotly.js';
-import { RSA_X931_PADDING } from 'constants';
 
 export default class StackedRow extends React.Component {
 
