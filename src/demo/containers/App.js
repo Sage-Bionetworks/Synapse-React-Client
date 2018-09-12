@@ -16,6 +16,7 @@ import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
 
 import QueryWrapper from 'lib/containers/QueryWrapper'
 import Facets from 'lib/containers/Facets';
+import StackedRow from 'lib/containers/StackedRow';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -183,8 +184,10 @@ class App extends Component {
           token={this.state.token}
           sql={`SELECT * FROM syn15661198`}
         >
-                <Facets>
-                </Facets>
+          <Facets>
+          </Facets>
+          <StackedRow>
+          </StackedRow>
         </QueryWrapper>
 
 
