@@ -5,26 +5,16 @@ const cloneDeep = require("lodash.clonedeep")
 
 class CheckboxGroup extends React.Component {
 
-    constructor(props) {
-        super(props)
-    }
-
-    componentWillUnmount() {
-        console.log("unmounting")
-    }
-
     render() {
         const {element} = this.props
         let children = []
         let selectedFacets = this.props.selectedFacets
-        console.log("facet values ", element.facetValues)
         element.facetValues.forEach(
             facetValue => {
-                let key = facetValue.value
                 children.push(
-                    <div key={facetValue.value}>
-                        <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={key} type="checkbox"/>
-                        <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
+                    <div key={facetValue.value + " " + facetValue.count}>
+                        <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={element.columnName + " " + facetValue.value + " " + facetValue.count} type="checkbox"/>
+                        <label htmlFor={facetValue.value + " " + facetValue.count}>{facetValue.value + ` (${facetValue.count})`}</label>
                     </div>
                 )
             }
