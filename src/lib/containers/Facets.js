@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import * as SynapseConstants from 'lib/utils/SynapseConstants';
-const uuidv4 = require('uuid/v4');
+const cloneDeep = require("lodash.clonedeep")
 
 class CheckboxGroup extends React.Component {
 
@@ -9,15 +9,20 @@ class CheckboxGroup extends React.Component {
         super(props)
     }
 
+    componentWillUnmount() {
+        console.log("unmounting")
+    }
+
     render() {
         const {element} = this.props
         let children = []
         let selectedFacets = this.props.selectedFacets
+        console.log("facet values ", element.facetValues)
         element.facetValues.forEach(
             facetValue => {
-                let key = uuidv4()
+                let key = facetValue.value
                 children.push(
-                    <div key={key}>
+                    <div key={facetValue.value}>
                         <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={key} type="checkbox"/>
                         <label htmlFor={key}>{facetValue.value + ` (${facetValue.count})`}</label>
                     </div>
@@ -32,7 +37,6 @@ class CheckboxGroup extends React.Component {
                     </div>
                 )
     }
-
 }
 
 export default class Facets extends React.Component {
@@ -85,7 +89,7 @@ export default class Facets extends React.Component {
         this.props.data.facets.forEach(
             (element) => {
                 if (element.facetType === "enumeration") {
-                    let group = <CheckboxGroup key={uuidv4()} selectedFacets={selectedFacets} element={element} clickHandler={this.handleClick}></CheckboxGroup>
+                    let group = <CheckboxGroup key={element.columnName} selectedFacets={selectedFacets} element={element} clickHandler={this.handleClick}></CheckboxGroup>
                     structuredRender.push(group)
                 }
             }
@@ -104,7 +108,7 @@ export default class Facets extends React.Component {
 
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     handleClick = (dict) => (event) => {
-        let selectedFacets = dict.selectedFacets
+        let selectedFacets = cloneDeep(this.state.selectedFacets)
         // if there is no entry for this column name into the selection of facets
         if (!selectedFacets.hasOwnProperty(dict.columnName)) {
             let newEntry = {
@@ -119,7 +123,7 @@ export default class Facets extends React.Component {
         let specificFacet = selectedFacets[dict.columnName]
         // if its not selected then we add as having been chosen, otherwise we 
         // have to delete it
-        if (!dict.isSelected) {
+        if (specificFacet.facetValues.indexOf(dict.value) === -1) {
             specificFacet.facetValues.push(dict.value)
         } else {
             // remove value
@@ -144,7 +148,7 @@ export default class Facets extends React.Component {
                 selectedFacets: selectedFacetsFormatted
             },
         };
-
+        this.setState({selectedFacets})
         this.props.updateQueryRequest(queryRequest)
     }
     
