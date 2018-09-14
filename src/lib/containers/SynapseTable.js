@@ -1,5 +1,7 @@
 import React from 'react'
 const cloneDeep = require("lodash.clonedeep")
+const NEXT = "NEXT"
+const PREVIOUS = "PREVIOUS"
 
 export default class SynapseTable extends React.Component {
 
@@ -8,12 +10,26 @@ export default class SynapseTable extends React.Component {
         this.handleColumnClick = this.handleColumnClick.bind(this)
         this.handlePaginationClick = this.handlePaginationClick.bind(this)
         this.state = {
-            sortSelection: []
+            sortSelection: [],
+            offset: 0
         }
     }
 
-    handlePaginationClick = (name) => (event) => {
-        // TODO: Implement
+    handlePaginationClick = (eventType) => (event) => {
+        let queryRequest = this.props.getLastQueryRequest()
+        let currentOffset = queryRequest.query.offset
+        if (eventType === PREVIOUS)  {
+            if (currentOffset === 0) {
+                return
+            } else {
+                currentOffset -= 25
+            }
+        }
+        if (eventType === NEXT) {
+            currentOffset += 25
+        }
+        queryRequest.query.offset = currentOffset
+        this.props.executeQueryRequest(queryRequest)
     }
 
     handleColumnClick = (name) => (event) => {
@@ -94,6 +110,8 @@ export default class SynapseTable extends React.Component {
             rowsFormatted.push(rowFormatted)
         });
 
+        let pastZero = this.props.getLastQueryRequest().query.offset > 0
+
         return (
             <div className="container">
                 <table className="table table-striped table-condensed">
@@ -120,10 +138,10 @@ export default class SynapseTable extends React.Component {
                         )}
                     </tbody>
                 </table>
-                <button onClick={this.handlePaginationClick("previous")} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
                     Previous
-                </button>
-                <button onClick={this.handlePaginationClick("next")} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                </button>}
+                <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
                     Next
                 </button>
             </div>
