@@ -1,5 +1,7 @@
 import React from 'react'
 import * as SynapseClient from 'lib/utils/SynapseClient'
+import * as SynapseConstants from 'lib/utils/SynapseConstants';
+
 const cloneDeep = require('lodash.clonedeep')
 let INIT_REQUEST = "init request"
 
@@ -40,6 +42,11 @@ export default class QueryWrapper extends React.Component {
                 lastColumnSelection = queryRequest.query.selectedFacets
                 queryRequest.query.sort = lastSortSelection
             }
+
+            queryRequest.concreteType = "org.sagebionetworks.repo.model.table.QueryBundleRequest" 
+            queryRequest.partMask = SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS 
+                            | SynapseConstants.BUNDLE_MASK_QUERY_FACETS 
+                            | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
 
             SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(
                 data => {

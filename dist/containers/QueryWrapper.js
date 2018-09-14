@@ -8,7 +8,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import * as SynapseClient from 'lib/utils/SynapseClient';
+import * as SynapseConstants from 'lib/utils/SynapseConstants';
 
+var cloneDeep = require('lodash.clonedeep');
 var INIT_REQUEST = "init request";
 
 // takes in a token and SQL string and initQueryRequest
@@ -23,7 +25,8 @@ var QueryWrapper = function (_React$Component) {
 
         _this.state = {
             data: [],
-            isLoading: true
+            lastColumnSelection: [],
+            lastSortSelection: []
         };
         _this.makeQueryRequest = _this.makeQueryRequest.bind(_this);
         return _this;
@@ -36,22 +39,35 @@ var QueryWrapper = function (_React$Component) {
         }
     }, {
         key: 'makeQueryRequest',
-        value: function makeQueryRequest(queryRequest) {
+        value: function makeQueryRequest(queryRequest, initiator) {
             var _this2 = this;
 
-            this.setState({ isLoading: true });
             if (queryRequest === INIT_REQUEST) {
                 SynapseClient.getQueryTableResults(this.props.initQueryRequest, this.props.token).then(function (data) {
                     _this2.setState({
-                        data: data,
-                        isLoading: false
+                        data: data
                     });
                 });
             } else {
+                var lastColumnSelection = cloneDeep(this.state.lastColumnSelection);
+                var lastSortSelection = cloneDeep(this.state.lastSortSelection);
+
+                if (initiator === "TABLE") {
+                    lastSortSelection = queryRequest.query.sort;
+                    queryRequest.query.selectedFacets = lastColumnSelection;
+                } else if (initiator === "FACETS") {
+                    lastColumnSelection = queryRequest.query.selectedFacets;
+                    queryRequest.query.sort = lastSortSelection;
+                }
+
+                queryRequest.concreteType = "org.sagebionetworks.repo.model.table.QueryBundleRequest";
+                queryRequest.partMask = SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS;
+
                 SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(function (data) {
                     _this2.setState({
                         data: data,
-                        isLoading: false
+                        lastColumnSelection: lastColumnSelection,
+                        lastSortSelection: lastSortSelection
                     });
                 });
             }
@@ -61,22 +77,14 @@ var QueryWrapper = function (_React$Component) {
         value: function render() {
             var _this3 = this;
 
-            if (this.state.isLoading) {
-                return React.createElement(
-                    'div',
-                    null,
-                    'loading....'
-                );
-            } else {
-                return React.createElement(
-                    'div',
-                    null,
-                    React.Children.map(this.props.children, function (child) {
-                        return React.cloneElement(child, { updateQueryRequest: _this3.makeQueryRequest, data: _this3.state.data, sql: _this3.props.sql });
-                    }),
-                    ' '
-                );
-            }
+            return React.createElement(
+                'div',
+                null,
+                React.Children.map(this.props.children, function (child) {
+                    return React.cloneElement(child, { showBy: "Disease", updateQueryRequest: _this3.makeQueryRequest, data: _this3.state.data, sql: _this3.props.sql
+                    });
+                })
+            );
         }
     }]);
 

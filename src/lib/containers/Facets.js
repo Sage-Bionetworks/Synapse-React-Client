@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import * as SynapseConstants from 'lib/utils/SynapseConstants';
 const cloneDeep = require("lodash.clonedeep")
 
 class CheckboxGroup extends React.Component {
@@ -128,8 +127,6 @@ export default class Facets extends React.Component {
         )
 
         let queryRequest = {
-            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 isConsistent: true,
                 sql,
