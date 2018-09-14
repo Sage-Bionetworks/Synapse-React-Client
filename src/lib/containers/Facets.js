@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 const cloneDeep = require("lodash.clonedeep")
+const uuidv4 = require("uuid/v4")
 
 class CheckboxGroup extends React.Component {
 
@@ -10,10 +11,12 @@ class CheckboxGroup extends React.Component {
         let selectedFacets = this.props.selectedFacets
         element.facetValues.forEach(
             facetValue => {
+                let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
+                let uuId = uuidv4()
                 children.push(
-                    <div key={facetValue.value + " " + facetValue.count}>
-                        <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={element.columnName + " " + facetValue.value + " " + facetValue.count} type="checkbox"/>
-                        <label htmlFor={facetValue.value + " " + facetValue.count}>{facetValue.value + ` (${facetValue.count})`}</label>
+                    <div key={uniqueId}>
+                        <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
+                        <label htmlFor={uuId}>{facetValue.value + ` (${facetValue.count})`}</label>
                     </div>
                 )
             }
@@ -72,7 +75,7 @@ export default class Facets extends React.Component {
             return
         }
         let structuredRender = []
-        let selectedFacets = this.recordSelections()  // deep copy
+        let selectedFacets = this.recordSelections()
 
         this.props.data.facets.forEach(
             (element) => {
@@ -118,24 +121,17 @@ export default class Facets extends React.Component {
             specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
         }
 
-        let {sql} = this.props
-
         let selectedFacetsFormatted = Object.keys(selectedFacets).map(
             key => {
                 return selectedFacets[key]
             }
         )
 
-        let queryRequest = {
-            query: {
-                isConsistent: true,
-                sql,
-                limit: 25,
-                selectedFacets: selectedFacetsFormatted
-            },
-        };
         this.setState({selectedFacets})
-        this.props.updateQueryRequest(queryRequest, "FACETS")
+        let queryRequest = this.props.getLastQueryRequest()
+        console.log("last query request ", queryRequest)
+        queryRequest.query.selectedFacets = selectedFacetsFormatted
+        this.props.executeQueryRequest(queryRequest)
     }
     
     render () {

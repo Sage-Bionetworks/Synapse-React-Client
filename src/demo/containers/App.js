@@ -178,7 +178,9 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn15661198`,
-                limit: 25
+                limit: 25,
+                selectedFacets: [],
+                sort: []
             }
           }}
           token={this.state.token}

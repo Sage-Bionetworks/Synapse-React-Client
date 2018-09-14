@@ -61,18 +61,9 @@ export default class SynapseTable extends React.Component {
             direction
         })
 
-        let {sql} = this.props
-        // TODO: Grab the facet selection...
-        let queryRequest = {
-            query: {
-                isConsistent: true,
-                sql,
-                limit: 25,
-                sort: sortSelection
-            },
-        };
-
-        this.props.updateQueryRequest(queryRequest, "TABLE")
+        let queryRequest = this.props.getLastQueryRequest()
+        queryRequest.query.sort = sortSelection
+        this.props.executeQueryRequest(queryRequest)
         this.setState({
             sortSelection
         })
