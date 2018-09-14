@@ -13,7 +13,12 @@ export default class SynapseTable extends React.Component {
     }
 
     handleClick = (name) => (event) => {
-        let arrow = event.target.children[0]
+        let arrow = null
+        if (event.target.tagName === "A") {
+            arrow = event.target.children[0]
+        } else if (event.target.tagName === "I") {
+            arrow = event.target
+        }
         let containsDown = arrow.className.indexOf("down") !== -1
         let containsUp = arrow.className.indexOf("up") !== -1
         let direction = "ASC"
@@ -34,7 +39,7 @@ export default class SynapseTable extends React.Component {
         if (sortSelection.length !== 0) {
             let index = sortSelection.findIndex(
                 (el) => {
-                    return el.name === name
+                    return el.column === name
                 }
             )
             if (index !== -1) {
@@ -45,7 +50,7 @@ export default class SynapseTable extends React.Component {
         // whether it's contained or not we lazily delete it and add it
         // back without finding the value, changing it, etc
         sortSelection.push({
-            name,
+            column: name,
             direction
         })
 
@@ -57,12 +62,12 @@ export default class SynapseTable extends React.Component {
             query: {
                 isConsistent: true,
                 sql,
-                limit: 1,
+                limit: 25,
+                sort: sortSelection
             },
-            sort: sortSelection
         };
 
-        this.props.updateQueryRequest(queryRequest)
+        this.props.updateQueryRequest(queryRequest, "TABLE")
         this.setState({
             sortSelection
         })
@@ -74,10 +79,21 @@ export default class SynapseTable extends React.Component {
         }
         const {data} = this.props
         const {columnModels} = data
-        console.log("data ", data)
         const {queryResult} = data
         const {queryResults} = queryResult
         const {rows} = queryResults
+
+        let rowsFormatted = []
+        rows.forEach((expRow,i) => {
+            let rowFormatted = (<tr key={`(${expRow.rowId})`} >
+                {expRow.values.map(
+                    (value, j) => {
+                        return <td key={`(${i},${j})`}><p> {value} </p></td>
+                    }
+                )}
+            </tr>)
+            rowsFormatted.push(rowFormatted)
+        });
 
         return (
             <div className="container">
@@ -98,24 +114,16 @@ export default class SynapseTable extends React.Component {
                     </thead>
 
                     <tbody>
-                        <tr>
-                        {
-                            rows.map(
-                                (row, i) => {
-                                    return (
-                                        row.values.map(
-                                            (value, j) => {
-                                                return <td key={`(${i},${j})`}><p> {value} </p></td>
-                                            }
-                                        )
-                                    )
-                                }
-                            )
-                        }
-                        </tr>
+                        {rowsFormatted.map(
+                            rowFormatted => {
+                                return rowFormatted
+                            }
+                        )}
                     </tbody>
-
                 </table>
+                <button className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                    Next
+                </button>
             </div>
         )
     }

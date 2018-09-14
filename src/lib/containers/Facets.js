@@ -67,7 +67,6 @@ export default class Facets extends React.Component {
     }
 
     showFacetFilter() {
-        console.log("%cdoing a re-render", "background: blue")
         // iterate through the loaded data and write out the appropriate checkboxes,
         // filling in the state of the checkboxes according to the current selection
         if (this.props.data.length === 0) {
@@ -130,16 +129,16 @@ export default class Facets extends React.Component {
 
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 isConsistent: true,
                 sql,
-                limit: 1,
+                limit: 25,
                 selectedFacets: selectedFacetsFormatted
             },
         };
         this.setState({selectedFacets})
-        this.props.updateQueryRequest(queryRequest)
+        this.props.updateQueryRequest(queryRequest, "FACETS")
     }
     
     render () {

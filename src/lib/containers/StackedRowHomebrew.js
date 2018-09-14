@@ -19,7 +19,7 @@ export default class StackedRowHomebrew extends React.Component {
     }
 
     render () {
-        if (this.props.isLoading) {
+        if (this.props.data.length === 0) {
             return (<div className="container">loading</div>)
         }
 
