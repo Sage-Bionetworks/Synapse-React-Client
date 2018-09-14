@@ -129,7 +129,6 @@ export default class Facets extends React.Component {
 
         this.setState({selectedFacets})
         let queryRequest = this.props.getLastQueryRequest()
-        console.log("last query request ", queryRequest)
         queryRequest.query.selectedFacets = selectedFacetsFormatted
         this.props.executeQueryRequest(queryRequest)
     }
