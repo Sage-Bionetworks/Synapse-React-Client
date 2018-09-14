@@ -53,7 +53,7 @@ export default class SynapseTable extends React.Component {
         // TODO: Grab the facet selection...
         let queryRequest = {
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 isConsistent: true,
                 sql,
@@ -74,6 +74,10 @@ export default class SynapseTable extends React.Component {
         }
         const {data} = this.props
         const {columnModels} = data
+        console.log("data ", data)
+        const {queryResult} = data
+        const {queryResults} = queryResult
+        const {rows} = queryResults
 
         return (
             <div className="container">
@@ -92,6 +96,25 @@ export default class SynapseTable extends React.Component {
                             )}
                         </tr>
                     </thead>
+
+                    <tbody>
+                        <tr>
+                        {
+                            rows.map(
+                                (row, i) => {
+                                    return (
+                                        row.values.map(
+                                            (value, j) => {
+                                                return <td key={`(${i},${j})`}><p> {value} </p></td>
+                                            }
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                        </tr>
+                    </tbody>
+
                 </table>
             </div>
         )
