@@ -13,8 +13,11 @@ import CustomMarkdownView from 'lib/containers/CustomMarkdownView'
 
 import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
-import Facets from 'lib/containers/Facets';
 
+import QueryWrapper from 'lib/containers/QueryWrapper'
+import Facets from 'lib/containers/Facets';
+import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
+import SynapseTable from 'lib/containers/SynapseTable'
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -85,7 +88,6 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
-    console.log("upadting state ", updatedState)
     this.setState(
       updatedState
     );
@@ -169,6 +171,30 @@ class App extends Component {
                     >
           </MarkdownSynapse>
         </CustomMarkdownView>
+
+        <QueryWrapper
+          initQueryRequest = {{
+            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn15661198`,
+                limit: 25,
+                selectedFacets: [],
+                sort: []
+            }
+          }}
+          token={this.state.token}
+          sql={`SELECT * FROM syn15661198`}
+        >
+          <Facets>
+          </Facets>
+          <StackedRowHomebrew>
+          </StackedRowHomebrew>
+          <SynapseTable>
+          </SynapseTable>
+        </QueryWrapper>
+
 
       </div>
     );

@@ -45,7 +45,6 @@ var SynapsePlot = function (_React$Component) {
         value: function fetchPlotlyData() {
             var _this2 = this;
 
-            console.log("making call in fetch plotly data");
             var token = this.props.token;
             var query = this.props.widgetparamsMapped.query;
 

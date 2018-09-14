@@ -25,7 +25,6 @@ class SynapsePlot extends React.Component {
      * @returns data corresponding to plotly widget
      */
     fetchPlotlyData() {
-        console.log("making call in fetch plotly data")
         const {token} = this.props
         const {query} = this.props.widgetparamsMapped
         let queryRequest = {
