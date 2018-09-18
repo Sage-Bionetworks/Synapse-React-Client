@@ -49,7 +49,7 @@ export default class QueryWrapper extends React.Component {
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{
-                    return React.cloneElement(child, {showBy: "Disease", executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
+                    return React.cloneElement(child, {showBy: this.props.showBy, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
                 })} 
             </div>
         )

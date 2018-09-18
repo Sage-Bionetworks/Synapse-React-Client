@@ -7,14 +7,23 @@ export default class StackedRowHomebrew extends React.Component {
         super()
         this.handleHover = this.handleHover.bind(this)
         this.handleExit = this.handleExit.bind(this)
+        this.state = {
+            hoverText: ""
+        }
     }
 
-    handleHover = (info) => (event) => {
+    handleHover = (incomingText) => (event) => {
         event.target.style.boxShadow = "25px 20px"
+        if (this.state.hoverText !== incomingText) {
+            this.setState({hoverText: incomingText})
+        }
     }
 
-    handleExit = (info) => (event) => {
+    handleExit (event) {
         event.target.style.boxShadow = ""
+        if (this.state.hoverText !== "") {
+            this.setState({hoverText: ""})
+        }
     }
 
     render () {
@@ -57,7 +66,7 @@ export default class StackedRowHomebrew extends React.Component {
                     return (
                             <svg height={height} width={width} key={uuidv4()}
                                 onMouseEnter={this.handleHover(count)}
-                                onMouseLeave={this.handleExit(count)}
+                                onMouseLeave={this.handleExit}
                                 >
                                 <rect 
                                 height={height} width={width} style={rectStyle}>
@@ -67,7 +76,7 @@ export default class StackedRowHomebrew extends React.Component {
                             </svg>)
             }
         )}
-        <p> {this.props.showBy}  </p>
+        <p> {this.props.showBy} {this.state.hoverText} </p>
          </div>)
     }
 }

@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 const cloneDeep = require("lodash.clonedeep")
 const uuidv4 = require("uuid/v4")
+const SELECT_ALL = "select all"
+const DESELECT_ALL = "deselect all"
 
 class CheckboxGroup extends React.Component {
 
@@ -14,10 +16,10 @@ class CheckboxGroup extends React.Component {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 let uuId = uuidv4()
                 children.push(
-                    <div key={uniqueId}>
+                    <span style={{padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
                         <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
                         <label htmlFor={uuId}>{facetValue.value + ` (${facetValue.count})`}</label>
-                    </div>
+                    </span>
                 )
             }
         )
@@ -40,23 +42,25 @@ export default class Facets extends React.Component {
         this.state = {
             selectedFacets: {}
         }
+        this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
+        this.updateSelection = this.updateSelection.bind(this)
     }
 
-    recordSelections() {
-        let selectedFacets = {}
+    recordSelections(options) {
+        let facets = {}
         this.props.data.facets.forEach(
             (element) => {
-                if (element.facetType === "enumeration") {
+                if (element.facetType === "enumeration" && element.columnName === "createdBy") {
                     let selection = []
                     element.facetValues.forEach(
                         facetValue => {
-                            if (facetValue.isSelected) {
+                            if ((facetValue.isSelected || options === SELECT_ALL) && options !== DESELECT_ALL) {
                                 selection.push(facetValue.value)
                             }
                         }
                     )
                     if (selection.length > 0) {
-                        selectedFacets[element.columnName] = {
+                        facets[element.columnName] = {
                             columnName: element.columnName,
                             facetValues: selection,
                             concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest"
@@ -65,7 +69,7 @@ export default class Facets extends React.Component {
                 }
             }
         )
-        return selectedFacets
+        return facets
     }
 
     showFacetFilter() {
@@ -121,16 +125,25 @@ export default class Facets extends React.Component {
             specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
         }
 
+        this.updateStateAndMakeQuery(selectedFacets);
+    }
+
+    updateSelection = (selectionGroup) => (event) => {
+        event.preventDefault()
+        let selectedFacets  = this.recordSelections(selectionGroup)
+        this.updateStateAndMakeQuery(selectedFacets);
+    }
+
+    updateStateAndMakeQuery(selectedFacets) {
+        this.setState({ selectedFacets });
         let selectedFacetsFormatted = Object.keys(selectedFacets).map(
             key => {
                 return selectedFacets[key]
             }
         )
-
-        this.setState({selectedFacets})
-        let queryRequest = this.props.getLastQueryRequest()
-        queryRequest.query.selectedFacets = selectedFacetsFormatted
-        this.props.executeQueryRequest(queryRequest)
+        let queryRequest = this.props.getLastQueryRequest();
+        queryRequest.query.selectedFacets = selectedFacetsFormatted;
+        this.props.executeQueryRequest(queryRequest);
     }
     
     render () {
@@ -141,6 +154,11 @@ export default class Facets extends React.Component {
                         <form>
                             <div className="form-group">
                                 {this.showFacetFilter()}
+                            </div>
+                            <div className="form-group">
+                                <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
+                                |
+                                <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>
                             </div>
                         </form>
                     </div>
