@@ -8,10 +8,10 @@ configure({ adapter: new Adapter() });
 
 describe('basic functionality', () => {
     let SynapseClient
-    
+    let mockData    
     beforeAll(() => {
         SynapseClient = require('lib/utils/SynapseClient')
-        SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve({
+        mockData = {
             columnModels: [{
                 columnType: "ENTITYID",
                 name: "id",
@@ -25,7 +25,8 @@ describe('basic functionality', () => {
                     }]
                 }
             }
-        }))
+        }
+        SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
     })
     
     it ('make init query request', async () => {
@@ -38,9 +39,10 @@ describe('basic functionality', () => {
                 </SynapseTable>
             </QueryWrapper>)
     
-        expect(wrapper.find("table")).toHaveLength(1)
+        
+        expect(wrapper.find(SynapseTable)).toHaveLength(1)
         expect(wrapper.state().lastQueryRequest).toEqual({})
-        expect(wrapper.state().data).toEqual({data: "data"})
+        expect(wrapper.state().data).toEqual(mockData)
     })
 
 })
