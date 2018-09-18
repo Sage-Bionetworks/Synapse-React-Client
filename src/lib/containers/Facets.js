@@ -5,6 +5,13 @@ const uuidv4 = require("uuid/v4")
 const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
 
+
+/**
+ * Checkbox group represents one column's set of checkbox filters
+ *
+ * @class CheckboxGroup
+ * @extends {React.Component}
+ */
 class CheckboxGroup extends React.Component {
 
     render() {
@@ -14,6 +21,7 @@ class CheckboxGroup extends React.Component {
         element.facetValues.forEach(
             facetValue => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
+                // caution when using uuId's to not cause extra re-renders from this always changing
                 let uuId = uuidv4()
                 children.push(
                     <span style={{padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
@@ -39,6 +47,8 @@ export default class Facets extends React.Component {
         super(props)
         this.recordSelections = this.recordSelections.bind(this)
         this.handleClick = this.handleClick.bind(this)
+        // we store the selected facets by column name for ease of use,
+        // this has to be later converted when making the api call
         this.state = {
             selectedFacets: {}
         }
@@ -46,11 +56,21 @@ export default class Facets extends React.Component {
         this.updateSelection = this.updateSelection.bind(this)
     }
 
+
+    /**
+     * Record's selection choice
+     *
+     * @param {*} options either SELECT_ALL or DESELECT_ALL, specifies if either of those options
+     * were selected
+     * @returns
+     * @memberof Facets
+     */
     recordSelections(options) {
+        // this code must change-- currently isn't being updated correctly
         let facets = {}
         this.props.data.facets.forEach(
             (element) => {
-                if (element.facetType === "enumeration" && element.columnName === "createdBy") {
+                if (element.facetType === "enumeration") {
                     let selection = []
                     element.facetValues.forEach(
                         facetValue => {
@@ -72,6 +92,13 @@ export default class Facets extends React.Component {
         return facets
     }
 
+
+    /**
+     * Display the view of the facets
+     *
+     * @returns
+     * @memberof Facets
+     */
     showFacetFilter() {
         // iterate through the loaded data and write out the appropriate checkboxes,
         // filling in the state of the checkboxes according to the current selection
@@ -79,8 +106,9 @@ export default class Facets extends React.Component {
             return
         }
         let structuredRender = []
+        // read in the most up to date data
         let selectedFacets = this.recordSelections()
-
+        // display the data -- currently we only support enumerations
         this.props.data.facets.forEach(
             (element) => {
                 if (element.facetType === "enumeration") {
@@ -101,8 +129,13 @@ export default class Facets extends React.Component {
                 </div>)
     }
 
-    // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+    
+    /**
+     * Handle checkbox click event
+     */
     handleClick = (dict) => (event) => {
+        // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+
         let selectedFacets = cloneDeep(this.state.selectedFacets)
         // if there is no entry for this column name into the selection of facets
         if (!selectedFacets.hasOwnProperty(dict.columnName)) {
@@ -128,14 +161,28 @@ export default class Facets extends React.Component {
         this.updateStateAndMakeQuery(selectedFacets);
     }
 
+
+    /**
+     * Handle select all or deselect all event, selection group specifies which
+     * option was chosen
+     *
+     * @memberof Facets
+     */
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
         let selectedFacets  = this.recordSelections(selectionGroup)
         this.updateStateAndMakeQuery(selectedFacets);
     }
 
+    /**
+     * Update the state with selected facets and call props to update data
+     *
+     * @param {*} selectedFacets
+     * @memberof Facets
+     */
     updateStateAndMakeQuery(selectedFacets) {
         this.setState({ selectedFacets });
+        // have to reformat the selected facets to format for the api call
         let selectedFacetsFormatted = Object.keys(selectedFacets).map(
             key => {
                 return selectedFacets[key]
@@ -153,6 +200,7 @@ export default class Facets extends React.Component {
                     <div className="col-xs-6">
                         <form>
                             <div className="form-group">
+                                {/* populate the page with checkboxes */}
                                 {this.showFacetFilter()}
                             </div>
                             <div className="form-group">
