@@ -60,13 +60,14 @@ class App extends Component {
    * Make a query on synapse
    */
   makeSampleQueryCall () {
-   // Example table (view) query
+   // Example table (view) query.
+   // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
    let QUERY = {
     entityId: "syn12335586",
     query: {
       sql: "SELECT * FROM syn12335586",
       includeEntityEtag: true,
-      isConsistent: true,
+      isConsistent: false,
       offset: 0,
       limit: 100
     },
