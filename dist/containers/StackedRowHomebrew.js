@@ -9,6 +9,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 import React from 'react';
 var uuidv4 = require('uuid/v4');
 
+/**
+ * Make a simple stacked bar char
+ *
+ * @class StackedRowHomebrew
+ * @extends {React.Component}
+ */
+
 var StackedRowHomebrew = function (_React$Component) {
     _inherits(StackedRowHomebrew, _React$Component);
 
@@ -17,28 +24,62 @@ var StackedRowHomebrew = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (StackedRowHomebrew.__proto__ || Object.getPrototypeOf(StackedRowHomebrew)).call(this));
 
-        _this.handleHover = function (info) {
+        _this.handleHover = function (incomingText) {
             return function (event) {
+                // add box shadow
                 event.target.style.boxShadow = "25px 20px";
-            };
-        };
-
-        _this.handleExit = function (info) {
-            return function (event) {
-                event.target.style.boxShadow = "";
+                // careful to avoid an infinite loop
+                if (_this.state.hoverText !== incomingText) {
+                    _this.setState({ hoverText: incomingText });
+                }
             };
         };
 
         _this.handleHover = _this.handleHover.bind(_this);
         _this.handleExit = _this.handleExit.bind(_this);
+        // the text currently under the cursor
+        _this.state = {
+            hoverText: ""
+        };
         return _this;
     }
 
+    /**
+     * Updates the hover text and update the view
+     *
+     * @memberof StackedRowHomebrew
+     */
+
+
     _createClass(StackedRowHomebrew, [{
+        key: 'handleExit',
+
+
+        /**
+         * Update the hover text and the view
+         *
+         * @param {*} event
+         * @memberof StackedRowHomebrew
+         */
+        value: function handleExit(event) {
+            // remove box shadow
+            event.target.style.boxShadow = "";
+            // careful to avoid an infinite loop
+            if (this.state.hoverText !== "") {
+                this.setState({ hoverText: "" });
+            }
+        }
+
+        /**
+         * Display view
+         */
+
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
+            // while data hasn't queued up display loading
             if (this.props.data.length === 0) {
                 return React.createElement(
                     'div',
@@ -60,6 +101,7 @@ var StackedRowHomebrew = function (_React$Component) {
                     });
                 }
             });
+            // sort the data so that the largest bars are at the front
             x_data.sort(function (a, b) {
                 return b - a;
             });
@@ -95,19 +137,23 @@ var StackedRowHomebrew = function (_React$Component) {
                     var height = 50;
                     var width = count / total * 800;
 
-                    return React.createElement(
-                        'svg',
-                        { height: height, width: width, key: uuidv4(),
-                            onMouseEnter: _this2.handleHover(count),
-                            onMouseLeave: _this2.handleExit(count)
-                        },
-                        React.createElement('rect', {
-                            height: height, width: width, style: rectStyle }),
+                    return (
+                        // each svg represents one of the bars
+                        // will need to change this to be responsive
                         React.createElement(
-                            'text',
-                            { font: 'bold sans-serif', fill: 'white', x: width / 2, y: height / 2 },
-                            ' ',
-                            count
+                            'svg',
+                            { height: height, width: width, key: uuidv4(),
+                                onMouseEnter: _this2.handleHover(count),
+                                onMouseLeave: _this2.handleExit
+                            },
+                            React.createElement('rect', {
+                                height: height, width: width, style: rectStyle }),
+                            React.createElement(
+                                'text',
+                                { font: 'bold sans-serif', fill: 'white', x: width / 2, y: height / 2 },
+                                ' ',
+                                count
+                            )
                         )
                     );
                 }),
@@ -116,7 +162,9 @@ var StackedRowHomebrew = function (_React$Component) {
                     null,
                     ' ',
                     this.props.showBy,
-                    '  '
+                    ' ',
+                    this.state.hoverText,
+                    ' '
                 )
             );
         }

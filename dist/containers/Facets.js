@@ -9,6 +9,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 import React from 'react';
 import PropTypes from 'prop-types';
 var cloneDeep = require("lodash.clonedeep");
+var uuidv4 = require("uuid/v4");
+var SELECT_ALL = "select all";
+var DESELECT_ALL = "deselect all";
+
+/**
+ * Checkbox group represents one column's set of checkbox filters
+ *
+ * @class CheckboxGroup
+ * @extends {React.Component}
+ */
 
 var CheckboxGroup = function (_React$Component) {
     _inherits(CheckboxGroup, _React$Component);
@@ -29,13 +39,16 @@ var CheckboxGroup = function (_React$Component) {
             var children = [];
             var selectedFacets = this.props.selectedFacets;
             element.facetValues.forEach(function (facetValue) {
+                var uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count;
+                // caution when using uuId's to not cause extra re-renders from this always changing
+                var uuId = uuidv4();
                 children.push(React.createElement(
-                    'div',
-                    { key: facetValue.value + " " + facetValue.count },
-                    React.createElement('input', { defaultChecked: facetValue.isSelected, onClick: _this2.props.clickHandler({ selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName }), id: element.columnName + " " + facetValue.value + " " + facetValue.count, type: 'checkbox' }),
+                    'span',
+                    { style: { padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px" }, key: uniqueId },
+                    React.createElement('input', { defaultChecked: facetValue.isSelected, onClick: _this2.props.clickHandler({ selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName }), id: uuId, type: 'checkbox' }),
                     React.createElement(
                         'label',
-                        { htmlFor: facetValue.value + " " + facetValue.count },
+                        { htmlFor: uuId },
                         facetValue.value + (' (' + facetValue.count + ')')
                     )
                 ));
@@ -71,6 +84,8 @@ var Facets = function (_React$Component2) {
 
         _this3.handleClick = function (dict) {
             return function (event) {
+                // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+
                 var selectedFacets = cloneDeep(_this3.state.selectedFacets);
                 // if there is no entry for this column name into the selection of facets
                 if (!selectedFacets.hasOwnProperty(dict.columnName)) {
@@ -93,48 +108,55 @@ var Facets = function (_React$Component2) {
                     specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1);
                 }
 
-                var sql = _this3.props.sql;
+                _this3.updateStateAndMakeQuery(selectedFacets);
+            };
+        };
 
-
-                var selectedFacetsFormatted = Object.keys(selectedFacets).map(function (key) {
-                    return selectedFacets[key];
-                });
-
-                var queryRequest = {
-                    query: {
-                        isConsistent: true,
-                        sql: sql,
-                        limit: 25,
-                        selectedFacets: selectedFacetsFormatted
-                    }
-                };
-                _this3.setState({ selectedFacets: selectedFacets });
-                _this3.props.updateQueryRequest(queryRequest, "FACETS");
+        _this3.updateSelection = function (selectionGroup) {
+            return function (event) {
+                event.preventDefault();
+                var selectedFacets = _this3.recordSelections(selectionGroup);
+                _this3.updateStateAndMakeQuery(selectedFacets);
             };
         };
 
         _this3.recordSelections = _this3.recordSelections.bind(_this3);
         _this3.handleClick = _this3.handleClick.bind(_this3);
+        // we store the selected facets by column name for ease of use,
+        // this has to be later converted when making the api call
         _this3.state = {
             selectedFacets: {}
         };
+        _this3.updateStateAndMakeQuery = _this3.updateStateAndMakeQuery.bind(_this3);
+        _this3.updateSelection = _this3.updateSelection.bind(_this3);
         return _this3;
     }
 
+    /**
+     * Record's selection choice
+     *
+     * @param {*} options either SELECT_ALL or DESELECT_ALL, specifies if either of those options
+     * were selected
+     * @returns
+     * @memberof Facets
+     */
+
+
     _createClass(Facets, [{
         key: 'recordSelections',
-        value: function recordSelections() {
-            var selectedFacets = {};
+        value: function recordSelections(options) {
+            // this code must change-- currently isn't being updated correctly
+            var facets = {};
             this.props.data.facets.forEach(function (element) {
                 if (element.facetType === "enumeration") {
                     var selection = [];
                     element.facetValues.forEach(function (facetValue) {
-                        if (facetValue.isSelected) {
+                        if ((facetValue.isSelected || options === SELECT_ALL) && options !== DESELECT_ALL) {
                             selection.push(facetValue.value);
                         }
                     });
                     if (selection.length > 0) {
-                        selectedFacets[element.columnName] = {
+                        facets[element.columnName] = {
                             columnName: element.columnName,
                             facetValues: selection,
                             concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest"
@@ -142,8 +164,16 @@ var Facets = function (_React$Component2) {
                     }
                 }
             });
-            return selectedFacets;
+            return facets;
         }
+
+        /**
+         * Display the view of the facets
+         *
+         * @returns
+         * @memberof Facets
+         */
+
     }, {
         key: 'showFacetFilter',
         value: function showFacetFilter() {
@@ -155,8 +185,9 @@ var Facets = function (_React$Component2) {
                 return;
             }
             var structuredRender = [];
-            var selectedFacets = this.recordSelections(); // deep copy
-
+            // read in the most up to date data
+            var selectedFacets = this.recordSelections();
+            // display the data -- currently we only support enumerations
             this.props.data.facets.forEach(function (element) {
                 if (element.facetType === "enumeration") {
                     var group = React.createElement(CheckboxGroup, { key: element.columnName, selectedFacets: selectedFacets, element: element, clickHandler: _this4.handleClick });
@@ -173,8 +204,38 @@ var Facets = function (_React$Component2) {
             );
         }
 
-        // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+        /**
+         * Handle checkbox click event
+         */
 
+
+        /**
+         * Handle select all or deselect all event, selection group specifies which
+         * option was chosen
+         *
+         * @memberof Facets
+         */
+
+    }, {
+        key: 'updateStateAndMakeQuery',
+
+
+        /**
+         * Update the state with selected facets and call props to update data
+         *
+         * @param {*} selectedFacets
+         * @memberof Facets
+         */
+        value: function updateStateAndMakeQuery(selectedFacets) {
+            this.setState({ selectedFacets: selectedFacets });
+            // have to reformat the selected facets to format for the api call
+            var selectedFacetsFormatted = Object.keys(selectedFacets).map(function (key) {
+                return selectedFacets[key];
+            });
+            var queryRequest = this.props.getLastQueryRequest();
+            queryRequest.query.selectedFacets = selectedFacetsFormatted;
+            this.props.executeQueryRequest(queryRequest);
+        }
     }, {
         key: 'render',
         value: function render() {
@@ -194,6 +255,33 @@ var Facets = function (_React$Component2) {
                                 'div',
                                 { className: 'form-group' },
                                 this.showFacetFilter()
+                            ),
+                            React.createElement(
+                                'div',
+                                { className: 'form-group' },
+                                React.createElement(
+                                    'a',
+                                    { href: "", onClick: this.updateSelection(SELECT_ALL) },
+                                    '   ',
+                                    React.createElement(
+                                        'u',
+                                        null,
+                                        '  Select All '
+                                    ),
+                                    ' '
+                                ),
+                                '|',
+                                React.createElement(
+                                    'a',
+                                    { href: "", onClick: this.updateSelection(DESELECT_ALL) },
+                                    ' ',
+                                    React.createElement(
+                                        'u',
+                                        null,
+                                        '  Unselect All '
+                                    ),
+                                    ' '
+                                )
                             )
                         )
                     )

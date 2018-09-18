@@ -8,6 +8,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 var cloneDeep = require("lodash.clonedeep");
+// Hold constants for next and previous button actions
+var NEXT = "NEXT";
+var PREVIOUS = "PREVIOUS";
 
 var SynapseTable = function (_React$Component) {
     _inherits(SynapseTable, _React$Component);
@@ -17,9 +20,20 @@ var SynapseTable = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (SynapseTable.__proto__ || Object.getPrototypeOf(SynapseTable)).call(this));
 
-        _this.handlePaginationClick = function (name) {
+        _this.handlePaginationClick = function (eventType) {
             return function (event) {
-                // TODO: Implement
+                var queryRequest = _this.props.getLastQueryRequest();
+                var currentOffset = queryRequest.query.offset;
+                // if its a "previous" click subtract from the offset
+                // otherwise its next and we paginate forward
+                if (eventType === PREVIOUS) {
+                    currentOffset -= 25;
+                }
+                if (eventType === NEXT) {
+                    currentOffset += 25;
+                }
+                queryRequest.query.offset = currentOffset;
+                _this.props.executeQueryRequest(queryRequest);
             };
         };
 
@@ -67,19 +81,9 @@ var SynapseTable = function (_React$Component) {
                     direction: direction
                 });
 
-                var sql = _this.props.sql;
-                // TODO: Grab the facet selection...
-
-                var queryRequest = {
-                    query: {
-                        isConsistent: true,
-                        sql: sql,
-                        limit: 25,
-                        sort: sortSelection
-                    }
-                };
-
-                _this.props.updateQueryRequest(queryRequest, "TABLE");
+                var queryRequest = _this.props.getLastQueryRequest();
+                queryRequest.query.sort = sortSelection;
+                _this.props.executeQueryRequest(queryRequest);
                 _this.setState({
                     sortSelection: sortSelection
                 });
@@ -88,14 +92,35 @@ var SynapseTable = function (_React$Component) {
 
         _this.handleColumnClick = _this.handleColumnClick.bind(_this);
         _this.handlePaginationClick = _this.handlePaginationClick.bind(_this);
+        // store the offset and sorted selection that is currently held
         _this.state = {
-            sortSelection: []
+            sortSelection: [],
+            offset: 0
         };
         return _this;
     }
 
+    /**
+     * Handle a click on next or previous
+     *
+     * @memberof SynapseTable
+     */
+
+
+    /**
+     * Handle a column having been selected
+     *
+     * @memberof SynapseTable
+     */
+
+
     _createClass(SynapseTable, [{
         key: "render",
+
+
+        /**
+         * Display the view
+         */
         value: function render() {
             var _this2 = this;
 
@@ -107,6 +132,7 @@ var SynapseTable = function (_React$Component) {
                 );
             }
 
+            // unpack all the data
             var data = this.props.data;
             var columnModels = data.columnModels;
             var queryResult = data.queryResult;
@@ -137,6 +163,10 @@ var SynapseTable = function (_React$Component) {
                 );
                 rowsFormatted.push(rowFormatted);
             });
+
+            // handle displaying the previous button -- if offset is zero then it
+            // shouldn't be displayed
+            var pastZero = this.props.getLastQueryRequest().query.offset > 0;
 
             return React.createElement(
                 "div",
@@ -174,14 +204,14 @@ var SynapseTable = function (_React$Component) {
                         })
                     )
                 ),
-                React.createElement(
+                pastZero && React.createElement(
                     "button",
-                    { onClick: this.handlePaginationClick("previous"), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
+                    { onClick: this.handlePaginationClick(PREVIOUS), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
                     "Previous"
                 ),
                 React.createElement(
                     "button",
-                    { onClick: this.handlePaginationClick("next"), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
+                    { onClick: this.handlePaginationClick(NEXT), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
                     "Next"
                 )
             );

@@ -180,12 +180,14 @@ class App extends Component {
                 isConsistent: false,
                 sql: `SELECT * FROM syn15661198`,
                 limit: 25,
+                offset: 0,
                 selectedFacets: [],
                 sort: []
             }
           }}
           token={this.state.token}
           sql={`SELECT * FROM syn15661198`}
+          showBy={"Disease"}
         >
           <Facets>
           </Facets>

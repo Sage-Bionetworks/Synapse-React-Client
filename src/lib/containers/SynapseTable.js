@@ -1,5 +1,8 @@
 import React from 'react'
 const cloneDeep = require("lodash.clonedeep")
+// Hold constants for next and previous button actions
+const NEXT = "NEXT"
+const PREVIOUS = "PREVIOUS"
 
 export default class SynapseTable extends React.Component {
 
@@ -7,15 +10,38 @@ export default class SynapseTable extends React.Component {
         super()
         this.handleColumnClick = this.handleColumnClick.bind(this)
         this.handlePaginationClick = this.handlePaginationClick.bind(this)
+        // store the offset and sorted selection that is currently held
         this.state = {
-            sortSelection: []
+            sortSelection: [],
+            offset: 0
         }
     }
 
-    handlePaginationClick = (name) => (event) => {
-        // TODO: Implement
+    /**
+     * Handle a click on next or previous
+     *
+     * @memberof SynapseTable
+     */
+    handlePaginationClick = (eventType) => (event) => {
+        let queryRequest = this.props.getLastQueryRequest()
+        let currentOffset = queryRequest.query.offset
+        // if its a "previous" click subtract from the offset
+        // otherwise its next and we paginate forward
+        if (eventType === PREVIOUS)  {
+            currentOffset -= 25
+        }
+        if (eventType === NEXT) {
+            currentOffset += 25
+        }
+        queryRequest.query.offset = currentOffset
+        this.props.executeQueryRequest(queryRequest)
     }
 
+    /**
+     * Handle a column having been selected
+     *
+     * @memberof SynapseTable
+     */
     handleColumnClick = (name) => (event) => {
         let element = null
         // weird onclick behavior that sometimes hits
@@ -69,11 +95,15 @@ export default class SynapseTable extends React.Component {
         })
     }
 
+    /**
+     * Display the view
+     */
     render() {
         if (this.props.data.length === 0) {
             return (<div className="container"> loading table </div>)
         }
 
+        // unpack all the data
         const {data} = this.props
         const {columnModels} = data
         const {queryResult} = data
@@ -94,9 +124,14 @@ export default class SynapseTable extends React.Component {
             rowsFormatted.push(rowFormatted)
         });
 
+        // handle displaying the previous button -- if offset is zero then it
+        // shouldn't be displayed
+        let pastZero = this.props.getLastQueryRequest().query.offset > 0
+
         return (
             <div className="container">
                 <table className="table table-striped table-condensed">
+                    {/* show the column headers */}
                     <thead>
                         <tr>
                             <th></th>
@@ -111,7 +146,7 @@ export default class SynapseTable extends React.Component {
                             )}
                         </tr>
                     </thead>
-
+                    {/* show the actual table body */}
                     <tbody>
                         {rowsFormatted.map(
                             rowFormatted => {
@@ -120,10 +155,10 @@ export default class SynapseTable extends React.Component {
                         )}
                     </tbody>
                 </table>
-                <button onClick={this.handlePaginationClick("previous")} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
                     Previous
-                </button>
-                <button onClick={this.handlePaginationClick("next")} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                </button>}
+                <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
                     Next
                 </button>
             </div>
