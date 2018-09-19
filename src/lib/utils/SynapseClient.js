@@ -132,7 +132,7 @@ export const getQueryTableResults =
         })
       }
 
-  
+      
    /**
    *  Run and return results from queryBundleRequest, queryBundle request must be of the
    *  form:
@@ -214,6 +214,29 @@ export const login =
 (username, password, endpoint = 'https://repo-prod.prod.sagebase.org') => {
     return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint)
   }
+
+/**
+ * Get redirect url 
+ * https://docs.synapse.org/rest/POST/oauth2/authurl.html
+ * @param {*} provider 
+ * @param {*} redirectUrl 
+ * @param {*} endpoint 
+ */
+export var oAuthUrlRequest = function(provider, redirectUrl, endpoint = 'https://repo-prod.prod.sagebase.org') {
+  return doPost('/auth/v1/oauth2/authurl', {provider, redirectUrl}, undefined, endpoint)
+}
+  
+/**
+ * Get session token from SSO
+ * https://docs.synapse.org/rest/POST/oauth2/session.html
+ * @param {*} provider 
+ * @param {*} authenticationCode 
+ * @param {*} redirectUrl 
+ * @param {*} endpoint 
+ */
+export var oAuthSessionRequest = function(provider, authenticationCode, redirectUrl, endpoint = 'https://repo-prod.prod.sagebase.org') {
+  return doPost('/auth/v1/oauth2/session', {provider, authenticationCode, redirectUrl}, undefined, endpoint)
+}
 
 /** Create an entity (Project, Folder, File, Table, View) 
  * http://docs.synapse.org/rest/POST/entity.html

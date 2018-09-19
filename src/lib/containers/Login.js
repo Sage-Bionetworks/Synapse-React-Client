@@ -1,8 +1,16 @@
 import React from "react";
+import * as SynapseClient from "lib/utils/SynapseClient";
+import GoogleIcon from 'assets/GoogleIcon'
+import ButtonContent from 'assets/ButtonContent'
 
+const GOOGLE_OAUTH = "GOOGLE_OAUTH_2_0"
 /**
  *  Demo of user session, show login screen and handling user login submission.
- *
+ * 
+ *  To support Google SSO in your portal, you must add your domain to the Authorized Redirect URIs for Synapse authentication.
+ *  This can be done by contacting synapseInfo@sagebionetworks.org to form a collaboration.  
+ *  Synapse engineers must add your redirect URL in the Google API console found at https://console.cloud.google.com/ for this functionality to work.
+ * 
  * @class Login
  * @extends {React.Component}
  */
@@ -28,6 +36,8 @@ class Login extends React.Component {
         this.getTokenView = this.getTokenView.bind(this)
         this.getLoginFailureView = this.getLoginFailureView.bind(this)
         this.getSignInStateView = this.getSignInStateView.bind(this)
+        this.onSignOut = this.onSignOut.bind(this)
+        this.onSignIn = this.onSignIn.bind(this)
     }
 
     /**
@@ -51,7 +61,7 @@ class Login extends React.Component {
      */
     handleLogin(clickEvent) {
         clickEvent.preventDefault()  // avoid page refresh
-        this.props.loginEndpoint(this.state.username, this.state.password).then(
+        SynapseClient.login(this.state.username, this.state.password).then(
             data => {
                 this.props.onTokenChange({ token: data.sessionToken })
                 this.setState({
@@ -124,7 +134,67 @@ class Login extends React.Component {
         }
     }
 
+    componentDidMount() {
+        let code = new URL(window.location.href).searchParams.get("code")
+        if (code) {
+            SynapseClient.oAuthSessionRequest(GOOGLE_OAUTH, code , `http://localhost:3000/?provider=${GOOGLE_OAUTH}`).then(
+                synToken => {
+                    this.props.onTokenChange({token: synToken.sessionToken})
+                    this.setState({
+                        isSignedIn: true,
+                        hasLoginInFailed: false,
+                        errorMessage: ""
+                    })
+                }
+            ).catch(
+                err => {
+                    console.log("error on auth request ", err)
+                }
+            )
+        }
+    }
+    
+    onSignIn(event) {
+        event.preventDefault()
+        SynapseClient.oAuthUrlRequest(GOOGLE_OAUTH,`http://localhost:3000/?provider=${GOOGLE_OAUTH}`).then(data => {
+            let authUrl = data.authorizationUrl
+            window.location = authUrl  // ping the url
+        }).catch(
+            err => 
+                {
+                    console.log("error here", err)
+                }
+        )
+    }
+
+    onSignOut(event) {
+        event.preventDefault()
+        this.props.onTokenChange({ token: "" })
+        this.setState({
+            isSignedIn: false,
+            hasLoginInFailed: false,
+            errorMessage: ""
+        })
+    }
+
     render() {
+        const {theme, icon, buttonText} = this.props
+
+        const initialStyle = {
+            backgroundColor: theme === 'dark' ? 'rgb(66, 133, 244)' : '#fff',
+            display: 'inline-flex',
+            alignItems: 'center',
+            color: theme === 'dark' ? '#fff' : 'rgba(0, 0, 0, .54)',
+            boxShadow: '0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24)',
+            padding: 0,
+            borderRadius: 2,
+            border: '1px solid transparent',
+            fontSize: 14,
+            fontWeight: '500',
+            fontFamily: 'Roboto, sans-serif'
+          }
+
+
         return (
             <div id="loginPage" className="container syn-example">
                 <h3 className="text-left"> Demo login with session token printed to screen</h3>
@@ -145,6 +215,19 @@ class Login extends React.Component {
                     </div>
                     {this.getLoginFailureView()}
                     <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">Submit</button>
+                </form>
+                <form >
+                    {!this.state.isSignedIn && <button onClick={this.onSignIn} style={initialStyle}>
+                        <GoogleIcon key={1} active={true}/>
+                        <ButtonContent icon={icon} key={2}>
+                            {buttonText}
+                        </ButtonContent>
+                    </button>}
+                    {this.state.isSignedIn && <button onClick={this.onSignOut} style={initialStyle}>
+                        <ButtonContent icon={icon} key={3}>
+                            Sign out
+                        </ButtonContent>
+                    </button>}
                 </form>
             </div>
         )

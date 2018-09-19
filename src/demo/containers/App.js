@@ -130,7 +130,10 @@ class App extends Component {
 
         <Login onTokenChange={this.handleChange}
                token={this.state.token}
-               loginEndpoint={SynapseClient.login}>
+               theme={"light"}
+               icon={true}
+               buttonText={"Sign in with Google"}
+               >
         </Login>
         
         <UserFavorites token={this.state.token}
@@ -196,12 +199,9 @@ class App extends Component {
           <SynapseTable>
           </SynapseTable>
         </QueryWrapper>
-
-
       </div>
     );
   }
-
 }
 
 export default App;
