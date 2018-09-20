@@ -233,27 +233,25 @@ export default class StackedRowHomebrew extends React.Component {
 
         return (
             <div style={{marginBottom:"50px"}} className="container">
-                <div> 
-                    <span>
-                        <strong> {total} </strong> files shown by {this.props.alias}
-                    </span>
-                    <button 
-                        className="btn btn-default"
-                        type="button" 
-                        onClick={this.handleArrowClick(NEXT_CLICK)} 
-                        style={{float:"right"}}>
-                        <i className="fas fa-angle-right"></i>
-                    </button>
-                    <button 
-                        className="btn btn-default"
-                        type="button"
-                        onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)} 
-                        style={{float:"right"}}> 
-                        <i className="fas fa-angle-left"></i> 
-                    </button>
-                </div>
+                <span>
+                    <strong> {total} </strong> files shown by {this.props.alias}
+                </span>
+                <button 
+                    className="btn btn-default"
+                    type="button" 
+                    onClick={this.handleArrowClick(NEXT_CLICK)} 
+                    style={{float:"right"}}>
+                    <i className="fas fa-angle-right"></i>
+                </button>
+                <button 
+                    className="btn btn-default"
+                    type="button"
+                    onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)} 
+                    style={{float:"right"}}> 
+                    <i className="fas fa-angle-left"></i> 
+                </button>
 
-                <div className="container" ref={this.chartRef}>
+                <div ref={this.chartRef}>
                     {x_data.map(
                         (obj, index) => {
                             let rectStyle = {
