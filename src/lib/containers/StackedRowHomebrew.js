@@ -295,8 +295,8 @@ export default class StackedRowHomebrew extends React.Component {
                     )}
                 </div>
                 {this.state.hoverText && <div> <i className="fas fa-caret-down"></i>  </div>}
-                {this.state.hoverText && <p> {this.props.alias}: {this.state.hoverText} </p>}
-                {this.state.hoverText && <p> <i> {this.state.hoverTextCount} files </i> </p>}
+                {this.state.hoverText && <p className="noMargin" > {this.props.alias}: {this.state.hoverText} </p>}
+                {this.state.hoverText && <p className="noMargin" > <i> {this.state.hoverTextCount} files </i> </p>}
             </div>
         )
     }

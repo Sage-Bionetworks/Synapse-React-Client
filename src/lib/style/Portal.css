@@ -147,3 +147,9 @@ svg:hover {
 
 .syn-lightbackground {
   background: #f9f9f9; }
+
+body {
+  font-family: "Lato" !important; }
+
+.noMargin {
+  margin: 0px !important; }

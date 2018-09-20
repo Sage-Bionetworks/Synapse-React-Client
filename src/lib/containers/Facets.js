@@ -24,7 +24,7 @@ class CheckboxGroup extends React.Component {
                 // caution when using uuId's to not cause extra re-renders from this always changing
                 let uuId = uuidv4()
                 children.push(
-                    <span style={{padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
+                    <span style={{padding: "4px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
                         <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
                         <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
                     </span>
@@ -213,7 +213,7 @@ export default class Facets extends React.Component {
                         </div>
                         <div className="form-group">
                             <p>
-                                <strong> {this.state.boxCount} {this.props.alias}s selected  </strong>
+                                <strong> {this.state.boxCount} {this.props.alias}s selected.  </strong>
                                 <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
                                 |
                                 <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>
