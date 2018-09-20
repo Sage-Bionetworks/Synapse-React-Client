@@ -49,7 +49,16 @@ var CheckboxGroup = function (_React$Component) {
                     React.createElement(
                         'label',
                         { htmlFor: uuId },
-                        facetValue.value + (' (' + facetValue.count + ')')
+                        ' ',
+                        React.createElement(
+                            'strong',
+                            null,
+                            ' ',
+                            facetValue.value,
+                            ' '
+                        ),
+                        '  ',
+                        facetValue.count
                     )
                 ));
             });
@@ -103,16 +112,25 @@ var Facets = function (_React$Component2) {
                     selectedFacets[dict.columnName] = newEntry;
                 }
 
+                var boxCount = _this3.state.boxCount;
+
                 // grab the facet values assoicated for this column
+
                 var specificFacet = selectedFacets[dict.columnName];
                 // if its not selected then we add as having been chosen, otherwise we 
                 // have to delete it
                 if (specificFacet.facetValues.indexOf(dict.value) === -1) {
                     specificFacet.facetValues.push(dict.value);
+                    boxCount++;
                 } else {
                     // remove value
                     specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1);
+                    boxCount--;
                 }
+
+                _this3.setState({
+                    boxCount: boxCount
+                });
 
                 _this3.updateStateAndMakeQuery(selectedFacets);
             };
@@ -131,7 +149,8 @@ var Facets = function (_React$Component2) {
         // we store the selected facets by column name for ease of use,
         // this has to be later converted when making the api call
         _this3.state = {
-            selectedFacets: {}
+            selectedFacets: {},
+            boxCount: 0
         };
         _this3.updateStateAndMakeQuery = _this3.updateStateAndMakeQuery.bind(_this3);
         _this3.updateSelection = _this3.updateSelection.bind(_this3);
@@ -247,24 +266,33 @@ var Facets = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 'div',
-                { className: 'container syn-border syn-border-spacing' },
+                { className: 'container syn-lightbackground syn-border-spacing ' },
                 React.createElement(
                     'div',
-                    { className: 'row', style: { padding: "7px" } },
+                    { className: 'col-xs' },
                     React.createElement(
-                        'div',
-                        { className: 'col-xs' },
+                        'form',
+                        null,
                         React.createElement(
-                            'form',
-                            null,
+                            'div',
+                            { className: 'form-group' },
+                            this.showFacetFilter()
+                        ),
+                        React.createElement(
+                            'div',
+                            { className: 'form-group' },
                             React.createElement(
-                                'div',
-                                { className: 'form-group' },
-                                this.showFacetFilter()
-                            ),
-                            React.createElement(
-                                'div',
-                                { className: 'form-group' },
+                                'p',
+                                null,
+                                React.createElement(
+                                    'strong',
+                                    null,
+                                    ' ',
+                                    this.state.boxCount,
+                                    ' ',
+                                    this.props.alias,
+                                    's selected  '
+                                ),
                                 React.createElement(
                                     'a',
                                     { href: "", onClick: this.updateSelection(SELECT_ALL) },

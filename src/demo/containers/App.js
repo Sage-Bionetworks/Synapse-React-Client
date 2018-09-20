@@ -134,6 +134,7 @@ class App extends Component {
                icon={true}
                buttonText={"Sign in with Google"}
                authProvider={"GOOGLE_OAUTH_2_0"}
+               redirectURL={"http://localhost:3000/"}
                >
         </Login>
         

@@ -222,7 +222,7 @@ var Login = function (_React$Component) {
             var code = new URL(window.location.href);
             // in test environment the searchParams isn't defined
             if (code.searchParams && (code = code.searchParams.get("code"))) {
-                SynapseClient.oAuthSessionRequest(this.props.authProvider, code, "http://localhost:3000/?provider=" + this.props.authProvider).then(function (synToken) {
+                SynapseClient.oAuthSessionRequest(this.props.authProvider, code, this.props.redirectURL + "?provider=" + this.props.authProvider).then(function (synToken) {
                     _this4.props.onTokenChange({ token: synToken.sessionToken });
                     _this4.setState({
                         isSignedIn: true,
@@ -238,7 +238,7 @@ var Login = function (_React$Component) {
         key: "onSignIn",
         value: function onSignIn(event) {
             event.preventDefault();
-            SynapseClient.oAuthUrlRequest(this.props.authProvider, "http://localhost:3000/?provider=" + this.props.authProvider).then(function (data) {
+            SynapseClient.oAuthUrlRequest(this.props.authProvider, this.props.redirectURL + "?provider=" + this.props.authProvider).then(function (data) {
                 var authUrl = data.authorizationUrl;
                 window.location = authUrl; // ping the url
             }).catch(function (err) {

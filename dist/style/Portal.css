@@ -136,9 +136,14 @@ svg:hover {
   filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 0.5));
   cursor: pointer; }
 
-.syn-border syn-border-spacing {
+.syn-border {
   border-color: lightgray;
   border-style: solid;
-  border-width: 1px;
+  border-width: 1px; }
+
+.syn-border-spacing {
   padding: 10px;
   margin-bottom: 10px; }
+
+.syn-lightbackground {
+  background: #f9f9f9; }

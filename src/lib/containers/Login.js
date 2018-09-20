@@ -137,7 +137,7 @@ class Login extends React.Component {
         let code = new URL(window.location.href)
         // in test environment the searchParams isn't defined
         if (code.searchParams && (code = code.searchParams.get("code"))) {
-            SynapseClient.oAuthSessionRequest(this.props.authProvider, code , `http://localhost:3000/?provider=${this.props.authProvider}`).then(
+            SynapseClient.oAuthSessionRequest(this.props.authProvider, code , `${this.props.redirectURL}?provider=${this.props.authProvider}`).then(
                 synToken => {
                     this.props.onTokenChange({token: synToken.sessionToken})
                     this.setState({
@@ -156,7 +156,7 @@ class Login extends React.Component {
     
     onSignIn(event) {
         event.preventDefault()
-        SynapseClient.oAuthUrlRequest(this.props.authProvider,`http://localhost:3000/?provider=${this.props.authProvider}`).then(data => {
+        SynapseClient.oAuthUrlRequest(this.props.authProvider,`${this.props.redirectURL}?provider=${this.props.authProvider}`).then(data => {
             let authUrl = data.authorizationUrl
             window.location = authUrl  // ping the url
         }).catch(
