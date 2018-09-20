@@ -8,6 +8,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 var uuidv4 = require('uuid/v4');
+var LEFT_CLICK = "left click";
+var RIGHT_CLICK = "right click";
 
 /**
  * Make a simple stacked bar char
@@ -24,23 +26,67 @@ var StackedRowHomebrew = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (StackedRowHomebrew.__proto__ || Object.getPrototypeOf(StackedRowHomebrew)).call(this));
 
-        _this.handleHover = function (incomingText) {
+        _this.handleClick = function (dict) {
             return function (event) {
-                // add box shadow
-                event.target.style.boxShadow = "25px 20px";
-                // careful to avoid an infinite loop
-                if (_this.state.hoverText !== incomingText) {
-                    _this.setState({ hoverText: incomingText });
-                }
+                // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+                _this.setState({
+                    hoverText: dict.value,
+                    hoverTextCount: dict.count,
+                    index: dict.index
+                });
             };
+        };
+
+        _this.handleArrowClick = function (direction) {
+            return function (event) {
+                var index = _this.state.index;
+
+                var dict = _this.extractPropsData(_this.props.data);
+                var length = Object.keys(dict).length;
+
+                if (direction === LEFT_CLICK) {
+                    if (index === 0) {
+                        // wrap around
+                        index = length - 1;
+                    } else {
+                        index -= 1;
+                    }
+                } else {
+                    if (index === length - 1) {
+                        index = 0;
+                    } else {
+                        index += 1;
+                    }
+                }
+                dict = dict[index];
+                _this.setState({
+                    hoverText: dict.value,
+                    hoverTextCount: dict.count,
+                    index: index
+                });
+            };
+        };
+
+        _this.resize = function () {
+            _this.forceUpdate();
         };
 
         _this.handleHover = _this.handleHover.bind(_this);
         _this.handleExit = _this.handleExit.bind(_this);
+        _this.handleClick = _this.handleClick.bind(_this);
+        _this.handleArrowClick = _this.handleArrowClick.bind(_this);
         // the text currently under the cursor
         _this.state = {
-            hoverText: ""
+            hoverText: "",
+            hoverTextCount: 0,
+            selectedFacets: {},
+            width: 0,
+            index: 0,
+            colors: ["#222222", "#3c3c3c", "#595959", "#787878", "#989898", "#bbbbbb", "#dddddd"]
         };
+        _this.chartRef = React.createRef();
+        _this.resize = _this.resize.bind(_this);
+        _this.extractPropsData = _this.extractPropsData.bind(_this);
         return _this;
     }
 
@@ -52,8 +98,11 @@ var StackedRowHomebrew = function (_React$Component) {
 
 
     _createClass(StackedRowHomebrew, [{
-        key: 'handleExit',
-
+        key: 'handleHover',
+        value: function handleHover(event) {
+            // add box shadow
+            event.target.style.boxShadow = "25px 20px";
+        }
 
         /**
          * Update the hover text and the view
@@ -61,13 +110,53 @@ var StackedRowHomebrew = function (_React$Component) {
          * @param {*} event
          * @memberof StackedRowHomebrew
          */
+
+    }, {
+        key: 'handleExit',
         value: function handleExit(event) {
             // remove box shadow
             event.target.style.boxShadow = "";
-            // careful to avoid an infinite loop
-            if (this.state.hoverText !== "") {
-                this.setState({ hoverText: "" });
-            }
+        }
+
+        /**
+         * Handle column click event
+         */
+
+    }, {
+        key: 'updateStateAndMakeQuery',
+
+
+        /**
+         * Update the state with selected facets and call props to update data
+         *
+         * @param {*} selectedFacets
+         * @memberof Facets
+         */
+        value: function updateStateAndMakeQuery(selectedFacets) {
+            this.setState({ selectedFacets: selectedFacets });
+            // have to reformat the selected facets to format for the api call
+            var selectedFacetsFormatted = Object.keys(selectedFacets).map(function (key) {
+                return selectedFacets[key];
+            });
+            var queryRequest = this.props.getLastQueryRequest();
+            queryRequest.query.selectedFacets = selectedFacetsFormatted;
+            this.props.executeQueryRequest(queryRequest);
+        }
+
+        // Handle user cycling through slices of the bar chart
+
+
+        // handle resizing of browser to make graphic responsive
+
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            window.addEventListener('resize', this.resize);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            window.removeEventListener('resize', this.resize);
         }
 
         /**
@@ -91,82 +180,149 @@ var StackedRowHomebrew = function (_React$Component) {
             var data = this.props.data;
 
 
+            var x_data = this.extractPropsData(data);
+            var total = 0;
+
+            // sum up the counts of data
+            for (var key in x_data) {
+                if (x_data.hasOwnProperty(key)) {
+                    total += x_data[key].count;
+                }
+            }
+            var colors = this.state.colors;
+
+
+            return React.createElement(
+                'div',
+                { style: { marginBottom: "50px" }, className: 'container' },
+                React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        'span',
+                        null,
+                        React.createElement(
+                            'strong',
+                            null,
+                            ' ',
+                            total,
+                            ' '
+                        ),
+                        ' files shown by ',
+                        this.props.alias
+                    ),
+                    React.createElement(
+                        'button',
+                        {
+                            className: 'btn btn-default',
+                            type: 'button',
+                            onClick: this.handleArrowClick(RIGHT_CLICK),
+                            style: { float: "right" } },
+                        React.createElement('i', { className: 'fas fa-angle-right' })
+                    ),
+                    React.createElement(
+                        'button',
+                        {
+                            className: 'btn btn-default',
+                            type: 'button',
+                            onClick: this.handleArrowClick(LEFT_CLICK),
+                            style: { float: "right" } },
+                        React.createElement('i', { className: 'fas fa-angle-left' })
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'container', ref: this.chartRef },
+                    x_data.map(function (obj, index) {
+                        var rectStyle = {
+                            margin: '0px',
+                            fill: '' + colors[index],
+                            strokeWidth: '0px',
+                            boxShadow: "20px 20px"
+                        };
+                        var height = 50;
+                        var width = void 0;
+                        if (_this2.state.width === 0) {
+                            width = obj.count / total * (window.innerWidth / 2);
+                        } else {
+                            // this doesn't work yet but is a better heuristic than above
+                            width = obj.count / total * (_this2.state.width / 1.5);
+                        }
+                        return (
+                            // each svg represents one of the bars
+                            // will need to change this to be responsive
+                            React.createElement(
+                                'svg',
+                                { height: height, width: width, key: uuidv4(),
+                                    onMouseEnter: _this2.handleHover,
+                                    onClick: _this2.handleClick(Object.assign({}, obj, { index: index })),
+                                    onMouseLeave: _this2.handleExit },
+                                React.createElement('rect', {
+                                    height: height,
+                                    width: width,
+                                    style: rectStyle }),
+                                React.createElement(
+                                    'text',
+                                    {
+                                        font: 'bold sans-serif',
+                                        fill: 'white',
+                                        x: width / 2,
+                                        y: height / 2 },
+                                    index < 3 && obj.count
+                                )
+                            )
+                        );
+                    })
+                ),
+                this.state.hoverText && React.createElement(
+                    'div',
+                    null,
+                    ' ',
+                    React.createElement('i', { className: 'fas fa-caret-down' }),
+                    '  '
+                ),
+                this.state.hoverText && React.createElement(
+                    'p',
+                    null,
+                    ' ',
+                    this.props.alias,
+                    ': ',
+                    this.state.hoverText,
+                    ' '
+                ),
+                this.state.hoverText && React.createElement(
+                    'p',
+                    null,
+                    ' ',
+                    React.createElement(
+                        'i',
+                        null,
+                        ' ',
+                        this.state.hoverTextCount,
+                        ' files '
+                    ),
+                    ' '
+                )
+            );
+        }
+    }, {
+        key: 'extractPropsData',
+        value: function extractPropsData(data) {
             var x_data = [];
             data.facets.forEach(function (item) {
                 if (item.facetType === "enumeration") {
                     item.facetValues.forEach(function (facetValue) {
                         if (item.columnName === "parentId") {
-                            x_data.push(facetValue.count);
+                            x_data.push(Object.assign({ columnName: item.columnName }, facetValue));
                         }
                     });
                 }
             });
             // sort the data so that the largest bars are at the front
             x_data.sort(function (a, b) {
-                return b - a;
+                return b.count - a.count;
             });
-            var total = x_data.reduce(function (a, b) {
-                return a + b;
-            });
-            var colors = ['#dddddd', '#bbbbbb', '#989898', '#787878', '#595959', '#3c3c3c', '#222222'].reverse();
-            return React.createElement(
-                'div',
-                { style: { marginBottom: "50px" }, className: 'container' },
-                React.createElement(
-                    'p',
-                    null,
-                    ' ',
-                    React.createElement(
-                        'strong',
-                        null,
-                        ' ',
-                        total,
-                        ' '
-                    ),
-                    ' files shown by ',
-                    this.props.showBy,
-                    ' '
-                ),
-                x_data.map(function (count, index) {
-                    var rectStyle = {
-                        margin: '0px',
-                        fill: '' + colors[index],
-                        strokeWidth: '0px',
-                        boxShadow: "20px 20px"
-                    };
-                    var height = 50;
-                    var width = count / total * 800;
-
-                    return (
-                        // each svg represents one of the bars
-                        // will need to change this to be responsive
-                        React.createElement(
-                            'svg',
-                            { height: height, width: width, key: uuidv4(),
-                                onMouseEnter: _this2.handleHover(count),
-                                onMouseLeave: _this2.handleExit
-                            },
-                            React.createElement('rect', {
-                                height: height, width: width, style: rectStyle }),
-                            React.createElement(
-                                'text',
-                                { font: 'bold sans-serif', fill: 'white', x: width / 2, y: height / 2 },
-                                ' ',
-                                count
-                            )
-                        )
-                    );
-                }),
-                React.createElement(
-                    'p',
-                    null,
-                    ' ',
-                    this.props.showBy,
-                    ' ',
-                    this.state.hoverText,
-                    ' '
-                )
-            );
+            return x_data;
         }
     }]);
 

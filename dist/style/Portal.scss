@@ -137,6 +137,15 @@
   svg {
     &:hover {
       -webkit-filter: drop-shadow(15px 15px 7px rgba(0,0,0,0.5));      
-      filter: drop-shadow(15px 15px 7px rgba(0,0,0,0.5));  
+      filter: drop-shadow(15px 15px 7px rgba(0,0,0,0.5));
+      cursor: pointer
     }
+  }
+
+  .syn-example {
+    border-color: lightgray;
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+    margin-bottom: 10px;
   }

@@ -82,21 +82,24 @@ var QueryWrapper = function (_React$Component) {
         value: function executeQueryRequest(queryRequest) {
             var _this2 = this;
 
+            var request = null;
+
             if (queryRequest === INIT_REQUEST) {
-                SynapseClient.getQueryTableResults(this.props.initQueryRequest, this.props.token).then(function (data) {
-                    _this2.setState({
-                        data: data,
-                        lastQueryRequest: cloneDeep(_this2.props.initQueryRequest)
-                    });
-                });
+                request = this.props.initQueryRequest;
             } else {
-                SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(function (data) {
-                    _this2.setState({
-                        data: data,
-                        lastQueryRequest: queryRequest
-                    });
-                });
+                request = queryRequest;
             }
+
+            SynapseClient.getQueryTableResults(request, this.props.token).then(function (data) {
+                var filteredData = data.facets.filter(function (value) {
+                    return value.columnName === _this2.props.filter;
+                });
+                data.facets = filteredData;
+                _this2.setState({
+                    data: data,
+                    lastQueryRequest: cloneDeep(request)
+                });
+            });
         }
 
         /**
@@ -112,7 +115,7 @@ var QueryWrapper = function (_React$Component) {
                 'div',
                 null,
                 React.Children.map(this.props.children, function (child) {
-                    return React.cloneElement(child, { showBy: _this3.props.showBy, executeQueryRequest: _this3.executeQueryRequest, getLastQueryRequest: _this3.getLastQueryRequest, data: _this3.state.data });
+                    return React.cloneElement(child, { alias: _this3.props.alias, executeQueryRequest: _this3.executeQueryRequest, getLastQueryRequest: _this3.getLastQueryRequest, data: _this3.state.data });
                 })
             );
         }

@@ -56,14 +56,20 @@ var CheckboxGroup = function (_React$Component) {
             var name = React.createElement(
                 'strong',
                 null,
-                ' ',
-                element.columnName,
-                ' '
+                ' Filter by ',
+                this.props.alias,
+                ' type '
             );
             return React.createElement(
                 'div',
                 null,
-                name,
+                React.createElement(
+                    'p',
+                    null,
+                    ' ',
+                    name,
+                    ' '
+                ),
                 children.map(function (child) {
                     return child;
                 })
@@ -190,7 +196,7 @@ var Facets = function (_React$Component2) {
             // display the data -- currently we only support enumerations
             this.props.data.facets.forEach(function (element) {
                 if (element.facetType === "enumeration") {
-                    var group = React.createElement(CheckboxGroup, { key: element.columnName, selectedFacets: selectedFacets, element: element, clickHandler: _this4.handleClick });
+                    var group = React.createElement(CheckboxGroup, { alias: _this4.props.alias, key: element.columnName, selectedFacets: selectedFacets, element: element, clickHandler: _this4.handleClick });
                     structuredRender.push(group);
                 }
             });
@@ -241,13 +247,13 @@ var Facets = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 'div',
-                { className: 'container' },
+                { className: 'container syn-example' },
                 React.createElement(
                     'div',
-                    { className: 'row' },
+                    { className: 'row', style: { padding: "7px" } },
                     React.createElement(
                         'div',
-                        { className: 'col-xs-6' },
+                        { className: 'col-xs' },
                         React.createElement(
                             'form',
                             null,

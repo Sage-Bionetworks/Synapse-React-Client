@@ -189,6 +189,45 @@ To use the markdown component with only markdown, simply pass down a prop with t
 
 ```
 
+#### Query View
+
+An example of a view with facets/stacked bar chart/table
+
+```jsx
+
+  import {SynapseComponents} from 'synapse-react-client'
+
+  <SynapseComponents.QueryWrapper
+    initQueryRequest = {{
+      concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
+      query: {
+          isConsistent: false,
+          sql: `SELECT * FROM syn15661198`,
+          limit: 25,
+          offset: 0,
+          selectedFacets: [],
+          sort: []
+      }
+    }}
+    token={this.state.token}
+    sql={`SELECT * FROM syn15661198`}
+    alias={"Disease"}
+    filter={"parentId"}
+  >
+    <SynapseComponents.Facets>
+    </SynapseComponents.Facets>
+    <SynapseComponents.StackedRowHomebrew>
+    </SynapseComponents.StackedRowHomebrew>
+    <SynapseComponents.SynapseTable>
+    </SynapseComponents.SynapseTable>
+  </SynapseComponents.QueryWrapper>
+
+
+```
+
+
+
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
 #### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).
 
