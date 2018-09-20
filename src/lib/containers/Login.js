@@ -135,8 +135,9 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        let code = new URL(window.location.href).searchParams.get("code")
-        if (code) {
+        let code = new URL(window.location.href)
+        // in test environment the searchParams isn't defined
+        if (code.searchParams && (code = code.searchParams.get("code"))) {
             SynapseClient.oAuthSessionRequest(GOOGLE_OAUTH, code , `http://localhost:3000/?provider=${GOOGLE_OAUTH}`).then(
                 synToken => {
                     this.props.onTokenChange({token: synToken.sessionToken})
