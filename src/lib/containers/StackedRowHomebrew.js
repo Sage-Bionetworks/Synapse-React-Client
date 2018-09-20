@@ -1,7 +1,7 @@
 import React from 'react'
 const uuidv4 = require('uuid/v4');
-const LEFT_CLICK = "left click"
-const RIGHT_CLICK = "right click"
+const PREVIOUS_ITEM_CLICK = "left click"
+const NEXT_CLICK = "right click"
 
 /**
  * Make a simple stacked bar char
@@ -91,7 +91,7 @@ export default class StackedRowHomebrew extends React.Component {
         let dict = this.extractPropsData(this.props.data)
         let length = Object.keys(dict).length
 
-        if (direction === LEFT_CLICK) {
+        if (direction === PREVIOUS_ITEM_CLICK) {
             if (index === 0) {
                 // wrap around
                 index = length - 1
@@ -155,14 +155,14 @@ export default class StackedRowHomebrew extends React.Component {
                     <button 
                         className="btn btn-default"
                         type="button" 
-                        onClick={this.handleArrowClick(RIGHT_CLICK)} 
+                        onClick={this.handleArrowClick(NEXT_CLICK)} 
                         style={{float:"right"}}>
                         <i className="fas fa-angle-right"></i>
                     </button>
                     <button 
                         className="btn btn-default"
                         type="button"
-                        onClick={this.handleArrowClick(LEFT_CLICK)} 
+                        onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)} 
                         style={{float:"right"}}> 
                         <i className="fas fa-angle-left"></i> 
                     </button>

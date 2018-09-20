@@ -8,8 +8,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 var uuidv4 = require('uuid/v4');
-var LEFT_CLICK = "left click";
-var RIGHT_CLICK = "right click";
+var PREVIOUS_ITEM_CLICK = "left click";
+var NEXT_CLICK = "right click";
 
 /**
  * Make a simple stacked bar char
@@ -44,7 +44,7 @@ var StackedRowHomebrew = function (_React$Component) {
                 var dict = _this.extractPropsData(_this.props.data);
                 var length = Object.keys(dict).length;
 
-                if (direction === LEFT_CLICK) {
+                if (direction === PREVIOUS_ITEM_CLICK) {
                     if (index === 0) {
                         // wrap around
                         index = length - 1;
@@ -216,7 +216,7 @@ var StackedRowHomebrew = function (_React$Component) {
                         {
                             className: 'btn btn-default',
                             type: 'button',
-                            onClick: this.handleArrowClick(RIGHT_CLICK),
+                            onClick: this.handleArrowClick(NEXT_CLICK),
                             style: { float: "right" } },
                         React.createElement('i', { className: 'fas fa-angle-right' })
                     ),
@@ -225,7 +225,7 @@ var StackedRowHomebrew = function (_React$Component) {
                         {
                             className: 'btn btn-default',
                             type: 'button',
-                            onClick: this.handleArrowClick(LEFT_CLICK),
+                            onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK),
                             style: { float: "right" } },
                         React.createElement('i', { className: 'fas fa-angle-left' })
                     )

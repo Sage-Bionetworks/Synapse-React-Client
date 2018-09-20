@@ -91,7 +91,9 @@ var QueryWrapper = function (_React$Component) {
             }
 
             SynapseClient.getQueryTableResults(request, this.props.token).then(function (data) {
-                var filteredData = data.facets.filter(function (value) {
+                // line below is for when testing doesn't mock
+                // the entire object
+                var filteredData = data.facets && data.facets.filter(function (value) {
                     return value.columnName === _this2.props.filter;
                 });
                 data.facets = filteredData;
@@ -99,6 +101,8 @@ var QueryWrapper = function (_React$Component) {
                     data: data,
                     lastQueryRequest: cloneDeep(request)
                 });
+            }).catch(function (err) {
+                console.log('Failed to get data ', err);
             });
         }
 

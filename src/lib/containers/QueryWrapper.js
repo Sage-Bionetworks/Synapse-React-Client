@@ -66,7 +66,9 @@ export default class QueryWrapper extends React.Component {
 
         SynapseClient.getQueryTableResults(request, this.props.token).then(
             data => {
-                let filteredData = data.facets.filter(
+                // line below is for when testing doesn't mock
+                // the entire object
+                let filteredData = data.facets && data.facets.filter(
                     (value) => {
                         return value.columnName === this.props.filter
                     }
@@ -76,6 +78,10 @@ export default class QueryWrapper extends React.Component {
                     data,
                     lastQueryRequest: cloneDeep(request)
                 })
+            }
+        ).catch(
+            err => {
+                console.log('Failed to get data ', err)
             }
         )   
     }

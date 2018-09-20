@@ -3,7 +3,6 @@ import * as SynapseClient from "lib/utils/SynapseClient";
 import GoogleIcon from 'assets/GoogleIcon'
 import ButtonContent from 'assets/ButtonContent'
 
-const GOOGLE_OAUTH = "GOOGLE_OAUTH_2_0"
 /**
  *  Demo of user session, show login screen and handling user login submission.
  * 
@@ -138,7 +137,7 @@ class Login extends React.Component {
         let code = new URL(window.location.href)
         // in test environment the searchParams isn't defined
         if (code.searchParams && (code = code.searchParams.get("code"))) {
-            SynapseClient.oAuthSessionRequest(GOOGLE_OAUTH, code , `http://localhost:3000/?provider=${GOOGLE_OAUTH}`).then(
+            SynapseClient.oAuthSessionRequest(this.props.authProvider, code , `http://localhost:3000/?provider=${this.props.authProvider}`).then(
                 synToken => {
                     this.props.onTokenChange({token: synToken.sessionToken})
                     this.setState({
@@ -157,7 +156,7 @@ class Login extends React.Component {
     
     onSignIn(event) {
         event.preventDefault()
-        SynapseClient.oAuthUrlRequest(GOOGLE_OAUTH,`http://localhost:3000/?provider=${GOOGLE_OAUTH}`).then(data => {
+        SynapseClient.oAuthUrlRequest(this.props.authProvider,`http://localhost:3000/?provider=${this.props.authProvider}`).then(data => {
             let authUrl = data.authorizationUrl
             window.location = authUrl  // ping the url
         }).catch(
@@ -192,7 +191,7 @@ class Login extends React.Component {
             border: '1px solid transparent',
             fontSize: 14,
             fontWeight: '500',
-            fontFamily: 'Roboto, sans-serif'
+            fontFamily: 'Lato, sans-serif'
           }
 
 

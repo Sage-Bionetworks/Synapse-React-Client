@@ -13,7 +13,6 @@ import * as SynapseClient from "lib/utils/SynapseClient";
 import GoogleIcon from 'assets/GoogleIcon';
 import ButtonContent from 'assets/ButtonContent';
 
-var GOOGLE_OAUTH = "GOOGLE_OAUTH_2_0";
 /**
  *  Demo of user session, show login screen and handling user login submission.
  * 
@@ -223,7 +222,7 @@ var Login = function (_React$Component) {
             var code = new URL(window.location.href);
             // in test environment the searchParams isn't defined
             if (code.searchParams && (code = code.searchParams.get("code"))) {
-                SynapseClient.oAuthSessionRequest(GOOGLE_OAUTH, code, "http://localhost:3000/?provider=" + GOOGLE_OAUTH).then(function (synToken) {
+                SynapseClient.oAuthSessionRequest(this.props.authProvider, code, "http://localhost:3000/?provider=" + this.props.authProvider).then(function (synToken) {
                     _this4.props.onTokenChange({ token: synToken.sessionToken });
                     _this4.setState({
                         isSignedIn: true,
@@ -239,7 +238,7 @@ var Login = function (_React$Component) {
         key: "onSignIn",
         value: function onSignIn(event) {
             event.preventDefault();
-            SynapseClient.oAuthUrlRequest(GOOGLE_OAUTH, "http://localhost:3000/?provider=" + GOOGLE_OAUTH).then(function (data) {
+            SynapseClient.oAuthUrlRequest(this.props.authProvider, "http://localhost:3000/?provider=" + this.props.authProvider).then(function (data) {
                 var authUrl = data.authorizationUrl;
                 window.location = authUrl; // ping the url
             }).catch(function (err) {
@@ -277,7 +276,7 @@ var Login = function (_React$Component) {
                 border: '1px solid transparent',
                 fontSize: 14,
                 fontWeight: '500',
-                fontFamily: 'Roboto, sans-serif'
+                fontFamily: 'Lato, sans-serif'
             };
 
             return React.createElement(

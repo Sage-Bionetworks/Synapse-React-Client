@@ -133,6 +133,7 @@ class App extends Component {
                theme={"light"}
                icon={true}
                buttonText={"Sign in with Google"}
+               authProvider={"GOOGLE_OAUTH_2_0"}
                >
         </Login>
         
