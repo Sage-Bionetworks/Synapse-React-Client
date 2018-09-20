@@ -247,7 +247,7 @@ var Facets = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 'div',
-                { className: 'container syn-example' },
+                { className: 'container syn-border syn-border-spacing' },
                 React.createElement(
                     'div',
                     { className: 'row', style: { padding: "7px" } },

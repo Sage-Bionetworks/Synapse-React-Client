@@ -3,6 +3,93 @@ const uuidv4 = require('uuid/v4');
 const PREVIOUS_ITEM_CLICK = "left click"
 const NEXT_CLICK = "right click"
 
+const colorsTissues = [
+    "#F27277",
+    "#EB8231",
+    "#FAD591",
+    "#B22D6B",
+    "#F47E6C",
+    "#FAD591",
+    "#CC3F45",
+    "#F89C55",
+    "#FF9CA0",
+    "#DE9A1F",
+    "#BD422F",
+    "#F7A6CC",
+    "#9C141A",
+    "#F683B9",
+    "#FACFAF",
+    "#FCA79A",
+    "#C94281",
+    "#C25D10",
+    "#FFE2AD",
+    "#B2242A",
+    "#F7E2DF",
+    "#D46D1E",
+    "#CF8C15",
+    "#FFC5BD",
+    "#DA614F",
+    "#F7C6DD",
+    "#F5B33C",
+    "#F5B584",
+    "#E566A1",
+    "#E0585D",
+    "#FCCB6F",
+  ]
+
+  const colorsAssays = [
+    "#94C9EB",
+    "#93ABE8",
+    "#5BB0B5",
+    "#109488",
+    "#05635B",
+    "#C5EDF0",
+    "#42C7BB",
+    "#47337D",
+    "#3C4A63",
+    "#3F833F",
+    "#B2A5D1",
+    "#6279A1",
+    "#6DB56D",
+    "#407BA0",
+    "#3F5EAB",
+    "#C0EBC0",
+    "#77AFD4",
+    "#7692D9",
+    "#5BB0B5",
+    "#10847A",
+    "#C7D6FF",
+    "#A6DDE0",
+    "#24AB9F",
+    "#47337D",
+    "#24334F",
+    "#A9EBE5",
+    "#907FBA",
+    "#4A5E81",
+    "#58A158",
+    "#2B688F",
+    "#ABBEE0",
+    "#A7DBA7",
+    "#5B95BA",
+    "#5171C0",
+    "#2F8E94",
+    "#BCE0F7",
+    "#B1C6FA",
+    "#7EC8CC",
+    "#109488",
+    "#332069",
+    "#E1F4F5",
+    "#63DBD0",
+    "#5A478F",
+    "#3C4A63",
+    "#58A158",
+    "#D5CFE3",
+    "#849BC4",
+    "#87C987",
+    "#407BA0",
+    "#5171C0",
+  ]
+
 /**
  * Make a simple stacked bar char
  *
@@ -23,8 +110,7 @@ export default class StackedRowHomebrew extends React.Component {
             hoverTextCount: 0,
             selectedFacets: {},
             width: 0,
-            index: 0,
-            colors: ["#222222", "#3c3c3c", "#595959", "#787878", "#989898", "#bbbbbb", "#dddddd"]
+            index: 0
         }
         this.chartRef = React.createRef()
         this.resize = this.resize.bind(this)
@@ -144,7 +230,6 @@ export default class StackedRowHomebrew extends React.Component {
 
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
-        let {colors} = this.state
 
         return (
             <div style={{marginBottom:"50px"}} className="container">
@@ -173,7 +258,7 @@ export default class StackedRowHomebrew extends React.Component {
                         (obj, index) => {
                             let rectStyle = {
                                 margin: '0px',
-                                fill: `${colors[index]}`,
+                                fill: `${colorsTissues[index]}`,
                                 strokeWidth: '0px',
                                 boxShadow: "20px 20px"
                             }

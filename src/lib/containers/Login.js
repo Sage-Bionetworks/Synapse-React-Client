@@ -196,7 +196,7 @@ class Login extends React.Component {
 
 
         return (
-            <div id="loginPage" className="container syn-example">
+            <div id="loginPage" className="container syn-border syn-border-spacing">
                 <h3 className="text-left"> Demo login with session token printed to screen</h3>
                 {this.getSignInStateView()}
                 {this.getTokenView()}

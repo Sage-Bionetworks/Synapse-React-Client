@@ -142,10 +142,15 @@
     }
   }
 
-  .syn-example {
+  .syn-border {
     border-color: lightgray;
     border-style: solid;
     border-width: 1px;
+  }
+  .syn-border-spacing { 
     padding: 10px;
     margin-bottom: 10px;
+  }
+  .syn-lightbackground {
+    background: #f9f9f9
   }

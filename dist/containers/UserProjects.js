@@ -77,7 +77,7 @@ var UserProjects = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: 'container syn-example' },
+                { className: 'container syn-border syn-border-spacing' },
                 React.createElement(
                     'h3',
                     null,

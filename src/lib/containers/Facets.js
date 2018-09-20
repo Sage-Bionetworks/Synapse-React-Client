@@ -26,7 +26,7 @@ class CheckboxGroup extends React.Component {
                 children.push(
                     <span style={{padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
                         <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
-                        <label htmlFor={uuId}>{facetValue.value + ` (${facetValue.count})`}</label>
+                        <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
                     </span>
                 )
             }
@@ -50,7 +50,8 @@ export default class Facets extends React.Component {
         // we store the selected facets by column name for ease of use,
         // this has to be later converted when making the api call
         this.state = {
-            selectedFacets: {}
+            selectedFacets: {},
+            boxCount: 0
         }
         this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
         this.updateSelection = this.updateSelection.bind(this)
@@ -147,16 +148,24 @@ export default class Facets extends React.Component {
             selectedFacets[dict.columnName] = newEntry
         }
 
+        let {boxCount} = this.state
+
         // grab the facet values assoicated for this column
         let specificFacet = selectedFacets[dict.columnName]
         // if its not selected then we add as having been chosen, otherwise we 
         // have to delete it
         if (specificFacet.facetValues.indexOf(dict.value) === -1) {
             specificFacet.facetValues.push(dict.value)
+            boxCount++
         } else {
             // remove value
             specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
+            boxCount--
         }
+
+        this.setState({
+            boxCount
+        })
 
         this.updateStateAndMakeQuery(selectedFacets);
     }
@@ -195,21 +204,22 @@ export default class Facets extends React.Component {
     
     render () {
         return (
-            <div className="container syn-example">
-                <div className="row" style={{padding: "7px"}}>
-                    <div className="col-xs">
-                        <form>
-                            <div className="form-group">
-                                {/* populate the page with checkboxes */}
-                                {this.showFacetFilter()}
-                            </div>
-                            <div className="form-group">
+            <div className="container syn-lightbackground syn-border-spacing ">
+                <div className="col-xs">
+                    <form>
+                        <div className="form-group">
+                            {/* populate the page with checkboxes */}
+                            {this.showFacetFilter()}
+                        </div>
+                        <div className="form-group">
+                            <p>
+                                <strong> {this.state.boxCount} {this.props.alias}s selected  </strong>
                                 <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
                                 |
                                 <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>
-                            </div>
-                        </form>
-                    </div>
+                            </p>
+                        </div>
+                    </form>
                 </div>
             </div>
         )

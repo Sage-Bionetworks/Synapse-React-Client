@@ -47,7 +47,7 @@ class UserTeam extends React.Component {
         let buttonIsOn = (this.props.token === "" || this.props.ownerId === "") 
 
         return (
-            <div className="container syn-example">
+            <div className="container syn-border syn-border-spacing">
                 <h3> Demo of getting user teams</h3>
                 <button disabled={buttonIsOn ? true: false} className={"mb-1 btn btn-primary"} onClick={this.getUserTeams}> All </button>
                 {listTeam}
