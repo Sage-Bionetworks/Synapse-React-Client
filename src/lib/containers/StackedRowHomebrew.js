@@ -20,8 +20,15 @@ export default class StackedRowHomebrew extends React.Component {
         // the text currently under the cursor
         this.state = {
             hoverText: "",
-            selectedFacets: {}
+            hoverTextCount: 0,
+            selectedFacets: {},
+            width: 0,
+            index: 0,
+            colors: ["#222222", "#3c3c3c", "#595959", "#787878", "#989898", "#bbbbbb", "#dddddd"]
         }
+        this.chartRef = React.createRef()
+        this.resize = this.resize.bind(this)
+        this.extractPropsData = this.extractPropsData.bind(this)
     }
 
     /**
@@ -29,13 +36,9 @@ export default class StackedRowHomebrew extends React.Component {
      *
      * @memberof StackedRowHomebrew
      */
-    handleHover = (incomingText) => (event) => {
+    handleHover (event) {
         // add box shadow
         event.target.style.boxShadow = "25px 20px"
-         // careful to avoid an infinite loop
-        // if (this.state.hoverText !== incomingText) {
-        //     this.setState({hoverText: incomingText})
-        // }
     }
 
     /**
@@ -54,7 +57,13 @@ export default class StackedRowHomebrew extends React.Component {
      */
     handleClick = (dict) => (event) => {
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-        this.setState({hoverText: dict.value + " " + dict.count})
+        this.setState(
+            {
+                hoverText: dict.value,
+                hoverTextCount: dict.count,
+                index: dict.index
+            }
+        )
     }
 
     /**
@@ -76,11 +85,40 @@ export default class StackedRowHomebrew extends React.Component {
         this.props.executeQueryRequest(queryRequest);
     }
 
+    // Handle user cycling through slices of the bar chart
     handleArrowClick = (direction) => (event) => {
-        console.log("clicked ", direction)
+        let {index} = this.state
+        let dict = this.extractPropsData(this.props.data)
+        let length = Object.keys(dict).length
+
+        if (direction === LEFT_CLICK) {
+            if (index === 0) {
+                // wrap around
+                index = length - 1
+            } else {
+                index -=1
+            }
+        } else {
+            if (index === length - 1) {
+                index = 0
+            } else {
+                index += 1
+            }            
+        }
+        dict = dict[index]
+        this.setState(
+            {
+                hoverText: dict.value,
+                hoverTextCount: dict.count,
+                index
+            }
+        )
     }
 
-    resize = () => this.forceUpdate()
+    // handle resizing of browser to make graphic responsive
+    resize = () => {
+        this.forceUpdate()
+    }
 
     componentDidMount() {
       window.addEventListener('resize', this.resize)
@@ -101,63 +139,98 @@ export default class StackedRowHomebrew extends React.Component {
 
         let {data} = this.props
 
-        let x_data = []
-        data.facets.forEach(
-            item => {
-                if (item.facetType === "enumeration") {
-                    item.facetValues.forEach(
-                        facetValue => {
-                            if (item.columnName === "parentId") {
-                                x_data.push({columnName: item.columnName , ...facetValue})
-                            }
-                        }
-                    )
-                }
-            }
-        )
-        // sort the data so that the largest bars are at the front
-        x_data.sort((a,b) => {return b.count - a.count})
+        let x_data = this.extractPropsData(data);
         let total = 0
+
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
-        let colors = ['#dddddd','#bbbbbb','#989898','#787878','#595959','#3c3c3c','#222222'].reverse()
-        return (<div style={{marginBottom:"50px"}} className="container">
-            <div> <span><strong> {total} </strong> files shown by {this.props.showBy}</span>
-            <button className="btn btn-default" type="button" onClick={this.handleArrowClick(RIGHT_CLICK)} style={{float:"right"}}> <i className="fas fa-angle-right"></i> </button>
-            <button className="btn btn-default" type="button" onClick={this.handleArrowClick(LEFT_CLICK)} style={{float:"right"}}> <i className="fas fa-angle-left"></i> </button>
+        let {colors} = this.state
+
+        return (
+            <div style={{marginBottom:"50px"}} className="container">
+                <div> 
+                    <span>
+                        <strong> {total} </strong> files shown by {this.props.alias}
+                    </span>
+                    <button 
+                        className="btn btn-default"
+                        type="button" 
+                        onClick={this.handleArrowClick(RIGHT_CLICK)} 
+                        style={{float:"right"}}>
+                        <i className="fas fa-angle-right"></i>
+                    </button>
+                    <button 
+                        className="btn btn-default"
+                        type="button"
+                        onClick={this.handleArrowClick(LEFT_CLICK)} 
+                        style={{float:"right"}}> 
+                        <i className="fas fa-angle-left"></i> 
+                    </button>
+                </div>
+
+                <div className="container" ref={this.chartRef}>
+                    {x_data.map(
+                        (obj, index) => {
+                            let rectStyle = {
+                                margin: '0px',
+                                fill: `${colors[index]}`,
+                                strokeWidth: '0px',
+                                boxShadow: "20px 20px"
+                            }
+                            let height = 50
+                            let width
+                            if (this.state.width === 0) {
+                                width = (obj.count / total) * (window.innerWidth/2)
+                            } else {
+                                // this doesn't work yet but is a better heuristic than above
+                                width = (obj.count / total) * (this.state.width/1.5)
+                            }
+                            return (
+                                // each svg represents one of the bars
+                                // will need to change this to be responsive
+                                <svg height={height} width={width} key={uuidv4()}
+                                    onMouseEnter={this.handleHover}
+                                    onClick={this.handleClick({...obj, index})}
+                                    onMouseLeave={this.handleExit}>
+                                    <rect 
+                                        height={height}
+                                        width={width}
+                                        style={rectStyle}>
+                                    </rect>
+                                    {/* display the count of this bar chart's frequency */}
+                                    <text 
+                                        font="bold sans-serif"
+                                        fill="white"
+                                        x={width / 2}
+                                        y={height/2}>
+                                        {/* only display the top three results */}
+                                        {index < 3 && obj.count}
+                                    </text>
+                                </svg>
+                            )
+                        }
+                    )}
+                </div>
+                {this.state.hoverText && <div> <i className="fas fa-caret-down"></i>  </div>}
+                {this.state.hoverText && <p> {this.props.alias}: {this.state.hoverText} </p>}
+                {this.state.hoverText && <p> <i> {this.state.hoverTextCount} files </i> </p>}
             </div>
-            <div className="container">
-             {x_data.map(
-                (obj, index) => {
-                    let rectStyle = {
-                        margin: '0px',
-                        fill: `${colors[index]}`,
-                        strokeWidth: '0px',
-                        boxShadow: "20px 20px"
+        )
+    }
+
+    extractPropsData(data) {
+        let x_data = [];
+        data.facets.forEach(item => {
+            if (item.facetType === "enumeration") {
+                item.facetValues.forEach(facetValue => {
+                    if (item.columnName === "parentId") {
+                        x_data.push({ columnName: item.columnName, ...facetValue });
                     }
-                    let height = 50
-                    let width = (obj.count / total) * (window.innerWidth/1.5)
-                    console.log("inner width ", width)
-                    return (
-                            // each svg represents one of the bars
-                            // will need to change this to be responsive
-                            <svg height={height} width={width} key={uuidv4()}
-                                onMouseEnter={this.handleHover(obj.count)}
-                                onClick={this.handleClick(obj)}
-                                onMouseLeave={this.handleExit}
-                                >
-                                <rect 
-                                height={height} width={width} style={rectStyle}>
-                                </rect>
-                                {/* display the count of this bar chart's frequency */}
-                                <text font="bold sans-serif" fill="white" x={width / 2} y={height/2}> {obj.count}
-                                </text>
-                            </svg>)
-                }
-            )}
-        </div>
-        <div> <i className="fas fa-caret-down"></i>  </div>
-        <p> {this.props.showBy} {this.state.hoverText} </p>
-         </div>)
+                });
+            }
+        });
+        // sort the data so that the largest bars are at the front
+        x_data.sort((a, b) => { return b.count - a.count; });
+        return x_data;
     }
 }

@@ -31,10 +31,10 @@ class CheckboxGroup extends React.Component {
                 )
             }
         )
-        let name = <strong> {element.columnName} </strong>
+        let name = <strong> Filter by {this.props.alias} type </strong>
         return (
                     <div>
-                        {name}
+                        <p> {name} </p>
                         {children.map(child => {return child})}
                     </div>
                 )
@@ -112,7 +112,7 @@ export default class Facets extends React.Component {
         this.props.data.facets.forEach(
             (element) => {
                 if (element.facetType === "enumeration") {
-                    let group = <CheckboxGroup key={element.columnName} selectedFacets={selectedFacets} element={element} clickHandler={this.handleClick}></CheckboxGroup>
+                    let group = <CheckboxGroup alias={this.props.alias} key={element.columnName} selectedFacets={selectedFacets} element={element} clickHandler={this.handleClick}></CheckboxGroup>
                     structuredRender.push(group)
                 }
             }
@@ -195,9 +195,9 @@ export default class Facets extends React.Component {
     
     render () {
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-xs-6">
+            <div className="container syn-example">
+                <div className="row" style={{padding: "7px"}}>
+                    <div className="col-xs">
                         <form>
                             <div className="form-group">
                                 {/* populate the page with checkboxes */}

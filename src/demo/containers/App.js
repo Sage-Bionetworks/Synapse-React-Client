@@ -190,7 +190,8 @@ class App extends Component {
           }}
           token={this.state.token}
           sql={`SELECT * FROM syn15661198`}
-          showBy={"Disease"}
+          alias={"Disease"}
+          filter={"parentId"}
         >
           <Facets>
           </Facets>
