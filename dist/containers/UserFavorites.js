@@ -74,7 +74,7 @@ var UserFavorites = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: 'container syn-example pt-2 mt-5' },
+                { className: 'container syn-border syn-border-spacing' },
                 React.createElement(
                     'h3',
                     null,

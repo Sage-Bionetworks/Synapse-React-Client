@@ -56,25 +56,34 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     executeQueryRequest(queryRequest) {
+        let request = null
+
         if (queryRequest === INIT_REQUEST) {
-            SynapseClient.getQueryTableResults(this.props.initQueryRequest, this.props.token).then(
-                data => {
-                    this.setState({
-                        data,
-                        lastQueryRequest: cloneDeep(this.props.initQueryRequest)
-                    })
-                }
-            )   
+            request = this.props.initQueryRequest
         } else {
-            SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(
-                data => {
-                    this.setState({
-                        data,
-                        lastQueryRequest: queryRequest
-                    })
-                }
-            )
+            request = queryRequest
         }
+
+        SynapseClient.getQueryTableResults(request, this.props.token).then(
+            data => {
+                // line below is for when testing doesn't mock
+                // the entire object
+                let filteredData = data.facets && data.facets.filter(
+                    (value) => {
+                        return value.columnName === this.props.filter
+                    }
+                )
+                data.facets = filteredData
+                this.setState({
+                    data,
+                    lastQueryRequest: cloneDeep(request)
+                })
+            }
+        ).catch(
+            err => {
+                console.log('Failed to get data ', err)
+            }
+        )   
     }
     
     /**
@@ -84,7 +93,7 @@ export default class QueryWrapper extends React.Component {
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{
-                    return React.cloneElement(child, {showBy: this.props.showBy, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
+                    return React.cloneElement(child, {filter : this.props.filter, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
                 })} 
             </div>
         )

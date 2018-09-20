@@ -76,7 +76,7 @@ var SynapseTable = function (_React$Component) {
                     }
                 }
 
-                sortSelection.push({
+                sortSelection.unshift({
                     column: name,
                     direction: direction
                 });

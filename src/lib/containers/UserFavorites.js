@@ -43,7 +43,7 @@ class UserFavorites extends React.Component {
         }
 
         return (
-            <div className="container syn-example pt-2 mt-5">
+            <div className="container syn-border syn-border-spacing">
                 <h3> Demo of getting user favorites</h3>
                 <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 btn-primary"} onClick={this.getFavorites}> Get favorites </button>
                 {listFavorites}

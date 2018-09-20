@@ -82,7 +82,7 @@ export default class SynapseTable extends React.Component {
             }
         }
 
-        sortSelection.push({
+        sortSelection.unshift({
             column: name,
             direction
         })

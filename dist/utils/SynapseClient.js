@@ -286,6 +286,33 @@ export var login = function login(username, password) {
   return doPost('/auth/v1/login', { username: username, password: password }, undefined, endpoint);
 };
 
+/**
+ * Get redirect url 
+ * https://docs.synapse.org/rest/POST/oauth2/authurl.html
+ * @param {*} provider 
+ * @param {*} redirectUrl 
+ * @param {*} endpoint 
+ */
+export var oAuthUrlRequest = function oAuthUrlRequest(provider, redirectUrl) {
+  var endpoint = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'https://repo-prod.prod.sagebase.org';
+
+  return doPost('/auth/v1/oauth2/authurl', { provider: provider, redirectUrl: redirectUrl }, undefined, endpoint);
+};
+
+/**
+ * Get session token from SSO
+ * https://docs.synapse.org/rest/POST/oauth2/session.html
+ * @param {*} provider 
+ * @param {*} authenticationCode 
+ * @param {*} redirectUrl 
+ * @param {*} endpoint 
+ */
+export var oAuthSessionRequest = function oAuthSessionRequest(provider, authenticationCode, redirectUrl) {
+  var endpoint = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'https://repo-prod.prod.sagebase.org';
+
+  return doPost('/auth/v1/oauth2/session', { provider: provider, authenticationCode: authenticationCode, redirectUrl: redirectUrl }, undefined, endpoint);
+};
+
 /** Create an entity (Project, Folder, File, Table, View) 
  * http://docs.synapse.org/rest/POST/entity.html
 */

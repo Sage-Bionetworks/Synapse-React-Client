@@ -130,7 +130,12 @@ class App extends Component {
 
         <Login onTokenChange={this.handleChange}
                token={this.state.token}
-               loginEndpoint={SynapseClient.login}>
+               theme={"light"}
+               icon={true}
+               buttonText={"Sign in with Google"}
+               authProvider={"GOOGLE_OAUTH_2_0"}
+               redirectURL={"http://localhost:3000/"}
+               >
         </Login>
         
         <UserFavorites token={this.state.token}
@@ -154,7 +159,7 @@ class App extends Component {
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
       
-        <div className="container">
+        <div className="container syn-border-spacing">
            <button className="btn btn-primary" onClick={
                         () => {
                             this.removeHandler()
@@ -187,7 +192,8 @@ class App extends Component {
           }}
           token={this.state.token}
           sql={`SELECT * FROM syn15661198`}
-          showBy={"Disease"}
+          alias={"Disease"}
+          filter={"parentId"}
         >
           <Facets>
           </Facets>
@@ -196,12 +202,9 @@ class App extends Component {
           <SynapseTable>
           </SynapseTable>
         </QueryWrapper>
-
-
       </div>
     );
   }
-
 }
 
 export default App;
