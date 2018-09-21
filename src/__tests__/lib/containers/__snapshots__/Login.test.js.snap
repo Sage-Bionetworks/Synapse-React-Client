@@ -5,41 +5,19 @@ exports[`test  renders correctly 1`] = `
   className="container syn-border syn-border-spacing"
   id="loginPage"
 >
-  <h3
-    className="text-left"
-  >
-     Demo login with session token printed to screen
-  </h3>
-  <p>
-     You are currently 
-    <strong>
-       
-      <i>
-         not 
-      </i>
-       
-    </strong>
-     signed in to Synpase 
-  </p>
   <form
     onSubmit={[Function]}
   >
     <div
       className="form-group"
     >
-      <label
-        className="text-left"
-        htmlFor="exampleEmail"
-      >
-        Synapse Email/Username:
-      </label>
       <input
         autoComplete="email"
         className="form-control"
         id="exampleEmail"
         name="username"
         onChange={[Function]}
-        placeholder="Enter email"
+        placeholder="Username or Email Address"
         type="text"
         value=""
       />
@@ -47,18 +25,13 @@ exports[`test  renders correctly 1`] = `
     <div
       className="form-group"
     >
-      <label
-        htmlFor="examplePassword"
-      >
-        Password:
-      </label>
       <input
         autoComplete="password"
         className="form-control"
         id="examplePassword"
         name="password"
         onChange={[Function]}
-        placeholder="Enter password"
+        placeholder="Password"
         type="password"
         value=""
       />
@@ -68,9 +41,12 @@ exports[`test  renders correctly 1`] = `
       onSubmit={[Function]}
       type="submit"
     >
-      Submit
+      Sign in
     </button>
   </form>
+  <p>
+    Or Sign in with Google
+  </p>
   <form>
     <button
       onClick={[Function]}

@@ -25,7 +25,7 @@ class CheckboxGroup extends React.Component {
                 let uuId = uuidv4()
                 children.push(
                     <span style={{padding: "4px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
-                        <input checked={this.props.isChecked[index]} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
+                        <input value={1} checked={this.props.isChecked[index]} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
                         <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
                     </span>
                 )
@@ -182,7 +182,6 @@ export default class Facets extends React.Component {
 
         this.updateStateAndMakeQuery(selectedFacets);
     }
-
 
     /**
      * Handle select all or deselect all event, selection group specifies which

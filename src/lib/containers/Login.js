@@ -25,10 +25,12 @@ class Login extends React.Component {
         this.state = {
             username: '',
             password: '',
+            email: '',
             isSignedIn: false,
             hasLoginInFailed: false,
             errorMessage: '',
-            dissmissButtonClicked: false
+            dissmissButtonClicked: false,
+            showRegistration: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
@@ -78,6 +80,10 @@ class Login extends React.Component {
                 })
             }
         )
+    }
+
+    handleRegistration (event) {
+        event.preventDefault()  // avoid page refresh
     }
 
     /**
@@ -148,7 +154,11 @@ class Login extends React.Component {
                 }
             ).catch(
                 err => {
-                    console.log("error on auth request ", err)
+                    if (err.statusCode === 404) {
+                        this.setState({
+                            showRegistration: true
+                        })
+                    }
                 }
             )
         }
@@ -162,7 +172,7 @@ class Login extends React.Component {
         }).catch(
             err => 
                 {
-                    console.log("error here", err)
+                    console.log("Error on oAuth url ", err)
                 }
         )
     }
@@ -179,7 +189,7 @@ class Login extends React.Component {
 
     render() {
         const {theme, icon, buttonText} = this.props
-
+        const {showRegistration} = this.state
         const initialStyle = {
             backgroundColor: theme === 'dark' ? 'rgb(66, 133, 244)' : '#fff',
             display: 'inline-flex',
@@ -194,10 +204,26 @@ class Login extends React.Component {
             fontFamily: 'Lato, sans-serif'
           }
 
+        if (showRegistration) {
+            return (
+                <div id="loginPage" className="container syn-border syn-border-spacing">    
+                    <h3>
+                    Create Synapse Account
+                    </h3>
+                    <p>  Please enter your email address and we will send you the instructions on how to complete the registration process through <a href={"https://www.synapse.org/"}>synapse</a>. </p>
+                    <form onSubmit={this.handleLogin}>
+                        <div className="form-group">
+                            <input autoComplete="email" placeholder="Email Address" className="form-control" id="exampleEmail" name="email" type="text" value={this.state.email} onChange={this.handleChange} />
+                        </div>
+                        <button onSubmit={this.handleRegistration} type="submit" className="btn btn-success">Send Registration Info</button>
+                    </form>
+                </div>
+            )
+        }
 
         return (
             <div id="loginPage" className="container syn-border syn-border-spacing">
-                    <form onSubmit={this.handleLogin}>
+                <form onSubmit={this.handleLogin}>
                     <div className="form-group">
                         <input autoComplete="email" placeholder="Username or Email Address" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
                     </div>
