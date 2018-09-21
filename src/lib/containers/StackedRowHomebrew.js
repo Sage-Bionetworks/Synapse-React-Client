@@ -111,7 +111,7 @@ export default class StackedRowHomebrew extends React.Component {
             hoverTextCount: 0,
             selectedFacets: {},
             dimensions: {height: 1, width: 1},
-            index: 0,
+            index: -1,
             isBarChart: false
         }
         this.resize = this.resize.bind(this)
@@ -229,8 +229,7 @@ export default class StackedRowHomebrew extends React.Component {
         let x_data = this.extractPropsData(data);
         let total = 0
 
-        let {height, width} = this.state.dimensions
-        console.log('width is ', width)
+        let {width} = this.state.dimensions
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
         return (
@@ -239,75 +238,85 @@ export default class StackedRowHomebrew extends React.Component {
                     <span>
                         <strong> {total} </strong> files shown by {this.props.alias}
                     </span>
-                    <span 
+                    <button
+                        className="btn btn-default btn-sm" 
                         onClick={this.handleArrowClick(NEXT_CLICK)} 
                         style={{float:"right"}}>
                         <i className="fas fa-angle-right"></i>
-                    </span>
-                    <span 
+                    </button>
+                    <button
+                        className="btn btn-default btn-sm" 
                         onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)} 
                         style={{float:"right"}}> 
                         <i className="fas fa-angle-left"></i> 
-                    </span>
+                    </button>
                 </div>
                 <div className="row">
-                <Measure 
-                    bounds
-                    onResize={(contentRect) => {
-                        this.setState({ dimensions: contentRect.bounds })
-                    }}
-                > 
-                    {({ measureRef }) =>
-                        <div ref={measureRef}>
-                            {x_data.map(
-                                (obj, index) => {
+                    <Measure 
+                        bounds
+                        onResize={(contentRect) => {
+                            this.setState({ dimensions: contentRect.bounds })
+                        }}
+                        > 
+                        {({ measureRef }) =>
+                            <div ref={measureRef}>
+                                {x_data.map(
+                                    (obj, index) => {
 
-                                    let rectStyle = {
-                                        margin: '0px',
-                                        fill: `${colorsTissues[index]}`,
-                                        strokeWidth: '0px',
-                                        boxShadow: "20px 20px"
-                                    }
-                                    
-                                    let svgHeight = 50
-                                    // this doesn't work yet but is a better heuristic than above
-                                    let svgWidth = (obj.count / total) * width
-                                    let {isBarChart} = this.state
-                                    
-                                    if (isBarChart) {
-                                        [svgWidth,svgHeight] = [svgHeight,svgWidth]
-                                    }
+                                        let rectStyle = {
+                                            margin: '0px',
+                                            fill: `${colorsTissues[index]}`,
+                                            strokeWidth: '0px',
+                                            boxShadow: "20px 20px"
+                                        }
+                                        
+                                        let svgHeight = 50
+                                        // this doesn't work yet but is a better heuristic than above
+                                        let svgWidth = (obj.count / total) * width
+                                        let {isBarChart} = this.state
+                                        
+                                        if (isBarChart) {
+                                            [svgWidth,svgHeight] = [svgHeight,svgWidth]
+                                        }
 
-                                    return (
-                                        // each svg represents one of the bars
-                                        // will need to change this to be responsive
-                                        <svg height={svgHeight}
-                                            width={svgWidth} 
-                                            key={uuidv4()}
-                                            onMouseEnter={this.handleHover}
-                                            onClick={this.handleClick({...obj, index})}
-                                            onMouseLeave={this.handleExit}>
-                                            <rect 
-                                                height={svgHeight}
-                                                width={svgWidth}
-                                                style={rectStyle}>
-                                            </rect>
-                                            {/* display the count of this bar chart's frequency */}
-                                            <text 
-                                                font="bold sans-serif"
-                                                fill="white"
-                                                x={svgWidth / 2}
-                                                y={svgHeight/2}>
-                                                {/* only display the top three results */}
-                                                {index < 3 && obj.count}
-                                            </text>
-                                        </svg>
-                                    )
-                                }
-                            )}
-                        </div>
-                    }
-                </Measure>
+                                        return (
+                                            // each svg represents one of the bars
+                                            // will need to change this to be responsive
+                                            <svg height={65}
+                                                width={svgWidth} 
+                                                key={uuidv4()}
+                                                onMouseEnter={this.handleHover}
+                                                onClick={this.handleClick({...obj, index})}
+                                                onMouseLeave={this.handleExit}>
+                                                <rect 
+                                                    height={svgHeight}
+                                                    width={svgWidth}
+                                                    style={rectStyle}>
+                                                </rect>
+                                                {/* display the count of this bar chart's frequency */}
+                                                <text 
+                                                    font="bold sans-serif"
+                                                    fill="white"
+                                                    x={svgWidth / 2}
+                                                    y={svgHeight/2}>
+                                                    {/* only display the top three results */}
+                                                    {index < 3 && obj.count}
+                                                </text>
+                                                {this.state.index === index && <text 
+                                                    className="fontAwesome"
+                                                    font="bold sans-serif"
+                                                    fill="black"
+                                                    x={svgWidth / 2}
+                                                    y={60}
+                                                    > &#xf042;
+                                                </text>}
+                                            </svg>
+                                        )
+                                    }
+                                )}
+                            </div>
+                        }
+                    </Measure>
                 </div>
                 <div className="row">
                     {this.state.hoverText && <div> <i className="fas fa-caret-down"></i>  </div>}
