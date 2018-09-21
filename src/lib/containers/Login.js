@@ -197,25 +197,19 @@ class Login extends React.Component {
 
         return (
             <div id="loginPage" className="container syn-border syn-border-spacing">
-                <h3 className="text-left"> Demo login with session token printed to screen</h3>
-                {this.getSignInStateView()}
-                {this.getTokenView()}
-                <form onSubmit={this.handleLogin}>
+                    <form onSubmit={this.handleLogin}>
                     <div className="form-group">
-                        <label className="text-left" htmlFor="exampleEmail">
-                            Synapse Email/Username:
-                        </label>
-                        <input autoComplete="email" placeholder="Enter email" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
+                        <input autoComplete="email" placeholder="Username or Email Address" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="examplePassword">
-                            Password:
-                        </label>
-                        <input autoComplete="password" placeholder="Enter password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
+                        <input autoComplete="password" placeholder="Password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
                     </div>
                     {this.getLoginFailureView()}
-                    <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">Submit</button>
+                    <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">Sign in</button>
                 </form>
+                <p>
+                    Or Sign in with Google
+                </p>
                 <form >
                     {!this.state.isSignedIn && <button onClick={this.onSignIn} style={initialStyle}>
                         <GoogleIcon key={1} active={true}/>

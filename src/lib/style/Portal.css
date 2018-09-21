@@ -132,8 +132,8 @@
   display: inline-block; }
 
 svg:hover {
-  -webkit-filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 0.5));
-  filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 0.5));
+  -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   cursor: pointer; }
 
 .syn-border {
@@ -153,3 +153,9 @@ body {
 
 .noMargin {
   margin: 0px !important; }
+
+.floatRight {
+  float: right; }
+
+.overflowAuto {
+  overflow: scroll; }
