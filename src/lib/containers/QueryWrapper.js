@@ -76,7 +76,8 @@ export default class QueryWrapper extends React.Component {
                 data.facets = filteredData
                 this.setState({
                     data,
-                    lastQueryRequest: cloneDeep(request)
+                    lastQueryRequest: cloneDeep(request),
+                    facetCount: filteredData[0].facetValues.length
                 })
             }
         ).catch(
@@ -93,7 +94,7 @@ export default class QueryWrapper extends React.Component {
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{
-                    return React.cloneElement(child, {alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
+                    return React.cloneElement(child, {facetCount: this.state.facetCount, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
                 })} 
             </div>
         )
