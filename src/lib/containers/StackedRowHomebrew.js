@@ -1,4 +1,6 @@
 import React from 'react'
+import Measure from 'react-measure'
+
 const uuidv4 = require('uuid/v4');
 const PREVIOUS_ITEM_CLICK = "left click"
 const NEXT_CLICK = "right click"
@@ -109,10 +111,10 @@ export default class StackedRowHomebrew extends React.Component {
             hoverText: "",
             hoverTextCount: 0,
             selectedFacets: {},
-            width: 0,
-            index: 0
+            dimensions: {height: 1, width: 1},
+            index: -1,
+            isBarChart: false
         }
-        this.chartRef = React.createRef()
         this.resize = this.resize.bind(this)
         this.extractPropsData = this.extractPropsData.bind(this)
     }
@@ -208,6 +210,7 @@ export default class StackedRowHomebrew extends React.Component {
 
     componentDidMount() {
       window.addEventListener('resize', this.resize)
+      window.myRef = this.myRef
     }
     
     componentWillUnmount() {
@@ -228,77 +231,102 @@ export default class StackedRowHomebrew extends React.Component {
         let x_data = this.extractPropsData(data);
         let total = 0
 
+        let {width} = this.state.dimensions
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
-
         return (
             <div style={{marginBottom:"50px"}} className="container">
-                <div> 
+                <div className="row">
                     <span>
                         <strong> {total} </strong> files shown by {this.props.alias}
                     </span>
-                    <button 
-                        className="btn btn-default"
-                        type="button" 
+                    <button
+                        className="btn btn-default btn-sm" 
                         onClick={this.handleArrowClick(NEXT_CLICK)} 
                         style={{float:"right"}}>
                         <i className="fas fa-angle-right"></i>
                     </button>
-                    <button 
-                        className="btn btn-default"
-                        type="button"
+                    <button
+                        className="btn btn-default btn-sm" 
                         onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)} 
                         style={{float:"right"}}> 
                         <i className="fas fa-angle-left"></i> 
                     </button>
                 </div>
+                <div className="row">
+                    <Measure 
+                        bounds
+                        onResize={(contentRect) => {
+                            this.setState({ dimensions: contentRect.bounds })
+                        }}
+                        > 
+                        {({ measureRef }) =>
+                            <div ref={measureRef}>
+                                {x_data.map(
+                                    (obj, index) => {
 
-                <div className="container" ref={this.chartRef}>
-                    {x_data.map(
-                        (obj, index) => {
-                            let rectStyle = {
-                                margin: '0px',
-                                fill: `${colorsTissues[index]}`,
-                                strokeWidth: '0px',
-                                boxShadow: "20px 20px"
-                            }
-                            let height = 50
-                            let width
-                            if (this.state.width === 0) {
-                                width = (obj.count / total) * (window.innerWidth/2)
-                            } else {
-                                // this doesn't work yet but is a better heuristic than above
-                                width = (obj.count / total) * (this.state.width/1.5)
-                            }
-                            return (
-                                // each svg represents one of the bars
-                                // will need to change this to be responsive
-                                <svg height={height} width={width} key={uuidv4()}
-                                    onMouseEnter={this.handleHover}
-                                    onClick={this.handleClick({...obj, index})}
-                                    onMouseLeave={this.handleExit}>
-                                    <rect 
-                                        height={height}
-                                        width={width}
-                                        style={rectStyle}>
-                                    </rect>
-                                    {/* display the count of this bar chart's frequency */}
-                                    <text 
-                                        font="bold sans-serif"
-                                        fill="white"
-                                        x={width / 2}
-                                        y={height/2}>
-                                        {/* only display the top three results */}
-                                        {index < 3 && obj.count}
-                                    </text>
-                                </svg>
-                            )
+                                        let rectStyle = {
+                                            margin: '0px',
+                                            fill: `${colorsTissues[index]}`,
+                                            strokeWidth: '0px',
+                                            boxShadow: "20px 20px"
+                                        }
+                                        
+                                        let svgHeight = 50
+                                        // this doesn't work yet but is a better heuristic than above
+                                        let svgWidth = (obj.count / total) * width
+                                        let {isBarChart} = this.state
+                                        
+                                        if (isBarChart) {
+                                            [svgWidth,svgHeight] = [svgHeight,svgWidth]
+                                        }
+
+                                        return (
+                                            // each svg represents one of the bars
+                                            // will need to change this to be responsive
+                                            <svg height={65}
+                                                width={svgWidth} 
+                                                key={uuidv4()}
+                                                onMouseEnter={this.handleHover}
+                                                onClick={this.handleClick({...obj, index})}
+                                                onMouseLeave={this.handleExit}>
+                                                <rect 
+                                                    height={svgHeight}
+                                                    width={svgWidth}
+                                                    style={rectStyle}>
+                                                </rect>
+                                                {/* display the count of this bar chart's frequency */}
+                                                <text 
+                                                    font="bold sans-serif"
+                                                    fill="white"
+                                                    x={svgWidth / 2}
+                                                    y={svgHeight/2}>
+                                                    {/* only display the top three results */}
+                                                    {index < 3 && obj.count}
+                                                </text>
+                                                {this.state.index === index && <text 
+                                                    fill="black"
+                                                    x={0}
+                                                    fontFamily="FontAwesome"
+                                                    y={60}
+                                                    >
+                                                    {/* unicode below corresponds to downward carret, this is an alternative
+                                                    to FontAwesome which wasn't displaying correctly when used inside a <text>
+                                                    element  */}
+                                                    {'\u25BE'}  
+                                                </text>}
+                                            </svg>
+                                        )
+                                    }
+                                )}
+                            </div>
                         }
-                    )}
+                    </Measure>
                 </div>
-                {this.state.hoverText && <div> <i className="fas fa-caret-down"></i>  </div>}
-                {this.state.hoverText && <p> {this.props.alias}: {this.state.hoverText} </p>}
-                {this.state.hoverText && <p> <i> {this.state.hoverTextCount} files </i> </p>}
+                <div className="row">
+                    {this.state.hoverText && <p className="noMargin" > <strong> {this.props.alias}: {this.state.hoverText} </strong> </p>}
+                    {this.state.hoverText && <p className="noMargin" > <i> {this.state.hoverTextCount} files </i> </p>}
+                </div>
             </div>
         )
     }

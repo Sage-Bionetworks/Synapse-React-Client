@@ -19,19 +19,19 @@ class CheckboxGroup extends React.Component {
         let children = []
         let selectedFacets = this.props.selectedFacets
         element.facetValues.forEach(
-            facetValue => {
+            (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
                 let uuId = uuidv4()
                 children.push(
-                    <span style={{padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
-                        <input defaultChecked={facetValue.isSelected} onClick={this.props.clickHandler({selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
+                    <span style={{padding: "4px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
+                        <input value={1} checked={this.props.isChecked[index]} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
                         <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
                     </span>
                 )
             }
         )
-        let name = <strong> Filter by {this.props.alias} type </strong>
+        let name = <strong> Filter by {this.props.alias} Type </strong>
         return (
                     <div>
                         <p> {name} </p>
@@ -51,7 +51,8 @@ export default class Facets extends React.Component {
         // this has to be later converted when making the api call
         this.state = {
             selectedFacets: {},
-            boxCount: 0
+            boxCount: 0,
+            isChecked: Array(this.props.facetCount).fill(false)
         }
         this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
         this.updateSelection = this.updateSelection.bind(this)
@@ -113,7 +114,15 @@ export default class Facets extends React.Component {
         this.props.data.facets.forEach(
             (element) => {
                 if (element.facetType === "enumeration") {
-                    let group = <CheckboxGroup alias={this.props.alias} key={element.columnName} selectedFacets={selectedFacets} element={element} clickHandler={this.handleClick}></CheckboxGroup>
+                    let group = <CheckboxGroup 
+                                    alias={this.props.alias}
+                                    key={element.columnName}
+                                    selectedFacets={selectedFacets}
+                                    element={element}
+                                    clickHandler={this.handleClick}
+                                    isChecked={this.state.isChecked}
+                                    >
+                                </CheckboxGroup>
                     structuredRender.push(group)
                 }
             }
@@ -163,13 +172,16 @@ export default class Facets extends React.Component {
             boxCount--
         }
 
+        let {isChecked} = cloneDeep(this.state)
+        isChecked[dict.index] = !isChecked[dict.index]
+
         this.setState({
-            boxCount
+            boxCount,
+            isChecked
         })
 
         this.updateStateAndMakeQuery(selectedFacets);
     }
-
 
     /**
      * Handle select all or deselect all event, selection group specifies which
@@ -179,6 +191,11 @@ export default class Facets extends React.Component {
      */
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
+        if (selectionGroup === SELECT_ALL) {
+            this.setState({boxCount: this.props.facetCount, isChecked: Array(this.props.facetCount).fill(true)})
+        } else {
+            this.setState({boxCount: 0, isChecked: Array(this.props.facetCount).fill(false)})
+        }
         let selectedFacets  = this.recordSelections(selectionGroup)
         this.updateStateAndMakeQuery(selectedFacets);
     }
@@ -213,7 +230,7 @@ export default class Facets extends React.Component {
                         </div>
                         <div className="form-group">
                             <p>
-                                <strong> {this.state.boxCount} {this.props.alias}s selected  </strong>
+                                <strong> {this.state.boxCount} {this.props.alias}s selected.  </strong>
                                 <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
                                 |
                                 <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>

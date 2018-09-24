@@ -38,14 +38,14 @@ var CheckboxGroup = function (_React$Component) {
 
             var children = [];
             var selectedFacets = this.props.selectedFacets;
-            element.facetValues.forEach(function (facetValue) {
+            element.facetValues.forEach(function (facetValue, index) {
                 var uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count;
                 // caution when using uuId's to not cause extra re-renders from this always changing
                 var uuId = uuidv4();
                 children.push(React.createElement(
                     'span',
-                    { style: { padding: "2px", borderStyle: "solid", borderWidth: "1px", margin: "2px" }, key: uniqueId },
-                    React.createElement('input', { defaultChecked: facetValue.isSelected, onClick: _this2.props.clickHandler({ selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName }), id: uuId, type: 'checkbox' }),
+                    { style: { padding: "4px", borderStyle: "solid", borderWidth: "1px", margin: "2px" }, key: uniqueId },
+                    React.createElement('input', { value: 1, checked: _this2.props.isChecked[index], onClick: _this2.props.clickHandler({ index: index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName }), id: uuId, type: 'checkbox' }),
                     React.createElement(
                         'label',
                         { htmlFor: uuId },
@@ -67,7 +67,7 @@ var CheckboxGroup = function (_React$Component) {
                 null,
                 ' Filter by ',
                 this.props.alias,
-                ' type '
+                ' Type '
             );
             return React.createElement(
                 'div',
@@ -128,8 +128,14 @@ var Facets = function (_React$Component2) {
                     boxCount--;
                 }
 
+                var _cloneDeep = cloneDeep(_this3.state),
+                    isChecked = _cloneDeep.isChecked;
+
+                isChecked[dict.index] = !isChecked[dict.index];
+
                 _this3.setState({
-                    boxCount: boxCount
+                    boxCount: boxCount,
+                    isChecked: isChecked
                 });
 
                 _this3.updateStateAndMakeQuery(selectedFacets);
@@ -139,6 +145,11 @@ var Facets = function (_React$Component2) {
         _this3.updateSelection = function (selectionGroup) {
             return function (event) {
                 event.preventDefault();
+                if (selectionGroup === SELECT_ALL) {
+                    _this3.setState({ boxCount: _this3.props.facetCount, isChecked: Array(_this3.props.facetCount).fill(true) });
+                } else {
+                    _this3.setState({ boxCount: 0, isChecked: Array(_this3.props.facetCount).fill(false) });
+                }
                 var selectedFacets = _this3.recordSelections(selectionGroup);
                 _this3.updateStateAndMakeQuery(selectedFacets);
             };
@@ -150,7 +161,8 @@ var Facets = function (_React$Component2) {
         // this has to be later converted when making the api call
         _this3.state = {
             selectedFacets: {},
-            boxCount: 0
+            boxCount: 0,
+            isChecked: Array(_this3.props.facetCount).fill(false)
         };
         _this3.updateStateAndMakeQuery = _this3.updateStateAndMakeQuery.bind(_this3);
         _this3.updateSelection = _this3.updateSelection.bind(_this3);
@@ -215,7 +227,14 @@ var Facets = function (_React$Component2) {
             // display the data -- currently we only support enumerations
             this.props.data.facets.forEach(function (element) {
                 if (element.facetType === "enumeration") {
-                    var group = React.createElement(CheckboxGroup, { alias: _this4.props.alias, key: element.columnName, selectedFacets: selectedFacets, element: element, clickHandler: _this4.handleClick });
+                    var group = React.createElement(CheckboxGroup, {
+                        alias: _this4.props.alias,
+                        key: element.columnName,
+                        selectedFacets: selectedFacets,
+                        element: element,
+                        clickHandler: _this4.handleClick,
+                        isChecked: _this4.state.isChecked
+                    });
                     structuredRender.push(group);
                 }
             });
@@ -291,7 +310,7 @@ var Facets = function (_React$Component2) {
                                     this.state.boxCount,
                                     ' ',
                                     this.props.alias,
-                                    's selected  '
+                                    's selected.  '
                                 ),
                                 React.createElement(
                                     'a',

@@ -1,4 +1,5 @@
 import React from 'react'
+
 const cloneDeep = require("lodash.clonedeep")
 // Hold constants for next and previous button actions
 const NEXT = "NEXT"
@@ -95,6 +96,16 @@ export default class SynapseTable extends React.Component {
         })
     }
 
+    // TODO: implement this method
+    download(event) {
+        event.preventDefault()
+    }
+
+    // TODO: implement this method
+    advancedSearch (event) {
+        event.preventDefault()
+    }
+
     /**
      * Display the view
      */
@@ -129,39 +140,58 @@ export default class SynapseTable extends React.Component {
         let pastZero = this.props.getLastQueryRequest().query.offset > 0
 
         return (
-            <div className="container">
-                <table className="table table-striped table-condensed">
-                    {/* show the column headers */}
-                    <thead>
-                        <tr>
-                            <th></th>
-                            {columnModels.map(
-                                column => {
-                                    return (<th key={column.name}>
-                                                <a onClick={this.handleColumnClick(column.name)} className="padding-left-2 padding-right-2" > {column.name}
-                                                    <i className="fa"></i>
-                                                </a>
-                                            </th>)
-                                }
-                            )}
-                        </tr>
-                    </thead>
-                    {/* show the actual table body */}
-                    <tbody>
-                        {rowsFormatted.map(
-                            rowFormatted => {
-                                return rowFormatted
-                            }
-                        )}
-                    </tbody>
-                </table>
-                {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
-                    Previous
-                </button>}
-                <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
-                    Next
-                </button>
-            </div>
+            <React.Fragment>
+                <div className="container">
+                    <div className="row">
+                        <span>
+                            {/* TODO: Actuall use query count or some metric of measure */}
+                            <strong>Showing 2530 files</strong>
+                        </span>
+                        <a onClick={this.advancedSearch} href="" className="floatRight">
+                            <u> Advanced Search </u>
+                        </a>
+                        <span className="floatRight">&nbsp;&nbsp;</span>
+                        <a onClick={this.download} href="" className="floatRight">
+                            <u>Download</u>
+                        </a>
+                    </div>
+                </div>
+                <div className="container overflowAuto">
+                    <div className="row">
+                        <table className="table table-striped table-condensed">
+                            {/* show the column headers */}
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    {columnModels.map(
+                                        column => {
+                                            return (<th key={column.name}>
+                                                        <a onClick={this.handleColumnClick(column.name)} className="padding-left-2 padding-right-2" > {column.name}
+                                                            <i className="fa"></i>
+                                                        </a>
+                                                    </th>)
+                                        }
+                                    )}
+                                </tr>
+                            </thead>
+                            {/* show the actual table body */}
+                            <tbody>
+                                {rowsFormatted.map(
+                                    rowFormatted => {
+                                        return rowFormatted
+                                    }
+                                )}
+                            </tbody>
+                        </table>
+                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                            Previous
+                        </button>}
+                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </React.Fragment>
         )
     }
 

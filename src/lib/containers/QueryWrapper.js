@@ -74,15 +74,17 @@ export default class QueryWrapper extends React.Component {
                     }
                 )
                 data.facets = filteredData
-                this.setState({
-                    data,
-                    lastQueryRequest: cloneDeep(request)
-                })
+                let newState = {data, lastQueryRequest: cloneDeep(request)}
+                // avoid failed test case by checking obj below
+                if (filteredData && filteredData[0]) {
+                    newState[facetCount] = filteredData[0].facetValues.length
+                }
+                this.setState(newState)
             }
         ).catch(
             err => {
                 console.log('Failed to get data ', err)
-            }
+            } 
         )   
     }
     
@@ -93,7 +95,7 @@ export default class QueryWrapper extends React.Component {
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{
-                    return React.cloneElement(child, {filter : this.props.filter, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
+                    return React.cloneElement(child, {facetCount: this.state.facetCount, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
                 })} 
             </div>
         )
