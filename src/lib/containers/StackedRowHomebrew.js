@@ -1,5 +1,6 @@
 import React from 'react'
 import Measure from 'react-measure'
+
 const uuidv4 = require('uuid/v4');
 const PREVIOUS_ITEM_CLICK = "left click"
 const NEXT_CLICK = "right click"
@@ -209,6 +210,7 @@ export default class StackedRowHomebrew extends React.Component {
 
     componentDidMount() {
       window.addEventListener('resize', this.resize)
+      window.myRef = this.myRef
     }
     
     componentWillUnmount() {
@@ -303,12 +305,15 @@ export default class StackedRowHomebrew extends React.Component {
                                                     {index < 3 && obj.count}
                                                 </text>
                                                 {this.state.index === index && <text 
-                                                    className="fontAwesome"
-                                                    font="bold sans-serif"
                                                     fill="black"
-                                                    x={svgWidth / 2}
+                                                    x={0}
+                                                    fontFamily="FontAwesome"
                                                     y={60}
-                                                    > &#xf042;
+                                                    >
+                                                    {/* unicode below corresponds to downward carret, this is an alternative
+                                                    to FontAwesome which wasn't displaying correctly when used inside a <text>
+                                                    element  */}
+                                                    {'\u25BE'}  
                                                 </text>}
                                             </svg>
                                         )
@@ -319,7 +324,6 @@ export default class StackedRowHomebrew extends React.Component {
                     </Measure>
                 </div>
                 <div className="row">
-                    {this.state.hoverText && <div> <i className="fas fa-caret-down"></i>  </div>}
                     {this.state.hoverText && <p className="noMargin" > <strong> {this.props.alias}: {this.state.hoverText} </strong> </p>}
                     {this.state.hoverText && <p className="noMargin" > <i> {this.state.hoverTextCount} files </i> </p>}
                 </div>
