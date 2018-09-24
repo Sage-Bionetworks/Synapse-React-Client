@@ -24,7 +24,7 @@ class CheckboxGroup extends React.Component {
                 // caution when using uuId's to not cause extra re-renders from this always changing
                 let uuId = uuidv4()
                 children.push(
-                    <span style={{padding: "4px", borderStyle: "solid", borderWidth: "1px", margin: "2px"}} key={uniqueId}>
+                    <span className="SRC_facets" key={uniqueId}>
                         <input value={1} checked={this.props.isChecked[index]} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
                         <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
                     </span>

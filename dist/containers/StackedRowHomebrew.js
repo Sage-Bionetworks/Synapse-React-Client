@@ -199,7 +199,7 @@ var StackedRowHomebrew = function (_React$Component) {
             }
             return React.createElement(
                 'div',
-                { style: { marginBottom: "50px" }, className: 'container' },
+                { className: 'container SRC-margin-bottom-50px' },
                 React.createElement(
                     'div',
                     { className: 'row' },
@@ -219,17 +219,15 @@ var StackedRowHomebrew = function (_React$Component) {
                     React.createElement(
                         'button',
                         {
-                            className: 'btn btn-default btn-sm',
-                            onClick: this.handleArrowClick(NEXT_CLICK),
-                            style: { float: "right" } },
+                            className: 'btn btn-default btn-sm SRC-floatRight',
+                            onClick: this.handleArrowClick(NEXT_CLICK) },
                         React.createElement('i', { className: 'fas fa-angle-right' })
                     ),
                     React.createElement(
                         'button',
                         {
-                            className: 'btn btn-default btn-sm',
-                            onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK),
-                            style: { float: "right" } },
+                            className: 'btn btn-default btn-sm SRC-floatRight',
+                            onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK) },
                         React.createElement('i', { className: 'fas fa-angle-left' })
                     )
                 ),
@@ -252,10 +250,7 @@ var StackedRowHomebrew = function (_React$Component) {
                                 x_data.map(function (obj, index) {
 
                                     var rectStyle = {
-                                        margin: '0px',
-                                        fill: '' + colorsTissues[index],
-                                        strokeWidth: '0px',
-                                        boxShadow: "20px 20px"
+                                        fill: '' + colorsTissues[index]
                                     };
 
                                     var svgHeight = 50;
@@ -284,6 +279,7 @@ var StackedRowHomebrew = function (_React$Component) {
                                             React.createElement('rect', {
                                                 height: svgHeight,
                                                 width: svgWidth,
+                                                className: 'SRC-chart-rect-style',
                                                 style: rectStyle }),
                                             React.createElement(
                                                 'text',

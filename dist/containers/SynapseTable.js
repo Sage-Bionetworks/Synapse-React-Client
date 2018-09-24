@@ -151,31 +151,53 @@ var SynapseTable = function (_React$Component) {
 
             // unpack all the data
             var data = this.props.data;
-            var columnModels = data.columnModels;
             var queryResult = data.queryResult;
             var queryResults = queryResult.queryResults;
             var rows = queryResults.rows;
+            var headers = queryResults.headers;
+
+
+            var headersFormatted = headers.map(function (column, index) {
+                if (index < _this2.props.defaultVisibleCount) {
+                    return React.createElement(
+                        "th",
+                        { key: column.name },
+                        React.createElement(
+                            "a",
+                            { onClick: _this2.handleColumnClick(column.name), className: "padding-left-2 padding-right-2" },
+                            " ",
+                            column.name,
+                            React.createElement("i", { className: "fa" })
+                        )
+                    );
+                }
+                // avoid eslint complaint below by returning undefined
+                return undefined;
+            });
 
             // grab the row data and format it 
             // e.g. <tr> <td> some value </td> </tr>
-
             var rowsFormatted = [];
             rows.forEach(function (expRow, i) {
                 var rowFormatted = React.createElement(
                     "tr",
                     { key: "(" + expRow.rowId + ")" },
                     expRow.values.map(function (value, j) {
-                        return React.createElement(
-                            "td",
-                            { className: "SRC_noBorderTop", key: "(" + i + "," + j + ")" },
-                            React.createElement(
-                                "p",
-                                null,
-                                " ",
-                                value,
-                                " "
-                            )
-                        );
+                        if (0 < j && j <= _this2.props.defaultVisibleCount) {
+                            return React.createElement(
+                                "td",
+                                { className: "SRC_noBorderTop", key: "(" + i + "," + j + ")" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    " ",
+                                    value,
+                                    " "
+                                )
+                            );
+                        }
+                        // avoid eslint complaint below by returning undefined
+                        return undefined;
                     })
                 );
                 rowsFormatted.push(rowFormatted);
@@ -243,19 +265,8 @@ var SynapseTable = function (_React$Component) {
                                 React.createElement(
                                     "tr",
                                     null,
-                                    React.createElement("th", null),
-                                    columnModels.map(function (column) {
-                                        return React.createElement(
-                                            "th",
-                                            { key: column.name },
-                                            React.createElement(
-                                                "a",
-                                                { onClick: _this2.handleColumnClick(column.name), className: "padding-left-2 padding-right-2" },
-                                                " ",
-                                                column.name,
-                                                React.createElement("i", { className: "fa" })
-                                            )
-                                        );
+                                    headersFormatted.map(function (headerFormatted) {
+                                        return headerFormatted;
                                     })
                                 )
                             ),
@@ -269,12 +280,12 @@ var SynapseTable = function (_React$Component) {
                         ),
                         pastZero && React.createElement(
                             "button",
-                            { onClick: this.handlePaginationClick(PREVIOUS), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
+                            { onClick: this.handlePaginationClick(PREVIOUS), className: "btn btn-default SRC-table-button", type: "button" },
                             "Previous"
                         ),
                         React.createElement(
                             "button",
-                            { onClick: this.handlePaginationClick(NEXT), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
+                            { onClick: this.handlePaginationClick(NEXT), className: "btn btn-default SRC-table-button", type: "button" },
                             "Next"
                         )
                     )

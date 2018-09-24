@@ -191,19 +191,8 @@ class Login extends React.Component {
     render() {
         const {theme, icon, buttonText} = this.props
         const {showRegistration} = this.state
-        const initialStyle = {
-            backgroundColor: theme === 'dark' ? 'rgb(66, 133, 244)' : '#fff',
-            display: 'inline-flex',
-            alignItems: 'center',
-            color: theme === 'dark' ? '#fff' : 'rgba(0, 0, 0, .54)',
-            boxShadow: '0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24)',
-            padding: 0,
-            borderRadius: 2,
-            border: '1px solid transparent',
-            fontSize: 14,
-            fontWeight: '500',
-            fontFamily: 'Lato, sans-serif'
-          }
+        
+        let googleTheme = (theme === 'dark') ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color'
 
         if (showRegistration) {
             return (
@@ -238,13 +227,13 @@ class Login extends React.Component {
                     Or Sign in with Google
                 </p>
                 <form >
-                    {!this.state.isSignedIn && <button onClick={this.onSignIn} style={initialStyle}>
+                    {!this.state.isSignedIn && <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme}`} >
                         <GoogleIcon key={1} active={true}/>
                         <ButtonContent icon={icon} key={2}>
                             {buttonText}
                         </ButtonContent>
                     </button>}
-                    {this.state.isSignedIn && <button onClick={this.onSignOut} style={initialStyle}>
+                    {this.state.isSignedIn && <button onClick={this.onSignOut} className={`SRC-google-button ${googleTheme}`} >
                         <ButtonContent icon={icon} key={3}>
                             Sign out
                         </ButtonContent>

@@ -131,7 +131,7 @@ export default class SynapseTable extends React.Component {
                             </a>
                     </th>)
                 }
-                // avoid eslint comlaint below by returning undefined
+                // avoid eslint complaint below by returning undefined
                 return undefined
             }
         )
@@ -146,7 +146,7 @@ export default class SynapseTable extends React.Component {
                             if (0 < j && j <= this.props.defaultVisibleCount) {
                                 return <td className="SRC_noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
                             }
-                            // avoid eslint comlaint below by returning undefined
+                            // avoid eslint complaint below by returning undefined
                             return undefined
                         }
                     )}
@@ -163,7 +163,7 @@ export default class SynapseTable extends React.Component {
                 <div className="container">
                     <div className="row">
                         <span>
-                            {/* TODO: Actuall use query count or some metric of measure */}
+                            {/* TODO: Actually use query count or some metric */}
                             <strong>Showing 2530 files</strong>
                         </span>
                         <a onClick={this.advancedSearch} href="" className="SRC-floatRight">
@@ -197,10 +197,10 @@ export default class SynapseTable extends React.Component {
                                 )}
                             </tbody>
                         </table>
-                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default SRC-table-button"  type="button">
                             Previous
                         </button>}
-                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button"  type="button">
                             Next
                         </button>
                     </div>

@@ -235,21 +235,19 @@ export default class StackedRowHomebrew extends React.Component {
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
         return (
-            <div style={{marginBottom:"50px"}} className="container">
+            <div className="container SRC-margin-bottom-50px">
                 <div className="row">
                     <span>
                         <strong> {total} </strong> files shown by {this.props.alias}
                     </span>
                     <button
-                        className="btn btn-default btn-sm" 
-                        onClick={this.handleArrowClick(NEXT_CLICK)} 
-                        style={{float:"right"}}>
+                        className="btn btn-default btn-sm SRC-floatRight" 
+                        onClick={this.handleArrowClick(NEXT_CLICK)}>
                         <i className="fas fa-angle-right"></i>
                     </button>
                     <button
-                        className="btn btn-default btn-sm" 
-                        onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)} 
-                        style={{float:"right"}}> 
+                        className="btn btn-default btn-sm SRC-floatRight" 
+                        onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}> 
                         <i className="fas fa-angle-left"></i> 
                     </button>
                 </div>
@@ -266,10 +264,7 @@ export default class StackedRowHomebrew extends React.Component {
                                     (obj, index) => {
 
                                         let rectStyle = {
-                                            margin: '0px',
-                                            fill: `${colorsTissues[index]}`,
-                                            strokeWidth: '0px',
-                                            boxShadow: "20px 20px"
+                                            fill: `${colorsTissues[index]}`
                                         }
                                         
                                         let svgHeight = 50
@@ -293,6 +288,7 @@ export default class StackedRowHomebrew extends React.Component {
                                                 <rect 
                                                     height={svgHeight}
                                                     width={svgWidth}
+                                                    className="SRC-chart-rect-style"
                                                     style={rectStyle}>
                                                 </rect>
                                                 {/* display the count of this bar chart's frequency */}

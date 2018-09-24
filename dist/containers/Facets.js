@@ -44,7 +44,7 @@ var CheckboxGroup = function (_React$Component) {
                 var uuId = uuidv4();
                 children.push(React.createElement(
                     'span',
-                    { style: { padding: "4px", borderStyle: "solid", borderWidth: "1px", margin: "2px" }, key: uniqueId },
+                    { className: 'SRC_facets', key: uniqueId },
                     React.createElement('input', { value: 1, checked: _this2.props.isChecked[index], onClick: _this2.props.clickHandler({ index: index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName }), id: uuId, type: 'checkbox' }),
                     React.createElement(
                         'label',

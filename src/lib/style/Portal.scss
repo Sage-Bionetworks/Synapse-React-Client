@@ -184,3 +184,48 @@ body * {
 .table>thead.SRC_borderTop {
   border-top: 1px solid #dddddd;
 }
+
+.SRC_facets {
+  padding: 4px;
+  border-style: solid;
+  border-width: 1px;
+  margin: 2px;
+}
+
+.SRC-google-button {
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24);
+  padding: 0;
+  border-radius: 2;
+  border: 1px solid transparent;
+  font-size: 14;
+  font-weight: 500;
+  font-family: Lato sans-serif;
+}
+
+.SRC-google-button-dark-color {
+  color: #fff;
+  background-color: rgb(66, 133, 244)
+}
+
+.SRC-google-button-light-color {
+  color: rgba(0, 0, 0, .54);
+  background-color: #fff;
+}
+
+.SRC-margin-bottom-50px {
+  margin-bottom: 50px;
+}
+
+.SRC-table-button {
+  border-radius: 8px;
+  color: #1e7098;
+  background: white;
+}
+
+.SRC-chart-rect-style {
+  margin: 0px;
+  stroke-width: 0px;
+  box-shadow: 20px 20px;
+}
