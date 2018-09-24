@@ -128,7 +128,7 @@ export default class SynapseTable extends React.Component {
             let rowFormatted = (<tr key={`(${expRow.rowId})`} >
                 {expRow.values.map(
                     (value, j) => {
-                        return <td className="SRC-noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
+                        return <td className="SRC_noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
                     }
                 )}
             </tr>)
@@ -159,7 +159,7 @@ export default class SynapseTable extends React.Component {
                     <div className="row">
                         <table className="table table-striped table-condensed">
                             {/* show the column headers */}
-                            <thead>
+                            <thead className="SRC_borderTop">
                                 <tr>
                                     <th></th>
                                     {columnModels.map(

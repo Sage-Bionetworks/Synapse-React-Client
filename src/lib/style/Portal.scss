@@ -177,6 +177,10 @@ body * {
   overflow: scroll;
 }
 
-.SRC_noBorderTop {
+.table>tbody>tr>td.SRC_noBorderTop {
   border-top: none ;
+}
+
+.table>thead.SRC_borderTop {
+  border-top: 1px solid #dddddd;
 }
