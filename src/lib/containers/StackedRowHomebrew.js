@@ -289,6 +289,7 @@ export default class StackedRowHomebrew extends React.Component {
                                                     height={svgHeight}
                                                     width={svgWidth}
                                                     className="SRC-chart-rect-style"
+                                                    // can't remove inline style due to dynamic fill
                                                     style={rectStyle}>
                                                 </rect>
                                                 {/* display the count of this bar chart's frequency */}

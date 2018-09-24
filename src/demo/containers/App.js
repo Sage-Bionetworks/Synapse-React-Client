@@ -160,12 +160,13 @@ class App extends Component {
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
       
         <div className="container SRC-syn-border-spacing">
-           <button className="btn btn-primary" onClick={
+           <button className="btn btn-primary" 
+                   onClick={
                         () => {
                             this.removeHandler()
                         }
-                        }
-                      > Toggle markdown from view </button>  
+                    }> Toggle markdown from view 
+            </button>  
         </div>
 
         <CustomMarkdownView>
@@ -183,7 +184,7 @@ class App extends Component {
             partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
             query: {
                 isConsistent: false,
-                sql: `SELECT * FROM syn15661198`,
+                sql: `SELECT name, createdOn, createdBy, etag FROM syn15661198`,
                 limit: 25,
                 offset: 0,
                 selectedFacets: [],
@@ -199,7 +200,7 @@ class App extends Component {
           <StackedRowHomebrew>
           </StackedRowHomebrew>
           <SynapseTable
-            defaultVisibleCount={4}
+            defaultVisibleCount={6}
           >
           </SynapseTable>
         </QueryWrapper>

@@ -11,6 +11,7 @@ export default class SynapseTable extends React.Component {
         super()
         this.handleColumnClick = this.handleColumnClick.bind(this)
         this.handlePaginationClick = this.handlePaginationClick.bind(this)
+        this.findSelectionIndex = this.findSelectionIndex.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
@@ -47,7 +48,9 @@ export default class SynapseTable extends React.Component {
         let element = null
         // weird onclick behavior that sometimes hits
         // the <i> tag
-        if (event.target.tagName === "A") {
+        if (event.target.tagName === "TH") {
+            element = event.target.children[0].children[0]
+        } else if (event.target.tagName === "A") {
             element = event.target.children[0]
         } else if (event.target.tagName === "I") {
             element = event.target
@@ -62,7 +65,7 @@ export default class SynapseTable extends React.Component {
         }
         // if it's down then its DESC and needs to be replaced with up
         if (containsDown) {
-            element.className = element.className.replace(" fa-sort-down", " fa-sort-up")
+            element.className = element.className.replace(" fa-sort-down", " fa-sort")
         }
         // if it's up then its ASC and needs to be replaced with down
         if (containsUp) {
@@ -71,22 +74,17 @@ export default class SynapseTable extends React.Component {
         }
         // get currently sorted items and remove/insert this selection
         let sortSelection = cloneDeep(this.state.sortSelection)
-        if (sortSelection.length !== 0) {
-            // find if the current selection exists already and remove it
-            let index = sortSelection.findIndex(
-                (el) => {
-                    return el.column === name
-                }
-            )
-            if (index !== -1) {
-                sortSelection.splice(index, 1)
-            }
+        let index = this.findSelectionIndex(sortSelection, name);
+        if (index !== -1 ) {
+            sortSelection.splice(index, 1)
         }
 
-        sortSelection.unshift({
-            column: name,
-            direction
-        })
+        if (!containsDown) {
+            sortSelection.unshift({
+                column: name,
+                direction
+            })
+        }
 
         let queryRequest = this.props.getLastQueryRequest()
         queryRequest.query.sort = sortSelection
@@ -94,6 +92,16 @@ export default class SynapseTable extends React.Component {
         this.setState({
             sortSelection
         })
+    }
+
+    findSelectionIndex(sortSelection, name) {
+        if (sortSelection.length !== 0) {
+            // find if the current selection exists already and remove it
+            return sortSelection.findIndex((el) => {
+                return el.column === name;
+            });
+        }
+        return -1
     }
 
     // TODO: implement this method
@@ -125,9 +133,11 @@ export default class SynapseTable extends React.Component {
         let headersFormatted = headers.map(
             (column, index) => {
                 if (index < this.props.defaultVisibleCount) {
-                    return (<th key={column.name}>
-                            <a onClick={this.handleColumnClick(column.name)} className="padding-left-2 padding-right-2" > {column.name}
-                                <i className="fa"></i>
+                    let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
+                    return (<th onClick={this.handleColumnClick(column.name)}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
+                            <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
+                                {column.name}
+                                <i className="fa fa-sort"></i>
                             </a>
                     </th>)
                 }
@@ -143,8 +153,12 @@ export default class SynapseTable extends React.Component {
             let rowFormatted = (<tr key={`(${expRow.rowId})`} >
                     {expRow.values.map(
                         (value, j) => {
-                            if (0 < j && j <= this.props.defaultVisibleCount) {
-                                return <td className="SRC_noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
+                            let columnName = headers[j].name
+                            let index = this.findSelectionIndex(this.state.sortSelection, columnName)
+                            if (j <  this.props.defaultVisibleCount) {
+                                return (<td className="SRC_noBorderTop" key={`(${i},${j})`}>
+                                            <p className={`${index === -1 ? "": "SRC-boldText"}`}> {value} </p>
+                                        </td>)
                             }
                             // avoid eslint complaint below by returning undefined
                             return undefined
