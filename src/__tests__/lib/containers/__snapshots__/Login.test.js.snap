@@ -2,7 +2,7 @@
 
 exports[`test  renders correctly 1`] = `
 <div
-  className="container syn-border syn-border-spacing"
+  className="container SRC-syn-border SRC-syn-border-spacing"
   id="loginPage"
 >
   <form

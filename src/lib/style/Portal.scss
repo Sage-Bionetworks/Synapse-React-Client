@@ -134,9 +134,9 @@
   display: inline-block;
 }
 
-///////////////////////////////////
-// Custom scss not in SWC        //
-///////////////////////////////////
+//////////////////////////////////////////////////////////////
+// Synapse React Client (SRC) Custom scss not in SWC        //
+//////////////////////////////////////////////////////////////
 
 svg {
   &:hover {
@@ -146,31 +146,37 @@ svg {
   }
 }
 
-.syn-border {
+.SRC-syn-border {
   border-color: lightgray;
   border-style: solid;
   border-width: 1px;
 }
-.syn-border-spacing { 
+.SRC-syn-border-spacing { 
   padding: 10px;
   margin-bottom: 10px;
 }
-.syn-lightbackground {
+.SRC-syn-lightbackground {
   background: #f9f9f9
 }
 
-body {
-  font-family:"Lato" !important 
+body * {
+  // remove important
+  font-family:"Lato"
 }
 
-.noMargin {
-  margin: 0px !important;
+.SRC-noMargin {
+  // remove important
+  margin: 0px
 }
 
-.floatRight {
+.SRC-floatRight {
   float: right;
 }
 
-.overflowAuto {
+.SRC-overflowAuto {
   overflow: scroll;
+}
+
+.SRC_noBorderTop {
+  border-top: none ;
 }

@@ -128,7 +128,7 @@ export default class SynapseTable extends React.Component {
             let rowFormatted = (<tr key={`(${expRow.rowId})`} >
                 {expRow.values.map(
                     (value, j) => {
-                        return <td key={`(${i},${j})`}><p> {value} </p></td>
+                        return <td className="SRC-noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
                     }
                 )}
             </tr>)
@@ -146,16 +146,16 @@ export default class SynapseTable extends React.Component {
                         <span>
                             <strong>Showing 2530 files</strong> 
                         </span>
-                        <a onClick={this.advancedSearch} href="" className="floatRight">
+                        <a onClick={this.advancedSearch} href="" className="SRC-floatRight">
                             <u> Advanced Search </u>
                         </a>
-                        <span className="floatRight">&nbsp;&nbsp;</span>
-                        <a onClick={this.download} href="" className="floatRight">
+                        <span className="SRC-floatRight">&nbsp;&nbsp;</span>
+                        <a onClick={this.download} href="" className="SRC-floatRight">
                             <u>Download</u>
                         </a>
                     </div>
                 </div>
-                <div className="container overflowAuto">
+                <div className="container SRC-overflowAuto">
                     <div className="row">
                         <table className="table table-striped table-condensed">
                             {/* show the column headers */}

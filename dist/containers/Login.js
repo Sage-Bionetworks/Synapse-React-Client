@@ -281,7 +281,7 @@ var Login = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { id: "loginPage", className: "container syn-border syn-border-spacing" },
+                { id: "loginPage", className: "container SRC-syn-border SRC-syn-border-spacing" },
                 React.createElement(
                     "h3",
                     { className: "text-left" },
