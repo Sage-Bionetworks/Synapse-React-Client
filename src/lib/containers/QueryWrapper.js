@@ -77,7 +77,7 @@ export default class QueryWrapper extends React.Component {
                 let newState = {data, lastQueryRequest: cloneDeep(request)}
                 // avoid failed test case by checking obj below
                 if (filteredData && filteredData[0]) {
-                    newState[facetCount] = filteredData[0].facetValues.length
+                    newState.facetCount = filteredData[0].facetValues.length
                 }
                 this.setState(newState)
             }
