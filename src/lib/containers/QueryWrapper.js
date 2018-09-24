@@ -74,18 +74,12 @@ export default class QueryWrapper extends React.Component {
                     }
                 )
                 data.facets = filteredData
-                // have to write this so test pass
-                if (!filteredData || !filteredData[0] ) {
-                    this.setState({
-                        data,
-                        lastQueryRequest: cloneDeep(request),
-                    })    
-                } else {
-                this.setState({
-                    data,
-                    lastQueryRequest: cloneDeep(request),
-                    facetCount: filteredData[0].facetValues.length
-                })}
+                let newState = {data, lastQueryRequest: cloneDeep(request)}
+                // avoid failed test case by checking obj below
+                if (filteredData && filteredData[0]) {
+                    newState[facetCount] = filteredData[0].facetValues.length
+                }
+                this.setState(newState)
             }
         ).catch(
             err => {

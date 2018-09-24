@@ -159,6 +159,7 @@ class Login extends React.Component {
                             showRegistration: true
                         })
                     }
+                    console.log("Error on sso sign in ", err)
                 }
             )
         }
@@ -210,7 +211,7 @@ class Login extends React.Component {
                     <h3>
                     Create Synapse Account
                     </h3>
-                    <p>  Please enter your email address and we will send you the instructions on how to complete the registration process through <a href={"https://www.synapse.org/"}>synapse</a>. </p>
+                    <p>  Please enter your email address and we will send you the instructions on how to complete the registration process through <a href={"https://www.synapse.org/"}>Synapse</a>. </p>
                     <form onSubmit={this.handleLogin}>
                         <div className="form-group">
                             <input autoComplete="email" placeholder="Email Address" className="form-control" id="exampleEmail" name="email" type="text" value={this.state.email} onChange={this.handleChange} />

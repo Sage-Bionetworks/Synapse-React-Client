@@ -144,7 +144,8 @@ export default class SynapseTable extends React.Component {
                 <div className="container">
                     <div className="row">
                         <span>
-                            <strong>Showing 2530 files</strong> 
+                            {/* TODO: Actuall use query count or some metric of measure */}
+                            <strong>Showing 2530 files</strong>
                         </span>
                         <a onClick={this.advancedSearch} href="" className="floatRight">
                             <u> Advanced Search </u>
