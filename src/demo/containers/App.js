@@ -191,7 +191,6 @@ class App extends Component {
             }
           }}
           token={this.state.token}
-          sql={`SELECT * FROM syn15661198`}
           alias={"Disease"}
           filter={"parentId"}
         >
@@ -199,7 +198,9 @@ class App extends Component {
           </Facets>
           <StackedRowHomebrew>
           </StackedRowHomebrew>
-          <SynapseTable>
+          <SynapseTable
+            defaultVisibleCount={4}
+          >
           </SynapseTable>
         </QueryWrapper>
       </div>

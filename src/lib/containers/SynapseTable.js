@@ -116,22 +116,41 @@ export default class SynapseTable extends React.Component {
 
         // unpack all the data
         const {data} = this.props
-        const {columnModels} = data
         const {queryResult} = data
         const {queryResults} = queryResult
         const {rows} = queryResults
+        const {headers} = queryResults
         
+
+        let headersFormatted = headers.map(
+            (column, index) => {
+                if (index < this.props.defaultVisibleCount) {
+                    return (<th key={column.name}>
+                            <a onClick={this.handleColumnClick(column.name)} className="padding-left-2 padding-right-2" > {column.name}
+                                <i className="fa"></i>
+                            </a>
+                    </th>)
+                }
+                // avoid eslint comlaint below by returning undefined
+                return undefined
+            }
+        )
+
         // grab the row data and format it 
         // e.g. <tr> <td> some value </td> </tr>
         let rowsFormatted = []
         rows.forEach((expRow,i) => {
             let rowFormatted = (<tr key={`(${expRow.rowId})`} >
-                {expRow.values.map(
-                    (value, j) => {
-                        return <td className="SRC_noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
-                    }
-                )}
-            </tr>)
+                    {expRow.values.map(
+                        (value, j) => {
+                            if (0 < j && j <= this.props.defaultVisibleCount) {
+                                return <td className="SRC_noBorderTop" key={`(${i},${j})`}><p> {value} </p></td>
+                            }
+                            // avoid eslint comlaint below by returning undefined
+                            return undefined
+                        }
+                    )}
+                </tr>)
             rowsFormatted.push(rowFormatted)
         });
 
@@ -162,14 +181,9 @@ export default class SynapseTable extends React.Component {
                             {/* show the column headers */}
                             <thead className="SRC_borderTop">
                                 <tr>
-                                    <th></th>
-                                    {columnModels.map(
-                                        column => {
-                                            return (<th key={column.name}>
-                                                        <a onClick={this.handleColumnClick(column.name)} className="padding-left-2 padding-right-2" > {column.name}
-                                                            <i className="fa"></i>
-                                                        </a>
-                                                    </th>)
+                                    {headersFormatted.map(
+                                        headerFormatted => {
+                                            return headerFormatted
                                         }
                                     )}
                                 </tr>
