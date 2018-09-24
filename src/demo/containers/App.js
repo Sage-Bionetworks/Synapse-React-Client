@@ -159,7 +159,7 @@ class App extends Component {
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
       
-        <div className="container syn-border-spacing">
+        <div className="container SRC-syn-border-spacing">
            <button className="btn btn-primary" onClick={
                         () => {
                             this.removeHandler()

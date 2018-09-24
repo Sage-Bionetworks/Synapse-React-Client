@@ -207,7 +207,7 @@ class Login extends React.Component {
 
         if (showRegistration) {
             return (
-                <div id="loginPage" className="container syn-border syn-border-spacing">    
+                <div id="loginPage" className="container SRC-syn-border SRC-syn-border-spacing">    
                     <h3>
                     Create Synapse Account
                     </h3>
@@ -223,7 +223,7 @@ class Login extends React.Component {
         }
 
         return (
-            <div id="loginPage" className="container syn-border syn-border-spacing">
+            <div id="loginPage" className="container SRC-syn-border SRC-syn-border-spacing">
                 <form onSubmit={this.handleLogin}>
                     <div className="form-group">
                         <input autoComplete="email" placeholder="Username or Email Address" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />

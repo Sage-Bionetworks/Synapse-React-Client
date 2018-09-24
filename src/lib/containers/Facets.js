@@ -221,7 +221,7 @@ export default class Facets extends React.Component {
     
     render () {
         return (
-            <div className="container syn-lightbackground syn-border-spacing ">
+            <div className="container SRC-syn-lightbackground SRC-syn-border-spacing ">
                 <div className="col-xs">
                     <form>
                         <div className="form-group">

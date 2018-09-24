@@ -84,7 +84,7 @@ var UserTeam = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                { className: 'container syn-border syn-border-spacing' },
+                { className: 'container SRC-syn-border SRC-syn-border-spacing' },
                 React.createElement(
                     'h3',
                     null,

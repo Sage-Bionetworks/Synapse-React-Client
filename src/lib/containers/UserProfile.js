@@ -43,7 +43,7 @@ class UserProfile extends React.Component {
 
 
         return (
-            <div className="container syn-border syn-border-spacing">
+            <div className="container SRC-syn-border SRC-syn-border-spacing">
                 <h3> Demo of getting user profile </h3>
                 <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 btn-primary"} onClick={this.getUserProfile}> Get User Profile Information </button>
                 {welcomeBanner}

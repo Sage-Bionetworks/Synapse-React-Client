@@ -316,7 +316,7 @@ var StackedRowHomebrew = function (_React$Component) {
                     { className: 'row' },
                     this.state.hoverText && React.createElement(
                         'p',
-                        { className: 'noMargin' },
+                        { className: 'SRC-noMargin' },
                         ' ',
                         React.createElement(
                             'strong',
@@ -331,7 +331,7 @@ var StackedRowHomebrew = function (_React$Component) {
                     ),
                     this.state.hoverText && React.createElement(
                         'p',
-                        { className: 'noMargin' },
+                        { className: 'SRC-noMargin' },
                         ' ',
                         React.createElement(
                             'i',

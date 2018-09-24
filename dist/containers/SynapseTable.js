@@ -167,7 +167,7 @@ var SynapseTable = function (_React$Component) {
                     expRow.values.map(function (value, j) {
                         return React.createElement(
                             "td",
-                            { key: "(" + i + "," + j + ")" },
+                            { className: "SRC_noBorderTop", key: "(" + i + "," + j + ")" },
                             React.createElement(
                                 "p",
                                 null,
@@ -205,7 +205,7 @@ var SynapseTable = function (_React$Component) {
                         ),
                         React.createElement(
                             "a",
-                            { onClick: this.advancedSearch, href: "", className: "floatRight" },
+                            { onClick: this.advancedSearch, href: "", className: "SRC-floatRight" },
                             React.createElement(
                                 "u",
                                 null,
@@ -214,12 +214,12 @@ var SynapseTable = function (_React$Component) {
                         ),
                         React.createElement(
                             "span",
-                            { className: "floatRight" },
+                            { className: "SRC-floatRight" },
                             "\xA0\xA0"
                         ),
                         React.createElement(
                             "a",
-                            { onClick: this.download, href: "", className: "floatRight" },
+                            { onClick: this.download, href: "", className: "SRC-floatRight" },
                             React.createElement(
                                 "u",
                                 null,
@@ -230,7 +230,7 @@ var SynapseTable = function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "container overflowAuto" },
+                    { className: "container SRC-overflowAuto" },
                     React.createElement(
                         "div",
                         { className: "row" },
@@ -239,7 +239,7 @@ var SynapseTable = function (_React$Component) {
                             { className: "table table-striped table-condensed" },
                             React.createElement(
                                 "thead",
-                                null,
+                                { className: "SRC_borderTop" },
                                 React.createElement(
                                     "tr",
                                     null,
