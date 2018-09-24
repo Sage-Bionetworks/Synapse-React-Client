@@ -40,10 +40,12 @@ var Login = function (_React$Component) {
         _this.state = {
             username: '',
             password: '',
+            email: '',
             isSignedIn: false,
             hasLoginInFailed: false,
             errorMessage: '',
-            dissmissButtonClicked: false
+            dissmissButtonClicked: false,
+            showRegistration: false
         };
         _this.handleChange = _this.handleChange.bind(_this);
         _this.handleLogin = _this.handleLogin.bind(_this);
@@ -97,6 +99,11 @@ var Login = function (_React$Component) {
                     isSignedIn: false
                 });
             });
+        }
+    }, {
+        key: "handleRegistration",
+        value: function handleRegistration(event) {
+            event.preventDefault(); // avoid page refresh
         }
 
         /**
@@ -230,7 +237,12 @@ var Login = function (_React$Component) {
                         errorMessage: ""
                     });
                 }).catch(function (err) {
-                    console.log("error on auth request ", err);
+                    if (err.statusCode === 404) {
+                        _this4.setState({
+                            showRegistration: true
+                        });
+                    }
+                    console.log("Error on sso sign in ", err);
                 });
             }
         }
@@ -242,7 +254,7 @@ var Login = function (_React$Component) {
                 var authUrl = data.authorizationUrl;
                 window.location = authUrl; // ping the url
             }).catch(function (err) {
-                console.log("error here", err);
+                console.log("Error on oAuth url ", err);
             });
         }
     }, {
@@ -263,7 +275,7 @@ var Login = function (_React$Component) {
                 theme = _props.theme,
                 icon = _props.icon,
                 buttonText = _props.buttonText;
-
+            var showRegistration = this.state.showRegistration;
 
             var initialStyle = {
                 backgroundColor: theme === 'dark' ? 'rgb(66, 133, 244)' : '#fff',
@@ -279,45 +291,70 @@ var Login = function (_React$Component) {
                 fontFamily: 'Lato, sans-serif'
             };
 
+            if (showRegistration) {
+                return React.createElement(
+                    "div",
+                    { id: "loginPage", className: "container syn-border syn-border-spacing" },
+                    React.createElement(
+                        "h3",
+                        null,
+                        "Create Synapse Account"
+                    ),
+                    React.createElement(
+                        "p",
+                        null,
+                        "  Please enter your email address and we will send you the instructions on how to complete the registration process through ",
+                        React.createElement(
+                            "a",
+                            { href: "https://www.synapse.org/" },
+                            "Synapse"
+                        ),
+                        ". "
+                    ),
+                    React.createElement(
+                        "form",
+                        { onSubmit: this.handleLogin },
+                        React.createElement(
+                            "div",
+                            { className: "form-group" },
+                            React.createElement("input", { autoComplete: "email", placeholder: "Email Address", className: "form-control", id: "exampleEmail", name: "email", type: "text", value: this.state.email, onChange: this.handleChange })
+                        ),
+                        React.createElement(
+                            "button",
+                            { onSubmit: this.handleRegistration, type: "submit", className: "btn btn-success" },
+                            "Send Registration Info"
+                        )
+                    )
+                );
+            }
+
             return React.createElement(
                 "div",
                 { id: "loginPage", className: "container syn-border syn-border-spacing" },
-                React.createElement(
-                    "h3",
-                    { className: "text-left" },
-                    " Demo login with session token printed to screen"
-                ),
-                this.getSignInStateView(),
-                this.getTokenView(),
                 React.createElement(
                     "form",
                     { onSubmit: this.handleLogin },
                     React.createElement(
                         "div",
                         { className: "form-group" },
-                        React.createElement(
-                            "label",
-                            { className: "text-left", htmlFor: "exampleEmail" },
-                            "Synapse Email/Username:"
-                        ),
-                        React.createElement("input", { autoComplete: "email", placeholder: "Enter email", className: "form-control", id: "exampleEmail", name: "username", type: "text", value: this.state.username, onChange: this.handleChange })
+                        React.createElement("input", { autoComplete: "email", placeholder: "Username or Email Address", className: "form-control", id: "exampleEmail", name: "username", type: "text", value: this.state.username, onChange: this.handleChange })
                     ),
                     React.createElement(
                         "div",
                         { className: "form-group" },
-                        React.createElement(
-                            "label",
-                            { htmlFor: "examplePassword" },
-                            "Password:"
-                        ),
-                        React.createElement("input", { autoComplete: "password", placeholder: "Enter password", className: "form-control", id: "examplePassword", name: "password", type: "password", value: this.state.password, onChange: this.handleChange })
+                        React.createElement("input", { autoComplete: "password", placeholder: "Password", className: "form-control", id: "examplePassword", name: "password", type: "password", value: this.state.password, onChange: this.handleChange })
                     ),
                     this.getLoginFailureView(),
                     React.createElement(
                         "button",
                         { onSubmit: this.handleLogin, type: "submit", className: "btn btn-primary m-1" },
-                        "Submit"
+                        "Sign in"
                     )
+                ),
+                React.createElement(
+                    "p",
+                    null,
+                    "Or Sign in with Google"
                 ),
                 React.createElement(
                     "form",

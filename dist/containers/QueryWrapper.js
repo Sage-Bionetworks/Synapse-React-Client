@@ -97,10 +97,12 @@ var QueryWrapper = function (_React$Component) {
                     return value.columnName === _this2.props.filter;
                 });
                 data.facets = filteredData;
-                _this2.setState({
-                    data: data,
-                    lastQueryRequest: cloneDeep(request)
-                });
+                var newState = { data: data, lastQueryRequest: cloneDeep(request)
+                    // avoid failed test case by checking obj below
+                };if (filteredData && filteredData[0]) {
+                    newState[facetCount] = filteredData[0].facetValues.length;
+                }
+                _this2.setState(newState);
             }).catch(function (err) {
                 console.log('Failed to get data ', err);
             });
@@ -119,7 +121,7 @@ var QueryWrapper = function (_React$Component) {
                 'div',
                 null,
                 React.Children.map(this.props.children, function (child) {
-                    return React.cloneElement(child, { filter: _this3.props.filter, alias: _this3.props.alias, executeQueryRequest: _this3.executeQueryRequest, getLastQueryRequest: _this3.getLastQueryRequest, data: _this3.state.data });
+                    return React.cloneElement(child, { facetCount: _this3.state.facetCount, alias: _this3.props.alias, executeQueryRequest: _this3.executeQueryRequest, getLastQueryRequest: _this3.getLastQueryRequest, data: _this3.state.data });
                 })
             );
         }

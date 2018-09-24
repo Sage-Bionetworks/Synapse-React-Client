@@ -7,6 +7,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from 'react';
+import Measure from 'react-measure';
+
 var uuidv4 = require('uuid/v4');
 var PREVIOUS_ITEM_CLICK = "left click";
 var NEXT_CLICK = "right click";
@@ -84,10 +86,10 @@ var StackedRowHomebrew = function (_React$Component) {
             hoverText: "",
             hoverTextCount: 0,
             selectedFacets: {},
-            width: 0,
-            index: 0
+            dimensions: { height: 1, width: 1 },
+            index: -1,
+            isBarChart: false
         };
-        _this.chartRef = React.createRef();
         _this.resize = _this.resize.bind(_this);
         _this.extractPropsData = _this.extractPropsData.bind(_this);
         return _this;
@@ -155,6 +157,7 @@ var StackedRowHomebrew = function (_React$Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             window.addEventListener('resize', this.resize);
+            window.myRef = this.myRef;
         }
     }, {
         key: 'componentWillUnmount',
@@ -186,19 +189,20 @@ var StackedRowHomebrew = function (_React$Component) {
             var x_data = this.extractPropsData(data);
             var total = 0;
 
+            var width = this.state.dimensions.width;
             // sum up the counts of data
+
             for (var key in x_data) {
                 if (x_data.hasOwnProperty(key)) {
                     total += x_data[key].count;
                 }
             }
-
             return React.createElement(
                 'div',
                 { style: { marginBottom: "50px" }, className: 'container' },
                 React.createElement(
                     'div',
-                    null,
+                    { className: 'row' },
                     React.createElement(
                         'span',
                         null,
@@ -215,8 +219,7 @@ var StackedRowHomebrew = function (_React$Component) {
                     React.createElement(
                         'button',
                         {
-                            className: 'btn btn-default',
-                            type: 'button',
+                            className: 'btn btn-default btn-sm',
                             onClick: this.handleArrowClick(NEXT_CLICK),
                             style: { float: "right" } },
                         React.createElement('i', { className: 'fas fa-angle-right' })
@@ -224,8 +227,7 @@ var StackedRowHomebrew = function (_React$Component) {
                     React.createElement(
                         'button',
                         {
-                            className: 'btn btn-default',
-                            type: 'button',
+                            className: 'btn btn-default btn-sm',
                             onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK),
                             style: { float: "right" } },
                         React.createElement('i', { className: 'fas fa-angle-left' })
@@ -233,76 +235,113 @@ var StackedRowHomebrew = function (_React$Component) {
                 ),
                 React.createElement(
                     'div',
-                    { className: 'container', ref: this.chartRef },
-                    x_data.map(function (obj, index) {
-                        var rectStyle = {
-                            margin: '0px',
-                            fill: '' + colorsTissues[index],
-                            strokeWidth: '0px',
-                            boxShadow: "20px 20px"
-                        };
-                        var height = 50;
-                        var width = void 0;
-                        if (_this2.state.width === 0) {
-                            width = obj.count / total * (window.innerWidth / 2);
-                        } else {
-                            // this doesn't work yet but is a better heuristic than above
-                            width = obj.count / total * (_this2.state.width / 1.5);
-                        }
-                        return (
-                            // each svg represents one of the bars
-                            // will need to change this to be responsive
-                            React.createElement(
-                                'svg',
-                                { height: height, width: width, key: uuidv4(),
-                                    onMouseEnter: _this2.handleHover,
-                                    onClick: _this2.handleClick(Object.assign({}, obj, { index: index })),
-                                    onMouseLeave: _this2.handleExit },
-                                React.createElement('rect', {
-                                    height: height,
-                                    width: width,
-                                    style: rectStyle }),
-                                React.createElement(
-                                    'text',
-                                    {
-                                        font: 'bold sans-serif',
-                                        fill: 'white',
-                                        x: width / 2,
-                                        y: height / 2 },
-                                    index < 3 && obj.count
-                                )
-                            )
-                        );
-                    })
-                ),
-                this.state.hoverText && React.createElement(
-                    'div',
-                    null,
-                    ' ',
-                    React.createElement('i', { className: 'fas fa-caret-down' }),
-                    '  '
-                ),
-                this.state.hoverText && React.createElement(
-                    'p',
-                    null,
-                    ' ',
-                    this.props.alias,
-                    ': ',
-                    this.state.hoverText,
-                    ' '
-                ),
-                this.state.hoverText && React.createElement(
-                    'p',
-                    null,
-                    ' ',
+                    { className: 'row' },
                     React.createElement(
-                        'i',
-                        null,
+                        Measure,
+                        {
+                            bounds: true,
+                            onResize: function onResize(contentRect) {
+                                _this2.setState({ dimensions: contentRect.bounds });
+                            }
+                        },
+                        function (_ref) {
+                            var measureRef = _ref.measureRef;
+                            return React.createElement(
+                                'div',
+                                { ref: measureRef },
+                                x_data.map(function (obj, index) {
+
+                                    var rectStyle = {
+                                        margin: '0px',
+                                        fill: '' + colorsTissues[index],
+                                        strokeWidth: '0px',
+                                        boxShadow: "20px 20px"
+                                    };
+
+                                    var svgHeight = 50;
+                                    // this doesn't work yet but is a better heuristic than above
+                                    var svgWidth = obj.count / total * width;
+                                    var isBarChart = _this2.state.isBarChart;
+
+
+                                    if (isBarChart) {
+                                        var _ref2 = [svgHeight, svgWidth];
+                                        svgWidth = _ref2[0];
+                                        svgHeight = _ref2[1];
+                                    }
+
+                                    return (
+                                        // each svg represents one of the bars
+                                        // will need to change this to be responsive
+                                        React.createElement(
+                                            'svg',
+                                            { height: 65,
+                                                width: svgWidth,
+                                                key: uuidv4(),
+                                                onMouseEnter: _this2.handleHover,
+                                                onClick: _this2.handleClick(Object.assign({}, obj, { index: index })),
+                                                onMouseLeave: _this2.handleExit },
+                                            React.createElement('rect', {
+                                                height: svgHeight,
+                                                width: svgWidth,
+                                                style: rectStyle }),
+                                            React.createElement(
+                                                'text',
+                                                {
+                                                    font: 'bold sans-serif',
+                                                    fill: 'white',
+                                                    x: svgWidth / 2,
+                                                    y: svgHeight / 2 },
+                                                index < 3 && obj.count
+                                            ),
+                                            _this2.state.index === index && React.createElement(
+                                                'text',
+                                                {
+                                                    fill: 'black',
+                                                    x: 0,
+                                                    fontFamily: 'FontAwesome',
+                                                    y: 60
+                                                },
+                                                '\u25BE'
+                                            )
+                                        )
+                                    );
+                                })
+                            );
+                        }
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'row' },
+                    this.state.hoverText && React.createElement(
+                        'p',
+                        { className: 'noMargin' },
                         ' ',
-                        this.state.hoverTextCount,
-                        ' files '
+                        React.createElement(
+                            'strong',
+                            null,
+                            ' ',
+                            this.props.alias,
+                            ': ',
+                            this.state.hoverText,
+                            ' '
+                        ),
+                        ' '
                     ),
-                    ' '
+                    this.state.hoverText && React.createElement(
+                        'p',
+                        { className: 'noMargin' },
+                        ' ',
+                        React.createElement(
+                            'i',
+                            null,
+                            ' ',
+                            this.state.hoverTextCount,
+                            ' files '
+                        ),
+                        ' '
+                    )
                 )
             );
         }

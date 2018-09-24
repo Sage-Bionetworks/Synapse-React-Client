@@ -7,6 +7,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from 'react';
+
 var cloneDeep = require("lodash.clonedeep");
 // Hold constants for next and previous button actions
 var NEXT = "NEXT";
@@ -115,12 +116,28 @@ var SynapseTable = function (_React$Component) {
 
 
     _createClass(SynapseTable, [{
-        key: "render",
+        key: "download",
 
+
+        // TODO: implement this method
+        value: function download(event) {
+            event.preventDefault();
+        }
+
+        // TODO: implement this method
+
+    }, {
+        key: "advancedSearch",
+        value: function advancedSearch(event) {
+            event.preventDefault();
+        }
 
         /**
          * Display the view
          */
+
+    }, {
+        key: "render",
         value: function render() {
             var _this2 = this;
 
@@ -169,50 +186,98 @@ var SynapseTable = function (_React$Component) {
             var pastZero = this.props.getLastQueryRequest().query.offset > 0;
 
             return React.createElement(
-                "div",
-                { className: "container" },
+                React.Fragment,
+                null,
                 React.createElement(
-                    "table",
-                    { className: "table table-striped table-condensed" },
+                    "div",
+                    { className: "container" },
                     React.createElement(
-                        "thead",
-                        null,
+                        "div",
+                        { className: "row" },
                         React.createElement(
-                            "tr",
+                            "span",
                             null,
-                            React.createElement("th", null),
-                            columnModels.map(function (column) {
-                                return React.createElement(
-                                    "th",
-                                    { key: column.name },
-                                    React.createElement(
-                                        "a",
-                                        { onClick: _this2.handleColumnClick(column.name), className: "padding-left-2 padding-right-2" },
-                                        " ",
-                                        column.name,
-                                        React.createElement("i", { className: "fa" })
-                                    )
-                                );
-                            })
+                            React.createElement(
+                                "strong",
+                                null,
+                                "Showing 2530 files"
+                            )
+                        ),
+                        React.createElement(
+                            "a",
+                            { onClick: this.advancedSearch, href: "", className: "floatRight" },
+                            React.createElement(
+                                "u",
+                                null,
+                                " Advanced Search "
+                            )
+                        ),
+                        React.createElement(
+                            "span",
+                            { className: "floatRight" },
+                            "\xA0\xA0"
+                        ),
+                        React.createElement(
+                            "a",
+                            { onClick: this.download, href: "", className: "floatRight" },
+                            React.createElement(
+                                "u",
+                                null,
+                                "Download"
+                            )
                         )
-                    ),
-                    React.createElement(
-                        "tbody",
-                        null,
-                        rowsFormatted.map(function (rowFormatted) {
-                            return rowFormatted;
-                        })
                     )
                 ),
-                pastZero && React.createElement(
-                    "button",
-                    { onClick: this.handlePaginationClick(PREVIOUS), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
-                    "Previous"
-                ),
                 React.createElement(
-                    "button",
-                    { onClick: this.handlePaginationClick(NEXT), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
-                    "Next"
+                    "div",
+                    { className: "container overflowAuto" },
+                    React.createElement(
+                        "div",
+                        { className: "row" },
+                        React.createElement(
+                            "table",
+                            { className: "table table-striped table-condensed" },
+                            React.createElement(
+                                "thead",
+                                null,
+                                React.createElement(
+                                    "tr",
+                                    null,
+                                    React.createElement("th", null),
+                                    columnModels.map(function (column) {
+                                        return React.createElement(
+                                            "th",
+                                            { key: column.name },
+                                            React.createElement(
+                                                "a",
+                                                { onClick: _this2.handleColumnClick(column.name), className: "padding-left-2 padding-right-2" },
+                                                " ",
+                                                column.name,
+                                                React.createElement("i", { className: "fa" })
+                                            )
+                                        );
+                                    })
+                                )
+                            ),
+                            React.createElement(
+                                "tbody",
+                                null,
+                                rowsFormatted.map(function (rowFormatted) {
+                                    return rowFormatted;
+                                })
+                            )
+                        ),
+                        pastZero && React.createElement(
+                            "button",
+                            { onClick: this.handlePaginationClick(PREVIOUS), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
+                            "Previous"
+                        ),
+                        React.createElement(
+                            "button",
+                            { onClick: this.handlePaginationClick(NEXT), className: "btn btn-default", style: { borderRadius: "8px", color: "#1e7098", background: "white" }, type: "button" },
+                            "Next"
+                        )
+                    )
                 )
             );
         }
