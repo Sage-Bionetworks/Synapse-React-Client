@@ -215,7 +215,6 @@ An example of a view with facets/stacked bar chart/table
                              // if defaultVisibleCount === 0 then it will show all
                              // columns as specified by the sql statement
     token={this.state.token}
-    sql={`SELECT * FROM syn15661198`}
     alias={"Disease"}
     filter={"parentId"}
   >

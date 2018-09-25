@@ -9,11 +9,25 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from 'react';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faSort } from '@fortawesome/free-solid-svg-icons';
+import { faSortUp } from '@fortawesome/free-solid-svg-icons';
+import { faSortDown } from '@fortawesome/free-solid-svg-icons';
+
+// Add all icons to the library so you can use it in your page
+library.add(faEllipsisV);
+library.add(faSort);
+library.add(faSortUp);
+library.add(faSortDown);
 
 var cloneDeep = require("lodash.clonedeep");
 // Hold constants for next and previous button actions
 var NEXT = "NEXT";
 var PREVIOUS = "PREVIOUS";
+var ICON_STATE = ["sort", "sort-up", "sort-down"];
+var SORT_STATE = ["", "ASC", "DESC"];
 
 var SynapseTable = function (_React$Component) {
     _inherits(SynapseTable, _React$Component);
@@ -40,47 +54,26 @@ var SynapseTable = function (_React$Component) {
             };
         };
 
-        _this.handleColumnClick = function (name) {
+        _this.handleColumnClick = function (dict) {
             return function (event) {
-                var element = null;
-                // weird onclick behavior that sometimes hits
-                // the <i> tag
-                if (event.target.tagName === "TH") {
-                    element = event.target.children[0].children[0];
-                } else if (event.target.tagName === "A") {
-                    element = event.target.children[0];
-                } else if (event.target.tagName === "I") {
-                    element = event.target;
-                }
-                // check what the state of the current column name is
-                var containsDown = element.className.indexOf("down") !== -1;
-                var containsUp = element.className.indexOf("up") !== -1;
-                var direction = "ASC";
-                // if its unitialized
-                if (!containsUp && !containsDown) {
-                    element.className = element.className.replace("fa-sort", "");
-                    element.className += "fa-sort-up";
-                }
-                // if ita's down then its DESC and needs to be replaced with up
-                if (containsDown) {
-                    element.className = element.className.replace("fa-sort-down", "fa-sort");
-                }
-                // if it's up then its ASC and needs to be replaced with down
-                if (containsUp) {
-                    element.className = element.className.replace("fa-sort-up", "fa-sort-down");
-                    direction = "DESC";
+                var columnIconState = cloneDeep(_this.state.columnIconState);
+                if (columnIconState.length === 0) {
+                    columnIconState = Array(_this.getLengthOfPropsData()).fill(0);
                 }
                 // get currently sorted items and remove/insert this selection
                 var sortSelection = cloneDeep(_this.state.sortSelection);
-                var index = _this.findSelectionIndex(sortSelection, name);
+                var index = _this.findSelectionIndex(sortSelection, dict.name);
+
                 if (index !== -1) {
                     sortSelection.splice(index, 1);
                 }
 
-                if (!containsDown) {
+                columnIconState[dict.index] = (columnIconState[dict.index] + 1) % ICON_STATE.length;
+
+                if (columnIconState[dict.index] > 0) {
                     sortSelection.unshift({
-                        column: name,
-                        direction: direction
+                        column: dict.name,
+                        direction: SORT_STATE[columnIconState[dict.index]]
                     });
                 }
 
@@ -88,7 +81,8 @@ var SynapseTable = function (_React$Component) {
                 queryRequest.query.sort = sortSelection;
                 _this.props.executeQueryRequest(queryRequest);
                 _this.setState({
-                    sortSelection: sortSelection
+                    sortSelection: sortSelection,
+                    columnIconState: columnIconState
                 });
             };
         };
@@ -101,21 +95,17 @@ var SynapseTable = function (_React$Component) {
                 var isColumnSelected = void 0;
                 if (_this.state.isColumnSelected.length === 0) {
                     // unpack all the data
-                    var data = _this.props.data;
-                    var queryResult = data.queryResult;
-                    var queryResults = queryResult.queryResults;
-                    var headers = queryResults.headers;
-
+                    var lengthOfPropsData = _this.getLengthOfPropsData();
                     var defaultSelection = void 0;
                     // fill defaultVisibleCount with true and the rest as false
                     if (_this.props.defaultVisibleCount === 0) {
                         // if set to zero then its all true
-                        defaultSelection = Array(headers.length).fill(true);
+                        defaultSelection = Array(lengthOfPropsData).fill(true);
                     } else {
                         var _defaultSelection;
 
                         defaultSelection = Array(_this.props.defaultVisibleCount).fill(true);
-                        (_defaultSelection = defaultSelection).push.apply(_defaultSelection, _toConsumableArray(Array(headers.length - _this.props.defaultVisibleCount).fill(false)));
+                        (_defaultSelection = defaultSelection).push.apply(_defaultSelection, _toConsumableArray(Array(lengthOfPropsData - _this.props.defaultVisibleCount).fill(false)));
                     }
                     isColumnSelected = defaultSelection;
                 } else {
@@ -133,12 +123,14 @@ var SynapseTable = function (_React$Component) {
         _this.toggleDropdown = _this.toggleDropdown.bind(_this);
         _this.advancedSearch = _this.advancedSearch.bind(_this);
         _this.download = _this.download.bind(_this);
+        _this.getLengthOfPropsData = _this.getLengthOfPropsData.bind(_this);
         // store the offset and sorted selection that is currently held
         _this.state = {
             sortSelection: [],
             offset: 0,
             isOpen: false,
-            isColumnSelected: []
+            isColumnSelected: [],
+            columnIconState: []
         };
         return _this;
     }
@@ -158,7 +150,7 @@ var SynapseTable = function (_React$Component) {
 
 
     _createClass(SynapseTable, [{
-        key: "findSelectionIndex",
+        key: 'findSelectionIndex',
 
 
         /**
@@ -183,7 +175,7 @@ var SynapseTable = function (_React$Component) {
         // TODO: implement this method
 
     }, {
-        key: "download",
+        key: 'download',
         value: function download(event) {
             event.preventDefault();
         }
@@ -191,7 +183,7 @@ var SynapseTable = function (_React$Component) {
         // Direct user to synapse corresponding synapse table
 
     }, {
-        key: "advancedSearch",
+        key: 'advancedSearch',
         value: function advancedSearch(event) {
             event.preventDefault();
             var lastQueryRequest = this.props.getLastQueryRequest();
@@ -200,7 +192,7 @@ var SynapseTable = function (_React$Component) {
 
             var encodedQuery = btoa(JSON.stringify(query));
             var synTable = this.props.synapseId;
-            window.location = "https://www.synapse.org/#!Synapse:" + synTable + "/tables/query/" + encodedQuery;
+            window.location = 'https://www.synapse.org/#!Synapse:' + synTable + '/tables/query/' + encodedQuery;
         }
 
         /**
@@ -212,11 +204,21 @@ var SynapseTable = function (_React$Component) {
          */
 
     }, {
-        key: "toggleDropdown",
+        key: 'toggleDropdown',
         value: function toggleDropdown() {
             var isOpen = this.state.isOpen;
 
             this.setState({ isOpen: !isOpen });
+        }
+    }, {
+        key: 'getLengthOfPropsData',
+        value: function getLengthOfPropsData() {
+            var data = this.props.data;
+            var queryResult = data.queryResult;
+            var queryResults = queryResult.queryResults;
+            var headers = queryResults.headers;
+
+            return headers.length;
         }
 
         /**
@@ -227,7 +229,7 @@ var SynapseTable = function (_React$Component) {
          */
 
     }, {
-        key: "render",
+        key: 'render',
 
 
         /**
@@ -238,9 +240,9 @@ var SynapseTable = function (_React$Component) {
 
             if (this.props.data.length === 0) {
                 return React.createElement(
-                    "div",
-                    { className: "container" },
-                    " loading table "
+                    'div',
+                    { className: 'container' },
+                    ' loading table '
                 );
             }
 
@@ -265,13 +267,13 @@ var SynapseTable = function (_React$Component) {
                 if (initRender || subsequentRender) {
                     var isSelected = _this2.findSelectionIndex(_this2.state.sortSelection, column.name) !== -1;
                     return React.createElement(
-                        "th",
-                        { onClick: _this2.handleColumnClick(column.name), key: column.name, className: isSelected ? "SRC-salmon-background" : "" },
+                        'th',
+                        { onClick: _this2.handleColumnClick({ name: column.name, index: index }), key: column.name, className: isSelected ? "SRC-salmon-background" : "" },
                         React.createElement(
-                            "a",
-                            { className: "padding-left-2 padding-right-2 " + (isSelected ? "SRC-anchor-light" : "") },
+                            'a',
+                            { className: 'padding-left-2 padding-right-2 ' + (isSelected ? "SRC-anchor-light" : "") },
                             column.name,
-                            React.createElement("i", { className: "fa fa-sort" })
+                            React.createElement(FontAwesomeIcon, { icon: ICON_STATE[_this2.state.columnIconState[index] | 0] })
                         )
                     );
                 }
@@ -285,8 +287,8 @@ var SynapseTable = function (_React$Component) {
             var rowsFormatted = [];
             rows.forEach(function (expRow, i) {
                 var rowFormatted = React.createElement(
-                    "tr",
-                    { key: "(" + expRow.rowId + ")" },
+                    'tr',
+                    { key: '(' + expRow.rowId + ')' },
                     expRow.values.map(function (value, j) {
                         var columnName = headers[j].name;
                         var index = _this2.findSelectionIndex(_this2.state.sortSelection, columnName);
@@ -295,14 +297,14 @@ var SynapseTable = function (_React$Component) {
                         var isRowActiveSubsequent = _this2.state.isColumnSelected[j] && _this2.state.isColumnSelected.length !== 0;
                         if (isRowActiveInit || isRowActiveSubsequent) {
                             return React.createElement(
-                                "td",
-                                { className: "SRC_noBorderTop", key: "(" + i + "," + j + ")" },
+                                'td',
+                                { className: 'SRC_noBorderTop', key: '(' + i + ',' + j + ')' },
                                 React.createElement(
-                                    "p",
-                                    { className: "" + (index === -1 ? "" : "SRC-boldText") },
-                                    " ",
+                                    'p',
+                                    { className: '' + (index === -1 ? "" : "SRC-boldText") },
+                                    ' ',
                                     value,
-                                    " "
+                                    ' '
                                 )
                             );
                         }
@@ -321,50 +323,49 @@ var SynapseTable = function (_React$Component) {
                 React.Fragment,
                 null,
                 React.createElement(
-                    "div",
-                    { className: "container" },
+                    'div',
+                    { className: 'container' },
                     React.createElement(
-                        "div",
-                        { className: "row" },
+                        'div',
+                        { className: 'row' },
                         React.createElement(
-                            "span",
+                            'span',
                             null,
                             React.createElement(
-                                "strong",
+                                'strong',
                                 null,
-                                " Showing ",
+                                ' Showing ',
                                 this.props.data.queryResult.queryResults.rows.length,
-                                " Files "
+                                ' Files '
                             )
                         ),
                         React.createElement(
-                            "span",
-                            { className: "SRC-floatRight" },
+                            'span',
+                            { className: 'SRC-floatRight' },
                             React.createElement(
-                                "span",
-                                { className: " dropdown " + (this.state.isOpen ? "open" : "") },
+                                'span',
+                                { className: ' dropdown ' + (this.state.isOpen ? "open" : "") },
                                 React.createElement(
-                                    "button",
-                                    { className: "btn SRC-marginRightSevenPx btn-default dropdown-toggle", onClick: this.toggleDropdown, type: "button", id: "dropdownMenu1", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "true" },
-                                    React.createElement("i", { className: "fas fa-ellipsis-v" })
+                                    'button',
+                                    { className: 'btn SRC-marginRightSevenPx btn-default dropdown-toggle', onClick: this.toggleDropdown, type: 'button', id: 'dropdownMenu1', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'true' },
+                                    React.createElement(FontAwesomeIcon, { icon: 'ellipsis-v' })
                                 ),
                                 React.createElement(
-                                    "ul",
-                                    { className: "dropdown-menu", "aria-labelledby": "dropdownMenu1" },
+                                    'ul',
+                                    { className: 'dropdown-menu', 'aria-labelledby': 'dropdownMenu1' },
                                     headers.map(function (header, index) {
                                         var isColumnSelected = _this2.state.isColumnSelected[index];
                                         if (isColumnSelected === undefined) {
-                                            isColumnSelected = index < _this2.props.defaultVisibleCount;
+                                            isColumnSelected = index < _this2.props.defaultVisibleCount | _this2.props.defaultVisibleCount === 0;
                                         }
                                         return React.createElement(
-                                            "li",
-                                            { className: "" + (isColumnSelected ? "SRC-table-anchor-chosen" : ""),
+                                            'li',
+                                            { className: '' + (isColumnSelected ? "SRC-table-anchor-chosen" : ""),
                                                 key: header.name,
-                                                onClick: _this2.toggleColumnSelection(index)
-                                            },
+                                                onClick: _this2.toggleColumnSelection(index) },
                                             React.createElement(
-                                                "a",
-                                                { className: "SRC-no-focus", href: "" },
+                                                'a',
+                                                { className: 'SRC-no-focus', href: '' },
                                                 header.name
                                             )
                                         );
@@ -372,45 +373,45 @@ var SynapseTable = function (_React$Component) {
                                 )
                             ),
                             React.createElement(
-                                "a",
-                                { onClick: this.advancedSearch, href: "" },
+                                'a',
+                                { onClick: this.advancedSearch, href: '' },
                                 React.createElement(
-                                    "u",
+                                    'u',
                                     null,
-                                    " Advanced Search "
+                                    ' Advanced Search '
                                 )
                             ),
                             React.createElement(
-                                "span",
+                                'span',
                                 null,
-                                "\xA0\xA0"
+                                '\xA0\xA0'
                             ),
                             React.createElement(
-                                "a",
-                                { onClick: this.download, href: "" },
+                                'a',
+                                { onClick: this.download, href: '' },
                                 React.createElement(
-                                    "u",
+                                    'u',
                                     null,
-                                    "Download"
+                                    'Download'
                                 )
                             )
                         )
                     )
                 ),
                 React.createElement(
-                    "div",
-                    { className: "container SRC-overflowAuto" },
+                    'div',
+                    { className: 'container SRC-overflowAuto' },
                     React.createElement(
-                        "div",
-                        { className: "row" },
+                        'div',
+                        { className: 'row' },
                         React.createElement(
-                            "table",
-                            { className: "table table-striped table-condensed" },
+                            'table',
+                            { className: 'table table-striped table-condensed' },
                             React.createElement(
-                                "thead",
-                                { className: "SRC_borderTop" },
+                                'thead',
+                                { className: 'SRC_borderTop' },
                                 React.createElement(
-                                    "tr",
+                                    'tr',
                                     null,
                                     headersFormatted.map(function (headerFormatted) {
                                         return headerFormatted;
@@ -418,7 +419,7 @@ var SynapseTable = function (_React$Component) {
                                 )
                             ),
                             React.createElement(
-                                "tbody",
+                                'tbody',
                                 null,
                                 rowsFormatted.map(function (rowFormatted) {
                                     return rowFormatted;
@@ -426,14 +427,14 @@ var SynapseTable = function (_React$Component) {
                             )
                         ),
                         pastZero && React.createElement(
-                            "button",
-                            { onClick: this.handlePaginationClick(PREVIOUS), className: "btn btn-default SRC-table-button", type: "button" },
-                            "Previous"
+                            'button',
+                            { onClick: this.handlePaginationClick(PREVIOUS), className: 'btn btn-default SRC-table-button', type: 'button' },
+                            'Previous'
                         ),
                         React.createElement(
-                            "button",
-                            { onClick: this.handlePaginationClick(NEXT), className: "btn btn-default SRC-table-button", type: "button" },
-                            "Next"
+                            'button',
+                            { onClick: this.handlePaginationClick(NEXT), className: 'btn btn-default SRC-table-button', type: 'button' },
+                            'Next'
                         )
                     )
                 )
