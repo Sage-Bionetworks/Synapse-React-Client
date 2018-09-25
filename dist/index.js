@@ -6,6 +6,9 @@ import Facets from './containers/Facets';
 import StackedRowHomebrew from './containers/StackedRowHomebrew';
 import SynapseTable from './containers/SynapseTable';
 
+import './style/Portal.css';
+import 'bootswatch/paper/bootstrap.css';
+
 var SynapseComponents = {
     Markdown: MarkdownSynapse,
     QueryWrapper: QueryWrapper,

@@ -8,6 +8,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import Measure from 'react-measure';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faAngleLeft);
+library.add(faAngleRight);
 
 var uuidv4 = require('uuid/v4');
 var PREVIOUS_ITEM_CLICK = "left click";
@@ -221,14 +228,14 @@ var StackedRowHomebrew = function (_React$Component) {
                         {
                             className: 'btn btn-default btn-sm SRC-floatRight',
                             onClick: this.handleArrowClick(NEXT_CLICK) },
-                        React.createElement('i', { className: 'fas fa-angle-right' })
+                        React.createElement(FontAwesomeIcon, { icon: 'angle-right' })
                     ),
                     React.createElement(
                         'button',
                         {
                             className: 'btn btn-default btn-sm SRC-floatRight',
                             onClick: this.handleArrowClick(PREVIOUS_ITEM_CLICK) },
-                        React.createElement('i', { className: 'fas fa-angle-left' })
+                        React.createElement(FontAwesomeIcon, { icon: 'angle-left' })
                     )
                 ),
                 React.createElement(

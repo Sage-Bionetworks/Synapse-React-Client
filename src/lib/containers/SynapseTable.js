@@ -1,9 +1,13 @@
 import React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { faSort } from '@fortawesome/free-solid-svg-icons'
 import { faSortUp } from '@fortawesome/free-solid-svg-icons'
 import { faSortDown } from '@fortawesome/free-solid-svg-icons'
+
+// Add all icons to the library so you can use it in your page
+library.add(faEllipsisV)
 library.add(faSort)
 library.add(faSortUp)
 library.add(faSortDown)
@@ -262,7 +266,7 @@ export default class SynapseTable extends React.Component {
                             {/* dropdown menu below */}
                             <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
                                 <button className="btn SRC-marginRightSevenPx btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i className="fas fa-ellipsis-v"></i>
+                                    <FontAwesomeIcon icon="ellipsis-v"></FontAwesomeIcon>
                                 </button>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
                                     {

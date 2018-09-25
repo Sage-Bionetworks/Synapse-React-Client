@@ -1,5 +1,12 @@
 import React from 'react'
 import Measure from 'react-measure'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faAngleLeft)
+library.add(faAngleRight)
 
 const uuidv4 = require('uuid/v4');
 const PREVIOUS_ITEM_CLICK = "left click"
@@ -243,12 +250,12 @@ export default class StackedRowHomebrew extends React.Component {
                     <button
                         className="btn btn-default btn-sm SRC-floatRight" 
                         onClick={this.handleArrowClick(NEXT_CLICK)}>
-                        <i className="fas fa-angle-right"></i>
+                        <FontAwesomeIcon icon="angle-right"/>
                     </button>
                     <button
                         className="btn btn-default btn-sm SRC-floatRight" 
                         onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}> 
-                        <i className="fas fa-angle-left"></i> 
+                        <FontAwesomeIcon icon="angle-left"/>
                     </button>
                 </div>
                 <div className="row">
