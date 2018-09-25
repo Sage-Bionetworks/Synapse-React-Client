@@ -131,6 +131,8 @@ var SynapseTable = function (_React$Component) {
         _this.findSelectionIndex = _this.findSelectionIndex.bind(_this);
         _this.toggleColumnSelection = _this.toggleColumnSelection.bind(_this);
         _this.toggleDropdown = _this.toggleDropdown.bind(_this);
+        _this.advancedSearch = _this.advancedSearch.bind(_this);
+        _this.download = _this.download.bind(_this);
         // store the offset and sorted selection that is currently held
         _this.state = {
             sortSelection: [],
@@ -186,12 +188,19 @@ var SynapseTable = function (_React$Component) {
             event.preventDefault();
         }
 
-        // TODO: implement this method
+        // Direct user to synapse corresponding synapse table
 
     }, {
         key: "advancedSearch",
         value: function advancedSearch(event) {
             event.preventDefault();
+            var lastQueryRequest = this.props.getLastQueryRequest();
+            var query = lastQueryRequest.query;
+            // base 64 encode the json of the query and go to url with the encoded object
+
+            var encodedQuery = btoa(JSON.stringify(query));
+            var synTable = this.props.synapseId;
+            window.location = "https://www.synapse.org/#!Synapse:" + synTable + "/tables/query/" + encodedQuery;
         }
 
         /**

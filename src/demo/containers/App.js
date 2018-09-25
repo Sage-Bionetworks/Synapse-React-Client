@@ -182,6 +182,7 @@ class App extends Component {
           initQueryRequest = {{
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
             partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
+            synapseId: "syn15661198",
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn15661198`,

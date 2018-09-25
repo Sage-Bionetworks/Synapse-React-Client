@@ -14,6 +14,8 @@ export default class SynapseTable extends React.Component {
         this.findSelectionIndex = this.findSelectionIndex.bind(this)
         this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
         this.toggleDropdown = this.toggleDropdown.bind(this)
+        this.advancedSearch = this.advancedSearch.bind(this)
+        this.download = this.download.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
@@ -123,9 +125,15 @@ export default class SynapseTable extends React.Component {
         event.preventDefault()
     }
 
-    // TODO: implement this method
+    // Direct user to synapse corresponding synapse table
     advancedSearch (event) {
         event.preventDefault()
+        let lastQueryRequest = this.props.getLastQueryRequest()
+        let {query} = lastQueryRequest
+        // base 64 encode the json of the query and go to url with the encoded object
+        let encodedQuery = btoa(JSON.stringify(query))
+        let synTable = this.props.synapseId
+        window.location = `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`
     }
 
     /**

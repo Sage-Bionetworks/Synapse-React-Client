@@ -49,22 +49,8 @@ exports[`test  renders correctly 1`] = `
   </p>
   <form>
     <button
+      className="SRC-google-button SRC-google-button-light-color"
       onClick={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#fff",
-          "border": "1px solid transparent",
-          "borderRadius": 2,
-          "boxShadow": "0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24)",
-          "color": "rgba(0, 0, 0, .54)",
-          "display": "inline-flex",
-          "fontFamily": "Lato, sans-serif",
-          "fontSize": 14,
-          "fontWeight": "500",
-          "padding": 0,
-        }
-      }
     >
       <div
         style={
