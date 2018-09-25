@@ -356,14 +356,13 @@ var SynapseTable = function (_React$Component) {
                                     headers.map(function (header, index) {
                                         var isColumnSelected = _this2.state.isColumnSelected[index];
                                         if (isColumnSelected === undefined) {
-                                            isColumnSelected = index < _this2.props.defaultVisibleCount;
+                                            isColumnSelected = index < _this2.props.defaultVisibleCount | _this2.props.defaultVisibleCount === 0;
                                         }
                                         return React.createElement(
                                             'li',
                                             { className: '' + (isColumnSelected ? "SRC-table-anchor-chosen" : ""),
                                                 key: header.name,
-                                                onClick: _this2.toggleColumnSelection(index)
-                                            },
+                                                onClick: _this2.toggleColumnSelection(index) },
                                             React.createElement(
                                                 'a',
                                                 { className: 'SRC-no-focus', href: '' },

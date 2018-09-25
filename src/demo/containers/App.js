@@ -198,7 +198,7 @@ class App extends Component {
           token={this.props.token}
           alias="Disease"
           filter="parentId"
-        >
+          defaultVisibleCount={4}>
           <Facets>
           </Facets>
           <StackedRowHomebrew>

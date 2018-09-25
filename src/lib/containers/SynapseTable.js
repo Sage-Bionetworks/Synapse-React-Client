@@ -274,12 +274,11 @@ export default class SynapseTable extends React.Component {
                                             (header, index) => {
                                                 let isColumnSelected = this.state.isColumnSelected[index]
                                                 if (isColumnSelected === undefined) {
-                                                    isColumnSelected = index < this.props.defaultVisibleCount
+                                                    isColumnSelected = index < this.props.defaultVisibleCount | this.props.defaultVisibleCount === 0
                                                 }
                                                 return (<li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} 
                                                             key={header.name}
-                                                            onClick={this.toggleColumnSelection(index)}
-                                                        >
+                                                            onClick={this.toggleColumnSelection(index)}>
                                                             <a className="SRC-no-focus" href="">{header.name}</a>
                                                         </li>)
                                             }
