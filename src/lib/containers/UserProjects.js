@@ -45,7 +45,7 @@ class UserProjects extends React.Component {
         }
 
         return (
-            <div className="container syn-border syn-border-spacing">
+            <div className="container SRC-syn-border SRC-syn-border-spacing">
                 <h3> Demo of getting user projects</h3>
                 <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 btn-primary"}  onClick={() => this.getProjects('MY_PROJECTS')}> All </button>
                 <button disabled={this.props.token === "" ? true: false} className={"btn mb-1 ml-1 mr-1 btn-primary"}  onClick={() => this.getProjects('MY_CREATED_PROJECTS')}> Created By Me </button>

@@ -277,24 +277,13 @@ var Login = function (_React$Component) {
                 buttonText = _props.buttonText;
             var showRegistration = this.state.showRegistration;
 
-            var initialStyle = {
-                backgroundColor: theme === 'dark' ? 'rgb(66, 133, 244)' : '#fff',
-                display: 'inline-flex',
-                alignItems: 'center',
-                color: theme === 'dark' ? '#fff' : 'rgba(0, 0, 0, .54)',
-                boxShadow: '0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24)',
-                padding: 0,
-                borderRadius: 2,
-                border: '1px solid transparent',
-                fontSize: 14,
-                fontWeight: '500',
-                fontFamily: 'Lato, sans-serif'
-            };
+
+            var googleTheme = theme === 'dark' ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color';
 
             if (showRegistration) {
                 return React.createElement(
                     "div",
-                    { id: "loginPage", className: "container syn-border syn-border-spacing" },
+                    { id: "loginPage", className: "container SRC-syn-border SRC-syn-border-spacing" },
                     React.createElement(
                         "h3",
                         null,
@@ -330,7 +319,7 @@ var Login = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { id: "loginPage", className: "container syn-border syn-border-spacing" },
+                { id: "loginPage", className: "container SRC-syn-border SRC-syn-border-spacing" },
                 React.createElement(
                     "form",
                     { onSubmit: this.handleLogin },
@@ -361,7 +350,7 @@ var Login = function (_React$Component) {
                     null,
                     !this.state.isSignedIn && React.createElement(
                         "button",
-                        { onClick: this.onSignIn, style: initialStyle },
+                        { onClick: this.onSignIn, className: "SRC-google-button " + googleTheme },
                         React.createElement(GoogleIcon, { key: 1, active: true }),
                         React.createElement(
                             ButtonContent,
@@ -371,7 +360,7 @@ var Login = function (_React$Component) {
                     ),
                     this.state.isSignedIn && React.createElement(
                         "button",
-                        { onClick: this.onSignOut, style: initialStyle },
+                        { onClick: this.onSignOut, className: "SRC-google-button " + googleTheme },
                         React.createElement(
                             ButtonContent,
                             { icon: icon, key: 3 },

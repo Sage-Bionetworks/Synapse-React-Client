@@ -159,13 +159,14 @@ class App extends Component {
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
       
-        <div className="container syn-border-spacing">
-           <button className="btn btn-primary" onClick={
+        <div className="container SRC-syn-border-spacing">
+           <button className="btn btn-primary" 
+                   onClick={
                         () => {
                             this.removeHandler()
                         }
-                        }
-                      > Toggle markdown from view </button>  
+                    }> Toggle markdown from view 
+            </button>  
         </div>
 
         <CustomMarkdownView>
@@ -181,6 +182,7 @@ class App extends Component {
           initQueryRequest = {{
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
             partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
+            synapseId: "syn15661198",
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn15661198`,
@@ -191,9 +193,9 @@ class App extends Component {
             }
           }}
           token={this.state.token}
-          sql={`SELECT * FROM syn15661198`}
           alias={"Disease"}
           filter={"parentId"}
+          defaultVisibleCount={4}
         >
           <Facets>
           </Facets>

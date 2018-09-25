@@ -95,7 +95,7 @@ export default class QueryWrapper extends React.Component {
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{
-                    return React.cloneElement(child, {facetCount: this.state.facetCount, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
+                    return React.cloneElement(child, {defaultVisibleCount: this.props.defaultVisibleCount, synapseId: this.props.synapseId, facetCount: this.state.facetCount, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
                 })} 
             </div>
         )

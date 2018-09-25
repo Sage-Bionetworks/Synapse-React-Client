@@ -7,14 +7,21 @@ const PREVIOUS = "PREVIOUS"
 
 export default class SynapseTable extends React.Component {
 
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.handleColumnClick = this.handleColumnClick.bind(this)
         this.handlePaginationClick = this.handlePaginationClick.bind(this)
+        this.findSelectionIndex = this.findSelectionIndex.bind(this)
+        this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
+        this.toggleDropdown = this.toggleDropdown.bind(this)
+        this.advancedSearch = this.advancedSearch.bind(this)
+        this.download = this.download.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
-            offset: 0
+            offset: 0,
+            isOpen: false,
+            isColumnSelected: []
         }
     }
 
@@ -47,7 +54,9 @@ export default class SynapseTable extends React.Component {
         let element = null
         // weird onclick behavior that sometimes hits
         // the <i> tag
-        if (event.target.tagName === "A") {
+        if (event.target.tagName === "TH") {
+            element = event.target.children[0].children[0]
+        } else if (event.target.tagName === "A") {
             element = event.target.children[0]
         } else if (event.target.tagName === "I") {
             element = event.target
@@ -58,35 +67,31 @@ export default class SynapseTable extends React.Component {
         let direction = "ASC"
         // if its unitialized
         if (!containsUp && !containsDown) {
-            element.className += " fa-sort-up"
+            element.className = element.className.replace("fa-sort", "")
+            element.className += "fa-sort-up"
         }
-        // if it's down then its DESC and needs to be replaced with up
+        // if ita's down then its DESC and needs to be replaced with up
         if (containsDown) {
-            element.className = element.className.replace(" fa-sort-down", " fa-sort-up")
+            element.className = element.className.replace("fa-sort-down", "fa-sort")
         }
         // if it's up then its ASC and needs to be replaced with down
         if (containsUp) {
-            element.className = element.className.replace(" fa-sort-up"," fa-sort-down")
+            element.className = element.className.replace("fa-sort-up","fa-sort-down")
             direction = "DESC"
         }
         // get currently sorted items and remove/insert this selection
         let sortSelection = cloneDeep(this.state.sortSelection)
-        if (sortSelection.length !== 0) {
-            // find if the current selection exists already and remove it
-            let index = sortSelection.findIndex(
-                (el) => {
-                    return el.column === name
-                }
-            )
-            if (index !== -1) {
-                sortSelection.splice(index, 1)
-            }
+        let index = this.findSelectionIndex(sortSelection, name);
+        if (index !== -1 ) {
+            sortSelection.splice(index, 1)
         }
 
-        sortSelection.unshift({
-            column: name,
-            direction
-        })
+        if (!containsDown) {
+            sortSelection.unshift({
+                column: name,
+                direction
+            })
+        }
 
         let queryRequest = this.props.getLastQueryRequest()
         queryRequest.query.sort = sortSelection
@@ -96,14 +101,85 @@ export default class SynapseTable extends React.Component {
         })
     }
 
+    /**
+     * Utility to search through array of objects and find object with key "column"
+     * equal to input parameter "name"
+     *
+     * @param {*} sortSelection
+     * @param {*} name
+     * @returns -1 if not present, otherwise the index of the object
+     * @memberof SynapseTable
+     */
+    findSelectionIndex(sortSelection, name) {
+        if (sortSelection.length !== 0) {
+            // find if the current selection exists already and remove it
+            return sortSelection.findIndex((el) => {
+                return el.column === name;
+            });
+        }
+        return -1
+    }
+
     // TODO: implement this method
     download(event) {
         event.preventDefault()
     }
 
-    // TODO: implement this method
+    // Direct user to synapse corresponding synapse table
     advancedSearch (event) {
         event.preventDefault()
+        let lastQueryRequest = this.props.getLastQueryRequest()
+        let {query} = lastQueryRequest
+        // base 64 encode the json of the query and go to url with the encoded object
+        let encodedQuery = btoa(JSON.stringify(query))
+        let synTable = this.props.synapseId
+        window.location = `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`
+    }
+
+    /**
+     * Handles the opening and closing of the column select menu, this method
+     * is only necessary because react overrides the behavior that bootstrap
+     * embeds in its menus
+     *
+     * @memberof SynapseTable
+     */
+    toggleDropdown() {
+        const {isOpen} = this.state
+        this.setState({isOpen: !isOpen})
+    }
+
+    /**
+     * Handles the toggle of a column select, this will cause the table to
+     * either show the column or hide depending on the prior state of the column
+     *
+     * @memberof SynapseTable
+     */
+    toggleColumnSelection = (index) => (event) => {
+        event.preventDefault()
+        // lazily update the component with this information
+        // this only runs once
+        let isColumnSelected
+        if (this.state.isColumnSelected.length === 0) {
+            // unpack all the data
+            const {data} = this.props
+            const {queryResult} = data
+            const {queryResults} = queryResult
+            const {headers} = queryResults
+            let defaultSelection
+            // fill defaultVisibleCount with true and the rest as false
+            if (this.props.defaultVisibleCount === 0) {
+                // if set to zero then its all true
+                defaultSelection = Array(headers.length).fill(true)
+            } else {
+                defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
+                defaultSelection.push(...(Array(headers.length - this.props.defaultVisibleCount).fill(false)))
+            }
+            isColumnSelected = defaultSelection
+        } else {
+            isColumnSelected = cloneDeep(this.state.isColumnSelected)
+        }
+        isColumnSelected[index] = !isColumnSelected[index]
+        this.setState({isColumnSelected})
     }
 
     /**
@@ -116,22 +192,59 @@ export default class SynapseTable extends React.Component {
 
         // unpack all the data
         const {data} = this.props
-        const {columnModels} = data
         const {queryResult} = data
         const {queryResults} = queryResult
         const {rows} = queryResults
+        const {headers} = queryResults
         
+        // Step 1: Format the column headers, we have to track a few variables --
+        // whether the column should be shown by default or if the state now mandates it 
+        // be shown
+        let headersFormatted = headers.map(
+            (column, index) => {
+                // two cases when rendering the column headers on init load
+                // of the page we have to show only this.props.defaultVisibleCount many
+                // columns, afterwards we rely on the isColumnSelected to get choices
+                let initRender = (index < this.props.defaultVisibleCount) && this.state.isColumnSelected.length === 0
+                initRender |= (this.props.defaultVisibleCount === 0 && this.state.isColumnSelected.length === 0)
+                let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
+                if (initRender || subsequentRender) {
+                    let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
+                    return (<th onClick={this.handleColumnClick(column.name)}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
+                            <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
+                                {column.name}
+                                <i className="fa fa-sort"></i>
+                            </a>
+                    </th>)
+                }
+                // avoid eslint complaint below by returning undefined
+                return undefined
+            }
+        )
+
+        // Step 2: Format the row values, tracking the same information that the columns have to.
         // grab the row data and format it 
         // e.g. <tr> <td> some value </td> </tr>
         let rowsFormatted = []
         rows.forEach((expRow,i) => {
             let rowFormatted = (<tr key={`(${expRow.rowId})`} >
-                {expRow.values.map(
-                    (value, j) => {
-                        return <td key={`(${i},${j})`}><p> {value} </p></td>
-                    }
-                )}
-            </tr>)
+                    {expRow.values.map(
+                        (value, j) => {
+                            let columnName = headers[j].name
+                            let index = this.findSelectionIndex(this.state.sortSelection, columnName)
+                            let isRowActiveInit = j <  this.props.defaultVisibleCount && this.state.isColumnSelected.length === 0
+                            isRowActiveInit |= (this.props.defaultVisibleCount === 0 && this.state.isColumnSelected.length === 0)
+                            let isRowActiveSubsequent = this.state.isColumnSelected[j] && this.state.isColumnSelected.length !== 0
+                            if (isRowActiveInit || isRowActiveSubsequent) {
+                                return (<td className="SRC_noBorderTop" key={`(${i},${j})`}>
+                                            <p className={`${index === -1 ? "": "SRC-boldText"}`}> {value} </p>
+                                        </td>)
+                            }
+                            // avoid eslint complaint below by returning undefined
+                            return undefined
+                        }
+                    )}
+                </tr>)
             rowsFormatted.push(rowFormatted)
         });
 
@@ -144,32 +257,53 @@ export default class SynapseTable extends React.Component {
                 <div className="container">
                     <div className="row">
                         <span>
-                            {/* TODO: Actuall use query count or some metric of measure */}
-                            <strong>Showing 2530 files</strong>
+                            {/* TODO: Actually use query count or some metric */}
+                            <strong> Showing {this.props.data.queryResult.queryResults.rows.length} Files </strong>
                         </span>
-                        <a onClick={this.advancedSearch} href="" className="floatRight">
-                            <u> Advanced Search </u>
-                        </a>
-                        <span className="floatRight">&nbsp;&nbsp;</span>
-                        <a onClick={this.download} href="" className="floatRight">
-                            <u>Download</u>
-                        </a>
+                        <span className="SRC-floatRight">
+                            {/* dropdown menu below */}
+                            <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
+                                <button className="btn SRC-marginRightSevenPx btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i className="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {
+                                        headers.map(
+                                            (header, index) => {
+                                                let isColumnSelected = this.state.isColumnSelected[index]
+                                                if (isColumnSelected === undefined) {
+                                                    isColumnSelected = index < this.props.defaultVisibleCount
+                                                }
+                                                return (<li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} 
+                                                            key={header.name}
+                                                            onClick={this.toggleColumnSelection(index)}
+                                                        >
+                                                            <a className="SRC-no-focus" href="">{header.name}</a>
+                                                        </li>)
+                                            }
+                                        )
+                                    }
+                                </ul>
+                            </span>
+                            <a onClick={this.advancedSearch} href="">
+                                <u> Advanced Search </u>
+                            </a>
+                            <span >&nbsp;&nbsp;</span>
+                            <a onClick={this.download} href="">
+                                <u>Download</u>
+                            </a>
+                        </span>
                     </div>
                 </div>
-                <div className="container overflowAuto">
+                <div className="container SRC-overflowAuto">
                     <div className="row">
                         <table className="table table-striped table-condensed">
                             {/* show the column headers */}
-                            <thead>
+                            <thead className="SRC_borderTop">
                                 <tr>
-                                    <th></th>
-                                    {columnModels.map(
-                                        column => {
-                                            return (<th key={column.name}>
-                                                        <a onClick={this.handleColumnClick(column.name)} className="padding-left-2 padding-right-2" > {column.name}
-                                                            <i className="fa"></i>
-                                                        </a>
-                                                    </th>)
+                                    {headersFormatted.map(
+                                        headerFormatted => {
+                                            return headerFormatted
                                         }
                                     )}
                                 </tr>
@@ -183,10 +317,10 @@ export default class SynapseTable extends React.Component {
                                 )}
                             </tbody>
                         </table>
-                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default SRC-table-button"  type="button">
                             Previous
                         </button>}
-                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default" style={{borderRadius: "8px", color: "#1e7098", background: "white"}} type="button">
+                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button"  type="button">
                             Next
                         </button>
                     </div>
@@ -194,5 +328,8 @@ export default class SynapseTable extends React.Component {
             </React.Fragment>
         )
     }
+}
 
+SynapseTable.defaultProps = {
+    defaultVisibleCount : 0
 }

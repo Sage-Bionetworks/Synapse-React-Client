@@ -136,26 +136,94 @@ svg:hover {
   filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   cursor: pointer; }
 
-.syn-border {
+.SRC-syn-border {
   border-color: lightgray;
   border-style: solid;
   border-width: 1px; }
 
-.syn-border-spacing {
+.SRC-syn-border-spacing {
   padding: 10px;
   margin-bottom: 10px; }
 
-.syn-lightbackground {
+.SRC-syn-lightbackground {
   background: #f9f9f9; }
 
-body {
-  font-family: "Lato" !important; }
+body * {
+  font-family: "Lato"; }
 
-.noMargin {
-  margin: 0px !important; }
+.SRC-noMargin {
+  margin: 0px; }
 
-.floatRight {
+.SRC-floatRight {
   float: right; }
 
-.overflowAuto {
+.SRC-overflowAuto {
   overflow: scroll; }
+
+.table > tbody > tr > td.SRC_noBorderTop {
+  border-top: none; }
+
+.table > thead.SRC_borderTop {
+  border-top: 1px solid #dddddd; }
+
+.SRC_facets {
+  padding: 4px;
+  border-style: solid;
+  border-width: 1px;
+  margin: 2px; }
+
+.SRC-google-button {
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
+  padding: 0;
+  border-radius: 2;
+  border: 1px solid transparent;
+  font-size: 14;
+  font-weight: 500;
+  font-family: Lato sans-serif; }
+
+.SRC-google-button-dark-color {
+  color: #fff;
+  background-color: #4285f4; }
+
+.SRC-google-button-light-color {
+  color: rgba(0, 0, 0, 0.54);
+  background-color: #fff; }
+
+.SRC-margin-bottom-50px {
+  margin-bottom: 50px; }
+
+.SRC-table-button {
+  border-radius: 8px;
+  color: #1e7098;
+  background: white; }
+
+.SRC-chart-rect-style {
+  margin: 0px;
+  stroke-width: 0px;
+  box-shadow: 20px 20px; }
+
+.SRC-salmon-background {
+  background: #F27277; }
+
+.SRC-boldText {
+  font-weight: bold; }
+
+a.SRC-anchor-light {
+  color: white; }
+
+li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
+  background: #505050;
+  color: white; }
+
+.dropdown-menu > li > a.SRC-no-focus:focus {
+  background: none; }
+
+.dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
+  background: none;
+  color: white; }
+
+.SRC-marginRightSevenPx {
+  margin-right: 5px;
+  padding: 7px; }
