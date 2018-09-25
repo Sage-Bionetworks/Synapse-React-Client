@@ -3,8 +3,8 @@ import React from "react";
 import * as SynapseClient from '../utils/SynapseClient'
 import Bookmarks from './widgets/Bookmarks'
 import PropTypes from 'prop-types'
-import "../style/Portal.css"
 import SynapseImage from "./widgets/SynapseImage";
+import katex from 'katex'
 
 const uuidv4 = require('uuid/v4');
 
@@ -135,7 +135,7 @@ class MarkdownSynapse extends React.Component {
         let mathExpressions = this.markupRef.current.querySelectorAll("[id^=\"mathjax-\"]")
         // go through all obtained elements and transform them with katex
         mathExpressions.forEach(element => {
-            window.katex.render(element.textContent, element, {throwOnError: false, delimiters: 
+            katex.render(element.textContent, element, {throwOnError: false, delimiters: 
                 [
                     {left: "$$", right: "$$", display: true},
                     {left: "\\(", right: "\\)", display: false},

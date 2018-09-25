@@ -179,23 +179,25 @@ class App extends Component {
         </CustomMarkdownView>
 
         <QueryWrapper
-          initQueryRequest = {{
-            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
-            synapseId: "syn15661198",
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn15661198`,
                 limit: 25,
                 offset: 0,
                 selectedFacets: [],
-                sort: []
-            }
+              sort: [],
+            },
           }}
-          token={this.state.token}
-          alias={"Disease"}
-          filter={"parentId"}
-          defaultVisibleCount={4}
+          token={this.props.token}
+          alias="Disease"
+          filter="parentId"
         >
           <Facets>
           </Facets>

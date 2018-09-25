@@ -1,9 +1,20 @@
 import React from 'react'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSort } from '@fortawesome/free-solid-svg-icons'
+import { faSortUp } from '@fortawesome/free-solid-svg-icons'
+import { faSortDown } from '@fortawesome/free-solid-svg-icons'
+library.add(faSort)
+library.add(faSortUp)
+library.add(faSortDown)
+
 
 const cloneDeep = require("lodash.clonedeep")
 // Hold constants for next and previous button actions
 const NEXT = "NEXT"
 const PREVIOUS = "PREVIOUS"
+const ICON_STATE = ["sort", "sort-up", "sort-down"]
+let SORT_STATE = ["", "ASC","DESC"]
 
 export default class SynapseTable extends React.Component {
 
@@ -16,12 +27,14 @@ export default class SynapseTable extends React.Component {
         this.toggleDropdown = this.toggleDropdown.bind(this)
         this.advancedSearch = this.advancedSearch.bind(this)
         this.download = this.download.bind(this)
+        this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
             offset: 0,
             isOpen: false,
-            isColumnSelected: []
+            isColumnSelected: [],
+            columnIconState: []
         }
     }
 
@@ -50,46 +63,25 @@ export default class SynapseTable extends React.Component {
      *
      * @memberof SynapseTable
      */
-    handleColumnClick = (name) => (event) => {
-        let element = null
-        // weird onclick behavior that sometimes hits
-        // the <i> tag
-        if (event.target.tagName === "TH") {
-            element = event.target.children[0].children[0]
-        } else if (event.target.tagName === "A") {
-            element = event.target.children[0]
-        } else if (event.target.tagName === "I") {
-            element = event.target
-        }
-        // check what the state of the current column name is
-        let containsDown = element.className.indexOf("down") !== -1
-        let containsUp = element.className.indexOf("up") !== -1
-        let direction = "ASC"
-        // if its unitialized
-        if (!containsUp && !containsDown) {
-            element.className = element.className.replace("fa-sort", "")
-            element.className += "fa-sort-up"
-        }
-        // if ita's down then its DESC and needs to be replaced with up
-        if (containsDown) {
-            element.className = element.className.replace("fa-sort-down", "fa-sort")
-        }
-        // if it's up then its ASC and needs to be replaced with down
-        if (containsUp) {
-            element.className = element.className.replace("fa-sort-up","fa-sort-down")
-            direction = "DESC"
+    handleColumnClick = (dict) => (event) => {
+        let columnIconState = cloneDeep(this.state.columnIconState)
+        if (columnIconState.length === 0) {
+            columnIconState = Array(this.getLengthOfPropsData()).fill(0)
         }
         // get currently sorted items and remove/insert this selection
         let sortSelection = cloneDeep(this.state.sortSelection)
-        let index = this.findSelectionIndex(sortSelection, name);
+        let index = this.findSelectionIndex(sortSelection, dict.name);
+        
         if (index !== -1 ) {
             sortSelection.splice(index, 1)
         }
 
-        if (!containsDown) {
+        columnIconState[dict.index] = (columnIconState[dict.index] + 1) % ICON_STATE.length
+
+        if (columnIconState[dict.index] > 0) {
             sortSelection.unshift({
-                column: name,
-                direction
+                column: dict.name,
+                direction: SORT_STATE[columnIconState[dict.index]]
             })
         }
 
@@ -97,7 +89,8 @@ export default class SynapseTable extends React.Component {
         queryRequest.query.sort = sortSelection
         this.props.executeQueryRequest(queryRequest)
         this.setState({
-            sortSelection
+            sortSelection,
+            columnIconState
         })
     }
 
@@ -148,6 +141,14 @@ export default class SynapseTable extends React.Component {
         this.setState({isOpen: !isOpen})
     }
 
+    getLengthOfPropsData() {
+        const {data} = this.props
+        const {queryResult} = data
+        const {queryResults} = queryResult
+        const {headers} = queryResults
+        return headers.length
+    }
+
     /**
      * Handles the toggle of a column select, this will cause the table to
      * either show the column or hide depending on the prior state of the column
@@ -161,18 +162,15 @@ export default class SynapseTable extends React.Component {
         let isColumnSelected
         if (this.state.isColumnSelected.length === 0) {
             // unpack all the data
-            const {data} = this.props
-            const {queryResult} = data
-            const {queryResults} = queryResult
-            const {headers} = queryResults
+            let lengthOfPropsData = this.getLengthOfPropsData()
             let defaultSelection
             // fill defaultVisibleCount with true and the rest as false
             if (this.props.defaultVisibleCount === 0) {
                 // if set to zero then its all true
-                defaultSelection = Array(headers.length).fill(true)
+                defaultSelection = Array(lengthOfPropsData).fill(true)
             } else {
                 defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
-                defaultSelection.push(...(Array(headers.length - this.props.defaultVisibleCount).fill(false)))
+                defaultSelection.push(...(Array(lengthOfPropsData - this.props.defaultVisibleCount).fill(false)))
             }
             isColumnSelected = defaultSelection
         } else {
@@ -210,12 +208,12 @@ export default class SynapseTable extends React.Component {
                 let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
                 if (initRender || subsequentRender) {
                     let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
-                    return (<th onClick={this.handleColumnClick(column.name)}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
-                            <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
-                                {column.name}
-                                <i className="fa fa-sort"></i>
-                            </a>
-                    </th>)
+                    return (<th onClick={this.handleColumnClick({name: column.name, index})}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
+                                <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
+                                    {column.name}
+                                    <FontAwesomeIcon icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
+                                </a>
+                            </th>)
                 }
                 // avoid eslint complaint below by returning undefined
                 return undefined

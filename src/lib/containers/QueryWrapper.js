@@ -1,5 +1,5 @@
 import React from 'react'
-import * as SynapseClient from 'lib/utils/SynapseClient'
+import * as SynapseClient from '../utils/SynapseClient'
 const cloneDeep = require('lodash.clonedeep')
 const INIT_REQUEST = "init request"
 
