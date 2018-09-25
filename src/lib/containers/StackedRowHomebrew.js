@@ -282,10 +282,10 @@ export default class StackedRowHomebrew extends React.Component {
                                             <svg height={65}
                                                 width={svgWidth} 
                                                 key={uuidv4()}
-                                                onMouseEnter={this.handleHover}
-                                                onClick={this.handleClick({...obj, index})}
-                                                onMouseLeave={this.handleExit}>
+                                                onClick={this.handleClick({...obj, index})}>
                                                 <rect 
+                                                    onMouseEnter={this.handleHover}
+                                                    onMouseLeave={this.handleExit}
                                                     height={svgHeight}
                                                     width={svgWidth}
                                                     className="SRC-chart-rect-style"

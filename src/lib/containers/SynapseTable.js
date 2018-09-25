@@ -250,37 +250,39 @@ export default class SynapseTable extends React.Component {
                             {/* TODO: Actually use query count or some metric */}
                             <strong> Showing {this.props.data.queryResult.queryResults.rows.length} Files </strong>
                         </span>
-                        {/* dropdown menu below */}
-                        <div className={`dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <button className="btn btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <i className="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                {
-                                    headers.map(
-                                        (header, index) => {
-                                            let isColumnSelected = this.state.isColumnSelected[index]
-                                            if (isColumnSelected === undefined) {
-                                                isColumnSelected = index < this.props.defaultVisibleCount
+                        <span className="SRC-floatRight">
+                            {/* dropdown menu below */}
+                            <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
+                                <button className="btn SRC-marginRightSevenPx btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i className="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {
+                                        headers.map(
+                                            (header, index) => {
+                                                let isColumnSelected = this.state.isColumnSelected[index]
+                                                if (isColumnSelected === undefined) {
+                                                    isColumnSelected = index < this.props.defaultVisibleCount
+                                                }
+                                                return (<li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} 
+                                                            key={header.name}
+                                                            onClick={this.toggleColumnSelection(index)}
+                                                        >
+                                                            <a className="SRC-no-focus" href="">{header.name}</a>
+                                                        </li>)
                                             }
-                                            return (<li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} 
-                                                        key={header.name}
-                                                        onClick={this.toggleColumnSelection(index)}
-                                                    >
-                                                        <a className="SRC-no-focus" href="">{header.name}</a>
-                                                    </li>)
-                                        }
-                                    )
-                                }
-                            </ul>
-                        </div>
-                        <a onClick={this.advancedSearch} href="" className="SRC-floatRight">
-                            <u> Advanced Search </u>
-                        </a>
-                        <span className="SRC-floatRight">&nbsp;&nbsp;</span>
-                        <a onClick={this.download} href="" className="SRC-floatRight">
-                            <u>Download</u>
-                        </a>
+                                        )
+                                    }
+                                </ul>
+                            </span>
+                            <a onClick={this.advancedSearch} href="">
+                                <u> Advanced Search </u>
+                            </a>
+                            <span >&nbsp;&nbsp;</span>
+                            <a onClick={this.download} href="">
+                                <u>Download</u>
+                            </a>
+                        </span>
                     </div>
                 </div>
                 <div className="container SRC-overflowAuto">

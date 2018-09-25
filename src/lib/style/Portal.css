@@ -223,3 +223,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 .dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
   background: none;
   color: white; }
+
+.SRC-marginRightSevenPx {
+  margin-right: 5px;
+  padding: 7px; }
