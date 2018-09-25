@@ -110,7 +110,7 @@ var SynapseTable = function (_React$Component) {
                     // fill defaultVisibleCount with true and the rest as false
                     if (_this.props.defaultVisibleCount === 0) {
                         // if set to zero then its all true
-                        defaultSelection = Array(_this.props.defaultVisibleCount).fill(true);
+                        defaultSelection = Array(headers.length).fill(true);
                     } else {
                         var _defaultSelection;
 
@@ -260,6 +260,7 @@ var SynapseTable = function (_React$Component) {
                 // of the page we have to show only this.props.defaultVisibleCount many
                 // columns, afterwards we rely on the isColumnSelected to get choices
                 var initRender = index < _this2.props.defaultVisibleCount && _this2.state.isColumnSelected.length === 0;
+                initRender |= _this2.props.defaultVisibleCount === 0 && _this2.state.isColumnSelected.length === 0;
                 var subsequentRender = _this2.state.isColumnSelected[index] && _this2.state.isColumnSelected.length !== 0;
                 if (initRender || subsequentRender) {
                     var isSelected = _this2.findSelectionIndex(_this2.state.sortSelection, column.name) !== -1;
@@ -290,6 +291,7 @@ var SynapseTable = function (_React$Component) {
                         var columnName = headers[j].name;
                         var index = _this2.findSelectionIndex(_this2.state.sortSelection, columnName);
                         var isRowActiveInit = j < _this2.props.defaultVisibleCount && _this2.state.isColumnSelected.length === 0;
+                        isRowActiveInit |= _this2.props.defaultVisibleCount === 0 && _this2.state.isColumnSelected.length === 0;
                         var isRowActiveSubsequent = _this2.state.isColumnSelected[j] && _this2.state.isColumnSelected.length !== 0;
                         if (isRowActiveInit || isRowActiveSubsequent) {
                             return React.createElement(
@@ -443,3 +445,8 @@ var SynapseTable = function (_React$Component) {
 }(React.Component);
 
 export default SynapseTable;
+
+
+SynapseTable.defaultProps = {
+    defaultVisibleCount: 0
+};

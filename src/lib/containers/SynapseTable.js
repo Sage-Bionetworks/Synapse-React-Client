@@ -169,7 +169,7 @@ export default class SynapseTable extends React.Component {
             // fill defaultVisibleCount with true and the rest as false
             if (this.props.defaultVisibleCount === 0) {
                 // if set to zero then its all true
-                defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
+                defaultSelection = Array(headers.length).fill(true)
             } else {
                 defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
                 defaultSelection.push(...(Array(headers.length - this.props.defaultVisibleCount).fill(false)))
@@ -205,7 +205,8 @@ export default class SynapseTable extends React.Component {
                 // two cases when rendering the column headers on init load
                 // of the page we have to show only this.props.defaultVisibleCount many
                 // columns, afterwards we rely on the isColumnSelected to get choices
-                let initRender = index < this.props.defaultVisibleCount && this.state.isColumnSelected.length === 0
+                let initRender = (index < this.props.defaultVisibleCount) && this.state.isColumnSelected.length === 0
+                initRender |= (this.props.defaultVisibleCount === 0 && this.state.isColumnSelected.length === 0)
                 let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
                 if (initRender || subsequentRender) {
                     let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
@@ -232,6 +233,7 @@ export default class SynapseTable extends React.Component {
                             let columnName = headers[j].name
                             let index = this.findSelectionIndex(this.state.sortSelection, columnName)
                             let isRowActiveInit = j <  this.props.defaultVisibleCount && this.state.isColumnSelected.length === 0
+                            isRowActiveInit |= (this.props.defaultVisibleCount === 0 && this.state.isColumnSelected.length === 0)
                             let isRowActiveSubsequent = this.state.isColumnSelected[j] && this.state.isColumnSelected.length !== 0
                             if (isRowActiveInit || isRowActiveSubsequent) {
                                 return (<td className="SRC_noBorderTop" key={`(${i},${j})`}>
@@ -326,4 +328,8 @@ export default class SynapseTable extends React.Component {
             </React.Fragment>
         )
     }
+}
+
+SynapseTable.defaultProps = {
+    defaultVisibleCount : 0
 }

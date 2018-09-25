@@ -195,12 +195,13 @@ class App extends Component {
           token={this.state.token}
           alias={"Disease"}
           filter={"parentId"}
+          defaultVisibleCount={4}
         >
           <Facets>
           </Facets>
           <StackedRowHomebrew>
           </StackedRowHomebrew>
-          <SynapseTable defaultVisibleCount={2}>
+          <SynapseTable>
           </SynapseTable>
         </QueryWrapper>
       </div>

@@ -200,16 +200,20 @@ An example of a view with facets/stacked bar chart/table
   <SynapseComponents.QueryWrapper
     initQueryRequest = {{
       concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      synapseId: "syn15661198",
       query: {
           isConsistent: false,
-          sql: `SELECT * FROM syn15661198`,
+          sql: `SELECT * FROM syn15661198`, // can select as many or as few columns as desired
           limit: 25,
           offset: 0,
           selectedFacets: [],
           sort: []
       }
     }}
+    defaultVisibleCount={2}  // specifies how many column should be shown be default
+                             // if defaultVisibleCount === 0 then it will show all
+                             // columns as specified by the sql statement
     token={this.state.token}
     sql={`SELECT * FROM syn15661198`}
     alias={"Disease"}
