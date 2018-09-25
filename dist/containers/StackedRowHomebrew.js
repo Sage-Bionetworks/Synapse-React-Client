@@ -273,14 +273,15 @@ var StackedRowHomebrew = function (_React$Component) {
                                             { height: 65,
                                                 width: svgWidth,
                                                 key: uuidv4(),
-                                                onMouseEnter: _this2.handleHover,
-                                                onClick: _this2.handleClick(Object.assign({}, obj, { index: index })),
-                                                onMouseLeave: _this2.handleExit },
+                                                onClick: _this2.handleClick(Object.assign({}, obj, { index: index })) },
                                             React.createElement('rect', {
+                                                onMouseEnter: _this2.handleHover,
+                                                onMouseLeave: _this2.handleExit,
                                                 height: svgHeight,
                                                 width: svgWidth,
-                                                className: 'SRC-chart-rect-style',
-                                                style: rectStyle }),
+                                                className: 'SRC-chart-rect-style'
+                                                // can't remove inline style due to dynamic fill
+                                                , style: rectStyle }),
                                             React.createElement(
                                                 'text',
                                                 {
