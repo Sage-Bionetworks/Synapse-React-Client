@@ -99,6 +99,15 @@ export default class SynapseTable extends React.Component {
         })
     }
 
+    /**
+     * Utility to search through array of objects and find object with key "column"
+     * equal to input parameter "name"
+     *
+     * @param {*} sortSelection
+     * @param {*} name
+     * @returns -1 if not present, otherwise the index of the object
+     * @memberof SynapseTable
+     */
     findSelectionIndex(sortSelection, name) {
         if (sortSelection.length !== 0) {
             // find if the current selection exists already and remove it
@@ -119,11 +128,24 @@ export default class SynapseTable extends React.Component {
         event.preventDefault()
     }
 
+    /**
+     * Handles the opening and closing of the column select menu, this method
+     * is only necessary because react overrides the behavior that bootstrap
+     * embeds in its menus
+     *
+     * @memberof SynapseTable
+     */
     toggleDropdown() {
         const {isOpen} = this.state
         this.setState({isOpen: !isOpen})
     }
 
+    /**
+     * Handles the toggle of a column select, this will cause the table to
+     * either show the column or hide depending on the prior state of the column
+     *
+     * @memberof SynapseTable
+     */
     toggleColumnSelection = (index) => (event) => {
         event.preventDefault()
         // lazily update the component with this information
@@ -167,7 +189,9 @@ export default class SynapseTable extends React.Component {
         const {rows} = queryResults
         const {headers} = queryResults
         
-
+        // Step 1: Format the column headers, we have to track a few variables --
+        // whether the column should be shown by default or if the state now mandates it 
+        // be shown
         let headersFormatted = headers.map(
             (column, index) => {
                 // two cases when rendering the column headers on init load
@@ -189,6 +213,7 @@ export default class SynapseTable extends React.Component {
             }
         )
 
+        // Step 2: Format the row values, tracking the same information that the columns have to.
         // grab the row data and format it 
         // e.g. <tr> <td> some value </td> </tr>
         let rowsFormatted = []
@@ -291,5 +316,4 @@ export default class SynapseTable extends React.Component {
             </React.Fragment>
         )
     }
-
 }
