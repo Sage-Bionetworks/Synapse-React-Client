@@ -184,7 +184,7 @@ class App extends Component {
             partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS ,
             query: {
                 isConsistent: false,
-                sql: `SELECT name, createdOn, createdBy, etag FROM syn15661198`,
+                sql: `SELECT * FROM syn15661198`,
                 limit: 25,
                 offset: 0,
                 selectedFacets: [],
@@ -199,9 +199,7 @@ class App extends Component {
           </Facets>
           <StackedRowHomebrew>
           </StackedRowHomebrew>
-          <SynapseTable
-            defaultVisibleCount={6}
-          >
+          <SynapseTable defaultVisibleCount={2}>
           </SynapseTable>
         </QueryWrapper>
       </div>

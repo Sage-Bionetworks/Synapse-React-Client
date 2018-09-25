@@ -212,3 +212,14 @@ body * {
 
 a.SRC-anchor-light {
   color: white; }
+
+li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
+  background: #505050;
+  color: white; }
+
+.dropdown-menu > li > a.SRC-no-focus:focus {
+  background: none; }
+
+.dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
+  background: none;
+  color: white; }

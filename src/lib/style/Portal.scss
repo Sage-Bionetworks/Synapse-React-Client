@@ -241,3 +241,20 @@ body * {
 a.SRC-anchor-light {
   color: white ;
 }
+
+// if its selected put a black background with white text on
+li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
+  background: #505050;
+  color: white;
+}
+
+// if its focused don't use their background color
+.dropdown-menu>li>a.SRC-no-focus:focus, {
+  background: none;
+ }
+
+ // if its focused make sure the text display right
+.dropdown-menu>li.SRC-table-anchor-chosen>a.SRC-no-focus:focus, {
+  background: none;
+  color: white;
+ }

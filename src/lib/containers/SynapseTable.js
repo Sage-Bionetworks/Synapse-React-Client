@@ -7,15 +7,19 @@ const PREVIOUS = "PREVIOUS"
 
 export default class SynapseTable extends React.Component {
 
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.handleColumnClick = this.handleColumnClick.bind(this)
         this.handlePaginationClick = this.handlePaginationClick.bind(this)
         this.findSelectionIndex = this.findSelectionIndex.bind(this)
+        this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
+        this.toggleDropdown = this.toggleDropdown.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
-            offset: 0
+            offset: 0,
+            isOpen: false,
+            isColumnSelected: []
         }
     }
 
@@ -61,15 +65,16 @@ export default class SynapseTable extends React.Component {
         let direction = "ASC"
         // if its unitialized
         if (!containsUp && !containsDown) {
-            element.className += " fa-sort-up"
+            element.className = element.className.replace("fa-sort", "")
+            element.className += "fa-sort-up"
         }
-        // if it's down then its DESC and needs to be replaced with up
+        // if ita's down then its DESC and needs to be replaced with up
         if (containsDown) {
-            element.className = element.className.replace(" fa-sort-down", " fa-sort")
+            element.className = element.className.replace("fa-sort-down", "fa-sort")
         }
         // if it's up then its ASC and needs to be replaced with down
         if (containsUp) {
-            element.className = element.className.replace(" fa-sort-up"," fa-sort-down")
+            element.className = element.className.replace("fa-sort-up","fa-sort-down")
             direction = "DESC"
         }
         // get currently sorted items and remove/insert this selection
@@ -114,6 +119,39 @@ export default class SynapseTable extends React.Component {
         event.preventDefault()
     }
 
+    toggleDropdown() {
+        const {isOpen} = this.state
+        this.setState({isOpen: !isOpen})
+    }
+
+    toggleColumnSelection = (index) => (event) => {
+        event.preventDefault()
+        // lazily update the component with this information
+        // this only runs once
+        let isColumnSelected
+        if (this.state.isColumnSelected.length === 0) {
+            // unpack all the data
+            const {data} = this.props
+            const {queryResult} = data
+            const {queryResults} = queryResult
+            const {headers} = queryResults
+            let defaultSelection
+            // fill defaultVisibleCount with true and the rest as false
+            if (this.props.defaultVisibleCount === 0) {
+                // if set to zero then its all true
+                defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
+            } else {
+                defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
+                defaultSelection.push(...(Array(headers.length - this.props.defaultVisibleCount).fill(false)))
+            }
+            isColumnSelected = defaultSelection
+        } else {
+            isColumnSelected = cloneDeep(this.state.isColumnSelected)
+        }
+        isColumnSelected[index] = !isColumnSelected[index]
+        this.setState({isColumnSelected})
+    }
+
     /**
      * Display the view
      */
@@ -132,7 +170,12 @@ export default class SynapseTable extends React.Component {
 
         let headersFormatted = headers.map(
             (column, index) => {
-                if (index < this.props.defaultVisibleCount) {
+                // two cases when rendering the column headers on init load
+                // of the page we have to show only this.props.defaultVisibleCount many
+                // columns, afterwards we rely on the isColumnSelected to get choices
+                let initRender = index < this.props.defaultVisibleCount && this.state.isColumnSelected.length === 0
+                let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
+                if (initRender || subsequentRender) {
                     let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
                     return (<th onClick={this.handleColumnClick(column.name)}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
                             <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
@@ -155,7 +198,9 @@ export default class SynapseTable extends React.Component {
                         (value, j) => {
                             let columnName = headers[j].name
                             let index = this.findSelectionIndex(this.state.sortSelection, columnName)
-                            if (j <  this.props.defaultVisibleCount) {
+                            let isRowActiveInit = j <  this.props.defaultVisibleCount && this.state.isColumnSelected.length === 0
+                            let isRowActiveSubsequent = this.state.isColumnSelected[j] && this.state.isColumnSelected.length !== 0
+                            if (isRowActiveInit || isRowActiveSubsequent) {
                                 return (<td className="SRC_noBorderTop" key={`(${i},${j})`}>
                                             <p className={`${index === -1 ? "": "SRC-boldText"}`}> {value} </p>
                                         </td>)
@@ -178,8 +223,32 @@ export default class SynapseTable extends React.Component {
                     <div className="row">
                         <span>
                             {/* TODO: Actually use query count or some metric */}
-                            <strong>Showing 2530 files</strong>
+                            <strong> Showing {this.props.data.queryResult.queryResults.rows.length} Files </strong>
                         </span>
+                        {/* dropdown menu below */}
+                        <div className={`dropdown ${this.state.isOpen ? "open" : ""}`}>
+                            <button className="btn btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <i className="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                {
+                                    headers.map(
+                                        (header, index) => {
+                                            let isColumnSelected = this.state.isColumnSelected[index]
+                                            if (isColumnSelected === undefined) {
+                                                isColumnSelected = index < this.props.defaultVisibleCount
+                                            }
+                                            return (<li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} 
+                                                        key={header.name}
+                                                        onClick={this.toggleColumnSelection(index)}
+                                                    >
+                                                        <a className="SRC-no-focus" href="">{header.name}</a>
+                                                    </li>)
+                                        }
+                                    )
+                                }
+                            </ul>
+                        </div>
                         <a onClick={this.advancedSearch} href="" className="SRC-floatRight">
                             <u> Advanced Search </u>
                         </a>
