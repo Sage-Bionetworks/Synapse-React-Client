@@ -2,38 +2,30 @@ import React from 'react'
 import {shallow, configure} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import QueryWrapper from 'lib/containers/QueryWrapper'
+import {mockData, mockRequest} from '../../../JSON_test_data/'
 configure({ adapter: new Adapter() });
 
 describe('basic functionality', () => {
     let SynapseClient
-    let data
 
     beforeAll(() => {
         SynapseClient = require('lib/utils/SynapseClient')
-        data = {
-            facets: [ 
-                {
-                    columnName:"createdBy",
-                    facetType:"enumeration",
-                    facetValues: ["syn1", "syn2","syn3"]
-                }
-            ]
-        }
-        SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(data))
+        SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
     })
     
     it ('make init query request', async () => {
         const wrapper = await shallow(
             <QueryWrapper
-                initQueryRequest = {{}}
+                initQueryRequest = {mockRequest}
                 token={""}
                 sql={""}
                 filter={""}
+                synapseId={""}
                 >
             </QueryWrapper>)
     
         expect(wrapper.find("div")).toHaveLength(1)
-        expect(wrapper.state().lastQueryRequest).toEqual({})
-        expect(wrapper.state().data).toEqual(data)
+        expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
+        expect(wrapper.state().data).toEqual(mockData)
     })
 })

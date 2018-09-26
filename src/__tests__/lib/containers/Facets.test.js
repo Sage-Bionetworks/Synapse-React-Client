@@ -1,25 +1,29 @@
 import React from 'react';
 import {shallow, configure} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
-import Facets from 'lib/containers/Facets';
+import {Facets, CheckboxGroup} from 'lib/containers/Facets';
+import {mockData} from '../../../JSON_test_data'
 
 configure({ adapter: new Adapter() });
 
 describe("it renders a facet without crashing", () => {
     it('renders correctly', async () => {
-        let facetValues = {facets: [ 
-            {
-                columnName:"createdBy",
-                facetType:"enumeration",
-                facetValues: ["syn1", "syn2","syn3"]
-            }
-         ]}
         const tree = await shallow( 
             <Facets
-            data = {facetValues}
-            sql={`SELECT * FROM syn15661198`}>
+                data={mockData}>
             </Facets>
         )
         expect(tree).toBeDefined()
+    });
+
+    it('renders checkbox groups correctly', async () => {
+        const tree = await shallow( 
+            <Facets
+                data={mockData}
+            >
+            </Facets>
+        )
+        expect(tree).toBeDefined()
+        expect(tree.find(CheckboxGroup)).toHaveLength(1)
     });
 })

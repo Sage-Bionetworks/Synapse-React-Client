@@ -104,7 +104,7 @@ class MarkdownSynapse extends React.Component {
             {   
                 allowedTags: [ 'span', 'code', 'h1', 'h2','h3', 'h4', 'h5', 'p', 'b', 'i', 'em', 'strong', 'a' ,'id',
             'table', 'tr', 'td', 'tbody', 'th', 'thead', "button", "div", "image", "ol", "ul", "li", "svg", "g",
-            "br"],
+            "br", "hr"],
                 allowedAttributes: {
                     'a': [ 'href' ],
                     'span': ['*'],
