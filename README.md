@@ -229,6 +229,16 @@ An example of a view with facets/stacked bar chart/table
 
 ```
  
+##### QueryWrapper Props
+  
+| Props  | Explanation | Default Value | Is Required |
+| ------------- | ------------- | ------------- | ------------- |
+| initQueryRequest  | This is the default query to be run on the first render of the component  | N/A  | Yes  |
+| defaultVisibleCount  | The number of columns to show initially, the order of columns selected is determined by the SELECT clause of the sql passed into initQueryRequest  | 0 | No  |
+| token  | Session token to make authenticated calls  | ""  | No  |
+| filter  | This is the **facet** column name that the stacked bar chart will show   | N/A  | Yes  |
+| alias  | If the facet column name should have a different display name than the filter name, you can specify it with this prop.  | The value passed in for the filter prop.  | No |
+ 
 
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
