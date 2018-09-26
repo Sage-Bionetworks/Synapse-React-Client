@@ -192,9 +192,10 @@ class App extends Component {
                 limit: 25,
                 offset: 0,
                 selectedFacets: [],
-              sort: [],
+                sort: [],
             },
           }}
+          synapseId="syn15661198"
           token={this.props.token}
           alias="Disease"
           filter="parentId"

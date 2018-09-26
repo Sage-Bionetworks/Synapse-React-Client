@@ -228,7 +228,7 @@ An example of a view with facets/stacked bar chart/table
 
 
 ```
-
+ 
 
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
