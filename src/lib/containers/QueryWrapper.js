@@ -96,7 +96,17 @@ export default class QueryWrapper extends React.Component {
         return (
             <div> 
                 {React.Children.map(this.props.children, child =>{
-                    return React.cloneElement(child, {defaultVisibleCount: this.props.defaultVisibleCount, synapseId: this.props.synapseId, facetCount: this.state.facetCount, alias: this.props.alias, executeQueryRequest: this.executeQueryRequest, getLastQueryRequest: this.getLastQueryRequest, data: this.state.data})
+                    return React
+                                .cloneElement(  child, 
+                                                {
+                                                    defaultVisibleCount: this.props.defaultVisibleCount,
+                                                    synapseId: this.props.filter.synapseId,
+                                                    facetCount: this.state.facetCount,
+                                                    alias: this.props.alias === "" ? this.props.filter : this.props.alias,
+                                                    executeQueryRequest: this.executeQueryRequest,
+                                                    getLastQueryRequest: this.getLastQueryRequest,
+                                                    data: this.state.data}
+                                            )
                 })} 
             </div>
         )
@@ -116,9 +126,15 @@ QueryWrapper.propTypes = {
             sort: PropTypes.array.isRequired
         })
     }).isRequired,
-    alias: PropTypes.string.isRequired,
+    alias: PropTypes.string,
     filter: PropTypes.string.isRequired,
     synapseId: PropTypes.string.isRequired,
     defaultVisibleCount: PropTypes.number,
     token : PropTypes.string,
+}
+
+QueryWrapper.defaultProps = {
+    alias: "",
+    defaultVisibleCount: 0,
+    token: ""
 }
