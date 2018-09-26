@@ -40,8 +40,7 @@ describe('basic functionality', () => {
                                         getLastQueryRequest={getLastQueryRequestMock}>
                                     </SynapseTable>
                                 )
-        console.log(testRenderer)
-
+        expect(testRenderer).toBeDefined()
     })
 
 })
