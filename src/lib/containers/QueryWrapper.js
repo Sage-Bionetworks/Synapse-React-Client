@@ -100,7 +100,7 @@ export default class QueryWrapper extends React.Component {
                                 .cloneElement(  child, 
                                                 {
                                                     defaultVisibleCount: this.props.defaultVisibleCount,
-                                                    synapseId: this.props.filter.synapseId,
+                                                    synapseId: this.props.filter,
                                                     facetCount: this.state.facetCount,
                                                     alias: this.props.alias === "" ? this.props.filter : this.props.alias,
                                                     executeQueryRequest: this.executeQueryRequest,

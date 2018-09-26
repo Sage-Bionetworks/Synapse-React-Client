@@ -3,46 +3,45 @@ import {shallow, configure} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import QueryWrapper from 'lib/containers/QueryWrapper'
 import SynapseTable from 'lib/containers/SynapseTable';
+import {mockData, mockRequest} from './../../../JSON_test_data'
 
 configure({ adapter: new Adapter() });
 
 describe('basic functionality', () => {
     let SynapseClient
-    let mockData    
+    let getLastQueryRequestMock
     beforeAll(() => {
         SynapseClient = require('lib/utils/SynapseClient')
-        mockData = {
-            columnModels: [{
-                columnType: "ENTITYID",
-                name: "id",
-                id: "2510"
-            }],
-            queryResult: {
-                queryResults: {
-                    rows: [{
-                        rowId: "1",
-                        values: ["syn5604373"]
-                    }]
-                }
-            }
-        }
         SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
     })
     
     it ('make init query request', async () => {
         const wrapper = await shallow(
             <QueryWrapper
-                initQueryRequest = {{}}
+                initQueryRequest = {mockRequest}
+                filter={""}
+                synapseId={"a"}
                 token={""}
                 sql={""}>
                 <SynapseTable>
                 </SynapseTable>
             </QueryWrapper>)
-    
         
         expect(wrapper.find(SynapseTable)).toHaveLength(1)
-        expect(wrapper.state().lastQueryRequest).toEqual({})
+        expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
         expect(wrapper.state().data).toEqual(mockData)
+    })
+
+    it ('renders a query table', async () => {
+        getLastQueryRequestMock = jest.fn(() => {return mockRequest})
+        const testRenderer = await shallow(
+                                    <SynapseTable
+                                        data={mockData}
+                                        getLastQueryRequest={getLastQueryRequestMock}>
+                                    </SynapseTable>
+                                )
+        console.log(testRenderer)
+
     })
 
 })
