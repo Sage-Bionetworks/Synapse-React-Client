@@ -6,9 +6,9 @@ let mockData = {
     }],
     facets: [
         {
-            facetCount: 1,
+            facetType: "enumeration",
             columnName: "name",
-            facetValues: ['']
+            facetValues: ['syn1d 1']
         }
     ],
     queryResult: {

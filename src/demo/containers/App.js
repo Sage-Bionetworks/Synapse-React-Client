@@ -15,7 +15,7 @@ import * as SynapseClient from 'lib/utils/SynapseClient.js';
 import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
 
 import QueryWrapper from 'lib/containers/QueryWrapper'
-import Facets from 'lib/containers/Facets';
+import {Facets} from 'lib/containers/Facets';
 import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
 import SynapseTable from 'lib/containers/SynapseTable'
 /**

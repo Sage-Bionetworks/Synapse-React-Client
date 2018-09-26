@@ -41,7 +41,7 @@ class CheckboxGroup extends React.Component {
     }
 }
 
-export default class Facets extends React.Component {
+class Facets extends React.Component {
 
     constructor(props) {
         super(props)
@@ -250,3 +250,5 @@ Facets.propTypes = {
 Facets.defaultProps = {
     makeQueryRequest: true
 }
+
+export {Facets, CheckboxGroup}
