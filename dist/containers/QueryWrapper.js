@@ -8,6 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import * as SynapseClient from '../utils/SynapseClient';
+import PropTypes from 'prop-types';
 var cloneDeep = require('lodash.clonedeep');
 var INIT_REQUEST = "init request";
 
@@ -121,7 +122,14 @@ var QueryWrapper = function (_React$Component) {
                 'div',
                 null,
                 React.Children.map(this.props.children, function (child) {
-                    return React.cloneElement(child, { defaultVisibleCount: _this3.props.defaultVisibleCount, synapseId: _this3.props.synapseId, facetCount: _this3.state.facetCount, alias: _this3.props.alias, executeQueryRequest: _this3.executeQueryRequest, getLastQueryRequest: _this3.getLastQueryRequest, data: _this3.state.data });
+                    return React.cloneElement(child, {
+                        defaultVisibleCount: _this3.props.defaultVisibleCount,
+                        synapseId: _this3.props.filter,
+                        facetCount: _this3.state.facetCount,
+                        alias: _this3.props.alias === "" ? _this3.props.filter : _this3.props.alias,
+                        executeQueryRequest: _this3.executeQueryRequest,
+                        getLastQueryRequest: _this3.getLastQueryRequest,
+                        data: _this3.state.data });
                 })
             );
         }
@@ -131,3 +139,30 @@ var QueryWrapper = function (_React$Component) {
 }(React.Component);
 
 export default QueryWrapper;
+
+
+QueryWrapper.propTypes = {
+    initQueryRequest: PropTypes.shape({
+        concreteType: PropTypes.string.isRequired,
+        partMask: PropTypes.number.isRequired,
+        query: PropTypes.shape({
+            isConsistent: PropTypes.bool.isRequired,
+            sql: PropTypes.string.isRequired,
+            limit: PropTypes.number.isRequired,
+            offset: PropTypes.number.isRequired,
+            selectedFacets: PropTypes.array.isRequired,
+            sort: PropTypes.array.isRequired
+        })
+    }).isRequired,
+    alias: PropTypes.string,
+    filter: PropTypes.string.isRequired,
+    synapseId: PropTypes.string.isRequired,
+    defaultVisibleCount: PropTypes.number,
+    token: PropTypes.string
+};
+
+QueryWrapper.defaultProps = {
+    alias: "",
+    defaultVisibleCount: 0,
+    token: ""
+};

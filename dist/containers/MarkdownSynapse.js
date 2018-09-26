@@ -113,7 +113,7 @@ var MarkdownSynapse = function (_React$Component) {
         value: function createMarkup(text) {
             var initText = this.state.md.render(text);
             var cleanText = sanitizeHtml(initText, {
-                allowedTags: ['span', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'p', 'b', 'i', 'em', 'strong', 'a', 'id', 'table', 'tr', 'td', 'tbody', 'th', 'thead', "button", "div", "image", "ol", "ul", "li", "svg", "g", "br"],
+                allowedTags: ['span', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'p', 'b', 'i', 'em', 'strong', 'a', 'id', 'table', 'tr', 'td', 'tbody', 'th', 'thead', "button", "div", "image", "ol", "ul", "li", "svg", "g", "br", "hr"],
                 allowedAttributes: {
                     'a': ['href'],
                     'span': ['*'],

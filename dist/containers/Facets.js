@@ -346,9 +346,6 @@ var Facets = function (_React$Component2) {
     return Facets;
 }(React.Component);
 
-export default Facets;
-
-
 Facets.propTypes = {
     makeQueryRequest: PropTypes.bool
 };
@@ -356,3 +353,5 @@ Facets.propTypes = {
 Facets.defaultProps = {
     makeQueryRequest: true
 };
+
+export { Facets, CheckboxGroup };
