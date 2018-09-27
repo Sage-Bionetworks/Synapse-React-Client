@@ -91,6 +91,7 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
+    console.log('recieving updated state ', updatedState)
     this.setState(
       updatedState
     );
@@ -199,7 +200,7 @@ class App extends Component {
             },
           }}
           synapseId="syn15661198"
-          token={this.props.token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -211,24 +212,34 @@ class App extends Component {
           </SynapseTable>
         </QueryWrapper>
 
-
+        
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16787123`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16787123"
+          token={this.state.token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
           <SynapseRow
             type={SynapseConstants.STUDY}
-            query={{
-              concreteType:
-                "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-              partMask:
-                 SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-              query: {
-                  isConsistent: false,
-                  sql: `SELECT * FROM syn16787123`,
-                  limit: 25,
-                  offset: 0,
-              },
-            }}
-            token={this.state.token}>
+          >
           </SynapseRow>
-          
+        </QueryWrapper>
 
       </div>
     );
