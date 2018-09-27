@@ -1,6 +1,7 @@
 import React from 'react'
+import { Chip } from './utils/index';
 
-const SCHEMA = {
+const STUDY_SCHEMA = {
     projectName :0,
     id : 1,
     projectFileviewId : 2,
@@ -17,14 +18,20 @@ const SCHEMA = {
 
 const Study = (props) => {
 
-    let projectName = props.data[SCHEMA.projectName]
-    let projectLeads = props.data[SCHEMA.projectLeads]
-    if (projectLeads.indexOf(";") !== -1) {
-        projectLeads = props.data[SCHEMA.projectLeads].split(";").join(" / ")
-    }
-    
+    const {data} = props
+    let projectName = data[STUDY_SCHEMA.projectName]
+    let projectLeads = data[STUDY_SCHEMA.projectLeads]
+    projectLeads = data[STUDY_SCHEMA.projectLeads].split(";").join(" / ")
+    let summary = data[STUDY_SCHEMA.summary]
 
-    return <div className="container SRC-syn-border  SRC-syn-border-spacing">
+    let diseaseFocus = <Chip type="gray" text={data[STUDY_SCHEMA.diseaseFocus]}></Chip>
+    let tumorType = <Chip type="blue" text={data[STUDY_SCHEMA.tumorType]}></Chip>
+    
+    let projectStatus = data[STUDY_SCHEMA.projectStatus]
+    let fundingAgency = data[STUDY_SCHEMA.fundingAgency]
+    let dataStatus = data[STUDY_SCHEMA.dataStatus]
+    let institutions = data[STUDY_SCHEMA.institutions]
+    return <div className="container SRC-syn-border SRC-noPaddingBottom  SRC-syn-border-spacing">
                 <div className="row">
                     <div className="col-xs-2">
                         {props.icon}
@@ -33,46 +40,107 @@ const Study = (props) => {
                         <div>
                             <p> STUDY </p>
                             <div>
-                                <a href="">
-                                    {
-                                        projectName
-                                    }
-                                </a>
+                                <h5> 
+                                    <a className="SRC-magentaText" href="">
+                                        {
+                                            projectName
+                                        }
+                                    </a>
+                                </h5>
                             </div>
                         </div>
                         <div>
-                            <i>
-                                {
-                                    projectLeads
-                                }
-                            </i>
+                            <strong> 
+                                <i>
+                                    {
+                                        projectLeads
+                                    }
+                                </i> 
+                            </strong>
                         </div>
                         <div>
                             <p>
-                                lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum
-                                lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum
-                                lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum
-                                lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum
-                                lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum
+                                {summary}
                             </p>
                         </div>
-                        <div>
-                            chips go here and here
+                        <div className="SRC-marginBottomTen">
+                            {diseaseFocus} {tumorType}
                         </div>
                     </div>
                 </div>
+                {/* FOOTER */}
                 <div className="row SRC-grayBackground">
-                    <div className="col-xs-4">
-                        <p> STUDY </p>
-                        <p> FUNDER </p>
-                        <p> DATA </p>
-                        <p> PUBLICATIONS </p>
+                    <div className="col-xs-2">
                     </div>
-                    <div className="col-xs-4">
-                        <p> INVESTIGATORS </p>
-                    </div>
-                    <div className="col-xs-4">
-                        <p> INSTITUTIONS </p>                    
+                    <div className="col-xs-10">
+                        <div className="row">
+                            <div className="col-xs-4">
+                                <table className="SRC-paddingRight">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                STATUS
+                                            </td>
+                                            <td>
+                                                {projectStatus}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                FUNDER
+                                            </td>
+                                            <td>
+                                                {fundingAgency}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                DATA    
+                                            </td>
+                                            <td>
+                                                {dataStatus}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                PUBLICATIONS    
+                                            </td>
+                                            <td>
+                                                NONE
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="col-xs-4">
+                                <table className="SRC-paddingRight">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                INVESTIGATORS
+                                            </td>
+                                            <td>
+                                                {projectLeads}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="col-xs-4">
+                                <table className="SRC-paddingRight">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                INSTUTIONS    
+                                            </td>
+                                            <td>
+                                                {institutions}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

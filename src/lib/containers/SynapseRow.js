@@ -11,7 +11,7 @@ const RowContainer = ({children, data, ...rest}) => {
     return (
         data.queryResult.queryResults.rows.map(
             rowData => {
-                return <React.Fragment>
+                return <React.Fragment key={rowData.rowId}>
                     {
                         React.Children.map(children, child => {
                             return React.cloneElement(child, {data: rowData.values}, rest)
