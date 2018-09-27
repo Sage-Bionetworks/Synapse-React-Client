@@ -226,7 +226,7 @@ class App extends Component {
                   offset: 0,
               },
             }}
-            token={"381472f7-549d-492d-9372-ca9acfaf5f67"}>
+            token={this.state.token}>
           </SynapseRow>
           
 
