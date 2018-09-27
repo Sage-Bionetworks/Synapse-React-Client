@@ -18,6 +18,9 @@ import QueryWrapper from 'lib/containers/QueryWrapper'
 import {Facets} from 'lib/containers/Facets';
 import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
 import SynapseTable from 'lib/containers/SynapseTable'
+
+import SynapseRow from 'lib/containers/SynapseRow'
+
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -207,6 +210,26 @@ class App extends Component {
           <SynapseTable>
           </SynapseTable>
         </QueryWrapper>
+
+
+          <SynapseRow
+            type={SynapseConstants.STUDY}
+            query={{
+              concreteType:
+                "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+              partMask:
+                 SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+              query: {
+                  isConsistent: false,
+                  sql: `SELECT * FROM syn16787123`,
+                  limit: 25,
+                  offset: 0,
+              },
+            }}
+            token={"381472f7-549d-492d-9372-ca9acfaf5f67"}>
+          </SynapseRow>
+          
+
       </div>
     );
   }
