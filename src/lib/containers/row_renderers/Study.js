@@ -36,8 +36,8 @@ export default class Study extends React.Component {
 
     render () {
         const {data} = this.props
-        let projectName = data[STUDY_SCHEMA.projectName]
-        let projectLeads = data[STUDY_SCHEMA.projectLeads] && data[STUDY_SCHEMA.projectLeads].split(";").join(" / ")
+        const projectName = data[STUDY_SCHEMA.projectName]
+        const projectLeads = data[STUDY_SCHEMA.projectLeads] && data[STUDY_SCHEMA.projectLeads].split(";").join(" / ")
         let summary = data[STUDY_SCHEMA.summary]
 
         // cutoff if show more is false and if its reasonably long enough
@@ -47,13 +47,13 @@ export default class Study extends React.Component {
             summary = summary.join(".") + "."  // add back period to the end
         }
 
-        let diseaseFocus = <Chip type="gray" text={data[STUDY_SCHEMA.diseaseFocus]}></Chip>
-        let tumorType = <Chip type="blue" text={data[STUDY_SCHEMA.tumorType]}></Chip>
+        const diseaseFocus = <Chip type="gray" text={data[STUDY_SCHEMA.diseaseFocus]}></Chip>
+        const tumorType = <Chip type="blue" text={data[STUDY_SCHEMA.tumorType]}></Chip>
         
-        let projectStatus = data[STUDY_SCHEMA.projectStatus]
-        let fundingAgency = data[STUDY_SCHEMA.fundingAgency]
-        let dataStatus = data[STUDY_SCHEMA.dataStatus]
-        let institutions = data[STUDY_SCHEMA.institutions]
+        const projectStatus = data[STUDY_SCHEMA.projectStatus]
+        const fundingAgency = data[STUDY_SCHEMA.fundingAgency]
+        const dataStatus = data[STUDY_SCHEMA.dataStatus]
+        const institutions = data[STUDY_SCHEMA.institutions]
         return <div className="container SRC-syn-border SRC-noPaddingBottom  SRC-syn-border-spacing">
                     <div className="row">
                         <div className="col-xs-2">

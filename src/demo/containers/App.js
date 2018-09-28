@@ -91,7 +91,6 @@ class App extends Component {
    * @param {Object} updatedState new state to be updated by the component
    */
   handleChange(updatedState) {
-    console.log('recieving updated state ', updatedState)
     this.setState(
       updatedState
     );
@@ -131,13 +130,6 @@ class App extends Component {
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-
-        <MarkdownSynapse
-          token={"this.token.sessionToken"}
-          markdown={"<a href=\"https://ampadportal.org\">go to amp-ad</a>"}
-          hasSynapseResources={false}
-          errorMessageView={<div>error</div>}>
-        </MarkdownSynapse>
 
         <Login onTokenChange={this.handleChange}
                token={this.state.token}
@@ -230,20 +222,21 @@ class App extends Component {
               | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 isConsistent: false,
-                sql: `SELECT * FROM syn16787123`,
+                sql: `SELECT * FROM syn16857542`,
                 limit: 25,
                 offset: 0,
                 selectedFacets: [],
                 sort: [],
             },
           }}
-          synapseId="syn16787123"
+          synapseId="syn16857542"
           token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
+          
           <SynapseRow
-            type={SynapseConstants.STUDY}
+            type={SynapseConstants.PUBLICATION}
           >
           </SynapseRow>
         </QueryWrapper>

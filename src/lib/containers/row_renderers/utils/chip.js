@@ -3,6 +3,9 @@ const uuidv4 = require("uuid/v4");
 
 const Chip = ({type, text}) => {
     let dynamicClass = type === "gray" ? "SRC-grayBorder" : "SRC-blueBorder"
+    if (!text) {
+        return (false)
+    }
     return (text.split(";").map(
             text => {
                 return (
