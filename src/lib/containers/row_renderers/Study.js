@@ -1,28 +1,12 @@
 import React from 'react'
 import { Chip } from './utils/index';
 
-const STUDY_SCHEMA = {
-    projectName :0,
-    id : 1,
-    projectFileviewId : 2,
-    projectStatus :3,
-    dataStatus : 4,
-    fundingAgency : 5,
-    summary : 6,
-    summarySource : 7,
-    projectLeads : 8,
-    institutions : 9,
-    tumorType : 10,
-    diseaseFocus: 11
-}
-
-const CUTOFF = 250
-
 export default class Study extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            showMore: false
+            showMore: false,
+            hasCreatedIndex: false,
         }
         this.toggleShowMore = this.toggleShowMore.bind(this)
     }
@@ -35,18 +19,19 @@ export default class Study extends React.Component {
     }
 
     render () {
-        const {data} = this.props
-        const projectName = data[STUDY_SCHEMA.projectName]
-        const projectLeads = data[STUDY_SCHEMA.projectLeads] && data[STUDY_SCHEMA.projectLeads].split(";").join(" / ")
-        let summary = data[STUDY_SCHEMA.summary]
 
-        const diseaseFocus = <Chip type="gray" text={data[STUDY_SCHEMA.diseaseFocus]}></Chip>
-        const tumorType = <Chip type="blue" text={data[STUDY_SCHEMA.tumorType]}></Chip>
+        const {data, schema} = this.props
+        const projectName = data[schema.projectName]
+        const projectLeads = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ")
+        let summary = data[schema.summary]
+
+        const diseaseFocus = <Chip type="gray" text={data[schema.diseaseFocus]}></Chip>
+        const tumorType = <Chip type="blue" text={data[schema.tumorType]}></Chip>
         
-        const projectStatus = data[STUDY_SCHEMA.projectStatus]
-        const fundingAgency = data[STUDY_SCHEMA.fundingAgency]
-        const dataStatus = data[STUDY_SCHEMA.dataStatus]
-        const institutions = data[STUDY_SCHEMA.institutions]
+        const projectStatus = data[schema.projectStatus]
+        const fundingAgency = data[schema.fundingAgency]
+        const dataStatus = data[schema.dataStatus]
+        const institutions = data[schema.institutions]
         return <div className="container SRC-syn-border SRC-noPaddingBottom  SRC-syn-border-spacing">
                     <div className="row">
                         <div className="col-xs-2">

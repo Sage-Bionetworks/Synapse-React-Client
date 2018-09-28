@@ -12,7 +12,7 @@ const RowContainer = ({children, data, ...rest}) => {
                 return <React.Fragment key={rowData.rowId}>
                     {
                         React.Children.map(children, child => {
-                            return React.cloneElement(child, {data: rowData.values}, rest)
+                            return React.cloneElement(child, {data: rowData.values, ...rest})
                         })
                     }
                 </React.Fragment>
@@ -49,10 +49,18 @@ class SynapseRow extends React.Component {
 
     render () {
         const {data} = this.props
+        
         if (data.length === 0) {
             return (<div>loading</div>)
         }
-        return (<RowContainer data={data} icon={"icon"}>
+
+        let schema = {}
+        data.queryResult.queryResults.headers.forEach(
+            (element, index) => {
+                schema[element.name] = index
+        });
+
+        return (<RowContainer data={data} schema={schema} icon={"icon"}>
                     {this.renderChild()}
                 </RowContainer>)
     }

@@ -199,7 +199,7 @@ class App extends Component {
             },
           }}
           synapseId="syn15661198"
-          token={this.state.token}
+          token={"595f33a3-1f93-4b8b-977a-00fcf86f1ee8"}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -227,7 +227,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16787123"
-          token={this.state.token}
+          token={"595f33a3-1f93-4b8b-977a-00fcf86f1ee8"}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
