@@ -72,6 +72,8 @@ class MarkdownSynapse extends React.Component {
 
         this.footnoteRef = React.createRef()
         this.markupRef = React.createRef()
+
+        this.handleLinkClicks = this.handleLinkClicks.bind(this)
         
         // handle widgets and math markdown
         this.processWidgets = this.processWidgets.bind(this)
@@ -91,6 +93,17 @@ class MarkdownSynapse extends React.Component {
         this.createMarkup = this.createMarkup.bind(this)
         this.addBookmarks = this.addBookmarks.bind(this)
         this.handleMarkupClick = this.handleMarkupClick.bind(this)
+    }
+
+    componentWillUnmount() {
+        this.markupRef.current.removeEventListener('click', this.handleLinkClicks)
+    }
+
+    // manually handle clicks to anchor tags
+    handleLinkClicks(event) {
+        if (event.target.tagName === "A") {
+            window.open(event.target.href, '_blank')
+        }
     }
 
     /**
@@ -316,6 +329,8 @@ class MarkdownSynapse extends React.Component {
                 text: this.props.markdown
             })
         }
+
+        this.markupRef.current.addEventListener("click", this.handleLinkClicks)
 
         if (this.props.hasSynapseResources) {
             // get wiki attachments

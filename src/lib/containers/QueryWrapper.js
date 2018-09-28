@@ -88,7 +88,7 @@ export default class QueryWrapper extends React.Component {
             } 
         )   
     }
-    
+
     /**
      * Render the children without any formatting
      */
@@ -131,6 +131,7 @@ QueryWrapper.propTypes = {
     synapseId: PropTypes.string.isRequired,
     defaultVisibleCount: PropTypes.number,
     token : PropTypes.string,
+    type: PropTypes.string
 }
 
 QueryWrapper.defaultProps = {

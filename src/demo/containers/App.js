@@ -18,6 +18,9 @@ import QueryWrapper from 'lib/containers/QueryWrapper'
 import {Facets} from 'lib/containers/Facets';
 import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
 import SynapseTable from 'lib/containers/SynapseTable'
+
+import SynapseRow from 'lib/containers/SynapseRow'
+
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -196,7 +199,7 @@ class App extends Component {
             },
           }}
           synapseId="syn15661198"
-          token={this.props.token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -206,6 +209,86 @@ class App extends Component {
           </StackedRowHomebrew>
           <SynapseTable>
           </SynapseTable>
+        </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16787123`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16787123"
+          token={this.state.token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow
+            type={SynapseConstants.STUDY}
+          >
+          </SynapseRow>
+        </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16859580`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16859580"
+          token={this.state.token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          
+          <SynapseRow
+            type={SynapseConstants.DATASET}
+          >
+          </SynapseRow>
+        </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16859448`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16859448"
+          token={"595f33a3-1f93-4b8b-977a-00fcf86f1ee8"}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow type={SynapseConstants.TOOL}></SynapseRow>
         </QueryWrapper>
       </div>
     );

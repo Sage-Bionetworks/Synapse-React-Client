@@ -21,3 +21,10 @@ export const ENTITY_BUNDLE_MASK_DOI = 32768;
 export const ENTITY_BUNDLE_MASK_FILE_NAME = 65536;
 export const ENTITY_BUNDLE_MASK_THREAD_COUNT = 131072;
 export const ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION = 262144;
+
+/** Row Types  */
+export const STUDY = "study"
+export const DATASET = "dataset"
+export const FUNDER = "funder"
+export const PUBLICATION = "publication"
+export const TOOL = "tool"

@@ -284,3 +284,56 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    margin-right: 5px;
    padding: 7px;
  }
+
+ .SRC-roundBorder {
+   border-radius: 15px;
+ }
+
+ .SRC-blueBorder {
+   background: blue;
+ }
+
+ .SRC-grayBorder {
+   background: gray;
+ }
+ 
+ .SRC-whiteText {
+   color: white
+ }
+
+ .SRC-paddingChips {
+   padding: 5px;
+   margin-bottom: 8px !important;
+ }
+
+ .SRC-paddingRight {
+   padding-right: 15px;
+ }
+
+ table.SRC-paddingRight > tbody > tr > td {
+   padding-right: 15px;
+ }
+
+ .SRC-grayBackground {
+    background: #f9f9f9;
+ }
+
+ .SRC-noPaddingBottom {
+   padding-bottom: 0px;
+ }
+
+ .SRC-magentaText {
+   color: #D53F77;
+ }
+
+ .SRC-magentaBackground {
+   background-color: #D53F77;
+ }
+
+ button.SRC-roundBorder {
+   border-radius: 15px;
+ }
+ 
+ .SRC-marginBottomTen {
+   margin-bottom: 10px;
+ }
