@@ -132,6 +132,13 @@ class App extends Component {
           Synapse production version: {this.state.version}
         </p>
 
+        <MarkdownSynapse
+          token={"this.token.sessionToken"}
+          markdown={"<a href=\"https://ampadportal.org\">go to amp-ad</a>"}
+          hasSynapseResources={false}
+          errorMessageView={<div>error</div>}>
+        </MarkdownSynapse>
+
         <Login onTokenChange={this.handleChange}
                token={this.state.token}
                theme={"light"}
