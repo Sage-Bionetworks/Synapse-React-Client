@@ -10,6 +10,7 @@ import Footer from './Footer'
 import SummaryHeader from './SummaryHeader'
 import ShowMe from './ShowMe'
 import ChipContainer from './ChipContainer'
+import SynButton from './SynButton'
 
 export {    
         Chip,
@@ -23,5 +24,6 @@ export {
         CardIcon,
         ShowMe,
         SummaryHeader,
-        ChipContainer
+        ChipContainer,
+        SynButton
     }

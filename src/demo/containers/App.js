@@ -211,7 +211,32 @@ class App extends Component {
           </SynapseTable>
         </QueryWrapper>
 
-        
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16787123`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16787123"
+          token={this.state.token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow
+            type={SynapseConstants.STUDY}
+          >
+          </SynapseRow>
+        </QueryWrapper>
+
         <QueryWrapper
           initQueryRequest={{
             concreteType:
@@ -222,25 +247,49 @@ class App extends Component {
               | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 isConsistent: false,
-                sql: `SELECT * FROM syn16857542`,
+                sql: `SELECT * FROM syn16859580`,
                 limit: 25,
                 offset: 0,
                 selectedFacets: [],
                 sort: [],
             },
           }}
-          synapseId="syn16857542"
+          synapseId="syn16859580"
           token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
           
           <SynapseRow
-            type={SynapseConstants.PUBLICATION}
+            type={SynapseConstants.DATASET}
           >
           </SynapseRow>
         </QueryWrapper>
 
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16859448`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16859448"
+          token={"595f33a3-1f93-4b8b-977a-00fcf86f1ee8"}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow type={SynapseConstants.TOOL}></SynapseRow>
+        </QueryWrapper>
       </div>
     );
   }

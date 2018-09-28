@@ -1,14 +1,5 @@
 import React from 'react'
-import {
-        CardIcon,
-        CardBorder,
-        Section,
-        Summary,
-        Footer,
-        SummaryHeader,
-        ChipContainer
-    }
-from './utils/index'
+import * as Utils from './utils'
 
 const PUBLICATION_SCHEMA = {
     projectName: 0,
@@ -42,23 +33,22 @@ class Publication extends React.Component {
         const tumorType = data[PUBLICATION_SCHEMA.tumorType]
         const diseaseFocus = data[PUBLICATION_SCHEMA.diseaseFocus]
         return (
-            <CardBorder>
-                <Section>
-                    <CardIcon icon={icon}/>
-                    <Summary>
-                        <SummaryHeader 
-                            name={"Publication"}
+            <Utils.CardBorder>
+                <Utils.Section>
+                    <Utils.CardIcon icon={icon}/>
+                    <Utils.Summary>
+                        <Utils.SummaryHeader 
+                            name={"PUBLICATION"}
                             title={citation}
                         />
-                        <ChipContainer
+                        <Utils.ChipContainer
                             chips={[{type: "gray", text: tumorType}, {type: "blue", text: diseaseFocus}]}
-                        >
-                        </ChipContainer>
-                    </Summary>
-                </Section>
-                <Footer>
-                </Footer>
-            </CardBorder>
+                        />
+                    </Utils.Summary>
+                </Utils.Section>
+                <Utils.Footer>
+                </Utils.Footer>
+            </Utils.CardBorder>
         )
     }
 }

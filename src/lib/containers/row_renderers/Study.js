@@ -40,13 +40,6 @@ export default class Study extends React.Component {
         const projectLeads = data[STUDY_SCHEMA.projectLeads] && data[STUDY_SCHEMA.projectLeads].split(";").join(" / ")
         let summary = data[STUDY_SCHEMA.summary]
 
-        // cutoff if show more is false and if its reasonably long enough
-        if (!this.state.showMore && summary.length >= CUTOFF) {
-            summary = summary.substring(0,CUTOFF).split(".")
-            summary = summary.slice(0, summary.length - 1) // remove text after last sentence
-            summary = summary.join(".") + "."  // add back period to the end
-        }
-
         const diseaseFocus = <Chip type="gray" text={data[STUDY_SCHEMA.diseaseFocus]}></Chip>
         const tumorType = <Chip type="blue" text={data[STUDY_SCHEMA.tumorType]}></Chip>
         
