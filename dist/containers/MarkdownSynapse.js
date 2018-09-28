@@ -80,6 +80,8 @@ var MarkdownSynapse = function (_React$Component) {
         _this.footnoteRef = React.createRef();
         _this.markupRef = React.createRef();
 
+        _this.handleLinkClicks = _this.handleLinkClicks.bind(_this);
+
         // handle widgets and math markdown
         _this.processWidgets = _this.processWidgets.bind(_this);
         _this.processWidgetOrDomElement = _this.processWidgetOrDomElement.bind(_this);
@@ -101,14 +103,29 @@ var MarkdownSynapse = function (_React$Component) {
         return _this;
     }
 
-    /**
-     * Given input text, generate markdown object to be passed onto inner html of some container.
-     * @param {String} text The text being written in plain markdown
-     * @returns {Object} Dictionary to be passed into dangerouslySetInnerHTML with markdown text
-     */
-
-
     _createClass(MarkdownSynapse, [{
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            this.markupRef.current.removeEventListener('click', this.handleLinkClicks);
+        }
+
+        // manually handle clicks to anchor tags
+
+    }, {
+        key: 'handleLinkClicks',
+        value: function handleLinkClicks(event) {
+            if (event.target.tagName === "A") {
+                window.open(event.target.href, '_blank');
+            }
+        }
+
+        /**
+         * Given input text, generate markdown object to be passed onto inner html of some container.
+         * @param {String} text The text being written in plain markdown
+         * @returns {Object} Dictionary to be passed into dangerouslySetInnerHTML with markdown text
+         */
+
+    }, {
         key: 'createMarkup',
         value: function createMarkup(text) {
             var initText = this.state.md.render(text);
@@ -350,6 +367,8 @@ var MarkdownSynapse = function (_React$Component) {
                     text: this.props.markdown
                 });
             }
+
+            this.markupRef.current.addEventListener("click", this.handleLinkClicks);
 
             if (this.props.hasSynapseResources) {
                 // get wiki attachments

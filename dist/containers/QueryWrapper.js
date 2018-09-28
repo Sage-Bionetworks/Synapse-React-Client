@@ -158,7 +158,8 @@ QueryWrapper.propTypes = {
     filter: PropTypes.string.isRequired,
     synapseId: PropTypes.string.isRequired,
     defaultVisibleCount: PropTypes.number,
-    token: PropTypes.string
+    token: PropTypes.string,
+    type: PropTypes.string
 };
 
 QueryWrapper.defaultProps = {

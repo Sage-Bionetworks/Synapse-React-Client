@@ -21,3 +21,10 @@ export var ENTITY_BUNDLE_MASK_DOI = 32768;
 export var ENTITY_BUNDLE_MASK_FILE_NAME = 65536;
 export var ENTITY_BUNDLE_MASK_THREAD_COUNT = 131072;
 export var ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION = 262144;
+
+/** Row Types  */
+export var STUDY = "study";
+export var DATASET = "dataset";
+export var FUNDER = "funder";
+export var PUBLICATION = "publication";
+export var TOOL = "tool";
