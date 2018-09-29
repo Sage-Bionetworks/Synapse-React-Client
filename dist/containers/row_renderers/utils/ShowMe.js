@@ -8,7 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 
-var CUTOFF = 250;
+var CUTOFF = 100;
 
 var ShowMe = function (_React$Component) {
     _inherits(ShowMe, _React$Component);
@@ -46,9 +46,9 @@ var ShowMe = function (_React$Component) {
             var summary = this.props.summary;
 
             var showButton = false;
-            if (!this.state.showMore && summary.length >= CUTOFF) {
-                summary = summary.substring(0, CUTOFF).split(".");
-                summary = summary.slice(0, summary.length - 1); // remove text after last sentence
+            if (summary && !this.state.showMore && summary.length >= CUTOFF) {
+                summary = summary.split(".");
+                summary = summary.slice(0, summary.length / 2); // remove text after last sentence
                 summary = summary.join(".") + "."; // add back period to the end
                 showButton = true;
             }

@@ -25,7 +25,7 @@ var RowContainer = function RowContainer(_ref) {
             React.Fragment,
             { key: rowData.rowId },
             React.Children.map(children, function (child) {
-                return React.cloneElement(child, { data: rowData.values }, rest);
+                return React.cloneElement(child, Object.assign({ data: rowData.values }, rest));
             })
         );
     });
@@ -68,6 +68,7 @@ var SynapseRow = function (_React$Component) {
         value: function render() {
             var data = this.props.data;
 
+
             if (data.length === 0) {
                 return React.createElement(
                     'div',
@@ -75,9 +76,15 @@ var SynapseRow = function (_React$Component) {
                     'loading'
                 );
             }
+
+            var schema = {};
+            data.queryResult.queryResults.headers.forEach(function (element, index) {
+                schema[element.name] = index;
+            });
+
             return React.createElement(
                 RowContainer,
-                { data: data, icon: "icon" },
+                { data: data, schema: schema, icon: "icon" },
                 this.renderChild()
             );
         }

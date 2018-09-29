@@ -3,7 +3,7 @@ import React from 'react'
 const Authors = ({authors}) => {
     
     return (
-        <div>
+        <div className="SRC-marginBottomTen">
             <strong> 
                 <i>
                     {

@@ -283,3 +283,6 @@ button.SRC-roundBorder {
 
 .SRC-marginBottomTen {
   margin-bottom: 10px; }
+
+.table > tbody.SRC-borderTopNone > tr > td {
+  border-top: None; }

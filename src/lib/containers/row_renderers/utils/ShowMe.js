@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CUTOFF = 250
+const CUTOFF = 100
 
 export default class ShowMe extends React.Component {
 
@@ -28,9 +28,9 @@ export default class ShowMe extends React.Component {
         // cutoff if show more is false and if its reasonably long enough
         let {summary} = this.props
         let showButton = false
-        if (!this.state.showMore && summary.length >= CUTOFF) {
-            summary = summary.substring(0,CUTOFF).split(".")
-            summary = summary.slice(0, summary.length - 1) // remove text after last sentence
+        if (summary && !this.state.showMore && summary.length >= CUTOFF) {
+            summary = summary.split(".")
+            summary = summary.slice(0, summary.length / 2) // remove text after last sentence
             summary = summary.join(".") + "."  // add back period to the end
             showButton = true
         }

@@ -4,11 +4,13 @@ import React from 'react'
 
 const ChipContainer = ({chips}) => {
     return (
-        chips.map(
-            el => {
-                return (<Chip key={el.text} type={el.type} text={el.text}  ></Chip>)
-            }
-        )
+        <div className="SRC-marginBottomTen">
+            {chips.map(
+                el => {
+                    return (<Chip key={el.text} type={el.type} text={el.text}  ></Chip>)
+                }
+            )}
+        </div>
     )
 }
 
