@@ -5,7 +5,7 @@ import DNA from './DNA'
 import Molecule from './Molecule'
 import Complete from './Complete'
 import Data2 from './Data2'
-import Publication from './Publication'
+import PublicationIcon from './Publication'
 import StudyIcon from './Study'
 
 export {
@@ -15,6 +15,6 @@ export {
     Molecule,
     Complete,
     Data2,
-    Publication,
+    PublicationIcon,
     StudyIcon
 }

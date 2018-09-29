@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Utils from './utils'
+import {PublicationIcon} from '../../../assets/icons'
 
 const PUBLICATION_SCHEMA = {
     projectName: 0,
@@ -28,14 +29,14 @@ class Publication extends React.Component {
     }
 
     render () {
-        const {data, icon}= this.props
+        const {data}= this.props
         const citation = data[PUBLICATION_SCHEMA.citation]
         const tumorType = data[PUBLICATION_SCHEMA.tumorType]
         const diseaseFocus = data[PUBLICATION_SCHEMA.diseaseFocus]
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon icon={icon}/>
+                    <Utils.CardIcon> {PublicationIcon} </Utils.CardIcon>
                     <Utils.Summary>
                         <Utils.SummaryHeader 
                             name={"PUBLICATION"}
@@ -46,8 +47,6 @@ class Publication extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-                <Utils.Footer>
-                </Utils.Footer>
             </Utils.CardBorder>
         )
     }

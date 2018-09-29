@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Utils from './utils'
+import {Data2} from '../../../assets/icons'
 
 const DATASET_SCHEMA = {
     id: 0,
@@ -37,7 +38,7 @@ class Dataset extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon icon={icon}/>
+                    <Utils.CardIcon> {Data2} </Utils.CardIcon>
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="DATASET"

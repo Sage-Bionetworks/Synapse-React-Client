@@ -291,6 +291,31 @@ class App extends Component {
           defaultVisibleCount={4}>
           <SynapseRow type={SynapseConstants.TOOL}></SynapseRow>
         </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16857542`,
+                limit: 25,
+                offset: 0,
+                selectedFacets: [],
+                sort: [],
+            },
+          }}
+          synapseId="syn16857542"
+          token={token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow type={SynapseConstants.PUBLICATION}></SynapseRow>
+        </QueryWrapper>
       </div>
     );
   }
