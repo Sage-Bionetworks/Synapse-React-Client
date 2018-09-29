@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Utils from './utils/index';
+import {StudyIcon} from '../../../assets/icons/'
 
 export default class Study extends React.Component {
     constructor(props) {
@@ -18,19 +19,12 @@ export default class Study extends React.Component {
     }
 
     render () {
-
-        const {data, schema, icon} = this.props
+        const {data, schema} = this.props
         const projectName = data[schema.projectName]
         const projectLeads = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ")
         let summary = data[schema.summary]
-        // let ShowMore = <ShowMe 
-        //                 summary={summary}
-        //                 onClick={this.handleClick}
-        //                 ></ShowMe>
-
         const diseaseFocus = data[schema.diseaseFocus]
         const tumorType = data[schema.tumorType]
-        
         const projectStatus = data[schema.projectStatus]
         const fundingAgency = data[schema.fundingAgency]
         const dataStatus = data[schema.dataStatus]
@@ -46,7 +40,7 @@ export default class Study extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon icon={icon}/>
+                    <Utils.CardIcon> {StudyIcon} </Utils.CardIcon>
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="STUDY"
