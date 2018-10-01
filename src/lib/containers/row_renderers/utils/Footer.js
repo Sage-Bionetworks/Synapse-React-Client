@@ -2,7 +2,9 @@ import React from 'react'
 const uuidv4 = require("uuid/v4")
 
 const Footer = ({rows, ...rest}) => {
-    console.log('rows coming in ', rows)
+    if (!rows) {
+        return <div>i failed</div>
+    }
     return (
         <div className="row SRC-grayBackground">
             <div className="col-xs-2">

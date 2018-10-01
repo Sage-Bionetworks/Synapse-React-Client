@@ -2,38 +2,34 @@ import React from 'react'
 import * as Utils from './utils'
 import {Data2} from '../../../assets/icons'
 
-const DATASET_SCHEMA = {
-    id: 0,
-    datasetName: 1,
-    diseaseFocus: 2,
-    tumorType: 3,
-    summary: 4,
-    fundingAgency: 5,
-    fileCount: 6,
-}
-
 class Dataset extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            showMe: false
+            showMore: false
         }
         this.handleChange = this.handleChange.bind(this)
+        this.handleButtonClick = this.handleButtonClick.bind(this)
     }
 
     handleChange(updatedState) {
-        this.setState(
-            updatedState
-        )
+        this.setState({
+            showMore: !this.state.showMore
+        })
+    }
+
+    handleButtonClick = (link) => (event) => {
+        // TODO: implement this method, get downloadable zip possibly
+        console.log('link clicked ', link)
     }
 
     render() {
-        const {data, icon} = this.props
-        const datasetName = data[DATASET_SCHEMA.datasetName]
-        const summary = data[DATASET_SCHEMA.summary]
-        const tumorType = data[DATASET_SCHEMA.tumorType]
-        const diseaseFocus = data[DATASET_SCHEMA.diseaseFocus]
-
+        const {data, schema} = this.props
+        const datasetName = data[schema.datasetName]
+        const summary = data[schema.summary]
+        const tumorType = data[schema.tumorType]
+        const diseaseFocus = data[schema.diseaseFocus]
+        const id = data[schema.id]
 
         return (
             <Utils.CardBorder>
@@ -44,21 +40,21 @@ class Dataset extends React.Component {
                             name="DATASET"
                             title={datasetName}
                         />
-                        <Utils.ShowMe onClick={this.handleChange} summary={summary}></Utils.ShowMe>
+                        <div>
+                            <Utils.ShowMore onClick={this.handleChange} summary={summary}></Utils.ShowMore>
+                            <Utils.SynButton onClick={this.handleButtonClick} link={id}  text={id} ></Utils.SynButton>
+                        </div>
+
                         <Utils.ChipContainer
                             chips={[{type: "gray", text: tumorType},{type: "blue", text: diseaseFocus}]}
                         />
                     </Utils.Summary>
-                    {this.state.showMe && <Utils.Footer></Utils.Footer>}
+                    {this.state.showMore && <Utils.Footer></Utils.Footer>}
                 </Utils.Section>
-
 
             </Utils.CardBorder>
         )
-
-
     }
-
 }
 
 export default Dataset

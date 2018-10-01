@@ -59,7 +59,7 @@ var Tool = function (_React$Component) {
                             name: "TOOL",
                             title: softwareName
                         }),
-                        React.createElement(Utils.ShowMe, { summary: summary })
+                        React.createElement(Utils.ShoreMore, { summary: summary })
                     )
                 ),
                 React.createElement(

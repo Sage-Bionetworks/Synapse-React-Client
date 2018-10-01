@@ -8,7 +8,7 @@ import CardBorder from './CardBorder'
 import CardIcon from './CardIcon'
 import Footer from './Footer'
 import SummaryHeader from './SummaryHeader'
-import ShowMe from './ShowMe'
+import ShowMore from './ShowMore'
 import ChipContainer from './ChipContainer'
 import SynButton from './SynButton'
 
@@ -22,7 +22,7 @@ export {
         Footer,
         CardBorder,
         CardIcon,
-        ShowMe,
+        ShowMore,
         SummaryHeader,
         ChipContainer,
         SynButton

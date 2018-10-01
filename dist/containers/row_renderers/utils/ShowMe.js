@@ -10,13 +10,13 @@ import React from 'react';
 
 var CUTOFF = 100;
 
-var ShowMe = function (_React$Component) {
-    _inherits(ShowMe, _React$Component);
+var ShoreMore = function (_React$Component) {
+    _inherits(ShoreMore, _React$Component);
 
-    function ShowMe(props) {
-        _classCallCheck(this, ShowMe);
+    function ShoreMore(props) {
+        _classCallCheck(this, ShoreMore);
 
-        var _this = _possibleConstructorReturn(this, (ShowMe.__proto__ || Object.getPrototypeOf(ShowMe)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ShoreMore.__proto__ || Object.getPrototypeOf(ShoreMore)).call(this, props));
 
         _this.state = {
             showMore: false
@@ -25,7 +25,7 @@ var ShowMe = function (_React$Component) {
         return _this;
     }
 
-    _createClass(ShowMe, [{
+    _createClass(ShoreMore, [{
         key: "toggleShowMore",
         value: function toggleShowMore(event) {
             event.preventDefault();
@@ -69,7 +69,7 @@ var ShowMe = function (_React$Component) {
         }
     }]);
 
-    return ShowMe;
+    return ShoreMore;
 }(React.Component);
 
-export default ShowMe;
+export default ShoreMore;

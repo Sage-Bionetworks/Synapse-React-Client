@@ -2,7 +2,7 @@ import React from 'react'
 
 const CUTOFF = 100
 
-export default class ShowMe extends React.Component {
+export default class ShoreMore extends React.Component {
 
     constructor(props) {
         super(props)

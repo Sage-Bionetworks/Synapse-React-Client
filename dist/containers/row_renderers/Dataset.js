@@ -28,7 +28,7 @@ var Dataset = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Dataset.__proto__ || Object.getPrototypeOf(Dataset)).call(this, props));
 
         _this.state = {
-            showMe: false
+            ShoreMore: false
         };
         _this.handleChange = _this.handleChange.bind(_this);
         return _this;
@@ -65,12 +65,12 @@ var Dataset = function (_React$Component) {
                             name: 'DATASET',
                             title: datasetName
                         }),
-                        React.createElement(Utils.ShowMe, { onClick: this.handleChange, summary: summary }),
+                        React.createElement(Utils.ShoreMore, { onClick: this.handleChange, summary: summary }),
                         React.createElement(Utils.ChipContainer, {
                             chips: [{ type: "gray", text: tumorType }, { type: "blue", text: diseaseFocus }]
                         })
                     ),
-                    this.state.showMe && React.createElement(Utils.Footer, null)
+                    this.state.ShoreMore && React.createElement(Utils.Footer, null)
                 )
             );
         }

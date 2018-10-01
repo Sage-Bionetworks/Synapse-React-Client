@@ -8,8 +8,8 @@ import CardBorder from './CardBorder';
 import CardIcon from './CardIcon';
 import Footer from './Footer';
 import SummaryHeader from './SummaryHeader';
-import ShowMe from './ShowMe';
+import ShoreMore from './ShoreMore';
 import ChipContainer from './ChipContainer';
 import SynButton from './SynButton';
 
-export { Chip, Section, Summary, Name, Title, Authors, Footer, CardBorder, CardIcon, ShowMe, SummaryHeader, ChipContainer, SynButton };
+export { Chip, Section, Summary, Name, Title, Authors, Footer, CardBorder, CardIcon, ShoreMore, SummaryHeader, ChipContainer, SynButton };

@@ -46,8 +46,8 @@ export default class Study extends React.Component {
                             name="STUDY"
                             title={projectName}
                         />
-                        <Utils.ShowMe onClick={this.handleClick} summary={summary} />
                         <Utils.Authors authors={projectLeads} />
+                        <Utils.ShowMore onClick={this.handleClick} summary={summary} />
                         <Utils.ChipContainer
                             chips={
                                 [

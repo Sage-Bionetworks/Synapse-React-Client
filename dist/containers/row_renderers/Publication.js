@@ -28,7 +28,7 @@ var Publication = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Publication.__proto__ || Object.getPrototypeOf(Publication)).call(this, props));
 
         _this.state = {
-            showMe: false
+            ShoreMore: false
         };
         return _this;
     }

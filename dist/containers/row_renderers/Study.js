@@ -43,10 +43,10 @@ var Study = function (_React$Component) {
             var projectName = data[schema.projectName];
             var projectLeads = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ");
             var summary = data[schema.summary];
-            // let ShowMore = <ShowMe 
+            // let ShowMore = <ShoreMore 
             //                 summary={summary}
             //                 onClick={this.handleClick}
-            //                 ></ShowMe>
+            //                 ></ShoreMore>
 
             var diseaseFocus = data[schema.diseaseFocus];
             var tumorType = data[schema.tumorType];
@@ -72,7 +72,7 @@ var Study = function (_React$Component) {
                             name: 'STUDY',
                             title: projectName
                         }),
-                        React.createElement(Utils.ShowMe, { onClick: this.handleClick, summary: summary }),
+                        React.createElement(Utils.ShoreMore, { onClick: this.handleClick, summary: summary }),
                         React.createElement(Utils.Authors, { authors: projectLeads }),
                         React.createElement(Utils.ChipContainer, {
                             chips: [{ type: "gray", text: tumorType }, { type: "blue", text: diseaseFocus }]
