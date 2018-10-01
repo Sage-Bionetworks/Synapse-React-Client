@@ -7,7 +7,6 @@ import StackedRowHomebrew from './containers/StackedRowHomebrew';
 import SynapseTable from './containers/SynapseTable'
 
 import './style/Portal.css'
-import 'bootswatch/paper/bootstrap.css'
 
 let SynapseComponents = {
     Markdown: MarkdownSynapse,

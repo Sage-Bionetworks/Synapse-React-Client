@@ -20,7 +20,7 @@ var SummaryHeader = function SummaryHeader(_ref) {
                 null,
                 React.createElement(
                     "a",
-                    { className: "SRC-magentaText", href: "" },
+                    { className: "SRC-primary-text-color", href: "" },
                     title
                 )
             )

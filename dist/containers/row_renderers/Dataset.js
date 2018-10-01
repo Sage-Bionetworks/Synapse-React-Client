@@ -8,16 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import * as Utils from './utils';
-
-var DATASET_SCHEMA = {
-    id: 0,
-    datasetName: 1,
-    diseaseFocus: 2,
-    tumorType: 3,
-    summary: 4,
-    fundingAgency: 5,
-    fileCount: 6
-};
+import { DATASET } from '../../utils/SynapseConstants';
 
 var Dataset = function (_React$Component) {
     _inherits(Dataset, _React$Component);
@@ -27,29 +18,43 @@ var Dataset = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Dataset.__proto__ || Object.getPrototypeOf(Dataset)).call(this, props));
 
+        _this.handleLinkClick = function (link) {
+            return function (event) {
+                event.preventDefault();
+                window.open(link, "_blank");
+            };
+        };
+
         _this.state = {
-            showMe: false
+            showMore: false
         };
         _this.handleChange = _this.handleChange.bind(_this);
+        _this.handleLinkClick = _this.handleLinkClick.bind(_this);
         return _this;
     }
 
     _createClass(Dataset, [{
         key: 'handleChange',
         value: function handleChange(updatedState) {
-            this.setState(updatedState);
+            this.setState({
+                showMore: !this.state.showMore
+            });
         }
     }, {
         key: 'render',
         value: function render() {
             var _props = this.props,
                 data = _props.data,
-                icon = _props.icon;
+                schema = _props.schema;
 
-            var datasetName = data[DATASET_SCHEMA.datasetName];
-            var summary = data[DATASET_SCHEMA.summary];
-            var tumorType = data[DATASET_SCHEMA.tumorType];
-            var diseaseFocus = data[DATASET_SCHEMA.diseaseFocus];
+            var datasetName = data[schema.datasetName];
+            var summary = data[schema.summary];
+            var tumorType = data[schema.tumorType];
+            var diseaseFocus = data[schema.diseaseFocus];
+            var id = data[schema.id];
+            var fundingAgency = data[schema.fundingAgency];
+            var fileCount = data[schema.fileCount];
+            var rows = [["FUNDER", fundingAgency, "SIZE", "12", "FILES", fileCount, "MODIFIED", "TODAY"]];
 
             return React.createElement(
                 Utils.CardBorder,
@@ -57,7 +62,7 @@ var Dataset = function (_React$Component) {
                 React.createElement(
                     Utils.Section,
                     null,
-                    React.createElement(Utils.CardIcon, { icon: icon }),
+                    React.createElement(Utils.CardIcon, { type: DATASET }),
                     React.createElement(
                         Utils.Summary,
                         null,
@@ -65,13 +70,18 @@ var Dataset = function (_React$Component) {
                             name: 'DATASET',
                             title: datasetName
                         }),
-                        React.createElement(Utils.ShowMe, { onClick: this.handleChange, summary: summary }),
+                        React.createElement(
+                            'div',
+                            null,
+                            React.createElement(Utils.ShowMore, { onClick: this.handleChange, summary: summary }),
+                            React.createElement(Utils.SynButton, { onClick: this.handleLinkClick, link: id, text: id })
+                        ),
                         React.createElement(Utils.ChipContainer, {
                             chips: [{ type: "gray", text: tumorType }, { type: "blue", text: diseaseFocus }]
                         })
-                    ),
-                    this.state.showMe && React.createElement(Utils.Footer, null)
-                )
+                    )
+                ),
+                this.state.showMore && React.createElement(Utils.CardFooter, { rows: rows })
             );
         }
     }]);

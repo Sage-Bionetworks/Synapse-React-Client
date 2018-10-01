@@ -8,12 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import * as Utils from './utils';
-
-var TOOLS_SCHEMA = {
-    softwareName: 0,
-    summary: 1,
-    softwareLink: 2
-};
+import { TOOL } from '../../utils/SynapseConstants';
 
 var Tool = function (_React$Component) {
     _inherits(Tool, _React$Component);
@@ -39,11 +34,11 @@ var Tool = function (_React$Component) {
         value: function render() {
             var _props = this.props,
                 data = _props.data,
-                icon = _props.icon;
+                schema = _props.schema;
 
-            var softwareName = data[TOOLS_SCHEMA.softwareName];
-            var summary = data[TOOLS_SCHEMA.summary];
-            var softwareLink = data[TOOLS_SCHEMA.softwareLink];
+            var softwareName = data[schema.softwareName];
+            var summary = data[schema.summary];
+            var softwareLink = data[schema.softwareLink];
 
             return React.createElement(
                 Utils.CardBorder,
@@ -51,7 +46,7 @@ var Tool = function (_React$Component) {
                 React.createElement(
                     Utils.Section,
                     null,
-                    React.createElement(Utils.CardIcon, { icon: icon }),
+                    React.createElement(Utils.CardIcon, { type: TOOL }),
                     React.createElement(
                         Utils.Summary,
                         null,
@@ -59,7 +54,11 @@ var Tool = function (_React$Component) {
                             name: "TOOL",
                             title: softwareName
                         }),
-                        React.createElement(Utils.ShowMe, { summary: summary })
+                        React.createElement(
+                            'p',
+                            null,
+                            summary
+                        )
                     )
                 ),
                 React.createElement(

@@ -8,15 +8,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 
-var CUTOFF = 250;
+var CHAR_COUNT_CUTOFF = 100;
 
-var ShowMe = function (_React$Component) {
-    _inherits(ShowMe, _React$Component);
+var ShoreMore = function (_React$Component) {
+    _inherits(ShoreMore, _React$Component);
 
-    function ShowMe(props) {
-        _classCallCheck(this, ShowMe);
+    function ShoreMore(props) {
+        _classCallCheck(this, ShoreMore);
 
-        var _this = _possibleConstructorReturn(this, (ShowMe.__proto__ || Object.getPrototypeOf(ShowMe)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ShoreMore.__proto__ || Object.getPrototypeOf(ShoreMore)).call(this, props));
 
         _this.state = {
             showMore: false
@@ -25,7 +25,7 @@ var ShowMe = function (_React$Component) {
         return _this;
     }
 
-    _createClass(ShowMe, [{
+    _createClass(ShoreMore, [{
         key: "toggleShowMore",
         value: function toggleShowMore(event) {
             event.preventDefault();
@@ -42,13 +42,15 @@ var ShowMe = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            // cutoff if show more is false and if its reasonably long enough
-            var summary = this.props.summary;
+            // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
+            var _props = this.props,
+                summary = _props.summary,
+                showMore = _props.showMore;
 
             var showButton = false;
-            if (!this.state.showMore && summary.length >= CUTOFF) {
-                summary = summary.substring(0, CUTOFF).split(".");
-                summary = summary.slice(0, summary.length - 1); // remove text after last sentence
+            if (summary && summary.length >= CHAR_COUNT_CUTOFF && showMore) {
+                summary = summary.split(".");
+                summary = summary.slice(0, summary.length / 2); // remove text after last sentence
                 summary = summary.join(".") + "."; // add back period to the end
                 showButton = true;
             }
@@ -61,7 +63,7 @@ var ShowMe = function (_React$Component) {
                     summary,
                     !this.state.showMore && showButton && React.createElement(
                         "a",
-                        { className: "SRC-magentaText", onClick: this.toggleShowMore },
+                        { className: "SRC-primary-text-color", onClick: this.toggleShowMore },
                         " Show More "
                     )
                 )
@@ -69,7 +71,7 @@ var ShowMe = function (_React$Component) {
         }
     }]);
 
-    return ShowMe;
+    return ShoreMore;
 }(React.Component);
 
-export default ShowMe;
+export default ShoreMore;

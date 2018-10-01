@@ -272,10 +272,10 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-noPaddingBottom {
   padding-bottom: 0px; }
 
-.SRC-magentaText {
+.SRC-primary-text-color {
   color: #D53F77; }
 
-.SRC-magentaBackground {
+.SRC-primary-background-color {
   background-color: #D53F77; }
 
 button.SRC-roundBorder {
@@ -283,3 +283,12 @@ button.SRC-roundBorder {
 
 .SRC-marginBottomTen {
   margin-bottom: 10px; }
+
+.table > tbody.SRC-borderTopNone > tr > td {
+  border-top: None; }
+
+.SRC-flex {
+  display: flex; }
+
+.SRC-width-50-percent {
+  width: 50%; }

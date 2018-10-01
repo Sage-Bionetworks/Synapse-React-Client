@@ -8,7 +8,7 @@ var SynButton = function SynButton(_ref) {
 
     return React.createElement(
         "button",
-        { onClick: onClick(link), type: "button", className: "btn SRC-whiteText SRC-roundBorder SRC-magentaBackground" },
+        { onClick: onClick(link), type: "button", className: "btn SRC-whiteText SRC-roundBorder SRC-primary-background-color" },
         text
     );
 };

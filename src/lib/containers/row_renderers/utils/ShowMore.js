@@ -1,8 +1,8 @@
 import React from 'react'
 
-const CUTOFF = 250
+const CHAR_COUNT_CUTOFF = 100
 
-export default class ShowMe extends React.Component {
+export default class ShoreMore extends React.Component {
 
     constructor(props) {
         super(props)
@@ -25,12 +25,12 @@ export default class ShowMe extends React.Component {
     }
     
     render () {
-        // cutoff if show more is false and if its reasonably long enough
-        let {summary} = this.props
+        // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
+        let {summary, showMore} = this.props
         let showButton = false
-        if (!this.state.showMore && summary.length >= CUTOFF) {
-            summary = summary.substring(0,CUTOFF).split(".")
-            summary = summary.slice(0, summary.length - 1) // remove text after last sentence
+        if (summary && summary.length >= CHAR_COUNT_CUTOFF && showMore) {
+            summary = summary.split(".")
+            summary = summary.slice(0, summary.length / 2) // remove text after last sentence
             summary = summary.join(".") + "."  // add back period to the end
             showButton = true
         }
@@ -38,7 +38,7 @@ export default class ShowMe extends React.Component {
             <React.Fragment>
                 <p>
                     {summary}
-                    {!this.state.showMore && showButton && <a className="SRC-magentaText" onClick={this.toggleShowMore}> Show More </a>}
+                    {!this.state.showMore && showButton && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}> Show More </a>}
                 </p>
             </React.Fragment>
         )

@@ -5,13 +5,13 @@ var Authors = function Authors(_ref) {
 
 
     return React.createElement(
-        'div',
-        null,
+        "div",
+        { className: "SRC-marginBottomTen" },
         React.createElement(
-            'strong',
+            "strong",
             null,
             React.createElement(
-                'i',
+                "i",
                 null,
                 authors
             )

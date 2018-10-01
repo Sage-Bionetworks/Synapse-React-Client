@@ -1,11 +1,6 @@
 import React from 'react'
 import * as Utils from './utils'
-
-const TOOLS_SCHEMA = {
-    softwareName: 0,
-    summary: 1,
-    softwareLink: 2,
-}
+import { TOOL } from '../../utils/SynapseConstants';
 
 export default class Tool extends React.Component {
 
@@ -20,21 +15,21 @@ export default class Tool extends React.Component {
     }
 
     render () {
-        const {data, icon} = this.props
-        const softwareName = data[TOOLS_SCHEMA.softwareName]
-        const summary = data[TOOLS_SCHEMA.summary]
-        const softwareLink = data[TOOLS_SCHEMA.softwareLink]
+        const {data, schema} = this.props
+        const softwareName = data[schema.softwareName]
+        const summary = data[schema.summary]
+        const softwareLink = data[schema.softwareLink]
 
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon icon={icon}/>
+                    <Utils.CardIcon type={TOOL}/>
                     <Utils.Summary>
                         <Utils.SummaryHeader 
                             name={"TOOL"}
                             title={softwareName}
                         />
-                        <Utils.ShowMe summary={summary}/>
+                        <p>{summary}</p>
                     </Utils.Summary>
                 </Utils.Section>
                 <Utils.Section>

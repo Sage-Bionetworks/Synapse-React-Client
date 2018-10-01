@@ -7,24 +7,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from 'react';
-import { Chip } from './utils/index';
-
-var STUDY_SCHEMA = {
-    projectName: 0,
-    id: 1,
-    projectFileviewId: 2,
-    projectStatus: 3,
-    dataStatus: 4,
-    fundingAgency: 5,
-    summary: 6,
-    summarySource: 7,
-    projectLeads: 8,
-    institutions: 9,
-    tumorType: 10,
-    diseaseFocus: 11
-};
-
-var CUTOFF = 250;
+import * as Utils from './utils/index';
+import { STUDY } from '../../utils/SynapseConstants';
 
 var Study = function (_React$Component) {
     _inherits(Study, _React$Component);
@@ -35,16 +19,16 @@ var Study = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Study.__proto__ || Object.getPrototypeOf(Study)).call(this, props));
 
         _this.state = {
-            showMore: false
+            showMore: false,
+            hasCreatedIndex: false
         };
-        _this.toggleShowMore = _this.toggleShowMore.bind(_this);
+        _this.handleClick = _this.handleClick.bind(_this);
         return _this;
     }
 
     _createClass(Study, [{
-        key: 'toggleShowMore',
-        value: function toggleShowMore(event) {
-            event.preventDefault();
+        key: 'handleClick',
+        value: function handleClick(event) {
             this.setState({
                 showMore: !this.state.showMore
             });
@@ -52,224 +36,44 @@ var Study = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var data = this.props.data;
+            var _props = this.props,
+                data = _props.data,
+                schema = _props.schema;
 
-            var projectName = data[STUDY_SCHEMA.projectName];
-            var projectLeads = data[STUDY_SCHEMA.projectLeads] && data[STUDY_SCHEMA.projectLeads].split(";").join(" / ");
-            var summary = data[STUDY_SCHEMA.summary];
+            var projectName = data[schema.projectName];
+            var projectLeads = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ");
+            var summary = data[schema.summary];
+            var diseaseFocus = data[schema.diseaseFocus];
+            var tumorType = data[schema.tumorType];
+            var projectStatus = data[schema.projectStatus];
+            var fundingAgency = data[schema.fundingAgency];
+            var dataStatus = data[schema.dataStatus];
+            var institutions = data[schema.institutions];
 
-            var diseaseFocus = React.createElement(Chip, { type: 'gray', text: data[STUDY_SCHEMA.diseaseFocus] });
-            var tumorType = React.createElement(Chip, { type: 'blue', text: data[STUDY_SCHEMA.tumorType] });
+            var rows = [["STATUS", projectStatus, "INVESTIGATORS", projectLeads, "INSTITUTIONS", institutions], ["FUNDER", fundingAgency], ["DATA", dataStatus], ["PUBLICATION", "NONE"]];
 
-            var projectStatus = data[STUDY_SCHEMA.projectStatus];
-            var fundingAgency = data[STUDY_SCHEMA.fundingAgency];
-            var dataStatus = data[STUDY_SCHEMA.dataStatus];
-            var institutions = data[STUDY_SCHEMA.institutions];
             return React.createElement(
-                'div',
-                { className: 'container SRC-syn-border SRC-noPaddingBottom  SRC-syn-border-spacing' },
+                Utils.CardBorder,
+                null,
                 React.createElement(
-                    'div',
-                    { className: 'row' },
+                    Utils.Section,
+                    null,
+                    React.createElement(Utils.CardIcon, { type: STUDY }),
                     React.createElement(
-                        'div',
-                        { className: 'col-xs-2' },
-                        this.props.icon
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'col-xs-10' },
-                        React.createElement(
-                            'div',
-                            null,
-                            React.createElement(
-                                'p',
-                                null,
-                                ' STUDY '
-                            ),
-                            React.createElement(
-                                'div',
-                                null,
-                                React.createElement(
-                                    'h5',
-                                    null,
-                                    React.createElement(
-                                        'a',
-                                        { className: 'SRC-magentaText', href: '' },
-                                        projectName
-                                    )
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            null,
-                            React.createElement(
-                                'strong',
-                                null,
-                                React.createElement(
-                                    'i',
-                                    null,
-                                    projectLeads
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            null,
-                            React.createElement(
-                                'p',
-                                null,
-                                summary,
-                                !this.state.showMore && React.createElement(
-                                    'a',
-                                    { className: 'SRC-magentaText', onClick: this.toggleShowMore },
-                                    ' Show More '
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'SRC-marginBottomTen' },
-                            diseaseFocus,
-                            ' ',
-                            tumorType
-                        )
+                        Utils.Summary,
+                        null,
+                        React.createElement(Utils.SummaryHeader, {
+                            name: 'STUDY',
+                            title: projectName
+                        }),
+                        React.createElement(Utils.Authors, { authors: projectLeads }),
+                        React.createElement(Utils.ShowMore, { onClick: this.handleClick, summary: summary }),
+                        React.createElement(Utils.ChipContainer, {
+                            chips: [{ type: "gray", text: tumorType }, { type: "blue", text: diseaseFocus }]
+                        })
                     )
                 ),
-                this.state.showMore && React.createElement(
-                    'div',
-                    { className: 'row SRC-grayBackground' },
-                    React.createElement('div', { className: 'col-xs-2' }),
-                    React.createElement(
-                        'div',
-                        { className: 'col-xs-10' },
-                        React.createElement(
-                            'div',
-                            { className: 'row' },
-                            React.createElement(
-                                'div',
-                                { className: 'col-xs-4' },
-                                React.createElement(
-                                    'table',
-                                    { className: 'SRC-paddingRight' },
-                                    React.createElement(
-                                        'tbody',
-                                        null,
-                                        React.createElement(
-                                            'tr',
-                                            null,
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'STATUS'
-                                            ),
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                projectStatus
-                                            )
-                                        ),
-                                        React.createElement(
-                                            'tr',
-                                            null,
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'FUNDER'
-                                            ),
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                fundingAgency
-                                            )
-                                        ),
-                                        React.createElement(
-                                            'tr',
-                                            null,
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'DATA'
-                                            ),
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                dataStatus
-                                            )
-                                        ),
-                                        React.createElement(
-                                            'tr',
-                                            null,
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'PUBLICATIONS'
-                                            ),
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'NONE'
-                                            )
-                                        )
-                                    )
-                                )
-                            ),
-                            React.createElement(
-                                'div',
-                                { className: 'col-xs-4' },
-                                React.createElement(
-                                    'table',
-                                    { className: 'SRC-paddingRight' },
-                                    React.createElement(
-                                        'tbody',
-                                        null,
-                                        React.createElement(
-                                            'tr',
-                                            null,
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'INVESTIGATORS'
-                                            ),
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                projectLeads
-                                            )
-                                        )
-                                    )
-                                )
-                            ),
-                            React.createElement(
-                                'div',
-                                { className: 'col-xs-4' },
-                                React.createElement(
-                                    'table',
-                                    { className: 'SRC-paddingRight' },
-                                    React.createElement(
-                                        'tbody',
-                                        null,
-                                        React.createElement(
-                                            'tr',
-                                            null,
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                'INSTUTIONS'
-                                            ),
-                                            React.createElement(
-                                                'td',
-                                                null,
-                                                institutions
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
+                this.state.showMore && React.createElement(Utils.CardFooter, { rows: rows })
             );
         }
     }]);

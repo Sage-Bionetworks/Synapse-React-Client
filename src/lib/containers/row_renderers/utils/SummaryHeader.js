@@ -7,7 +7,7 @@ const SummaryHeader = ({name, title}) => {
                 </p>
                 <div>
                     <h5> 
-                        <a className="SRC-magentaText" href="">
+                        <a className="SRC-primary-text-color" href="">
                             {
                                 title
                             }

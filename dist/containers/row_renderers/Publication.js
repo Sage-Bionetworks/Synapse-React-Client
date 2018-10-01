@@ -8,16 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import * as Utils from './utils';
-
-var PUBLICATION_SCHEMA = {
-    projectName: 0,
-    id: 1,
-    fundingAgency: 2,
-    citation: 3,
-    doi: 4,
-    tumorType: 5,
-    diseaseFocus: 6
-};
+import { PUBLICATION } from '../../utils/SynapseConstants';
 
 var Publication = function (_React$Component) {
     _inherits(Publication, _React$Component);
@@ -28,7 +19,7 @@ var Publication = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Publication.__proto__ || Object.getPrototypeOf(Publication)).call(this, props));
 
         _this.state = {
-            showMe: false
+            showMore: false
         };
         return _this;
     }
@@ -43,18 +34,23 @@ var Publication = function (_React$Component) {
         value: function render() {
             var _props = this.props,
                 data = _props.data,
-                icon = _props.icon;
+                schema = _props.schema;
 
-            var citation = data[PUBLICATION_SCHEMA.citation];
-            var tumorType = data[PUBLICATION_SCHEMA.tumorType];
-            var diseaseFocus = data[PUBLICATION_SCHEMA.diseaseFocus];
+            var citation = data[schema.citation];
+            var tumorType = data[schema.tumorType];
+            var diseaseFocus = data[schema.diseaseFocus];
+            var doi = data[schema.doi];
+            var funder = data[schema.funder];
+            var projectName = data[schema.projectName];
+            var rows = [["DOI", doi, "FUNDER", funder, "STUDY", projectName]];
+
             return React.createElement(
                 Utils.CardBorder,
                 null,
                 React.createElement(
                     Utils.Section,
                     null,
-                    React.createElement(Utils.CardIcon, { icon: icon }),
+                    React.createElement(Utils.CardIcon, { type: PUBLICATION }),
                     React.createElement(
                         Utils.Summary,
                         null,
@@ -67,7 +63,7 @@ var Publication = function (_React$Component) {
                         })
                     )
                 ),
-                React.createElement(Utils.Footer, null)
+                React.createElement(Utils.CardFooter, { rows: rows })
             );
         }
     }]);

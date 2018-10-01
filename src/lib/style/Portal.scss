@@ -322,11 +322,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    padding-bottom: 0px;
  }
 
- .SRC-magentaText {
+ .SRC-primary-text-color {
    color: #D53F77;
  }
 
- .SRC-magentaBackground {
+ .SRC-primary-background-color {
    background-color: #D53F77;
  }
 
@@ -336,4 +336,16 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
  
  .SRC-marginBottomTen {
    margin-bottom: 10px;
+ }
+
+ .table > tbody.SRC-borderTopNone > tr > td {
+   border-top: None;
+ }
+
+ .SRC-flex {
+  display: flex;
+ }
+
+ .SRC-width-50-percent {
+    width: 50%;
  }

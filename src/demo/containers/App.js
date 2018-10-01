@@ -121,6 +121,7 @@ class App extends Component {
   }
   
   render() {
+    let token = process.env.REACT_APP_DEV_TOKEN
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -173,7 +174,7 @@ class App extends Component {
         </div>
 
         <CustomMarkdownView>
-          <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
+          <MarkdownSynapse removeHandler={this.removeHandler} token={token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
                     updateLoadState={this.handleChange}
@@ -199,7 +200,7 @@ class App extends Component {
             },
           }}
           synapseId="syn15661198"
-          token={this.state.token}
+          token={token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -220,14 +221,12 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16787123`,
-                limit: 25,
+                limit: 3,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16787123"
-          token={this.state.token}
+          token={token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -248,14 +247,12 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16859580`,
-                limit: 25,
+                limit: 7,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16859580"
-          token={this.state.token}
+          token={token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -277,18 +274,62 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16859448`,
-                limit: 25,
+                limit: 7,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16859448"
-          token={"595f33a3-1f93-4b8b-977a-00fcf86f1ee8"}
+          token={token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
           <SynapseRow type={SynapseConstants.TOOL}></SynapseRow>
+        </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16857542`,
+                limit: 7,
+                offset: 0,
+            },
+          }}
+          synapseId="syn16857542"
+          token={token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow type={SynapseConstants.PUBLICATION}></SynapseRow>
+        </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16858699`,
+                limit: 25,
+                offset: 0,
+            },
+          }}
+          synapseId="syn16858699"
+          token={token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow type={SynapseConstants.FUNDER}></SynapseRow>
         </QueryWrapper>
       </div>
     );
