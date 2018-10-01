@@ -5,29 +5,35 @@ var uuidv4 = require("uuid/v4");
 
 var Footer = function Footer(_ref) {
     var rows = _ref.rows,
-        rest = _objectWithoutProperties(_ref, ['rows']);
+        rest = _objectWithoutProperties(_ref, ["rows"]);
 
-    console.log('rows coming in ', rows);
+    if (!rows) {
+        return React.createElement(
+            "div",
+            null,
+            "i failed"
+        );
+    }
     return React.createElement(
-        'div',
-        { className: 'row SRC-grayBackground' },
-        React.createElement('div', { className: 'col-xs-2' }),
+        "div",
+        { className: "row SRC-grayBackground" },
+        React.createElement("div", { className: "col-xs-2" }),
         React.createElement(
-            'div',
-            { className: 'table-responsive col-xs-10' },
+            "div",
+            { className: "table-responsive col-xs-10" },
             React.createElement(
-                'table',
-                { className: 'table table-condensed' },
+                "table",
+                { className: "table table-condensed" },
                 React.createElement(
-                    'tbody',
-                    { className: 'SRC-borderTopNone' },
+                    "tbody",
+                    { className: "SRC-borderTopNone" },
                     rows.map(function (row) {
                         return React.createElement(
-                            'tr',
+                            "tr",
                             { key: uuidv4() },
                             row.map(function (value) {
                                 return React.createElement(
-                                    'td',
+                                    "td",
                                     { key: uuidv4() },
                                     value
                                 );

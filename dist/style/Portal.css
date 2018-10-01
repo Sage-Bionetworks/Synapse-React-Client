@@ -286,3 +286,9 @@ button.SRC-roundBorder {
 
 .table > tbody.SRC-borderTopNone > tr > td {
   border-top: None; }
+
+.SRC-flex {
+  display: flex; }
+
+.SRC-width-50-percent {
+  width: 50%; }

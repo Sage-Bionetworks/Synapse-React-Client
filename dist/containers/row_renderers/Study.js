@@ -8,6 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 import * as Utils from './utils/index';
+import { STUDY } from '../../utils/SynapseConstants';
 
 var Study = function (_React$Component) {
     _inherits(Study, _React$Component);
@@ -37,20 +38,13 @@ var Study = function (_React$Component) {
         value: function render() {
             var _props = this.props,
                 data = _props.data,
-                schema = _props.schema,
-                icon = _props.icon;
+                schema = _props.schema;
 
             var projectName = data[schema.projectName];
             var projectLeads = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ");
             var summary = data[schema.summary];
-            // let ShowMore = <ShoreMore 
-            //                 summary={summary}
-            //                 onClick={this.handleClick}
-            //                 ></ShoreMore>
-
             var diseaseFocus = data[schema.diseaseFocus];
             var tumorType = data[schema.tumorType];
-
             var projectStatus = data[schema.projectStatus];
             var fundingAgency = data[schema.fundingAgency];
             var dataStatus = data[schema.dataStatus];
@@ -64,7 +58,7 @@ var Study = function (_React$Component) {
                 React.createElement(
                     Utils.Section,
                     null,
-                    React.createElement(Utils.CardIcon, { icon: icon }),
+                    React.createElement(Utils.CardIcon, { type: STUDY }),
                     React.createElement(
                         Utils.Summary,
                         null,
@@ -72,8 +66,8 @@ var Study = function (_React$Component) {
                             name: 'STUDY',
                             title: projectName
                         }),
-                        React.createElement(Utils.ShoreMore, { onClick: this.handleClick, summary: summary }),
                         React.createElement(Utils.Authors, { authors: projectLeads }),
+                        React.createElement(Utils.ShowMore, { onClick: this.handleClick, summary: summary }),
                         React.createElement(Utils.ChipContainer, {
                             chips: [{ type: "gray", text: tumorType }, { type: "blue", text: diseaseFocus }]
                         })

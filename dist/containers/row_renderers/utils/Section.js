@@ -5,7 +5,7 @@ var Section = function Section(_ref) {
 
     return React.createElement(
         "div",
-        { className: "row" },
+        { style: { display: "flex" }, className: "row" },
         children
     );
 };
