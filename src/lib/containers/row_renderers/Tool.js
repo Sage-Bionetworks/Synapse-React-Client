@@ -1,6 +1,6 @@
 import React from 'react'
 import * as Utils from './utils'
-import { DNA } from '../../../assets/icons'
+import { TOOL } from '../../utils/SynapseConstants';
 
 export default class Tool extends React.Component {
 
@@ -23,13 +23,16 @@ export default class Tool extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon>  {DNA} </Utils.CardIcon>
+                    <Utils.CardIcon type={TOOL}/>
                     <Utils.Summary>
                         <Utils.SummaryHeader 
                             name={"TOOL"}
                             title={softwareName}
                         />
-                        <Utils.ShowMore summary={summary}/>
+                        <Utils.ShowMore
+                            stop
+                            summary={summary}>
+                        </Utils.ShowMore>
                     </Utils.Summary>
                 </Utils.Section>
                 <Utils.Section>

@@ -221,10 +221,8 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16787123`,
-                limit: 25,
+                limit: 3,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16787123"
@@ -249,10 +247,8 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16859580`,
-                limit: 25,
+                limit: 7,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16859580"
@@ -278,10 +274,8 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16859448`,
-                limit: 25,
+                limit: 7,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16859448"
@@ -303,10 +297,8 @@ class App extends Component {
             query: {
                 isConsistent: false,
                 sql: `SELECT * FROM syn16857542`,
-                limit: 25,
+                limit: 7,
                 offset: 0,
-                selectedFacets: [],
-                sort: [],
             },
           }}
           synapseId="syn16857542"
@@ -315,6 +307,29 @@ class App extends Component {
           filter="parentId"
           defaultVisibleCount={4}>
           <SynapseRow type={SynapseConstants.PUBLICATION}></SynapseRow>
+        </QueryWrapper>
+
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16858699`,
+                limit: 25,
+                offset: 0,
+            },
+          }}
+          synapseId="syn16858699"
+          token={token}
+          alias="Disease"
+          filter="parentId"
+          defaultVisibleCount={4}>
+          <SynapseRow type={SynapseConstants.FUNDER}></SynapseRow>
         </QueryWrapper>
       </div>
     );

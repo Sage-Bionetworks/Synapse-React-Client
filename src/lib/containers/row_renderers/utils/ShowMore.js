@@ -26,9 +26,9 @@ export default class ShoreMore extends React.Component {
     
     render () {
         // cutoff if show more is false and if its reasonably long enough
-        let {summary} = this.props
+        let {summary, stop} = this.props
         let showButton = false
-        if (summary && !this.state.showMore && summary.length >= CUTOFF) {
+        if (summary && !stop && !this.state.showMore && summary.length >= CUTOFF) {
             summary = summary.split(".")
             summary = summary.slice(0, summary.length / 2) // remove text after last sentence
             summary = summary.join(".") + "."  // add back period to the end

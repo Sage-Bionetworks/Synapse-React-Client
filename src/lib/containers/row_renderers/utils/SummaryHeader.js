@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SummaryHeader = ({name, title}) => {
+const SummaryHeader = ({name, title, link}) => {
     return (<div>
                 <p>
                     {name}

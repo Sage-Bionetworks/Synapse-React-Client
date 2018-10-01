@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Section = ({children}) => {
-    return (<div className="row">
+    return (<div style={{display: "flex"}} className="row">
             {children}
     </div>)
 }

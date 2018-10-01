@@ -1,6 +1,6 @@
 import React from 'react'
 import * as Utils from './utils'
-import {Data2} from '../../../assets/icons'
+import { DATASET } from '../../utils/SynapseConstants';
 
 class Dataset extends React.Component {
     constructor(props) {
@@ -30,11 +30,16 @@ class Dataset extends React.Component {
         const tumorType = data[schema.tumorType]
         const diseaseFocus = data[schema.diseaseFocus]
         const id = data[schema.id]
+        const fundingAgency = data[schema.fundingAgency]
+        const fileCount = data[schema.fileCount]
+        const rows = [
+            ["FUNDER", fundingAgency, "SIZE", "12", "FILES", fileCount,  "MODIFIED", "TODAY"],
+        ]
 
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon> {Data2} </Utils.CardIcon>
+                    <Utils.CardIcon type={DATASET} />
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="DATASET"
@@ -49,8 +54,10 @@ class Dataset extends React.Component {
                             chips={[{type: "gray", text: tumorType},{type: "blue", text: diseaseFocus}]}
                         />
                     </Utils.Summary>
-                    {this.state.showMore && <Utils.Footer></Utils.Footer>}
                 </Utils.Section>
+                {
+                    this.state.showMore && <Utils.Footer rows={rows}/>
+                }
 
             </Utils.CardBorder>
         )

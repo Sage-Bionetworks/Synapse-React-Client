@@ -1,13 +1,13 @@
 import React from 'react'
 import * as Utils from './utils'
-import {PublicationIcon} from '../../../assets/icons'
+import { PUBLICATION } from '../../utils/SynapseConstants';
 
 class Publication extends React.Component {
     
     constructor(props) {
         super(props)
         this.state = {
-            ShoreMore: false
+            showMore: false
         }
     }
 
@@ -22,10 +22,17 @@ class Publication extends React.Component {
         const citation = data[schema.citation]
         const tumorType = data[schema.tumorType]
         const diseaseFocus = data[schema.diseaseFocus]
+        const doi = data[schema.doi]
+        const funder = data[schema.funder]
+        const projectName = data[schema.projectName]
+        const rows = [
+            ["DOI", doi, "FUNDER", funder, "STUDY", projectName]
+        ]
+
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon> {PublicationIcon} </Utils.CardIcon>
+                    <Utils.CardIcon type={PUBLICATION}/>
                     <Utils.Summary>
                         <Utils.SummaryHeader 
                             name={"PUBLICATION"}
@@ -36,6 +43,7 @@ class Publication extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
+                <Utils.Footer rows={rows}/>
             </Utils.CardBorder>
         )
     }

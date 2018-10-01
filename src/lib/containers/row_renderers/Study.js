@@ -1,6 +1,6 @@
 import React from 'react'
 import * as Utils from './utils/index';
-import {StudyIcon} from '../../../assets/icons/'
+import { STUDY } from '../../utils/SynapseConstants';
 
 export default class Study extends React.Component {
     constructor(props) {
@@ -40,7 +40,7 @@ export default class Study extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon> {StudyIcon} </Utils.CardIcon>
+                    <Utils.CardIcon type={STUDY}/>
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="STUDY"
