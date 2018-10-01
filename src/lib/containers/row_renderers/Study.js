@@ -59,7 +59,7 @@ export default class Study extends React.Component {
                     </Utils.Summary>
                 </Utils.Section>
                {
-                    this.state.showMore && <Utils.Footer rows={rows}/>
+                    this.state.showMore && <Utils.CardFooter rows={rows}/>
                 }
             </Utils.CardBorder>
         )

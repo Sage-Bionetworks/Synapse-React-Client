@@ -9,7 +9,7 @@ class Dataset extends React.Component {
             showMore: false
         }
         this.handleChange = this.handleChange.bind(this)
-        this.handleButtonClick = this.handleButtonClick.bind(this)
+        this.handleLinkClick = this.handleLinkClick.bind(this)
     }
 
     handleChange(updatedState) {
@@ -18,9 +18,9 @@ class Dataset extends React.Component {
         })
     }
 
-    handleButtonClick = (link) => (event) => {
-        // TODO: implement this method, get downloadable zip possibly
-        console.log('link clicked ', link)
+    handleLinkClick = (link) => (event) => {
+        event.preventDefault()
+        window.open(link, "_blank")
     }
 
     render() {
@@ -47,7 +47,7 @@ class Dataset extends React.Component {
                         />
                         <div>
                             <Utils.ShowMore onClick={this.handleChange} summary={summary}></Utils.ShowMore>
-                            <Utils.SynButton onClick={this.handleButtonClick} link={id}  text={id} ></Utils.SynButton>
+                            <Utils.SynButton onClick={this.handleLinkClick} link={id}  text={id} ></Utils.SynButton>
                         </div>
 
                         <Utils.ChipContainer
@@ -56,7 +56,7 @@ class Dataset extends React.Component {
                     </Utils.Summary>
                 </Utils.Section>
                 {
-                    this.state.showMore && <Utils.Footer rows={rows}/>
+                    this.state.showMore && <Utils.CardFooter rows={rows}/>
                 }
 
             </Utils.CardBorder>

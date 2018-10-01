@@ -1,13 +1,13 @@
 import React from 'react'
 
-const SummaryHeader = ({name, title, link}) => {
+const SummaryHeader = ({name, title}) => {
     return (<div>
                 <p>
                     {name}
                 </p>
                 <div>
                     <h5> 
-                        <a className="SRC-magentaText" href="">
+                        <a className="SRC-primary-text-color" href="">
                             {
                                 title
                             }

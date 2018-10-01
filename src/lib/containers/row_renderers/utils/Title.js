@@ -4,7 +4,7 @@ const Title = ({title}) => {
     return (
         <div>
             <h5> 
-                <a className="SRC-magentaText" href="">
+                <a className="SRC-primary-text-color" href="">
                     {
                         title
                     }

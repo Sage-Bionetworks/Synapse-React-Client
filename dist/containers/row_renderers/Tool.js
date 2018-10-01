@@ -54,9 +54,11 @@ var Tool = function (_React$Component) {
                             name: "TOOL",
                             title: softwareName
                         }),
-                        React.createElement(Utils.ShowMore, {
-                            stop: true,
-                            summary: summary })
+                        React.createElement(
+                            'p',
+                            null,
+                            summary
+                        )
                     )
                 ),
                 React.createElement(

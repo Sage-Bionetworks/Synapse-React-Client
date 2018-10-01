@@ -43,7 +43,7 @@ class Publication extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-                <Utils.Footer rows={rows}/>
+                <Utils.CardFooter rows={rows}/>
             </Utils.CardBorder>
         )
     }

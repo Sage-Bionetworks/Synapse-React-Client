@@ -31,11 +31,13 @@ export default class Funder extends React.Component {
                                 title={organizationName}
                             />
                             <div>
-                                <a className={"SRC-magentaText"} href={website}>
+                                <a className={"SRC-primary-text-color"} href={website}>
                                     {website}
                                 </a>
                             </div>
-                            <Utils.ShowMore summary={summary} stop/>
+                            <p>
+                                {summary}
+                            </p>
                     </Utils.Summary>
                 </Utils.Section>
                 <Utils.Section>

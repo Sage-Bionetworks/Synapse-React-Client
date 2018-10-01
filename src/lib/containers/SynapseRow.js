@@ -60,11 +60,10 @@ class SynapseRow extends React.Component {
                 schema[element.name] = index
         });
 
-        return (<RowContainer data={data} schema={schema} icon={"icon"}>
+        return (<RowContainer data={data} schema={schema}>
                     {this.renderChild()}
                 </RowContainer>)
     }
-
 }
 
 SynapseRow.propTypes = {

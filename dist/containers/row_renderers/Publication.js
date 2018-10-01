@@ -63,7 +63,7 @@ var Publication = function (_React$Component) {
                         })
                     )
                 ),
-                React.createElement(Utils.Footer, { rows: rows })
+                React.createElement(Utils.CardFooter, { rows: rows })
             );
         }
     }]);

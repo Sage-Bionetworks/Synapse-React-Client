@@ -84,7 +84,7 @@ var SynapseRow = function (_React$Component) {
 
             return React.createElement(
                 RowContainer,
-                { data: data, schema: schema, icon: "icon" },
+                { data: data, schema: schema },
                 this.renderChild()
             );
         }

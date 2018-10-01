@@ -29,10 +29,7 @@ export default class Tool extends React.Component {
                             name={"TOOL"}
                             title={softwareName}
                         />
-                        <Utils.ShowMore
-                            stop
-                            summary={summary}>
-                        </Utils.ShowMore>
+                        <p>{summary}</p>
                     </Utils.Summary>
                 </Utils.Section>
                 <Utils.Section>

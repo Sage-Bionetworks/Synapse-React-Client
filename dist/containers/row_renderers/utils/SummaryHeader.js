@@ -2,8 +2,7 @@ import React from 'react';
 
 var SummaryHeader = function SummaryHeader(_ref) {
     var name = _ref.name,
-        title = _ref.title,
-        link = _ref.link;
+        title = _ref.title;
 
     return React.createElement(
         "div",
@@ -21,7 +20,7 @@ var SummaryHeader = function SummaryHeader(_ref) {
                 null,
                 React.createElement(
                     "a",
-                    { className: "SRC-magentaText", href: "" },
+                    { className: "SRC-primary-text-color", href: "" },
                     title
                 )
             )

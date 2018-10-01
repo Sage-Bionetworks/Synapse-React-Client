@@ -1,9 +1,9 @@
 import React from 'react'
 const uuidv4 = require("uuid/v4")
 
-const Footer = ({rows, ...rest}) => {
+const CardFooter = ({rows, ...rest}) => {
     if (!rows) {
-        return <div>i failed</div>
+        return <div></div>
     }
     return (
         <div className="row SRC-grayBackground">
@@ -32,4 +32,4 @@ const Footer = ({rows, ...rest}) => {
     )
 }
 
-export default Footer
+export default CardFooter

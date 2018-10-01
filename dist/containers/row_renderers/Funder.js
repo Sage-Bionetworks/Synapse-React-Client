@@ -60,11 +60,15 @@ var Funder = function (_React$Component) {
                             null,
                             React.createElement(
                                 'a',
-                                { className: "SRC-magentaText", href: website },
+                                { className: "SRC-primary-text-color", href: website },
                                 website
                             )
                         ),
-                        React.createElement(Utils.ShowMore, { summary: summary, stop: true })
+                        React.createElement(
+                            'p',
+                            null,
+                            summary
+                        )
                     )
                 ),
                 React.createElement(

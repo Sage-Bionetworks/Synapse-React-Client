@@ -3,16 +3,12 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 import React from 'react';
 var uuidv4 = require("uuid/v4");
 
-var Footer = function Footer(_ref) {
+var CardFooter = function CardFooter(_ref) {
     var rows = _ref.rows,
         rest = _objectWithoutProperties(_ref, ["rows"]);
 
     if (!rows) {
-        return React.createElement(
-            "div",
-            null,
-            "i failed"
-        );
+        return React.createElement("div", null);
     }
     return React.createElement(
         "div",
@@ -46,4 +42,4 @@ var Footer = function Footer(_ref) {
     );
 };
 
-export default Footer;
+export default CardFooter;

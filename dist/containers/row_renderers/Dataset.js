@@ -18,10 +18,10 @@ var Dataset = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Dataset.__proto__ || Object.getPrototypeOf(Dataset)).call(this, props));
 
-        _this.handleButtonClick = function (link) {
+        _this.handleLinkClick = function (link) {
             return function (event) {
-                // TODO: implement this method, get downloadable zip possibly
-                console.log('link clicked ', link);
+                event.preventDefault();
+                window.open(link, "_blank");
             };
         };
 
@@ -29,7 +29,7 @@ var Dataset = function (_React$Component) {
             showMore: false
         };
         _this.handleChange = _this.handleChange.bind(_this);
-        _this.handleButtonClick = _this.handleButtonClick.bind(_this);
+        _this.handleLinkClick = _this.handleLinkClick.bind(_this);
         return _this;
     }
 
@@ -74,14 +74,14 @@ var Dataset = function (_React$Component) {
                             'div',
                             null,
                             React.createElement(Utils.ShowMore, { onClick: this.handleChange, summary: summary }),
-                            React.createElement(Utils.SynButton, { onClick: this.handleButtonClick, link: id, text: id })
+                            React.createElement(Utils.SynButton, { onClick: this.handleLinkClick, link: id, text: id })
                         ),
                         React.createElement(Utils.ChipContainer, {
                             chips: [{ type: "gray", text: tumorType }, { type: "blue", text: diseaseFocus }]
                         })
                     )
                 ),
-                this.state.showMore && React.createElement(Utils.Footer, { rows: rows })
+                this.state.showMore && React.createElement(Utils.CardFooter, { rows: rows })
             );
         }
     }]);

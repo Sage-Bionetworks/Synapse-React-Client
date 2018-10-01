@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CUTOFF = 100
+const CHAR_COUNT_CUTOFF = 100
 
 export default class ShoreMore extends React.Component {
 
@@ -25,10 +25,10 @@ export default class ShoreMore extends React.Component {
     }
     
     render () {
-        // cutoff if show more is false and if its reasonably long enough
-        let {summary, stop} = this.props
+        // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
+        let {summary, showMore} = this.props
         let showButton = false
-        if (summary && !stop && !this.state.showMore && summary.length >= CUTOFF) {
+        if (summary && summary.length >= CHAR_COUNT_CUTOFF && showMore) {
             summary = summary.split(".")
             summary = summary.slice(0, summary.length / 2) // remove text after last sentence
             summary = summary.join(".") + "."  // add back period to the end
@@ -38,7 +38,7 @@ export default class ShoreMore extends React.Component {
             <React.Fragment>
                 <p>
                     {summary}
-                    {!this.state.showMore && showButton && <a className="SRC-magentaText" onClick={this.toggleShowMore}> Show More </a>}
+                    {!this.state.showMore && showButton && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}> Show More </a>}
                 </p>
             </React.Fragment>
         )

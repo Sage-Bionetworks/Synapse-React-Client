@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Section = ({children}) => {
-    return (<div style={{display: "flex"}} className="row">
+    return (<div className="row SRC-flex">
             {children}
     </div>)
 }

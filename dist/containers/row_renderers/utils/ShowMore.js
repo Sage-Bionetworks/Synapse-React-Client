@@ -8,7 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import React from 'react';
 
-var CUTOFF = 100;
+var CHAR_COUNT_CUTOFF = 100;
 
 var ShoreMore = function (_React$Component) {
     _inherits(ShoreMore, _React$Component);
@@ -42,13 +42,13 @@ var ShoreMore = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            // cutoff if show more is false and if its reasonably long enough
+            // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
             var _props = this.props,
                 summary = _props.summary,
-                stop = _props.stop;
+                showMore = _props.showMore;
 
             var showButton = false;
-            if (summary && !stop && !this.state.showMore && summary.length >= CUTOFF) {
+            if (summary && summary.length >= CHAR_COUNT_CUTOFF && showMore) {
                 summary = summary.split(".");
                 summary = summary.slice(0, summary.length / 2); // remove text after last sentence
                 summary = summary.join(".") + "."; // add back period to the end
@@ -63,7 +63,7 @@ var ShoreMore = function (_React$Component) {
                     summary,
                     !this.state.showMore && showButton && React.createElement(
                         "a",
-                        { className: "SRC-magentaText", onClick: this.toggleShowMore },
+                        { className: "SRC-primary-text-color", onClick: this.toggleShowMore },
                         " Show More "
                     )
                 )

@@ -73,7 +73,7 @@ var Study = function (_React$Component) {
                         })
                     )
                 ),
-                this.state.showMore && React.createElement(Utils.Footer, { rows: rows })
+                this.state.showMore && React.createElement(Utils.CardFooter, { rows: rows })
             );
         }
     }]);
