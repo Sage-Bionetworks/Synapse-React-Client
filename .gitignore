@@ -25,5 +25,4 @@ src/**/*.css
 
 # dist/build folders created to either deploy to npm or
 # to gh-pages
-dist
-build
+/dist
