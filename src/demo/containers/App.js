@@ -121,7 +121,7 @@ class App extends Component {
   }
   
   render() {
-    let token = process.env.REACT_APP_DEV_TOKEN
+    
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -174,7 +174,7 @@ class App extends Component {
         </div>
 
         <CustomMarkdownView>
-          <MarkdownSynapse removeHandler={this.removeHandler} token={token}
+          <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
                     updateLoadState={this.handleChange}
@@ -200,7 +200,7 @@ class App extends Component {
             },
           }}
           synapseId="syn15661198"
-          token={token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -226,7 +226,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16787123"
-          token={token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -252,7 +252,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16859580"
-          token={token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -279,7 +279,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16859448"
-          token={token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -302,7 +302,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16857542"
-          token={token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -325,7 +325,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16858699"
-          token={token}
+          token={this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>

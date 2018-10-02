@@ -40,6 +40,18 @@ export default class QueryWrapper extends React.Component {
     }
 
     /**
+     * @memberof QueryWrapper
+     */
+    componentDidUpdate(prevProps) {
+        // The only reason that reason querry wrapper should take
+        // action here is when incoming session token is now set
+        // we carefully check that this is the case
+        if (this.props.token !== "" && prevProps.token === "") {
+            this.executeQueryRequest(INIT_REQUEST)
+        }
+    }
+
+    /**
      * Pass down a deep clone (so no side affects on the child's part) of the 
      * last query request made
      *
