@@ -40,6 +40,18 @@ export default class QueryWrapper extends React.Component {
     }
 
     /**
+     * @memberof QueryWrapper
+     */
+    componentDidUpdate(prevProps) {
+        // The only reason that reason querry wrapper should take
+        // action here is when incoming session token is now set
+        // we carefully check that this is the case
+        if (this.props.token !== "" && prevProps.token === "") {
+            this.executeQueryRequest(INIT_REQUEST)
+        }
+    }
+
+    /**
      * Pass down a deep clone (so no side affects on the child's part) of the 
      * last query request made
      *
@@ -122,8 +134,8 @@ QueryWrapper.propTypes = {
             sql: PropTypes.string.isRequired,
             limit: PropTypes.number.isRequired,
             offset: PropTypes.number.isRequired,
-            selectedFacets: PropTypes.array.isRequired,
-            sort: PropTypes.array.isRequired
+            selectedFacets: PropTypes.array,
+            sort: PropTypes.array
         })
     }).isRequired,
     alias: PropTypes.string,

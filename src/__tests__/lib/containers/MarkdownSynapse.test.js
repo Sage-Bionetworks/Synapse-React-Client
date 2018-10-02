@@ -1,5 +1,5 @@
 import React from 'react';
-import {shallow, configure} from 'enzyme'
+import {shallow, configure, mount} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import renderer from 'react-test-renderer'; // ES6
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse';
@@ -9,14 +9,13 @@ import Bookmark from 'lib/containers/widgets/Bookmarks'
 configure({ adapter: new Adapter() });
 
 it('renders without crashing', () => {
-  const tree = renderer
-    .create(
+  const tree = mount(
       <MarkdownSynapse
         token={""}
         markdown={""}
         hasSynapseResources={false}
-        />).toJSON()
-  expect(tree).toMatchSnapshot()
+        />)
+  expect(tree.find(MarkdownSynapse)).toHaveLength(1)
 });
 
 describe('renders widgets ', () => {
@@ -31,7 +30,7 @@ describe('renders widgets ', () => {
   it('renders a synapse image', async () => {
     SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({markdown: "${image?synapseId=syn7809125&align=None&responsive=true}"}))
   
-    const wrapper = await shallow(
+    const wrapper = await mount(
         <MarkdownSynapse
         token={""}
         synapseId={""}
@@ -39,7 +38,8 @@ describe('renders widgets ', () => {
         hasSynapseResources={true}/>
     );
   
-    expect(wrapper.find(SynapseImage)).toHaveLength(1)
+    expect(wrapper.html()).toEqual(`<div><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\"><span><p></p>
+</span></span><div></div></div>`)
     expect(wrapper.find(Bookmark)).toHaveLength(0)
   });
 
@@ -47,7 +47,7 @@ describe('renders widgets ', () => {
  it('renders a synapse reference', async () => {
    SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({markdown: "${reference?params}"}))
  
-   const wrapper = await shallow(
+   const wrapper = await mount(
        <MarkdownSynapse
        token={""}
        synapseId={""}
