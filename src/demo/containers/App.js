@@ -96,24 +96,6 @@ class App extends Component {
     );
   }
   
-  getMultipleWikis() {
-    if (!this.state.token) {
-      return ""
-    }
-    let foo = Array.from(Array(4).keys())
-    return foo.map((element, index) => {
-      return (
-        <div className="container" key={index}>
-          <MarkdownSynapse token={this.state.token}
-                    ownerId={"syn14568473"}
-                    wikiId={"582406"}
-                    >
-          </MarkdownSynapse>
-        </div>
-      )
-   })
-  }
-
   removeHandler () {
     this.setState(
       {showMarkdown: !this.state.showMarkdown}
@@ -125,6 +107,13 @@ class App extends Component {
     if (process.env.NODE_ENV === "production") {
       redirectUrl = "https://leem42.github.io/Synapse-React-Client/"
     }
+    let token = ""
+    let inDevEnv = false
+    if (process.env.NODE_ENV === "development") {
+      token = process.env.REACT_APP_DEV_TOKEN
+      inDevEnv = true
+    }
+
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -136,7 +125,7 @@ class App extends Component {
         </p>
 
         <Login onTokenChange={this.handleChange}
-               token={this.state.token}
+               token={inDevEnv ? token: this.state.token}
                theme={"light"}
                icon={true}
                buttonText={"Sign in with Google"}
@@ -145,21 +134,21 @@ class App extends Component {
                >
         </Login>
         
-        <UserFavorites token={this.state.token}
+        <UserFavorites token={inDevEnv ? token: this.state.token}
                        getUserFavoritesEndpoint={SynapseClient.getUserFavorites}>
         </UserFavorites>
         
-        <UserProjects token={this.state.token} 
+        <UserProjects token={inDevEnv ? token: this.state.token} 
                       getUserProjectsEndpoint={SynapseClient.getUserProjectList}>
         </UserProjects>
         
         <UserProfile onProfileChange={this.handleChange}
-                     token={this.state.token}
+                     token={inDevEnv ? token: this.state.token}
                      ownerId={this.state.ownerId}
                      getUserProfileEndpoint={SynapseClient.getUserProfile}>
         </UserProfile>
        
-        <UserTeam token={this.state.token} 
+        <UserTeam token={inDevEnv ? token: this.state.token} 
                   ownerId={this.state.ownerId}
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
@@ -177,7 +166,7 @@ class App extends Component {
         </div>
 
         <CustomMarkdownView>
-          <MarkdownSynapse removeHandler={this.removeHandler} token={this.state.token}
+          <MarkdownSynapse removeHandler={this.removeHandler} token={inDevEnv ? token: this.state.token}
                     ownerId={"syn14568473"}
                     wikiId={"582406"}
                     updateLoadState={this.handleChange}
@@ -201,7 +190,7 @@ class App extends Component {
             },
           }}
           synapseId="syn15661198"
-          token={this.state.token}
+          token={inDevEnv ? token: this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -227,7 +216,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16787123"
-          token={this.state.token}
+          token={inDevEnv ? token: this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -253,7 +242,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16859580"
-          token={this.state.token}
+          token={inDevEnv ? token: this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -280,7 +269,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16859448"
-          token={this.state.token}
+          token={inDevEnv ? token: this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -303,7 +292,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16857542"
-          token={this.state.token}
+          token={inDevEnv ? token: this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
@@ -326,7 +315,7 @@ class App extends Component {
             },
           }}
           synapseId="syn16858699"
-          token={this.state.token}
+          token={inDevEnv ? token: this.state.token}
           alias="Disease"
           filter="parentId"
           defaultVisibleCount={4}>
