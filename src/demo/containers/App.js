@@ -121,7 +121,10 @@ class App extends Component {
   }
   
   render() {
-    
+    let redirectUrl = "http://localhost:3000/"
+    if (process.env.NODE_ENV === "production") {
+      redirectUrl = "https://leem42.github.io/Synapse-React-Client/"
+    }
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -138,7 +141,7 @@ class App extends Component {
                icon={true}
                buttonText={"Sign in with Google"}
                authProvider={"GOOGLE_OAUTH_2_0"}
-               redirectURL={"http://localhost:3000/"}
+               redirectURL={redirectUrl}
                >
         </Login>
         
@@ -194,9 +197,7 @@ class App extends Component {
                 isConsistent: false,
                 sql: `SELECT * FROM syn15661198`,
                 limit: 25,
-                offset: 0,
-                selectedFacets: [],
-                sort: [],
+                offset: 0
             },
           }}
           synapseId="syn15661198"

@@ -134,8 +134,8 @@ QueryWrapper.propTypes = {
             sql: PropTypes.string.isRequired,
             limit: PropTypes.number.isRequired,
             offset: PropTypes.number.isRequired,
-            selectedFacets: PropTypes.array.isRequired,
-            sort: PropTypes.array.isRequired
+            selectedFacets: PropTypes.array,
+            sort: PropTypes.array
         })
     }).isRequired,
     alias: PropTypes.string,

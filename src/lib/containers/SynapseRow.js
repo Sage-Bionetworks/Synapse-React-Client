@@ -51,7 +51,7 @@ class SynapseRow extends React.Component {
         const {data} = this.props
         
         if (data.length === 0) {
-            return (<div>loading</div>)
+            return (<div className="container"> Login to see this resource </div>)
         }
 
         let schema = {}
