@@ -6,17 +6,7 @@ import { LARGE_ICON } from './utils/index';
 class Dataset extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            showMore: false
-        }
-        this.handleChange = this.handleChange.bind(this)
         this.handleLinkClick = this.handleLinkClick.bind(this)
-    }
-
-    handleChange(updatedState) {
-        this.setState({
-            showMore: !this.state.showMore
-        })
     }
 
     handleLinkClick = (link) => (event) => {
@@ -49,7 +39,7 @@ class Dataset extends React.Component {
                             title={datasetName}
                         />
                         <div className="SRC-marginBottomTop">
-                            <Utils.ShowMore onClick={this.handleChange} summary={summary}></Utils.ShowMore>
+                            <p>{summary}</p>
                             <Utils.SynButton onClick={this.handleLinkClick} link={id}  text={id} ></Utils.SynButton>
                         </div>
 
@@ -58,10 +48,7 @@ class Dataset extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-                {
-                    this.state.showMore && <Utils.CardFooter rows={rows}/>
-                }
-
+                    <Utils.CardFooter rows={rows}/>
             </Utils.CardBorder>
         )
     }

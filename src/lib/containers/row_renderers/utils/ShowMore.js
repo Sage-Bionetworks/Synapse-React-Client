@@ -30,13 +30,13 @@ export default class ShowMore extends React.Component {
         if (!this.state.showMore && summary && summary.length >= CHAR_COUNT_CUTOFF) {
             summary = summary.split(".")
             summary = summary.slice(0, summary.length / 2) // remove text after last sentence
-            summary = summary.join(".") + "."  // add back period to the end
+            summary = summary.join(".") + "..."  // add back period to the end
         }
         return (
             <React.Fragment>
                 <p>
                     {summary}
-                    {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}> Show More </a>}
+                    {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>Show More </a>}
                 </p>
             </React.Fragment>
         )
