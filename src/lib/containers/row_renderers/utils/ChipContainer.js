@@ -4,7 +4,7 @@ const uuidv4 = require('uuid/v4')
 
 const ChipContainer = ({chips}) => {
     return (
-        <div className="SRC-marginBottomTen">
+        <div>
             {chips.map(
                 el => {
                     return (<Chip key={uuidv4()} type={el.type} text={el.text}  ></Chip>)

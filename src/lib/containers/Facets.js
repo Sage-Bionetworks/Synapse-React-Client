@@ -18,6 +18,7 @@ class CheckboxGroup extends React.Component {
         const {element} = this.props
         let children = []
         let selectedFacets = this.props.selectedFacets
+
         element.facetValues.forEach(
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
@@ -31,7 +32,7 @@ class CheckboxGroup extends React.Component {
                 )
             }
         )
-        let name = <strong> Filter by {this.props.alias} Type </strong>
+        let name = <strong> Filter by {this.props.filter} Type </strong>
         return (
                     <div>
                         <p> {name} </p>
@@ -47,17 +48,37 @@ class Facets extends React.Component {
         super(props)
         this.recordSelections = this.recordSelections.bind(this)
         this.handleClick = this.handleClick.bind(this)
-        // we store the selected facets by column name for ease of use,
-        // this has to be later converted when making the api call
+
         this.state = {
-            selectedFacets: {},
-            boxCount: 0,
-            isChecked: Array(this.props.facetCount).fill(false)
+            // we store the selected facets by column name for ease of use,
+            // this has to be later converted when making the api call
+            selectedFacets : {},
+            boxCount : 0,
+            isChecked :[]
         }
+
         this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
         this.updateSelection = this.updateSelection.bind(this)
     }
 
+
+    componentDidMount() {
+        let {data} = this.props
+        let facetCount = 0
+        // line below is for when testing doesn't mock
+        // the entire object
+        let filteredData = data.facets && data.facets.filter(
+            (value) => {
+                return value.columnName === this.props.filter
+            }
+        )
+        if (filteredData && filteredData[0]) {
+            facetCount = filteredData[0].facetValues.length
+        }
+        this.setState({
+            isChecked: Array(facetCount).fill(false)
+        })
+    }
 
     /**
      * Record's selection choice
@@ -72,7 +93,7 @@ class Facets extends React.Component {
         let facets = {}
         this.props.data.facets.forEach(
             (element) => {
-                if (element.facetType === "enumeration") {
+                if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                     let selection = []
                     element.facetValues.forEach(
                         facetValue => {
@@ -113,9 +134,9 @@ class Facets extends React.Component {
         // display the data -- currently we only support enumerations
         this.props.data.facets.forEach(
             (element) => {
-                if (element.facetType === "enumeration") {
+                if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                     let group = <CheckboxGroup 
-                                    alias={this.props.alias}
+                                    filter={this.props.filter}
                                     key={element.columnName}
                                     selectedFacets={selectedFacets}
                                     element={element}
@@ -230,7 +251,7 @@ class Facets extends React.Component {
                         </div>
                         <div className="form-group">
                             <p>
-                                <strong> {this.state.boxCount} {this.props.alias}s selected.  </strong>
+                                <strong> {this.state.boxCount} {this.props.filter}s selected.  </strong>
                                 <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
                                 |
                                 <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>

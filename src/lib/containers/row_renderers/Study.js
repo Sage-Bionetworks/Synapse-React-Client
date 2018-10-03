@@ -40,13 +40,22 @@ export default class Study extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon type={STUDY}/>
+                    <Utils.IconHolder>
+                        <Utils.Icon type={STUDY} size={Utils.LARGE_ICON}/>
+                    </Utils.IconHolder>
                     <Utils.Summary>
-                        <Utils.SummaryHeader
-                            name="STUDY"
-                            title={projectName}
-                        />
-                        <Utils.Authors authors={projectLeads} />
+                        <div className="SRC-flex">
+                            <div className="SRC-flex SRC-noPadding col-xs-2 visible-xs-inline-block">
+                                <Utils.Icon type={STUDY} size={Utils.SMALL_ICON}/>
+                            </div>
+                            <div className="col-xs-10 col-md-12 SRC-noPadding">
+                                <Utils.SummaryHeader
+                                    name="STUDY"
+                                    title={projectName}
+                                />
+                                <Utils.Authors authors={projectLeads} />
+                            </div>
+                        </div>
                         <Utils.ShowMore onClick={this.handleClick} summary={summary} />
                         <Utils.ChipContainer
                             chips={

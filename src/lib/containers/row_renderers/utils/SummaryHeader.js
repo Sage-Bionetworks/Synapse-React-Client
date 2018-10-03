@@ -1,10 +1,10 @@
 import React from 'react'
 
 const SummaryHeader = ({name, title}) => {
-    return (<div>
-                <p>
+    return (<React.Fragment>
+                <span>
                     {name}
-                </p>
+                </span>
                 <div>
                     <h5> 
                         <a className="SRC-primary-text-color" href="">
@@ -14,6 +14,6 @@ const SummaryHeader = ({name, title}) => {
                         </a>
                     </h5>
                 </div>
-            </div>)
+            </React.Fragment>)
 }
 export default SummaryHeader

@@ -168,13 +168,13 @@ export default class SynapseTable extends React.Component {
             // unpack all the data
             let lengthOfPropsData = this.getLengthOfPropsData()
             let defaultSelection
-            // fill defaultVisibleCount with true and the rest as false
-            if (this.props.defaultVisibleCount === 0) {
+            // fill visibleColumnCount with true and the rest as false
+            if (this.props.visibleColumnCount === 0) {
                 // if set to zero then its all true
                 defaultSelection = Array(lengthOfPropsData).fill(true)
             } else {
-                defaultSelection = Array(this.props.defaultVisibleCount).fill(true)
-                defaultSelection.push(...(Array(lengthOfPropsData - this.props.defaultVisibleCount).fill(false)))
+                defaultSelection = Array(this.props.visibleColumnCount).fill(true)
+                defaultSelection.push(...(Array(lengthOfPropsData - this.props.visibleColumnCount).fill(false)))
             }
             isColumnSelected = defaultSelection
         } else {
@@ -205,10 +205,10 @@ export default class SynapseTable extends React.Component {
         let headersFormatted = headers.map(
             (column, index) => {
                 // two cases when rendering the column headers on init load
-                // of the page we have to show only this.props.defaultVisibleCount many
+                // of the page we have to show only this.props.visibleColumnCount many
                 // columns, afterwards we rely on the isColumnSelected to get choices
-                let initRender = (index < this.props.defaultVisibleCount) && this.state.isColumnSelected.length === 0
-                initRender |= (this.props.defaultVisibleCount === 0 && this.state.isColumnSelected.length === 0)
+                let initRender = (index < this.props.visibleColumnCount) && this.state.isColumnSelected.length === 0
+                initRender |= (this.props.visibleColumnCount === 0 && this.state.isColumnSelected.length === 0)
                 let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
                 if (initRender || subsequentRender) {
                     let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
@@ -234,8 +234,8 @@ export default class SynapseTable extends React.Component {
                         (value, j) => {
                             let columnName = headers[j].name
                             let index = this.findSelectionIndex(this.state.sortSelection, columnName)
-                            let isRowActiveInit = j <  this.props.defaultVisibleCount && this.state.isColumnSelected.length === 0
-                            isRowActiveInit |= (this.props.defaultVisibleCount === 0 && this.state.isColumnSelected.length === 0)
+                            let isRowActiveInit = j <  this.props.visibleColumnCount && this.state.isColumnSelected.length === 0
+                            isRowActiveInit |= (this.props.visibleColumnCount === 0 && this.state.isColumnSelected.length === 0)
                             let isRowActiveSubsequent = this.state.isColumnSelected[j] && this.state.isColumnSelected.length !== 0
                             if (isRowActiveInit || isRowActiveSubsequent) {
                                 return (<td className="SRC_noBorderTop" key={`(${i},${j})`}>
@@ -274,7 +274,7 @@ export default class SynapseTable extends React.Component {
                                             (header, index) => {
                                                 let isColumnSelected = this.state.isColumnSelected[index]
                                                 if (isColumnSelected === undefined) {
-                                                    isColumnSelected = index < this.props.defaultVisibleCount | this.props.defaultVisibleCount === 0
+                                                    isColumnSelected = index < this.props.visibleColumnCount | this.props.visibleColumnCount === 0
                                                 }
                                                 return (<li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} 
                                                             key={header.name}
@@ -332,5 +332,5 @@ export default class SynapseTable extends React.Component {
 }
 
 SynapseTable.defaultProps = {
-    defaultVisibleCount : 0
+    visibleColumnCount : 0
 }

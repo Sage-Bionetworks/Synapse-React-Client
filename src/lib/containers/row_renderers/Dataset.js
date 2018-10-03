@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Utils from './utils'
 import { DATASET } from '../../utils/SynapseConstants';
+import { LARGE_ICON } from './utils/index';
 
 class Dataset extends React.Component {
     constructor(props) {
@@ -39,13 +40,15 @@ class Dataset extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon type={DATASET} />
+                    <Utils.IconHolder>
+                        <Utils.Icon size={LARGE_ICON} type={DATASET} />
+                    </Utils.IconHolder>
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="DATASET"
                             title={datasetName}
                         />
-                        <div>
+                        <div className="SRC-marginBottomTop">
                             <Utils.ShowMore onClick={this.handleChange} summary={summary}></Utils.ShowMore>
                             <Utils.SynButton onClick={this.handleLinkClick} link={id}  text={id} ></Utils.SynButton>
                         </div>

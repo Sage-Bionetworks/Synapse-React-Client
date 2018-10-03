@@ -7,9 +7,9 @@ const CardFooter = ({rows, ...rest}) => {
     }
     return (
         <div className="row SRC-grayBackground">
-            <div className="col-xs-2">
+            <div className="col-md-2 hidden-xs">
             </div>
-            <div className="table-responsive col-xs-10">
+            <div className="table-responsive col-md-10">
                 <table className="table table-condensed">
                     <tbody className="SRC-borderTopNone">
                         {

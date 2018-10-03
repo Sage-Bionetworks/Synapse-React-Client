@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Utils from './utils'
 import { PUBLICATION } from '../../utils/SynapseConstants';
+import {LARGE_ICON } from './utils/index';
 
 class Publication extends React.Component {
     
@@ -32,12 +33,14 @@ class Publication extends React.Component {
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon type={PUBLICATION}/>
+                    <Utils.IconHolder>
+                        <Utils.Icon size={LARGE_ICON} type={PUBLICATION}/>
+                    </Utils.IconHolder>
                     <Utils.Summary>
                         <Utils.SummaryHeader 
                             name={"PUBLICATION"}
                             title={citation}
-                        />
+                            />
                         <Utils.ChipContainer
                             chips={[{type: "gray", text: tumorType}, {type: "blue", text: diseaseFocus}]}
                         />

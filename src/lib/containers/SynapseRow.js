@@ -5,17 +5,21 @@ import PropTypes from 'prop-types'
 
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
-const RowContainer = ({children, data, ...rest}) => {
+const RowContainer = ({children, data, limit,...rest}) => {
     return (
         data.queryResult.queryResults.rows.map(
-            rowData => {
-                return <React.Fragment key={rowData.rowId}>
-                    {
-                        React.Children.map(children, child => {
-                            return React.cloneElement(child, {data: rowData.values, ...rest})
-                        })
-                    }
-                </React.Fragment>
+            (rowData, index) => {
+                if (index < limit) {
+                    return <React.Fragment key={rowData.rowId}>
+                        {
+                            React.Children.map(children, child => {
+                                return React.cloneElement(child, {data: rowData.values, ...rest})
+                            })
+                        }
+                    </React.Fragment>
+                } else {
+                     return false
+                }
             }
         )
     )
@@ -48,7 +52,7 @@ class SynapseRow extends React.Component {
     }
 
     render () {
-        const {data} = this.props
+        const {data, limit} = this.props
         
         if (data.length === 0) {
             return (<div className="container"> Login to see this resource </div>)
@@ -60,7 +64,7 @@ class SynapseRow extends React.Component {
                 schema[element.name] = index
         });
 
-        return (<RowContainer data={data} schema={schema}>
+        return (<RowContainer limit={limit} data={data} schema={schema}>
                     {this.renderChild()}
                 </RowContainer>)
     }
@@ -68,6 +72,11 @@ class SynapseRow extends React.Component {
 
 SynapseRow.propTypes = {
     type: PropTypes.string.isRequired,
+}
+
+SynapseRow.defaultProps = {
+    type: PropTypes.string.isRequired,
+    limit: Infinity
 }
 
 export default SynapseRow

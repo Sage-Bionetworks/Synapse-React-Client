@@ -228,16 +228,20 @@ An example of a view with facets/stacked bar chart/table
 
 
 ```
- 
 ##### QueryWrapper Props
   
-| Props  | Explanation | Default Value | Is Required |
+**Note** Take note that the query wrapper can consume data in two ways. You can either specify a query request to synapse OR passed in already loaded JSON from a synapse query.
+
+| Props  | Explanation | Default Value |
 | ------------- | ------------- | ------------- | ------------- |
-| initQueryRequest  | This is the default query to be run on the first render of the component  | N/A  | Yes  |
-| defaultVisibleCount  | The number of columns to show initially, the order of columns selected is determined by the SELECT clause of the sql passed into initQueryRequest  | 0 | No  |
-| token  | Session token to make authenticated calls  | ""  | No  |
-| filter  | This is the **facet** column name that the stacked bar chart will show   | N/A  | Yes  |
-| alias  | If the facet column name should have a different display name than the filter name, you can specify it with this prop.  | The value passed in for the filter prop.  | No |
+| Use case #1: Making a query call to synapse |
+| initQueryRequest  | This is the default query to be run on the first render of the component  | N/A  |
+| defaultVisibleCount  | The number of columns to show initially, the order of columns selected is determined by the SELECT clause of the sql passed into initQueryRequest  | 0 |
+| filter  | This is the **facet** column name that the stacked bar chart will show   | N/A  |
+| alias  | If the facet column name should have a different display name than the filter name, you can specify it with this prop.  | The value passed in for the filter prop.  |
+| token  | Session token to make authenticated calls  | ""  |
+| Use case #2: Loading in JSON data |
+| json | If there is pre-loaded data for the data then this can be inputted using this prop **Note**: JSON passed in must be exactly the same as the query requests returned by a standard Synapse Table Call.
  
 
 

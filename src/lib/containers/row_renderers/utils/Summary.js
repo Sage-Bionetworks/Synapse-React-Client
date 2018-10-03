@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Summary = ({children}) => {
-    return (<div className="col-xs-10">
+    return (<div className="col-md-10 col-sm-9">
                 {children}        
             </div>)
 }

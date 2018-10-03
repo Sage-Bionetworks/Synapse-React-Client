@@ -5,12 +5,14 @@ import Name from './Name'
 import Title from './Title'
 import Authors from './Author'
 import CardBorder from './CardBorder'
-import CardIcon from './CardIcon'
+import Icon from './Icon'
 import CardFooter from './CardFooter'
 import SummaryHeader from './SummaryHeader'
 import ShowMore from './ShowMore'
 import ChipContainer from './ChipContainer'
 import SynButton from './SynButton'
+import IconHolder from './IconHolder'
+import {SMALL_ICON, LARGE_ICON} from './Constants'
 
 export {    
         Chip,
@@ -21,9 +23,12 @@ export {
         Authors,
         CardFooter,
         CardBorder,
-        CardIcon,
+        Icon,
         ShowMore,
         SummaryHeader,
         ChipContainer,
-        SynButton
+        SynButton,
+        IconHolder,
+        SMALL_ICON,
+        LARGE_ICON
     }

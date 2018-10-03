@@ -36,7 +36,13 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     componentDidMount() {
-        this.executeQueryRequest(INIT_REQUEST)
+        if (!this.props.json) {
+            this.executeQueryRequest(INIT_REQUEST)
+        } else {
+            this.setState({
+                data: cloneDeep(this.props.json)
+            })
+        }
     }
 
     /**
@@ -46,7 +52,7 @@ export default class QueryWrapper extends React.Component {
         // The only reason that reason querry wrapper should take
         // action here is when incoming session token is now set
         // we carefully check that this is the case
-        if (this.props.token !== "" && prevProps.token === "") {
+        if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
             this.executeQueryRequest(INIT_REQUEST)
         }
     }
@@ -81,17 +87,7 @@ export default class QueryWrapper extends React.Component {
             data => {
                 // line below is for when testing doesn't mock
                 // the entire object
-                let filteredData = data.facets && data.facets.filter(
-                    (value) => {
-                        return value.columnName === this.props.filter
-                    }
-                )
-                data.facets = filteredData
                 let newState = {data, lastQueryRequest: cloneDeep(request)}
-                // avoid failed test case by checking obj below
-                if (filteredData && filteredData[0]) {
-                    newState.facetCount = filteredData[0].facetValues.length
-                }
                 this.setState(newState)
             }
         ).catch(
@@ -111,10 +107,6 @@ export default class QueryWrapper extends React.Component {
                     return React
                                 .cloneElement(  child, 
                                                 {
-                                                    defaultVisibleCount: this.props.defaultVisibleCount,
-                                                    synapseId: this.props.filter,
-                                                    facetCount: this.state.facetCount,
-                                                    alias: this.props.alias === "" ? this.props.filter : this.props.alias,
                                                     executeQueryRequest: this.executeQueryRequest,
                                                     getLastQueryRequest: this.getLastQueryRequest,
                                                     data: this.state.data}
@@ -127,27 +119,22 @@ export default class QueryWrapper extends React.Component {
 
 QueryWrapper.propTypes = {
     initQueryRequest: PropTypes.shape({
-        concreteType: PropTypes.string.isRequired,
-        partMask: PropTypes.number.isRequired,
+        concreteType: PropTypes.string,
+        partMask: PropTypes.number,
         query: PropTypes.shape({
-            isConsistent: PropTypes.bool.isRequired,
-            sql: PropTypes.string.isRequired,
-            limit: PropTypes.number.isRequired,
-            offset: PropTypes.number.isRequired,
+            isConsistent: PropTypes.bool,
+            sql: PropTypes.string,
+            limit: PropTypes.number,
+            offset: PropTypes.number,
             selectedFacets: PropTypes.array,
             sort: PropTypes.array
         })
-    }).isRequired,
-    alias: PropTypes.string,
-    filter: PropTypes.string.isRequired,
-    synapseId: PropTypes.string.isRequired,
-    defaultVisibleCount: PropTypes.number,
+    }),
+    json: PropTypes.object,
     token : PropTypes.string,
-    type: PropTypes.string
 }
 
 QueryWrapper.defaultProps = {
-    alias: "",
-    defaultVisibleCount: 0,
-    token: ""
+    token: "",
+    json: null
 }
