@@ -71,7 +71,7 @@ export default class Study extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-                <div className="row SRC-grayBackground">
+               {this.state.showMore && <Utils.CardFooter>
                     <div className="col-md-2 hidden-xs">
                     </div>
                     {
@@ -81,14 +81,13 @@ export default class Study extends React.Component {
                                     <div key={uuidv4()} className="col-md-3 col-sm-4">
                                             <Utils.FauxTable
                                                 values={column}
-                                            >
-                                            </Utils.FauxTable>
+                                            />
                                     </div>
                                 )            
                             }
                         )
                     }
-                </div>
+                </Utils.CardFooter>}
             </Utils.CardBorder>
         )
 

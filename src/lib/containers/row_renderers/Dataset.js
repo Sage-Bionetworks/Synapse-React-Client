@@ -1,7 +1,7 @@
 import React from 'react'
 import * as Utils from './utils'
 import { DATASET } from '../../utils/SynapseConstants';
-import { LARGE_ICON } from './utils/index';
+const uuidv4 = require("uuid/v4")
 
 class Dataset extends React.Component {
     constructor(props) {
@@ -23,15 +23,18 @@ class Dataset extends React.Component {
         const id = data[schema.id]
         const fundingAgency = data[schema.fundingAgency]
         const fileCount = data[schema.fileCount]
-        const rows = [
-            ["FUNDER", fundingAgency, "SIZE", "12", "FILES", fileCount,  "MODIFIED", "TODAY"],
+        const columns = [
+            [["FUNDER", fundingAgency]],
+            [[ "SIZE", "12"]],
+            [[ "FILES", fileCount]],
+            [["MODIFIED", "TODAY"]]
         ]
 
         return (
             <Utils.CardBorder>
                 <Utils.Section>
                     <Utils.IconHolder>
-                        <Utils.Icon size={LARGE_ICON} type={DATASET} />
+                        <Utils.Icon size={Utils.LARGE_ICON} type={DATASET} />
                     </Utils.IconHolder>
                     <Utils.Summary>
                         <Utils.SummaryHeader
@@ -50,7 +53,23 @@ class Dataset extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-                    <Utils.CardFooter rows={rows}/>
+                <Utils.CardFooter>
+                    <div className="col-sm-1 hidden-xs">
+                    </div>
+                    {
+                      columns.map(
+                          column => {
+                              return (
+                                  <div key={uuidv4()} className="col-md-2 col-sm-2">
+                                        <Utils.FauxTable
+                                            values={column}
+                                        />
+                                  </div>
+                              )
+                          }
+                      )  
+                    }
+                </Utils.CardFooter>
             </Utils.CardBorder>
         )
     }
