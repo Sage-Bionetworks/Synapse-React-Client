@@ -236,8 +236,9 @@ An example of a view with facets/stacked bar chart/table
 | token  | Session token to make authenticated calls  |
 
 ### StaticQueryWrapper Example
-
 ```jsx
+import syn16787123 from 'folder/to/syn16787123.json'
+
 <SynapseComponents.StaticQueryWrapper
   json={syn16787123}
   >
