@@ -265,7 +265,7 @@ export default class SynapseTable extends React.Component {
                         <span className="SRC-floatRight">
                             {/* dropdown menu below */}
                             <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                                <button className="btn SRC-marginRightSevenPx btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <button className="btn SRC-marginRightFivePx SRC-paddingSevenPx btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <FontAwesomeIcon icon="ellipsis-v"></FontAwesomeIcon>
                                 </button>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">

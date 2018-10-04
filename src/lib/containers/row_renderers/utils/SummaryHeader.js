@@ -1,10 +1,11 @@
 import React from 'react'
 
-const SummaryHeader = ({name, title}) => {
+const SummaryHeader = ({name, title, children}) => {
     return (<React.Fragment>
-                <span>
+                <div>
+                    {children}
                     {name}
-                </span>
+                </div>
                 <div>
                     <h5> 
                         <a className="SRC-primary-text-color" href="">

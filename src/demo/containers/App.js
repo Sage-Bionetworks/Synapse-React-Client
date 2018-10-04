@@ -116,7 +116,7 @@ class App extends Component {
     let token = ""
     let inDevEnv = false
     if (process.env.NODE_ENV === "development") {
-      token = "03021292-e395-4746-9ccf-055a662e25ea"
+      token = process.env.REACT_APP_DEV_TOKEN
       inDevEnv = true
     }
 
@@ -214,7 +214,7 @@ class App extends Component {
           >
           <SynapseRow
               type={SynapseConstants.STUDY}
-              limit={3}
+              limit={1}
           />
         </StaticQueryWrapper>
 

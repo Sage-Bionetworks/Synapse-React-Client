@@ -44,18 +44,13 @@ export default class Study extends React.Component {
                         <Utils.Icon type={STUDY} size={Utils.LARGE_ICON}/>
                     </Utils.IconHolder>
                     <Utils.Summary>
-                        <div className="SRC-flex">
-                            <div className="SRC-flex SRC-noPadding col-xs-2 visible-xs-inline-block">
-                                <Utils.Icon type={STUDY} size={Utils.SMALL_ICON}/>
-                            </div>
-                            <div className="col-xs-10 col-md-12 SRC-noPadding">
-                                <Utils.SummaryHeader
-                                    name="STUDY"
-                                    title={projectName}
-                                />
-                                <Utils.Authors authors={projectLeads} />
-                            </div>
-                        </div>
+                        <Utils.SummaryHeader
+                            name="STUDY"
+                            title={projectName}
+                        >
+                            <Utils.Icon type={STUDY} size={Utils.SMALL_ICON}/>
+                        </Utils.SummaryHeader>
+                        <Utils.Authors authors={projectLeads} />
                         <Utils.ShowMore onClick={this.handleClick} summary={summary} />
                         <Utils.ChipContainer
                             chips={
