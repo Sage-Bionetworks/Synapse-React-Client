@@ -1,7 +1,7 @@
 import React from "react";
 import * as SynapseClient from "lib/utils/SynapseClient";
-import GoogleIcon from 'assets/GoogleIcon'
-import ButtonContent from 'assets/ButtonContent'
+import GoogleIcon from '../assets/GoogleIcon'
+import ButtonContent from '../assets/ButtonContent'
 
 /**
  *  Demo of user session, show login screen and handling user login submission.

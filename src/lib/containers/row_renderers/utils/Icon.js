@@ -13,15 +13,15 @@ const Icon = ({type, size}) => {
 
     switch (type) {
         case PUBLICATION:
-            return (<img alt="" style={style} className={classStyle} src={require("../../../../assets/icons/Publication.svg")}></img>)
+            return (<img alt="" style={style} className={classStyle} src={require("../../../assets/icons/Publication.svg")}></img>)
         case DATASET:
-            return (<img alt="" style={style} className={classStyle} src={require("../../../../assets/icons/Data2.svg")}></img>)
+            return (<img alt="" style={style} className={classStyle} src={require("../../../assets/icons/Data2.svg")}></img>)
         case FUNDER:
-            return (<img alt="" style={style} className={classStyle} src={require("../../../../assets/icons/Data2.svg")}></img>)
+            return (<img alt="" style={style} className={classStyle} src={require("../../../assets/icons/Data2.svg")}></img>)
         case STUDY:
-            return (<img alt="" style={style} className={classStyle} src={require("../../../../assets/icons/Study.svg")}></img>)
+            return (<img alt="" style={style} className={classStyle} src={require("../../../assets/icons/Study.svg")}></img>)
         case TOOL:
-            return (<img alt="" style={style} className={classStyle} src={require("../../../../assets/icons/DNA_Two.svg")}></img>)
+            return (<img alt="" style={style} className={classStyle} src={require("../../../assets/icons/DNA_Two.svg")}></img>)
         default:
             return null
     }
