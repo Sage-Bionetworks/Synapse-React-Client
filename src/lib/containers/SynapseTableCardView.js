@@ -25,7 +25,7 @@ const RowContainer = ({children, data, limit,...rest}) => {
     )
 }
 
-class SynapseRow extends React.Component {
+class SynapseTableCardView extends React.Component {
 
     constructor(props){ 
         super(props)
@@ -70,13 +70,13 @@ class SynapseRow extends React.Component {
     }
 }
 
-SynapseRow.propTypes = {
+SynapseTableCardView.propTypes = {
     type: PropTypes.string.isRequired,
 }
 
-SynapseRow.defaultProps = {
+SynapseTableCardView.defaultProps = {
     type: PropTypes.string.isRequired,
     limit: Infinity
 }
 
-export default SynapseRow
+export default SynapseTableCardView

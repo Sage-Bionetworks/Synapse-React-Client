@@ -241,7 +241,7 @@ An example of a view with facets/stacked bar chart/table
 <SynapseComponents.StaticQueryWrapper
   json={syn16787123}
   >
-  <SynapseComponents.SynapseRow
+  <SynapseComponents.SynapseTableCardView
       type={SynapseConstants.STUDY}
       limit={3}
   />
@@ -275,7 +275,7 @@ An example of a view with facets/stacked bar chart/table
 | ------------- | ------------- |
 | filter | This is the column name that will be displayed |
 
-#### SynapseRow
+#### SynapseTableCardView
 
 | Props  | Explanation |
 | ------------- | ------------- |

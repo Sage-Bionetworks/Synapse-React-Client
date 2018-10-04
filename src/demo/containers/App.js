@@ -19,7 +19,7 @@ import {Facets} from 'lib/containers/Facets';
 import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
 import SynapseTable from 'lib/containers/SynapseTable'
 
-import SynapseRow from 'lib/containers/SynapseRow'
+import SynapseTableCardView from 'lib/containers/SynapseTableCardView'
 import syn16787123 from '../../JSON_test_data/syn16787123.json'
 import syn16859580 from '../../JSON_test_data/syn16859580.json'
 import syn16858699 from '../../JSON_test_data/syn16858699.json'
@@ -212,7 +212,7 @@ class App extends Component {
         <StaticQueryWrapper
           json={syn16787123}
           >
-          <SynapseRow
+          <SynapseTableCardView
               type={SynapseConstants.STUDY}
               limit={1}
           />
@@ -221,7 +221,7 @@ class App extends Component {
         <StaticQueryWrapper
           json={syn16859580}        
         >
-          <SynapseRow
+          <SynapseTableCardView
             type={SynapseConstants.DATASET}
           />
         </StaticQueryWrapper>
@@ -229,7 +229,7 @@ class App extends Component {
         <StaticQueryWrapper
           json={syn16859448}
         >
-          <SynapseRow
+          <SynapseTableCardView
           type={SynapseConstants.TOOL}
           />
         </StaticQueryWrapper>
@@ -237,7 +237,7 @@ class App extends Component {
         <StaticQueryWrapper
             json={syn16857542}
         >
-          <SynapseRow 
+          <SynapseTableCardView 
             type={SynapseConstants.PUBLICATION}
           />
         </StaticQueryWrapper>
@@ -245,7 +245,7 @@ class App extends Component {
         <StaticQueryWrapper
           json={syn16858699}        
         >
-          <SynapseRow 
+          <SynapseTableCardView 
             type={SynapseConstants.FUNDER}
           />
         </StaticQueryWrapper>
