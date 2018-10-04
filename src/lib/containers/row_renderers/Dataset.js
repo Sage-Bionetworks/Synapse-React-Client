@@ -37,7 +37,9 @@ class Dataset extends React.Component {
                         <Utils.SummaryHeader
                             name="DATASET"
                             title={datasetName}
-                        />
+                        >
+                            <Utils.Icon type={DATASET} size={Utils.SMALL_ICON}/>
+                        </Utils.SummaryHeader>
                         <div className="SRC-marginBottomTop">
                             <p>{summary}</p>
                             <Utils.SynButton onClick={this.handleLinkClick} link={id}  text={id} ></Utils.SynButton>

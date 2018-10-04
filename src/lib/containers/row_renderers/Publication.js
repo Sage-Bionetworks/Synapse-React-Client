@@ -40,7 +40,9 @@ class Publication extends React.Component {
                         <Utils.SummaryHeader 
                             name={"PUBLICATION"}
                             title={citation}
-                            />
+                        >
+                            <Utils.Icon type={PUBLICATION} size={Utils.SMALL_ICON}/>
+                        </Utils.SummaryHeader>
                         <Utils.ChipContainer
                             chips={[{type: "gray", text: tumorType}, {type: "blue", text: diseaseFocus}]}
                         />

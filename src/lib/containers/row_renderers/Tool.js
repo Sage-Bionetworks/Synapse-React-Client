@@ -30,20 +30,16 @@ export default class Tool extends React.Component {
                         <Utils.SummaryHeader 
                             name={"TOOL"}
                             title={softwareName}
-                        />
+                        >
+                            <Utils.Icon type={TOOL} size={Utils.SMALL_ICON}/>
+                        </Utils.SummaryHeader>
                         <p>{summary}</p>
-                    </Utils.Summary>
-                </Utils.Section>
-                <Utils.Section>
-                    <div className="col-md-2 hidden-xs">
-                    </div>
-                    <div className="col-md-10">
                         <Utils.SynButton
                             link={softwareLink}
                             text={"OPEN"}
                             onClick={this.handleLinkClick}
                         />
-                    </div>
+                    </Utils.Summary>
                 </Utils.Section>
             </Utils.CardBorder>
         )
