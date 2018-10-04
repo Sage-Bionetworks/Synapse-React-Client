@@ -1,6 +1,5 @@
 import React from 'react'
 import * as Utils from './utils'
-import { FUNDER } from '../../utils/SynapseConstants';
 
 export default class Funder extends React.Component {
     
@@ -24,7 +23,6 @@ export default class Funder extends React.Component {
         return (
             <Utils.CardBorder>
                  <Utils.Section>
-                     <Utils.CardIcon type={FUNDER}/>
                     <Utils.Summary>
                             <Utils.SummaryHeader
                                 name={"FUNDER"}

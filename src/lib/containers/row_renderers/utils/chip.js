@@ -11,7 +11,7 @@ const Chip = ({type, text}) => {
                 return (
                     <span 
                         key={uuidv4()}
-                        className={`SRC-roundBorder SRC-whiteText SRC-paddingChips ${dynamicClass}`}>
+                        className={`SRC-roundBorder SRC-marginFive SRC-whiteText SRC-paddingChips ${dynamicClass}`}>
                         { text }
                     </span>
                 )

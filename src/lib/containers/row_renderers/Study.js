@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Utils from './utils/index';
 import { STUDY } from '../../utils/SynapseConstants';
+const uuidv4 = require("uuid/v4")
 
 export default class Study extends React.Component {
     constructor(props) {
@@ -30,22 +31,34 @@ export default class Study extends React.Component {
         const dataStatus = data[schema.dataStatus]
         const institutions = data[schema.institutions]
 
-        const rows = [
-            ["STATUS", projectStatus, "INVESTIGATORS", projectLeads, "INSTITUTIONS", institutions],
-            ["FUNDER", fundingAgency], 
-            ["DATA", dataStatus,], 
-            ["PUBLICATION", "NONE"]
+        const columns = [
+            [
+                ["STATUS", projectStatus],
+                ["FUNDER", fundingAgency],
+                ["DATA", dataStatus],
+                ["PUBLICATION", "NONE"]
+            ],
+            [
+                ["INVESTIGATORS", projectLeads]
+            ],
+            [
+                ["INSTITUTIONS", institutions]
+            ]
         ]
 
         return (
             <Utils.CardBorder>
                 <Utils.Section>
-                    <Utils.CardIcon type={STUDY}/>
+                    <Utils.IconHolder>
+                        <Utils.Icon type={STUDY} size={Utils.LARGE_ICON}/>
+                    </Utils.IconHolder>
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="STUDY"
                             title={projectName}
-                        />
+                        >
+                            <Utils.Icon type={STUDY} size={Utils.SMALL_ICON}/>
+                        </Utils.SummaryHeader>
                         <Utils.Authors authors={projectLeads} />
                         <Utils.ShowMore onClick={this.handleClick} summary={summary} />
                         <Utils.ChipContainer
@@ -58,9 +71,23 @@ export default class Study extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-               {
-                    this.state.showMore && <Utils.CardFooter rows={rows}/>
-                }
+               {this.state.showMore && <Utils.CardFooter>
+                    <div className="col-md-2 hidden-xs">
+                    </div>
+                    {
+                        columns.map(
+                            column => {
+                                return (
+                                    <div key={uuidv4()} className="col-md-3 col-sm-4">
+                                            <Utils.FauxTable
+                                                values={column}
+                                            />
+                                    </div>
+                                )            
+                            }
+                        )
+                    }
+                </Utils.CardFooter>}
             </Utils.CardBorder>
         )
 

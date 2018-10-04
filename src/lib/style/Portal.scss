@@ -251,6 +251,11 @@ body * {
   box-shadow: 20px 20px;
 }
 
+.SRC-marginBottomTop {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 .SRC-salmon-background {
   background: #F27277;
 }
@@ -280,7 +285,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   color: white;
  }
 
- .SRC-marginRightSevenPx {
+ .SRC-marginRightFivePx SRC-paddingSevenPx {
    margin-right: 5px;
    padding: 7px;
  }
@@ -303,9 +308,16 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 
  .SRC-paddingChips {
    padding: 5px;
-   margin-bottom: 8px !important;
  }
 
+ .SRC-marginFive {
+   margin: 5px;
+ }
+
+ .SRC-noPadding {
+   padding: 0px;
+ }
+ 
  .SRC-paddingRight {
    padding-right: 15px;
  }
@@ -348,4 +360,12 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 
  .SRC-width-50-percent {
     width: 50%;
+ }
+
+ .SRC-table-row {
+   display: table-row;
+ }
+ 
+ .SRC-table-row div {
+   display: table-cell;
  }

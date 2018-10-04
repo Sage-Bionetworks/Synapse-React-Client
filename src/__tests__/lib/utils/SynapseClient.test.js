@@ -19,16 +19,6 @@ it('version call', () => {
     })
 });
 
-it('login', function () {
-  SynapseClient.login(process.env.REACT_APP_TEST_USERNAME,
-    process.env.REACT_APP_TEST_PASS)
-    .then(data => {
-      expect(data.sessionToken).toBeDefined();
-    }).catch(err => {
-      fail(err.reason)
-    })
-});
-
 it('get user profiles', () => {
   return SynapseClient.getUserProfiles([345424, 273978, 273991])
     .then(data => {

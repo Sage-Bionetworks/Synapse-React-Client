@@ -189,56 +189,99 @@ To use the markdown component with only markdown, simply pass down a prop with t
 
 ```
 
-#### Query View
+### QueryWrapper Example
 
 An example of a view with facets/stacked bar chart/table
 
 ```jsx
 
   import {SynapseComponents} from 'synapse-react-client'
-
   <SynapseComponents.QueryWrapper
-    initQueryRequest = {{
-      concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS | SynapseConstants.BUNDLE_MASK_QUERY_FACETS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-      synapseId: "syn15661198",
-      query: {
-          isConsistent: false,
-          sql: `SELECT * FROM syn15661198`, // can select as many or as few columns as desired
-          limit: 25,
-          offset: 0,
-          selectedFacets: [],
-          sort: []
-      }
-    }}
-    defaultVisibleCount={2}  // specifies how many column should be shown be default
-                             // if defaultVisibleCount === 0 then it will show all
-                             // columns as specified by the sql statement
-    token={this.state.token}
-    alias={"Disease"}
-    filter={"parentId"}
-  >
-    <SynapseComponents.Facets>
-    </SynapseComponents.Facets>
-    <SynapseComponents.StackedRowHomebrew>
-    </SynapseComponents.StackedRowHomebrew>
-    <SynapseComponents.SynapseTable>
-    </SynapseComponents.SynapseTable>
+          initQueryRequest={{
+            concreteType:
+              "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+              | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+              | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+                isConsistent: false,
+                sql: `SELECT * FROM syn16858331`,
+                limit: 25,
+                offset: 0
+            },
+          }}
+          token={inDevEnv ? token: this.state.token}
+          >
+          <SynapseComponents.Facets
+            filter={"projectId"}
+          />
+          <SynapseComponents.StackedRowHomebrew
+            filter={"projectId"}
+          />
+          <SynapseComponents.SynapseTable
+            synapseId={"syn15661198"}
+            visibleColumnCount={8}
+          />
   </SynapseComponents.QueryWrapper>
 
 
 ```
- 
-##### QueryWrapper Props
+
+#### QueryWrapper Props
   
-| Props  | Explanation | Default Value | Is Required |
-| ------------- | ------------- | ------------- | ------------- |
-| initQueryRequest  | This is the default query to be run on the first render of the component  | N/A  | Yes  |
-| defaultVisibleCount  | The number of columns to show initially, the order of columns selected is determined by the SELECT clause of the sql passed into initQueryRequest  | 0 | No  |
-| token  | Session token to make authenticated calls  | ""  | No  |
-| filter  | This is the **facet** column name that the stacked bar chart will show   | N/A  | Yes  |
-| alias  | If the facet column name should have a different display name than the filter name, you can specify it with this prop.  | The value passed in for the filter prop.  | No |
- 
+| Props  | Explanation |
+| ------------- | ------------- |
+| initQueryRequest  | This is the default query to be run on the first render of the component  |
+| token  | Session token to make authenticated calls  |
+
+### StaticQueryWrapper Example
+```jsx
+import syn16787123 from 'folder/to/syn16787123.json'
+
+<SynapseComponents.StaticQueryWrapper
+  json={syn16787123}
+  >
+  <SynapseComponents.SynapseTableCardView
+      type={SynapseConstants.STUDY}
+      limit={3}
+  />
+</SynapseComponents.StaticQueryWrapper>
+```
+
+#### StaticQueryWrapper Props
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| json  | Preloaded data from Synapse  |
+
+### QueryWrapper/StaticQueryWrapper Children
+
+#### Facets
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| filter | This is the column name that will be displayed  |
+
+#### SynapseTable
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| filter | This is the column name that will be displayed  |
+| visibleColumnCount | This is the number of columns that will be displayed by default. These columns are chosen according to the order of which the columns are specified by the SELECT clause from the query producing the data for this view.  |
+
+#### StackedRowHomebrew
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| filter | This is the column name that will be displayed |
+
+#### SynapseTableCardView
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
+| limit | The number of cards to show, e.g limit = 3 will only render 3 cards  |
 
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)

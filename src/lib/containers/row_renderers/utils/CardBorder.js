@@ -1,7 +1,7 @@
 import React from 'react'
 
 const CardBorder = ({children}) => {
-    return (<div className="container SRC-syn-border SRC-noPaddingBottom  SRC-syn-border-spacing">
+    return (<div className="container SRC-marginBottomTop SRC-syn-border">
                 {children}
             </div>)
 }

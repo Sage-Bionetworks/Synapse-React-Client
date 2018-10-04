@@ -228,12 +228,12 @@ export default class StackedRowHomebrew extends React.Component {
      * Display view
      */
     render () {
+        let {data} = this.props
         // while data hasn't queued up display loading
-        if (this.props.data.length === 0) {
+        if (data.length === 0) {
             return (<div className="container">loading</div>)
         }
 
-        let {data} = this.props
 
         let x_data = this.extractPropsData(data);
         let total = 0
@@ -245,7 +245,7 @@ export default class StackedRowHomebrew extends React.Component {
             <div className="container SRC-margin-bottom-50px">
                 <div className="row">
                     <span>
-                        <strong> {total} </strong> files shown by {this.props.alias}
+                        <strong> {total} </strong> files shown by {this.props.filter}
                     </span>
                     <button
                         className="btn btn-default btn-sm SRC-floatRight" 
@@ -328,7 +328,7 @@ export default class StackedRowHomebrew extends React.Component {
                     </Measure>
                 </div>
                 <div className="row">
-                    {this.state.hoverText && <p className="SRC-noMargin" > <strong> {this.props.alias}: {this.state.hoverText} </strong> </p>}
+                    {this.state.hoverText && <p className="SRC-noMargin" > <strong> {this.props.filter}: {this.state.hoverText} </strong> </p>}
                     {this.state.hoverText && <p className="SRC-noMargin" > <i> {this.state.hoverTextCount} files </i> </p>}
                 </div>
             </div>
@@ -338,9 +338,9 @@ export default class StackedRowHomebrew extends React.Component {
     extractPropsData(data) {
         let x_data = [];
         data.facets.forEach(item => {
-            if (item.facetType === "enumeration") {
+            if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
                 item.facetValues.forEach(facetValue => {
-                    if (item.columnName === "parentId") {
+                    if (item.columnName) {
                         x_data.push({ columnName: item.columnName, ...facetValue });
                     }
                 });

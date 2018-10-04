@@ -10,7 +10,9 @@ describe("it renders a facet without crashing", () => {
     it('renders correctly', async () => {
         const tree = await shallow( 
             <Facets
-                data={mockData}>
+                data={mockData}
+                filter={"name"}
+            >
             </Facets>
         )
         expect(tree).toBeDefined()
@@ -20,6 +22,7 @@ describe("it renders a facet without crashing", () => {
         const tree = await shallow( 
             <Facets
                 data={mockData}
+                filter={'name'}
             >
             </Facets>
         )
