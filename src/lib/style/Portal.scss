@@ -361,3 +361,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
  .SRC-width-50-percent {
     width: 50%;
  }
+
+ .SRC-table-row {
+   display: table-row;
+ }
+ 
+ .SRC-table-row div {
+   display: table-cell;
+ }

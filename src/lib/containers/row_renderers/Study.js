@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Utils from './utils/index';
 import { STUDY } from '../../utils/SynapseConstants';
+const uuidv4 = require("uuid/v4")
 
 export default class Study extends React.Component {
     constructor(props) {
@@ -30,11 +31,19 @@ export default class Study extends React.Component {
         const dataStatus = data[schema.dataStatus]
         const institutions = data[schema.institutions]
 
-        const rows = [
-            ["STATUS", projectStatus, "INVESTIGATORS", projectLeads, "INSTITUTIONS", institutions],
-            ["FUNDER", fundingAgency], 
-            ["DATA", dataStatus,], 
-            ["PUBLICATION", "NONE"]
+        const columns = [
+            [
+                ["STATUS", projectStatus],
+                ["FUNDER", fundingAgency],
+                ["DATA", dataStatus],
+                ["PUBLICATION", "NONE"]
+            ],
+            [
+                ["INVESTIGATORS", projectLeads]
+            ],
+            [
+                ["INSTITUTIONS", institutions]
+            ]
         ]
 
         return (
@@ -62,9 +71,24 @@ export default class Study extends React.Component {
                         />
                     </Utils.Summary>
                 </Utils.Section>
-               {
-                    this.state.showMore && <Utils.CardFooter rows={rows}/>
-                }
+                <div className="row SRC-grayBackground">
+                    <div className="col-md-2 hidden-xs">
+                    </div>
+                    {
+                        columns.map(
+                            column => {
+                                return (
+                                    <div key={uuidv4()} className="col-md-3 col-sm-4">
+                                            <Utils.FauxTable
+                                                values={column}
+                                            >
+                                            </Utils.FauxTable>
+                                    </div>
+                                )            
+                            }
+                        )
+                    }
+                </div>
             </Utils.CardBorder>
         )
 

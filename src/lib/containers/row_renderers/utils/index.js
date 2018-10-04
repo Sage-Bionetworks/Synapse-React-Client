@@ -12,6 +12,7 @@ import ShowMore from './ShowMore'
 import ChipContainer from './ChipContainer'
 import SynButton from './SynButton'
 import IconHolder from './IconHolder'
+import FauxTable from './FauxTable'
 import {SMALL_ICON, LARGE_ICON} from './Constants'
 
 export {    
@@ -30,5 +31,6 @@ export {
         SynButton,
         IconHolder,
         SMALL_ICON,
-        LARGE_ICON
+        LARGE_ICON,
+        FauxTable
     }
