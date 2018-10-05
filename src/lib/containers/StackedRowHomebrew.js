@@ -8,96 +8,10 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
+const cloneDeep = require('lodash.clonedeep')
 const uuidv4 = require('uuid/v4');
 const PREVIOUS_ITEM_CLICK = "left click"
 const NEXT_CLICK = "right click"
-
-const colorsTissues = [
-    "#F27277",
-    "#EB8231",
-    "#FAD591",
-    "#B22D6B",
-    "#F47E6C",
-    "#FAD591",
-    "#CC3F45",
-    "#F89C55",
-    "#FF9CA0",
-    "#DE9A1F",
-    "#BD422F",
-    "#F7A6CC",
-    "#9C141A",
-    "#F683B9",
-    "#FACFAF",
-    "#FCA79A",
-    "#C94281",
-    "#C25D10",
-    "#FFE2AD",
-    "#B2242A",
-    "#F7E2DF",
-    "#D46D1E",
-    "#CF8C15",
-    "#FFC5BD",
-    "#DA614F",
-    "#F7C6DD",
-    "#F5B33C",
-    "#F5B584",
-    "#E566A1",
-    "#E0585D",
-    "#FCCB6F",
-  ]
-
-  const colorsAssays = [
-    "#94C9EB",
-    "#93ABE8",
-    "#5BB0B5",
-    "#109488",
-    "#05635B",
-    "#C5EDF0",
-    "#42C7BB",
-    "#47337D",
-    "#3C4A63",
-    "#3F833F",
-    "#B2A5D1",
-    "#6279A1",
-    "#6DB56D",
-    "#407BA0",
-    "#3F5EAB",
-    "#C0EBC0",
-    "#77AFD4",
-    "#7692D9",
-    "#5BB0B5",
-    "#10847A",
-    "#C7D6FF",
-    "#A6DDE0",
-    "#24AB9F",
-    "#47337D",
-    "#24334F",
-    "#A9EBE5",
-    "#907FBA",
-    "#4A5E81",
-    "#58A158",
-    "#2B688F",
-    "#ABBEE0",
-    "#A7DBA7",
-    "#5B95BA",
-    "#5171C0",
-    "#2F8E94",
-    "#BCE0F7",
-    "#B1C6FA",
-    "#7EC8CC",
-    "#109488",
-    "#332069",
-    "#E1F4F5",
-    "#63DBD0",
-    "#5A478F",
-    "#3C4A63",
-    "#58A158",
-    "#D5CFE3",
-    "#849BC4",
-    "#87C987",
-    "#407BA0",
-    "#5171C0",
-  ]
 
 /**
  * Make a simple stacked bar char
@@ -122,7 +36,6 @@ export default class StackedRowHomebrew extends React.Component {
             index: -1,
             isBarChart: false
         }
-        this.resize = this.resize.bind(this)
         this.extractPropsData = this.extractPropsData.bind(this)
     }
 
@@ -151,6 +64,10 @@ export default class StackedRowHomebrew extends React.Component {
      * Handle column click event
      */
     handleClick = (dict) => (event) => {
+        let {isChecked} = cloneDeep(this.props)
+        isChecked[dict.index] = !isChecked[dict.index]
+        this.props.executeQueryRequest(null, isChecked);
+
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
         this.setState(
             {
@@ -162,23 +79,23 @@ export default class StackedRowHomebrew extends React.Component {
     }
 
     /**
-     * Update the state with selected facets and call props to update data
-     *
-     * @param {*} selectedFacets
-     * @memberof Facets
-     */
-    updateStateAndMakeQuery(selectedFacets) {
-        this.setState({ selectedFacets });
-        // have to reformat the selected facets to format for the api call
-        let selectedFacetsFormatted = Object.keys(selectedFacets).map(
-            key => {
-                return selectedFacets[key]
-            }
-        )
-        let queryRequest = this.props.getLastQueryRequest();
-        queryRequest.query.selectedFacets = selectedFacetsFormatted;
-        this.props.executeQueryRequest(queryRequest);
-    }
+    //  * Update the state with selected facets and call props to update data
+    //  *
+    //  * @param {*} selectedFacets
+    //  * @memberof Facets
+    //  */
+    // updateStateAndMakeQuery(selectedFacets) {
+    //     this.setState({ selectedFacets });
+    //     // have to reformat the selected facets to format for the api call
+    //     let selectedFacetsFormatted = Object.keys(selectedFacets).map(
+    //         key => {
+    //             return selectedFacets[key]
+    //         }
+    //     )
+    //     let queryRequest = this.props.getLastQueryRequest();
+    //     queryRequest.query.selectedFacets = selectedFacetsFormatted;
+    //     this.props.executeQueryRequest(queryRequest);
+    // }
 
     // Handle user cycling through slices of the bar chart
     handleArrowClick = (direction) => (event) => {
@@ -208,20 +125,6 @@ export default class StackedRowHomebrew extends React.Component {
                 index
             }
         )
-    }
-
-    // handle resizing of browser to make graphic responsive
-    resize = () => {
-        this.forceUpdate()
-    }
-
-    componentDidMount() {
-      window.addEventListener('resize', this.resize)
-      window.myRef = this.myRef
-    }
-    
-    componentWillUnmount() {
-      window.removeEventListener('resize', this.resize)
     }
 
     /**
@@ -269,9 +172,23 @@ export default class StackedRowHomebrew extends React.Component {
                             <div ref={measureRef}>
                                 {x_data.map(
                                     (obj, index) => {
+                                        // simple heuristics for color
+                                        // let newR = this.props.R + (255 - this.props.R) * (1 / index)
+                                        // let newG = this.props.G + (255 - this.props.G) * (1 / index)
+                                        // let newB = this.props.B + (255 - this.props.B) * (1 / index)
 
-                                        let rectStyle = {
-                                            fill: `${colorsTissues[index]}`
+                                        let newR = this.props.R * (1.3 - (1.0 / index))
+                                        let newG = this.props.G * (1.3 - (1.0 / index))
+                                        let newB = this.props.B * (1.3 - (1.0 / index))
+                                        let rectStyle
+                                        if (this.props.isChecked[index]) {
+                                            rectStyle = {
+                                                fill: `#C4C4C4`
+                                            }
+                                        } else {
+                                            rectStyle = {
+                                                fill: `rgb(${newR},${newG},${newB})`
+                                            }
                                         }
                                         
                                         let svgHeight = 50
@@ -302,7 +219,7 @@ export default class StackedRowHomebrew extends React.Component {
                                                 {/* display the count of this bar chart's frequency */}
                                                 <text 
                                                     font="bold sans-serif"
-                                                    fill="white"
+                                                    fill={this.props.isChecked[index] ?  "black": "white"}
                                                     x={svgWidth / 2}
                                                     y={svgHeight/2}>
                                                     {/* only display the top three results */}

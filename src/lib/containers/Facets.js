@@ -1,9 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 const cloneDeep = require("lodash.clonedeep")
 const uuidv4 = require("uuid/v4")
 const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
+
+// Add all icons to the library so you can use it in your page
+library.add(faTimesCircle)
 
 
 /**
@@ -19,15 +25,30 @@ class CheckboxGroup extends React.Component {
         let children = []
         let selectedFacets = this.props.selectedFacets
 
+        element.facetValues.sort((a,b) => {return b.count - a.count})
+
         element.facetValues.forEach(
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let uuId = uuidv4()
+                let newR = this.props.R * (1.3 - (1.0 / index))
+                let newG = this.props.G * (1.3 - (1.0 / index))
+                let newB = this.props.B * (1.3 - (1.0 / index))
+                let style = {}
+                if (this.props.isChecked[index]) {
+                    style = {
+                        background: `#C4C4C4`
+                    }
+                } else {
+                    style = {
+                        background: `rgb(${newR},${newG},${newB})` 
+                    }
+                }
+
                 children.push(
-                    <span className="SRC_facets" key={uniqueId}>
-                        <input value={1} checked={this.props.isChecked[index]} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
-                        <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
+                    <span style={style}  className="SRC_facets" key={uniqueId} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} >
+                        <strong> {facetValue.value} </strong>  {facetValue.count}
+                        <FontAwesomeIcon icon={"times-circle"} />
                     </span>
                 )
             }
@@ -59,25 +80,6 @@ class Facets extends React.Component {
 
         this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
         this.updateSelection = this.updateSelection.bind(this)
-    }
-
-
-    componentDidMount() {
-        let {data} = this.props
-        let facetCount = 0
-        // line below is for when testing doesn't mock
-        // the entire object
-        let filteredData = data.facets && data.facets.filter(
-            (value) => {
-                return value.columnName === this.props.filter
-            }
-        )
-        if (filteredData && filteredData[0]) {
-            facetCount = filteredData[0].facetValues.length
-        }
-        this.setState({
-            isChecked: Array(facetCount).fill(false)
-        })
     }
 
     /**
@@ -136,12 +138,15 @@ class Facets extends React.Component {
             (element) => {
                 if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                     let group = <CheckboxGroup 
+                                    R={this.props.R}
+                                    G={this.props.G}
+                                    B={this.props.B}
                                     filter={this.props.filter}
                                     key={element.columnName}
                                     selectedFacets={selectedFacets}
                                     element={element}
                                     clickHandler={this.handleClick}
-                                    isChecked={this.state.isChecked}
+                                    isChecked={this.props.isChecked}
                                     >
                                 </CheckboxGroup>
                     structuredRender.push(group)
@@ -193,15 +198,14 @@ class Facets extends React.Component {
             boxCount--
         }
 
-        let {isChecked} = cloneDeep(this.state)
+        let {isChecked} = cloneDeep(this.props)
         isChecked[dict.index] = !isChecked[dict.index]
 
         this.setState({
-            boxCount,
-            isChecked
+            boxCount
         })
 
-        this.updateStateAndMakeQuery(selectedFacets);
+        this.updateStateAndMakeQuery(selectedFacets, isChecked);
     }
 
     /**
@@ -212,13 +216,20 @@ class Facets extends React.Component {
      */
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
+        let {isChecked} = cloneDeep(this.props)
         if (selectionGroup === SELECT_ALL) {
-            this.setState({boxCount: this.props.facetCount, isChecked: Array(this.props.facetCount).fill(true)})
+            for(let i = 0; i < 100; i++) {
+                isChecked[i] = true
+            }
+            this.setState({boxCount: 100})
         } else {
-            this.setState({boxCount: 0, isChecked: Array(this.props.facetCount).fill(false)})
+            for(let i = 0; i < 100; i++) {
+                isChecked[i] = false
+            }
+            this.setState({boxCount: 0})
         }
         let selectedFacets  = this.recordSelections(selectionGroup)
-        this.updateStateAndMakeQuery(selectedFacets);
+        this.updateStateAndMakeQuery(selectedFacets, isChecked);
     }
 
     /**
@@ -227,7 +238,7 @@ class Facets extends React.Component {
      * @param {*} selectedFacets
      * @memberof Facets
      */
-    updateStateAndMakeQuery(selectedFacets) {
+    updateStateAndMakeQuery(selectedFacets, isChecked ) {
         this.setState({ selectedFacets });
         // have to reformat the selected facets to format for the api call
         let selectedFacetsFormatted = Object.keys(selectedFacets).map(
@@ -237,7 +248,7 @@ class Facets extends React.Component {
         )
         let queryRequest = this.props.getLastQueryRequest();
         queryRequest.query.selectedFacets = selectedFacetsFormatted;
-        this.props.executeQueryRequest(queryRequest);
+        this.props.executeQueryRequest(queryRequest, isChecked);
     }
     
     render () {

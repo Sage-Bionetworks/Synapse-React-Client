@@ -24,7 +24,8 @@ export default class QueryWrapper extends React.Component {
     constructor(){
         super()
         this.state = {
-            data: []
+            data: [],
+            isChecked: {}
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
@@ -74,7 +75,7 @@ export default class QueryWrapper extends React.Component {
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
      */
-    executeQueryRequest(queryRequest) {
+    executeQueryRequest(queryRequest, isChecked = null) {
         let request = null
 
         if (queryRequest === INIT_REQUEST) {
@@ -83,18 +84,25 @@ export default class QueryWrapper extends React.Component {
             request = queryRequest
         }
 
-        SynapseClient.getQueryTableResults(request, this.props.token).then(
-            data => {
-                // line below is for when testing doesn't mock
-                // the entire object
-                let newState = {data, lastQueryRequest: cloneDeep(request)}
-                this.setState(newState)
-            }
-        ).catch(
-            err => {
-                console.log('Failed to get data ', err)
-            } 
-        )   
+        if (isChecked) {
+            this.setState({isChecked})
+        }
+
+        if (queryRequest) {
+            SynapseClient.getQueryTableResults(request, this.props.token).then(
+                data => {
+                    // line below is for when testing doesn't mock
+                    // the entire object
+                    console.log('retrieved data ', data)
+                    let newState = {data, lastQueryRequest: cloneDeep(request)}
+                    this.setState(newState)
+                }
+            ).catch(
+                err => {
+                    console.log('Failed to get data ', err)
+                } 
+            )   
+        }
     }
 
     /**
@@ -109,6 +117,7 @@ export default class QueryWrapper extends React.Component {
                                                 {
                                                     executeQueryRequest: this.executeQueryRequest,
                                                     getLastQueryRequest: this.getLastQueryRequest,
+                                                    isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
                                                     data: this.state.data}
                                             )
                 })} 

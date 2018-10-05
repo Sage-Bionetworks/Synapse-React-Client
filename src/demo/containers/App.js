@@ -197,11 +197,17 @@ class App extends Component {
           }}
           token={inDevEnv ? token: this.state.token}
           >
-          <Facets
-            filter={"projectId"}
-          />
           <StackedRowHomebrew
-            filter={"projectId"}
+            filter={"fileFormat"}
+            R={91}
+            G={176}
+            B={181}
+            />
+          <Facets
+            filter={"fileFormat"}
+            R={91}
+            G={176}
+            B={181}
           />
           <SynapseTable
             synapseId={"syn15661198"}
