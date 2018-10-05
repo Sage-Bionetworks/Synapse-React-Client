@@ -38,6 +38,13 @@ export default class Tool extends React.Component {
                             link={softwareLink}
                             text={"OPEN"}
                             onClick={this.handleLinkClick}
+                            customClass={"hidden-xs"}
+                        />
+                        <Utils.SynButton
+                            link={softwareLink}
+                            text={"OPEN"}
+                            onClick={this.handleLinkClick}
+                            customClass={"center-block visible-xs-block"}
                         />
                     </Utils.Summary>
                 </Utils.Section>
