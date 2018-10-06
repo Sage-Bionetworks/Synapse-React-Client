@@ -35,7 +35,7 @@ class CheckboxGroup extends React.Component {
                 let newG = this.props.G * (1.3 - (1.0 / index))
                 let newB = this.props.B * (1.3 - (1.0 / index))
                 let style = {}
-                if (this.props.isChecked[index]) {
+                if (this.props.isChecked[index] === false) {
                     style = {
                         background: `#C4C4C4`
                     }
@@ -200,7 +200,6 @@ class Facets extends React.Component {
 
         let {isChecked} = cloneDeep(this.props)
         isChecked[dict.index] = !isChecked[dict.index]
-
         this.setState({
             boxCount
         })

@@ -181,7 +181,8 @@ export default class StackedRowHomebrew extends React.Component {
                                         let newG = this.props.G * (1.3 - (1.0 / index))
                                         let newB = this.props.B * (1.3 - (1.0 / index))
                                         let rectStyle
-                                        if (this.props.isChecked[index]) {
+
+                                        if (this.props.isChecked[index] && this.props.isChecked[index] !== null) {
                                             rectStyle = {
                                                 fill: `#C4C4C4`
                                             }

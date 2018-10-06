@@ -1,6 +1,7 @@
 import React from 'react'
 import * as SynapseClient from '../utils/SynapseClient'
 import PropTypes from 'prop-types'
+import Menu from './Menu'
 const cloneDeep = require('lodash.clonedeep')
 const INIT_REQUEST = "init request"
 
@@ -25,10 +26,12 @@ export default class QueryWrapper extends React.Component {
         super()
         this.state = {
             data: [],
-            isChecked: {}
+            isChecked: {},
+            currentFacet: ""
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
+        this.updateParentFacet = this.updateParentFacet.bind(this)
     }
 
     /**
@@ -105,22 +108,38 @@ export default class QueryWrapper extends React.Component {
         }
     }
 
+    updateParentFacet(update) { 
+        this.setState(update)
+    }
+
     /**
      * Render the children without any formatting
      */
     render () {
+        let menu = false
+        if (this.props.showMenu) {
+            menu = <Menu updateParentFacet={this.updateParentFacet} filter={"fileFormat"} data={this.state.data}/>
+        }
+
         return (
-            <div> 
-                {React.Children.map(this.props.children, child =>{
-                    return React
-                                .cloneElement(  child, 
-                                                {
-                                                    executeQueryRequest: this.executeQueryRequest,
-                                                    getLastQueryRequest: this.getLastQueryRequest,
-                                                    isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
-                                                    data: this.state.data}
-                                            )
-                })} 
+            <div className="container-fluid"> 
+                <div className="col-xs-2">
+                    {menu}
+                </div>
+                <div className="col-xs-10">
+                    {React.Children.map(this.props.children, child =>{
+                        return React
+                                    .cloneElement(  child, 
+                                                    {
+                                                        executeQueryRequest: this.executeQueryRequest,
+                                                        getLastQueryRequest: this.getLastQueryRequest,
+                                                        isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
+                                                        data: this.state.data,
+                                                        filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter
+                                                    }
+                                                )
+                    })} 
+                </div>
             </div>
         )
     }

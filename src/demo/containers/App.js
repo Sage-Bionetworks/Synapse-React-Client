@@ -195,16 +195,16 @@ class App extends Component {
                 offset: 0
             },
           }}
+          showMenu
+          filter={"fileFormat"}
           token={inDevEnv ? token: this.state.token}
           >
           <StackedRowHomebrew
-            filter={"fileFormat"}
             R={91}
             G={176}
             B={181}
             />
           <Facets
-            filter={"fileFormat"}
             R={91}
             G={176}
             B={181}
