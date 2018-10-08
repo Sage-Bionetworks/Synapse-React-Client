@@ -16,6 +16,12 @@ export default class Menu extends React.Component {
             currentFacet: columnName
         })
         this.props.updateParentFacet({currentFacet: columnName})
+        let lastQueryRequest = this.props.getLastQueryRequest()
+        // TODO: minor optimization that doesnt reload each time a new menu item is clicked,
+        // e.g. look at the init query request selcted facets length, if equal to current then
+        // no need to update
+        this.props.executeQueryRequest(lastQueryRequest, true)
+
     }
 
     render() {
@@ -24,27 +30,31 @@ export default class Menu extends React.Component {
             return false
         }
         return (
-            <div>
+            <React.Fragment>
                   {
                       data.facets.map(
                           el => {
                               let style = {}
                               let selection = (this.state.currentFacet ? this.state.currentFacet: this.props.filter)
+                              let active = ""
                               if (selection === el.columnName) {
                                 style.background = `rgb(${this.props.R},${this.props.G},${this.props.B})`
                                 style.color =  "black"
-                              } else {
+                                active = "pointed"
+                            } else {
                                 style.background =  "#F5F5F5"
                               }
+                              style.width = "100%"
+
                               return (
-                                <div key={el.columnName} className="SRC-menu" onClick={this.handleClick(el.columnName)} style={style} >
-                                      <span className="SRC-menu-link"> {el.columnName}  </span>
+                                <div key={el.columnName} className={"SRC-menu SRC-menu-hover " + active} onClick={this.handleClick(el.columnName)} style={style}>
+                                      <p className="SRC-menu-link"> {el.columnName}  </p>
                                 </div>
                               )
                           }
                       )
                   }      
-            </div>
+            </React.Fragment>
         )
     }
 

@@ -256,7 +256,7 @@ export default class SynapseTable extends React.Component {
 
         return (
             <React.Fragment>
-                <div className="container">
+                <div className="container-fluid">
                     <div className="row">
                         <span>
                             {/* TODO: Actually use query count or some metric */}
@@ -296,7 +296,7 @@ export default class SynapseTable extends React.Component {
                         </span>
                     </div>
                 </div>
-                <div className="container SRC-overflowAuto">
+                <div className="container-fluid SRC-overflowAuto">
                     <div className="row">
                         <table className="table table-striped table-condensed">
                             {/* show the column headers */}

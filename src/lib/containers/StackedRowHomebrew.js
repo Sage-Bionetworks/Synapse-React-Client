@@ -145,7 +145,7 @@ export default class StackedRowHomebrew extends React.Component {
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
         return (
-            <div className="container SRC-margin-bottom-50px">
+            <div className="container-fluid SRC-margin-bottom-50px">
                 <div className="row">
                     <span>
                         <strong> {total} </strong> files shown by {this.props.filter}
