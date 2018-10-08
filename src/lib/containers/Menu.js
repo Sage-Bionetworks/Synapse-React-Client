@@ -31,14 +31,14 @@ export default class Menu extends React.Component {
                               let style = {}
                               let selection = (this.state.currentFacet ? this.state.currentFacet: this.props.filter)
                               if (selection === el.columnName) {
-                                style.background =  "blue"
-                                style.color =  "white"
+                                style.background = `rgb(${this.props.R},${this.props.G},${this.props.B})`
+                                style.color =  "black"
                               } else {
                                 style.background =  "#F5F5F5"
                               }
                               return (
-                                <div onClick={this.handleClick(el.columnName)} style={style} >
-                                      {el.columnName}
+                                <div key={el.columnName} className="SRC-menu" onClick={this.handleClick(el.columnName)} style={style} >
+                                      <span className="SRC-menu-link"> {el.columnName}  </span>
                                 </div>
                               )
                           }

@@ -118,7 +118,13 @@ export default class QueryWrapper extends React.Component {
     render () {
         let menu = false
         if (this.props.showMenu) {
-            menu = <Menu updateParentFacet={this.updateParentFacet} filter={"fileFormat"} data={this.state.data}/>
+            menu = <Menu
+                    R={91}
+                    G={176}
+                    B={181} 
+                    updateParentFacet={this.updateParentFacet} 
+                    filter={"fileFormat"}
+                    data={this.state.data}/>
         }
 
         return (

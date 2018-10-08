@@ -371,3 +371,16 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
  .SRC-table-row div {
    display: table-cell;
  }
+
+.SRC-menu {
+  min-height: "51px";
+  height: "51px";
+  line-height: "51px";
+  text-align: "center";
+}
+
+.SRC-menu-link {
+  display: "inline-block";
+  vertical-align: "middle";
+  line-height: "normal";
+}
