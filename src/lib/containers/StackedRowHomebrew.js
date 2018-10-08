@@ -78,25 +78,6 @@ export default class StackedRowHomebrew extends React.Component {
         )
     }
 
-    /**
-    //  * Update the state with selected facets and call props to update data
-    //  *
-    //  * @param {*} selectedFacets
-    //  * @memberof Facets
-    //  */
-    // updateStateAndMakeQuery(selectedFacets) {
-    //     this.setState({ selectedFacets });
-    //     // have to reformat the selected facets to format for the api call
-    //     let selectedFacetsFormatted = Object.keys(selectedFacets).map(
-    //         key => {
-    //             return selectedFacets[key]
-    //         }
-    //     )
-    //     let queryRequest = this.props.getLastQueryRequest();
-    //     queryRequest.query.selectedFacets = selectedFacetsFormatted;
-    //     this.props.executeQueryRequest(queryRequest);
-    // }
-
     // Handle user cycling through slices of the bar chart
     handleArrowClick = (direction) => (event) => {
         let {index} = this.state

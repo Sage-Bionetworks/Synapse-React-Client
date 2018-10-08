@@ -4,6 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
 const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
@@ -230,19 +231,23 @@ class Facets extends React.Component {
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
         let {isChecked} = cloneDeep(this.props)
+        let queryRequest = this.props.getLastQueryRequest();
         if (selectionGroup === SELECT_ALL) {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = true
             }
-            this.setState({boxCount: 100})
+            this.props.updateParentState({isChecked})
+            this.props.executeQueryRequest(queryRequest, true);
         } else {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = false
             }
-            this.setState({boxCount: 0})
+            this.props.updateParentState({isChecked})
+            // TODO: fix this, current implementation will mimick the behavior of the
+            // SELECT_ALL
+            queryRequest.query.selectedFacets[0].facetValues = []
+            this.props.executeQueryRequest(queryRequest, false);
         }
-        let selectedFacets  = this.recordSelections(selectionGroup)
-        this.updateStateAndMakeQuery(selectedFacets, isChecked);
     }
 
     /**

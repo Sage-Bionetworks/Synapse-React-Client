@@ -30,7 +30,6 @@ export default class QueryWrapper extends React.Component {
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
-        this.updateParentFacet = this.updateParentFacet.bind(this)
         this.updateParentState = this.updateParentState.bind(this)
     }
 
@@ -79,6 +78,7 @@ export default class QueryWrapper extends React.Component {
         let request = null
         if (isInitRequest) {
             request = this.props.initQueryRequest
+            this.setState({isChecked: []})
         } else {
             request = queryRequest
         }
@@ -110,7 +110,6 @@ export default class QueryWrapper extends React.Component {
                                 ]
                             }
                         ]
-                        this.setState({isChecked: []})
                     }
                     let newState = {data, lastQueryRequest: cloneDeep(request)}
                     this.setState(newState)
@@ -127,10 +126,6 @@ export default class QueryWrapper extends React.Component {
         this.setState(update)
     }
 
-    updateParentFacet(update) { 
-        this.setState(update)
-    }
-
     /**
      * Render the children without any formatting
      */
@@ -141,7 +136,7 @@ export default class QueryWrapper extends React.Component {
                     R={91}
                     G={176}
                     B={181} 
-                    updateParentFacet={this.updateParentFacet} 
+                    updateParentState={this.updateParentState} 
                     executeQueryRequest={this.executeQueryRequest}
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={"fileFormat"}

@@ -15,13 +15,11 @@ export default class Menu extends React.Component {
         this.setState({
             currentFacet: columnName
         })
-        this.props.updateParentFacet({currentFacet: columnName})
-        let lastQueryRequest = this.props.getLastQueryRequest()
+        this.props.updateParentState({currentFacet: columnName})
         // TODO: minor optimization that doesnt reload each time a new menu item is clicked,
         // e.g. look at the init query request selcted facets length, if equal to current then
-        // no need to update
-        this.props.executeQueryRequest(lastQueryRequest, true)
-
+        // no need to update.
+        this.props.executeQueryRequest(null, true)
     }
 
     render() {
@@ -39,6 +37,9 @@ export default class Menu extends React.Component {
                               let active = ""
                               if (selection === el.columnName) {
                                 style.background = `rgb(${this.props.R},${this.props.G},${this.props.B})`
+                                // below has to be set so the pseudo element created will inherit its color
+                                // appropriately
+                                style.borderLeftColor = `rgb(${this.props.R},${this.props.G},${this.props.B})`
                                 style.color =  "black"
                                 active = "pointed"
                             } else {
@@ -47,7 +48,7 @@ export default class Menu extends React.Component {
                               style.width = "100%"
 
                               return (
-                                <div key={el.columnName} className={"SRC-menu SRC-menu-hover " + active} onClick={this.handleClick(el.columnName)} style={style}>
+                                <div key={el.columnName}  className={"SRC-menu SRC-menu-hover " + active} onClick={this.handleClick(el.columnName)} style={style}>
                                       <p className="SRC-menu-link"> {el.columnName}  </p>
                                 </div>
                               )
