@@ -42,14 +42,14 @@ export default class Menu extends React.Component {
                                 // appropriately
                                 style.borderLeftColor = colorGradient
                                 style.color =  "black"
-                                active = "pointed"
+                                active = "SRC-pointed"
                             } else {
                                 style.background =  "#F5F5F5"
                               }
                               style.width = "100%"
 
                               return (
-                                <div key={el.columnName}  className={"SRC-menu SRC-menu-hover " + active} onClick={this.handleClick(el.columnName)} style={style}>
+                                <div key={el.columnName}  className={"SRC-menu SRC-hand-cursor SRC-menu-hover " + active} onClick={this.handleClick(el.columnName)} style={style}>
                                       <p className="SRC-menu-link"> {el.columnName}  </p>
                                 </div>
                               )

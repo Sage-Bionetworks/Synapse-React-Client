@@ -54,9 +54,9 @@ class CheckboxGroup extends React.Component {
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let newR = this.props.RGB[0] * (1.3 - (1.0 / index))
-                let newG = this.props.RGB[1] * (1.3 - (1.0 / index))
-                let newB = this.props.RGB[2] * (1.3 - (1.0 / index))
+                let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
+                let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
+                let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
                 let rgb = []
@@ -69,19 +69,20 @@ class CheckboxGroup extends React.Component {
                         background: `#C4C4C4`
                     }
                 }
-                ([newR,newG,newB]).map(c => {
+                // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+                ([newR,newG,newB]).forEach(c => {
                                                 c = c / 255.0
                                                 if (c <= 0.03928) {
                                                     c = c/12.92
                                                 } else {
-                                                    c = ((c+0.055)/1.055) ^ 2.4
+                                                    c = Math.pow(((c+0.055)/1.055), 2.4)
                                                 }
                                                 rgb.push(c)
                                             }
                 )
                 let L = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
 
-                if (L > 0.179) {
+                if (L > 0.22) {
                     style.color = "white"
                 } else {
                     style.color = "black"

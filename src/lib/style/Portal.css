@@ -190,6 +190,9 @@ body * {
   display: inline-block;
   cursor: pointer; }
 
+.SRC-hand-cursor {
+  cursor: pointer; }
+
 .SRC-google-button {
   display: inline-flex;
   align-items: center;
@@ -327,10 +330,10 @@ button.SRC-roundBorder {
   vertical-align: middle;
   line-height: normal; }
 
-.pointed {
+.SRC-pointed {
   position: relative; }
 
-.pointed:after, .pointed::after {
+.SRC-pointed:after, .SRC-pointed::after {
   position: absolute;
   right: -10px;
   top: 15px;

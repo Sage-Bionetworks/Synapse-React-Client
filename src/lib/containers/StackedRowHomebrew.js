@@ -33,8 +33,7 @@ export default class StackedRowHomebrew extends React.Component {
             hoverTextCount: 0,
             selectedFacets: {},
             dimensions: {height: 1, width: 1},
-            index: -1,
-            isBarChart: false
+            index: -1
         }
         this.extractPropsData = this.extractPropsData.bind(this)
     }
@@ -153,20 +152,39 @@ export default class StackedRowHomebrew extends React.Component {
                             <div ref={measureRef}>
                                 {x_data.map(
                                     (obj, index) => {
-                                        // simple heuristics for color
-                                        // let newR = this.props.R + (255 - this.props.R) * (1 / index)
-                                        // let newG = this.props.G + (255 - this.props.G) * (1 / index)
-                                        // let newB = this.props.B + (255 - this.props.B) * (1 / index)
+                                        let rgb = []
+                                        let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
+                                        let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
+                                        let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
 
-                                        let newR = this.props.RGB[0] * (1.3 - (1.0 / index))
-                                        let newG = this.props.RGB[1] * (1.3 - (1.0 / index))
-                                        let newB = this.props.RGB[2] * (1.3 - (1.0 / index))
                                         let rectStyle
+                                        // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+                                        ([newR,newG,newB]).forEach(
+                                            c => {
+                                                c = c / 255.0
+                                                if (c <= 0.03928) {
+                                                    c = c / 12.92
+                                                } else {
+                                                    c = Math.pow(((c+0.055)/1.055), 2.4)
+                                                }
+                                                rgb.push(c)
+                                            }
+                                        )
+                                        
+                                        let L = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+                                        let textColor = ""
+
+                                        if (L > 0.179) {
+                                            textColor = "white"
+                                        } else {
+                                            textColor = "black"
+                                        } 
 
                                         if (this.props.isChecked[index] === false) {
                                             rectStyle = {
                                                 fill: `#C4C4C4`
                                             }
+                                            textColor = "white"
                                         } else {
                                             rectStyle = {
                                                 fill: `rgb(${newR},${newG},${newB})`
@@ -174,13 +192,7 @@ export default class StackedRowHomebrew extends React.Component {
                                         }
                                         
                                         let svgHeight = 50
-                                        // this doesn't work yet but is a better heuristic than above
                                         let svgWidth = (obj.count / total) * width
-                                        let {isBarChart} = this.state
-                                        
-                                        if (isBarChart) {
-                                            [svgWidth,svgHeight] = [svgHeight,svgWidth]
-                                        }
 
                                         return (
                                             // each svg represents one of the bars
@@ -201,7 +213,7 @@ export default class StackedRowHomebrew extends React.Component {
                                                 {/* display the count of this bar chart's frequency */}
                                                 <text 
                                                     font="bold sans-serif"
-                                                    fill={this.props.isChecked[index] ?  "black": "white"}
+                                                    fill={textColor}
                                                     x={svgWidth / 2}
                                                     y={svgHeight/2}>
                                                     {/* only display the top three results */}
