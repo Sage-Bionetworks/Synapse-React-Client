@@ -217,7 +217,11 @@ An example of a view with facets/stacked bar chart/table
           showMenu
           >
           <SynapseComponents.Facets/>
-          <SynapseComponents.StackedRowHomebrew/>
+          <SynapseComponents.StackedRowHomebrew
+                loadingScreen={
+                  <div> I'm loading as fast as I can </div>
+                }
+          />
           <SynapseComponents.SynapseTable
             synapseId={"syn15661198"}
             visibleColumnCount={8}
@@ -273,7 +277,8 @@ import syn16787123 from 'folder/to/syn16787123.json'
 
 | Props  | Explanation |
 | ------------- | ------------- |
-| N/A | N/A |
+| loadingScreen | This is an optional loading screen to show when the barchart data is being updated |
+
 
 #### SynapseTableCardView
 

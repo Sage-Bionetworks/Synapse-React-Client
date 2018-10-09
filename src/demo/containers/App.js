@@ -213,11 +213,12 @@ class App extends Component {
           filter={"assay"}
           token={inDevEnv ? token: this.state.token}
           RGB={[91,176,181]}
-          loadingScreen={<div>
-            I'm loading as fast I can
-          </div>}
           >
-          <StackedRowHomebrew/>
+          <StackedRowHomebrew
+            loadingScreen={<div>
+              I'm loading as fast as I can
+            </div>}
+          />
           <Facets/>
           <SynapseTable
             synapseId={"syn16858331"}

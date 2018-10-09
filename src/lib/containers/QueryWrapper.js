@@ -165,7 +165,6 @@ export default class QueryWrapper extends React.Component {
                         return React
                                     .cloneElement(  child, 
                                                     {
-                                                        loadingScreen: this.props.loadingScreen,
                                                         isLoading: this.state.isLoading,
                                                         executeQueryRequest: this.executeQueryRequest,
                                                         getLastQueryRequest: this.getLastQueryRequest,
