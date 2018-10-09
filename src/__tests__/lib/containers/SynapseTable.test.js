@@ -19,8 +19,8 @@ describe('basic functionality', () => {
         const wrapper = await shallow(
             <QueryWrapper
                 initQueryRequest = {mockRequest}
-                filter={""}
-                synapseId={"a"}
+                filter={"name"}
+                RGB={[0,0,0]}
                 token={""}
                 sql={""}>
                 <SynapseTable>

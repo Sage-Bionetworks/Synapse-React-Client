@@ -1,9 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import calculateTextColor from './calculateTextColor'
+
+// import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
-const uuidv4 = require("uuid/v4")
 const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
+
+// Add all icons to the library so you can use it in your page
+library.add(faTimesCircle)
+library.add(faPlus)
 
 
 /**
@@ -17,25 +27,42 @@ class CheckboxGroup extends React.Component {
     render() {
         const {element} = this.props
         let children = []
-        let selectedFacets = this.props.selectedFacets
+
+        element.facetValues.sort((a,b) => {return b.count - a.count})
 
         element.facetValues.forEach(
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let uuId = uuidv4()
+                let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
+                let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
+                let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
+                let style = {}
+                const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
+                if (check) {
+                    style = {
+                        background: `rgb(${newR},${newG},${newB})` 
+                    }
+                } else {
+                    style = {
+                        background: `#C4C4C4`
+                    }
+                }
+                style.color = calculateTextColor(newR,newG,newB)
+
+                const showTimes = check
                 children.push(
-                    <span className="SRC_facets" key={uniqueId}>
-                        <input value={1} checked={this.props.isChecked[index]} onClick={this.props.clickHandler({index, selectedFacets: selectedFacets, value: facetValue.value, columnName: element.columnName})} id={uuId} type="checkbox"/>
-                        <label htmlFor={uuId}> <strong> {facetValue.value} </strong>  {facetValue.count}</label>
+                    <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
+                        <strong> {facetValue.value} </strong>  {facetValue.count}
+                        {
+                            showTimes ?  <FontAwesomeIcon icon={"times-circle"} /> : <FontAwesomeIcon icon={"plus"} />
+                        }
                     </span>
                 )
             }
         )
-        let name = <strong> Filter by {this.props.filter} Type </strong>
         return (
                     <div>
-                        <p> {name} </p>
                         {children.map(child => {return child})}
                     </div>
                 )
@@ -59,25 +86,6 @@ class Facets extends React.Component {
 
         this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
         this.updateSelection = this.updateSelection.bind(this)
-    }
-
-
-    componentDidMount() {
-        let {data} = this.props
-        let facetCount = 0
-        // line below is for when testing doesn't mock
-        // the entire object
-        let filteredData = data.facets && data.facets.filter(
-            (value) => {
-                return value.columnName === this.props.filter
-            }
-        )
-        if (filteredData && filteredData[0]) {
-            facetCount = filteredData[0].facetValues.length
-        }
-        this.setState({
-            isChecked: Array(facetCount).fill(false)
-        })
     }
 
     /**
@@ -136,12 +144,13 @@ class Facets extends React.Component {
             (element) => {
                 if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                     let group = <CheckboxGroup 
+                                    RGB={this.props.RGB}
                                     filter={this.props.filter}
                                     key={element.columnName}
                                     selectedFacets={selectedFacets}
                                     element={element}
                                     clickHandler={this.handleClick}
-                                    isChecked={this.state.isChecked}
+                                    isChecked={this.props.isChecked}
                                     >
                                 </CheckboxGroup>
                     structuredRender.push(group)
@@ -167,41 +176,30 @@ class Facets extends React.Component {
     handleClick = (dict) => (event) => {
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
 
-        let selectedFacets = cloneDeep(this.state.selectedFacets)
-        // if there is no entry for this column name into the selection of facets
-        if (!selectedFacets.hasOwnProperty(dict.columnName)) {
-            let newEntry = {
-                columnName: dict.columnName,
-                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
-                facetValues: []
-            }
-            selectedFacets[dict.columnName] = newEntry
-        }
-
-        let {boxCount} = this.state
-
+        let queryRequest = this.props.getLastQueryRequest()
+        let {selectedFacets} = queryRequest.query
+        
         // grab the facet values assoicated for this column
-        let specificFacet = selectedFacets[dict.columnName]
+        let specificFacet = selectedFacets[0]
         // if its not selected then we add as having been chosen, otherwise we 
         // have to delete it
         if (specificFacet.facetValues.indexOf(dict.value) === -1) {
             specificFacet.facetValues.push(dict.value)
-            boxCount++
         } else {
             // remove value
             specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
-            boxCount--
         }
 
-        let {isChecked} = cloneDeep(this.state)
-        isChecked[dict.index] = !isChecked[dict.index]
+        let {isChecked} = cloneDeep(this.props)
+        if (isChecked[dict.index] === undefined) {
+            isChecked[dict.index] = false
+        } else {
+            isChecked[dict.index] = !isChecked[dict.index]
+        }
 
-        this.setState({
-            boxCount,
-            isChecked
-        })
-
-        this.updateStateAndMakeQuery(selectedFacets);
+        queryRequest.query.selectedFacets = selectedFacets;
+        this.props.updateParentState({isChecked})
+        this.props.executeQueryRequest(queryRequest, false);
     }
 
     /**
@@ -212,13 +210,24 @@ class Facets extends React.Component {
      */
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
+        let {isChecked} = cloneDeep(this.props)
+        let queryRequest = this.props.getLastQueryRequest();
         if (selectionGroup === SELECT_ALL) {
-            this.setState({boxCount: this.props.facetCount, isChecked: Array(this.props.facetCount).fill(true)})
+            for(let i = 0; i < 100; i++) {
+                isChecked[i] = true
+            }
+            this.props.updateParentState({isChecked})
+            this.props.executeQueryRequest(queryRequest, true);
         } else {
-            this.setState({boxCount: 0, isChecked: Array(this.props.facetCount).fill(false)})
+            for(let i = 0; i < 100; i++) {
+                isChecked[i] = false
+            }
+            this.props.updateParentState({isChecked})
+            // TODO: fix this, current implementation will mimick the behavior of the
+            // SELECT_ALL
+            queryRequest.query.selectedFacets[0].facetValues = []
+            this.props.executeQueryRequest(queryRequest, false);
         }
-        let selectedFacets  = this.recordSelections(selectionGroup)
-        this.updateStateAndMakeQuery(selectedFacets);
     }
 
     /**
@@ -227,8 +236,7 @@ class Facets extends React.Component {
      * @param {*} selectedFacets
      * @memberof Facets
      */
-    updateStateAndMakeQuery(selectedFacets) {
-        this.setState({ selectedFacets });
+    updateStateAndMakeQuery(selectedFacets, isChecked ) {
         // have to reformat the selected facets to format for the api call
         let selectedFacetsFormatted = Object.keys(selectedFacets).map(
             key => {
@@ -237,12 +245,12 @@ class Facets extends React.Component {
         )
         let queryRequest = this.props.getLastQueryRequest();
         queryRequest.query.selectedFacets = selectedFacetsFormatted;
-        this.props.executeQueryRequest(queryRequest);
+        this.props.executeQueryRequest(queryRequest, isChecked);
     }
     
     render () {
         return (
-            <div className="container SRC-syn-lightbackground SRC-syn-border-spacing ">
+            <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">
                     <form>
                         <div className="form-group">
@@ -251,9 +259,7 @@ class Facets extends React.Component {
                         </div>
                         <div className="form-group">
                             <p>
-                                <strong> {this.state.boxCount} {this.props.filter}s selected.  </strong>
                                 <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
-                                |
                                 <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>
                             </p>
                         </div>

@@ -1,8 +1,8 @@
 import React from 'react'
 import * as SynapseClient from '../utils/SynapseClient'
 import PropTypes from 'prop-types'
+import Menu from './Menu'
 const cloneDeep = require('lodash.clonedeep')
-const INIT_REQUEST = "init request"
 
 /**
  * Class wraps around any Synapse views that are dependent on a query bundle
@@ -24,10 +24,13 @@ export default class QueryWrapper extends React.Component {
     constructor(){
         super()
         this.state = {
-            data: []
+            data: [],
+            isChecked: {},
+            currentFacet: ""
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
+        this.updateParentState = this.updateParentState.bind(this)
     }
 
     /**
@@ -37,7 +40,7 @@ export default class QueryWrapper extends React.Component {
      */
     componentDidMount() {
         if (!this.props.json) {
-            this.executeQueryRequest(INIT_REQUEST)
+            this.executeQueryRequest(null,true)
         } else {
             this.setState({
                 data: cloneDeep(this.props.json)
@@ -49,11 +52,14 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     componentDidUpdate(prevProps) {
-        // The only reason that reason querry wrapper should take
-        // action here is when incoming session token is now set
-        // we carefully check that this is the case
+        // if token has updated
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
-            this.executeQueryRequest(INIT_REQUEST)
+            this.executeQueryRequest(null,true)
+        }
+
+        if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
+            this.setState({isChecked: []})
+            this.executeQueryRequest(this.props.initQueryRequest, false)
         }
     }
 
@@ -74,44 +80,95 @@ export default class QueryWrapper extends React.Component {
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
      */
-    executeQueryRequest(queryRequest) {
+    executeQueryRequest(queryRequest = null, isInitRequest=false) {
         let request = null
-
-        if (queryRequest === INIT_REQUEST) {
+        if (isInitRequest) {
             request = this.props.initQueryRequest
+            this.setState({isChecked: []})
         } else {
             request = queryRequest
         }
 
-        SynapseClient.getQueryTableResults(request, this.props.token).then(
-            data => {
-                // line below is for when testing doesn't mock
-                // the entire object
-                let newState = {data, lastQueryRequest: cloneDeep(request)}
-                this.setState(newState)
-            }
-        ).catch(
-            err => {
-                console.log('Failed to get data ', err)
-            } 
-        )   
+        if (queryRequest || isInitRequest) {
+            SynapseClient.getQueryTableResults(request, this.props.token).then(
+                data => {
+                    // this is from the normal yet peculiar behavior that when no values
+                    // are selected from the init query we expect that they are ALL selected
+                    // hence we have to 
+                    const filter = this.state.currentFacet ? this.state.currentFacet : this.props.filter
+                    if (isInitRequest) {
+                        let facetsForFilter = data.facets.filter(
+                            obj => {
+                                return obj.columnName === filter
+                            }
+                         )[0]
+                         let facetsMapped = facetsForFilter.facetValues.map(
+                             el => {
+                                 return el.value
+                             }
+                         )
+                        request.query.selectedFacets = [
+                            {
+                                columnName: filter,
+                                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                                facetValues: [
+                                    ...facetsMapped
+                                ]
+                            }
+                        ]
+                    }
+                    let newState = {data, lastQueryRequest: cloneDeep(request)}
+                    this.setState(newState)
+                }
+            ).catch(
+                err => {
+                    console.log('Failed to get data ', err)
+                } 
+            )   
+        }
+    }
+
+    updateParentState(update) {
+        this.setState(update)
     }
 
     /**
      * Render the children without any formatting
      */
     render () {
+        let menu = false
+        if (this.props.showMenu) {
+            menu = <Menu
+                    RGB={this.props.RGB}
+                    updateParentState={this.updateParentState} 
+                    executeQueryRequest={this.executeQueryRequest}
+                    getLastQueryRequest={this.getLastQueryRequest}
+                    filter={this.props.filter}
+                    data={this.state.data}/>
+        }
+
         return (
-            <div> 
-                {React.Children.map(this.props.children, child =>{
-                    return React
-                                .cloneElement(  child, 
-                                                {
-                                                    executeQueryRequest: this.executeQueryRequest,
-                                                    getLastQueryRequest: this.getLastQueryRequest,
-                                                    data: this.state.data}
-                                            )
-                })} 
+            <div className="container-fluid"> 
+                {this.props.showMenu && <div className="col-xs-2">
+                    {menu}
+                </div>
+                }
+                <div className={this.props.showMenu ? "col-xs-10": "col-xs-12" }>
+                    {React.Children.map(this.props.children, child =>{
+                        return React
+                                    .cloneElement(  child, 
+                                                    {
+                                                        executeQueryRequest: this.executeQueryRequest,
+                                                        getLastQueryRequest: this.getLastQueryRequest,
+                                                        isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
+                                                        data: this.state.data,
+                                                        filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter,
+                                                        updateParentState: this.updateParentState,
+                                                        RGB: this.props.RGB
+                                                    }
+                                                )
+                    })} 
+                </div>
             </div>
         )
     }

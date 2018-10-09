@@ -24,12 +24,12 @@ class Publication extends React.Component {
         const tumorType = data[schema.tumorType]
         const diseaseFocus = data[schema.diseaseFocus]
         const doi = data[schema.doi]
-        const funder = data[schema.funder]
+        const fundingAgency = data[schema.fundingAgency]
         const projectName = data[schema.projectName]
         const columns = [
             [
                 ["DOI", doi],
-                ["FUNDER", funder],
+                ["FUNDER", fundingAgency],
                 ["STUDY", projectName]
             ]
         ]
