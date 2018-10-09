@@ -230,8 +230,9 @@ An example of a view with facets/stacked bar chart/table
 | Props  | Explanation |
 | ------------- | ------------- |
 | initQueryRequest  | This is the default query to be run on the first render of the component  |
-| RGB | Array of three values that specifies the rgb value that the gradient for the query wrapper will be built off of.|
+| RGB | Array of three values that specifies the rgb value that the gradient for the query wrapper will be built off of. Note: This is a required value if using any of Facets/Menu/StackedRowHomebrew as children. |
 | showMenu| Boolean that specifies whether to show a side menu with facets on the side, if not specified then it won't show. If set to true will show the menu. |
+| filter | This is the facet that will be default filtered on if using any of StackedRowHomebrew/Facets/Menu. |
 | token  | Session token to make authenticated calls  |
 
 ### StaticQueryWrapper Example
