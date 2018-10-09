@@ -211,21 +211,18 @@ An example of a view with facets/stacked bar chart/table
                 offset: 0
             },
           }}
-          token={inDevEnv ? token: this.state.token}
+          RGB={[91,176,181]}
+          token={this.state.token}
+          filter={"assay"}
+          showMenu
           >
-          <SynapseComponents.Facets
-            filter={"projectId"}
-          />
-          <SynapseComponents.StackedRowHomebrew
-            filter={"projectId"}
-          />
+          <SynapseComponents.Facets/>
+          <SynapseComponents.StackedRowHomebrew/>
           <SynapseComponents.SynapseTable
             synapseId={"syn15661198"}
             visibleColumnCount={8}
           />
   </SynapseComponents.QueryWrapper>
-
-
 ```
 
 #### QueryWrapper Props
@@ -233,6 +230,8 @@ An example of a view with facets/stacked bar chart/table
 | Props  | Explanation |
 | ------------- | ------------- |
 | initQueryRequest  | This is the default query to be run on the first render of the component  |
+| RGB | Array of three values that specifies the rgb value that the gradient for the query wrapper will be built off of.|
+| showMenu| Boolean that specifies whether to show a side menu with facets on the side, if not specified then it won't show. If set to true will show the menu. |
 | token  | Session token to make authenticated calls  |
 
 ### StaticQueryWrapper Example
@@ -261,20 +260,20 @@ import syn16787123 from 'folder/to/syn16787123.json'
 
 | Props  | Explanation |
 | ------------- | ------------- |
-| filter | This is the column name that will be displayed  |
+| N/A | N/A |
 
 #### SynapseTable
 
 | Props  | Explanation |
 | ------------- | ------------- |
-| filter | This is the column name that will be displayed  |
+| synapseId | When a user click's advanced search this synapseId will tell the browser where to redirect to. |
 | visibleColumnCount | This is the number of columns that will be displayed by default. These columns are chosen according to the order of which the columns are specified by the SELECT clause from the query producing the data for this view.  |
 
 #### StackedRowHomebrew
 
 | Props  | Explanation |
 | ------------- | ------------- |
-| filter | This is the column name that will be displayed |
+| N/A | N/A |
 
 #### SynapseTableCardView
 

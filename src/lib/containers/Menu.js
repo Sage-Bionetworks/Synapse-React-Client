@@ -35,11 +35,12 @@ export default class Menu extends React.Component {
                               let style = {}
                               let selection = (this.state.currentFacet ? this.state.currentFacet: this.props.filter)
                               let active = ""
+                              const colorGradient = `rgb(${this.props.RGB[0]},${this.props.RGB[1]},${this.props.RGB[2]})` 
                               if (selection === el.columnName) {
-                                style.background = `rgb(${this.props.R},${this.props.G},${this.props.B})`
+                                style.background = colorGradient
                                 // below has to be set so the pseudo element created will inherit its color
                                 // appropriately
-                                style.borderLeftColor = `rgb(${this.props.R},${this.props.G},${this.props.B})`
+                                style.borderLeftColor = colorGradient
                                 style.color =  "black"
                                 active = "pointed"
                             } else {

@@ -130,7 +130,7 @@ ShallowWrapper {
           
 </div>,
       ],
-      "className": "container SRC-margin-bottom-50px",
+      "className": "container-fluid SRC-margin-bottom-50px",
     },
     "ref": null,
     "rendered": Array [
@@ -485,7 +485,7 @@ ShallowWrapper {
             
 </div>,
         ],
-        "className": "container SRC-margin-bottom-50px",
+        "className": "container-fluid SRC-margin-bottom-50px",
       },
       "ref": null,
       "rendered": Array [

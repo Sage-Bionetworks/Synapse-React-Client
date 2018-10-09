@@ -52,8 +52,14 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     componentDidUpdate(prevProps) {
-        if ((this.props.token !== "" && prevProps.token === "" && !this.props.json) || (prevProps.initQueryRequest.sql !== this.props.initQueryRequest.sql)) {
+        // if token has updated
+        if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
             this.executeQueryRequest(null,true)
+        }
+
+        if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
+            this.setState({isChecked: []})
+            this.executeQueryRequest(this.props.initQueryRequest, false)
         }
     }
 
@@ -133,13 +139,11 @@ export default class QueryWrapper extends React.Component {
         let menu = false
         if (this.props.showMenu) {
             menu = <Menu
-                    R={91}
-                    G={176}
-                    B={181} 
+                    RGB={this.props.RGB}
                     updateParentState={this.updateParentState} 
                     executeQueryRequest={this.executeQueryRequest}
                     getLastQueryRequest={this.getLastQueryRequest}
-                    filter={"fileFormat"}
+                    filter={this.props.filter}
                     data={this.state.data}/>
         }
 
@@ -158,7 +162,8 @@ export default class QueryWrapper extends React.Component {
                                                         isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
                                                         data: this.state.data,
                                                         filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter,
-                                                        updateParentState: this.updateParentState
+                                                        updateParentState: this.updateParentState,
+                                                        RGB: this.props.RGB
                                                     }
                                                 )
                     })} 

@@ -18,13 +18,12 @@ describe('basic functionality', () => {
             <QueryWrapper
                 initQueryRequest = {mockRequest}
                 token={""}
-                sql={""}
-                filter={""}
-                synapseId={""}
+                filter={"name"}
+                showMenu      
+                RGB={[0,0,0]}
                 >
             </QueryWrapper>)
-    
-        expect(wrapper.find("div")).toHaveLength(1)
+        expect(wrapper.find("div")).toHaveLength(3)
         expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
         expect(wrapper.state().data).toEqual(mockData)
     })

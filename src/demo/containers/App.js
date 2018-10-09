@@ -42,7 +42,21 @@ class App extends Component {
       token: "",
       ownerId: "",
       isLoading: true,
-      showMarkdown: true
+      showMarkdown: true,
+      initQueryRequest : {
+        concreteType:
+          "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+        partMask:
+          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+          | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+          | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+        query: {
+            isConsistent: false,
+            sql: `SELECT * FROM syn`,
+            limit: 25,
+            offset: 0
+        },
+    }
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
@@ -196,25 +210,17 @@ class App extends Component {
             },
           }}
           showMenu
-          filter={"fileFormat"}
+          filter={"assay"}
           token={inDevEnv ? token: this.state.token}
+          RGB={[91,176,181]}
           >
-          <StackedRowHomebrew
-            R={91}
-            G={176}
-            B={181}
-            />
-          <Facets
-            R={91}
-            G={176}
-            B={181}
-          />
+          <StackedRowHomebrew/>
+          <Facets/>
           <SynapseTable
-            synapseId={"syn15661198"}
+            synapseId={"syn16858331"}
             visibleColumnCount={8}
           />
         </QueryWrapper>
-
         <StaticQueryWrapper
           json={syn16787123}
           >
@@ -255,7 +261,6 @@ class App extends Component {
             type={SynapseConstants.FUNDER}
           />
         </StaticQueryWrapper>
-
       </div>
     );
   }
