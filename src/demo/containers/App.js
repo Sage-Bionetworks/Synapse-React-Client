@@ -213,6 +213,9 @@ class App extends Component {
           filter={"assay"}
           token={inDevEnv ? token: this.state.token}
           RGB={[91,176,181]}
+          loadingScreen={<div>
+            I'm loading as fast I can
+          </div>}
           >
           <StackedRowHomebrew/>
           <Facets/>
@@ -226,7 +229,7 @@ class App extends Component {
           >
           <SynapseTableCardView
               type={SynapseConstants.STUDY}
-              limit={1}
+              limit={3}
           />
         </StaticQueryWrapper>
 

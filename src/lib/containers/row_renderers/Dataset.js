@@ -23,11 +23,12 @@ class Dataset extends React.Component {
         const id = data[schema.id]
         const fundingAgency = data[schema.fundingAgency]
         const fileCount = data[schema.fileCount]
+        const fileSize = data[schema.fileSize]
+
         const columns = [
             [["FUNDER", fundingAgency]],
-            [[ "SIZE", "12"]],
-            [[ "FILES", fileCount]],
-            [["MODIFIED", "TODAY"]]
+            [[ "SIZE", "12 MB"]],
+            [[ "FILES", fileCount]]
         ]
 
         return (
@@ -60,7 +61,7 @@ class Dataset extends React.Component {
                       columns.map(
                           column => {
                               return (
-                                  <div key={uuidv4()} className="col-md-2 col-sm-2">
+                                  <div key={uuidv4()} className="col-md-3 col-sm-3">
                                         <Utils.FauxTable
                                             values={column}
                                         />

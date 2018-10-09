@@ -113,9 +113,9 @@ export default class StackedRowHomebrew extends React.Component {
      */
     render () {
         let {data} = this.props
-        // while data hasn't queued up display loading
-        if (data.length === 0) {
-            return (<div className="container">loading</div>)
+        // while loading
+        if (data.length === 0 || (this.props.isLoading)) {
+            return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> i'm loading as fast i can </div>))
         }
 
 

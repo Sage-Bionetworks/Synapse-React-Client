@@ -189,7 +189,7 @@ export default class SynapseTable extends React.Component {
      */
     render() {
         if (this.props.data.length === 0) {
-            return (<div className="container"> loading table </div>)
+            return (<div className="container"> </div>)
         }
 
         // unpack all the data

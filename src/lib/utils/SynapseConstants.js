@@ -24,6 +24,9 @@ export const ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION = 262144;
 
 /** Row Types  */
 export const STUDY = "study"
+// for study icons
+export const STUDY_ACTIVE = "study active"
+export const STUDY_COMPLETE = "study complete"
 export const DATASET = "dataset"
 export const FUNDER = "funder"
 export const PUBLICATION = "publication"
