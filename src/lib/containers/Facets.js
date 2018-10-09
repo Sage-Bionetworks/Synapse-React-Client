@@ -4,7 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import * as SynapseConstants from '../../lib/utils/SynapseConstants'
+// import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
 const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
@@ -54,12 +54,13 @@ class CheckboxGroup extends React.Component {
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let newR = this.props.R * (1.3 - (1.0 / index))
-                let newG = this.props.G * (1.3 - (1.0 / index))
-                let newB = this.props.B * (1.3 - (1.0 / index))
+                let newR = this.props.RGB[0] * (1.3 - (1.0 / index))
+                let newG = this.props.RGB[1] * (1.3 - (1.0 / index))
+                let newB = this.props.RGB[2] * (1.3 - (1.0 / index))
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
-                if (check ) {
+                let rgb = []
+                if (check) {
                     style = {
                         background: `rgb(${newR},${newG},${newB})` 
                     }
@@ -68,6 +69,24 @@ class CheckboxGroup extends React.Component {
                         background: `#C4C4C4`
                     }
                 }
+                ([newR,newG,newB]).map(c => {
+                                                c = c / 255.0
+                                                if (c <= 0.03928) {
+                                                    c = c/12.92
+                                                } else {
+                                                    c = ((c+0.055)/1.055) ^ 2.4
+                                                }
+                                                rgb.push(c)
+                                            }
+                )
+                let L = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+
+                if (L > 0.179) {
+                    style.color = "white"
+                } else {
+                    style.color = "black"
+                 } 
+
                 const showTimes = check
                 children.push(
                     <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
@@ -162,9 +181,7 @@ class Facets extends React.Component {
             (element) => {
                 if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                     let group = <CheckboxGroup 
-                                    R={this.props.R}
-                                    G={this.props.G}
-                                    B={this.props.B}
+                                    RGB={this.props.RGB}
                                     filter={this.props.filter}
                                     key={element.columnName}
                                     selectedFacets={selectedFacets}
