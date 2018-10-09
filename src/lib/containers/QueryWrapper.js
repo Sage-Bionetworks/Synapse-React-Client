@@ -150,6 +150,7 @@ export default class QueryWrapper extends React.Component {
                     executeQueryRequest={this.executeQueryRequest}
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={this.props.filter}
+                    isChecked={this.state.isChecked}
                     data={this.state.data}/>
         }
 

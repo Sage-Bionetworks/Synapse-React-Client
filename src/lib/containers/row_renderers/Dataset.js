@@ -27,7 +27,7 @@ class Dataset extends React.Component {
 
         const columns = [
             [["FUNDER", fundingAgency]],
-            [[ "SIZE", "12 MB"]],
+            [[ "SIZE", fileSize]],
             [[ "FILES", fileCount]]
         ]
 
