@@ -61,7 +61,7 @@ class Dataset extends React.Component {
                       columns.map(
                           column => {
                               return (
-                                  <div key={uuidv4()} className="col-md-3 col-sm-3">
+                                  <div key={uuidv4()} className="col-sm-3">
                                         <Utils.FauxTable
                                             values={column}
                                         />

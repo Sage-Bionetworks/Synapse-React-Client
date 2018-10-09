@@ -115,9 +115,8 @@ export default class StackedRowHomebrew extends React.Component {
         let {data} = this.props
         // while loading
         if (data.length === 0 || (this.props.isLoading && this.props.loadingScreen !== undefined )) {
-            return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> </div>))
+            return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> Loading... </div>))
         }
-
 
         let x_data = this.extractPropsData(data);
         let total = 0
