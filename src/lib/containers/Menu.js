@@ -16,8 +16,8 @@ export default class Menu extends React.Component {
             currentFacet: columnName
         })
         this.props.updateParentState({currentFacet: columnName})
-        // below we make a slight optimization when switching between menu tabs
-        // that is deciding whether the query result has to be reset or not, this
+        // below we make a slight optimization when switching between menu tabs,
+        // that is, deciding whether the query result has to be reset or not, this
         // is made by seeing if any of the chicklets are selected, if any of them
         // are then we make the query request, otherwise not.
         let {isChecked} = this.props

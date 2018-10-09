@@ -198,6 +198,10 @@ QueryWrapper.propTypes = {
     }),
     json: PropTypes.object,
     token : PropTypes.string,
+    RGB: PropTypes.array,
+    filter: PropTypes.string,
+    showMenu: PropTypes.bool,
+    loadingScreen: PropTypes.element
 }
 
 QueryWrapper.defaultProps = {
