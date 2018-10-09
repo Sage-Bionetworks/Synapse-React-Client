@@ -4,6 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import calculateTextColor from './calculateTextColor'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -152,33 +153,13 @@ export default class StackedRowHomebrew extends React.Component {
                             <div ref={measureRef}>
                                 {x_data.map(
                                     (obj, index) => {
-                                        let rgb = []
                                         let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
                                         let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
                                         let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
 
                                         let rectStyle
                                         // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
-                                        ([newR,newG,newB]).forEach(
-                                            c => {
-                                                c = c / 255.0
-                                                if (c <= 0.03928) {
-                                                    c = c / 12.92
-                                                } else {
-                                                    c = Math.pow(((c+0.055)/1.055), 2.4)
-                                                }
-                                                rgb.push(c)
-                                            }
-                                        )
-                                        
-                                        let L = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
-                                        let textColor = ""
-
-                                        if (L > 0.179) {
-                                            textColor = "white"
-                                        } else {
-                                            textColor = "black"
-                                        } 
+                                        let textColor = calculateTextColor(newR,newG,newB)
 
                                         if (this.props.isChecked[index] === false) {
                                             rectStyle = {

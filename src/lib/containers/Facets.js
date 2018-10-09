@@ -4,6 +4,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import calculateTextColor from './calculateTextColor'
+
 // import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
 const SELECT_ALL = "select all"
@@ -22,28 +24,6 @@ library.add(faPlus)
  */
 class CheckboxGroup extends React.Component {
 
-    constructor() {
-        super()
-        this.handleHover = this.handleHover.bind(this)
-        this.handleHoverExit = this.handleHoverExit.bind(this)
-    }
-
-    handleHover(event) {
-        if (event.target.tagName === "SPAN") {
-            event.target.className += " SRC-primary-background-color"
-        }
-    }
-    
-    handleHoverExit(event) {
-        if (event.target.tagName === "SPAN") {
-            let className = event.target.className
-            if (className.indexOf(" SRC-primary-background-color") !== -1 ) {
-                className = className.substring(0, className.indexOf(" SRC-primary-background-color"))
-                event.target.className = className
-            }
-        }
-    }
-
     render() {
         const {element} = this.props
         let children = []
@@ -59,7 +39,6 @@ class CheckboxGroup extends React.Component {
                 let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
-                let rgb = []
                 if (check) {
                     style = {
                         background: `rgb(${newR},${newG},${newB})` 
@@ -69,24 +48,7 @@ class CheckboxGroup extends React.Component {
                         background: `#C4C4C4`
                     }
                 }
-                // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
-                ([newR,newG,newB]).forEach(c => {
-                                                c = c / 255.0
-                                                if (c <= 0.03928) {
-                                                    c = c/12.92
-                                                } else {
-                                                    c = Math.pow(((c+0.055)/1.055), 2.4)
-                                                }
-                                                rgb.push(c)
-                                            }
-                )
-                let L = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
-
-                if (L > 0.22) {
-                    style.color = "white"
-                } else {
-                    style.color = "black"
-                 } 
+                style.color = calculateTextColor(newR,newG,newB)
 
                 const showTimes = check
                 children.push(

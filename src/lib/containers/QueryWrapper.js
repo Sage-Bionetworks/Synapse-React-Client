@@ -149,10 +149,11 @@ export default class QueryWrapper extends React.Component {
 
         return (
             <div className="container-fluid"> 
-                <div className="col-xs-2">
+                {this.props.showMenu && <div className="col-xs-2">
                     {menu}
                 </div>
-                <div className="col-xs-10">
+                }
+                <div className={this.props.showMenu ? "col-xs-10": "col-xs-12" }>
                     {React.Children.map(this.props.children, child =>{
                         return React
                                     .cloneElement(  child, 
