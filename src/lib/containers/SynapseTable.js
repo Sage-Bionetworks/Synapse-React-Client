@@ -260,7 +260,7 @@ export default class SynapseTable extends React.Component {
                     <div className="row">
                         <span>
                             {/* TODO: Actually use query count or some metric */}
-                            <strong> Showing {this.props.data.queryResult.queryResults.rows.length} Files </strong>
+                            <strong> Showing {this.props.showNothing ? 0 : this.props.data.queryResult.queryResults.rows.length} Files </strong>
                         </span>
                         <span className="SRC-floatRight">
                             {/* dropdown menu below */}
@@ -310,20 +310,20 @@ export default class SynapseTable extends React.Component {
                                 </tr>
                             </thead>
                             {/* show the actual table body */}
-                            <tbody>
+                           {!this.props.showNothing && <tbody>
                                 {rowsFormatted.map(
                                     rowFormatted => {
                                         return rowFormatted
                                     }
                                 )}
-                            </tbody>
+                            </tbody>}
                         </table>
-                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default SRC-table-button"  type="button">
+                        {!this.props.showNothing && pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default SRC-table-button"  type="button">
                             Previous
                         </button>}
-                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button"  type="button">
+                        {!this.props.showNothing && <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button"  type="button">
                             Next
-                        </button>
+                        </button>}
                     </div>
                 </div>
             </React.Fragment>

@@ -212,22 +212,20 @@ class Facets extends React.Component {
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
         let {isChecked} = cloneDeep(this.props)
-        let queryRequest = this.props.getLastQueryRequest();
+        let queryRequest = cloneDeep(this.props.getLastQueryRequest());
         if (selectionGroup === SELECT_ALL) {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = true
             }
             this.props.updateParentState({isChecked})
-            this.props.executeQueryRequest(queryRequest, true);
+            this.props.executeQueryRequest(null, true);
         } else {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = false
             }
-            this.props.updateParentState({isChecked})
-            // TODO: fix this, current implementation will mimick the behavior of the
-            // SELECT_ALL
+            // hack to make deselct all work
             queryRequest.query.selectedFacets[0].facetValues = []
-            this.props.executeQueryRequest(queryRequest, false);
+            this.props.updateParentState({isChecked, showNothing: true, lastQueryRequest: queryRequest})
         }
     }
 

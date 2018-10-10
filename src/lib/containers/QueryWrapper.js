@@ -27,7 +27,8 @@ export default class QueryWrapper extends React.Component {
             data: [],
             isChecked: {},
             currentFacet: "",
-            isLoading: true
+            isLoading: true,
+            showNothing: false
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
@@ -124,7 +125,7 @@ export default class QueryWrapper extends React.Component {
                             }
                         ]
                     }
-                    let newState = {data, lastQueryRequest: cloneDeep(request), isLoading: false}
+                    let newState = {data, lastQueryRequest: cloneDeep(request), isLoading: false, showNothing: false}
                     this.setState(newState)
                 }
             ).catch(
@@ -140,7 +141,7 @@ export default class QueryWrapper extends React.Component {
     }
 
     updateParentFilter(filter) {
-        let request = this.props.initQueryRequest
+        let request = cloneDeep(this.props.initQueryRequest)
         let facetsForFilter = this.state.data.facets.filter(
             obj => {
                 return obj.columnName === filter
@@ -199,7 +200,8 @@ export default class QueryWrapper extends React.Component {
                                                         data: this.state.data,
                                                         filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter,
                                                         updateParentState: this.updateParentState,
-                                                        RGB: this.props.RGB
+                                                        RGB: this.props.RGB,
+                                                        showNothing: this.state.showNothing
                                                     }
                                                 )
                     })} 

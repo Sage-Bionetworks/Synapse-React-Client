@@ -10,7 +10,6 @@ import calculateGradient from './calculateGradient'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
-const cloneDeep = require('lodash.clonedeep')
 const uuidv4 = require('uuid/v4');
 const PREVIOUS_ITEM_CLICK = "left click"
 const NEXT_CLICK = "right click"
@@ -65,14 +64,6 @@ export default class StackedRowHomebrew extends React.Component {
      * Handle column click event
      */
     handleClick = (dict) => (event) => {
-        let {isChecked} = cloneDeep(this.props)
-        if (isChecked[dict.index] === undefined) {
-            isChecked[dict.index] = false
-        } else {
-            isChecked[dict.index] = !isChecked[dict.index]
-        }
-        this.props.updateParentState({isChecked})
-
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
         this.setState(
             {
