@@ -15,7 +15,6 @@ export default class Menu extends React.Component {
         this.setState({
             currentFacet: columnName
         })
-        this.props.updateParentState({currentFacet: columnName})
         // below we make a slight optimization when switching between menu tabs,
         // that is, deciding whether the query result has to be reset or not, this
         // is made by seeing if any of the chicklets are selected, if any of them
@@ -28,7 +27,10 @@ export default class Menu extends React.Component {
             }
         }
         if (hasChickletsSelected) { 
+            this.props.updateParentFilter(columnName)
             this.props.executeQueryRequest(null, true)
+        } else {
+            this.props.updateParentFilter(columnName)
         }
     }
 

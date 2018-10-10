@@ -32,6 +32,7 @@ export default class QueryWrapper extends React.Component {
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
         this.updateParentState = this.updateParentState.bind(this)
+        this.updateParentFilter = this.updateParentFilter.bind(this)
     }
 
     /**
@@ -138,6 +139,30 @@ export default class QueryWrapper extends React.Component {
         this.setState(update)
     }
 
+    updateParentFilter(filter) {
+        let request = this.props.initQueryRequest
+        let facetsForFilter = this.state.data.facets.filter(
+            obj => {
+                return obj.columnName === filter
+            }
+         )[0]
+         let facetsMapped = facetsForFilter.facetValues.map(
+             el => {
+                 return el.value
+             }
+         )
+        request.query.selectedFacets = [
+            {
+                columnName: filter,
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: [
+                    ...facetsMapped
+                ]
+            }
+        ]
+        this.setState({lastQueryRequest: cloneDeep(request), currentFacet: filter})
+    }
+
     /**
      * Render the children without any formatting
      */
@@ -151,7 +176,9 @@ export default class QueryWrapper extends React.Component {
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={this.props.filter}
                     isChecked={this.state.isChecked}
-                    data={this.state.data}/>
+                    data={this.state.data}
+                    updateParentFilter={this.updateParentFilter}
+                    />
         }
 
         return (

@@ -203,10 +203,10 @@ export default class StackedRowHomebrew extends React.Component {
                                                     {index < 3 && obj.count}
                                                 </text>
                                                 {this.state.index === index && <text 
-                                                    fill="black"
+                                                    fill={`rgb(${this.props.RGB[0]},${this.props.RGB[1]},${this.props.RGB[2]})`}
                                                     x={0}
-                                                    fontFamily="FontAwesome"
-                                                    y={60}
+                                                    y={62}
+                                                    className="SRC-text-shadow SRC-text-large"
                                                     >
                                                     {/* unicode below corresponds to downward carret, this is an alternative
                                                     to FontAwesome which wasn't displaying correctly when used inside a <text>

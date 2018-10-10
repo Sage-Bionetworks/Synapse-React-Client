@@ -215,7 +215,7 @@ export default class SynapseTable extends React.Component {
                     return (<th onClick={this.handleColumnClick({name: column.name, index})}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
                                 <a style={{color: "black"}} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
                                     {column.name}
-                                    <FontAwesomeIcon className="SRC-primary-text-color pull-right" icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
+                                    <FontAwesomeIcon className={`${isSelected ? 'SRC-selected-table-icon': 'SRC-primary-text-color' } pull-right`} icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
                                 </a>
                             </th>)
                 }

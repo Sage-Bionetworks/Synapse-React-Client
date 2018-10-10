@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
 import calculateGradient from './calculateGradient'
@@ -13,7 +13,7 @@ const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
 
 // Add all icons to the library so you can use it in your page
-library.add(faTimesCircle)
+library.add(faTimes)
 library.add(faPlus)
 
 
@@ -52,10 +52,12 @@ class CheckboxGroup extends React.Component {
                 const showTimes = check
                 children.push(
                     <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
-                        <strong> {facetValue.value} </strong>  {facetValue.count}
+                        <strong> &nbsp;&nbsp; {facetValue.value} </strong>  {facetValue.count}
+                        <span>&nbsp;&nbsp;</span>
                         {
-                            showTimes ?  <FontAwesomeIcon icon={"times-circle"} /> : <FontAwesomeIcon icon={"plus"} />
+                            showTimes ?  <FontAwesomeIcon  icon={"times"} /> : <FontAwesomeIcon icon={"plus"} />
                         }
+                        <span>&nbsp;&nbsp;</span>
                     </span>
                 )
             }

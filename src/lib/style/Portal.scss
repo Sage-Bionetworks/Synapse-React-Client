@@ -208,7 +208,6 @@ body * {
 
 .SRC-facets {
   padding: 4px;
-  border-style: solid;
   border-radius: 20px;
   margin: 5px;
   display: inline-block;
@@ -420,4 +419,16 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent;
+}
+
+.SRC-text-shadow {
+  text-shadow: #505050 2px 2px 4px;
+}
+
+.SRC-text-large {
+  font-size: 25px;
+}
+
+.SRC-selected-table-icon {
+  color: white;
 }
