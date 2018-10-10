@@ -65,8 +65,12 @@ export default class StackedRowHomebrew extends React.Component {
      */
     handleClick = (dict) => (event) => {
         let {isChecked} = cloneDeep(this.props)
-        isChecked[dict.index] = !isChecked[dict.index]
-        this.props.executeQueryRequest(null, isChecked);
+        if (isChecked[dict.index] === undefined) {
+            isChecked[dict.index] = false
+        } else {
+            isChecked[dict.index] = !isChecked[dict.index]
+        }
+        this.props.updateParentState({isChecked})
 
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
         this.setState(
@@ -152,23 +156,24 @@ export default class StackedRowHomebrew extends React.Component {
                             <div ref={measureRef}>
                                 {x_data.map(
                                     (obj, index) => {
-                                        let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
-                                        let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
-                                        let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
+                                        let newR = this.props.RGB[0] * (1.3 - (1.0 / ((x_data.length - index - 2) + 1)))
+                                        let newG = this.props.RGB[1] * (1.3 - (1.0 / ((x_data.length - index - 2) + 1)))
+                                        let newB = this.props.RGB[2] * (1.3 - (1.0 / ((x_data.length - index - 2) + 1)))
 
                                         let rectStyle
                                         // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
                                         let textColor = calculateTextColor(newR,newG,newB)
+                                        const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
 
-                                        if (this.props.isChecked[index] === false) {
+                                        if (check) {
+                                            rectStyle = {
+                                                fill: `rgb(${newR},${newG},${newB})`
+                                            }
+                                        } else {
                                             rectStyle = {
                                                 fill: `#C4C4C4`
                                             }
                                             textColor = "white"
-                                        } else {
-                                            rectStyle = {
-                                                fill: `rgb(${newR},${newG},${newB})`
-                                            }
                                         }
                                         
                                         let svgHeight = 50
@@ -218,10 +223,10 @@ export default class StackedRowHomebrew extends React.Component {
                         }
                     </Measure>
                 </div>
-                <div className="row">
-                    {this.state.hoverText && <p className="SRC-noMargin" > <strong> {this.props.filter}: {this.state.hoverText} </strong> </p>}
-                    {this.state.hoverText && <p className="SRC-noMargin" > <i> {this.state.hoverTextCount} files </i> </p>}
-                </div>
+                {this.state.hoverText && <div className="row SRC-grayBackground">
+                    <p className="SRC-noMargin" > <strong> {this.props.filter}: {this.state.hoverText} </strong> </p>
+                    <p className="SRC-noMargin SRC-primary-text-color" > <i> {this.state.hoverTextCount} files </i> </p>
+                </div>}
             </div>
         )
     }

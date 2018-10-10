@@ -213,9 +213,9 @@ export default class SynapseTable extends React.Component {
                 if (initRender || subsequentRender) {
                     let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
                     return (<th onClick={this.handleColumnClick({name: column.name, index})}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
-                                <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
+                                <a style={{color: "black"}} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
                                     {column.name}
-                                    <FontAwesomeIcon icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
+                                    <FontAwesomeIcon className="SRC-primary-text-color pull-right" icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
                                 </a>
                             </th>)
                 }
@@ -289,10 +289,10 @@ export default class SynapseTable extends React.Component {
                             <a onClick={this.advancedSearch} href="">
                                 <u> Advanced Search </u>
                             </a>
-                            <span >&nbsp;&nbsp;</span>
+                            {/* <span >&nbsp;&nbsp;</span>
                             <a onClick={this.download} href="">
                                 <u>Download</u>
-                            </a>
+                            </a> */}
                         </span>
                     </div>
                 </div>

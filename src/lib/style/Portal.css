@@ -289,6 +289,9 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-text-color {
   color: #D53F77; }
 
+.SRC-no-text-decor {
+  text-decoration: none; }
+
 .SRC-primary-background-color {
   background-color: #D53F77 !important; }
 

@@ -259,8 +259,8 @@ class Facets extends React.Component {
                         </div>
                         <div className="form-group">
                             <p>
-                                <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
-                                <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>
+                                <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>    Select All  </a>
+                                <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>  Deselect All  </a>
                             </p>
                         </div>
                     </form>
