@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
+import calculateGradient from './calculateGradient'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -156,10 +157,7 @@ export default class StackedRowHomebrew extends React.Component {
                             <div ref={measureRef}>
                                 {x_data.map(
                                     (obj, index) => {
-                                        let newR = this.props.RGB[0] * (1.3 - (1.0 / ((x_data.length - index - 2) + 1)))
-                                        let newG = this.props.RGB[1] * (1.3 - (1.0 / ((x_data.length - index - 2) + 1)))
-                                        let newB = this.props.RGB[2] * (1.3 - (1.0 / ((x_data.length - index - 2) + 1)))
-
+                                        let {newR,newG,newB} = calculateGradient(this.props.RGB, index)
                                         let rectStyle
                                         // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
                                         let textColor = calculateTextColor(newR,newG,newB)
@@ -225,7 +223,7 @@ export default class StackedRowHomebrew extends React.Component {
                 </div>
                 {this.state.hoverText && <div className="row SRC-grayBackground">
                     <p className="SRC-noMargin" > <strong> {this.props.filter}: {this.state.hoverText} </strong> </p>
-                    <p className="SRC-noMargin SRC-primary-text-color" > <i> {this.state.hoverTextCount} files </i> </p>
+                    <p className="SRC-noMargin SRC-primary-text-color" > {this.state.hoverTextCount} files </p>
                 </div>}
             </div>
         )

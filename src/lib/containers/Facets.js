@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
+import calculateGradient from './calculateGradient'
 
 // import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
@@ -34,9 +35,7 @@ class CheckboxGroup extends React.Component {
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
-                let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
-                let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
+                let {newR,newG,newB} = calculateGradient(this.props.RGB, index)
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
                 if (check) {
