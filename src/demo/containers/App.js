@@ -214,7 +214,11 @@ class App extends Component {
           token={inDevEnv ? token: this.state.token}
           RGB={[91,176,181]}
           >
-          <StackedRowHomebrew/>
+          <StackedRowHomebrew
+            loadingScreen={<div>
+              I'm loading as fast as I can
+            </div>}
+          />
           <Facets/>
           <SynapseTable
             synapseId={"syn16858331"}
@@ -226,7 +230,7 @@ class App extends Component {
           >
           <SynapseTableCardView
               type={SynapseConstants.STUDY}
-              limit={1}
+              limit={3}
           />
         </StaticQueryWrapper>
 

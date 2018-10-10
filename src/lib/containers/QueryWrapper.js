@@ -26,7 +26,8 @@ export default class QueryWrapper extends React.Component {
         this.state = {
             data: [],
             isChecked: {},
-            currentFacet: ""
+            currentFacet: "",
+            isLoading: true
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
@@ -84,7 +85,12 @@ export default class QueryWrapper extends React.Component {
         let request = null
         if (isInitRequest) {
             request = this.props.initQueryRequest
-            this.setState({isChecked: []})
+            this.setState(
+                {
+                    isChecked: [],
+                    isLoading: true
+                }
+            )
         } else {
             request = queryRequest
         }
@@ -117,7 +123,7 @@ export default class QueryWrapper extends React.Component {
                             }
                         ]
                     }
-                    let newState = {data, lastQueryRequest: cloneDeep(request)}
+                    let newState = {data, lastQueryRequest: cloneDeep(request), isLoading: false}
                     this.setState(newState)
                 }
             ).catch(
@@ -144,6 +150,7 @@ export default class QueryWrapper extends React.Component {
                     executeQueryRequest={this.executeQueryRequest}
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={this.props.filter}
+                    isChecked={this.state.isChecked}
                     data={this.state.data}/>
         }
 
@@ -158,6 +165,7 @@ export default class QueryWrapper extends React.Component {
                         return React
                                     .cloneElement(  child, 
                                                     {
+                                                        isLoading: this.state.isLoading,
                                                         executeQueryRequest: this.executeQueryRequest,
                                                         getLastQueryRequest: this.getLastQueryRequest,
                                                         isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
@@ -189,6 +197,10 @@ QueryWrapper.propTypes = {
     }),
     json: PropTypes.object,
     token : PropTypes.string,
+    RGB: PropTypes.array,
+    filter: PropTypes.string,
+    showMenu: PropTypes.bool,
+    loadingScreen: PropTypes.element
 }
 
 QueryWrapper.defaultProps = {

@@ -16,10 +16,20 @@ export default class Menu extends React.Component {
             currentFacet: columnName
         })
         this.props.updateParentState({currentFacet: columnName})
-        // TODO: minor optimization that doesnt reload each time a new menu item is clicked,
-        // e.g. look at the init query request selcted facets length, if equal to current then
-        // no need to update.
-        this.props.executeQueryRequest(null, true)
+        // below we make a slight optimization when switching between menu tabs,
+        // that is, deciding whether the query result has to be reset or not, this
+        // is made by seeing if any of the chicklets are selected, if any of them
+        // are then we make the query request, otherwise not.
+        let {isChecked} = this.props
+        let hasChickletsSelected = false
+        for(let key in isChecked) {
+            if (isChecked.hasOwnProperty(key)) {
+                hasChickletsSelected = true
+            }
+        }
+        if (hasChickletsSelected) { 
+            this.props.executeQueryRequest(null, true)
+        }
     }
 
     render() {

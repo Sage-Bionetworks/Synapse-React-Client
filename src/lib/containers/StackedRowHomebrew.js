@@ -113,11 +113,10 @@ export default class StackedRowHomebrew extends React.Component {
      */
     render () {
         let {data} = this.props
-        // while data hasn't queued up display loading
-        if (data.length === 0) {
-            return (<div className="container">loading</div>)
+        // while loading
+        if (data.length === 0 || (this.props.isLoading && this.props.loadingScreen !== undefined )) {
+            return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> Loading... </div>))
         }
-
 
         let x_data = this.extractPropsData(data);
         let total = 0
@@ -126,7 +125,7 @@ export default class StackedRowHomebrew extends React.Component {
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
         return (
-            <div className="container-fluid SRC-margin-bottom-50px">
+            <div className="container-fluid ">
                 <div className="row">
                     <span>
                         <strong> {total} </strong> files shown by {this.props.filter}

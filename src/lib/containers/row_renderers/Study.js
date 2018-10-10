@@ -1,6 +1,6 @@
 import React from 'react'
 import * as Utils from './utils/index';
-import { STUDY } from '../../utils/SynapseConstants';
+import { STUDY_ACTIVE, STUDY_COMPLETE } from '../../utils/SynapseConstants';
 const uuidv4 = require("uuid/v4")
 
 export default class Study extends React.Component {
@@ -50,14 +50,14 @@ export default class Study extends React.Component {
             <Utils.CardBorder>
                 <Utils.Section>
                     <Utils.IconHolder>
-                        <Utils.Icon type={STUDY} size={Utils.LARGE_ICON}/>
+                        <Utils.Icon type={projectStatus === "Active" ? STUDY_ACTIVE: STUDY_COMPLETE} size={Utils.LARGE_ICON}/>
                     </Utils.IconHolder>
                     <Utils.Summary>
                         <Utils.SummaryHeader
                             name="STUDY"
                             title={projectName}
                         >
-                            <Utils.Icon type={STUDY} size={Utils.SMALL_ICON}/>
+                            <Utils.Icon type={projectStatus === "Active" ? STUDY_ACTIVE: STUDY_COMPLETE} size={Utils.SMALL_ICON}/>
                         </Utils.SummaryHeader>
                         <Utils.Authors authors={projectLeads} />
                         <Utils.ShowMore onClick={this.handleClick} summary={summary} />
