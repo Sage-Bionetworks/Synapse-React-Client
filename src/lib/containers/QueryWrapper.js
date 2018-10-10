@@ -62,7 +62,7 @@ export default class QueryWrapper extends React.Component {
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
             this.setState({isChecked: []})
-            this.executeQueryRequest(this.props.initQueryRequest, false)
+            this.executeQueryRequest(null, true)
         }
     }
 
@@ -85,12 +85,14 @@ export default class QueryWrapper extends React.Component {
      */
     executeQueryRequest(queryRequest = null, isInitRequest=false) {
         let request = null
+        this.setState({
+            isLoading: true
+        })
         if (isInitRequest) {
             request = this.props.initQueryRequest
             this.setState(
                 {
-                    isChecked: [],
-                    isLoading: true
+                    isChecked: []
                 }
             )
         } else {
@@ -200,6 +202,7 @@ export default class QueryWrapper extends React.Component {
                                                         data: this.state.data,
                                                         filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter,
                                                         updateParentState: this.updateParentState,
+                                                        updateParentFilter: this.updateParentFilter,
                                                         RGB: this.props.RGB,
                                                         showNothing: this.state.showNothing
                                                     }

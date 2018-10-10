@@ -217,6 +217,7 @@ class Facets extends React.Component {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = true
             }
+            this.props.updateParentFilter(this.props.filter)
             this.props.updateParentState({isChecked})
             this.props.executeQueryRequest(null, true);
         } else {
