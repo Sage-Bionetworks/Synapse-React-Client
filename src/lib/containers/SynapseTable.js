@@ -212,10 +212,10 @@ export default class SynapseTable extends React.Component {
                 let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
                 if (initRender || subsequentRender) {
                     let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1
-                    return (<th onClick={this.handleColumnClick({name: column.name, index})}  key={column.name} className={isSelected ? "SRC-salmon-background" : ""}>
-                                <a className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
+                    return (<th onClick={this.handleColumnClick({name: column.name, index})}  key={column.name} className={"SRC-hand-cursor " + (isSelected ? "SRC-salmon-background" : "")}>
+                                <a style={{color: "black"}} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light": "" }`} > 
                                     {column.name}
-                                    <FontAwesomeIcon icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
+                                    <FontAwesomeIcon className={`${isSelected ? 'SRC-selected-table-icon': 'SRC-primary-text-color' } pull-right`} icon={ICON_STATE[this.state.columnIconState[index] | 0] } />
                                 </a>
                             </th>)
                 }
@@ -260,7 +260,7 @@ export default class SynapseTable extends React.Component {
                     <div className="row">
                         <span>
                             {/* TODO: Actually use query count or some metric */}
-                            <strong> Showing {this.props.data.queryResult.queryResults.rows.length} Files </strong>
+                            <strong> Showing {this.props.showNothing ? 0 : this.props.data.queryResult.queryResults.rows.length} Files </strong>
                         </span>
                         <span className="SRC-floatRight">
                             {/* dropdown menu below */}
@@ -289,10 +289,10 @@ export default class SynapseTable extends React.Component {
                             <a onClick={this.advancedSearch} href="">
                                 <u> Advanced Search </u>
                             </a>
-                            <span >&nbsp;&nbsp;</span>
+                            {/* <span >&nbsp;&nbsp;</span>
                             <a onClick={this.download} href="">
                                 <u>Download</u>
-                            </a>
+                            </a> */}
                         </span>
                     </div>
                 </div>
@@ -310,20 +310,20 @@ export default class SynapseTable extends React.Component {
                                 </tr>
                             </thead>
                             {/* show the actual table body */}
-                            <tbody>
+                           {!this.props.showNothing && <tbody>
                                 {rowsFormatted.map(
                                     rowFormatted => {
                                         return rowFormatted
                                     }
                                 )}
-                            </tbody>
+                            </tbody>}
                         </table>
-                        {pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default SRC-table-button"  type="button">
+                        {!this.props.showNothing && pastZero && <button onClick={this.handlePaginationClick(PREVIOUS)} className="btn btn-default SRC-table-button"  type="button">
                             Previous
                         </button>}
-                        <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button"  type="button">
+                        {!this.props.showNothing && <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button"  type="button">
                             Next
-                        </button>
+                        </button>}
                     </div>
                 </div>
             </React.Fragment>

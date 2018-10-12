@@ -184,7 +184,6 @@ body * {
 
 .SRC-facets {
   padding: 4px;
-  border-style: solid;
   border-radius: 20px;
   margin: 5px;
   display: inline-block;
@@ -289,6 +288,9 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-text-color {
   color: #D53F77; }
 
+.SRC-no-text-decor {
+  text-decoration: none; }
+
 .SRC-primary-background-color {
   background-color: #D53F77 !important; }
 
@@ -344,3 +346,12 @@ button.SRC-roundBorder {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent; }
+
+.SRC-text-shadow {
+  text-shadow: #505050 2px 2px 4px; }
+
+.SRC-text-large {
+  font-size: 25px; }
+
+.SRC-selected-table-icon {
+  color: white; }

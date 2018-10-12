@@ -27,11 +27,13 @@ export default class QueryWrapper extends React.Component {
             data: [],
             isChecked: {},
             currentFacet: "",
-            isLoading: true
+            isLoading: true,
+            showNothing: false
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
         this.updateParentState = this.updateParentState.bind(this)
+        this.updateParentFilter = this.updateParentFilter.bind(this)
     }
 
     /**
@@ -60,7 +62,7 @@ export default class QueryWrapper extends React.Component {
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
             this.setState({isChecked: []})
-            this.executeQueryRequest(this.props.initQueryRequest, false)
+            this.executeQueryRequest(null, true)
         }
     }
 
@@ -83,12 +85,14 @@ export default class QueryWrapper extends React.Component {
      */
     executeQueryRequest(queryRequest = null, isInitRequest=false) {
         let request = null
+        this.setState({
+            isLoading: true
+        })
         if (isInitRequest) {
             request = this.props.initQueryRequest
             this.setState(
                 {
-                    isChecked: [],
-                    isLoading: true
+                    isChecked: []
                 }
             )
         } else {
@@ -123,7 +127,7 @@ export default class QueryWrapper extends React.Component {
                             }
                         ]
                     }
-                    let newState = {data, lastQueryRequest: cloneDeep(request), isLoading: false}
+                    let newState = {data, lastQueryRequest: cloneDeep(request), isLoading: false, showNothing: false}
                     this.setState(newState)
                 }
             ).catch(
@@ -136,6 +140,30 @@ export default class QueryWrapper extends React.Component {
 
     updateParentState(update) {
         this.setState(update)
+    }
+
+    updateParentFilter(filter) {
+        let request = cloneDeep(this.props.initQueryRequest)
+        let facetsForFilter = this.state.data.facets.filter(
+            obj => {
+                return obj.columnName === filter
+            }
+         )[0]
+         let facetsMapped = facetsForFilter.facetValues.map(
+             el => {
+                 return el.value
+             }
+         )
+        request.query.selectedFacets = [
+            {
+                columnName: filter,
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: [
+                    ...facetsMapped
+                ]
+            }
+        ]
+        this.setState({lastQueryRequest: cloneDeep(request), currentFacet: filter})
     }
 
     /**
@@ -151,7 +179,9 @@ export default class QueryWrapper extends React.Component {
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={this.props.filter}
                     isChecked={this.state.isChecked}
-                    data={this.state.data}/>
+                    data={this.state.data}
+                    updateParentFilter={this.updateParentFilter}
+                    />
         }
 
         return (
@@ -172,7 +202,9 @@ export default class QueryWrapper extends React.Component {
                                                         data: this.state.data,
                                                         filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter,
                                                         updateParentState: this.updateParentState,
-                                                        RGB: this.props.RGB
+                                                        updateParentFilter: this.updateParentFilter,
+                                                        RGB: this.props.RGB,
+                                                        showNothing: this.state.showNothing
                                                     }
                                                 )
                     })} 

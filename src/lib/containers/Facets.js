@@ -2,9 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
+import calculateGradient from './calculateGradient'
 
 // import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
@@ -12,7 +13,7 @@ const SELECT_ALL = "select all"
 const DESELECT_ALL = "deselect all"
 
 // Add all icons to the library so you can use it in your page
-library.add(faTimesCircle)
+library.add(faTimes)
 library.add(faPlus)
 
 
@@ -34,9 +35,7 @@ class CheckboxGroup extends React.Component {
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let newR = this.props.RGB[0] * (1.3 - (1.0 / (index + 1)))
-                let newG = this.props.RGB[1] * (1.3 - (1.0 / (index + 1)))
-                let newB = this.props.RGB[2] * (1.3 - (1.0 / (index + 1)))
+                let {newR,newG,newB} = calculateGradient(this.props.RGB, index)
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
                 if (check) {
@@ -53,10 +52,12 @@ class CheckboxGroup extends React.Component {
                 const showTimes = check
                 children.push(
                     <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
-                        <strong> {facetValue.value} </strong>  {facetValue.count}
+                        <strong> &nbsp;&nbsp; {facetValue.value} </strong>  {facetValue.count}
+                        <span>&nbsp;&nbsp;</span>
                         {
-                            showTimes ?  <FontAwesomeIcon icon={"times-circle"} /> : <FontAwesomeIcon icon={"plus"} />
+                            showTimes ?  <FontAwesomeIcon  icon={"times"} /> : <FontAwesomeIcon icon={"plus"} />
                         }
+                        <span>&nbsp;&nbsp;</span>
                     </span>
                 )
             }
@@ -211,22 +212,21 @@ class Facets extends React.Component {
     updateSelection = (selectionGroup) => (event) => {
         event.preventDefault()
         let {isChecked} = cloneDeep(this.props)
-        let queryRequest = this.props.getLastQueryRequest();
+        let queryRequest = cloneDeep(this.props.getLastQueryRequest());
         if (selectionGroup === SELECT_ALL) {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = true
             }
+            this.props.updateParentFilter(this.props.filter)
             this.props.updateParentState({isChecked})
-            this.props.executeQueryRequest(queryRequest, true);
+            this.props.executeQueryRequest(null, true);
         } else {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = false
             }
-            this.props.updateParentState({isChecked})
-            // TODO: fix this, current implementation will mimick the behavior of the
-            // SELECT_ALL
+            // hack to make deselct all work
             queryRequest.query.selectedFacets[0].facetValues = []
-            this.props.executeQueryRequest(queryRequest, false);
+            this.props.updateParentState({isChecked, showNothing: true, lastQueryRequest: queryRequest})
         }
     }
 
@@ -259,8 +259,8 @@ class Facets extends React.Component {
                         </div>
                         <div className="form-group">
                             <p>
-                                <a href={""} onClick={this.updateSelection(SELECT_ALL)}>   <u>  Select All </u> </a>
-                                <a href={""} onClick={this.updateSelection(DESELECT_ALL)}> <u>  Unselect All </u> </a>
+                                <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>    Select All  </a>
+                                <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>  Deselect All  </a>
                             </p>
                         </div>
                     </form>

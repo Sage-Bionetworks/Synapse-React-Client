@@ -123,12 +123,7 @@ ShallowWrapper {
                     [Function]
           </Measure>
 </div>,
-        <div
-          className="row"
->
-          
-          
-</div>,
+        "",
       ],
       "className": "container-fluid ",
     },
@@ -382,24 +377,7 @@ ShallowWrapper {
         },
         "type": "div",
       },
-      Object {
-        "instance": null,
-        "key": undefined,
-        "nodeType": "host",
-        "props": Object {
-          "children": Array [
-            "",
-            "",
-          ],
-          "className": "row",
-        },
-        "ref": null,
-        "rendered": Array [
-          "",
-          "",
-        ],
-        "type": "div",
-      },
+      "",
     ],
     "type": "div",
   },
@@ -478,12 +456,7 @@ ShallowWrapper {
                         [Function]
             </Measure>
 </div>,
-          <div
-            className="row"
->
-            
-            
-</div>,
+          "",
         ],
         "className": "container-fluid ",
       },
@@ -737,24 +710,7 @@ ShallowWrapper {
           },
           "type": "div",
         },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "host",
-          "props": Object {
-            "children": Array [
-              "",
-              "",
-            ],
-            "className": "row",
-          },
-          "ref": null,
-          "rendered": Array [
-            "",
-            "",
-          ],
-          "type": "div",
-        },
+        "",
       ],
       "type": "div",
     },
