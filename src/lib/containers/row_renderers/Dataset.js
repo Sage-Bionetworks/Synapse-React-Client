@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Utils from './utils'
 import { DATASET } from '../../utils/SynapseConstants';
+import calculateFriendlyFileSize from '../calculateFriendlyFileSize'
 const uuidv4 = require("uuid/v4")
 
 class Dataset extends React.Component {
@@ -23,7 +24,7 @@ class Dataset extends React.Component {
         const id = data[schema.id]
         const fundingAgency = data[schema.fundingAgency]
         const fileCount = data[schema.fileCount]
-        const fileSize = data[schema.fileSize]
+        const fileSize = calculateFriendlyFileSize(data[schema.fileSize])
 
         const columns = [
             [["FUNDER", fundingAgency]],

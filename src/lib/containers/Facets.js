@@ -48,11 +48,15 @@ class CheckboxGroup extends React.Component {
                     }
                 }
                 style.color = calculateTextColor(newR,newG,newB)
-
+                if (facetValue.value == 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
+                    facetValue.displayValue = 'Not Set';
+                } else {
+                    facetValue.displayValue = facetValue.value;
+                }
                 const showTimes = check
                 children.push(
                     <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
-                        <strong> &nbsp;&nbsp; {facetValue.value} </strong>  {facetValue.count}
+                        <strong> &nbsp;&nbsp; {facetValue.displayValue} </strong>  {facetValue.count}
                         <span>&nbsp;&nbsp;</span>
                         {
                             showTimes ?  <FontAwesomeIcon  icon={"times"} /> : <FontAwesomeIcon icon={"plus"} />
