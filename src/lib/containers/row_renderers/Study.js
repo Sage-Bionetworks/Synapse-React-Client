@@ -1,7 +1,6 @@
 import React from 'react'
 import * as Utils from './utils/index';
 import { STUDY_ACTIVE, STUDY_COMPLETE } from '../../utils/SynapseConstants';
-const uuidv4 = require("uuid/v4")
 
 export default class Study extends React.Component {
     constructor(props) {
@@ -29,67 +28,32 @@ export default class Study extends React.Component {
         const projectStatus = data[schema.projectStatus]
         const fundingAgency = data[schema.fundingAgency]
         const dataStatus = data[schema.dataStatus]
-        const institutions = data[schema.institutions]
+        // const institutions = data[schema.institutions]
 
-        const columns = [
-            [
-                ["STATUS", projectStatus],
-                ["FUNDER", fundingAgency],
-                ["DATA", dataStatus],
-                ["PUBLICATION", "NONE"]
-            ],
-            [
-                ["INVESTIGATORS", projectLeads]
-            ],
-            [
-                ["INSTITUTIONS", institutions]
-            ]
+        const values = [
+            ["STATUS", projectStatus],
+            ["FUNDER", fundingAgency],
+            ["DATA", dataStatus],
+            ["PUBLICATION", "NONE"]
         ]
 
         return (
-            <Utils.CardBorder>
-                <Utils.Section>
-                    <Utils.IconHolder>
-                        <Utils.Icon type={projectStatus === "Active" ? STUDY_ACTIVE: STUDY_COMPLETE} size={Utils.LARGE_ICON}/>
-                    </Utils.IconHolder>
-                    <Utils.Summary>
-                        <Utils.SummaryHeader
-                            name="STUDY"
-                            title={projectName}
-                        >
-                            <Utils.Icon type={projectStatus === "Active" ? STUDY_ACTIVE: STUDY_COMPLETE} size={Utils.SMALL_ICON}/>
-                        </Utils.SummaryHeader>
-                        <Utils.Authors authors={projectLeads} />
-                        <Utils.ShowMore onClick={this.handleClick} summary={summary} />
-                        <Utils.ChipContainer
-                            chips={
-                                [
-                                    {type: "gray", text: tumorType},
-                                    {type: "blue", text: diseaseFocus}
-                                ]
-                            }                    
-                        />
-                    </Utils.Summary>
-                </Utils.Section>
-               {this.state.showMore && <Utils.CardFooter>
-                    <div className="col-md-2 hidden-xs">
+            <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+                <div className="SRC-cardThumbnail">
+                    <Utils.Icon type={projectStatus === "Active" ? STUDY_ACTIVE: STUDY_COMPLETE}> </Utils.Icon>
+                    <div>{projectStatus}</div>
+                </div>
+                <div className="SRC-cardContent">
+                    <div className="SRC-type">Study</div>
+                    <div className="SRC-title"><a>{projectName}</a></div>
+                    <div className="SRC-author">{projectLeads}</div>
+                    <Utils.ShowMore onClick={this.handleClick} summary={summary} />
+                    <div className="SRC-cardAnnotations">
+                        <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
                     </div>
-                    {
-                        columns.map(
-                            column => {
-                                return (
-                                    <div key={uuidv4()} className="col-md-3 col-sm-4">
-                                            <Utils.FauxTable
-                                                values={column}
-                                            />
-                                    </div>
-                                )            
-                            }
-                        )
-                    }
-                </Utils.CardFooter>}
-            </Utils.CardBorder>
+                </div>
+                <Utils.CardFooter values={values}/>
+            </div>
         )
-
     }
 }

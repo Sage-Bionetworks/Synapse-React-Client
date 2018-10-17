@@ -194,7 +194,7 @@ class App extends Component {
           </MarkdownSynapse>
         </CustomMarkdownView>
 
-        <QueryWrapper
+        {/* <QueryWrapper
           initQueryRequest={{
             concreteType:
               "org.sagebionetworks.repo.model.table.QueryBundleRequest",
@@ -214,7 +214,7 @@ class App extends Component {
           token={inDevEnv ? token: this.state.token}
           RGB={[91,176,181]}
           >
-          <StackedRowHomebrew
+          <StackedRowHomeberew
             loadingScreen={<div>
               I'm loading as fast as I can
             </div>}
@@ -224,7 +224,7 @@ class App extends Component {
             synapseId={"syn16858331"}
             visibleColumnCount={8}
           />
-        </QueryWrapper>
+        </QueryWrapper> */}
         <StaticQueryWrapper
           json={syn16787123}
           >
@@ -250,13 +250,13 @@ class App extends Component {
           />
         </StaticQueryWrapper>
 
-        <StaticQueryWrapper
+        {/* <StaticQueryWrapper
             json={syn16857542}
         >
           <SynapseTableCardView 
             type={SynapseConstants.PUBLICATION}
           />
-        </StaticQueryWrapper>
+        </StaticQueryWrapper> */}
 
         <StaticQueryWrapper
           json={syn16858699}        
