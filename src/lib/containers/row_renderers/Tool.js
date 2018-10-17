@@ -26,9 +26,9 @@ export default class Tool extends React.Component {
                     <Utils.Icon type={TOOL}/>
                 </div>
                 <div className="SRC-cardContent">
-                    <div class="SRC-type">Tool</div>
-                    <div class="SRC-title"><h3><a>{softwareName}</a></h3></div>
-                    <div class="SRC-description">{summary}</div>
+                    <div className="SRC-type">Tool</div>
+                    <div className="SRC-title"><h3><a>{softwareName}</a></h3></div>
+                    <div className="SRC-description">{summary}</div>
                 </div>
                 <div className="SRC-cardAction">
                     <button onClick={this.handleLinkClick(softwareLink)} type="button">Open Tool</button>        

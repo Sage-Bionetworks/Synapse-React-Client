@@ -20,7 +20,7 @@ class Dataset extends React.Component {
         const summary = data[schema.summary]
         const tumorType = data[schema.tumorType]
         const diseaseFocus = data[schema.diseaseFocus]
-        // const id = data[schema.id]
+        const id = data[schema.id]
         const fundingAgency = data[schema.fundingAgency]
         const fileCount = data[schema.fileCount]
         const fileSize = calculateFriendlyFileSize(data[schema.fileSize])
@@ -39,13 +39,16 @@ class Dataset extends React.Component {
                 </div>
 
                 <div className="SRC-cardContent">
-                    <div class="SRC-type">Dataset
-                        <div class="SRC-title"><h3><a>{datasetName}</a></h3></div>
-                        <div class="SRC-description"> {summary} </div>
-                    </div>
+                    <div className="SRC-type">Dataset </div>
+                    <div className="SRC-title"><h3><a>{datasetName}</a></h3></div>
+                    <div className="SRC-description"> {summary} </div>
                     <div className="SRC-cardAnnotations">
                         <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
                     </div>
+                </div>
+
+                <div className="SRC-cardAction">
+                    <button onClick={this.handleLinkClick(id)} type="button">Download Dataset</button>
                 </div>
                 <Utils.CardFooter values={values}/>
             </div>

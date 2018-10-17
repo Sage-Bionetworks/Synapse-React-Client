@@ -6,6 +6,7 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
 import calculateGradient from './calculateGradient'
+import ColorGradient from './ColorGradient'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -116,7 +117,7 @@ export default class StackedRowHomebrew extends React.Component {
 
         let x_data = this.extractPropsData(data);
         let total = 0
-
+        let colorGradient = new ColorGradient(0)
         let {width} = this.state.dimensions
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
@@ -152,11 +153,12 @@ export default class StackedRowHomebrew extends React.Component {
                                         let rectStyle
                                         // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
                                         let textColor = calculateTextColor(newR,newG,newB)
+
                                         const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
 
                                         if (check) {
                                             rectStyle = {
-                                                fill: `rgb(${newR},${newG},${newB})`
+                                                fill: colorGradient.getColor()
                                             }
                                         } else {
                                             rectStyle = {

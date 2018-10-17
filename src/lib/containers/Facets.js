@@ -6,6 +6,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
 import calculateGradient from './calculateGradient'
+import ColorGradient from './ColorGradient';
 
 // import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
@@ -28,6 +29,7 @@ class CheckboxGroup extends React.Component {
     render() {
         const {element} = this.props
         let children = []
+        let colorGradient = new ColorGradient(0)
 
         element.facetValues.sort((a,b) => {return b.count - a.count})
 
@@ -40,7 +42,7 @@ class CheckboxGroup extends React.Component {
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
                 if (check) {
                     style = {
-                        background: `rgb(${newR},${newG},${newB})` 
+                        background: colorGradient.getColor()
                     }
                 } else {
                     style = {
