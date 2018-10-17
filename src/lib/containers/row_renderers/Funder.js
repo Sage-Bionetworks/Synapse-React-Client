@@ -33,7 +33,7 @@ export default class Funder extends React.Component {
                     <img alt="funder logo" className="SRC-logo" src={logo} />
                 </div>
                 <div className="SRC-cardContent">
-                    <div className="SRC-type">Funder</div>
+                    <div className="SRC-type">Organization</div>
                     <div className="SRC-title"><h3><a>{organizationName}</a></h3></div>
                     <div className="SRC-website"><a>{website}</a></div>
                     <div className="SRC-description">{summary}</div>

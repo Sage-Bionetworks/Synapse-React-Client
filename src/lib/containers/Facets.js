@@ -204,7 +204,7 @@ class Facets extends React.Component {
 
         queryRequest.query.selectedFacets = selectedFacets;
         this.props.updateParentState({isChecked})
-        this.props.executeQueryRequest(queryRequest, false);
+        this.props.executeQueryRequest(queryRequest);
     }
 
     /**
@@ -223,7 +223,7 @@ class Facets extends React.Component {
             }
             this.props.updateParentFilter(this.props.filter)
             this.props.updateParentState({isChecked})
-            this.props.executeQueryRequest(null, true);
+            this.props.executeInitialQueryRequest();
         } else {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = false
@@ -249,7 +249,7 @@ class Facets extends React.Component {
         )
         let queryRequest = this.props.getLastQueryRequest();
         queryRequest.query.selectedFacets = selectedFacetsFormatted;
-        this.props.executeQueryRequest(queryRequest, isChecked);
+        this.props.executeQueryRequest(queryRequest);
     }
     
     render () {

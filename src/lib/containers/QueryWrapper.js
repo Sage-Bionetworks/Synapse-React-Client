@@ -32,6 +32,7 @@ export default class QueryWrapper extends React.Component {
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
+        this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
         this.updateParentState = this.updateParentState.bind(this)
         this.updateParentFilter = this.updateParentFilter.bind(this)
     }
@@ -43,7 +44,7 @@ export default class QueryWrapper extends React.Component {
      */
     componentDidMount() {
         if (!this.props.json) {
-            this.executeQueryRequest(null,true)
+            this.executeInitialQueryRequest()
         } else {
             this.setState({
                 data: cloneDeep(this.props.json)
@@ -57,12 +58,12 @@ export default class QueryWrapper extends React.Component {
     componentDidUpdate(prevProps) {
         // if token has updated
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
-            this.executeQueryRequest(null,true)
+            this.executeInitialQueryRequest()
         }
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
             this.setState({isChecked: []})
-            this.executeQueryRequest(null, true)
+            this.executeInitialQueryRequest()
         }
     }
 
@@ -108,7 +109,8 @@ export default class QueryWrapper extends React.Component {
      */
     executeInitialQueryRequest() {
         this.setState({
-            isLoading: true
+            isLoading: true,
+            isChecked: []
         })
 
         SynapseClient.getQueryTableResults(this.props.initQueryRequest, this.props.token).then(
@@ -182,6 +184,7 @@ export default class QueryWrapper extends React.Component {
                     RGB={this.props.RGB}
                     updateParentState={this.updateParentState} 
                     executeQueryRequest={this.executeQueryRequest}
+                    executeInitialQueryRequest={this.executeInitialQueryRequest}
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={this.props.filter}
                     isChecked={this.state.isChecked}
@@ -203,6 +206,7 @@ export default class QueryWrapper extends React.Component {
                                                     {
                                                         isLoading: this.state.isLoading,
                                                         executeQueryRequest: this.executeQueryRequest,
+                                                        executeInitialQueryRequest: this.executeInitialQueryRequest,
                                                         getLastQueryRequest: this.getLastQueryRequest,
                                                         isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
                                                         data: this.state.data,

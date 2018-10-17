@@ -28,7 +28,7 @@ export default class Menu extends React.Component {
         }
         this.props.updateParentFilter(columnName)
         if (hasChickletsSelected) { 
-            this.props.executeQueryRequest(null, true)
+            this.props.executeInitialQueryRequest()
         }
     }
 
