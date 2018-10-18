@@ -24,6 +24,13 @@ describe('basic functionality', () => {
                 >
             </QueryWrapper>)
         expect(wrapper.find("div")).toHaveLength(3)
+        mockRequest.query.selectedFacets = [
+            {
+                columnName: "name",
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: [undefined]
+            }
+        ]
         expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
         expect(wrapper.state().data).toEqual(mockData)
     })

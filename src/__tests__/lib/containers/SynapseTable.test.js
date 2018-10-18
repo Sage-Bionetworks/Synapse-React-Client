@@ -27,6 +27,13 @@ describe('basic functionality', () => {
                 </SynapseTable>
             </QueryWrapper>)
         
+        mockRequest.query.selectedFacets = [
+            {
+                columnName: "name",
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: [undefined]
+            }
+        ]
         expect(wrapper.find(SynapseTable)).toHaveLength(1)
         expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
         expect(wrapper.state().data).toEqual(mockData)
