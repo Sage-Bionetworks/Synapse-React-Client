@@ -34,10 +34,8 @@ export default class ShowMore extends React.Component {
         }
         return (
             <React.Fragment>
-                <p>
-                    {summary}
-                    {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>Show More </a>}
-                </p>
+                {summary}
+                {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>Show More </a>}
             </React.Fragment>
         )
     }

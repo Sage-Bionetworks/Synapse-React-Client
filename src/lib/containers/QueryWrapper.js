@@ -32,6 +32,7 @@ export default class QueryWrapper extends React.Component {
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
         this.executeQueryRequest = this.executeQueryRequest.bind(this)
+        this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
         this.updateParentState = this.updateParentState.bind(this)
         this.updateParentFilter = this.updateParentFilter.bind(this)
     }
@@ -43,7 +44,7 @@ export default class QueryWrapper extends React.Component {
      */
     componentDidMount() {
         if (!this.props.json) {
-            this.executeQueryRequest(null,true)
+            this.executeInitialQueryRequest()
         } else {
             this.setState({
                 data: cloneDeep(this.props.json)
@@ -57,12 +58,12 @@ export default class QueryWrapper extends React.Component {
     componentDidUpdate(prevProps) {
         // if token has updated
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
-            this.executeQueryRequest(null,true)
+            this.executeInitialQueryRequest()
         }
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
             this.setState({isChecked: []})
-            this.executeQueryRequest(null, true)
+            this.executeInitialQueryRequest()
         }
     }
 
@@ -83,59 +84,66 @@ export default class QueryWrapper extends React.Component {
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
      */
-    executeQueryRequest(queryRequest = null, isInitRequest=false) {
-        let request = null
+    executeQueryRequest(queryRequest) {
         this.setState({
             isLoading: true
         })
-        if (isInitRequest) {
-            request = this.props.initQueryRequest
-            this.setState(
-                {
-                    isChecked: []
-                }
-            )
-        } else {
-            request = queryRequest
-        }
 
-        if (queryRequest || isInitRequest) {
-            SynapseClient.getQueryTableResults(request, this.props.token).then(
-                data => {
-                    // this is from the normal yet peculiar behavior that when no values
-                    // are selected from the init query we expect that they are ALL selected
-                    // hence we have to 
-                    const filter = this.state.currentFacet ? this.state.currentFacet : this.props.filter
-                    if (isInitRequest) {
-                        let facetsForFilter = data.facets.filter(
-                            obj => {
-                                return obj.columnName === filter
-                            }
-                         )[0]
-                         let facetsMapped = facetsForFilter.facetValues.map(
-                             el => {
-                                 return el.value
-                             }
-                         )
-                        request.query.selectedFacets = [
-                            {
-                                columnName: filter,
-                                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
-                                facetValues: [
-                                    ...facetsMapped
-                                ]
-                            }
+        SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(
+            data => {
+                let newState = {data, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false}
+                this.setState(newState)
+            }
+        ).catch(
+            err => {
+                console.log('Failed to get data ', err)
+            } 
+        )   
+    }
+
+    /**
+     * Exectue the given query
+     *
+     * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+     * @memberof QueryWrapper
+     */
+    executeInitialQueryRequest() {
+        this.setState({
+            isLoading: true,
+            isChecked: []
+        })
+
+        SynapseClient.getQueryTableResults(this.props.initQueryRequest, this.props.token).then(
+            data => {
+                const filter = this.state.currentFacet ? this.state.currentFacet : this.props.filter
+                let facetsForFilter = data.facets.filter(
+                    obj => {
+                        return obj.columnName === filter
+                    }
+                    )[0]
+                    let facetsMapped = facetsForFilter.facetValues.map(
+                        el => {
+                            return el.value
+                        }
+                    )
+                let lastQueryRequest = cloneDeep(this.props.initQueryRequest)
+                lastQueryRequest.query.selectedFacets = [
+                    {
+                        columnName: filter,
+                        concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                        facetValues: [
+                            ...facetsMapped
                         ]
                     }
-                    let newState = {data, lastQueryRequest: cloneDeep(request), isLoading: false, showNothing: false}
-                    this.setState(newState)
-                }
-            ).catch(
-                err => {
-                    console.log('Failed to get data ', err)
-                } 
-            )   
-        }
+                ]
+                let newState = {data, lastQueryRequest, isLoading: false, showNothing: false}
+                this.setState(newState)
+            }
+        ).catch(
+            err => {
+                console.log('Failed to get data ', err)
+            } 
+        )   
     }
 
     updateParentState(update) {
@@ -176,6 +184,7 @@ export default class QueryWrapper extends React.Component {
                     RGB={this.props.RGB}
                     updateParentState={this.updateParentState} 
                     executeQueryRequest={this.executeQueryRequest}
+                    executeInitialQueryRequest={this.executeInitialQueryRequest}
                     getLastQueryRequest={this.getLastQueryRequest}
                     filter={this.props.filter}
                     isChecked={this.state.isChecked}
@@ -197,6 +206,7 @@ export default class QueryWrapper extends React.Component {
                                                     {
                                                         isLoading: this.state.isLoading,
                                                         executeQueryRequest: this.executeQueryRequest,
+                                                        executeInitialQueryRequest: this.executeInitialQueryRequest,
                                                         getLastQueryRequest: this.getLastQueryRequest,
                                                         isChecked: this.state.isChecked === null ? {}: this.state.isChecked,
                                                         data: this.state.data,

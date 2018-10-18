@@ -1,5 +1,4 @@
 import React from 'react'
-import * as Utils from './utils'
 
 const logoLinks = {
     CTF : require("../../assets/logos/ctf.svg"),
@@ -29,37 +28,20 @@ export default class Funder extends React.Component {
         const logo = logoLinks[abbreviation]
 
         return (
-            <Utils.CardBorder>
-                 <Utils.Section>
-                    <div className="col-xs-6">
-                        <Utils.SummaryHeader
-                            name={"FUNDER"}
-                            title={organizationName}
-                        />
-                        <div>
-                            <a className={"SRC-primary-text-color"} href={website}>
-                                {website}
-                            </a>
-                        </div>
-                    </div>
-                    <div className="col-xs-6">
-                        <img alt="" className="pull-right img-responsive" src={logo}></img>
-                    </div>
-                </Utils.Section>
-                <p>
-                    {summary}
-                </p>
-                <Utils.Section>
-                    <div className="col-xs-2"/>
-                    <div className="">
-                        <Utils.SynButton
-                            link={website}
-                            text={"VIEW RESEARCH"}
-                            onClick={this.handleLinkClick}
-                        />
-                    </div>
-                </Utils.Section>
-            </Utils.CardBorder>
+            <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
+                <div className="SRC-cardThumbnail">
+                    <img alt="funder logo" className="SRC-logo" src={logo} />
+                </div>
+                <div className="SRC-cardContent">
+                    <div className="SRC-type">Organization</div>
+                    <div className="SRC-title"><h3><a>{organizationName}</a></h3></div>
+                    <div className="SRC-website"><a>{website}</a></div>
+                    <div className="SRC-description">{summary}</div>
+                </div>
+                <div className="SRC-cardAction">
+                    <button onClick={this.handleLinkClick(website)} type="button">View Funded Research</button>
+                </div>
+            </div>
         )
     }
 }

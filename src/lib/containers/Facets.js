@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import calculateTextColor from './calculateTextColor'
-import calculateGradient from './calculateGradient'
+import ColorGradient from './ColorGradient';
 
 // import * as SynapseConstants from '../../lib/utils/SynapseConstants'
 const cloneDeep = require("lodash.clonedeep")
@@ -28,6 +28,7 @@ class CheckboxGroup extends React.Component {
     render() {
         const {element} = this.props
         let children = []
+        let colorGradient = new ColorGradient(0)
 
         element.facetValues.sort((a,b) => {return b.count - a.count})
 
@@ -35,20 +36,20 @@ class CheckboxGroup extends React.Component {
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
-                let {newR,newG,newB} = calculateGradient(this.props.RGB, index)
+                let curColor = colorGradient.getColor()
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
                 if (check) {
                     style = {
-                        background: `rgb(${newR},${newG},${newB})` 
+                        background: curColor
                     }
                 } else {
                     style = {
                         background: `#C4C4C4`
                     }
                 }
-                style.color = calculateTextColor(newR,newG,newB)
-                if (facetValue.value == 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
+                style.color = "black"
+                if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
                     facetValue.displayValue = 'Not Set';
                 } else {
                     facetValue.displayValue = facetValue.value;
@@ -204,7 +205,7 @@ class Facets extends React.Component {
 
         queryRequest.query.selectedFacets = selectedFacets;
         this.props.updateParentState({isChecked})
-        this.props.executeQueryRequest(queryRequest, false);
+        this.props.executeQueryRequest(queryRequest);
     }
 
     /**
@@ -223,7 +224,7 @@ class Facets extends React.Component {
             }
             this.props.updateParentFilter(this.props.filter)
             this.props.updateParentState({isChecked})
-            this.props.executeQueryRequest(null, true);
+            this.props.executeInitialQueryRequest();
         } else {
             for(let i = 0; i < 100; i++) {
                 isChecked[i] = false
@@ -249,7 +250,7 @@ class Facets extends React.Component {
         )
         let queryRequest = this.props.getLastQueryRequest();
         queryRequest.query.selectedFacets = selectedFacetsFormatted;
-        this.props.executeQueryRequest(queryRequest, isChecked);
+        this.props.executeQueryRequest(queryRequest);
     }
     
     render () {

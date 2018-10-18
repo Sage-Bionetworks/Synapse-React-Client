@@ -6,5 +6,5 @@ export default function calculateFriendlyFileSize(bytes) {
     }
     // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
     let i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return !bytes && '0 Bytes' || (bytes / Math.pow(1024, i)).toFixed(2) + " " + sufixes[i];
+    return ((!bytes) && '0 Bytes') || ((bytes / Math.pow(1024, i)).toFixed(2) + " " + sufixes[i]);
 }
