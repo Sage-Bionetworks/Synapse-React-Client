@@ -32,14 +32,14 @@ class Publication extends React.Component {
         ]
 
         return (
-            <div class="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
+            <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
                     <Utils.Icon type={PUBLICATION}/>
                 </div>
-                <div class="SRC-cardContent">
-                    <div class="SRC-type">Publication</div>
-                    <div class="SRC-title"><h3><a>{citation}</a></h3></div>
-                    <div class="SRC-author">Smita Bhatia / Jean L. Nakamuralue</div>
+                <div className="SRC-cardContent">
+                    <div className="SRC-type">Publication</div>
+                    <div className="SRC-title"><h3><a>{citation}</a></h3></div>
+                    <div className="SRC-author">Smita Bhatia / Jean L. Nakamuralue</div>
                     <div className="SRC-cardAnnotations">
                         <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
                     </div>
