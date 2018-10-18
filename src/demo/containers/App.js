@@ -250,13 +250,13 @@ class App extends Component {
           />
         </StaticQueryWrapper>
 
-        {/* <StaticQueryWrapper
+        <StaticQueryWrapper
             json={syn16857542}
         >
           <SynapseTableCardView 
             type={SynapseConstants.PUBLICATION}
           />
-        </StaticQueryWrapper> */}
+        </StaticQueryWrapper>
 
         <StaticQueryWrapper
           json={syn16858699}        

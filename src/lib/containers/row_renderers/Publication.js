@@ -1,7 +1,6 @@
 import React from 'react'
 import * as Utils from './utils'
 import { PUBLICATION } from '../../utils/SynapseConstants';
-const uuidv4 = require("uuid/v4")
 
 class Publication extends React.Component {
     
@@ -26,50 +25,27 @@ class Publication extends React.Component {
         const doi = data[schema.doi]
         const fundingAgency = data[schema.fundingAgency]
         const projectName = data[schema.projectName]
-        const columns = [
-            [
-                ["DOI", doi],
-                ["FUNDER", fundingAgency],
-                ["STUDY", projectName]
-            ]
+        const values = [
+            ["DOI", doi],
+            ["FUNDER", fundingAgency],
+            ["STUDY", projectName]
         ]
 
         return (
-            <Utils.CardBorder>
-                <Utils.Section>
-                    <Utils.IconHolder>
-                        <Utils.Icon size={Utils.LARGE_ICON} type={PUBLICATION}/>
-                    </Utils.IconHolder>
-                    <Utils.Summary>
-                        <Utils.SummaryHeader 
-                            name={"PUBLICATION"}
-                            title={citation}
-                        >
-                            <Utils.Icon type={PUBLICATION} size={Utils.SMALL_ICON}/>
-                        </Utils.SummaryHeader>
-                        <Utils.ChipContainer
-                            chips={[{type: "gray", text: tumorType}, {type: "blue", text: diseaseFocus}]}
-                        />
-                    </Utils.Summary>
-                </Utils.Section>
-                <Utils.CardFooter>
-                    <div className="col-sm-2 hidden-xs">
+            <div class="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
+                <div className="SRC-cardThumbnail">
+                    <Utils.Icon type={PUBLICATION}/>
+                </div>
+                <div class="SRC-cardContent">
+                    <div class="SRC-type">Publication</div>
+                    <div class="SRC-title"><h3><a>{citation}</a></h3></div>
+                    <div class="SRC-author">Smita Bhatia / Jean L. Nakamuralue</div>
+                    <div className="SRC-cardAnnotations">
+                        <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
                     </div>
-                    {
-                        columns.map(
-                            column => {
-                                return (
-                                    <div key={uuidv4()} className="col-sm-10" >
-                                        <Utils.FauxTable
-                                            values={column}
-                                        />
-                                    </div>
-                                )
-                            }
-                        )
-                    }
-                </Utils.CardFooter>
-            </Utils.CardBorder>
+                  </div>
+                <Utils.CardFooter values={values}/>
+            </div>
         )
     }
 }
