@@ -116,7 +116,8 @@ export default class StackedRowHomebrew extends React.Component {
 
         let x_data = this.extractPropsData(data);
         let total = 0
-        let colorGradient = new ColorGradient(0)
+        let colorGradient = new ColorGradient(this.props.rgbIndex)
+        let originalColor = colorGradient.getOriginalColor()
         let {width} = this.state.dimensions
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
@@ -199,7 +200,7 @@ export default class StackedRowHomebrew extends React.Component {
                                                     {index < 3 && obj.count}
                                                 </text>
                                                 {this.state.index === index && <text 
-                                                    fill={`rgb(${this.props.RGB[0]},${this.props.RGB[1]},${this.props.RGB[2]})`}
+                                                    fill={originalColor}
                                                     x={0}
                                                     y={62}
                                                     className="SRC-text-shadow SRC-text-large"

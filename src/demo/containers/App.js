@@ -212,7 +212,7 @@ class App extends Component {
           showMenu
           filter={"assay"}
           token={inDevEnv ? token: this.state.token}
-          RGB={[91,176,181]}
+          rgbIndex={4}
           >
           <StackedRowHomebrew
             loadingScreen={<div>
@@ -223,6 +223,7 @@ class App extends Component {
           <SynapseTable
             synapseId={"syn16858331"}
             visibleColumnCount={8}
+            index={1}
           />
         </QueryWrapper>
         <StaticQueryWrapper
