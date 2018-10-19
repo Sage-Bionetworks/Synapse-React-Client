@@ -159,6 +159,40 @@
   color: #2B688F;
 }
 
+.markdown {
+  line-height: 1.85em;
+  word-wrap: break-word;
+  overflow-x: auto;
+  overflow-y: hidden;
+  line-height: 1.8em;
+  color: #000000;
+}
+
+.toc-indent1 {
+  margin-left: 35px;
+}
+
+.toc-indent2 {
+  margin-left: 65px;
+}
+
+.toc-indent3 {
+  margin-left: 95px;
+}
+
+.toc-indent4 {
+  margin-left: 125px;
+}
+
+.toc-indent5 {
+  margin-left: 155px;
+}
+
+.toc-indent6 {
+  margin-left: 185px;
+}
+
+
 //////////////////////////////////////////////////////////////
 // Synapse React Client (SRC) Custom scss not in SWC        //
 //////////////////////////////////////////////////////////////

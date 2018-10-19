@@ -7,6 +7,14 @@ import SynapseImage from "./widgets/SynapseImage";
 import katex from 'katex'
 
 const uuidv4 = require('uuid/v4');
+const TOC_CLASS = {
+    1: 'toc-indent1',
+    2: 'toc-indent2',
+    3: 'toc-indent3',
+    4: 'toc-indent4',
+    5: 'toc-indent5',
+    6: 'toc-indent6',
+}
 
 // Only because in the test enviornment there is an issue with importing
 // react-plot which in turn imports mapboxgl which in turn defines a function
@@ -377,13 +385,14 @@ class MarkdownSynapse extends React.Component {
 
     renderSynapseTOC(originalMarkup) {
         // for TOC
+
         let tocHeadersRegex = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
         let elements = []
         originalMarkup.replace(tocHeadersRegex, 
             (p1,p2,p3,p4) => {
                 elements.push(<div key={uuidv4()} >
                         {
-                            <a className="link" data-anchor={p3} onClick={this.handleMarkupClick}> {'\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'.repeat(Number(p2) - 1)}  {p4} </a>
+                            <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3} onClick={this.handleMarkupClick}> {p4} </a>
                         }
                     </div>)
 
@@ -451,7 +460,7 @@ class MarkdownSynapse extends React.Component {
 
     render() {
         return (
-            <div ref={this.markupRef}>
+            <div className="markdown" ref={this.markupRef}>
                 {this.getErrorView()}
                 <span>
                     {this.processWidgets()}
