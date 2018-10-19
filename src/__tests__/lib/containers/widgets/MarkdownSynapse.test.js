@@ -1,9 +1,7 @@
 import React from 'react';
-import {shallow, configure, mount} from 'enzyme'
+import {configure, mount} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
-import renderer from 'react-test-renderer'; // ES6
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse';
-import SynapseImage from 'lib/containers/widgets/SynapseImage'
 import Bookmark from 'lib/containers/widgets/Bookmarks'
 
 configure({ adapter: new Adapter() });
@@ -38,7 +36,7 @@ describe('renders widgets ', () => {
         hasSynapseResources={true}/>
     );
   
-    expect(wrapper.html()).toEqual(`<div><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\"><span><p></p>
+    expect(wrapper.html()).toEqual(`<div class=\"markdown\"><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\"><span><p></p>
 </span></span><div></div></div>`)
     expect(wrapper.find(Bookmark)).toHaveLength(0)
   });
@@ -55,7 +53,7 @@ describe('renders widgets ', () => {
        hasSynapseResources={true}/>
    );
 
-   expect(wrapper.html()).toEqual("<div><span><span><p><a href=\"\" id=\"ref1\">[1]</a></p>\n</span></span><div></div></div>")
+   expect(wrapper.html()).toEqual("<div class=\"markdown\"><span><span><p><a href=\"\" id=\"ref1\">[1]</a></p>\n</span></span><div></div></div>")
  });
   
 })
