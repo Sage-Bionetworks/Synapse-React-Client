@@ -28,7 +28,7 @@ class CheckboxGroup extends React.Component {
     render() {
         const {element} = this.props
         let children = []
-        let colorGradient = new ColorGradient(0)
+        let colorGradient = new ColorGradient(this.props.rgbIndex)
 
         element.facetValues.sort((a,b) => {return b.count - a.count})
 
@@ -150,7 +150,7 @@ class Facets extends React.Component {
             (element) => {
                 if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                     let group = <CheckboxGroup 
-                                    RGB={this.props.RGB}
+                                    rgbIndex={this.props.rgbIndex}
                                     filter={this.props.filter}
                                     key={element.columnName}
                                     selectedFacets={selectedFacets}

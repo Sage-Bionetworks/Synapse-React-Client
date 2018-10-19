@@ -181,7 +181,7 @@ export default class QueryWrapper extends React.Component {
         let menu = false
         if (this.props.showMenu) {
             menu = <Menu
-                    RGB={this.props.RGB}
+                    rgbIndex={this.props.rgbIndex}
                     updateParentState={this.updateParentState} 
                     executeQueryRequest={this.executeQueryRequest}
                     executeInitialQueryRequest={this.executeInitialQueryRequest}
@@ -213,7 +213,7 @@ export default class QueryWrapper extends React.Component {
                                                         filter: this.state.currentFacet ? this.state.currentFacet: this.props.filter,
                                                         updateParentState: this.updateParentState,
                                                         updateParentFilter: this.updateParentFilter,
-                                                        RGB: this.props.RGB,
+                                                        rgbIndex: this.props.rgbIndex,
                                                         showNothing: this.state.showNothing
                                                     }
                                                 )

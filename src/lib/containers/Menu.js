@@ -1,4 +1,5 @@
 import React from 'react'
+import ColorGradient from './ColorGradient';
 
 // will take in a default facet
 export default class Menu extends React.Component {
@@ -37,6 +38,8 @@ export default class Menu extends React.Component {
         if (data.length === 0) {
             return false
         }
+        const colorGradient = new ColorGradient(this.props.rgbIndex)
+        const originalColor = colorGradient.getOriginalColor()
         return (
             <React.Fragment>
                   {
@@ -45,12 +48,11 @@ export default class Menu extends React.Component {
                               let style = {}
                               let selection = (this.state.currentFacet ? this.state.currentFacet: this.props.filter)
                               let active = ""
-                              const colorGradient = `rgb(${this.props.RGB[0]},${this.props.RGB[1]},${this.props.RGB[2]})` 
                               if (selection === el.columnName) {
-                                style.background = colorGradient
+                                style.background = originalColor
                                 // below has to be set so the pseudo element created will inherit its color
                                 // appropriately
-                                style.borderLeftColor = colorGradient
+                                style.borderLeftColor = originalColor
                                 style.color =  "black"
                                 active = "SRC-pointed"
                             } else {
