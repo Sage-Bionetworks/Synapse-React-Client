@@ -7,6 +7,7 @@ import SynapseImage from "./widgets/SynapseImage";
 import katex from 'katex'
 
 const uuidv4 = require('uuid/v4');
+
 const TOC_CLASS = {
     1: 'toc-indent1',
     2: 'toc-indent2',
@@ -15,6 +16,9 @@ const TOC_CLASS = {
     5: 'toc-indent5',
     6: 'toc-indent6',
 }
+
+const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
+const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
 
 // Only because in the test enviornment there is an issue with importing
 // react-plot which in turn imports mapboxgl which in turn defines a function
@@ -279,11 +283,9 @@ class MarkdownSynapse extends React.Component {
             }
         )
 
-        // for TOC
-        let tocHeadersRegex = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
         let tocId = "SRC-header-"
         let tocIdCount = 1
-        markup = markup.replace(tocHeadersRegex,
+        markup = markup.replace(TOC_HEADER_REGEX,
             (match) => {
                 // replace with id so we can target them alter with click events
                 let matchWithId = `${match.substring(0,3)} id="${tocId}${tocIdCount++}"${match.substring(3)}`
@@ -386,9 +388,8 @@ class MarkdownSynapse extends React.Component {
     renderSynapseTOC(originalMarkup) {
         // for TOC
 
-        let tocHeadersRegex = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
         let elements = []
-        originalMarkup.replace(tocHeadersRegex, 
+        originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, 
             (p1,p2,p3,p4) => {
                 elements.push(<div key={uuidv4()} >
                         {
