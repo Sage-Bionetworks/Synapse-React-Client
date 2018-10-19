@@ -8,6 +8,18 @@ import katex from 'katex'
 
 const uuidv4 = require('uuid/v4');
 
+const TOC_CLASS = {
+    1: 'toc-indent1',
+    2: 'toc-indent2',
+    3: 'toc-indent3',
+    4: 'toc-indent4',
+    5: 'toc-indent5',
+    6: 'toc-indent6',
+}
+
+const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
+const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
+
 // Only because in the test enviornment there is an issue with importing
 // react-plot which in turn imports mapboxgl which in turn defines a function
 // that causes an error
@@ -88,11 +100,11 @@ class MarkdownSynapse extends React.Component {
         this.renderSynapseButton = this.renderSynapseButton.bind(this)
         this.renderSynapseImage = this.renderSynapseImage.bind(this)
         this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
+        this.renderSynapseTOC = this.renderSynapseTOC.bind(this)
         
         this.getErrorView = this.getErrorView.bind(this)
         this.createMarkup = this.createMarkup.bind(this)
         this.addBookmarks = this.addBookmarks.bind(this)
-        this.handleMarkupClick = this.handleMarkupClick.bind(this)
     }
 
     componentWillUnmount() {
@@ -101,8 +113,35 @@ class MarkdownSynapse extends React.Component {
 
     // manually handle clicks to anchor tags
     handleLinkClicks(event) {
-        if (event.target.tagName === "A") {
+        event.preventDefault()
+        if (event.target.tagName === "A" && event.target.getAttribute("data-anchor") === null && event.target.id === "") {
             window.open(event.target.href, '_blank')
+        } else if (event.target.id.substring(0,3) === "ref") {
+            let referenceNumber = Number(event.target.id.substring(3)) // e.g. ref2 => '2'
+            let goTo = this.markupRef.current.querySelector(`#bookmark${referenceNumber - 1}`);
+            try {
+                goTo.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+            catch (e) {
+                console.log('error on scroll', e);
+            }
+        } else if (event.target.getAttribute("data-anchor") !== null) {
+            let idOfContent = event.target.getAttribute("data-anchor")
+            let goTo = this.markupRef.current.querySelector(`#${idOfContent}`)
+            try {
+                goTo.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+            catch (e) {
+                console.log('error on scroll', e);
+            }
         }
     }
 
@@ -128,7 +167,13 @@ class MarkdownSynapse extends React.Component {
                     "li": ["class"],
                     'table': ["class"],
                     'th': ['class'],
-                    'thead': ['class']
+                    'thead': ['class'],
+                    'h1': ['toc'],
+                    'h2': ['toc'],
+                    'h3': ['toc'],
+                    'h4': ['toc'],
+                    'h5': ['toc'],
+                    'h6': ['toc']
                 }
             }
         )
@@ -164,7 +209,6 @@ class MarkdownSynapse extends React.Component {
      * @memberof MarkdownSynapse
      */
     addBookmarks() {
-
         markdownitSynapse.resetFootnotes()
         this.createMarkup(this.state.text)
         let footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
@@ -233,13 +277,25 @@ class MarkdownSynapse extends React.Component {
         let count = 1
         let markup = this.createMarkup(this.state.text).__html.replace(/<span id="wikiReference.*?<span data-widgetparams.*?span>/g, 
             () => {
+                // replace all reference tags with id's that we can later target
                 let current = count++
                 return `<a href="" id="ref${current}">[${current}]</a>`
             }
         )
+
+        let tocId = "SRC-header-"
+        let tocIdCount = 1
+        markup = markup.replace(TOC_HEADER_REGEX,
+            (match) => {
+                // replace with id so we can target them alter with click events
+                let matchWithId = `${match.substring(0,3)} id="${tocId}${tocIdCount++}"${match.substring(3)}`
+                return matchWithId
+            }    
+        )
+        
         let groups = markup.split(/(<span data-widgetparams.*?span>)/)
         if (groups.length > 0) {
-            return this.processWidgetOrDomElement(groups)
+            return this.processWidgetOrDomElement(groups, markup)
         }
     }
     
@@ -257,10 +313,14 @@ class MarkdownSynapse extends React.Component {
         });
     }
     
-    processWidgetMappings(rawWidgetString, index) {
+    processWidgetMappings(rawWidgetString, index, originalMarkup) {
         let widgetstring = rawWidgetString.match(/data-widgetparams=("(.*?)")/)
         widgetstring = this.decodeXml(widgetstring[2])
         let questionIndex = widgetstring.indexOf("?")
+        if (questionIndex === -1) {
+            // e.g. toc is passed, there are no params
+            return this.renderWidget(widgetstring, {}, originalMarkup);
+        }
         let widgetType = widgetstring.substring(0, questionIndex);
         let widgetparamsMapped = {};
         // map out params and their values
@@ -270,15 +330,15 @@ class MarkdownSynapse extends React.Component {
             value = decodeURIComponent(value);
             widgetparamsMapped[key] = value;
         });
-        return this.renderWidget(widgetType, widgetparamsMapped, index);
+        return this.renderWidget(widgetType, widgetparamsMapped, originalMarkup);
     } 
     
-    processWidgetOrDomElement (widgetsToBe) {
+    processWidgetOrDomElement (widgetsToBe, originalMarkup) {
         let widgets = []
         for(let i = 0; i < widgetsToBe.length;i++) {
             let text = widgetsToBe[i]
             if (text.indexOf("<span data-widgetparams") !== -1) {
-                widgets.push(this.processWidgetMappings(text, i))
+                widgets.push(this.processWidgetMappings(text, i, originalMarkup))
             } else {
                 widgets.push(<span key={uuidv4()} dangerouslySetInnerHTML={{__html: text}}></span>)
             }
@@ -286,7 +346,7 @@ class MarkdownSynapse extends React.Component {
         return widgets
     }
     
-    renderWidget (widgetType, widgetparamsMapped) {
+    renderWidget (widgetType, widgetparamsMapped, originalMarkup) {
         switch (widgetType) {
             case "buttonlink":
                 return this.renderSynapseButton(widgetparamsMapped)
@@ -294,6 +354,8 @@ class MarkdownSynapse extends React.Component {
                 return this.renderSynapseImage(widgetparamsMapped);
             case "plot":
                 return this.renderSynapsePlot(widgetparamsMapped);
+            case "toc":
+                return this.renderSynapseTOC(originalMarkup)
             default:
                 return
         }
@@ -321,6 +383,29 @@ class MarkdownSynapse extends React.Component {
             // with the file attachnent list
             return <SynapseImage key={uuidv4()} token={this.props.token} synapseId={widgetparamsMapped.synapseId} />;
         }
+    }
+
+    renderSynapseTOC(originalMarkup) {
+        // for TOC
+
+        let elements = []
+        originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, 
+            (p1,p2,p3,p4) => {
+                elements.push(<div key={uuidv4()} >
+                        {
+                            <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3} onClick={this.handleMarkupClick}> {p4} </a>
+                        }
+                    </div>)
+
+                return (
+                    ""
+                )
+        })
+        return (<div key={uuidv4()}>
+                    {
+                        elements.map(el =>{ return el })
+                    }
+                </div>)
     }
     
     componentDidMount() {
@@ -360,7 +445,7 @@ class MarkdownSynapse extends React.Component {
         event.preventDefault();
         if (event.target.tagName.toLowerCase() === 'a' && event.target.id.substring(0,3) === "ref") {  // check they clicked on anchor tag
             let referenceNumber = Number(event.target.id.substring(3)) // e.g. ref2 => '2'
-            let goTo = this.footnoteRef.current.querySelector(`a#bookmark${referenceNumber - 1}`);
+            let goTo = this.footnoteRef.current.querySelector(`#bookmark${referenceNumber - 1}`);
             try {
                 goTo.scrollIntoView({
                     behavior: 'smooth',
@@ -376,12 +461,12 @@ class MarkdownSynapse extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="markdown" ref={this.markupRef}>
                 {this.getErrorView()}
-                <span ref={this.markupRef} onClick={this.handleMarkupClick}>
+                <span>
                     {this.processWidgets()}
                 </span>
-                <div ref={this.footnoteRef}>
+                <div>
                     {this.addBookmarks()}
                 </div>
             </div>

@@ -50,7 +50,7 @@ class CheckboxGroup extends React.Component {
                 }
                 style.color = "black"
                 if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-                    facetValue.displayValue = 'Not Set';
+                    facetValue.displayValue = 'unannotated';
                 } else {
                     facetValue.displayValue = facetValue.value;
                 }
