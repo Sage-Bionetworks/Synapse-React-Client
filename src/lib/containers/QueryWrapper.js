@@ -88,7 +88,6 @@ export default class QueryWrapper extends React.Component {
         this.setState({
             isLoading: true
         })
-
         SynapseClient.getQueryTableResults(queryRequest, this.props.token).then(
             data => {
                 let newState = {data, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false}
