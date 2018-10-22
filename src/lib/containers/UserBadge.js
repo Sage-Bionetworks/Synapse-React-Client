@@ -6,6 +6,7 @@ import UserBadgeView from './UserBadgeView'
 export default class UserBadge extends React.Component {
 
     constructor() {
+        super()
         this.state = {}
     }
 
@@ -17,7 +18,6 @@ export default class UserBadge extends React.Component {
         );   
     }
 
- 
     render() { 
         return (<UserBadgeView data={this.state.data}/>)
     }
