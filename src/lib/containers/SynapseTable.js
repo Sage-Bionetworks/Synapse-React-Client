@@ -284,10 +284,12 @@ export default class SynapseTable extends React.Component {
                 <div className="container-fluid">
                     <div className="row">
                         <span>
-                            {
-                                this.props.isLoading ? (<div> updating </div>): ""
-                            }
-                            <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>
+                            {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>}
+                            <span
+                                className={this.props.isLoading? "spinner": ""}
+                                style={this.props.isLoading? {}: {display: "none"}}
+                            />
+                            {this.props.isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
                         </span>
                         <span className="SRC-floatRight">
                             {/* dropdown menu below */}
