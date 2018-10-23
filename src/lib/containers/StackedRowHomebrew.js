@@ -217,7 +217,11 @@ export default class StackedRowHomebrew extends React.Component {
                     </Measure>
                 </div>
                 {this.state.hoverText && <div className="row SRC-grayBackground">
-                    <p className="SRC-noMargin" > <strong> {this.props.filter}: {this.state.hoverText} </strong> </p>
+                    <p className="SRC-noMargin" >
+                        <strong> 
+                            {this.props.filter}: {this.state.hoverText === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? "unannotated": this.props.filter } 
+                        </strong> 
+                    </p>
                     <p className="SRC-noMargin SRC-primary-text-color" > {this.state.hoverTextCount} files </p>
                 </div>}
             </div>

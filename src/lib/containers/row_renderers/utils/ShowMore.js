@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CHAR_COUNT_CUTOFF = 100
+const CHAR_COUNT_CUTOFF = 400
 
 export default class ShowMore extends React.Component {
 
@@ -27,15 +27,22 @@ export default class ShowMore extends React.Component {
     render () {
         // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
         let {summary} = this.props
+        let summaryView = ""
         if (!this.state.showMore && summary && summary.length >= CHAR_COUNT_CUTOFF) {
-            summary = summary.split(".")
-            summary = summary.slice(0, summary.length / 2) // remove text after last sentence
-            summary = summary.join(".") + "..."  // add back period to the end
+            summary = summary.split(" ")
+            // find num words to join such that its >= char_count_cutoff
+            let i = 0
+            while (summaryView.length < CHAR_COUNT_CUTOFF) {
+                summaryView += summary[i] + " "
+                i++
+            }
+
         }
         return (
             <React.Fragment>
-                {summary}
-                {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>Show More </a>}
+                {!this.state.showMore && summaryView}
+                {this.state.showMore && summary}
+                {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>...Show More </a>}
             </React.Fragment>
         )
     }

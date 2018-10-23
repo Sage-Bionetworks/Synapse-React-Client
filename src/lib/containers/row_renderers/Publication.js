@@ -39,7 +39,7 @@ class Publication extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Publication</div>
-                    <div className="SRC-title"><h3><a href={`https://dx.doi.org/${doi}`}>{citation}</a></h3></div>
+                    <div className="SRC-title"><h3><a target="_blank" href={`https://dx.doi.org/${doi}`}>{citation}</a></h3></div>
                     <div className="SRC-cardAnnotations">
                         <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
                     </div>
