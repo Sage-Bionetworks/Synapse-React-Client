@@ -13,7 +13,7 @@ export default class UserBadgeBatch extends React.Component {
     }
 
     componentDidMount() {
-        getUserProfileData(this.props.synapseIds, this.props.token).then(
+        getUserProfileData(this.props.principalIds, this.props.token).then(
             data => {
                 this.setState({data})
             }

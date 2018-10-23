@@ -1,7 +1,7 @@
 import * as SynapseClient from '../utils/SynapseClient'
 
-function getUserProfileData (synapseIds, token) {
-    return SynapseClient.getUserProfiles(synapseIds).then(data => {
+function getUserProfileData (principalIds, token) {
+    return SynapseClient.getUserProfiles(principalIds).then(data => {
         // people will either have a profile pic file handle id
         // or they won't. Have to break this down into two groups.
         let withProfilePic = data.list.filter(value => {

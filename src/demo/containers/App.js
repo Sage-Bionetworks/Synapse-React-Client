@@ -175,7 +175,7 @@ class App extends Component {
         </UserTeam>
 
         <UserBadgeBatch
-          synapseIds={
+          principalIds={
             [
               3342573,
               3374422,
