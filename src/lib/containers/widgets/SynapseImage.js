@@ -87,6 +87,13 @@ class SynapseImage extends React.Component {
     }
 
     render () {
+        let imgStyle = {}
+        let {params} = this.props
+        
+        if (params.align) {
+            imgStyle.float = params.align.toLowerCase()
+        }
+        
         if (this.state.isLoaded) {
             return (
                 null
@@ -94,7 +101,12 @@ class SynapseImage extends React.Component {
         } else {
             return (
                 <React.Fragment>
-                    <img alt="synapse" className="img-fluid" src={this.state.preSignedURL}></img>
+                    <img
+                        alt="synapse"
+                        className="img-fluid"
+                        src={this.state.preSignedURL}
+                        style={imgStyle}
+                    />
                 </React.Fragment>
             )
         }
