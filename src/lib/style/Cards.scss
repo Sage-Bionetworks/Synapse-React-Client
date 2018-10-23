@@ -37,7 +37,6 @@ $text-color-lighter: #898989;
         margin: 0;
         font-size: $text-size-title !important;
         font-weight: 700;
-        text-transform: capitalize ;
       }
     }
 
@@ -45,9 +44,6 @@ $text-color-lighter: #898989;
     text-transform: uppercase;
     color: $text-color-lighter;
   }
-
-  
- 
 
   .SRC-cardThumbnail {
     display: inline-block;
