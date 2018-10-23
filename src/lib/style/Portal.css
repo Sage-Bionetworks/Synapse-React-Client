@@ -176,6 +176,32 @@
 .toc-indent6 {
   margin-left: 185px; }
 
+.userProfileImage {
+  border-radius: 50%;
+  max-width: none;
+  height: 23px;
+  width: 23px; }
+
+/*-------------------------------------------------------*/
+/* ### Loading spinner ### */
+/*-------------------------------------------------------*/
+@keyframes spinner {
+  to {
+    transform: rotate(360deg); } }
+
+.spinner {
+  box-sizing: border-box;
+  display: inline-block;
+  margin: auto;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-image: url("../assets/logos/logo.svg");
+  animation: spinner 1s linear infinite;
+  background-size: 20px 20px;
+  background-repeat: no-repeat; }
+
+/* End loading spinner */
 svg:hover {
   -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));

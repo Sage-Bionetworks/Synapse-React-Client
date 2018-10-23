@@ -18,6 +18,7 @@ import QueryWrapper from 'lib/containers/QueryWrapper'
 import {Facets} from 'lib/containers/Facets';
 import StackedRowHomebrew from 'lib/containers/StackedRowHomebrew';
 import SynapseTable from 'lib/containers/SynapseTable'
+import UserBadgeBatch from 'lib/containers/UserBadgeBatch'
 
 import SynapseTableCardView from 'lib/containers/SynapseTableCardView'
 import syn16787123 from '../../JSON_test_data/syn16787123.json'
@@ -172,6 +173,16 @@ class App extends Component {
                   ownerId={this.state.ownerId}
                   getUserTeamEndpoint={SynapseClient.getUserTeamList}>
         </UserTeam>
+
+        <UserBadgeBatch
+          principalIds={
+            [
+              3342573,
+              3374422,
+              1131050
+            ]
+          }
+        />
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
       

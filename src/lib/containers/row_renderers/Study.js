@@ -28,6 +28,7 @@ export default class Study extends React.Component {
         const projectStatus = data[schema.projectStatus]
         const fundingAgency = data[schema.fundingAgency]
         const dataStatus = data[schema.dataStatus]
+        const summarySource = data[schema.summarySource]
         // const institutions = data[schema.institutions]
 
         const values = [
@@ -45,7 +46,7 @@ export default class Study extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Study</div>
-                    <div className="SRC-title"><a>{projectName}</a></div>
+                    <div className="SRC-title"> <a href={summarySource}>{projectName}</a> </div>
                     <div className="SRC-author">{projectLeads}</div>
                     <Utils.ShowMore onClick={this.handleClick} summary={summary} />
                     <div className="SRC-cardAnnotations">

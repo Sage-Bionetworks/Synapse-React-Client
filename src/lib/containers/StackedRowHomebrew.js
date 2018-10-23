@@ -4,7 +4,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
-import calculateTextColor from './calculateTextColor'
 import ColorGradient from './ColorGradient'
 
 library.add(faAngleLeft)
@@ -110,7 +109,7 @@ export default class StackedRowHomebrew extends React.Component {
     render () {
         let {data} = this.props
         // while loading
-        if (data.length === 0 || (this.props.isLoading && this.props.loadingScreen !== undefined )) {
+        if (data.length === 0) {
             return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> Loading... </div>))
         }
 
@@ -150,13 +149,13 @@ export default class StackedRowHomebrew extends React.Component {
                                 {x_data.map(
                                     (obj, index) => {
 
+                                        let textColor = colorGradient.getTextColor()
                                         let curColor = colorGradient.getColor()
                                         let rectStyle
                                         
                                         // TODO: find a way to calculate text color with opacity factored in
                                         // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
                                         // let textColor = calculateTextColor(newR,newG,newB)
-                                        let textColor = "black"
 
                                         const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
 
@@ -168,7 +167,6 @@ export default class StackedRowHomebrew extends React.Component {
                                             rectStyle = {
                                                 fill: `#C4C4C4`
                                             }
-                                            textColor = "white"
                                         }
                                         
                                         let svgHeight = 50

@@ -40,16 +40,16 @@ class Dataset extends React.Component {
 
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Dataset </div>
-                    <div className="SRC-title"><h3><a>{datasetName}</a></h3></div>
+                    <div className="SRC-title"><h3><a href={`https://www.synapse.org/#!Synapse:${id}`}>{datasetName}</a></h3></div>
+                    <div className="SRC-cardAction SRC-floatRight">
+                        <button onClick={this.handleLinkClick(id)} type="button">Download Dataset</button>
+                    </div>
                     <div className="SRC-description"> {summary} </div>
                     <div className="SRC-cardAnnotations">
                         <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
                     </div>
                 </div>
 
-                <div className="SRC-cardAction">
-                    <button onClick={this.handleLinkClick(id)} type="button">Download Dataset</button>
-                </div>
                 <Utils.CardFooter values={values}/>
             </div>
         )

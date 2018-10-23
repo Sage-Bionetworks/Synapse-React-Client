@@ -4,7 +4,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import calculateTextColor from './calculateTextColor'
 import ColorGradient from './ColorGradient';
 
 // import * as SynapseConstants from '../../lib/utils/SynapseConstants'
@@ -36,6 +35,7 @@ class CheckboxGroup extends React.Component {
             (facetValue, index) => {
                 let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count
                 // caution when using uuId's to not cause extra re-renders from this always changing
+                let textColor = colorGradient.getTextColor()
                 let curColor = colorGradient.getColor()
                 let style = {}
                 const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
@@ -48,7 +48,7 @@ class CheckboxGroup extends React.Component {
                         background: `#C4C4C4`
                     }
                 }
-                style.color = "black"
+                style.color = textColor
                 if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
                     facetValue.displayValue = 'unannotated';
                 } else {

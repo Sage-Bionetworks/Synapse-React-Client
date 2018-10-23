@@ -27,7 +27,7 @@ export default class Tool extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Tool</div>
-                    <div className="SRC-title"><h3><a>{softwareName}</a></h3></div>
+                    <div className="SRC-title"><h3><a href={softwareLink} target="_blank">{softwareName}</a></h3></div>
                     <div className="SRC-description">{summary}</div>
                 </div>
                 <div className="SRC-cardAction">

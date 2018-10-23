@@ -36,6 +36,11 @@ export default class ColorGradient {
         return `${COLOR_PALETTE[this.originalColor]},100)`
     }
 
+    getTextColor() {
+        // dark, dark, light, light, light, light, light, light, dark, dark  
+        return ((this.index % 10 < 2) || (this.index % 10 > 7)) ? "white" : "black"
+    }
+
     getColor() {
         let opacityIndex = OPACITY_WHEEL[this.index % 10]
         if ((this.index % 10) === OPACITY_WHEEL.length / 2) {

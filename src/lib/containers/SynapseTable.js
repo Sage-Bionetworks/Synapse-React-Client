@@ -254,13 +254,42 @@ export default class SynapseTable extends React.Component {
         // shouldn't be displayed
         let pastZero = this.props.getLastQueryRequest().query.offset > 0
 
+        let x_data = [];
+        data.facets.forEach(item => {
+            if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
+                item.facetValues.forEach(facetValue => {
+                    if (item.columnName) {
+                        x_data.push({ columnName: item.columnName, ...facetValue });
+                    }
+                });
+            }
+        });
+        
+        // edge case -- if they are all false then they are considered all true..
+        // sum up the counts of data
+        let anyTrue = false
+        let totalAllFalseCase = 0
+        let totalStandardCase = 0
+        for (let key in x_data) {
+             if (x_data.hasOwnProperty(key)) { 
+                 anyTrue = anyTrue || x_data[key].isSelected
+                 totalAllFalseCase += x_data[key].count 
+                 totalStandardCase += x_data[key].isSelected ?  x_data[key].count : 0
+            } 
+        }
+        let total = anyTrue ? totalStandardCase: totalAllFalseCase
+
         return (
             <React.Fragment>
                 <div className="container-fluid">
                     <div className="row">
                         <span>
-                            {/* TODO: Actually use query count or some metric */}
-                            <strong> Showing {this.props.showNothing ? 0 : this.props.data.queryResult.queryResults.rows.length} Files </strong>
+                            {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>}
+                            <span
+                                className={this.props.isLoading? "spinner": ""}
+                                style={this.props.isLoading? {}: {display: "none"}}
+                            />
+                            {this.props.isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
                         </span>
                         <span className="SRC-floatRight">
                             {/* dropdown menu below */}
