@@ -28,7 +28,7 @@ export default class Funder extends React.Component {
         const abbreviation = data[schema.abbreviation]
         const logo = logoLinks[abbreviation]
         
-        let orgPath = `${window.location.origin}/#/${organizationPath}`
+        let orgPath = `${window.location.origin}/#${organizationPath}`
 
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
