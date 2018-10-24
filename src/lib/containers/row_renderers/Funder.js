@@ -20,7 +20,7 @@ export default class Funder extends React.Component {
     }
 
     render () {
-        const {data, schema} = this.props
+        const {data, schema, funderURL} = this.props
         const organizationName = data[schema.organizationName]
         const summary = data[schema.summary]
         const website = data[schema.website]
@@ -34,7 +34,7 @@ export default class Funder extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Organization</div>
-                    <div className="SRC-title"><h3><a onClick={this.handleLinkClick(website)}>{organizationName}</a></h3></div>
+                    <div className="SRC-title"><h3><a  target="_blank" href={funderURL}>{organizationName}</a></h3></div>
                     <div className="SRC-website"><a target="_blank" href={website}>{website}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>
