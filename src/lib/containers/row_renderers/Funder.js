@@ -22,10 +22,13 @@ export default class Funder extends React.Component {
     render () {
         const {data, schema} = this.props
         const organizationName = data[schema.organizationName]
+        const organizationPath = data[schema.organizationPath]
         const summary = data[schema.summary]
         const website = data[schema.website]
         const abbreviation = data[schema.abbreviation]
         const logo = logoLinks[abbreviation]
+        
+        let orgPath = `${window.location.origin}/#/${organizationPath}`
 
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
@@ -34,7 +37,7 @@ export default class Funder extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Organization</div>
-                    <div className="SRC-title"><h3><a onClick={this.handleLinkClick(website)}>{organizationName}</a></h3></div>
+                    <div className="SRC-title"><h3><a href={orgPath}>{organizationName}</a></h3></div>
                     <div className="SRC-website"><a target="_blank" href={website}>{website}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>

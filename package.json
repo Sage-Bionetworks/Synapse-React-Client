@@ -66,7 +66,8 @@
     "start-js": "NODE_PATH=./src react-scripts start",
     "start": "NODE_PATH=./src npm-run-all -p watch-css start-js",
     "build-js": "NODE_PATH=./src rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
-    "build": "NODE_PATH=./src npm-run-all build-css build-js",
+    "rebuild-css": "NODE_PATH=./src npm rebuild node-sass ",
+    "build": "NODE_PATH=./src npm-run-all rebuild-css build-css build-js",
     "test": "NODE_PATH=./src react-scripts test --env=jsdom",
     "test:coverage": "npm test -- --coverage",
     "eject": "react-scripts eject"
