@@ -90,7 +90,7 @@ class SynapseImage extends React.Component {
         let imgStyle = {}
         let {params} = this.props
         
-        if (params.align) {
+        if (params && params.align) {
             imgStyle.float = params.align.toLowerCase()
         }
         

@@ -36,7 +36,7 @@ describe('renders widgets ', () => {
         hasSynapseResources={true}/>
     );
   
-    expect(wrapper.html()).toEqual(`<div class=\"markdown\"><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\"><span><p></p>
+    expect(wrapper.html()).toEqual(`<div class=\"markdown\"><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\" style=\"float: none;\"><span><p></p>
 </span></span><div></div></div>`)
     expect(wrapper.find(Bookmark)).toHaveLength(0)
   });
