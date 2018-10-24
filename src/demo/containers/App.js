@@ -275,7 +275,6 @@ class App extends Component {
         >
           <SynapseTableCardView 
             type={SynapseConstants.FUNDER}
-            funderURL={"https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"}
           />
         </StaticQueryWrapper>
       </div>
