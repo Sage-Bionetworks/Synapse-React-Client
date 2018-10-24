@@ -52,10 +52,10 @@ class SynapseTableCardView extends React.Component {
     }
 
     render () {
-        const {data, limit} = this.props
-        
-        if (data.length === 0) {
-            return (<div className="container"> Login to see this resource </div>)
+        const {data, limit, hideOrganizationLink} = this.props
+
+        if (Object.keys(data).length === 0) {
+            return (<div className="container"> </div>)
         }
 
         let schema = {}
@@ -64,7 +64,7 @@ class SynapseTableCardView extends React.Component {
                 schema[element.name] = index
         });
 
-        return (<RowContainer limit={limit} data={data} schema={schema}>
+        return (<RowContainer hideOrganizationLink={hideOrganizationLink} limit={limit} data={data} schema={schema}>
                     {this.renderChild()}
                 </RowContainer>)
     }
