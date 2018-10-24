@@ -43,7 +43,7 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     componentDidMount() {
-        if (!this.props.json) {
+        if (this.props.json === null) {
             this.executeInitialQueryRequest()
         } else {
             this.setState({

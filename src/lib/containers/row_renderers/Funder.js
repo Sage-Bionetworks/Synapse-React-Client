@@ -37,7 +37,16 @@ export default class Funder extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Organization</div>
-                    <div className="SRC-title"><h3><a href={orgPath}>{organizationName}</a></h3></div>
+                    <div className="SRC-title">
+                        <h3>
+                            {
+                                this.props.hideOrganizationLink && organizationName
+                            }
+                            {
+                                !this.props.hideOrganizationLink && <a href={orgPath}>{organizationName}</a>
+                            }
+                        </h3>
+                    </div>
                     <div className="SRC-website"><a target="_blank" href={website}>{website}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>

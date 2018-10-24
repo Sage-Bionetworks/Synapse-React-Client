@@ -277,6 +277,15 @@ class App extends Component {
             type={SynapseConstants.FUNDER}
           />
         </StaticQueryWrapper>
+
+        <StaticQueryWrapper
+          json={syn16858699}        
+        >
+          <SynapseTableCardView 
+            hideOrganizationLink={true}
+            type={SynapseConstants.FUNDER}
+          />
+        </StaticQueryWrapper>
       </div>
     );
   }
