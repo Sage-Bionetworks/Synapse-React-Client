@@ -287,6 +287,7 @@ import syn16787123 from 'folder/to/syn16787123.json'
 | ------------- | ------------- |
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
 | limit | The number of cards to show, e.g limit = 3 will only render 3 cards  |
+| hideOrganizationLink | This is a boolean, set to true it will hide the organization's link |
 
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
