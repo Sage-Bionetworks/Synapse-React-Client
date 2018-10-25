@@ -6,6 +6,9 @@ const ChipContainer = ({chips}) => {
         <React.Fragment>
             {chips.map(
                 el => {
+                    if (!el) {
+                        return (false)
+                    }
                     return (<span key={uuidv4()}> {el}</span>)
                 }
             )}

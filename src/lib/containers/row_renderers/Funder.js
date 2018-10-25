@@ -29,6 +29,16 @@ export default class Funder extends React.Component {
         const logo = logoLinks[abbreviation]
         
         let orgPath = `${window.location.origin}/#${organizationPath}`
+        
+        // remove leading http(s):// and trailing /
+        let websiteDisplayName = website.replace("https://", "")
+        websiteDisplayName = websiteDisplayName.replace("http://", "")
+
+        if (websiteDisplayName.charAt(websiteDisplayName.length - 1) === "/") {
+            websiteDisplayName = websiteDisplayName.substring(0,websiteDisplayName.length - 1)
+        }
+
+        let isOnOrgPath = window.location.hash.substring(1) === organizationPath
 
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
@@ -47,12 +57,12 @@ export default class Funder extends React.Component {
                             }
                         </h3>
                     </div>
-                    <div className="SRC-website"><a target="_blank" href={website}>{website}</a></div>
+                    <div className="SRC-website"><a target="_blank" href={website}>{websiteDisplayName}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>
-                <div className="SRC-cardAction">
-                    <button onClick={this.handleLinkClick(website)} type="button">View Funded Research</button>
-                </div>
+                {!isOnOrgPath && <div className="SRC-cardAction">
+                    <button onClick={this.handleLinkClick(orgPath)} type="button">View Funded Research</button>
+                </div>}
             </div>
         )
     }
