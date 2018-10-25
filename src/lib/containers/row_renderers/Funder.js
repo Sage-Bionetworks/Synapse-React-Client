@@ -38,6 +38,8 @@ export default class Funder extends React.Component {
             websiteDisplayName = websiteDisplayName.substring(0,websiteDisplayName.length - 1)
         }
 
+        let isOnOrgPath = window.location.hash.substring(1) === organizationPath
+
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
                 <div className="SRC-cardThumbnail">
@@ -58,9 +60,9 @@ export default class Funder extends React.Component {
                     <div className="SRC-website"><a target="_blank" href={website}>{websiteDisplayName}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>
-                <div className="SRC-cardAction">
-                    <button onClick={this.handleLinkClick(website)} type="button">View Funded Research</button>
-                </div>
+                {!isOnOrgPath && <div className="SRC-cardAction">
+                    <button onClick={this.handleLinkClick(orgPath)} type="button">View Funded Research</button>
+                </div>}
             </div>
         )
     }

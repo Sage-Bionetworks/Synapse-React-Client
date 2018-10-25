@@ -37,13 +37,7 @@ export default class Study extends React.Component {
             ["DATA", dataStatus],
             ["PUBLICATION", "NONE"]
         ]
-        let chips = []
-        if (tumorType) {
-            chips.push(tumorType)
-        }
-        if (diseaseFocus) {
-            chips.push(diseaseFocus)
-        }
+        let chips = [tumorType, diseaseFocus]
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
