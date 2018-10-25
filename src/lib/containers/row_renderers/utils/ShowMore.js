@@ -36,7 +36,8 @@ export default class ShowMore extends React.Component {
                 summaryView += summary[i] + " "
                 i++
             }
-
+        } else if (summary && summary.length < CHAR_COUNT_CUTOFF) {
+            summaryView = summary
         }
         return (
             <React.Fragment>

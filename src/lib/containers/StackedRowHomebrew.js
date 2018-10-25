@@ -222,7 +222,7 @@ export default class StackedRowHomebrew extends React.Component {
                             {this.props.filter}: {this.state.hoverText === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? "unannotated": this.state.hoverText } 
                         </strong> 
                     </p>
-                    <p className="SRC-noMargin SRC-primary-text-color" > {this.state.hoverTextCount} files </p>
+                    <p className="SRC-noMargin" > {this.state.hoverTextCount} files </p>
                 </div>}
             </div>
         )

@@ -29,6 +29,8 @@ export default class Funder extends React.Component {
         const logo = logoLinks[abbreviation]
         
         let orgPath = `${window.location.origin}/#${organizationPath}`
+        let websiteDisplayName = website.replace("https://", "")
+        websiteDisplayName = websiteDisplayName.replace("http://", "")
 
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
@@ -47,7 +49,7 @@ export default class Funder extends React.Component {
                             }
                         </h3>
                     </div>
-                    <div className="SRC-website"><a target="_blank" href={website}>{website}</a></div>
+                    <div className="SRC-website"><a target="_blank" href={website}>{websiteDisplayName}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>
                 <div className="SRC-cardAction">
