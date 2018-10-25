@@ -37,7 +37,7 @@ export default class Study extends React.Component {
             ["DATA", dataStatus],
             ["PUBLICATION", "NONE"]
         ]
-
+        let chips = [tumorType, diseaseFocus]
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
@@ -46,11 +46,11 @@ export default class Study extends React.Component {
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Study</div>
-                    <div className="SRC-title"> <a target="_blank" href={summarySource}>{projectName}</a> </div>
+                    <div className="SRC-title"> <h3> <a target="_blank" href={summarySource}>{projectName}</a> </h3> </div>
                     <div className="SRC-author">{projectLeads}</div>
                     <Utils.ShowMore onClick={this.handleClick} summary={summary} />
                     <div className="SRC-cardAnnotations">
-                        <Utils.ChipContainer chips={[tumorType, diseaseFocus]}/>
+                        <Utils.ChipContainer chips={chips}/>
                     </div>
                 </div>
                 <Utils.CardFooter values={values}/>

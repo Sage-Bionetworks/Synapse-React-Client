@@ -7,7 +7,7 @@ const CardFooter = ({values}) => {
             {
                 values.map(
                     kv => {
-                        return(<div key={uuidv4()} className="SRC-row">
+                        return(<div key={uuidv4()} className="row">
                                     <div className="SRC-row-label"> {kv[0]} </div>
                                     <div className="SRC-row-data">  {kv[1]}  </div>
                                 </div>)

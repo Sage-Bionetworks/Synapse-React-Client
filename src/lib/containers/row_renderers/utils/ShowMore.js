@@ -28,7 +28,8 @@ export default class ShowMore extends React.Component {
         // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
         let {summary} = this.props
         let summaryView = ""
-        if (!this.state.showMore && summary && summary.length >= CHAR_COUNT_CUTOFF) {
+        let meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
+        if (!this.state.showMore && meetsCharRequirenent) {
             summary = summary.split(" ")
             // find num words to join such that its >= char_count_cutoff
             let i = 0
@@ -36,13 +37,14 @@ export default class ShowMore extends React.Component {
                 summaryView += summary[i] + " "
                 i++
             }
-
+        } else if (!meetsCharRequirenent) {
+            summaryView = summary
         }
         return (
             <React.Fragment>
                 {!this.state.showMore && summaryView}
                 {this.state.showMore && summary}
-                {!this.state.showMore && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>...Show More </a>}
+                {!this.state.showMore && meetsCharRequirenent && <a className="SRC-primary-text-color" onClick={this.toggleShowMore}>...Show More </a>}
             </React.Fragment>
         )
     }

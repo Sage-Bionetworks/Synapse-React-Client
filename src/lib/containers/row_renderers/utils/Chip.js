@@ -8,6 +8,9 @@ const Chip = ({type, text}) => {
     }
     return (text.split(";").map(
             text => {
+                if (!text) {
+                    return false
+                }
                 return (
                     <span 
                         key={uuidv4()}
