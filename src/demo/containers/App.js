@@ -27,6 +27,7 @@ import syn16858699 from '../../JSON_test_data/syn16858699.json'
 import syn16859448 from '../../JSON_test_data/syn16859448.json'
 import syn16857542 from '../../JSON_test_data/syn16857542.json'
 import StaticQueryWrapper from 'lib/containers/StaticQueryWrapper';
+import TeamMemberList from 'lib/containers/TeamMemberList';
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -286,6 +287,12 @@ class App extends Component {
             type={SynapseConstants.FUNDER}
           />
         </StaticQueryWrapper>
+
+        <TeamMemberList
+          id={3379644}
+          token={inDevEnv? token : this.state.token}
+        />
+
       </div>
     );
   }

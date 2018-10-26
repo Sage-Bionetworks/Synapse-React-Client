@@ -17,7 +17,9 @@ export default class UserBadgeBatch extends React.Component {
             data => {
                 this.setState({data})
             }
-        )
+        ).catch(er => {
+            console.log("Error on user badge batch call ", er)
+        })
     }
  
     render() { 

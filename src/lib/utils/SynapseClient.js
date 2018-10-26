@@ -371,7 +371,7 @@ export const getEntityBundleForVersion =
    */
   export const getTeamList =
   (sessionToken, id, fragment="", limit=10, offset=0, endpoint="https://repo-prod.prod.sagebase.org/") => {
-    let url = `repo/v1/user/${id}/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}`: ""}`
+    let url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}`: ""}`
     return doGet(url, sessionToken, endpoint)
   }
 

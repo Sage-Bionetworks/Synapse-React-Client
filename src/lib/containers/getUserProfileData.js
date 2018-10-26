@@ -7,6 +7,11 @@ function getUserProfileData (principalIds, token) {
         let withProfilePic = data.list.filter(value => {
             return value.profilePicureFileHandleId !== undefined;
         });
+
+        if (withProfilePic.length === 0) {
+            return data
+        }
+
         let fileHandleAssociationList = withProfilePic.map(value => {
             return {
                 fileHandleId: value.profilePicureFileHandleId,
