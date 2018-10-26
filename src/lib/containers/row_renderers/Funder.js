@@ -42,11 +42,11 @@ export default class Funder extends React.Component {
 
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
-                <div className="SRC-cardThumbnail">
-                    <img alt="funder logo" className="SRC-logo" src={logo} />
-                </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Organization</div>
+                    <div className="SRC-cardThumbnail">
+                        <img alt="funder logo" className="SRC-logo" src={logo} />
+                    </div>
                     <div className="SRC-title">
                         <h3>
                             {

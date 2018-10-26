@@ -360,6 +360,21 @@ export const getEntityBundleForVersion =
     return doGet(url, sessionToken, endpoint)
   }
 
+  /**
+   * Get the user's list of teams they are on
+   * 
+   * @param {*} id ownerID of the synapse user see -https://docs.synapse.org/rest/GET/teamMembers/id.html
+   * @param {*} fragment (optional) a prefix of the user's first or last name or email address (optional)
+   * @param {*} limit    (optional) the maximum number of members to return (default 10, max limit 50)
+   * @param {*} offset   (optional) the starting index of the returned results (default 0)
+   * 
+   */
+  export const getTeamList =
+  (sessionToken, id, fragment="", limit=10, offset=0, endpoint="https://repo-prod.prod.sagebase.org/") => {
+    let url = `repo/v1/user/${id}/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}`: ""}`
+    return doGet(url, sessionToken, endpoint)
+  }
+
   export const getWikiAttachmentsFromEntity = 
   (sessionToken, id, wikiId, endpoint="https://repo-prod.prod.sagebase.org/") => {
     let url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
