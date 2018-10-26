@@ -68,7 +68,6 @@ $text-color-lighter: #898989;
 
   .SRC-cardContent {
     display: inline-block;
-    max-width: 80%;
     padding-top: $baseline-grid;
 
     .SRC-author {
@@ -150,16 +149,15 @@ $text-color-lighter: #898989;
 
   &.SRC-typeFunder {
     .SRC-cardThumbnail {
-      display: block;
+      display: inline;
       float: right;
-      width: 25%;
       img {
         width: 65%;
       }
     }
     .SRC-cardContent {
       max-width: 100%;
-      width: 100%;
+      width: 90% !important;
       margin-left: $baseline-grid * 2;
       .SRC-website a {
         display: inline-block;
