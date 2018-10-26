@@ -56,6 +56,9 @@ $text-color-lighter: #898989;
       width: 50%;
       margin: auto;
       display: block;
+      &.iconImg {
+        max-width: 75px;
+      }
     }
     > div { // icon label
       margin-top: $baseline-grid/2;
@@ -155,7 +158,8 @@ $text-color-lighter: #898989;
       }
     }
     .SRC-cardContent {
-      width: 70%;
+      max-width: 100%;
+      width: 100%;
       margin-left: $baseline-grid * 2;
       .SRC-website a {
         display: inline-block;
