@@ -425,3 +425,6 @@ button.SRC-roundBorder {
 
 .SRC-text-cap {
   text-transform: capitalize; }
+
+.SRC-bar-marginTop {
+  margin-top: 10px; }

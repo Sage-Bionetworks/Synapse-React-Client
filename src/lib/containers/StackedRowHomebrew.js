@@ -160,7 +160,7 @@ export default class StackedRowHomebrew extends React.Component {
                         <FontAwesomeIcon icon="angle-left"/>
                     </button>
                 </div>
-                <div className="row SRC-bar-border">
+                <div className="row SRC-bar-border SRC-bar-marginTop">
                     <Measure 
                         bounds
                         onResize={(contentRect) => {
