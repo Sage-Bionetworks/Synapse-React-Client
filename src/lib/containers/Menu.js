@@ -7,8 +7,7 @@ export default class Menu extends React.Component {
     constructor() {
         super()
         this.handleClick = this.handleClick.bind(this)
-        this.handleHover = this.handleHover.bind(this)
-        this.handleHoverExit = this.handleHoverExit.bind(this)
+        this.handleHoverLogic = this.handleHoverLogic.bind(this)
         this.state = {
             currentFacet: ""
         }
@@ -35,20 +34,12 @@ export default class Menu extends React.Component {
         }
     }
 
-    handleHover = (info) => (event) => {
+    handleHoverLogic = (info) => (event) => {
         if (!info.isSelected && event.target.tagName === "DIV") {
             event.target.style.backgroundColor = info.originalColor
-            event.target.style.color = "white"
+            event.target.style.color = info.textColor
         }
     }
-
-    handleHoverExit = (info) => (event) => {
-        if (!info.isSelected && event.target.tagName === "DIV") {
-            event.target.style.backgroundColor = "#F5F5F5"
-            event.target.style.color = "black"
-        }
-    }
-
 
     render() {
         let {data} = this.props
@@ -79,8 +70,8 @@ export default class Menu extends React.Component {
                               style.width = "100%"
 
                               return (
-                                <div onMouseEnter={this.handleHover({isSelected, originalColor})}
-                                     onMouseLeave={this.handleHoverExit({isSelected})} key={el.columnName}
+                                <div onMouseEnter={this.handleHoverLogic({isSelected, originalColor, textColor: "white"})}
+                                     onMouseLeave={this.handleHoverLogic({isSelected, originalColor: "#F5F5F5", textColor: "black"})} key={el.columnName}
                                      className={`SRC-menu SRC-hand-cursor SRC-menu-hover SRC-text-chart ${active} ${active} ${isSelected ? "SRC-whiteText": ""}`} 
                                      onClick={this.handleClick(el.columnName)} style={style}>
                                       {el.columnName}

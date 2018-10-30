@@ -28,6 +28,7 @@ export default class StackedRowHomebrew extends React.Component {
         this.handleClick = this.handleClick.bind(this)
         this.handleArrowClick = this.handleArrowClick.bind(this)
         this.getHoverText = this.getHoverText.bind(this)
+        this.rgba2rgb = this.rgba2rgb.bind(this)
         // the text currently under the cursor
         this.state = {
             hoverText: "",
@@ -139,6 +140,13 @@ export default class StackedRowHomebrew extends React.Component {
         )
     }
 
+    rgba2rgb(background, color) {
+        const alpha = color[3]
+        return [Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
+                Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
+                Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)]
+    }
+
     /**
      * Display view
      */
@@ -188,6 +196,13 @@ export default class StackedRowHomebrew extends React.Component {
                                         let initRender = this.state.index === -1 && index === 0
                                         let textColor = colorGradient.getTextColor()
                                         let curColor = colorGradient.getColor()
+                                        let curColorSplit = curColor.substring(5).split(",")
+
+                                        curColorSplit[3] = curColorSplit[3].replace(")","")
+                                        curColorSplit = curColorSplit.map(el => {return Number(el)})
+                                        // we do this to convert the rgba => rgb so hover will work
+                                        let rgbColor = this.rgba2rgb([255, 255, 255],curColorSplit)
+                                        rgbColor = `rgb(${rgbColor})`
                                         let rectStyle
                                         
                                         // TODO: find a way to calculate text color with opacity factored in
@@ -198,7 +213,7 @@ export default class StackedRowHomebrew extends React.Component {
 
                                         if (check) {
                                             rectStyle = {
-                                                fill: curColor
+                                                fill: rgbColor
                                             }
                                         } else {
                                             rectStyle = {
