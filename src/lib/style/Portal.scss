@@ -430,12 +430,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   }
 }
 
- .SRC-menu-hover {
-  &:hover {
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24), 1px 1px 1px 1px rgba(0, 0, 0, .24);
-  }
-}
-
  button.SRC-roundBorder {
    border-radius: 15px;
  }
@@ -469,12 +463,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   height: 51px;
   line-height: 51px;
   text-align: center;
-}
-
-.SRC-menu-link {
-  display: inline-block;
-  vertical-align: middle;
-  line-height: normal;
 }
 
 .SRC-pointed {

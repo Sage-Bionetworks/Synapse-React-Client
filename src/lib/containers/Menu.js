@@ -7,6 +7,8 @@ export default class Menu extends React.Component {
     constructor() {
         super()
         this.handleClick = this.handleClick.bind(this)
+        this.handleHover = this.handleHover.bind(this)
+        this.handleHoverExit = this.handleHoverExit.bind(this)
         this.state = {
             currentFacet: ""
         }
@@ -33,6 +35,21 @@ export default class Menu extends React.Component {
         }
     }
 
+    handleHover = (info) => (event) => {
+        if (!info.isSelected && event.target.tagName === "DIV") {
+            event.target.style.backgroundColor = info.originalColor
+            event.target.style.color = "white"
+        }
+    }
+
+    handleHoverExit = (info) => (event) => {
+        if (!info.isSelected && event.target.tagName === "DIV") {
+            event.target.style.backgroundColor = "#F5F5F5"
+            event.target.style.color = "black"
+        }
+    }
+
+
     render() {
         let {data} = this.props
         if (data.length === 0) {
@@ -47,13 +64,14 @@ export default class Menu extends React.Component {
                           el => {
                               let style = {}
                               let selection = (this.state.currentFacet ? this.state.currentFacet: this.props.filter)
+                              let isSelected = selection === el.columnName
                               let active = ""
-                              if (selection === el.columnName) {
+                              if (isSelected) {
                                 style.background = originalColor
                                 // below has to be set so the pseudo element created will inherit its color
                                 // appropriately
                                 style.borderLeftColor = originalColor
-                                style.color =  "black"
+                                style.color =  "white"
                                 active = "SRC-pointed"
                             } else {
                                 style.background =  "#F5F5F5"
@@ -61,8 +79,11 @@ export default class Menu extends React.Component {
                               style.width = "100%"
 
                               return (
-                                <div key={el.columnName}  className={"SRC-menu SRC-hand-cursor SRC-menu-hover " + active} onClick={this.handleClick(el.columnName)} style={style}>
-                                      <p className="SRC-menu-link"> {el.columnName}  </p>
+                                <div onMouseEnter={this.handleHover({isSelected, originalColor})}
+                                     onMouseLeave={this.handleHoverExit({isSelected})} key={el.columnName}
+                                     className={`SRC-menu SRC-hand-cursor SRC-menu-hover SRC-text-chart ${active} ${active} ${isSelected ? "SRC-whiteText": ""}`} 
+                                     onClick={this.handleClick(el.columnName)} style={style}>
+                                      {el.columnName}
                                 </div>
                               )
                           }

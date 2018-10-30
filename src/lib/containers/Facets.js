@@ -254,6 +254,11 @@ class Facets extends React.Component {
     }
     
     render () {
+
+        if (this.props.isLoading) {
+            return (false)
+        }
+
         return (
             <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">

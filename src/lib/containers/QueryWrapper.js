@@ -56,13 +56,16 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     componentDidUpdate(prevProps) {
+
+        
         // if token has updated
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
+            this.setState({isLoading: true})
             this.executeInitialQueryRequest()
         }
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
-            this.setState({isChecked: []})
+            this.setState({isChecked: [], isLoading: true})
             this.executeInitialQueryRequest()
         }
     }
