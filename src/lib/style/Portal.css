@@ -410,3 +410,18 @@ button.SRC-roundBorder {
 
 .SRC-selected-table-icon {
   color: white; }
+
+.SRC-center-text {
+  text-align: center; }
+
+.SRC-text-title {
+  font-size: 18px; }
+
+.SRC-text-chart {
+  font-size: 16px; }
+
+.SRC-bar-border {
+  background: #F9F9F9; }
+
+.SRC-text-cap {
+  text-transform: capitalize; }
