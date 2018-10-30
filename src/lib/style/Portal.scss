@@ -499,11 +499,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .SRC-text-title {
-  font-size: 18px;
+  font-size: 18px !important;
 }
 
 .SRC-text-chart {
-  font-size: 16px;
+  font-size: 16px !important;
 }
 
 .SRC-bar-border {
@@ -515,6 +515,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .SRC-bar-marginTop {
-  margin-top: 10px;
+  margin-top: 10px !important;
 }
 

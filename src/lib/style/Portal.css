@@ -413,10 +413,10 @@ button.SRC-roundBorder {
   text-align: center; }
 
 .SRC-text-title {
-  font-size: 18px; }
+  font-size: 18px !important; }
 
 .SRC-text-chart {
-  font-size: 16px; }
+  font-size: 16px !important; }
 
 .SRC-bar-border {
   background: #F9F9F9; }
@@ -425,4 +425,4 @@ button.SRC-roundBorder {
   text-transform: capitalize; }
 
 .SRC-bar-marginTop {
-  margin-top: 10px; }
+  margin-top: 10px !important; }
