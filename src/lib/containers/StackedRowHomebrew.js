@@ -87,7 +87,7 @@ export default class StackedRowHomebrew extends React.Component {
     getHoverText(x_data) {
         let hoverText
         if (this.state.index === -1) {
-            hoverText = x_data[0].value
+            hoverText = x_data[0] && x_data[0].value
         } else {
             hoverText = this.state.hoverText
         }
@@ -99,7 +99,7 @@ export default class StackedRowHomebrew extends React.Component {
 
     getFileCount(x_data) {
         if (this.state.index === -1) {
-            let hoverTextCount = x_data[0].count
+            let hoverTextCount = x_data[0] && x_data[0].count
             return hoverTextCount
         } else {
             return this.state.hoverTextCount
@@ -145,8 +145,8 @@ export default class StackedRowHomebrew extends React.Component {
     render () {
         let {data} = this.props
         // while loading
-        if (data.length === 0) {
-            return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> Loading... </div>))
+        if (this.props.isLoadingNewData) {
+            return (this.props.loadingScreen)
         }
 
         let x_data = this.extractPropsData(data);

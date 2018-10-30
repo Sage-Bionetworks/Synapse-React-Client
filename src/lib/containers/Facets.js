@@ -140,7 +140,7 @@ class Facets extends React.Component {
         // iterate through the loaded data and write out the appropriate checkboxes,
         // filling in the state of the checkboxes according to the current selection
         if (this.props.data.length === 0) {
-            return
+            return (false)
         }
         let structuredRender = []
         // read in the most up to date data
@@ -255,7 +255,7 @@ class Facets extends React.Component {
     
     render () {
 
-        if (this.props.isLoading) {
+        if (this.props.data.length === 0) {
             return (false)
         }
 

@@ -27,7 +27,7 @@ export default class QueryWrapper extends React.Component {
             data: [],
             isChecked: {},
             currentFacet: "",
-            isLoading: true,
+            isLoadingNewData: true,
             showNothing: false
         }
         this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
@@ -56,16 +56,14 @@ export default class QueryWrapper extends React.Component {
      * @memberof QueryWrapper
      */
     componentDidUpdate(prevProps) {
-
         
         // if token has updated
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
-            this.setState({isLoading: true})
             this.executeInitialQueryRequest()
         }
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
-            this.setState({isChecked: [], isLoading: true})
+            this.setState({isChecked: []})
             this.executeInitialQueryRequest()
         }
     }
@@ -112,6 +110,7 @@ export default class QueryWrapper extends React.Component {
     executeInitialQueryRequest() {
         this.setState({
             isLoading: true,
+            isLoadingNewData: true,
             isChecked: []
         })
 
@@ -138,7 +137,7 @@ export default class QueryWrapper extends React.Component {
                         ]
                     }
                 ]
-                let newState = {data, lastQueryRequest, isLoading: false, showNothing: false}
+                let newState = {data, lastQueryRequest, isLoading: false, isLoadingNewData: false, showNothing: false}
                 this.setState(newState)
             }
         ).catch(
@@ -207,6 +206,7 @@ export default class QueryWrapper extends React.Component {
                                     .cloneElement(  child, 
                                                     {
                                                         isLoading: this.state.isLoading,
+                                                        isLoadingNewData: this.state.isLoadingNewData,
                                                         executeQueryRequest: this.executeQueryRequest,
                                                         executeInitialQueryRequest: this.executeInitialQueryRequest,
                                                         getLastQueryRequest: this.getLastQueryRequest,
