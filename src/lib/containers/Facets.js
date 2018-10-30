@@ -57,7 +57,7 @@ class CheckboxGroup extends React.Component {
                 const showTimes = check
                 children.push(
                     <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
-                        <strong> &nbsp;&nbsp; {facetValue.displayValue} </strong>  {facetValue.count}
+                        <span className="SRC-facets-text"> &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}) </span>
                         <span>&nbsp;&nbsp;</span>
                         {
                             showTimes ?  <FontAwesomeIcon  icon={"times"} /> : <FontAwesomeIcon icon={"plus"} />

@@ -244,6 +244,10 @@ body * {
   display: inline-block;
   cursor: pointer; }
 
+.SRC-facets-text {
+  font-weight: 400;
+  font-size: 13px; }
+
 .SRC-hand-cursor {
   cursor: pointer; }
 
@@ -350,7 +354,9 @@ table.SRC-paddingRight > tbody > tr > td {
   background-color: #D53F77 !important; }
 
 .SRC-primary-background-hover:hover {
-  background-color: #D53F77 !important; }
+  background-color: #D53F77 !important;
+  color: white !important;
+  box-shadow: 4px 2px 2px rgba(0, 0, 0, 0.5); }
 
 .SRC-menu-hover:hover {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 1px 1px 1px 1px rgba(0, 0, 0, 0.24); }

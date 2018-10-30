@@ -280,6 +280,11 @@ body * {
   cursor: pointer;
 }
 
+.SRC-facets-text {
+  font-weight: 400;
+  font-size: 13px;
+}
+
 .SRC-hand-cursor {
   cursor: pointer;
 }
@@ -420,6 +425,8 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
  .SRC-primary-background-hover {
   &:hover {
     background-color: #D53F77 !important; 
+    color: white!important;
+    box-shadow: 4px 2px 2px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -522,3 +529,4 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 .SRC-bar-marginTop {
   margin-top: 10px;
 }
+
