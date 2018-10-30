@@ -39,6 +39,16 @@ export default class StackedRowHomebrew extends React.Component {
         this.extractPropsData = this.extractPropsData.bind(this)
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.filter !== this.props.filter) {
+            this.setState({
+                hoverText: "",
+                hoverTextCount: 0,
+                index: -1
+            })
+        }
+    }
+
     /**
      * Updates the hover text and update the view
      *
@@ -99,6 +109,9 @@ export default class StackedRowHomebrew extends React.Component {
     // Handle user cycling through slices of the bar chart
     handleArrowClick = (direction) => (event) => {
         let {index} = this.state
+        if (index === -1) {
+            index = 0
+        }
         let dict = this.extractPropsData(this.props.data)
         let length = Object.keys(dict).length
 
