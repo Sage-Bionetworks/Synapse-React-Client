@@ -57,7 +57,7 @@ class CheckboxGroup extends React.Component {
                 const showTimes = check
                 children.push(
                     <span style={style}  className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={this.props.clickHandler({index, value: facetValue.value, columnName: element.columnName})} >
-                        <strong> &nbsp;&nbsp; {facetValue.displayValue} </strong>  {facetValue.count}
+                        <span className="SRC-facets-text"> &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}) </span>
                         <span>&nbsp;&nbsp;</span>
                         {
                             showTimes ?  <FontAwesomeIcon  icon={"times"} /> : <FontAwesomeIcon icon={"plus"} />
@@ -140,7 +140,7 @@ class Facets extends React.Component {
         // iterate through the loaded data and write out the appropriate checkboxes,
         // filling in the state of the checkboxes according to the current selection
         if (this.props.data.length === 0) {
-            return
+            return (false)
         }
         let structuredRender = []
         // read in the most up to date data
@@ -254,6 +254,11 @@ class Facets extends React.Component {
     }
     
     render () {
+
+        if (this.props.data.length === 0) {
+            return (false)
+        }
+
         return (
             <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">

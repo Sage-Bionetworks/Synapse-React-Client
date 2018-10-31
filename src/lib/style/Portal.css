@@ -244,6 +244,10 @@ body * {
   display: inline-block;
   cursor: pointer; }
 
+.SRC-facets-text {
+  font-weight: 400;
+  font-size: 13px; }
+
 .SRC-hand-cursor {
   cursor: pointer; }
 
@@ -350,10 +354,9 @@ table.SRC-paddingRight > tbody > tr > td {
   background-color: #D53F77 !important; }
 
 .SRC-primary-background-hover:hover {
-  background-color: #D53F77 !important; }
-
-.SRC-menu-hover:hover {
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 1px 1px 1px 1px rgba(0, 0, 0, 0.24); }
+  background-color: #D53F77 !important;
+  color: white !important;
+  box-shadow: 4px 2px 2px rgba(0, 0, 0, 0.5); }
 
 button.SRC-roundBorder {
   border-radius: 15px; }
@@ -382,11 +385,6 @@ button.SRC-roundBorder {
   line-height: 51px;
   text-align: center; }
 
-.SRC-menu-link {
-  display: inline-block;
-  vertical-align: middle;
-  line-height: normal; }
-
 .SRC-pointed {
   position: relative; }
 
@@ -410,3 +408,21 @@ button.SRC-roundBorder {
 
 .SRC-selected-table-icon {
   color: white; }
+
+.SRC-center-text {
+  text-align: center; }
+
+.SRC-text-title {
+  font-size: 18px !important; }
+
+.SRC-text-chart {
+  font-size: 16px !important; }
+
+.SRC-bar-border {
+  background: #F9F9F9; }
+
+.SRC-text-cap {
+  text-transform: capitalize; }
+
+.SRC-bar-marginTop {
+  margin-top: 10px !important; }

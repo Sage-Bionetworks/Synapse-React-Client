@@ -27,6 +27,8 @@ export default class StackedRowHomebrew extends React.Component {
         this.handleExit = this.handleExit.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.handleArrowClick = this.handleArrowClick.bind(this)
+        this.getHoverText = this.getHoverText.bind(this)
+        this.rgba2rgb = this.rgba2rgb.bind(this)
         // the text currently under the cursor
         this.state = {
             hoverText: "",
@@ -36,6 +38,16 @@ export default class StackedRowHomebrew extends React.Component {
             index: -1
         }
         this.extractPropsData = this.extractPropsData.bind(this)
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.filter !== this.props.filter) {
+            this.setState({
+                hoverText: "",
+                hoverTextCount: 0,
+                index: -1
+            })
+        }
     }
 
     /**
@@ -73,9 +85,34 @@ export default class StackedRowHomebrew extends React.Component {
         )
     }
 
+    getHoverText(x_data) {
+        let hoverText
+        if (this.state.index === -1) {
+            hoverText = x_data[0] && x_data[0].value
+        } else {
+            hoverText = this.state.hoverText
+        }
+
+        return  (<React.Fragment>
+                    <span className="SRC-text-cap">  {this.props.filter} </span> : <span> {hoverText === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? "unannotated": hoverText } </span>
+                </React.Fragment>) 
+    }
+
+    getFileCount(x_data) {
+        if (this.state.index === -1) {
+            let hoverTextCount = x_data[0] && x_data[0].count
+            return hoverTextCount
+        } else {
+            return this.state.hoverTextCount
+        }
+    }
+
     // Handle user cycling through slices of the bar chart
     handleArrowClick = (direction) => (event) => {
         let {index} = this.state
+        if (index === -1) {
+            index = 0
+        }
         let dict = this.extractPropsData(this.props.data)
         let length = Object.keys(dict).length
 
@@ -103,14 +140,21 @@ export default class StackedRowHomebrew extends React.Component {
         )
     }
 
+    rgba2rgb(background, color) {
+        const alpha = color[3]
+        return [Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
+                Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
+                Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)]
+    }
+
     /**
      * Display view
      */
     render () {
         let {data} = this.props
         // while loading
-        if (data.length === 0) {
-            return (this.props.loadingScreen ? this.props.loadingScreen : (<div className="container"> Loading... </div>))
+        if (this.props.isLoadingNewData) {
+            return (this.props.loadingScreen)
         }
 
         let x_data = this.extractPropsData(data);
@@ -121,9 +165,9 @@ export default class StackedRowHomebrew extends React.Component {
         // sum up the counts of data
         for (let key in x_data) { if (x_data.hasOwnProperty(key)) { total += x_data[key].count } }
         return (
-            <div className="container-fluid ">
-                <div className="row">
-                    <span>
+            <div className="container-fluid">
+                <div className="row SRC-center-text">
+                    <span className="SRC-text-title">
                         <strong> {total} </strong> files shown by {this.props.filter}
                     </span>
                     <button
@@ -137,7 +181,7 @@ export default class StackedRowHomebrew extends React.Component {
                         <FontAwesomeIcon icon="angle-left"/>
                     </button>
                 </div>
-                <div className="row">
+                <div className="row SRC-bar-border SRC-bar-marginTop">
                     <Measure 
                         bounds
                         onResize={(contentRect) => {
@@ -149,8 +193,16 @@ export default class StackedRowHomebrew extends React.Component {
                                 {x_data.map(
                                     (obj, index) => {
 
+                                        let initRender = this.state.index === -1 && index === 0
                                         let textColor = colorGradient.getTextColor()
                                         let curColor = colorGradient.getColor()
+                                        let curColorSplit = curColor.substring(5).split(",")
+
+                                        curColorSplit[3] = curColorSplit[3].replace(")","")
+                                        curColorSplit = curColorSplit.map(el => {return Number(el)})
+                                        // we do this to convert the rgba => rgb so hover will work
+                                        let rgbColor = this.rgba2rgb([255, 255, 255],curColorSplit)
+                                        rgbColor = `rgb(${rgbColor})`
                                         let rectStyle
                                         
                                         // TODO: find a way to calculate text color with opacity factored in
@@ -161,7 +213,7 @@ export default class StackedRowHomebrew extends React.Component {
 
                                         if (check) {
                                             rectStyle = {
-                                                fill: curColor
+                                                fill: rgbColor
                                             }
                                         } else {
                                             rectStyle = {
@@ -169,13 +221,13 @@ export default class StackedRowHomebrew extends React.Component {
                                             }
                                         }
                                         
-                                        let svgHeight = 50
+                                        let svgHeight = 80
                                         let svgWidth = (obj.count / total) * width
 
                                         return (
                                             // each svg represents one of the bars
                                             // will need to change this to be responsive
-                                            <svg height={65}
+                                            <svg height={svgHeight + 15}
                                                 width={svgWidth} 
                                                 key={uuidv4()}
                                                 onClick={this.handleClick({...obj, index})}>
@@ -190,17 +242,18 @@ export default class StackedRowHomebrew extends React.Component {
                                                 </rect>
                                                 {/* display the count of this bar chart's frequency */}
                                                 <text 
+                                                    className="SRC-text-chart"
                                                     font="bold sans-serif"
                                                     fill={textColor}
-                                                    x={svgWidth / 2}
-                                                    y={svgHeight/2}>
+                                                    x={(svgWidth / 2) }
+                                                    y={(svgHeight/2) + 3}>
                                                     {/* only display the top three results */}
                                                     {index < 3 && obj.count}
                                                 </text>
-                                                {this.state.index === index && <text 
+                                                {(this.state.index === index || (initRender)) && <text 
                                                     fill={originalColor}
                                                     x={0}
-                                                    y={62}
+                                                    y={svgHeight + 15}
                                                     className="SRC-text-shadow SRC-text-large"
                                                     >
                                                     {/* unicode below corresponds to downward carret, this is an alternative
@@ -216,14 +269,14 @@ export default class StackedRowHomebrew extends React.Component {
                         }
                     </Measure>
                 </div>
-                {this.state.hoverText && <div className="row SRC-grayBackground">
-                    <p className="SRC-noMargin" >
+                <div className="row SRC-bar-border">
+                    <p className="SRC-noMargin SRC-text-title" >
                         <strong> 
-                            {this.props.filter}: {this.state.hoverText === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? "unannotated": this.state.hoverText } 
+                            {this.getHoverText(x_data)}
                         </strong> 
                     </p>
-                    <p className="SRC-noMargin" > {this.state.hoverTextCount} files </p>
-                </div>}
+                    <p className="SRC-noMargin SRC-text-chart" > {this.getFileCount(x_data)} files </p>
+                </div>
             </div>
         )
     }

@@ -189,7 +189,7 @@ export default class SynapseTable extends React.Component {
      */
     render() {
         if (this.props.data.length === 0) {
-            return (<div className="container"> </div>)
+            return (false)
         }
 
         // unpack all the data
@@ -318,10 +318,6 @@ export default class SynapseTable extends React.Component {
                             <a onClick={this.advancedSearch} href="">
                                 <u> Advanced Search </u>
                             </a>
-                            {/* <span >&nbsp;&nbsp;</span>
-                            <a onClick={this.download} href="">
-                                <u>Download</u>
-                            </a> */}
                         </span>
                     </div>
                 </div>
