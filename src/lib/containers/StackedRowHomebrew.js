@@ -219,13 +219,17 @@ export default class StackedRowHomebrew extends React.Component {
                                         
                                         let svgHeight = 80
                                         let svgWidth = (obj.count / total) * width
-
+                                        let style = {}
+                                        if (this.state.index === index || initRender) {
+                                            style.filter  = "drop-shadow(5px 5px 5px rgba(0,0,0,0.5))"
+                                        }
                                         return (
                                             // each svg represents one of the bars
                                             // will need to change this to be responsive
                                             <svg height={svgHeight + 15}
                                                 width={svgWidth} 
                                                 key={uuidv4()}
+                                                style={style}
                                                 onClick={this.handleClick({...obj, index})}>
                                                 <rect 
                                                     onMouseEnter={this.handleHover}
