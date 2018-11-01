@@ -41,7 +41,7 @@ export default class StackedRowHomebrew extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.filter !== this.props.filter) {
+        if (prevProps.filter !== this.props.filter || prevProps.isLoadingNewData !== this.props.isLoadingNewData) {
             this.setState({
                 hoverText: "",
                 hoverTextCount: 0,
