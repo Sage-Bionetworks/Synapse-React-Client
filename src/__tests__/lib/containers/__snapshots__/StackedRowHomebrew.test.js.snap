@@ -116,7 +116,7 @@ ShallowWrapper {
           </button>
 </div>,
         <div
-          className="row SRC-bar-border SRC-bar-marginTop"
+          className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top"
 >
           <Measure
                     bounds={true}
@@ -126,10 +126,10 @@ ShallowWrapper {
           </Measure>
 </div>,
         <div
-          className="row SRC-bar-border"
+          className="row SRC-bar-border SRC-bar-border-bottom"
 >
           <p
-                    className="SRC-noMargin SRC-text-title"
+                    className="SRC-noMargin SRC-padding-chart SRC-text-title"
           >
                     <strong>
                               <Unknown>
@@ -148,7 +148,7 @@ ShallowWrapper {
                     </strong>
           </p>
           <p
-                    className="SRC-noMargin SRC-text-chart"
+                    className="SRC-noMargin SRC-padding-chart SRC-text-chart"
           >
                      
                      files 
@@ -392,7 +392,7 @@ ShallowWrapper {
 >
             [Function]
 </Measure>,
-          "className": "row SRC-bar-border SRC-bar-marginTop",
+          "className": "row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top",
         },
         "ref": null,
         "rendered": Object {
@@ -417,7 +417,7 @@ ShallowWrapper {
         "props": Object {
           "children": Array [
             <p
-              className="SRC-noMargin SRC-text-title"
+              className="SRC-noMargin SRC-padding-chart SRC-text-title"
 >
               <strong>
                             <Unknown>
@@ -436,13 +436,13 @@ ShallowWrapper {
               </strong>
 </p>,
             <p
-              className="SRC-noMargin SRC-text-chart"
+              className="SRC-noMargin SRC-padding-chart SRC-text-chart"
 >
                
                files 
 </p>,
           ],
-          "className": "row SRC-bar-border",
+          "className": "row SRC-bar-border SRC-bar-border-bottom",
         },
         "ref": null,
         "rendered": Array [
@@ -466,7 +466,7 @@ ShallowWrapper {
                                 </span>
                 </Unknown>
 </strong>,
-              "className": "SRC-noMargin SRC-text-title",
+              "className": "SRC-noMargin SRC-padding-chart SRC-text-title",
             },
             "ref": null,
             "rendered": Object {
@@ -567,7 +567,7 @@ ShallowWrapper {
                 undefined,
                 " files ",
               ],
-              "className": "SRC-noMargin SRC-text-chart",
+              "className": "SRC-noMargin SRC-padding-chart SRC-text-chart",
             },
             "ref": null,
             "rendered": Array [
@@ -651,7 +651,7 @@ ShallowWrapper {
             </button>
 </div>,
           <div
-            className="row SRC-bar-border SRC-bar-marginTop"
+            className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top"
 >
             <Measure
                         bounds={true}
@@ -661,10 +661,10 @@ ShallowWrapper {
             </Measure>
 </div>,
           <div
-            className="row SRC-bar-border"
+            className="row SRC-bar-border SRC-bar-border-bottom"
 >
             <p
-                        className="SRC-noMargin SRC-text-title"
+                        className="SRC-noMargin SRC-padding-chart SRC-text-title"
             >
                         <strong>
                                     <Unknown>
@@ -683,7 +683,7 @@ ShallowWrapper {
                         </strong>
             </p>
             <p
-                        className="SRC-noMargin SRC-text-chart"
+                        className="SRC-noMargin SRC-padding-chart SRC-text-chart"
             >
                          
                          files 
@@ -927,7 +927,7 @@ ShallowWrapper {
 >
               [Function]
 </Measure>,
-            "className": "row SRC-bar-border SRC-bar-marginTop",
+            "className": "row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top",
           },
           "ref": null,
           "rendered": Object {
@@ -952,7 +952,7 @@ ShallowWrapper {
           "props": Object {
             "children": Array [
               <p
-                className="SRC-noMargin SRC-text-title"
+                className="SRC-noMargin SRC-padding-chart SRC-text-title"
 >
                 <strong>
                                 <Unknown>
@@ -971,13 +971,13 @@ ShallowWrapper {
                 </strong>
 </p>,
               <p
-                className="SRC-noMargin SRC-text-chart"
+                className="SRC-noMargin SRC-padding-chart SRC-text-chart"
 >
                  
                  files 
 </p>,
             ],
-            "className": "row SRC-bar-border",
+            "className": "row SRC-bar-border SRC-bar-border-bottom",
           },
           "ref": null,
           "rendered": Array [
@@ -1001,7 +1001,7 @@ ShallowWrapper {
                                     </span>
                   </Unknown>
 </strong>,
-                "className": "SRC-noMargin SRC-text-title",
+                "className": "SRC-noMargin SRC-padding-chart SRC-text-title",
               },
               "ref": null,
               "rendered": Object {
@@ -1102,7 +1102,7 @@ ShallowWrapper {
                   undefined,
                   " files ",
                 ],
-                "className": "SRC-noMargin SRC-text-chart",
+                "className": "SRC-noMargin SRC-padding-chart SRC-text-chart",
               },
               "ref": null,
               "rendered": Array [
