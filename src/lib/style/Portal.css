@@ -207,6 +207,12 @@ svg:hover {
   filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   cursor: pointer; }
 
+svg::after {
+  transition: all 400ms; }
+
+svg:hover:after {
+  transition: all 400ms; }
+
 .SRC-syn-border {
   border-color: lightgray;
   border-style: solid;
@@ -421,8 +427,26 @@ button.SRC-roundBorder {
 .SRC-bar-border {
   background: #F9F9F9; }
 
+.SRC-bar-border-bottom {
+  border-bottom: 1px solid #dddddf;
+  border-left: 1px solid #dddddf;
+  border-right: 1px solid #dddddf; }
+
+.SRC-bar-border-top {
+  border-top: 1px solid #dddddf;
+  border-left: 1px solid #dddddf;
+  border-right: 1px solid #dddddf; }
+
 .SRC-text-cap {
   text-transform: capitalize; }
 
 .SRC-bar-marginTop {
   margin-top: 10px !important; }
+
+.SRC-padding-chart {
+  padding-left: 10px; }
+
+.SRC-marginAuto {
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px; }

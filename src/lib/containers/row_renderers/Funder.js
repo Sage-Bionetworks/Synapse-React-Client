@@ -39,9 +39,12 @@ export default class Funder extends React.Component {
         }
 
         let isOnOrgPath = window.location.hash.substring(1) === organizationPath
-
+        let style = {}
+        if (isOnOrgPath) {
+            style.paddingBottom = "42px"
+        }
         return (
-            <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape">
+            <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape" style={style}>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Organization</div>
                     <div className="SRC-cardThumbnail">
@@ -60,7 +63,7 @@ export default class Funder extends React.Component {
                     <div className="SRC-website"><a target="_blank" href={website}>{websiteDisplayName}</a></div>
                     <div className="SRC-description">{summary}</div>
                 </div>
-                {!isOnOrgPath && <div className="SRC-cardAction">
+                {!isOnOrgPath && <div className="SRC-marginAuto SRC-cardAction">
                     <button onClick={this.handleLinkClick(orgPath)} type="button">View Funded Research</button>
                 </div>}
             </div>

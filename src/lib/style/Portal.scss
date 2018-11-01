@@ -231,6 +231,12 @@ svg {
     filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5));
     cursor: pointer
   }
+  &::after {
+    transition: all 400ms;
+  }
+  &:hover:after {
+    transition: all 400ms;
+  }
 }
 
 .SRC-syn-border {
@@ -510,6 +516,18 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   background: #F9F9F9;
 }
 
+.SRC-bar-border-bottom {
+  border-bottom:1px solid #dddddf;
+  border-left:1px solid #dddddf;
+  border-right:1px solid #dddddf;
+}
+
+.SRC-bar-border-top {
+  border-top:1px solid #dddddf;
+  border-left:1px solid #dddddf;
+  border-right:1px solid #dddddf;
+}
+
 .SRC-text-cap {
   text-transform: capitalize;
 }
@@ -518,3 +536,12 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   margin-top: 10px !important;
 }
 
+.SRC-padding-chart {
+  padding-left: 10px;
+}
+
+.SRC-marginAuto {
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

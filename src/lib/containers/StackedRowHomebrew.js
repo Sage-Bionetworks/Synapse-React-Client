@@ -181,7 +181,7 @@ export default class StackedRowHomebrew extends React.Component {
                         <FontAwesomeIcon icon="angle-left"/>
                     </button>
                 </div>
-                <div className="row SRC-bar-border SRC-bar-marginTop">
+                <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
                     <Measure 
                         bounds
                         onResize={(contentRect) => {
@@ -204,10 +204,6 @@ export default class StackedRowHomebrew extends React.Component {
                                         let rgbColor = this.rgba2rgb([255, 255, 255],curColorSplit)
                                         rgbColor = `rgb(${rgbColor})`
                                         let rectStyle
-                                        
-                                        // TODO: find a way to calculate text color with opacity factored in
-                                        // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
-                                        // let textColor = calculateTextColor(newR,newG,newB)
 
                                         const check = this.props.isChecked[index] === undefined || this.props.isChecked[index]
 
@@ -223,13 +219,17 @@ export default class StackedRowHomebrew extends React.Component {
                                         
                                         let svgHeight = 80
                                         let svgWidth = (obj.count / total) * width
-
+                                        let style = {}
+                                        if (this.state.index === index || initRender) {
+                                            style.filter  = "drop-shadow(5px 5px 5px rgba(0,0,0,0.5))"
+                                        }
                                         return (
                                             // each svg represents one of the bars
                                             // will need to change this to be responsive
                                             <svg height={svgHeight + 15}
                                                 width={svgWidth} 
                                                 key={uuidv4()}
+                                                style={style}
                                                 onClick={this.handleClick({...obj, index})}>
                                                 <rect 
                                                     onMouseEnter={this.handleHover}
@@ -242,7 +242,7 @@ export default class StackedRowHomebrew extends React.Component {
                                                 </rect>
                                                 {/* display the count of this bar chart's frequency */}
                                                 <text 
-                                                    className="SRC-text-chart"
+                                                    className="SRC-text-title"
                                                     font="bold sans-serif"
                                                     fill={textColor}
                                                     x={(svgWidth / 2) }
@@ -269,13 +269,13 @@ export default class StackedRowHomebrew extends React.Component {
                         }
                     </Measure>
                 </div>
-                <div className="row SRC-bar-border">
-                    <p className="SRC-noMargin SRC-text-title" >
+                <div className="row SRC-bar-border SRC-bar-border-bottom">
+                    <p className="SRC-noMargin SRC-padding-chart SRC-text-title" >
                         <strong> 
                             {this.getHoverText(x_data)}
                         </strong> 
                     </p>
-                    <p className="SRC-noMargin SRC-text-chart" > {this.getFileCount(x_data)} files </p>
+                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart" > {this.getFileCount(x_data)} files </p>
                 </div>
             </div>
         )
