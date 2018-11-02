@@ -13,6 +13,9 @@ $text-color-base: #1A1C29;
 $text-color-active: #C94281;
 $text-color-lighter: #898989;
 
+.SRC-font-size-base {
+  font-size: $text-size-base;
+}
 
 .SRC-portalCard {
   display: block;
