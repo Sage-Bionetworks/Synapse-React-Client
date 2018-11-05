@@ -1,5 +1,5 @@
 import React from "react";
-import * as SynapseClient from "../../lib/utils/SynapseClient";
+import {SynapseClient} from "../"
 import GoogleIcon from "../assets/GoogleIcon";
 import ButtonContent from "../assets/ButtonContent";
 

@@ -63,7 +63,6 @@ export default class QueryWrapper extends React.Component {
         }
 
         if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest.query.sql) {
-            this.setState({isChecked: []})
             this.executeInitialQueryRequest()
         }
     }
