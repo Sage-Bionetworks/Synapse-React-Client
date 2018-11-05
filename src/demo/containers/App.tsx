@@ -135,7 +135,7 @@ class App extends Component<{}, AppState> {
       redirectUrl = "https://leem42.github.io/Synapse-React-Client/";
     }
     let token: string | undefined = "";
-    let inDevEnv: boolean = false;
+    let inDevEnv = false;
     if (process.env.NODE_ENV === "development") {
       token = process.env.REACT_APP_DEV_TOKEN;
       inDevEnv = true;
