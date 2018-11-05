@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import logo from "images/logo.svg";
 import "./App.css";
-import Login from "../../lib/containers/Login.js";
-import MarkdownSynapse from "../../lib/containers/MarkdownSynapse.js";
-import UserFavorites from "../../lib/containers/UserFavorites.js";
-import UserProjects from "../../lib/containers/UserProjects.js";
-import UserTeam from "../../lib/containers/UserTeams.js";
-import UserProfile from "../../lib/containers/UserProfile.js";
+import Login from "../../lib/containers/Login";
+import MarkdownSynapse from "../../lib/containers/MarkdownSynapse";
+import UserFavorites from "../../lib/containers/UserFavorites";
+import UserProjects from "../../lib/containers/UserProjects";
+import UserTeam from "../../lib/containers/UserTeams";
+import UserProfile from "../../lib/containers/UserProfile";
 import CustomMarkdownView from "../../lib/containers/CustomMarkdownView";
-import * as SynapseClient from "../../lib/utils/SynapseClient.js";
-import * as SynapseConstants from "../../lib/utils/SynapseConstants.js";
+import * as SynapseClient from "../../lib/utils/SynapseClient";
+import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapper from "../../lib/containers/QueryWrapper";
 import { Facets } from "../../lib/containers/Facets";
 import StackedRowHomebrew from "../../lib/containers/StackedRowHomebrew";
@@ -24,13 +24,23 @@ import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
 
-type AppState = ((error: any) => void) &
-  any & { showMarkdown: boolean } & {
+type AppState = 
+  {
     token: string,
     ownerId: string,
     isLoading: boolean,
     showMarkdown: boolean,
-    initQueryRequest: { concreteType: string, partMask: number, query: { isConsistent: boolean, sql: string, limit: number, offset: number } }
+    version: string,
+    initQueryRequest: {
+      concreteType: string,
+      partMask: number,
+      query: {
+        isConsistent: boolean,
+        sql: string,
+        limit: number,
+        offset: number
+      }
+    }
   };
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -44,6 +54,7 @@ class App extends Component<{}, AppState> {
     super(props);
     this.state = {
       token: "",
+      version: "",
       ownerId: "",
       isLoading: true,
       showMarkdown: true,
@@ -69,7 +80,7 @@ class App extends Component<{}, AppState> {
   /**
    * Get the current version of Synapse
    */
-  getVersion() {
+  getVersion(): void {
     // IMPORTANT: Your component should have a property (with default) to change the endpoint.  This is necessary for Synapse.org integration.
     // Pass your endpoint through to the rpc call:
     // SynapseClient.getVersion('https://repo-staging.prod.sagebase.org')
@@ -83,7 +94,7 @@ class App extends Component<{}, AppState> {
   /**
    * Make a query on synapse
    */
-  makeSampleQueryCall() {
+  makeSampleQueryCall(): void {
     // Example table (view) query.
     // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
     let QUERY = {
@@ -111,19 +122,20 @@ class App extends Component<{}, AppState> {
    * Update internal state
    * @param {Object} updatedState new state to be updated by the component
    */
-  handleChange(updatedState: {}) {
+  handleChange(updatedState: {}): void {
     this.setState(updatedState);
   }
-  removeHandler() {
+
+  removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown });
   }
-  render() {
-    let redirectUrl = "http://localhost:3000/";
+  render(): JSX.Element {
+    let redirectUrl: string = "http://localhost:3000/";
     if (process.env.NODE_ENV === "production") {
       redirectUrl = "https://leem42.github.io/Synapse-React-Client/";
     }
     let token: string | undefined = "";
-    let inDevEnv = false;
+    let inDevEnv: boolean = false;
     if (process.env.NODE_ENV === "development") {
       token = process.env.REACT_APP_DEV_TOKEN;
       inDevEnv = true;
