@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "images/logo.svg";
+import logo from "../../images/logo.svg";
 import "./App.css";
 import Login from "../../lib/containers/Login";
 import MarkdownSynapse from "../../lib/containers/MarkdownSynapse";

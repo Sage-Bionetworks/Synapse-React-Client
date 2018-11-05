@@ -65,7 +65,7 @@ export default class Menu extends React.Component<Props, MenuState> {
         if (data.length === 0) {
             return false;
         }
-        const colorGradient = new ColorGradient(this.props.rgbIndex);
+        const colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex);
         const originalColor = colorGradient.getOriginalColor();
         return (
             <React.Fragment>
