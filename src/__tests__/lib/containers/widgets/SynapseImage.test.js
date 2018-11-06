@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import SynapseImage from 'lib/containers/widgets/SynapseImage';
+import SynapseImage from '../../../../lib/containers/widgets/SynapseImage';
 
 it('renders correctly', () => {
   const tree = renderer

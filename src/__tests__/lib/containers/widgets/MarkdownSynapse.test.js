@@ -1,8 +1,8 @@
 import React from 'react';
 import {configure, mount} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
-import MarkdownSynapse from 'lib/containers/MarkdownSynapse';
-import Bookmark from 'lib/containers/widgets/Bookmarks'
+import MarkdownSynapse from '../../../../lib/containers/MarkdownSynapse';
+import Bookmark from '../../../../lib/containers/widgets/Bookmarks'
 
 configure({ adapter: new Adapter() });
 
@@ -20,7 +20,7 @@ describe('renders widgets ', () => {
   let SynapseClient
 
   beforeAll( () =>  { 
-      SynapseClient = require('lib/utils/SynapseClient')
+      SynapseClient = require('../../../../lib/utils/SynapseClient')
       SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve([""]))
     }
   )

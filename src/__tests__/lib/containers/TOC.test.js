@@ -1,7 +1,7 @@
 import React from 'react'
 import {configure, mount} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
-import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 
 configure({ adapter: new Adapter() });
 
@@ -9,7 +9,7 @@ describe ('renders without crashing', () => {
     let SynapseClient
     
     beforeAll( () => {
-        SynapseClient = require('lib/utils/SynapseClient')
+        SynapseClient = require('../../../lib/utils/SynapseClient')
         SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve([""]))
         }
     )
