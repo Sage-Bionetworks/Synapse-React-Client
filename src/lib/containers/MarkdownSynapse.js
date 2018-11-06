@@ -243,7 +243,7 @@ class MarkdownSynapse extends React.Component {
         // else the wiki page was retrieved accordingly or it was passed down
         // as a prop
     }
-              
+
     getWikiAttachments() {
         SynapseClient.getWikiAttachmentsFromEntity(this.props.token, this.props.ownerId, this.props.wikiId)
             .then(data => {
@@ -255,7 +255,6 @@ class MarkdownSynapse extends React.Component {
                 console.log("Error on wiki attachment load ", err)
             })
     }
-
     
     /**
      * If theres an error loading the wiki page show an informative message

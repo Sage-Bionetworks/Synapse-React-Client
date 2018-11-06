@@ -1,67 +1,81 @@
-import React from 'react'
+import React from 'react';
 import Plot from 'react-plotly.js';
-import PropTypes from 'prop-types'
-import * as SynapseConstants from '../../utils/SynapseConstants'
-import {getFullQueryTableResults} from '../../utils/SynapseClient'
+import * as SynapseConstants from '../../utils/SynapseConstants';
+import { getFullQueryTableResults } from '../../utils/SynapseClient';
 
-class SynapsePlot extends React.Component {
+type SynapsePlotProps = {
+    token: string | undefined 
+    ownerId?: string,
+    wikiId?: string,
+    widgetparamsMapped?: any
+};
 
-    constructor(props) {
-        super(props)
+type SynapsePlotState = { 
+    isLoaded: boolean,
+    queryData: any
+}
+
+class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
+
+    constructor(props: SynapsePlotProps) {
+        super(props);
         this.state = {
-            isLoaded: false
-        }
-        this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
-        this.showPlot = this.showPlot.bind(this)
+            isLoaded: false,
+            queryData: {}
+        };
+        this.fetchPlotlyData = this.fetchPlotlyData.bind(this);
+        this.showPlot = this.showPlot.bind(this);
     }
 
     componentDidMount() {
-        this.fetchPlotlyData()
+        this.fetchPlotlyData();
     }
-
     /**
      * Get data for plotly
      *
      * @returns data corresponding to plotly widget
      */
     fetchPlotlyData() {
-        const {token} = this.props
-        const {query} = this.props.widgetparamsMapped
+        const { token } = this.props;
+        const { query } = this.props.widgetparamsMapped;
         let queryRequest = {
-            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
             partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
                 sql: query
             }
         };
-
         getFullQueryTableResults(queryRequest, token).then(
-            data => {
+            (data: any) => {
                 this.setState({
                     queryData: data,
                     isLoaded: true
-                })
+                });
             }
         ).catch(
-            err => {
-                console.log("Error on full table query " , err)
+            (err: any) => {
+                console.log('Error on full table query ', err);
             }
-        )
+        );
     }
-
 
     showPlot() {
         if (!this.state.isLoaded) {
-            return
+            return;
         }
-
-        const {title, xtitle, ytitle, type, xaxistype, showlegend} = this.props.widgetparamsMapped
-        const queryData = this.state
+        const {
+            title,
+            xtitle,
+            ytitle,
+            type,
+            xaxistype,
+            showlegend
+        } = this.props.widgetparamsMapped;
+        const queryData = this.state;
         let isHorizontal = this.props.widgetparamsMapped.horizontal.toLowerCase();
-
-        let layout = {
+        let layout: any = {
             title: title,
-            showlegend: showlegend,
+            showlegend: showlegend
         };
         if (xtitle) {
             layout.xaxis = {
@@ -79,10 +93,9 @@ class SynapsePlot extends React.Component {
                 title: ytitle
             };
         }
-
         // init plot_data
-        let plot_data = [];
-        let orientation = isHorizontal ? "v" : "h";
+        let plot_data: any = [];
+        let orientation = isHorizontal ? 'v' : 'h';
         let headers = queryData.queryData.queryResult.queryResults.headers;
         for (let i = 0; i < headers.length - 1; i++) {
             // make an entry for each set of data points
@@ -99,35 +112,19 @@ class SynapsePlot extends React.Component {
             let row = queryData.queryData.queryResult.queryResults.rows[i];
             for (let j = 1; j < row.values.length; j++) {
                 // create pairs of data
-                let row_values = row.values;
+                let row_values: any = row.values;
                 plot_data[j - 1].x.push(row_values[0]);
                 plot_data[j - 1].y.push(row_values[j]);
             }
         }
-
-        return (<Plot
-                    data={plot_data}
-                    layout={layout}>
-                </Plot>)
-    }               
-
-    render () {
+        return <Plot data={plot_data} layout={layout} />;
+    }
+    render() {
         if (!this.state.isLoaded) {
-            return null
+            return null;
         } else {
-            return (
-                <React.Fragment>
-                    {this.showPlot()}
-                </React.Fragment>
-            )
+            return <React.Fragment>{this.showPlot()}</React.Fragment>;
         }
     }
 }
-
-SynapsePlot.propTypes = {
-    ownerId: PropTypes.string,
-    wikiId: PropTypes.string,
-    widgetparamsMapped: PropTypes.object
-}
-
-export default SynapsePlot
+export default SynapsePlot;
