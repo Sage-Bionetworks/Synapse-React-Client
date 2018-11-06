@@ -356,7 +356,7 @@ export const getTeamList = (
   return doGet(url, sessionToken, endpoint);
 };
 
-export const getWikiAttachmentsFromEntity = (sessionToken: string|undefined, id: string|number, wikiId: string|number, endpoint = DEFAULT_ENDPOINT) => {
+export const getWikiAttachmentsFromEntity = (sessionToken: string|undefined, id: string|number, wikiId: string|number, endpoint: string = DEFAULT_ENDPOINT) => {
   let url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`;
   return doGet(url, sessionToken, endpoint);
 };
