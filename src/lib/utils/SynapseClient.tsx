@@ -278,7 +278,7 @@ export const getFiles = (request: string, sessionToken: string | undefined = und
  * See SynapseClient.test.js for an example partsMask.
  * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
  */
-export const getEntity = (sessionToken = undefined, entityId: string | number, endpoint = DEFAULT_ENDPOINT) => {
+export const getEntity = (sessionToken: string | undefined = undefined, entityId: string | number, endpoint = DEFAULT_ENDPOINT) => {
   let url = `/repo/v1/entity/${entityId}`;
   return doGet(url, sessionToken, endpoint);
 };
