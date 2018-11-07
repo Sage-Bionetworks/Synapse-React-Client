@@ -37,7 +37,7 @@ export default class Menu extends React.Component<Props, MenuState> {
             currentFacet: ""
         };
     }
-    handleClick = (columnName: string) => (event: React.SyntheticEvent) => {
+    handleClick = (columnName: string) => (event: React.MouseEvent<HTMLDivElement>) => {
         this.setState({
             currentFacet: columnName
         });

@@ -23,6 +23,7 @@ type Props = {
     authProvider : string,
     redirectURL : string,
 }
+
 /**
  *  Demo of user session, show login screen and handling user login submission.
  *
@@ -76,7 +77,7 @@ class Login extends React.Component<Props, State> {
      *
      * @param {*} clickEvent Userclick event
      */
-    handleLogin(clickEvent: React.SyntheticEvent) {
+    handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
         clickEvent.preventDefault(); // avoid page refresh
         SynapseClient.login(this.state.username, this.state.password)
             .then((data: any) => {
@@ -196,7 +197,7 @@ class Login extends React.Component<Props, State> {
                 });
         }
     }
-    onSignIn(event: React.SyntheticEvent) {
+    onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         SynapseClient.oAuthUrlRequest(this.props.authProvider, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
             .then((data: any) => {

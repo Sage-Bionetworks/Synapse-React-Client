@@ -317,7 +317,7 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
             return escaped_one_to_xml_special_map[item];
         });
     }
-    processWidgetMappings(rawWidgetString: string, index: number, originalMarkup: string) {
+    processWidgetMappings(rawWidgetString: string, originalMarkup: string) {
         let widgetstringRegExp = rawWidgetString.match(/data-widgetparams=("(.*?)")/);
         let widgetstring = this.decodeXml(widgetstringRegExp![2]);
         let questionIndex = widgetstring.indexOf('?');
@@ -339,12 +339,12 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
             });
         return this.renderWidget(widgetType, widgetparamsMapped, originalMarkup);
     }
-    processWidgetOrDomElement(widgetsToBe: any[], originalMarkup: string) {
+    processWidgetOrDomElement(widgetsToBe: string[], originalMarkup: string) {
         let widgets = [];
         for (let i = 0; i < widgetsToBe.length; i++) {
             let text = widgetsToBe[i];
             if (text.indexOf('<span data-widgetparams') !== -1) {
-                widgets.push(this.processWidgetMappings(text, i, originalMarkup));
+                widgets.push(this.processWidgetMappings(text, originalMarkup));
             } else {
                 widgets.push(<span key={uuidv4()} dangerouslySetInnerHTML={{ __html: text }} />);
             }
