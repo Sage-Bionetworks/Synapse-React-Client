@@ -35,6 +35,22 @@ type QueryWrapperState = {
     showNothing: boolean,
     lastQueryRequest: {}
 }
+
+export type QuerryWrapperChildProps = {
+    isLoading?: boolean,
+    isLoadingNewData?: boolean,
+    executeQueryRequest?: (param: any) => void,
+    executeInitialQueryRequest?: () => void,
+    getLastQueryRequest?: () => any,
+    isChecked?: any,
+    data?: any,
+    filter?: string,
+    updateParentState?: (param: any) => void,
+    updateParentFilter?: (param: string) => void,
+    rgbIndex?: number,
+    showNothing?: boolean
+}
+
 /**
  * Class wraps around any Synapse views that are dependent on a query bundle
  * Those classes then take in as props:

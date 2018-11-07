@@ -220,7 +220,7 @@ class App extends Component<{}, AppState> {
           rgbIndex={4}
         >
           <StackedRowHomebrew loadingScreen={<div>I'm loading as fast as I can</div>} />
-          <Facets />
+          <Facets/>
           <SynapseTable synapseId={"syn16858331"} visibleColumnCount={8} index={1} />
         </QueryWrapper>
         <StaticQueryWrapper json={syn16787123}>
