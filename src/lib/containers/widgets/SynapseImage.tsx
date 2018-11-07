@@ -38,7 +38,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     /**
      * Attach markdown to wiki attachments
      */
-    matchToHandle(comparator: any, objectList:any) {
+    matchToHandle(comparator: any , objectList:any) {
         if (objectList) {
             // make sure the files have loaded
             let filtered = objectList.filter(comparator);
