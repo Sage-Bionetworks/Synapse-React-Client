@@ -7,8 +7,11 @@ type MenuState = {
 
 type Props = {
     isChecked: object,
+    updateParentState: (param: any) => void,
     updateParentFilter: (param: string) => void,
+    executeQueryRequest: (param: any) => void,
     executeInitialQueryRequest: () => void,
+    getLastQueryRequest: () => any,
     data: any,
     rgbIndex: number,
     filter: string

@@ -3,7 +3,7 @@ const DEFAULT_ENDPOINT = "https://repo-prod.prod.sagebase.org/"
 
 function delay(t: any) {
   return new Promise(function(resolve) {
-    setTimeout(() => {}, t);
+    setTimeout(resolve.bind(null,null), t);
   });
 }
 const fetch_with_exponential_timeout = (url: string, options: any, delayMs: any, retries: number): Promise<Response> => {
@@ -129,7 +129,7 @@ export const getQueryTableResults = (
   endpoint: string = DEFAULT_ENDPOINT
 ) => {
   return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
-    .then((resp: any) => {
+  .then((resp: any) => {
       //started query, now attempt to get the results.
       return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint);
     })
