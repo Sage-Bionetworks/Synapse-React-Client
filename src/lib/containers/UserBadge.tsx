@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import getUserProfileData from './getUserProfileData';
 import UserBadgeView from './UserBadgeView';
 

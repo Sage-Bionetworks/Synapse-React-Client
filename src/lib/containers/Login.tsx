@@ -1,9 +1,9 @@
-import React from "react";
+import * as React from "react";
 import * as SynapseClient from "../utils/SynapseClient"
 import GoogleIcon from "../assets/GoogleIcon";
 import ButtonContent from "../assets/ButtonContent";
 
-type LoginState = { 
+type State = { 
     username: string,
     password: string,
     email: string,
@@ -33,7 +33,8 @@ type Props = {
  * @class Login
  * @extends {React.Component}
  */
-class Login extends React.Component<Props, LoginState> {
+class Login extends React.Component<Props, State> {
+    
     /**
      * Creates a user session, maintaining credentials
      * @param {*} props

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as SynapseClient from '../utils/SynapseClient';
 import Bookmarks from './widgets/Bookmarks';
 import SynapseImage from './widgets/SynapseImage';
@@ -122,6 +122,12 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         this.createMarkup = this.createMarkup.bind(this);
         this.addBookmarks = this.addBookmarks.bind(this);
     }
+
+    componentDidCatch(err:any, info:any) {
+        console.log("error ", err)
+        console.log("info ", info)
+    }
+
     componentWillUnmount() {
         // @ts-ignore TODO: give justification for ignoring this line
         this.markupRef.current!.removeEventListener('click', this.handleLinkClicks);

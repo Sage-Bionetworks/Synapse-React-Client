@@ -1,10 +1,10 @@
-import React from 'react';
+import * as React from 'react';
 import Plot from 'react-plotly.js';
 import * as SynapseConstants from '../../utils/SynapseConstants';
 import { getFullQueryTableResults } from '../../utils/SynapseClient';
 
 type SynapsePlotProps = {
-    token: string | undefined 
+    token?: string 
     ownerId?: string,
     wikiId?: string,
     widgetparamsMapped?: any
