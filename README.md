@@ -17,6 +17,11 @@ Run the following command:<br>
 Or add to your dependencies in package.json:<br>
 `"synapse-react-client": "latest"`
 
+If using Typescript then you'll need to create a file called "synapse-react-client.d.ts" file with the following content: <br>
+``` jsx
+ declare module "synapse-react-client"
+ ```
+
 ## Examples
 
 #### Login
