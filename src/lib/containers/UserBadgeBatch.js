@@ -1,4 +1,3 @@
-// FILE NOT EXPORTED - DEMO ONLY
 import React from 'react'
 import PropTypes from 'prop-types'
 import getUserProfileData from './getUserProfileData'

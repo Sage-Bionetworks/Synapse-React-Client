@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import logo from "../../images/logo.svg";
 import "./App.css";
-import Login from "../../lib/containers/Login";
+import Login from "../../lib/containers/demo_components/Login";
 import MarkdownSynapse from "../../lib/containers/MarkdownSynapse";
-import UserFavorites from "../../lib/containers/UserFavorites";
-import UserProjects from "../../lib/containers/UserProjects";
-import UserTeam from "../../lib/containers/UserTeams";
-import UserProfile from "../../lib/containers/UserProfile";
+import UserFavorites from "../../lib/containers/demo_components/UserFavorites";
+import UserProjects from "../../lib/containers/demo_components/UserProjects";
+import UserTeam from "../../lib/containers/demo_components/UserTeams";
+import UserProfile from "../../lib/containers/demo_components/UserProfile";
 import CustomMarkdownView from "../../lib/containers/CustomMarkdownView";
 import * as SynapseClient from "../../lib/utils/SynapseClient";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";

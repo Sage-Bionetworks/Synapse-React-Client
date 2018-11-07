@@ -1,4 +1,3 @@
-// FILE NOT EXPORTED - DEMO ONLY
 import React from 'react'
 import UserBadgeBatch from './UserBadgeBatch'
 import * as SynapseClient from '../utils/SynapseClient'
