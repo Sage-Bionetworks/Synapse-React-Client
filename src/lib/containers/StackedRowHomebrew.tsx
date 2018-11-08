@@ -172,10 +172,10 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             return this.props.loadingScreen;
         }
         let x_data = this.extractPropsData(data);
-        let total = 0;
-        let colorGradient = new ColorGradient(this.props.rgbIndex);
-        let originalColor = colorGradient.getOriginalColor();
-        let width = this.state.dimensions.bounds!.width;
+        let total: number = 0;
+        let colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex!);
+        let originalColor: string = colorGradient.getOriginalColor();
+        let width: number = this.state.dimensions.bounds!.width;
         // sum up the counts of data
         for (let key in x_data) {
             if (x_data.hasOwnProperty(key)) {
@@ -218,7 +218,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     // we do this to convert the rgba => rgb so hover will work
                                     let rgbColorNums: number[] = this.rgba2rgb([255, 255, 255], curColorSplitNum);
                                     let rgbColor: string = `rgb(${rgbColorNums})`;
-                                    let rectStyle;
+                                    let rectStyle : any;
                                     const check = this.props.isChecked[index] === undefined || this.props.isChecked[index];
                                     if (check) {
                                         rectStyle = {
