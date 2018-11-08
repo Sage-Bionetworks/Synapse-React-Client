@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ColorGradient from "./ColorGradient";
-import {QuerryWrapperChildProps} from './QueryWrapper'
+import {QueryWrapperChildProps} from './QueryWrapper'
 
 const cloneDeep = require("lodash.clonedeep");
 const SELECT_ALL = "select all";
@@ -90,9 +90,9 @@ type FacetsState = {
     boxCount: number,
 };
 
-class Facets extends React.Component<QuerryWrapperChildProps, FacetsState> {
+class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
-    constructor(props: QuerryWrapperChildProps) {
+    constructor(props: QueryWrapperChildProps) {
         super(props);
         this.recordSelections = this.recordSelections.bind(this);
         this.handleClick = this.handleClick.bind(this);

@@ -221,7 +221,7 @@ class App extends Component<{}, AppState> {
         >
           <StackedRowHomebrew loadingScreen={<div>I'm loading as fast as I can</div>} />
           <Facets/>
-          <SynapseTable synapseId={"syn16858331"} visibleColumnCount={8} index={1} />
+          <SynapseTable synapseId={"syn16858331"} visibleColumnCount={8} />
         </QueryWrapper>
         <StaticQueryWrapper json={syn16787123}>
           <SynapseTableCardView type={SynapseConstants.STUDY} limit={3} />

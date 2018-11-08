@@ -36,7 +36,7 @@ type QueryWrapperState = {
     lastQueryRequest: {}
 }
 
-export type QuerryWrapperChildProps = {
+export type QueryWrapperChildProps = {
     isLoading?: boolean,
     isLoadingNewData?: boolean,
     executeQueryRequest?: (param: any) => void,
