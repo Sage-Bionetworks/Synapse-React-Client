@@ -70,6 +70,7 @@ $text-color-lighter: #898989;
   }
 
   .SRC-cardContent {
+    max-width: 80%;
     display: inline-block;
     padding-top: $baseline-grid;
 
@@ -78,10 +79,6 @@ $text-color-lighter: #898989;
       padding-bottom: $baseline-grid / 2;
     }
   
-    .SRC-description {
-      //padding-bottom: $baseline-grid /2;
-    }
-   
     .SRC-cardAnnotations {
       margin: ($baseline-grid / 2) 0;
       span{
