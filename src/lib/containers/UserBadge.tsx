@@ -7,7 +7,7 @@ type UserBadgeState = {
 };
 
 type UserBadgeProps = {
-    principalId: string,
+    principalId: number,
     token: string
 };
 
@@ -17,10 +17,11 @@ export default class UserBadge extends React.Component<UserBadgeProps, UserBadge
         this.state = {data: {}};
     }
     componentDidMount() {
-        getUserProfileData(this.props.principalId, this.props.token).then(
-            data => {
-                this.setState({ data });
-            }
+        getUserProfileData([this.props.principalId], this.props.token)
+        .then(
+                (data: any) => {
+                    this.setState({ data });
+                }
         );
     }
     render() {
