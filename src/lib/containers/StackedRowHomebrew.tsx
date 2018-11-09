@@ -1,5 +1,7 @@
 import React, { MouseEvent } from "react";
+import PropTypes from 'prop-types'
 import Measure, {ContentRect} from "react-measure";
+import {QueryWrapperChildProps} from './QueryWrapper'
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
@@ -22,12 +24,7 @@ type StackedRowHomebrewState = {
 };
 
 type StackedRowHomebrewProps = {
-    isChecked?: any
-    isLoadingNewData?: boolean
     loadingScreen: any
-    filter?: string,
-    data?: any,
-    rgbIndex?: number
 };
 
 type Info = {
@@ -42,8 +39,13 @@ type Info = {
  * @class StackedRowHomebrew
  * @extends {React.Component}
  */
-export default class StackedRowHomebrew extends React.Component<StackedRowHomebrewProps, StackedRowHomebrewState> {
-    constructor(props: StackedRowHomebrewProps) {
+export default class StackedRowHomebrew extends React.Component<StackedRowHomebrewProps & QueryWrapperChildProps, StackedRowHomebrewState> {
+
+    static propTypes = {
+        loadingScreen: PropTypes.element
+    }
+
+    constructor(props: StackedRowHomebrewProps & QueryWrapperChildProps) {
         super(props);
         this.handleHover = this.handleHover.bind(this);
         this.handleExit = this.handleExit.bind(this);
@@ -219,7 +221,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     let rgbColorNums: number[] = this.rgba2rgb([255, 255, 255], curColorSplitNum);
                                     let rgbColor: string = `rgb(${rgbColorNums})`;
                                     let rectStyle : any;
-                                    const check = this.props.isChecked[index] === undefined || this.props.isChecked[index];
+                                    const check = this.props.isChecked![index] === undefined || this.props.isChecked![index];
                                     if (check) {
                                         rectStyle = {
                                             fill: rgbColor

@@ -1,12 +1,13 @@
 import * as React from "react";
 import ColorGradient from "./ColorGradient";
+import PropTypes from 'prop-types';
 
 type MenuState = {
     currentFacet: string
 };
 
 type Props = {
-    isChecked: object,
+    isChecked: boolean [],
     updateParentState: (param: any) => void,
     updateParentFilter: (param: string) => void,
     executeQueryRequest: (param: any) => void,
@@ -29,6 +30,19 @@ type Data = {
 
 // will take in a default facet  originalColor: "#F5F5F5"
 export default class Menu extends React.Component<Props, MenuState> {
+
+    static propTypes = {
+        isChecked: PropTypes.array,
+        updateParentState: PropTypes.func,
+        updateParentFilter: PropTypes.func,
+        executeQueryRequest: PropTypes.func,
+        executeInitialQueryRequest: PropTypes.func,
+        getLastQueryRequest: PropTypes.func,
+        data: PropTypes.object,
+        rgbIndex: PropTypes.number,
+        filter: PropTypes.string
+    }
+
     constructor(props: Props) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
@@ -37,6 +51,7 @@ export default class Menu extends React.Component<Props, MenuState> {
             currentFacet: ""
         };
     }
+
     handleClick = (columnName: string) => (event: React.MouseEvent<HTMLDivElement>) => {
         this.setState({
             currentFacet: columnName
@@ -57,15 +72,17 @@ export default class Menu extends React.Component<Props, MenuState> {
             this.props.executeInitialQueryRequest();
         }
     };
+
     handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
         if (!info.isSelected && event.currentTarget.tagName === "DIV") {
             event.currentTarget.style.backgroundColor = info.originalColor;
             event.currentTarget.style.color = info.textColor;
         }
     };
+
     render() {
         let { data } = this.props;
-        if (data.length === 0) {
+        if (data === undefined) {
             return false;
         }
         const colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex);

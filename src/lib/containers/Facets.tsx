@@ -94,7 +94,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     constructor(props: QueryWrapperChildProps) {
         super(props);
-        this.recordSelections = this.recordSelections.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.state = {
             // we store the selected facets by column name for ease of use,
@@ -107,36 +106,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         this.updateSelection = this.updateSelection.bind(this);
     }
     /**
-     * Record's selection choice
-     *
-     * @param {*} options either SELECT_ALL or DESELECT_ALL, specifies if either of those options
-     * were selected
-     * @returns
-     * @memberof Facets
-     */
-    recordSelections(options: any) {
-        // this code must change-- currently isn't being updated correctly
-        let facets: any = {};
-        this.props.data.facets.forEach((element: any) => {
-            if (element.columnName === this.props.filter && element.facetType === "enumeration") {
-                let selection: any = [];
-                element.facetValues.forEach((facetValue: any) => {
-                    if ((facetValue.isSelected || options === SELECT_ALL) && options !== DESELECT_ALL) {
-                        selection.push(facetValue.value);
-                    }
-                });
-                if (selection.length > 0) {
-                    facets[element.columnName] = {
-                        columnName: element.columnName,
-                        facetValues: selection,
-                        concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest"
-                    };
-                }
-            }
-        });
-        return facets;
-    }
-    /**
      * Display the view of the facets
      *
      * @returns
@@ -145,13 +114,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     showFacetFilter() {
         // iterate through the loaded data and write out the appropriate checkboxes,
         // filling in the state of the checkboxes according to the current selection
-        if (this.props.data.length === 0) {
-            return false;
-        }
         let structuredRender: JSX.Element[] = [];
         // read in the most up to date data
         // display the data -- currently we only support enumerations
-        this.props.data.facets.forEach((element: any) => {
+        this.props.data!.facets.forEach((element: any) => {
             if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                 let group = (
                     <CheckboxGroup
@@ -243,7 +209,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     }
 
     render() {
-        if (this.props.data.length === 0) {
+        if (this.props.data === undefined) {
             return false;
         }
         return (

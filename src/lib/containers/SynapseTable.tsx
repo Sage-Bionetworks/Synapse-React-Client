@@ -157,10 +157,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     getLengthOfPropsData() {
         const { data } = this.props;
-        const { queryResult } = data;
-        const { queryResults } = queryResult;
-        const { headers } = queryResults;
-        return headers.length;
+        return data!.queryResult.queryResults.headers.length
     }
     /**
      * Handles the toggle of a column select, this will cause the table to
@@ -196,7 +193,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      * Display the view
      */
     render() {
-        if (this.props.data.length === 0) {
+        if (this.props.data === undefined) {
             return false;
         }
         // unpack all the data

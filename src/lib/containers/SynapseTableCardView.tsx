@@ -62,7 +62,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
 
     render() {
         const { data, limit = Infinity, hideOrganizationLink = false } = this.props;
-        if (Object.keys(data).length === 0) {
+        if (data === undefined) {
             return <div className="container"> </div>;
         }
         let schema = {};

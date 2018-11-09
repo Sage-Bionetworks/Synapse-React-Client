@@ -1,6 +1,10 @@
 import * as React from "react"
 import * as SynapseClient from "../utils/SynapseClient"
+import PropTypes from 'prop-types';
+
 import Menu from "./Menu"
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
+import { FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult';
 
 const cloneDeep = require("lodash.clonedeep")
 
@@ -27,8 +31,8 @@ type QueryWrapperProps = {
 }
 
 type QueryWrapperState = {
-    data: any,
-    isChecked: {},
+    data: QueryResultBundle | undefined,
+    isChecked: [],
     currentFacet: string,
     isLoadingNewData: boolean,
     isLoading: boolean,
@@ -42,8 +46,8 @@ export type QueryWrapperChildProps = {
     executeQueryRequest?: (param: any) => void,
     executeInitialQueryRequest?: () => void,
     getLastQueryRequest?: () => any,
-    isChecked?: any,
-    data?: any,
+    isChecked?: boolean [],
+    data?: QueryResultBundle,
     filter?: string,
     updateParentState?: (param: any) => void,
     updateParentFilter?: (param: string) => void,
@@ -68,6 +72,28 @@ export type QueryWrapperChildProps = {
  */
 export default class QueryWrapper extends React.Component<QueryWrapperProps, QueryWrapperState> {
 
+    static propTypes = {
+        initQueryRequest: PropTypes.shape({
+            concreteType: PropTypes.string,
+            partMask: PropTypes.number,
+            query: PropTypes.shape({
+                isConsistent: PropTypes.bool,
+                sql: PropTypes.string,
+                limit: PropTypes.number,
+                offset: PropTypes.number,
+                selectedFacets: PropTypes.array,
+                sort: PropTypes.array
+            })
+        }),
+        rgbIndex: PropTypes.number,
+        json: PropTypes.object,
+        token: PropTypes.string,
+        RGB: PropTypes.array,
+        filter: PropTypes.string,
+        showMenu: PropTypes.bool,
+        loadingScreen: PropTypes.element,
+    }
+
     static defaultProps = {
         token: "",
         json: null
@@ -76,8 +102,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     constructor(props: QueryWrapperProps) {
         super(props)
         this.state = {
-            data: [],
-            isChecked: {},
+            data: undefined,
+            isChecked: [],
             currentFacet: "",
             isLoadingNewData: true,
             isLoading: true,
@@ -139,7 +165,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         })
         SynapseClient.getQueryTableResults(queryRequest, this.props.token)
             .then(
-                (data: any )=> {
+                (data: QueryResultBundle )=> {
                     let newState: any = { data, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false }
                     this.setState(newState)
                 }
@@ -162,9 +188,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         SynapseClient
             .getQueryTableResults(this.props.initQueryRequest, this.props.token)
             .then(
-                (data: any) => {
+                (data: QueryResultBundle) => {
                     const filter = this.state.currentFacet ? this.state.currentFacet : this.props.filter
-                    let facetsForFilter = data.facets.filter(
+                    let facetsForFilter: FacetColumnResult = data.facets.filter(
                         (obj: any) => {
                             return obj.columnName === filter
                         })[0]
@@ -239,7 +265,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
                             executeQueryRequest: this.executeQueryRequest,
                             executeInitialQueryRequest: this.executeInitialQueryRequest,
                             getLastQueryRequest: this.getLastQueryRequest,
-                            isChecked: this.state.isChecked === null ? {} : this.state.isChecked,
+                            isChecked: this.state.isChecked,
                             data: this.state.data,
                             filter: this.state.currentFacet ? this.state.currentFacet : this.props.filter,
                             updateParentState: this.updateParentState,
