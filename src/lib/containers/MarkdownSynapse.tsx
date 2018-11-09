@@ -3,6 +3,7 @@ import * as SynapseClient from '../utils/SynapseClient';
 import Bookmarks from './widgets/Bookmarks';
 import SynapseImage from './widgets/SynapseImage';
 import katex from 'katex';
+import { WikiPage } from '../utils/jsonResponses/WikiPage'
 
 const uuidv4 = require('uuid/v4');
 const TOC_CLASS = {
@@ -250,7 +251,7 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
     getWikiPageMarkdown() {
         if (!this.state.text) {
             SynapseClient.getEntityWiki(this.props.token, this.props.ownerId, this.props.wikiId)
-                .then((data: any) => {
+                .then((data: WikiPage) => {
                     // on success grab text and append to the default text
                     let initText = this.state.text;
                     this.setState({

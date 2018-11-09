@@ -2,6 +2,7 @@ import * as React from 'react';
 import Plot from 'react-plotly.js';
 import * as SynapseConstants from '../../utils/SynapseConstants';
 import { getFullQueryTableResults } from '../../utils/SynapseClient';
+import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle';
 
 type SynapsePlotProps = {
     token?: string 
@@ -12,7 +13,7 @@ type SynapsePlotProps = {
 
 type SynapsePlotState = { 
     isLoaded: boolean,
-    queryData: any
+    queryData: QueryResultBundle
 }
 
 class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
@@ -21,6 +22,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
         super(props);
         this.state = {
             isLoaded: false,
+            // @ts-ignore
             queryData: {}
         };
         this.fetchPlotlyData = this.fetchPlotlyData.bind(this);
@@ -46,7 +48,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
             }
         };
         getFullQueryTableResults(queryRequest, token).then(
-            (data: any) => {
+            (data: QueryResultBundle) => {
                 this.setState({
                     queryData: data,
                     isLoaded: true

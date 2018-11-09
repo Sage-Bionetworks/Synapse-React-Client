@@ -1,3 +1,7 @@
+import { WikiPage } from './jsonResponses/WikiPage';
+import { SynapseVersion } from './jsonResponses/SynapseVersion';
+import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle';
+
 // TODO: Create JSON response types for return types
 const DEFAULT_ENDPOINT = "https://repo-prod.prod.sagebase.org/"
 
@@ -6,7 +10,7 @@ function delay(t: any) {
     setTimeout(resolve.bind(null,null), t);
   });
 }
-const fetch_with_exponential_timeout = (url: string, options: any, delayMs: any, retries: number): Promise<Response> => {
+const fetch_with_exponential_timeout = (url: string, options: any, delayMs: any, retries: number): Promise<any> => {
   return fetch(url, options)
     .then(resp => {
       if (resp.status > 199 && resp.status < 300) {
@@ -91,15 +95,18 @@ export const doGet = (url: string, sessionToken: string | undefined, endpoint:st
   }
   return fetch_with_exponential_timeout(endpoint + url, options, 1000, 5);
 };
-export const getVersion = (endpoint: string = DEFAULT_ENDPOINT) => {
-  return doGet('/repo/v1/version', undefined, endpoint);
+
+
+export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
+  return doGet('/repo/v1/version', undefined, endpoint) as Promise<SynapseVersion>;
 };
+
 export const getQueryTableResultsFromJobId = (
   entityId: string,
   jobId: string,
   sessionToken: string | undefined = undefined,
   endpoint: string = DEFAULT_ENDPOINT
-): Promise<Response> => {
+): Promise<QueryResultBundle> => {
   return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, endpoint)
     .then((resp: any) => {
       // is this the job status?
@@ -154,7 +161,7 @@ export const getQueryTableResults = (
  * data-- (internally this limits the row count to 1 on the request)
  * @returns Full dataset from synapse table query
  */
-export const getFullQueryTableResults = async (queryBundleRequest: any, sessionToken: string | undefined = undefined) => {
+export const getFullQueryTableResults = async (queryBundleRequest: any, sessionToken: string | undefined = undefined): Promise<QueryResultBundle> => {
   // TODO: Find out why theres a bug causing the query limut
   const { query, ...rest } = queryBundleRequest;
   let data: any = {};
@@ -166,39 +173,40 @@ export const getFullQueryTableResults = async (queryBundleRequest: any, sessionT
   // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
   // we can get, the following uses that maximum and offsets to the appropriate location to get the data
   // afterwards, the process repeats
-  await getQueryTableResults(queryRequest, sessionToken).then(async (initData: any) => {
-    let queryCount: any = initData.queryResult.queryResults.rows.length;
-    let currentQueryCount: number = queryCount;
-    data = initData;
-    // Get the subsequent data, note- although the function calls itself, it runs
-    // iteratively due to the await
-    const getData = async () => {
-      if (queryCount === maxPageSize) {
-        maxPageSize = initData.maxRowsPerPage;
-        let queryRequestWithMaxPageSize = {
-          ...rest,
-          query: { ...query, limit: maxPageSize, offset: currentQueryCount }
-        };
-        await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
-          .then((post_data: any) => {
-            queryCount += post_data.queryResult.queryResults.rows.length;
-            if (queryCount > 0) {
-              currentQueryCount += queryCount;
-              data.queryResult.queryResults.rows.push(
-                ...post_data.queryResult.queryResults.rows // ... spread operator to push all elements on
-              );
-            }
-            return getData();
-          })
-          .catch(err => {
-            console.log('Error on getting table results ', err);
-          });
-      } else {
-        // set data to this plots sql in the query data
-        return data;
-      }
-    };
-    return getData();
+  await getQueryTableResults(queryRequest, sessionToken).then(
+    async (initData: QueryResultBundle) => {
+      let queryCount: any = initData.queryResult.queryResults.rows.length;
+      let currentQueryCount: number = queryCount;
+      data = initData;
+      // Get the subsequent data, note- although the function calls itself, it runs
+      // iteratively due to the await
+      const getData = async () => {
+        if (queryCount === maxPageSize) {
+          maxPageSize = initData.maxRowsPerPage;
+          let queryRequestWithMaxPageSize = {
+            ...rest,
+            query: { ...query, limit: maxPageSize, offset: currentQueryCount }
+          };
+          await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
+            .then((post_data: any) => {
+              queryCount += post_data.queryResult.queryResults.rows.length;
+              if (queryCount > 0) {
+                currentQueryCount += queryCount;
+                data.queryResult.queryResults.rows.push(
+                  ...post_data.queryResult.queryResults.rows // ... spread operator to push all elements on
+                );
+              }
+              return getData();
+            })
+            .catch(err => {
+              console.log('Error on getting table results ', err);
+            });
+        } else {
+          // set data to this plots sql in the query data
+          return data;
+        }
+      };
+      return getData();
   });
   return data;
 };
@@ -308,7 +316,7 @@ export const getEntityBundleForVersion = (
  */
 export const getEntityWiki = (sessionToken:string|undefined, ownerId: string | undefined, wikiId: string | undefined, endpoint: string = DEFAULT_ENDPOINT) => {
   let url = `/repo/v1/entity/${ownerId}/wiki/${wikiId}`;
-  return doGet(url, sessionToken, endpoint);
+  return doGet(url, sessionToken, endpoint) as Promise<WikiPage>;
 };
 /**
  * Returns synapse user favorites list given their session token

@@ -23,6 +23,7 @@ import syn16859448 from "../../JSON_test_data/syn16859448.json";
 import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
+import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
 
 type AppState = 
   {
@@ -30,7 +31,7 @@ type AppState =
     ownerId: string,
     isLoading: boolean,
     showMarkdown: boolean,
-    version: string,
+    version: number,
     initQueryRequest: {
       concreteType: string,
       partMask: number,
@@ -54,7 +55,7 @@ class App extends Component<{}, AppState> {
     super(props);
     this.state = {
       token: "",
-      version: "",
+      version: 0,
       ownerId: "",
       isLoading: true,
       showMarkdown: true,
@@ -85,7 +86,7 @@ class App extends Component<{}, AppState> {
     // Pass your endpoint through to the rpc call:
     // SynapseClient.getVersion('https://repo-staging.prod.sagebase.org')
     SynapseClient.getVersion()
-      .then((data: any) => this.setState(data))
+      .then((data: SynapseVersion) => this.setState({version: data.version}))
       .catch(function(error: any) {
         // Handle HTTPError.  Has statusCode and message.
         console.error("Get version failed", error);
