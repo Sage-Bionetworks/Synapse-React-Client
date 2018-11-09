@@ -7,7 +7,7 @@ import UserFavorites from "../../lib/containers/demo_components/UserFavorites";
 import UserProjects from "../../lib/containers/demo_components/UserProjects";
 import UserTeam from "../../lib/containers/demo_components/UserTeams";
 import UserProfile from "../../lib/containers/demo_components/UserProfile";
-import CustomMarkdownView from "../../lib/containers/CustomMarkdownView";
+import CustomMarkdownView from "../../lib/containers/demo_components/CustomMarkdownView";
 import * as SynapseClient from "../../lib/utils/SynapseClient";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapper from "../../lib/containers/QueryWrapper";
@@ -194,8 +194,8 @@ class App extends Component<{}, AppState> {
         <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
-            ownerId={"syn14306197"}
-            wikiId={"582150"}
+            ownerId={"syn17012850"}
+            wikiId={"584559"}
             updateLoadState={this.handleChange}
           />
         </CustomMarkdownView>

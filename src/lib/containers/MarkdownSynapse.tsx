@@ -67,7 +67,6 @@ type MarkdownSynapseState = {
  */
 class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSynapseState> {
 
-    private footnoteRef: React.RefObject<HTMLInputElement>
     private markupRef: React.RefObject<HTMLInputElement>
 
     /**
@@ -102,7 +101,6 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
             isLoggedIn: this.props.token !== '',
             errorMessage: ''
         };
-        this.footnoteRef = React.createRef();
         this.markupRef = React.createRef();
         this.handleLinkClicks = this.handleLinkClicks.bind(this);
         // handle widgets and math markdown
@@ -132,37 +130,47 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         // @ts-ignore TODO: give justification for ignoring this line
         this.markupRef.current!.removeEventListener('click', this.handleLinkClicks);
     }
+
     // manually handle clicks to anchor tags
-    handleLinkClicks(event: React.MouseEvent<HTMLAnchorElement>) {
+    handleLinkClicks(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        if (event.currentTarget.tagName === 'A' && event.currentTarget.getAttribute('data-anchor') === null && event.currentTarget.id === '') {
-            window.open(event.currentTarget.href, '_blank');
-        } else if (event.currentTarget.id.substring(0, 3) === 'ref') {
-            let referenceNumber = Number(event.currentTarget.id.substring(3)); // e.g. ref2 => '2'
-            let goTo = this.markupRef.current!.querySelector(`#bookmark${referenceNumber - 1}`);
-            try {
-                goTo!.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            } catch (e) {
-                console.log('error on scroll', e);
-            }
-        } else if (event.currentTarget.getAttribute('data-anchor') !== null) {
-            let idOfContent = event.currentTarget.getAttribute('data-anchor');
-            let goTo = this.markupRef.current!.querySelector(`#${idOfContent}`);
-            try {
-                goTo!.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            } catch (e) {
-                console.log('error on scroll', e);
+
+        // because this listener acts on the whole page (which is desired)
+        // we have to cast the event to an anchor because that's what were interested in
+        // responding to
+        let anchor = event.target as HTMLAnchorElement
+
+        if (anchor.tagName === 'A') {
+            if (anchor.getAttribute("data-anchor") === null && anchor.id === '') {
+                window.open(anchor.href, '_blank');
+            } else if (anchor.id.substring(0, 3) === 'ref') {
+                let referenceNumber = Number(event.currentTarget.id.substring(3)); // e.g. ref2 => '2'
+                let goTo = this.markupRef.current!.querySelector(`#bookmark${referenceNumber - 1}`);
+                try {
+                    goTo!.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    });
+                } catch (e) {
+                    console.log('error on scroll', e);
+                }
+            } else if (event.currentTarget.id !== null) {
+                let idOfContent = anchor.getAttribute("data-anchor");
+                let goTo = this.markupRef.current!.querySelector(`#${idOfContent}`);
+                try {
+                    goTo!.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    });
+                } catch (e) {
+                    console.log('error on scroll', e);
+                }
             }
         }
     }
+
     /**
      * Given input text, generate markdown object to be passed onto inner html of some container.
      * @param {String} text The text being written in plain markdown
@@ -396,7 +404,7 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
             elements.push(
                 <div key={uuidv4()}>
                     {
-                        <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3} onClick={this.handleMarkupClick}>
+                        <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
                             {' '}
                             {p4}{' '}
                         </a>
@@ -447,22 +455,6 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         this.processMath();
     }
 
-    handleMarkupClick(event: any) {
-        event.preventDefault();
-        if (event.target.tagName.toLowerCase() === 'a' && event.target.id.substring(0, 3) === 'ref') {
-            let referenceNumber = Number(event.target.id.substring(3)); // e.g. ref2 => '2'
-            let goTo = this.footnoteRef.current!.querySelector(`#bookmark${referenceNumber - 1}`);
-            try {
-                goTo!.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                });
-            } catch (e) {
-                console.log('error on scroll', e);
-            }
-        }
-    }
     render() {
         return (
             <div className="markdown" ref={this.markupRef}>
