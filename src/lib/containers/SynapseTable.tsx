@@ -141,9 +141,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         // base 64 encode the json of the query and go to url with the encoded object
         let encodedQuery = btoa(JSON.stringify(query));
         let synTable = this.props.synapseId;
-        let location: Location = new Location()
-        location.assign(`https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`)
-        window.location = location;
+        window.location.href = `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`
     }
     /**
      * Handles the opening and closing of the column select menu, this method
@@ -220,11 +218,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
             if (initRender || subsequentRender) {
                 let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1;
+                let columnIndex = this.state.columnIconState[index] === undefined ? 0: this.state.columnIconState[index]
                 return (
                     <th onClick={this.handleColumnClick({ name: column.name, index })} key={column.name} className={"SRC-hand-cursor " + (isSelected ? "SRC-salmon-background" : "")}>
                         <a style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
-                            <FontAwesomeIcon className={`${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"} pull-right`} icon={ICON_STATE[this.state.columnIconState[index]]}/>
+                            <FontAwesomeIcon className={`${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"} pull-right`} icon={ICON_STATE[columnIndex]}/>
                         </a>
                     </th>
                 );
