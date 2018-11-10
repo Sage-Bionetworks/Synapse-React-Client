@@ -4,28 +4,18 @@ import PropTypes from 'prop-types';
 
 import Menu from "./Menu"
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
-import { FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult';
+import { FacetColumnResult, FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult';
+import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 
 const cloneDeep = require("lodash.clonedeep")
 
 type QueryWrapperProps = {
-    initQueryRequest?: {
-        concreteType?: string,
-        partMask?: number,
-        query?: {
-            isConsistent?: boolean,
-            sql?: string,
-            limit?: number,
-            offset?: number,
-            selectedFacets?: any[],
-            sort?: any[]
-        }
-    },
+    initQueryRequest?: QueryBundleRequest,
     rgbIndex?: number
     json?: object,
     token?: string,
     RGB?: any[],
-    filter?: string,
+    filter: string,
     showMenu?: boolean,
     loadingScreen?: JSX.Element
 }
@@ -59,14 +49,6 @@ export type QueryWrapperChildProps = {
  * Class wraps around any Synapse views that are dependent on a query bundle
  * Those classes then take in as props:
  *
- *          data: This is the data of the current query bundle
- *          getLastQueryRequest: When the child needs to make a query selection
- *                               this is called so that it can then modify that query
- *                               with its own.
- *          executeQueryRequest: Once the step from above is completed the child calls
- *                               this to make the query request.
- *
- * @export
  * @class QueryWrapper
  * @extends {React.Component}
  */
@@ -189,15 +171,23 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             .getQueryTableResults(this.props.initQueryRequest, this.props.token)
             .then(
                 (data: QueryResultBundle) => {
-                    const filter = this.state.currentFacet ? this.state.currentFacet : this.props.filter
+                    const filter: string = this.state.currentFacet ? this.state.currentFacet : this.props.filter
+
+                    // we have to reset the facet selections by getting the original
+                    // facet corresponding to the original filter
                     let facetsForFilter: FacetColumnResult = data.facets.filter(
-                        (obj: any) => {
+                        (obj: FacetColumnResult) => {
                             return obj.columnName === filter
                         })[0]
-                    let facetsMapped = facetsForFilter.facetValues.map((el: any) => {
-                        return el.value
-                    })
-                    let lastQueryRequest = cloneDeep(this.props.initQueryRequest)
+                    // next we have to selectively choose those facets and their
+                    // corresponding counts, we have to get the full counts because of 
+                    // the nature that we are clicking elements and turning them "off"
+                    let facetsMapped = facetsForFilter.facetValues.map(
+                        (el: FacetColumnResultValueCount) => {
+                            return el.value
+                        }
+                    )
+                    let lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)
                     lastQueryRequest.query.selectedFacets = [
                         {
                             columnName: filter,
@@ -205,6 +195,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
                             facetValues: [...facetsMapped]
                         }
                     ]
+
+
                     let newState = { data, lastQueryRequest, isLoading: false, isLoadingNewData: false, showNothing: false }
                     this.setState(newState)
                 }
