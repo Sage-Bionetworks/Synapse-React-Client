@@ -5,6 +5,7 @@ import Bookmarks from './widgets/Bookmarks';
 import SynapseImage from './widgets/SynapseImage';
 import katex from 'katex';
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
+import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults';
 
 const uuidv4 = require('uuid/v4');
 const TOC_CLASS = {
@@ -55,7 +56,7 @@ type MarkdownSynapseProps = {
 type MarkdownSynapseState = {
     md: any,
     text: string,
-    fileHandles: any,
+    fileHandles?: FileHandleResults,
     newOwnerId: string,
     newWikiId: string,
     isLoggedIn: boolean,
@@ -68,7 +69,6 @@ type MarkdownSynapseState = {
  * @extends {React.Component}
  */
 class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSynapseState> {
-
 
     static propTypes = {
         errorMessageView: PropTypes.element,
@@ -108,7 +108,7 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         this.state = {
             md,
             text: '',
-            fileHandles: null,
+            fileHandles: undefined,
             newOwnerId: '',
             newWikiId: '',
             isLoggedIn: this.props.token !== '',

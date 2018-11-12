@@ -195,8 +195,8 @@ class App extends Component<{}, AppState> {
         <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
-            ownerId={"syn17012850"}
-            wikiId={"584559"}
+            ownerId={"syn14306197"}
+            wikiId={"582150"}
             updateLoadState={this.handleChange}
           />
         </CustomMarkdownView>

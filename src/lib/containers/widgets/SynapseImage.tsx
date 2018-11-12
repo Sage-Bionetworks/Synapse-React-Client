@@ -1,12 +1,15 @@
 import * as React from "react";
 import { getFiles, getEntity } from "../../utils/SynapseClient";
+import { FileEntity } from 'src/lib/utils/jsonResponses/FileEntity';
+import { BatchFileResult } from 'src/lib/utils/jsonResponses/BatchFileResult';
+import { FileHandle } from 'src/lib/utils/jsonResponses/FileHandle';
 
 type SynapseImageProps = {
     wikiId?: string,
     synapseId?: string,
     token?: string,
     fileName?: string,
-    fileResults?: any[]
+    fileResults?: FileHandle []
     params: any
 };
 
@@ -14,7 +17,6 @@ type SynapseImageState = {
     isLoaded: boolean,
     preSignedURL: string
 };
-
 
 class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState> {
 
@@ -38,18 +40,21 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     /**
      * Attach markdown to wiki attachments
      */
-    matchToHandle(comparator: any , objectList:any) {
+    matchToHandle(comparator: any , objectList: any) {
         if (objectList) {
             // make sure the files have loaded
             let filtered = objectList.filter(comparator);
             return filtered;
         }
+        return []
     }
 
     getEntity() {
         const { token, synapseId } = this.props;
         getEntity(token, synapseId!).then(
-            (data: any) => {
+            // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
+            (data: FileEntity) => {
+                console.log('entity is ', data)
                 let fileHandleAssociationList = [
                     {
                         fileHandleId: data.dataFileHandleId,
@@ -71,7 +76,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
             includePreviewPreSignedURLs: false
         };
         getFiles(request, this.props.token).then(
-            (data: any) => {
+            (data: BatchFileResult) => {
                 let match = this.matchToHandle(this.compareById(id, "fileHandleId"), data.requestedFiles);
                 this.setState({
                     preSignedURL: match[0].preSignedURL
@@ -86,7 +91,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
             this.getEntity();
         } else {
             const { fileName, fileResults } = this.props;
-            let match = this.matchToHandle(this.compareById(fileName!, "fileName"), fileResults);
+            let match = this.matchToHandle(this.compareById(fileName!, "fileName"), fileResults!);
             let fileHandleAssociationList = [
                 {
                     fileHandleId: match[0].id,

@@ -1,6 +1,9 @@
 import { WikiPage } from './jsonResponses/WikiPage';
 import { SynapseVersion } from './jsonResponses/SynapseVersion';
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle';
+import { Entity } from './jsonResponses/Entity';
+import { BatchFileResult } from './jsonResponses/BatchFileResult';
+import { FileHandleResults } from './jsonResponses/FileHandleResults';
 
 // TODO: Create JSON response types for return types
 const DEFAULT_ENDPOINT = "https://repo-prod.prod.sagebase.org/"
@@ -65,7 +68,7 @@ const fetch_with_exponential_timeout = (url: string, options: any, delayMs: any,
       return Promise.reject(error);
     });
 };
-export const doPost = (url: string, requestJsonObject: any, sessionToken: string | undefined, endpoint: string): Promise<Response> => {
+export const doPost = (url: string, requestJsonObject: any, sessionToken: string | undefined, endpoint: string): Promise<any> => {
   let options: any = {
     method: 'POST',
     mode: 'cors',
@@ -277,16 +280,16 @@ export const getEntityChildren = (request: string, sessionToken: string | undefi
 /** Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
  */
-export const getFiles = (request: string, sessionToken: string | undefined = undefined, endpoint:string = DEFAULT_ENDPOINT) => {
+export const getFiles = (request: string, sessionToken: string | undefined = undefined, endpoint:string = DEFAULT_ENDPOINT): Promise<BatchFileResult> => {
   return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint);
 };
 /**
  * Bundled access to Entity and related data components.
  * An EntityBundle can be used to create, fetch, or update an Entity and associated objects with a single web service request.
  * See SynapseClient.test.js for an example partsMask.
- * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+ * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
  */
-export const getEntity = (sessionToken: string | undefined = undefined, entityId: string | number, endpoint = DEFAULT_ENDPOINT) => {
+export const getEntity = (sessionToken: string | undefined = undefined, entityId: string | number, endpoint = DEFAULT_ENDPOINT): Promise<Entity> => {
   let url = `/repo/v1/entity/${entityId}`;
   return doGet(url, sessionToken, endpoint);
 };
@@ -364,7 +367,11 @@ export const getTeamList = (
   return doGet(url, sessionToken, endpoint);
 };
 
-export const getWikiAttachmentsFromEntity = (sessionToken: string|undefined, id: string|number, wikiId: string|number, endpoint: string = DEFAULT_ENDPOINT) => {
+export const getWikiAttachmentsFromEntity = 
+    ( sessionToken: string|undefined,
+      id: string|number,
+      wikiId: string|number,
+      endpoint: string = DEFAULT_ENDPOINT): Promise<FileHandleResults> => {
   let url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`;
   return doGet(url, sessionToken, endpoint);
 };
