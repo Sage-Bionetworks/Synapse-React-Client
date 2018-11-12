@@ -5,6 +5,7 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { faSort } from "@fortawesome/free-solid-svg-icons";
 import { faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { faSortDown } from "@fortawesome/free-solid-svg-icons";
+import PropTypes from 'prop-types'
 
 // Add all icons to the library so you can use it in your page
 library.add(faEllipsisV);
@@ -39,6 +40,11 @@ type SynapseTableProps = {
 import {QueryWrapperChildProps} from './QueryWrapper'
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps & SynapseTableProps, SynapseTableState> {
+
+    static propTypes = {
+        visibleColumnCount: PropTypes.number,
+        synapseId: PropTypes.string
+    }
 
     constructor(props: QueryWrapperChildProps & SynapseTableProps) {
         super(props);

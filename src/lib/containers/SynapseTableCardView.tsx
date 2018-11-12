@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL } from '../utils/SynapseConstants';
 import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
 // Instead of giving each of the Study/Tool/etc components the same
@@ -36,6 +37,12 @@ type SynapseTableCardViewProps = {
     hideOrganizationLink?: boolean
 };
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}> {
+
+    static propTypes = {
+        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL]),
+        limit: PropTypes.number,
+        hideOrganizationLink: PropTypes.bool
+    }
 
     constructor(props: SynapseTableCardViewProps) {
         super(props);

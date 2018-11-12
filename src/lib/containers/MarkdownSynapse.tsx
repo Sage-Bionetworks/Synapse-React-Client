@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as SynapseClient from '../utils/SynapseClient';
+import PropTypes from 'prop-types';
 import Bookmarks from './widgets/Bookmarks';
 import SynapseImage from './widgets/SynapseImage';
 import katex from 'katex';
@@ -67,6 +68,17 @@ type MarkdownSynapseState = {
  * @extends {React.Component}
  */
 class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSynapseState> {
+
+
+    static propTypes = {
+        errorMessageView: PropTypes.element,
+        token: PropTypes.string,
+        ownerId: PropTypes.string,
+        wikiId: PropTypes.string,
+        markdown: PropTypes.string,
+        hasSynapseResources: PropTypes.bool,
+        updateLoadState: PropTypes.func
+    }
 
     private markupRef: React.RefObject<HTMLInputElement>
 

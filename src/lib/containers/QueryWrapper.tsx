@@ -97,6 +97,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
         this.updateParentState = this.updateParentState.bind(this)
         this.updateParentFilter = this.updateParentFilter.bind(this)
+        this.resetFacetSelection = this.resetFacetSelection.bind(this)
     }
 
     /**
@@ -172,59 +173,45 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             .then(
                 (data: QueryResultBundle) => {
                     const filter: string = this.state.currentFacet ? this.state.currentFacet : this.props.filter
-
-                    // we have to reset the facet selections by getting the original
-                    // facet corresponding to the original filter
-                    let facetsForFilter: FacetColumnResult = data.facets.filter(
-                        (obj: FacetColumnResult) => {
-                            return obj.columnName === filter
-                        })[0]
-                    // next we have to selectively choose those facets and their
-                    // corresponding counts, we have to get the full counts because of 
-                    // the nature that we are clicking elements and turning them "off"
-                    let facetsMapped = facetsForFilter.facetValues.map(
-                        (el: FacetColumnResultValueCount) => {
-                            return el.value
-                        }
-                    )
-                    let lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)
-                    lastQueryRequest.query.selectedFacets = [
-                        {
-                            columnName: filter,
-                            concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
-                            facetValues: [...facetsMapped]
-                        }
-                    ]
-
-
+                    let lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(data, filter);
                     let newState = { data, lastQueryRequest, isLoading: false, isLoadingNewData: false, showNothing: false }
                     this.setState(newState)
                 }
-            ).catch(err => {
-                console.log("Failed to get data ", err)
-            })
+                ).catch(err => {
+                    console.log("Failed to get data ", err)
+                })
+            }
+            
+    private resetFacetSelection(data: QueryResultBundle, filter: string) {
+        // we have to reset the facet selections by getting the original
+        // facet corresponding to the original filter
+        let facetsForFilter: FacetColumnResult = data.facets.filter((obj: FacetColumnResult) => {
+            return obj.columnName === filter;
+        })[0];
+        // next we have to selectively choose those facets and their
+        // corresponding counts, we have to get the full counts because of 
+        // the nature that we are clicking elements and turning them "off"
+        let facetsMapped = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
+            return el.value;
+        });
+        let lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest);
+        lastQueryRequest.query.selectedFacets = [
+            {
+                columnName: filter,
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: [...facetsMapped]
+            }
+        ];
+        return lastQueryRequest;
     }
 
     updateParentState(update: any) {
         this.setState(update)
     }
 
-    updateParentFilter(filter: any) {
-        let request = cloneDeep(this.props.initQueryRequest)
-        let facetsForFilter = this.state.data!.facets.filter((obj: any) => {
-            return obj.columnName === filter
-        })[0]
-        let facetsMapped = facetsForFilter.facetValues.map((el: any) => {
-            return el.value
-        })
-        request.query.selectedFacets = [
-            {
-                columnName: filter,
-                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
-                facetValues: [...facetsMapped]
-            }
-        ]
-        this.setState({ lastQueryRequest: cloneDeep(request), currentFacet: filter })
+    updateParentFilter(filter: string) {
+        let lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(this.state.data!, filter)
+        this.setState({ lastQueryRequest, currentFacet: filter })
     }
     /**
      * Render the children without any formatting
