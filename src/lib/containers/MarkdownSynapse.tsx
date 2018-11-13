@@ -21,7 +21,6 @@ const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]
 // Only because in the test enviornment there is an issue with importing
 // react-plot which in turn imports mapboxgl which in turn defines a function
 // that causes an error
-
 let SynapsePlot: any;
 if (process.env.NODE_ENV !== 'test') {
     import('./widgets/SynapsePlot').then(data => {

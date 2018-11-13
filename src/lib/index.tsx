@@ -10,6 +10,7 @@ import SynapseTable from './containers/SynapseTable'
 
 import './style/Portal.css'
 import './style/Cards.css'
+import './style/katex.css'
 
 let SynapseComponents = {
     Markdown: MarkdownSynapse,
