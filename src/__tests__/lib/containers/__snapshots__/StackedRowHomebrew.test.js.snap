@@ -136,7 +136,7 @@ ShallowWrapper {
                                         <span
                                                   className="SRC-text-cap"
                                         >
-                                                    
+                                                   
                                                    
                                         </span>
                                          : 
@@ -424,7 +424,7 @@ ShallowWrapper {
                                           <span
                                                         className="SRC-text-cap"
                                           >
-                                                          
+                                                         
                                                          
                                           </span>
                                            : 
@@ -456,7 +456,7 @@ ShallowWrapper {
                                 <span
                                                 className="SRC-text-cap"
                                 >
-                                                  
+                                                 
                                                  
                                 </span>
                                  : 
@@ -478,7 +478,7 @@ ShallowWrapper {
                   <span
                                     className="SRC-text-cap"
                   >
-                                      
+                                     
                                      
                   </span>
                    : 
@@ -498,7 +498,7 @@ ShallowWrapper {
                     <span
                       className="SRC-text-cap"
 >
-                        
+                       
                        
 </span>,
                     " : ",
@@ -516,7 +516,7 @@ ShallowWrapper {
                     "nodeType": "host",
                     "props": Object {
                       "children": Array [
-                        "  ",
+                        " ",
                         undefined,
                         " ",
                       ],
@@ -524,7 +524,7 @@ ShallowWrapper {
                     },
                     "ref": null,
                     "rendered": Array [
-                      "  ",
+                      " ",
                       undefined,
                       " ",
                     ],
@@ -671,7 +671,7 @@ ShallowWrapper {
                                                 <span
                                                             className="SRC-text-cap"
                                                 >
-                                                              
+                                                             
                                                              
                                                 </span>
                                                  : 
@@ -959,7 +959,7 @@ ShallowWrapper {
                                                 <span
                                                                 className="SRC-text-cap"
                                                 >
-                                                                  
+                                                                 
                                                                  
                                                 </span>
                                                  : 
@@ -991,7 +991,7 @@ ShallowWrapper {
                                     <span
                                                       className="SRC-text-cap"
                                     >
-                                                        
+                                                       
                                                        
                                     </span>
                                      : 
@@ -1013,7 +1013,7 @@ ShallowWrapper {
                     <span
                                         className="SRC-text-cap"
                     >
-                                          
+                                         
                                          
                     </span>
                      : 
@@ -1033,7 +1033,7 @@ ShallowWrapper {
                       <span
                         className="SRC-text-cap"
 >
-                          
+                         
                          
 </span>,
                       " : ",
@@ -1051,7 +1051,7 @@ ShallowWrapper {
                       "nodeType": "host",
                       "props": Object {
                         "children": Array [
-                          "  ",
+                          " ",
                           undefined,
                           " ",
                         ],
@@ -1059,7 +1059,7 @@ ShallowWrapper {
                       },
                       "ref": null,
                       "rendered": Array [
-                        "  ",
+                        " ",
                         undefined,
                         " ",
                       ],

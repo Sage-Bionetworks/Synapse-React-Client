@@ -1,5 +1,5 @@
-import * as SynapseClient from 'lib/utils/SynapseClient';
-import * as SynapseConstants from 'lib/utils/SynapseConstants.js';
+import * as SynapseClient from '../../../lib/utils/SynapseClient';
+import * as SynapseConstants from '../../../lib/utils/SynapseConstants';
 import { fail } from 'assert';
 
 it('invalid call', () => {
