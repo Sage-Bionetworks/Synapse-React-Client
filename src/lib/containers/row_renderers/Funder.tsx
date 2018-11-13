@@ -7,8 +7,8 @@ const logoLinks = {
 }
 
 type FunderProps = {
-    data?: any,
-    schema?: any,
+    data?: any
+    schema?: any
     hideOrganizationLink?: boolean
 }
 

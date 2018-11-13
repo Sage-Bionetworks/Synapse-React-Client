@@ -10,38 +10,38 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 const cloneDeep = require("lodash.clonedeep")
 
 type QueryWrapperProps = {
-    initQueryRequest?: QueryBundleRequest,
+    initQueryRequest?: QueryBundleRequest
     rgbIndex?: number
-    json?: object,
-    token?: string,
-    RGB?: any[],
-    filter: string,
-    showMenu?: boolean,
+    json?: object
+    token?: string
+    RGB?: any[]
+    filter: string
+    showMenu?: boolean
     loadingScreen?: JSX.Element
 }
 
 type QueryWrapperState = {
-    data: QueryResultBundle | undefined,
-    isChecked: [],
-    currentFacet: string,
-    isLoadingNewData: boolean,
-    isLoading: boolean,
-    showNothing: boolean,
+    data: QueryResultBundle | undefined
+    isChecked: []
+    currentFacet: string
+    isLoadingNewData: boolean
+    isLoading: boolean
+    showNothing: boolean
     lastQueryRequest: {}
 }
 
 export type QueryWrapperChildProps = {
-    isLoading?: boolean,
-    isLoadingNewData?: boolean,
-    executeQueryRequest?: (param: any) => void,
-    executeInitialQueryRequest?: () => void,
-    getLastQueryRequest?: () => any,
-    isChecked?: boolean [],
-    data?: QueryResultBundle,
-    filter?: string,
-    updateParentState?: (param: any) => void,
-    updateParentFilter?: (param: string) => void,
-    rgbIndex?: number,
+    isLoading?: boolean
+    isLoadingNewData?: boolean
+    executeQueryRequest?: (param: any) => void
+    executeInitialQueryRequest?: () => void
+    getLastQueryRequest?: () => any
+    isChecked?: boolean []
+    data?: QueryResultBundle
+    filter?: string
+    updateParentState?: (param: any) => void
+    updateParentFilter?: (param: string) => void
+    rgbIndex?: number
     showNothing?: boolean
 }
 

@@ -15,14 +15,14 @@ library.add(faTimes);
 library.add(faPlus);
 
 type CheckboxGroupProps = {
-    rgbIndex: number,
-    isChecked: any,
-    element: any,
+    rgbIndex: number
+    isChecked: any
+    element: any
     clickHandler: any
 }
 
 type Info = {
-    index: number,
+    index: number
     value: string
 }
 

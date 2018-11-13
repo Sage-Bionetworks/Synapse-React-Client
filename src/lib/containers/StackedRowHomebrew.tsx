@@ -16,10 +16,10 @@ const PREVIOUS_ITEM_CLICK = "left click";
 const NEXT_CLICK = "right click";
 
 type StackedRowHomebrewState = {
-    hoverTextCount: number,
-    hoverText: string,
-    selectedFacets: {},
-    dimensions: ContentRect,
+    hoverTextCount: number
+    hoverText: string
+    selectedFacets: {}
+    dimensions: ContentRect
     index: number
 };
 
@@ -28,8 +28,8 @@ type StackedRowHomebrewProps = {
 };
 
 type Info = {
-    value: string,
-    count: number,
+    value: string
+    count: number
     index:  number
 }
 

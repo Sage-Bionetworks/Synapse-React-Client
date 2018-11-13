@@ -3,12 +3,12 @@ import * as Utils from "./utils/index";
 import { STUDY_ACTIVE, STUDY_COMPLETE } from "../../utils/SynapseConstants";
 
 type StudyState = {
-    showMore: boolean,
+    showMore: boolean
     hasCreatedIndex: boolean
 };
 
 type StudyProps = {
-    data?: any,
+    data?: any
     schema?: any
 };
 

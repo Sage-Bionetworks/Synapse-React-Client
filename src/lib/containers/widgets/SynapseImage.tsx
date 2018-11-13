@@ -5,16 +5,16 @@ import { BatchFileResult } from 'src/lib/utils/jsonResponses/BatchFileResult';
 import { FileHandle } from 'src/lib/utils/jsonResponses/FileHandle';
 
 type SynapseImageProps = {
-    wikiId?: string,
-    synapseId?: string,
-    token?: string,
-    fileName?: string,
+    wikiId?: string
+    synapseId?: string
+    token?: string
+    fileName?: string
     fileResults?: FileHandle []
     params: any
 };
 
 type SynapseImageState = {
-    isLoaded: boolean,
+    isLoaded: boolean
     preSignedURL: string
 };
 

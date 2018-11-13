@@ -4,24 +4,24 @@ import GoogleIcon from "../../assets/GoogleIcon";
 import ButtonContent from "../../assets/ButtonContent";
 
 type State = { 
-    username: string,
-    password: string,
-    email: string,
-    isSignedIn: boolean,
-    hasLoginInFailed: boolean,
-    errorMessage: string,
-    dissmissButtonClicked: boolean,
+    username: string
+    password: string
+    email: string
+    isSignedIn: boolean
+    hasLoginInFailed: boolean
+    errorMessage: string
+    dissmissButtonClicked: boolean
     showRegistration: boolean
 };
 
 type Props = {
-    onTokenChange : ((val: {}) => void),
-    token : string | undefined,
-    theme : string,
-    icon : boolean,
-    buttonText : string,
-    authProvider : string,
-    redirectURL : string,
+    onTokenChange : ((val: {}) => void)
+    token : string | undefined
+    theme : string
+    icon : boolean
+    buttonText : string
+    authProvider : string
+    redirectURL : string
 }
 
 /**

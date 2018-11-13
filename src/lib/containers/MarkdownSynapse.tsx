@@ -44,22 +44,22 @@ let sanitizeHtml = require('sanitize-html');
 let synapseMath = require('markdown-it-synapse-math');
 
 type MarkdownSynapseProps = {
-    errorMessageView?: JSX.Element,
-    token?: string,
-    ownerId?: string,
-    wikiId?: string,
-    markdown?: string,
+    errorMessageView?: JSX.Element
+    token?: string
+    ownerId?: string
+    wikiId?: string
+    markdown?: string
     hasSynapseResources?: boolean
-    updateLoadState?: any,
+    updateLoadState?: any
 };
 
 type MarkdownSynapseState = {
-    md: any,
-    text: string,
-    fileHandles?: FileHandleResults,
-    newOwnerId: string,
-    newWikiId: string,
-    isLoggedIn: boolean,
+    md: any
+    text: string
+    fileHandles?: FileHandleResults
+    newOwnerId: string
+    newWikiId: string
+    isLoggedIn: boolean
     errorMessage: string
 };
 /**

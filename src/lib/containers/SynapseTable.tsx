@@ -20,15 +20,15 @@ const ICON_STATE: ("sort" | "sort-up" | "sort-down")[] = ["sort", "sort-up", "so
 let SORT_STATE = ["", "ASC", "DESC"];
 
 type Info = {
-    index: number,
+    index: number
     name: string
 }
 
 type SynapseTableState = {
-    sortSelection: string[],
-    offset: number,
-    isOpen: boolean,
-    isColumnSelected: boolean[],
+    sortSelection: string[]
+    offset: number
+    isOpen: boolean
+    isColumnSelected: boolean[]
     columnIconState: string[]
 };
 

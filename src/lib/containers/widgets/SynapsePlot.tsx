@@ -5,14 +5,14 @@ import { getFullQueryTableResults } from '../../utils/SynapseClient';
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle';
 
 type SynapsePlotProps = {
-    token?: string 
-    ownerId?: string,
-    wikiId?: string,
+    token?: string
+    ownerId?: string
+    wikiId?: string
     widgetparamsMapped?: any
 };
 
 type SynapsePlotState = { 
-    isLoaded: boolean,
+    isLoaded: boolean
     queryData: QueryResultBundle
 }
 

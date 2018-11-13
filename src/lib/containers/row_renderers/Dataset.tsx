@@ -4,7 +4,7 @@ import { DATASET } from "../../utils/SynapseConstants";
 import calculateFriendlyFileSize from "../calculateFriendlyFileSize";
 
 type DatasetProps = {
-    data?: any,
+    data?: any
     schema?: any
 }
 

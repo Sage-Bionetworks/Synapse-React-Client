@@ -2,7 +2,7 @@ import { FacetColumnRequest } from './FacetColumnRequest';
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SortDirection.html
 export type SortItem = {
-    column: string,
+    column: string
     direction: "ASC" | "DESC"
 }
 

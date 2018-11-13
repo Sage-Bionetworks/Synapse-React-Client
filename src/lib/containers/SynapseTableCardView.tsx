@@ -6,10 +6,10 @@ import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
 // props we make a simple container that does
 
 type RowContainerProps = {
-    children: any,
-    data: any,
-    limit: number,
-    hideOrganizationLink: boolean,
+    children: any
+    data: any
+    limit: number
+    hideOrganizationLink: boolean
     schema: any
 }
 

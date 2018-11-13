@@ -15,9 +15,9 @@ export type RowSet = {
  
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Row.html
 export type Row = {
-    rowId: number,          // The immutable ID issued to a new row.
-    versionNumber: number,  // The version number of this row. Each row version is immutable, so when a row is updated a new version is created
-    etag: string,           // For queries against EntityViews with query.includeEtag=true, this field will contain the etag of the entity. Will be null for all other cases.
+    rowId: number          // The immutable ID issued to a new row.
+    versionNumber: number  // The version number of this row. Each row version is immutable, so when a row is updated a new version is created
+    etag: string           // For queries against EntityViews with query.includeEtag=true, this field will contain the etag of the entity. Will be null for all other cases.
     values: string []       // The values for each column of this row.
 }
 

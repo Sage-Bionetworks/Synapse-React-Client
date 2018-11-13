@@ -7,7 +7,7 @@ type UserBadgeState = {
 };
 
 type UserBadgeProps = {
-    principalId: number,
+    principalId: number
     token: string
 };
 

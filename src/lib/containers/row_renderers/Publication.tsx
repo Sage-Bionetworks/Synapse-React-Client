@@ -7,7 +7,7 @@ type PublicationState = {
 };
 
 type PublicationProps = { 
-    data?: any,
+    data?: any
     schema?: any
 };
 
