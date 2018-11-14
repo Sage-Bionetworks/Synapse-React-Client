@@ -31,18 +31,19 @@ export default class Study extends React.Component<StudyProps, StudyState> {
 
     render() {
         const { data, schema } = this.props;
-        const projectName = data[schema.projectName];
-        const projectLeads = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ");
-        let summary = data[schema.summary];
-        const diseaseFocus = data[schema.diseaseFocus];
-        const tumorType = data[schema.tumorType];
-        const projectStatus = data[schema.projectStatus];
-        const fundingAgency = data[schema.fundingAgency];
-        const dataStatus = data[schema.dataStatus];
-        const summarySource = data[schema.summarySource];
+        const projectName: string = data[schema.projectName];
+        const projectLeads: string = data[schema.projectLeads] && data[schema.projectLeads].split(";").join(" / ");
+        let summary: string = data[schema.summary];
+        const diseaseFocus: string = data[schema.diseaseFocus];
+        const tumorType: string = data[schema.tumorType];
+        const projectStatus: string = data[schema.projectStatus];
+        const fundingAgency: string = data[schema.fundingAgency];
+        const dataStatus: string = data[schema.dataStatus];
+        const id: string = data[schema.id];
+        const link: string = `https://www.synapse.org/#!Synapse:${id}`
         // const institutions = data[schema.institutions]
-        const values = [["STATUS", projectStatus], ["FUNDER", fundingAgency], ["DATA", dataStatus], ["PUBLICATION", "NONE"]];
-        let chips = [tumorType, diseaseFocus];
+        const values: string [][] = [["STATUS", projectStatus], ["FUNDER", fundingAgency], ["DATA", dataStatus], ["PUBLICATION", "NONE"]];
+        let chips: string [] = [tumorType, diseaseFocus];
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
@@ -55,7 +56,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
                         {" "}
                         <h3>
                             {" "}
-                            <a target="_blank" href={summarySource}>
+                            <a target="_blank" href={link}>
                                 {projectName}
                             </a>{" "}
                         </h3>{" "}
