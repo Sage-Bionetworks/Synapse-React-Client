@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +9,7 @@ import { faSortAmountDown } from "@fortawesome/free-solid-svg-icons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faDatabase } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
 
 // Add all icons to the library so you can use it in your page
@@ -18,11 +20,14 @@ library.add(faSortAmountDown);
 library.add(faCheck);
 library.add(faTimes);
 library.add(faFilter);
+library.add(faDatabase);
 
 const cloneDeep = require("lodash.clonedeep");
 // Hold constants for next and previous button actions
 const NEXT = "NEXT";
 const PREVIOUS = "PREVIOUS";
+const SELECT_ALL = "SELECT_ALL";
+const DESELECT_ALL = "DESELECT_ALL";
 const ICON_STATE: ("sort" | "sort-amount-up" | "sort-amount-down")[] = ["sort", "sort-amount-up", "sort-amount-down"];
 let SORT_STATE = ["", "ASC", "DESC"];
 
@@ -48,6 +53,8 @@ type SynapseTableProps = {
 import {QueryWrapperChildProps} from './QueryWrapper'
 import { FacetColumnResult, FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult';
 import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
+import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
+import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequest';
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps & SynapseTableProps, SynapseTableState> {
 
@@ -84,7 +91,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      */
     handlePaginationClick = (eventType: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
         let queryRequest = this.props.getLastQueryRequest!();
-        let currentOffset = queryRequest.query.offset;
+        let currentOffset = queryRequest.query.offset!;
         // if its a "previous" click subtract from the offset
         // otherwise its next and we paginate forward
         if (eventType === PREVIOUS) {
@@ -209,12 +216,27 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     };
 
 
-    configureFacetDropdown(index: number, columnName: string, facetValues: FacetColumnResultValueCount []) {
+    /**
+     *
+     *
+     * @param {number} index this is column index of the query table data
+     * @param {string} columnName this is the name of the column
+     * @param {FacetColumnResult[]} facetColumnResults
+     * @param {number} facetIndex
+     * @returns
+     * @memberof SynapseTable
+     */
+    configureFacetDropdown(index: number, facetColumnResults: FacetColumnResult[], facetIndex:number) {
 
+        // this grabs the specific facet selection
+        let facetColumnResult = facetColumnResults[facetIndex]
+        let columnName = facetColumnResult.columnName
+
+        // this is related to whether we've selected this column or not
         let isFilterSelected = this.state.isFilterSelected[index]
 
-        // js closure!
-        let clickHandler = (event: React.SyntheticEvent<HTMLElement>) => { 
+        let toggleDropdown = (param?: any) => { 
+            //  make param any for code re-use
             let isFilterSelectedDeepCopy = cloneDeep(this.state.isFilterSelected)
             isFilterSelectedDeepCopy[index] = !isFilterSelected
             this.setState(
@@ -224,10 +246,59 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             )
         }
 
+        let ref: React.RefObject<HTMLSpanElement> = React.createRef()
+
+        // handle column selection
+        let handleSelector = (selector? : string) => (event: React.SyntheticEvent<HTMLElement>) => { 
+            for (let i = 0; i < ref.current!.children.length; i++) {
+                let curElement = ref.current!.children[i] as HTMLLIElement
+                let checkbox = curElement.children[0] as HTMLInputElement
+                if (selector === SELECT_ALL) {
+                    checkbox.checked = true
+                } else {
+                    checkbox.checked = false
+                }
+            }
+        }
+
+        let applyChanges = (event: React.SyntheticEvent<HTMLElement>) => { 
+            let facetValues: string [] = []
+            
+            for (let i = 0; i < ref.current!.children.length; i++) {
+                let curElement = ref.current!.children[i] as HTMLLIElement
+                let checkbox = curElement.children[0] as HTMLInputElement
+                let isSelected = checkbox.checked
+                if (isSelected) {
+                    facetValues.push(checkbox.value)
+                }
+            }
+
+            let queryRequest: QueryBundleRequest = cloneDeep(this.props.getLastQueryRequest!())
+
+            let selectedFacets: FacetColumnRequest [] = queryRequest.query.selectedFacets!
+
+            // the facet index of the result and the request are the same
+            let currentFacetRequest: FacetColumnRequest = {
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                columnName,
+                facetValues
+            }
+
+            let indexOfFacetInRequest = selectedFacets!.findIndex( el => {return el.columnName === columnName})
+
+            if (indexOfFacetInRequest === -1) {
+                queryRequest.query!.selectedFacets!.push(currentFacetRequest)
+            } else {
+                queryRequest.query!.selectedFacets![indexOfFacetInRequest] =  currentFacetRequest
+            }
+
+            this.props.executeQueryRequest!(queryRequest)
+            toggleDropdown()
+        }
 
         return (
             <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
-                <span  style={{padding: "4px"}} className={isFilterSelected ? "SRC-dark-background": ""} onClick={clickHandler}> 
+                <span  style={{padding: "4px"}} className={isFilterSelected ? "SRC-dark-background": ""} onClick={toggleDropdown}> 
                     <FontAwesomeIcon size={"1x"} className={isFilterSelected ? "SRC-dark-background": ""} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
@@ -236,33 +307,39 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <li> 
                             <div style={{borderBottomColor:"green", borderBottom: "1px solid"}}> 
                                 <h3 style={{display: "inline-block"}}> {columnName} </h3>
-                                <button className="btn pull-right" onClick={clickHandler}> 
+                                <button className="btn pull-right" onClick={toggleDropdown}> 
                                     <FontAwesomeIcon size={"2x"} icon="times"/> 
                                 </button>
                             </div> 
                         </li>
                         <br/>
-                        {facetValues.map(
-                            (dataPoint: FacetColumnResultValueCount) => {
-                                let text = `${dataPoint.value}(${dataPoint.count})`
-                                return (
-                                            <React.Fragment key={text}>
-                                                    <li>
-                                                        <input type="checkbox" id={text}/>
-                                                        <label htmlFor={text}> {dataPoint.value}&nbsp;&nbsp;({dataPoint.count}) </label>
-                                                    </li>
-                                            </React.Fragment>
-                                        )
-                                }
-                            )
-                        }
+                        <span ref={ref}>
+                            {facetColumnResult.facetValues.map(
+                                (dataPoint: FacetColumnResultValueCount) => {
+                                    let idText = `${dataPoint.value}(${dataPoint.count})`
+                                    let displayValue = dataPoint.value
+                                    if (displayValue === "org.sagebionetworks.UNDEFINED_NULL_NOTSET") {
+                                        displayValue = "unannotated"
+                                    }
+                                    return (
+                                                <React.Fragment key={idText}>
+                                                        <li>
+                                                            <input defaultChecked={true} type="checkbox" value={dataPoint.value} id={idText}/>
+                                                            <label htmlFor={idText}> {displayValue}&nbsp;&nbsp;({dataPoint.count}) </label>
+                                                        </li>
+                                                </React.Fragment>
+                                            )
+                                    }
+                                )
+                            }
+                        </span>
                     </ul>
                     <br/>   
                     <div>
-                        <button style={{marginLeft: "10px"}} className="btn btn-default"> All </button>
+                        <button onClick={handleSelector(SELECT_ALL)} style={{marginLeft: "10px"}} className="btn btn-default"> All </button>
                         | 
-                        <button className="btn btn-default"> Clear </button>
-                        <button className="btn btn-default pull-right"> APPLY </button>
+                        <button onClick={handleSelector(DESELECT_ALL)} className="btn btn-default"> Clear </button>
+                        <button onClick={applyChanges} className="btn btn-default pull-right"> APPLY </button>
                     </div>
                 </div>
             </span>
@@ -317,7 +394,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             <span className="pull-right" onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon className={`${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
-                            {isFacetSelection && this.configureFacetDropdown(index, column.name, facets[facetIndex].facetValues)}
+                            {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
                         </a>
                     </th>
                 );
@@ -365,7 +442,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         });
         // handle displaying the previous button -- if offset is zero then it
         // shouldn't be displayed
-        let pastZero: boolean = this.props.getLastQueryRequest!().query.offset > 0;
+        let pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0;
         let x_data: any[] = [];
         data.facets.forEach((item: any) => {
             if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
@@ -399,37 +476,38 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             <span className={this.props.isLoading ? "spinner" : ""} style={this.props.isLoading ? {} : { display: "none" }} />
                             {this.props.isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
                         </span>
-                        <span className="SRC-floatRight">
-                            <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                                <button className="btn SRC-marginRightFivePx SRC-paddingSevenPx btn-default dropdown-toggle" onClick={this.toggleDropdown} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <FontAwesomeIcon icon="ellipsis-v" />
-                                </button>
-                                <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    {headers.map((header: any, index: number) => {
-                                        let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
-                                        let {visibleColumnCount = 0} = this.props
-                                        if (isColumnSelected === undefined) {
-                                            isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
-                                        }
-                                        return (
-                                            <li key={header.name} onClick={this.toggleColumnSelection(index)}>
-                                                <a className="SRC-no-focus" href="">
-                                                    {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "green"}} icon="check"/>}
-                                                    {header.name}
-                                                </a>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </span>
-                            <a onClick={this.advancedSearch} href="">
-                                <u> Advanced Search </u>
-                            </a>
-                        </span>
                     </div>
                 </div>
-                <div className="container-fluid SRC-overflowAuto">
-                    <div className="row">
+                <div style={{background: "#5BB0B5", display: "flex", padding: "3px", alignItems: "center"}}>
+                    <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> My title here</h3>
+                    <span style={{marginLeft: "auto", marginRight: "10px"}}>
+                        <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
+                            <FontAwesomeIcon size="1x" color="white"  icon="database"/>
+                            <span style={{marginLeft: "15px"}} className="dropdown-toggle" onClick={this.toggleDropdown} id="dropdownMenu1">
+                                <FontAwesomeIcon color="white" icon="ellipsis-v" />
+                            </span>
+                            <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                {headers.map((header: any, index: number) => {
+                                    let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
+                                    let {visibleColumnCount = 0} = this.props
+                                    if (isColumnSelected === undefined) {
+                                        isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
+                                    }
+                                    return (
+                                        <li key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                            <a className="SRC-no-focus" href="">
+                                                {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "green"}} icon="check"/>}
+                                                {header.name}
+                                            </a>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </span>
+                    </span>
+                </div>
+                <div className="container-fluid">
+                    <div className="row SRC-overflowAuto">
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>

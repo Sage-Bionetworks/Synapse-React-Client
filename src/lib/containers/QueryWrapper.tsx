@@ -33,9 +33,9 @@ type QueryWrapperState = {
 export type QueryWrapperChildProps = {
     isLoading?: boolean
     isLoadingNewData?: boolean
-    executeQueryRequest?: (param: any) => void
+    executeQueryRequest?: (param: QueryBundleRequest) => void
     executeInitialQueryRequest?: () => void
-    getLastQueryRequest?: () => any
+    getLastQueryRequest?: () => QueryBundleRequest
     isChecked?: boolean []
     data?: QueryResultBundle
     filter?: string
