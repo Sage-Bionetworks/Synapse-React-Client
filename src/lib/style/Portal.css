@@ -450,3 +450,11 @@ button.SRC-roundBorder {
   margin: auto;
   margin-top: 10px;
   margin-bottom: 10px; }
+
+.scrollable {
+  height: 300px;
+  overflow: hidden;
+  overflow-y: scroll; }
+
+.SRC-dark-background {
+  background: grey; }

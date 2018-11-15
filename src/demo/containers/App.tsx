@@ -218,7 +218,7 @@ class App extends Component<{}, AppState> {
           }}
           showMenu
           filter={"assay"}
-          token={inDevEnv ? token : this.state.token}
+          token={""}
           rgbIndex={4}
         >
           <StackedRowHomebrew loadingScreen={<div>I'm loading as fast as I can</div>} />

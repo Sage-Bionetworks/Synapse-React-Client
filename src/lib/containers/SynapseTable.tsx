@@ -3,20 +3,27 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { faSort } from "@fortawesome/free-solid-svg-icons";
-import { faSortUp } from "@fortawesome/free-solid-svg-icons";
-import { faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
+import { faSortAmountDown } from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
 
 // Add all icons to the library so you can use it in your page
 library.add(faEllipsisV);
 library.add(faSort);
-library.add(faSortUp);
-library.add(faSortDown);
+library.add(faSortAmountUp);
+library.add(faSortAmountDown);
+library.add(faCheck);
+library.add(faTimes);
+library.add(faFilter);
+
 const cloneDeep = require("lodash.clonedeep");
 // Hold constants for next and previous button actions
 const NEXT = "NEXT";
 const PREVIOUS = "PREVIOUS";
-const ICON_STATE: ("sort" | "sort-up" | "sort-down")[] = ["sort", "sort-up", "sort-down"];
+const ICON_STATE: ("sort" | "sort-amount-up" | "sort-amount-down")[] = ["sort", "sort-amount-up", "sort-amount-down"];
 let SORT_STATE = ["", "ASC", "DESC"];
 
 type Info = {
@@ -29,7 +36,8 @@ type SynapseTableState = {
     offset: number
     isOpen: boolean
     isColumnSelected: boolean[]
-    columnIconState: string[]
+    columnIconState: number[],
+    isFilterSelected: boolean []
 };
 
 type SynapseTableProps = {
@@ -38,6 +46,8 @@ type SynapseTableProps = {
 }
 
 import {QueryWrapperChildProps} from './QueryWrapper'
+import { FacetColumnResult, FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult';
+import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps & SynapseTableProps, SynapseTableState> {
 
@@ -56,13 +66,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         this.advancedSearch = this.advancedSearch.bind(this);
         this.download = this.download.bind(this);
         this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this);
+        this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
             offset: 0,
             isOpen: false,
             isColumnSelected: [],
-            columnIconState: []
+            columnIconState: [],
+            isFilterSelected: Array(100).fill(false)
         };
     }
     /**
@@ -195,6 +207,68 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         isColumnSelected[index] = !isColumnSelected[index];
         this.setState({ isColumnSelected });
     };
+
+
+    configureFacetDropdown(index: number, columnName: string, facetValues: FacetColumnResultValueCount []) {
+
+        let isFilterSelected = this.state.isFilterSelected[index]
+
+        // js closure!
+        let clickHandler = (event: React.SyntheticEvent<HTMLElement>) => { 
+            let isFilterSelectedDeepCopy = cloneDeep(this.state.isFilterSelected)
+            isFilterSelectedDeepCopy[index] = !isFilterSelected
+            this.setState(
+                {
+                    isFilterSelected: isFilterSelectedDeepCopy
+                }
+            )
+        }
+
+
+        return (
+            <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
+                <span  style={{padding: "4px"}} className={isFilterSelected ? "SRC-dark-background": ""} onClick={clickHandler}> 
+                    <FontAwesomeIcon size={"1x"} className={isFilterSelected ? "SRC-dark-background": ""} color={isFilterSelected ? "white": ""} icon="filter"/> 
+                </span>
+
+                <div className="dropdown-menu dropdown-menu-right">
+                    <ul style={{listStyleType: "none"}} className="scrollable">
+                        <li> 
+                            <div style={{borderBottomColor:"green", borderBottom: "1px solid"}}> 
+                                <h3 style={{display: "inline-block"}}> {columnName} </h3>
+                                <button className="btn pull-right" onClick={clickHandler}> 
+                                    <FontAwesomeIcon size={"2x"} icon="times"/> 
+                                </button>
+                            </div> 
+                        </li>
+                        <br/>
+                        {facetValues.map(
+                            (dataPoint: FacetColumnResultValueCount) => {
+                                let text = `${dataPoint.value}(${dataPoint.count})`
+                                return (
+                                            <React.Fragment key={text}>
+                                                    <li>
+                                                        <input type="checkbox" id={text}/>
+                                                        <label htmlFor={text}> {dataPoint.value}&nbsp;&nbsp;({dataPoint.count}) </label>
+                                                    </li>
+                                            </React.Fragment>
+                                        )
+                                }
+                            )
+                        }
+                    </ul>
+                    <br/>   
+                    <div>
+                        <button style={{marginLeft: "10px"}} className="btn btn-default"> All </button>
+                        | 
+                        <button className="btn btn-default"> Clear </button>
+                        <button className="btn btn-default pull-right"> APPLY </button>
+                    </div>
+                </div>
+            </span>
+        )
+
+    }
     /**
      * Display the view
      */
@@ -208,10 +282,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const { queryResults } = queryResult;
         const { rows } = queryResults;
         const { headers } = queryResults;
+
+        const {facets} = data
+        
+
         // Step 1: Format the column headers, we have to track a few variables --
         // whether the column should be shown by default or if the state now mandates it
         // be shown
-        let headersFormatted = headers.map((column: any, index: number) => {
+        let headersFormatted = headers.map((column: SelectColumn, index: number) => {
+
             // two cases when rendering the column headers on init load
             // of the page we have to show only this.props.visibleColumnCount many
             // columns, afterwards we rely on the isColumnSelected to get choices
@@ -219,14 +298,26 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             let initRender: boolean = index < visibleColumnCount && this.state.isColumnSelected.length === 0
             initRender = initRender || (visibleColumnCount === 0 && this.state.isColumnSelected.length === 0)
             let subsequentRender = this.state.isColumnSelected[index] && this.state.isColumnSelected.length !== 0
+
             if (initRender || subsequentRender) {
-                let isSelected = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1;
-                let columnIndex = this.state.columnIconState[index] === undefined ? 0: this.state.columnIconState[index]
+                let isSelected: boolean = this.findSelectionIndex(this.state.sortSelection, column.name) !== -1; // for background color
+                let columnIndex: number = this.state.columnIconState[index] === undefined ? 0: this.state.columnIconState[index] // for icon state
+                
+                // we have to figure out if the current column is a facet selection
+                let facetIndex: number = facets.findIndex(
+                                                (value: FacetColumnResult) => {
+                                                    return value.columnName === column.name
+                                                })
+                let isFacetSelection: boolean = facetIndex !== -1
+
                 return (
-                    <th onClick={this.handleColumnClick({ name: column.name, index })} key={column.name} className={"SRC-hand-cursor " + (isSelected ? "SRC-salmon-background" : "")}>
+                    <th style={{minWidth: "140px"}} key={column.name} className={"SRC-hand-cursor " + (isSelected ? "SRC-salmon-background" : "")}>
                         <a style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
-                            <FontAwesomeIcon className={`${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"} pull-right`} icon={ICON_STATE[columnIndex]}/>
+                            <span className="pull-right" onClick={this.handleColumnClick({ name: column.name, index })}> 
+                                <FontAwesomeIcon className={`${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
+                            </span>
+                            {isFacetSelection && this.configureFacetDropdown(index, column.name, facets[facetIndex].facetValues)}
                         </a>
                     </th>
                 );
@@ -234,6 +325,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             // avoid eslint complaint below by returning undefined
             return undefined;
         });
+
         // Step 2: Format the row values, tracking the same information that the columns have to.
         // grab the row data and format it
         // e.g. <tr> <td> some value </td> </tr>
@@ -245,9 +337,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         let columnName = headers[j].name;
                         let index = this.findSelectionIndex(this.state.sortSelection, columnName);
                         let {visibleColumnCount = 0} = this.props
+
+                        // we have to check if this column is selected under initial load
+                        // there are two cases:
+                        // 1. If the user has just clicked on the screen, we should show the column if its within
+                        // the limit of the rows specified
+                        // 2. If the visibleColumnCount is not specified or set to zero AND there have not been any selections made
+                        // then we don't show it
                         let isRowActiveInit: boolean = j < visibleColumnCount && this.state.isColumnSelected.length === 0;
                         isRowActiveInit = isRowActiveInit || (visibleColumnCount === 0 && this.state.isColumnSelected.length === 0);
-                        let isRowActiveSubsequent = this.state.isColumnSelected[j] && this.state.isColumnSelected.length !== 0;
+
+                        // this is checking if the column is selected post load and interactions have taken place
+                        let isRowActiveSubsequent = this.state.isColumnSelected.length !== 0 && this.state.isColumnSelected[j];
                         if (isRowActiveInit || isRowActiveSubsequent) {
                             return (
                                 <td className="SRC_noBorderTop" key={`(${i},${j})`}>
@@ -311,8 +412,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                             isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
                                         }
                                         return (
-                                            <li className={`${isColumnSelected ? "SRC-table-anchor-chosen" : ""}`} key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                            <li key={header.name} onClick={this.toggleColumnSelection(index)}>
                                                 <a className="SRC-no-focus" href="">
+                                                    {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "green"}} icon="check"/>}
                                                     {header.name}
                                                 </a>
                                             </li>

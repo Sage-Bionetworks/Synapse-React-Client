@@ -545,3 +545,13 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.scrollable {
+  height: 300px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.SRC-dark-background {
+  background: grey
+}
