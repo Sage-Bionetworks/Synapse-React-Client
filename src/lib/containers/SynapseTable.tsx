@@ -28,7 +28,7 @@ const NEXT = "NEXT";
 const PREVIOUS = "PREVIOUS";
 const SELECT_ALL = "SELECT_ALL";
 const DESELECT_ALL = "DESELECT_ALL";
-const ICON_STATE: ("sort" | "sort-amount-up" | "sort-amount-down")[] = ["sort", "sort-amount-up", "sort-amount-down"];
+const ICON_STATE: ("sort-amount-down" | "sort-amount-up" | "sort-amount-down")[] = ["sort-amount-down", "sort-amount-up", "sort-amount-down"];
 let SORT_STATE = ["", "ASC", "DESC"];
 
 type Info = {
@@ -166,7 +166,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         // base 64 encode the json of the query and go to url with the encoded object
         let encodedQuery = btoa(JSON.stringify(query));
         let synTable = this.props.synapseId;
-        window.location.href = `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`
+        window.open(`https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`, "_blank")
     }
     /**
      * Handles the opening and closing of the column select menu, this method
@@ -482,7 +482,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> My title here</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <FontAwesomeIcon size="1x" color="white"  icon="database"/>
+                            <span onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
                             <span style={{marginLeft: "15px"}} className="dropdown-toggle" onClick={this.toggleDropdown} id="dropdownMenu1">
                                 <FontAwesomeIcon color="white" icon="ellipsis-v" />
                             </span>

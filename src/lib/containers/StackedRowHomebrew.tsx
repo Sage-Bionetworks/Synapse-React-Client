@@ -25,6 +25,7 @@ type StackedRowHomebrewState = {
 
 type StackedRowHomebrewProps = {
     loadingScreen: any
+    synapseId: string
 };
 
 type Info = {
@@ -156,6 +157,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             index
         });
     };
+    
     rgba2rgb(background: number[], color: number[]) {
         const alpha = color[3];
         return [
@@ -164,6 +166,33 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
         ];
     }
+
+    advancedSearch(x_data: any) {
+
+        let hoverText;
+
+        if (this.state.index === -1) {
+            hoverText = x_data[0] && x_data[0].value;
+        } else {
+            hoverText = this.state.hoverText;
+        }
+
+        // base 64 encode the json of the query and go to url with the encoded object
+        let lastQueryRequest = this.props.getLastQueryRequest!();
+        let { query } = lastQueryRequest;
+        query.selectedFacets = [
+            {
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                columnName: this.props.filter,
+                facetValues: [hoverText]
+            }
+        ]
+        let encodedQuery = btoa(JSON.stringify(query));
+        let {synapseId = ""} = this.props;
+        let link = `https://www.synapse.org/#!Synapse:${synapseId}/tables/query/${encodedQuery}`
+        return link
+    }
+
     /**
      * Display view
      */
@@ -270,7 +299,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                     <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
                         <strong>{this.getHoverText(x_data)}</strong>
                     </p>
-                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> {this.getFileCount(x_data)} files </p>
+                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> <a href={this.advancedSearch(x_data)} target={"_blank"}>{this.getFileCount(x_data)} files</a> </p>
                 </div>
             </div>
         );

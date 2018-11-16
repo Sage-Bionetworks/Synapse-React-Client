@@ -211,7 +211,7 @@ class App extends Component<{}, AppState> {
               SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
               isConsistent: false,
-              sql: `SELECT * FROM syn16858331`,
+              sql: `SELECT id, name, assay FROM syn16858331`,
               limit: 25,
               offset: 0
             }
@@ -219,11 +219,10 @@ class App extends Component<{}, AppState> {
           showMenu
           filter={"assay"}
           token={""}
-          rgbIndex={4}
-        >
-          <StackedRowHomebrew loadingScreen={<div>I'm loading as fast as I can</div>} />
+          rgbIndex={4}>
+          <StackedRowHomebrew synapseId={"syn16858331"} loadingScreen={<div>I'm loading as fast as I can</div>} />
           <Facets/>
-          <SynapseTable synapseId={"syn16858331"} visibleColumnCount={8} />
+          <SynapseTable synapseId={"syn16858331"} visibleColumnCount={2} />
         </QueryWrapper>
         <StaticQueryWrapper json={syn16787123}>
           <SynapseTableCardView type={SynapseConstants.STUDY} limit={3} />
