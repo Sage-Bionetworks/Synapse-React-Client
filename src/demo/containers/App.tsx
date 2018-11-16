@@ -16,11 +16,10 @@ import StackedRowHomebrew from "../../lib/containers/StackedRowHomebrew";
 import SynapseTable from "../../lib/containers/SynapseTable";
 import UserBadgeBatch from "../../lib/containers/UserBadgeBatch";
 import SynapseTableCardView from "../../lib/containers/SynapseTableCardView";
-import syn16787123 from "../../JSON_test_data/syn16787123.json";
-import syn16859580 from "../../JSON_test_data/syn16859580.json";
-import syn16858699 from "../../JSON_test_data/syn16858699.json";
-import syn16859448 from "../../JSON_test_data/syn16859448.json";
-import syn16857542 from "../../JSON_test_data/syn16857542.json";
+// import syn16859580 from "../../JSON_test_data/syn16859580.json";
+// import syn16858699 from "../../JSON_test_data/syn16858699.json";
+// import syn16859448 from "../../JSON_test_data/syn16859448.json";
+// import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
 import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
@@ -195,8 +194,8 @@ class App extends Component<{}, AppState> {
         <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
-            markdown={`$$ x^2 $$
-                      `}
+            wikiId={"585318"}
+            ownerId={"syn12666371"}
             hasSynapseResources={false}
             updateLoadState={this.handleChange}
           />
@@ -211,24 +210,30 @@ class App extends Component<{}, AppState> {
               SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
             query: {
               isConsistent: false,
-              sql: `SELECT id, name, assay FROM syn16858331`,
+              sql: `SELECT * FROM syn16858331`,
               limit: 25,
               offset: 0
             }
           }}
           showMenu
           filter={"assay"}
-          token={""}
+          token={inDevEnv ? token : this.state.token}
           rgbIndex={4}>
-          <StackedRowHomebrew synapseId={"syn16858331"} loadingScreen={<div>I'm loading as fast as I can</div>} />
+          <StackedRowHomebrew
+            synapseId={"syn16858331"}
+            loadingScreen={<div>I'm loading as fast as I can</div>} />
           <Facets/>
-          <SynapseTable synapseId={"syn16858331"} visibleColumnCount={2} />
+          <SynapseTable 
+            title={"My title here"}
+            synapseId={"syn16858331"}
+           visibleColumnCount={4} />
         </QueryWrapper>
-        <StaticQueryWrapper json={syn16787123}>
-          <SynapseTableCardView type={SynapseConstants.STUDY} limit={3} />
+
+        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn17024229"}> 
+          <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
         </StaticQueryWrapper>
 
-        <StaticQueryWrapper json={syn16859580}>
+        {/* <StaticQueryWrapper json={syn16859580}>
           <SynapseTableCardView type={SynapseConstants.DATASET} />
         </StaticQueryWrapper>
 
@@ -246,7 +251,7 @@ class App extends Component<{}, AppState> {
 
         <StaticQueryWrapper json={syn16858699}>
           <SynapseTableCardView hideOrganizationLink={true} type={SynapseConstants.FUNDER} />
-        </StaticQueryWrapper>
+        </StaticQueryWrapper> */}
 
         <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
       </div>

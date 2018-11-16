@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL } from '../utils/SynapseConstants';
+import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT } from '../utils/SynapseConstants';
 import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
+import { Project } from './row_renderers/AMPAD';
+
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
 
@@ -39,7 +41,7 @@ type SynapseTableCardViewProps = {
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}> {
 
     static propTypes = {
-        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL]),
+        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT]),
         limit: PropTypes.number,
         hideOrganizationLink: PropTypes.bool
     }
@@ -62,6 +64,8 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
                 return <Publication />;
             case TOOL:
                 return <Tool />;
+            case AMP_PROJECT:
+                return <Project />;
             default:
                 return; // this should never happen
         }

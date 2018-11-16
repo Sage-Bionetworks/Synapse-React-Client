@@ -48,6 +48,7 @@ type SynapseTableState = {
 type SynapseTableProps = {
     visibleColumnCount?: number
     synapseId : string
+    title: string
 }
 
 import {QueryWrapperChildProps} from './QueryWrapper'
@@ -479,7 +480,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </div>
                 </div>
                 <div style={{background: "#5BB0B5", display: "flex", padding: "3px", alignItems: "center"}}>
-                    <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> My title here</h3>
+                    <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
                             <span onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
