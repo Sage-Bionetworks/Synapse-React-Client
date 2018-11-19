@@ -194,9 +194,8 @@ class App extends Component<{}, AppState> {
         <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
-            wikiId={"585318"}
+            wikiId={"581895"}
             ownerId={"syn12666371"}
-            hasSynapseResources={false}
             updateLoadState={this.handleChange}
           />
         </CustomMarkdownView>
@@ -234,7 +233,11 @@ class App extends Component<{}, AppState> {
         </StaticQueryWrapper>
 
         <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn17024173"}> 
-          <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
+          <SynapseTableCardView
+            ownerId={"syn17024173"}
+            token={inDevEnv ? token: this.state.token}
+            type={SynapseConstants.AMP_CONSORTIUM} 
+          />
         </StaticQueryWrapper>
 
         <StaticQueryWrapper json={syn16859580}>

@@ -1,6 +1,6 @@
 import React from "react";
+import { Project } from '.';
 import * as Utils from '../utils'
-import { AMP_PROJECT } from 'src/lib/utils/SynapseConstants';
 
 type ProjectState = {
     showMore: boolean
@@ -14,6 +14,8 @@ type ProjectProps = {
 };
 
 export default class Study extends React.Component<ProjectProps, ProjectState> {
+
+    static icon = <img className="iconImg" alt="" src={require("../../../assets/icons/project.svg")}/>
 
     constructor(props: ProjectProps) {
         super(props);
@@ -46,7 +48,7 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
-                    <Utils.Icon type={AMP_PROJECT}/>
+                    {Project.icon}
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Project</div>

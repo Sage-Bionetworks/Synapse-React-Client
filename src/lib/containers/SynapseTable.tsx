@@ -28,7 +28,7 @@ const NEXT = "NEXT";
 const PREVIOUS = "PREVIOUS";
 const SELECT_ALL = "SELECT_ALL";
 const DESELECT_ALL = "DESELECT_ALL";
-const ICON_STATE: ("sort-amount-down" | "sort-amount-up" | "sort-amount-down")[] = ["sort-amount-down", "sort-amount-up", "sort-amount-down"];
+const ICON_STATE: ("sort-amount-down" | "sort-amount-down" | "sort-amount-up")[] = ["sort-amount-down", "sort-amount-down", "sort-amount-up"];
 let SORT_STATE = ["", "ASC", "DESC"];
 
 type Info = {

@@ -1,6 +1,4 @@
 import React from "react";
-import * as Utils from '../utils'
-import { AMP_CONSORTIUM } from 'src/lib/utils/SynapseConstants';
 
 type ConsortiumState = {
     showMore: boolean
@@ -8,6 +6,8 @@ type ConsortiumState = {
 };
 
 type ConsortiumProps = {
+    token?: string
+    ownerId?: string
     isHeader?: boolean
     data?: any
     schema?: any
@@ -22,6 +22,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
             hasCreatedIndex: false,
         };
         this.handleClick = this.handleClick.bind(this);
+        this.getIcon = this.getIcon.bind(this);
     }
 
     handleClick(event: React.SyntheticEvent) {
@@ -30,17 +31,33 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         });
     }
 
+    getIcon(org: string) {
+        switch(org) {
+            case "AMP-AD":
+                return <img src={require("../../../assets/icons/ampad.svg")}/>
+            case "M2OVE-AD":
+                return <img src={require("../../../assets/icons/movead.png")}/>
+            case "MODEL-AD":
+                return <img src={require("../../../assets/icons/modelad.png")}/>
+            case "Resilience-AD":
+                return <img src={require("../../../assets/icons/resiliencead.png")}/>
+            default:
+                return (false)
+        }
+    }
+
     render() {
         const { data, schema } = this.props;
         
         const description = data[schema["Short Description"]]
         const link = data[schema.Website]
         const name = data[schema["Full Name"]]
+        const org = data[schema.Consortium]
 
         return (
-            <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+            <div style={{paddingBottom: "32px"}} className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
-                    <Utils.Icon type={AMP_CONSORTIUM}/>
+                    {this.getIcon(org)}
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Consortium</div>

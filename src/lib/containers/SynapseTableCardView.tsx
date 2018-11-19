@@ -13,6 +13,9 @@ type RowContainerProps = {
     limit: number
     hideOrganizationLink: boolean
     schema: any
+    token? : string
+    ownerId? : string
+    isHeader: boolean
 }
 
 const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...rest }) => {
@@ -37,11 +40,14 @@ type SynapseTableCardViewProps = {
     data?: any,
     limit?: number,
     hideOrganizationLink?: boolean
+    token? : string
+    ownerId? : string
+    isHeader?: boolean
 };
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}> {
 
     static propTypes = {
-        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT]),
+        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM ]),
         limit: PropTypes.number,
         hideOrganizationLink: PropTypes.bool
     }
@@ -74,7 +80,13 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
     }
 
     render() {
-        const { data, limit = Infinity, hideOrganizationLink = false } = this.props;
+        const { data, 
+                limit = Infinity,
+                hideOrganizationLink = false,
+                token="",
+                ownerId="",
+                isHeader=false            
+                } = this.props;
         if (data === undefined || Object.keys(data).length === 0) {
             return <div className="container"> </div>;
         }
@@ -84,7 +96,15 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
                 schema[element.name] = index;
             });
         return (
-            <RowContainer hideOrganizationLink={hideOrganizationLink} limit={limit} data={data} schema={schema}>
+            <RowContainer 
+                hideOrganizationLink={hideOrganizationLink}
+                limit={limit}
+                data={data}
+                schema={schema}
+                token={token}
+                ownerId={ownerId}
+                isHeader={isHeader}    
+            >
                 {this.renderChild()}
             </RowContainer>
         );
