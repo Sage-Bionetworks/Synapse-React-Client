@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PUBLICATION, DATASET, FUNDER, TOOL, STUDY_ACTIVE, STUDY_COMPLETE, AMP_PROJECT } from "../../../utils/SynapseConstants";
+import { PUBLICATION, DATASET, FUNDER, TOOL, STUDY_ACTIVE, STUDY_COMPLETE, AMP_PROJECT, AMP_CONSORTIUM } from "../../../utils/SynapseConstants";
 
 type IconProps = {
     type: string
@@ -21,6 +21,8 @@ const Icon: React.SFC<IconProps> = ({ type }) => {
             return <img className="iconImg" alt="" src={require("../../../assets/icons/DNA_Two.svg")} />;
         case AMP_PROJECT:
             return <img className="iconImg" alt="" src={require("../../../assets/icons/project.svg")} />;
+        case AMP_CONSORTIUM:
+            return <img className="iconImg" alt="" src={require("../../../assets/icons/icon-consortium.svg")} />;
         default:
             return null;
     }

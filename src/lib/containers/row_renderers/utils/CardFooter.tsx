@@ -2,10 +2,11 @@ import * as React from "react"
 const uuidv4 = require("uuid/v4")
 
 type CardFooterProps = {
-    values: any []
+    values: any [],
+    extraWide? : boolean
 }
 
-const CardFooter: React.SFC<CardFooterProps> = ({ values }) => {
+const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) => {
     return (
         <div className="SRC-cardMetadata">
             {values.map(kv => {
@@ -26,7 +27,7 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values }) => {
                     return false
                 }
                 return (
-                    <div key={uuidv4()} className="row">
+                    <div key={uuidv4()} className={"row " + (extraWide ? "extraWide" : "")}>
                         <div className="SRC-row-label"> {kv[0]} </div>
                         <div className="SRC-row-data"> {kv[1]} </div>
                     </div>

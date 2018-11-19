@@ -1,21 +1,21 @@
 import React from "react";
 import * as Utils from '../utils'
-import { AMP_PROJECT } from 'src/lib/utils/SynapseConstants';
+import { AMP_CONSORTIUM } from 'src/lib/utils/SynapseConstants';
 
-type ProjectState = {
+type ConsortiumState = {
     showMore: boolean
     hasCreatedIndex: boolean
 };
 
-type ProjectProps = {
+type ConsortiumProps = {
     isHeader?: boolean
     data?: any
     schema?: any
 };
 
-export default class Study extends React.Component<ProjectProps, ProjectState> {
+export default class Consortium extends React.Component<ConsortiumProps, ConsortiumState> {
 
-    constructor(props: ProjectProps) {
+    constructor(props: ConsortiumProps) {
         super(props);
         this.state = {
             showMore: false,
@@ -33,23 +33,17 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
     render() {
         const { data, schema } = this.props;
         
-        const abstract = data[schema.Abstract]
-        const consortium = data[schema.Consortium]
-        const grantNumber = data[schema["Grant Number"]]
-        const institutions = data[schema.Institutions]
-        const contributors = data[schema["Key Data Contributors"]]
-        const investigators = data[schema["Key Investigators"]]
-        const link = data[schema.Link]
-        const name = data[schema.Name]
+        const description = data[schema["Short Description"]]
+        const link = data[schema.Website]
+        const name = data[schema["Full Name"]]
 
-        const values: string[][] = [["GRANT", grantNumber], ["KEY CONTRIBUTORS", contributors], ["INSTITUTION", institutions], ["PROGRAM", consortium]]
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
-                    <Utils.Icon type={AMP_PROJECT}/>
+                    <Utils.Icon type={AMP_CONSORTIUM}/>
                 </div>
                 <div className="SRC-cardContent">
-                    <div className="SRC-type">Project</div>
+                    <div className="SRC-type">Consortium</div>
                     <div className="SRC-title">
                         <h3>
                             <a target="_blank" href={link}>
@@ -57,12 +51,10 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
                             </a>
                         </h3>
                     </div>
-                    <div className="SRC-author">{investigators}</div>
                     <span className="SRC-font-size-base">
-                        <Utils.ShowMore onClick={this.handleClick} summary={abstract} />
+                        {description}
                     </span>
                 </div>
-                <Utils.CardFooter extraWide={true} values={values} />
             </div>
 
         );

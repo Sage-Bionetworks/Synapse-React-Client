@@ -16,10 +16,10 @@ import StackedRowHomebrew from "../../lib/containers/StackedRowHomebrew";
 import SynapseTable from "../../lib/containers/SynapseTable";
 import UserBadgeBatch from "../../lib/containers/UserBadgeBatch";
 import SynapseTableCardView from "../../lib/containers/SynapseTableCardView";
-// import syn16859580 from "../../JSON_test_data/syn16859580.json";
-// import syn16858699 from "../../JSON_test_data/syn16858699.json";
-// import syn16859448 from "../../JSON_test_data/syn16859448.json";
-// import syn16857542 from "../../JSON_test_data/syn16857542.json";
+import syn16859580 from "../../JSON_test_data/syn16859580.json";
+import syn16858699 from "../../JSON_test_data/syn16858699.json";
+import syn16859448 from "../../JSON_test_data/syn16859448.json";
+import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
 import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
@@ -233,7 +233,11 @@ class App extends Component<{}, AppState> {
           <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
         </StaticQueryWrapper>
 
-        {/* <StaticQueryWrapper json={syn16859580}>
+        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn17024173"}> 
+          <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
+        </StaticQueryWrapper>
+
+        <StaticQueryWrapper json={syn16859580}>
           <SynapseTableCardView type={SynapseConstants.DATASET} />
         </StaticQueryWrapper>
 
@@ -251,7 +255,7 @@ class App extends Component<{}, AppState> {
 
         <StaticQueryWrapper json={syn16858699}>
           <SynapseTableCardView hideOrganizationLink={true} type={SynapseConstants.FUNDER} />
-        </StaticQueryWrapper> */}
+        </StaticQueryWrapper>
 
         <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
       </div>
