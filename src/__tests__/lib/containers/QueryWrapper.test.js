@@ -23,7 +23,7 @@ describe('basic functionality', () => {
                 RGB={[0,0,0]}
                 >
             </QueryWrapper>)
-        expect(wrapper.find("div")).toHaveLength(3)
+        expect(wrapper.find("div")).toHaveLength(2)
         mockRequest.query.selectedFacets = [
             {
                 columnName: "name",

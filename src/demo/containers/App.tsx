@@ -23,14 +23,21 @@ import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
 import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
+import ColorGradient from 'src/lib/containers/ColorGradient';
+
+type Info = {
+  isSelected: boolean
+  originalColor: string
+}
+
 
 type AppState = 
   {
-    token: string,
-    ownerId: string,
-    isLoading: boolean,
-    showMarkdown: boolean,
-    version: number,
+    token: string
+    ownerId: string
+    isLoading: boolean
+    showMarkdown: boolean
+    version: number
     initQueryRequest: {
       concreteType: string,
       partMask: number,
@@ -41,6 +48,8 @@ type AppState =
         offset: number
       }
     }
+    menuConfig: any
+    menuIndex: number
   };
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -70,12 +79,15 @@ class App extends Component<{}, AppState> {
           limit: 25,
           offset: 0
         }
-      }
+      },
+      menuConfig : [{sql: "SELECT * FROM syn16858331", filter: "assay"}, {sql: "SELECT name, id FROM syn16858331", filter: "fundingAgency"}],
+      menuIndex: 0
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.getVersion = this.getVersion.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
+    this.renderSynTable = this.renderSynTable.bind(this);
   }
   /**
    * Get the current version of Synapse
@@ -129,6 +141,113 @@ class App extends Component<{}, AppState> {
   removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown });
   }
+
+
+  
+  handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!info.isSelected && event.currentTarget.tagName === "DIV") {
+        event.currentTarget.style.backgroundColor = info.originalColor;
+    }
+  } 
+
+  renderSynTable(token: string) {
+
+    // 2 would be replaced with the this.props.rgbIndex
+    const colorGradient: ColorGradient = new ColorGradient(2);
+    const originalColor = colorGradient.getOriginalColor();
+
+    let menuDropdown = this.state.menuConfig.map(
+      (config: any, index:number) => {
+        
+        let isSelected: boolean = (index === this.state.menuIndex)
+        let style: any = {}
+        let selectedStyling: string = ""
+
+        if (isSelected) {
+          // we have to programatically set the style since the color is chosen from a color
+          // wheel
+          style.background = originalColor;
+          // below has to be set so the pseudo element created will inherit its color
+          // appropriately
+          style.borderLeftColor = originalColor;
+
+          selectedStyling = "SRC-pointed SRC-whiteText" ;
+        } else {
+          style.background = "#F5F5F5";
+          selectedStyling = "SRC-blackText";
+        }
+
+        let infoEnter: Info = {isSelected, originalColor}
+        let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
+
+        return (
+          <div
+            onMouseEnter={this.handleHoverLogic(infoEnter)}
+            onMouseLeave={this.handleHoverLogic(infoLeave)}
+            key={config.filter}
+            className={`SRC-hoverWhiteText SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
+            onClick={() => {this.setState({menuIndex: index})}}
+            style={style}>
+            {config.filter}
+        </div>
+        )
+      }
+    )
+    
+    let queryWrapper = this.state.menuConfig.map(
+      (config: any, index: number) => {
+        let isSelected: boolean = (this.state.menuIndex === index)
+        let style: any
+        if (!isSelected) {
+          style = {visibility: "hidden", display: "none"}
+        }
+        return (
+          <span style={style} >
+            <QueryWrapper
+              showMenu
+              initQueryRequest={{
+                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                partMask:
+                  SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+                  SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+                  SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                query: {
+                  isConsistent: false,
+                  sql: config.sql,
+                  limit: 25,
+                  offset: 0
+                }
+              }}
+              filter={config.filter}
+              token={token}
+              rgbIndex={4}>
+              <StackedRowHomebrew
+                synapseId={"syn16858331"}
+                loadingScreen={<div>I'm loading as fast as I can</div>} />
+              <Facets/>
+                <SynapseTable 
+                  title={"My title here"}
+                  synapseId={"syn16858331"}
+                visibleColumnCount={4} />  
+            </QueryWrapper>
+          </span>
+        )
+      }
+    )
+
+    return (
+        <div className="container-fluid">
+          <div className="col-xs-2">
+            {menuDropdown}
+          </div>
+          <div className="col-xs-10">
+            {queryWrapper}
+          </div>
+        </div>
+        
+    )
+  }
+
   render(): JSX.Element {
     let redirectUrl: string = "http://localhost:3000/";
     if (process.env.NODE_ENV === "production") {
@@ -200,33 +319,9 @@ class App extends Component<{}, AppState> {
           />
         </CustomMarkdownView>
 
-        <QueryWrapper
-          initQueryRequest={{
-            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-            partMask:
-              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-              SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-              SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-            query: {
-              isConsistent: false,
-              sql: `SELECT * FROM syn16858331`,
-              limit: 25,
-              offset: 0
-            }
-          }}
-          showMenu
-          filter={"assay"}
-          token={inDevEnv ? token : this.state.token}
-          rgbIndex={4}>
-          <StackedRowHomebrew
-            synapseId={"syn16858331"}
-            loadingScreen={<div>I'm loading as fast as I can</div>} />
-          <Facets/>
-          <SynapseTable 
-            title={"My title here"}
-            synapseId={"syn16858331"}
-           visibleColumnCount={4} />
-        </QueryWrapper>
+        {
+          this.renderSynTable(inDevEnv ? token! : this.state.token!)
+        }
 
         <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn9886254"}> 
           <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />

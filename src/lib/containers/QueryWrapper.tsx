@@ -2,7 +2,6 @@ import * as React from "react"
 import * as SynapseClient from "../utils/SynapseClient"
 import PropTypes from 'prop-types';
 
-import Menu from "./Menu"
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
 import { FacetColumnResult, FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
@@ -14,9 +13,8 @@ type QueryWrapperProps = {
     rgbIndex?: number
     json?: object
     token?: string
-    RGB?: any[]
-    filter: string
     showMenu?: boolean
+    filter:string
     loadingScreen?: JSX.Element
 }
 
@@ -70,9 +68,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         rgbIndex: PropTypes.number,
         json: PropTypes.object,
         token: PropTypes.string,
-        RGB: PropTypes.array,
         filter: PropTypes.string,
-        showMenu: PropTypes.bool,
         loadingScreen: PropTypes.element,
     }
 
@@ -122,7 +118,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
             this.executeInitialQueryRequest()
         }
-        if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest!.query!.sql) {
+        if (prevProps.filter !== this.props.filter) {
             this.executeInitialQueryRequest()
         }
     }
@@ -217,26 +213,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
      * Render the children without any formatting
      */
     render() {
-        let menu: JSX.Element | undefined
-        if (this.props.showMenu) {
-            menu = (
-                <Menu
-                    rgbIndex={this.props.rgbIndex!}
-                    updateParentState={this.updateParentState}
-                    executeQueryRequest={this.executeQueryRequest}
-                    executeInitialQueryRequest={this.executeInitialQueryRequest}
-                    getLastQueryRequest={this.getLastQueryRequest}
-                    filter={this.props.filter!}
-                    isChecked={this.state.isChecked}
-                    data={this.state.data}
-                    updateParentFilter={this.updateParentFilter}
-                />
-            )
-        }
-        return (
-            <div className="container-fluid">
-                {this.props.showMenu && <div className="col-xs-2">{menu}</div>}
-                <div className={this.props.showMenu ? "col-xs-10" : "col-xs-12"}>
+        if (!this.props.showMenu) {
+            return (
+                <React.Fragment>
                     {React.Children.map(this.props.children, (child: any) => {
                         return React.cloneElement(child, {
                             isLoading: this.state.isLoading,
@@ -253,8 +232,31 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
                             showNothing: this.state.showNothing
                         })
                     })}
+                </React.Fragment>
+            )
+        } else {
+            return (
+                <div className="container-fluid">
+                    <div className={"col-xs-12"}>
+                        {React.Children.map(this.props.children, (child: any) => {
+                            return React.cloneElement(child, {
+                                isLoading: this.state.isLoading,
+                                isLoadingNewData: this.state.isLoadingNewData,
+                                executeQueryRequest: this.executeQueryRequest,
+                                executeInitialQueryRequest: this.executeInitialQueryRequest,
+                                getLastQueryRequest: this.getLastQueryRequest,
+                                isChecked: this.state.isChecked,
+                                data: this.state.data,
+                                filter: this.state.currentFacet ? this.state.currentFacet : this.props.filter,
+                                updateParentState: this.updateParentState,
+                                updateParentFilter: this.updateParentFilter,
+                                rgbIndex: this.props.rgbIndex,
+                                showNothing: this.state.showNothing
+                            })
+                        })}
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 }

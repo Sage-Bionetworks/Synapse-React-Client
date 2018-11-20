@@ -41,6 +41,7 @@ ShallowWrapper {
             },
           }
     }
+    getLastQueryRequest={[Function]}
 />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
@@ -151,7 +152,13 @@ ShallowWrapper {
                     className="SRC-noMargin SRC-padding-chart SRC-text-chart"
           >
                      
-                     files 
+                    <a
+                              href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                              target="_blank"
+                    >
+                               files
+                    </a>
+                     
           </p>
 </div>,
       ],
@@ -439,7 +446,13 @@ ShallowWrapper {
               className="SRC-noMargin SRC-padding-chart SRC-text-chart"
 >
                
-               files 
+              <a
+                            href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                            target="_blank"
+              >
+                             files
+              </a>
+               
 </p>,
           ],
           "className": "row SRC-bar-border SRC-bar-border-bottom",
@@ -564,16 +577,39 @@ ShallowWrapper {
             "props": Object {
               "children": Array [
                 " ",
-                undefined,
-                " files ",
+                <a
+                  href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                  target="_blank"
+>
+                   files
+</a>,
+                " ",
               ],
               "className": "SRC-noMargin SRC-padding-chart SRC-text-chart",
             },
             "ref": null,
             "rendered": Array [
               " ",
-              undefined,
-              " files ",
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    undefined,
+                    " files",
+                  ],
+                  "href": "https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0=",
+                  "target": "_blank",
+                },
+                "ref": null,
+                "rendered": Array [
+                  undefined,
+                  " files",
+                ],
+                "type": "a",
+              },
+              " ",
             ],
             "type": "p",
           },
@@ -686,7 +722,13 @@ ShallowWrapper {
                         className="SRC-noMargin SRC-padding-chart SRC-text-chart"
             >
                          
-                         files 
+                        <a
+                                    href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                                    target="_blank"
+                        >
+                                     files
+                        </a>
+                         
             </p>
 </div>,
         ],
@@ -974,7 +1016,13 @@ ShallowWrapper {
                 className="SRC-noMargin SRC-padding-chart SRC-text-chart"
 >
                  
-                 files 
+                <a
+                                href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                                target="_blank"
+                >
+                                 files
+                </a>
+                 
 </p>,
             ],
             "className": "row SRC-bar-border SRC-bar-border-bottom",
@@ -1099,16 +1147,39 @@ ShallowWrapper {
               "props": Object {
                 "children": Array [
                   " ",
-                  undefined,
-                  " files ",
+                  <a
+                    href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                    target="_blank"
+>
+                     files
+</a>,
+                  " ",
                 ],
                 "className": "SRC-noMargin SRC-padding-chart SRC-text-chart",
               },
               "ref": null,
               "rendered": Array [
                 " ",
-                undefined,
-                " files ",
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      undefined,
+                      " files",
+                    ],
+                    "href": "https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0=",
+                    "target": "_blank",
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    undefined,
+                    " files",
+                  ],
+                  "type": "a",
+                },
+                " ",
               ],
               "type": "p",
             },

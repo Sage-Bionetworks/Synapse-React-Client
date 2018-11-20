@@ -299,8 +299,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
         return (
             <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
-                <span  style={{padding: "4px"}} className={isFilterSelected ? "SRC-dark-background": ""} onClick={toggleDropdown}> 
-                    <FontAwesomeIcon size={"1x"} className={isFilterSelected ? "SRC-dark-background": ""} color={isFilterSelected ? "white": ""} icon="filter"/> 
+                <span style={{padding: "4px"}} className={isFilterSelected ? "SRC-primary-background-color": ""} onClick={toggleDropdown}> 
+                    <FontAwesomeIcon size={"1x"} className={isFilterSelected ? "SRC-primary-background-color": ""} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
                 <div className="dropdown-menu dropdown-menu-right">
@@ -389,11 +389,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 let isFacetSelection: boolean = facetIndex !== -1
 
                 return (
-                    <th style={{minWidth: "140px"}} key={column.name} className={"SRC-hand-cursor " + (isSelected ? "SRC-salmon-background" : "")}>
+                    <th style={{minWidth: "140px"}} key={column.name} className={"SRC-hand-cursor "}>
                         <a style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
-                            <span className="pull-right" onClick={this.handleColumnClick({ name: column.name, index })}> 
-                                <FontAwesomeIcon className={`${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
+                            <span className={"pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
+                                <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
                             {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
                         </a>
@@ -479,7 +479,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         </span>
                     </div>
                 </div>
-                <div style={{background: "#5BB0B5", display: "flex", padding: "3px", alignItems: "center"}}>
+                <div className="SRC-padding" style={{background: "#5BB0B5", display: "flex", alignItems: "center"}}>
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
