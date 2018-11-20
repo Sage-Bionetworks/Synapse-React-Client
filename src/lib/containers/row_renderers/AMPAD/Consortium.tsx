@@ -60,7 +60,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
                     {this.getIcon(org)}
                 </div>
                 <div className="SRC-cardContent">
-                    <div className="SRC-type">Consortium</div>
+                    <div className="SRC-type">Programs</div>
                     <div className="SRC-title">
                         <h3>
                             <a target="_blank" href={link}>
