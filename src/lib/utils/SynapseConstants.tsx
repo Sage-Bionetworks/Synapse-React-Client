@@ -28,6 +28,7 @@ export const STUDY_COMPLETE: string = "study complete";
 export const DATASET: string = "dataset";
 export const AMP_PROJECT: string = "AMP_Project";
 export const AMP_CONSORTIUM: string = "AMP_Consortium";
+export const AMP_STUDY: string = "AMP_Study";
 export const FUNDER: string = "funder";
 export const PUBLICATION: string = "publication";
 export const TOOL: string = "tool";

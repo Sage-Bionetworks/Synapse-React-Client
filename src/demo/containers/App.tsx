@@ -228,6 +228,10 @@ class App extends Component<{}, AppState> {
            visibleColumnCount={4} />
         </QueryWrapper>
 
+        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn9886254"}> 
+          <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />
+        </StaticQueryWrapper>
+
         <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn17024229"}> 
           <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
         </StaticQueryWrapper>

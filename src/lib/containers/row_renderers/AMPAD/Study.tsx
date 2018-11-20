@@ -31,7 +31,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
     getIcon(name: string) {
         switch(name) {
             case "Controlled":
-                return (<img src={require("../../../assets/icons/controlledStudy.svg")}/>)
+                return (<img src={require("../../../assets/icons/controlledStudy.png")}/>)
             default:
                 return (false)
         }
@@ -45,23 +45,20 @@ export default class Study extends React.Component<StudyProps, StudyState> {
         const link: string = `https://www.synapse.org/#!Synapse:${id}`
 
         const dataContributors = data[schema["Data_Contributor"]]
-
         const studyName = data[schema["Study_Name"]]
         const studyDescription = data[schema["Study_Description"]]
 
-        const model = data[schema["Model System"]]
+        const model = data[schema["Model_System"]]
         const organism = data[schema.Organism]
         const individuals = data[schema["Number_of_Individuals"]]
         const program  = data[schema.Consortium]
-        const grant = data[schema.Grant]
 
-        const values: string [][] = [["MODEL", model], ["ORGANISM", organism], ["INDIVIDUALS", individuals], ["PROGRAM", program], ["GRANT", grant]];
+        const values: string [][] = [["MODEL", model], ["ORGANISM", organism], ["INDIVIDUALS", individuals], ["PROGRAM", program]];
 
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
                     {this.getIcon(accessType)}
-                    {accessType !== "" && <div>{accessType}</div>}
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Study</div>
