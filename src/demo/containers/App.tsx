@@ -21,12 +21,6 @@ import TeamMemberList from "../../lib/containers/TeamMemberList";
 import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
 import Menu from 'src/lib/containers/Menu';
 
-type Info = {
-  isSelected: boolean
-  originalColor: string
-}
-
-
 type AppState = 
   {
     token: string
@@ -34,8 +28,6 @@ type AppState =
     isLoading: boolean
     showMarkdown: boolean
     version: number
-    menuConfig: any
-    menuIndex: number
   };
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -53,8 +45,6 @@ class App extends Component<{}, AppState> {
       ownerId: "",
       isLoading: true,
       showMarkdown: true,
-      menuConfig : [{sql: "SELECT * FROM syn16858331", filter: "assay"}, {sql: "SELECT name, id FROM syn16858331", filter: "fundingAgency"}],
-      menuIndex: 0
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.getVersion = this.getVersion.bind(this);
@@ -115,12 +105,6 @@ class App extends Component<{}, AppState> {
     this.setState({ showMarkdown: !this.state.showMarkdown });
   }
   
-  handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!info.isSelected && event.currentTarget.tagName === "DIV") {
-        event.currentTarget.style.backgroundColor = info.originalColor;
-    }
-  } 
-
   renderSynTable(token: string) {
     return (
       <Menu
