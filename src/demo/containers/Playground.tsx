@@ -119,7 +119,7 @@ class Demo extends Component<{}, DemoState> {
       <div className="App">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h4 className="white-text">Playground of Components under development </h4>
+          <h4 className="white-text">Playground of components under development </h4>
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
         
@@ -181,13 +181,13 @@ class Demo extends Component<{}, DemoState> {
             { sql: "SELECT * FROM syn16858331",
               title: "my title here",
               synapseId: "syn16858331",
-              filter: "assay",
+              facetName: "assay",
               unitDescription: "data types"
             },
             { sql: "SELECT * FROM syn16858331",
               title: "Facet is dataType",
               synapseId: "syn16858331",
-              filter: "dataType",
+              facetName: "dataType",
               unitDescription: "files"
             }
           ]}

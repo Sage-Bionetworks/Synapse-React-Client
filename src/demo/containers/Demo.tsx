@@ -124,7 +124,7 @@ class Demo extends Component<{}, DemoState> {
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
         
-        <Link to="/Playground "> To Playground </Link>
+        <Link to="/Playground"> To Playground </Link>
 
         <Login
           onTokenChange={this.handleChange}
@@ -184,13 +184,13 @@ class Demo extends Component<{}, DemoState> {
             { sql: "SELECT * FROM syn16858331",
               title: "my title here",
               synapseId: "syn16858331",
-              filter: "assay",
+              facetName: "assay",
               unitDescription: "data types"
             },
             { sql: "SELECT * FROM syn16858331",
               title: "Facet is dataType",
               synapseId: "syn16858331",
-              filter: "dataType",
+              facetName: "dataType",
               unitDescription: "files"
             }
           ]}

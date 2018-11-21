@@ -14,7 +14,7 @@ type QueryWrapperProps = {
     json?: object
     token?: string
     showMenu?: boolean
-    filter:string
+    facetName:string
     loadingScreen?: JSX.Element
 }
 
@@ -168,7 +168,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             .getQueryTableResults(this.props.initQueryRequest, this.props.token)
             .then(
                 (data: QueryResultBundle) => {
-                    const filter: string = this.state.currentFacet ? this.state.currentFacet : this.props.filter
+                    const filter: string = this.state.currentFacet ? this.state.currentFacet : this.props.facetName
                     let lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(data, filter);
                     let newState = { data, lastQueryRequest, isLoading: false, isLoadingNewData: false, showNothing: false }
                     this.setState(newState)
@@ -223,7 +223,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
                 getLastQueryRequest: this.getLastQueryRequest,
                 isChecked: this.state.isChecked,
                 data: this.state.data,
-                filter: this.state.currentFacet ? this.state.currentFacet : this.props.filter,
+                filter: this.state.currentFacet ? this.state.currentFacet : this.props.facetName,
                 updateParentState: this.updateParentState,
                 updateParentFilter: this.updateParentFilter,
                 rgbIndex: this.props.rgbIndex,

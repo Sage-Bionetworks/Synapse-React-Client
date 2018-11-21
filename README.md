@@ -243,6 +243,7 @@ An example of a view with facets/stacked bar chart/table
 | showMenu| Boolean that specifies whether to show a side menu with facets on the side, if not specified then it won't show. If set to true will show the menu. |
 | filter | This is the facet that will be default filtered on if using any of StackedRowHomebrew/Facets/Menu. |
 | token  | Session token to make authenticated calls  |
+| loadingScreen  | UI to show when a query is being run  |
 
 ### StaticQueryWrapper Example
 ```jsx
@@ -256,6 +257,18 @@ import syn16787123 from 'folder/to/syn16787123.json'
       limit={3}
   />
 </SynapseComponents.StaticQueryWrapper>
+
+// An alternative usecase for static query wrapper is if the 
+// table is known and 
+
+<SynapseComponents.StaticQueryWrapper
+  sql={"SELECT * FROM syn1234567"}
+  >
+  <SynapseComponents.SynapseTableCardView
+      type={SynapseConstants.STUDY}
+      limit={3}
+  />
+</SynapseComponents.StaticQueryWrapper>
 ```
 
 #### StaticQueryWrapper Props
@@ -263,8 +276,41 @@ import syn16787123 from 'folder/to/syn16787123.json'
 | Props  | Explanation |
 | ------------- | ------------- |
 | json  | Preloaded data from Synapse  |
+| token  | Session token to make authenticated requests to synapse  |
+| sql  | SQL query to be run on Synapse  |
 
-### QueryWrapper/StaticQueryWrapper Children
+#### QueryWrapperMenu
+```jsx
+<QueryWrapperMenu
+  token={inDevEnv ? token! : this.state.token!}
+  menuConfig={
+    [ 
+      { sql: "SELECT * FROM syn16858331",
+        title: "my title here",
+        synapseId: "syn16858331",
+        filter: "assay",
+        unitDescription: "data types"
+      },
+      { sql: "SELECT * FROM syn16858331",
+        title: "Facet is dataType",
+        synapseId: "syn16858331",
+        filter: "dataType",
+        unitDescription: "files"
+      }
+    ]
+  }
+  rgbIndex={4}
+/>
+
+```
+
+#### QueryWrapperMenu Props
+| Props  | Explanation |
+| ------------- | ------------- |
+| token | Session token to make authenticated calls to Synapse |
+| rgbIndex | The index into the color pallette starting the color gradient for the view |
+| MenuConfig [] | Specifications for each view under the facet |
+| MenuConfig has keys: sql,  title,  synapseId,  facet,  unitDescription  | sql: The query driving the specific's facets view <br/>title: The title of the table being used <br/> synapseId: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> unitDescription: This gives the units under the barchart |
 
 #### Facets
 
@@ -278,6 +324,7 @@ import syn16787123 from 'folder/to/syn16787123.json'
 | ------------- | ------------- |
 | synapseId | When a user click's advanced search this synapseId will tell the browser where to redirect to. |
 | visibleColumnCount | This is the number of columns that will be displayed by default. These columns are chosen according to the order of which the columns are specified by the SELECT clause from the query producing the data for this view.  |
+| title | The name of the table |
 
 #### StackedRowHomebrew
 

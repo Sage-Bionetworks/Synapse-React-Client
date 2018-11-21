@@ -13,7 +13,7 @@ type MenuState = {
 
 type MenuConfig = {
     sql: string
-    filter: string
+    facetName: string
     title: string
     unitDescription?: string
     synapseId: string
@@ -37,7 +37,7 @@ export default class Menu extends React.Component<Props, MenuState> {
         menuConfig: PropTypes.arrayOf(PropTypes.any),
         token: PropTypes.string,
         rgbIndex: PropTypes.number,
-        filter: PropTypes.string
+        facetName: PropTypes.string
     }
 
     constructor(props: Props) {
@@ -87,11 +87,11 @@ export default class Menu extends React.Component<Props, MenuState> {
                     <div
                         onMouseEnter={this.handleHoverLogic(infoEnter)}
                         onMouseLeave={this.handleHoverLogic(infoLeave)}
-                        key={config.filter}
+                        key={config.facetName}
                         className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
                         onClick={() => {this.setState({menuIndex: index})}}
                         style={style}>
-                        {config.filter}
+                        {config.facetName}
                     </div>
                 )
             }
@@ -121,7 +121,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                         offset: 0
                         }
                     }}
-                    filter={config.filter}
+                    facetName={config.facetName}
                     token={token}
                     rgbIndex={rgbIndex}>
                     <StackedRowHomebrew
