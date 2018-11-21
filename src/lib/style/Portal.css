@@ -472,3 +472,6 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white !important; }
+
+.SRC-light-background {
+  background: #F5F5F5; }

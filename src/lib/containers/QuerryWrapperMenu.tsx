@@ -15,19 +15,20 @@ type MenuConfig = {
     sql: string
     filter: string
     title: string
+    unitDescription?: string
     synapseId: string
 }
 
 type Props = {
     menuConfig: MenuConfig []
     token: string
-    rgbIndex: number
+    rgbIndex: number,
 }
 
 type Info = {
     isSelected: boolean
     originalColor: string
-  }
+}
 
 // will take in a default facet  originalColor: "#F5F5F5"
 export default class Menu extends React.Component<Props, MenuState> {
@@ -60,7 +61,7 @@ export default class Menu extends React.Component<Props, MenuState> {
         const originalColor = colorGradient.getOriginalColor();
 
         let menuDropdown = menuConfig.map(
-            (config: any, index:number) => {
+            (config: MenuConfig, index:number) => {
             
                 let isSelected: boolean = (index === this.state.menuIndex)
                 let style: any = {}
@@ -75,23 +76,23 @@ export default class Menu extends React.Component<Props, MenuState> {
                     style.borderLeftColor = originalColor;
                     selectedStyling = "SRC-pointed SRC-whiteText";
                 } else {
-                    style.background = "#F5F5F5";
-                    selectedStyling = "SRC-blackText";
+                    // change background to class
+                    selectedStyling = "SRC-blackText SRC-light-background";
                 }
 
                 let infoEnter: Info = {isSelected, originalColor}
                 let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
 
                 return (
-                <div
-                    onMouseEnter={this.handleHoverLogic(infoEnter)}
-                    onMouseLeave={this.handleHoverLogic(infoLeave)}
-                    key={config.filter}
-                    className={`SRC-hoverWhiteText SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
-                    onClick={() => {this.setState({menuIndex: index})}}
-                    style={style}>
-                    {config.filter}
-                </div>
+                    <div
+                        onMouseEnter={this.handleHoverLogic(infoEnter)}
+                        onMouseLeave={this.handleHoverLogic(infoLeave)}
+                        key={config.filter}
+                        className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
+                        onClick={() => {this.setState({menuIndex: index})}}
+                        style={style}>
+                        {config.filter}
+                    </div>
                 )
             }
         )
@@ -125,11 +126,13 @@ export default class Menu extends React.Component<Props, MenuState> {
                     rgbIndex={rgbIndex}>
                     <StackedRowHomebrew
                         synapseId={config.synapseId}
+                        unitDescription={(config.unitDescription || "files")}
                         loadingScreen={<div>I'm loading as fast as I can</div>} />
                     <Facets/>
                         <SynapseTable 
                         title={config.title}
                         synapseId={config.synapseId}
+                        // specify visible column count
                         visibleColumnCount={4} />  
                     </QueryWrapper>
                 </span>
@@ -139,15 +142,13 @@ export default class Menu extends React.Component<Props, MenuState> {
 
         return (
             <div className="container-fluid">
-            <div className="col-xs-2">
-                {menuDropdown}
+                <div className="col-xs-2">
+                    {menuDropdown}
+                </div>
+                <div className="col-xs-10">
+                    {queryWrapper}
+                </div>
             </div>
-            <div className="col-xs-10">
-                {queryWrapper}
-            </div>
-            </div>
-            
         )
     }
-
 }

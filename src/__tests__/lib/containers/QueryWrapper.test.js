@@ -19,9 +19,7 @@ describe('basic functionality', () => {
                 initQueryRequest = {mockRequest}
                 token={""}
                 filter={"name"}
-                showMenu      
-                RGB={[0,0,0]}
-                >
+            >
             </QueryWrapper>)
         expect(wrapper.find("div")).toHaveLength(2)
         mockRequest.query.selectedFacets = [

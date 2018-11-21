@@ -19,7 +19,7 @@ import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
 import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
-import Menu from 'src/lib/containers/Menu';
+import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 
 type AppState = 
   {
@@ -50,7 +50,6 @@ class App extends Component<{}, AppState> {
     this.getVersion = this.getVersion.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
-    this.renderSynTable = this.renderSynTable.bind(this);
   }
   /**
    * Get the current version of Synapse
@@ -103,27 +102,6 @@ class App extends Component<{}, AppState> {
 
   removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown });
-  }
-  
-  renderSynTable(token: string) {
-    return (
-      <Menu
-        token={token}
-        menuConfig={[ 
-          { sql: "SELECT * FROM syn16858331",
-            title: "",
-            synapseId: "syn16858331",
-            filter: "assay"
-          },
-          { sql: "SELECT * FROM syn16858331",
-            title: "Facet is dataType",
-            synapseId: "syn16858331",
-            filter: "dataType"
-          }
-        ]}
-        rgbIndex={4}
-      />
-    )
   }
 
   render(): JSX.Element {
@@ -197,9 +175,25 @@ class App extends Component<{}, AppState> {
           />
         </CustomMarkdownView>
 
-        {
-          this.renderSynTable(inDevEnv ? token! : this.state.token!)
-        }
+        <QueryWrapperMenu
+          token={inDevEnv ? token! : this.state.token!}
+          menuConfig={[ 
+            { sql: "SELECT * FROM syn16858331",
+              title: "my title here",
+              synapseId: "syn16858331",
+              filter: "assay",
+              unitDescription: "data types"
+            },
+            { sql: "SELECT * FROM syn16858331",
+              title: "Facet is dataType",
+              synapseId: "syn16858331",
+              filter: "dataType",
+              unitDescription: "files"
+            }
+          ]}
+          rgbIndex={4}
+        />
+
 
         <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn9886254"}> 
           <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />

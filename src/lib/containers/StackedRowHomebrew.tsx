@@ -26,6 +26,7 @@ type StackedRowHomebrewState = {
 type StackedRowHomebrewProps = {
     loadingScreen: any
     synapseId: string
+    unitDescription: string
 };
 
 type Info = {
@@ -168,7 +169,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
     }
 
     advancedSearch(x_data: any) {
-
+        
         let hoverText;
 
         if (this.state.index === -1) {
@@ -216,9 +217,6 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
         return (
             <div className="container-fluid">
                 <div className="row SRC-center-text">
-                    <span className="SRC-text-title">
-                        <strong> {total} </strong> files shown by {this.props.filter}
-                    </span>
                     <button className="btn btn-default btn-sm SRC-floatRight" onClick={this.handleArrowClick(NEXT_CLICK)}>
                         <FontAwesomeIcon icon="angle-right" />
                     </button>
@@ -299,7 +297,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                     <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
                         <strong>{this.getHoverText(x_data)}</strong>
                     </p>
-                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> <a href={this.advancedSearch(x_data)} target={"_blank"}>{this.getFileCount(x_data)} files</a> </p>
+                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> <a href={this.advancedSearch(x_data)} target={"_blank"}>{this.getFileCount(x_data)} {this.props.unitDescription}</a> </p>
                 </div>
             </div>
         );

@@ -2,15 +2,9 @@
 import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { faSort } from "@fortawesome/free-solid-svg-icons";
-import { faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
-import { faSortAmountDown } from "@fortawesome/free-solid-svg-icons";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { faDatabase } from "@fortawesome/free-solid-svg-icons";
+import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
+import ColorGradient from "./ColorGradient";
 
 // Add all icons to the library so you can use it in your page
 library.add(faEllipsisV);
@@ -28,6 +22,7 @@ const NEXT = "NEXT";
 const PREVIOUS = "PREVIOUS";
 const SELECT_ALL = "SELECT_ALL";
 const DESELECT_ALL = "DESELECT_ALL";
+// double check these icons!
 const ICON_STATE: ("sort-amount-down" | "sort-amount-down" | "sort-amount-up")[] = ["sort-amount-down", "sort-amount-down", "sort-amount-up"];
 let SORT_STATE = ["", "ASC", "DESC"];
 
@@ -363,6 +358,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
         const {facets} = data
         
+        let colorGradient = new ColorGradient(this.props.rgbIndex!)
+        let backgroundColor = colorGradient.getOriginalColor()
 
         // Step 1: Format the column headers, we have to track a few variables --
         // whether the column should be shown by default or if the state now mandates it
@@ -479,7 +476,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         </span>
                     </div>
                 </div>
-                <div className="SRC-padding" style={{background: "#5BB0B5", display: "flex", alignItems: "center"}}>
+                <div className="SRC-padding" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>

@@ -118,7 +118,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         if (this.props.token !== "" && prevProps.token === "" && !this.props.json) {
             this.executeInitialQueryRequest()
         }
-        if (prevProps.filter !== this.props.filter) {
+        if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest!.query.sql) {
             this.executeInitialQueryRequest()
         }
     }
@@ -213,47 +213,33 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
      * Render the children without any formatting
      */
     render() {
-        if (!this.props.showMenu) {
+        // clean up variable names
+        let childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
+            return React.cloneElement(child, {
+                isLoading: this.state.isLoading,
+                isLoadingNewData: this.state.isLoadingNewData,
+                executeQueryRequest: this.executeQueryRequest,
+                executeInitialQueryRequest: this.executeInitialQueryRequest,
+                getLastQueryRequest: this.getLastQueryRequest,
+                isChecked: this.state.isChecked,
+                data: this.state.data,
+                filter: this.state.currentFacet ? this.state.currentFacet : this.props.filter,
+                updateParentState: this.updateParentState,
+                updateParentFilter: this.updateParentFilter,
+                rgbIndex: this.props.rgbIndex,
+                showNothing: this.state.showNothing
+            })
+        }))
+
+        if (this.props.showMenu) {
             return (
-                <React.Fragment>
-                    {React.Children.map(this.props.children, (child: any) => {
-                        return React.cloneElement(child, {
-                            isLoading: this.state.isLoading,
-                            isLoadingNewData: this.state.isLoadingNewData,
-                            executeQueryRequest: this.executeQueryRequest,
-                            executeInitialQueryRequest: this.executeInitialQueryRequest,
-                            getLastQueryRequest: this.getLastQueryRequest,
-                            isChecked: this.state.isChecked,
-                            data: this.state.data,
-                            filter: this.state.currentFacet ? this.state.currentFacet : this.props.filter,
-                            updateParentState: this.updateParentState,
-                            updateParentFilter: this.updateParentFilter,
-                            rgbIndex: this.props.rgbIndex,
-                            showNothing: this.state.showNothing
-                        })
-                    })}
-                </React.Fragment>
+                childrenWithProps
             )
         } else {
             return (
                 <div className="container-fluid">
                     <div className={"col-xs-12"}>
-                        {React.Children.map(this.props.children, (child: any) => {
-                            return React.cloneElement(child, {
-                                isLoading: this.state.isLoading,
-                                isLoadingNewData: this.state.isLoadingNewData,
-                                executeQueryRequest: this.executeQueryRequest,
-                                executeInitialQueryRequest: this.executeInitialQueryRequest,
-                                getLastQueryRequest: this.getLastQueryRequest,
-                                isChecked: this.state.isChecked,
-                                data: this.state.data,
-                                filter: this.state.currentFacet ? this.state.currentFacet : this.props.filter,
-                                updateParentState: this.updateParentState,
-                                updateParentFilter: this.updateParentFilter,
-                                rgbIndex: this.props.rgbIndex,
-                                showNothing: this.state.showNothing
-                            })
-                        })}
+                        {childrenWithProps}
                     </div>
                 </div>
             )
