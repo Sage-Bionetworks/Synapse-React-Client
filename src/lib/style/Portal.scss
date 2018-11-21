@@ -225,7 +225,7 @@
 // Synapse React Client (SRC) Custom scss not in SWC        //
 //////////////////////////////////////////////////////////////
 
-svg {
+svg.SRC-hoverBox {
   &:hover {
     -webkit-filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5));      
     filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5));
@@ -428,6 +428,15 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    background-color: #D53F77 !important;
  }
 
+ .SRC-primary-background-color-hover:hover {
+    &:hover {
+      background-color: #D53F77 !important; 
+      > svg {
+        color: white!important;
+      }
+    }
+ }
+
  .SRC-primary-background-hover {
   &:hover {
     background-color: #D53F77 !important; 
@@ -544,4 +553,32 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   margin: auto;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.scrollable {
+  height: 300px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.SRC-padding {
+  padding: 3px;
+}
+
+.SRC-padding {
+  padding: 3px;
+}
+
+.SRC-blackText {
+  color: black;
+}
+
+.SRC-hoverWhiteText {
+  &:hover {
+    color: white !important;
+  }
+}
+
+.SRC-light-background {
+  background: #F5F5F5;
 }

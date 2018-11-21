@@ -117,6 +117,9 @@ $text-color-lighter: #898989;
       > * {
         min-width: 100px;
       }
+      &.extraWide > * {
+        min-width: 150px;
+      }
     }
     .SRC-row-label {
       display: inline-block;

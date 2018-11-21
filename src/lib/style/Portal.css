@@ -202,15 +202,15 @@
   background-repeat: no-repeat; }
 
 /* End loading spinner */
-svg:hover {
+svg.SRC-hoverBox:hover {
   -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   cursor: pointer; }
 
-svg::after {
+svg.SRC-hoverBox::after {
   transition: all 400ms; }
 
-svg:hover:after {
+svg.SRC-hoverBox:hover:after {
   transition: all 400ms; }
 
 .SRC-syn-border {
@@ -359,6 +359,11 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-background-color {
   background-color: #D53F77 !important; }
 
+.SRC-primary-background-color-hover:hover:hover {
+  background-color: #D53F77 !important; }
+  .SRC-primary-background-color-hover:hover:hover > svg {
+    color: white !important; }
+
 .SRC-primary-background-hover:hover {
   background-color: #D53F77 !important;
   color: white !important;
@@ -450,3 +455,23 @@ button.SRC-roundBorder {
   margin: auto;
   margin-top: 10px;
   margin-bottom: 10px; }
+
+.scrollable {
+  height: 300px;
+  overflow: hidden;
+  overflow-y: scroll; }
+
+.SRC-padding {
+  padding: 3px; }
+
+.SRC-padding {
+  padding: 3px; }
+
+.SRC-blackText {
+  color: black; }
+
+.SRC-hoverWhiteText:hover {
+  color: white !important; }
+
+.SRC-light-background {
+  background: #F5F5F5; }

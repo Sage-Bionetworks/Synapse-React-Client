@@ -25,6 +25,8 @@ type StackedRowHomebrewState = {
 
 type StackedRowHomebrewProps = {
     loadingScreen: any
+    synapseId: string
+    unitDescription: string
 };
 
 type Info = {
@@ -156,6 +158,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             index
         });
     };
+    
     rgba2rgb(background: number[], color: number[]) {
         const alpha = color[3];
         return [
@@ -164,6 +167,33 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
         ];
     }
+
+    advancedSearch(x_data: any) {
+        
+        let hoverText;
+
+        if (this.state.index === -1) {
+            hoverText = x_data[0] && x_data[0].value;
+        } else {
+            hoverText = this.state.hoverText;
+        }
+
+        // base 64 encode the json of the query and go to url with the encoded object
+        let lastQueryRequest = this.props.getLastQueryRequest!();
+        let { query } = lastQueryRequest;
+        query.selectedFacets = [
+            {
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                columnName: this.props.filter,
+                facetValues: [hoverText]
+            }
+        ]
+        let encodedQuery = btoa(JSON.stringify(query));
+        let {synapseId = ""} = this.props;
+        let link = `https://www.synapse.org/#!Synapse:${synapseId}/tables/query/${encodedQuery}`
+        return link
+    }
+
     /**
      * Display view
      */
@@ -187,9 +217,6 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
         return (
             <div className="container-fluid">
                 <div className="row SRC-center-text">
-                    <span className="SRC-text-title">
-                        <strong> {total} </strong> files shown by {this.props.filter}
-                    </span>
                     <button className="btn btn-default btn-sm SRC-floatRight" onClick={this.handleArrowClick(NEXT_CLICK)}>
                         <FontAwesomeIcon icon="angle-right" />
                     </button>
@@ -240,7 +267,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     return (
                                         // each svg represents one of the bars
                                         // will need to change this to be responsive
-                                        <svg height={svgHeight + 15} width={svgWidth} key={uuidv4()} style={style} onClick={this.handleClick({ ...obj, index })}>
+                                        <svg className="SRC-hoverBox" height={svgHeight + 15} width={svgWidth} key={uuidv4()} style={style} onClick={this.handleClick({ ...obj, index })}>
                                             <rect
                                                 onMouseEnter={this.handleHover}
                                                 onMouseLeave={this.handleExit}
@@ -270,7 +297,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                     <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
                         <strong>{this.getHoverText(x_data)}</strong>
                     </p>
-                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> {this.getFileCount(x_data)} files </p>
+                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> <a href={this.advancedSearch(x_data)} target={"_blank"}>{this.getFileCount(x_data)} {this.props.unitDescription}</a> </p>
                 </div>
             </div>
         );

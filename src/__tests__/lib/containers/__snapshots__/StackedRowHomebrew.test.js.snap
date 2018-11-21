@@ -41,6 +41,7 @@ ShallowWrapper {
             },
           }
     }
+    getLastQueryRequest={[Function]}
 />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
@@ -58,16 +59,6 @@ ShallowWrapper {
         <div
           className="row SRC-center-text"
 >
-          <span
-                    className="SRC-text-title"
-          >
-                    <strong>
-                               
-                              0
-                               
-                    </strong>
-                     files shown by 
-          </span>
           <button
                     className="btn btn-default btn-sm SRC-floatRight"
                     onClick={[Function]}
@@ -151,7 +142,13 @@ ShallowWrapper {
                     className="SRC-noMargin SRC-padding-chart SRC-text-chart"
           >
                      
-                     files 
+                    <a
+                              href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                              target="_blank"
+                    >
+                               
+                    </a>
+                     
           </p>
 </div>,
       ],
@@ -165,16 +162,6 @@ ShallowWrapper {
         "nodeType": "host",
         "props": Object {
           "children": Array [
-            <span
-              className="SRC-text-title"
->
-              <strong>
-                             
-                            0
-                             
-              </strong>
-               files shown by 
-</span>,
             <button
               className="btn btn-default btn-sm SRC-floatRight"
               onClick={[Function]}
@@ -226,48 +213,6 @@ ShallowWrapper {
         },
         "ref": null,
         "rendered": Array [
-          Object {
-            "instance": null,
-            "key": undefined,
-            "nodeType": "host",
-            "props": Object {
-              "children": Array [
-                <strong>
-                   
-                  0
-                   
-</strong>,
-                " files shown by ",
-                undefined,
-              ],
-              "className": "SRC-text-title",
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": Array [
-                    " ",
-                    0,
-                    " ",
-                  ],
-                },
-                "ref": null,
-                "rendered": Array [
-                  " ",
-                  0,
-                  " ",
-                ],
-                "type": "strong",
-              },
-              " files shown by ",
-              undefined,
-            ],
-            "type": "span",
-          },
           Object {
             "instance": null,
             "key": undefined,
@@ -439,7 +384,13 @@ ShallowWrapper {
               className="SRC-noMargin SRC-padding-chart SRC-text-chart"
 >
                
-               files 
+              <a
+                            href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                            target="_blank"
+              >
+                             
+              </a>
+               
 </p>,
           ],
           "className": "row SRC-bar-border SRC-bar-border-bottom",
@@ -564,16 +515,41 @@ ShallowWrapper {
             "props": Object {
               "children": Array [
                 " ",
-                undefined,
-                " files ",
+                <a
+                  href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                  target="_blank"
+>
+                   
+</a>,
+                " ",
               ],
               "className": "SRC-noMargin SRC-padding-chart SRC-text-chart",
             },
             "ref": null,
             "rendered": Array [
               " ",
-              undefined,
-              " files ",
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": Array [
+                    undefined,
+                    " ",
+                    undefined,
+                  ],
+                  "href": "https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0=",
+                  "target": "_blank",
+                },
+                "ref": null,
+                "rendered": Array [
+                  undefined,
+                  " ",
+                  undefined,
+                ],
+                "type": "a",
+              },
+              " ",
             ],
             "type": "p",
           },
@@ -593,16 +569,6 @@ ShallowWrapper {
           <div
             className="row SRC-center-text"
 >
-            <span
-                        className="SRC-text-title"
-            >
-                        <strong>
-                                     
-                                    0
-                                     
-                        </strong>
-                         files shown by 
-            </span>
             <button
                         className="btn btn-default btn-sm SRC-floatRight"
                         onClick={[Function]}
@@ -686,7 +652,13 @@ ShallowWrapper {
                         className="SRC-noMargin SRC-padding-chart SRC-text-chart"
             >
                          
-                         files 
+                        <a
+                                    href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                                    target="_blank"
+                        >
+                                     
+                        </a>
+                         
             </p>
 </div>,
         ],
@@ -700,16 +672,6 @@ ShallowWrapper {
           "nodeType": "host",
           "props": Object {
             "children": Array [
-              <span
-                className="SRC-text-title"
->
-                <strong>
-                                 
-                                0
-                                 
-                </strong>
-                 files shown by 
-</span>,
               <button
                 className="btn btn-default btn-sm SRC-floatRight"
                 onClick={[Function]}
@@ -761,48 +723,6 @@ ShallowWrapper {
           },
           "ref": null,
           "rendered": Array [
-            Object {
-              "instance": null,
-              "key": undefined,
-              "nodeType": "host",
-              "props": Object {
-                "children": Array [
-                  <strong>
-                     
-                    0
-                     
-</strong>,
-                  " files shown by ",
-                  undefined,
-                ],
-                "className": "SRC-text-title",
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": Array [
-                      " ",
-                      0,
-                      " ",
-                    ],
-                  },
-                  "ref": null,
-                  "rendered": Array [
-                    " ",
-                    0,
-                    " ",
-                  ],
-                  "type": "strong",
-                },
-                " files shown by ",
-                undefined,
-              ],
-              "type": "span",
-            },
             Object {
               "instance": null,
               "key": undefined,
@@ -974,7 +894,13 @@ ShallowWrapper {
                 className="SRC-noMargin SRC-padding-chart SRC-text-chart"
 >
                  
-                 files 
+                <a
+                                href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                                target="_blank"
+                >
+                                 
+                </a>
+                 
 </p>,
             ],
             "className": "row SRC-bar-border SRC-bar-border-bottom",
@@ -1099,16 +1025,41 @@ ShallowWrapper {
               "props": Object {
                 "children": Array [
                   " ",
-                  undefined,
-                  " files ",
+                  <a
+                    href="https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0="
+                    target="_blank"
+>
+                     
+</a>,
+                  " ",
                 ],
                 "className": "SRC-noMargin SRC-padding-chart SRC-text-chart",
               },
               "ref": null,
               "rendered": Array [
                 " ",
-                undefined,
-                " files ",
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": Array [
+                      undefined,
+                      " ",
+                      undefined,
+                    ],
+                    "href": "https://www.synapse.org/#!Synapse:/tables/query/eyJzZWxlY3RlZEZhY2V0cyI6W3siY29uY3JldGVUeXBlIjoib3JnLnNhZ2ViaW9uZXR3b3Jrcy5yZXBvLm1vZGVsLnRhYmxlLkZhY2V0Q29sdW1uVmFsdWVzUmVxdWVzdCIsImZhY2V0VmFsdWVzIjpbbnVsbF19XX0=",
+                    "target": "_blank",
+                  },
+                  "ref": null,
+                  "rendered": Array [
+                    undefined,
+                    " ",
+                    undefined,
+                  ],
+                  "type": "a",
+                },
+                " ",
               ],
               "type": "p",
             },
