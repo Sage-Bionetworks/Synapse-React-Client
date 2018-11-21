@@ -1,126 +1,153 @@
 import * as React from "react";
 import ColorGradient from "./ColorGradient";
 import PropTypes from 'prop-types';
+import QueryWrapper from './QueryWrapper';
+import { SynapseConstants } from '..';
+import StackedRowHomebrew from './StackedRowHomebrew';
+import { Facets } from './Facets';
+import SynapseTable from './SynapseTable';
 
 type MenuState = {
-    currentFacet: string
+    menuIndex: number
 };
 
-type Props = {
-    isChecked: boolean [],
-    updateParentState: (param: any) => void
-    updateParentFilter: (param: string) => void
-    executeQueryRequest: (param: any) => void
-    executeInitialQueryRequest: () => void
-    getLastQueryRequest: () => any
-    data: any
-    rgbIndex: number
+type MenuConfig = {
+    sql: string
     filter: string
+    title: string
+    synapseId: string
+}
+
+type Props = {
+    menuConfig: MenuConfig []
+    token: string
+    rgbIndex: number
 }
 
 type Info = {
     isSelected: boolean
     originalColor: string
-    textColor: string
-}
-
-type Data = {
-    columnName: string
-}
+  }
 
 // will take in a default facet  originalColor: "#F5F5F5"
 export default class Menu extends React.Component<Props, MenuState> {
 
     static propTypes = {
-        isChecked: PropTypes.array,
-        updateParentState: PropTypes.func,
-        updateParentFilter: PropTypes.func,
-        executeQueryRequest: PropTypes.func,
-        executeInitialQueryRequest: PropTypes.func,
-        getLastQueryRequest: PropTypes.func,
-        data: PropTypes.object,
+        menuConfig: PropTypes.arrayOf(PropTypes.any),
+        token: PropTypes.string,
         rgbIndex: PropTypes.number,
         filter: PropTypes.string
     }
 
     constructor(props: Props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-        this.handleHoverLogic = this.handleHoverLogic.bind(this);
+        super(props)
         this.state = {
-            currentFacet: ""
-        };
+            menuIndex: 0
+        }
+        this.handleHoverLogic = this.handleHoverLogic.bind(this)
     }
-
-    handleClick = (columnName: string) => (event: React.MouseEvent<HTMLDivElement>) => {
-        this.setState({
-            currentFacet: columnName
-        });
-        // below we make a slight optimization when switching between menu tabs,
-        // that is, deciding whether the query result has to be reset or not, this
-        // is made by seeing if any of the chicklets are selected, if any of them
-        // are then we make the query request, otherwise not.
-        let { isChecked } = this.props;
-        let hasChickletsSelected = false;
-        for (let key in isChecked) {
-            if (isChecked.hasOwnProperty(key)) {
-                hasChickletsSelected = true;
-            }
-        }
-        this.props.updateParentFilter(columnName);
-        if (hasChickletsSelected) {
-            this.props.executeInitialQueryRequest();
-        }
-    };
 
     handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
         if (!info.isSelected && event.currentTarget.tagName === "DIV") {
             event.currentTarget.style.backgroundColor = info.originalColor;
-            event.currentTarget.style.color = info.textColor;
         }
-    };
+      } 
+    
+    render () {
+        let {token, menuConfig, rgbIndex} = this.props
 
-    render() {
-        let { data } = this.props;
-        if (data === undefined) {
-            return false;
-        }
         const colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex);
         const originalColor = colorGradient.getOriginalColor();
+
+        let menuDropdown = menuConfig.map(
+            (config: any, index:number) => {
+            
+                let isSelected: boolean = (index === this.state.menuIndex)
+                let style: any = {}
+                let selectedStyling: string = ""
+
+                if (isSelected) {
+                    // we have to programatically set the style since the color is chosen from a color
+                    // wheel
+                    style.background = originalColor;
+                    // below has to be set so the pseudo element created will inherit its color
+                    // appropriately
+                    style.borderLeftColor = originalColor;
+                    selectedStyling = "SRC-pointed SRC-whiteText";
+                } else {
+                    style.background = "#F5F5F5";
+                    selectedStyling = "SRC-blackText";
+                }
+
+                let infoEnter: Info = {isSelected, originalColor}
+                let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
+
+                return (
+                <div
+                    onMouseEnter={this.handleHoverLogic(infoEnter)}
+                    onMouseLeave={this.handleHoverLogic(infoLeave)}
+                    key={config.filter}
+                    className={`SRC-hoverWhiteText SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
+                    onClick={() => {this.setState({menuIndex: index})}}
+                    style={style}>
+                    {config.filter}
+                </div>
+                )
+            }
+        )
+        
+        let queryWrapper = menuConfig.map(
+            (config: MenuConfig, index: number) => {
+                let isSelected: boolean = (this.state.menuIndex === index)
+                let style: any
+                if (!isSelected) {
+                    style = {visibility: "hidden", display: "none"}
+                }
+                return (
+                <span style={style} >
+                    <QueryWrapper
+                    showMenu
+                    initQueryRequest={{
+                        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                        partMask:
+                        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+                        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+                        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                        query: {
+                        isConsistent: false,
+                        sql: config.sql,
+                        limit: 25,
+                        offset: 0
+                        }
+                    }}
+                    filter={config.filter}
+                    token={token}
+                    rgbIndex={rgbIndex}>
+                    <StackedRowHomebrew
+                        synapseId={config.synapseId}
+                        loadingScreen={<div>I'm loading as fast as I can</div>} />
+                    <Facets/>
+                        <SynapseTable 
+                        title={config.title}
+                        synapseId={config.synapseId}
+                        visibleColumnCount={4} />  
+                    </QueryWrapper>
+                </span>
+                )
+            }
+        )
+
         return (
-            <React.Fragment>
-                {data.facets.map((el: Data) => {
-                    let style: any = {};
-                    let selection = this.state.currentFacet ? this.state.currentFacet : this.props.filter;
-                    let isSelected = selection === el.columnName;
-                    let active = "";
-                    if (isSelected) {
-                        style.background = originalColor;
-                        // below has to be set so the pseudo element created will inherit its color
-                        // appropriately
-                        style.borderLeftColor = originalColor;
-                        style.color = "white";
-                        active = "SRC-pointed";
-                    } else {
-                        style.background = "#F5F5F5";
-                    }
-                    style.width = "100%";
-                    let infoEnter: Info = {isSelected, originalColor, textColor: "white"}
-                    let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" ,textColor: "black"}
-                    return (
-                        <div
-                            onMouseEnter={this.handleHoverLogic(infoEnter)}
-                            onMouseLeave={this.handleHoverLogic(infoLeave)}
-                            key={el.columnName}
-                            className={`SRC-menu SRC-hand-cursor SRC-menu-hover SRC-text-chart ${active} ${active} ${isSelected ? "SRC-whiteText" : ""}`}
-                            onClick={this.handleClick(el.columnName)}
-                            style={style}
-                        >
-                            {el.columnName}
-                        </div>
-                    );
-                })}
-            </React.Fragment>
-        );
+            <div className="container-fluid">
+            <div className="col-xs-2">
+                {menuDropdown}
+            </div>
+            <div className="col-xs-10">
+                {queryWrapper}
+            </div>
+            </div>
+            
+        )
     }
+
 }

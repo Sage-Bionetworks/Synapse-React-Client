@@ -10,10 +10,6 @@ import UserProfile from "../../lib/containers/demo_components/UserProfile";
 import CustomMarkdownView from "../../lib/containers/demo_components/CustomMarkdownView";
 import * as SynapseClient from "../../lib/utils/SynapseClient";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
-import QueryWrapper from "../../lib/containers/QueryWrapper";
-import { Facets } from "../../lib/containers/Facets";
-import StackedRowHomebrew from "../../lib/containers/StackedRowHomebrew";
-import SynapseTable from "../../lib/containers/SynapseTable";
 import UserBadgeBatch from "../../lib/containers/UserBadgeBatch";
 import SynapseTableCardView from "../../lib/containers/SynapseTableCardView";
 import syn16859580 from "../../JSON_test_data/syn16859580.json";
@@ -23,7 +19,7 @@ import syn16857542 from "../../JSON_test_data/syn16857542.json";
 import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
 import TeamMemberList from "../../lib/containers/TeamMemberList";
 import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
-import ColorGradient from 'src/lib/containers/ColorGradient';
+import Menu from 'src/lib/containers/Menu';
 
 type Info = {
   isSelected: boolean
@@ -38,16 +34,6 @@ type AppState =
     isLoading: boolean
     showMarkdown: boolean
     version: number
-    initQueryRequest: {
-      concreteType: string,
-      partMask: number,
-      query: {
-        isConsistent: boolean,
-        sql: string,
-        limit: number,
-        offset: number
-      }
-    }
     menuConfig: any
     menuIndex: number
   };
@@ -67,19 +53,6 @@ class App extends Component<{}, AppState> {
       ownerId: "",
       isLoading: true,
       showMarkdown: true,
-      initQueryRequest: {
-        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          isConsistent: false,
-          sql: `SELECT * FROM syn`,
-          limit: 25,
-          offset: 0
-        }
-      },
       menuConfig : [{sql: "SELECT * FROM syn16858331", filter: "assay"}, {sql: "SELECT name, id FROM syn16858331", filter: "fundingAgency"}],
       menuIndex: 0
     };
@@ -141,8 +114,6 @@ class App extends Component<{}, AppState> {
   removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown });
   }
-
-
   
   handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
     if (!info.isSelected && event.currentTarget.tagName === "DIV") {
@@ -151,100 +122,23 @@ class App extends Component<{}, AppState> {
   } 
 
   renderSynTable(token: string) {
-
-    // 2 would be replaced with the this.props.rgbIndex
-    const colorGradient: ColorGradient = new ColorGradient(2);
-    const originalColor = colorGradient.getOriginalColor();
-
-    let menuDropdown = this.state.menuConfig.map(
-      (config: any, index:number) => {
-        
-        let isSelected: boolean = (index === this.state.menuIndex)
-        let style: any = {}
-        let selectedStyling: string = ""
-
-        if (isSelected) {
-          // we have to programatically set the style since the color is chosen from a color
-          // wheel
-          style.background = originalColor;
-          // below has to be set so the pseudo element created will inherit its color
-          // appropriately
-          style.borderLeftColor = originalColor;
-
-          selectedStyling = "SRC-pointed SRC-whiteText" ;
-        } else {
-          style.background = "#F5F5F5";
-          selectedStyling = "SRC-blackText";
-        }
-
-        let infoEnter: Info = {isSelected, originalColor}
-        let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
-
-        return (
-          <div
-            onMouseEnter={this.handleHoverLogic(infoEnter)}
-            onMouseLeave={this.handleHoverLogic(infoLeave)}
-            key={config.filter}
-            className={`SRC-hoverWhiteText SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
-            onClick={() => {this.setState({menuIndex: index})}}
-            style={style}>
-            {config.filter}
-        </div>
-        )
-      }
-    )
-    
-    let queryWrapper = this.state.menuConfig.map(
-      (config: any, index: number) => {
-        let isSelected: boolean = (this.state.menuIndex === index)
-        let style: any
-        if (!isSelected) {
-          style = {visibility: "hidden", display: "none"}
-        }
-        return (
-          <span style={style} >
-            <QueryWrapper
-              showMenu
-              initQueryRequest={{
-                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                partMask:
-                  SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                  SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                  SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                query: {
-                  isConsistent: false,
-                  sql: config.sql,
-                  limit: 25,
-                  offset: 0
-                }
-              }}
-              filter={config.filter}
-              token={token}
-              rgbIndex={4}>
-              <StackedRowHomebrew
-                synapseId={"syn16858331"}
-                loadingScreen={<div>I'm loading as fast as I can</div>} />
-              <Facets/>
-                <SynapseTable 
-                  title={"My title here"}
-                  synapseId={"syn16858331"}
-                visibleColumnCount={4} />  
-            </QueryWrapper>
-          </span>
-        )
-      }
-    )
-
     return (
-        <div className="container-fluid">
-          <div className="col-xs-2">
-            {menuDropdown}
-          </div>
-          <div className="col-xs-10">
-            {queryWrapper}
-          </div>
-        </div>
-        
+      <Menu
+        token={token}
+        menuConfig={[ 
+          { sql: "SELECT * FROM syn16858331",
+            title: "",
+            synapseId: "syn16858331",
+            filter: "assay"
+          },
+          { sql: "SELECT * FROM syn16858331",
+            title: "Facet is dataType",
+            synapseId: "syn16858331",
+            filter: "dataType"
+          }
+        ]}
+        rgbIndex={4}
+      />
     )
   }
 
