@@ -246,6 +246,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
         // handle column selection
         let handleSelector = (selector? : string) => (event: React.SyntheticEvent<HTMLElement>) => { 
+            event.preventDefault()
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
                 let checkbox = curElement.children[0] as HTMLInputElement
@@ -299,43 +300,47 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 </span>
 
                 <div className="dropdown-menu dropdown-menu-right">
-                    <ul style={{listStyleType: "none"}} className="scrollable">
-                        <li> 
-                            <div style={{borderBottomColor:"green", borderBottom: "1px solid"}}> 
-                                <h3 style={{display: "inline-block"}}> {columnName} </h3>
-                                <button className="btn pull-right" onClick={toggleDropdown}> 
-                                    <FontAwesomeIcon size={"2x"} icon="times"/> 
-                                </button>
-                            </div> 
-                        </li>
-                        <br/>
-                        <span ref={ref}>
-                            {facetColumnResult.facetValues.map(
-                                (dataPoint: FacetColumnResultValueCount) => {
-                                    let idText = `${dataPoint.value}(${dataPoint.count})`
-                                    let displayValue = dataPoint.value
-                                    if (displayValue === "org.sagebionetworks.UNDEFINED_NULL_NOTSET") {
-                                        displayValue = "unannotated"
-                                    }
-                                    return (
-                                                <React.Fragment key={idText}>
-                                                        <li>
-                                                            <input defaultChecked={true} type="checkbox" value={dataPoint.value} id={idText}/>
-                                                            <label htmlFor={idText}> {displayValue}&nbsp;&nbsp;({dataPoint.count}) </label>
-                                                        </li>
-                                                </React.Fragment>
-                                            )
-                                    }
-                                )
-                            }
+                    <div className="paddingMenuDropdown">
+                        <ul style={{listStyleType: "none"}} className="scrollable">
+                            <li> 
+                                <div className="SRC-flex" style={{borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
+                                    <h3 style={{display: "inline-block"}}> {columnName} </h3>
+                                    <button style={{marginLeft: "auto"}} className="btn pull-right" onClick={toggleDropdown}> 
+                                        <FontAwesomeIcon size={"2x"} icon="times"/> 
+                                    </button>
+                                </div> 
+                            </li>
+                            <br/>
+                            <span ref={ref}>
+                                {facetColumnResult.facetValues.map(
+                                    (dataPoint: FacetColumnResultValueCount) => {
+                                        let idText = `${dataPoint.value}(${dataPoint.count})`
+                                        let displayValue = dataPoint.value
+                                        if (displayValue === "org.sagebionetworks.UNDEFINED_NULL_NOTSET") {
+                                            displayValue = "unannotated"
+                                        }
+                                        return (
+                                                    <React.Fragment key={idText}>
+                                                            <li>
+                                                                <input defaultChecked={true} type="checkbox" value={dataPoint.value} id={idText}/>
+                                                                <label className="dropdownList" htmlFor={idText}> {displayValue}&nbsp;&nbsp;({dataPoint.count}) </label>
+                                                            </li>
+                                                    </React.Fragment>
+                                                )
+                                        }
+                                    )
+                                }
+                            </span>
+                        </ul>
+
+                    </div>
+                    <div className="borderTopTable SRC-flex">
+                        <span className="tableTextColor">
+                            <a href="#" onClick={handleSelector(SELECT_ALL)} className="tableDropdownSelector tableAll" > All </a>
+                            <span> | </span>
+                            <a href="#" onClick={handleSelector(DESELECT_ALL)} className="tableDropdownSelector tableClear"> Clear </a>
                         </span>
-                    </ul>
-                    <br/>   
-                    <div>
-                        <button onClick={handleSelector(SELECT_ALL)} style={{marginLeft: "10px"}} className="btn btn-default"> All </button>
-                        | 
-                        <button onClick={handleSelector(DESELECT_ALL)} className="btn btn-default"> Clear </button>
-                        <button onClick={applyChanges} className="btn btn-default pull-right"> APPLY </button>
+                        <button onClick={applyChanges} className="tableApply"> APPLY </button>
                     </div>
                 </div>
             </span>
