@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
 import ColorGradient from "./ColorGradient";
+import close from '../assets/icons/close.svg'
 
 // Add all icons to the library so you can use it in your page
 library.add(faEllipsisV);
@@ -246,10 +247,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
         // handle column selection
         let handleSelector = (selector? : string) => (event: React.SyntheticEvent<HTMLElement>) => { 
-            event.preventDefault()
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
-                let checkbox = curElement.children[0] as HTMLInputElement
+                let label = curElement.children[0] as HTMLLabelElement
+                let checkbox = label.children[0] as HTMLInputElement
                 if (selector === SELECT_ALL) {
                     checkbox.checked = true
                 } else {
@@ -263,7 +264,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
-                let checkbox = curElement.children[0] as HTMLInputElement
+                let label = curElement.children[0] as HTMLLabelElement
+                let checkbox = label.children[0] as HTMLInputElement
                 let isSelected = checkbox.checked
                 if (isSelected) {
                     facetValues.push(checkbox.value)
@@ -306,7 +308,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 <div className="SRC-flex" style={{borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
                                     <h3 style={{display: "inline-block"}}> {columnName} </h3>
                                     <button style={{marginLeft: "auto"}} className="btn pull-right" onClick={toggleDropdown}> 
-                                        <FontAwesomeIcon size={"2x"} icon="times"/> 
+                                        <img src={close}></img>
                                     </button>
                                 </div> 
                             </li>
@@ -322,8 +324,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         return (
                                                     <React.Fragment key={idText}>
                                                             <li>
-                                                                <input defaultChecked={true} type="checkbox" value={dataPoint.value} id={idText}/>
-                                                                <label className="dropdownList" htmlFor={idText}> {displayValue}&nbsp;&nbsp;({dataPoint.count}) </label>
+                                                                <label className="dropdownList containerCheckbox"> {displayValue}&nbsp;&nbsp;({dataPoint.count}) 
+                                                                    <input defaultChecked={true} type="checkbox" value={dataPoint.value}/>
+                                                                    <span className="checkmark"></span>
+                                                                </label>
                                                             </li>
                                                     </React.Fragment>
                                                 )
@@ -336,9 +340,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </div>
                     <div className="borderTopTable SRC-flex">
                         <span className="tableTextColor">
-                            <a href="#" onClick={handleSelector(SELECT_ALL)} className="tableDropdownSelector tableAll" > All </a>
+                            <button onClick={handleSelector(SELECT_ALL)} className="tableDropdownSelector tableAll" > All </button>
                             <span> | </span>
-                            <a href="#" onClick={handleSelector(DESELECT_ALL)} className="tableDropdownSelector tableClear"> Clear </a>
+                            <button onClick={handleSelector(DESELECT_ALL)} className="tableDropdownSelector tableClear"> Clear </button>
                         </span>
                         <button onClick={applyChanges} className="tableApply"> APPLY </button>
                     </div>
