@@ -36,15 +36,16 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
         const { data, schema } = this.props;
         
         const abstract = data[schema.Abstract]
-        const consortium = data[schema.Consortium]
+        // const consortium = data[schema.Consortium]
         const grantNumber = data[schema["Grant Number"]]
         const institutions = data[schema.Institutions]
-        const contributors = data[schema["Key Data Contributors"]]
+        // const contributors = data[schema["Key Data Contributors"]]
+        const program = data[schema.Program]
         const investigators = data[schema["Key Investigators"]]
         const link = data[schema.Link]
         const name = data[schema.Name]
 
-        const values: string[][] = [["GRANT", grantNumber], ["KEY CONTRIBUTORS", contributors], ["INSTITUTION", institutions], ["PROGRAM", consortium]]
+        const values: string[][] = [["GRANT", grantNumber], ["STUDIES", ""], ["INSTITUTIONS", institutions], ["PROGRAM", program]]
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">

@@ -47,7 +47,7 @@ type SynapseTableCardViewProps = {
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}> {
 
     static propTypes = {
-        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM ]),
+        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY ]),
         limit: PropTypes.number,
         hideOrganizationLink: PropTypes.bool
     }

@@ -5,6 +5,8 @@ import Login from "../../lib/containers/demo_components/Login";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
+import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
+import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 
 type DemoState = 
   {
@@ -85,7 +87,11 @@ class Demo extends Component<{}, DemoState> {
     if (process.env.NODE_ENV === "development") {
       token = process.env.REACT_APP_DEV_TOKEN;
       inDevEnv = true;
+    } else {
+      token = this.state.token
     }
+
+
     return (
       <div className="App">
         <div className="App-header text-center">
@@ -96,7 +102,7 @@ class Demo extends Component<{}, DemoState> {
         
         <Login
           onTokenChange={this.handleChange}
-          token={inDevEnv ? token : this.state.token}
+          token={token}
           theme={"light"}
           icon={true}
           buttonText={"Sign in with Google"}
@@ -122,6 +128,18 @@ class Demo extends Component<{}, DemoState> {
           ]}
           rgbIndex={4}
         />
+
+        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn9886254"}>
+          <SynapseTableCardView type={SynapseConstants.AMP_STUDY}  />
+        </StaticQueryWrapper>
+
+        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024229"}>
+          <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
+        </StaticQueryWrapper>
+
+        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024173"}>
+          <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
+        </StaticQueryWrapper>
 
       </div>
     );
