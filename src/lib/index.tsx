@@ -2,6 +2,7 @@ import * as SynapseClient from './utils/SynapseClient';
 import * as SynapseConstants from './utils/SynapseConstants';
 import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapper from './containers/QueryWrapper'
+import QueryWrapperMenu from './containers/QuerryWrapperMenu'
 import StaticQueryWrapper from './containers/StaticQueryWrapper'
 import SynapseTableCardView from './containers/SynapseTableCardView'
 import {Facets} from './containers/Facets';
@@ -19,7 +20,8 @@ let SynapseComponents = {
     StackedRowHomebrew,
     SynapseTable,
     StaticQueryWrapper,
-    SynapseTableCardView
+    SynapseTableCardView,
+    QueryWrapperMenu
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents };
