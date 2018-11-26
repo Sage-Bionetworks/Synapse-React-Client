@@ -258,11 +258,13 @@ import syn16787123 from 'folder/to/syn16787123.json'
   />
 </SynapseComponents.StaticQueryWrapper>
 
-// An alternative usecase for static query wrapper is if the 
-// table is known and 
+/** An alternative usecase for static query wrapper is if the data only needs to be pulled
+down once you can specify the query that will pull down the data for the child components.
+**/
 
 <SynapseComponents.StaticQueryWrapper
   sql={"SELECT * FROM syn1234567"}
+  token={"1234..."}
   >
   <SynapseComponents.SynapseTableCardView
       type={SynapseConstants.STUDY}
