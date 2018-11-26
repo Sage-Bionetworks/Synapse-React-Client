@@ -623,12 +623,20 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   }
 }
 
+.SRC-extraPadding {
+  padding: 5px;
+}
+
 .tableAll {
   margin-right: 10px;
 }
 
 .tableClear {
   margin-left: 10px;
+}
+
+.SRC-base-font {
+  font-size: 14px !important;
 }
 
 /*

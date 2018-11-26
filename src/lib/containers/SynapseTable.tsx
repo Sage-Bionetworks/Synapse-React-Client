@@ -324,7 +324,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         return (
                                                     <React.Fragment key={idText}>
                                                             <li>
-                                                                <label className="dropdownList containerCheckbox"> {displayValue}&nbsp;&nbsp;({dataPoint.count}) 
+                                                                <label className="dropdownList SRC-base-font containerCheckbox"> {displayValue}&nbsp;&nbsp;({dataPoint.count}) 
                                                                     <input defaultChecked={true} type="checkbox" value={dataPoint.value}/>
                                                                     <span className="checkmark"></span>
                                                                 </label>
@@ -395,14 +395,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 let isFacetSelection: boolean = facetIndex !== -1
 
                 return (
-                    <th style={{minWidth: "140px"}} key={column.name} className={"SRC-hand-cursor "}>
-                        <a style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
+                    <th style={{minWidth: "140px"}} key={column.name}>
+                        <span style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
                             <span className={"pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
                             {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
-                        </a>
+                        </span>
                     </th>
                 );
             }
@@ -489,8 +489,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <span style={{marginLeft: "15px"}} className="dropdown-toggle" onClick={this.toggleDropdown} id="dropdownMenu1">
+                            <span className="SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                            <span style={{marginLeft: "15px"}} className="SRC-extraPadding dropdown-toggle SRC-hand-cursor" onClick={this.toggleDropdown} id="dropdownMenu1">
                                 <FontAwesomeIcon color="white" icon="ellipsis-v" />
                             </span>
                             <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
@@ -503,7 +503,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                     return (
                                         <li key={header.name} onClick={this.toggleColumnSelection(index)}>
                                             <a className="SRC-no-focus" href="">
-                                                {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "green"}} icon="check"/>}
+                                                {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "#5171C0"}} icon="check"/>}
                                                 {header.name}
                                             </a>
                                         </li>
