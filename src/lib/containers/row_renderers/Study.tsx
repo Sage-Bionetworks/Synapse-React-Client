@@ -41,7 +41,6 @@ export default class Study extends React.Component<StudyProps, StudyState> {
         const dataStatus: string = data[schema.dataStatus];
         const id: string = data[schema.id];
         const link: string = `https://www.synapse.org/#!Synapse:${id}`
-        // const institutions = data[schema.institutions]
         const values: string [][] = [["STATUS", projectStatus], ["FUNDER", fundingAgency], ["DATA", dataStatus], ["PUBLICATION", "NONE"]];
         let chips: string [] = [tumorType, diseaseFocus];
         return (
