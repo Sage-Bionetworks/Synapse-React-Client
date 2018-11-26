@@ -31,9 +31,9 @@ export default class Study extends React.Component<StudyProps, StudyState> {
     getIcon(name: string) {
         switch(name) {
             case "Controlled":
-                return (<img src={require("../../../assets/icons/controlledStudy.png")}/>)
+                return (<img src={require("../../../assets/icons/controlledStudy.svg")}/>)
             default:
-                return (false)
+                return (<img src={require("../../../assets/icons/study-active.svg")}/>)
         }
     }
 
@@ -54,7 +54,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
         const program  = data[schema.Consortium]
         const grant  = data[schema["Grant"]]
 
-        const values: string [][] = [["MODEL", model], ["ORGANISM", organism], ["INDIVIDUALS", individuals], ["PROGRAM", program], ["GRANT", grant]];
+        const values: string [][] = [["Data Type", ""], ["ORGANISM", organism + " " + model], ["INDIVIDUALS", individuals], ["PROGRAM", program], ["GRANT", grant]];
 
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
