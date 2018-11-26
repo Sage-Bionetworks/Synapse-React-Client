@@ -18,7 +18,7 @@ describe('basic functionality', () => {
             <QueryWrapper
                 initQueryRequest = {mockRequest}
                 token={""}
-                filter={"name"}
+                facetName={"name"}
             >
             </QueryWrapper>)
         expect(wrapper.find("div")).toHaveLength(2)

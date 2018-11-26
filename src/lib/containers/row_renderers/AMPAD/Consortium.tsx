@@ -1,4 +1,5 @@
 import React from "react";
+import * as Utils from '../utils'
 
 type ConsortiumState = {
     showMore: boolean
@@ -54,6 +55,9 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         const name = data[schema["Full Name"]]
         const org = data[schema.Consortium]
 
+        const values: string[][] = [["GRANT",""]]
+
+
         return (
             <div style={{paddingBottom: "32px"}} className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
@@ -72,6 +76,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
                         {description}
                     </span>
                 </div>
+                <Utils.CardFooter extraWide={true} values={values} />
             </div>
 
         );

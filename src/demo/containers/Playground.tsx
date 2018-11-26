@@ -2,24 +2,11 @@ import React, { Component } from "react";
 import logo from "../../images/logo.svg";
 import "./App.css";
 import Login from "../../lib/containers/demo_components/Login";
-import MarkdownSynapse from "../../lib/containers/MarkdownSynapse";
-import UserFavorites from "../../lib/containers/demo_components/UserFavorites";
-import UserProjects from "../../lib/containers/demo_components/UserProjects";
-import UserTeam from "../../lib/containers/demo_components/UserTeams";
-import UserProfile from "../../lib/containers/demo_components/UserProfile";
-import CustomMarkdownView from "../../lib/containers/demo_components/CustomMarkdownView";
-import * as SynapseClient from "../../lib/utils/SynapseClient";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
-import UserBadgeBatch from "../../lib/containers/UserBadgeBatch";
-import SynapseTableCardView from "../../lib/containers/SynapseTableCardView";
-import syn16859580 from "../../JSON_test_data/syn16859580.json";
-import syn16858699 from "../../JSON_test_data/syn16858699.json";
-import syn16859448 from "../../JSON_test_data/syn16859448.json";
-import syn16857542 from "../../JSON_test_data/syn16857542.json";
-import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper";
-import TeamMemberList from "../../lib/containers/TeamMemberList";
-import { SynapseVersion } from 'src/lib/utils/jsonResponses/SynapseVersion';
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
+import { SynapseClient } from 'src/lib';
+import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
+import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 
 type DemoState = 
   {
@@ -47,24 +34,10 @@ class Demo extends Component<{}, DemoState> {
       showMarkdown: true,
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
-    this.getVersion = this.getVersion.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
   }
-  /**
-   * Get the current version of Synapse
-   */
-  getVersion(): void {
-    // IMPORTANT: Your component should have a property (with default) to change the endpoint.  This is necessary for Synapse.org integration.
-    // Pass your endpoint through to the rpc call:
-    // SynapseClient.getVersion('https://repo-staging.prod.sagebase.org')
-    SynapseClient.getVersion()
-      .then((data: SynapseVersion) => this.setState({version: data.version}))
-      .catch(function(error: any) {
-        // Handle HTTPError.  Has statusCode and message.
-        console.error("Get version failed", error);
-      });
-  }
+
   /**
    * Make a query on synapse
    */
@@ -114,18 +87,22 @@ class Demo extends Component<{}, DemoState> {
     if (process.env.NODE_ENV === "development") {
       token = process.env.REACT_APP_DEV_TOKEN;
       inDevEnv = true;
+    } else {
+      token = this.state.token
     }
+
+
     return (
       <div className="App">
         <div className="App-header text-center">
           <img src={logo} className="App-logo" alt="logo" />
-          <h4 className="white-text">Playground of Components under development </h4>
+          <h4 className="white-text">Playground of components under development </h4>
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
         
         <Login
           onTokenChange={this.handleChange}
-          token={inDevEnv ? token : this.state.token}
+          token={token}
           theme={"light"}
           icon={true}
           buttonText={"Sign in with Google"}
@@ -133,105 +110,37 @@ class Demo extends Component<{}, DemoState> {
           redirectURL={redirectUrl}
         />
 
-        <UserFavorites token={inDevEnv ? token : this.state.token} getUserFavoritesEndpoint={SynapseClient.getUserFavorites} />
-
-        <UserProjects token={inDevEnv ? token : this.state.token} getUserProjectsEndpoint={SynapseClient.getUserProjectList} />
-
-        <UserProfile
-          onProfileChange={this.handleChange}
-          token={inDevEnv ? token : this.state.token}
-          ownerId={this.state.ownerId}
-          getUserProfileEndpoint={SynapseClient.getUserProfile}
-        />
-
-        <UserTeam
-          token={inDevEnv ? token : this.state.token}
-          ownerId={this.state.ownerId}
-          getUserTeamEndpoint={SynapseClient.getUserTeamList}
-        />
-
-        <UserBadgeBatch principalIds={[3342573, 3374422, 1131050]} />
-
-        {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ""}
-
-        <div className="container SRC-syn-border-spacing">
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              this.removeHandler();
-            }}
-          >
-            {" "}
-            Toggle markdown from view
-          </button>
-        </div>
-
-        <CustomMarkdownView>
-          <MarkdownSynapse
-            token={inDevEnv ? token : this.state.token}
-            wikiId={"581895"}
-            ownerId={"syn12666371"}
-            updateLoadState={this.handleChange}
-          />
-        </CustomMarkdownView>
-
         <QueryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={[ 
             { sql: "SELECT * FROM syn16858331",
               title: "my title here",
               synapseId: "syn16858331",
-              filter: "assay",
+              facetName: "assay",
               unitDescription: "data types"
             },
             { sql: "SELECT * FROM syn16858331",
               title: "Facet is dataType",
               synapseId: "syn16858331",
-              filter: "dataType",
+              facetName: "dataType",
               unitDescription: "files"
             }
           ]}
           rgbIndex={4}
         />
 
-
-        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn9886254"}> 
-          <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />
+        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn9886254"}>
+          <SynapseTableCardView type={SynapseConstants.AMP_STUDY}  />
         </StaticQueryWrapper>
 
-        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn17024229"}> 
+        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024229"}>
           <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
         </StaticQueryWrapper>
 
-        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn17024173"}> 
-          <SynapseTableCardView
-            ownerId={"syn17024173"}
-            token={inDevEnv ? token: this.state.token}
-            type={SynapseConstants.AMP_CONSORTIUM} 
-          />
+        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024173"}>
+          <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
         </StaticQueryWrapper>
 
-        <StaticQueryWrapper json={syn16859580}>
-          <SynapseTableCardView type={SynapseConstants.DATASET} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16859448}>
-          <SynapseTableCardView type={SynapseConstants.TOOL} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16857542}>
-          <SynapseTableCardView type={SynapseConstants.PUBLICATION} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16858699}>
-          <SynapseTableCardView type={SynapseConstants.FUNDER} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16858699}>
-          <SynapseTableCardView hideOrganizationLink={true} type={SynapseConstants.FUNDER} />
-        </StaticQueryWrapper>
-
-        <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
       </div>
     );
   }

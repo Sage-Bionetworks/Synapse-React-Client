@@ -459,7 +459,8 @@ button.SRC-roundBorder {
 .scrollable {
   height: 300px;
   overflow: hidden;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  padding-left: 0px; }
 
 .SRC-padding {
   padding: 3px; }
@@ -475,3 +476,109 @@ button.SRC-roundBorder {
 
 .SRC-light-background {
   background: #F5F5F5; }
+
+.dropdownList {
+  font-weight: 100;
+  padding-left: 7px; }
+
+.paddingMenuDropdown {
+  padding-left: 30px;
+  padding-right: 30px; }
+
+.borderTopTable {
+  border-top: 1px solid #dddddf;
+  padding-top: 5px;
+  padding-right: 20px; }
+
+.tableApply {
+  border-radius: 17px;
+  padding: 6px 25px;
+  background: #4E5491;
+  color: white;
+  margin-left: auto; }
+
+.tableTextColor {
+  margin: auto;
+  margin-left: 10px; }
+
+.tableDropdownSelector {
+  color: #4E5491;
+  font-size: 13px;
+  font-weight: 600;
+  border: none; }
+  .tableDropdownSelector:focus {
+    outline: none; }
+
+.SRC-extraPadding {
+  padding: 5px; }
+
+.tableAll {
+  margin-right: 10px; }
+
+.tableClear {
+  margin-left: 10px; }
+
+.SRC-base-font {
+  font-size: 14px !important; }
+
+/*
+  checkmark styling start
+*/
+/* Hide the browser's default checkbox */
+/* The container */
+.containerCheckbox {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+
+/* Hide the browser's default checkbox */
+.containerCheckbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0; }
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  border: 1px solid #DDDDDF;
+  width: 20px;
+  margin-top: 7px; }
+
+/* On mouse-over, add a grey background color */
+.containerCheckbox:hover input ~ .checkmark {
+  background-color: #ccc; }
+
+/* When the checkbox is checked, add a blue background */
+.containerCheckbox input:checked ~ .checkmark {
+  background-image: url("../assets/icons/selected.svg");
+  background-repeat: no-repeat;
+  background-size: 20px; }
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none; }
+
+/* Show the checkmark when checked */
+.containerCheckbox input:checked ~ .checkmark:after {
+  display: block; }
+
+/* Style the checkmark/indicator */
+/*
+
+  checkmark styling end
+
+*/

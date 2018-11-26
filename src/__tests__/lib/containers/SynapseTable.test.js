@@ -19,7 +19,7 @@ describe('basic functionality', () => {
         const wrapper = await shallow(
             <QueryWrapper
                 initQueryRequest = {mockRequest}
-                filter={"name"}
+                facetName={"name"}
                 RGB={[0,0,0]}
                 token={""}
                 sql={""}>

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from 'prop-types'
 import ColorGradient from "./ColorGradient";
+import close from '../assets/icons/close.svg'
 
 // Add all icons to the library so you can use it in your page
 library.add(faEllipsisV);
@@ -248,7 +249,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let handleSelector = (selector? : string) => (event: React.SyntheticEvent<HTMLElement>) => { 
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
-                let checkbox = curElement.children[0] as HTMLInputElement
+                let label = curElement.children[0] as HTMLLabelElement
+                let checkbox = label.children[0] as HTMLInputElement
                 if (selector === SELECT_ALL) {
                     checkbox.checked = true
                 } else {
@@ -262,7 +264,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
-                let checkbox = curElement.children[0] as HTMLInputElement
+                let label = curElement.children[0] as HTMLLabelElement
+                let checkbox = label.children[0] as HTMLInputElement
                 let isSelected = checkbox.checked
                 if (isSelected) {
                     facetValues.push(checkbox.value)
@@ -299,43 +302,49 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 </span>
 
                 <div className="dropdown-menu dropdown-menu-right">
-                    <ul style={{listStyleType: "none"}} className="scrollable">
-                        <li> 
-                            <div style={{borderBottomColor:"green", borderBottom: "1px solid"}}> 
-                                <h3 style={{display: "inline-block"}}> {columnName} </h3>
-                                <button className="btn pull-right" onClick={toggleDropdown}> 
-                                    <FontAwesomeIcon size={"2x"} icon="times"/> 
-                                </button>
-                            </div> 
-                        </li>
-                        <br/>
-                        <span ref={ref}>
-                            {facetColumnResult.facetValues.map(
-                                (dataPoint: FacetColumnResultValueCount) => {
-                                    let idText = `${dataPoint.value}(${dataPoint.count})`
-                                    let displayValue = dataPoint.value
-                                    if (displayValue === "org.sagebionetworks.UNDEFINED_NULL_NOTSET") {
-                                        displayValue = "unannotated"
-                                    }
-                                    return (
-                                                <React.Fragment key={idText}>
-                                                        <li>
-                                                            <input defaultChecked={true} type="checkbox" value={dataPoint.value} id={idText}/>
-                                                            <label htmlFor={idText}> {displayValue}&nbsp;&nbsp;({dataPoint.count}) </label>
-                                                        </li>
-                                                </React.Fragment>
-                                            )
-                                    }
-                                )
-                            }
+                    <div className="paddingMenuDropdown">
+                        <ul style={{listStyleType: "none"}} className="scrollable">
+                            <li> 
+                                <div className="SRC-flex" style={{borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
+                                    <h3 style={{display: "inline-block"}}> {columnName} </h3>
+                                    <button style={{marginLeft: "auto"}} className="btn pull-right" onClick={toggleDropdown}> 
+                                        <img src={close}></img>
+                                    </button>
+                                </div> 
+                            </li>
+                            <br/>
+                            <span ref={ref}>
+                                {facetColumnResult.facetValues.map(
+                                    (dataPoint: FacetColumnResultValueCount) => {
+                                        let idText = `${dataPoint.value}(${dataPoint.count})`
+                                        let displayValue = dataPoint.value
+                                        if (displayValue === "org.sagebionetworks.UNDEFINED_NULL_NOTSET") {
+                                            displayValue = "unannotated"
+                                        }
+                                        return (
+                                                    <React.Fragment key={idText}>
+                                                            <li>
+                                                                <label className="dropdownList SRC-base-font containerCheckbox"> {displayValue}&nbsp;&nbsp;({dataPoint.count}) 
+                                                                    <input defaultChecked={true} type="checkbox" value={dataPoint.value}/>
+                                                                    <span className="checkmark"></span>
+                                                                </label>
+                                                            </li>
+                                                    </React.Fragment>
+                                                )
+                                        }
+                                    )
+                                }
+                            </span>
+                        </ul>
+
+                    </div>
+                    <div className="borderTopTable SRC-flex">
+                        <span className="tableTextColor">
+                            <button onClick={handleSelector(SELECT_ALL)} className="tableDropdownSelector tableAll" > All </button>
+                            <span> | </span>
+                            <button onClick={handleSelector(DESELECT_ALL)} className="tableDropdownSelector tableClear"> Clear </button>
                         </span>
-                    </ul>
-                    <br/>   
-                    <div>
-                        <button onClick={handleSelector(SELECT_ALL)} style={{marginLeft: "10px"}} className="btn btn-default"> All </button>
-                        | 
-                        <button onClick={handleSelector(DESELECT_ALL)} className="btn btn-default"> Clear </button>
-                        <button onClick={applyChanges} className="btn btn-default pull-right"> APPLY </button>
+                        <button onClick={applyChanges} className="tableApply"> APPLY </button>
                     </div>
                 </div>
             </span>
@@ -386,14 +395,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 let isFacetSelection: boolean = facetIndex !== -1
 
                 return (
-                    <th style={{minWidth: "140px"}} key={column.name} className={"SRC-hand-cursor "}>
-                        <a style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
+                    <th style={{minWidth: "140px"}} key={column.name}>
+                        <span style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
                             <span className={"pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
                             {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
-                        </a>
+                        </span>
                     </th>
                 );
             }
@@ -480,8 +489,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <span style={{marginLeft: "15px"}} className="dropdown-toggle" onClick={this.toggleDropdown} id="dropdownMenu1">
+                            <span className="SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                            <span style={{marginLeft: "15px"}} className="SRC-extraPadding dropdown-toggle SRC-hand-cursor" onClick={this.toggleDropdown} id="dropdownMenu1">
                                 <FontAwesomeIcon color="white" icon="ellipsis-v" />
                             </span>
                             <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
@@ -494,7 +503,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                     return (
                                         <li key={header.name} onClick={this.toggleColumnSelection(index)}>
                                             <a className="SRC-no-focus" href="">
-                                                {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "green"}} icon="check"/>}
+                                                {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "#5171C0"}} icon="check"/>}
                                                 {header.name}
                                             </a>
                                         </li>
