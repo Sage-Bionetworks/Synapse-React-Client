@@ -26,4 +26,4 @@ export type FacetColumnResultRange = {
     selectedMax:	string	    // the upper bound of the selected range
  }
 
-export type FacetColumnResult = FacetColumnResultValues & FacetColumnResultRange
+export type FacetColumnResult = FacetColumnResultValues | FacetColumnResultRange
