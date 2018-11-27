@@ -24,6 +24,7 @@
     "@types/react-measure": "^2.0.4",
     "@types/react-plotly.js": "^2.2.2",
     "@types/react-router-dom": "^4.3.1",
+    "@types/react-tooltip": "^3.3.6",
     "bootswatch": "git+https://git@github.com/thomaspark/bootswatch.git#95a134434fd0955182e9a938b5e50624e8e143c6",
     "gh-pages": "^2.0.0",
     "i": "^0.3.6",
@@ -56,6 +57,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts-ts": "^3.1.0",
     "react-test-renderer": "^16.4.2",
+    "react-tooltip": "^3.9.0",
     "sanitize-html": "^1.18.4",
     "typescript": "^3.1.6",
     "uuid": "^3.3.2"

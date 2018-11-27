@@ -1,7 +1,7 @@
 import { FacetType } from './FacetType';
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnResultValues.html
-export type FacetColumnResultValues = {
+interface FacetColumnResultValues extends FacetColumnResult {
     concreteType:	string	
     columnName:	    string	                        // The name of the faceted column
     facetType:   	FacetType	
@@ -16,7 +16,7 @@ export type FacetColumnResultValueCount = {
 }
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnResultRange.html
-export type FacetColumnResultRange = {
+interface FacetColumnResultRange extends FacetColumnResult {
     concreteType:	string	
     columnName:	    string	    // The name of the faceted column
     facetType:	    FacetType	
@@ -26,4 +26,10 @@ export type FacetColumnResultRange = {
     selectedMax:	string	    // the upper bound of the selected range
  }
 
-export type FacetColumnResult = FacetColumnResultValues | FacetColumnResultRange
+interface FacetColumnResult {
+    concreteType:	string	
+    columnName:	    string	                        // The name of the faceted column
+    facetType:   	FacetType
+}
+
+export {FacetColumnResult, FacetColumnResultValues, FacetColumnResultRange}

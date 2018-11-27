@@ -1,5 +1,6 @@
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle';
 import { ColumnType } from 'src/lib/utils/jsonResponses/Table/ColumnType';
+import { FacetColumnResultValues } from 'src/lib/utils/jsonResponses/Table/FacetColumnResult';
 
 let mockData: QueryResultBundle = {
     concreteType: "a",
@@ -18,7 +19,7 @@ let mockData: QueryResultBundle = {
             facetType: {enumeration: "a"},
             columnName: "name",
             facetValues: [{value: "a", count: 1, isSelected: true}]
-        }
+        } as FacetColumnResultValues
     ],
     queryResult: {
         queryResults: {
@@ -36,7 +37,11 @@ let mockData: QueryResultBundle = {
             }]
         },
         nextPageToken: {token: "123"}
-    }
+    },
+    queryCount: 100,
+    selectColumns: [{name: "name", columnType: ColumnType.STRING, id: "a"}],
+    sumFileSizes: {sumFileSizesBytes: 1000, greaterThan: false},
+    maxRowsPerPage: 100
 }
 
 export default mockData

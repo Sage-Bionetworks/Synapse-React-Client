@@ -3,6 +3,7 @@ import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
 import ColorGradient from "./ColorGradient";
 import close from '../assets/icons/close.svg'
@@ -39,6 +40,7 @@ type SynapseTableState = {
     isColumnSelected: boolean[]
     columnIconState: number[],
     isFilterSelected: boolean []
+    applyClickedArray: boolean []
 };
 
 type SynapseTableProps = {
@@ -48,7 +50,7 @@ type SynapseTableProps = {
 }
 
 import {QueryWrapperChildProps} from './QueryWrapper'
-import { FacetColumnResult, FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult';
+import { FacetColumnResult, FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
 import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequest';
@@ -78,7 +80,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             isOpen: false,
             isColumnSelected: [],
             columnIconState: [],
-            isFilterSelected: Array(100).fill(false)
+            isFilterSelected: Array(100).fill(false),
+            applyClickedArray: Array(100).fill(false)
         };
     }
     /**
@@ -226,7 +229,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     configureFacetDropdown(index: number, facetColumnResults: FacetColumnResult[], facetIndex:number) {
 
         // this grabs the specific facet selection
-        let facetColumnResult = facetColumnResults[facetIndex]
+        let facetColumnResult = facetColumnResults[facetIndex] as FacetColumnResultValues
         let columnName = facetColumnResult.columnName
 
         // this is related to whether we've selected this column or not
@@ -258,6 +261,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 }
             }
         }
+
+        // TODO: Use var for styling of filter
+        // let hasClickedApply = this.state.applyClickedArray[index]
 
         let applyChanges = (event: React.SyntheticEvent<HTMLElement>) => { 
             let facetValues: string [] = []
@@ -293,12 +299,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
             this.props.executeQueryRequest!(queryRequest)
             toggleDropdown()
+            let applyClickedArray = cloneDeep(this.state.applyClickedArray)
+            applyClickedArray[index] = true
+            this.setState({
+                applyClickedArray
+            })
         }
 
         let applyPrimary = isFilterSelected ? "SRC-primary-background-color": ""
-
+        // TODO: Get styling for filter having been clicked
         return (
             <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
+
                 <span className={`SRC-hand-cursor SRC-extraPadding ${applyPrimary}`} onClick={toggleDropdown}> 
                     <FontAwesomeIcon size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
@@ -491,10 +503,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <span style={{marginLeft: "15px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
+                            <span data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                            <ReactTooltip place="bottom" type="dark" effect="solid" />
+
+                            <span data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
                                 <FontAwesomeIcon color="white" icon="ellipsis-v" />
                             </span>
+                            <ReactTooltip place="bottom" type="dark" effect="solid" />
+
                             <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                                 {headers.map((header: any, index: number) => {
                                     let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
