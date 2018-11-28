@@ -31,7 +31,7 @@ describe('basic functionality', () => {
             {
                 columnName: "name",
                 concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
-                facetValues: [undefined]
+                facetValues: ["a"]
             }
         ]
         expect(wrapper.find(SynapseTable)).toHaveLength(1)

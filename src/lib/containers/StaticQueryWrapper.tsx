@@ -20,28 +20,36 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
     constructor(props: StaticQueryWrapperProps) {
         super(props)
         this.state = {data: {}}
+        this.getData = this.getData.bind(this)
+    }
+
+    componentDidUpdate(prevProps: any) {
+        // re-run query if sql is updated
+        if (this.props.sql != prevProps.sql) {
+            this.getData()
+        }
     }
 
     componentDidMount() {
-        let {token = "", json} = this.props
+        this.getData();
+    }
 
+    private getData() {
+        let {token = "", json} = this.props
         if (json === undefined) {
             let queryBundleRequest: QueryBundleRequest = {
                 concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
                 partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                 query: {
-                  isConsistent: false,
-                  sql: this.props.sql!,
-                  limit: 25,
-                  offset: 0
+                    isConsistent: false,
+                    sql: this.props.sql!,
+                    limit: 25,
+                    offset: 0
                 }
-            }
-    
-            SynapseClient.getQueryTableResults(queryBundleRequest, token).then(
-                data => {
-                    this.setState({data})
-                }
-            )
+            };
+            SynapseClient.getQueryTableResults(queryBundleRequest, token).then(data => {
+                this.setState({ data });
+            });
         }
     }
 

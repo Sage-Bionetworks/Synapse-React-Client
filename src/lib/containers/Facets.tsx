@@ -5,6 +5,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ColorGradient from "./ColorGradient";
 import {QueryWrapperChildProps} from './QueryWrapper'
+import { FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult';
 
 const cloneDeep = require("lodash.clonedeep");
 const SELECT_ALL = "select all";
@@ -19,6 +20,7 @@ type CheckboxGroupProps = {
     isChecked: any
     element: any
     clickHandler: any
+    showAllFacets: boolean
 }
 
 type Info = {
@@ -34,13 +36,14 @@ type Info = {
  */
 const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     
-    const { element } = props;
+    const { element, showAllFacets } = props;
     let children: any = [];
     let colorGradient = new ColorGradient(props.rgbIndex);
     element.facetValues.sort((a: any, b: any) => {
         return b.count - a.count;
     });
     element.facetValues.forEach((facetValue: any, index: any) => {
+        
         let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count;
         // caution when using uuId's to not cause extra re-renders from always changing
         let textColor = colorGradient.getTextColor();
@@ -77,8 +80,12 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     });
     return (
         <div>
-            {children.map((child: any) => {
-                return child;
+            {children.map((child: any, index: number) => {
+                if (!showAllFacets && index > 4) {
+                    return false
+                } else {
+                    return child;
+                }
             })}
         </div>
     );
@@ -88,6 +95,7 @@ type FacetsState = {
     selectedFacets: {},
     isChecked: boolean []
     boxCount: number,
+    showAllFacets: boolean
 };
 
 class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
@@ -100,8 +108,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             // this has to be later converted when making the api call
             selectedFacets: {},
             boxCount: 0,
-            isChecked: []
+            isChecked: [],
+            showAllFacets: false
         };
+        this.showAllFacets = this.showAllFacets.bind(this)
         this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this);
         this.updateSelection = this.updateSelection.bind(this);
     }
@@ -117,10 +127,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         let structuredRender: JSX.Element[] = [];
         // read in the most up to date data
         // display the data -- currently we only support enumerations
-        this.props.data!.facets.forEach((element: any) => {
+        this.props.data!.facets.forEach((element: FacetColumnResult) => {
             if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                 let group = (
                     <CheckboxGroup
+                        showAllFacets={this.state.showAllFacets}
                         rgbIndex={this.props.rgbIndex!}
                         key={element.columnName}
                         element={element}
@@ -143,6 +154,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
      * Handle checkbox click event
      */
     handleClick = (dict: Info) => (event: React.MouseEvent<HTMLSpanElement>) => {
+        if (!this.state.showAllFacets) {
+            this.setState({
+                showAllFacets: true
+            })
+        }
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
         let queryRequest: any = this.props.getLastQueryRequest!();
         let { selectedFacets } = queryRequest.query;
@@ -192,6 +208,14 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             this.props.updateParentState!({ isChecked, showNothing: true, lastQueryRequest: queryRequest });
         }
     };
+
+    showAllFacets (event: React.MouseEvent<HTMLAnchorElement>) {
+        event.preventDefault()
+        this.setState({
+            showAllFacets: true
+        })
+    }
+
     /**
      * Update the state with selected facets and call props to update data
      *
@@ -212,6 +236,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         if (this.props.data === undefined) {
             return false;
         }
+        let {showAllFacets}= this.state
+
         return (
             <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">
@@ -219,14 +245,27 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
                         <div className="form-group">{this.showFacetFilter()}</div>
                         <div className="form-group">
                             <p>
-                                <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
+                                {
+                                !showAllFacets
+                                    &&
+                                 <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
+                                 {" "}
+                                 Show All (10){" "}
+                                 </a>   
+                                }
+                               {showAllFacets &&
+                                 <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
                                     {" "}
                                     Select All{" "}
-                                </a>
-                                <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>
+                                 </a>}
+                                {
+                                showAllFacets
+                                    &&
+                                 <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>
                                     {" "}
                                     Deselect All{" "}
-                                </a>
+                                 </a>
+                                }
                             </p>
                         </div>
                     </form>
