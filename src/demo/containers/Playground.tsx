@@ -41,8 +41,9 @@ class Demo extends Component<{}, DemoState> {
               sql: "SELECT * FROM syn9886254",
               synapseId: "syn9886254",
               facetName: "Organism",
-              unitDescription: "data types"
-
+              unitDescription: "data types",
+              visibleColumnCount: 3,
+              title: "my title"
             },
             { sql: "SELECT * FROM syn9886254",
               synapseId: "syn9886254",
@@ -60,7 +61,8 @@ class Demo extends Component<{}, DemoState> {
             { sql: "SELECT * FROM syn17024229",
                 synapseId: "syn17024229",
                 facetName: "Program",
-                unitDescription: "Program"
+                unitDescription: "Program",
+                title: "my title"
             }]
           ,
           rgbIndex: 0,

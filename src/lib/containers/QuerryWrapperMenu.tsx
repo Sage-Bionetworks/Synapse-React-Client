@@ -131,7 +131,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                     >
                         <StackedRowHomebrew
                             synapseId={config.synapseId}
-                            unitDescription={(config.unitDescription || "files")}
+                            unitDescription={(config.unitDescription || "")}
                             loadingScreen={this.props.loadingScreen} 
                         />
                         <Facets/>
@@ -148,7 +148,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                         }
                         {
                             this.props.type ?
-                            <SynapseTableCardView type={SynapseConstants.AMP_STUDY}  />
+                            <SynapseTableCardView type={this.props.type}  />
                             :
                             (<div></div>)
                         }

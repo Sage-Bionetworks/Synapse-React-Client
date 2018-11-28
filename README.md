@@ -240,7 +240,6 @@ An example of a view with facets/stacked bar chart/table
 | ------------- | ------------- |
 | initQueryRequest  | This is the default query to be run on the first render of the component  |
 | rgbIndex | Specifies the starting index of the following color wheel: turquoise, blueberry, rose, royal, butterscotch, powder, slate, apricot, fern, lavender, apple |
-| showMenu| Boolean that specifies whether to show a side menu with facets on the side, if not specified then it won't show. If set to true will show the menu. |
 | filter | This is the facet that will be default filtered on if using any of StackedRowHomebrew/Facets/Menu. |
 | token  | Session token to make authenticated calls  |
 | loadingScreen  | UI to show when a query is being run  |
@@ -297,11 +296,13 @@ down once you can specify the query that will pull down the data for the child c
         title: "Facet is dataType",
         synapseId: "syn16858331",
         filter: "dataType",
-        unitDescription: "files"
+        unitDescription: "files",
+        visibleColumnCount: 3
       }
     ]
   }
   rgbIndex={4}
+  type={SynapseConstants.PROJECT}
 />
 
 ```
@@ -313,6 +314,7 @@ down once you can specify the query that will pull down the data for the child c
 | rgbIndex | The index into the color pallette starting the color gradient for the view |
 | MenuConfig [] | Specifications for each view under the facet |
 | MenuConfig has keys: sql,  title,  synapseId,  facet, unitDescription, visibleColumnCount  | sql: The query driving the specific's facets view <br/>title: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/> synapseId: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> unitDescription: This gives the units under the barchart <br/> visibleColumnCount: The number of columns to be shown for the table (NOTE: title must be specified with a non-empty string for the table to show) |
+| type | The type of card to show for this table view. NOTE: If not specified then no cards will render. |
 
 #### Facets
 
