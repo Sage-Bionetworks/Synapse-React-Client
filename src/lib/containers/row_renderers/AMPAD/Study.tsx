@@ -48,7 +48,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
         const studyName = data[schema["Study_Name"]]
         const studyDescription = data[schema["Study_Description"]]
 
-        const model = data[schema["Model_System"]]
+        const model = data[schema["Model_System"]] || ""
         const organism = data[schema.Organism]
         const individuals = data[schema["Number_of_Individuals"]]
         const program  = data[schema.Consortium]

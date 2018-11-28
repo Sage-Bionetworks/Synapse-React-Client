@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import logo from "../../images/logo.svg";
 import "./App.css";
-import Login from "../../lib/containers/demo_components/Login";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
@@ -15,6 +14,9 @@ type DemoState =
     isLoading: boolean
     showMarkdown: boolean
     version: number
+    tabOne: any
+    tabTwo: any
+    showTabOne: boolean
   };
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -32,6 +34,42 @@ class Demo extends Component<{}, DemoState> {
       ownerId: "",
       isLoading: true,
       showMarkdown: true,
+      tabOne:
+        {
+          menuConfig: [
+            {
+              sql: "SELECT * FROM syn9886254",
+              synapseId: "syn9886254",
+              facetName: "Organism",
+              unitDescription: "data types",
+              visibleColumnCount: 3,
+              title: "my title"
+            },
+            { sql: "SELECT * FROM syn9886254",
+              synapseId: "syn9886254",
+              facetName: "Study",
+              unitDescription: "files"
+            }
+          ]
+          ,
+          rgbIndex: 4,
+          type: SynapseConstants.AMP_STUDY 
+        }
+      ,
+      tabTwo:{
+          menuConfig: [
+            { sql: "SELECT * FROM syn17024229",
+                synapseId: "syn17024229",
+                facetName: "Program",
+                unitDescription: "Program",
+                title: "my title"
+            }]
+          ,
+          rgbIndex: 0,
+          type: SynapseConstants.AMP_PROJECT
+        }
+      ,
+      showTabOne: true
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -78,10 +116,6 @@ class Demo extends Component<{}, DemoState> {
   }
 
   render(): JSX.Element {
-    let redirectUrl: string = "http://localhost:3000/";
-    if (process.env.NODE_ENV === "production") {
-      redirectUrl = "https://leem42.github.io/Synapse-React-Client/";
-    }
     let token: string | undefined = "";
     let inDevEnv = false;
     if (process.env.NODE_ENV === "development") {
@@ -99,38 +133,20 @@ class Demo extends Component<{}, DemoState> {
           <h4 className="white-text">Playground of components under development </h4>
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-        
-        <Login
-          onTokenChange={this.handleChange}
-          token={token}
-          theme={"light"}
-          icon={true}
-          buttonText={"Sign in with Google"}
-          authProvider={"GOOGLE_OAUTH_2_0"}
-          redirectURL={redirectUrl}
-        />
 
+        <button role="button" className="btn btn-default" onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}>
+          toggle tabs
+        </button>
+        
         <QueryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
-          menuConfig={[ 
-            { sql: "SELECT * FROM syn16858331",
-              title: "my title here",
-              synapseId: "syn16858331",
-              facetName: "assay",
-              unitDescription: "data types"
-            },
-            { sql: "SELECT * FROM syn16858331",
-              title: "Facet is dataType",
-              synapseId: "syn16858331",
-              facetName: "dataType",
-              unitDescription: "files"
-            }
-          ]}
-          rgbIndex={4}
+          menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig: this.state.tabTwo.menuConfig}
+          rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex: this.state.tabTwo.rgbIndex}
+          loadingScreen={<div>loading... </div>}
         />
 
-        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn9886254"}>
-          <SynapseTableCardView type={SynapseConstants.AMP_STUDY}  />
+        <StaticQueryWrapper token={token} sql={this.state.showTabOne? this.state.tabOne.menuConfig[0].sql: this.state.tabTwo.menuConfig[0].sql }>
+          <SynapseTableCardView type={ this.state.showTabOne? SynapseConstants.AMP_STUDY: SynapseConstants.AMP_PROJECT}  />
         </StaticQueryWrapper>
 
         <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024229"}>

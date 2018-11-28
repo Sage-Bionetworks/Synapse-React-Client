@@ -8,36 +8,69 @@ ShallowWrapper {
         Object {
             "columnModels": Array [
               Object {
-                "columnType": "ENTITYID",
+                "columnType": "STRING",
+                "defaultValue": "a",
+                "enumValues": Array [
+                  "a",
+                ],
+                "facetType": "enumeration",
                 "id": "2510",
+                "maximumSize": 89,
                 "name": "id",
               },
             ],
+            "concreteType": "org.sagebionetworks.repo.model.table.QueryResultBundle",
             "facets": Array [
               Object {
                 "columnName": "name",
+                "concreteType": "a",
                 "facetType": "enumeration",
                 "facetValues": Array [
-                  "syn1d 1",
+                  Object {
+                    "count": 1,
+                    "isSelected": true,
+                    "value": "a",
+                  },
                 ],
               },
             ],
+            "maxRowsPerPage": 100,
+            "queryCount": 100,
             "queryResult": Object {
+              "nextPageToken": Object {
+                "token": "123",
+              },
               "queryResults": Object {
+                "etag": "s",
                 "headers": Array [
                   Object {
+                    "columnType": "STRING",
+                    "id": "a",
                     "name": "header",
                   },
                 ],
                 "rows": Array [
                   Object {
-                    "rowId": "1",
+                    "etag": "a",
+                    "rowId": 1,
                     "values": Array [
                       "syn5604373",
                     ],
+                    "versionNumber": 123,
                   },
                 ],
               },
+            },
+            "selectColumns": Array [
+              Object {
+                "columnType": "STRING",
+                "id": "a",
+                "name": "name",
+              },
+            ],
+            "sumFileSizes": Object {
+              "greaterThan": false,
+              "sumFileSizesBytes": 1000,
             },
           }
     }

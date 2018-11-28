@@ -3,7 +3,7 @@ import * as SynapseClient from "../utils/SynapseClient"
 import PropTypes from 'prop-types';
 
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
-import { FacetColumnResult, FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult';
+import {FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 
 const cloneDeep = require("lodash.clonedeep")
@@ -181,15 +181,17 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     private resetFacetSelection(data: QueryResultBundle, filter: string) {
         // we have to reset the facet selections by getting the original
         // facet corresponding to the original filter
-        let facetsForFilter: FacetColumnResult = data.facets.filter((obj: FacetColumnResult) => {
+        let facetsForFilter = data.facets.filter((obj: FacetColumnResultValues) => {
             return obj.columnName === filter;
-        })[0];
+        })[0] as FacetColumnResultValues;
+        
         // next we have to selectively choose those facets and their
         // corresponding counts, we have to get the full counts because of 
         // the nature that we are clicking elements and turning them "off"
-        let facetsMapped = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
+        let facetsMapped: string [] = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
             return el.value;
         });
+
         let lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest);
         lastQueryRequest.query.selectedFacets = [
             {

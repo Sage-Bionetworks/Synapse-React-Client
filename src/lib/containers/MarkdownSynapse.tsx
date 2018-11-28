@@ -6,6 +6,7 @@ import SynapseImage from './widgets/SynapseImage';
 import katex from 'katex';
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults';
+import SynapsePlot from './widgets/SynapsePlot'
 
 const uuidv4 = require('uuid/v4');
 const TOC_CLASS = {
@@ -18,15 +19,7 @@ const TOC_CLASS = {
 };
 const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm;
 const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm;
-// Only because in the test enviornment there is an issue with importing
-// react-plot which in turn imports mapboxgl which in turn defines a function
-// that causes an error
-let SynapsePlot: any;
-if (process.env.NODE_ENV !== 'test') {
-    import('./widgets/SynapsePlot').then(data => {
-        SynapsePlot = data.default;
-    });
-}
+
 
 let md = require('markdown-it')({ html: true });
 let markdownitSynapse = require('markdown-it-synapse');

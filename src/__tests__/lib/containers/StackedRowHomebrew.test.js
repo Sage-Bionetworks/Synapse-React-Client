@@ -12,7 +12,7 @@ describe('it renders a chart without crashing', () => {
         const tree = await shallow(
             <StackedRowHomebrew
                 data={mockData}             
-                getLastQueryRequest={() => {return {query: {}}}}
+                getLastQueryRequest={() => {return {query: {selectedFacets: {}}}}}
             ></StackedRowHomebrew>
         )
         expect(tree).toBeDefined()

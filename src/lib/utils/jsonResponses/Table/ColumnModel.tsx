@@ -1,5 +1,4 @@
 import { ColumnType } from './ColumnType';
-import {FacetType} from './FacetType'
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnModel.html    
 export type ColumnModel = {
@@ -9,5 +8,5 @@ export type ColumnModel = {
     columnType:	ColumnType	// The column type determines the type of data that can be stored in a column.
     maximumSize:	number	// A parameter for columnTypes with a maximum size. For example, ColumnType.strings have a default maximum size of 50 characters, but can be set to a maximumSize of 1 to 1000 characters.
     enumValues:	string []   // Columns of type string can be constrained to an enumeration values set on this list. The maximum number of entries for an enum is 100
-    facetType:	FacetType
+    facetType:	"enumeration" | "range"
 }
