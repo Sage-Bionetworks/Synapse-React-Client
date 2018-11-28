@@ -1,5 +1,5 @@
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnResultValues.html
-interface FacetColumnResultValues extends FacetColumnResult {
+export interface FacetColumnResultValues extends FacetColumnResult {
     concreteType:	string	
     columnName:	    string	                        // The name of the faceted column
     facetValues:    FacetColumnResultValueCount []	// The list of QueryFacetResultValue that contain frequency counts for its most frequent values
@@ -13,7 +13,7 @@ export type FacetColumnResultValueCount = {
 }
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnResultRange.html
-interface FacetColumnResultRange extends FacetColumnResult {
+export interface FacetColumnResultRange extends FacetColumnResult {
     concreteType:	string	
     columnName:	    string	    // The name of the faceted column
     columnMin:	    string	    // the smallest value in the column
@@ -22,10 +22,8 @@ interface FacetColumnResultRange extends FacetColumnResult {
     selectedMax:	string	    // the upper bound of the selected range
  }
 
-interface FacetColumnResult {
+export interface FacetColumnResult {
     concreteType:	string	
     columnName:	    string	                        // The name of the faceted column
     facetType:   	"enumeration" | "range"
 }
-
-export {FacetColumnResult, FacetColumnResultValues, FacetColumnResultRange}
