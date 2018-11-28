@@ -114,7 +114,6 @@ class Demo extends Component<{}, DemoState> {
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={[ 
             { sql: "SELECT * FROM syn16858331",
-              title: "my title here",
               synapseId: "syn16858331",
               facetName: "assay",
               unitDescription: "data types"

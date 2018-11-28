@@ -312,7 +312,7 @@ down once you can specify the query that will pull down the data for the child c
 | token | Session token to make authenticated calls to Synapse |
 | rgbIndex | The index into the color pallette starting the color gradient for the view |
 | MenuConfig [] | Specifications for each view under the facet |
-| MenuConfig has keys: sql,  title,  synapseId,  facet,  unitDescription  | sql: The query driving the specific's facets view <br/>title: The title of the table being used <br/> synapseId: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> unitDescription: This gives the units under the barchart |
+| MenuConfig has keys: sql,  title,  synapseId,  facet, unitDescription, visibleColumnCount  | sql: The query driving the specific's facets view <br/>title: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/> synapseId: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> unitDescription: This gives the units under the barchart <br/> visibleColumnCount: The number of columns to be shown for the table (NOTE: title must be specified with a non-empty string for the table to show) |
 
 #### Facets
 

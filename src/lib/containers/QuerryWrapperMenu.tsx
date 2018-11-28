@@ -14,7 +14,8 @@ type MenuState = {
 type MenuConfig = {
     sql: string
     facetName: string
-    title: string
+    title?: string
+    visibleColumnCount?: number
     unitDescription?: string
     synapseId: string
 }
@@ -107,33 +108,41 @@ export default class Menu extends React.Component<Props, MenuState> {
                 return (
                 <span style={style} >
                     <QueryWrapper
-                    showMenu
-                    initQueryRequest={{
-                        concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                        partMask:
-                        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                        query: {
-                        isConsistent: false,
-                        sql: config.sql,
-                        limit: 25,
-                        offset: 0
+                        showMenu
+                        initQueryRequest={{
+                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                            partMask:
+                            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+                            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+                            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                            query: {
+                            isConsistent: false,
+                            sql: config.sql,
+                            limit: 25,
+                            offset: 0
+                            }
+                        }}
+                        facetName={config.facetName}
+                        token={token}
+                        rgbIndex={rgbIndex}
+                    >
+                        <StackedRowHomebrew
+                            synapseId={config.synapseId}
+                            unitDescription={(config.unitDescription || "files")}
+                            loadingScreen={<div>I'm loading as fast as I can</div>} 
+                        />
+                        <Facets/>
+                        {
+                            config.title ?
+                            (<SynapseTable 
+                                title={config.title}
+                                synapseId={config.synapseId}
+                                // specify visible column count
+                                visibleColumnCount={config.visibleColumnCount || 0} 
+                            />)
+                            :
+                            (<div></div>)
                         }
-                    }}
-                    facetName={config.facetName}
-                    token={token}
-                    rgbIndex={rgbIndex}>
-                    <StackedRowHomebrew
-                        synapseId={config.synapseId}
-                        unitDescription={(config.unitDescription || "files")}
-                        loadingScreen={<div>I'm loading as fast as I can</div>} />
-                    <Facets/>
-                        <SynapseTable 
-                        title={config.title}
-                        synapseId={config.synapseId}
-                        // specify visible column count
-                        visibleColumnCount={4} />  
                     </QueryWrapper>
                 </span>
                 )
