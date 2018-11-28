@@ -1,22 +1,22 @@
-import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle';
-import { ColumnType } from 'src/lib/utils/jsonResponses/Table/ColumnType';
-import { FacetColumnResultValues } from 'src/lib/utils/jsonResponses/Table/FacetColumnResult';
+import { QueryResultBundle } from '../lib/utils/jsonResponses/Table/QueryResultBundle';
+import { ColumnType } from '../lib/utils/jsonResponses/Table/ColumnType';
+import { FacetColumnResultValues } from '../lib/utils/jsonResponses/Table/FacetColumnResult';
 
 let mockData: QueryResultBundle = {
-    concreteType: "a",
+    concreteType: "org.sagebionetworks.repo.model.table.QueryResultBundle",
     columnModels: [{
         id: "2510",
         name: "id",
         defaultValue: "a",
         columnType: ColumnType.STRING,
         enumValues: ["a"],
-        maximumSize: 5120,
-        facetType: {enumeration: "a"}
+        maximumSize: 89,
+        facetType: "enumeration"
     }],
     facets: [
         {
             concreteType: "a",
-            facetType: {enumeration: "a"},
+            facetType: "enumeration",
             columnName: "name",
             facetValues: [{value: "a", count: 1, isSelected: true}]
         } as FacetColumnResultValues

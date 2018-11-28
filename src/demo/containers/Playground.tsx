@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import logo from "../../images/logo.svg";
 import "./App.css";
-import Login from "../../lib/containers/demo_components/Login";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
@@ -78,10 +77,6 @@ class Demo extends Component<{}, DemoState> {
   }
 
   render(): JSX.Element {
-    let redirectUrl: string = "http://localhost:3000/";
-    if (process.env.NODE_ENV === "production") {
-      redirectUrl = "https://leem42.github.io/Synapse-React-Client/";
-    }
     let token: string | undefined = "";
     let inDevEnv = false;
     if (process.env.NODE_ENV === "development") {
@@ -99,33 +94,24 @@ class Demo extends Component<{}, DemoState> {
           <h4 className="white-text">Playground of components under development </h4>
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-        
-        <Login
-          onTokenChange={this.handleChange}
-          token={token}
-          theme={"light"}
-          icon={true}
-          buttonText={"Sign in with Google"}
-          authProvider={"GOOGLE_OAUTH_2_0"}
-          redirectURL={redirectUrl}
-        />
 
         <QueryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={[ 
-            { sql: "SELECT * FROM syn16858331",
-              synapseId: "syn16858331",
-              facetName: "assay",
+            { sql: "SELECT * FROM syn9886254",
+              synapseId: "syn9886254",
+              facetName: "Organism",
               unitDescription: "data types"
             },
-            { sql: "SELECT * FROM syn16858331",
-              title: "Facet is dataType",
-              synapseId: "syn16858331",
-              facetName: "dataType",
+            { sql: "SELECT * FROM syn9886254",
+              synapseId: "syn9886254",
+              facetName: "Study",
               unitDescription: "files"
             }
           ]}
           rgbIndex={4}
+          type={SynapseConstants.AMP_STUDY}
+          loadingScreen={<div>loading... </div>}
         />
 
         <StaticQueryWrapper token={token} sql={"SELECT * FROM syn9886254"}>

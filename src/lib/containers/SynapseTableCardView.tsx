@@ -98,17 +98,19 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
                 schema[element.name] = index;
             });
         return (
-            <RowContainer 
-                hideOrganizationLink={hideOrganizationLink}
-                limit={limit}
-                data={data}
-                schema={schema}
-                token={token}
-                ownerId={ownerId}
-                isHeader={isHeader}    
-            >
+            <React.Fragment>
+                <RowContainer 
+                    hideOrganizationLink={hideOrganizationLink}
+                    limit={limit}
+                    data={data}
+                    schema={schema}
+                    token={token}
+                    ownerId={ownerId}
+                    isHeader={isHeader}    
+                >
                 {this.renderChild()}
-            </RowContainer>
+                </RowContainer>
+            </React.Fragment>
         );
     }
 }

@@ -6,6 +6,7 @@ import { SynapseConstants } from '..';
 import StackedRowHomebrew from './StackedRowHomebrew';
 import { Facets } from './Facets';
 import SynapseTable from './SynapseTable';
+import SynapseTableCardView from './SynapseTableCardView';
 
 type MenuState = {
     menuIndex: number
@@ -23,7 +24,9 @@ type MenuConfig = {
 type Props = {
     menuConfig: MenuConfig []
     token: string
-    rgbIndex: number,
+    type?:string
+    rgbIndex: number
+    loadingScreen?: JSX.Element
 }
 
 type Info = {
@@ -129,7 +132,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                         <StackedRowHomebrew
                             synapseId={config.synapseId}
                             unitDescription={(config.unitDescription || "files")}
-                            loadingScreen={<div>I'm loading as fast as I can</div>} 
+                            loadingScreen={this.props.loadingScreen} 
                         />
                         <Facets/>
                         {
@@ -140,6 +143,12 @@ export default class Menu extends React.Component<Props, MenuState> {
                                 // specify visible column count
                                 visibleColumnCount={config.visibleColumnCount || 0} 
                             />)
+                            :
+                            (<div></div>)
+                        }
+                        {
+                            this.props.type ?
+                            <SynapseTableCardView type={SynapseConstants.AMP_STUDY}  />
                             :
                             (<div></div>)
                         }

@@ -5,6 +5,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ColorGradient from "./ColorGradient";
 import {QueryWrapperChildProps} from './QueryWrapper'
+import { FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult';
 
 const cloneDeep = require("lodash.clonedeep");
 const SELECT_ALL = "select all";
@@ -126,7 +127,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         let structuredRender: JSX.Element[] = [];
         // read in the most up to date data
         // display the data -- currently we only support enumerations
-        this.props.data!.facets.forEach((element: any) => {
+        this.props.data!.facets.forEach((element: FacetColumnResult) => {
             if (element.columnName === this.props.filter && element.facetType === "enumeration") {
                 let group = (
                     <CheckboxGroup
