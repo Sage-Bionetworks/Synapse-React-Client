@@ -14,6 +14,9 @@ type DemoState =
     isLoading: boolean
     showMarkdown: boolean
     version: number
+    tabOne: any
+    tabTwo: any
+    showTabOne: boolean
   };
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -31,6 +34,40 @@ class Demo extends Component<{}, DemoState> {
       ownerId: "",
       isLoading: true,
       showMarkdown: true,
+      tabOne:
+        {
+          menuConfig: [
+            {
+              sql: "SELECT * FROM syn9886254",
+              synapseId: "syn9886254",
+              facetName: "Organism",
+              unitDescription: "data types"
+
+            },
+            { sql: "SELECT * FROM syn9886254",
+              synapseId: "syn9886254",
+              facetName: "Study",
+              unitDescription: "files"
+            }
+          ]
+          ,
+          rgbIndex: 4,
+          type: SynapseConstants.AMP_STUDY 
+        }
+      ,
+      tabTwo:{
+          menuConfig: [
+            { sql: "SELECT * FROM syn17024229",
+                synapseId: "syn17024229",
+                facetName: "Program",
+                unitDescription: "Program"
+            }]
+          ,
+          rgbIndex: 0,
+          type: SynapseConstants.AMP_PROJECT
+        }
+      ,
+      showTabOne: true
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -95,27 +132,19 @@ class Demo extends Component<{}, DemoState> {
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
 
+        <button role="button" className="btn btn-default" onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}>
+          toggle tabs
+        </button>
+        
         <QueryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
-          menuConfig={[ 
-            { sql: "SELECT * FROM syn9886254",
-              synapseId: "syn9886254",
-              facetName: "Organism",
-              unitDescription: "data types"
-            },
-            { sql: "SELECT * FROM syn9886254",
-              synapseId: "syn9886254",
-              facetName: "Study",
-              unitDescription: "files"
-            }
-          ]}
-          rgbIndex={4}
-          type={SynapseConstants.AMP_STUDY}
+          menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig: this.state.tabTwo.menuConfig}
+          rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex: this.state.tabTwo.rgbIndex}
           loadingScreen={<div>loading... </div>}
         />
 
-        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn9886254"}>
-          <SynapseTableCardView type={SynapseConstants.AMP_STUDY}  />
+        <StaticQueryWrapper token={token} sql={this.state.showTabOne? this.state.tabOne.menuConfig[0].sql: this.state.tabTwo.menuConfig[0].sql }>
+          <SynapseTableCardView type={ this.state.showTabOne? SynapseConstants.AMP_STUDY: SynapseConstants.AMP_PROJECT}  />
         </StaticQueryWrapper>
 
         <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024229"}>
