@@ -25,6 +25,7 @@
     "@types/react-plotly.js": "^2.2.2",
     "@types/react-router-dom": "^4.3.1",
     "@types/react-tooltip": "^3.3.6",
+    "@types/jquery": "^3.3.6",
     "bootswatch": "git+https://git@github.com/thomaspark/bootswatch.git#95a134434fd0955182e9a938b5e50624e8e143c6",
     "gh-pages": "^2.0.0",
     "i": "^0.3.6",
