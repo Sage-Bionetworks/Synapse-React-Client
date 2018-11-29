@@ -39,9 +39,8 @@ export default class Study extends React.Component<StudyProps, StudyState> {
 
     render() {
         const { data, schema } = this.props;
-
         const accessType : string = data[schema["Access_Type"]];
-        const id: string = data[schema.id];
+        const id: string = data[schema.Study];
         const link: string = `https://www.synapse.org/#!Synapse:${id}`
 
         const dataContributors = data[schema["Data_Contributor"]]

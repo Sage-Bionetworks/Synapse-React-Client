@@ -4,8 +4,6 @@ import "./App.css";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
-import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
-import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 
 type DemoState = 
   {
@@ -42,8 +40,6 @@ class Demo extends Component<{}, DemoState> {
               synapseId: "syn9886254",
               facetName: "Organism",
               unitDescription: "data types",
-              visibleColumnCount: 3,
-              title: "my title"
             },
             { sql: "SELECT * FROM syn9886254",
               synapseId: "syn9886254",
@@ -61,8 +57,7 @@ class Demo extends Component<{}, DemoState> {
             { sql: "SELECT * FROM syn17024229",
                 synapseId: "syn17024229",
                 facetName: "Program",
-                unitDescription: "Program",
-                title: "my title"
+                unitDescription: "Program"
             }]
           ,
           rgbIndex: 0,
@@ -142,20 +137,9 @@ class Demo extends Component<{}, DemoState> {
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig: this.state.tabTwo.menuConfig}
           rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex: this.state.tabTwo.rgbIndex}
+          type={this.state.showTabOne ? this.state.tabOne.type: this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
-
-        <StaticQueryWrapper token={token} sql={this.state.showTabOne? this.state.tabOne.menuConfig[0].sql: this.state.tabTwo.menuConfig[0].sql }>
-          <SynapseTableCardView type={ this.state.showTabOne? SynapseConstants.AMP_STUDY: SynapseConstants.AMP_PROJECT}  />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024229"}>
-          <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024173"}>
-          <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
-        </StaticQueryWrapper>
 
       </div>
     );

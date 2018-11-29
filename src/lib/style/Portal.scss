@@ -647,6 +647,13 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   max-width: 70%;
 }
 
+.SRC-viewMoreButton {
+  background: #DFDFDF;
+  border-radius: 24px;
+  width: 130px;
+  height: 40px;
+}
+
 /*
   checkmark styling start
 */
@@ -710,19 +717,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   display: block;
 }
 
-
-/* Style the checkmark/indicator */
-.containerCheckbox .checkmark:after {
-  // left: 9px;
-  // top: 5px;
-  // width: 5px;
-  // height: 10px;
-  // border: solid white;
-  // border-width: 0 3px 3px 0;
-  // -webkit-transform: rotate(45deg);
-  // -ms-transform: rotate(45deg);
-  // transform: rotate(45deg);
-}
 
 /*
 

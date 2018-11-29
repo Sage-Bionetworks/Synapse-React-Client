@@ -527,6 +527,12 @@ button.SRC-roundBorder {
 .SRC-limitMaxWidth {
   max-width: 70%; }
 
+.SRC-viewMoreButton {
+  background: #DFDFDF;
+  border-radius: 24px;
+  width: 130px;
+  height: 40px; }
+
 /*
   checkmark styling start
 */
@@ -582,7 +588,6 @@ button.SRC-roundBorder {
 .containerCheckbox input:checked ~ .checkmark:after {
   display: block; }
 
-/* Style the checkmark/indicator */
 /*
 
   checkmark styling end
