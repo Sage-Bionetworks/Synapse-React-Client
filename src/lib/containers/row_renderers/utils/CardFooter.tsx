@@ -28,8 +28,8 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) =
                 }
                 return (
                     <div key={uuidv4()} className={"row " + (extraWide ? "extraWide" : "")}>
-                        <div className="SRC-row-label"> {kv[0]} </div>
-                        <div className="SRC-row-data"> {kv[1]} </div>
+                        <div className="SRC-verticalAlignTop SRC-row-label"> {kv[0]} </div>
+                        <div className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </div>
                     </div>
                 )
             })}
