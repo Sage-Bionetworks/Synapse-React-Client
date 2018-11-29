@@ -521,6 +521,12 @@ button.SRC-roundBorder {
 .SRC-base-font {
   font-size: 14px !important; }
 
+.SRC-verticalAlignTop {
+  vertical-align: top; }
+
+.SRC-limitMaxWidth {
+  max-width: 70%; }
+
 /*
   checkmark styling start
 */
