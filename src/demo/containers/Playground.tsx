@@ -4,6 +4,10 @@ import "./App.css";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
+import QueryWrapper from 'src/lib/containers/QueryWrapper';
+import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
+import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
+import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = 
   {
@@ -70,6 +74,18 @@ class Demo extends Component<{}, DemoState> {
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
   }
+
+
+componentDidMount() {
+  let colorGradient: ColorGradient = new ColorGradient(0)
+  let rgbString= ""
+  for(let i = 0; i < 110; i++) {
+    let rgbColor = colorGradient.getColor()
+    rgbString  += rgbColor
+  }
+  console.log(rgbString)
+
+}
 
   /**
    * Make a query on synapse
@@ -140,6 +156,37 @@ class Demo extends Component<{}, DemoState> {
           type={this.state.showTabOne ? this.state.tabOne.type: this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
+
+        
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+              isConsistent: false,
+              sql: this.state.tabOne.menuConfig[0].sql,
+              limit: 25,
+              offset: 0
+            }
+          }}
+          facetName={this.state.tabOne.menuConfig[0].facetName}
+          token={inDevEnv ? token! : this.state.token!}
+          rgbIndex={this.state.tabOne.rgbIndex}
+          >
+          <StackedRowHomebrew
+                              synapseId={this.state.tabOne.menuConfig[0].synapseId}
+                              loadingScreen={<div className="container">loading</div>} 
+                              unitDescription={(this.state.tabOne.menuConfig[0].unitDescription || "")}
+            />
+
+            <SynapseTableCardView
+            type={SynapseConstants.AMP_STUDY}
+            >
+            </SynapseTableCardView>
+          </QueryWrapper>
 
       </div>
     );

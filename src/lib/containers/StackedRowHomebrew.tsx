@@ -236,17 +236,9 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                 {x_data.map((obj, index) => {
                                     let initRender: boolean = this.state.index === -1 && index === 0;
                                     let textColor:  string = colorGradient.getTextColor();
-                                    let curColor:   string = colorGradient.getColor();
 
-                                    let curColorSplit: string [] = curColor.substring(5).split(",");
-                                    curColorSplit[3] = curColorSplit[3].replace(")", "");
+                                    let rgbColor: string = colorGradient.getColor();
 
-                                    let curColorSplitNum: number[] = curColorSplit.map(el => {
-                                        return Number(el);
-                                    });
-                                    // we do this to convert the rgba => rgb so hover will work
-                                    let rgbColorNums: number[] = this.rgba2rgb([255, 255, 255], curColorSplitNum);
-                                    let rgbColor: string = `rgb(${rgbColorNums})`;
                                     let rectStyle : any;
                                     const check = this.props.isChecked![index] === undefined || this.props.isChecked![index];
                                     if (check) {
