@@ -410,6 +410,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 let isFacetSelection: boolean = facetIndex !== -1
 
                 return (
+                    // we make the minWidth calculation to adjust for large text sizes, but maintain a default width
                     <th style={{minWidth: Math.max((column.name.length * 13), 145)}} key={column.name}>
                         <span style={{ color: "black" }} className={`SRC-tableHead padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
