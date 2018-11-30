@@ -250,6 +250,9 @@ body * {
   display: inline-block;
   cursor: pointer; }
 
+.SRC-inlineBlock {
+  display: inline-block; }
+
 .SRC-facets-text {
   font-weight: 400;
   font-size: 13px; }
