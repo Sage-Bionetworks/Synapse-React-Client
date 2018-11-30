@@ -2,14 +2,15 @@
 import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faColumns } from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
 import ColorGradient from "./ColorGradient";
 import close from '../assets/icons/close.svg'
+const uuidv4 = require("uuid/v4");
 
 // Add all icons to the library so you can use it in your page
-library.add(faEllipsisV);
+library.add(faColumns);
 library.add(faSort);
 library.add(faSortAmountUp);
 library.add(faSortAmountDown);
@@ -488,6 +489,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             }
         }
         let total = anyTrue ? totalStandardCase : totalAllFalseCase;
+        let tooltipIdOne = uuidv4()
+        let tooltipIdTwo = uuidv4()
         return (
             <React.Fragment>
                 <div className="container-fluid">
@@ -503,13 +506,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <ReactTooltip place="bottom" type="dark" effect="solid" />
+                            <span data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                            <ReactTooltip place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
 
-                            <span data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
-                                <FontAwesomeIcon color="white" icon="ellipsis-v" />
+                            <span data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
+                                <FontAwesomeIcon color="white" icon="columns" />
                             </span>
-                            <ReactTooltip place="bottom" type="dark" effect="solid" />
+                            <ReactTooltip place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
 
                             <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                                 {headers.map((header: any, index: number) => {

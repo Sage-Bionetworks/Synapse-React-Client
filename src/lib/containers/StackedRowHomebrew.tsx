@@ -1,4 +1,5 @@
 import React, { MouseEvent } from "react";
+import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
 import Measure, {ContentRect} from "react-measure";
 import {QueryWrapperChildProps} from './QueryWrapper'
@@ -256,29 +257,36 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     if (this.state.index === index || initRender) {
                                         style.filter = "drop-shadow(5px 5px 5px rgba(0,0,0,0.5))";
                                     }
+                                    let label: string =`${this.props.filter}: ${obj.value}  - ${obj.count} ${this.props.unitDescription}`
+                                    let tooltipId = uuidv4()
                                     return (
                                         // each svg represents one of the bars
                                         // will need to change this to be responsive
-                                        <svg className="SRC-hoverBox" height={svgHeight + 15} width={svgWidth} key={uuidv4()} style={style} onClick={this.handleClick({ ...obj, index })}>
-                                            <rect
-                                                onMouseEnter={this.handleHover}
-                                                onMouseLeave={this.handleExit}
-                                                height={svgHeight}
-                                                width={svgWidth}
-                                                className="SRC-chart-rect-style"
-                                                // can't remove inline style due to dynamic fill
-                                                style={rectStyle}
-                                            />
+                                        <React.Fragment>
+                                            <span data-for={tooltipId} data-tip={label}>
+                                                <svg className="SRC-hoverBox" height={svgHeight + 15} width={svgWidth} key={uuidv4()} style={style} onClick={this.handleClick({ ...obj, index })}>
+                                                    <rect
+                                                        onMouseEnter={this.handleHover}
+                                                        onMouseLeave={this.handleExit}
+                                                        height={svgHeight}
+                                                        width={svgWidth}
+                                                        className="SRC-chart-rect-style"
+                                                        // can't remove inline style due to dynamic fill
+                                                        style={rectStyle}
+                                                    />
 
-                                            <text className="SRC-text-title" fontFamily={"bold sans-serif"} fill={textColor} x={svgWidth / 2} y={svgHeight / 2 + 3}>
-                                                {index < 3 && obj.count}
-                                            </text>
-                                            {(this.state.index === index || initRender) && (
-                                                <text fill={originalColor} x={0} y={svgHeight + 15} className="SRC-text-shadow SRC-text-large">
-                                                    {"\u25BE"}
-                                                </text>
-                                            )}
-                                        </svg>
+                                                    <text className="SRC-text-title" fontFamily={"bold sans-serif"} fill={textColor} x={svgWidth / 2} y={svgHeight / 2 + 3}>
+                                                        {index < 3 && obj.count}
+                                                    </text>
+                                                    {(this.state.index === index || initRender) && (
+                                                        <text fill={originalColor} x={0} y={svgHeight + 15} className="SRC-text-shadow SRC-text-large">
+                                                            {"\u25BE"}
+                                                        </text>
+                                                    )}
+                                                </svg>
+                                            </span>
+                                            <ReactTooltip id={tooltipId}/>
+                                        </React.Fragment>
                                     );
                                 })}
                             </div>
