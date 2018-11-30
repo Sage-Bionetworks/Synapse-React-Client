@@ -285,7 +285,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                                     )}
                                                 </svg>
                                             </span>
-                                            <ReactTooltip id={tooltipId}/>
+                                            <ReactTooltip delayShow={1000} id={tooltipId}/>
                                         </React.Fragment>
                                     );
                                 })}

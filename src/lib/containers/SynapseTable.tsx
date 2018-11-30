@@ -308,7 +308,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         }
 
         let applyPrimary = isFilterSelected ? "SRC-primary-background-color": ""
-        // TODO: Get styling for filter having been clicked
+        let isFirst = index === 0
+        let style: any = {}
+        if (isFirst) {
+            style.right = "auto"
+            style.left = 0
+        }
         return (
             <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
 
@@ -316,7 +321,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <FontAwesomeIcon size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
-                <div className="dropdown-menu dropdown-menu-right">
+                <div className="dropdown-menu SRC-minDropdownWidth dropdown-menu-left" style={style}>
                     <div className="paddingMenuDropdown">
                         <ul style={{listStyleType: "none"}} className="scrollable">
                             <li> 
@@ -508,12 +513,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
                             <span data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <ReactTooltip place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
+                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
 
                             <span data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
                                 <FontAwesomeIcon color="white" icon="columns" />
                             </span>
-                            <ReactTooltip place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
+                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
 
                             <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                                 {headers.map((header: any, index: number) => {

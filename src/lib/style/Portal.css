@@ -594,6 +594,9 @@ button.SRC-roundBorder {
   text-transform: capitalize !important;
   font-weight: 700 !important; }
 
+.SRC-minDropdownWidth {
+  width: 240px; }
+
 /*
 
   checkmark styling end
