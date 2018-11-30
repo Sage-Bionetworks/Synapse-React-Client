@@ -44,7 +44,8 @@ class Demo extends Component<{}, DemoState> {
               synapseId: "syn9886254",
               facetName: "Organism",
               unitDescription: "data types",
-              title: "my title"
+              title: "my title",
+              facetDisplayValue: "organiSm"
             },
             { sql: "SELECT * FROM syn9886254",
               synapseId: "syn9886254",
