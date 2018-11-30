@@ -296,7 +296,7 @@ down once you can specify the query that will pull down the data for the child c
       { sql: "SELECT * FROM syn16858331",
         title: "Facet is dataType",
         synapseId: "syn16858331",
-        facetName: "Data Ty[e",
+        facetName: "Data Type",
         unitDescription: "files",
         visibleColumnCount: 3
       }
