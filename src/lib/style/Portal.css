@@ -531,7 +531,8 @@ button.SRC-roundBorder {
   background: #DFDFDF;
   border-radius: 24px;
   width: 130px;
-  height: 40px; }
+  height: 40px;
+  margin: 21px; }
 
 /*
   checkmark styling start
@@ -587,6 +588,11 @@ button.SRC-roundBorder {
 /* Show the checkmark when checked */
 .containerCheckbox input:checked ~ .checkmark:after {
   display: block; }
+
+.SRC-tableHead {
+  font-size: 14px !important;
+  text-transform: capitalize !important;
+  font-weight: 700 !important; }
 
 /*
 

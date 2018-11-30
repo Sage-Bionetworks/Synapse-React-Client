@@ -410,8 +410,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 let isFacetSelection: boolean = facetIndex !== -1
 
                 return (
-                    <th style={{minWidth: "140px"}} key={column.name}>
-                        <span style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
+                    <th style={{minWidth: Math.max((column.name.length * 13), 145)}} key={column.name}>
+                        <span style={{ color: "black" }} className={`SRC-tableHead padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
                             <span className={"SRC-hand-cursor  pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
@@ -494,7 +494,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         return (
             <React.Fragment>
                 <div className="container-fluid">
-                    <div className="row">
+                    <div className="row SRC-marginBottomTen">
                         <span>
                             {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>}
                             <span className={this.props.isLoading ? "spinner" : ""} style={this.props.isLoading ? {} : { display: "none" }} />
@@ -535,7 +535,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </span>
                 </div>
                 <div className="container-fluid">
-                    <div className="row SRC-overflowAuto">
+                    <div style={{marginLeft: "-15px", marginRight: "-15px"}} className="row SRC-overflowAuto">
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>
@@ -560,7 +560,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 </button>
                             )}
                         {!this.props.showNothing && (
-                            <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button" type="button">
+                            <button onClick={this.handlePaginationClick(NEXT)} className="SRC-viewMoreButton pull-right" type="button">
                                 Next
                             </button>
                         )}

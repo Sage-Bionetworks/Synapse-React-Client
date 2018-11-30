@@ -652,6 +652,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   border-radius: 24px;
   width: 130px;
   height: 40px;
+  margin: 21px;
 }
 
 /*
@@ -717,6 +718,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   display: block;
 }
 
+.SRC-tableHead {
+  font-size: 14px !important;
+  text-transform: capitalize !important;
+  font-weight: 700 !important;
+}
 
 /*
 
