@@ -69,7 +69,7 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
                             </a>
                         </h3>
                     </div>
-                    <div className="SRC-author">{investigators}</div>
+                    <div className="SRC-author SRC-boldText">{investigators}</div>
                     <span className="SRC-font-size-base">
                         <Utils.ShowMore onClick={this.handleClick} summary={abstract} />
                     </span>

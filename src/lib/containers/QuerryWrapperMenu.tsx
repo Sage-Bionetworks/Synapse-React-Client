@@ -57,7 +57,6 @@ export default class Menu extends React.Component<Props, MenuState> {
             event.currentTarget.style.backgroundColor = info.originalColor;
         }
       } 
-    
     render () {
         let {token, menuConfig, rgbIndex} = this.props
 

@@ -235,7 +235,7 @@ body * {
   float: right; }
 
 .SRC-overflowAuto {
-  overflow: scroll; }
+  overflow: auto; }
 
 .table > tbody > tr > td.SRC_noBorderTop {
   border-top: none; }

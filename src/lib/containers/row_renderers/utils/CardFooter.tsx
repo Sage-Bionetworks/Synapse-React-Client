@@ -23,14 +23,6 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) =
                         </div>
                     )
                 }
-                if(kv[0].toUpperCase() === "KEY CONTRIBUTORS") {
-                    return (
-                        <div key={uuidv4()} className={"row " + (extraWide ? "extraWide" : "")}>
-                            <div className="SRC-verticalAlignTop SRC-row-label"> {kv[0]} </div>
-                            <div className="SRC-row-data SRC-boldText SRC- SRC-limitMaxWidth"> {kv[1]} </div>
-                        </div>
-                    )
-                }
                 if (kv[0].toUpperCase() === "PUBLICATION") {
                     return false
                 }
