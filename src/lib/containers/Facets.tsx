@@ -237,9 +237,13 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             return false;
         }
         let {showAllFacets}= this.state
-
         let curFacets = this.props.data!.facets.
                                             filter( (facet: FacetColumnResultValues) => {return facet.columnName === this.props.filter && facet.facetType === "enumeration"} )[0] as FacetColumnResultValues
+
+        if (!curFacets) {
+            return (<div></div>)
+        }
+
         let curFacetsLength = curFacets.facetValues.length
 
         if (curFacetsLength < 5) {
