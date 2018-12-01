@@ -5,7 +5,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ColorGradient from "./ColorGradient";
 import {QueryWrapperChildProps} from './QueryWrapper'
-import { FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult';
+import { FacetColumnResult, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
 
 const cloneDeep = require("lodash.clonedeep");
 const SELECT_ALL = "select all";
@@ -79,7 +79,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         );
     });
     return (
-        <div>
+        <React.Fragment>
             {children.map((child: any, index: number) => {
                 if (!showAllFacets && index > 4) {
                     return false
@@ -87,7 +87,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
                     return child;
                 }
             })}
-        </div>
+        </React.Fragment>
     );
 }
 
@@ -143,11 +143,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             }
         });
         return (
-            <div>
+            <React.Fragment>
                 {structuredRender.map(element => {
                     return element;
                 })}
-            </div>
+            </React.Fragment>
         );
     }
     /**
@@ -238,21 +238,32 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         }
         let {showAllFacets}= this.state
 
+        let curFacets = this.props.data!.facets.
+                                            filter( (facet: FacetColumnResultValues) => {return facet.columnName === this.props.filter && facet.facetType === "enumeration"} )[0] as FacetColumnResultValues
+        let curFacetsLength = curFacets.facetValues.length
+
+        if (curFacetsLength < 5) {
+            // override
+            showAllFacets = true
+        }
+
         return (
             <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">
                     <form>
-                        <div className="form-group">{this.showFacetFilter()}</div>
+                        <div className="form-group">{this.showFacetFilter()}
+                            {!showAllFacets
+                                &&
+                                <span>
+                                    <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
+                                    {" "}
+                                    Show All ({curFacetsLength}){" "}
+                                    </a>   
+                                </span>
+                            }
+                        </div>
                         <div className="form-group">
                             <p>
-                                {
-                                !showAllFacets
-                                    &&
-                                 <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
-                                 {" "}
-                                 Show All (10){" "}
-                                 </a>   
-                                }
                                {showAllFacets &&
                                  <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
                                     {" "}

@@ -33,6 +33,7 @@ export type QueryWrapperChildProps = {
     isLoadingNewData?: boolean
     executeQueryRequest?: (param: QueryBundleRequest) => void
     executeInitialQueryRequest?: () => void
+    getNextPageOfData?: (queryRequest: any) => void 
     getLastQueryRequest?: () => QueryBundleRequest
     isChecked?: boolean []
     data?: QueryResultBundle
@@ -94,6 +95,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         this.updateParentState = this.updateParentState.bind(this)
         this.updateParentFilter = this.updateParentFilter.bind(this)
         this.resetFacetSelection = this.resetFacetSelection.bind(this)
+        this.getNextPageOfData = this.getNextPageOfData.bind(this)
     }
 
     /**
@@ -146,6 +148,29 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             .then(
                 (data: QueryResultBundle )=> {
                     let newState: any = { data, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false }
+                    this.setState(newState)
+                }
+            ).catch(err => {
+                console.log("Failed to get data ", err)
+            })
+    }
+
+    /**
+     * Exectue the given query
+     *
+     * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+     * @memberof QueryWrapper
+     */
+    getNextPageOfData(queryRequest: any) {
+        this.setState({
+            isLoading: true
+        })
+        SynapseClient.getQueryTableResults(queryRequest, this.props.token)
+            .then(
+                (data: QueryResultBundle )=> {
+                    let oldData: QueryResultBundle = cloneDeep(this.state.data)
+                    oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
+                    let newState: any = { data: oldData, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false }
                     this.setState(newState)
                 }
             ).catch(err => {
@@ -229,7 +254,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
                 updateParentState: this.updateParentState,
                 updateParentFilter: this.updateParentFilter,
                 rgbIndex: this.props.rgbIndex,
-                showNothing: this.state.showNothing
+                showNothing: this.state.showNothing,
+                isQueryWrapperChild: true,
+                getNextPageOfData: this.getNextPageOfData
             })
         }))
 

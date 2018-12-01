@@ -235,7 +235,7 @@ body * {
   float: right; }
 
 .SRC-overflowAuto {
-  overflow: scroll; }
+  overflow: auto; }
 
 .table > tbody > tr > td.SRC_noBorderTop {
   border-top: none; }
@@ -249,6 +249,9 @@ body * {
   margin: 5px;
   display: inline-block;
   cursor: pointer; }
+
+.SRC-inlineBlock {
+  display: inline-block; }
 
 .SRC-facets-text {
   font-weight: 400;
@@ -527,6 +530,13 @@ button.SRC-roundBorder {
 .SRC-limitMaxWidth {
   max-width: 70%; }
 
+.SRC-viewMoreButton {
+  background: #DFDFDF;
+  border-radius: 24px;
+  width: 130px;
+  height: 40px;
+  margin: 21px; }
+
 /*
   checkmark styling start
 */
@@ -582,7 +592,14 @@ button.SRC-roundBorder {
 .containerCheckbox input:checked ~ .checkmark:after {
   display: block; }
 
-/* Style the checkmark/indicator */
+.SRC-tableHead {
+  font-size: 14px !important;
+  text-transform: capitalize !important;
+  font-weight: 700 !important; }
+
+.SRC-minDropdownWidth {
+  width: 240px; }
+
 /*
 
   checkmark styling end

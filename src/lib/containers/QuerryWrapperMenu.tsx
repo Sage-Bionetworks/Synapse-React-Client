@@ -15,6 +15,7 @@ type MenuState = {
 type MenuConfig = {
     sql: string
     facetName: string
+    facetDisplayValue?: string
     title?: string
     visibleColumnCount?: number
     unitDescription?: string
@@ -57,7 +58,6 @@ export default class Menu extends React.Component<Props, MenuState> {
             event.currentTarget.style.backgroundColor = info.originalColor;
         }
       } 
-    
     render () {
         let {token, menuConfig, rgbIndex} = this.props
 
@@ -87,6 +87,11 @@ export default class Menu extends React.Component<Props, MenuState> {
                 let infoEnter: Info = {isSelected, originalColor}
                 let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
 
+                let facetDisplayValue:string = config.facetDisplayValue || ""
+                if (!facetDisplayValue) {
+                    facetDisplayValue = config.facetName
+                }
+
                 return (
                     <div
                         onMouseEnter={this.handleHoverLogic(infoEnter)}
@@ -95,7 +100,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                         className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
                         onClick={() => {this.setState({menuIndex: index})}}
                         style={style}>
-                        {config.facetName}
+                        {facetDisplayValue}
                     </div>
                 )
             }

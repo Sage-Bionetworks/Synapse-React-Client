@@ -4,8 +4,10 @@ import "./App.css";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
-import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
+import QueryWrapper from 'src/lib/containers/QueryWrapper';
+import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
+import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = 
   {
@@ -42,8 +44,8 @@ class Demo extends Component<{}, DemoState> {
               synapseId: "syn9886254",
               facetName: "Organism",
               unitDescription: "data types",
-              visibleColumnCount: 3,
-              title: "my title"
+              title: "my title",
+              facetDisplayValue: "organiSm"
             },
             { sql: "SELECT * FROM syn9886254",
               synapseId: "syn9886254",
@@ -61,8 +63,7 @@ class Demo extends Component<{}, DemoState> {
             { sql: "SELECT * FROM syn17024229",
                 synapseId: "syn17024229",
                 facetName: "Program",
-                unitDescription: "Program",
-                title: "my title"
+                unitDescription: "Program"
             }]
           ,
           rgbIndex: 0,
@@ -75,6 +76,18 @@ class Demo extends Component<{}, DemoState> {
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
   }
+
+
+componentDidMount() {
+  let colorGradient: ColorGradient = new ColorGradient(0)
+  let rgbString= ""
+  for(let i = 0; i < 110; i++) {
+    let rgbColor = colorGradient.getColor()
+    rgbString  += rgbColor
+  }
+  console.log(rgbString)
+
+}
 
   /**
    * Make a query on synapse
@@ -142,20 +155,40 @@ class Demo extends Component<{}, DemoState> {
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig: this.state.tabTwo.menuConfig}
           rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex: this.state.tabTwo.rgbIndex}
+          type={this.state.showTabOne ? this.state.tabOne.type: this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
 
-        <StaticQueryWrapper token={token} sql={this.state.showTabOne? this.state.tabOne.menuConfig[0].sql: this.state.tabTwo.menuConfig[0].sql }>
-          <SynapseTableCardView type={ this.state.showTabOne? SynapseConstants.AMP_STUDY: SynapseConstants.AMP_PROJECT}  />
-        </StaticQueryWrapper>
+        
+        <QueryWrapper
+          initQueryRequest={{
+            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+            partMask:
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+            query: {
+              isConsistent: false,
+              sql: this.state.tabOne.menuConfig[0].sql,
+              limit: 25,
+              offset: 0
+            }
+          }}
+          facetName={this.state.tabOne.menuConfig[0].facetName}
+          token={inDevEnv ? token! : this.state.token!}
+          rgbIndex={this.state.tabOne.rgbIndex}
+          >
+          <StackedRowHomebrew
+                              synapseId={this.state.tabOne.menuConfig[0].synapseId}
+                              loadingScreen={<div className="container">loading</div>} 
+                              unitDescription={(this.state.tabOne.menuConfig[0].unitDescription || "")}
+            />
 
-        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024229"}>
-          <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper token={token} sql={"SELECT * FROM syn17024173"}>
-          <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
-        </StaticQueryWrapper>
+            <SynapseTableCardView
+            type={SynapseConstants.AMP_STUDY}
+            >
+            </SynapseTableCardView>
+          </QueryWrapper>
 
       </div>
     );

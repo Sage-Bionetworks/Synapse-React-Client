@@ -2,14 +2,15 @@
 import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faColumns } from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
 import ColorGradient from "./ColorGradient";
 import close from '../assets/icons/close.svg'
+const uuidv4 = require("uuid/v4");
 
 // Add all icons to the library so you can use it in your page
-library.add(faEllipsisV);
+library.add(faColumns);
 library.add(faSort);
 library.add(faSortAmountUp);
 library.add(faSortAmountDown);
@@ -307,7 +308,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         }
 
         let applyPrimary = isFilterSelected ? "SRC-primary-background-color": ""
-        // TODO: Get styling for filter having been clicked
+        let isFirst = index === 0
+        let style: any = {}
+        if (isFirst) {
+            style.right = "auto"
+            style.left = 0
+        }
         return (
             <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
 
@@ -315,7 +321,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <FontAwesomeIcon size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
-                <div className="dropdown-menu dropdown-menu-right">
+                <div className="dropdown-menu SRC-minDropdownWidth dropdown-menu-left" style={style}>
                     <div className="paddingMenuDropdown">
                         <ul style={{listStyleType: "none"}} className="scrollable">
                             <li> 
@@ -409,8 +415,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 let isFacetSelection: boolean = facetIndex !== -1
 
                 return (
-                    <th style={{minWidth: "140px"}} key={column.name}>
-                        <span style={{ color: "black" }} className={`padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
+                    // we make the minWidth calculation to adjust for large text sizes, but maintain a default width
+                    <th style={{minWidth: Math.max((column.name.length * 13), 145)}} key={column.name}>
+                        <span style={{ color: "black" }} className={`SRC-tableHead padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
                             {column.name}
                             <span className={"SRC-hand-cursor  pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
@@ -488,10 +495,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             }
         }
         let total = anyTrue ? totalStandardCase : totalAllFalseCase;
+        let tooltipIdOne = uuidv4()
+        let tooltipIdTwo = uuidv4()
         return (
             <React.Fragment>
                 <div className="container-fluid">
-                    <div className="row">
+                    <div className="row SRC-marginBottomTen">
                         <span>
                             {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>}
                             <span className={this.props.isLoading ? "spinner" : ""} style={this.props.isLoading ? {} : { display: "none" }} />
@@ -503,13 +512,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <ReactTooltip place="bottom" type="dark" effect="solid" />
+                            <span data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
 
-                            <span data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
-                                <FontAwesomeIcon color="white" icon="ellipsis-v" />
+                            <span data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
+                                <FontAwesomeIcon color="white" icon="columns" />
                             </span>
-                            <ReactTooltip place="bottom" type="dark" effect="solid" />
+                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
 
                             <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                                 {headers.map((header: any, index: number) => {
@@ -532,7 +541,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </span>
                 </div>
                 <div className="container-fluid">
-                    <div className="row SRC-overflowAuto">
+                    <div style={{marginLeft: "-15px", marginRight: "-15px"}} className="row SRC-overflowAuto">
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>
@@ -557,7 +566,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 </button>
                             )}
                         {!this.props.showNothing && (
-                            <button onClick={this.handlePaginationClick(NEXT)} className="btn btn-default SRC-table-button" type="button">
+                            <button onClick={this.handlePaginationClick(NEXT)} className="SRC-viewMoreButton pull-right" type="button">
                                 Next
                             </button>
                         )}

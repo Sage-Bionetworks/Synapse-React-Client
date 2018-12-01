@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY } from '../utils/SynapseConstants';
 import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
 import { Project, Consortium, AMP_Study } from './row_renderers/AMPAD';
+import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
@@ -35,6 +36,7 @@ const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...
             }
     });
 };
+
 type SynapseTableCardViewProps = {
     type: string,
     data?: any,
@@ -43,6 +45,10 @@ type SynapseTableCardViewProps = {
     token? : string
     ownerId? : string
     isHeader?: boolean
+    isQueryWrapperChild?: boolean
+    getLastQueryRequest?: () => QueryBundleRequest
+    getNextPageOfData?: (queryRequest: any) => void 
+    executeInitialQueryRequest?: () => void
 };
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}> {
 
@@ -55,6 +61,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
     constructor(props: SynapseTableCardViewProps) {
         super(props);
         this.renderChild = this.renderChild.bind(this);
+        this.handleViewMore = this.handleViewMore.bind(this);
     }
 
     renderChild(): JSX.Element | boolean{
@@ -80,6 +87,21 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
                 return (false); // this should never happen
         }
     }
+
+    /**
+     * Handle a click on next or previous
+     *
+     * @memberof SynapseTable
+     */
+    handleViewMore (event: React.MouseEvent<HTMLButtonElement>){
+        let queryRequest = this.props.getLastQueryRequest!();
+        let offset = queryRequest.query.offset!;
+        // if its a "previous" click subtract from the offset
+        // otherwise its next and we paginate forward
+        offset += 25;
+        queryRequest.query.offset = offset;
+        this.props.getNextPageOfData!(queryRequest);
+    };
 
     render() {
         const { data, 
@@ -110,6 +132,13 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
                 >
                 {this.renderChild()}
                 </RowContainer>
+                {this.props.isQueryWrapperChild 
+                    && (<div>
+                            <button onClick={this.handleViewMore} className="pull-right SRC-viewMoreButton">
+                            View More
+                            </button>
+                        </div>)
+                }
             </React.Fragment>
         );
     }
