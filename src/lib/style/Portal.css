@@ -316,7 +316,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   background: none;
   color: white; }
 
-.SRC-marginRightFivePx SRC-paddingSevenPx {
+.SRC-marginRightFivePx .SRC-paddingSevenPx {
   margin-right: 5px;
   padding: 7px; }
 
@@ -599,6 +599,9 @@ button.SRC-roundBorder {
 
 .SRC-minDropdownWidth {
   width: 240px; }
+
+.SRC-sortPadding {
+  padding: 2px 3px; }
 
 /*
 

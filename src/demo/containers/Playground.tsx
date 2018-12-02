@@ -7,7 +7,6 @@ import { SynapseClient } from 'src/lib';
 import QueryWrapper from 'src/lib/containers/QueryWrapper';
 import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
-import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = 
   {
@@ -76,18 +75,6 @@ class Demo extends Component<{}, DemoState> {
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
   }
-
-
-componentDidMount() {
-  let colorGradient: ColorGradient = new ColorGradient(0)
-  let rgbString= ""
-  for(let i = 0; i < 110; i++) {
-    let rgbColor = colorGradient.getColor()
-    rgbString  += rgbColor
-  }
-  console.log(rgbString)
-
-}
 
   /**
    * Make a query on synapse

@@ -307,7 +307,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             })
         }
 
-        let applyPrimary = isFilterSelected ? "SRC-primary-background-color": ""
+        let applyPrimary = isFilterSelected ? "SRC-primary-background-color": "SRC-primary-text-color"
         let isFirst = index === 0
         let style: any = {}
         if (isFirst) {
@@ -315,10 +315,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             style.left = 0
         }
         return (
-            <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
-
-                <span className={`SRC-hand-cursor SRC-extraPadding ${applyPrimary}`} onClick={toggleDropdown}> 
-                    <FontAwesomeIcon size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
+            <div style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isFilterSelected ? "open SRC-anchor-light": ""}`}>
+                <span className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`} onClick={toggleDropdown}> 
+                    <FontAwesomeIcon style={{margin: "auto"}} size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
                 <div className="dropdown-menu SRC-minDropdownWidth dropdown-menu-left" style={style}>
@@ -367,7 +366,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <button onClick={applyChanges} className="tableApply"> APPLY </button>
                     </div>
                 </div>
-            </span>
+            </div>
         )
 
     }
@@ -416,14 +415,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
                 return (
                     // we make the minWidth calculation to adjust for large text sizes, but maintain a default width
-                    <th style={{minWidth: Math.max((column.name.length * 13), 145)}} key={column.name}>
-                        <span style={{ color: "black" }} className={`SRC-tableHead padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
+                    <th key={column.name}>
+                        <div style={{display: "flex", alignItems: "center"}}>
                             {column.name}
-                            <span className={"SRC-hand-cursor  pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
+                            {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
+                            <span className={"SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color SRC-anchor-light": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
-                            {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
-                        </span>
+                        </div>
                     </th>
                 );
             }
