@@ -512,7 +512,8 @@ button.SRC-roundBorder {
   color: #4E5491;
   font-size: 13px;
   font-weight: 600;
-  border: none; }
+  border: none;
+  background: white; }
   .tableDropdownSelector:focus {
     outline: none; }
 

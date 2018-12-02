@@ -328,7 +328,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             <li> 
                                 <div className="SRC-flex" style={{alignItems: "center", borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
                                     <p style={{marginBottom: "0px", fontSize: "15px", display: "inline-block", fontWeight: "bold"}}> {columnName} ({numFacets})</p>
-                                    <button style={{marginLeft: "auto"}} className="btn pull-right" onClick={toggleDropdown}> 
+                                <button style={{marginLeft: "auto", background: "white"}} className="btn pull-right" onClick={toggleDropdown}> 
                                         <img src={close}></img>
                                     </button>
                                 </div> 

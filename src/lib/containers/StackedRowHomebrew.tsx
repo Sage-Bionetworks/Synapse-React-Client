@@ -233,7 +233,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                         }}
                     >
                         {({ measureRef }) => (
-                            <div ref={measureRef}>
+                            <div style={{display: "flex"}} ref={measureRef}>
                                 {x_data.map((obj, index) => {
                                     let initRender: boolean = this.state.index === -1 && index === 0;
                                     let textColor:  string = colorGradient.getTextColor();
