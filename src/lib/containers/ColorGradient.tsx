@@ -8,13 +8,18 @@ export default class ColorGradient {
     private colorPallete : string []
 
     constructor(colorWheelStart: number) {
-        this.originalColor = colorWheelStart * 10
-        this.offset = colorWheelStart * 11
+        // Since we precompute each color and the color schema
+        // goes from high -> low -> low -> high -> . 
+        // then there are two different color
         this.index = 0
         if (colorWheelStart % 2 == 0) {
             this.colorPallete = COLOR_PALETTE_EVEN
+            this.originalColor = colorWheelStart * 5
+            this.offset = colorWheelStart * 5
         } else {
             this.colorPallete = COLOR_PALETTE_ODD
+            this.originalColor = (colorWheelStart - 1) * 5
+            this.offset = (colorWheelStart - 1) * 5
         }
     }
 

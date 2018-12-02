@@ -9,6 +9,7 @@ import QueryWrapper from 'src/lib/containers/QueryWrapper';
 import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
+// import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = 
   {
@@ -55,7 +56,7 @@ class Demo extends Component<{}, DemoState> {
             }
           ]
           ,
-          rgbIndex: 0,
+          rgbIndex: 1,
           type: SynapseConstants.AMP_STUDY 
         }
       ,
@@ -91,7 +92,7 @@ class Demo extends Component<{}, DemoState> {
 // componentDidMount() {
 //   let colorGradient: ColorGradient = new ColorGradient(0)
 //   let out = ""
-//   for (let i = 0; i < 120; i++) {
+//   for (let i = 0; i < 110; i++) {
 //     let curColor:   string = colorGradient.getColor();
   
 //     let curColorSplit: string [] = curColor.substring(5).split(",");
@@ -103,6 +104,7 @@ class Demo extends Component<{}, DemoState> {
 //     // we do this to convert the rgba => rgb so hover will work
 //     let rgbColorNums: number[] = this.rgba2rgb([255, 255, 255], curColorSplitNum);
 //     let rgbColor: string = `rgb(${rgbColorNums})`;
+//     console.log("%c ------------ ", `background: ${rgbColor}`)
 //     out += `'${rgbColor}', `
 //   }
 //   console.log(out)
