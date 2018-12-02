@@ -573,8 +573,7 @@ button.SRC-roundBorder {
   left: 0;
   height: 20px;
   border: 1px solid #DDDDDF;
-  width: 20px;
-  margin-top: 7px; }
+  width: 20px; }
 
 /* On mouse-over, add a grey background color */
 .containerCheckbox:hover input ~ .checkmark {

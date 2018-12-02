@@ -314,6 +314,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             style.right = "auto"
             style.left = 0
         }
+
+        let numFacets: number = facetColumnResult.facetValues.length
         return (
             <div style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isFilterSelected ? "open SRC-anchor-light": ""}`}>
                 <span className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`} onClick={toggleDropdown}> 
@@ -324,8 +326,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <div className="paddingMenuDropdown">
                         <ul style={{listStyleType: "none"}} className="scrollable">
                             <li> 
-                                <div className="SRC-flex" style={{borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
-                                    <h3 style={{display: "inline-block"}}> {columnName} </h3>
+                                <div className="SRC-flex" style={{alignItems: "center", borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
+                                    <p style={{marginBottom: "0px", fontSize: "15px", display: "inline-block", fontWeight: "bold"}}> {columnName} ({numFacets})</p>
                                     <button style={{marginLeft: "auto"}} className="btn pull-right" onClick={toggleDropdown}> 
                                         <img src={close}></img>
                                     </button>
@@ -343,7 +345,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         return (
                                                     <React.Fragment key={idText}>
                                                             <li>
-                                                                <label className="dropdownList SRC-base-font containerCheckbox"> {displayValue}&nbsp;&nbsp;({dataPoint.count}) 
+                                                                <label className="dropdownList SRC-base-font containerCheckbox"> {displayValue} <span style={{color: "#DDDDDF"}}> &nbsp;&nbsp;({dataPoint.count})  </span>
                                                                     <input defaultChecked={true} type="checkbox" value={dataPoint.value}/>
                                                                     <span className="checkmark"></span>
                                                                 </label>
