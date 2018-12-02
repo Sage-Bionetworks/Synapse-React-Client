@@ -439,6 +439,15 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
         color: white!important;
       }
     }
+    &:hover {
+      &.SRC-nested-color {
+        > * {
+          background-color: #D53F77 !important; 
+          color: white!important;
+        }
+
+      }
+    }
  }
 
  .SRC-primary-background-hover {

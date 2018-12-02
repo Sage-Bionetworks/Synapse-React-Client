@@ -367,6 +367,10 @@ table.SRC-paddingRight > tbody > tr > td {
   .SRC-primary-background-color-hover:hover:hover > svg {
     color: white !important; }
 
+.SRC-primary-background-color-hover:hover:hover.SRC-nested-color > * {
+  background-color: #D53F77 !important;
+  color: white !important; }
+
 .SRC-primary-background-hover:hover {
   background-color: #D53F77 !important;
   color: white !important;
