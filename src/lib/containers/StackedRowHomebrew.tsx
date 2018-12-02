@@ -219,10 +219,10 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             <div className="container-fluid">
                 <div className="row SRC-center-text">
                     <button className="btn btn-default btn-sm SRC-floatRight" onClick={this.handleArrowClick(NEXT_CLICK)}>
-                        <FontAwesomeIcon icon="angle-right" />
+                        <FontAwesomeIcon style={{fontSize: "11px"}} className="SRC-primary-text-color" icon="angle-right" />
                     </button>
                     <button className="btn btn-default btn-sm SRC-floatRight" onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}>
-                        <FontAwesomeIcon icon="angle-left" />
+                        <FontAwesomeIcon style={{fontSize: "11px"}} className="SRC-primary-text-color" icon="angle-left" />
                     </button>
                 </div>
                 <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
@@ -274,10 +274,12 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                                         // can't remove inline style due to dynamic fill
                                                         style={rectStyle}
                                                     />
-
-                                                    <text className="SRC-text-title" fontFamily={"bold sans-serif"} fill={textColor} x={svgWidth / 2} y={svgHeight / 2 + 3}>
-                                                        {index < 3 && obj.count}
-                                                    </text>
+                                                    {
+                                                        index < 3 && svgWidth > 8 &&
+                                                        <text textAnchor="middle" className="SRC-text-title" fontFamily={"bold sans-serif"} fill={textColor} x={"50%"} y={"50%"}>
+                                                            {obj.count}
+                                                        </text>
+                                                    }
                                                     {(this.state.index === index || initRender) && (
                                                         <text fill={originalColor} x={0} y={svgHeight + 15} className="SRC-text-shadow SRC-text-large">
                                                             {"\u25BE"}
