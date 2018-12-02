@@ -262,9 +262,9 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     return (
                                         // each svg represents one of the bars
                                         // will need to change this to be responsive
-                                        <React.Fragment>
+                                        <React.Fragment key={uuidv4()}>
                                             <span data-for={tooltipId} data-tip={label}>
-                                                <svg className="SRC-hoverBox" height={svgHeight + 15} width={svgWidth} key={uuidv4()} style={style} onClick={this.handleClick({ ...obj, index })}>
+                                                <svg className="SRC-hoverBox" height={svgHeight + 15} width={svgWidth} style={style} onClick={this.handleClick({ ...obj, index })}>
                                                     <rect
                                                         onMouseEnter={this.handleHover}
                                                         onMouseLeave={this.handleExit}

@@ -234,7 +234,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     render() {
         if (this.props.data === undefined) {
-            return false;
+            return (<div></div>);
         }
         let {showAllFacets}= this.state
         let curFacets = this.props.data!.facets.

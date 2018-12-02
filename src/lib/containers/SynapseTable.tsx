@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -52,9 +51,10 @@ type SynapseTableProps = {
 
 import {QueryWrapperChildProps} from './QueryWrapper'
 import { FacetColumnResult, FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
-import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
+// import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequest';
+import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps & SynapseTableProps, SynapseTableState> {
 
@@ -85,6 +85,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             applyClickedArray: Array(100).fill(false)
         };
     }
+
     /**
      * Handle a click on next or previous
      *
@@ -254,7 +255,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
                 let label = curElement.children[0] as HTMLLabelElement
-                let checkbox = label.children[0] as HTMLInputElement
+                let checkbox = label.children[1] as HTMLInputElement
                 if (selector === SELECT_ALL) {
                     checkbox.checked = true
                 } else {
@@ -272,7 +273,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
                 let label = curElement.children[0] as HTMLLabelElement
-                let checkbox = label.children[0] as HTMLInputElement
+                let checkbox = label.children[1] as HTMLInputElement
                 let isSelected = checkbox.checked
                 if (isSelected) {
                     facetValues.push(checkbox.value)
@@ -377,8 +378,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      */
     render() {
         if (this.props.data === undefined) {
-            return false;
+            return (<div></div>);
         }
+        
         // unpack all the data
         const { data } = this.props;
         const { queryResult } = data;
@@ -429,7 +431,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 );
             }
             // avoid eslint complaint below by returning undefined
-            return undefined;
+            return (<div></div>);
         });
 
         // Step 2: Format the row values, tracking the same information that the columns have to.
@@ -438,7 +440,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let rowsFormatted: JSX.Element [] = [];
         rows.forEach((expRow: any, i: any) => {
             let rowFormatted = (
-                <tr key={`(${expRow.rowId})`}>
+                <tr key={expRow.rowId}>
                     {expRow.values.map( (value: string, j: number) => {
                         let columnName = headers[j].name;
                         let index = this.findSelectionIndex(this.state.sortSelection, columnName);
@@ -463,7 +465,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             );
                         }
                         // avoid eslint complaint below by returning undefined
-                        return undefined;
+                        return (<div></div>);
                     })}
                 </tr>
             );
@@ -548,17 +550,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>
-                                    {headersFormatted.map((headerFormatted: any) => {
-                                        return headerFormatted;
-                                    })}
+                                    {headersFormatted.map(element => {return <React.Fragment key={uuidv4()}>{element}</React.Fragment>})}
                                 </tr>
                             </thead>
 
                             {!this.props.showNothing && (
                                 <tbody>
-                                    {rowsFormatted.map(rowFormatted => {
-                                        return rowFormatted;
-                                    })}
+                                    {rowsFormatted.map(element => {return <React.Fragment key={uuidv4()}>{element}</React.Fragment>})}
                                 </tbody>
                             )}
                         </table>
