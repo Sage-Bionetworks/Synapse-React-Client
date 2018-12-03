@@ -114,7 +114,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                     style = {visibility: "hidden", display: "none"}
                 }
                 return (
-                <span style={style} >
+                <span key={config.facetName} style={style} >
                     <QueryWrapper
                         showMenu
                         initQueryRequest={{
@@ -147,8 +147,8 @@ export default class Menu extends React.Component<Props, MenuState> {
                                 synapseId={config.synapseId}
                                 // specify visible column count
                                 visibleColumnCount={config.visibleColumnCount || 0} 
-                            />)
-                            :
+                                />
+                            ):
                             (<div></div>)
                         }
                         {

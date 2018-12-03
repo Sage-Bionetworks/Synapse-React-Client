@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -52,9 +51,10 @@ type SynapseTableProps = {
 
 import {QueryWrapperChildProps} from './QueryWrapper'
 import { FacetColumnResult, FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
-import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
+// import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequest';
+import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn';
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps & SynapseTableProps, SynapseTableState> {
 
@@ -85,6 +85,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             applyClickedArray: Array(100).fill(false)
         };
     }
+
     /**
      * Handle a click on next or previous
      *
@@ -254,7 +255,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
                 let label = curElement.children[0] as HTMLLabelElement
-                let checkbox = label.children[0] as HTMLInputElement
+                let checkbox = label.children[1] as HTMLInputElement
                 if (selector === SELECT_ALL) {
                     checkbox.checked = true
                 } else {
@@ -272,7 +273,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             for (let i = 0; i < ref.current!.children.length; i++) {
                 let curElement = ref.current!.children[i] as HTMLLIElement
                 let label = curElement.children[0] as HTMLLabelElement
-                let checkbox = label.children[0] as HTMLInputElement
+                let checkbox = label.children[1] as HTMLInputElement
                 let isSelected = checkbox.checked
                 if (isSelected) {
                     facetValues.push(checkbox.value)
@@ -307,27 +308,28 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             })
         }
 
-        let applyPrimary = isFilterSelected ? "SRC-primary-background-color": ""
+        let applyPrimary = isFilterSelected ? "SRC-primary-background-color": "SRC-primary-text-color"
         let isFirst = index === 0
         let style: any = {}
         if (isFirst) {
             style.right = "auto"
             style.left = 0
         }
-        return (
-            <span style={{marginRight: "10px"}} className={`btn-group pull-right ${isFilterSelected ? "open": ""}`}>
 
-                <span className={`SRC-hand-cursor SRC-extraPadding ${applyPrimary}`} onClick={toggleDropdown}> 
-                    <FontAwesomeIcon size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
+        let numFacets: number = facetColumnResult.facetValues.length
+        return (
+            <div style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isFilterSelected ? "open SRC-anchor-light": ""}`}>
+                <span className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`} onClick={toggleDropdown}> 
+                    <FontAwesomeIcon style={{margin: "auto"}} size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
                 <div className="dropdown-menu SRC-minDropdownWidth dropdown-menu-left" style={style}>
                     <div className="paddingMenuDropdown">
                         <ul style={{listStyleType: "none"}} className="scrollable">
                             <li> 
-                                <div className="SRC-flex" style={{borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
-                                    <h3 style={{display: "inline-block"}}> {columnName} </h3>
-                                    <button style={{marginLeft: "auto"}} className="btn pull-right" onClick={toggleDropdown}> 
+                                <div className="SRC-flex" style={{alignItems: "center", borderBottomColor:"green", borderBottom: "1px solid #DDDDDF"}}> 
+                                    <p style={{marginBottom: "0px", fontSize: "15px", display: "inline-block", fontWeight: "bold"}}> {columnName} ({numFacets})</p>
+                                <button style={{marginLeft: "auto", background: "white"}} className="btn pull-right" onClick={toggleDropdown}> 
                                         <img src={close}></img>
                                     </button>
                                 </div> 
@@ -344,7 +346,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         return (
                                                     <React.Fragment key={idText}>
                                                             <li>
-                                                                <label className="dropdownList SRC-base-font containerCheckbox"> {displayValue}&nbsp;&nbsp;({dataPoint.count}) 
+                                                                <label className="dropdownList SRC-base-font containerCheckbox"> {displayValue} <span style={{color: "#DDDDDF"}}> &nbsp;&nbsp;({dataPoint.count})  </span>
                                                                     <input defaultChecked={true} type="checkbox" value={dataPoint.value}/>
                                                                     <span className="checkmark"></span>
                                                                 </label>
@@ -367,7 +369,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <button onClick={applyChanges} className="tableApply"> APPLY </button>
                     </div>
                 </div>
-            </span>
+            </div>
         )
 
     }
@@ -376,8 +378,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      */
     render() {
         if (this.props.data === undefined) {
-            return false;
+            return (<div></div>);
         }
+        
         // unpack all the data
         const { data } = this.props;
         const { queryResult } = data;
@@ -416,19 +419,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
                 return (
                     // we make the minWidth calculation to adjust for large text sizes, but maintain a default width
-                    <th style={{minWidth: Math.max((column.name.length * 13), 145)}} key={column.name}>
-                        <span style={{ color: "black" }} className={`SRC-tableHead padding-left-2 padding-right-2 ${isSelected ? "SRC-anchor-light" : ""}`}>
+                    <th key={column.name}>
+                        <div style={{display: "flex", alignItems: "center"}}>
                             {column.name}
-                            <span className={"SRC-hand-cursor  pull-right SRC-padding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
+                            {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
+                            <span className={"SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color SRC-anchor-light": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
-                            {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
-                        </span>
+                        </div>
                     </th>
                 );
             }
             // avoid eslint complaint below by returning undefined
-            return undefined;
+            return (<div></div>);
         });
 
         // Step 2: Format the row values, tracking the same information that the columns have to.
@@ -437,7 +440,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let rowsFormatted: JSX.Element [] = [];
         rows.forEach((expRow: any, i: any) => {
             let rowFormatted = (
-                <tr key={`(${expRow.rowId})`}>
+                <tr key={expRow.rowId}>
                     {expRow.values.map( (value: string, j: number) => {
                         let columnName = headers[j].name;
                         let index = this.findSelectionIndex(this.state.sortSelection, columnName);
@@ -462,7 +465,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             );
                         }
                         // avoid eslint complaint below by returning undefined
-                        return undefined;
+                        return (<div></div>);
                     })}
                 </tr>
             );
@@ -528,9 +531,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
                                     }
                                     return (
-                                        <li key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                        <li className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
                                             <a className="SRC-no-focus" href="">
-                                                {isColumnSelected && <FontAwesomeIcon style={{marginRight: "10px", color : "#5171C0"}} icon="check"/>}
+                                                {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
+                                                {/* below is to fake the indent that occurs */}
+                                                {!isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px", visibility: "hidden"}} icon="check"/>}
                                                 {header.name}
                                             </a>
                                         </li>
@@ -545,17 +550,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>
-                                    {headersFormatted.map((headerFormatted: any) => {
-                                        return headerFormatted;
-                                    })}
+                                    {headersFormatted.map(element => {return <React.Fragment key={uuidv4()}>{element}</React.Fragment>})}
                                 </tr>
                             </thead>
 
                             {!this.props.showNothing && (
                                 <tbody>
-                                    {rowsFormatted.map(rowFormatted => {
-                                        return rowFormatted;
-                                    })}
+                                    {rowsFormatted.map(element => {return <React.Fragment key={uuidv4()}>{element}</React.Fragment>})}
                                 </tbody>
                             )}
                         </table>

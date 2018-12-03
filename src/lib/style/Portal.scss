@@ -371,7 +371,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   color: white;
  }
 
- .SRC-marginRightFivePx SRC-paddingSevenPx {
+ .SRC-marginRightFivePx .SRC-paddingSevenPx {
    margin-right: 5px;
    padding: 7px;
  }
@@ -437,6 +437,15 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
       background-color: #D53F77 !important; 
       > svg {
         color: white!important;
+      }
+    }
+    &:hover {
+      &.SRC-nested-color {
+        > * {
+          background-color: #D53F77 !important; 
+          color: white!important;
+        }
+
       }
     }
  }
@@ -622,6 +631,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   font-size: 13px;
   font-weight: 600;
   border:none;
+  background: white;
   &:focus {
     outline: none;
   }
@@ -695,7 +705,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   height: 20px;
   border: 1px solid #DDDDDF;
   width: 20px;
-  margin-top: 7px;
 }
 
 /* On mouse-over, add a grey background color */
@@ -730,6 +739,10 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 
 .SRC-minDropdownWidth {
   width: 240px;
+}
+
+.SRC-sortPadding {
+  padding: 2px 3px;
 }
 
 /*

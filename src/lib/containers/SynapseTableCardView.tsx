@@ -4,7 +4,7 @@ import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM,
 import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
 import { Project, Consortium, AMP_Study } from './row_renderers/AMPAD';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
-
+const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
 
@@ -24,10 +24,10 @@ const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...
         (rowData: any, index: number) => {
             if (index < limit) {
                 return (
-                    <React.Fragment key={rowData.rowId}>
+                    <React.Fragment key={uuidv4()}>
                         {React.Children.map(children,
                          (child: any) => {
-                                return React.cloneElement(child, { data: rowData.values, ...rest });
+                                return React.cloneElement(child, {key: uuidv4(), data: rowData.values, ...rest });
                             })}
                     </React.Fragment>
                 );
@@ -122,6 +122,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
         return (
             <React.Fragment>
                 <RowContainer 
+                    key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
                     limit={limit}
                     data={data}

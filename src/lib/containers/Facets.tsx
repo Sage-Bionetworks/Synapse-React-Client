@@ -234,7 +234,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     render() {
         if (this.props.data === undefined) {
-            return false;
+            return (<div></div>);
         }
         let {showAllFacets}= this.state
         let curFacets = this.props.data!.facets.
@@ -269,17 +269,19 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
                         <div className="form-group">
                             <p>
                                {showAllFacets &&
-                                 <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
-                                    {" "}
-                                    Select All{" "}
-                                 </a>}
-                                {
-                                showAllFacets
-                                    &&
-                                 <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>
-                                    {" "}
-                                    Deselect All{" "}
-                                 </a>
+                                    <React.Fragment>
+                                        <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
+                                            {" "}
+                                            Select All{" "}
+                                        </a>
+                                        <span style={{marginLeft: "5px", marginRight: "5px"}}>
+                                            |
+                                        </span>
+                                        <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>
+                                            {" "}
+                                            Deselect All{" "}
+                                        </a>
+                                    </React.Fragment>
                                 }
                             </p>
                         </div>

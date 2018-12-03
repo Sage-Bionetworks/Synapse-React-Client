@@ -2,7 +2,7 @@
 import React from 'react'
 const uuidv4 = require("uuid/v4")
 
-const UserBadgeView = ({data, loadingBar}) => {
+const UserBadgeView = ({data, loadingBar = (<div></div>)}) => {
     if (data.length === 0) {
         return loadingBar || false
     } else {

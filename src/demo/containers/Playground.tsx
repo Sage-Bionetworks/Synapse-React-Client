@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { Component } from "react";
 import logo from "../../images/logo.svg";
 import "./App.css";
@@ -7,7 +8,8 @@ import { SynapseClient } from 'src/lib';
 import QueryWrapper from 'src/lib/containers/QueryWrapper';
 import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
-import ColorGradient from 'src/lib/containers/ColorGradient';
+// import ColorGradient from 'src/lib/containers/ColorGradient';
+// import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = 
   {
@@ -54,7 +56,7 @@ class Demo extends Component<{}, DemoState> {
             }
           ]
           ,
-          rgbIndex: 4,
+          rgbIndex: 1,
           type: SynapseConstants.AMP_STUDY 
         }
       ,
@@ -75,19 +77,38 @@ class Demo extends Component<{}, DemoState> {
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.removeHandler = this.removeHandler.bind(this);
+    this.rgba2rgb = this.rgba2rgb.bind(this);
   }
 
-
-componentDidMount() {
-  let colorGradient: ColorGradient = new ColorGradient(0)
-  let rgbString= ""
-  for(let i = 0; i < 110; i++) {
-    let rgbColor = colorGradient.getColor()
-    rgbString  += rgbColor
-  }
-  console.log(rgbString)
-
+  rgba2rgb(background: number[], color: number[]) {
+    const alpha = color[3];
+    return [
+        Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
+        Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
+        Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
+    ];
 }
+
+// componentDidMount() {
+//   let colorGradient: ColorGradient = new ColorGradient(0)
+//   let out = ""
+//   for (let i = 0; i < 110; i++) {
+//     let curColor:   string = colorGradient.getColor();
+  
+//     let curColorSplit: string [] = curColor.substring(5).split(",");
+//     curColorSplit[3] = curColorSplit[3].replace(")", "");
+  
+//     let curColorSplitNum: number[] = curColorSplit.map(el => {
+//         return Number(el);
+//     });
+//     // we do this to convert the rgba => rgb so hover will work
+//     let rgbColorNums: number[] = this.rgba2rgb([255, 255, 255], curColorSplitNum);
+//     let rgbColor: string = `rgb(${rgbColorNums})`;
+//     console.log("%c ------------ ", `background: ${rgbColor}`)
+//     out += `'${rgbColor}', `
+//   }
+//   console.log(out)
+// }
 
   /**
    * Make a query on synapse
@@ -150,7 +171,7 @@ componentDidMount() {
         <button role="button" className="btn btn-default" onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}>
           toggle tabs
         </button>
-        
+      
         <QueryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig: this.state.tabTwo.menuConfig}

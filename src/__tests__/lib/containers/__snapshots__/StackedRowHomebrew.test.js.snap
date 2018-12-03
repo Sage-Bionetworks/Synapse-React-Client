@@ -98,7 +98,7 @@ ShallowWrapper {
           >
                     <FontAwesomeIcon
                               border={false}
-                              className=""
+                              className="SRC-primary-text-color"
                               fixedWidth={false}
                               flip={null}
                               icon="angle-right"
@@ -110,6 +110,11 @@ ShallowWrapper {
                               rotation={null}
                               size={null}
                               spin={false}
+                              style={
+                                        Object {
+                                                  "fontSize": "11px",
+                                                }
+                              }
                               symbol={false}
                               title=""
                               transform={null}
@@ -121,7 +126,7 @@ ShallowWrapper {
           >
                     <FontAwesomeIcon
                               border={false}
-                              className=""
+                              className="SRC-primary-text-color"
                               fixedWidth={false}
                               flip={null}
                               icon="angle-left"
@@ -133,6 +138,11 @@ ShallowWrapper {
                               rotation={null}
                               size={null}
                               spin={false}
+                              style={
+                                        Object {
+                                                  "fontSize": "11px",
+                                                }
+                              }
                               symbol={false}
                               title=""
                               transform={null}
@@ -201,7 +211,7 @@ ShallowWrapper {
 >
               <FontAwesomeIcon
                             border={false}
-                            className=""
+                            className="SRC-primary-text-color"
                             fixedWidth={false}
                             flip={null}
                             icon="angle-right"
@@ -213,6 +223,11 @@ ShallowWrapper {
                             rotation={null}
                             size={null}
                             spin={false}
+                            style={
+                                          Object {
+                                                        "fontSize": "11px",
+                                                      }
+                            }
                             symbol={false}
                             title=""
                             transform={null}
@@ -224,7 +239,7 @@ ShallowWrapper {
 >
               <FontAwesomeIcon
                             border={false}
-                            className=""
+                            className="SRC-primary-text-color"
                             fixedWidth={false}
                             flip={null}
                             icon="angle-left"
@@ -236,6 +251,11 @@ ShallowWrapper {
                             rotation={null}
                             size={null}
                             spin={false}
+                            style={
+                                          Object {
+                                                        "fontSize": "11px",
+                                                      }
+                            }
                             symbol={false}
                             title=""
                             transform={null}
@@ -253,7 +273,7 @@ ShallowWrapper {
             "props": Object {
               "children": <FontAwesomeIcon
                 border={false}
-                className=""
+                className="SRC-primary-text-color"
                 fixedWidth={false}
                 flip={null}
                 icon="angle-right"
@@ -265,6 +285,11 @@ ShallowWrapper {
                 rotation={null}
                 size={null}
                 spin={false}
+                style={
+                                Object {
+                                                "fontSize": "11px",
+                                              }
+                }
                 symbol={false}
                 title=""
                 transform={null}
@@ -279,7 +304,7 @@ ShallowWrapper {
               "nodeType": "function",
               "props": Object {
                 "border": false,
-                "className": "",
+                "className": "SRC-primary-text-color",
                 "fixedWidth": false,
                 "flip": null,
                 "icon": "angle-right",
@@ -291,6 +316,9 @@ ShallowWrapper {
                 "rotation": null,
                 "size": null,
                 "spin": false,
+                "style": Object {
+                  "fontSize": "11px",
+                },
                 "symbol": false,
                 "title": "",
                 "transform": null,
@@ -308,7 +336,7 @@ ShallowWrapper {
             "props": Object {
               "children": <FontAwesomeIcon
                 border={false}
-                className=""
+                className="SRC-primary-text-color"
                 fixedWidth={false}
                 flip={null}
                 icon="angle-left"
@@ -320,6 +348,11 @@ ShallowWrapper {
                 rotation={null}
                 size={null}
                 spin={false}
+                style={
+                                Object {
+                                                "fontSize": "11px",
+                                              }
+                }
                 symbol={false}
                 title=""
                 transform={null}
@@ -334,7 +367,7 @@ ShallowWrapper {
               "nodeType": "function",
               "props": Object {
                 "border": false,
-                "className": "",
+                "className": "SRC-primary-text-color",
                 "fixedWidth": false,
                 "flip": null,
                 "icon": "angle-left",
@@ -346,6 +379,9 @@ ShallowWrapper {
                 "rotation": null,
                 "size": null,
                 "spin": false,
+                "style": Object {
+                  "fontSize": "11px",
+                },
                 "symbol": false,
                 "title": "",
                 "transform": null,
@@ -608,7 +644,7 @@ ShallowWrapper {
             >
                         <FontAwesomeIcon
                                     border={false}
-                                    className=""
+                                    className="SRC-primary-text-color"
                                     fixedWidth={false}
                                     flip={null}
                                     icon="angle-right"
@@ -620,6 +656,11 @@ ShallowWrapper {
                                     rotation={null}
                                     size={null}
                                     spin={false}
+                                    style={
+                                                Object {
+                                                            "fontSize": "11px",
+                                                          }
+                                    }
                                     symbol={false}
                                     title=""
                                     transform={null}
@@ -631,7 +672,7 @@ ShallowWrapper {
             >
                         <FontAwesomeIcon
                                     border={false}
-                                    className=""
+                                    className="SRC-primary-text-color"
                                     fixedWidth={false}
                                     flip={null}
                                     icon="angle-left"
@@ -643,6 +684,11 @@ ShallowWrapper {
                                     rotation={null}
                                     size={null}
                                     spin={false}
+                                    style={
+                                                Object {
+                                                            "fontSize": "11px",
+                                                          }
+                                    }
                                     symbol={false}
                                     title=""
                                     transform={null}
@@ -711,7 +757,7 @@ ShallowWrapper {
 >
                 <FontAwesomeIcon
                                 border={false}
-                                className=""
+                                className="SRC-primary-text-color"
                                 fixedWidth={false}
                                 flip={null}
                                 icon="angle-right"
@@ -723,6 +769,11 @@ ShallowWrapper {
                                 rotation={null}
                                 size={null}
                                 spin={false}
+                                style={
+                                                Object {
+                                                                "fontSize": "11px",
+                                                              }
+                                }
                                 symbol={false}
                                 title=""
                                 transform={null}
@@ -734,7 +785,7 @@ ShallowWrapper {
 >
                 <FontAwesomeIcon
                                 border={false}
-                                className=""
+                                className="SRC-primary-text-color"
                                 fixedWidth={false}
                                 flip={null}
                                 icon="angle-left"
@@ -746,6 +797,11 @@ ShallowWrapper {
                                 rotation={null}
                                 size={null}
                                 spin={false}
+                                style={
+                                                Object {
+                                                                "fontSize": "11px",
+                                                              }
+                                }
                                 symbol={false}
                                 title=""
                                 transform={null}
@@ -763,7 +819,7 @@ ShallowWrapper {
               "props": Object {
                 "children": <FontAwesomeIcon
                   border={false}
-                  className=""
+                  className="SRC-primary-text-color"
                   fixedWidth={false}
                   flip={null}
                   icon="angle-right"
@@ -775,6 +831,11 @@ ShallowWrapper {
                   rotation={null}
                   size={null}
                   spin={false}
+                  style={
+                                    Object {
+                                                      "fontSize": "11px",
+                                                    }
+                  }
                   symbol={false}
                   title=""
                   transform={null}
@@ -789,7 +850,7 @@ ShallowWrapper {
                 "nodeType": "function",
                 "props": Object {
                   "border": false,
-                  "className": "",
+                  "className": "SRC-primary-text-color",
                   "fixedWidth": false,
                   "flip": null,
                   "icon": "angle-right",
@@ -801,6 +862,9 @@ ShallowWrapper {
                   "rotation": null,
                   "size": null,
                   "spin": false,
+                  "style": Object {
+                    "fontSize": "11px",
+                  },
                   "symbol": false,
                   "title": "",
                   "transform": null,
@@ -818,7 +882,7 @@ ShallowWrapper {
               "props": Object {
                 "children": <FontAwesomeIcon
                   border={false}
-                  className=""
+                  className="SRC-primary-text-color"
                   fixedWidth={false}
                   flip={null}
                   icon="angle-left"
@@ -830,6 +894,11 @@ ShallowWrapper {
                   rotation={null}
                   size={null}
                   spin={false}
+                  style={
+                                    Object {
+                                                      "fontSize": "11px",
+                                                    }
+                  }
                   symbol={false}
                   title=""
                   transform={null}
@@ -844,7 +913,7 @@ ShallowWrapper {
                 "nodeType": "function",
                 "props": Object {
                   "border": false,
-                  "className": "",
+                  "className": "SRC-primary-text-color",
                   "fixedWidth": false,
                   "flip": null,
                   "icon": "angle-left",
@@ -856,6 +925,9 @@ ShallowWrapper {
                   "rotation": null,
                   "size": null,
                   "spin": false,
+                  "style": Object {
+                    "fontSize": "11px",
+                  },
                   "symbol": false,
                   "title": "",
                   "transform": null,
