@@ -137,6 +137,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                             offset: 0
                             }
                         }}
+                        unitDescription={config.unitDescription || ""}
                         facetName={config.facetName}
                         token={token}
                         rgbIndex={rgbIndex}

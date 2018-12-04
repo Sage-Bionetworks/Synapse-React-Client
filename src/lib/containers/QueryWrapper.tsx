@@ -16,6 +16,7 @@ type QueryWrapperProps = {
     showMenu?: boolean
     facetName:string
     loadingScreen?: JSX.Element
+    unitDescription?: string
 }
 
 type QueryWrapperState = {
@@ -42,6 +43,7 @@ export type QueryWrapperChildProps = {
     updateParentFilter?: (param: string) => void
     rgbIndex?: number
     showNothing?: boolean
+    unitDescription?: string
 }
 
 /**
@@ -256,7 +258,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
                 rgbIndex: this.props.rgbIndex,
                 showNothing: this.state.showNothing,
                 isQueryWrapperChild: true,
-                getNextPageOfData: this.getNextPageOfData
+                getNextPageOfData: this.getNextPageOfData,
+                unitDescription: this.props.unitDescription
             })
         }))
 

@@ -504,7 +504,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 <div className="container-fluid">
                     <div className="row SRC-marginBottomTen">
                         <span>
-                            {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>}
+                            {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} {this.props.unitDescription} </strong>}
                             <span className={this.props.isLoading ? "spinner" : ""} style={this.props.isLoading ? {} : { display: "none" }} />
                             {this.props.isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
                         </span>
