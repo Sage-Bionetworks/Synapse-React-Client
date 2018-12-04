@@ -7,7 +7,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import ColorGradient from "./ColorGradient";
+import {getColorPallette} from "./ColorGradient";
 
 library.add(faAngleLeft);
 library.add(faAngleRight);
@@ -206,8 +206,6 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
         }
         let x_data = this.extractPropsData(data);
         let total: number = 0;
-        let colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex!);
-        let originalColor: string = colorGradient.getOriginalColor();
         let width: number = this.state.dimensions.bounds!.width;
         // sum up the counts of data
         for (let key in x_data) {
@@ -215,6 +213,8 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                 total += x_data[key].count;
             }
         }
+        let {colorPallete, textColors} = getColorPallette(this.props.rgbIndex!, x_data.length)
+        let originalColor = colorPallete[0]
         return (
             <div className="container-fluid">
                 <div className="row SRC-center-text">
@@ -236,9 +236,9 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                             <div style={{display: "flex"}} ref={measureRef}>
                                 {x_data.map((obj, index) => {
                                     let initRender: boolean = this.state.index === -1 && index === 0;
-                                    let textColor:  string = colorGradient.getTextColor();
+                                    let textColor:  string = textColors[index]
 
-                                    let rgbColor: string = colorGradient.getColor();
+                                    let rgbColor: string = colorPallete[index]
 
                                     let rectStyle : any;
                                     const check = this.props.isChecked![index] === undefined || this.props.isChecked![index];

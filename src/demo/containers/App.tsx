@@ -13,7 +13,7 @@ const App : React.SFC<{}> = () => {
     <HashRouter>
       <Switch>
         <Route exact path="/" component={Demo}/>
-        <Route exact path="/Playground" component={Playground}/>
+        <Route exact path="/Playground" render={(props) => <Playground rgbIndex={0} />}/>
       </Switch>
     </HashRouter>
   )

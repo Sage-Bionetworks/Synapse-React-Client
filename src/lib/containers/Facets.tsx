@@ -3,7 +3,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import ColorGradient from "./ColorGradient";
+import { getColorPallette } from "./ColorGradient";
 import {QueryWrapperChildProps} from './QueryWrapper'
 import { FacetColumnResult, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
 
@@ -38,16 +38,17 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     
     const { element, showAllFacets } = props;
     let children: any = [];
-    let colorGradient = new ColorGradient(props.rgbIndex);
+    
     element.facetValues.sort((a: any, b: any) => {
         return b.count - a.count;
     });
+    let {colorPallete, textColors} = getColorPallette(props.rgbIndex, element.facetValues.length)
     element.facetValues.forEach((facetValue: any, index: any) => {
         
         let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count;
         // caution when using uuId's to not cause extra re-renders from always changing
-        let textColor = colorGradient.getTextColor();
-        let curColor = colorGradient.getColor();
+        let textColor = textColors[index]
+        let curColor = colorPallete[index]
         let style: any = {};
         const check = props.isChecked[index] === undefined || props.isChecked[index];
         if (check) {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import ColorGradient from "./ColorGradient";
+import {getColorPallette} from "./ColorGradient";
 import PropTypes from 'prop-types';
 import QueryWrapper from './QueryWrapper';
 import { SynapseConstants } from '..';
@@ -69,8 +69,8 @@ export default class Menu extends React.Component<Props, MenuState> {
     render () {
         let {token, menuConfig, rgbIndex} = this.props
 
-        const colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex);
-        const originalColor = colorGradient.getOriginalColor();
+        let {colorPallete} = getColorPallette(this.props.rgbIndex!, 1)
+        let originalColor = colorPallete[0]
 
         let menuDropdown = menuConfig.map(
             (config: MenuConfig, index:number) => {
