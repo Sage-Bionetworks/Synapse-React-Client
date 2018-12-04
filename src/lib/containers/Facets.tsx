@@ -73,7 +73,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
                     &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}){" "}
                 </span>
                 <span>&nbsp;&nbsp;</span>
-                {showTimes ? <FontAwesomeIcon icon={"times"} /> : <FontAwesomeIcon icon={"plus"} />}
+                {showTimes ? <FontAwesomeIcon className="SRC-facets-icon" icon={"times"} /> : <FontAwesomeIcon className="SRC-facets-icon" icon={"plus"} />}
                 <span>&nbsp;&nbsp;</span>
             </span>
         );
