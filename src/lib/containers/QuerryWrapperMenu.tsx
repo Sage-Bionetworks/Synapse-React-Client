@@ -1,12 +1,19 @@
 import * as React from "react";
-import ColorGradient from "./ColorGradient";
+import {getColorPallette} from "./ColorGradient";
 import PropTypes from 'prop-types';
 import QueryWrapper from './QueryWrapper';
 import { SynapseConstants } from '..';
 import StackedRowHomebrew from './StackedRowHomebrew';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+
 import { Facets } from './Facets';
 import SynapseTable from './SynapseTable';
 import SynapseTableCardView from './SynapseTableCardView';
+
+library.add(faAngleLeft);
+library.add(faAngleRight);
 
 type MenuState = {
     menuIndex: number
@@ -61,8 +68,8 @@ export default class Menu extends React.Component<Props, MenuState> {
     render () {
         let {token, menuConfig, rgbIndex} = this.props
 
-        const colorGradient: ColorGradient = new ColorGradient(this.props.rgbIndex);
-        const originalColor = colorGradient.getOriginalColor();
+        let {colorPallete} = getColorPallette(this.props.rgbIndex!, 1)
+        let originalColor = colorPallete[0]
 
         let menuDropdown = menuConfig.map(
             (config: MenuConfig, index:number) => {
@@ -130,6 +137,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                             offset: 0
                             }
                         }}
+                        unitDescription={config.unitDescription || ""}
                         facetName={config.facetName}
                         token={token}
                         rgbIndex={rgbIndex}
@@ -165,7 +173,7 @@ export default class Menu extends React.Component<Props, MenuState> {
 
         return (
             <div className="container-fluid">
-                <div className="col-xs-2">
+                <div style={{paddingTop: "50px", marginTop: "0px"}} className="col-xs-2">
                     {menuDropdown}
                 </div>
                 <div className="col-xs-10">

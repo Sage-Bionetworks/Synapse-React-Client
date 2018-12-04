@@ -10,6 +10,7 @@ import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
+// import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = 
   {
@@ -26,7 +27,7 @@ type DemoState =
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-class Demo extends Component<{}, DemoState> {
+class Demo extends Component<{rgbIndex: number}, DemoState> {
   /**
    * Maintain internal state of user session
    */
@@ -56,7 +57,7 @@ class Demo extends Component<{}, DemoState> {
             }
           ]
           ,
-          rgbIndex: 1,
+          rgbIndex: 0,
           type: SynapseConstants.AMP_STUDY 
         }
       ,
@@ -89,26 +90,6 @@ class Demo extends Component<{}, DemoState> {
     ];
 }
 
-// componentDidMount() {
-//   let colorGradient: ColorGradient = new ColorGradient(0)
-//   let out = ""
-//   for (let i = 0; i < 110; i++) {
-//     let curColor:   string = colorGradient.getColor();
-  
-//     let curColorSplit: string [] = curColor.substring(5).split(",");
-//     curColorSplit[3] = curColorSplit[3].replace(")", "");
-  
-//     let curColorSplitNum: number[] = curColorSplit.map(el => {
-//         return Number(el);
-//     });
-//     // we do this to convert the rgba => rgb so hover will work
-//     let rgbColorNums: number[] = this.rgba2rgb([255, 255, 255], curColorSplitNum);
-//     let rgbColor: string = `rgb(${rgbColorNums})`;
-//     console.log("%c ------------ ", `background: ${rgbColor}`)
-//     out += `'${rgbColor}', `
-//   }
-//   console.log(out)
-// }
 
   /**
    * Make a query on synapse

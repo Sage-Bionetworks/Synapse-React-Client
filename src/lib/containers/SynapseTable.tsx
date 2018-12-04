@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortAmountUp, faSortAmountDown, faCheck, faTimes, faFilter, faDatabase,  faSort, faColumns } from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
-import ColorGradient from "./ColorGradient";
+import {getColorPallette} from "./ColorGradient";
 import close from '../assets/icons/close.svg'
 const uuidv4 = require("uuid/v4");
 
@@ -389,9 +389,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const { headers } = queryResults;
 
         const {facets} = data
-        
-        let colorGradient = new ColorGradient(this.props.rgbIndex!)
-        let backgroundColor = colorGradient.getOriginalColor()
+        let {colorPallete} = getColorPallette(this.props.rgbIndex!, 1)
+        let backgroundColor = colorPallete[0]
 
         // Step 1: Format the column headers, we have to track a few variables --
         // whether the column should be shown by default or if the state now mandates it
@@ -465,7 +464,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             );
                         }
                         // avoid eslint complaint below by returning undefined
-                        return (<div></div>);
+                        return (<td></td>);
                     })}
                 </tr>
             );
@@ -505,7 +504,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 <div className="container-fluid">
                     <div className="row SRC-marginBottomTen">
                         <span>
-                            {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} Files </strong>}
+                            {!this.props.isLoading && <strong> Showing {this.props.showNothing ? 0 : total} {this.props.unitDescription} </strong>}
                             <span className={this.props.isLoading ? "spinner" : ""} style={this.props.isLoading ? {} : { display: "none" }} />
                             {this.props.isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
                         </span>
@@ -531,7 +530,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
                                     }
                                     return (
-                                        <li className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                        <li style={{listStyle: "none"}} className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
                                             <a className="SRC-no-focus" href="">
                                                 {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
                                                 {/* below is to fake the indent that occurs */}
