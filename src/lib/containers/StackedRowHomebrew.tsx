@@ -299,7 +299,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                     <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
                         <strong>{this.getHoverText(x_data)}</strong>
                     </p>
-                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> <a href={this.advancedSearch(x_data)} target={"_blank"}>{this.getFileCount(x_data)} {this.props.unitDescription}</a> </p>
+                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> {this.getFileCount(x_data)} {this.props.unitDescription} </p>
                 </div>
             </div>
         );

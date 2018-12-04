@@ -5,7 +5,6 @@ import QueryWrapper from './QueryWrapper';
 import { SynapseConstants } from '..';
 import StackedRowHomebrew from './StackedRowHomebrew';
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -173,16 +172,7 @@ export default class Menu extends React.Component<Props, MenuState> {
 
         return (
             <div className="container-fluid">
-                <div className="col-xs-2">
-                    {/* we put in the following so the chart and buttons align at the same height  */}
-                    <div style={{marginBottom: "10px", visibility: "hidden"}} className="row">
-                        <button className="btn btn-default btn-sm">
-                            <FontAwesomeIcon style={{fontSize: "11px"}} icon="angle-right" />
-                        </button>
-                        <button className="btn btn-default btn-sm">
-                            <FontAwesomeIcon style={{fontSize: "11px"}} icon="angle-left" />
-                        </button>
-                    </div>
+                <div style={{paddingTop: "50px", marginTop: "0px"}} className="col-xs-2">
                     {menuDropdown}
                 </div>
                 <div className="col-xs-10">

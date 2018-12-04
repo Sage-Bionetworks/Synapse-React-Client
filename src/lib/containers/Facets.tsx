@@ -259,7 +259,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
                         <div className="form-group">{this.showFacetFilter()}
                             {!showAllFacets
                                 &&
-                                <span>
+                                <span className="SRC-inlineBlock">
                                     <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
                                     {" "}
                                     Show All ({curFacetsLength}){" "}

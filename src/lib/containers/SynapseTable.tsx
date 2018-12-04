@@ -464,7 +464,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             );
                         }
                         // avoid eslint complaint below by returning undefined
-                        return (<div></div>);
+                        return (<td></td>);
                     })}
                 </tr>
             );
@@ -530,7 +530,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                         isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
                                     }
                                     return (
-                                        <li className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                        <li style={{listStyle: "none"}} className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
                                             <a className="SRC-no-focus" href="">
                                                 {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
                                                 {/* below is to fake the indent that occurs */}
