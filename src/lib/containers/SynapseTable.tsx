@@ -510,39 +510,41 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         </span>
                     </div>
                 </div>
-                <div className="SRC-padding SRC-marginFifteen" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
-                    <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
-                    <span style={{marginLeft: "auto", marginRight: "10px"}}>
-                        <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
+                <div className="container-fluid" >
+                   <div className="SRC-padding" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
+                        <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
+                        <span style={{marginLeft: "auto", marginRight: "10px"}}>
+                            <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
+                                <span data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                                <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
 
-                            <span data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
-                                <FontAwesomeIcon color="white" icon="columns" />
+                                <span data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
+                                    <FontAwesomeIcon color="white" icon="columns" />
+                                </span>
+                                <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
+
+                                <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                    {headers.map((header: any, index: number) => {
+                                        let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
+                                        let {visibleColumnCount = 0} = this.props
+                                        if (isColumnSelected === undefined) {
+                                            isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
+                                        }
+                                        return (
+                                            <li style={{listStyle: "none"}} className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                                <a className="SRC-no-focus" href="">
+                                                    {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
+                                                    {/* below is to fake the indent that occurs */}
+                                                    {!isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px", visibility: "hidden"}} icon="check"/>}
+                                                    {header.name}
+                                                </a>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
                             </span>
-                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
-
-                            <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                                {headers.map((header: any, index: number) => {
-                                    let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
-                                    let {visibleColumnCount = 0} = this.props
-                                    if (isColumnSelected === undefined) {
-                                        isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
-                                    }
-                                    return (
-                                        <li style={{listStyle: "none"}} className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
-                                            <a className="SRC-no-focus" href="">
-                                                {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
-                                                {/* below is to fake the indent that occurs */}
-                                                {!isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px", visibility: "hidden"}} icon="check"/>}
-                                                {header.name}
-                                            </a>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
                         </span>
-                    </span>
+                    </div>
                 </div>
                 <div className="container-fluid">
                     <div className="row SRC-overflowAuto">
