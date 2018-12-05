@@ -213,8 +213,8 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                 total += x_data[key].count;
             }
         }
-        let {colorPallete, textColors} = getColorPallette(this.props.rgbIndex!, x_data.length)
-        let originalColor = colorPallete[0]
+        let {colorPalette, textColors} = getColorPallette(this.props.rgbIndex!, x_data.length)
+        let originalColor = colorPalette[0]
         return (
             <div className="container-fluid">
                 <div className="row SRC-center-text">
@@ -238,7 +238,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     let initRender: boolean = this.state.index === -1 && index === 0;
                                     let textColor:  string = textColors[index]
 
-                                    let rgbColor: string = colorPallete[index]
+                                    let rgbColor: string = colorPalette[index]
 
                                     let rectStyle : any;
                                     const check = this.props.isChecked![index] === undefined || this.props.isChecked![index];

@@ -42,13 +42,13 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     element.facetValues.sort((a: any, b: any) => {
         return b.count - a.count;
     });
-    let {colorPallete, textColors} = getColorPallette(props.rgbIndex, element.facetValues.length)
+    let {colorPalette, textColors} = getColorPallette(props.rgbIndex, element.facetValues.length)
     element.facetValues.forEach((facetValue: any, index: any) => {
         
         let uniqueId = element.columnName + " " + facetValue.value + " " + facetValue.count;
         // caution when using uuId's to not cause extra re-renders from always changing
         let textColor = textColors[index]
-        let curColor = colorPallete[index]
+        let curColor = colorPalette[index]
         let style: any = {};
         const check = props.isChecked[index] === undefined || props.isChecked[index];
         if (check) {

@@ -68,8 +68,8 @@ export default class Menu extends React.Component<Props, MenuState> {
     render () {
         let {token, menuConfig, rgbIndex} = this.props
 
-        let {colorPallete} = getColorPallette(this.props.rgbIndex!, 1)
-        let originalColor = colorPallete[0]
+        let {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
+        let originalColor = colorPalette[0]
 
         let menuDropdown = menuConfig.map(
             (config: MenuConfig, index:number) => {
