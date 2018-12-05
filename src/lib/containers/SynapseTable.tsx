@@ -389,8 +389,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const { headers } = queryResults;
 
         const {facets} = data
-        let {colorPallete} = getColorPallette(this.props.rgbIndex!, 1)
-        let backgroundColor = colorPallete[0]
+        let {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
+        let backgroundColor = colorPalette[0]
 
         // Step 1: Format the column headers, we have to track a few variables --
         // whether the column should be shown by default or if the state now mandates it
@@ -464,7 +464,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                             );
                         }
                         // avoid eslint complaint below by returning undefined
-                        return (<td></td>);
+                        return (<td key={`(${i},${j})`}></td>);
                     })}
                 </tr>
             );
@@ -510,7 +510,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         </span>
                     </div>
                 </div>
-                <div className="SRC-padding" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
+                <div className="SRC-padding SRC-marginFifteen" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
                     <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
                     <span style={{marginLeft: "auto", marginRight: "10px"}}>
                         <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
@@ -545,7 +545,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </span>
                 </div>
                 <div className="container-fluid">
-                    <div style={{marginLeft: "-15px", marginRight: "-15px"}} className="row SRC-overflowAuto">
+                    <div className="row SRC-overflowAuto">
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>

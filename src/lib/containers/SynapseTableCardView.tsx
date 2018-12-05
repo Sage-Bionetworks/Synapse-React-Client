@@ -4,6 +4,7 @@ import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM,
 import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
 import { Project, Consortium, AMP_Study } from './row_renderers/AMPAD';
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
 const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
@@ -39,7 +40,7 @@ const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...
 
 type SynapseTableCardViewProps = {
     type: string,
-    data?: any,
+    data?: QueryResultBundle,
     limit?: number,
     hideOrganizationLink?: boolean
     token? : string
@@ -47,10 +48,15 @@ type SynapseTableCardViewProps = {
     isHeader?: boolean
     isQueryWrapperChild?: boolean
     getLastQueryRequest?: () => QueryBundleRequest
-    getNextPageOfData?: (queryRequest: any) => void 
+    getNextPageOfData?: (queryRequest: any) => boolean 
     executeInitialQueryRequest?: () => void
 };
-class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}> {
+
+type SynapseTableCardViewState = {
+    hasMoreData: boolean
+}
+
+class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, SynapseTableCardViewState> {
 
     static propTypes = {
         type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY ]),
@@ -62,6 +68,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
         super(props);
         this.renderChild = this.renderChild.bind(this);
         this.handleViewMore = this.handleViewMore.bind(this);
+        this.state = {
+            hasMoreData: true
+        }
     }
 
     renderChild(): JSX.Element | boolean{
@@ -100,7 +109,10 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
         // otherwise its next and we paginate forward
         offset += 25;
         queryRequest.query.offset = offset;
-        this.props.getNextPageOfData!(queryRequest);
+        let hasMoreData = this.props.getNextPageOfData!(queryRequest);
+        if (!hasMoreData) {
+            this.setState({hasMoreData: false})
+        }
     };
 
     render() {
@@ -133,8 +145,13 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, {}
                 >
                 {this.renderChild()}
                 </RowContainer>
-                {this.props.isQueryWrapperChild 
-                    && (<div>
+                {this.props.isQueryWrapperChild
+                    &&
+                    data.queryResult.queryResults.rows.length >= 25
+                    &&
+                    this.state.hasMoreData
+                    && (
+                        <div>
                             <button onClick={this.handleViewMore} className="pull-right SRC-viewMoreButton">
                             View More
                             </button>

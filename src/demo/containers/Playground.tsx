@@ -5,9 +5,9 @@ import "./App.css";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
-import QueryWrapper from 'src/lib/containers/QueryWrapper';
-import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
-import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
+// import QueryWrapper from 'src/lib/containers/QueryWrapper';
+// import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
+// import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
@@ -43,22 +43,68 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
         {
           menuConfig: [
             {
-              sql: "SELECT * FROM syn9886254",
-              synapseId: "syn9886254",
-              facetName: "Organism",
-              unitDescription: "data types",
-              title: "my title",
-              facetDisplayValue: "organiSm"
+              sql:
+                "SELECT species, dataType, id as file_id, consortium as program, grant, study, organ, tissue, cellType, assay, fileFormat, specimenID FROM syn11346063",
+              title: "Data",
+              synapseId: "syn11346063",
+              facetName: "species",
+              facetDisplayValue: "Species",
+              unitDescription: "data files",
+              visibleColumnCount: 3,
             },
-            { sql: "SELECT * FROM syn9886254",
-              synapseId: "syn9886254",
-              facetName: "Study",
-              unitDescription: "files"
-            }
+            {
+              sql:
+                "SELECT organ, tissue, dataType, assay, id AS file_id, consortium as program, grant, study, species, cellType, specimenID FROM syn11346063",
+              title: "Data",
+              synapseId: "syn11346063",
+              facetName: "organ",
+              facetDisplayValue: "Organ",
+              unitDescription: "data files",
+              visibleColumnCount: 5,
+            },
+            {
+              sql:
+                "SELECT study, dataType, assay, id AS file_id, consortium as program, grant, species, organ, tissue, cellType, fileFormat, specimenID FROM syn11346063",
+              title: "Data",
+              synapseId: "syn11346063",
+              facetName: "study",
+              facetDisplayValue: "Study",
+              unitDescription: "data files",
+              visibleColumnCount: 4,
+            },
+            {
+              sql:
+                "SELECT dataType, assay, study, id AS file_id, consortium as program, grant, species, organ, tissue, cellType, fileFormat, specimenID FROM syn11346063",
+              title: "Data",
+              synapseId: "syn11346063",
+              facetName: "dataType",
+              facetDisplayValue: "Data Type",
+              unitDescription: "data files",
+              visibleColumnCount: 4,
+            },
+            {
+              sql:
+                "SELECT assay, fileFormat, id AS file_id, consortium as program, grant, study, species, organ, tissue, cellType, dataType, specimenID FROM syn11346063",
+              title: "Data",
+              synapseId: "syn11346063",
+              facetName: "assay",
+              facetDisplayValue: "Assay",
+              unitDescription: "data files",
+              visibleColumnCount: 4,
+            },
+            {
+              sql:
+                "SELECT diagnosis, sex, dataType, assay, id as file_id, consortium as program, grant, study, species, organ, tissue, cellType, fileFormat, specimenID, anonymized_individualID FROM syn17024112",
+              title: "Data",
+              synapseId: "syn17024112",
+              facetName: "diagnosis",
+              facetDisplayValue: "Diagnosis",
+              unitDescription: "data files",
+              visibleColumnCount: 5,
+            },
           ]
           ,
-          rgbIndex: 0,
-          type: SynapseConstants.AMP_STUDY 
+          rgbIndex: 2,
         }
       ,
       tabTwo:{
@@ -69,11 +115,11 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
                 unitDescription: "Program"
             }]
           ,
-          rgbIndex: 0,
+          rgbIndex: 5,
           type: SynapseConstants.AMP_PROJECT
         }
       ,
-      showTabOne: true
+      showTabOne: false
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -162,7 +208,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
         />
 
         
-        <QueryWrapper
+        {/* <QueryWrapper
           initQueryRequest={{
             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
             partMask:
@@ -190,7 +236,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
             type={SynapseConstants.AMP_STUDY}
             >
             </SynapseTableCardView>
-          </QueryWrapper>
+          </QueryWrapper> */}
 
       </div>
     );

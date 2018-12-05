@@ -371,6 +371,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   background: none;
  }
 
+// if its focused don't use their background color
+.dropdown-menu>li>a.SRC-no-focus:hover, {
+  background: unset;
+ }
+
  // if its focused make sure the text display right
 .dropdown-menu>li.SRC-table-anchor-chosen>a.SRC-no-focus:focus, {
   background: none;
@@ -438,6 +443,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    background-color: #D53F77 !important;
  }
 
+ .SRC-marginFifteen {
+   margin-left: 15px;
+   margin-right: 15px;
+ }
+
  .SRC-primary-background-color-hover:hover {
     &:hover {
       background-color: #D53F77 !important; 
@@ -447,7 +457,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
     }
     &:hover {
       &.SRC-nested-color {
-        > * {
+        * {
           background-color: #D53F77 !important; 
           color: white!important;
         }

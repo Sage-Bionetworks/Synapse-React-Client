@@ -317,6 +317,9 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 .dropdown-menu > li > a.SRC-no-focus:focus {
   background: none; }
 
+.dropdown-menu > li > a.SRC-no-focus:hover {
+  background: unset; }
+
 .dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
   background: none;
   color: white; }
@@ -367,12 +370,16 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-background-color {
   background-color: #D53F77 !important; }
 
+.SRC-marginFifteen {
+  margin-left: 15px;
+  margin-right: 15px; }
+
 .SRC-primary-background-color-hover:hover:hover {
   background-color: #D53F77 !important; }
   .SRC-primary-background-color-hover:hover:hover > svg {
     color: white !important; }
 
-.SRC-primary-background-color-hover:hover:hover.SRC-nested-color > * {
+.SRC-primary-background-color-hover:hover:hover.SRC-nested-color * {
   background-color: #D53F77 !important;
   color: white !important; }
 
