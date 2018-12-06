@@ -337,7 +337,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let classList = this.state.filterClassList[index]
 
         return (
-            <div onBlur={() => {console.log("I was blurred")}} ref={refOuterDiv} style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isCurFilterSelected ? "open SRC-anchor-light": ""}`}>
+            <div ref={refOuterDiv} style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isCurFilterSelected ? "open SRC-anchor-light": ""}`}>
                 <span tabIndex={0} className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`} onKeyPress={toggleDropdown} onClick={toggleDropdown}> 
                     <FontAwesomeIcon style={{margin: "auto"}} size={"1x"} className={applyPrimary} color={isCurFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
