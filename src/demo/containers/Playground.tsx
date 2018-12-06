@@ -61,47 +61,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
               facetDisplayValue: "Organ",
               unitDescription: "data files",
               visibleColumnCount: 5,
-            },
-            {
-              sql:
-                "SELECT study, dataType, assay, id AS file_id, consortium as program, grant, species, organ, tissue, cellType, fileFormat, specimenID FROM syn11346063",
-              title: "Data",
-              synapseId: "syn11346063",
-              facetName: "study",
-              facetDisplayValue: "Study",
-              unitDescription: "data files",
-              visibleColumnCount: 4,
-            },
-            {
-              sql:
-                "SELECT dataType, assay, study, id AS file_id, consortium as program, grant, species, organ, tissue, cellType, fileFormat, specimenID FROM syn11346063",
-              title: "Data",
-              synapseId: "syn11346063",
-              facetName: "dataType",
-              facetDisplayValue: "Data Type",
-              unitDescription: "data files",
-              visibleColumnCount: 4,
-            },
-            {
-              sql:
-                "SELECT assay, fileFormat, id AS file_id, consortium as program, grant, study, species, organ, tissue, cellType, dataType, specimenID FROM syn11346063",
-              title: "Data",
-              synapseId: "syn11346063",
-              facetName: "assay",
-              facetDisplayValue: "Assay",
-              unitDescription: "data files",
-              visibleColumnCount: 4,
-            },
-            {
-              sql:
-                "SELECT diagnosis, sex, dataType, assay, id as file_id, consortium as program, grant, study, species, organ, tissue, cellType, fileFormat, specimenID, anonymized_individualID FROM syn17024112",
-              title: "Data",
-              synapseId: "syn17024112",
-              facetName: "diagnosis",
-              facetDisplayValue: "Diagnosis",
-              unitDescription: "data files",
-              visibleColumnCount: 5,
-            },
+            }
           ]
           ,
           rgbIndex: 2,
@@ -119,7 +79,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           type: SynapseConstants.AMP_PROJECT
         }
       ,
-      showTabOne: false
+      showTabOne: true
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);

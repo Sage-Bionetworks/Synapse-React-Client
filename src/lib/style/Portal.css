@@ -625,3 +625,7 @@ checkmark styling end
 
 .SRC-sortPadding {
   padding: 2px 3px; }
+
+.SRC-forceLeftDropdown {
+  right: auto;
+  left: 0; }
