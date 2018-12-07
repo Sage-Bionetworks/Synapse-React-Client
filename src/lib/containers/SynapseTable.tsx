@@ -113,6 +113,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      * @memberof SynapseTable
      */
     handleColumnClick = (dict: Info) => (event: React.SyntheticEvent) => {
+        // by using Synthetic event we can use the handler on both key press and mouse click
         let columnIconState = cloneDeep(this.state.columnIconState);
         if (columnIconState.length === 0) {
             columnIconState = Array(this.getLengthOfPropsData()).fill(0);
@@ -245,20 +246,28 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             
             isFilterSelected[index] = !isCurFilterSelected
 
+            // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the 
+            // front of the scrollable we can examine its parent bounding rect -- this gives a relative value (that changes
+            // on scroll) of the filter to a fixed left most point.
             let tHeadLeftPosition = refOuterDiv.current!.parentElement!.getBoundingClientRect().left
-            let classListDiv = ""
+            
+            let classNames = "" //  the classes to be applied to the filter dropdown menu
 
             if (isFilterSelected[index]) {
                 if (tHeadLeftPosition < 300) {
-                    classListDiv = "SRC-forceLeftDropdown dropdown-menu-right"
+                    // this implies that its within 300 px of the fixed left most point, ie its dropdown
+                    // menu should pop out to the right
+                    classNames = "SRC-forceLeftDropdown dropdown-menu-left"
                 } else {
-                    classListDiv = "dropdown-menu-right"
+                    // the menu is sufficiently to the right that the menu can pop down to the left
+                    classNames = "dropdown-menu-right"
                 }
             } else {
-                classListDiv = ""
+                classNames = ""
             }
-                    
-            filterClassList[index] = classListDiv
+            
+            // set the class names for this dropdown item
+            filterClassList[index] = classNames
 
             this.setState(
                 {
@@ -271,7 +280,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
         let ref: React.RefObject<HTMLSpanElement> = React.createRef()
         let refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
-        let innerDiv: React.RefObject<HTMLDivElement> = React.createRef()
 
         // handle column selection
         let handleSelector = (selector? : string) => (event: React.SyntheticEvent<HTMLElement>) => { 
@@ -342,7 +350,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     <FontAwesomeIcon style={{margin: "auto"}} size={"1x"} className={applyPrimary} color={isCurFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
-                <div ref={innerDiv} className={"dropdown-menu SRC-minDropdownWidth " + classList}>
+                <div className={"dropdown-menu SRC-minDropdownWidth " + classList}>
                     <div className="paddingMenuDropdown">
                         <ul style={{listStyleType: "none"}} className="scrollable">
                             <li> 
@@ -448,7 +456,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </th>
                 );
             }
-            // avoid eslint complaint below by returning undefined
             return (<th key={column.name}></th>);
         });
 
@@ -482,7 +489,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 </td>
                             );
                         }
-                        // avoid eslint complaint below by returning undefined
                         return (<td key={`(${i},${j})`}></td>);
                     })}
                 </tr>
@@ -587,7 +593,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 </button>
                             )}
                         {!this.props.showNothing && (
-                            <button onClick={this.handlePaginationClick(NEXT)} className="SRC-viewMoreButton pull-right" type="button">
+                            <button onClick={this.handlePaginationClick(NEXT)} className="SRC-primary-background-hover SRC-viewMoreButton pull-right" type="button">
                                 Next
                             </button>
                         )}
