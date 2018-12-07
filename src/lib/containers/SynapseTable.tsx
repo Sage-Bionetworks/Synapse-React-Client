@@ -41,6 +41,7 @@ type SynapseTableState = {
     columnIconState: number[],
     isFilterSelected: boolean []
     applyClickedArray: boolean []
+    filterClassList: string [],
 };
 
 type SynapseTableProps = {
@@ -82,6 +83,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             isColumnSelected: [],
             columnIconState: [],
             isFilterSelected: Array(100).fill(false),
+            filterClassList: Array(100).fill(""),
             applyClickedArray: Array(100).fill(false)
         };
     }
@@ -110,7 +112,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      *
      * @memberof SynapseTable
      */
-    handleColumnClick = (dict: Info) => (event: React.MouseEvent<HTMLTableHeaderCellElement>) => {
+    handleColumnClick = (dict: Info) => (event: React.SyntheticEvent) => {
+        // by using Synthetic event we can use the handler on both key press and mouse click
         let columnIconState = cloneDeep(this.state.columnIconState);
         if (columnIconState.length === 0) {
             columnIconState = Array(this.getLengthOfPropsData()).fill(0);
@@ -161,7 +164,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
 
     // Direct user to synapse corresponding synapse table
-    advancedSearch(event: React.MouseEvent<HTMLAnchorElement>) {
+    advancedSearch(event: React.SyntheticEvent) {
         event.preventDefault();
         let lastQueryRequest = this.props.getLastQueryRequest!();
         let { query } = lastQueryRequest;
@@ -217,7 +220,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         this.setState({ isColumnSelected });
     };
 
-
     /**
      *
      *
@@ -235,20 +237,49 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let columnName = facetColumnResult.columnName
 
         // this is related to whether we've selected this column or not
-        let isFilterSelected = this.state.isFilterSelected[index]
+        let isCurFilterSelected = this.state.isFilterSelected[index]
 
-        let toggleDropdown = (param?: any) => { 
+        let toggleDropdown = (event?: any) => { 
             //  make param any for code re-use
-            let isFilterSelectedDeepCopy = cloneDeep(this.state.isFilterSelected)
-            isFilterSelectedDeepCopy[index] = !isFilterSelected
+            let isFilterSelected = cloneDeep(this.state.isFilterSelected)
+            let filterClassList = cloneDeep(this.state.filterClassList)
+            
+            isFilterSelected[index] = !isCurFilterSelected
+
+            // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the 
+            // front of the scrollable we can examine its parent bounding rect -- this gives a relative value (that changes
+            // on scroll) of the filter to a fixed left most point.
+            let tHeadLeftPosition = refOuterDiv.current!.parentElement!.getBoundingClientRect().left
+            
+            let classNames = "" //  the classes to be applied to the filter dropdown menu
+
+            if (isFilterSelected[index]) {
+                if (tHeadLeftPosition < 300) {
+                    // this implies that its within 300 px of the fixed left most point, ie its dropdown
+                    // menu should pop out to the right
+                    classNames = "SRC-forceLeftDropdown dropdown-menu-left"
+                } else {
+                    // the menu is sufficiently to the right that the menu can pop down to the left
+                    classNames = "dropdown-menu-right"
+                }
+            } else {
+                classNames = ""
+            }
+            
+            // set the class names for this dropdown item
+            filterClassList[index] = classNames
+
             this.setState(
                 {
-                    isFilterSelected: isFilterSelectedDeepCopy
+                    isFilterSelected,
+                    filterClassList
                 }
             )
+
         }
 
         let ref: React.RefObject<HTMLSpanElement> = React.createRef()
+        let refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
 
         // handle column selection
         let handleSelector = (selector? : string) => (event: React.SyntheticEvent<HTMLElement>) => { 
@@ -308,22 +339,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             })
         }
 
-        let applyPrimary = isFilterSelected ? "SRC-primary-background-color": "SRC-primary-text-color"
-        let isFirst = index === 0
-        let style: any = {}
-        if (isFirst) {
-            style.right = "auto"
-            style.left = 0
-        }
+        let applyPrimary = isCurFilterSelected ? "SRC-primary-background-color": "SRC-primary-text-color"
 
         let numFacets: number = facetColumnResult.facetValues.length
+        let classList = this.state.filterClassList[index]
+
         return (
-            <div style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isFilterSelected ? "open SRC-anchor-light": ""}`}>
-                <span className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`} onClick={toggleDropdown}> 
-                    <FontAwesomeIcon style={{margin: "auto"}} size={"1x"} className={applyPrimary} color={isFilterSelected ? "white": ""} icon="filter"/> 
+            <div ref={refOuterDiv} style={{alignItems: "center", marginLeft: "15px", marginRight: "5px", color: "black", display: "flex" }} className={`btn-group SRC-tableHead ${isCurFilterSelected ? "open SRC-anchor-light": ""}`}>
+                <span tabIndex={0} className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`} onKeyPress={toggleDropdown} onClick={toggleDropdown}> 
+                    <FontAwesomeIcon style={{margin: "auto"}} size={"1x"} className={applyPrimary} color={isCurFilterSelected ? "white": ""} icon="filter"/> 
                 </span>
 
-                <div className="dropdown-menu SRC-minDropdownWidth dropdown-menu-left" style={style}>
+                <div className={"dropdown-menu SRC-minDropdownWidth " + classList}>
                     <div className="paddingMenuDropdown">
                         <ul style={{listStyleType: "none"}} className="scrollable">
                             <li> 
@@ -422,15 +449,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <div style={{display: "flex", alignItems: "center"}}>
                             {column.name}
                             {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
-                            <span className={"SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color SRC-anchor-light": "")} onClick={this.handleColumnClick({ name: column.name, index })}> 
+                            <span tabIndex={0} className={"SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover " + (isSelected ? "SRC-primary-background-color SRC-anchor-light": "")} onKeyPress={this.handleColumnClick({ name: column.name, index })} onClick={this.handleColumnClick({ name: column.name, index })}> 
                                 <FontAwesomeIcon  className={`SRC-primary-background-color-hover ${isSelected ? "SRC-selected-table-icon" : "SRC-primary-text-color"}`} icon={ICON_STATE[columnIndex]}/> 
                             </span>
                         </div>
                     </th>
                 );
             }
-            // avoid eslint complaint below by returning undefined
-            return (<div></div>);
+            return (<th key={column.name}></th>);
         });
 
         // Step 2: Format the row values, tracking the same information that the columns have to.
@@ -463,7 +489,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 </td>
                             );
                         }
-                        // avoid eslint complaint below by returning undefined
                         return (<td key={`(${i},${j})`}></td>);
                     })}
                 </tr>
@@ -510,39 +535,41 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         </span>
                     </div>
                 </div>
-                <div className="SRC-padding SRC-marginFifteen" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
-                    <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
-                    <span style={{marginLeft: "auto", marginRight: "10px"}}>
-                        <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
-                            <span data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
-                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
+                <div className="container-fluid" >
+                   <div className="SRC-padding" style={{background: backgroundColor,display: "flex", alignItems: "center"}}>
+                        <h3 style={{margin: "0px", display: "inline-block", color: "white"}}> {this.props.title}</h3>
+                        <span style={{marginLeft: "auto", marginRight: "10px"}}>
+                            <span className={` dropdown ${this.state.isOpen ? "open" : ""}`}>
+                                <span tabIndex={0} data-for={tooltipIdOne} data-tip="Open Advanced Search in Synapse" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onKeyPress={this.advancedSearch} onClick={this.advancedSearch}><FontAwesomeIcon size="1x" color="white"  icon="database"/></span>
+                                <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdOne} />
 
-                            <span data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onClick={this.toggleDropdown} id="dropdownMenu1">
-                                <FontAwesomeIcon color="white" icon="columns" />
+                                <span tabIndex={0} data-for={tooltipIdTwo} data-tip="Add / Remove Columns" style={{marginLeft: "10px"}} className={`SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor ${this.state.isOpen ? "SRC-primary-background-color": ""} `} onKeyPress={this.toggleDropdown} onClick={this.toggleDropdown} id="dropdownMenu1">
+                                    <FontAwesomeIcon color="white" icon="columns" />
+                                </span>
+                                <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
+
+                                <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                    {headers.map((header: any, index: number) => {
+                                        let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
+                                        let {visibleColumnCount = 0} = this.props
+                                        if (isColumnSelected === undefined) {
+                                            isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
+                                        }
+                                        return (
+                                            <li style={{listStyle: "none"}} className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
+                                                <a className="SRC-no-focus" href="">
+                                                    {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
+                                                    {/* below is to fake the indent that occurs */}
+                                                    {!isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px", visibility: "hidden"}} icon="check"/>}
+                                                    {header.name}
+                                                </a>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
                             </span>
-                            <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid"  id={tooltipIdTwo}/>
-
-                            <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                                {headers.map((header: any, index: number) => {
-                                    let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index];
-                                    let {visibleColumnCount = 0} = this.props
-                                    if (isColumnSelected === undefined) {
-                                        isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0);
-                                    }
-                                    return (
-                                        <li style={{listStyle: "none"}} className="SRC-primary-background-color-hover SRC-nested-color " key={header.name} onClick={this.toggleColumnSelection(index)}>
-                                            <a className="SRC-no-focus" href="">
-                                                {isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px"}} className="SRC-primary-text-color" icon="check"/>}
-                                                {/* below is to fake the indent that occurs */}
-                                                {!isColumnSelected && <FontAwesomeIcon style={{width: "11px", marginRight: "10px", visibility: "hidden"}} icon="check"/>}
-                                                {header.name}
-                                            </a>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
                         </span>
-                    </span>
+                    </div>
                 </div>
                 <div className="container-fluid">
                     <div className="row SRC-overflowAuto">
@@ -566,7 +593,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                                 </button>
                             )}
                         {!this.props.showNothing && (
-                            <button onClick={this.handlePaginationClick(NEXT)} className="SRC-viewMoreButton pull-right" type="button">
+                            <button onClick={this.handlePaginationClick(NEXT)} className="SRC-primary-background-hover SRC-viewMoreButton pull-right" type="button">
                                 Next
                             </button>
                         )}

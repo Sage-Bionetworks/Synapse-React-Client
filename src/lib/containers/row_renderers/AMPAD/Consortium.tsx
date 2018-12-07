@@ -38,7 +38,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
             case "M2OVE-AD":
                 return <img src={require("../../../assets/icons/movead.png")}/>
             case "MODEL-AD":
-                return <img src={require("../../../assets/icons/modelad.png")}/>
+                return <img src={require("../../../assets/icons/ModelADLogo-IconOnly-FNL.svg")}/>
             case "Resilience-AD":
                 return <img src={require("../../../assets/icons/resiliencead.png")}/>
             default:

@@ -256,7 +256,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">
                     <form>
-                        <div className="form-group">{this.showFacetFilter()}
+                        <div className="SRC-marginFive form-group">{this.showFacetFilter()}
                             {!showAllFacets
                                 &&
                                 <span className="SRC-inlineBlock">
@@ -267,7 +267,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
                                 </span>
                             }
                         </div>
-                        <div className="form-group">
+                        <div className="SRC-marginFive form-group">
                             <p>
                                {showAllFacets &&
                                     <React.Fragment>

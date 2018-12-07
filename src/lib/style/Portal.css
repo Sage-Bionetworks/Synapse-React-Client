@@ -246,7 +246,9 @@ body * {
 .SRC-facets {
   padding: 4px;
   border-radius: 20px;
-  margin: 5px;
+  margin-right: 6px;
+  margin-bottom: 5px;
+  margin-top: 5px;
   display: inline-block;
   cursor: pointer; }
 
@@ -608,19 +610,22 @@ button.SRC-roundBorder {
 .containerCheckbox input:checked ~ .checkmark:after {
   display: block; }
 
+.SRC-minDropdownWidth {
+  width: 240px; }
+
+/*
+
+checkmark styling end
+
+*/
 .SRC-tableHead {
   font-size: 14px !important;
   text-transform: capitalize !important;
   font-weight: 700 !important; }
 
-.SRC-minDropdownWidth {
-  width: 240px; }
-
 .SRC-sortPadding {
   padding: 2px 3px; }
 
-/*
-
-  checkmark styling end
-
-*/
+.SRC-forceLeftDropdown {
+  right: auto;
+  left: 0; }

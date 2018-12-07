@@ -25,10 +25,10 @@ const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...
         (rowData: any, index: number) => {
             if (index < limit) {
                 return (
-                    <React.Fragment key={uuidv4()}>
+                    <React.Fragment key={index}>
                         {React.Children.map(children,
-                         (child: any) => {
-                                return React.cloneElement(child, {key: uuidv4(), data: rowData.values, ...rest });
+                         (child: any, j) => {
+                                return React.cloneElement(child, {key: `${index},${j}`, data: rowData.values, ...rest });
                             })}
                     </React.Fragment>
                 );
@@ -152,7 +152,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                     this.state.hasMoreData
                     && (
                         <div>
-                            <button onClick={this.handleViewMore} className="pull-right SRC-viewMoreButton">
+                            <button onClick={this.handleViewMore} className="pull-right SRC-primary-background-hover SRC-viewMoreButton">
                             View More
                             </button>
                         </div>)
