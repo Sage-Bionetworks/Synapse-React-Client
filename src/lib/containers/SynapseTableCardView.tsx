@@ -54,6 +54,8 @@ type SynapseTableCardViewProps = {
 
 type SynapseTableCardViewState = {
     hasMoreData: boolean
+    cardLimit: number
+    hasLoadedBufferData: boolean
 }
 
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, SynapseTableCardViewState> {
@@ -68,8 +70,11 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         super(props);
         this.renderChild = this.renderChild.bind(this);
         this.handleViewMore = this.handleViewMore.bind(this);
+        this.getBufferData = this.getBufferData.bind(this);
         this.state = {
-            hasMoreData: true
+            hasMoreData: true,
+            cardLimit: 25,
+            hasLoadedBufferData: false
         }
     }
 
@@ -97,27 +102,60 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
     }
 
+    componentDidMount() {
+        // we try to load one page of data ahead of cards, this allows the "view more" behavior 
+        // to be instant
+        this.getBufferData()
+    }
+
+    getBufferData() {
+        // Load data ahead of the currently displayed data, do this recursively in case it needs more time
+        if (!this.state.hasLoadedBufferData) {
+            setTimeout(() => {
+                if (!this.props.getLastQueryRequest) {
+                    // parent component still setting up
+                    this.getBufferData()
+                    return
+                }
+                let queryRequest = this.props.getLastQueryRequest!();
+                if (!queryRequest.query) {
+                    // parent component still setting up
+                    this.getBufferData()
+                    return
+                }
+                let offset = queryRequest.query.offset!;
+                // if its a "previous" click subtract from the offset
+                // otherwise its next and we paginate forward
+                offset += 25;
+                queryRequest.query.offset = offset;
+                this.props.getNextPageOfData!(queryRequest);
+                this.setState({hasLoadedBufferData: true})
+            }, 1500)
+        }
+    }
+
     /**
      * Handle a click on next or previous
      *
      * @memberof SynapseTable
      */
-    handleViewMore (event: React.MouseEvent<HTMLButtonElement>){
-        let queryRequest = this.props.getLastQueryRequest!();
-        let offset = queryRequest.query.offset!;
-        // if its a "previous" click subtract from the offset
-        // otherwise its next and we paginate forward
-        offset += 25;
-        queryRequest.query.offset = offset;
-        let hasMoreData = this.props.getNextPageOfData!(queryRequest);
-        if (!hasMoreData) {
-            this.setState({hasMoreData: false})
-        }
+    handleViewMore (){
+       let queryRequest = this.props.getLastQueryRequest!();
+       let offset = queryRequest.query.offset!;
+       // if its a "previous" click subtract from the offset
+       // otherwise its next and we paginate forward
+       offset += 25;
+       queryRequest.query.offset = offset;
+       let hasMoreData = this.props.getNextPageOfData!(queryRequest);
+       if (!hasMoreData) {
+           this.setState({hasMoreData: false})
+       }
+       let {cardLimit} = this.state
+       this.setState({cardLimit: cardLimit + 25})
     };
 
     render() {
         const { data, 
-                limit = Infinity,
                 hideOrganizationLink = false,
                 token="",
                 ownerId="",
@@ -136,7 +174,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 <RowContainer 
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
-                    limit={limit}
+                    limit={this.state.cardLimit}
                     data={data}
                     schema={schema}
                     token={token}

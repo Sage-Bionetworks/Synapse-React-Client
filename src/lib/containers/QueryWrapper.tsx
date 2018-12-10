@@ -126,6 +126,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             this.executeInitialQueryRequest()
         }
     }
+
     /**
      * Pass down a deep clone (so no side affects on the child's part) of the
      * last query request made
@@ -136,8 +137,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     getLastQueryRequest() {
         return cloneDeep(this.state.lastQueryRequest)
     }
+    
     /**
-     * Exectue the given query
+     * execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
@@ -158,7 +160,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }
 
     /**
-     * Exectue the given query
+     * execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
@@ -181,7 +183,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             })
     }
     /**
-     * Exectue the given query
+     * execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper

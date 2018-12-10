@@ -46,42 +46,43 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           menuConfig: [
             {
               sql:
-                "SELECT species, dataType, id as file_id, consortium as program, grant, study, organ, tissue, cellType, assay, fileFormat, specimenID FROM syn11346063",
-              title: "Data",
-              synapseId: "syn11346063",
-              facetName: "species",
-              facetDisplayValue: "Species",
+                "SELECT * FROM syn9886254",
+              // title: "Data",
+              synapseId: "syn9886254",
+              facetName: "Organism",
+              facetDisplayValue: "Organism",
               unitDescription: "data files",
               visibleColumnCount: 3,
             },
             {
               sql:
-                "SELECT organ, tissue, dataType, assay, id AS file_id, consortium as program, grant, study, species, cellType, specimenID FROM syn11346063",
+              "SELECT * FROM syn9886254",
               title: "Data",
-              synapseId: "syn11346063",
-              facetName: "organ",
-              facetDisplayValue: "Organ",
+              synapseId: "syn9886254",
+              facetName: "Study",
+              facetDisplayValue: "Study",
               unitDescription: "data files",
               visibleColumnCount: 5,
             }
-          ]
+          ],
+          type: SynapseConstants.AMP_STUDY
           ,
           rgbIndex: 2,
         }
       ,
       tabTwo:{
           menuConfig: [
-            { sql: "SELECT * FROM syn17024173",
-                synapseId: "syn17024173",
-                facetName: "Program",
-                unitDescription: "Program"
+            { sql: "SELECT * FROM syn9886254",
+                synapseId: "syn9886254",
+                facetName: "Consortium",
+                title: "title",
+                unitDescription: "Consortium"
             }]
           ,
-          rgbIndex: 5,
-          type: SynapseConstants.AMP_PROJECT
+          rgbIndex: 5
         }
       ,
-      showTabOne: false
+      showTabOne: true
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);
