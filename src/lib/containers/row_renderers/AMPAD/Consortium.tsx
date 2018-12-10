@@ -50,9 +50,13 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         const { data, schema } = this.props;
         
         const description = data[schema["Short Description"]]
-        const link = data[schema.Website]
         const name = data[schema["Full Name"]]
         const org = data[schema.Program]
+
+        const path = data[schema.Path]
+        let orgPath = `${window.location.origin}/#${path}`        
+
+        let isOnOrgPath = window.location.hash.substring(1) === path
 
         return (
             <div style={{paddingBottom: "32px"}} className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
@@ -63,9 +67,14 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
                     <div className="SRC-type">Program</div>
                     <div className="SRC-title">
                         <h3>
-                            <a target="_blank" href={link}>
-                                {name}
-                            </a>
+                            {!isOnOrgPath && 
+                                <a target="_blank" href={orgPath}>
+                                    {name}
+                                </a>
+                            }
+                            {isOnOrgPath && 
+                                name
+                            }
                         </h3>
                     </div>
                     <span className="SRC-font-size-base">

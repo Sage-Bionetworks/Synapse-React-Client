@@ -5,6 +5,8 @@ import "./App.css";
 import * as SynapseConstants from "../../lib/utils/SynapseConstants";
 import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
+import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
+import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 // import QueryWrapper from 'src/lib/containers/QueryWrapper';
 // import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 // import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
@@ -69,8 +71,8 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
       ,
       tabTwo:{
           menuConfig: [
-            { sql: "SELECT * FROM syn17024229",
-                synapseId: "syn17024229",
+            { sql: "SELECT * FROM syn17024173",
+                synapseId: "syn17024173",
                 facetName: "Program",
                 unitDescription: "Program"
             }]
@@ -79,7 +81,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           type: SynapseConstants.AMP_PROJECT
         }
       ,
-      showTabOne: true
+      showTabOne: false
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -166,6 +168,15 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           type={this.state.showTabOne ? this.state.tabOne.type: this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
+
+        <StaticQueryWrapper
+            sql="SELECT * FROM syn17024173"
+            token={inDevEnv ? token! : this.state.token!}
+          >
+            <SynapseTableCardView
+              type={SynapseConstants.AMP_CONSORTIUM}
+            />
+          </StaticQueryWrapper>
 
         
         {/* <QueryWrapper
