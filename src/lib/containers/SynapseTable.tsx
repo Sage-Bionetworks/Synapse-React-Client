@@ -87,7 +87,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             isFilterSelected: Array(100).fill(false),
             filterClassList: Array(100).fill(""),
             applyClickedArray: Array(100).fill(false),
-            menuWallIsActive: true
+            menuWallIsActive: false
         };
     }
 
@@ -187,9 +187,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const { isOpen } = this.state;
 
         if (!isOpen) {
-            this.setState({ menuWallIsActive: false });
-        } else {
+            // the dropdown was closed coming into this method, so now it will be opened
+            // so we activate the menu wall.
             this.setState({ menuWallIsActive: true });
+        } else {
+            // dropdown was open coming into this method, so we activate the menu wall
+            // to allow the dropdown to be closed
+            this.setState({ menuWallIsActive: false });
         }
 
         this.setState({ isOpen: !isOpen });
@@ -284,7 +288,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 {
                     isFilterSelected,
                     filterClassList,
-                    menuWallIsActive: false
+                    menuWallIsActive: true
                 }
             )
 
@@ -348,7 +352,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             applyClickedArray[index] = true
             this.setState({
                 applyClickedArray,
-                menuWallIsActive: true
+                menuWallIsActive: false
             })
         }
 
@@ -566,7 +570,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let {menuWallIsActive} = this.state
         let optionalHiddenClass = ""
 
-        if (menuWallIsActive) {
+        if (!menuWallIsActive) {
             optionalHiddenClass = "hidden"
         }
 

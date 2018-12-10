@@ -261,7 +261,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     let tooltipId = uuidv4()
                                     // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
                                     let value = obj.value as number
-                                    let numCharsInValue = value.toString().length * 4.5 // 5 represents width of a character 
+                                    let numCharsInValue = value.toString().length * 4.5 // represents width of a character
 
                                     return (
                                         // each svg represents one of the bars

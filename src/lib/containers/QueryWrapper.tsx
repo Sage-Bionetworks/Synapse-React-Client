@@ -139,7 +139,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }
     
     /**
-     * execute the given query
+     * Execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
@@ -160,7 +160,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }
 
     /**
-     * execute the given query
+     * Execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
@@ -183,7 +183,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             })
     }
     /**
-     * execute the given query
+     * Execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
