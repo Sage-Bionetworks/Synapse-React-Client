@@ -259,6 +259,10 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     }
                                     let label: string =`${this.props.filter}: ${obj.value}  - ${obj.count} ${this.props.unitDescription}`
                                     let tooltipId = uuidv4()
+                                    // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
+                                    let value = obj.value as number
+                                    let numCharsInValue = value.toString().length * 4.5 // 5 represents width of a character 
+
                                     return (
                                         // each svg represents one of the bars
                                         // will need to change this to be responsive
@@ -275,7 +279,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                                         style={rectStyle}
                                                     />
                                                     {
-                                                        index < 3 && svgWidth > 8 &&
+                                                        index < 3 && svgWidth > numCharsInValue  &&
                                                         <text textAnchor="middle" className="SRC-text-title" fontFamily={"bold sans-serif"} fill={textColor} x={"50%"} y={"50%"}>
                                                             {obj.count}
                                                         </text>

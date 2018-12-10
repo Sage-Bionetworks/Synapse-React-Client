@@ -629,3 +629,12 @@ checkmark styling end
 .SRC-forceLeftDropdown {
   right: auto;
   left: 0; }
+
+.SRC-menu-wall {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: none;
+  border: none; }
+  .SRC-menu-wall:focus {
+    outline: none; }

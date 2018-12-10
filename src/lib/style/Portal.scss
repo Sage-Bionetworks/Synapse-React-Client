@@ -774,3 +774,14 @@ checkmark styling end
   right: auto;
   left: 0
 }
+
+.SRC-menu-wall {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: none;
+  border: none;
+  &:focus {
+    outline: none;
+  }
+}

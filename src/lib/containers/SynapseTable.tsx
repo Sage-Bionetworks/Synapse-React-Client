@@ -42,6 +42,7 @@ type SynapseTableState = {
     isFilterSelected: boolean []
     applyClickedArray: boolean []
     filterClassList: string [],
+    menuWallIsActive: boolean
 };
 
 type SynapseTableProps = {
@@ -75,6 +76,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         this.download = this.download.bind(this);
         this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this);
         this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
+        this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             sortSelection: [],
@@ -84,7 +86,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             columnIconState: [],
             isFilterSelected: Array(100).fill(false),
             filterClassList: Array(100).fill(""),
-            applyClickedArray: Array(100).fill(false)
+            applyClickedArray: Array(100).fill(false),
+            menuWallIsActive: true
         };
     }
 
@@ -182,7 +185,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      */
     toggleDropdown() {
         const { isOpen } = this.state;
+
+        if (!isOpen) {
+            this.setState({ menuWallIsActive: false });
+        } else {
+            this.setState({ menuWallIsActive: true });
+        }
+
         this.setState({ isOpen: !isOpen });
+        
     }
 
     getLengthOfPropsData() {
@@ -272,7 +283,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             this.setState(
                 {
                     isFilterSelected,
-                    filterClassList
+                    filterClassList,
+                    menuWallIsActive: false
                 }
             )
 
@@ -335,7 +347,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             let applyClickedArray = cloneDeep(this.state.applyClickedArray)
             applyClickedArray[index] = true
             this.setState({
-                applyClickedArray
+                applyClickedArray,
+                menuWallIsActive: true
             })
         }
 
@@ -400,6 +413,31 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         )
 
     }
+
+
+    closeMenuClickHandler (event: React.SyntheticEvent) {
+        let {menuWallIsActive} = this.state
+
+        let isFilterSelected = cloneDeep(this.state.isFilterSelected)
+        let filterClassList = cloneDeep(this.state.filterClassList)
+
+        if (!menuWallIsActive) {
+            // need to close the menus and column select menu
+            for (let i = 0; i < isFilterSelected.length; i++) {
+                isFilterSelected[i] = false
+                filterClassList[i] = ""
+            }
+
+            this.setState({
+                isOpen: false,
+                isFilterSelected,
+                filterClassList,
+                menuWallIsActive: true
+            })
+        }
+
+    }
+
     /**
      * Display the view
      */
@@ -524,8 +562,17 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let total = anyTrue ? totalStandardCase : totalAllFalseCase;
         let tooltipIdOne = uuidv4()
         let tooltipIdTwo = uuidv4()
+        
+        let {menuWallIsActive} = this.state
+        let optionalHiddenClass = ""
+
+        if (menuWallIsActive) {
+            optionalHiddenClass = "hidden"
+        }
+
         return (
             <React.Fragment>
+                <button onClick={this.closeMenuClickHandler} className={"SRC-menu-wall " + optionalHiddenClass} />
                 <div className="container-fluid">
                     <div className="row SRC-marginBottomTen">
                         <span>
