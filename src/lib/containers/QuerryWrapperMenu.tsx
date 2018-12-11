@@ -64,7 +64,8 @@ export default class Menu extends React.Component<Props, MenuState> {
         if (!info.isSelected && event.currentTarget.tagName === "DIV") {
             event.currentTarget.style.backgroundColor = info.originalColor;
         }
-      } 
+    }
+
     render () {
         let {token, menuConfig, rgbIndex} = this.props
 

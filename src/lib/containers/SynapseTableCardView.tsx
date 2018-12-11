@@ -8,6 +8,7 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
+const PAGE_SIZE: number = 25
 
 type RowContainerProps = {
     children: any
@@ -48,12 +49,15 @@ type SynapseTableCardViewProps = {
     isHeader?: boolean
     isQueryWrapperChild?: boolean
     getLastQueryRequest?: () => QueryBundleRequest
-    getNextPageOfData?: (queryRequest: any) => boolean 
-    executeInitialQueryRequest?: () => void
+    getNextPageOfData?: (queryRequest: any) => Promise<boolean> 
+    executeInitialQueryRequest?: () => void,
+    isLoading? : boolean
 };
 
 type SynapseTableCardViewState = {
     hasMoreData: boolean
+    cardLimit: number
+    hasLoadedBufferData: boolean
 }
 
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, SynapseTableCardViewState> {
@@ -68,8 +72,11 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         super(props);
         this.renderChild = this.renderChild.bind(this);
         this.handleViewMore = this.handleViewMore.bind(this);
+        this.getBufferData = this.getBufferData.bind(this);
         this.state = {
-            hasMoreData: true
+            hasMoreData: true,
+            cardLimit: PAGE_SIZE,
+            hasLoadedBufferData: false
         }
     }
 
@@ -97,28 +104,70 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
     }
 
+    componentDidMount() {
+        // we try to load one page of data ahead of cards, this allows the "view more" behavior 
+        // to be instant
+        this.getBufferData()
+    }
+
+    getBufferData() {
+        // Load data ahead of the currently displayed data, do this recursively in case it needs more time
+        if (!this.state.hasLoadedBufferData) {
+            setTimeout(() => {
+                if (!this.props.getLastQueryRequest) {
+                    // parent component still setting up
+                    this.getBufferData()
+                    return
+                }
+                let queryRequest = this.props.getLastQueryRequest!();
+                if (!queryRequest.query) {
+                    // parent component still setting up
+                    this.getBufferData()
+                    return
+                }
+                let offset = queryRequest.query.offset!;
+                // if its a "previous" click subtract from the offset
+                // otherwise its next and we paginate forward
+                offset += PAGE_SIZE;
+                queryRequest.query.offset = offset;
+                this.props.getNextPageOfData!(queryRequest).then(
+                    hasMoreData => {
+                        this.setState({hasLoadedBufferData: true, hasMoreData})
+                    }
+                )
+            }, 1500)
+        }
+    }
+
     /**
      * Handle a click on next or previous
      *
      * @memberof SynapseTable
      */
-    handleViewMore (event: React.MouseEvent<HTMLButtonElement>){
-        let queryRequest = this.props.getLastQueryRequest!();
-        let offset = queryRequest.query.offset!;
-        // if its a "previous" click subtract from the offset
-        // otherwise its next and we paginate forward
-        offset += 25;
-        queryRequest.query.offset = offset;
-        let hasMoreData = this.props.getNextPageOfData!(queryRequest);
-        if (!hasMoreData) {
-            this.setState({hasMoreData: false})
-        }
+    handleViewMore (){
+       let queryRequest = this.props.getLastQueryRequest!();
+       let offset = queryRequest.query.offset!;
+       // if its a "previous" click subtract from the offset
+       // otherwise its next and we paginate forward
+       offset += PAGE_SIZE;
+       queryRequest.query.offset = offset;
+       
+       let {cardLimit} = this.state
+       this.setState({cardLimit: cardLimit + PAGE_SIZE})
+
+       this.props.getNextPageOfData!(queryRequest).then(
+           hasMoreData => {
+               if (!hasMoreData) {
+                   this.setState({hasMoreData: false})
+               }
+           }
+       )
     };
 
     render() {
         const { data, 
-                limit = Infinity,
                 hideOrganizationLink = false,
+                limit = Infinity,
                 token="",
                 ownerId="",
                 isHeader=false            
@@ -131,12 +180,35 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
             (element: any, index: any) => {
                 schema[element.name] = index;
             });
+
+        let cardLimit = 0 
+        
+        // Either the number of cards to be shown is specified by the developer in the props
+        // or this card is under the query wrapper and we handle the view more button
+        if (this.props.isQueryWrapperChild) {
+            cardLimit = this.state.cardLimit
+        } else {
+            cardLimit = limit
+        }
+
+        // We want to hide the view more button if:
+        //     1. On page load we get the initial results and find there are < 25 rows
+        //     2. We have done a subsequent query request from init render and have found
+        //        that there were no rows returned.
+        //     3. If its loading then we want it to remove from the screen so the browser doesn't
+        //        keep the button in focus (its a UX issue).
+
+        let showViewMore: boolean = this.props.isQueryWrapperChild! && data.queryResult.queryResults.rows.length >= PAGE_SIZE
+        showViewMore = showViewMore && this.state.hasMoreData
+        showViewMore = showViewMore && !this.props.isLoading
+
+
         return (
             <React.Fragment>
                 <RowContainer 
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
-                    limit={limit}
+                    limit={cardLimit}
                     data={data}
                     schema={schema}
                     token={token}
@@ -145,13 +217,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 >
                 {this.renderChild()}
                 </RowContainer>
-                {this.props.isQueryWrapperChild
+                {showViewMore
                     &&
-                    data.queryResult.queryResults.rows.length >= 25
-                    &&
-                    this.state.hasMoreData
-                    && (
-                        <div>
+                        (<div>
                             <button onClick={this.handleViewMore} className="pull-right SRC-primary-background-hover SRC-viewMoreButton">
                             View More
                             </button>

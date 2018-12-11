@@ -34,7 +34,7 @@ export type QueryWrapperChildProps = {
     isLoadingNewData?: boolean
     executeQueryRequest?: (param: QueryBundleRequest) => void
     executeInitialQueryRequest?: () => void
-    getNextPageOfData?: (queryRequest: any) => boolean 
+    getNextPageOfData?: (queryRequest: any) => Promise<boolean>
     getLastQueryRequest?: () => QueryBundleRequest
     isChecked?: boolean []
     data?: QueryResultBundle
@@ -126,6 +126,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             this.executeInitialQueryRequest()
         }
     }
+
     /**
      * Pass down a deep clone (so no side affects on the child's part) of the
      * last query request made
@@ -136,8 +137,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     getLastQueryRequest() {
         return cloneDeep(this.state.lastQueryRequest)
     }
+    
     /**
-     * Exectue the given query
+     * Execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
@@ -158,7 +160,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }
 
     /**
-     * Exectue the given query
+     * Execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper
@@ -167,21 +169,21 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         this.setState({
             isLoading: true
         })
-        SynapseClient.getQueryTableResults(queryRequest, this.props.token)
+        return SynapseClient.getQueryTableResults(queryRequest, this.props.token)
             .then(
                 (data: QueryResultBundle )=> {
                     let oldData: QueryResultBundle = cloneDeep(this.state.data)
                     oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
                     let newState: any = { data: oldData, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false }
                     this.setState(newState)
-                    return data.queryResult.queryResults.rows.length > 0
+                    return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
                 }
             ).catch(err => {
                 console.log("Failed to get data ", err)
             })
     }
     /**
-     * Exectue the given query
+     * Execute the given query
      *
      * @param {*} queryRequest Query request as specified by https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
      * @memberof QueryWrapper

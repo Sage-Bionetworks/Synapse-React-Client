@@ -278,6 +278,7 @@ down once you can specify the query that will pull down the data for the child c
 | ------------- | ------------- |
 | json  | Preloaded data from Synapse  |
 | token  | Session token to make authenticated requests to synapse  |
+| limit | The number of cards to show, e.g limit = 3 will only render 3 cards  |
 | sql  | SQL query to be run on Synapse  |
 
 #### QueryWrapperMenu
@@ -343,7 +344,6 @@ down once you can specify the query that will pull down the data for the child c
 | Props  | Explanation |
 | ------------- | ------------- |
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
-| limit | The number of cards to show, e.g limit = 3 will only render 3 cards  |
 | hideOrganizationLink | This is a boolean, set to true it will hide the organization's link |
 
 

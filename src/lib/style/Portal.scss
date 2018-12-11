@@ -685,6 +685,9 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   width: 130px;
   height: 40px;
   margin: 21px;
+  &:focus {
+    outline: none;
+  }
 }
 
 /*
@@ -773,4 +776,15 @@ checkmark styling end
 .SRC-forceLeftDropdown {
   right: auto;
   left: 0
+}
+
+.SRC-menu-wall {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: none;
+  border: none;
+  &:focus {
+    outline: none;
+  }
 }
