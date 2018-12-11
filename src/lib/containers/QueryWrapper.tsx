@@ -34,7 +34,7 @@ export type QueryWrapperChildProps = {
     isLoadingNewData?: boolean
     executeQueryRequest?: (param: QueryBundleRequest) => void
     executeInitialQueryRequest?: () => void
-    getNextPageOfData?: (queryRequest: any) => boolean 
+    getNextPageOfData?: (queryRequest: any) => Promise<boolean>
     getLastQueryRequest?: () => QueryBundleRequest
     isChecked?: boolean []
     data?: QueryResultBundle
@@ -169,14 +169,14 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         this.setState({
             isLoading: true
         })
-        SynapseClient.getQueryTableResults(queryRequest, this.props.token)
+        return SynapseClient.getQueryTableResults(queryRequest, this.props.token)
             .then(
                 (data: QueryResultBundle )=> {
                     let oldData: QueryResultBundle = cloneDeep(this.state.data)
                     oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
                     let newState: any = { data: oldData, lastQueryRequest: cloneDeep(queryRequest), isLoading: false, showNothing: false }
                     this.setState(newState)
-                    return data.queryResult.queryResults.rows.length > 0
+                    return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
                 }
             ).catch(err => {
                 console.log("Failed to get data ", err)

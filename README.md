@@ -253,6 +253,7 @@ import syn16787123 from 'folder/to/syn16787123.json'
   >
   <SynapseComponents.SynapseTableCardView
       type={SynapseConstants.STUDY}
+      limit={3}
   />
 </SynapseComponents.StaticQueryWrapper>
 
@@ -266,6 +267,7 @@ down once you can specify the query that will pull down the data for the child c
   >
   <SynapseComponents.SynapseTableCardView
       type={SynapseConstants.STUDY}
+      limit={3}
   />
 </SynapseComponents.StaticQueryWrapper>
 ```
@@ -276,6 +278,7 @@ down once you can specify the query that will pull down the data for the child c
 | ------------- | ------------- |
 | json  | Preloaded data from Synapse  |
 | token  | Session token to make authenticated requests to synapse  |
+| limit | The number of cards to show, e.g limit = 3 will only render 3 cards  |
 | sql  | SQL query to be run on Synapse  |
 
 #### QueryWrapperMenu

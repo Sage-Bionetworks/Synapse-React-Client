@@ -8,6 +8,7 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
+const PAGE_SIZE: number = 25
 
 type RowContainerProps = {
     children: any
@@ -48,8 +49,9 @@ type SynapseTableCardViewProps = {
     isHeader?: boolean
     isQueryWrapperChild?: boolean
     getLastQueryRequest?: () => QueryBundleRequest
-    getNextPageOfData?: (queryRequest: any) => boolean 
-    executeInitialQueryRequest?: () => void
+    getNextPageOfData?: (queryRequest: any) => Promise<boolean> 
+    executeInitialQueryRequest?: () => void,
+    isLoading? : boolean
 };
 
 type SynapseTableCardViewState = {
@@ -73,7 +75,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         this.getBufferData = this.getBufferData.bind(this);
         this.state = {
             hasMoreData: true,
-            cardLimit: 25,
+            cardLimit: PAGE_SIZE,
             hasLoadedBufferData: false
         }
     }
@@ -126,7 +128,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 let offset = queryRequest.query.offset!;
                 // if its a "previous" click subtract from the offset
                 // otherwise its next and we paginate forward
-                offset += 25;
+                offset += PAGE_SIZE;
                 queryRequest.query.offset = offset;
                 this.props.getNextPageOfData!(queryRequest);
                 this.setState({hasLoadedBufferData: true})
@@ -144,19 +146,25 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
        let offset = queryRequest.query.offset!;
        // if its a "previous" click subtract from the offset
        // otherwise its next and we paginate forward
-       offset += 25;
+       offset += PAGE_SIZE;
        queryRequest.query.offset = offset;
-       let hasMoreData = this.props.getNextPageOfData!(queryRequest);
-       if (!hasMoreData) {
-           this.setState({hasMoreData: false})
-       }
+       
        let {cardLimit} = this.state
-       this.setState({cardLimit: cardLimit + 25})
+       this.setState({cardLimit: cardLimit + PAGE_SIZE})
+
+       this.props.getNextPageOfData!(queryRequest).then(
+           hasMoreData => {
+               if (!hasMoreData) {
+                   this.setState({hasMoreData: false})
+               }
+           }
+       )
     };
 
     render() {
         const { data, 
                 hideOrganizationLink = false,
+                limit = Infinity,
                 token="",
                 ownerId="",
                 isHeader=false            
@@ -169,12 +177,23 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
             (element: any, index: any) => {
                 schema[element.name] = index;
             });
+
+        let cardLimit = 0 
+        
+        // Either the number of cards to be shown is specified by the developer in the props
+        // or this card is under the query wrapper and we handle the view more button
+        if (this.props.isQueryWrapperChild) {
+            cardLimit = this.state.cardLimit
+        } else {
+            cardLimit = limit
+        }
+        let showViewMore = this.props.isQueryWrapperChild && data.queryResult.queryResults.rows.length >= PAGE_SIZE && this.state.hasMoreData && !this.props.isLoading
         return (
             <React.Fragment>
                 <RowContainer 
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
-                    limit={this.state.cardLimit}
+                    limit={cardLimit}
                     data={data}
                     schema={schema}
                     token={token}
@@ -183,13 +202,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 >
                 {this.renderChild()}
                 </RowContainer>
-                {this.props.isQueryWrapperChild
+                {showViewMore
                     &&
-                    data.queryResult.queryResults.rows.length >= 25
-                    &&
-                    this.state.hasMoreData
-                    && (
-                        <div>
+                        (<div>
                             <button onClick={this.handleViewMore} className="pull-right SRC-primary-background-hover SRC-viewMoreButton">
                             View More
                             </button>
