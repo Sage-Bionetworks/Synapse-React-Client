@@ -130,8 +130,11 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 // otherwise its next and we paginate forward
                 offset += PAGE_SIZE;
                 queryRequest.query.offset = offset;
-                this.props.getNextPageOfData!(queryRequest);
-                this.setState({hasLoadedBufferData: true})
+                this.props.getNextPageOfData!(queryRequest).then(
+                    hasMoreData => {
+                        this.setState({hasLoadedBufferData: true, hasMoreData})
+                    }
+                )
             }, 1500)
         }
     }
@@ -187,7 +190,19 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         } else {
             cardLimit = limit
         }
-        let showViewMore = this.props.isQueryWrapperChild && data.queryResult.queryResults.rows.length >= PAGE_SIZE && this.state.hasMoreData && !this.props.isLoading
+
+        // We want to hide the view more button if:
+        //     1. On page load we get the initial results and find there are < 25 rows
+        //     2. We have done a subsequent query request from init render and have found
+        //        that there were no rows returned.
+        //     3. If its loading then we want it to remove from the screen so the browser doesn't
+        //        keep the button in focus (its a UX issue).
+
+        let showViewMore: boolean = this.props.isQueryWrapperChild! && data.queryResult.queryResults.rows.length >= PAGE_SIZE
+        showViewMore = showViewMore && this.state.hasMoreData
+        showViewMore = showViewMore && !this.props.isLoading
+
+
         return (
             <React.Fragment>
                 <RowContainer 

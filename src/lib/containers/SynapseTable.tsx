@@ -184,8 +184,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      * @memberof SynapseTable
      */
     toggleDropdown() {
-        const { isOpen } = this.state;
-
+        let { isOpen } = this.state;
+        
         if (!isOpen) {
             // the dropdown was closed coming into this method, so now it will be opened
             // so we activate the menu wall.
@@ -288,7 +288,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 {
                     isFilterSelected,
                     filterClassList,
-                    menuWallIsActive: true
+                    menuWallIsActive: !isCurFilterSelected
                 }
             )
 
@@ -425,7 +425,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let isFilterSelected = cloneDeep(this.state.isFilterSelected)
         let filterClassList = cloneDeep(this.state.filterClassList)
 
-        if (!menuWallIsActive) {
+        if (menuWallIsActive) {
             // need to close the menus and column select menu
             for (let i = 0; i < isFilterSelected.length; i++) {
                 isFilterSelected[i] = false
@@ -436,8 +436,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 isOpen: false,
                 isFilterSelected,
                 filterClassList,
-                menuWallIsActive: true
+                menuWallIsActive: false
             })
+        } else {
+
         }
 
     }
@@ -571,6 +573,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let optionalHiddenClass = ""
 
         if (!menuWallIsActive) {
+            // if its in active then we have to hide it.
             optionalHiddenClass = "hidden"
         }
 

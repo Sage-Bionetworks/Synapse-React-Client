@@ -82,7 +82,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           rgbIndex: 5
         }
       ,
-      showTabOne: true
+      showTabOne: false
     };
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this);
     this.handleChange = this.handleChange.bind(this);

@@ -685,6 +685,9 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   width: 130px;
   height: 40px;
   margin: 21px;
+  &:focus {
+    outline: none;
+  }
 }
 
 /*

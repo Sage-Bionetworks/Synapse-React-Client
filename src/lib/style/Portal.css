@@ -555,6 +555,8 @@ button.SRC-roundBorder {
   width: 130px;
   height: 40px;
   margin: 21px; }
+  .SRC-viewMoreButton:focus {
+    outline: none; }
 
 /*
   checkmark styling start
