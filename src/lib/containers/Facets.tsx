@@ -68,7 +68,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         }
         const showTimes = check;
         children.push(
-            <span style={style} className="SRC-facets SRC-primary-background-hover" key={uniqueId} onClick={props.clickHandler({ index, value: facetValue.value, columnName: element.columnName })}>
+            <span style={style} className="SRC-facets SRC-primary-background-color-hover SRC-nested-color" key={uniqueId} onClick={props.clickHandler({ index, value: facetValue.value, columnName: element.columnName })}>
                 <span className="SRC-facets-text">
                     {" "}
                     &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}){" "}
