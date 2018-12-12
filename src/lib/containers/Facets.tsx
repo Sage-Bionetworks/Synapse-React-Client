@@ -256,7 +256,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             <div className="container-fluid SRC-syn-border-spacing ">
                 <div className="col-xs">
                     <form>
-                        <div className="SRC-marginFive form-group">{this.showFacetFilter()}
+                        <div className="SRC-marginFive form-group">
+                            {this.showFacetFilter()}
                             {!showAllFacets
                                 &&
                                 <span className="SRC-inlineBlock">
@@ -266,25 +267,21 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
                                     </a>   
                                 </span>
                             }
-                        </div>
-                        <div className="SRC-marginFive form-group">
-                            <p>
-                               {showAllFacets &&
-                                    <React.Fragment>
-                                        <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
-                                            {" "}
-                                            Select All{" "}
-                                        </a>
-                                        <span style={{marginLeft: "5px", marginRight: "5px"}}>
-                                            |
-                                        </span>
-                                        <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>
-                                            {" "}
-                                            Deselect All{" "}
-                                        </a>
-                                    </React.Fragment>
-                                }
-                            </p>
+                            {showAllFacets &&
+                                <span className="SRC-inlineBlock">
+                                    <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(SELECT_ALL)}>
+                                        {" "}
+                                        Select All{" "}
+                                    </a>
+                                    <span style={{marginLeft: "5px", marginRight: "5px"}}>
+                                        |
+                                    </span>
+                                    <a href={""} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.updateSelection(DESELECT_ALL)}>
+                                        {" "}
+                                        Deselect All{" "}
+                                    </a>
+                                </span>
+                            }
                         </div>
                     </form>
                 </div>
