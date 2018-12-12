@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import {getColorPallette} from "./ColorGradient";
 import close from '../assets/icons/close.svg'
 const uuidv4 = require("uuid/v4");
+const MIN_SPACE_FACET_MENU = 700
 
 // Add all icons to the library so you can use it in your page
 library.add(faColumns);
@@ -265,11 +266,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             // front of the scrollable we can examine its parent bounding rect -- this gives a relative value (that changes
             // on scroll) of the filter to a fixed left most point.
             let tHeadLeftPosition = refOuterDiv.current!.parentElement!.getBoundingClientRect().left
-            
             let classNames = "" //  the classes to be applied to the filter dropdown menu
 
             if (isFilterSelected[index]) {
-                if (tHeadLeftPosition < 300) {
+                if (tHeadLeftPosition < MIN_SPACE_FACET_MENU) {
                     // this implies that its within 300 px of the fixed left most point, ie its dropdown
                     // menu should pop out to the right
                     classNames = "SRC-forceLeftDropdown dropdown-menu-left"
