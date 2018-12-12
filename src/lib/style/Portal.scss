@@ -433,16 +433,32 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    padding-bottom: 0px;
  }
 
- .SRC-primary-text-color {
-   color: #D53F77;
- }
-
+ 
  .SRC-no-text-decor {
    text-decoration: none;
- }
+  }
+
+  $primaryColor: #D53F77;
+  
+  .SRC-primary-text-color {
+    color: $primaryColor;
+  }
 
  .SRC-primary-background-color {
-   background-color: #D53F77 !important;
+   background-color: $primaryColor;
+ }
+
+ .SRC-primary-background-color-hover:hover {
+   background-color: $primaryColor; 
+   > svg {
+     color: white!important;
+   }
+   &.SRC-nested-color {
+     * {
+       background-color: $primaryColor;
+       color: white!important;
+     }
+   }
  }
 
  .SRC-marginFifteen {
@@ -450,31 +466,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    margin-right: 15px;
  }
 
- .SRC-primary-background-color-hover:hover {
-    &:hover {
-      background-color: #D53F77 !important; 
-      > svg {
-        color: white!important;
-      }
-    }
-    &:hover {
-      &.SRC-nested-color {
-        * {
-          background-color: #D53F77 !important; 
-          color: white!important;
-        }
-
-      }
-    }
- }
-
- .SRC-primary-background-hover {
-  &:hover {
-    background-color: #D53F77 !important; 
-    color: white!important;
-    box-shadow: 4px 2px 2px rgba(0, 0, 0, 0.5);
-  }
-}
 
  button.SRC-roundBorder {
    border-radius: 15px;

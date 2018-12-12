@@ -363,32 +363,26 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-noPaddingBottom {
   padding-bottom: 0px; }
 
-.SRC-primary-text-color {
-  color: #D53F77; }
-
 .SRC-no-text-decor {
   text-decoration: none; }
 
+.SRC-primary-text-color {
+  color: #D53F77; }
+
 .SRC-primary-background-color {
-  background-color: #D53F77 !important; }
+  background-color: #D53F77; }
+
+.SRC-primary-background-color-hover:hover {
+  background-color: #D53F77; }
+  .SRC-primary-background-color-hover:hover > svg {
+    color: white !important; }
+  .SRC-primary-background-color-hover:hover.SRC-nested-color * {
+    background-color: #D53F77;
+    color: white !important; }
 
 .SRC-marginFifteen {
   margin-left: 15px;
   margin-right: 15px; }
-
-.SRC-primary-background-color-hover:hover:hover {
-  background-color: #D53F77 !important; }
-  .SRC-primary-background-color-hover:hover:hover > svg {
-    color: white !important; }
-
-.SRC-primary-background-color-hover:hover:hover.SRC-nested-color * {
-  background-color: #D53F77 !important;
-  color: white !important; }
-
-.SRC-primary-background-hover:hover {
-  background-color: #D53F77 !important;
-  color: white !important;
-  box-shadow: 4px 2px 2px rgba(0, 0, 0, 0.5); }
 
 button.SRC-roundBorder {
   border-radius: 15px; }
