@@ -52,6 +52,8 @@ type SynapseTableCardViewProps = {
     getNextPageOfData?: (queryRequest: any) => Promise<boolean> 
     executeInitialQueryRequest?: () => void,
     isLoading? : boolean
+    filter? : string
+    unitDescription? : number
 };
 
 type SynapseTableCardViewState = {
@@ -202,9 +204,34 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         showViewMore = showViewMore && this.state.hasMoreData
         showViewMore = showViewMore && !this.props.isLoading
 
+        let x_data: any[] = [];
+        data.facets && data.facets.forEach((item: any) => {
+            if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
+                item.facetValues.forEach(
+                    (facetValue: any) => {
+                        if (item.columnName) {
+                            x_data.push({ columnName: item.columnName, ...facetValue });
+                        }
+                });
+            }
+        });
+        // edge case -- if they are all false then they are considered all true..
+        // sum up the counts of data
+        let anyTrue = false;
+        let totalAllFalseCase = 0;
+        let totalStandardCase = 0;
+        for (let key in x_data) {
+            if (x_data.hasOwnProperty(key)) {
+                anyTrue = anyTrue || x_data[key].isSelected;
+                totalAllFalseCase += x_data[key].count;
+                totalStandardCase += x_data[key].isSelected ? x_data[key].count : 0;
+            }
+        }
+        let total = anyTrue ? totalStandardCase : totalAllFalseCase;
 
         return (
             <React.Fragment>
+                {this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
                 <RowContainer 
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
