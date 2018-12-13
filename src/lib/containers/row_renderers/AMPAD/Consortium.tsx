@@ -31,16 +31,35 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         });
     }
 
-    getIcon(org: string) {
+    getIcon(org: string, isHeader: boolean) {
+        // This CAN NOT be refactored below -- dynamic imports are currently not supported
+        // in es6, so the code below already has static references to the files below
+        // even though its baked into if else clauses.
         switch(org) {
             case "AMP-AD":
-                return <img src={require("../../../assets/icons/ampad.svg")}/>
+                if (isHeader) {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/amp-icon-header.svg")}/>
+                } else {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/amp-icon.svg")}/>
+                }
             case "M2OVE-AD":
-                return <img src={require("../../../assets/icons/movead.png")}/>
+                if (isHeader) {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/move-icon-header.svg")}/>
+                } else {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/move-icon.svg")}/>
+                }
             case "MODEL-AD":
-                return <img src={require("../../../assets/icons/ModelADLogo-IconOnly-FNL.svg")}/>
+                if  (isHeader) {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/ModelAD-icon-header.svg")}/>
+                } else {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/ModelAD-icon.svg")}/>
+                }
             case "Resilience-AD":
-                return <img src={require("../../../assets/icons/resiliencead.png")}/>
+                if (isHeader) {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/resilience-icon-header.svg")}/>
+                } else {
+                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/resilience-icon.svg")}/>
+                }
             default:
                 return (false)
         }
@@ -61,7 +80,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         return (
             <div style={{paddingBottom: "32px"}} className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
-                    {this.getIcon(org)}
+                    {this.getIcon(org, isOnOrgPath)}
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Program</div>
