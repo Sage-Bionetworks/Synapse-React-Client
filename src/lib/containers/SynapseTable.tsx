@@ -187,6 +187,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     toggleDropdown() {
         let { isOpen } = this.state;
         
+        let {isFilterSelected} = this.state
+
+        if (!isOpen) {
+            for(let i = 0; i < isFilterSelected.length; i++) {
+                isFilterSelected[i] = false
+            }
+        }
+
+
         if (!isOpen) {
             // the dropdown was closed coming into this method, so now it will be opened
             // so we activate the menu wall.
@@ -197,7 +206,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             this.setState({ menuWallIsActive: false });
         }
 
-        this.setState({ isOpen: !isOpen });
+        this.setState({ isOpen: !isOpen, isFilterSelected });
         
     }
 
@@ -256,11 +265,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         let isCurFilterSelected = this.state.isFilterSelected[index]
 
         let toggleDropdown = (event?: any) => { 
+
             //  make param any for code re-use
             let isFilterSelected = cloneDeep(this.state.isFilterSelected)
             let filterClassList = cloneDeep(this.state.filterClassList)
             
             isFilterSelected[index] = !isCurFilterSelected
+
+            // close all the other filters
+            for(let i = 0; i < isFilterSelected.length; i++) {
+                if (i != index) {
+                    isFilterSelected[i] = false
+                }
+            }
 
             // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the 
             // front of the scrollable we can examine its parent bounding rect -- this gives a relative value (that changes
@@ -288,7 +305,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 {
                     isFilterSelected,
                     filterClassList,
-                    menuWallIsActive: !isCurFilterSelected
+                    menuWallIsActive: !isCurFilterSelected,
+                    isOpen: false // close the toggle dropdown if its even open
                 }
             )
 

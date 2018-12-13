@@ -48,13 +48,13 @@ export default class Study extends React.Component<StudyProps, StudyState> {
         const studyDescription = data[schema["Study_Description"]]
 
         const model = data[schema["Model_System"]] || ""
-        const organism = data[schema.Organism]
+        const species = data[schema.Species]
         const individuals = data[schema["Number_of_Individuals"]]
         const program  = data[schema.Consortium]
         const grant  = data[schema["Grant"]]
         const dataTypes  = data[schema["DataType_All"]]
 
-        const values: string [][] = [["Data Types", dataTypes], ["ORGANISM", organism + " " + model], ["INDIVIDUALS", individuals], ["PROGRAM", program], ["GRANT", grant]];
+        const values: string [][] = [["Data Types", dataTypes], ["SPECIES", species + " " + model], ["INDIVIDUALS", individuals], ["PROGRAM", program], ["GRANT", grant]];
 
         return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">

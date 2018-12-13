@@ -13,6 +13,7 @@ type StaticQueryWrapperProps = {
     children : any
     json?: any,
     token?: string
+    unitDescription?: string
 }
 
 class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, StaticQueryWrapperState> {

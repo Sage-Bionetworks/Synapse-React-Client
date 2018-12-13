@@ -229,9 +229,14 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
         let total = anyTrue ? totalStandardCase : totalAllFalseCase;
 
+        if (!this.props.filter) {
+            total = data.queryResult.queryResults.rows.length
+        }
+        
         return (
-            <React.Fragment>
+            <div className="container-fluid">
                 {this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
+                {!this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
                 <RowContainer 
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
@@ -252,7 +257,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                             </button>
                         </div>)
                 }
-            </React.Fragment>
+            </div>
         );
     }
 }
