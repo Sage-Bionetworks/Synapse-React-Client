@@ -236,7 +236,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         return (
             <div className="container-fluid">
                 {this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
-                {!this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
+                {!this.props.filter && this.props.unitDescription && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
                 <RowContainer 
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
