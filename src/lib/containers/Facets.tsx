@@ -6,6 +6,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { getColorPallette } from "./ColorGradient";
 import {QueryWrapperChildProps} from './QueryWrapper'
 import { FacetColumnResult, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
+import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
 
 const cloneDeep = require("lodash.clonedeep");
 const SELECT_ALL = "select all";
@@ -161,10 +162,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             })
         }
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-        let queryRequest: any = this.props.getLastQueryRequest!();
+        let queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!();
         let { selectedFacets } = queryRequest.query;
         // grab the facet values assoicated for this column
-        let specificFacet = selectedFacets[0];
+        let specificFacet = selectedFacets![0];
         // if its not selected then we add as having been chosen, otherwise we
         // have to delete it
         if (specificFacet.facetValues.indexOf(dict.value) === -1) {
@@ -180,6 +181,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
             isChecked[dict.index] = !isChecked[dict.index];
         }
         queryRequest.query.selectedFacets = selectedFacets;
+        queryRequest.query.offset = 0;
         this.props.updateParentState!({ isChecked });
         this.props.executeQueryRequest!(queryRequest);
     };
@@ -230,6 +232,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         });
         let queryRequest = this.props.getLastQueryRequest!();
         queryRequest.query.selectedFacets = selectedFacetsFormatted;
+        queryRequest.query.offset = 0;
         this.props.executeQueryRequest!(queryRequest);
     }
 
