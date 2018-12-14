@@ -1,11 +1,8 @@
 import React from 'react'
 import {shallow, configure} from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16';
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import SynapseTable from '../../../lib/containers/SynapseTable';
 import {mockData, mockRequest} from './../../../JSON_test_data'
-
-configure({ adapter: new Adapter() });
 
 describe('basic functionality', () => {
     let SynapseClient
