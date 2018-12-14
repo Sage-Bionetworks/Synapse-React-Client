@@ -84,7 +84,7 @@
     "typescript": "^3.2.1"
   },
   "scripts": {
-    "prepublish": "npm run build && npm test:coverage",
+    "prepublish": "npm run build && npm run test:coverage",
     "predeploy": "npm run build-gh",
     "build-gh": "react-scripts-ts build",
     "deploy": "gh-pages -d build",
