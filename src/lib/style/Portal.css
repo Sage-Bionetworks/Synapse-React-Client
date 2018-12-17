@@ -634,3 +634,26 @@ checkmark styling end
   border: none; }
   .SRC-menu-wall:focus {
     outline: none; }
+
+.SRC-table-dropdown-content {
+  align-items: center;
+  border-bottom: 1px solid #DDDDDF; }
+
+.SRC-table-dropdown-text {
+  margin-bottom: 0px;
+  font-size: 15px;
+  display: inline-block;
+  font-weight: bold; }
+
+.SRC-table-dropdown-close {
+  margin-left: auto;
+  background: white; }
+
+.SRC-centerContent {
+  display: flex;
+  align-items: center; }
+
+.SRC-tableHeader {
+  margin: 0px;
+  display: inline-block;
+  color: white; }

@@ -1,10 +1,28 @@
 {
-  "extends": [],
+  "extends": ["tslint:latest", "tslint-react"],
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*.ts",
       "coverage/**/*.js"
     ]
-  }
+  },
+  "rules": 
+    {
+      // uuid library and various other legacy libraries in use have unforunate
+      // need for the requires statement
+      "no-var-requires": false,
+      // uuid library which has an unforunated submodule import
+      "no-submodule-imports": false,
+      // below is a fairly opinionated suggestion, we use types primarily because thats
+      // exactly what our code is using it for- as a "type" not an interface to be implemented
+      "interface-over-type-literal": false,
+      // never use semi-colons
+      "semicolon": [true, "never"],
+      // disallow trailing commas
+      "trailing-comma": false,
+      "prefer-const": [true, {"destructuring": "all"}],
+      // ignore single line template vars. eg let x = `hello ${myvarname}` 
+      "max-line-length": [true, {"limit": 120, "ignore-pattern": "`(.+)`"}]
+    }
 }
