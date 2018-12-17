@@ -1,4 +1,4 @@
-import {ColumnType} from './ColumnType'
+import {ColumnType} from "./ColumnType"
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html
 export type SelectColumn = {
     name: string                // The required display name of the column
