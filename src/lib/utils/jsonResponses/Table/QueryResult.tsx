@@ -1,4 +1,4 @@
-import {SelectColumn} from './SelectColumn'
+import {SelectColumn} from "./SelectColumn"
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/QueryResult.html
 export type QueryResult = {
@@ -12,7 +12,7 @@ export type RowSet = {
     headers: SelectColumn []    // The list of SelectColumns that describes the rows of this set.
     rows: Row []                // 	The Rows of this set. The index of each row value aligns with the index of each header.
 }
- 
+
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Row.html
 export type Row = {
     rowId: number          // The immutable ID issued to a new row.

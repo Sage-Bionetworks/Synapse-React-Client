@@ -9,4 +9,4 @@ export enum ColumnType {
     LINK = "LINK",
     LARGETEXT = "LARGETEXT",
     USERID = "USERID"
-}   
+}

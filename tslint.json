@@ -22,9 +22,10 @@
       // disallow trailing commas
       "trailing-comma": false,
       "prefer-const": [true, {"destructuring": "all"}],
-      // ignore single line template vars. eg let x = `hello ${myvarname}` 
-      "max-line-length": [true, {"limit": 120, "ignore-pattern": ["`(.+)`", "(.*)//(.*)"]}],
+      // ignore single line template vars. eg let x = `hello ${myvarname}` and lines with comments in them
+      "max-line-length": [true, {"limit": 120, "ignore-pattern": "`(.+)`|(.*)//(.*)"}],
       // When this codebase becomes much more mature removing the line below could be considered
-      "no-console": false
+      "no-console": false,
+      "interface-name": [true, "never-prefix"]
     }
 }

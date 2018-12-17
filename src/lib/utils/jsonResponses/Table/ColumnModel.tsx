@@ -1,6 +1,6 @@
-import { ColumnType } from './ColumnType';
+import { ColumnType } from "./ColumnType"
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnModel.html    
+// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnModel.html
 export type ColumnModel = {
     id:	string	            // The immutable ID issued to new columns
     name:	string	        // The display name of the column

@@ -1,8 +1,8 @@
-import {QueryResult} from './QueryResult'
-import {SelectColumn} from './SelectColumn'
-import {ColumnModel} from './ColumnModel'
-import {FacetColumnResult} from './FacetColumnResult'
-import { SumFileSizes } from './SumFileSizes';
+import {ColumnModel} from "./ColumnModel"
+import {FacetColumnResult} from "./FacetColumnResult"
+import {QueryResult} from "./QueryResult"
+import {SelectColumn} from "./SelectColumn"
+import { SumFileSizes } from "./SumFileSizes"
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/QueryResultBundle.html
 export interface QueryResultBundle {
@@ -14,5 +14,5 @@ export interface QueryResultBundle {
     columnModels:	ColumnModel []    // The list of ColumnModels for the table. Use mask = 0x10 to include in the bundle.
     facets:	FacetColumnResult []      // The list of facets for the search results
     sumFileSizes: SumFileSizes
-    [index: string]: any        
+    [index: string]: any
 }

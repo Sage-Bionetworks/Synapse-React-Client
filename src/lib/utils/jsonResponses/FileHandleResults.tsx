@@ -1,4 +1,4 @@
-import { FileHandle } from './FileHandle';
+import { FileHandle } from "./FileHandle"
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileHandleResults.html
 
