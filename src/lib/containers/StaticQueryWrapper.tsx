@@ -1,8 +1,8 @@
-import * as React from 'react'
-import { SynapseClient } from '..'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
-import { SynapseConstants } from '..';
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
+import * as React from "react"
+import { SynapseClient } from ".."
+import { SynapseConstants } from ".."
+import { QueryBundleRequest } from "../utils/jsonResponses/Table/QueryBundleRequest"
+import { QueryResultBundle } from "../utils/jsonResponses/Table/QueryResultBundle"
 
 type StaticQueryWrapperState = {
     data: any
@@ -10,7 +10,7 @@ type StaticQueryWrapperState = {
 
 type StaticQueryWrapperProps = {
     sql?: string
-    children : any
+    children: any
     json?: any,
     token?: string
     unitDescription?: string
@@ -24,39 +24,20 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
         this.getData = this.getData.bind(this)
     }
 
-    componentDidUpdate(prevProps: any) {
+    public componentDidUpdate(prevProps: any) {
         // re-run query if sql is updated
         if (this.props.sql != prevProps.sql) {
             this.getData()
         }
     }
 
-    componentDidMount() {
-        this.getData();
+    public componentDidMount() {
+        this.getData()
     }
 
-    private getData() {
-        let {token = "", json} = this.props
-        if (json === undefined) {
-            let queryBundleRequest: QueryBundleRequest = {
-                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                query: {
-                    isConsistent: false,
-                    sql: this.props.sql!,
-                    limit: 25,
-                    offset: 0
-                }
-            };
-            SynapseClient.getQueryTableResults(queryBundleRequest, token).then(data => {
-                this.setState({ data });
-            });
-        }
-    }
-
-    render () {
-        let {children, json} = this.props
-        let {data} = this.state
+    public render() {
+        const {children, json} = this.props
+        const {data} = this.state
         let childData: QueryResultBundle
 
         if (json !== undefined) {
@@ -72,6 +53,25 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
                             })
                     })}
                 </div>)
+    }
+
+    private getData() {
+        const {token = "", json} = this.props
+        if (json === undefined) {
+            const queryBundleRequest: QueryBundleRequest = {
+                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                query: {
+                    isConsistent: false,
+                    sql: this.props.sql!,
+                    limit: 25,
+                    offset: 0
+                }
+            }
+            SynapseClient.getQueryTableResults(queryBundleRequest, token).then((data) => {
+                this.setState({ data })
+            })
+        }
     }
 
 }

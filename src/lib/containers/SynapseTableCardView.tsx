@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types'
-import { STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY } from '../utils/SynapseConstants';
-import { Study, Tool, Publication, Dataset, Funder } from './row_renderers';
-import { Project, Consortium, AMP_Study } from './row_renderers/AMPAD';
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest';
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle';
+import PropTypes from "prop-types"
+import React from "react"
+import { QueryBundleRequest } from "../utils/jsonResponses/Table/QueryBundleRequest"
+import { QueryResultBundle } from "../utils/jsonResponses/Table/QueryResultBundle"
+import { AMP_CONSORTIUM, AMP_PROJECT, AMP_STUDY, DATASET, FUNDER, PUBLICATION, STUDY, TOOL } from "../utils/SynapseConstants"
+import { Dataset, Funder, Publication, Study, Tool } from "./row_renderers"
+import { AMP_Study, Consortium, Project } from "./row_renderers/AMPAD"
 const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
@@ -16,8 +16,8 @@ type RowContainerProps = {
     limit: number
     hideOrganizationLink: boolean
     schema: any
-    token? : string
-    ownerId? : string
+    token?: string
+    ownerId?: string
     isHeader: boolean
 }
 
@@ -29,32 +29,32 @@ const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...
                     <React.Fragment key={index}>
                         {React.Children.map(children,
                          (child: any, j) => {
-                                return React.cloneElement(child, {key: `${index},${j}`, data: rowData.values, ...rest });
+                                return React.cloneElement(child, {key: `${index},${j}`, data: rowData.values, ...rest })
                             })}
                     </React.Fragment>
-                );
+                )
             } else {
-                return false;
+                return false
             }
-    });
-};
+    })
+}
 
 type SynapseTableCardViewProps = {
     type: string,
     data?: QueryResultBundle,
     limit?: number,
     hideOrganizationLink?: boolean
-    token? : string
-    ownerId? : string
+    token?: string
+    ownerId?: string
     isHeader?: boolean
     isQueryWrapperChild?: boolean
     getLastQueryRequest?: () => QueryBundleRequest
-    getNextPageOfData?: (queryRequest: any) => Promise<boolean> 
+    getNextPageOfData?: (queryRequest: any) => Promise<boolean>
     executeInitialQueryRequest?: () => void,
-    isLoading? : boolean
-    filter? : string
-    unitDescription? : number
-};
+    isLoading?: boolean
+    filter?: string
+    unitDescription?: number
+}
 
 type SynapseTableCardViewState = {
     hasMoreData: boolean
@@ -64,17 +64,17 @@ type SynapseTableCardViewState = {
 
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, SynapseTableCardViewState> {
 
-    static propTypes = {
+    public static propTypes = {
         type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY ]),
         limit: PropTypes.number,
         hideOrganizationLink: PropTypes.bool
     }
 
     constructor(props: SynapseTableCardViewProps) {
-        super(props);
-        this.renderChild = this.renderChild.bind(this);
-        this.handleViewMore = this.handleViewMore.bind(this);
-        this.getBufferData = this.getBufferData.bind(this);
+        super(props)
+        this.renderChild = this.renderChild.bind(this)
+        this.handleViewMore = this.handleViewMore.bind(this)
+        this.getBufferData = this.getBufferData.bind(this)
         this.state = {
             hasMoreData: true,
             cardLimit: PAGE_SIZE,
@@ -82,37 +82,37 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
     }
 
-    renderChild(): JSX.Element | boolean{
-        const { type } = this.props;
+    public renderChild(): JSX.Element | boolean {
+        const { type } = this.props
         switch (type) {
             case STUDY:
-                return <Study />;
+                return <Study />
             case DATASET:
-                return <Dataset />;
+                return <Dataset />
             case FUNDER:
-                return <Funder />;
+                return <Funder />
             case PUBLICATION:
-                return <Publication />;
+                return <Publication />
             case TOOL:
-                return <Tool />;
+                return <Tool />
             case AMP_PROJECT:
-                return <Project />;
+                return <Project />
             case AMP_CONSORTIUM:
-                return <Consortium />;
+                return <Consortium />
             case AMP_STUDY:
-                return <AMP_Study />;
+                return <AMP_Study />
             default:
-                return (false); // this should never happen
+                return (false) // this should never happen
         }
     }
 
-    componentDidMount() {
-        // we try to load one page of data ahead of cards, this allows the "view more" behavior 
+    public componentDidMount() {
+        // we try to load one page of data ahead of cards, this allows the "view more" behavior
         // to be instant
         this.getBufferData()
     }
 
-    getBufferData() {
+    public getBufferData() {
         // Load data ahead of the currently displayed data, do this recursively in case it needs more time
         if (!this.state.hasLoadedBufferData) {
             setTimeout(() => {
@@ -121,19 +121,19 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                     this.getBufferData()
                     return
                 }
-                let queryRequest = this.props.getLastQueryRequest!();
+                const queryRequest = this.props.getLastQueryRequest!()
                 if (!queryRequest.query) {
                     // parent component still setting up
                     this.getBufferData()
                     return
                 }
-                let offset = queryRequest.query.offset!;
+                let offset = queryRequest.query.offset!
                 // if its a "previous" click subtract from the offset
                 // otherwise its next and we paginate forward
-                offset += PAGE_SIZE;
-                queryRequest.query.offset = offset;
+                offset += PAGE_SIZE
+                queryRequest.query.offset = offset
                 this.props.getNextPageOfData!(queryRequest).then(
-                    hasMoreData => {
+                    (hasMoreData) => {
                         this.setState({hasLoadedBufferData: true, hasMoreData})
                     }
                 )
@@ -146,45 +146,45 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
      *
      * @memberof SynapseTable
      */
-    handleViewMore (){
-       let queryRequest = this.props.getLastQueryRequest!();
-       let offset = queryRequest.query.offset!;
+    public handleViewMore() {
+       const queryRequest = this.props.getLastQueryRequest!()
+       let offset = queryRequest.query.offset!
        // if its a "previous" click subtract from the offset
        // otherwise its next and we paginate forward
-       offset += PAGE_SIZE;
-       queryRequest.query.offset = offset;
-       
-       let {cardLimit} = this.state
+       offset += PAGE_SIZE
+       queryRequest.query.offset = offset
+
+       const {cardLimit} = this.state
        this.setState({cardLimit: cardLimit + PAGE_SIZE})
 
        this.props.getNextPageOfData!(queryRequest).then(
-           hasMoreData => {
+           (hasMoreData) => {
                if (!hasMoreData) {
                    this.setState({hasMoreData: false})
                }
            }
        )
-    };
+    }
 
-    render() {
-        const { data, 
+    public render() {
+        const { data,
                 hideOrganizationLink = false,
                 limit = Infinity,
-                token="",
-                ownerId="",
-                isHeader=false            
-                } = this.props;
+                token= "",
+                ownerId= "",
+                isHeader= false
+                } = this.props
         if (data === undefined || Object.keys(data).length === 0) {
-            return <div className="container"> </div>;
+            return <div className="container"> </div>
         }
-        let schema = {};
+        const schema = {}
         data.queryResult.queryResults.headers.forEach(
             (element: any, index: any) => {
-                schema[element.name] = index;
-            });
+                schema[element.name] = index
+            })
 
-        let cardLimit = 0 
-        
+        let cardLimit = 0
+
         // Either the number of cards to be shown is specified by the developer in the props
         // or this card is under the query wrapper and we handle the view more button
         if (this.props.isQueryWrapperChild) {
@@ -204,40 +204,40 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         showViewMore = showViewMore && this.state.hasMoreData
         showViewMore = showViewMore && !this.props.isLoading
 
-        let x_data: any[] = [];
+        const x_data: any[] = []
         data.facets && data.facets.forEach((item: any) => {
             if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
                 item.facetValues.forEach(
                     (facetValue: any) => {
                         if (item.columnName) {
-                            x_data.push({ columnName: item.columnName, ...facetValue });
+                            x_data.push({ columnName: item.columnName, ...facetValue })
                         }
-                });
+                })
             }
-        });
+        })
         // edge case -- if they are all false then they are considered all true..
         // sum up the counts of data
-        let anyTrue = false;
-        let totalAllFalseCase = 0;
-        let totalStandardCase = 0;
-        for (let key in x_data) {
+        let anyTrue = false
+        let totalAllFalseCase = 0
+        let totalStandardCase = 0
+        for (const key in x_data) {
             if (x_data.hasOwnProperty(key)) {
-                anyTrue = anyTrue || x_data[key].isSelected;
-                totalAllFalseCase += x_data[key].count;
-                totalStandardCase += x_data[key].isSelected ? x_data[key].count : 0;
+                anyTrue = anyTrue || x_data[key].isSelected
+                totalAllFalseCase += x_data[key].count
+                totalStandardCase += x_data[key].isSelected ? x_data[key].count : 0
             }
         }
-        let total = anyTrue ? totalStandardCase : totalAllFalseCase;
+        let total = anyTrue ? totalStandardCase : totalAllFalseCase
 
         if (!this.props.filter) {
             total = data.queryResult.queryResults.rows.length
         }
-        
+
         return (
             <div className="container-fluid">
                 {this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
                 {!this.props.filter && this.props.unitDescription && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
-                <RowContainer 
+                <RowContainer
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
                     limit={cardLimit}
@@ -245,7 +245,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                     schema={schema}
                     token={token}
                     ownerId={ownerId}
-                    isHeader={isHeader}    
+                    isHeader={isHeader}
                 >
                 {this.renderChild()}
                 </RowContainer>
@@ -258,8 +258,8 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                         </div>)
                 }
             </div>
-        );
+        )
     }
 }
 
-export default SynapseTableCardView;
+export default SynapseTableCardView

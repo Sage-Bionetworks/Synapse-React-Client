@@ -1,23 +1,23 @@
-import * as React from "react";
-import {getColorPallette} from "./ColorGradient";
-import PropTypes from 'prop-types';
-import QueryWrapper from './QueryWrapper';
-import { SynapseConstants } from '..';
-import StackedRowHomebrew from './StackedRowHomebrew';
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
-import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core"
+import { faAngleLeft } from "@fortawesome/free-solid-svg-icons"
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons"
+import PropTypes from "prop-types"
+import * as React from "react"
+import { SynapseConstants } from ".."
+import {getColorPallette} from "./ColorGradient"
+import QueryWrapper from "./QueryWrapper"
+import StackedRowHomebrew from "./StackedRowHomebrew"
 
-import { Facets } from './Facets';
-import SynapseTable from './SynapseTable';
-import SynapseTableCardView from './SynapseTableCardView';
+import { Facets } from "./Facets"
+import SynapseTable from "./SynapseTable"
+import SynapseTableCardView from "./SynapseTableCardView"
 
-library.add(faAngleLeft);
-library.add(faAngleRight);
+library.add(faAngleLeft)
+library.add(faAngleRight)
 
 type MenuState = {
     menuIndex: number
-};
+}
 
 type MenuConfig = {
     sql: string
@@ -32,7 +32,7 @@ type MenuConfig = {
 type Props = {
     menuConfig: MenuConfig []
     token: string
-    type?:string
+    type?: string
     rgbIndex: number
     loadingScreen?: JSX.Element
 }
@@ -45,7 +45,7 @@ type Info = {
 // will take in a default facet  originalColor: "#F5F5F5"
 export default class Menu extends React.Component<Props, MenuState> {
 
-    static propTypes = {
+    public static propTypes = {
         menuConfig: PropTypes.arrayOf(PropTypes.any),
         token: PropTypes.string,
         rgbIndex: PropTypes.number,
@@ -60,42 +60,42 @@ export default class Menu extends React.Component<Props, MenuState> {
         this.handleHoverLogic = this.handleHoverLogic.bind(this)
     }
 
-    handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
+    public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
         if (!info.isSelected && event.currentTarget.tagName === "DIV") {
-            event.currentTarget.style.backgroundColor = info.originalColor;
+            event.currentTarget.style.backgroundColor = info.originalColor
         }
     }
 
-    render () {
-        let {token, menuConfig, rgbIndex} = this.props
+    public render() {
+        const {token, menuConfig, rgbIndex} = this.props
 
-        let {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
-        let originalColor = colorPalette[0]
+        const {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
+        const originalColor = colorPalette[0]
 
-        let menuDropdown = menuConfig.map(
-            (config: MenuConfig, index:number) => {
-            
-                let isSelected: boolean = (index === this.state.menuIndex)
-                let style: any = {}
+        const menuDropdown = menuConfig.map(
+            (config: MenuConfig, index: number) => {
+
+                const isSelected: boolean = (index === this.state.menuIndex)
+                const style: any = {}
                 let selectedStyling: string = ""
 
                 if (isSelected) {
                     // we have to programatically set the style since the color is chosen from a color
                     // wheel
-                    style.background = originalColor;
+                    style.background = originalColor
                     // below has to be set so the pseudo element created will inherit its color
                     // appropriately
-                    style.borderLeftColor = originalColor;
-                    selectedStyling = "SRC-pointed SRC-whiteText";
+                    style.borderLeftColor = originalColor
+                    selectedStyling = "SRC-pointed SRC-whiteText"
                 } else {
                     // change background to class
-                    selectedStyling = "SRC-blackText SRC-light-background";
+                    selectedStyling = "SRC-blackText SRC-light-background"
                 }
 
-                let infoEnter: Info = {isSelected, originalColor}
-                let infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
+                const infoEnter: Info = {isSelected, originalColor}
+                const infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
 
-                let facetDisplayValue:string = config.facetDisplayValue || ""
+                let facetDisplayValue: string = config.facetDisplayValue || ""
                 if (!facetDisplayValue) {
                     facetDisplayValue = config.facetName
                 }
@@ -113,10 +113,10 @@ export default class Menu extends React.Component<Props, MenuState> {
                 )
             }
         )
-        
-        let queryWrapper = menuConfig.map(
+
+        const queryWrapper = menuConfig.map(
             (config: MenuConfig, index: number) => {
-                let isSelected: boolean = (this.state.menuIndex === index)
+                const isSelected: boolean = (this.state.menuIndex === index)
                 let style: any
                 if (!isSelected) {
                     style = {visibility: "hidden", display: "none"}
@@ -124,7 +124,7 @@ export default class Menu extends React.Component<Props, MenuState> {
                 return (
                 <span key={config.facetName} style={style} >
                     <QueryWrapper
-                        showMenu
+                        showMenu={true}
                         initQueryRequest={{
                             concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
                             partMask:
@@ -146,18 +146,18 @@ export default class Menu extends React.Component<Props, MenuState> {
                         <StackedRowHomebrew
                             synapseId={config.synapseId}
                             unitDescription={(config.unitDescription || "")}
-                            loadingScreen={this.props.loadingScreen} 
+                            loadingScreen={this.props.loadingScreen}
                         />
                         <Facets/>
                         {
                             config.title ?
-                            (<SynapseTable 
+                            (<SynapseTable
                                 title={config.title}
                                 synapseId={config.synapseId}
                                 // specify visible column count
-                                visibleColumnCount={config.visibleColumnCount || 0} 
+                                visibleColumnCount={config.visibleColumnCount || 0}
                                 />
-                            ):
+                            ) :
                             (<div></div>)
                         }
                         {

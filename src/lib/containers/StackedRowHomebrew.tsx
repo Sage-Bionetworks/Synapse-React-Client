@@ -1,20 +1,20 @@
-import React, { MouseEvent } from "react";
-import ReactTooltip from 'react-tooltip'
-import PropTypes from 'prop-types'
-import Measure, {ContentRect} from "react-measure";
-import {QueryWrapperChildProps} from './QueryWrapper'
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
-import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import {getColorPallette} from "./ColorGradient";
+import { library } from "@fortawesome/fontawesome-svg-core"
+import { faAngleLeft } from "@fortawesome/free-solid-svg-icons"
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import PropTypes from "prop-types"
+import React, { MouseEvent } from "react"
+import Measure, {ContentRect} from "react-measure"
+import ReactTooltip from "react-tooltip"
+import {getColorPallette} from "./ColorGradient"
+import {QueryWrapperChildProps} from "./QueryWrapper"
 
-library.add(faAngleLeft);
-library.add(faAngleRight);
+library.add(faAngleLeft)
+library.add(faAngleRight)
 
-const uuidv4 = require("uuid/v4");
-const PREVIOUS_ITEM_CLICK = "left click";
-const NEXT_CLICK = "right click";
+const uuidv4 = require("uuid/v4")
+const PREVIOUS_ITEM_CLICK = "left click"
+const NEXT_CLICK = "right click"
 
 type StackedRowHomebrewState = {
     hoverTextCount: number
@@ -22,18 +22,18 @@ type StackedRowHomebrewState = {
     selectedFacets: {}
     dimensions: ContentRect
     index: number
-};
+}
 
 type StackedRowHomebrewProps = {
     loadingScreen: any
     synapseId: string
     unitDescription: string
-};
+}
 
 type Info = {
     value: string
     count: number
-    index:  number
+    index: number
 }
 
 /**
@@ -44,18 +44,18 @@ type Info = {
  */
 export default class StackedRowHomebrew extends React.Component<StackedRowHomebrewProps & QueryWrapperChildProps, StackedRowHomebrewState> {
 
-    static propTypes = {
+    public static propTypes = {
         loadingScreen: PropTypes.element
     }
 
     constructor(props: StackedRowHomebrewProps & QueryWrapperChildProps) {
-        super(props);
-        this.handleHover = this.handleHover.bind(this);
-        this.handleExit = this.handleExit.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-        this.handleArrowClick = this.handleArrowClick.bind(this);
-        this.getHoverText = this.getHoverText.bind(this);
-        this.rgba2rgb = this.rgba2rgb.bind(this);
+        super(props)
+        this.handleHover = this.handleHover.bind(this)
+        this.handleExit = this.handleExit.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.handleArrowClick = this.handleArrowClick.bind(this)
+        this.getHoverText = this.getHoverText.bind(this)
+        this.rgba2rgb = this.rgba2rgb.bind(this)
         // the text currently under the cursor
         this.state = {
             hoverText: "",
@@ -64,17 +64,17 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
             // dimensios has shape ContentRect: { bounds: BoundingRect }
             dimensions: { bounds: {height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0} },
             index: -1
-        };
-        this.extractPropsData = this.extractPropsData.bind(this);
+        }
+        this.extractPropsData = this.extractPropsData.bind(this)
     }
 
-    componentDidUpdate(prevProps: any) {
+    public componentDidUpdate(prevProps: any) {
         if (prevProps.filter !== this.props.filter || prevProps.isLoadingNewData !== this.props.isLoadingNewData) {
             this.setState({
                 hoverText: "",
                 hoverTextCount: 0,
                 index: -1
-            });
+            })
         }
     }
     /**
@@ -82,9 +82,9 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
      *
      * @memberof StackedRowHomebrew
      */
-    handleHover(event: React.MouseEvent<SVGRectElement>) {
+    public handleHover(event: React.MouseEvent<SVGRectElement>) {
         // add box shadow
-        event.currentTarget.style.boxShadow = "25px 20px";
+        event.currentTarget.style.boxShadow = "25px 20px"
     }
     /**
      * Update the hover text and the view
@@ -92,96 +92,96 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
      * @param {*} event
      * @memberof StackedRowHomebrew
      */
-    handleExit(event: React.MouseEvent<SVGRectElement>) {
+    public handleExit(event: React.MouseEvent<SVGRectElement>) {
         // remove box shadow
-        event.currentTarget.style.boxShadow = "";
+        event.currentTarget.style.boxShadow = ""
     }
     /**
      * Handle column click event
      */
-    handleClick = (dict: Info) => (event: React.MouseEvent<SVGElement>) => {
+    public handleClick = (dict: Info) => (event: React.MouseEvent<SVGElement>) => {
         // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
         this.setState({
             hoverText: dict.value,
             hoverTextCount: dict.count,
             index: dict.index
-        });
-    };
+        })
+    }
 
-    getHoverText(x_data: any) {
-        let hoverText;
+    public getHoverText(x_data: any) {
+        let hoverText
         if (this.state.index === -1) {
-            hoverText = x_data[0] && x_data[0].value;
+            hoverText = x_data[0] && x_data[0].value
         } else {
-            hoverText = this.state.hoverText;
+            hoverText = this.state.hoverText
         }
         return (
             <React.Fragment>
                 <span className="SRC-text-cap"> {this.props.filter} </span> : <span> {hoverText === "org.sagebionetworks.UNDEFINED_NULL_NOTSET" ? "unannotated" : hoverText} </span>
             </React.Fragment>
-        );
+        )
     }
 
-    getFileCount(x_data: any) {
+    public getFileCount(x_data: any) {
         if (this.state.index === -1) {
-            let hoverTextCount = x_data[0] && x_data[0].count;
-            return hoverTextCount;
+            const hoverTextCount = x_data[0] && x_data[0].count
+            return hoverTextCount
         } else {
-            return this.state.hoverTextCount;
+            return this.state.hoverTextCount
         }
     }
     // Handle user cycling through slices of the bar chart
-    handleArrowClick = (direction: string) => (event: MouseEvent<HTMLButtonElement>) => {
-        let { index } = this.state;
+    public handleArrowClick = (direction: string) => (event: MouseEvent<HTMLButtonElement>) => {
+        let { index } = this.state
         if (index === -1) {
-            index = 0;
+            index = 0
         }
-        let dict: any = this.extractPropsData(this.props.data);
-        let length = Object.keys(dict).length;
+        let dict: any = this.extractPropsData(this.props.data)
+        const length = Object.keys(dict).length
         if (direction === PREVIOUS_ITEM_CLICK) {
             if (index === 0) {
                 // wrap around
-                index = length - 1;
+                index = length - 1
             } else {
-                index -= 1;
+                index -= 1
             }
         } else {
             if (index === length - 1) {
-                index = 0;
+                index = 0
             } else {
-                index += 1;
+                index += 1
             }
         }
-        dict = dict[index];
+        dict = dict[index]
         this.setState({
             hoverText: dict.value,
             hoverTextCount: dict.count,
             index
-        });
-    };
-    
-    rgba2rgb(background: number[], color: number[]) {
-        const alpha = color[3];
+        })
+    }
+
+    public rgba2rgb(background: number[], color: number[]) {
+        const alpha = color[3]
         return [
             Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
             Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
             Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
-        ];
+        ]
     }
 
-    advancedSearch(x_data: any) {
-        
-        let hoverText;
+    public advancedSearch(x_data: any) {
+
+        let hoverText
 
         if (this.state.index === -1) {
-            hoverText = x_data[0] && x_data[0].value;
+            hoverText = x_data[0] && x_data[0].value
         } else {
-            hoverText = this.state.hoverText;
+            hoverText = this.state.hoverText
         }
 
         // base 64 encode the json of the query and go to url with the encoded object
-        let lastQueryRequest = this.props.getLastQueryRequest!();
-        let { query } = lastQueryRequest;
+        const lastQueryRequest = this.props.getLastQueryRequest!()
+        const { query } = lastQueryRequest
         query.selectedFacets = [
             {
                 concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
@@ -189,32 +189,32 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                 facetValues: [hoverText]
             }
         ]
-        let encodedQuery = btoa(JSON.stringify(query));
-        let {synapseId = ""} = this.props;
-        let link = `https://www.synapse.org/#!Synapse:${synapseId}/tables/query/${encodedQuery}`
+        const encodedQuery = btoa(JSON.stringify(query))
+        const {synapseId = ""} = this.props
+        const link = `https://www.synapse.org/#!Synapse:${synapseId}/tables/query/${encodedQuery}`
         return link
     }
 
     /**
      * Display view
      */
-    render() {
-        let { data } = this.props;
+    public render() {
+        const { data } = this.props
         // while loading
         if (this.props.isLoadingNewData) {
-            return this.props.loadingScreen || <div></div>;
+            return this.props.loadingScreen || <div></div>
         }
-        let x_data = this.extractPropsData(data);
-        let total: number = 0;
-        let width: number = this.state.dimensions.bounds!.width;
+        const x_data = this.extractPropsData(data)
+        let total: number = 0
+        const width: number = this.state.dimensions.bounds!.width
         // sum up the counts of data
-        for (let key in x_data) {
+        for (const key in x_data) {
             if (x_data.hasOwnProperty(key)) {
-                total += x_data[key].count;
+                total += x_data[key].count
             }
         }
-        let {colorPalette, textColors} = getColorPallette(this.props.rgbIndex!, x_data.length)
-        let originalColor = colorPalette[0]
+        const {colorPalette, textColors} = getColorPallette(this.props.rgbIndex!, x_data.length)
+        const originalColor = colorPalette[0]
         return (
             <div className="container-fluid">
                 <div className="row SRC-center-text">
@@ -227,41 +227,41 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                 </div>
                 <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
                     <Measure
-                        bounds
+                        bounds={true}
                         onResize={(contentRect: ContentRect) => {
-                            this.setState({ dimensions: contentRect });
+                            this.setState({ dimensions: contentRect })
                         }}
                     >
                         {({ measureRef }) => (
                             <div style={{display: "flex"}} ref={measureRef}>
                                 {x_data.map((obj, index) => {
-                                    let initRender: boolean = this.state.index === -1 && index === 0;
-                                    let textColor:  string = textColors[index]
+                                    const initRender: boolean = this.state.index === -1 && index === 0
+                                    const textColor: string = textColors[index]
 
-                                    let rgbColor: string = colorPalette[index]
+                                    const rgbColor: string = colorPalette[index]
 
-                                    let rectStyle : any;
-                                    const check = this.props.isChecked![index] === undefined || this.props.isChecked![index];
+                                    let rectStyle: any
+                                    const check = this.props.isChecked![index] === undefined || this.props.isChecked![index]
                                     if (check) {
                                         rectStyle = {
                                             fill: rgbColor
-                                        };
+                                        }
                                     } else {
                                         rectStyle = {
                                             fill: `#C4C4C4`
-                                        };
+                                        }
                                     }
-                                    let svgHeight = 80;
-                                    let svgWidth = obj.count / total * width;
-                                    let style: any = {};
+                                    const svgHeight = 80
+                                    const svgWidth = obj.count / total * width
+                                    const style: any = {}
                                     if (this.state.index === index || initRender) {
-                                        style.filter = "drop-shadow(5px 5px 5px rgba(0,0,0,0.5))";
+                                        style.filter = "drop-shadow(5px 5px 5px rgba(0,0,0,0.5))"
                                     }
-                                    let label: string =`${this.props.filter}: ${obj.value}  - ${obj.count} ${this.props.unitDescription}`
-                                    let tooltipId = uuidv4()
+                                    const label: string = `${this.props.filter}: ${obj.value}  - ${obj.count} ${this.props.unitDescription}`
+                                    const tooltipId = uuidv4()
                                     // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
-                                    let value = obj.value as number
-                                    let numCharsInValue = value.toString().length * 4.5 // represents width of a character
+                                    const value = obj.value as number
+                                    const numCharsInValue = value.toString().length * 4.5 // represents width of a character
 
                                     return (
                                         // each svg represents one of the bars
@@ -293,7 +293,7 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                             </span>
                                             <ReactTooltip delayShow={1000} id={tooltipId}/>
                                         </React.Fragment>
-                                    );
+                                    )
                                 })}
                             </div>
                         )}
@@ -306,25 +306,25 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                     <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> {this.getFileCount(x_data)} {this.props.unitDescription} </p>
                 </div>
             </div>
-        );
+        )
     }
-    extractPropsData(data: any) {
-        let x_data: any[] = [];
+    public extractPropsData(data: any) {
+        const x_data: any[] = []
         data.facets.forEach(
             (item: any) => {
                 if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
                     item.facetValues.forEach(
                         (facetValue: any) => {
                             if (item.columnName) {
-                                x_data.push({ columnName: item.columnName, ...facetValue });
+                                x_data.push({ columnName: item.columnName, ...facetValue })
                             }
-                    });
+                    })
                 }
-        });
+        })
         // sort the data so that the largest bars are at the front
         x_data.sort((a, b) => {
-            return b.count - a.count;
-        });
-        return x_data;
+            return b.count - a.count
+        })
+        return x_data
     }
 }
