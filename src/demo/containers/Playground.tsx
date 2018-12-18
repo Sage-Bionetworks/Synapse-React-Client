@@ -170,6 +170,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
+        {/* tslint:disable-next-line */}
 {/* 
         <StaticQueryWrapper
             sql="SELECT * FROM syn17024173"

@@ -4,8 +4,8 @@ import {Facets, CheckboxGroup} from "../../../lib/containers/Facets";
 import {mockData} from "../../../JSON_test_data";
 
 describe("it renders a facet without crashing", () => {
-    it('renders correctly', async () => {
-        const tree = await shallow( 
+    it("renders correctly", async () => {
+        const tree = await shallow(
             <Facets
                 data={mockData}
                 filter={"name"}
@@ -15,11 +15,11 @@ describe("it renders a facet without crashing", () => {
         expect(tree).toBeDefined()
     });
 
-    it('renders checkbox groups correctly', async () => {
+    it("renders checkbox groups correctly", async () => {
         const tree = await shallow( 
             <Facets
                 data={mockData}
-                filter={'name'}
+                filter={"name"}
             >
             </Facets>
         )

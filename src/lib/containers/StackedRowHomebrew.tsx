@@ -1,13 +1,12 @@
 import { library } from "@fortawesome/fontawesome-svg-core"
-import { faAngleLeft } from "@fortawesome/free-solid-svg-icons"
-import { faAngleRight } from "@fortawesome/free-solid-svg-icons"
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import PropTypes from "prop-types"
 import React, { MouseEvent } from "react"
-import Measure, {ContentRect} from "react-measure"
+import Measure, { ContentRect } from "react-measure"
 import ReactTooltip from "react-tooltip"
-import {getColorPallette} from "./ColorGradient"
-import {QueryWrapperChildProps} from "./QueryWrapper"
+import { getColorPallette } from "./ColorGradient"
+import { QueryWrapperChildProps } from "./QueryWrapper"
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -42,7 +41,8 @@ type Info = {
  * @class StackedRowHomebrew
  * @extends {React.Component}
  */
-export default class StackedRowHomebrew extends React.Component<StackedRowHomebrewProps & QueryWrapperChildProps, StackedRowHomebrewState> {
+export default class StackedRowHomebrew extends
+    React.Component<StackedRowHomebrewProps & QueryWrapperChildProps, StackedRowHomebrewState> {
 
     public static propTypes = {
         loadingScreen: PropTypes.element
@@ -55,15 +55,15 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
         this.handleClick = this.handleClick.bind(this)
         this.handleArrowClick = this.handleArrowClick.bind(this)
         this.getHoverText = this.getHoverText.bind(this)
+        this.onMeasureResize = this.onMeasureResize.bind(this)
         this.rgba2rgb = this.rgba2rgb.bind(this)
         // the text currently under the cursor
         this.state = {
+            dimensions: { bounds: {height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0} },
             hoverText: "",
             hoverTextCount: 0,
-            selectedFacets: {},
-            // dimensios has shape ContentRect: { bounds: BoundingRect }
-            dimensions: { bounds: {height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0} },
-            index: -1
+            index: -1,
+            selectedFacets: {}
         }
         this.extractPropsData = this.extractPropsData.bind(this)
     }
@@ -108,28 +108,30 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
         })
     }
 
-    public getHoverText(x_data: any) {
-        let hoverText
-        if (this.state.index === -1) {
-            hoverText = x_data[0] && x_data[0].value
-        } else {
-            hoverText = this.state.hoverText
-        }
+    public getHoverText(xData: any) {
+        const {index, hoverText} = this.state
+        const hoverTextDisplay = index === -1 ? xData[0] && xData[0].value : hoverText
         return (
             <React.Fragment>
-                <span className="SRC-text-cap"> {this.props.filter} </span> : <span> {hoverText === "org.sagebionetworks.UNDEFINED_NULL_NOTSET" ? "unannotated" : hoverText} </span>
+                <span className="SRC-text-cap">
+                    {this.props.filter}
+                </span> :
+                <span>
+                    {hoverTextDisplay === "org.sagebionetworks.UNDEFINED_NULL_NOTSET" ? "unannotated" : hoverText}
+                </span>
             </React.Fragment>
         )
     }
 
-    public getFileCount(x_data: any) {
+    public getFileCount(xData: any) {
         if (this.state.index === -1) {
-            const hoverTextCount = x_data[0] && x_data[0].count
+            const hoverTextCount = xData[0] && xData[0].count
             return hoverTextCount
         } else {
             return this.state.hoverTextCount
         }
     }
+
     // Handle user cycling through slices of the bar chart
     public handleArrowClick = (direction: string) => (event: MouseEvent<HTMLButtonElement>) => {
         let { index } = this.state
@@ -169,24 +171,20 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
         ]
     }
 
-    public advancedSearch(x_data: any) {
+    public advancedSearch(xData: any) {
 
-        let hoverText
+        const {index, hoverText} = this.state
 
-        if (this.state.index === -1) {
-            hoverText = x_data[0] && x_data[0].value
-        } else {
-            hoverText = this.state.hoverText
-        }
+        const hoverTextDisplay = index === -1 ? xData[0] && xData[0].value : hoverText
 
         // base 64 encode the json of the query and go to url with the encoded object
         const lastQueryRequest = this.props.getLastQueryRequest!()
         const { query } = lastQueryRequest
         query.selectedFacets = [
             {
-                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
                 columnName: this.props.filter,
-                facetValues: [hoverText]
+                concreteType: "org.sagebionetworks.repo.model.table.FacetColumnValuesRequest",
+                facetValues: [hoverTextDisplay]
             }
         ]
         const encodedQuery = btoa(JSON.stringify(query))
@@ -199,49 +197,71 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
      * Display view
      */
     public render() {
-        const { data } = this.props
+        const {
+                data,
+                isLoadingNewData,
+                loadingScreen,
+                rgbIndex,
+                isChecked,
+                filter,
+                unitDescription
+            } = this.props
         // while loading
-        if (this.props.isLoadingNewData) {
-            return this.props.loadingScreen || <div></div>
+        if (isLoadingNewData) {
+            return loadingScreen || <div/>
         }
-        const x_data = this.extractPropsData(data)
+        const xData = this.extractPropsData(data)
         let total: number = 0
         const width: number = this.state.dimensions.bounds!.width
         // sum up the counts of data
-        for (const key in x_data) {
-            if (x_data.hasOwnProperty(key)) {
-                total += x_data[key].count
+        for (const key in xData) {
+            if (xData.hasOwnProperty(key)) {
+                total += xData[key].count
             }
         }
-        const {colorPalette, textColors} = getColorPallette(this.props.rgbIndex!, x_data.length)
+        const {colorPalette, textColors} = getColorPallette(rgbIndex!, xData.length)
         const originalColor = colorPalette[0]
         return (
             <div className="container-fluid">
                 <div className="row SRC-center-text">
-                    <button className="btn btn-default btn-sm SRC-floatRight" onClick={this.handleArrowClick(NEXT_CLICK)}>
-                        <FontAwesomeIcon style={{fontSize: "11px"}} className="SRC-primary-text-color" icon="angle-right" />
+                    <button
+                        className="btn btn-default btn-sm SRC-floatRight"
+                        onClick={this.handleArrowClick(NEXT_CLICK)}
+                    >
+                        <FontAwesomeIcon
+                            style={{fontSize: "11px"}}
+                            className="SRC-primary-text-color"
+                            icon="angle-right"
+                        />
                     </button>
-                    <button className="btn btn-default btn-sm SRC-floatRight" onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}>
-                        <FontAwesomeIcon style={{fontSize: "11px"}} className="SRC-primary-text-color" icon="angle-left" />
+                    <button
+                        className="btn btn-default btn-sm SRC-floatRight"
+                        onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}
+                    >
+                        <FontAwesomeIcon
+                            style={{fontSize: "11px"}}
+                            className="SRC-primary-text-color"
+                            icon="angle-left"
+                        />
                     </button>
                 </div>
                 <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
                     <Measure
                         bounds={true}
+                        // tslint:disable-next-line
                         onResize={(contentRect: ContentRect) => {
                             this.setState({ dimensions: contentRect })
                         }}
                     >
                         {({ measureRef }) => (
-                            <div style={{display: "flex"}} ref={measureRef}>
-                                {x_data.map((obj, index) => {
+                            <div className="SRC-flex" ref={measureRef}>
+                                {/* tslint:disable-next-line */}
+                                {xData.map((obj, index) => {
                                     const initRender: boolean = this.state.index === -1 && index === 0
                                     const textColor: string = textColors[index]
-
                                     const rgbColor: string = colorPalette[index]
-
                                     let rectStyle: any
-                                    const check = this.props.isChecked![index] === undefined || this.props.isChecked![index]
+                                    const check = isChecked![index] === undefined || isChecked![index]
                                     if (check) {
                                         rectStyle = {
                                             fill: rgbColor
@@ -257,18 +277,23 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                     if (this.state.index === index || initRender) {
                                         style.filter = "drop-shadow(5px 5px 5px rgba(0,0,0,0.5))"
                                     }
-                                    const label: string = `${this.props.filter}: ${obj.value}  - ${obj.count} ${this.props.unitDescription}`
+                                    const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
                                     const tooltipId = uuidv4()
                                     // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
                                     const value = obj.value as number
                                     const numCharsInValue = value.toString().length * 4.5 // represents width of a character
-
                                     return (
                                         // each svg represents one of the bars
                                         // will need to change this to be responsive
                                         <React.Fragment key={uuidv4()}>
                                             <span data-for={tooltipId} data-tip={label}>
-                                                <svg className="SRC-hoverBox" height={svgHeight + 15} width={svgWidth} style={style} onClick={this.handleClick({ ...obj, index })}>
+                                                <svg
+                                                    className="SRC-hoverBox"
+                                                    height={svgHeight + 15}
+                                                    width={svgWidth}
+                                                    style={style}
+                                                    onClick={this.handleClick({ ...obj, index })}
+                                                >
                                                     <rect
                                                         onMouseEnter={this.handleHover}
                                                         onMouseLeave={this.handleExit}
@@ -278,53 +303,75 @@ export default class StackedRowHomebrew extends React.Component<StackedRowHomebr
                                                         // can't remove inline style due to dynamic fill
                                                         style={rectStyle}
                                                     />
-                                                    {
-                                                        index < 3 && svgWidth > numCharsInValue  &&
-                                                        <text textAnchor="middle" className="SRC-text-title" fontFamily={"bold sans-serif"} fill={textColor} x={"50%"} y={"50%"}>
+                                                    {/* tslint:disable-next-line */}
+                                                    {index < 3 && svgWidth > numCharsInValue &&
+                                                        <text
+                                                            textAnchor="middle"
+                                                            className="SRC-text-title"
+                                                            fontFamily={"bold sans-serif"}
+                                                            fill={textColor}
+                                                            x={"50%"}
+                                                            y={"50%"}
+                                                        >
                                                             {obj.count}
-                                                        </text>
+                                                        </text>}
+                                                    {
+                                                        // tslint:disable-next-line:jsx-no-multiline-js
+                                                        (this.state.index === index || initRender) &&
+                                                        (
+                                                            <text
+                                                                fill={originalColor}
+                                                                x={0}
+                                                                y={svgHeight + 15}
+                                                                className="SRC-text-shadow SRC-text-large"
+                                                            >
+                                                                {"\u25BE"}
+                                                            </text>
+                                                        )
                                                     }
-                                                    {(this.state.index === index || initRender) && (
-                                                        <text fill={originalColor} x={0} y={svgHeight + 15} className="SRC-text-shadow SRC-text-large">
-                                                            {"\u25BE"}
-                                                        </text>
-                                                    )}
                                                 </svg>
                                             </span>
-                                            <ReactTooltip delayShow={1000} id={tooltipId}/>
-                                        </React.Fragment>
-                                    )
+                                            <ReactTooltip delayShow={1000} id={tooltipId} />
+                                        </React.Fragment>)
                                 })}
-                            </div>
-                        )}
+                            </div>)}
                     </Measure>
                 </div>
                 <div className="row SRC-bar-border SRC-bar-border-bottom">
                     <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
-                        <strong>{this.getHoverText(x_data)}</strong>
+                        <strong>{this.getHoverText(xData)}</strong>
                     </p>
-                    <p className="SRC-noMargin SRC-padding-chart SRC-text-chart"> {this.getFileCount(x_data)} {this.props.unitDescription} </p>
+                    <p
+                        className="SRC-noMargin SRC-padding-chart SRC-text-chart"
+                    >
+                        {this.getFileCount(xData)} {unitDescription}
+                    </p>
                 </div>
             </div>
         )
     }
     public extractPropsData(data: any) {
-        const x_data: any[] = []
+        const xData: any[] = []
+        const {filter} = this.props
         data.facets.forEach(
             (item: any) => {
-                if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
+                if (item.facetType === "enumeration" && item.columnName === filter) {
                     item.facetValues.forEach(
                         (facetValue: any) => {
                             if (item.columnName) {
-                                x_data.push({ columnName: item.columnName, ...facetValue })
+                                xData.push({ columnName: item.columnName, ...facetValue })
                             }
                     })
                 }
         })
         // sort the data so that the largest bars are at the front
-        x_data.sort((a, b) => {
+        xData.sort((a, b) => {
             return b.count - a.count
         })
-        return x_data
+        return xData
+    }
+
+    public onMeasureResize(contentRect: ContentRect) {
+        this.setState({ dimensions: contentRect })
     }
 }

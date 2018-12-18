@@ -146,9 +146,9 @@ export default class Menu extends React.Component<Props, MenuState> {
                                     SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
                                     SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                                 query: {
+                                    isConsistent: false,
                                     limit: 25,
                                     offset: 0,
-                                    isConsistent: false,
                                     sql: config.sql,
                                 }
                             }}
