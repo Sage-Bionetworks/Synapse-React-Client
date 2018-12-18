@@ -1,14 +1,12 @@
 import { library } from "@fortawesome/fontawesome-svg-core"
-import { faAngleLeft } from "@fortawesome/free-solid-svg-icons"
-import { faAngleRight } from "@fortawesome/free-solid-svg-icons"
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons"
 import PropTypes from "prop-types"
 import * as React from "react"
 import { SynapseConstants } from ".."
-import {getColorPallette} from "./ColorGradient"
+import { getColorPallette } from "./ColorGradient"
+import { Facets } from "./Facets"
 import QueryWrapper from "./QueryWrapper"
 import StackedRowHomebrew from "./StackedRowHomebrew"
-
-import { Facets } from "./Facets"
 import SynapseTable from "./SynapseTable"
 import SynapseTableCardView from "./SynapseTableCardView"
 
@@ -46,10 +44,10 @@ type Info = {
 export default class Menu extends React.Component<Props, MenuState> {
 
     public static propTypes = {
+        facetName: PropTypes.string,
         menuConfig: PropTypes.arrayOf(PropTypes.any),
-        token: PropTypes.string,
         rgbIndex: PropTypes.number,
-        facetName: PropTypes.string
+        token: PropTypes.string
     }
 
     constructor(props: Props) {
@@ -58,6 +56,7 @@ export default class Menu extends React.Component<Props, MenuState> {
             menuIndex: 0
         }
         this.handleHoverLogic = this.handleHoverLogic.bind(this)
+        this.switchFacet = this.switchFacet.bind(this)
     }
 
     public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
@@ -66,8 +65,12 @@ export default class Menu extends React.Component<Props, MenuState> {
         }
     }
 
+    public switchFacet = (menuIndex: number) => (_: React.MouseEvent<HTMLDivElement>) => {
+        this.setState({menuIndex})
+    }
+
     public render() {
-        const {token, menuConfig, rgbIndex} = this.props
+        const {token, menuConfig, rgbIndex, type} = this.props
 
         const {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
         const originalColor = colorPalette[0]
@@ -106,14 +109,14 @@ export default class Menu extends React.Component<Props, MenuState> {
                         onMouseLeave={this.handleHoverLogic(infoLeave)}
                         key={config.facetName}
                         className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
-                        onClick={() => {this.setState({menuIndex: index})}}
-                        style={style}>
+                        onClick={this.switchFacet(index)}
+                        style={style}
+                    >
                         {facetDisplayValue}
                     </div>
                 )
             }
         )
-
         const queryWrapper = menuConfig.map(
             (config: MenuConfig, index: number) => {
                 const isSelected: boolean = (this.state.menuIndex === index)
@@ -121,53 +124,49 @@ export default class Menu extends React.Component<Props, MenuState> {
                 if (!isSelected) {
                     style = {visibility: "hidden", display: "none"}
                 }
-                return (
-                <span key={config.facetName} style={style} >
-                    <QueryWrapper
-                        showMenu={true}
-                        initQueryRequest={{
-                            concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                            partMask:
-                            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                            query: {
-                            isConsistent: false,
-                            sql: config.sql,
-                            limit: 25,
-                            offset: 0
-                            }
-                        }}
-                        unitDescription={config.unitDescription || ""}
-                        facetName={config.facetName}
-                        token={token}
-                        rgbIndex={rgbIndex}
-                    >
-                        <StackedRowHomebrew
+                let showSynTable = <div/>
+                if (config.title) {
+                    showSynTable = (
+                        <SynapseTable
+                            title={config.title}
                             synapseId={config.synapseId}
-                            unitDescription={(config.unitDescription || "")}
-                            loadingScreen={this.props.loadingScreen}
-                        />
-                        <Facets/>
-                        {
-                            config.title ?
-                            (<SynapseTable
-                                title={config.title}
+                            // specify visible column count
+                            visibleColumnCount={config.visibleColumnCount || 0}
+                        />)
+                }
+                return (
+                    <span key={config.facetName} style={style} >
+                        <QueryWrapper
+                            showMenu={true}
+                            initQueryRequest={{
+                                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
+                                partMask:
+                                    // tslint:disable-next-line
+                                    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+                                    SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+                                    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+                                query: {
+                                    limit: 25,
+                                    offset: 0,
+                                    isConsistent: false,
+                                    sql: config.sql,
+                                }
+                            }}
+                            unitDescription={config.unitDescription || ""}
+                            facetName={config.facetName}
+                            token={token}
+                            rgbIndex={rgbIndex}
+                        >
+                            <StackedRowHomebrew
                                 synapseId={config.synapseId}
-                                // specify visible column count
-                                visibleColumnCount={config.visibleColumnCount || 0}
-                                />
-                            ) :
-                            (<div></div>)
-                        }
-                        {
-                            this.props.type ?
-                            <SynapseTableCardView type={this.props.type}  />
-                            :
-                            (<div></div>)
-                        }
-                    </QueryWrapper>
-                </span>
+                                unitDescription={(config.unitDescription || "")}
+                                loadingScreen={this.props.loadingScreen}
+                            />
+                            <Facets />
+                            {showSynTable}
+                            {type ? <SynapseTableCardView type={type} /> : (<div/>)}
+                        </QueryWrapper>
+                    </span>
                 )
             }
         )

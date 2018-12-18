@@ -1,10 +1,10 @@
 import React, { Component } from "react"
 import logo from "../../images/logo.svg"
 import { SynapseClient } from "../../lib"
-import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
+// import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
 import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
-import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
-import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
+// import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
+// import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
 import * as SynapseConstants from "../../lib/utils/SynapseConstants"
 import "./App.css"
 // import QueryWrapper from "src/lib/containers/QueryWrapper"
@@ -170,7 +170,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
-
+{/* 
         <StaticQueryWrapper
             sql="SELECT * FROM syn17024173"
             token={inDevEnv ? token! : this.state.token!}
@@ -184,7 +184,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
             ownerId={"syn14306197"}
             wikiId={"582150"}
             token={inDevEnv ? token! : this.state.token!}
-          />
+          /> */}
 
       </div>
     )

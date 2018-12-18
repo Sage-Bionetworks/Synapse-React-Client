@@ -95,6 +95,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
         this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
         this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
+        this.showPaginationButtons = this.showPaginationButtons.bind(this)
         // store the offset and sorted selection that is currently held
         this.state = {
             applyClickedArray: Array(100).fill(false),
@@ -117,7 +118,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             return (<div/>)
         }
         // unpack all the data
-        const { data } = this.props
+        const { data, filter, isLoading, showNothing, unitDescription } = this.props
         const { queryResult } = data
         const { queryResults } = queryResult
         const { rows } = queryResults
@@ -127,22 +128,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
         const backgroundColor = colorPalette[0]
 
-        // Step 1: Format the column headers, we have to track a few variables --
-        // whether the column should be shown by default or if the state now mandates it
-        // be shown
-        const headersFormatted = this.createTableHeader(headers, facets)
-
-        // Step 2: Format the row values, tracking the same information that the columns have to,
-        // grab the row data and format it
-        // e.g. <tr> <td> some value </td> </tr>
-        const rowsFormatted: JSX.Element [] = []
-        this.createTableRows(rows, headers, rowsFormatted)
         // handle displaying the previous button -- if offset is zero then it
         // shouldn't be displayed
         const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
+
         const xData: any[] = []
         data.facets.forEach((item: any) => {
-            if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
+            if (item.facetType === "enumeration" && item.columnName === filter) {
                 item.facetValues.forEach(
                     (facetValue: any) => {
                         if (item.columnName) {
@@ -164,11 +156,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             }
         }
         const total = anyTrue ? totalStandardCase : totalAllFalseCase
+
         const tooltipIdOne = uuidv4()
         const tooltipIdTwo = uuidv4()
         const {menuWallIsActive, isOpen} = this.state
         const optionalHiddenClass: string = !menuWallIsActive ? "hidden" : ""
-        const {isLoading, showNothing, unitDescription} = this.props
         let addRemoveColClasses  = "SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor"
         addRemoveColClasses += (isOpen ? "SRC-primary-background-color" : "")
 
@@ -238,29 +230,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         <table className="table table-striped table-condensed">
                             <thead className="SRC_borderTop">
                                 <tr>
-                                    {headersFormatted}
+                                    {this.createTableHeader(headers, facets)}
                                 </tr>
                             </thead>
-                            {!showNothing && (<tbody> {rowsFormatted}</tbody>)}
+                            {!showNothing && (<tbody> {this.createTableRows(rows, headers)}</tbody>)}
                         </table>
-                        {!showNothing && pastZero && (
-                            <button
-                                onClick={this.handlePaginationClick(PREVIOUS)}
-                                className="btn btn-default SRC-table-button"
-                                type="button"
-                            >
-                                Previous
-                            </button>
-                        )}
-                        {!showNothing && (
-                            <button
-                                onClick={this.handlePaginationClick(NEXT)}
-                                className="SRC-primary-background-hover SRC-viewMoreButton pull-right"
-                                type="button"
-                            >
-                                Next
-                            </button>
-                        )}
+                        {!showNothing && this.showPaginationButtons(pastZero)}
                     </div>
                 </div>
             </React.Fragment>
@@ -284,6 +259,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             currentOffset += 25
         }
         queryRequest.query.offset = currentOffset
+        console.log('executing query request')
         this.props.executeQueryRequest!(queryRequest)
     }
     /**
@@ -317,6 +293,38 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             columnIconState,
             sortSelection
         })
+    }
+
+    private showPaginationButtons(pastZero: boolean): any {
+
+        const previous = (
+                            <button
+                                onClick={this.handlePaginationClick(PREVIOUS)}
+                                className="btn btn-default SRC-table-button"
+                                type="button"
+                            >
+                                Previous
+                            </button>
+                        )
+
+        const next = (
+            (
+                <button
+                    onClick={this.handlePaginationClick(NEXT)}
+                    className="SRC-primary-background-hover SRC-viewMoreButton pull-right"
+                    type="button"
+                >
+                    Next
+                </button>
+            )
+        )
+
+        return (
+            <React.Fragment>
+                {pastZero && previous}
+                {next}
+            </React.Fragment>
+        )
     }
 
     private renderDropdownColumnMenu(headers: SelectColumn[]): React.ReactNode {
@@ -353,8 +361,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         )
     }
 
-    private createTableRows(rows: Row [], headers: SelectColumn[], rowsFormatted: JSX.Element[]) {
-
+    private createTableRows(rows: Row [], headers: SelectColumn[]) {
+        const rowsFormatted: JSX.Element[] = []
         const {isColumnSelected} = this.state
         const isColumnSelectedLen = isColumnSelected.length
         rows.forEach((expRow: any, i: any) => {
@@ -390,6 +398,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             )
             rowsFormatted.push(rowFormatted)
         })
+        return rowsFormatted
     }
 
     private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
