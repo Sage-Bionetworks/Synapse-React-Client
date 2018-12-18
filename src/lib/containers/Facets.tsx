@@ -61,7 +61,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         }
         style.color = textColor
         const {value} = facetValue
-        facetValue.displayValue = value === "org.sagebionetworks.UNDEFINED_NULL_NOTSET" ? "unannotated" : facetValue.value
+        facetValue.displayValue = value === "org.sagebionetworks.UNDEFINED_NULL_NOTSET" ? "unannotated" : value
         const icon = isChecked ? "times" : "plus"
 
         children.push(

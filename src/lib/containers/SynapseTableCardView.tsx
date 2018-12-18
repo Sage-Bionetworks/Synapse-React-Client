@@ -2,9 +2,19 @@ import PropTypes from "prop-types"
 import React from "react"
 import { QueryBundleRequest } from "../utils/jsonResponses/Table/QueryBundleRequest"
 import { QueryResultBundle } from "../utils/jsonResponses/Table/QueryResultBundle"
-import { AMP_CONSORTIUM, AMP_PROJECT, AMP_STUDY, DATASET, FUNDER, PUBLICATION, STUDY, TOOL } from "../utils/SynapseConstants"
+import {
+    AMP_CONSORTIUM,
+    AMP_PROJECT,
+    AMP_STUDY,
+    DATASET,
+    FUNDER,
+    PUBLICATION,
+    STUDY,
+    TOOL
+} from "../utils/SynapseConstants"
 import { Dataset, Funder, Publication, Study, Tool } from "./row_renderers"
 import { AMP_Study, Consortium, Project } from "./row_renderers/AMPAD"
+import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
 const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
@@ -25,12 +35,13 @@ const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...
     return data.queryResult.queryResults.rows.map(
         (rowData: any, index: number) => {
             if (index < limit) {
+                const childrenWithProps = React.Children.map(children,
+                    (child: any, j) => {
+                        return React.cloneElement(child, { key: `${index},${j}`, data: rowData.values, ...rest })
+                    })
                 return (
                     <React.Fragment key={index}>
-                        {React.Children.map(children,
-                         (child: any, j) => {
-                                return React.cloneElement(child, {key: `${index},${j}`, data: rowData.values, ...rest })
-                            })}
+                        {childrenWithProps}
                     </React.Fragment>
                 )
             } else {
@@ -65,9 +76,9 @@ type SynapseTableCardViewState = {
 class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, SynapseTableCardViewState> {
 
     public static propTypes = {
-        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY ]),
+        hideOrganizationLink: PropTypes.bool,
         limit: PropTypes.number,
-        hideOrganizationLink: PropTypes.bool
+        type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY ])
     }
 
     constructor(props: SynapseTableCardViewProps) {
@@ -76,9 +87,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         this.handleViewMore = this.handleViewMore.bind(this)
         this.getBufferData = this.getBufferData.bind(this)
         this.state = {
-            hasMoreData: true,
             cardLimit: PAGE_SIZE,
-            hasLoadedBufferData: false
+            hasLoadedBufferData: false,
+            hasMoreData: true
         }
     }
 
@@ -172,10 +183,13 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 limit = Infinity,
                 token= "",
                 ownerId= "",
-                isHeader= false
+                isHeader= false,
+                isQueryWrapperChild,
+                filter,
+                unitDescription
                 } = this.props
         if (data === undefined || Object.keys(data).length === 0) {
-            return <div className="container"> </div>
+            return <div className="container"/>
         }
         const schema = {}
         data.queryResult.queryResults.headers.forEach(
@@ -187,11 +201,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
         // Either the number of cards to be shown is specified by the developer in the props
         // or this card is under the query wrapper and we handle the view more button
-        if (this.props.isQueryWrapperChild) {
-            cardLimit = this.state.cardLimit
-        } else {
-            cardLimit = limit
-        }
+        cardLimit = isQueryWrapperChild ? this.state.cardLimit : limit
 
         // We want to hide the view more button if:
         //     1. On page load we get the initial results and find there are < 25 rows
@@ -199,44 +209,55 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         //        that there were no rows returned.
         //     3. If its loading then we want it to remove from the screen so the browser doesn't
         //        keep the button in focus (its a UX issue).
-
-        let showViewMore: boolean = this.props.isQueryWrapperChild! && data.queryResult.queryResults.rows.length >= PAGE_SIZE
+        let showViewMore: boolean = isQueryWrapperChild! && data.queryResult.queryResults.rows.length >= PAGE_SIZE
         showViewMore = showViewMore && this.state.hasMoreData
         showViewMore = showViewMore && !this.props.isLoading
 
-        const x_data: any[] = []
-        data.facets && data.facets.forEach((item: any) => {
-            if (item.facetType === "enumeration" && item.columnName === this.props.filter) {
-                item.facetValues.forEach(
-                    (facetValue: any) => {
-                        if (item.columnName) {
-                            x_data.push({ columnName: item.columnName, ...facetValue })
-                        }
-                })
-            }
-        })
+        const {facets = []} = data
+        const curFacetsIndex = facets.findIndex((el) => el.facetType === "enumeration" && el.columnName === filter)
+        if (curFacetsIndex === -1) {
+            // stil waiting on the data to come through
+            return <div/>
+        }
+        const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
+
         // edge case -- if they are all false then they are considered all true..
         // sum up the counts of data
         let anyTrue = false
         let totalAllFalseCase = 0
         let totalStandardCase = 0
-        for (const key in x_data) {
-            if (x_data.hasOwnProperty(key)) {
-                anyTrue = anyTrue || x_data[key].isSelected
-                totalAllFalseCase += x_data[key].count
-                totalStandardCase += x_data[key].isSelected ? x_data[key].count : 0
+        if (curFacets) {
+            for (const key of curFacets.facetValues) {
+                anyTrue = anyTrue || key.isSelected
+                totalAllFalseCase += key.count
+                totalStandardCase += key.isSelected ? key.count : 0
             }
         }
         let total = anyTrue ? totalStandardCase : totalAllFalseCase
 
-        if (!this.props.filter) {
+        if (!filter) {
             total = data.queryResult.queryResults.rows.length
         }
-
+        // Either the filter is defined and the count should be shown or the client defined the unit description
+        // and the count should be shown.
+        const showCardCount = filter || (!filter && unitDescription)
+        const showViewMoreButton = (
+            showViewMore
+            &&
+            (
+                <div>
+                    <button
+                        onClick={this.handleViewMore}
+                        className="pull-right SRC-primary-background-hover SRC-viewMoreButton"
+                    >
+                        View More
+                    </button>
+                </div>
+            )
+        )
         return (
             <div className="container-fluid">
-                {this.props.filter && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
-                {!this.props.filter && this.props.unitDescription && <p className="SRC-boldText SRC-text-title"> Displaying {total} {this.props.unitDescription}</p>}
+                {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
                 <RowContainer
                     key={uuidv4()}
                     hideOrganizationLink={hideOrganizationLink}
@@ -249,14 +270,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 >
                 {this.renderChild()}
                 </RowContainer>
-                {showViewMore
-                    &&
-                        (<div>
-                            <button onClick={this.handleViewMore} className="pull-right SRC-primary-background-hover SRC-viewMoreButton">
-                            View More
-                            </button>
-                        </div>)
-                }
+                {showViewMoreButton}
             </div>
         )
     }
