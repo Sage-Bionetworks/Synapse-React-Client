@@ -143,13 +143,12 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         // we have to cast the event to an anchor because that's what were interested in
         // responding to
         const anchor = event.target as HTMLAnchorElement
-
         if (anchor.tagName === "A") {
             if (anchor.getAttribute("data-anchor") === null && anchor.id === "") {
                 window.open(anchor.href, "_blank")
             } else if (anchor.id.substring(0, 3) === "ref") {
                 const referenceNumber = Number(event.currentTarget.id.substring(3)) // e.g. ref2 => '2'
-                const goTo = this.markupRef.current!.querySelector(`#bookmark${referenceNumber - 1}`)
+                const goTo = this.markupRef.current!.querySelector(`#bookmark${referenceNumber}`)
                 try {
                     goTo!.scrollIntoView({
                         behavior: "smooth",

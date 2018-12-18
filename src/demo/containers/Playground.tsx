@@ -7,6 +7,7 @@ import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
 import { SynapseClient } from 'src/lib';
 import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
 import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
+import MarkdownSynapse from 'src/lib/containers/MarkdownSynapse';
 // import QueryWrapper from 'src/lib/containers/QueryWrapper';
 // import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 // import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
@@ -178,6 +179,14 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
               type={SynapseConstants.AMP_CONSORTIUM}
             />
           </StaticQueryWrapper>
+
+          <MarkdownSynapse
+            ownerId={"syn17100797"}
+            wikiId={"587923"}
+            token={inDevEnv ? token! : this.state.token!}
+          >
+
+          </MarkdownSynapse>
 
         
         {/* <QueryWrapper
