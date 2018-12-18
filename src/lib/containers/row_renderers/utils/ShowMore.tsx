@@ -6,8 +6,8 @@ type ShowMoreState = {
 }
 
 type ShowMoreProps = {
+    onClick?: (val: any) => void
     summary?: string
-    onClick?: Function
 }
 
 export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreState> {
@@ -20,7 +20,7 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
         this.toggleShowMore = this.toggleShowMore.bind(this)
     }
 
-    toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
+    public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
         event.preventDefault()
         let { showMore } = this.state
         showMore = !showMore
@@ -32,13 +32,13 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
         })
     }
 
-    render() {
+    public render() {
         // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
-        let { summary } = this.props
+        const { summary } = this.props
         let summaryView = ""
-        let meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
+        const meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
         if (!this.state.showMore && meetsCharRequirenent) {
-            let summarySplit = summary!.split(" ")
+            const summarySplit = summary!.split(" ")
             // find num words to join such that its >= char_count_cutoff
             let i = 0
             while (summaryView.length < CHAR_COUNT_CUTOFF) {
@@ -48,16 +48,20 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
         } else if (!meetsCharRequirenent) {
             summaryView = summary!
         }
+        const showMoreButton =  (
+            <a
+                style={{fontSize: "14px", cursor: "pointer"}}
+                className="SRC-primary-text-color"
+                onClick={this.toggleShowMore}
+            >
+                ...Show More{" "}
+            </a>
+        )
         return (
             <React.Fragment>
                 {!this.state.showMore && summaryView}
                 {this.state.showMore && summary}
-                {!this.state.showMore &&
-                    meetsCharRequirenent && (
-                        <a style={{fontSize: "14px", cursor: "pointer"}} className="SRC-primary-text-color" onClick={this.toggleShowMore}>
-                            ...Show More{" "}
-                        </a>
-                    )}
+                {!this.state.showMore && showMoreButton}
             </React.Fragment>
         )
     }

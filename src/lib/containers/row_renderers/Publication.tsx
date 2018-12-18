@@ -1,34 +1,34 @@
-import React from "react";
-import * as Utils from "./utils";
-import { PUBLICATION } from "../../utils/SynapseConstants";
+import React from "react"
+import { PUBLICATION } from "../../utils/SynapseConstants"
+import * as Utils from "./utils"
 
-type PublicationState = { 
-    showMore: boolean 
-};
+type PublicationState = {
+    showMore: boolean
+}
 
-type PublicationProps = { 
+type PublicationProps = {
     data?: any
     schema?: any
-};
+}
 
 class Publication extends React.Component<PublicationProps, PublicationState> {
 
     constructor(props: PublicationProps) {
-        super(props);
+        super(props)
         this.state = {
             showMore: false
-        };
+        }
     }
 
-    render() {
-        const { data, schema } = this.props;
-        const citation = data[schema.citation];
-        const tumorType = data[schema.tumorType];
-        const diseaseFocus = data[schema.diseaseFocus];
-        const doi = data[schema.doi];
-        const fundingAgency = data[schema.fundingAgency];
-        const projectName = data[schema.projectName];
-        const values = [["DOI", doi], ["FUNDER", fundingAgency], ["STUDY", projectName]];
+    public render() {
+        const { data, schema } = this.props
+        const citation = data[schema.citation]
+        const tumorType = data[schema.tumorType]
+        const diseaseFocus = data[schema.diseaseFocus]
+        const doi = data[schema.doi]
+        const fundingAgency = data[schema.fundingAgency]
+        const projectName = data[schema.projectName]
+        const values = [["DOI", doi], ["FUNDER", fundingAgency], ["STUDY", projectName]]
         return (
             <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
@@ -49,7 +49,7 @@ class Publication extends React.Component<PublicationProps, PublicationState> {
                 </div>
                 <Utils.CardFooter values={values} />
             </div>
-        );
+        )
     }
 }
-export default Publication;
+export default Publication

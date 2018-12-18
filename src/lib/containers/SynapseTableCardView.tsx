@@ -214,30 +214,32 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         showViewMore = showViewMore && !this.props.isLoading
 
         const {facets = []} = data
+        let total = 0
         const curFacetsIndex = facets.findIndex((el) => el.facetType === "enumeration" && el.columnName === filter)
-        if (curFacetsIndex === -1) {
-            // stil waiting on the data to come through
-            return <div/>
-        }
-        const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
+       
+        if (curFacetsIndex !== -1) {
+            // calculate the values chosen
+            const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
+    
+            // edge case -- if they are all false then they are considered all true..
+            // sum up the counts of data
+            let anyTrue = false
+            let totalAllFalseCase = 0
+            let totalStandardCase = 0
 
-        // edge case -- if they are all false then they are considered all true..
-        // sum up the counts of data
-        let anyTrue = false
-        let totalAllFalseCase = 0
-        let totalStandardCase = 0
-        if (curFacets) {
-            for (const key of curFacets.facetValues) {
-                anyTrue = anyTrue || key.isSelected
-                totalAllFalseCase += key.count
-                totalStandardCase += key.isSelected ? key.count : 0
+            if (curFacets) {
+                for (const key of curFacets.facetValues) {
+                    anyTrue = anyTrue || key.isSelected
+                    totalAllFalseCase += key.count
+                    totalStandardCase += key.isSelected ? key.count : 0
+                }
             }
-        }
-        let total = anyTrue ? totalStandardCase : totalAllFalseCase
-
-        if (!filter) {
+    
+            total = anyTrue ? totalStandardCase : totalAllFalseCase
+        } else {
             total = data.queryResult.queryResults.rows.length
         }
+
         // Either the filter is defined and the count should be shown or the client defined the unit description
         // and the count should be shown.
         const showCardCount = filter || (!filter && unitDescription)

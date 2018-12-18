@@ -1,7 +1,7 @@
-import Study from './Study'
-import Tool from './Tool'
-import Dataset from './Dataset'
-import Publication from './Publication'
-import Funder from './Funder'
+import Dataset from "./Dataset"
+import Funder from "./Funder"
+import Publication from "./Publication"
+import Study from "./Study"
+import Tool from "./Tool"
 
 export { Study, Tool, Dataset, Publication, Funder }

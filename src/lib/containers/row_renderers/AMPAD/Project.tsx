@@ -1,40 +1,40 @@
-import React from "react";
-import { Project } from '.';
-import * as Utils from '../utils'
+import React from "react"
+import { Project } from "."
+import * as Utils from "../utils"
 
 type ProjectState = {
     showMore: boolean
     hasCreatedIndex: boolean
-};
+}
 
 type ProjectProps = {
     isHeader?: boolean
     data?: any
     schema?: any
-};
+}
 
 export default class Study extends React.Component<ProjectProps, ProjectState> {
 
-    static icon = <img className="iconImg" alt="" src={require("../../../assets/icons/project.svg")}/>
+    public static icon = <img className="iconImg" alt="" src={require("../../../assets/icons/project.svg")}/>
 
     constructor(props: ProjectProps) {
-        super(props);
+        super(props)
         this.state = {
-            showMore: false,
             hasCreatedIndex: false,
-        };
-        this.handleClick = this.handleClick.bind(this);
+            showMore: false
+        }
+        this.handleClick = this.handleClick.bind(this)
     }
 
-    handleClick(event: React.SyntheticEvent) {
+    public handleClick(event: React.SyntheticEvent) {
         this.setState({
             showMore: !this.state.showMore
-        });
+        })
     }
 
-    render() {
-        const { data, schema } = this.props;
-        
+    public render() {
+        const { data, schema } = this.props
+
         const abstract = data[schema.Abstract]
         // const consortium = data[schema.Consortium]
         const grantNumber = data[schema["Grant Number"]]
@@ -81,7 +81,6 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
                 <Utils.CardFooter extraWide={true} values={values} />
             </div>
 
-        );
+        )
     }
 }
- 

@@ -1,9 +1,9 @@
 import React from "react"
 
 const logoLinks = {
-    CTF: require("../../assets/logos/ctf.svg"),
+    "CTF": require("../../assets/logos/ctf.svg"),
     "DHART SPORE": require("../../assets/logos/dhart.svg"),
-    NTAP: require("../../assets/logos/ntap.svg")
+    "NTAP": require("../../assets/logos/ntap.svg")
 }
 
 type FunderProps = {
@@ -17,11 +17,11 @@ export default class Funder extends React.Component<FunderProps, {}> {
         super(props)
         this.handleLinkClick = this.handleLinkClick.bind(this)
     }
-    handleLinkClick = (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    public handleLinkClick = (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
         window.open(link, "_blank")
     }
-    render() {
+    public render() {
         const { data, schema } = this.props
         const organizationName = data[schema.organizationName]
         const organizationPath = data[schema.organizationPath]
@@ -29,17 +29,25 @@ export default class Funder extends React.Component<FunderProps, {}> {
         const website = data[schema.website]
         const abbreviation = data[schema.abbreviation]
         const logo = logoLinks[abbreviation]
-        let orgPath = `${window.location.origin}/#${organizationPath}`
+        const orgPath = `${window.location.origin}/#${organizationPath}`
         // remove leading http(s):// and trailing /
         let websiteDisplayName = website.replace("https://", "")
         websiteDisplayName = websiteDisplayName.replace("http://", "")
         if (websiteDisplayName.charAt(websiteDisplayName.length - 1) === "/") {
             websiteDisplayName = websiteDisplayName.substring(0, websiteDisplayName.length - 1)
         }
-        let isOnOrgPath = window.location.hash.substring(1) === organizationPath
-        let style: any = {}
+        const isOnOrgPath = window.location.hash.substring(1) === organizationPath
+        const style: any = {}
+        let showOrgLink
         if (isOnOrgPath) {
             style.paddingBottom = "42px"
+            showOrgLink = (
+                            <div className="SRC-marginAuto SRC-cardAction">
+                                <button onClick={this.handleLinkClick(orgPath)} type="button">
+                                View Funded Research
+                                </button>)
+                            </div>
+                        )
         }
         return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape" style={style}>
@@ -61,13 +69,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
                     </div>
                     <div className="SRC-description">{summary}</div>
                 </div>
-                {!isOnOrgPath && (
-                    <div className="SRC-marginAuto SRC-cardAction">
-                        <button onClick={this.handleLinkClick(orgPath)} type="button">
-                            View Funded Research
-                        </button>
-                    </div>
-                )}
+                {showOrgLink}
             </div>
         )
     }

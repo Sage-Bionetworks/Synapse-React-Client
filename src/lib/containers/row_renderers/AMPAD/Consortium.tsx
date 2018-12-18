@@ -1,9 +1,9 @@
-import React from "react";
+import React from "react"
 
 type ConsortiumState = {
     showMore: boolean
     hasCreatedIndex: boolean
-};
+}
 
 type ConsortiumProps = {
     token?: string
@@ -11,31 +11,31 @@ type ConsortiumProps = {
     isHeader?: boolean
     data?: any
     schema?: any
-};
+}
 
 export default class Consortium extends React.Component<ConsortiumProps, ConsortiumState> {
 
     constructor(props: ConsortiumProps) {
-        super(props);
+        super(props)
         this.state = {
-            showMore: false,
             hasCreatedIndex: false,
-        };
-        this.handleClick = this.handleClick.bind(this);
-        this.getIcon = this.getIcon.bind(this);
+            showMore: false
+        }
+        this.handleClick = this.handleClick.bind(this)
+        this.getIcon = this.getIcon.bind(this)
     }
 
-    handleClick(event: React.SyntheticEvent) {
+    public handleClick(event: React.SyntheticEvent) {
         this.setState({
             showMore: !this.state.showMore
-        });
+        })
     }
 
-    getIcon(org: string, isHeader: boolean) {
+    public getIcon(org: string, isHeader: boolean) {
         // This CAN NOT be refactored below -- dynamic imports are currently not supported
         // in es6, so the code below already has static references to the files below
         // even though its baked into if else clauses.
-        switch(org) {
+        switch (org) {
             case "AMP-AD":
                 if (isHeader) {
                     return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/amp-icon-header.svg")}/>
@@ -56,6 +56,8 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
                 }
             case "Resilience-AD":
                 if (isHeader) {
+                    // ignore long require, this is inevitable
+                    // tslint:disable-next-line
                     return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/resilience-icon-header.svg")}/>
                 } else {
                     return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/resilience-icon.svg")}/>
@@ -65,20 +67,23 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         }
     }
 
-    render() {
-        const { data, schema } = this.props;
-        
+    public render() {
+        const { data, schema } = this.props
+
         const description = data[schema["Short Description"]]
         const name = data[schema["Full Name"]]
         const org = data[schema.Program]
 
         const path = data[schema.Path]
-        let orgPath = `${window.location.origin}/#${path}`        
+        const orgPath = `${window.location.origin}/#${path}`
 
-        let isOnOrgPath = window.location.hash.substring(1) === path
+        const isOnOrgPath = window.location.hash.substring(1) === path
 
         return (
-            <div style={{paddingBottom: "32px"}} className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+            <div
+                style={{paddingBottom: "32px"}}
+                className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata"
+            >
                 <div className="SRC-cardThumbnail">
                     {this.getIcon(org, isOnOrgPath)}
                 </div>
@@ -86,14 +91,8 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
                     <div className="SRC-type">Program</div>
                     <div className="SRC-title">
                         <h3>
-                            {!isOnOrgPath && 
-                                <a target="_blank" href={orgPath}>
-                                    {name}
-                                </a>
-                            }
-                            {isOnOrgPath && 
-                                name
-                            }
+                            {!isOnOrgPath && <a target="_blank" href={orgPath}> {name} </a>}
+                            {isOnOrgPath && name}
                         </h3>
                     </div>
                     <span className="SRC-font-size-base">
@@ -102,7 +101,6 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
                 </div>
             </div>
 
-        );
+        )
     }
 }
- 
