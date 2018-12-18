@@ -183,28 +183,6 @@ class Demo extends Component<{}, DemoState> {
             updateLoadState={this.handleChange}
           />
         </CustomMarkdownView>
-{/* 
-        <QueryWrapperMenu
-          token={inDevEnv ? token! : this.state.token!}
-          // tslint:disable-next-line
-          menuConfig={[
-            {
-              facetName: "assay",
-              sql: "SELECT * FROM syn16858331",
-              synapseId: "syn16858331",
-              title: "my title here",
-              unitDescription: "data types"
-            },
-            {
-              facetName: "dataType",
-              sql: "SELECT * FROM syn16858331",
-              synapseId: "syn16858331",
-              title: "Facet is dataType",
-              unitDescription: "files"
-            }
-          ]}
-          rgbIndex={4}
-        /> */}
 
         <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={"SELECT * FROM syn9886254"}>
           <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />

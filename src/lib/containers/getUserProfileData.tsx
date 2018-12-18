@@ -16,16 +16,16 @@ function getUserProfileData(principalIds: number [], token?: string) {
             const fileHandleAssociationList = withProfilePic.map(
                 (value: any) => {
                     return {
-                        fileHandleId: value.profilePicureFileHandleId,
                         associateObjectId: value.ownerId,
-                        associateObjectType: "UserProfileAttachment"
+                        associateObjectType: "UserProfileAttachment",
+                        fileHandleId: value.profilePicureFileHandleId
                     }
             })
             const request: any = {
-                requestedFiles: fileHandleAssociationList,
-                includePreSignedURLs: true,
                 includeFileHandles: false,
-                includePreviewPreSignedURLs: false
+                includePreSignedURLs: true,
+                includePreviewPreSignedURLs: false,
+                requestedFiles: fileHandleAssociationList
             }
             return SynapseClient.getFiles(request, token)
                 .then(

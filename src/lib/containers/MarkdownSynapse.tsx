@@ -63,12 +63,12 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
 
     public static propTypes = {
         errorMessageView: PropTypes.element,
-        token: PropTypes.string,
-        ownerId: PropTypes.string,
-        wikiId: PropTypes.string,
-        markdown: PropTypes.string,
         hasSynapseResources: PropTypes.bool,
-        updateLoadState: PropTypes.func
+        markdown: PropTypes.string,
+        ownerId: PropTypes.string,
+        token: PropTypes.string,
+        updateLoadState: PropTypes.func,
+        wikiId: PropTypes.string
     }
 
     private markupRef: React.RefObject<HTMLInputElement>
@@ -97,13 +97,13 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         // Update the internal md object with the wrapped synapse object
         md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
         this.state = {
-            md,
-            text: "",
+            errorMessage: "",
             fileHandles: undefined,
+            isLoggedIn: this.props.token !== "",
+            md,
             newOwnerId: "",
             newWikiId: "",
-            isLoggedIn: this.props.token !== "",
-            errorMessage: ""
+            text: ""
         }
         this.markupRef = React.createRef()
         this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -182,30 +182,30 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
     public createMarkup(text: string) {
         const initText = this.state.md.render(text)
         const cleanText = sanitizeHtml(initText, {
-            allowedTags: [
-                "span", "code", "h1", "h2", "h3", "h4", "h5", "p", "b", "i",
-                "em", "strong", "a", "id", "table", "tr", "td", "tbody", "th",
-                "thead", "button", "div", "image", "ol", "ul", "li", "svg", "g", "br", "hr", "summary",
-                "details"
-            ],
             allowedAttributes: {
                 a: ["href"],
-                span: ["*"],
                 button: ["class"],
                 div: ["class", "style"],
-                ul: ["class"],
-                ol: ["class"],
-                li: ["class"],
-                table: ["class"],
-                th: ["class"],
-                thead: ["class"],
                 h1: ["toc"],
                 h2: ["toc"],
                 h3: ["toc"],
                 h4: ["toc"],
                 h5: ["toc"],
-                h6: ["toc"]
-            }
+                h6: ["toc"],
+                li: ["class"],
+                ol: ["class"],
+                span: ["*"],
+                table: ["class"],
+                th: ["class"],
+                thead: ["class"],
+                ul: ["class"]
+            },
+            allowedTags: [
+                "span", "code", "h1", "h2", "h3", "h4", "h5", "p", "b", "i",
+                "em", "strong", "a", "id", "table", "tr", "td", "tbody", "th",
+                "thead", "button", "div", "image", "ol", "ul", "li", "svg", "g", "br", "hr", "summary",
+                "details"
+            ]
         })
         return { __html: cleanText }
     }
@@ -225,8 +225,24 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
             katex.render(element.textContent, element, {
                 // @ts-ignore: The docs for katex report conflicting information
                 // about the typescript docs for katex usage
-                throwOnError: false,
-                delimiters: [{ left: "$$", right: "$$", display: true }, { left: "\\(", right: "\\)", display: false }, { left: "\\[", right: "\\]", display: true }]
+                delimiters: [
+                    {
+                        display: true,
+                        left: "$$",
+                        right: "$$"
+                    },
+                    {
+                        display: false,
+                        left: "\\(",
+                        right: "\\)",
+                    },
+                    {
+                        display: true,
+                        left: "\\[",
+                        right: "\\]"
+                    }
+                ],
+                throwOnError: false
             })
         })
     }
@@ -238,9 +254,9 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
     public addBookmarks() {
         markdownitSynapse.resetFootnotes()
         this.createMarkup(this.state.text)
-        const footnotes_html = this.createMarkup(markdownitSynapse.footnotes()).__html
-        if (footnotes_html.length > 0) {
-            const bookmarks = <Bookmarks footnotes={footnotes_html} />
+        const footnotesHtml = this.createMarkup(markdownitSynapse.footnotes()).__html
+        if (footnotesHtml.length > 0) {
+            const bookmarks = <Bookmarks footnotes={footnotesHtml} />
             return bookmarks
         }
         // ts doesn't like functions without explicit return statements
@@ -292,18 +308,24 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
      */
     public getErrorView() {
         if (this.state.errorMessage && this.props.errorMessageView) {
-            return <React.Fragment>{React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}</React.Fragment>
+            return (
+                <React.Fragment>
+                    {React.cloneElement(this.props.errorMessageView, { message: this.state.errorMessage })}
+                </React.Fragment>
+            )
         }
         return
     }
     public processWidgets() {
         // (<span data-widgetparams.*?span>) captures widgets
         let count = 1
-        let markup = this.createMarkup(this.state.text).__html.replace(/<span id="wikiReference.*?<span data-widgetparams.*?span>/g, () => {
-            // replace all reference tags with id's that we can later target
-            const current = count++
-            return `<a href="" id="ref${current}">[${current}]</a>`
-        })
+        let markup = this.createMarkup(this.state.text).__html
+            .replace(/<span id="wikiReference.*?<span data-widgetparams.*?span>/g,
+                () => {
+                    // replace all reference tags with id's that we can later target
+                    const current = count++
+                    return `<a href="" id="ref${current}">[${current}]</a>`
+                })
         const tocId = "SRC-header-"
         let tocIdCount = 1
         markup = markup.replace(TOC_HEADER_REGEX, (match: string) => {
@@ -317,15 +339,15 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         }
         return
     }
-    public decodeXml(string: string) {
-        const escaped_one_to_xml_special_map = {
+    public decodeXml(xml: string) {
+        const escapedOneToXmlSpecialMap = {
             "&amp;": "&",
-            "&quot;": '"',
+            "&gt;": ">",
             "&lt;": "<",
-            "&gt;": ">"
+            "&quot;": '"'
         }
-        return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g, function(str, item) {
-            return escaped_one_to_xml_special_map[item]
+        return xml.replace(/(&quot;|&lt;|&gt;|&amp;)/g, (str, item) => {
+            return escapedOneToXmlSpecialMap[item]
         })
     }
     public processWidgetMappings(rawWidgetString: string, originalMarkup: string) {
@@ -343,8 +365,7 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
             .substring(questionIndex + 1)
             .split("&")
             .forEach((keyPair) => {
-                let key, value
-                [key, value] = keyPair.split("=")
+                let [key, value] = keyPair.split("=")
                 value = decodeURIComponent(value)
                 widgetparamsMapped[key] = value
             })
@@ -352,8 +373,7 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
     }
     public processWidgetOrDomElement(widgetsToBe: string[], originalMarkup: string) {
         const widgets = []
-        for (let i = 0; i < widgetsToBe.length; i++) {
-            const text = widgetsToBe[i]
+        for (const text of widgetsToBe) {
             if (text.indexOf("<span data-widgetparams") !== -1) {
                 widgets.push(this.processWidgetMappings(text, originalMarkup))
             } else {
@@ -384,19 +404,44 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         )
     }
     public renderSynapsePlot(widgetparamsMapped: any) {
-        return <SynapsePlot key={uuidv4()} token={this.props.token} ownerId={this.props.ownerId} wikiId={this.props.wikiId} widgetparamsMapped={widgetparamsMapped} />
+        return (
+                    <SynapsePlot
+                        key={uuidv4()}
+                        token={this.props.token}
+                        ownerId={this.props.ownerId}
+                        wikiId={this.props.wikiId}
+                        widgetparamsMapped={widgetparamsMapped}
+                    />
+                )
     }
+
     public renderSynapseImage(widgetparamsMapped: any) {
         if (!this.state.fileHandles) {
             // ensure files are loaded
             return
         }
         if (widgetparamsMapped.fileName) {
-            return <SynapseImage params={widgetparamsMapped} key={uuidv4()} token={this.props.token} fileName={widgetparamsMapped.fileName} wikiId={this.props.wikiId} fileResults={this.state.fileHandles.list} />
+            return (
+                        <SynapseImage
+                            params={widgetparamsMapped}
+                            key={uuidv4()}
+                            token={this.props.token}
+                            fileName={widgetparamsMapped.fileName}
+                            wikiId={this.props.wikiId}
+                            fileResults={this.state.fileHandles.list}
+                        />
+                    )
         } else if (widgetparamsMapped.synapseId) {
             // elements with synapseIds have to have their resources loaded first, their not located
             // with the file attachnent list
-            return <SynapseImage params={widgetparamsMapped} key={uuidv4()} token={this.props.token} synapseId={widgetparamsMapped.synapseId} />
+            return (
+                        <SynapseImage
+                            params={widgetparamsMapped}
+                            key={uuidv4()}
+                            token={this.props.token}
+                            synapseId={widgetparamsMapped.synapseId}
+                        />
+                    )
         }
         return
     }
@@ -406,20 +451,17 @@ class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSyna
         originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, (p1, p2, p3, p4) => {
             elements.push(
                 <div key={uuidv4()}>
-                    {
-                        <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
-                            {" "}
-                            {p4}{" "}
-                        </a>}
+                    <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
+                        {" "}
+                        {p4}{" "}
+                    </a>
                 </div>
             )
             return ""
         })
         return (
             <div key={uuidv4()}>
-                {elements.map((el) => {
-                    return el
-                })}
+                {elements}
             </div>
         )
     }
