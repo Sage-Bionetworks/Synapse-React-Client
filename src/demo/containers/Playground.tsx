@@ -1,21 +1,20 @@
-//@ts-nocheck
-import React, { Component } from "react";
-import logo from "../../images/logo.svg";
-import "./App.css";
-import * as SynapseConstants from "../../lib/utils/SynapseConstants";
-import QueryWrapperMenu from 'src/lib/containers/QuerryWrapperMenu';
-import { SynapseClient } from 'src/lib';
-import StaticQueryWrapper from 'src/lib/containers/StaticQueryWrapper';
-import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
-import MarkdownSynapse from 'src/lib/containers/MarkdownSynapse';
-// import QueryWrapper from 'src/lib/containers/QueryWrapper';
+import React, { Component } from "react"
+import logo from "../../images/logo.svg"
+import { SynapseClient } from "../../lib"
+import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
+import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
+import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
+import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
+import * as SynapseConstants from "../../lib/utils/SynapseConstants"
+import "./App.css"
+// import QueryWrapper from "src/lib/containers/QueryWrapper"
 // import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 // import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 
-type DemoState = 
+type DemoState =
   {
     token: string
     ownerId: string
@@ -181,8 +180,8 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           </StaticQueryWrapper>
 
           <MarkdownSynapse
-            ownerId={"syn17100797"}
-            wikiId={"587923"}
+            ownerId={"syn14306197"}
+            wikiId={"582150"}
             token={inDevEnv ? token! : this.state.token!}
           >
 

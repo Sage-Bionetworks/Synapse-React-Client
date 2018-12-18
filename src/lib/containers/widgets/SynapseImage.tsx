@@ -1,8 +1,8 @@
-import * as React from "react";
-import { getFiles, getEntity } from "../../utils/SynapseClient";
-import { FileEntity } from 'src/lib/utils/jsonResponses/FileEntity';
-import { BatchFileResult } from 'src/lib/utils/jsonResponses/BatchFileResult';
-import { FileHandle } from 'src/lib/utils/jsonResponses/FileHandle';
+import * as React from "react"
+import { BatchFileResult } from "../../utils/jsonResponses/BatchFileResult"
+import { FileEntity } from "../../utils/jsonResponses/FileEntity"
+import { FileHandle } from "../../utils/jsonResponses/FileHandle"
+import { getEntity, getFiles } from "../../utils/SynapseClient"
 
 type SynapseImageProps = {
     wikiId?: string
@@ -11,105 +11,102 @@ type SynapseImageProps = {
     fileName?: string
     fileResults?: FileHandle []
     params: any
-};
+}
 
 type SynapseImageState = {
     isLoaded: boolean
     preSignedURL: string
-};
+}
 
 class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState> {
 
     constructor(props: SynapseImageProps) {
-        super(props);
-        this.getEntity = this.getEntity.bind(this);
-        this.getSynapseFiles = this.getSynapseFiles.bind(this);
-        this.compareById = this.compareById.bind(this);
+        super(props)
+        this.getEntity = this.getEntity.bind(this)
+        this.getSynapseFiles = this.getSynapseFiles.bind(this)
+        this.compareById = this.compareById.bind(this)
         this.state = {
             isLoaded: false,
             preSignedURL: ""
-        };
+        }
     }
 
-    compareById(fileName: string, key: string) {
-        return function(element: any) {
-            return element[key] === fileName;
-        };
+    public compareById(fileName: string, key: string) {
+        return (element: any) => element[key] === fileName
     }
 
     /**
      * Attach markdown to wiki attachments
      */
-    matchToHandle(comparator: any , objectList: any) {
+    public matchToHandle(comparator: any , objectList: any) {
         if (objectList) {
             // make sure the files have loaded
-            let filtered = objectList.filter(comparator);
-            return filtered;
+            const filtered = objectList.filter(comparator)
+            return filtered
         }
         return []
     }
 
-    getEntity() {
-        const { token, synapseId } = this.props;
+    public getEntity() {
+        const { token, synapseId } = this.props
         getEntity(token, synapseId!).then(
             // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
             (data: FileEntity) => {
-                console.log('entity is ', data)
-                let fileHandleAssociationList = [
+                const fileHandleAssociationList = [
                     {
-                        fileHandleId: data.dataFileHandleId,
                         associateObjectId: synapseId,
-                        associateObjectType: "FileEntity"
+                        associateObjectType: "FileEntity",
+                        fileHandleId: data.dataFileHandleId
                     }
-                ];
-                this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId);
-        });
+                ]
+                this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+        })
     }
-    getSynapseFiles(fileHandleAssociationList: any, id: string) {
+    public getSynapseFiles(fileHandleAssociationList: any, id: string) {
         // overload the method for two different use cases, one where
         // the image is attached to an entity and creates a list on the spot,
         // the other where list is passed in from componentDidMount in MarkdownSynapse
-        let request: any = {
-            requestedFiles: fileHandleAssociationList,
-            includePreSignedURLs: true,
+        const request: any = {
             includeFileHandles: false,
-            includePreviewPreSignedURLs: false
-        };
+            includePreSignedURLs: true,
+            includePreviewPreSignedURLs: false,
+            requestedFiles: fileHandleAssociationList
+        }
         getFiles(request, this.props.token).then(
             (data: BatchFileResult) => {
-                let match = this.matchToHandle(this.compareById(id, "fileHandleId"), data.requestedFiles);
+                const match = this.matchToHandle(this.compareById(id, "fileHandleId"), data.requestedFiles)
                 this.setState({
                     preSignedURL: match[0].preSignedURL
-                });
-        });
+                })
+        })
     }
-    componentDidMount() {
+    public componentDidMount() {
         if (!this.props.token) {
-            return;
+            return
         }
         if (!this.props.hasOwnProperty("wikiId")) {
-            this.getEntity();
+            this.getEntity()
         } else {
-            const { fileName, fileResults } = this.props;
-            let match = this.matchToHandle(this.compareById(fileName!, "fileName"), fileResults!);
-            let fileHandleAssociationList = [
+            const { fileName, fileResults } = this.props
+            const match = this.matchToHandle(this.compareById(fileName!, "fileName"), fileResults!)
+            const fileHandleAssociationList = [
                 {
-                    fileHandleId: match[0].id,
                     associateObjectId: this.props.wikiId,
-                    associateObjectType: "WikiAttachment"
+                    associateObjectType: "WikiAttachment",
+                    fileHandleId: match[0].id
                 }
-            ];
-            this.getSynapseFiles(fileHandleAssociationList, match[0].id);
+            ]
+            this.getSynapseFiles(fileHandleAssociationList, match[0].id)
         }
     }
-    render() {
-        let imgStyle: any = {};
-        let { params } = this.props;
+    public render() {
+        const imgStyle: any = {}
+        const { params } = this.props
         if (params && params.align) {
-            imgStyle.float = params.align.toLowerCase();
+            imgStyle.float = params.align.toLowerCase()
         }
         if (this.state.isLoaded) {
-            return null;
+            return null
         } else {
             return (
                 <React.Fragment>
@@ -120,8 +117,8 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
                         style={imgStyle}
                     />
                 </React.Fragment>
-            );
+            )
         }
     }
 }
-export default SynapseImage;
+export default SynapseImage
