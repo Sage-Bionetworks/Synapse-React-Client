@@ -27,7 +27,8 @@ type Props = {
 /**
  *  Demo of user session, show login screen and handling user login submission.
  *
- *  To support Google SSO in your portal, you must add your domain to the Authorized Redirect URIs for Synapse authentication.
+ *  To support Google SSO in your portal, you must add your domain to the Authorized Redirect URIs
+ *  for Synapse authentication.
  *  This can be done by contacting synapseInfo@sagebionetworks.org to form a collaboration.
  *  Synapse engineers must add your redirect URL in the Google API console found at https://console.cloud.google.com/ for this functionality to work.
  *
@@ -44,14 +45,14 @@ class Login extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            username: "",
-            password: "",
-            email: "",
-            isSignedIn: false,
-            hasLoginInFailed: false,
-            errorMessage: "",
             dissmissButtonClicked: false,
-            showRegistration: false
+            email: "",
+            errorMessage: "",
+            hasLoginInFailed: false,
+            isSignedIn: false,
+            password: "",
+            showRegistration: false,
+            username: ""
         }
         this.handleChange = this.handleChange.bind(this)
         this.handleLogin = this.handleLogin.bind(this)
@@ -60,6 +61,7 @@ class Login extends React.Component<Props, State> {
         this.getSignInStateView = this.getSignInStateView.bind(this)
         this.onSignOut = this.onSignOut.bind(this)
         this.onSignIn = this.onSignIn.bind(this)
+        this.setDismissButton = this.setDismissButton.bind(this)
     }
     /**
      * Updates internal state with the event that was triggered
@@ -70,7 +72,8 @@ class Login extends React.Component<Props, State> {
         const target = event.currentTarget
         const name = target.name
         const value = target.value
-        this.setState({ [name]: value } as Pick<any, any>)
+        const newState: (Pick<any, any>) = { [name]: value }
+        this.setState(newState)
     }
     /**
      * Handle user login on click
@@ -83,15 +86,15 @@ class Login extends React.Component<Props, State> {
             .then((data: any) => {
                 this.props.onTokenChange({ token: data.sessionToken })
                 this.setState({
-                    isSignedIn: true,
+                    errorMessage: "",
                     hasLoginInFailed: false,
-                    errorMessage: ""
+                    isSignedIn: true
                 })
             })
             .catch((err: any) => {
                 this.setState({
-                    hasLoginInFailed: true,
                     errorMessage: err.reason,
+                    hasLoginInFailed: true,
                     isSignedIn: false
                 })
             })
@@ -162,9 +165,7 @@ class Login extends React.Component<Props, State> {
                         <button
                             type="button"
                             className="close"
-                            onClick={() => {
-                                this.setState({ dissmissButtonClicked: true })
-                            }}
+                            onClick={this.setDismissButton}
                         >
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -177,14 +178,19 @@ class Login extends React.Component<Props, State> {
     public componentDidMount() {
         let code: URL | null | string = new URL(window.location.href)
         // in test environment the searchParams isn't defined
-        if (code.searchParams && (code = code.searchParams.get("code"))) {
+        const {searchParams} = code
+        if (!searchParams) {
+            return
+        }
+        code = searchParams.get("code")
+        if (code) {
             SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
                 .then((synToken: any) => {
                     this.props.onTokenChange({ token: synToken.sessionToken })
                     this.setState({
-                        isSignedIn: true,
+                        errorMessage: "",
                         hasLoginInFailed: false,
-                        errorMessage: ""
+                        isSignedIn: true
                     })
                 })
                 .catch((err: any) => {
@@ -212,9 +218,9 @@ class Login extends React.Component<Props, State> {
         event.preventDefault()
         this.props.onTokenChange({ token: "" })
         this.setState({
-            isSignedIn: false,
+            errorMessage: "",
             hasLoginInFailed: false,
-            errorMessage: ""
+            isSignedIn: false
         })
     }
     public render() {
@@ -231,7 +237,16 @@ class Login extends React.Component<Props, State> {
                     </p>
                     <form onSubmit={this.handleLogin}>
                         <div className="form-group">
-                            <input autoComplete="email" placeholder="Email Address" className="form-control" id="exampleEmail" name="email" type="text" value={this.state.email} onChange={this.handleChange} />
+                            <input
+                                autoComplete="email"
+                                placeholder="Email Address"
+                                className="form-control"
+                                id="exampleEmail"
+                                name="email"
+                                type="text"
+                                value={this.state.email}
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <button onSubmit={this.handleRegistration} type="submit" className="btn btn-success">
                             Send Registration Info
@@ -244,10 +259,28 @@ class Login extends React.Component<Props, State> {
             <div id="loginPage" className="container SRC-syn-border SRC-syn-border-spacing">
                 <form onSubmit={this.handleLogin}>
                     <div className="form-group">
-                        <input autoComplete="email" placeholder="Username or Email Address" className="form-control" id="exampleEmail" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
+                        <input
+                                autoComplete="email"
+                                placeholder="Username or Email Address"
+                                className="form-control"
+                                id="exampleEmail"
+                                name="username"
+                                type="text"
+                                value={this.state.username}
+                                onChange={this.handleChange}
+                        />
                     </div>
                     <div className="form-group">
-                        <input autoComplete="password" placeholder="Password" className="form-control" id="examplePassword" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
+                        <input
+                                autoComplete="password"
+                                placeholder="Password"
+                                className="form-control"
+                                id="examplePassword"
+                                name="password"
+                                type="password"
+                                value={this.state.password}
+                                onChange={this.handleChange}
+                        />
                     </div>
                     {this.getLoginFailureView()}
                     <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">
@@ -256,6 +289,7 @@ class Login extends React.Component<Props, State> {
                 </form>
                 <p>Or Sign in with Google</p>
                 <form>
+                    {/* tslint:disable-next-line */}
                     {!this.state.isSignedIn && (
                         <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme}`}>
                             <GoogleIcon key={1} active={true} />
@@ -264,6 +298,7 @@ class Login extends React.Component<Props, State> {
                             </ButtonContent>
                         </button>
                     )}
+                    {/* tslint:disable-next-line */}
                     {this.state.isSignedIn && (
                         <button onClick={this.onSignOut} className={`SRC-google-button ${googleTheme}`}>
                             <ButtonContent icon={icon} key={3}>
@@ -274,6 +309,10 @@ class Login extends React.Component<Props, State> {
                 </form>
             </div>
         )
+    }
+
+    public setDismissButton(event: React.MouseEvent<HTMLButtonElement>)  {
+        this.setState({ dissmissButtonClicked: true })
     }
 }
 export default Login
