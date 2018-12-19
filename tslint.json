@@ -3,6 +3,12 @@
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
+      "src/**/**/**.js",
+      "src/**/**/**.json",
+      "src/__tests__/**/**/*.**",
+      "src/JSON_test_data/**/**/*.**",
+      "node_modules/**/*.ts",
+      "node_modules/**/*.ts",
       "node_modules/**/*.ts",
       "coverage/**/*.js"
     ]

@@ -259,7 +259,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             currentOffset += 25
         }
         queryRequest.query.offset = currentOffset
-        console.log('executing query request')
         this.props.executeQueryRequest!(queryRequest)
     }
     /**

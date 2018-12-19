@@ -245,6 +245,7 @@ export default class StackedRowHomebrew extends
                         />
                     </button>
                 </div>
+                {/* TODO: Refactor the chart into its own component */}
                 <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
                     <Measure
                         bounds={true}

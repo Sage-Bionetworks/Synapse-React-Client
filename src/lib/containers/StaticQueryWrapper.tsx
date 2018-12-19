@@ -1,6 +1,5 @@
 import * as React from "react"
-import { SynapseClient } from ".."
-import { SynapseConstants } from ".."
+import { SynapseClient, SynapseConstants } from ".."
 import { QueryBundleRequest } from "../utils/jsonResponses/Table/QueryBundleRequest"
 import { QueryResultBundle } from "../utils/jsonResponses/Table/QueryResultBundle"
 
@@ -26,7 +25,7 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
 
     public componentDidUpdate(prevProps: any) {
         // re-run query if sql is updated
-        if (this.props.sql != prevProps.sql) {
+        if (this.props.sql !== prevProps.sql) {
             this.getData()
         }
     }
@@ -40,19 +39,18 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
         const {data} = this.state
         let childData: QueryResultBundle
 
-        if (json !== undefined) {
-            childData = json
-        } else {
-            childData = data
-        }
-        return (<div>
-                    {React.Children.map(
-                        children, (child: any) => {
-                            return React.cloneElement(child, {
-                                data: childData
-                            })
-                    })}
-                </div>)
+        childData = json !== undefined ? json : data
+        const childrenWithProps = React.Children.map(
+            children, (child: any) => {
+                return React.cloneElement(child, {
+                    data: childData
+                })
+            })
+        return (
+            <div>
+                {childrenWithProps}
+            </div>
+        )
     }
 
     private getData() {
@@ -63,9 +61,9 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
                 partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                 query: {
                     isConsistent: false,
-                    sql: this.props.sql!,
                     limit: 25,
-                    offset: 0
+                    offset: 0,
+                    sql: this.props.sql!
                 }
             }
             SynapseClient.getQueryTableResults(queryBundleRequest, token).then((data) => {

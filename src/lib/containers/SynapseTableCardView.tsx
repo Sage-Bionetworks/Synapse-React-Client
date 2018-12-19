@@ -1,20 +1,21 @@
 import PropTypes from "prop-types"
 import React from "react"
+import { FacetColumnResultValues } from "../utils/jsonResponses/Table/FacetColumnResult"
 import { QueryBundleRequest } from "../utils/jsonResponses/Table/QueryBundleRequest"
 import { QueryResultBundle } from "../utils/jsonResponses/Table/QueryResultBundle"
 import {
-    AMP_CONSORTIUM,
-    AMP_PROJECT,
-    AMP_STUDY,
-    DATASET,
-    FUNDER,
-    PUBLICATION,
-    STUDY,
-    TOOL
-} from "../utils/SynapseConstants"
+        AMP_CONSORTIUM,
+        AMP_PROJECT,
+        AMP_STUDY,
+        DATASET,
+        FUNDER,
+        PUBLICATION,
+        STUDY,
+        TOOL
+    } from "../utils/SynapseConstants"
 import { Dataset, Funder, Publication, Study, Tool } from "./row_renderers"
 import { AMP_Study, Consortium, Project } from "./row_renderers/AMPAD"
-import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult';
+
 const uuidv4 = require("uuid/v4")
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
@@ -216,11 +217,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         const {facets = []} = data
         let total = 0
         const curFacetsIndex = facets.findIndex((el) => el.facetType === "enumeration" && el.columnName === filter)
-       
         if (curFacetsIndex !== -1) {
             // calculate the values chosen
             const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
-    
             // edge case -- if they are all false then they are considered all true..
             // sum up the counts of data
             let anyTrue = false
@@ -234,7 +233,6 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                     totalStandardCase += key.isSelected ? key.count : 0
                 }
             }
-    
             total = anyTrue ? totalStandardCase : totalAllFalseCase
         } else {
             total = data.queryResult.queryResults.rows.length
