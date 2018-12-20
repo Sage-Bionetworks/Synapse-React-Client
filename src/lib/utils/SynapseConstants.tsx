@@ -21,14 +21,14 @@ export const ENTITY_BUNDLE_MASK_FILE_NAME: number = 65536
 export const ENTITY_BUNDLE_MASK_THREAD_COUNT: number = 131072
 export const ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION: number = 262144
 /** Row Types  */
-export const STUDY: string = "study"
+export const STUDY: string = 'study'
 // for study icons
-export const STUDY_ACTIVE: string = "study active"
-export const STUDY_COMPLETE: string = "study complete"
-export const DATASET: string = "dataset"
-export const AMP_PROJECT: string = "AMP_Project"
-export const AMP_CONSORTIUM: string = "AMP_Consortium"
-export const AMP_STUDY: string = "AMP_Study"
-export const FUNDER: string = "funder"
-export const PUBLICATION: string = "publication"
-export const TOOL: string = "tool"
+export const STUDY_ACTIVE: string = 'study active'
+export const STUDY_COMPLETE: string = 'study complete'
+export const DATASET: string = 'dataset'
+export const AMP_PROJECT: string = 'AMP_Project'
+export const AMP_CONSORTIUM: string = 'AMP_Consortium'
+export const AMP_STUDY: string = 'AMP_Study'
+export const FUNDER: string = 'funder'
+export const PUBLICATION: string = 'publication'
+export const TOOL: string = 'tool'

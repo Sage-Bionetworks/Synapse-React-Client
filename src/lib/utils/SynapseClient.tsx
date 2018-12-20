@@ -1,12 +1,12 @@
-import { BatchFileResult } from "./jsonResponses/BatchFileResult"
-import { Entity } from "./jsonResponses/Entity"
-import { FileHandleResults } from "./jsonResponses/FileHandleResults"
-import { SynapseVersion } from "./jsonResponses/SynapseVersion"
-import { QueryResultBundle } from "./jsonResponses/Table/QueryResultBundle"
-import { WikiPage } from "./jsonResponses/WikiPage"
+import { BatchFileResult } from './jsonResponses/BatchFileResult'
+import { Entity } from './jsonResponses/Entity'
+import { FileHandleResults } from './jsonResponses/FileHandleResults'
+import { SynapseVersion } from './jsonResponses/SynapseVersion'
+import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
+import { WikiPage } from './jsonResponses/WikiPage'
 
 // TODO: Create JSON response types for return types
-const DEFAULT_ENDPOINT = "https://repo-prod.prod.sagebase.org/"
+const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 
 function delay(t: any) {
   return new Promise((resolve) => {
@@ -19,7 +19,8 @@ const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, re
       if (resp.status > 199 && resp.status < 300) {
         // ok!
         return resp.json()
-      } else if (resp.status === 429 || resp.status === 0) {
+      }
+      if (resp.status === 429 || resp.status === 0) {
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
         if (retries === 1) {
           return Promise.reject({
@@ -30,38 +31,35 @@ const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, re
         return delay(delayMs).then(() => {
           return fetchWithExponentialTimeout(url, options, delayMs * 2, retries - 1)
         })
-      } else {
-        // error status that indicates no more retries
-        retries = 1
-        return resp
-          .json()
-          .then((json) => {
-            // on okay response return json, o.w. reject with json and
-            // send to catch block
-            const error = {
-              reason: json.reason,
-              status: resp.status
-            }
-            return resp.ok ? json : Promise.reject(error)
-          })
-          .catch((error) => {
-            // call failed above
-            if (error.reason && error.status) {
-              // successfull return from server but invalid call
-              // the call was recieved, but staus wasn't ok-- return the json response from above
-              // from the response directly
-              return Promise.reject({
-                reason: error.reason,
-                statusCode: error.status
-              })
-            } else {
-              return Promise.reject({
-                reason: resp.statusText,
-                statusCode: resp.status
-              })
-            }
-          })
       }
+      // error status that indicates no more retries
+      return resp
+        .json()
+        .then((json) => {
+          // on okay response return json, o.w. reject with json and
+          // send to catch block
+          const error = {
+            reason: json.reason,
+            status: resp.status
+          }
+          return resp.ok ? json : Promise.reject(error)
+        })
+        .catch((error) => {
+          // call failed above
+          if (error.reason && error.status) {
+            // successfull return from server but invalid call
+            // the call was recieved, but staus wasn't ok-- return the json response from above
+            // from the response directly
+            return Promise.reject({
+              reason: error.reason,
+              statusCode: error.status
+            })
+          }
+          return Promise.reject({
+            reason: resp.statusText,
+            statusCode: resp.status
+          })
+        })
     })
     .catch((error) => {
       // this should never happen
@@ -76,12 +74,12 @@ export const doPost = (
   const options: any = {
     body: JSON.stringify(requestJsonObject),
     headers: {
-      "Accept": "*/*",
-      "Access-Control-Request-Headers": "sessiontoken",
-      "Content-Type": "application/json",
+      Accept: '*/*',
+      'Access-Control-Request-Headers': 'sessiontoken',
+      'Content-Type': 'application/json',
     },
-    method: "POST",
-    mode: "cors"
+    method: 'POST',
+    mode: 'cors'
   }
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
@@ -91,11 +89,11 @@ export const doPost = (
 export const doGet = (url: string, sessionToken: string | undefined, endpoint: string) => {
   const options: any = {
     headers: {
-      "Accept": "*/*",
-      "Access-Control-Request-Headers": "sessiontoken"
+      Accept: '*/*',
+      'Access-Control-Request-Headers': 'sessiontoken'
     },
-    method: "GET",
-    mode: "cors"
+    method: 'GET',
+    mode: 'cors'
   }
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
@@ -104,7 +102,7 @@ export const doGet = (url: string, sessionToken: string | undefined, endpoint: s
 }
 
 export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
-  return doGet("/repo/v1/version", undefined, endpoint) as Promise<SynapseVersion>
+  return doGet('/repo/v1/version', undefined, endpoint) as Promise<SynapseVersion>
 }
 
 export const getQueryTableResultsFromJobId = (
@@ -116,15 +114,14 @@ export const getQueryTableResultsFromJobId = (
   return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, endpoint)
     .then((resp: any) => {
       // is this the job status?
-      if (resp.jobState && resp.jobState !== "FAILED") {
+      if (resp.jobState && resp.jobState !== 'FAILED') {
         // still processing, wait for a second and try again
         return delay(500).then(() => {
           return getQueryTableResultsFromJobId(entityId, jobId, sessionToken, endpoint)
         })
-      } else {
-        // these must be the query results!
-        return resp
       }
+      // these must be the query results!
+      return resp
     })
     .catch((error) => {
       throw error
@@ -144,8 +141,8 @@ export const getQueryTableResults = (
   return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
   .then((resp: any) => {
       // started query, now attempt to get the results.
-      return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint)
-    })
+    return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint)
+  })
     .catch((error) => {
       throw error
     })
@@ -207,7 +204,7 @@ export const getFullQueryTableResults = async (queryBundleRequest: any,
               return getData()
             })
             .catch((err) => {
-              console.log("Error on getting table results ", err)
+              console.log('Error on getting table results ', err)
             })
         } else {
           // set data to this plots sql in the query data
@@ -215,7 +212,7 @@ export const getFullQueryTableResults = async (queryBundleRequest: any,
         }
       }
       return getData()
-  })
+    })
   return data
 }
 
@@ -225,7 +222,7 @@ export const getFullQueryTableResults = async (queryBundleRequest: any,
  *  http://docs.synapse.org/rest/POST/login.html
  */
 export const login = (username: string, password: string, endpoint = DEFAULT_ENDPOINT) => {
-  return doPost("/auth/v1/login", { username, password }, undefined, endpoint)
+  return doPost('/auth/v1/login', { username, password }, undefined, endpoint)
 }
 /**
  * Get redirect url
@@ -235,7 +232,7 @@ export const login = (username: string, password: string, endpoint = DEFAULT_END
  * @param {*} endpoint
  */
 export let oAuthUrlRequest = (provider: string, redirectUrl: string, endpoint = DEFAULT_ENDPOINT) => {
-  return doPost("/auth/v1/oauth2/authurl", { provider, redirectUrl }, undefined, endpoint)
+  return doPost('/auth/v1/oauth2/authurl', { provider, redirectUrl }, undefined, endpoint)
 }
 /**
  * Get session token from SSO
@@ -249,14 +246,14 @@ export let oAuthSessionRequest = (provider: string,
                                   authenticationCode: string | number,
                                   redirectUrl: string,
                                   endpoint: any = DEFAULT_ENDPOINT) => {
-  return doPost("/auth/v1/oauth2/session", { provider, authenticationCode, redirectUrl }, undefined, endpoint)
+  return doPost('/auth/v1/oauth2/session', { provider, authenticationCode, redirectUrl }, undefined, endpoint)
 }
 /**
  * Create an entity (Project, Folder, File, Table, View)
  * http://docs.synapse.org/rest/POST/entity.html
  */
 export const createEntity = (entity: any, sessionToken: string | undefined, endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost("/repo/v1/entity", entity, sessionToken, endpoint)
+  return doPost('/repo/v1/entity', entity, sessionToken, endpoint)
 }
 /**
  * Create a project with the given name.
@@ -268,8 +265,8 @@ export const createProject = (name: string,
                               : Promise<Response> => {
   return createEntity(
     {
-      concreteType: "org.sagebionetworks.repo.model.Project",
-      name
+      name,
+      concreteType: 'org.sagebionetworks.repo.model.Project'
     },
     sessionToken,
     endpoint
@@ -281,14 +278,14 @@ export const createProject = (name: string,
  * http://docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
-  return doGet("/repo/v1/userProfile", sessionToken, endpoint)
+  return doGet('/repo/v1/userProfile', sessionToken, endpoint)
 }
 /**
  * Return the User Profiles for the given list of user IDs
  * http://docs.synapse.org/rest/POST/userProfile.html
  */
 export const getUserProfiles = (userIdsArray: number[] = [], endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost("/repo/v1/userProfile", { list: userIdsArray }, undefined, endpoint)
+  return doPost('/repo/v1/userProfile', { list: userIdsArray }, undefined, endpoint)
 }
 /**
  * Return the children (Files/Folders) of the given entity (Project or Folder).
@@ -297,7 +294,7 @@ export const getUserProfiles = (userIdsArray: number[] = [], endpoint: string = 
 export const getEntityChildren = (request: string,
                                   sessionToken: string | undefined = undefined,
                                   endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost("/repo/v1/entity/children", request, sessionToken, endpoint)
+  return doPost('/repo/v1/entity/children', request, sessionToken, endpoint)
 }
 /**
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
@@ -306,7 +303,7 @@ export const getEntityChildren = (request: string,
 export const getFiles = (request: string,
                          sessionToken: string | undefined = undefined,
                          endpoint: string = DEFAULT_ENDPOINT): Promise<BatchFileResult> => {
-  return doPost("/file/v1/fileHandle/batch", request, sessionToken, endpoint)
+  return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint)
 }
 /**
  * Bundled access to Entity and related data components.
@@ -337,9 +334,9 @@ export const getEntityBundleForVersion = (
 ) => {
   let url = `/repo/v1/entity/${entityId}`
   if (version) {
-    url += "/version/" + version
+    url += `/version/ + ${version}`
   }
-  url += "/bundle?mask=" + partsMask
+  url += `/bundle?mask= ${partsMask}`
   return doGet(url, sessionToken, endpoint)
 }
 /**
@@ -359,7 +356,7 @@ export const getEntityWiki = (sessionToken: string | undefined,
  * http://docs.synapse.org/rest/GET/favorite.html
  */
 export const getUserFavorites = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
-  const url = "repo/v1/favorite?offset=0&limit=200"
+  const url = 'repo/v1/favorite?offset=0&limit=200'
   return doGet(url, sessionToken, endpoint)
 }
 /**
@@ -393,12 +390,12 @@ export const getUserTeamList = (sessionToken: string | undefined, id: string | n
 export const getTeamList = (
   sessionToken: string | undefined,
   id: string | number,
-  fragment: string = "",
+  fragment: string = '',
   limit: number = 10,
   offset: number = 0,
   endpoint: string = DEFAULT_ENDPOINT
 ) => {
-  const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}` : ""}`
+  const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}` : ''}`
   return doGet(url, sessionToken, endpoint)
 }
 
@@ -408,9 +405,9 @@ export const getWikiAttachmentsFromEntity =
       id: string | number,
       wikiId: string | number,
       endpoint: string = DEFAULT_ENDPOINT): Promise<FileHandleResults> => {
-  const url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
-  return doGet(url, sessionToken, endpoint)
-}
+      const url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
+      return doGet(url, sessionToken, endpoint)
+    }
 export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefined,
                                                  id: string | number,
                                                  wikiId: string | number,

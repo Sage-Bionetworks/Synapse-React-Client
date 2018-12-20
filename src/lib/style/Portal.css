@@ -614,6 +614,10 @@ button.SRC-roundBorder {
 checkmark styling end
 
 */
+.SRC-facets-divider {
+  margin-left: 5px;
+  margin-right: 5px; }
+
 .SRC-tableHead {
   font-size: 14px !important;
   text-transform: capitalize !important;
@@ -657,3 +661,11 @@ checkmark styling end
   margin: 0px;
   display: inline-block;
   color: white; }
+
+.SRC-hidden {
+  visibility: hidden;
+  display: none; }
+
+.SRC-paddingTopNoMargin {
+  padding-top: 50px;
+  margin-top: 0px; }

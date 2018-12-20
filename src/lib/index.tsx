@@ -1,25 +1,25 @@
-import { Facets } from "./containers/Facets"
-import MarkdownSynapse from "./containers/MarkdownSynapse"
-import QueryWrapperMenu from "./containers/QuerryWrapperMenu"
-import QueryWrapper from "./containers/QueryWrapper"
-import StackedRowHomebrew from "./containers/StackedRowHomebrew"
-import StaticQueryWrapper from "./containers/StaticQueryWrapper"
-import SynapseTable from "./containers/SynapseTable"
-import SynapseTableCardView from "./containers/SynapseTableCardView"
-import "./style/Cards.css"
-import "./style/Portal.css"
-import * as SynapseClient from "./utils/SynapseClient"
-import * as SynapseConstants from "./utils/SynapseConstants"
+import { Facets } from './containers/Facets'
+import MarkdownSynapse from './containers/MarkdownSynapse'
+import QuerryWrapperMenu from './containers/QuerryWrapperMenu'
+import QueryWrapper from './containers/QueryWrapper'
+import StackedRowHomebrew from './containers/StackedRowHomebrew'
+import StaticQueryWrapper from './containers/StaticQueryWrapper'
+import SynapseTable from './containers/SynapseTable'
+import SynapseTableCardView from './containers/SynapseTableCardView'
+import './style/Cards.css'
+import './style/Portal.css'
+import * as SynapseClient from './utils/SynapseClient'
+import * as SynapseConstants from './utils/SynapseConstants'
 
 const SynapseComponents = {
-    Facets,
-    Markdown: MarkdownSynapse,
-    QueryWrapper,
-    QueryWrapperMenu,
-    StackedRowHomebrew,
-    StaticQueryWrapper,
-    SynapseTable,
-    SynapseTableCardView,
+  Facets,
+  QueryWrapper,
+  StackedRowHomebrew,
+  StaticQueryWrapper,
+  SynapseTable,
+  SynapseTableCardView,
+  QueryWrapperMenu: QuerryWrapperMenu,
+  Markdown: MarkdownSynapse
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

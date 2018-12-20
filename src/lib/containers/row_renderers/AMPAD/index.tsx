@@ -1,5 +1,8 @@
-import Consortium from "./Consortium"
-import Project from "./Project"
-import AMP_Study from "./Study"
+import Consortium from './Consortium'
+import Project from './Project'
+import Study from './Study'
 
-export {Project, Consortium, AMP_Study}
+export {
+    Project,
+    Consortium,
+    Study as AMP_Study }

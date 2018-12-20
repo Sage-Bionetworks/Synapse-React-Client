@@ -1,12 +1,12 @@
-import React, { Component } from "react"
-import logo from "../../images/logo.svg"
-import { SynapseClient } from "../../lib"
+import * as React from 'react'
+import logoSvg from '../../images/logo.svg'
+import { SynapseClient } from '../../lib'
 // import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
-import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
+import QuerryWrapperMenu from '../../lib/containers/QuerryWrapperMenu'
 // import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
 // import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
-import * as SynapseConstants from "../../lib/utils/SynapseConstants"
-import "./App.css"
+import * as SynapseConstants from '../../lib/utils/SynapseConstants'
+import './App.css'
 // import QueryWrapper from "src/lib/containers/QueryWrapper"
 // import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
 // import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
@@ -15,20 +15,20 @@ import "./App.css"
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 
 type DemoState = {
-    token: string
-    ownerId: string
-    isLoading: boolean
-    showMarkdown: boolean
-    version: number
-    tabOne: any
-    tabTwo: any
-    showTabOne: boolean
-  }
+  token: string
+  ownerId: string
+  isLoading: boolean
+  showMarkdown: boolean
+  version: number
+  tabOne: any
+  tabTwo: any
+  showTabOne: boolean
+}
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-class Demo extends Component<{rgbIndex: number}, DemoState> {
+class Demo extends React.Component<{rgbIndex: number}, DemoState> {
   /**
    * Maintain internal state of user session
    */
@@ -36,7 +36,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
     super(props)
     this.state = {
       isLoading: true,
-      ownerId: "",
+      ownerId: '',
       showMarkdown: true,
       showTabOne: false,
       tabOne:
@@ -44,20 +44,20 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
         menuConfig: [
           {
             // title: "Data",
-            facetDisplayValue: "Organism",
-            facetName: "Organism",
-            sql: "SELECT * FROM syn9886254",
-            synapseId: "syn9886254",
-            unitDescription: "data files",
+            facetDisplayValue: 'Organism',
+            facetName: 'Organism',
+            sql: 'SELECT * FROM syn9886254',
+            synapseId: 'syn9886254',
+            unitDescription: 'data files',
             visibleColumnCount: 3,
           },
           {
-            facetDisplayValue: "Study",
-            facetName: "Study",
-            sql: "SELECT * FROM syn9886254",
-            synapseId: "syn9886254",
-            title: "Data",
-            unitDescription: "data files",
+            facetDisplayValue: 'Study',
+            facetName: 'Study',
+            sql: 'SELECT * FROM syn9886254',
+            synapseId: 'syn9886254',
+            title: 'Data',
+            unitDescription: 'data files',
             visibleColumnCount: 5,
           }
         ],
@@ -68,17 +68,17 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
       tabTwo: {
         menuConfig: [
           {
-            facetName: "Consortium",
-            sql: "SELECT * FROM syn9886254",
-            synapseId: "syn9886254",
-            title: "title",
-            unitDescription: "Consortium"
+            facetName: 'Consortium',
+            sql: 'SELECT * FROM syn9886254',
+            synapseId: 'syn9886254',
+            title: 'title',
+            unitDescription: 'Consortium'
           }]
         ,
         rgbIndex: 5
       }
       ,
-      token: "",
+      token: '',
       version: 0
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
@@ -90,11 +90,11 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
   public rgba2rgb(background: number[], color: number[]) {
     const alpha = color[3]
     return [
-        Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
-        Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
-        Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
+      Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
+      Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
+      Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
     ]
-}
+  }
 
   /**
    * Make a query on synapse
@@ -103,7 +103,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
     // Example table (view) query.
     // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
     const QUERY = {
-      entityId: "syn12335586",
+      entityId: 'syn12335586',
       partMask:
         // tslint:disable-next-line
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
@@ -115,7 +115,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
         isConsistent: false,
         limit: 100,
         offset: 0,
-        sql: "SELECT * FROM syn12335586"
+        sql: 'SELECT * FROM syn12335586'
       }
     }
     SynapseClient.getQueryTableResults(QUERY)
@@ -137,9 +137,9 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
   }
 
   public render(): JSX.Element {
-    let token: string | undefined = ""
+    let token: string | undefined = ''
     let inDevEnv = false
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       token = process.env.REACT_APP_DEV_TOKEN
       inDevEnv = true
     } else {
@@ -149,7 +149,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
     return (
       <div className="App">
         <div className="App-header text-center">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src={logoSvg} className="App-logo" alt="logo" />
           <h4 className="white-text">Playground of components under development </h4>
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
@@ -163,7 +163,7 @@ class Demo extends Component<{rgbIndex: number}, DemoState> {
           toggle tabs
         </button>
 
-        <QueryWrapperMenu
+        <QuerryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
           rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}

@@ -1,109 +1,109 @@
-import { library } from "@fortawesome/fontawesome-svg-core"
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons"
-import PropTypes from "prop-types"
-import * as React from "react"
-import { SynapseConstants } from ".."
-import { getColorPallette } from "./ColorGradient"
-import { Facets } from "./Facets"
-import QueryWrapper from "./QueryWrapper"
-import StackedRowHomebrew from "./StackedRowHomebrew"
-import SynapseTable from "./SynapseTable"
-import SynapseTableCardView from "./SynapseTableCardView"
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import * as PropTypes from 'prop-types'
+import * as React from 'react'
+import { SynapseConstants } from '..'
+import { getColorPallette } from './ColorGradient'
+import { Facets } from './Facets'
+import QueryWrapper from './QueryWrapper'
+import StackedRowHomebrew from './StackedRowHomebrew'
+import SynapseTable from './SynapseTable'
+import SynapseTableCardView from './SynapseTableCardView'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
 type MenuState = {
-    menuIndex: number
+  menuIndex: number
 }
 
 type MenuConfig = {
-    sql: string
-    facetName: string
-    facetDisplayValue?: string
-    title?: string
-    visibleColumnCount?: number
-    unitDescription?: string
-    synapseId: string
+  sql: string
+  facetName: string
+  facetDisplayValue?: string
+  title?: string
+  visibleColumnCount?: number
+  unitDescription?: string
+  synapseId: string
 }
 
 type Props = {
-    menuConfig: MenuConfig []
-    token: string
-    type?: string
-    rgbIndex: number
-    loadingScreen?: JSX.Element
+  menuConfig: MenuConfig []
+  token: string
+  type?: string
+  rgbIndex: number
+  loadingScreen?: JSX.Element
 }
 
 type Info = {
-    isSelected: boolean
-    originalColor: string
+  isSelected: boolean
+  originalColor: string
 }
 
 // will take in a default facet  originalColor: "#F5F5F5"
 export default class Menu extends React.Component<Props, MenuState> {
 
-    public static propTypes = {
-        facetName: PropTypes.string,
-        menuConfig: PropTypes.arrayOf(PropTypes.any),
-        rgbIndex: PropTypes.number,
-        token: PropTypes.string
+  public static propTypes = {
+    facetName: PropTypes.string,
+    menuConfig: PropTypes.arrayOf(PropTypes.any),
+    rgbIndex: PropTypes.number,
+    token: PropTypes.string
+  }
+
+  constructor(props: Props) {
+    super(props)
+    this.state = {
+      menuIndex: 0
     }
+    this.handleHoverLogic = this.handleHoverLogic.bind(this)
+    this.switchFacet = this.switchFacet.bind(this)
+  }
 
-    constructor(props: Props) {
-        super(props)
-        this.state = {
-            menuIndex: 0
-        }
-        this.handleHoverLogic = this.handleHoverLogic.bind(this)
-        this.switchFacet = this.switchFacet.bind(this)
+  public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!info.isSelected && event.currentTarget.tagName === 'DIV') {
+      event.currentTarget.style.backgroundColor = info.originalColor
     }
+  }
 
-    public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
-        if (!info.isSelected && event.currentTarget.tagName === "DIV") {
-            event.currentTarget.style.backgroundColor = info.originalColor
-        }
-    }
+  public switchFacet = (menuIndex: number) => (_: React.MouseEvent<HTMLDivElement>) => {
+    this.setState({ menuIndex })
+  }
 
-    public switchFacet = (menuIndex: number) => (_: React.MouseEvent<HTMLDivElement>) => {
-        this.setState({menuIndex})
-    }
+  public render() {
+    const { token, menuConfig, rgbIndex, type } = this.props
 
-    public render() {
-        const {token, menuConfig, rgbIndex, type} = this.props
+    const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
+    const originalColor = colorPalette[0]
 
-        const {colorPalette} = getColorPallette(this.props.rgbIndex!, 1)
-        const originalColor = colorPalette[0]
-
-        const menuDropdown = menuConfig.map(
+    const menuDropdown = menuConfig.map(
             (config: MenuConfig, index: number) => {
 
-                const isSelected: boolean = (index === this.state.menuIndex)
-                const style: any = {}
-                let selectedStyling: string = ""
+              const isSelected: boolean = (index === this.state.menuIndex)
+              const style: any = {}
+              let selectedStyling: string = ''
 
-                if (isSelected) {
+              if (isSelected) {
                     // we have to programatically set the style since the color is chosen from a color
                     // wheel
-                    style.background = originalColor
+                style.background = originalColor
                     // below has to be set so the pseudo element created will inherit its color
                     // appropriately
-                    style.borderLeftColor = originalColor
-                    selectedStyling = "SRC-pointed SRC-whiteText"
-                } else {
+                style.borderLeftColor = originalColor
+                selectedStyling = 'SRC-pointed SRC-whiteText'
+              } else {
                     // change background to class
-                    selectedStyling = "SRC-blackText SRC-light-background"
-                }
+                selectedStyling = 'SRC-blackText SRC-light-background'
+              }
 
-                const infoEnter: Info = {isSelected, originalColor}
-                const infoLeave: Info = {isSelected,  originalColor: "#F5F5F5" }
+              const infoEnter: Info = { isSelected, originalColor }
+              const infoLeave: Info = { isSelected,  originalColor: '#F5F5F5' }
 
-                let facetDisplayValue: string = config.facetDisplayValue || ""
-                if (!facetDisplayValue) {
-                    facetDisplayValue = config.facetName
-                }
+              let facetDisplayValue: string = config.facetDisplayValue || ''
+              if (!facetDisplayValue) {
+                facetDisplayValue = config.facetName
+              }
 
-                return (
+              return (
                     <div
                         onMouseEnter={this.handleHoverLogic(infoEnter)}
                         onMouseLeave={this.handleHoverLogic(infoLeave)}
@@ -114,52 +114,52 @@ export default class Menu extends React.Component<Props, MenuState> {
                     >
                         {facetDisplayValue}
                     </div>
-                )
+              )
             }
         )
-        const queryWrapper = menuConfig.map(
+    const queryWrapper = menuConfig.map(
             (config: MenuConfig, index: number) => {
-                const isSelected: boolean = (this.state.menuIndex === index)
-                let style: any
-                if (!isSelected) {
-                    style = {visibility: "hidden", display: "none"}
-                }
-                let showSynTable = <div/>
-                if (config.title) {
-                    showSynTable = (
+              const isSelected: boolean = (this.state.menuIndex === index)
+              let className = ''
+              if (!isSelected) {
+                className = 'SRC-hidden'
+              }
+              let showSynTable = <div/>
+              if (config.title) {
+                showSynTable = (
                         <SynapseTable
                             title={config.title}
                             synapseId={config.synapseId}
                             // specify visible column count
                             visibleColumnCount={config.visibleColumnCount || 0}
                         />)
-                }
-                return (
-                    <span key={config.facetName} style={style} >
+              }
+              return (
+                    <span key={config.facetName} className={className} >
                         <QueryWrapper
                             showMenu={true}
                             initQueryRequest={{
-                                concreteType: "org.sagebionetworks.repo.model.table.QueryBundleRequest",
-                                partMask:
+                              concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+                              partMask:
                                     // tslint:disable-next-line
                                     SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
                                     SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
                                     SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                                query: {
-                                    isConsistent: false,
-                                    limit: 25,
-                                    offset: 0,
-                                    sql: config.sql,
-                                }
+                              query: {
+                                isConsistent: false,
+                                limit: 25,
+                                offset: 0,
+                                sql: config.sql,
+                              }
                             }}
-                            unitDescription={config.unitDescription || ""}
+                            unitDescription={config.unitDescription || ''}
                             facetName={config.facetName}
                             token={token}
                             rgbIndex={rgbIndex}
                         >
                             <StackedRowHomebrew
                                 synapseId={config.synapseId}
-                                unitDescription={(config.unitDescription || "")}
+                                unitDescription={(config.unitDescription || '')}
                                 loadingScreen={this.props.loadingScreen}
                             />
                             <Facets />
@@ -167,19 +167,19 @@ export default class Menu extends React.Component<Props, MenuState> {
                             {type ? <SynapseTableCardView type={type} /> : (<div/>)}
                         </QueryWrapper>
                     </span>
-                )
+              )
             }
         )
 
-        return (
+    return (
             <div className="container-fluid">
-                <div style={{paddingTop: "50px", marginTop: "0px"}} className="col-xs-2">
+                <div className="col-xs-2 SRC-paddingTopNoMargin">
                     {menuDropdown}
                 </div>
                 <div className="col-xs-10">
                     {queryWrapper}
                 </div>
             </div>
-        )
-    }
+    )
+  }
 }

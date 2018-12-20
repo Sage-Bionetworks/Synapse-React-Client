@@ -1,7 +1,7 @@
-import * as React from "react"
-import { HashRouter, Route, Switch } from "react-router-dom"
-import Demo from "./Demo"
-import Playground from "./Playground"
+import * as React from 'react'
+import { HashRouter, Route, Switch } from 'react-router-dom'
+import Demo from './Demo'
+import Playground from './Playground'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient

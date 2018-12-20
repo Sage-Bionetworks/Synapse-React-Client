@@ -1,65 +1,65 @@
-import React from "react"
-import { Project } from "."
-import * as Utils from "../utils"
+import * as React from 'react'
+import { Project } from '.'
+import * as Utils from '../utils'
 
 type ProjectState = {
-    showMore: boolean
-    hasCreatedIndex: boolean
+  showMore: boolean
+  hasCreatedIndex: boolean
 }
 
 type ProjectProps = {
-    isHeader?: boolean
-    data?: any
-    schema?: any
+  isHeader?: boolean
+  data?: any
+  schema?: any
 }
 
 export default class Study extends React.Component<ProjectProps, ProjectState> {
 
-    public static icon = <img className="iconImg" alt="" src={require("../../../assets/icons/project.svg")}/>
+  public static icon = <img className="iconImg" alt="" src={require('../../../assets/icons/project.svg')}/>
 
-    constructor(props: ProjectProps) {
-        super(props)
-        this.state = {
-            hasCreatedIndex: false,
-            showMore: false
-        }
-        this.handleClick = this.handleClick.bind(this)
+  constructor(props: ProjectProps) {
+    super(props)
+    this.state = {
+      hasCreatedIndex: false,
+      showMore: false
     }
+    this.handleClick = this.handleClick.bind(this)
+  }
 
-    public handleClick(event: React.SyntheticEvent) {
-        this.setState({
-            showMore: !this.state.showMore
-        })
-    }
+  public handleClick(event: React.SyntheticEvent) {
+    this.setState({
+      showMore: !this.state.showMore
+    })
+  }
 
-    public render() {
-        const { data, schema } = this.props
+  public render() {
+    const { data, schema } = this.props
 
-        const abstract = data[schema.Abstract]
+    const abstract = data[schema.Abstract]
         // const consortium = data[schema.Consortium]
-        const grantNumber = data[schema["Grant Number"]]
-        const institutions = data[schema.Institutions]
-        const contributors = data[schema["Key Data Contributors"]]
-        const program = data[schema.Program]
-        const investigators = data[schema["Key Investigators"]]
-        const link = data[schema.Link]
-        const name = data[schema.Name]
+    const grantNumber = data[schema['Grant Number']]
+    const institutions = data[schema.Institutions]
+    const contributors = data[schema['Key Data Contributors']]
+    const program = data[schema.Program]
+    const investigators = data[schema['Key Investigators']]
+    const link = data[schema.Link]
+    const name = data[schema.Name]
 
-        const values: string[][] = [["PROGRAM", program]]
+    const values: string[][] = [['PROGRAM', program]]
 
-        if (institutions) {
-            values.unshift(["INSTITUTIONS", institutions])
-        }
+    if (institutions) {
+      values.unshift(['INSTITUTIONS', institutions])
+    }
 
-        if (contributors) {
-            values.unshift(["KEY CONTRIBUTORS", contributors])
-        }
+    if (contributors) {
+      values.unshift(['KEY CONTRIBUTORS', contributors])
+    }
 
-        if (grantNumber) {
-            values.unshift(["GRANT", grantNumber])
-        }
+    if (grantNumber) {
+      values.unshift(['GRANT', grantNumber])
+    }
 
-        return (
+    return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
                     {Project.icon}
@@ -81,6 +81,6 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
                 <Utils.CardFooter extraWide={true} values={values} />
             </div>
 
-        )
-    }
+    )
+  }
 }
