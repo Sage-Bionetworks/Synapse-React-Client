@@ -1,7 +1,7 @@
 import React from 'react';
 import {mount} from 'enzyme'
-import MarkdownSynapse from '../../../../lib/containers/MarkdownSynapse';
-import Bookmark from '../../../../lib/containers/widgets/Bookmarks'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse';
+import Bookmark from '../../../lib/containers/widgets/Bookmarks'
 
 it('renders without crashing', () => {
   const tree = mount(
@@ -17,7 +17,7 @@ describe('renders widgets ', () => {
   let SynapseClient
 
   beforeAll( () =>  { 
-      SynapseClient = require('../../../../lib/utils/SynapseClient')
+      SynapseClient = require('../../../lib/utils/SynapseClient')
       SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve([""]))
     }
   )

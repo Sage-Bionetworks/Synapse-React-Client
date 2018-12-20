@@ -53,7 +53,7 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
     )
   }
 
-  private getData() {
+  public getData() {
     const { token = '', json } = this.props
     if (json === undefined) {
       const queryBundleRequest: QueryBundleRequest = {

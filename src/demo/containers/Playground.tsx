@@ -2,7 +2,7 @@ import * as React from 'react'
 import logoSvg from '../../images/logo.svg'
 import { SynapseClient } from '../../lib'
 // import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
-import QuerryWrapperMenu from '../../lib/containers/QuerryWrapperMenu'
+import QueryWrapperMenu from '../../lib/containers/QueryWrapperMenu'
 // import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
 // import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
 import * as SynapseConstants from '../../lib/utils/SynapseConstants'
@@ -163,7 +163,7 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
           toggle tabs
         </button>
 
-        <QuerryWrapperMenu
+        <QueryWrapperMenu
           token={inDevEnv ? token! : this.state.token!}
           menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
           rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}

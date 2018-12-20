@@ -1,6 +1,6 @@
 import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
-import QuerryWrapperMenu from './containers/QuerryWrapperMenu'
+import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import StackedRowHomebrew from './containers/StackedRowHomebrew'
 import StaticQueryWrapper from './containers/StaticQueryWrapper'
@@ -18,7 +18,7 @@ const SynapseComponents = {
   StaticQueryWrapper,
   SynapseTable,
   SynapseTableCardView,
-  QueryWrapperMenu: QuerryWrapperMenu,
+  QueryWrapperMenu,
   Markdown: MarkdownSynapse
 }
 

@@ -49,9 +49,9 @@ class Bookmarks extends React.Component<BookmarksProps, {}> {
               return text
             }
         )
-        // create the dom element for this view and append to the ref
+    // create the dom element for this view and append to the ref
     const bookmarkFragment = document.createRange().createContextualFragment(matches)
-        // TS doesn't like possibly null values, bang operator ! will assert this is okay.
+    // TS doesn't like possibly null values, bang operator ! will assert this is okay.
     this.bookmarkRef.current!.appendChild(bookmarkFragment)
   }
 
