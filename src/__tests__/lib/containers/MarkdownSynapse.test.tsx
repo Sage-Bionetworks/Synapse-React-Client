@@ -1,58 +1,63 @@
-import React from 'react';
-import {mount} from 'enzyme'
-import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse';
-import Bookmark from '../../../lib/containers/widgets/Bookmarks'
+import * as React from 'react'
+import { mount } from 'enzyme'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
+import Bookmarks from '../../../lib/containers/widgets/Bookmarks'
 
 it('renders without crashing', () => {
   const tree = mount(
-      <MarkdownSynapse
-        token={""}
-        markdown={""}
-        hasSynapseResources={false}
-        />)
+    <MarkdownSynapse
+      token={''}
+      markdown={''}
+      hasSynapseResources={false}
+    />)
   expect(tree.find(MarkdownSynapse)).toHaveLength(1)
-});
+})
 
 describe('renders widgets ', () => {
   let SynapseClient:any
 
-  beforeAll( () =>  { 
-      SynapseClient = require('../../../lib/utils/SynapseClient')
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve([""]))
-    }
+  beforeAll(() =>  {
+    SynapseClient = require('../../../lib/utils/SynapseClient')
+    SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve(['']))
+  }
   )
-  
+
   it('renders a synapse image', async () => {
-    SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({markdown: "${image?synapseId=syn7809125&align=None&responsive=true}"}))
-  
+    SynapseClient.getEntityWiki = jest.fn(() =>
+      Promise.resolve({
+        markdown: '${image?synapseId=syn7809125&align=None&responsive=true}'
+      })
+    )
+
     const wrapper = await mount(
         <MarkdownSynapse
-          token={""}
-          ownerId={""}
-          wikiId={""}
+          token={''}
+          ownerId={''}
+          wikiId={''}
           hasSynapseResources={true}
         />
-    );
-  
+    )
+
+    // tslint:disable-next-line
     expect(wrapper.html()).toEqual(`<div class=\"markdown\"><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\" style=\"float: none;\"><span><p></p>
 </span></span><div></div></div>`)
-    expect(wrapper.find(Bookmark)).toHaveLength(0)
-  });
+    // tslint:disable-next-line
+    expect(wrapper.find(Bookmarks)).toHaveLength(0)
+  })
 
-  
- it('renders a synapse reference', async () => {
-   SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({markdown: "${reference?params}"}))
- 
-   const wrapper = await mount(
+  it('renders a synapse reference', async () => {
+    SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: '${reference?params}' }))
+
+    const wrapper = await mount(
        <MarkdownSynapse
-        token={""}
-        ownerId={""}
-        wikiId={""}
+        token={''}
+        ownerId={''}
+        wikiId={''}
         hasSynapseResources={true}
        />
-   );
+   )
+   // tslint:disable-next-line
+    expect(wrapper.html()).toEqual('<div class="markdown"><span><span><p><a href="" id="ref1">[1]</a></p>\n</span></span><div></div></div>')
+  })
 
-   expect(wrapper.html()).toEqual("<div class=\"markdown\"><span><span><p><a href=\"\" id=\"ref1\">[1]</a></p>\n</span></span><div></div></div>")
- });
-  
 })
