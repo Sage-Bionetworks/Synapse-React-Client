@@ -291,7 +291,7 @@ export const getUserProfiles = (userIdsArray: number[] = [], endpoint: string = 
  * Return the children (Files/Folders) of the given entity (Project or Folder).
  * http://docs.synapse.org/rest/POST/entity/children.html
  */
-export const getEntityChildren = (request: string,
+export const getEntityChildren = (request: any,
                                   sessionToken: string | undefined = undefined,
                                   endpoint: string = DEFAULT_ENDPOINT) => {
   return doPost('/repo/v1/entity/children', request, sessionToken, endpoint)
@@ -300,7 +300,7 @@ export const getEntityChildren = (request: string,
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
  */
-export const getFiles = (request: string,
+export const getFiles = (request: any,
                          sessionToken: string | undefined = undefined,
                          endpoint: string = DEFAULT_ENDPOINT): Promise<BatchFileResult> => {
   return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint)
@@ -327,7 +327,7 @@ export const getEntity = (sessionToken: string | undefined = undefined,
  */
 export const getEntityBundleForVersion = (
   entityId: string | number,
-  version: string | number,
+  version: string | number | undefined,
   partsMask: string | number,
   sessionToken: string | undefined = undefined,
   endpoint = DEFAULT_ENDPOINT

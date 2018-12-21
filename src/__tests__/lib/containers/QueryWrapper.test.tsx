@@ -1,7 +1,7 @@
 import React from 'react'
-import {shallow, configure} from 'enzyme'
+import {shallow} from 'enzyme'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
-import {mockData, mockRequest} from '../../../JSON_test_data/'
+import {mockData, mockRequest} from '../../../JSON_test_data'
 
 describe('basic functionality', () => {
     let SynapseClient
@@ -14,7 +14,7 @@ describe('basic functionality', () => {
     it ('make init query request', async () => {
         const wrapper = await shallow(
             <QueryWrapper
-                initQueryRequest = {mockRequest}
+                initQueryRequest ={mockRequest}
                 token={""}
                 facetName={"name"}
             >
@@ -27,7 +27,8 @@ describe('basic functionality', () => {
                 facetValues: ["a"]
             }
         ]
-        expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
-        expect(wrapper.state().data).toEqual(mockData)
+        const wrapperState = wrapper.state() as any
+        expect(wrapperState.lastQueryRequest).toEqual(mockRequest)
+        expect(wrapperState.data).toEqual(mockData)
     })
 })

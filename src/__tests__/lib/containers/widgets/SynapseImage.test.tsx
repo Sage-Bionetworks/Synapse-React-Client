@@ -1,9 +1,8 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+import {shallow} from 'enzyme';
 import SynapseImage from '../../../../lib/containers/widgets/SynapseImage';
 
 it('renders without failing', () => {
-  const tree = renderer
-    .create(<SynapseImage />)
-    .toJSON();
+  const tree = shallow(<SynapseImage params={{}}/>)
+  expect(tree).toBeDefined()
 });

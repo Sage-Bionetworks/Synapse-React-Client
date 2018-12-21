@@ -1,7 +1,7 @@
 import React from 'react';
-import {shallow, configure} from 'enzyme'
+import {shallow} from 'enzyme'
 import StackedRowHomebrew from '../../../lib/containers/StackedRowHomebrew'
-import {mockData} from '../../../JSON_test_data'
+import {mockData, mockRequest} from '../../../JSON_test_data'
 
 describe('it renders a chart without crashing', () => {
 
@@ -9,7 +9,10 @@ describe('it renders a chart without crashing', () => {
         const tree = await shallow(
             <StackedRowHomebrew
                 data={mockData}             
-                getLastQueryRequest={() => {return {query: {selectedFacets: {}}}}}
+                getLastQueryRequest={() => {return mockRequest}}
+                loadingScreen={<div/>}
+                synapseId={""}
+                unitDescription={""}
             ></StackedRowHomebrew>
         )
         expect(tree).toBeDefined()

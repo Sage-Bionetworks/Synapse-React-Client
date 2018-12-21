@@ -1,5 +1,5 @@
 import React from "react";
-import {shallow, configure} from "enzyme";
+import {shallow} from "enzyme";
 import {Facets, CheckboxGroup} from "../../../lib/containers/Facets";
 import {mockData} from "../../../JSON_test_data";
 

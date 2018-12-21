@@ -1,8 +1,8 @@
 import React from 'react'
-import {shallow, configure} from 'enzyme'
+import {shallow} from 'enzyme'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import SynapseTable from '../../../lib/containers/SynapseTable';
-import {mockData, mockRequest} from './../../../JSON_test_data'
+import {mockData, mockRequest} from '../../../JSON_test_data'
 
 describe('basic functionality', () => {
     let SynapseClient
@@ -15,13 +15,12 @@ describe('basic functionality', () => {
     it ('make init query request', async () => {
         const wrapper = await shallow(
             <QueryWrapper
-                initQueryRequest = {mockRequest}
+                initQueryRequest={mockRequest}
                 facetName={"name"}
-                RGB={[0,0,0]}
                 token={""}
-                sql={""}>
-                <SynapseTable>
-                </SynapseTable>
+                rgbIndex={0}
+            >
+                <SynapseTable synapseId={""} title={""}/>
             </QueryWrapper>)
         
         mockRequest.query.selectedFacets = [
@@ -31,9 +30,10 @@ describe('basic functionality', () => {
                 facetValues: ["a"]
             }
         ]
+        const wrapperState = wrapper.state() as any
         expect(wrapper.find(SynapseTable)).toHaveLength(1)
-        expect(wrapper.state().lastQueryRequest).toEqual(mockRequest)
-        expect(wrapper.state().data).toEqual(mockData)
+        expect(wrapperState.lastQueryRequest).toEqual(mockRequest)
+        expect(wrapperState.data).toEqual(mockData)
     })
 
     it ('renders a query table', async () => {
@@ -41,6 +41,8 @@ describe('basic functionality', () => {
         const testRenderer = await shallow(
                                     <SynapseTable
                                         data={mockData}
+                                        synapseId={""}
+                                        title={""}
                                         getLastQueryRequest={getLastQueryRequestMock}>
                                     </SynapseTable>
                                 )

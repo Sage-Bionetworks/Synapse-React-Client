@@ -14,7 +14,7 @@ it('renders without crashing', () => {
 });
 
 describe('renders widgets ', () => {
-  let SynapseClient
+  let SynapseClient:any
 
   beforeAll( () =>  { 
       SynapseClient = require('../../../lib/utils/SynapseClient')
@@ -27,10 +27,11 @@ describe('renders widgets ', () => {
   
     const wrapper = await mount(
         <MarkdownSynapse
-        token={""}
-        synapseId={""}
-        wikiId={""}
-        hasSynapseResources={true}/>
+          token={""}
+          ownerId={""}
+          wikiId={""}
+          hasSynapseResources={true}
+        />
     );
   
     expect(wrapper.html()).toEqual(`<div class=\"markdown\"><span><span><p></p></span><img alt=\"synapse\" class=\"img-fluid\" src=\"\" style=\"float: none;\"><span><p></p>
@@ -44,10 +45,11 @@ describe('renders widgets ', () => {
  
    const wrapper = await mount(
        <MarkdownSynapse
-       token={""}
-       synapseId={""}
-       wikiId={""}
-       hasSynapseResources={true}/>
+        token={""}
+        ownerId={""}
+        wikiId={""}
+        hasSynapseResources={true}
+       />
    );
 
    expect(wrapper.html()).toEqual("<div class=\"markdown\"><span><span><p><a href=\"\" id=\"ref1\">[1]</a></p>\n</span></span><div></div></div>")
