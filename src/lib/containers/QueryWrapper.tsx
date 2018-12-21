@@ -20,13 +20,14 @@ type QueryWrapperProps = {
 
 type QueryWrapperState = {
   data: QueryResultBundle | undefined
-  isChecked: []  // keep Facets and Bar Chart slices colors in sync
+  isChecked: []  // keep Facets and BarChart colors in sync
   isLoadingNewData: boolean
   isLoading: boolean
   showNothing: boolean
   lastQueryRequest: {}
 }
 
+// Since the component is an HOC we export the props passed down
 export type QueryWrapperChildProps = {
   isLoading?: boolean
   isLoadingNewData?: boolean
@@ -95,11 +96,11 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }
   }
 
-    /**
-     * Compute default query request
-     *
-     * @memberof QueryWrapper
-     */
+  /**
+   * Compute default query request
+   *
+   * @memberof QueryWrapper
+   */
   public componentDidMount() {
     if (this.props.json === null) {
       this.executeInitialQueryRequest()
@@ -109,11 +110,17 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       })
     }
   }
-    /**
-     * @memberof QueryWrapper
-     */
+
+  /**
+   * @memberof QueryWrapper
+   *
+   */
   public componentDidUpdate(prevProps: any) {
-        // if token has updated
+    /**
+     *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
+     *  sql query has changed of the component then perform an update.
+     */
+
     if (this.props.token !== '' && prevProps.token === '' && !this.props.json) {
       this.executeInitialQueryRequest()
     }
@@ -122,52 +129,13 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }
   }
 
-    /**
-     * Render the children without any formatting
-     */
-  public render() {
-
-    // clean up variable names
-    const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
-      return React.cloneElement(child, {
-        data: this.state.data,
-        executeInitialQueryRequest: this.executeInitialQueryRequest,
-        executeQueryRequest: this.executeQueryRequest,
-        filter: this.props.facetName,
-        getLastQueryRequest: this.getLastQueryRequest,
-        getNextPageOfData: this.getNextPageOfData,
-        isChecked: this.state.isChecked,
-        isLoading: this.state.isLoading,
-        isLoadingNewData: this.state.isLoadingNewData,
-        isQueryWrapperChild: true,
-        rgbIndex: this.props.rgbIndex,
-        showNothing: this.state.showNothing,
-        unitDescription: this.props.unitDescription,
-        updateParentState: this.updateParentState
-      })
-    }))
-
-    if (this.props.showMenu) {
-      return (
-                childrenWithProps
-      )
-    }
-    return (
-            <div className="container-fluid">
-                <div className={'col-xs-12'}>
-                    {childrenWithProps}
-                </div>
-            </div>
-    )
-  }
-
-    /**
-     * Pass down a deep clone (so no side affects on the child's part) of the
-     * last query request made
-     *
-     * @returns
-     * @memberof QueryWrapper
-     */
+  /**
+   * Pass down a deep clone (so no side affects on the child's part) of the
+   * last query request made
+   *
+   * @returns
+   * @memberof QueryWrapper
+   */
   private getLastQueryRequest() {
     return cloneDeep(this.state.lastQueryRequest)
   }
@@ -184,57 +152,59 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       isLoading: true
     })
     SynapseClient.getQueryTableResults(queryRequest, this.props.token)
-            .then(
-                (data: QueryResultBundle) => {
-                  const newState: any = {
-                    data,
-                    isLoading: false,
-                    lastQueryRequest: cloneDeep(queryRequest),
-                    showNothing: false
-                  }
-                  this.setState(newState)
-                }
-            ).catch((err) => {
-              console.log('Failed to get data ', err)
-            })
+      .then(
+          (data: QueryResultBundle) => {
+            const newState: any = {
+              data,
+              isLoading: false,
+              lastQueryRequest: cloneDeep(queryRequest),
+              showNothing: false
+            }
+            this.setState(newState)
+          }
+      ).catch((err) => {
+        console.log('Failed to get data ', err)
+      })
   }
 
-    /**
-     * Execute the given query
-     *
-     * @param {*} queryRequest Query request as specified by
-     *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-     * @memberof QueryWrapper
-     */
+  /**
+   * Grab the next page of data, pulling in 25 more rows.
+   *
+   * @param {*} queryRequest Query request as specified by
+   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+   * @memberof QueryWrapper
+   */
   private getNextPageOfData(queryRequest: any) {
     this.setState({
       isLoading: true
     })
     return SynapseClient.getQueryTableResults(queryRequest, this.props.token)
-            .then(
-                (data: QueryResultBundle) => {
-                  const oldData: QueryResultBundle = cloneDeep(this.state.data)
-                  oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
-                  const newState: any = {
-                    data: oldData,
-                    isLoading: false,
-                    lastQueryRequest: cloneDeep(queryRequest),
-                    showNothing: false
-                  }
-                  this.setState(newState)
-                  return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
-                }
-            ).catch((err) => {
-              console.log('Failed to get data ', err)
-            })
+      .then(
+        (data: QueryResultBundle) => {
+          const oldData: QueryResultBundle = cloneDeep(this.state.data)
+          // push on the new data retrieved from the API call
+          oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
+          const newState: any = {
+            data: oldData,
+            isLoading: false,
+            lastQueryRequest: cloneDeep(queryRequest),
+            showNothing: false
+          }
+          this.setState(newState)
+          return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
+        }
+      ).catch((err) => {
+        console.log('Failed to get data ', err)
+      })
   }
-    /**
-     * Execute the given query
-     *
-     * @param {*} queryRequest Query request as specified by
-     *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-     * @memberof QueryWrapper
-     */
+
+  /**
+   * Execute the initial query passed into the component
+   *
+   * @param {*} queryRequest Query request as specified by
+   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+   * @memberof QueryWrapper
+   */
   private executeInitialQueryRequest() {
     this.setState({
       isChecked: [],
@@ -242,36 +212,46 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       isLoadingNewData: true
     })
     SynapseClient
-            .getQueryTableResults(this.props.initQueryRequest, this.props.token)
-            .then(
-                (data: QueryResultBundle) => {
-                  const filter: string = this.props.facetName
-                  const lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(data, filter)
-                  const newState = {
-                    data,
-                    lastQueryRequest,
-                    isLoading: false,
-                    isLoadingNewData: false,
-                    showNothing: false
-                  }
-                  this.setState(newState)
-                }
-                ).catch((err) => {
-                  console.log('Failed to get data ', err)
-                })
+      .getQueryTableResults(this.props.initQueryRequest, this.props.token)
+      .then(
+        (data: QueryResultBundle) => {
+          const filter: string = this.props.facetName
+          const lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(data, filter)
+          const newState = {
+            data,
+            lastQueryRequest,
+            isLoading: false,
+            isLoadingNewData: false,
+            showNothing: false
+          }
+          this.setState(newState)
+        }
+      ).catch((err) => {
+        console.log('Failed to get data ', err)
+      })
   }
 
+  /**
+   * Reset the initial set of facets for the lastQueryRequest object
+   *
+   * @private
+   * @param {QueryResultBundle} data
+   * @param {string} filter the facet used to filter the synapse table
+   * @returns
+   * @memberof QueryWrapper
+   */
   private resetFacetSelection(data: QueryResultBundle, filter: string) {
-        // we have to reset the facet selections by getting the original
-        // facet corresponding to the original filter
+    // we have to reset the facet selections by getting the original
+    // facet corresponding to the original filter
     const facetsForFilter = data.facets.filter((obj: FacetColumnResultValues) => {
       return obj.columnName === filter
     })[0] as FacetColumnResultValues
 
-        // next we have to selectively choose those facets and their
-        // corresponding counts, we have to get the full counts because of
-        // the nature that we are clicking elements and turning them "off"
-    const facetsMapped: string [] = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
+    // next we have to selectively choose those facets and their
+    // corresponding counts, we have to get the full counts because of
+    // the nature that we are clicking elements and turning them "off"
+    // this is a peculiarity due to UX and the synapse backend having different behavior
+    const facetsMapped: string[] = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
       return el.value
     })
 
@@ -280,14 +260,58 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       {
         columnName: filter,
         concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: [...facetsMapped]
+        facetValues: facetsMapped
       }
     ]
     return lastQueryRequest
   }
 
   private updateParentState(update: any) {
+    // This is a hack needed because the barchart and the facets have to stay insync
+    // with each other (their colors), but they exist side by side in the component tree, so we
+    // have to pass the isChecked array up through querywrapper
     this.setState(update)
+  }
+
+  /**
+   * Render the children without any formatting
+   */
+  public render() {
+
+    // inject props in children of this component
+    const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
+      return React.cloneElement(child, {
+        data: this.state.data,
+        executeInitialQueryRequest: this.executeInitialQueryRequest,
+        executeQueryRequest: this.executeQueryRequest,
+        getLastQueryRequest: this.getLastQueryRequest,
+        getNextPageOfData: this.getNextPageOfData,
+        isChecked: this.state.isChecked,
+        isLoading: this.state.isLoading,
+        showNothing: this.state.showNothing,
+        isLoadingNewData: this.state.isLoadingNewData,
+        filter: this.props.facetName,
+        rgbIndex: this.props.rgbIndex,
+        unitDescription: this.props.unitDescription,
+        updateParentState: this.updateParentState,
+        isQueryWrapperChild: true
+      })
+    }))
+
+    if (this.props.showMenu) {
+      // menu is to the left of the child components so we let that add its
+      // own html
+      return (
+        childrenWithProps
+      )
+    }
+    return (
+      <div className="container-fluid">
+          <div className={'col-xs-12'}>
+              {childrenWithProps}
+          </div>
+      </div>
+    )
   }
 
 }
