@@ -20,8 +20,7 @@ type QueryWrapperProps = {
 
 type QueryWrapperState = {
   data: QueryResultBundle | undefined
-  isChecked: []
-  currentFacet: string
+  isChecked: []  // keep Facets and Bar Chart slices colors in sync
   isLoadingNewData: boolean
   isLoading: boolean
   showNothing: boolean
@@ -39,7 +38,6 @@ export type QueryWrapperChildProps = {
   data?: QueryResultBundle
   filter?: string
   updateParentState?: (param: any) => void
-  updateParentFilter?: (param: string) => void
   rgbIndex?: number
   showNothing?: boolean
   unitDescription?: string
@@ -86,10 +84,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.resetFacetSelection = this.resetFacetSelection.bind(this)
-    this.updateParentFilter = this.updateParentFilter.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
     this.state = {
-      currentFacet: '',
       data: undefined,
       isChecked: [],
       isLoading: true,
@@ -137,7 +133,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         data: this.state.data,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
-        filter: this.state.currentFacet ? this.state.currentFacet : this.props.facetName,
+        filter: this.props.facetName,
         getLastQueryRequest: this.getLastQueryRequest,
         getNextPageOfData: this.getNextPageOfData,
         isChecked: this.state.isChecked,
@@ -147,7 +143,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         rgbIndex: this.props.rgbIndex,
         showNothing: this.state.showNothing,
         unitDescription: this.props.unitDescription,
-        updateParentFilter: this.updateParentFilter,
         updateParentState: this.updateParentState
       })
     }))
@@ -250,7 +245,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             .getQueryTableResults(this.props.initQueryRequest, this.props.token)
             .then(
                 (data: QueryResultBundle) => {
-                  const filter: string = this.state.currentFacet ? this.state.currentFacet : this.props.facetName
+                  const filter: string = this.props.facetName
                   const lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(data, filter)
                   const newState = {
                     data,
@@ -295,8 +290,4 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.setState(update)
   }
 
-  private updateParentFilter(filter: string) {
-    const lastQueryRequest: QueryBundleRequest = this.resetFacetSelection(this.state.data!, filter)
-    this.setState({ lastQueryRequest, currentFacet: filter })
-  }
 }

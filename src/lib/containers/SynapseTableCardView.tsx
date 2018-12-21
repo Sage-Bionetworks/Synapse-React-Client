@@ -16,13 +16,9 @@ import {
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
 
-const uuidv4 = require('uuid/v4')
-// Instead of giving each of the Study/Tool/etc components the same
-// props we make a simple container that does
 const PAGE_SIZE: number = 25
 
 type RowContainerProps = {
-  children: any
   data: any
   limit: number
   hideOrganizationLink: boolean
@@ -30,30 +26,33 @@ type RowContainerProps = {
   token?: string
   ownerId?: string
   isHeader: boolean
+  type: string
 }
 
-const RowContainer: React.SFC<RowContainerProps> = ({ children, data, limit, ...rest }) => {
-  return data.queryResult.queryResults.rows.map(
-        (rowData: any, index: number) => {
-          if (index < limit) {
-            const childrenWithProps = React.Children.map(
-              children,
-              (child: any, j) => {
-                return React.cloneElement(child, {
-                  key: `${index},${j}`,
-                  data: rowData.values,
-                  ...rest
-                })
-              }
-            )
-            return (
-                    <React.Fragment key={index}>
-                        {childrenWithProps}
-                    </React.Fragment>
-            )
-          }
-          return false
-        })
+// Instead of giving each of the Study/Tool/etc components the same
+// props we make a simple container that does
+const RowContainer: React.SFC<RowContainerProps> = (props) => {
+  const { type, ...rest } = props
+  switch (type) {
+    case STUDY:
+      return <Study {...rest} />
+    case DATASET:
+      return <Dataset {...rest} />
+    case FUNDER:
+      return <Funder {...rest} />
+    case PUBLICATION:
+      return <Publication {...rest} />
+    case TOOL:
+      return <Tool {...rest} />
+    case AMP_PROJECT:
+      return <Project {...rest} />
+    case AMP_CONSORTIUM:
+      return <Consortium {...rest} />
+    case AMP_STUDY:
+      return <AMP_Study {...rest} />
+    default:
+      return (<div/>) // this should never happen
+  }
 }
 
 type SynapseTableCardViewProps = {
@@ -89,7 +88,6 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
   constructor(props: SynapseTableCardViewProps) {
     super(props)
-    this.renderChild = this.renderChild.bind(this)
     this.handleViewMore = this.handleViewMore.bind(this)
     this.getBufferData = this.getBufferData.bind(this)
     this.state = {
@@ -99,33 +97,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     }
   }
 
-  public renderChild(): JSX.Element | boolean {
-    const { type } = this.props
-    switch (type) {
-      case STUDY:
-        return <Study />
-      case DATASET:
-        return <Dataset />
-      case FUNDER:
-        return <Funder />
-      case PUBLICATION:
-        return <Publication />
-      case TOOL:
-        return <Tool />
-      case AMP_PROJECT:
-        return <Project />
-      case AMP_CONSORTIUM:
-        return <Consortium />
-      case AMP_STUDY:
-        return <AMP_Study />
-      default:
-        return (false) // this should never happen
-    }
-  }
-
   public componentDidMount() {
-        // we try to load one page of data ahead of cards, this allows the "view more" behavior
-        // to be instant
+    // we try to load one page of data ahead of cards, this allows the "view more" behavior
+    // to be instant
     this.getBufferData()
   }
 
@@ -184,16 +158,18 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
   }
 
   public render() {
-    const { data,
-                hideOrganizationLink = false,
-                limit = Infinity,
-                token= '',
-                ownerId= '',
-                isHeader= false,
-                isQueryWrapperChild,
-                filter,
-                unitDescription
-                } = this.props
+    const {
+      data,
+      hideOrganizationLink = false,
+      limit = Infinity,
+      token = '',
+      ownerId = '',
+      isHeader = false,
+      isQueryWrapperChild,
+      filter,
+      unitDescription,
+      type
+    } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
       return <div className="container"/>
     }
@@ -205,16 +181,16 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     let cardLimit = 0
 
-        // Either the number of cards to be shown is specified by the developer in the props
-        // or this card is under the query wrapper and we handle the view more button
+    // Either the number of cards to be shown is specified by the developer in the props
+    // or this card is under the query wrapper and we handle the view more button
     cardLimit = isQueryWrapperChild ? this.state.cardLimit : limit
 
-        // We want to hide the view more button if:
-        //     1. On page load we get the initial results and find there are < 25 rows
-        //     2. We have done a subsequent query request from init render and have found
-        //        that there were no rows returned.
-        //     3. If its loading then we want it to remove from the screen so the browser doesn't
-        //        keep the button in focus (its a UX issue).
+    // We want to hide the view more button if:
+    //     1. On page load we get the initial results and find there are < 25 rows
+    //     2. We have done a subsequent query request from init render and have found
+    //        that there were no rows returned.
+    //     3. If its loading then we want it to remove from the screen so the browser doesn't
+    //        keep the button in focus (its a UX issue).
     let showViewMore: boolean = isQueryWrapperChild! && data.queryResult.queryResults.rows.length >= PAGE_SIZE
     showViewMore = showViewMore && this.state.hasMoreData
     showViewMore = showViewMore && !this.props.isLoading
@@ -223,10 +199,10 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     let total = 0
     const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === filter)
     if (curFacetsIndex !== -1) {
-            // calculate the values chosen
+      // calculate the values chosen
       const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
-            // edge case -- if they are all false then they are considered all true..
-            // sum up the counts of data
+      // edge case -- if they are all false then they are considered all true..
+      // sum up the counts of data
       let anyTrue = false
       let totalAllFalseCase = 0
       let totalStandardCase = 0
@@ -243,40 +219,56 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
       total = data.queryResult.queryResults.rows.length
     }
 
-        // Either the filter is defined and the count should be shown or the client defined the unit description
-        // and the count should be shown.
+    // Either the filter is defined and the count should be shown or the client defined the unit description
+    // and the count should be shown.
     const showCardCount = filter || (!filter && unitDescription)
     const showViewMoreButton = (
-            showViewMore
-            &&
-            (
-                <div>
-                    <button
-                        onClick={this.handleViewMore}
-                        className="pull-right SRC-primary-background-hover SRC-viewMoreButton"
-                    >
-                        View More
-                    </button>
-                </div>
-            )
-        )
+      showViewMore
+      &&
+      (
+        <div>
+          <button
+            onClick={this.handleViewMore}
+            className="pull-right SRC-primary-background-hover SRC-viewMoreButton"
+          >
+            View More
+          </button>
+        </div>
+      )
+    )
+
     return (
-            <div className="container-fluid">
-                {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
-                <RowContainer
-                    key={uuidv4()}
-                    hideOrganizationLink={hideOrganizationLink}
-                    limit={cardLimit}
-                    data={data}
-                    schema={schema}
-                    token={token}
-                    ownerId={ownerId}
-                    isHeader={isHeader}
-                >
-                {this.renderChild()}
-                </RowContainer>
-                {showViewMoreButton}
-            </div>
+      <div className="container-fluid">
+          {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
+          {/* tslint:disable */}
+          {/* 
+            
+            Below we loop through the rows of the table and we render a specific row, we can 
+            use the key={index} because the underlying table *shouldn't* be changing beneath
+            us and does in fact act as a unique identifier
+          */}
+          {data.queryResult.queryResults.rows.map(
+            (rowData: any, index: number) => {
+              if (index < limit) {
+                return (
+                  <React.Fragment key={index}>
+                    <RowContainer
+                      type={type}
+                      hideOrganizationLink={hideOrganizationLink}
+                      limit={cardLimit}
+                      data={rowData.values}
+                      schema={schema}
+                      token={token}
+                      ownerId={ownerId}
+                      isHeader={isHeader}
+                    />
+                  </React.Fragment>
+                )
+              }
+              return false
+            })}
+          {showViewMoreButton}
+      </div>
     )
   }
 }

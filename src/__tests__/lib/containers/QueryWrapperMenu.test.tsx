@@ -7,10 +7,7 @@ describe('it renders without crashing', () => {
   it('renders', () => {
     const tree = shallow(
         <QueryWrapperMenu
-            // tslint:disable-next-line
-            menuConfig={[
-            { sql: 'SELECT * FROM TEST', facetName: 'test', synapseId: '123' }
-            ]}
+            menuConfig={[{ sql: 'SELECT * FROM TEST', facetName: 'test', synapseId: '123' }]}
             token={'1'}
             rgbIndex={3}
         />

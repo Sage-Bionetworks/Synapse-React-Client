@@ -18,6 +18,7 @@ describe('basic functionality', () => {
                 token={''}
                 facetName={'name'}
             />)
+    // expect two divs
     expect(wrapper.find('div')).toHaveLength(2)
     mockRequest.query.selectedFacets = [
       {

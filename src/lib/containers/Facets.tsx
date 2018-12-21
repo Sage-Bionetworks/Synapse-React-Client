@@ -193,7 +193,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       for (let i = 0; i < 100; i += 1) {
         isChecked[i] = true
       }
-      this.props.updateParentFilter!(this.props.filter!)
       this.props.updateParentState!({ isChecked })
       this.props.executeInitialQueryRequest!()
     } else {
