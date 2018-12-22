@@ -60,4 +60,20 @@ describe('renders widgets ', () => {
     expect(wrapper.html()).toEqual('<div class="markdown"><span><span><p><a href="" id="ref1">[1]</a></p>\n</span></span><div></div></div>')
   })
 
+  it('renders a bookmark reference', async () => {
+
+    const wrapper = await mount(
+       <MarkdownSynapse
+        token={''}
+        ownerId={''}
+        wikiId={''}
+        markdown={'text ${reference?inlineWidget=true&text=google%2Ecom}'}
+        hasSynapseResources={false}
+       />
+   )
+
+   // tslint:disable-next-line
+    console.log(wrapper.html())
+  })
+
 })

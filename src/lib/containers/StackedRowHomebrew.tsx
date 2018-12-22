@@ -59,7 +59,7 @@ export default class StackedRowHomebrew extends
     this.getHoverText = this.getHoverText.bind(this)
     this.onMeasureResize = this.onMeasureResize.bind(this)
     this.rgba2rgb = this.rgba2rgb.bind(this)
-        // the text currently under the cursor
+    // the text currently under the cursor
     this.state = {
       dimensions: { bounds: { height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0 } },
       hoverText: '',
@@ -144,12 +144,12 @@ export default class StackedRowHomebrew extends
     const hoverTextDisplay = index === -1 ? xData[0] && xData[0].value : hoverText
     return (
       <React.Fragment>
-          <span className="SRC-text-cap">
-              {this.props.filter}
-          </span> :
-          <span>
-              {hoverTextDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : hoverText}
-          </span>
+        <span className="SRC-text-cap">
+          {this.props.filter}
+        </span> :
+        <span>
+          {hoverTextDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : hoverText}
+        </span>
       </React.Fragment>
     )
   }

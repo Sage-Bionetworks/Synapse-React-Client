@@ -178,8 +178,10 @@ class Demo extends React.Component<{}, DemoState> {
         <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
-            wikiId={'581895'}
-            ownerId={'syn12666371'}
+            wikiId={'587923'}
+            ownerId={'syn17100797'}
+            // tslint:disable-next-line
+            // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
             updateLoadState={this.handleChange}
           />
         </CustomMarkdownView>
