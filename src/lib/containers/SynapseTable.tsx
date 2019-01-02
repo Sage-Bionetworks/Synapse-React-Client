@@ -413,36 +413,36 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       initRender = initRender || (visibleColumnCount === 0 && isColumnSelected.length === 0)
       const subsequentRender = isColumnSelected[index] && isColumnSelected.length !== 0
       if (initRender || subsequentRender) {
-                // for background color
+        // for background color
         const isSelected: boolean = this.findSelectionIndex(sortSelection, column.name) !== -1
-                // for icon state
+        // for icon state
         const columnIndex: number = columnIconState[index] === undefined ? 0 : this.state.columnIconState[index]
-                // we have to figure out if the current column is a facet selection
+        // we have to figure out if the current column is a facet selection
         const facetIndex: number = facets.findIndex((value: FacetColumnResult) => {
           return value.columnName === column.name
         })
         const isFacetSelection: boolean = facetIndex !== -1
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
-        const sortSpanBacgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
+        const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
         return (
-                        <th key={column.name}>
-                            <div className="SRC-centerContent">
-                                {column.name}
-                                {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
-                                <span
-                                    tabIndex={0}
-                                    className={sortSpanBacgoundClass}
-                                    onKeyPress={this.handleColumnClick({ index, name: column.name })}
-                                    onClick={this.handleColumnClick({ index, name: column.name })}
-                                >
-                                    <FontAwesomeIcon
-                                        className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
-                                        icon={ICON_STATE[columnIndex] as IconProp}
-                                    />
-                                </span>
-                            </div>
-                        </th>
+          <th key={column.name}>
+            <div className="SRC-centerContent">
+              {column.name}
+              {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
+              <span
+                tabIndex={0}
+                className={sortSpanBackgoundClass}
+                onKeyPress={this.handleColumnClick({ index, name: column.name })}
+                onClick={this.handleColumnClick({ index, name: column.name })}
+              >
+                <FontAwesomeIcon
+                  className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
+                  icon={ICON_STATE[columnIndex] as IconProp}
+                />
+              </span>
+            </div>
+          </th>
         )
       }
       return (<th key={column.name} />)
@@ -767,16 +767,16 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         displayValue = 'unannotated'
       }
       return (
-                        <React.Fragment key={idText}>
-                            <li>
-                                <label className="dropdownList SRC-base-font containerCheckbox">
-                                    {displayValue}
-                                    <span style={{ color: '#DDDDDF' }}> &nbsp;&nbsp;({dataPoint.count}) </span>
-                                    <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
-                                    <span className="checkmark"/>
-                                </label>
-                            </li>
-                        </React.Fragment>
+        <React.Fragment key={idText}>
+          <li>
+            <label className="dropdownList SRC-base-font containerCheckbox">
+              {displayValue}
+              <span style={{ color: '#DDDDDF' }}> &nbsp;&nbsp;({dataPoint.count}) </span>
+              <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
+              <span className="checkmark" />
+            </label>
+          </li>
+        </React.Fragment>
       )
     })
   }

@@ -65,29 +65,29 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     const icon = isChecked ? 'times' : 'plus'
 
     children.push(
-            <span
-                style={style}
-                className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
-                key={uniqueId}
-                onClick={props.clickHandler({ index, value: facetValue.value, columnName: element.columnName })}
-            >
-                <span className="SRC-facets-text">
-                    {' '}
-                    &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}){' '}
-                </span>
-                <span>&nbsp;&nbsp;</span>
-                <FontAwesomeIcon className="SRC-facets-icon" icon={icon} />
-                <span>&nbsp;&nbsp;</span>
-            </span>
-        )
+      <span
+        style={style}
+        className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
+        key={uniqueId}
+        onClick={props.clickHandler({ index, value: facetValue.value, columnName: element.columnName })}
+      >
+        <span className="SRC-facets-text">
+          {' '}
+          &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}){' '}
+        </span>
+        <span>&nbsp;&nbsp;</span>
+        <FontAwesomeIcon className="SRC-facets-icon" icon={icon} />
+        <span>&nbsp;&nbsp;</span>
+      </span>
+    )
   })
-    // By default only show 5 facets unless the user has clicked a facet, in which case
-    // showAllFacets will be true.
+  // By default only show 5 facets unless the user has clicked a facet, in which case
+  // showAllFacets will be true.
   const childrenView = children.map((child: any, index: number) => !showAllFacets && index > 4 ? false : child)
   return (
-        <React.Fragment>
-            {childrenView}
-        </React.Fragment>
+    <React.Fragment>
+        {childrenView}
+    </React.Fragment>
   )
 }
 
@@ -123,34 +123,35 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
      * @memberof Facets
      */
   public showFacetFilter() {
-        // iterate through the loaded data and write out the appropriate checkboxes,
-        // filling in the state of the checkboxes according to the current selection
+    // iterate through the loaded data and write out the appropriate checkboxes,
+    // filling in the state of the checkboxes according to the current selection
     const structuredRender: JSX.Element[] = this.props.data!.facets.map((element: FacetColumnResult) => {
-            // display the data -- currently we only support enumerations
+      // display the data -- currently we only support enumerations
       if (element.columnName === this.props.filter && element.facetType === 'enumeration') {
         return (
-                    <CheckboxGroup
-                        showAllFacets={this.state.showAllFacets}
-                        rgbIndex={this.props.rgbIndex!}
-                        key={element.columnName}
-                        element={element}
-                        isChecked={this.props.isChecked}
-                        clickHandler={this.handleClick}
-                    />
+          <CheckboxGroup
+            showAllFacets={this.state.showAllFacets}
+            rgbIndex={this.props.rgbIndex!}
+            key={element.columnName}
+            element={element}
+            isChecked={this.props.isChecked}
+            clickHandler={this.handleClick}
+          />
         )
       }
             // throw away.
       return (<span key={element.columnName}/>)
     })
     return (
-            <React.Fragment>
-                {structuredRender}
-            </React.Fragment>
+      <React.Fragment>
+        {structuredRender}
+      </React.Fragment>
     )
   }
-    /**
-     * Handle checkbox click event
-     */
+
+  /**
+   * Handle checkbox click event
+   */
   public handleClick = (dict: Info) => (event: React.MouseEvent<HTMLSpanElement>) => {
     if (!this.state.showAllFacets) {
       this.setState({
@@ -179,12 +180,13 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     this.props.updateParentState!({ isChecked })
     this.props.executeQueryRequest!(queryRequest)
   }
-    /**
-     * Handle select all or deselect all event, selection group specifies which
-     * option was chosen
-     *
-     * @memberof Facets
-     */
+
+  /**
+   * Handle select all or deselect all event, selection group specifies which
+   * option was chosen
+   *
+   * @memberof Facets
+   */
   public updateSelection = (selectionGroup: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     const { isChecked } = cloneDeep(this.props)
@@ -212,12 +214,12 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     })
   }
 
-    /**
-     * Update the state with selected facets and call props to update data
-     *
-     * @param {*} selectedFacets
-     * @memberof Facets
-     */
+  /**
+   * Update the state with selected facets and call props to update data
+   *
+   * @param {*} selectedFacets
+   * @memberof Facets
+   */
   public updateStateAndMakeQuery(selectedFacets: any) {
         // have to reformat the selected facets to format for the api call
     const selectedFacetsFormatted = Object.keys(selectedFacets).map((key) => {
@@ -232,35 +234,35 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   public showButtons(showAllFacets: boolean, curFacetsLength: number) {
     if (showAllFacets) {
       return (
-                <React.Fragment>
-                    <a
-                        href={''}
-                        className="SRC-primary-text-color SRC-no-text-decor"
-                        onClick={this.updateSelection(SELECT_ALL)}
-                    >
-                        {' '}
-                        Select All{' '}
-                    </a>
-                    <span className="SRC-facets-divider">
-                        |
+        <React.Fragment>
+          <a
+            href={''}
+            className="SRC-primary-text-color SRC-no-text-decor"
+            onClick={this.updateSelection(SELECT_ALL)}
+          >
+            {' '}
+            Select All{' '}
+          </a>
+          <span className="SRC-facets-divider">
+            |
                     </span>
-                    <a
-                        href={''}
-                        className="SRC-primary-text-color SRC-no-text-decor"
-                        onClick={this.updateSelection(DESELECT_ALL)}
-                    >
-                        {' '}
-                        Deselect All{' '}
-                    </a>
-                </React.Fragment>
+          <a
+            href={''}
+            className="SRC-primary-text-color SRC-no-text-decor"
+            onClick={this.updateSelection(DESELECT_ALL)}
+          >
+            {' '}
+            Deselect All{' '}
+          </a>
+        </React.Fragment>
       )
     }
 
     return (
-            <a href={''} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
-                {' '}
-                Show All ({curFacetsLength}){' '}
-            </a>
+      <a href={''} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
+        {' '}
+        Show All ({curFacetsLength}){' '}
+      </a>
     )
   }
 
@@ -272,9 +274,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const { data, filter } = this.props
     const { facets } = data
 
-        // tslint:disable-next-line
-        const curFacetsIndex = facets.findIndex((facet) => facet.columnName === filter && facet.facetType === "enumeration")
-        // cast is necessary because filter returns an array of arrays
+    // tslint:disable-next-line
+    const curFacetsIndex = facets.findIndex((facet) => facet.columnName === filter && facet.facetType === "enumeration")
+    // cast is necessary because filter returns an array of arrays
     const facetColumnResultValues = facets[curFacetsIndex] as FacetColumnResultValues
 
     if (!facetColumnResultValues) {
@@ -282,23 +284,23 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     }
 
     if (facetColumnResultValues.facetValues.length < 5) {
-            // override
+      // override
       showAllFacets = true
     }
 
     return (
-            <div className="container-fluid SRC-syn-border-spacing ">
-                <div className="col-xs">
-                    <form>
-                        <div className="SRC-marginFive form-group">
-                            {this.showFacetFilter()}
-                            <span className="SRC-inlineBlock">
-                                {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length)}
-                            </span>
-                        </div>
-                    </form>
-                </div>
+      <div className="container-fluid SRC-syn-border-spacing ">
+        <div className="col-xs">
+          <form>
+            <div className="SRC-marginFive form-group">
+              {this.showFacetFilter()}
+              <span className="SRC-inlineBlock">
+                {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length)}
+              </span>
             </div>
+          </form>
+        </div>
+      </div>
     )
   }
 }

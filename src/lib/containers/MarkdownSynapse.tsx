@@ -536,9 +536,6 @@ class MarkdownSynapse extends React.Component<
   }
 
   public componentDidMount() {
-    const item = new Object()
-    Object.assign(item, { x: 3 })
-
     if (this.props.markdown) {
       this.setState({
         text: this.props.markdown

@@ -13,11 +13,11 @@ describe('basic functionality', () => {
 
   it('make init query request', async () => {
     const wrapper = await shallow(
-            <QueryWrapper
-                initQueryRequest={mockRequest}
-                token={''}
-                facetName={'name'}
-            />)
+      <QueryWrapper
+        initQueryRequest={mockRequest}
+        token={''}
+        facetName={'name'}
+      />)
     // expect two divs
     expect(wrapper.find('div')).toHaveLength(2)
     mockRequest.query.selectedFacets = [

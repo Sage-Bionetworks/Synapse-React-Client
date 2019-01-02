@@ -109,14 +109,14 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
       return null
     }
     return (
-            <React.Fragment>
-                <img
-                    alt="synapse"
-                    className="img-fluid"
-                    src={this.state.preSignedURL}
-                    style={imgStyle}
-                />
-            </React.Fragment>
+      <React.Fragment>
+        <img
+          alt="synapse"
+          className="img-fluid"
+          src={this.state.preSignedURL}
+          style={imgStyle}
+        />
+      </React.Fragment>
     )
   }
 }

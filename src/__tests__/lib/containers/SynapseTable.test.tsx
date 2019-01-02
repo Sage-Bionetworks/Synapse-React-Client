@@ -14,14 +14,14 @@ describe('basic functionality', () => {
 
   it('make init query request', async () => {
     const wrapper = await shallow(
-            <QueryWrapper
-                initQueryRequest={mockRequest}
-                facetName={'name'}
-                token={''}
-                rgbIndex={0}
-            >
-                <SynapseTable synapseId={''} title={''} />
-            </QueryWrapper>)
+      <QueryWrapper
+        initQueryRequest={mockRequest}
+        facetName={'name'}
+        token={''}
+        rgbIndex={0}
+      >
+        <SynapseTable synapseId={''} title={''} />
+      </QueryWrapper>)
 
     mockRequest.query.selectedFacets = [
       {
@@ -39,12 +39,12 @@ describe('basic functionality', () => {
   it('renders a query table', async () => {
     getLastQueryRequestMock = jest.fn(() => { return mockRequest })
     const testRenderer = await shallow(
-        <SynapseTable
-            data={mockData}
-            synapseId={''}
-            title={''}
-            getLastQueryRequest={getLastQueryRequestMock}
-        />
+      <SynapseTable
+        data={mockData}
+        synapseId={''}
+        title={''}
+        getLastQueryRequest={getLastQueryRequestMock}
+      />
     )
     expect(testRenderer).toBeDefined()
   })

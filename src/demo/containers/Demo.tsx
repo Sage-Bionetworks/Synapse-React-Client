@@ -186,6 +186,17 @@ class Demo extends React.Component<{}, DemoState> {
           />
         </CustomMarkdownView>
 
+        <CustomMarkdownView>
+          <MarkdownSynapse
+            token={inDevEnv ? token : this.state.token}
+            wikiId={'582150'}
+            ownerId={'syn14306197'}
+            // tslint:disable-next-line
+            // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
+            updateLoadState={this.handleChange}
+          />
+        </CustomMarkdownView>
+
         <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={'SELECT * FROM syn9886254'}>
           <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />
         </StaticQueryWrapper>

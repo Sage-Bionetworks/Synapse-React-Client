@@ -253,12 +253,10 @@ svg.SRC-hoverBox {
 }
 
 body * {
-  // remove important
   font-family:"Lato"
 }
 
 .SRC-noMargin {
-  // remove important
   margin: 0px
 }
 
@@ -288,9 +286,9 @@ body * {
   cursor: pointer;
 }
 
-.SRC-facets-icon {
+span.SRC-facets svg.SRC-facets-icon {
   vertical-align: -.175em;
-  width: 0.5em !important;
+  width: 0.5em;
   opacity: 0.5;
 }
 
@@ -451,12 +449,12 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
  .SRC-primary-background-color-hover:hover {
    background-color: $primaryColor; 
    > svg {
-     color: white!important;
+     color: white;
    }
-   &.SRC-nested-color {
+   &.SRC-nested-color:hover {
      * {
        background-color: $primaryColor;
-       color: white!important;
+       color: white;
      }
    }
  }
@@ -536,11 +534,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .SRC-text-title {
-  font-size: 18px !important;
+  font-size: 18px;
 }
 
 .SRC-text-chart {
-  font-size: 16px !important;
+  font-size: 16px;
 }
 
 .SRC-bar-border {
@@ -564,7 +562,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .SRC-bar-marginTop {
-  margin-top: 10px !important;
+  margin-top: 10px;
 }
 
 .SRC-padding-chart {
@@ -596,10 +594,8 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   color: black;
 }
 
-.SRC-hoverWhiteText {
-  &:hover {
-    color: white !important;
-  }
+.SRC-hoverWhiteText:hover {
+  color: white;
 }
 
 .SRC-light-background {
@@ -659,7 +655,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .SRC-base-font {
-  font-size: 14px !important;
+  font-size: 14px;
 }
 
 .SRC-verticalAlignTop {
@@ -693,7 +689,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   padding-left: 35px;
   margin-bottom: 12px;
   cursor: pointer;
-  font-size: 22px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -760,9 +755,9 @@ checkmark styling end
 }
 
 .SRC-tableHead {
-  font-size: 14px !important;
-  text-transform: capitalize !important;
-  font-weight: 700 !important;
+  font-size: 14px;
+  text-transform: capitalize;
+  font-weight: 700;
 }
 
 .SRC-sortPadding {

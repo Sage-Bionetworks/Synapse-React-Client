@@ -49,17 +49,17 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
       }
     }
     getFullQueryTableResults(queryRequest, token).then(
-            (data: QueryResultBundle) => {
-              this.setState({
-                isLoaded: true,
-                queryData: data
-              })
-            }
-        ).catch(
-            (err: any) => {
-              console.log('Error on full table query ', err)
-            }
-        )
+      (data: QueryResultBundle) => {
+        this.setState({
+          isLoaded: true,
+          queryData: data
+        })
+      }
+    ).catch(
+      (err: any) => {
+        console.log('Error on full table query ', err)
+      }
+    )
   }
 
   public showPlot() {
