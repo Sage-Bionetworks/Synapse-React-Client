@@ -1,4 +1,6 @@
-let mockRequest = {
+import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest';
+
+let mockRequest: QueryBundleRequest = {
     partMask: 0,
     concreteType: "a",
     query: {

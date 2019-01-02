@@ -1,6 +1,6 @@
-import { QueryResultBundle } from '../lib/utils/jsonResponses/Table/QueryResultBundle';
-import { ColumnType } from '../lib/utils/jsonResponses/Table/ColumnType';
-import { FacetColumnResultValues } from '../lib/utils/jsonResponses/Table/FacetColumnResult';
+import { QueryResultBundle } from '../lib/utils/jsonResponses/Table/QueryResultBundle'
+import { ColumnType } from '../lib/utils/jsonResponses/Table/ColumnType'
+import { FacetColumnResultValues } from '../lib/utils/jsonResponses/Table/FacetColumnResult'
 
 let mockData: QueryResultBundle = {
     concreteType: "org.sagebionetworks.repo.model.table.QueryResultBundle",

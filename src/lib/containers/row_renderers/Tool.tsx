@@ -1,30 +1,30 @@
-import React from "react";
-import * as Utils from "./utils";
-import { TOOL } from "../../utils/SynapseConstants";
+import * as React from 'react'
+import { TOOL } from '../../utils/SynapseConstants'
+import * as Utils from './utils'
 
 type ToolProps = {
-    data?: any
-    schema?: any
+  data?: any
+  schema?: any
 }
 
 export default class Tool extends React.Component<ToolProps, {}> {
 
-    constructor(props: ToolProps) {
-        super(props);
-        this.handleLinkClick = this.handleLinkClick.bind(this);
-    }
+  constructor(props: ToolProps) {
+    super(props)
+    this.handleLinkClick = this.handleLinkClick.bind(this)
+  }
 
-    handleLinkClick = (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        window.open(link, "_blank");
-    };
+  public handleLinkClick = (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    window.open(link, '_blank')
+  }
 
-    render() {
-        const { data, schema } = this.props;
-        const softwareName = data[schema.softwareName];
-        const summary = data[schema.summary];
-        const softwareLink = data[schema.softwareLink];
-        return (
+  public render() {
+    const { data, schema } = this.props
+    const softwareName = data[schema.softwareName]
+    const summary = data[schema.summary]
+    const softwareLink = data[schema.softwareLink]
+    return (
             <div className="SRC-portalCard SRC-typeTool SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
                     <Utils.Icon type={TOOL} />
@@ -46,6 +46,6 @@ export default class Tool extends React.Component<ToolProps, {}> {
                     </button>
                 </div>
             </div>
-        );
-    }
+    )
+  }
 }

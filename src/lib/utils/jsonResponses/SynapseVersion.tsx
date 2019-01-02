@@ -1,3 +1,3 @@
 export type SynapseVersion = {
-    version: number
+  version: number
 }

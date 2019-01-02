@@ -1,132 +1,131 @@
-import * as React from 'react';
-import Plot from 'react-plotly.js';
-import * as SynapseConstants from '../../utils/SynapseConstants';
-import { getFullQueryTableResults } from '../../utils/SynapseClient';
-import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle';
+import * as React from 'react'
+// tslint:disable-next-line
+import Plot from "react-plotly.js"
+import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
+import { getFullQueryTableResults } from '../../utils/SynapseClient'
+import * as SynapseConstants from '../../utils/SynapseConstants'
 
 type SynapsePlotProps = {
-    token?: string
-    ownerId?: string
-    wikiId?: string
-    widgetparamsMapped?: any
-};
+  token?: string
+  ownerId?: string
+  wikiId?: string
+  widgetparamsMapped?: any
+}
 
-type SynapsePlotState = { 
-    isLoaded: boolean
-    queryData: QueryResultBundle
+type SynapsePlotState = {
+  isLoaded: boolean
+  queryData: QueryResultBundle
 }
 
 class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
 
-    constructor(props: SynapsePlotProps) {
-        super(props);
-        this.state = {
-            isLoaded: false,
+  constructor(props: SynapsePlotProps) {
+    super(props)
+    this.state = {
+      isLoaded: false,
             // @ts-ignore
-            queryData: {}
-        };
-        this.fetchPlotlyData = this.fetchPlotlyData.bind(this);
-        this.showPlot = this.showPlot.bind(this);
+      queryData: {}
     }
+    this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
+    this.showPlot = this.showPlot.bind(this)
+  }
 
-    componentDidMount() {
-        this.fetchPlotlyData();
-    }
+  public componentDidMount() {
+    this.fetchPlotlyData()
+  }
     /**
      * Get data for plotly
      *
      * @returns data corresponding to plotly widget
      */
-    fetchPlotlyData() {
-        const { token } = this.props;
-        const { query } = this.props.widgetparamsMapped;
-        let queryRequest = {
-            concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-            partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-            query: {
-                sql: query
-            }
-        };
-        getFullQueryTableResults(queryRequest, token).then(
-            (data: QueryResultBundle) => {
-                this.setState({
-                    queryData: data,
-                    isLoaded: true
-                });
-            }
-        ).catch(
-            (err: any) => {
-                console.log('Error on full table query ', err);
-            }
-        );
+  public fetchPlotlyData() {
+    const { token } = this.props
+    const { query } = this.props.widgetparamsMapped
+    const queryRequest = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      query: {
+        sql: query
+      }
     }
+    getFullQueryTableResults(queryRequest, token).then(
+      (data: QueryResultBundle) => {
+        this.setState({
+          isLoaded: true,
+          queryData: data
+        })
+      }
+    ).catch(
+      (err: any) => {
+        console.log('Error on full table query ', err)
+      }
+    )
+  }
 
-    showPlot() {
-        if (!this.state.isLoaded) {
-            return;
-        }
-        const {
+  public showPlot() {
+    if (!this.state.isLoaded) {
+      return
+    }
+    const {
             title,
             xtitle,
             ytitle,
             type,
             xaxistype,
             showlegend
-        } = this.props.widgetparamsMapped;
-        const queryData = this.state;
-        let isHorizontal = this.props.widgetparamsMapped.horizontal.toLowerCase();
-        let layout: any = {
-            title: title,
-            showlegend: showlegend
-        };
-        if (xtitle) {
-            layout.xaxis = {
-                title: xtitle
-            };
-        }
-        if (xaxistype) {
-            layout.xaxis = {
-                ...layout.xaxis,
-                xaxistype: xaxistype.toLowerCase()
-            };
-        }
-        if (ytitle) {
-            layout.yaxis = {
-                title: ytitle
-            };
-        }
+        } = this.props.widgetparamsMapped
+    const queryData = this.state
+    const isHorizontal = this.props.widgetparamsMapped.horizontal.toLowerCase()
+    const layout: any = {
+      showlegend,
+      title
+    }
+    if (xtitle) {
+      layout.xaxis = {
+        title: xtitle
+      }
+    }
+    if (xaxistype) {
+      layout.xaxis = {
+        ...layout.xaxis,
+        xaxistype: xaxistype.toLowerCase()
+      }
+    }
+    if (ytitle) {
+      layout.yaxis = {
+        title: ytitle
+      }
+    }
         // init plot_data
-        let plot_data: any = [];
-        let orientation = isHorizontal ? 'v' : 'h';
-        let headers = queryData.queryData.queryResult.queryResults.headers;
-        for (let i = 0; i < headers.length - 1; i++) {
+    const plotData: any = []
+    const orientation = isHorizontal ? 'v' : 'h'
+    const headers = queryData.queryData.queryResult.queryResults.headers
+    for (let i = 0; i < headers.length - 1; i += 1) {
             // make an entry for each set of data points
-            plot_data[i] = {
-                x: [],
-                y: [],
-                name: headers[i + 1].name,
-                type: type.toLowerCase(),
-                orientation: orientation
-            };
-        }
+      plotData[i] = {
+        orientation,
+        name: headers[i + 1].name,
+        type: type.toLowerCase(),
+        x: [],
+        y: []
+      }
+    }
         // grab all the data
-        for (let i = 0; i < queryData.queryData.queryResult.queryResults.rows.length; i++) {
-            let row = queryData.queryData.queryResult.queryResults.rows[i];
-            for (let j = 1; j < row.values.length; j++) {
+    for (const row of queryData.queryData.queryResult.queryResults.rows) {
+      for (let j = 1; j < row.values.length; j += 1) {
                 // create pairs of data
-                let row_values: any = row.values;
-                plot_data[j - 1].x.push(row_values[0]);
-                plot_data[j - 1].y.push(row_values[j]);
-            }
-        }
-        return <Plot data={plot_data} layout={layout} />;
+        const rowValues: any = row.values
+        plotData[j - 1].x.push(rowValues[0])
+        plotData[j - 1].y.push(rowValues[j])
+      }
     }
-    render() {
-        if (!this.state.isLoaded) {
-            return null;
-        } else {
-            return <React.Fragment>{this.showPlot()}</React.Fragment>;
-        }
+    return <Plot data={plotData} layout={layout} />
+  }
+  public render() {
+    if (!this.state.isLoaded) {
+      return null
     }
+    return <React.Fragment>{this.showPlot()}</React.Fragment>
+  }
 }
-export default SynapsePlot;
+export default SynapsePlot

@@ -252,9 +252,9 @@ body * {
   display: inline-block;
   cursor: pointer; }
 
-.SRC-facets-icon {
+span.SRC-facets svg.SRC-facets-icon {
   vertical-align: -.175em;
-  width: 0.5em !important;
+  width: 0.5em;
   opacity: 0.5; }
 
 .SRC-inlineBlock {
@@ -375,10 +375,10 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-background-color-hover:hover {
   background-color: #D53F77; }
   .SRC-primary-background-color-hover:hover > svg {
-    color: white !important; }
-  .SRC-primary-background-color-hover:hover.SRC-nested-color * {
+    color: white; }
+  .SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
     background-color: #D53F77;
-    color: white !important; }
+    color: white; }
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -439,10 +439,10 @@ button.SRC-roundBorder {
   text-align: center; }
 
 .SRC-text-title {
-  font-size: 18px !important; }
+  font-size: 18px; }
 
 .SRC-text-chart {
-  font-size: 16px !important; }
+  font-size: 16px; }
 
 .SRC-bar-border {
   background: #F9F9F9; }
@@ -461,7 +461,7 @@ button.SRC-roundBorder {
   text-transform: capitalize; }
 
 .SRC-bar-marginTop {
-  margin-top: 10px !important; }
+  margin-top: 10px; }
 
 .SRC-padding-chart {
   padding-left: 10px; }
@@ -487,7 +487,7 @@ button.SRC-roundBorder {
   color: black; }
 
 .SRC-hoverWhiteText:hover {
-  color: white !important; }
+  color: white; }
 
 .SRC-light-background {
   background: #F5F5F5; }
@@ -535,7 +535,7 @@ button.SRC-roundBorder {
   margin-left: 10px; }
 
 .SRC-base-font {
-  font-size: 14px !important; }
+  font-size: 14px; }
 
 .SRC-verticalAlignTop {
   vertical-align: top; }
@@ -563,7 +563,6 @@ button.SRC-roundBorder {
   padding-left: 35px;
   margin-bottom: 12px;
   cursor: pointer;
-  font-size: 22px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -614,10 +613,14 @@ button.SRC-roundBorder {
 checkmark styling end
 
 */
+.SRC-facets-divider {
+  margin-left: 5px;
+  margin-right: 5px; }
+
 .SRC-tableHead {
-  font-size: 14px !important;
-  text-transform: capitalize !important;
-  font-weight: 700 !important; }
+  font-size: 14px;
+  text-transform: capitalize;
+  font-weight: 700; }
 
 .SRC-sortPadding {
   padding: 2px 3px; }
@@ -634,3 +637,34 @@ checkmark styling end
   border: none; }
   .SRC-menu-wall:focus {
     outline: none; }
+
+.SRC-table-dropdown-content {
+  align-items: center;
+  border-bottom: 1px solid #DDDDDF; }
+
+.SRC-table-dropdown-text {
+  margin-bottom: 0px;
+  font-size: 15px;
+  display: inline-block;
+  font-weight: bold; }
+
+.SRC-table-dropdown-close {
+  margin-left: auto;
+  background: white; }
+
+.SRC-centerContent {
+  display: flex;
+  align-items: center; }
+
+.SRC-tableHeader {
+  margin: 0px;
+  display: inline-block;
+  color: white; }
+
+.SRC-hidden {
+  visibility: hidden;
+  display: none; }
+
+.SRC-paddingTopNoMargin {
+  padding-top: 50px;
+  margin-top: 0px; }
