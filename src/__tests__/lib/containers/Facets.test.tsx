@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import { Facets, CheckboxGroup } from '../../../lib/containers/Facets'
-import { mockData } from '../../../JSON_test_data'
+import { mockData } from '../../../mocks'
 
 describe('it renders a facet without crashing', () => {
   it('renders correctly', async () => {

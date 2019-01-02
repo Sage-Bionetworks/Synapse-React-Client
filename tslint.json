@@ -5,7 +5,7 @@
       "config/**/*.js",
       "src/**/**/**.js",
       "src/**/**/**.json",
-      "src/JSON_test_data/**/**/*.**",
+      "src/mocks/**/**/*.**",
       "node_modules/**/*.ts",
       "node_modules/**/*.ts",
       "node_modules/**/*.ts",

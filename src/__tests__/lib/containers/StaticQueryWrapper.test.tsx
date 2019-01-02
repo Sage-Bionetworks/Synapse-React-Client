@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import StaticQueryWrapper from '../../../lib/containers/StaticQueryWrapper'
 import SynapseTableCardView from '../../../lib/containers/SynapseTableCardView'
 import { SynapseConstants } from '../../../lib'
-import syn16859448Json from '../../../JSON_test_data/syn16859448.json'
+import syn16859448Json from '../../../mocks/syn16859448.json'
 
 describe('it renders without crashing', () => {
   let SynapseClient

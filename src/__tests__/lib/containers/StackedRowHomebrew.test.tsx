@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import StackedRowHomebrew from '../../../lib/containers/StackedRowHomebrew'
-import { mockData, mockRequest } from '../../../JSON_test_data'
+import { mockData, mockRequest } from '../../../mocks'
 
 describe('it renders a chart without crashing', () => {
   it('renders a chart', async () => {

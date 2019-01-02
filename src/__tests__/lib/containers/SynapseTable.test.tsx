@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow } from 'enzyme'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import SynapseTable from '../../../lib/containers/SynapseTable'
-import { mockData, mockRequest } from '../../../JSON_test_data'
+import { mockData, mockRequest } from '../../../mocks'
 
 describe('basic functionality', () => {
   let SynapseClient
