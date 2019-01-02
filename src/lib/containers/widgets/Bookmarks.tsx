@@ -6,74 +6,52 @@ type BookmarksProps = {
 
 class Bookmarks extends React.Component<BookmarksProps, {}> {
 
-  private bookmarkRef: React.RefObject<HTMLInputElement>
-
   constructor(props: BookmarksProps) {
     super(props)
-    this.bookmarkRef = React.createRef()
-    this.transformProps = this.transformProps.bind(this)
-  }
-
-  public componentDidMount(): void {
-    this.transformProps()
+    this.renderBookmarks = this.renderBookmarks.bind(this)
   }
 
   /**
-   * Given an input string of a synapse reference create a dom element
+   * Returns bookmarks
    *
+   * @returns JSX for the embedded bookmarks in the markdown passed in as a prop
    * @memberof Bookmarks
    */
-  public transformProps(): void {
-    // Instead of a standard method- e.g. renderBookmarks() we have to take an input
-    // string containing the bookmark information and then transform it to a dom element
-    // we don't know apriori the shape of the dom element.
-
-    // save for later
+  public renderBookmarks() {
     const copyFootnotes: string = String(this.props.footnotes)
-    // TODO: match a regex to the links in the bookmarks, this will make things much simpler
-    // console.log('footnotes  match link = ', copyFootnotes.match(/;<\/span>(.*?)<br \/>/g))
 
-    // find all links in the footnotes_html-- each of which contains a "text=[\d]"
-    const linkOccurences: RegExpMatchArray | null = copyFootnotes.match(/text=\[.\]/g)
-
-    if (!linkOccurences) {
-      // not loaded yet
-      return
+    // find all the links embedded in the markdown below
+    const regex = /Synapse widget&gt;<\/span>(.*)</g
+    let matchedGroup: RegExpExecArray | null
+    const output = []
+    // below we use regex.exec to find the find matched group containing the citation source
+    while (matchedGroup = regex.exec(copyFootnotes)) {
+      output.push(matchedGroup[1])
     }
-    const linksFormatted = linkOccurences
-      .map((element, index) => {
-        // here bookmark is used so that the references can target this anchor tag
-        return `<span><span class="BookmarkWidget"><a id="bookmark${index}">[${index + 1}]</a></span></span>`
-      })
 
-    // now all of the links are prepared to be inserted back into the original string
-    // all link occurences have a single location in the original string-- we go through and then
-    // match of the link occurences to the spot it belongs into the html
-    let i: number = 0
-    const matches = copyFootnotes.replace(
-      /(<span data-widgetparams=.*>)&lt;Synapse widget&gt;(<\/span>)/g,
-      // replace using a function where p1,p2 correspond to the matched groups from above
-      // specifically removing the Synapse widget text and then putting instead of the anchor tag with the link
-      // formatted text from above
-      (match, p1, p2, original) => {
-        const text = [p1, linksFormatted[i], p2].join('')
-        i += 1
-        return text
+    // return all the links formatted accordingly
+    return output.map(
+      (el, index) => {
+        const isBeforeLastElement = index < output.length - 1
+        return (
+          <React.Fragment key={index}>
+            <span>
+              <a href={''} id={`bookmark${index}`}>[{index + 1}]</a>
+            </span>
+            {el}
+            {isBeforeLastElement && <br/>}
+          </React.Fragment>
+        )
       }
     )
-
-    // create the dom element for this view and append to the ref
-    const bookmarkFragment = document.createRange().createContextualFragment(matches)
-    // TS doesn't like possibly null values, bang operator ! will assert this is okay.
-    this.bookmarkRef.current!.appendChild(bookmarkFragment)
   }
 
   public render() {
     return (
-            <React.Fragment>
-                <hr />
-                <div ref={this.bookmarkRef}/>
-            </React.Fragment>
+      <React.Fragment>
+        <hr />
+        {this.renderBookmarks()}
+      </React.Fragment>
     )
   }
 }

@@ -46,6 +46,8 @@ describe('renders widgets ', () => {
   })
 
   it('renders a synapse reference', async () => {
+    // note- a reference is the anchor tag inside the text that links to the bookmark down below,
+    // its an inline link
     SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: '${reference?params}' }))
 
     const wrapper = await mount(
@@ -56,12 +58,14 @@ describe('renders widgets ', () => {
         hasSynapseResources={true}
        />
    )
+   // ignore max line length, this is in unavoidable
    // tslint:disable-next-line
     expect(wrapper.html()).toEqual('<div class="markdown"><span><span><p><a href="" id="ref1">[1]</a></p>\n</span></span><div></div></div>')
   })
 
-  it('renders a bookmark reference', async () => {
-
+  it('renders a bookmark', async () => {
+    // note - a bookmark is a corresponding citation for an inline reference, it provides a URL for
+    // the reference.
     const wrapper = await mount(
        <MarkdownSynapse
         token={''}
@@ -72,8 +76,7 @@ describe('renders widgets ', () => {
        />
    )
 
-   // tslint:disable-next-line
-    console.log(wrapper.html())
+    expect(wrapper.find('a#bookmark0')).toBeTruthy()
   })
 
 })
