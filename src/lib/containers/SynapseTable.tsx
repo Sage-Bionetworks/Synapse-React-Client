@@ -298,31 +298,31 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private showPaginationButtons(pastZero: boolean): any {
 
     const previous = (
-                            <button
-                                onClick={this.handlePaginationClick(PREVIOUS)}
-                                className="btn btn-default SRC-table-button"
-                                type="button"
-                            >
-                                Previous
-                            </button>
-                        )
+      <button
+        onClick={this.handlePaginationClick(PREVIOUS)}
+        className="SRC-primary-background-color-hover SRC-viewMoreButton pull-right"
+        type="button"
+      >
+        Previous
+      </button>
+    )
 
     const next = (
-            (
-                <button
-                    onClick={this.handlePaginationClick(NEXT)}
-                    className="SRC-primary-background-hover SRC-viewMoreButton pull-right"
-                    type="button"
-                >
-                    Next
-                </button>
-            )
-        )
+      (
+        <button
+          onClick={this.handlePaginationClick(NEXT)}
+          className="SRC-primary-background-color-hover SRC-viewMoreButton pull-right"
+          type="button"
+        >
+          Next
+        </button>
+      )
+    )
 
     return (
             <React.Fragment>
-                {pastZero && previous}
                 {next}
+                {pastZero && previous}
             </React.Fragment>
     )
   }

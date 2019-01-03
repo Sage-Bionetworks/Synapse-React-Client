@@ -460,7 +460,7 @@ button.SRC-roundBorder {
 .SRC-text-cap {
   text-transform: capitalize; }
 
-.SRC-bar-marginTop {
+div.row.SRC-bar-marginTop {
   margin-top: 10px; }
 
 .SRC-padding-chart {
@@ -665,6 +665,6 @@ checkmark styling end
   visibility: hidden;
   display: none; }
 
-.SRC-paddingTopNoMargin {
+div.col-xs-2.SRC-paddingTopNoMargin {
   padding-top: 50px;
   margin-top: 0px; }

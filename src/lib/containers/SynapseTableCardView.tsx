@@ -229,7 +229,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         <div>
           <button
             onClick={this.handleViewMore}
-            className="pull-right SRC-primary-background-hover SRC-viewMoreButton"
+            className="pull-right SRC-primary-background-color-hover SRC-viewMoreButton"
           >
             View More
           </button>
