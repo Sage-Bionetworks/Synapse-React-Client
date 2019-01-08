@@ -533,11 +533,25 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   text-align: center;
 }
 
+#barChartHoverText {
+  &.SRC-text-title {
+    font-size: 18px;
+  }
+}
+#fileCount {
+  &.SRC-text-chart {
+    font-size: 16px;
+  }
+}
 .SRC-text-title {
   font-size: 18px;
 }
 
 .SRC-text-chart {
+  font-size: 16px;
+}
+
+.SRC-text-chart #fileCount {
   font-size: 16px;
 }
 

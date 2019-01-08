@@ -238,7 +238,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     )
 
     return (
-      <div className="container-fluid">
+      <div>
           {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
           {/* tslint:disable */}
           {/* 

@@ -45,7 +45,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
                             <div className="SRC-marginAuto SRC-cardAction">
                                 <button onClick={this.handleLinkClick(orgPath)} type="button">
                                 View Funded Research
-                                </button>)
+                                </button>
                             </div>
                         )
     }

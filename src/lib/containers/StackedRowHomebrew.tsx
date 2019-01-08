@@ -143,15 +143,15 @@ export default class StackedRowHomebrew extends
     const { index, hoverText } = this.state
     const hoverTextDisplay = index === -1 ? (xData[0] && xData[0].value) : hoverText
     return (
-      <React.Fragment>
-        <span className="SRC-text-cap">
+      <span id="barChartHoverText">
+        <span className="SRC-text-title">
           {this.props.filter}
         </span> :
-        <span>
+        <span className="SRC-text-title">
           {' '}
           {hoverTextDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : hoverTextDisplay}
         </span>
-      </React.Fragment>
+      </span>
     )
   }
 
@@ -343,6 +343,7 @@ export default class StackedRowHomebrew extends
           </p>
           <p
             className="SRC-noMargin SRC-padding-chart SRC-text-chart"
+            id="fileCount"
           >
             {this.getFileCount(xData)} {unitDescription}
           </p>
