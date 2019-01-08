@@ -533,22 +533,13 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   text-align: center;
 }
 
-#barChartHoverText {
-  &.SRC-text-title {
+#root {
+  .SRC-text-title {
     font-size: 18px;
   }
-}
-#fileCount {
-  &.SRC-text-chart {
+  .SRC-text-chart {
     font-size: 16px;
   }
-}
-.SRC-text-title {
-  font-size: 18px;
-}
-
-.SRC-text-chart {
-  font-size: 16px;
 }
 
 .SRC-text-chart #fileCount {
@@ -575,8 +566,10 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   text-transform: capitalize;
 }
 
-div.row.SRC-bar-marginTop {
-  margin-top: 10px;
+#root  {
+  .SRC-bar-border-top.SRC-bar-border.SRC-bar-marginTop {
+    margin-top: 10px;
+  }
 }
 
 .SRC-padding-chart {
@@ -827,7 +820,9 @@ checkmark styling end
   display: none;
 }
 
-div.col-xs-2.SRC-paddingTopNoMargin {
-  padding-top: 50px;
-  margin-top: 0px;
+#root {
+  .SRC-paddingTopNoMargin {
+    padding-top: 29px;
+    margin-top: 0px;
+  }
 }

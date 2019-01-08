@@ -4,6 +4,3 @@ node_js:
 script:
   - npm run test:coverage
   - npm run build
-cache:
-  directories:
-  - node_modules

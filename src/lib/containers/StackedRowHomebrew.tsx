@@ -143,7 +143,7 @@ export default class StackedRowHomebrew extends
     const { index, hoverText } = this.state
     const hoverTextDisplay = index === -1 ? (xData[0] && xData[0].value) : hoverText
     return (
-      <span id="barChartHoverText">
+      <span>
         <span className="SRC-text-title">
           {this.props.filter}
         </span> :

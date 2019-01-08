@@ -183,7 +183,7 @@ export default class Menu extends React.Component<Props, MenuState> {
 
     return (
       <div className="container-fluid">
-          <div className="col-xs-2 SRC-paddingTopNoMargin">
+          <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
               {menuDropdown}
           </div>
           <div className="col-xs-10">

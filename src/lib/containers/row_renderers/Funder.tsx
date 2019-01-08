@@ -42,12 +42,12 @@ export default class Funder extends React.Component<FunderProps, {}> {
     if (isOnOrgPath) {
       style.paddingBottom = '42px'
       showOrgLink = (
-                            <div className="SRC-marginAuto SRC-cardAction">
-                                <button onClick={this.handleLinkClick(orgPath)} type="button">
-                                View Funded Research
-                                </button>
-                            </div>
-                        )
+        <div className="SRC-marginAuto SRC-cardAction">
+            <button onClick={this.handleLinkClick(orgPath)} type="button">
+            View Funded Research
+            </button>
+        </div>
+        )
     }
     return (
             <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape" style={style}>
