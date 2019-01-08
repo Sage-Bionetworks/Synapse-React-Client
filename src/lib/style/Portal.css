@@ -438,8 +438,11 @@ button.SRC-roundBorder {
 .SRC-center-text {
   text-align: center; }
 
-.SRC-text-title {
+#root .SRC-text-title {
   font-size: 18px; }
+
+#root .SRC-text-chart {
+  font-size: 16px; }
 
 .SRC-text-chart {
   font-size: 16px; }
@@ -460,7 +463,7 @@ button.SRC-roundBorder {
 .SRC-text-cap {
   text-transform: capitalize; }
 
-.SRC-bar-marginTop {
+#root .SRC-bar-border-top.SRC-bar-border.SRC-bar-marginTop {
   margin-top: 10px; }
 
 .SRC-padding-chart {
@@ -665,6 +668,6 @@ checkmark styling end
   visibility: hidden;
   display: none; }
 
-.SRC-paddingTopNoMargin {
-  padding-top: 50px;
+#root .SRC-paddingTopNoMargin {
+  padding-top: 29px;
   margin-top: 0px; }

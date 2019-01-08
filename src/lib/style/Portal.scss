@@ -533,8 +533,13 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   text-align: center;
 }
 
-.SRC-text-title {
-  font-size: 18px;
+#root {
+  .SRC-text-title {
+    font-size: 18px;
+  }
+  .SRC-text-chart {
+    font-size: 16px;
+  }
 }
 
 .SRC-text-chart {
@@ -561,8 +566,10 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   text-transform: capitalize;
 }
 
-.SRC-bar-marginTop {
-  margin-top: 10px;
+#root  {
+  .SRC-bar-border-top.SRC-bar-border.SRC-bar-marginTop {
+    margin-top: 10px;
+  }
 }
 
 .SRC-padding-chart {
@@ -813,7 +820,9 @@ checkmark styling end
   display: none;
 }
 
-.SRC-paddingTopNoMargin {
-  padding-top: 50px;
-  margin-top: 0px;
+#root {
+  .SRC-paddingTopNoMargin {
+    padding-top: 29px;
+    margin-top: 0px;
+  }
 }

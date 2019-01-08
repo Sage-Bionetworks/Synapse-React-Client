@@ -229,7 +229,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         <div>
           <button
             onClick={this.handleViewMore}
-            className="pull-right SRC-primary-background-hover SRC-viewMoreButton"
+            className="pull-right SRC-primary-background-color-hover SRC-viewMoreButton"
           >
             View More
           </button>
@@ -238,7 +238,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     )
 
     return (
-      <div className="container-fluid">
+      <div>
           {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
           {/* tslint:disable */}
           {/* 

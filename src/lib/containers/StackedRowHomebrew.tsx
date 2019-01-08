@@ -141,16 +141,17 @@ export default class StackedRowHomebrew extends
 
   public getHoverText(xData: any) {
     const { index, hoverText } = this.state
-    const hoverTextDisplay = index === -1 ? xData[0] && xData[0].value : hoverText
+    const hoverTextDisplay = index === -1 ? (xData[0] && xData[0].value) : hoverText
     return (
-      <React.Fragment>
-        <span className="SRC-text-cap">
+      <span>
+        <span className="SRC-text-title">
           {this.props.filter}
         </span> :
-        <span>
-          {hoverTextDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : hoverText}
+        <span className="SRC-text-title">
+          {' '}
+          {hoverTextDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : hoverTextDisplay}
         </span>
-      </React.Fragment>
+      </span>
     )
   }
 
@@ -278,8 +279,9 @@ export default class StackedRowHomebrew extends
                   const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
                   const tooltipId = uuidv4()
                   // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
-                  const value = obj.value as number
+                  const value = obj.count as number
                   const numCharsInValue = value.toString().length * 4.5 // represents width of a character
+
                   return (
                     // each svg represents one of the bars
                     // will need to change this to be responsive
