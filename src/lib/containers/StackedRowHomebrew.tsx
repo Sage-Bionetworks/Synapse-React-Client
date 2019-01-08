@@ -343,7 +343,6 @@ export default class StackedRowHomebrew extends
           </p>
           <p
             className="SRC-noMargin SRC-padding-chart SRC-text-chart"
-            id="fileCount"
           >
             {this.getFileCount(xData)} {unitDescription}
           </p>
