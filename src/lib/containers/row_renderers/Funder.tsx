@@ -39,7 +39,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
     const isOnOrgPath = window.location.hash.substring(1) === organizationPath
     const style: any = {}
     let showOrgLink
-    if (isOnOrgPath) {
+    if (!isOnOrgPath) {
       style.paddingBottom = '42px'
       showOrgLink = (
         <div className="SRC-marginAuto SRC-cardAction">
