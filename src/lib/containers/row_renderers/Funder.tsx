@@ -9,7 +9,6 @@ const logoLinks = {
 type FunderProps = {
   data?: any
   schema?: any
-  hideOrganizationLink?: boolean
 }
 
 export default class Funder extends React.Component<FunderProps, {}> {
@@ -30,7 +29,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
     const abbreviation = data[schema.abbreviation]
     const logo = logoLinks[abbreviation]
     const orgPath = `${window.location.origin}/#${organizationPath}`
-        // remove leading http(s):// and trailing /
+    // remove leading http(s):// and trailing /
     let websiteDisplayName = website.replace('https://', '')
     websiteDisplayName = websiteDisplayName.replace('http://', '')
     if (websiteDisplayName.charAt(websiteDisplayName.length - 1) === '/') {
@@ -58,8 +57,8 @@ export default class Funder extends React.Component<FunderProps, {}> {
                     </div>
                     <div className="SRC-title">
                         <h3>
-                            {this.props.hideOrganizationLink && organizationName}
-                            {!this.props.hideOrganizationLink && <a href={orgPath}>{organizationName}</a>}
+                            {isOnOrgPath && organizationName}
+                            {!isOnOrgPath && <a href={orgPath}>{organizationName}</a>}
                         </h3>
                     </div>
                     <div className="SRC-website">
