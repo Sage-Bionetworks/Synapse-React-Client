@@ -228,7 +228,7 @@ export const getFullQueryTableResults = async (queryBundleRequest: any,
       // iteratively due to the await
       const getData = async () => {
         if (queryCount === maxPageSize) {
-          maxPageSize = initData.maxRowsPerPage
+          maxPageSize = initData.maxRowsPerPage!
           const queryRequestWithMaxPageSize = {
             ...rest,
             query: { ...query, limit: maxPageSize, offset: currentQueryCount }
