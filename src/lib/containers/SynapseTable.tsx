@@ -119,7 +119,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (<div/>)
     }
         // unpack all the data
-    const { data, filter, isLoading, showNothing, unitDescription } = this.props
+    const { data, filter, isLoading, unitDescription } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
@@ -144,8 +144,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     })
       }
     })
-        // edge case -- if they are all false then they are considered all true..
-        // sum up the counts of data
+    // edge case -- if they are all false then they are considered all true..
+    // sum up the counts of data
     let anyTrue = false
     let totalAllFalseCase = 0
     let totalStandardCase = 0
@@ -156,7 +156,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         totalStandardCase += xData[key].isSelected ? xData[key].count : 0
       }
     }
-    const total = anyTrue ? totalStandardCase : totalAllFalseCase
+    let total = anyTrue ? totalStandardCase : totalAllFalseCase
+
+    if (rows.length === 0) {
+      total = 0
+    }
 
     const tooltipIdOne = uuidv4()
     const tooltipIdTwo = uuidv4()
@@ -166,80 +170,80 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     addRemoveColClasses += (isOpen ? 'SRC-primary-background-color' : '')
 
     return (
-            <React.Fragment>
-                <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
-                <div className="container-fluid">
-                    <div className="row SRC-marginBottomTen">
-                        <span>
-                            {!isLoading && <strong> Showing {showNothing ? 0 : total} {unitDescription} </strong>}
-                            <span className={isLoading ? 'spinner' : ''} style={isLoading ? {} : { display: 'none' }} />
-                            {isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
-                        </span>
-                    </div>
-                </div>
-                <div className="container-fluid" >
-                   <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
-                        <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-                        <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
-                            <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
-                                <span
-                                    tabIndex={0}
-                                    data-for={tooltipIdOne}
-                                    data-tip="Open Advanced Search in Synapse"
-                                    className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                                    onKeyPress={this.advancedSearch}
-                                    onClick={this.advancedSearch}
-                                >
-                                    <FontAwesomeIcon size="1x" color="white"  icon="database"/>
-                                </span>
-                                <ReactTooltip
-                                    delayShow={1500}
-                                    place="bottom"
-                                    type="dark"
-                                    effect="solid"
-                                    id={tooltipIdOne}
-                                />
+      <React.Fragment>
+          <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
+          <div className="container-fluid">
+              <div className="row SRC-marginBottomTen">
+                  <span>
+                      {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
+                      <span className={isLoading ? 'spinner' : ''} style={isLoading ? {} : { display: 'none' }} />
+                      {isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
+                  </span>
+              </div>
+          </div>
+          <div className="container-fluid" >
+              <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
+                  <h3 className="SRC-tableHeader"> {this.props.title}</h3>
+                  <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
+                      <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
+                          <span
+                              tabIndex={0}
+                              data-for={tooltipIdOne}
+                              data-tip="Open Advanced Search in Synapse"
+                              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                              onKeyPress={this.advancedSearch}
+                              onClick={this.advancedSearch}
+                          >
+                              <FontAwesomeIcon size="1x" color="white"  icon="database"/>
+                          </span>
+                          <ReactTooltip
+                              delayShow={1500}
+                              place="bottom"
+                              type="dark"
+                              effect="solid"
+                              id={tooltipIdOne}
+                          />
 
-                                <span
-                                    tabIndex={0}
-                                    data-for={tooltipIdTwo}
-                                    data-tip="Add / Remove Columns"
-                                    style={{ marginLeft: '10px' }}
-                                    className={addRemoveColClasses}
-                                    onKeyPress={this.toggleDropdown}
-                                    onClick={this.toggleDropdown}
-                                    id="dropdownMenu1"
-                                >
-                                    <FontAwesomeIcon color="white" icon="columns"/>
-                                </span>
-                                <ReactTooltip
-                                    delayShow={1500}
-                                    place="bottom"
-                                    type="dark"
-                                    effect="solid"
-                                    id={tooltipIdTwo}
-                                />
-                                <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                                    {this.renderDropdownColumnMenu(headers)}
-                                </ul>
-                            </span>
-                        </span>
-                    </div>
-                </div>
-                <div className="container-fluid">
-                    <div className="row SRC-overflowAuto">
-                        <table className="table table-striped table-condensed">
-                            <thead className="SRC_borderTop">
-                                <tr>
-                                    {this.createTableHeader(headers, facets)}
-                                </tr>
-                            </thead>
-                            {!showNothing && (<tbody> {this.createTableRows(rows, headers)}</tbody>)}
-                        </table>
-                        {!showNothing && this.showPaginationButtons(pastZero)}
-                    </div>
-                </div>
-            </React.Fragment>
+                          <span
+                              tabIndex={0}
+                              data-for={tooltipIdTwo}
+                              data-tip="Add / Remove Columns"
+                              style={{ marginLeft: '10px' }}
+                              className={addRemoveColClasses}
+                              onKeyPress={this.toggleDropdown}
+                              onClick={this.toggleDropdown}
+                              id="dropdownMenu1"
+                          >
+                              <FontAwesomeIcon color="white" icon="columns"/>
+                          </span>
+                          <ReactTooltip
+                              delayShow={1500}
+                              place="bottom"
+                              type="dark"
+                              effect="solid"
+                              id={tooltipIdTwo}
+                          />
+                          <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                              {this.renderDropdownColumnMenu(headers)}
+                          </ul>
+                      </span>
+                  </span>
+              </div>
+          </div>
+          <div className="container-fluid">
+              <div className="row SRC-overflowAuto">
+                  <table className="table table-striped table-condensed">
+                      <thead className="SRC_borderTop">
+                          <tr>
+                              {this.createTableHeader(headers, facets)}
+                          </tr>
+                      </thead>
+                      {<tbody> {this.createTableRows(rows, headers)}</tbody>}
+                  </table>
+                  {total > 0 && this.showPaginationButtons(pastZero)}
+              </div>
+          </div>
+      </React.Fragment>
     )
   }
 

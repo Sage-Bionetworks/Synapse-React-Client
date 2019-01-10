@@ -112,7 +112,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       showAllFacets: false
     }
     this.showAllFacets = this.showAllFacets.bind(this)
-    this.updateStateAndMakeQuery = this.updateStateAndMakeQuery.bind(this)
     this.updateSelection = this.updateSelection.bind(this)
     this.showButtons = this.showButtons.bind(this)
   }
@@ -158,17 +157,17 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         showAllFacets: true
       })
     }
-        // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+    // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     const { selectedFacets } = queryRequest.query
-        // grab the facet values assoicated for this column
+    // grab the facet values assoicated for this column
     const specificFacet = selectedFacets![0]
-        // if its not selected then we add as having been chosen, otherwise we
-        // have to delete it
+    // if its not selected then we add as having been chosen, otherwise we
+    // have to delete it
     if (specificFacet.facetValues.indexOf(dict.value) === -1) {
       specificFacet.facetValues.push(dict.value)
     } else {
-            // remove value
+      // remove value
       specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
     }
     const { isChecked } = cloneDeep(this.props)
@@ -190,21 +189,24 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   public updateSelection = (selectionGroup: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     const { isChecked } = cloneDeep(this.props)
-    const queryRequest = cloneDeep(this.props.getLastQueryRequest!())
-    if (selectionGroup === SELECT_ALL) {
-      for (let i = 0; i < 100; i += 1) {
+    const queryRequest = this.props.getLastQueryRequest!() as QueryBundleRequest
+    const { selectedFacets } = queryRequest.query
+
+    for (let i = 0; i < 100; i += 1) {
+      if (selectionGroup === SELECT_ALL) {
         isChecked[i] = true
-      }
-      this.props.updateParentState!({ isChecked })
-      this.props.executeInitialQueryRequest!()
-    } else {
-      for (let i = 0; i < 100; i += 1) {
+      } else {
         isChecked[i] = false
       }
-            // hack to make deselct all work
-      queryRequest.query.selectedFacets[0].facetValues = []
-      this.props.updateParentState!({ isChecked, showNothing: true, lastQueryRequest: queryRequest })
     }
+    this.props.updateParentState!({ isChecked })
+    if (selectionGroup === SELECT_ALL) {
+      this.props.executeInitialQueryRequest!()
+    } else {
+      selectedFacets![0].facetValues = []
+      this.props.executeQueryRequest!(queryRequest)
+    }
+
   }
 
   public showAllFacets(event: React.MouseEvent<HTMLAnchorElement>) {
@@ -212,23 +214,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     this.setState({
       showAllFacets: true
     })
-  }
-
-  /**
-   * Update the state with selected facets and call props to update data
-   *
-   * @param {*} selectedFacets
-   * @memberof Facets
-   */
-  public updateStateAndMakeQuery(selectedFacets: any) {
-        // have to reformat the selected facets to format for the api call
-    const selectedFacetsFormatted = Object.keys(selectedFacets).map((key) => {
-      return selectedFacets[key]
-    })
-    const queryRequest = this.props.getLastQueryRequest!()
-    queryRequest.query.selectedFacets = selectedFacetsFormatted
-    queryRequest.query.offset = 0
-    this.props.executeQueryRequest!(queryRequest)
   }
 
   public showButtons(showAllFacets: boolean, curFacetsLength: number) {
@@ -245,7 +230,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
           </a>
           <span className="SRC-facets-divider">
             |
-                    </span>
+          </span>
           <a
             href={''}
             className="SRC-primary-text-color SRC-no-text-decor"

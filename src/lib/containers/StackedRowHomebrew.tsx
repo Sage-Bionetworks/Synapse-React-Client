@@ -211,7 +211,7 @@ export default class StackedRowHomebrew extends
     const xData = this.extractPropsData(data)
     let total: number = 0
     const width: number = this.state.dimensions.bounds!.width
-        // sum up the counts of data
+    // sum up the counts of data
     for (const key in xData) {
       if (xData.hasOwnProperty(key)) {
         total += xData[key].count

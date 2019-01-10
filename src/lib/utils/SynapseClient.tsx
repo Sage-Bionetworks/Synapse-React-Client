@@ -4,6 +4,8 @@ import { FileHandleResults } from './jsonResponses/FileHandleResults'
 import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
+import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
+import { FaceFacetColumnValuesRequest } from './jsonResponses/Table/FacetColumnRequest'
 
 // TODO: Create JSON response types for return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
@@ -128,6 +130,45 @@ export const getQueryTableResultsFromJobId = (
     })
 }
 /**
+ * This method is necesary because the backend service returns ALL table results when
+ * a particular facet is empty, the rationale being that it is a slight optimization
+ * for when a client first gets table results. However, it introduces an edge case on the front
+ * end that when the user "deselects" all facets inside Facets.tsx, uninutitive to the user,
+ * all results would be returned, so we have to make this a special case.
+ *
+ * Note: This is under the context that the user is exploring with only a single facet in mind,
+ * beyond that this issue becomes much more confusing.
+ *
+ * @param {*} queryBundleRequest
+ * @param {*} sessionToken
+ * @param {*} lastQueryResult
+ * @param {*} filter
+ * @param {*} endpoint
+ */
+export const getIntuitiveQueryTableResults = (
+  queryBundleRequest: QueryBundleRequest,
+  sessionToken: string | undefined = undefined,
+  filter: string,
+  lastQueryResult: QueryResultBundle,
+  endpoint: string = DEFAULT_ENDPOINT
+): Promise<QueryResultBundle> => {
+
+  const facetSelection = queryBundleRequest.query.selectedFacets as FaceFacetColumnValuesRequest []
+
+  const facetsForFilter = facetSelection.filter((obj: FaceFacetColumnValuesRequest) => {
+    return obj.columnName === filter
+  })[0] as FaceFacetColumnValuesRequest
+
+  // check if the current set of facets being used is empty or not
+  if (facetsForFilter.facetValues.length === 0) {
+    // zero out the rows
+    lastQueryResult.queryResult.queryResults.rows = []
+    return Promise.resolve(lastQueryResult)
+  }
+
+  return getQueryTableResults(queryBundleRequest, sessionToken, endpoint)
+}
+/**
  * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
  * @param {*} queryBundleRequest
  * @param {*} sessionToken
@@ -137,15 +178,15 @@ export const getQueryTableResults = (
   queryBundleRequest: any,
   sessionToken: string | undefined = undefined,
   endpoint: string = DEFAULT_ENDPOINT
-) => {
+): Promise<QueryResultBundle> => {
   return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
   .then((resp: any) => {
       // started query, now attempt to get the results.
     return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint)
   })
-    .catch((error) => {
-      throw error
-    })
+  .catch((error) => {
+    throw error
+  })
 }
 /**
  *  Run and return results from queryBundleRequest, queryBundle request must be of the
