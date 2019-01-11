@@ -192,6 +192,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const queryRequest = this.props.getLastQueryRequest!() as QueryBundleRequest
     const { selectedFacets } = queryRequest.query
 
+    // we go through and set all facets as selected or deselected per the button
+    // clicked that initiated this function call
     for (let i = 0; i < 100; i += 1) {
       if (selectionGroup === SELECT_ALL) {
         isChecked[i] = true
@@ -199,11 +201,22 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         isChecked[i] = false
       }
     }
+    // we update the parent state with isChecked so that the barchart will reflect
+    // in the graph slices on or off
     this.props.updateParentState!({ isChecked })
     if (selectionGroup === SELECT_ALL) {
+      // if the user chose to select all facets then we can have the parent component
+      // run the first query it was given
       this.props.executeInitialQueryRequest!()
     } else {
-      selectedFacets![0].facetValues = []
+      // if the user chose to deselect all facets then we zero out the facet selection
+      const facetColumnResultValues = selectedFacets!.filter(
+        (value) => {
+          return value.columnName === this.props.filter
+        }
+      )[0] as FacetColumnResultValues
+      facetColumnResultValues.facetValues = []
+      console.log('selected facets = ', selectedFacets)
       this.props.executeQueryRequest!(queryRequest)
     }
 
