@@ -217,8 +217,10 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
       }
       total = anyTrue ? totalStandardCase : totalAllFalseCase
-    } else {
-      total = data.queryResult.queryResults.rows.length
+    }
+
+    if (data.queryResult.queryResults.rows.length === 0) {
+      total = 0
     }
 
     // Either the filter is defined and the count should be shown or the client defined the unit description
@@ -244,10 +246,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
         {/* tslint:disable */}
         {/* 
-            
-            Below we loop through the rows of the table and we render a specific row, we can 
-            use the key={index} because the underlying table *shouldn't* be changing beneath
-            us and does in fact act as a unique identifier
+          Below we loop through the rows of the table and we render a specific row, we can 
+          use the key={index} because the underlying table *shouldn't* be changing beneath
+          us and does in fact act as a unique identifier
           */}
         {data.queryResult.queryResults.rows.map(
           (rowData: any, index: number) => {

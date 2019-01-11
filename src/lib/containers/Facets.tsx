@@ -160,7 +160,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     const { selectedFacets } = queryRequest.query
-    // grab the facet values assoicated for this column
+    // grab the facet values associated for this column
     const specificFacet = selectedFacets![0]
     // if its not selected then we add as having been chosen, otherwise we
     // have to delete it
@@ -216,7 +216,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         }
       )[0] as FacetColumnResultValues
       facetColumnResultValues.facetValues = []
-      console.log('selected facets = ', selectedFacets)
       this.props.executeQueryRequest!(queryRequest)
     }
 
