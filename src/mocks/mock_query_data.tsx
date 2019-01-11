@@ -21,8 +21,10 @@ let mockData: QueryResultBundle = {
         } as FacetColumnResultValues
     ],
     queryResult: {
-        // @ts-ignore
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         queryResults: {
+            tableId: "syn5604373",
+            concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
             etag: "s",
             rows: [{
                 rowId: 1,
@@ -34,7 +36,7 @@ let mockData: QueryResultBundle = {
                 name: "header",
                 columnType: ColumnType.STRING,
                 id: "a"
-            }]
+            }],
         },
         nextPageToken: {token: "123"}
     },
