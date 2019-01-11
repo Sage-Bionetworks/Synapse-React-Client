@@ -1,7 +1,6 @@
 import { QueryResultBundle } from '../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { ColumnType } from '../lib/utils/jsonResponses/Table/ColumnType'
 import { FacetColumnResultValues } from '../lib/utils/jsonResponses/Table/FacetColumnResult'
-
 let mockData: QueryResultBundle = {
     concreteType: "org.sagebionetworks.repo.model.table.QueryResultBundle",
     columnModels: [{
@@ -22,7 +21,10 @@ let mockData: QueryResultBundle = {
         } as FacetColumnResultValues
     ],
     queryResult: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         queryResults: {
+            tableId: "syn5604373",
+            concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
             etag: "s",
             rows: [{
                 rowId: 1,
@@ -34,7 +36,7 @@ let mockData: QueryResultBundle = {
                 name: "header",
                 columnType: ColumnType.STRING,
                 id: "a"
-            }]
+            }],
         },
         nextPageToken: {token: "123"}
     },

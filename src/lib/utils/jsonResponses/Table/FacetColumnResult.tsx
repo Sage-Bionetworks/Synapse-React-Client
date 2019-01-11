@@ -1,7 +1,5 @@
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnResultValues.html
 export interface FacetColumnResultValues extends FacetColumnResult {
-  concreteType:	string
-  columnName:	string	                        // The name of the faceted column
   facetValues: FacetColumnResultValueCount []	// The list of QueryFacetResultValue that contain frequency counts for its most frequent values
 }
 
@@ -26,4 +24,5 @@ export interface FacetColumnResult {
   concreteType:	string
   columnName:	string	                        // The name of the faceted column
   facetType: 'enumeration' | 'range'
+  facetValues: any 	// The list of QueryFacetResultValue that contain frequency counts for its most frequent values
 }

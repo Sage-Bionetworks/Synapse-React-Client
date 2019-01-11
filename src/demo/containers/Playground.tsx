@@ -56,7 +56,6 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
             facetName: 'Study',
             sql: 'SELECT * FROM syn9886254',
             synapseId: 'syn9886254',
-            title: 'Data',
             unitDescription: 'data files',
             visibleColumnCount: 5,
           }
@@ -68,12 +67,25 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
       tabTwo: {
         menuConfig: [
           {
-            facetName: 'Consortium',
-            sql: 'SELECT * FROM syn9886254',
-            synapseId: 'syn9886254',
+            facetName: 'assay',
+            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            synapseId: 'syn16858331',
             title: 'title',
-            unitDescription: 'Consortium'
-          }]
+            unitDescription: 'diseaseFocus'
+          },
+          {
+            facetName: 'dataType',
+            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            synapseId: 'syn16858331',
+            title: 'title',
+          },
+          {
+            facetName: 'diagnosis',
+            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            synapseId: 'syn16858331',
+            title: 'title'
+          }
+        ]
         ,
         rgbIndex: 5
       }

@@ -23,7 +23,6 @@ type QueryWrapperState = {
   isChecked: []  // keep Facets and BarChart colors in sync
   isLoadingNewData: boolean
   isLoading: boolean
-  showNothing: boolean
   lastQueryRequest: {}
 }
 
@@ -40,7 +39,6 @@ export type QueryWrapperChildProps = {
   filter?: string
   updateParentState?: (param: any) => void
   rgbIndex?: number
-  showNothing?: boolean
   unitDescription?: string
 }
 
@@ -92,7 +90,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       isLoading: true,
       isLoadingNewData: true,
       lastQueryRequest: {},
-      showNothing: false
     }
   }
 
@@ -136,33 +133,37 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @returns
    * @memberof QueryWrapper
    */
-  private getLastQueryRequest() {
+  private getLastQueryRequest(): QueryBundleRequest {
     return cloneDeep(this.state.lastQueryRequest)
   }
 
-    /**
-     * Execute the given query
-     *
-     * @param {*} queryRequest Query request as specified by
-     *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-     * @memberof QueryWrapper
-     */
+  /**
+   * Execute the given query
+   *
+   * @param {*} queryRequest Query request as specified by
+   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+   * @memberof QueryWrapper
+   */
   private executeQueryRequest(queryRequest: any) {
     this.setState({
       isLoading: true
     })
-    SynapseClient.getQueryTableResults(queryRequest, this.props.token)
+    SynapseClient.getIntuitiveQueryTableResults(
+      queryRequest,
+      this.props.token,
+      this.props.facetName,
+      this.state.data!
+    )
       .then(
-          (data: QueryResultBundle) => {
-            const newState: any = {
-              data,
-              isLoading: false,
-              lastQueryRequest: cloneDeep(queryRequest),
-              showNothing: false
-            }
-            this.setState(newState)
+        (data: QueryResultBundle) => {
+          const newState: any = {
+            data,
+            isLoading: false,
+            lastQueryRequest: cloneDeep(queryRequest)
           }
-      ).catch((err) => {
+          this.setState(newState)
+        }
+      ).catch((err: string) => {
         console.log('Failed to get data ', err)
       })
   }
@@ -187,8 +188,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           const newState: any = {
             data: oldData,
             isLoading: false,
-            lastQueryRequest: cloneDeep(queryRequest),
-            showNothing: false
+            lastQueryRequest: cloneDeep(queryRequest)
           }
           this.setState(newState)
           return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
@@ -221,8 +221,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             data,
             lastQueryRequest,
             isLoading: false,
-            isLoadingNewData: false,
-            showNothing: false
+            isLoadingNewData: false
           }
           this.setState(newState)
         }
@@ -240,7 +239,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @returns
    * @memberof QueryWrapper
    */
-  private resetFacetSelection(data: QueryResultBundle, filter: string) {
+  private resetFacetSelection(data: QueryResultBundle, filter: string): QueryBundleRequest {
     // we have to reset the facet selections by getting the original
     // facet corresponding to the original filter
     const facetsForFilter = data.facets.filter((obj: FacetColumnResultValues) => {
@@ -288,7 +287,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         getNextPageOfData: this.getNextPageOfData,
         isChecked: this.state.isChecked,
         isLoading: this.state.isLoading,
-        showNothing: this.state.showNothing,
         isLoadingNewData: this.state.isLoadingNewData,
         filter: this.props.facetName,
         rgbIndex: this.props.rgbIndex,

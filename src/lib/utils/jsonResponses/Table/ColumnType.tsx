@@ -2,6 +2,7 @@
 export enum ColumnType {
     STRING = 'STRING',
     DOUBLE = 'DOUBLE',
+    BOOLEAN = 'BOOLEAN',
     INTEGER = 'INTEGER',
     DATE = 'DATE',
     FILEHANDLEID = 'FILEHANDLEID',

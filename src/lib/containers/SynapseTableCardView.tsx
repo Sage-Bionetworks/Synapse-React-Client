@@ -4,15 +4,15 @@ import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColum
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import {
-        AMP_CONSORTIUM,
-        AMP_PROJECT,
-        AMP_STUDY,
-        DATASET,
-        FUNDER,
-        PUBLICATION,
-        STUDY,
-        TOOL
-    } from '../utils/SynapseConstants'
+  AMP_CONSORTIUM,
+  AMP_PROJECT,
+  AMP_STUDY,
+  DATASET,
+  FUNDER,
+  PUBLICATION,
+  STUDY,
+  TOOL
+} from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
 
@@ -51,7 +51,7 @@ const RowContainer: React.SFC<RowContainerProps> = (props) => {
     case AMP_STUDY:
       return <AMP_Study {...rest} />
     default:
-      return (<div/>) // this should never happen
+      return (<div />) // this should never happen
   }
 }
 
@@ -104,44 +104,46 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
   }
 
   public getBufferData() {
-        // Load data ahead of the currently displayed data, do this recursively in case it needs more time
+    // Load data ahead of the currently displayed data, do this recursively in case it needs more time
     if (!this.state.hasLoadedBufferData) {
       setTimeout(() => {
         if (!this.props.getLastQueryRequest) {
-                    // parent component still setting up
+          // parent component still setting up
           this.getBufferData()
           return
         }
         const queryRequest = this.props.getLastQueryRequest!()
         if (!queryRequest.query) {
-                    // parent component still setting up
+          // parent component still setting up
           this.getBufferData()
           return
         }
         let offset = queryRequest.query.offset!
-                // if its a "previous" click subtract from the offset
-                // otherwise its next and we paginate forward
+        // if its a "previous" click subtract from the offset
+        // otherwise its next and we paginate forward
         offset += PAGE_SIZE
         queryRequest.query.offset = offset
         this.props.getNextPageOfData!(queryRequest).then(
-                    (hasMoreData) => {
-                      this.setState({ hasMoreData, hasLoadedBufferData: true })
-                    }
-                )
-      },         1500)
+          (hasMoreData) => {
+            this.setState({ hasMoreData, hasLoadedBufferData: true })
+          }
+        )
+      },
+                 1500
+    )
     }
   }
 
-    /**
-     * Handle a click on next or previous
-     *
-     * @memberof SynapseTable
-     */
+  /**
+   * Handle a click on next or previous
+   *
+   * @memberof SynapseTable
+   */
   public handleViewMore() {
     const queryRequest = this.props.getLastQueryRequest!()
     let offset = queryRequest.query.offset!
-       // if its a "previous" click subtract from the offset
-       // otherwise its next and we paginate forward
+    // if its a "previous" click subtract from the offset
+    // otherwise its next and we paginate forward
     offset += PAGE_SIZE
     queryRequest.query.offset = offset
 
@@ -149,12 +151,12 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     this.setState({ cardLimit: cardLimit + PAGE_SIZE })
 
     this.props.getNextPageOfData!(queryRequest).then(
-           (hasMoreData) => {
-             if (!hasMoreData) {
-               this.setState({ hasMoreData: false })
-             }
-           }
-       )
+      (hasMoreData) => {
+        if (!hasMoreData) {
+          this.setState({ hasMoreData: false })
+        }
+      }
+    )
   }
 
   public render() {
@@ -171,19 +173,19 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
       type
     } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
-      return <div className="container"/>
+      return <div className="container" />
     }
     const schema = {}
     data.queryResult.queryResults.headers.forEach(
-            (element: any, index: any) => {
-              schema[element.name] = index
-            })
+      (element: any, index: any) => {
+        schema[element.name] = index
+      })
 
     let cardLimit = 0
 
     // Either the number of cards to be shown is specified by the developer in the props
     // or this card is under the query wrapper and we handle the view more button
-    cardLimit = isQueryWrapperChild ? this.state.cardLimit : limit
+    cardLimit = isQueryWrapperChild ? this.state.cardLimit : limit!
 
     // We want to hide the view more button if:
     //     1. On page load we get the initial results and find there are < 25 rows
@@ -215,8 +217,10 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
       }
       total = anyTrue ? totalStandardCase : totalAllFalseCase
-    } else {
-      total = data.queryResult.queryResults.rows.length
+    }
+
+    if (data.queryResult.queryResults.rows.length === 0) {
+      total = 0
     }
 
     // Either the filter is defined and the count should be shown or the client defined the unit description
@@ -239,35 +243,34 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     return (
       <div>
-          {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
-          {/* tslint:disable */}
-          {/* 
-            
-            Below we loop through the rows of the table and we render a specific row, we can 
-            use the key={index} because the underlying table *shouldn't* be changing beneath
-            us and does in fact act as a unique identifier
+        {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
+        {/* tslint:disable */}
+        {/* 
+          Below we loop through the rows of the table and we render a specific row, we can 
+          use the key={index} because the underlying table *shouldn't* be changing beneath
+          us and does in fact act as a unique identifier
           */}
-          {data.queryResult.queryResults.rows.map(
-            (rowData: any, index: number) => {
-              if (index < limit) {
-                return (
-                  <React.Fragment key={index}>
-                    <RowContainer
-                      type={type}
-                      hideOrganizationLink={hideOrganizationLink}
-                      limit={cardLimit}
-                      data={rowData.values}
-                      schema={schema}
-                      token={token}
-                      ownerId={ownerId}
-                      isHeader={isHeader}
-                    />
-                  </React.Fragment>
-                )
-              }
-              return false
-            })}
-          {showViewMoreButton}
+        {data.queryResult.queryResults.rows.map(
+          (rowData: any, index: number) => {
+            if (index < cardLimit) {
+              return (
+                <React.Fragment key={index}>
+                  <RowContainer
+                    type={type}
+                    hideOrganizationLink={hideOrganizationLink}
+                    limit={cardLimit}
+                    data={rowData.values}
+                    schema={schema}
+                    token={token}
+                    ownerId={ownerId}
+                    isHeader={isHeader}
+                  />
+                </React.Fragment>
+              )
+            }
+            return false
+          })}
+        {showViewMoreButton}
       </div>
     )
   }
