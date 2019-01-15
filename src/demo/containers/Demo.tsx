@@ -18,8 +18,7 @@ import SynapseTableCardView from '../../lib/containers/SynapseTableCardView'
 import TeamMemberList from '../../lib/containers/TeamMemberList'
 import UserBadgeBatch from '../../lib/containers/UserBadgeBatch'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
-import * as SynapseClient from '../../lib/utils/SynapseClient'
-import * as SynapseConstants from '../../lib/utils/SynapseConstants'
+import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 
 type DemoState = {

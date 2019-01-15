@@ -5,7 +5,7 @@ import { SynapseClient } from '../../lib'
 import QueryWrapperMenu from '../../lib/containers/QueryWrapperMenu'
 // import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
 // import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
-import * as SynapseConstants from '../../lib/utils/SynapseConstants'
+import { SynapseConstants } from '../../lib/utils'
 import './App.css'
 // import QueryWrapper from "src/lib/containers/QueryWrapper"
 // import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';

@@ -8,8 +8,7 @@ import SynapseTable from './containers/SynapseTable'
 import SynapseTableCardView from './containers/SynapseTableCardView'
 import './style/Cards.css'
 import './style/Portal.css'
-import * as SynapseClient from './utils/SynapseClient'
-import * as SynapseConstants from './utils/SynapseConstants'
+import { SynapseClient, SynapseConstants } from './utils/'
 
 const SynapseComponents = {
   Facets,

@@ -1,5 +1,4 @@
-import * as SynapseClient from '../../../lib/utils/SynapseClient'
-import * as SynapseConstants from '../../../lib/utils/SynapseConstants'
+import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
 import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle'

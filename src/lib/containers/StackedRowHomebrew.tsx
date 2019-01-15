@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 // tslint:disable-next-line
-import Measure, { ContentRect } from "react-measure"
+import Measure from "react-measure"
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
@@ -21,7 +21,7 @@ type StackedRowHomebrewState = {
   hoverTextCount: number
   hoverText: string
   selectedFacets: {}
-  dimensions: ContentRect
+  dimensions: any
   index: number
 }
 
@@ -248,7 +248,7 @@ export default class StackedRowHomebrew extends
           <Measure
             bounds={true}
             // tslint:disable-next-line
-            onResize={(contentRect: ContentRect) => {
+            onResize={(contentRect: any) => {
               this.setState({ dimensions: contentRect })
             }}
           >
@@ -372,7 +372,7 @@ export default class StackedRowHomebrew extends
     return xData
   }
 
-  public onMeasureResize(contentRect: ContentRect) {
+  public onMeasureResize(contentRect: any) {
     this.setState({ dimensions: contentRect })
   }
 }

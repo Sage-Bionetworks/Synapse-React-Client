@@ -10,6 +10,7 @@ import { faCheck,
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
+// tslint:disable-next-line
 import closeSvg from '../assets/icons/close.svg'
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"

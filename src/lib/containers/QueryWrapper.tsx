@@ -3,7 +3,7 @@ import * as React from 'react'
 import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import * as SynapseClient from '../utils/SynapseClient'
+import { SynapseClient } from '../utils/'
 
 const cloneDeep = require('lodash.clonedeep')
 

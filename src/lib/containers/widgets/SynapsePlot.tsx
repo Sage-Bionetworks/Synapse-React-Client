@@ -3,7 +3,7 @@ import * as React from 'react'
 import Plot from "react-plotly.js"
 import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
-import * as SynapseConstants from '../../utils/SynapseConstants'
+import { SynapseConstants } from '../../utils/'
 
 type SynapsePlotProps = {
   token?: string

@@ -20,6 +20,10 @@ yarn-error.log*
 jsconfig.json
 .vscode
 
+#rollup
+.rpt2_cache
+SingleFileBuild/
+
 # css
 src/**/*.css
 

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Project } from '.'
 import * as Utils from '../utils'
 
 type ProjectState = {
@@ -62,7 +61,7 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
     return (
             <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
                 <div className="SRC-cardThumbnail">
-                    {Project.icon}
+                    {Study.icon}
                 </div>
                 <div className="SRC-cardContent">
                     <div className="SRC-type">Project</div>

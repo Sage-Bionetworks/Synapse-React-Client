@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SynapseClient, SynapseConstants } from '..'
+import { SynapseClient, SynapseConstants } from '../utils/'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 
