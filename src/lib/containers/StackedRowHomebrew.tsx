@@ -13,7 +13,7 @@ import { QueryWrapperChildProps } from './QueryWrapper'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
-const uuidv4 = require('uuid/v4')
+import { uuidv4 } from '../utils/modules'
 const PREVIOUS_ITEM_CLICK = 'left click'
 const NEXT_CLICK = 'right click'
 

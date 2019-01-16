@@ -8,7 +8,7 @@ import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 
-const uuidv4 = require('uuid/v4')
+import { uuidv4 } from '../utils/modules'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',

@@ -1,5 +1,5 @@
 import * as React from 'react'
-const uuidv4 = require('uuid/v4')
+import { uuidv4 } from '../../../utils/modules'
 
 type CardFooterProps = {
   values: any [],

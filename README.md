@@ -10,7 +10,7 @@ This project helps you integrate your app with the Synapse API backend.
 
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
 
-## Installation
+## Installation with npm
 Run the following command:<br>
 `npm install synapse-react-client`
 
@@ -22,8 +22,41 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  declare module "synapse-react-client"
  ```
 
-### Using the client outside of npm
+## Installation without npm or yarn
+You can use a cdn containing the javascript and css required for the client here-
+``` html
+<script crossorigin src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.min.js"/>
+<link rel="stylesheet" rel="stylesheet" src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.styles.css"/>
+```
+Note there are a number of CDNs required to finish this functionality-
 
+**react**
+``` html
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"/>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.min.js" integrity="sha256-NmmDcgvrXeKbOwVBbplNFlX4dj72UBwMTOB9VP9dptU=" crossorigin="anonymous"/>
+```
+
+**katex**
+``` html
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"/>
+```
+
+**react-plotly**
+``` html
+  <script crossorigin src="https://cdn.plot.ly/plotly-1.31.2.min.js"/>
+  <script crossorigin src="https://unpkg.com/react-plotly.js@1.1.1/dist/create-plotly-component.js"/>
+```
+**react-measure**
+``` html
+  <script crossorigin src="https://unpkg.com/react-measure/dist/react-measure.js"/>
+```
+
+**react-tooltip**
+```html
+  <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"/>
+```
 ## Examples
 
 #### Login
@@ -93,9 +126,9 @@ Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
 
   <SynapseComponents.CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
-              ownerId={"syn14568473"}
-              wikiId={"582406"}
-              >
+      ownerId={"syn14568473"}
+      wikiId={"582406"}
+      >
     </SynapseComponents.Markdown>
   </SynapseComponents.CustomMarkdownView>
 
@@ -110,10 +143,10 @@ Example 2: Rendering a Synapse Wiki page with the markdown already loaded
 
   <SynapseComponents.CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
-              ownerId={"syn14568473"}
-              wikiId={"582406"}
-              markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
-              >
+      ownerId={"syn14568473"}
+      wikiId={"582406"}
+      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+      >
     </SynapseComponents.Markdown>
   </SynapseComponents.CustomMarkdownView>
 
@@ -151,11 +184,11 @@ Example 3: Rendering a Synapse Wiki page with the markdown already loaded with a
       // componentDidMount is over
       <SynapseComponents.CustomMarkdownView>
         <SynapseComponents.Markdown token={this.state.token}
-                  ownerId={"syn14568473"}
-                  wikiId={"582406"}
-                  markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
-                  updateLoadState={this.handleChange}
-                  >
+            ownerId={"syn14568473"}
+            wikiId={"582406"}
+            markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+            updateLoadState={this.handleChange}
+            >
         </SynapseComponents.Markdown>
       </SynapseComponents.CustomMarkdownView>
 
@@ -172,9 +205,9 @@ Example 3: Rendering ONLY markdown (if you know that a  wiki page has no synapse
 
   <SynapseComponents.CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
-              markdown={"# my first wiki page!"}
-              hasSynapseResources={false}
-              >
+      markdown={"# my first wiki page!"}
+      hasSynapseResources={false}
+    >
     </SynapseComponents.Markdown>
   </SynapseComponents.CustomMarkdownView>
 
@@ -189,8 +222,8 @@ To use the markdown component with only markdown, simply pass down a prop with t
 
   <SynapseComponents.CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
-              markdown={"# my own markdown! "}
-              errorMessageView={<SynapseComponents.CustomMarkdownErrorView/>}>
+      markdown={"# my own markdown! "}
+      errorMessageView={<SynapseComponents.CustomMarkdownErrorView/>}>
     </SynapseComponents.Markdown>
   </SynapseComponents.CustomMarkdownView>
 

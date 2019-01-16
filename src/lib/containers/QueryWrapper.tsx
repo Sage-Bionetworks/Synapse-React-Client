@@ -4,13 +4,12 @@ import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/j
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient } from '../utils/'
-
-const cloneDeep = require('lodash.clonedeep')
+import { cloneDeep } from '../utils/modules'
 
 type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
   rgbIndex?: number
-  json?: object
+  json?: QueryResultBundle
   token?: string
   showMenu?: boolean
   facetName: string
@@ -23,7 +22,7 @@ type QueryWrapperState = {
   isChecked: []  // keep Facets and BarChart colors in sync
   isLoadingNewData: boolean
   isLoading: boolean
-  lastQueryRequest: {}
+  lastQueryRequest: QueryBundleRequest
 }
 
 // Since the component is an HOC we export the props passed down
@@ -89,7 +88,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       isChecked: [],
       isLoading: true,
       isLoadingNewData: true,
-      lastQueryRequest: {},
+      lastQueryRequest: {} as QueryBundleRequest,
     }
   }
 
@@ -182,7 +181,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     return SynapseClient.getQueryTableResults(queryRequest, this.props.token)
       .then(
         (data: QueryResultBundle) => {
-          const oldData: QueryResultBundle = cloneDeep(this.state.data)
+          const oldData: QueryResultBundle = cloneDeep(this.state.data)!
           // push on the new data retrieved from the API call
           oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
           const newState: any = {
@@ -254,7 +253,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       return el.value
     })
 
-    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)
+    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)!
     lastQueryRequest.query.selectedFacets = [
       {
         columnName: filter,

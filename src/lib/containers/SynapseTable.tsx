@@ -25,7 +25,7 @@ import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 
-const uuidv4 = require('uuid/v4')
+import { uuidv4 } from '../utils/modules'
 const MIN_SPACE_FACET_MENU = 700
 
 // Add all icons to the library so you can use it in your page
@@ -37,8 +37,9 @@ library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
-
-const cloneDeep = require('lodash.clonedeep')
+// tslint:disable-next-line
+import {cloneDeep} from '../utils/modules/'
+import { SortItem } from '../utils/jsonResponses/Table/Query'
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
@@ -46,15 +47,15 @@ const SELECT_ALL = 'SELECT_ALL'
 const DESELECT_ALL = 'DESELECT_ALL'
 // double check these icons!
 const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
-const SORT_STATE = ['', 'ASC', 'DESC']
-
+type direction = ''|'ASC'|'DESC'
+const SORT_STATE: direction [] = ['', 'ASC', 'DESC']
 type Info = {
   index: number
   name: string
 }
 
 type SynapseTableState = {
-  sortSelection: SortSelection []
+  sortSelection: SortItem []
   offset: number
   isOpen: boolean
   isColumnSelected: boolean[]
@@ -69,11 +70,6 @@ type SynapseTableProps = {
   visibleColumnCount?: number
   synapseId: string
   title: string
-}
-
-type SortSelection = {
-  column: string
-  name: string
 }
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps &
@@ -463,10 +459,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @returns -1 if not present, otherwise the index of the object
    * @memberof SynapseTable
    */
-  private findSelectionIndex(sortSelection: SortSelection [], name: string) {
+  private findSelectionIndex(sortSelection: SortItem [], name: string) {
     if (sortSelection.length !== 0) {
       // find if the current selection exists already and remove it
-      return sortSelection.findIndex((el: SortSelection) => el.column === name)
+      return sortSelection.findIndex((el: SortItem) => el.column === name)
     }
     return -1
   }

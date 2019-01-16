@@ -4,6 +4,7 @@ import image from 'rollup-plugin-image'
 import resolve from 'rollup-plugin-node-resolve';
 import svg from 'rollup-plugin-svg';
 import { uglify } from "rollup-plugin-uglify";
+import commonjs from 'rollup-plugin-commonjs';
 
 export default {
 	input: 'src/lib/index.tsx',
@@ -13,7 +14,7 @@ export default {
 		'react-measure',
 		'react-plotly.js',
 		'katex',
-		'react-tooltip'
+		'react-tooltip',
 	],
 	plugins: [
 		image(),
@@ -21,7 +22,9 @@ export default {
 		scss({output: "./umd/synapse-react-client.production.styles.css"}),
 		resolve(),
 		svg(),
-		uglify({sourcemap: "true"})
+		commonjs({
+			include: ["node_modules/**"]
+		})
 	],
 	output: {
 		globals: {
@@ -32,7 +35,6 @@ export default {
 			'react-tooltip': 'ReactToolTip',
 			'prop-types': 'PropTypes',
 		},
-		sourcemap: "inline",
 		format: "umd",
 		name: "SRC",
 		file: "./umd/synapse-react-client.production.min.js",
