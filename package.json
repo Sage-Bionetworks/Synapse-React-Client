@@ -6,6 +6,7 @@
   "module": "dist/index.js",
   "homepage": "https://leem42.github.io/Synapse-React-Client/",
   "files": [
+    "umd",
     "dist",
     "README.md"
   ],
@@ -85,6 +86,7 @@
     "rollup-plugin-scss": "^0.4.0",
     "rollup-plugin-svg": "^1.0.1",
     "rollup-plugin-typescript2": "^0.18.1",
+    "rollup-plugin-uglify": "^6.0.1",
     "sinon": "^7.2.2",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-react": "^3.6.0",

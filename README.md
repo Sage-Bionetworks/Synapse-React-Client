@@ -22,6 +22,8 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  declare module "synapse-react-client"
  ```
 
+### Using the client outside of npm
+
 ## Examples
 
 #### Login
@@ -413,6 +415,10 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.<br>
 
+### `npm run build:rollup`
+
+This project can be built as a umd bundle. It produces two files `synapse-react-client.production.min.js` and `synapse-react-client.production.min.styles.css`.
+
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
@@ -539,3 +545,6 @@ For improved vscode intellisense support you can optionally add a jsconfig.json 
     }
 }
 ```
+
+# rollup.config.js
+  This is required to build a umd build, docs can be found here: https://rollupjs.org/guide/en
