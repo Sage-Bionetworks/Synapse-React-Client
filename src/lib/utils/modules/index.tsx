@@ -1,7 +1,7 @@
 
 // @ts-ignore
 import * as cloneDeepProxy from 'lodash/cloneDeep'
-const cloneDeep: (x :any) => any  = cloneDeepProxy
+const cloneDeep: (x :any) => any  = ((cloneDeepProxy as any).default) || cloneDeepProxy
 
 const uuidv4 = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -11,6 +11,7 @@ const uuidv4 = () => {
   }
   )
 }
+
 export {
   cloneDeep,
   uuidv4,

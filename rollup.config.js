@@ -47,8 +47,8 @@ export default {
 			'react' : "React",
 			'katex' : 'katex',
 			'react-plotly.js': 'Plot',
-			'react-measure': 'Measure',
-			'react-tooltip': 'ReactToolTip',
+			'react-measure': 'ReactMeasure',
+			'react-tooltip': 'ReactTooltip',
 			'prop-types': 'PropTypes',
 			'md': 'md' ,
 			'markdownitSynapse': 'markdownitSynapse' ,
@@ -62,8 +62,7 @@ export default {
 			'markdownInlineComments': 'markdownInlineComments' ,
 			'markdownBr': 'markdownBr' ,
 			'sanitizeHtml': 'sanitizeHtml' ,
-			'synapseMath': 'synapseMath',
-			'lodash/cloneDeep': '_'
+			'synapseMath': 'synapseMath'
 		},
 		format: "umd",
 		name: "SRC",

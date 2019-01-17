@@ -40,7 +40,7 @@ type Info = {
   originalColor: string
 }
 
-export default class Menu extends React.Component<Props, MenuState> {
+export default class QueryWrapperMenu extends React.Component<Props, MenuState> {
 
   public static propTypes = {
     facetName: PropTypes.string,

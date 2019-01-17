@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 // tslint:disable-next-line
-import Measure from "react-measure"
+import ReactMeasure from "react-measure"
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
@@ -245,7 +245,7 @@ export default class StackedRowHomebrew extends
         </div>
         {/* TODO: Refactor the chart into its own component */}
         <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
-          <Measure
+          <ReactMeasure
             bounds={true}
             // tslint:disable-next-line
             onResize={(contentRect: any) => {
@@ -335,7 +335,7 @@ export default class StackedRowHomebrew extends
                     </React.Fragment>)
                 })}
               </div>)}
-          </Measure>
+          </ReactMeasure>
         </div>
         <div className="row SRC-bar-border SRC-bar-border-bottom">
           <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
