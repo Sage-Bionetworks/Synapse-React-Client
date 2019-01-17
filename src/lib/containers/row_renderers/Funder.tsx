@@ -1,9 +1,13 @@
 import * as React from 'react'
 
+import ctfSvg from '../../assets/logos/ctf.svg'
+import dhartSvg from '../../assets/logos/dhart.svg'
+import ntapSvg from  '../../assets/logos/ntap.svg'
+
 const logoLinks = {
-  CTF: require('../../assets/logos/ctf.svg'),
-  'DHART SPORE': require('../../assets/logos/dhart.svg'),
-  NTAP: require('../../assets/logos/ntap.svg')
+  CTF: ctfSvg,
+  'DHART SPORE':dhartSvg,
+  NTAP: ntapSvg
 }
 
 type FunderProps = {

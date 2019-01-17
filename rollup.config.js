@@ -4,6 +4,7 @@ import image from 'rollup-plugin-image'
 import resolve from 'rollup-plugin-node-resolve';
 import svg from 'rollup-plugin-svg';
 import { uglify } from "rollup-plugin-uglify";
+import json from 'rollup-plugin-json'
 import commonjs from 'rollup-plugin-commonjs';
 
 export default {
@@ -15,6 +16,19 @@ export default {
 		'react-plotly.js',
 		'katex',
 		'react-tooltip',
+		"md",
+		"markdownitSynapse",
+		"markdownSubAlt",
+		"markdownCenterText",
+		"markdownSynapseHeading",
+		"markdownSynapseTable",
+		"markdownStrikethrough",
+		"markdownContainer",
+		"markdownEmpahsisAlt",
+		"markdownInlineComments",
+		"markdownBr",
+		"sanitizeHtml",
+		"synapseMath",
 	],
 	plugins: [
 		image(),
@@ -24,7 +38,9 @@ export default {
 		svg(),
 		commonjs({
 			include: ["node_modules/**"]
-		})
+		}),
+		json()
+		// uglify()
 	],
 	output: {
 		globals: {
@@ -34,6 +50,20 @@ export default {
 			'react-measure': 'Measure',
 			'react-tooltip': 'ReactToolTip',
 			'prop-types': 'PropTypes',
+			'md': 'md' ,
+			'markdownitSynapse': 'markdownitSynapse' ,
+			'markdownSubAlt': 'markdownSubAlt' ,
+			'markdownCenterText': 'markdownCenterText' ,
+			'markdownSynapseHeading': 'markdownSynapseHeading' ,
+			'markdownSynapseTable': 'markdownSynapseTable' ,
+			'markdownStrikethrough': 'markdownStrikethrough' ,
+			'markdownContainer': 'markdownContainer' ,
+			'markdownEmpahsisAlt': 'markdownEmpahsisAlt' ,
+			'markdownInlineComments': 'markdownInlineComments' ,
+			'markdownBr': 'markdownBr' ,
+			'sanitizeHtml': 'sanitizeHtml' ,
+			'synapseMath': 'synapseMath',
+			'lodash/cloneDeep': '_'
 		},
 		format: "umd",
 		name: "SRC",

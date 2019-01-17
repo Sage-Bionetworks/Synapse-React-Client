@@ -1,4 +1,12 @@
 import * as React from 'react'
+import ampIconHeaderSvg from '../../../assets/icons/AMP_AD/consortia-icons/amp-icon-header.svg'
+import ampIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/amp-icon.svg'
+import moveIconHeaderSvg from '../../../assets/icons/AMP_AD/consortia-icons/move-icon-header.svg'
+import moveIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/move-icon.svg'
+import ModelADIconHeaderSvg from '../../../assets/icons/AMP_AD/consortia-icons/ModelAD-icon-header.svg'
+import ModelADIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/ModelAD-icon.svg'
+import resilienceIconHeaderSvg from '../../../assets/icons/AMP_AD/consortia-icons/resilience-icon-header.svg'
+import resilienceIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/resilience-icon.svg'
 
 type ConsortiumState = {
   showMore: boolean
@@ -38,26 +46,24 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
     switch (org) {
       case 'AMP-AD':
         if (isHeader) {
-          return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/amp-icon-header.svg')}/>
+          return <img src={ampIconHeaderSvg}/>
         }
-        return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/amp-icon.svg')}/>
+        return <img src={ampIconSvg}/>
       case 'M2OVE-AD':
         if (isHeader) {
-          return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/move-icon-header.svg')}/>
+          return <img src={moveIconHeaderSvg}/>
         }
-        return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/move-icon.svg')}/>
+        return <img src={moveIconSvg}/>
       case 'MODEL-AD':
         if  (isHeader) {
-          return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/ModelAD-icon-header.svg')}/>
+          return <img src={ModelADIconHeaderSvg}/>
         }
-        return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/ModelAD-icon.svg')}/>
+        return <img src={ModelADIconSvg}/>
       case 'Resilience-AD':
         if (isHeader) {
-                    // ignore long require, this is inevitable
-                    // tslint:disable-next-line
-                    return <img src={require("../../../assets/icons/AMP_AD/consortia-icons/resilience-icon-header.svg")}/>
+          return <img src={resilienceIconHeaderSvg}/>
         }
-        return <img src={require('../../../assets/icons/AMP_AD/consortia-icons/resilience-icon.svg')}/>
+        return <img src={resilienceIconSvg}/>
       default:
         return (false)
     }

@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as Utils from '../utils'
+import projectSvg from '../../../assets/icons/project.svg'
 
 type ProjectState = {
   showMore: boolean
@@ -14,7 +15,7 @@ type ProjectProps = {
 
 export default class Study extends React.Component<ProjectProps, ProjectState> {
 
-  public static icon = <img className="iconImg" alt="" src={require('../../../assets/icons/project.svg')}/>
+  public static icon = <img className="iconImg" alt="" src={projectSvg}/>
 
   constructor(props: ProjectProps) {
     super(props)
