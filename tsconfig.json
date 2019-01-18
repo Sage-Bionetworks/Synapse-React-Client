@@ -15,7 +15,7 @@
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "rootDir": "src",
+    "rootDir": "./src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -26,6 +26,7 @@
     "noUnusedLocals": true
   },
   "exclude": [
+    "rollup.config.js",
     "node_modules",
     "build",
     "coverage",

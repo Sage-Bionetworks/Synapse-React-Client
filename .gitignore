@@ -1,5 +1,6 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
+
 # dependencies
 /node_modules
 
@@ -22,7 +23,6 @@ jsconfig.json
 
 #rollup
 .rpt2_cache
-SingleFileBuild/
 
 # css
 src/**/*.css

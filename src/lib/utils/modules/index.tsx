@@ -1,6 +1,7 @@
 
 // @ts-ignore
 import * as cloneDeepProxy from 'lodash/cloneDeep'
+// https://github.com/rollup/rollup/issues/670#issuecomment-281139978
 const cloneDeep: (x :any) => any  = ((cloneDeepProxy as any).default) || cloneDeepProxy
 
 const uuidv4 = () => {

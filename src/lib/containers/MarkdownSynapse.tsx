@@ -29,6 +29,7 @@ type MarkdownSynapseProps = {
   hasSynapseResources?: boolean;
   updateLoadState?: any;
 }
+const md = markdownit({ html: true })
 
 type MarkdownSynapseState = {
   md: any;
@@ -67,23 +68,23 @@ class MarkdownSynapse extends React.Component<
    */
   constructor(props: MarkdownSynapseProps) {
     super(props)
-    // markdownitSynapse wraps around md object and uses its own dependencies
-    markdownitSynapse.init_markdown_it(
-      md,
-      markdownSubAlt,
-      markdownEmpahsisAlt,
-      markdownCenterText,
-      markdownSynapseHeading,
-      markdownSynapseTable,
-      markdownStrikethrough,
-      markdownContainer,
-      markdownEmpahsisAlt,
-      markdownInlineComments,
-      markdownBr
+    // markdownitSynapse wraps around markdownit object and uses its own dependencies
+    markdownitSynapse.init_markdown_it(md,
+                                       markdownitSub,
+                                       markdownitSup,
+                                       markdownitCentertext,
+                                       markdownitSynapseHeading,
+                                       markdownitSynapseTable,
+                                       markdownitStrikethroughAlt,
+                                       markdownitContainer,
+                                       markdownitEmphasisAlt,
+                                       markdownitInlineComments,
+                                       markdownitBr
     )
+
     const mathSuffix = ''
-    // Update the internal md object with the wrapped synapse object
-    md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
+    // Update the internal markdownit object with the wrapped synapse object
+    md.use(markdownitSynapse, mathSuffix).use(markdownitMath, mathSuffix)
     this.state = {
       md,
       errorMessage: '',

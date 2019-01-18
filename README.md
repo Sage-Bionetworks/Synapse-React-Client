@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/Sage-Bionetworks/Synapse-React-Client.svg?branch=master)](https://travis-ci.org/Sage-Bionetworks/Synapse-React-Client)  [![npm version](https://badge.fury.io/js/synapse-react-client.svg)](https://badge.fury.io/js/synapse-react-client)
 
-
-
 ## Synapse React Client
 
 This project helps you integrate your app with the Synapse API backend.
@@ -23,7 +21,10 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  ```
 
 ## Installation without npm or yarn
-You can use a cdn containing the javascript and css required for the client here-
+To see an example index.html page with all the necessary imports view here - [here](https://github.com/Sage-Bionetworks/Synapse-React-Client/tree/master/src/SingleFileBuild/index.html)
+
+
+You can use a cdn containing the javascript and css required for the client here (the client is exposed as SRC to the browser)-
 ``` html
 <script crossorigin src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.min.js"/>
 <link rel="stylesheet" rel="stylesheet" src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.styles.css"/>
@@ -32,14 +33,15 @@ Note there are a number of CDNs required to finish this functionality-
 
 **react**
 ``` html
-  <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"/>
-  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.min.js" integrity="sha256-NmmDcgvrXeKbOwVBbplNFlX4dj72UBwMTOB9VP9dptU=" crossorigin="anonymous"/>
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.6/prop-types.min.js"></script>
 ```
 
 **katex**
 ``` html
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous"/>
+  
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"/>
 ```
 
@@ -50,12 +52,29 @@ Note there are a number of CDNs required to finish this functionality-
 ```
 **react-measure**
 ``` html
-  <script crossorigin src="https://unpkg.com/react-measure/dist/react-measure.js"/>
+  <script src="https://unpkg.com/react-measure@2.2.2/dist/index.umd.js"></script>
 ```
 
 **react-tooltip**
 ```html
-  <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"/>
+  <script crossorigin <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"> </script>
+```
+
+**markdown**
+``` html
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-synapse@1.1.1/dist/markdown-it-synapse.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-center-text@1.0.4/dist/markdown-it-center-text.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-synapse-heading@1.0.1/dist/markdown-it-synapse-heading.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-synapse-table@1.0.6/dist/markdown-it-synapse-table.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-strikethrough-alt@1.0.0/dist/markdown-it-strikethrough-alt.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-emphasis-alt@1.0.8/dist/markdown-it-emphasis-alt.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-synapse-math@3.0.4/dist/markdown-it-math.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-sup-alt@1.0.2/dist/markdown-it-sup.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-sub-alt@1.0.0/dist/markdown-it-sub.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
+
 ```
 ## Examples
 
@@ -98,11 +117,9 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 #### Markdown Rendering Example
 View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
-To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a ["CustomMarkdownView"](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownView.js) component which does this. Additionally, you can configure an error message to display (demonstrated by the [CustomMarkdownErrorView](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownErrorView.js) being passed into the Markdown component).
+To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error message to display (demonstrated by the [CustomMarkdownErrorView](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownErrorView.js) being passed into the Markdown component).
 
-*Note* the *SynapseComponents.Custom\** components serve as 
-examples of possibile ideas of configuring the markdown component, but are
-not necessarily intended to be used.
+*Note* the *Custom\** components serve as template of what a client might do.
 
 ```js
   Markdown props:
@@ -124,13 +141,13 @@ Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
   import {SynapseComponents} from 'synapse-react-client'
  
 
-  <SynapseComponents.CustomMarkdownView>
+  <CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
       ownerId={"syn14568473"}
       wikiId={"582406"}
       >
     </SynapseComponents.Markdown>
-  </SynapseComponents.CustomMarkdownView>
+  </CustomMarkdownView>
 
 ```
 
@@ -141,14 +158,14 @@ Example 2: Rendering a Synapse Wiki page with the markdown already loaded
   import {SynapseComponents} from 'synapse-react-client'
  
 
-  <SynapseComponents.CustomMarkdownView>
+  <CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
       ownerId={"syn14568473"}
       wikiId={"582406"}
       markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
       >
     </SynapseComponents.Markdown>
-  </SynapseComponents.CustomMarkdownView>
+  </CustomMarkdownView>
 
 ```
 
@@ -182,7 +199,7 @@ Example 3: Rendering a Synapse Wiki page with the markdown already loaded with a
       {this.state.isLoading ? "Component loading..." : ""}
       // updateLoadState will notify this that loading from
       // componentDidMount is over
-      <SynapseComponents.CustomMarkdownView>
+      <CustomMarkdownView>
         <SynapseComponents.Markdown token={this.state.token}
             ownerId={"syn14568473"}
             wikiId={"582406"}
@@ -190,7 +207,7 @@ Example 3: Rendering a Synapse Wiki page with the markdown already loaded with a
             updateLoadState={this.handleChange}
             >
         </SynapseComponents.Markdown>
-      </SynapseComponents.CustomMarkdownView>
+      </CustomMarkdownView>
 
     }
   }
@@ -203,13 +220,13 @@ Example 3: Rendering ONLY markdown (if you know that a  wiki page has no synapse
   import {SynapseComponents} from 'synapse-react-client'
  
 
-  <SynapseComponents.CustomMarkdownView>
+  <CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
       markdown={"# my first wiki page!"}
       hasSynapseResources={false}
     >
     </SynapseComponents.Markdown>
-  </SynapseComponents.CustomMarkdownView>
+  </CustomMarkdownView>
 
 ```
 
@@ -220,12 +237,12 @@ To use the markdown component with only markdown, simply pass down a prop with t
   import {SynapseComponents} from 'synapse-react-client'
  
 
-  <SynapseComponents.CustomMarkdownView>
+  <CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
       markdown={"# my own markdown! "}
-      errorMessageView={<SynapseComponents.CustomMarkdownErrorView/>}>
+      errorMessageView={<CustomMarkdownErrorView/>}>
     </SynapseComponents.Markdown>
-  </SynapseComponents.CustomMarkdownView>
+  </CustomMarkdownView>
 
 ```
 
@@ -393,6 +410,24 @@ down once you can specify the query that will pull down the data for the child c
 ./src/lib/utils/HTTPError.js : Error class that will be thrown on failure.
 ./src/demo/containers/App.js : Demo App component
 ```
+
+## Project Development
+This project's core dependencies are [Typescript](https://www.typescriptlang.org/docs/home.html), [tslint](https://github.com/progre/tslint-config-airbnb/#readme), and [rollup](https://rollupjs.org/guide/en).
+
+Motivation for dependencies-
+  
+  * Typescript is a superset of Javascript that provides static typing. This catches many bugs at compile time and makes the client much more 
+  self-documenting.
+
+  * tslint is a linter for typescript, it analyzes the code for both coding style and potential issues.
+
+  * rollup allows the client to be built as a UMD bundle **without** having to eject the application from react's built in webpack configuation.
+
+Caveats of these dependencies-
+  When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module
+  in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](https://github.com/Sage-Bionetworks/Synapse-React-Client/rollup.config.js),
+  specify this in the `external` and `output.globals` fields.
+
 
 ## Updating this Project to New Releases
 
