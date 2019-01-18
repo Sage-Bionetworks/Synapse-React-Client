@@ -86,6 +86,7 @@
     "rollup-plugin-image": "^1.0.2",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-scss": "^0.4.0",
     "rollup-plugin-svg": "^1.0.1",
     "rollup-plugin-typescript2": "^0.18.1",

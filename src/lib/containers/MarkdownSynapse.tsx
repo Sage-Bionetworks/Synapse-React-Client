@@ -1,4 +1,3 @@
-import katex from 'katex'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
@@ -171,6 +170,8 @@ class MarkdownSynapse extends React.Component<
    * @returns {Object} Dictionary to be passed into dangerouslySetInnerHTML with markdown text
    */
   public createMarkup(text: string) {
+    console.log('this.state at 174 = ', this.state)
+    console.log('this.state.md at 174 = ', this.state.md)
     const initText = this.state.md.render(text)
     const cleanText = sanitizeHtml(initText, {
       allowedAttributes: {
@@ -297,13 +298,18 @@ class MarkdownSynapse extends React.Component<
       )
         .then((data: WikiPage) => {
           // on success grab text and append to the default text
+          console.log('data got back is ', data)
           const initText = this.state.text
+          console.log('made it to line 302')
+          console.log('has markdown field = ', data.markdown)
           this.setState({
             text: initText + data.markdown
           })
+          console.log('made it to line 306')
           if (this.props.updateLoadState) {
             this.props.updateLoadState({ isLoading: false })
           }
+          console.log('made it to line 310')
         })
         .catch((err) => {
           console.log('Error on wiki markdown load\n', err)

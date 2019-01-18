@@ -3,8 +3,11 @@ import scss from 'rollup-plugin-scss'
 import image from 'rollup-plugin-image'
 import resolve from 'rollup-plugin-node-resolve';
 import svg from 'rollup-plugin-svg';
-import { uglify } from 'rollup-plugin-uglify';
 import json from 'rollup-plugin-json'
+import postprocess from 'rollup-plugin-postprocess';
+import { uglify } from 'rollup-plugin-uglify';
+import commonjs from 'rollup-plugin-commonjs'
+
 
 export default {
 	input: 'src/lib/index.tsx',
@@ -36,14 +39,19 @@ export default {
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
 		resolve(),
 		svg(),
-		json()
-		// uglify()
+		json(),
+		postprocess([
+            [
+				/React.createElement\(Plot, { data: plotData, layout: layout }\)/g, 
+				'React.createElement(createPlotlyComponent(Plotly), { data: plotData, layout: layout })']
+		]),
+		commonjs()
 	],
 	output: {
 		globals: {
 			'react' : 'React',
 			'katex' : 'katex',
-			'react-plotly.js': 'Plot',
+			'react-plotly.js': 'createPlotlyComponent(Plotly)',
 			'react-measure': 'ReactMeasure',
 			'react-tooltip': 'ReactTooltip',
 			'prop-types': 'PropTypes',
