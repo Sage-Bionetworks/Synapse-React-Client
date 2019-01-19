@@ -40,11 +40,17 @@ export default {
 		resolve(),
 		svg(),
 		json(),
+		// The plugin below is used to mitigate a limitation of rollup which is that an import statement
+		// can only be set as a global variable as the module names its imported as. In this case-
+		// 		import Plotly from 'react-plotly.js' 
+		// doesn't work because plotly exposes a method createPlotlyComponent and not a class Plotly, so 
+		// we do this text transformation.
 		postprocess([
             [
 				/React.createElement\(Plot, { data: plotData, layout: layout }\)/g, 
 				'React.createElement(createPlotlyComponent(Plotly), { data: plotData, layout: layout })']
 		]),
+		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs()
 	],
 	output: {
