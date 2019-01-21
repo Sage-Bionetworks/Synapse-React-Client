@@ -13,9 +13,7 @@ type ProjectProps = {
   schema?: any
 }
 
-export default class Study extends React.Component<ProjectProps, ProjectState> {
-
-  public static icon = <img className="iconImg" alt="" src={projectSvg}/>
+export default class Project extends React.Component<ProjectProps, ProjectState> {
 
   constructor(props: ProjectProps) {
     super(props)
@@ -60,27 +58,26 @@ export default class Study extends React.Component<ProjectProps, ProjectState> {
     }
 
     return (
-            <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
-                <div className="SRC-cardThumbnail">
-                    {Study.icon}
-                </div>
-                <div className="SRC-cardContent">
-                    <div className="SRC-type">Project</div>
-                    <div className="SRC-title">
-                        <h3>
-                            <a target="_blank" href={link}>
-                                {name}
-                            </a>
-                        </h3>
-                    </div>
-                    <div className="SRC-author SRC-boldText">{investigators}</div>
-                    <span className="SRC-font-size-base">
-                        <Utils.ShowMore onClick={this.handleClick} summary={abstract} />
-                    </span>
-                </div>
-                <Utils.CardFooter extraWide={true} values={values} />
-            </div>
-
+      <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+          <div className="SRC-cardThumbnail">
+            <img className="iconImg" alt="" src={projectSvg}/>
+          </div>
+          <div className="SRC-cardContent">
+              <div className="SRC-type">Project</div>
+              <div className="SRC-title">
+                  <h3>
+                      <a target="_blank" href={link}>
+                          {name}
+                      </a>
+                  </h3>
+              </div>
+              <div className="SRC-author SRC-boldText">{investigators}</div>
+              <span className="SRC-font-size-base">
+                  <Utils.ShowMore onClick={this.handleClick} summary={abstract} />
+              </span>
+          </div>
+          <Utils.CardFooter extraWide={true} values={values} />
+      </div>
     )
   }
 }

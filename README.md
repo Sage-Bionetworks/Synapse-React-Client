@@ -42,13 +42,13 @@ Note there are a number of CDNs required to finish this functionality-
 ``` html
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous"/>
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
 ```
 
 **react-plotly**
 ``` html
-  <script crossorigin src="https://cdn.plot.ly/plotly-1.31.2.min.js"/>
-  <script crossorigin src="https://unpkg.com/react-plotly.js@1.1.1/dist/create-plotly-component.js"/>
+  <script crossorigin src="https://cdn.plot.ly/plotly-1.31.2.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-plotly.js@1.1.1/dist/create-plotly-component.js"></script>
 ```
 **react-measure**
 ``` html
@@ -57,24 +57,23 @@ Note there are a number of CDNs required to finish this functionality-
 
 **react-tooltip**
 ```html
-  <script crossorigin <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"> </script>
+  <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"> </script>
 ```
 
 **markdown**
 ``` html
-<script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-synapse@1.1.1/dist/markdown-it-synapse.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-center-text@1.0.4/dist/markdown-it-center-text.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-synapse-heading@1.0.1/dist/markdown-it-synapse-heading.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-synapse-table@1.0.6/dist/markdown-it-synapse-table.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-strikethrough-alt@1.0.0/dist/markdown-it-strikethrough-alt.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-emphasis-alt@1.0.8/dist/markdown-it-emphasis-alt.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-synapse-math@3.0.4/dist/markdown-it-math.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-sup-alt@1.0.2/dist/markdown-it-sup.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-sub-alt@1.0.0/dist/markdown-it-sub.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-synapse@1.1.1/dist/markdown-it-synapse.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-center-text@1.0.4/dist/markdown-it-center-text.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-synapse-heading@1.0.1/dist/markdown-it-synapse-heading.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-synapse-table@1.0.6/dist/markdown-it-synapse-table.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-strikethrough-alt@1.0.0/dist/markdown-it-strikethrough-alt.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-emphasis-alt@1.0.8/dist/markdown-it-emphasis-alt.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-synapse-math@3.0.4/dist/markdown-it-math.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-sup-alt@1.0.2/dist/markdown-it-sup.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-sub-alt@1.0.0/dist/markdown-it-sub.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
+  <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
 ```
 ## Examples
 
@@ -416,16 +415,14 @@ This project's core dependencies are [Typescript](https://www.typescriptlang.org
 
 Motivation for dependencies-
   
-  * Typescript is a superset of Javascript that provides static typing. This catches many bugs at compile time and makes the client much more 
-  self-documenting.
+  * Typescript is a superset of Javascript that provides static typing. This catches many bugs at compile time and makes the client much more self-documenting.
 
   * tslint is a linter for typescript, it analyzes the code for both coding style and potential issues.
 
   * rollup allows the client to be built as a UMD bundle **without** having to eject the application from react's built in webpack configuation.
 
 Caveats of these dependencies-
-  When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module
-  in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](https://github.com/Sage-Bionetworks/Synapse-React-Client/rollup.config.js),
+  When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](https://github.com/Sage-Bionetworks/Synapse-React-Client/rollup.config.js),
   specify this in the `external` and `output.globals` fields.
 
 

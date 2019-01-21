@@ -1,7 +1,7 @@
+declare var katex: any
+
 declare var markdownitSynapse: any
 declare var markdownit: any
-
-declare var katex: any
 declare var markdownitSub: any
 declare var markdownitSup: any
 declare var markdownitCentertext: any
