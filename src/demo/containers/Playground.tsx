@@ -8,7 +8,7 @@ import QueryWrapperMenu from '../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../lib/utils'
 import './App.css'
 // import QueryWrapper from "src/lib/containers/QueryWrapper"
-// import StackedRowHomebrew from 'src/lib/containers/StackedRowHomebrew';
+// import StackedBarChart from 'src/lib/containers/StackedBarChart';
 // import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
 // import ColorGradient from 'src/lib/containers/ColorGradient';
 // import ColorGradient from 'src/lib/containers/ColorGradient';

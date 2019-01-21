@@ -6,7 +6,7 @@ import { SynapseConstants } from '../utils/'
 import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
-import StackedRowHomebrew from './StackedRowHomebrew'
+import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
 import SynapseTableCardView from './SynapseTableCardView'
 
@@ -167,7 +167,7 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
               token={token}
               rgbIndex={rgbIndex}
             >
-              <StackedRowHomebrew
+              <StackedBarChart
                 synapseId={config.synapseId}
                 unitDescription={(config.unitDescription || '')}
                 loadingScreen={loadingScreen}

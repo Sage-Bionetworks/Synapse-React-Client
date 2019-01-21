@@ -17,7 +17,7 @@ import { uuidv4 } from '../utils/modules'
 const PREVIOUS_ITEM_CLICK = 'left click'
 const NEXT_CLICK = 'right click'
 
-type StackedRowHomebrewState = {
+type StackedBarChartState = {
   hoverTextCount: number
   hoverText: string
   selectedFacets: {}
@@ -25,7 +25,7 @@ type StackedRowHomebrewState = {
   index: number
 }
 
-type StackedRowHomebrewProps = {
+type StackedBarChartProps = {
   loadingScreen: any
   synapseId: string
   unitDescription: string
@@ -40,17 +40,17 @@ type Info = {
 /**
  * Make a simple stacked bar char
  *
- * @class StackedRowHomebrew
+ * @class StackedBarChart
  * @extends {React.Component}
  */
-export default class StackedRowHomebrew extends
-    React.Component<StackedRowHomebrewProps & QueryWrapperChildProps, StackedRowHomebrewState> {
+export default class StackedBarChart extends
+    React.Component<StackedBarChartProps & QueryWrapperChildProps, StackedBarChartState> {
 
   public static propTypes = {
     loadingScreen: PropTypes.element
   }
 
-  constructor(props: StackedRowHomebrewProps & QueryWrapperChildProps) {
+  constructor(props: StackedBarChartProps & QueryWrapperChildProps) {
     super(props)
     this.handleHover = this.handleHover.bind(this)
     this.handleExit = this.handleExit.bind(this)
@@ -82,7 +82,7 @@ export default class StackedRowHomebrew extends
     /**
      * Updates the hover text and update the view
      *
-     * @memberof StackedRowHomebrew
+     * @memberof StackedBarChart
      */
   public handleHover(event: React.MouseEvent<SVGRectElement>) {
         // add box shadow
@@ -92,7 +92,7 @@ export default class StackedRowHomebrew extends
      * Update the hover text and the view
      *
      * @param {*} event
-     * @memberof StackedRowHomebrew
+     * @memberof StackedBarChart
      */
   public handleExit(event: React.MouseEvent<SVGRectElement>) {
         // remove box shadow

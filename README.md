@@ -273,7 +273,7 @@ An example of a view with facets/stacked bar chart/table
           showMenu
           >
           <SynapseComponents.Facets/>
-          <SynapseComponents.StackedRowHomebrew
+          <SynapseComponents.StackedBarChart
                 loadingScreen={
                   <div> I'm loading as fast as I can </div>
                 }
@@ -291,7 +291,7 @@ An example of a view with facets/stacked bar chart/table
 | ------------- | ------------- |
 | initQueryRequest  | This is the default query to be run on the first render of the component  |
 | rgbIndex | Specifies the starting index of the following color wheel: turquoise, blueberry, rose, royal, butterscotch, powder, slate, apricot, fern, lavender, apple |
-| filter | This is the facet that will be default filtered on if using any of StackedRowHomebrew/Facets/Menu. |
+| filter | This is the facet that will be default filtered on if using any of StackedBarChart/Facets/Menu. |
 | token  | Session token to make authenticated calls  |
 | loadingScreen  | UI to show when a query is being run  |
 
@@ -383,7 +383,7 @@ down once you can specify the query that will pull down the data for the child c
 | visibleColumnCount | This is the number of columns that will be displayed by default. These columns are chosen according to the order of which the columns are specified by the SELECT clause from the query producing the data for this view.  |
 | title | The name of the table |
 
-#### StackedRowHomebrew
+#### StackedBarChart
 
 | Props  | Explanation |
 | ------------- | ------------- |

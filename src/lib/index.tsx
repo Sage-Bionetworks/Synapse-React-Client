@@ -2,7 +2,7 @@ import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
-import StackedRowHomebrew from './containers/StackedRowHomebrew'
+import StackedBarChart from './containers/StackedBarChart'
 import StaticQueryWrapper from './containers/StaticQueryWrapper'
 import SynapseTable from './containers/SynapseTable'
 import SynapseTableCardView from './containers/SynapseTableCardView'
@@ -13,7 +13,7 @@ import { SynapseClient, SynapseConstants } from './utils/'
 const SynapseComponents = {
   Facets,
   QueryWrapper,
-  StackedRowHomebrew,
+  StackedBarChart,
   StaticQueryWrapper,
   SynapseTable,
   SynapseTableCardView,
