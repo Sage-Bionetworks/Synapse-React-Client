@@ -21,7 +21,7 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  ```
 
 ## Installation without npm or yarn
-To see an example index.html page with all the necessary imports view here - [here](https://github.com/Sage-Bionetworks/Synapse-React-Client/tree/master/src/SingleFileBuild/index.html)
+To see an example index.html page with all the necessary imports view [here](https://github.com/leem42/Synapse-React-Client/blob/ts/develop/src/demo/SingleFileBuild/index.html)
 
 
 You can use a cdn containing the javascript and css required for the client here (the client is exposed as SRC to the browser)-
