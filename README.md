@@ -461,15 +461,8 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.<br>
 
-For the unit tests to run correctly you will need to set the following environment variables in your shell:
-
-  ```bash
-  export REACT_APP_TEST_USERNAME=#<synapse username>
-  ```
-
-  ```bash
-  export REACT_APP_TEST_PASS=#<synapse password>
-  ```
+The client has its configuration file for tests in `src/setupTests.js`. 
+* Any predefined functionality must be defined there and CDN dependencies must imported there as npm modules. 
 
 
 ### `npm test:coverage`

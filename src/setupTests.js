@@ -3,8 +3,12 @@ import 'raf/polyfill'     // polyfill for requestAnimationFrame
 import {configure} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
-import katex from 'katex'
 
+// MarkdownSynapse dependencies below --
+// When using the component in production it relies on these imports being globals,
+// however, the testing environment doesn't have a browser loading CDNs, so we 
+// import it below. This also means that these dependencies are required in package.json
+import katex from 'katex'
 global.markdownit = require('markdown-it')
 global.markdownitSynapse = require('markdown-it-synapse')
 global.markdownitSub = require('markdown-it-sub-alt')
