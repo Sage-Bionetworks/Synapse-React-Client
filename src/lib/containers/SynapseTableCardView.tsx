@@ -217,10 +217,16 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         }
       }
       total = anyTrue ? totalStandardCase : totalAllFalseCase
-    }
 
-    if (data.queryResult.queryResults.rows.length === 0) {
-      total = 0
+      if (data.queryResult.queryResults.rows.length === 0) {
+        // we override the statements above if there are zero results because the current UI
+        // would be showing zero cards
+        total = 0
+      }
+
+    } else {
+      // If the user doesn't have a faceted view then we use length of the rows
+      total = data.queryResult.queryResults.rows.length
     }
 
     // Either the filter is defined and the count should be shown or the client defined the unit description
