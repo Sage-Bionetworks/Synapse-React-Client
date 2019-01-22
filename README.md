@@ -27,7 +27,7 @@ To see an example index.html page with all the necessary imports view [here](htt
 You can use a cdn containing the javascript and css required for the client here (the client is exposed as SRC to the browser)-
 ``` html
 <script crossorigin src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.min.js"/>
-<link rel="stylesheet" rel="stylesheet" src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.styles.css"/>
+<link rel="stylesheet" src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.styles.css"/>
 ```
 Note there are a number of CDNs required to finish this functionality-
 
@@ -110,7 +110,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       .then(response => {
         // query results are available
       }).catch(function (error) {
-        // handle Error (possibly a HTTPError)
+        // handle Error (possibly an HTTPError)
       });
 ```
 #### Markdown Rendering Example
@@ -471,7 +471,7 @@ Launches the test runner in the non-interactive mode to run all tests and calcul
 Builds the app for production to the `build` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br>
+It produces a build for npm distribution and umd. <br>
 
 ### `npm run build:rollup`
 

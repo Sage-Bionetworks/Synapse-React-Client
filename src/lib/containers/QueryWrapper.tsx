@@ -15,6 +15,7 @@ type QueryWrapperProps = {
   facetName: string
   loadingScreen?: JSX.Element
   unitDescription?: string
+  facetAliases?: {}
 }
 
 type QueryWrapperState = {
@@ -39,6 +40,7 @@ export type QueryWrapperChildProps = {
   updateParentState?: (param: any) => void
   rgbIndex?: number
   unitDescription?: string
+  facetAliases?: {}
 }
 
 /**
@@ -276,9 +278,11 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    */
   public render() {
 
+    const { facetAliases = {} } = this.props
     // inject props in children of this component
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
       return React.cloneElement(child, {
+        facetAliases,
         data: this.state.data,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,

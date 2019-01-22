@@ -17,7 +17,7 @@ type MenuState = {
   menuIndex: number
 }
 
-type MenuConfig = {
+export type MenuConfig = {
   sql: string
   facetName: string
   facetDisplayValue?: string
@@ -25,6 +25,7 @@ type MenuConfig = {
   visibleColumnCount?: number
   unitDescription?: string
   synapseId: string
+  facetAliases?: {}
 }
 
 type Props = {
@@ -88,6 +89,8 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
     const menuDropdown = menuConfig.map(
       (config: MenuConfig, index: number) => {
 
+        const { facetName, facetAliases = {} } = config
+
         const isSelected: boolean = (index === this.state.menuIndex)
         const style: any = {}
         let selectedStyling: string = ''
@@ -108,10 +111,7 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
         const infoEnter: Info = { isSelected, originalColor }
         const infoLeave: Info = { isSelected, originalColor: '#F5F5F5' }
 
-        let facetDisplayValue: string = config.facetDisplayValue || ''
-        if (!facetDisplayValue) {
-          facetDisplayValue = config.facetName
-        }
+        const facetDisplayValue: string = facetAliases[facetName] || facetName
 
         return (
           <div
@@ -130,22 +130,24 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
     const queryWrapper = menuConfig.map(
       (config: MenuConfig, index: number) => {
         const isSelected: boolean = (this.state.menuIndex === index)
+        const { facetName, facetAliases, unitDescription = '', sql, synapseId, visibleColumnCount = 0, title } = config
         let className = ''
         if (!isSelected) {
           className = 'SRC-hidden'
         }
         let showSynTable = <div />
-        if (config.title) {
+        if (title) {
           showSynTable = (
+            // @ts-ignore
             <SynapseTable
-              title={config.title}
-              synapseId={config.synapseId}
+              title={title}
+              synapseId={synapseId}
               // specify visible column count
-              visibleColumnCount={config.visibleColumnCount || 0}
+              visibleColumnCount={visibleColumnCount}
             />)
         }
         return (
-          <span key={config.facetName} className={className} >
+          <span key={facetName} className={className} >
             <QueryWrapper
               showMenu={true}
               initQueryRequest={{
@@ -156,23 +158,25 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
                   SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
                   SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
                 query: {
+                  sql,
                   isConsistent: false,
                   limit: 25,
-                  offset: 0,
-                  sql: config.sql,
+                  offset: 0
                 }
               }}
-              unitDescription={config.unitDescription || ''}
-              facetName={config.facetName}
+              unitDescription={unitDescription}
+              facetName={facetName}
               token={token}
               rgbIndex={rgbIndex}
+              facetAliases={facetAliases}
             >
               <StackedBarChart
-                synapseId={config.synapseId}
-                unitDescription={(config.unitDescription || '')}
+                synapseId={synapseId}
+                unitDescription={unitDescription}
                 loadingScreen={loadingScreen}
               />
-              <Facets />
+              <Facets
+              />
               {showSynTable}
               {type ? <SynapseTableCardView type={type} /> : (<div />)}
             </QueryWrapper>

@@ -2,7 +2,7 @@ import * as React from 'react'
 import logoSvg from '../../images/logo.svg'
 import { SynapseClient } from '../../lib'
 // import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
-import QueryWrapperMenu from '../../lib/containers/QueryWrapperMenu'
+import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
 // import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
 // import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
 import { SynapseConstants } from '../../lib/utils'
@@ -68,10 +68,20 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
         menuConfig: [
           {
             facetName: 'assay',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            // tslint:disable-next-line:max-line-length
+            sql:
+            `SELECT id AS "File ID",
+              fundingAgency AS "Funding Agency",
+              assay AS "Assay", diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
+            `,
+            facetAliases: {
+              id: 'File ID',
+              fundingAgency: 'Funding Agency',
+              assay: 'Assay',
+            },
             synapseId: 'syn16858331',
             title: 'title',
-            unitDescription: 'diseaseFocus'
+            unitDescription: 'datum'
           },
           {
             facetName: 'dataType',
@@ -85,7 +95,7 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
             synapseId: 'syn16858331',
             title: 'title'
           }
-        ]
+        ] as MenuConfig[]
         ,
         rgbIndex: 5
       }

@@ -141,11 +141,13 @@ export default class StackedBarChart extends
 
   public getHoverText(xData: any) {
     const { index, hoverText } = this.state
+    const { facetAliases = {}, filter } = this.props
     const hoverTextDisplay = index === -1 ? (xData[0] && xData[0].value) : hoverText
+    const filterDisplay = facetAliases[filter!] || filter
     return (
       <span>
         <span className="SRC-text-title">
-          {this.props.filter}
+          {filterDisplay}
         </span> :
         <span className="SRC-text-title">
           {' '}
