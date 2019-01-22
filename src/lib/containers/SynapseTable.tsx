@@ -396,7 +396,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               </td>
             )
           }
-          return (<td key={`(${i},${j})`}/>)
+          return (<td className="SRC-hidden" key={`(${i},${j})`}/>)
         })
 
       const rowFormatted = (
@@ -436,7 +436,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         return (
           <th key={column.name}>
             <div className="SRC-centerContent">
+              <span style={{ whiteSpace: 'nowrap' }}>
               {column.name}
+              </span>
               {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
               <span
                 tabIndex={0}
@@ -453,7 +455,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </th>
         )
       }
-      return (<th key={column.name} />)
+      return (<th className="SRC-hidden" key={column.name} />)
     })
   }
 
