@@ -3,12 +3,32 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
-    <!-- synapse markdown imports -->
+    <!-- production version of react-- errors obfuscated -->
+    <!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script> -->
+    <!-- <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script> -->
+    <script crossorigin src="https://unpkg.com/prop-types@15.6/prop-types.min.js"></script>
+    
+    <!-- development version of react -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <!-- katex -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script> 
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+
+    <!-- react-measure -->
+    <script src="https://unpkg.com/react-measure@2.2.2/dist/index.umd.js"></script>
+
+    <!-- react-tooltip -->
+    <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"> </script>
+
+    <!-- plotly -->
+    <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"></script>
+
+    <!-- markdown imports  -->
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
     <script src="https://unpkg.com/markdown-it-synapse@1.1.1/dist/markdown-it-synapse.min.js"></script>
     <script src="https://unpkg.com/markdown-it-center-text@1.0.4/dist/markdown-it-center-text.min.js"></script>
@@ -23,8 +43,12 @@
     <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@2.0.0/dist/markdown-it-container.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sanitize-html@1.20.0/dist/sanitize-html.min.js"></script>
-    <!-- end synapse markdown imports -->
+    <!-- end imports -->
 
+    <!-- local imports-- change in prod -->
+    <link rel="stylesheet" href="../../umd/synapse-react-client.production.styles.css"/>
+    <script src="../../umd/synapse-react-client.production.min.js"> </script>
+    
     <!--
       Notice the use of %PUBLIC_URL% in the tag above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -37,9 +61,7 @@
     <title>Synapse React Client</title>
   </head>
   <style>
-    /* In the main css exported with the app the class below isn't doesn't use !important,
-      so that a client developer can override without hindering their css. To make our app
-      look correctly we have to override this class as a result. */
+    /* Configure css */
     .SRC-primary-background-color-hover:hover {
       background: #D53F77 !important;
       color: white;
@@ -52,7 +74,10 @@
 
   </style>
   <body>
-    <div id="root"></div>
+    <div id="panel1"></div>
+    <!-- spacer div below -->
+    <div id="panel2"></div>
+    <div style="height: 300px"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -64,4 +89,41 @@
       To create a production bundle, use `npm run build`.
     -->
   </body>
+  <script type="text/javascript">
+    const e = React.createElement;  // utility for creating elements
+    const queryWrapperMenuContainer = document.querySelector('#panel1');
+    const queryWrapperProps = {
+      token: "",
+      menuConfig: [
+        {
+          facetDisplayValue: 'Organism',
+          facetName: 'Organism',
+          sql: 'SELECT * FROM syn9886254',
+          synapseId: 'syn9886254',
+          unitDescription: 'data files',
+          visibleColumnCount: 3,
+        },
+        {
+          facetDisplayValue: 'Study',
+          facetName: 'Study',
+          sql: 'SELECT * FROM syn9886254',
+          synapseId: 'syn9886254',
+          unitDescription: 'data files',
+          visibleColumnCount: 5,
+        }
+      ],
+      rgbIndex: 2,
+      loadingScreen: e('div', null, null)
+    }
+    const markdownContainer = document.querySelector('#panel2');
+    const markdownProps = {
+      token: "4263ef88-714d-46fc-91cf-1a4cd45734e1",
+      wikiId: '582150',
+      ownerId: 'syn14306197',
+    }
+
+    ReactDOM.render(e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null), queryWrapperMenuContainer)
+    ReactDOM.render(e(SRC.SynapseComponents.Markdown, markdownProps, null), markdownContainer)
+
+  </script>
 </html>

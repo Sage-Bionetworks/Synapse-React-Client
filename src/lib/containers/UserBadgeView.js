@@ -1,6 +1,6 @@
 // FILE NOT EXPORTED - DEMO ONLY
 import React from 'react'
-const uuidv4 = require("uuid/v4")
+import { uuidv4 } from '../utils/modules'
 
 const UserBadgeView = ({data, loadingBar = (<div></div>)}) => {
     if (data.length === 0) {

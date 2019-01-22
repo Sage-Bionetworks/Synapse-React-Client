@@ -14,7 +14,7 @@ describe('renders without crashing', () => {
     SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: '${toc}\n#Heading1' }))
     const tree = await mount(<MarkdownSynapse token="" ownerId={''} wikiId={''} />)
     expect(tree.find('div.markdown')).toHaveLength(1)
-        // peculiar behavior below where only usng .render() works
+    // peculiar behavior below where only usng .render() works
     expect(tree.render().find('a.link.toc-indent1')).toHaveLength(1)
     expect(tree.render().find('h1#SRC-header-1')).toHaveLength(1)
   })

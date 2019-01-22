@@ -1,9 +1,13 @@
 import * as React from 'react'
 
+import ctfSvg from '../../assets/logos/ctf.svg'
+import dhartSvg from '../../assets/logos/dhart.svg'
+import ntapSvg from  '../../assets/logos/ntap.svg'
+
 const logoLinks = {
-  CTF: require('../../assets/logos/ctf.svg'),
-  'DHART SPORE': require('../../assets/logos/dhart.svg'),
-  NTAP: require('../../assets/logos/ntap.svg')
+  CTF: ctfSvg,
+  'DHART SPORE':dhartSvg,
+  NTAP: ntapSvg
 }
 
 type FunderProps = {
@@ -39,37 +43,38 @@ export default class Funder extends React.Component<FunderProps, {}> {
     const style: any = {}
     let showOrgLink
     if (!isOnOrgPath) {
-      style.paddingBottom = '42px'
       showOrgLink = (
-        <div className="SRC-marginAuto SRC-cardAction">
+            <div className="SRC-marginAuto SRC-cardAction">
             <button onClick={this.handleLinkClick(orgPath)} type="button">
             View Funded Research
             </button>
         </div>
         )
+    } else {
+      style.paddingBottom = '42px'
     }
     return (
-            <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape" style={style}>
-                <div className="SRC-cardContent">
-                    <div className="SRC-type">Organization</div>
-                    <div className="SRC-cardThumbnail">
-                        <img alt="funder logo" className="SRC-logo" src={logo} />
-                    </div>
-                    <div className="SRC-title">
-                        <h3>
-                            {isOnOrgPath && organizationName}
-                            {!isOnOrgPath && <a href={orgPath}>{organizationName}</a>}
-                        </h3>
-                    </div>
-                    <div className="SRC-website">
-                        <a target="_blank" href={website}>
-                            {websiteDisplayName}
-                        </a>
-                    </div>
-                    <div className="SRC-description">{summary}</div>
+        <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape" style={style}>
+            <div className="SRC-cardContent">
+                <div className="SRC-type">Organization</div>
+                <div className="SRC-cardThumbnail">
+                    <img alt="funder logo" className="SRC-logo" src={logo} />
                 </div>
-                {showOrgLink}
+                <div className="SRC-title">
+                    <h3>
+                        {isOnOrgPath && organizationName}
+                        {!isOnOrgPath && <a href={orgPath}>{organizationName}</a>}
+                    </h3>
+                </div>
+                <div className="SRC-website">
+                    <a target="_blank" href={website}>
+                        {websiteDisplayName}
+                    </a>
+                </div>
+                <div className="SRC-description">{summary}</div>
             </div>
+            {showOrgLink}
+        </div>
     )
   }
 }

@@ -1,5 +1,7 @@
 import * as React from 'react'
 import * as Utils from '../utils'
+import controlledStudySvg from '../../../assets/icons/controlledStudy.svg'
+import studyActiveSvg from '../../../assets/icons/study-active.svg'
 
 type StudyState = {
   showMore: boolean
@@ -31,9 +33,9 @@ export default class Study extends React.Component<StudyProps, StudyState> {
   public getIcon(name: string) {
     switch (name) {
       case 'Controlled':
-        return (<img src={require('../../../assets/icons/controlledStudy.svg')}/>)
+        return (<img src={controlledStudySvg}/>)
       default:
-        return (<img src={require('../../../assets/icons/study-active.svg')}/>)
+        return (<img src={studyActiveSvg}/>)
     }
   }
 

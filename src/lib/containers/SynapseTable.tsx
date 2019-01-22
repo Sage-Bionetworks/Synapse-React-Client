@@ -10,6 +10,7 @@ import { faCheck,
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
+// tslint:disable-next-line
 import closeSvg from '../assets/icons/close.svg'
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
@@ -24,7 +25,7 @@ import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 
-const uuidv4 = require('uuid/v4')
+import { uuidv4 } from '../utils/modules'
 const MIN_SPACE_FACET_MENU = 700
 
 // Add all icons to the library so you can use it in your page
@@ -36,8 +37,9 @@ library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
-
-const cloneDeep = require('lodash.clonedeep')
+// tslint:disable-next-line
+import {cloneDeep} from '../utils/modules/'
+import { SortItem } from '../utils/jsonResponses/Table/Query'
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
@@ -45,15 +47,15 @@ const SELECT_ALL = 'SELECT_ALL'
 const DESELECT_ALL = 'DESELECT_ALL'
 // double check these icons!
 const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
-const SORT_STATE = ['', 'ASC', 'DESC']
-
+type direction = ''|'ASC'|'DESC'
+const SORT_STATE: direction [] = ['', 'ASC', 'DESC']
 type Info = {
   index: number
   name: string
 }
 
 type SynapseTableState = {
-  sortSelection: SortSelection []
+  sortSelection: SortItem []
   offset: number
   isOpen: boolean
   isColumnSelected: boolean[]
@@ -70,11 +72,6 @@ type SynapseTableProps = {
   title: string
 }
 
-type SortSelection = {
-  column: string
-  name: string
-}
-
 export default class SynapseTable extends React.Component<QueryWrapperChildProps &
                                                           SynapseTableProps, SynapseTableState> {
 
@@ -86,7 +83,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   constructor(props: QueryWrapperChildProps & SynapseTableProps) {
     super(props)
-    this.handleColumnClick = this.handleColumnClick.bind(this)
+    this.handleColumnSortPress = this.handleColumnSortPress.bind(this)
     this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
@@ -97,6 +94,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
     this.showPaginationButtons = this.showPaginationButtons.bind(this)
+    this.getFacetAliasIfDefined = this.getFacetAliasIfDefined.bind(this)
         // store the offset and sorted selection that is currently held
     this.state = {
       applyClickedArray: Array(100).fill(false),
@@ -111,6 +109,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
   }
+
+  public getFacetAliasIfDefined(facetName: string) {
+    const { facetAliases = {} } = this.props
+    return facetAliases[facetName] || facetName
+  }
+
     /**
      * Display the view
      */
@@ -271,7 +275,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    *
    * @memberof SynapseTable
    */
-  private handleColumnClick = (dict: Info) => (event: React.SyntheticEvent) => {
+  private handleColumnSortPress = (dict: Info) => (_: React.SyntheticEvent) => {
     // by using Synthetic event we can use the handler on both key press and mouse click
     let columnIconState = cloneDeep(this.state.columnIconState)
     if (columnIconState.length === 0) {
@@ -423,7 +427,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const columnIndex: number = columnIconState[index] === undefined ? 0 : this.state.columnIconState[index]
         // we have to figure out if the current column is a facet selection
         const facetIndex: number = facets.findIndex((value: FacetColumnResult) => {
-          return value.columnName === column.name
+          return this.getFacetAliasIfDefined(value.columnName) === column.name
         })
         const isFacetSelection: boolean = facetIndex !== -1
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
@@ -437,8 +441,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               <span
                 tabIndex={0}
                 className={sortSpanBackgoundClass}
-                onKeyPress={this.handleColumnClick({ index, name: column.name })}
-                onClick={this.handleColumnClick({ index, name: column.name })}
+                onKeyPress={this.handleColumnSortPress({ index, name: column.name })}
+                onClick={this.handleColumnSortPress({ index, name: column.name })}
               >
                 <FontAwesomeIcon
                   className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
@@ -462,10 +466,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @returns -1 if not present, otherwise the index of the object
    * @memberof SynapseTable
    */
-  private findSelectionIndex(sortSelection: SortSelection [], name: string) {
+  private findSelectionIndex(sortSelection: SortItem [], name: string) {
     if (sortSelection.length !== 0) {
       // find if the current selection exists already and remove it
-      return sortSelection.findIndex((el: SortSelection) => el.column === name)
+      return sortSelection.findIndex((el: SortItem) => el.column === name)
     }
     return -1
   }
@@ -700,8 +704,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                   className="SRC-flex SRC-table-dropdown-content"
                 >
                   <p className="SRC-table-dropdown-text">
-                    {columnName} ({numFacets})
-                                    </p>
+                    {this.getFacetAliasIfDefined(columnName)} ({numFacets})
+                  </p>
                   <button
                     className="SRC-table-dropdown-close btn pull-right"
                     onClick={toggleDropdown}

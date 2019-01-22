@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 // tslint:disable-next-line
-import Measure, { ContentRect } from "react-measure"
+import ReactMeasure from "react-measure"
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
@@ -13,19 +13,19 @@ import { QueryWrapperChildProps } from './QueryWrapper'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
-const uuidv4 = require('uuid/v4')
+import { uuidv4 } from '../utils/modules'
 const PREVIOUS_ITEM_CLICK = 'left click'
 const NEXT_CLICK = 'right click'
 
-type StackedRowHomebrewState = {
+type StackedBarChartState = {
   hoverTextCount: number
   hoverText: string
   selectedFacets: {}
-  dimensions: ContentRect
+  dimensions: any
   index: number
 }
 
-type StackedRowHomebrewProps = {
+type StackedBarChartProps = {
   loadingScreen: any
   synapseId: string
   unitDescription: string
@@ -40,17 +40,17 @@ type Info = {
 /**
  * Make a simple stacked bar char
  *
- * @class StackedRowHomebrew
+ * @class StackedBarChart
  * @extends {React.Component}
  */
-export default class StackedRowHomebrew extends
-    React.Component<StackedRowHomebrewProps & QueryWrapperChildProps, StackedRowHomebrewState> {
+export default class StackedBarChart extends
+    React.Component<StackedBarChartProps & QueryWrapperChildProps, StackedBarChartState> {
 
   public static propTypes = {
     loadingScreen: PropTypes.element
   }
 
-  constructor(props: StackedRowHomebrewProps & QueryWrapperChildProps) {
+  constructor(props: StackedBarChartProps & QueryWrapperChildProps) {
     super(props)
     this.handleHover = this.handleHover.bind(this)
     this.handleExit = this.handleExit.bind(this)
@@ -82,7 +82,7 @@ export default class StackedRowHomebrew extends
     /**
      * Updates the hover text and update the view
      *
-     * @memberof StackedRowHomebrew
+     * @memberof StackedBarChart
      */
   public handleHover(event: React.MouseEvent<SVGRectElement>) {
         // add box shadow
@@ -92,7 +92,7 @@ export default class StackedRowHomebrew extends
      * Update the hover text and the view
      *
      * @param {*} event
-     * @memberof StackedRowHomebrew
+     * @memberof StackedBarChart
      */
   public handleExit(event: React.MouseEvent<SVGRectElement>) {
         // remove box shadow
@@ -141,11 +141,13 @@ export default class StackedRowHomebrew extends
 
   public getHoverText(xData: any) {
     const { index, hoverText } = this.state
+    const { facetAliases = {}, filter } = this.props
     const hoverTextDisplay = index === -1 ? (xData[0] && xData[0].value) : hoverText
+    const filterDisplay = facetAliases[filter!] || filter
     return (
       <span>
         <span className="SRC-text-title">
-          {this.props.filter}
+          {filterDisplay}
         </span> :
         <span className="SRC-text-title">
           {' '}
@@ -245,10 +247,10 @@ export default class StackedRowHomebrew extends
         </div>
         {/* TODO: Refactor the chart into its own component */}
         <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
-          <Measure
+          <ReactMeasure
             bounds={true}
             // tslint:disable-next-line
-            onResize={(contentRect: ContentRect) => {
+            onResize={(contentRect: any) => {
               this.setState({ dimensions: contentRect })
             }}
           >
@@ -335,7 +337,7 @@ export default class StackedRowHomebrew extends
                     </React.Fragment>)
                 })}
               </div>)}
-          </Measure>
+          </ReactMeasure>
         </div>
         <div className="row SRC-bar-border SRC-bar-border-bottom">
           <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
@@ -372,7 +374,7 @@ export default class StackedRowHomebrew extends
     return xData
   }
 
-  public onMeasureResize(contentRect: ContentRect) {
+  public onMeasureResize(contentRect: any) {
     this.setState({ dimensions: contentRect })
   }
 }

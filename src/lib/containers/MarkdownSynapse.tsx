@@ -1,14 +1,14 @@
-import katex from 'katex'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
-import * as SynapseClient from '../utils/SynapseClient'
+import { SynapseClient } from '../utils/'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
-
-const uuidv4 = require('uuid/v4')
+import {
+  uuidv4
+} from '../utils/modules'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -19,21 +19,6 @@ const TOC_CLASS = {
 }
 const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
 const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
-
-const md = require('markdown-it')({ html: true })
-const markdownitSynapse = require('markdown-it-synapse')
-const markdownSubAlt = require('markdown-it-sub-alt')
-const markdownCenterText = require('markdown-it-center-text')
-const markdownSynapseHeading = require('markdown-it-synapse-heading')
-const markdownSynapseTable = require('markdown-it-synapse-table')
-const markdownStrikethrough = require('markdown-it-strikethrough-alt')
-const markdownContainer = require('markdown-it-container')
-const markdownEmpahsisAlt = require('markdown-it-emphasis-alt')
-const markdownInlineComments = require('markdown-it-inline-comments')
-const markdownBr = require('markdown-it-br')
-const sanitizeHtml = require('sanitize-html')
-const synapseMath = require('markdown-it-synapse-math')
-
 type MarkdownSynapseProps = {
   errorMessageView?: JSX.Element;
   token?: string;
@@ -43,6 +28,7 @@ type MarkdownSynapseProps = {
   hasSynapseResources?: boolean;
   updateLoadState?: any;
 }
+const md = markdownit({ html: true })
 
 type MarkdownSynapseState = {
   md: any;
@@ -81,23 +67,23 @@ class MarkdownSynapse extends React.Component<
    */
   constructor(props: MarkdownSynapseProps) {
     super(props)
-    // markdownitSynapse wraps around md object and uses its own dependencies
-    markdownitSynapse.init_markdown_it(
-      md,
-      markdownSubAlt,
-      markdownEmpahsisAlt,
-      markdownCenterText,
-      markdownSynapseHeading,
-      markdownSynapseTable,
-      markdownStrikethrough,
-      markdownContainer,
-      markdownEmpahsisAlt,
-      markdownInlineComments,
-      markdownBr
+    // markdownitSynapse wraps around markdownit object and uses its own dependencies
+    markdownitSynapse.init_markdown_it(md,
+                                       markdownitSub,
+                                       markdownitSup,
+                                       markdownitCentertext,
+                                       markdownitSynapseHeading,
+                                       markdownitSynapseTable,
+                                       markdownitStrikethroughAlt,
+                                       markdownitContainer,
+                                       markdownitEmphasisAlt,
+                                       markdownitInlineComments,
+                                       markdownitBr
     )
+
     const mathSuffix = ''
-    // Update the internal md object with the wrapped synapse object
-    md.use(markdownitSynapse, mathSuffix).use(synapseMath, mathSuffix)
+    // Update the internal markdownit object with the wrapped synapse object
+    md.use(markdownitSynapse, mathSuffix).use(markdownitMath, mathSuffix)
     this.state = {
       md,
       errorMessage: '',

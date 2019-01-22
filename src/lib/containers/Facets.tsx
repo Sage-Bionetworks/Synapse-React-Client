@@ -6,8 +6,8 @@ import { FacetColumnResult, FacetColumnResultValues } from '../utils/jsonRespons
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
+import { cloneDeep } from '../utils/modules/'
 
-const cloneDeep = require('lodash.clonedeep')
 const SELECT_ALL = 'select all'
 const DESELECT_ALL = 'deselect all'
 
@@ -171,8 +171,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
     }
     const { isChecked } = cloneDeep(this.props)
-    const isCheckedValue = isChecked[dict.index]
-    isChecked[dict.index] = isCheckedValue === undefined ? false : !isChecked[dict.index]
+    const isCheckedValue = isChecked![dict.index]
+    isChecked![dict.index] = isCheckedValue === undefined ? false : !isChecked![dict.index]
 
     queryRequest.query.selectedFacets = selectedFacets
     queryRequest.query.offset = 0
@@ -196,9 +196,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     // clicked that initiated this function call
     for (let i = 0; i < 100; i += 1) {
       if (selectionGroup === SELECT_ALL) {
-        isChecked[i] = true
+        isChecked![i] = true
       } else {
-        isChecked[i] = false
+        isChecked![i] = false
       }
     }
     // we update the parent state with isChecked so that the barchart will reflect

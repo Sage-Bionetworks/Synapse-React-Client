@@ -1,6 +1,6 @@
 import React from 'react'
 import UserBadgeBatch from './UserBadgeBatch'
-import * as SynapseClient from '../utils/SynapseClient'
+import {SynapseClient} from '../utils/'
 
 export default class TeamMemberList extends React.Component {
     constructor() {

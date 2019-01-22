@@ -1,4 +1,4 @@
-import * as SynapseClient from '../utils/SynapseClient'
+import { SynapseClient } from '../utils/'
 
 function getUserProfileData(principalIds: number [], token?: string) {
   return SynapseClient.getUserProfiles(principalIds).then(

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import ButtonContent from '../../assets/ButtonContent'
 import GoogleIcon from '../../assets/GoogleIcon'
-import * as SynapseClient from '../../utils/SynapseClient'
+import { SynapseClient } from '../../utils'
 
 type State = {
   username: string
