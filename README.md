@@ -116,7 +116,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 #### Markdown Rendering Example
 View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
-To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error message to display (demonstrated by the [CustomMarkdownErrorView](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/containers/CustomMarkdownErrorView.js) being passed into the Markdown component).
+To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error view to display.
 
 *Note* the *Custom\** components serve as template of what a client might do.
 
@@ -144,7 +144,7 @@ Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
     <SynapseComponents.Markdown token={this.state.token}
       ownerId={"syn14568473"}
       wikiId={"582406"}
-      >
+    >
     </SynapseComponents.Markdown>
   </CustomMarkdownView>
 
@@ -156,9 +156,9 @@ Example 2: Rendering a Synapse Wiki page with the markdown already loaded
 
   import {SynapseComponents} from 'synapse-react-client'
  
-
   <CustomMarkdownView>
-    <SynapseComponents.Markdown token={this.state.token}
+    <SynapseComponents.Markdown 
+      token={this.state.token}
       ownerId={"syn14568473"}
       wikiId={"582406"}
       markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
@@ -235,7 +235,6 @@ To use the markdown component with only markdown, simply pass down a prop with t
 
   import {SynapseComponents} from 'synapse-react-client'
  
-
   <CustomMarkdownView>
     <SynapseComponents.Markdown token={this.state.token}
       markdown={"# my own markdown! "}
@@ -366,7 +365,7 @@ down once you can specify the query that will pull down the data for the child c
 | token | Session token to make authenticated calls to Synapse |
 | rgbIndex | The index into the color pallette starting the color gradient for the view |
 | MenuConfig [] | Specifications for each view under the facet |
-| MenuConfig has keys: sql,  title,  synapseId,  facet, unitDescription, visibleColumnCount, facetDisplayValue  | sql: The query driving the specific's facets view <br/>title: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/> synapseId: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> unitDescription: This gives the units under the barchart <br/> visibleColumnCount: The number of columns to be shown for the table (NOTE: title must be specified with a non-empty string for the table to show) <br/> facetDisplayValue: The string to display for the facet's name, will default to the facetName if not specified|
+| MenuConfig has keys: sql,  title,  synapseId,  facet, unitDescription, visibleColumnCount, facetDisplayValue, facetAliases  | **sql**: The query driving the specific's facets view <br/>**title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/> **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> **unitDescription**: This gives the units under the barchart <br/> **visibleColumnCount**: The number of columns to be shown for the table (NOTE: title must be specified with a non-empty string for the table to show) <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
 | type | The type of card to show for this table view. NOTE: If not specified then no cards will render. |
 
 #### Facets
@@ -403,11 +402,36 @@ down once you can specify the query that will pull down the data for the child c
 #### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).
 
 ## Project Contents
+
+### 
 ```
-./src/lib/utils/SynapseClient.js : Contains the collection of helper functions to use the Synapse API
-./src/lib/utils/SynapseClient.test.js : Integration tests for SynapseClient helper functions.
-./src/lib/utils/HTTPError.js : Error class that will be thrown on failure.
-./src/demo/containers/App.js : Demo App component
+└── ./src
+   ├── ./__tests__ Folder of tests that contains the same structure as the lib folder
+   ├── ./demo
+   │   ├── ./containers      Demo of the Client in use with es6/jsx, imported with npm.
+   │   ├── ./SingleFileBuild Demo of the Client with pure javascript, imported as a CDN
+   ├── ./lib
+   │   ├── ./assets      Contains all the svgs/pngs needed for logos or buttons
+   │   ├── ./containers  Contains all the distributed React components
+   │   ├── ./style       Contains all the distributed css
+   │   ├── ./utils       Contains all utilities
+   │       ├── SynapseClient.js       Contains the collection of helper functions to use the Synapse API
+   │       ├── SynapseClient.test.js  Integration tests for SynapseClient helper functions.
+   │       ├── HTTPError.js           Error class that will be thrown on failure.
+   │   ├── ./mocks  Contains JSON data (soon to be deprecated) for demonstrating views powered with only JSON. In future versions,
+                    the folder will only contain data that is to be mocked for __tests__.
+   ├── /umd
+      ├── synapse-react-client.production.min.js: The umd bundle of the client's javascript.
+      ├── synapse-react-client.production.styles.css: The umd bundle of the client's styling.
+```
+
+### Configuration Files
+```
+./globals.d.ts       In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.
+./images.d.ts        File that tells TS how to handle various file extensions.
+./tsconfig.json      Typescript configuration
+./tslint.json        tslint config
+./rollup.config.json rollup config
 ```
 
 ## Project Development

@@ -6,7 +6,6 @@
   "module": "dist/index.js",
   "homepage": "https://leem42.github.io/Synapse-React-Client/",
   "files": [
-    "umd",
     "dist",
     "README.md"
   ],
