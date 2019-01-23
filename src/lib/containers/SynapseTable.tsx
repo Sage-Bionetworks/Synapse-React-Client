@@ -619,10 +619,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     // handle column selection
     const handleSelector = (selector?: string) => (event: React.SyntheticEvent<HTMLElement>) => {
-      // There is conflicting information about tslint suggestion to use for..of
-      // We ignore the suggestion
-      // tslint:disable-next-line
-      for (let i = 0; i < ref.current!.children.length; i++) {
+      for (let i = 0; i < ref.current!.children.length; i += 1) {
         const curElement = ref.current!.children[i] as HTMLLIElement
         const label = curElement.children[0] as HTMLLabelElement
         const checkbox = label.children[1] as HTMLInputElement
