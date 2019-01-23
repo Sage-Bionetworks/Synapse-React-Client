@@ -15,15 +15,15 @@ describe('it renders without crashing', () => {
 
   it('renders using json', async () => {
     const tree = await mount(
-            <StaticQueryWrapper
-                token={'1'}
-                json={syn16859448Json}
-            >
-                <SynapseTableCardView
-                    type={SynapseConstants.AMP_CONSORTIUM}
-                />
-            </StaticQueryWrapper>
-        )
+        <StaticQueryWrapper
+            token={'1'}
+            json={syn16859448Json}
+        >
+            <SynapseTableCardView
+                type={SynapseConstants.AMP_CONSORTIUM}
+            />
+        </StaticQueryWrapper>
+    )
     expect(tree).toBeDefined()
     expect(tree.find(SynapseTableCardView)).toHaveLength(1)
   })
