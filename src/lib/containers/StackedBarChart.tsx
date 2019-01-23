@@ -146,7 +146,7 @@ export default class StackedBarChart extends
     const filterDisplay = facetAliases[filter!] || filter
     return (
       <span>
-        <span className="SRC-text-title">
+        <span className="SRC-text-title SRC-filter-display">
           {filterDisplay}
         </span> :
         <span className="SRC-text-title">

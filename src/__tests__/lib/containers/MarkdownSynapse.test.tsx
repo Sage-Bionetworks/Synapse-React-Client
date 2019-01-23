@@ -9,7 +9,8 @@ it('renders without crashing', () => {
       token={''}
       markdown={''}
       hasSynapseResources={false}
-    />)
+    />
+  )
   expect(tree.find(MarkdownSynapse)).toHaveLength(1)
 })
 
@@ -19,8 +20,7 @@ describe('renders widgets ', () => {
   beforeAll(() =>  {
     SynapseClient = require('../../../lib/utils/SynapseClient')
     SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve(['']))
-  }
-  )
+  })
 
   it('renders a synapse image', async () => {
     SynapseClient.getEntityWiki = jest.fn(() =>
