@@ -15,7 +15,7 @@ describe('it renders without failing', () => {
     )
   })
 
-  it('renders the correct cards', () => {
+  it('renders a study card', () => {
     const tree = mount(
       <SynapseTableCardView data={mockData} type={SynapseConstants.STUDY} />
     )

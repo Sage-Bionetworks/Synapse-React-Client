@@ -192,6 +192,8 @@ class Demo extends React.Component<{}, DemoState> {
       case SynapseConstants.TOOL:
         sql = 'SELECT * FROM syn16859448'
         break
+      // peculiar edge case here that breaks the app..
+      // react doesn't set state when this sql statement is used below
       // case SynapseConstants.FUNDER:
       //   sql = 'SELECT * FROM syn16858699'
       //   break
@@ -227,7 +229,7 @@ class Demo extends React.Component<{}, DemoState> {
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
 
         <div className="container">
-        <Link to="/Playground"> /To Playground </Link>
+          <Link to="/Playground"> /To Playground </Link>
         </div>
 
         <Login
