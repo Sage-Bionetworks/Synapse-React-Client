@@ -65,7 +65,7 @@ type SynapseTableCardViewProps = {
   isHeader?: boolean
   isQueryWrapperChild?: boolean
   getLastQueryRequest?: () => QueryBundleRequest
-  getNextPageOfData?: (queryRequest: any) => Promise<boolean>
+  getNextPageOfData?: (queryRequest: QueryBundleRequest) => Promise<boolean>
   executeInitialQueryRequest?: () => void,
   isLoading?: boolean
   filter?: string

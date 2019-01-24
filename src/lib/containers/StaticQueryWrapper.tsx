@@ -4,7 +4,7 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 
 type StaticQueryWrapperState = {
-  data: any
+  data: QueryResultBundle
 }
 
 type StaticQueryWrapperProps = {
@@ -19,7 +19,7 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
 
   constructor(props: StaticQueryWrapperProps) {
     super(props)
-    this.state = { data: {} }
+    this.state = { data: {} as QueryResultBundle }
     this.getData = this.getData.bind(this)
   }
 

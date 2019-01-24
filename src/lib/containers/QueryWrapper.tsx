@@ -32,7 +32,7 @@ export type QueryWrapperChildProps = {
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
   executeInitialQueryRequest?: () => void
-  getNextPageOfData?: (queryRequest: any) => Promise<boolean>
+  getNextPageOfData?: (queryRequest: QueryBundleRequest) => Promise<boolean>
   getLastQueryRequest?: () => QueryBundleRequest
   isChecked?: boolean []
   data?: QueryResultBundle
@@ -145,7 +145,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private executeQueryRequest(queryRequest: any) {
+  private executeQueryRequest(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
@@ -176,7 +176,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private getNextPageOfData(queryRequest: any) {
+  private getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
