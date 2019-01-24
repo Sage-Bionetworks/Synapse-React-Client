@@ -24,7 +24,7 @@ class StaticQueryWrapper extends React.Component<StaticQueryWrapperProps, Static
   }
 
   public componentDidUpdate(prevProps: any) {
-        // re-run query if sql is updated
+    // re-run query if sql is updated
     if (this.props.sql !== prevProps.sql) {
       this.getData()
     }

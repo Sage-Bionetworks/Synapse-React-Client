@@ -1,10 +1,6 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import logoSvg from '../../images/logo.svg'
-import syn16857542Json from '../../mocks/syn16857542.json'
-import syn16858699Json from '../../mocks/syn16858699.json'
-import syn16859448Json from '../../mocks/syn16859448.json'
-import syn16859580Json from '../../mocks/syn16859580.json'
 import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
 import Login from '../../lib/containers/demo_components/Login'
 import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
@@ -15,11 +11,12 @@ import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
 // import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
 import SynapseTableCardView from '../../lib/containers/SynapseTableCardView'
-import TeamMemberList from '../../lib/containers/TeamMemberList'
+// import TeamMemberList from '../../lib/containers/TeamMemberList'
 import UserBadgeBatch from '../../lib/containers/UserBadgeBatch'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
+import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
 
 type DemoState = {
   token: string
@@ -27,10 +24,17 @@ type DemoState = {
   isLoading: boolean
   showMarkdown: boolean
   version: number
+  cardSelection: string
+  cardSql: string
+  tabOne: any
+  tabTwo: any
+  showTabOne: boolean
 }
+
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
+
  */
 class Demo extends React.Component<{}, DemoState> {
   /**
@@ -43,12 +47,76 @@ class Demo extends React.Component<{}, DemoState> {
       ownerId: '',
       showMarkdown: true,
       token: '',
-      version: 0
+      version: 0,
+      cardSql: 'SELECT * FROM syn16859448',
+      cardSelection: SynapseConstants.TOOL,
+      showTabOne: false,
+      tabOne:
+      {
+        menuConfig: [
+          {
+            // title: "Data",
+            facetDisplayValue: 'Organism',
+            facetName: 'Organism',
+            sql: 'SELECT * FROM syn9886254',
+            synapseId: 'syn9886254',
+            unitDescription: 'data files',
+            visibleColumnCount: 3,
+          },
+          {
+            facetDisplayValue: 'Study',
+            facetName: 'Study',
+            sql: 'SELECT * FROM syn9886254',
+            synapseId: 'syn9886254',
+            unitDescription: 'data files',
+            visibleColumnCount: 5,
+          }
+        ],
+        rgbIndex: 2,
+        type: SynapseConstants.AMP_STUDY
+      }
+    ,
+      tabTwo: {
+        menuConfig: [
+          {
+            facetName: 'assay',
+            // tslint:disable-next-line:max-line-length
+            sql:
+            `SELECT id AS "File ID",
+              fundingAgency AS "Funding Agency",
+              assay AS "Assay", diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
+            `,
+            facetAliases: {
+              id: 'File ID',
+              fundingAgency: 'Funding Agency',
+              assay: 'Assay',
+            },
+            synapseId: 'syn16858331',
+            title: 'title',
+            unitDescription: 'datum'
+          },
+          {
+            facetName: 'dataType',
+            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            synapseId: 'syn16858331',
+            title: 'title',
+          },
+          {
+            facetName: 'diagnosis',
+            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            synapseId: 'syn16858331',
+            title: 'title'
+          }
+        ] as MenuConfig[]
+        ,
+        rgbIndex: 5
+      }
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
+    this.handleCardSelection = this.handleCardSelection.bind(this)
   }
   /**
    * Get the current version of Synapse
@@ -105,6 +173,40 @@ class Demo extends React.Component<{}, DemoState> {
     this.setState({ showMarkdown: !this.state.showMarkdown })
   }
 
+  public handleCardSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value
+    let sql = ''
+    switch (value) {
+      case SynapseConstants.AMP_STUDY:
+        sql = 'SELECT * FROM syn9886254'
+        break
+      case SynapseConstants.AMP_PROJECT:
+        sql = 'SELECT * FROM syn17024229'
+        break
+      case SynapseConstants.AMP_CONSORTIUM:
+        sql = 'SELECT * FROM syn17024173'
+        break
+      case SynapseConstants.DATASET:
+        sql = 'SELECT * FROM syn16859580'
+        break
+      case SynapseConstants.TOOL:
+        sql = 'SELECT * FROM syn16859448'
+        break
+      // case SynapseConstants.FUNDER:
+      //   sql = 'SELECT * FROM syn16858699'
+      //   break
+      case SynapseConstants.PUBLICATION:
+        sql = 'SELECT * FROM syn16857542'
+        break
+    }
+    this.setState(
+      {
+        cardSql: sql,
+        cardSelection: value
+      }
+    )
+  }
+
   public render(): JSX.Element {
     let redirectUrl: string = 'http://localhost:3000/'
     if (process.env.NODE_ENV === 'production') {
@@ -124,7 +226,9 @@ class Demo extends React.Component<{}, DemoState> {
         </div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
 
-        <Link to="/Playground"> To Playground </Link>
+        <div className="container">
+        <Link to="/Playground"> /To Playground </Link>
+        </div>
 
         <Login
           onTokenChange={this.handleChange}
@@ -196,41 +300,44 @@ class Demo extends React.Component<{}, DemoState> {
           />
         </CustomMarkdownView>
 
-        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={'SELECT * FROM syn9886254'}>
-          <SynapseTableCardView type={SynapseConstants.AMP_STUDY} />
-        </StaticQueryWrapper>
+        <div className="container">
+          <form>
+            <label>
+              Pick a card type
+            <select value={this.state.cardSelection} onChange={this.handleCardSelection}>
+                <option value={SynapseConstants.AMP_STUDY}>{SynapseConstants.AMP_STUDY}</option>
+                <option value={SynapseConstants.AMP_CONSORTIUM}>{SynapseConstants.AMP_CONSORTIUM}</option>
+                <option value={SynapseConstants.AMP_PROJECT}>{SynapseConstants.AMP_PROJECT}</option>
+                <option value={SynapseConstants.DATASET}>{SynapseConstants.DATASET}</option>
+                <option value={SynapseConstants.TOOL}>{SynapseConstants.TOOL}</option>
+                {/* <option value={SynapseConstants.FUNDER}>{SynapseConstants.FUNDER}</option> */}
+                <option value={SynapseConstants.PUBLICATION}>{SynapseConstants.PUBLICATION}</option>
+              </select>
+            </label>
+          </form>
+          <StaticQueryWrapper sql={this.state.cardSql}>
+            <SynapseTableCardView limit={1} type={this.state.cardSelection} />
+          </StaticQueryWrapper>
+        </div>
 
-        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={'SELECT * FROM syn17024229'}>
-          <SynapseTableCardView type={SynapseConstants.AMP_PROJECT} />
-        </StaticQueryWrapper>
+        <div className="container">
+          <button
+            role="button"
+            className="btn btn-default"
+            // tslint:disable-next-line
+            onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
+          >
+            toggle tabs
+          </button>
 
-        <StaticQueryWrapper token={inDevEnv ? token : this.state.token} sql={'SELECT * FROM syn17024173'}>
-          <SynapseTableCardView
-            type={SynapseConstants.AMP_CONSORTIUM}
+          <QueryWrapperMenu
+            token={inDevEnv ? token! : this.state.token!}
+            menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
+            rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
+            type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
+            loadingScreen={<div>loading... </div>}
           />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16859580Json}>
-          <SynapseTableCardView type={SynapseConstants.DATASET} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16859448Json}>
-          <SynapseTableCardView type={SynapseConstants.TOOL} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16857542Json}>
-          <SynapseTableCardView type={SynapseConstants.PUBLICATION} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16858699Json}>
-          <SynapseTableCardView type={SynapseConstants.FUNDER} />
-        </StaticQueryWrapper>
-
-        <StaticQueryWrapper json={syn16858699Json}>
-          <SynapseTableCardView hideOrganizationLink={true} type={SynapseConstants.FUNDER} />
-        </StaticQueryWrapper>
-
-        <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
+        </div>
       </div>
     )
   }
