@@ -267,17 +267,6 @@ class Demo extends React.Component<{}, DemoState> {
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
 
-        <div className="container SRC-syn-border-spacing">
-          <button
-            className="btn btn-primary"
-            // tslint:disable-next-line
-            onClick={() => {this.removeHandler()}}
-          >
-            {' '}
-            Toggle markdown from view
-          </button>
-        </div>
-
         <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
@@ -327,7 +316,7 @@ class Demo extends React.Component<{}, DemoState> {
             // tslint:disable-next-line
             onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
           >
-            toggle tabs
+            toggle tabs for query wrapper menu
           </button>
 
           <QueryWrapperMenu
@@ -335,7 +324,7 @@ class Demo extends React.Component<{}, DemoState> {
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
             type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
-            loadingScreen={<div>loading... </div>}
+            loadingScreen={<div className="container">loading... </div>}
           />
         </div>
       </div>
