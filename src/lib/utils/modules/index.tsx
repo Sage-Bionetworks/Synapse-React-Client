@@ -2,7 +2,10 @@
 // @ts-ignore
 import * as cloneDeepProxy from 'lodash/cloneDeep'
 // wonky syntax explained here - https://github.com/rollup/rollup/issues/670#issuecomment-281139978
-const cloneDeep: (x :any) => any  = ((cloneDeepProxy as any).default) || cloneDeepProxy
+function cloneDeep <T>(x : T): T {
+  const fn = ((cloneDeepProxy as any).default) || cloneDeepProxy
+  return fn(x)
+}
 // https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 const uuidv4 = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

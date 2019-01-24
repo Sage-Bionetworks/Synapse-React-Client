@@ -81,5 +81,6 @@ export default {
 		format: 'umd',
 		name: 'SRC',
 		file: './src/umd/synapse-react-client.production.min.js',
+		sourcemap: 'inline'
 	}
 }

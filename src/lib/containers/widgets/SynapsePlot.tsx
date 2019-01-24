@@ -23,8 +23,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
     super(props)
     this.state = {
       isLoaded: false,
-            // @ts-ignore
-      queryData: {}
+      queryData: {} as QueryResultBundle
     }
     this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
     this.showPlot = this.showPlot.bind(this)

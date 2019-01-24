@@ -33,7 +33,7 @@ let mockData: QueryResultBundle = {
                 etag: "a"
             }],
             headers: [{
-                name: "header",
+                name: "Name",
                 columnType: ColumnType.STRING,
                 id: "a"
             }],

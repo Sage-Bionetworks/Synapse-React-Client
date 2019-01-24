@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import StaticQueryWrapper from '../../../lib/containers/StaticQueryWrapper'
+import { mockData } from '../../../mocks'
 import SynapseTableCardView from '../../../lib/containers/SynapseTableCardView'
+import { Study } from '../../../lib/containers/row_renderers'
 import { SynapseConstants } from '../../../lib'
 import syn16859448Json from '../../../mocks/syn16859448.json'
 
@@ -14,13 +15,12 @@ describe('it renders without failing', () => {
     )
   })
 
-  it('renders the correct cards', () => {
+  it('renders a study card', () => {
     const tree = mount(
-      <StaticQueryWrapper token={'1'} json={syn16859448Json}>
-        <SynapseTableCardView type={SynapseConstants.AMP_CONSORTIUM} />
-      </StaticQueryWrapper>
+      <SynapseTableCardView data={mockData} type={SynapseConstants.STUDY} />
     )
     expect(tree).toBeDefined()
     expect(tree.find(SynapseTableCardView)).toHaveLength(1)
+    expect(tree.find(Study)).toHaveLength(1)
   })
 })

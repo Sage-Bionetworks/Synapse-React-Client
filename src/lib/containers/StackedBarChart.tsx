@@ -17,11 +17,24 @@ import { uuidv4 } from '../utils/modules'
 const PREVIOUS_ITEM_CLICK = 'left click'
 const NEXT_CLICK = 'right click'
 
+type Rect = {
+  height: number
+  width: number
+  top: number
+  left: number
+  right: number
+  bottom: number
+}
+
+type MeasureRect = {
+  bounds: Rect
+}
+
 type StackedBarChartState = {
   hoverTextCount: number
   hoverText: string
   selectedFacets: {}
-  dimensions: any
+  dimensions: MeasureRect
   index: number
 }
 
@@ -146,7 +159,7 @@ export default class StackedBarChart extends
     const filterDisplay = facetAliases[filter!] || filter
     return (
       <span>
-        <span className="SRC-text-title">
+        <span className="SRC-text-title SRC-filter-display">
           {filterDisplay}
         </span> :
         <span className="SRC-text-title">

@@ -138,7 +138,6 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
         let showSynTable = <div />
         if (title) {
           showSynTable = (
-            // @ts-ignore
             <SynapseTable
               title={title}
               synapseId={synapseId}
