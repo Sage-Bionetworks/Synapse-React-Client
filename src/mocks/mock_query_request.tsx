@@ -9,7 +9,7 @@ let mockRequest: QueryBundleRequest = {
         limit: 0,
         offset: 0,
         selectedFacets: [],
-    sort: [],
+        sort: [],
     },
 }
 export default mockRequest

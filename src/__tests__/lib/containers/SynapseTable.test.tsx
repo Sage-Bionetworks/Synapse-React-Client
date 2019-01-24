@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { mount, shallow } from 'enzyme'
+import { shallow } from 'enzyme'
 import SynapseTable from '../../../lib/containers/SynapseTable'
 import { mockData, mockRequest } from '../../../mocks'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'

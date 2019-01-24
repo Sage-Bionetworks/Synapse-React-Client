@@ -75,6 +75,25 @@ Note there are a number of CDNs required to finish this functionality-
   <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
   <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
 ```
+
+## Theming
+### Overrides
+There are two classes to override - 
+``` css
+    /* Configure css */
+    /* This is the primary color used in the app */
+    .SRC-primary-background-color-hover:hover {
+      background: #D53F77 !important;
+      color: white;
+    }
+
+    /* Some html elements require theming to go down multiple elements */
+    .SRC-primary-background-color-hover.SRC-nested-color:hover > * {
+      background: #D53F77;
+      color: white;
+    }
+```
+
 ## Examples
 
 #### Login

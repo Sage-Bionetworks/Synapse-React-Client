@@ -93,7 +93,6 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
 
 type FacetsState = {
   selectedFacets: {},
-  isChecked: boolean []
   boxCount: number,
   showAllFacets: boolean
 }
@@ -105,7 +104,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     this.handleClick = this.handleClick.bind(this)
     this.state = {
       boxCount: 0,
-      isChecked: [],
             // we store the selected facets by column name for ease of use,
             // this has to be later converted when making the api call
       selectedFacets: {},
