@@ -456,3 +456,10 @@ export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefine
   const url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
   return doGet(url, sessionToken, endpoint)
 }
+export const getPrincipalAliasRequest = (sessionToken: string | undefined,
+                                         alias: string,
+                                         type: string,
+                                         endpoint: string = DEFAULT_ENDPOINT) => {
+  const url = 'repo/v1/principal/alias'
+  return doPost(url, { alias, type }, sessionToken, endpoint)
+}

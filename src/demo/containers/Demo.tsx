@@ -17,6 +17,7 @@ import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
+import TeamMemberList from '../../lib/containers/TeamMemberList'
 
 type DemoState = {
   token: string
@@ -329,6 +330,7 @@ class Demo extends React.Component<{}, DemoState> {
             loadingScreen={<div className="container">loading... </div>}
           />
         </div>
+        <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
       </div>
     )
   }

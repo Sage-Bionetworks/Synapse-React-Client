@@ -9,6 +9,7 @@ import SynapsePlot from './widgets/SynapsePlot'
 import {
   uuidv4
 } from '../utils/modules'
+// import UserBadge from './UserBadge'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -445,10 +446,13 @@ class MarkdownSynapse extends React.Component<
         return this.renderSynapsePlot(widgetparamsMapped)
       case 'toc':
         return this.renderSynapseTOC(originalMarkup)
+      case 'badge':
+        return this.renderUserBadge(widgetparamsMapped)
       default:
         return
     }
   }
+
   public renderSynapseButton(widgetparamsMapped: any) {
     return (
       <a
@@ -519,6 +523,12 @@ class MarkdownSynapse extends React.Component<
       return ''
     })
     return <div key={uuidv4()}>{elements}</div>
+  }
+
+  public renderUserBadge(widgetparamsMapped: any) {
+    return (<span/>)
+    // TODO: Finish UserBadge
+    // return <UserBadge alias={widgetparamsMapped.alias} type={'USER_NAME'}/>
   }
 
   public componentDidMount() {
