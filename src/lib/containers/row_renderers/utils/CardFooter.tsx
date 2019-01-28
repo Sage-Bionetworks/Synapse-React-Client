@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { uuidv4 } from '../../../utils/modules'
 
 type CardFooterProps = {
   values: any [],
@@ -7,10 +6,10 @@ type CardFooterProps = {
 }
 
 const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) => {
-  const valuesFormatted = values.map((kv) => {
+  const valuesFormatted = values.map((kv, index) => {
     if (kv[0].toUpperCase() === 'DOI') {
       return (
-        <div key={uuidv4()} className="row">
+        <div key={index} className="row">
             <div className="SRC-row-label"> {kv[0]} </div>
             <div className="SRC-row-data">
                 {' '}
@@ -22,10 +21,11 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) =
       )
     }
     if (!kv[1]) {
+      // if a field is unspecified then it's not shown
       return null
     }
     return (
-      <div key={uuidv4()} className={`row ${extraWide ? 'extraWide' : ''}`}>
+      <div key={index} className={`row ${extraWide ? 'extraWide' : ''}`}>
           <div className="SRC-verticalAlignTop SRC-row-label"> {kv[0]} </div>
           <div className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </div>
       </div>
