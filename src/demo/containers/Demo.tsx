@@ -210,6 +210,15 @@ class Demo extends React.Component<{}, DemoState> {
     )
   }
 
+  public componentDidMount() {
+    // Note:  All portals should do this once on the initial app load.
+    // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
+    SynapseClient.getSessionTokenFromCookie()
+      .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
+      .catch((error: any) => {
+        console.error(error)
+      })
+  }
   public render(): JSX.Element {
     let redirectUrl: string = 'http://localhost:3000/'
     if (process.env.NODE_ENV === 'production') {

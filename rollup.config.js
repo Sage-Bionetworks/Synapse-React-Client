@@ -33,6 +33,15 @@ export default {
 		'markdownitMath',
 		'sanitizeHtml',
 	],
+	onwarn: function(warning) {
+		// Skip certain warnings
+	
+		// Skip warning about AOT compiler (babel) use of the 'this' keyword
+		if ( warning.code === 'THIS_IS_UNDEFINED' ) { return; }
+	
+		// console.warn everything else
+		console.warn( warning.message );
+	},
 	plugins: [
 		image(),
         typescript(),
