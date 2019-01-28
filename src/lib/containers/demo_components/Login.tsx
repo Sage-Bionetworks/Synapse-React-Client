@@ -84,6 +84,7 @@ class Login extends React.Component<Props, State> {
     clickEvent.preventDefault() // avoid page refresh
     SynapseClient.login(this.state.username, this.state.password)
             .then((data: any) => {
+              SynapseClient.setSessionTokenCookie(data.sessionToken)
               this.props.onTokenChange({ token: data.sessionToken })
               this.setState({
                 errorMessage: '',
@@ -99,6 +100,7 @@ class Login extends React.Component<Props, State> {
               })
             })
   }
+
   public handleRegistration(event: React.SyntheticEvent) {
     event.preventDefault() // avoid page refresh
   }
@@ -187,6 +189,7 @@ class Login extends React.Component<Props, State> {
     if (code) {
       SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
                 .then((synToken: any) => {
+                  SynapseClient.setSessionTokenCookie(synToken.sessionToken)
                   this.props.onTokenChange({ token: synToken.sessionToken })
                   this.setState({
                     errorMessage: '',
@@ -217,6 +220,7 @@ class Login extends React.Component<Props, State> {
   }
   public onSignOut(event: any) {
     event.preventDefault()
+    SynapseClient.setSessionTokenCookie(undefined)
     this.props.onTokenChange({ token: '' })
     this.setState({
       errorMessage: '',

@@ -118,6 +118,12 @@ class Demo extends React.Component<{}, DemoState> {
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
     this.handleCardSelection = this.handleCardSelection.bind(this)
+    // Look for the session token cookie (HttpOnly, unable to directly access).  Initialize the session if it exists.
+    SynapseClient.getSessionTokenFromCookie()
+      .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
+      .catch((error: any) => {
+        console.error(error)
+      })
   }
   /**
    * Get the current version of Synapse

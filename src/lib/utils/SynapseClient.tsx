@@ -9,10 +9,17 @@ import { FaceFacetColumnValuesRequest } from './jsonResponses/Table/FacetColumnR
 
 // TODO: Create JSON response types for return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
+const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 
 function delay(t: any) {
   return new Promise((resolve) => {
     setTimeout(resolve.bind(null, null), t)
+  })
+}
+function parseJSON(response: any) {
+  return response.text()
+  .then((text: string) => {
+    return text ? JSON.parse(text) : {}
   })
 }
 const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, retries: number): Promise<any> => {
@@ -20,7 +27,7 @@ const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, re
     .then((resp) => {
       if (resp.status > 199 && resp.status < 300) {
         // ok!
-        return resp.json()
+        return parseJSON(resp)
       }
       if (resp.status === 429 || resp.status === 0) {
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
@@ -68,10 +75,12 @@ const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, re
       return Promise.reject(error)
     })
 }
+
 export const doPost = (
                         url: string,
                         requestJsonObject: any,
                         sessionToken: string | undefined,
+                        initCredentials: string | undefined,
                         endpoint: string): Promise<any> => {
   const options: any = {
     body: JSON.stringify(requestJsonObject),
@@ -81,14 +90,22 @@ export const doPost = (
       'Content-Type': 'application/json',
     },
     method: 'POST',
-    mode: 'cors'
+    mode: 'cors',
+    credentials: initCredentials
+  }
+  if (initCredentials) {
+    options.headers.credentials = initCredentials
   }
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
   }
   return fetchWithExponentialTimeout(endpoint + url, options, 1000, 5)
 }
-export const doGet = (url: string, sessionToken: string | undefined, endpoint: string) => {
+export const doGet = (
+                      url: string,
+                      sessionToken: string | undefined,
+                      initCredentials: string | undefined,
+                      endpoint: string) => {
   const options: any = {
     headers: {
       Accept: '*/*',
@@ -97,6 +114,9 @@ export const doGet = (url: string, sessionToken: string | undefined, endpoint: s
     method: 'GET',
     mode: 'cors'
   }
+  if (initCredentials) {
+    options.headers.credentials = initCredentials
+  }
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
   }
@@ -104,7 +124,7 @@ export const doGet = (url: string, sessionToken: string | undefined, endpoint: s
 }
 
 export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
-  return doGet('/repo/v1/version', undefined, endpoint) as Promise<SynapseVersion>
+  return doGet('/repo/v1/version', undefined, undefined, endpoint) as Promise<SynapseVersion>
 }
 
 export const getQueryTableResultsFromJobId = (
@@ -113,7 +133,7 @@ export const getQueryTableResultsFromJobId = (
   sessionToken: string | undefined = undefined,
   endpoint: string = DEFAULT_ENDPOINT
 ): Promise<QueryResultBundle> => {
-  return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, endpoint)
+  return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, undefined, endpoint)
     .then((resp: any) => {
       // is this the job status?
       if (resp.jobState && resp.jobState !== 'FAILED') {
@@ -179,7 +199,7 @@ export const getQueryTableResults = (
   sessionToken: string | undefined = undefined,
   endpoint: string = DEFAULT_ENDPOINT
 ): Promise<QueryResultBundle> => {
-  return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, endpoint)
+  return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, undefined, endpoint)
   .then((resp: any) => {
       // started query, now attempt to get the results.
     return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint)
@@ -263,7 +283,7 @@ export const getFullQueryTableResults = async (queryBundleRequest: any,
  *  http://docs.synapse.org/rest/POST/login.html
  */
 export const login = (username: string, password: string, endpoint = DEFAULT_ENDPOINT) => {
-  return doPost('/auth/v1/login', { username, password }, undefined, endpoint)
+  return doPost('/auth/v1/login', { username, password }, undefined, undefined, endpoint)
 }
 /**
  * Get redirect url
@@ -273,7 +293,7 @@ export const login = (username: string, password: string, endpoint = DEFAULT_END
  * @param {*} endpoint
  */
 export let oAuthUrlRequest = (provider: string, redirectUrl: string, endpoint = DEFAULT_ENDPOINT) => {
-  return doPost('/auth/v1/oauth2/authurl', { provider, redirectUrl }, undefined, endpoint)
+  return doPost('/auth/v1/oauth2/authurl', { provider, redirectUrl }, undefined, undefined, endpoint)
 }
 /**
  * Get session token from SSO
@@ -287,14 +307,16 @@ export let oAuthSessionRequest = (provider: string,
                                   authenticationCode: string | number,
                                   redirectUrl: string,
                                   endpoint: any = DEFAULT_ENDPOINT) => {
-  return doPost('/auth/v1/oauth2/session', { provider, authenticationCode, redirectUrl }, undefined, endpoint)
+  return doPost(
+    '/auth/v1/oauth2/session',
+    { provider, authenticationCode, redirectUrl }, undefined, undefined, endpoint)
 }
 /**
  * Create an entity (Project, Folder, File, Table, View)
  * http://docs.synapse.org/rest/POST/entity.html
  */
 export const createEntity = (entity: any, sessionToken: string | undefined, endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost('/repo/v1/entity', entity, sessionToken, endpoint)
+  return doPost('/repo/v1/entity', entity, sessionToken, undefined, endpoint)
 }
 /**
  * Create a project with the given name.
@@ -319,14 +341,14 @@ export const createProject = (name: string,
  * http://docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
-  return doGet('/repo/v1/userProfile', sessionToken, endpoint)
+  return doGet('/repo/v1/userProfile', sessionToken, undefined, endpoint)
 }
 /**
  * Return the User Profiles for the given list of user IDs
  * http://docs.synapse.org/rest/POST/userProfile.html
  */
 export const getUserProfiles = (userIdsArray: number[] = [], endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost('/repo/v1/userProfile', { list: userIdsArray }, undefined, endpoint)
+  return doPost('/repo/v1/userProfile', { list: userIdsArray }, undefined, undefined, endpoint)
 }
 /**
  * Return the children (Files/Folders) of the given entity (Project or Folder).
@@ -335,7 +357,7 @@ export const getUserProfiles = (userIdsArray: number[] = [], endpoint: string = 
 export const getEntityChildren = (request: any,
                                   sessionToken: string | undefined = undefined,
                                   endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost('/repo/v1/entity/children', request, sessionToken, endpoint)
+  return doPost('/repo/v1/entity/children', request, sessionToken, undefined, endpoint)
 }
 /**
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
@@ -344,7 +366,7 @@ export const getEntityChildren = (request: any,
 export const getFiles = (request: any,
                          sessionToken: string | undefined = undefined,
                          endpoint: string = DEFAULT_ENDPOINT): Promise<BatchFileResult> => {
-  return doPost('/file/v1/fileHandle/batch', request, sessionToken, endpoint)
+  return doPost('/file/v1/fileHandle/batch', request, sessionToken, undefined, endpoint)
 }
 /**
  * Bundled access to Entity and related data components.
@@ -357,7 +379,7 @@ export const getEntity = (sessionToken: string | undefined = undefined,
                           entityId: string | number,
                           endpoint = DEFAULT_ENDPOINT): Promise<Entity> => {
   const url = `/repo/v1/entity/${entityId}`
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
 }
 /**
  * Bundled access to Entity and related data components.
@@ -378,7 +400,7 @@ export const getEntityBundleForVersion = (
     url += `/version/ + ${version}`
   }
   url += `/bundle?mask= ${partsMask}`
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
 }
 /**
  * Get Wiki page contents, call is of the form:
@@ -389,7 +411,7 @@ export const getEntityWiki = (sessionToken: string | undefined,
                               wikiId: string | undefined,
                               endpoint: string = DEFAULT_ENDPOINT) => {
   const url = `/repo/v1/entity/${ownerId}/wiki/${wikiId}`
-  return doGet(url, sessionToken, endpoint) as Promise<WikiPage>
+  return doGet(url, sessionToken, undefined, endpoint) as Promise<WikiPage>
 }
 
 /**
@@ -398,7 +420,7 @@ export const getEntityWiki = (sessionToken: string | undefined,
  */
 export const getUserFavorites = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
   const url = 'repo/v1/favorite?offset=0&limit=200'
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
 }
 /**
  *  http://docs.synapse.org/rest/GET/projects/type.html
@@ -408,7 +430,7 @@ export const getUserProjectList = (sessionToken: string | undefined,
                                    projectDetails: string,
                                    endpoint = DEFAULT_ENDPOINT) => {
   const url = `repo/v1/projects/${projectDetails}?offset=0&limit=200`
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
 }
 /**
  * Get the user's list of teams they are on
@@ -417,7 +439,7 @@ export const getUserProjectList = (sessionToken: string | undefined,
  */
 export const getUserTeamList = (sessionToken: string | undefined, id: string | number, endpoint = DEFAULT_ENDPOINT) => {
   const url = `repo/v1/user/${id}/team?offset=0&limit=200`
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
 }
 /**
  * Get the user's list of teams they are on
@@ -437,7 +459,7 @@ export const getTeamList = (
   endpoint: string = DEFAULT_ENDPOINT
 ) => {
   const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}` : ''}`
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
 }
 
 export const getWikiAttachmentsFromEntity =
@@ -447,19 +469,35 @@ export const getWikiAttachmentsFromEntity =
       wikiId: string | number,
       endpoint: string = DEFAULT_ENDPOINT): Promise<FileHandleResults> => {
       const url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
-      return doGet(url, sessionToken, endpoint)
+      return doGet(url, sessionToken, undefined, endpoint)
     }
 export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefined,
                                                  id: string | number,
                                                  wikiId: string | number,
                                                  endpoint: string = DEFAULT_ENDPOINT) => {
   const url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
-  return doGet(url, sessionToken, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint)
+}
+/**
+ * Set the session token cookie.  Note that this will only succeed if your app is running on
+ * a .synapse.org subdomain.
+ *
+ * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
+ */
+export const setSessionTokenCookie = (token: string | undefined) => {
+  return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', DEFAULT_SWC_ENDPOINT)
+}
+/**
+ * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
+ * a .synapse.org subdomain.
+ */
+export const getSessionTokenFromCookie = () => {
+  return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
 }
 export const getPrincipalAliasRequest = (sessionToken: string | undefined,
                                          alias: string,
                                          type: string,
                                          endpoint: string = DEFAULT_ENDPOINT) => {
   const url = 'repo/v1/principal/alias'
-  return doPost(url, { alias, type }, sessionToken, endpoint)
+  return doPost(url, { alias, type }, sessionToken, undefined, endpoint)
 }

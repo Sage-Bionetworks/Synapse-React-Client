@@ -8,6 +8,7 @@ it('invalid call', () => {
   return SynapseClient.doGet(
     '/repo/v1/invalid',
     undefined,
+    undefined,
     'https://repo-prod.prod.sagebase.org'
   ).catch((error) => {
     expect(error.statusCode).toEqual(404)
