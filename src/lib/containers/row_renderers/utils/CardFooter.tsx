@@ -7,6 +7,10 @@ type CardFooterProps = {
 
 const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) => {
   const valuesFormatted = values.map((kv, index) => {
+    if (!kv[1]) {
+      // if a field is unspecified then it's not shown
+      return null
+    }
     if (kv[0].toUpperCase() === 'DOI') {
       return (
         <div key={index} className="row">
@@ -19,10 +23,6 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) =
             </div>
         </div>
       )
-    }
-    if (!kv[1]) {
-      // if a field is unspecified then it's not shown
-      return null
     }
     return (
       <div key={index} className={`row ${extraWide ? 'extraWide' : ''}`}>
