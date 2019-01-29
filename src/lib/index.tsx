@@ -5,6 +5,7 @@ import QueryWrapper from './containers/QueryWrapper'
 import StackedBarChart from './containers/StackedBarChart'
 import StaticQueryWrapper from './containers/StaticQueryWrapper'
 import SynapseTable from './containers/SynapseTable'
+import Login from './containers/demo_components/Login'
 import SynapseTableCardView from './containers/SynapseTableCardView'
 import './style/Cards.css'
 import './style/Portal.css'
@@ -12,6 +13,7 @@ import { SynapseClient, SynapseConstants } from './utils/'
 
 const SynapseComponents = {
   Facets,
+  Login,
   QueryWrapper,
   StackedBarChart,
   StaticQueryWrapper,
