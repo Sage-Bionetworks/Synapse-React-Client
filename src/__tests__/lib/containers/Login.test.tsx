@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import Login from '../../../lib/containers/demo_components/Login'
+import Login from '../../../lib/containers/Login'
 
 describe('test ', () => {
   it('renders correctly', () => {

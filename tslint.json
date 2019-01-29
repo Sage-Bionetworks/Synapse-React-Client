@@ -18,7 +18,8 @@
       true,
       "ban-keywords",
       "check-format",
-      "allow-pascal-case"
+      "allow-pascal-case",
+      "allow-leading-underscore"
     ],
     // uuid library and various other legacy libraries in use have unforunate
     // need for the requires statement

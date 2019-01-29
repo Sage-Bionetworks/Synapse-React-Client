@@ -35,8 +35,6 @@ type MarkdownSynapseState = {
   md: any;
   text: string;
   fileHandles?: FileHandleResults;
-  newOwnerId: string;
-  newWikiId: string;
   isLoggedIn: boolean;
   errorMessage: string;
 }
@@ -90,8 +88,6 @@ class MarkdownSynapse extends React.Component<
       errorMessage: '',
       fileHandles: undefined,
       isLoggedIn: this.props.token !== '',
-      newOwnerId: '',
-      newWikiId: '',
       text: ''
     }
     this.markupRef = React.createRef()

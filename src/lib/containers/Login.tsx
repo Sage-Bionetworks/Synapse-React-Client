@@ -1,7 +1,7 @@
 import * as React from 'react'
-import ButtonContent from '../../assets/ButtonContent'
-import GoogleIcon from '../../assets/GoogleIcon'
-import { SynapseClient } from '../../utils'
+import ButtonContent from '../assets/ButtonContent'
+import GoogleIcon from '../assets/GoogleIcon'
+import { SynapseClient } from '../utils'
 
 type State = {
   username: string
@@ -84,7 +84,9 @@ class Login extends React.Component<Props, State> {
     clickEvent.preventDefault() // avoid page refresh
     SynapseClient.login(this.state.username, this.state.password)
             .then((data: any) => {
-              SynapseClient.setSessionTokenCookie(data.sessionToken)
+              SynapseClient.setSessionTokenCookie(data.sessionToken).catch((errSetSession) => {
+                console.log('Could not set session token cookie', errSetSession)
+              })
               this.props.onTokenChange({ token: data.sessionToken })
               this.setState({
                 errorMessage: '',
@@ -93,6 +95,7 @@ class Login extends React.Component<Props, State> {
               })
             })
             .catch((err: any) => {
+              console.log('Handle login failed with err = ', err)
               this.setState({
                 errorMessage: err.reason,
                 hasLoginInFailed: true,
@@ -189,7 +192,9 @@ class Login extends React.Component<Props, State> {
     if (code) {
       SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
                 .then((synToken: any) => {
-                  SynapseClient.setSessionTokenCookie(synToken.sessionToken)
+                  SynapseClient.setSessionTokenCookie(synToken.sessionToken).catch((errSetSession) => {
+                    console.log('Error on set sesion token cookie ', errSetSession)
+                  })
                   this.props.onTokenChange({ token: synToken.sessionToken })
                   this.setState({
                     errorMessage: '',
@@ -220,7 +225,7 @@ class Login extends React.Component<Props, State> {
   }
   public onSignOut(event: any) {
     event.preventDefault()
-    SynapseClient.setSessionTokenCookie(undefined)
+    SynapseClient.setSessionTokenCookie(undefined).catch((err) => { console.log('err on set session cookie ', err) })
     this.props.onTokenChange({ token: '' })
     this.setState({
       errorMessage: '',
