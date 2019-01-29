@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
-import logoSvg from '../../images/logo.svg'
 import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
 import Login from '../../lib/containers/Login'
 import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
@@ -231,16 +229,8 @@ class Demo extends React.Component<{}, DemoState> {
       inDevEnv = true
     }
     return (
-      <div className="App">
-        <div className="App-header text-center">
-          <img src={logoSvg} className="App-logo" alt="logo" />
-          <h4 className="white-text">Synapse React Client Demo</h4>
-        </div>
+      <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-
-        <div className="container">
-          <Link to="/Playground"> /To Playground </Link>
-        </div>
 
         <Login
           onTokenChange={this.handleChange}

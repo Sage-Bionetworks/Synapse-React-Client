@@ -1,18 +1,8 @@
 import * as React from 'react'
-import logoSvg from '../../images/logo.svg'
-import { SynapseClient } from '../../lib'
-// import MarkdownSynapse from "../../lib/containers/MarkdownSynapse"
-import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
-// import StaticQueryWrapper from "../../lib/containers/StaticQueryWrapper"
-// import SynapseTableCardView from "../../lib/containers/SynapseTableCardView"
-import { SynapseConstants } from '../../lib/utils'
-import './App.css'
-// import QueryWrapper from "src/lib/containers/QueryWrapper"
-// import StackedBarChart from 'src/lib/containers/StackedBarChart';
-// import SynapseTableCardView from 'src/lib/containers/SynapseTableCardView';
-// import ColorGradient from 'src/lib/containers/ColorGradient';
-// import ColorGradient from 'src/lib/containers/ColorGradient';
-// import ColorGradient from 'src/lib/containers/ColorGradient';
+import { SynapseClient } from '../../../lib'
+import QueryWrapperMenu, { MenuConfig } from '../../../lib/containers/QueryWrapperMenu'
+import { SynapseConstants } from '../../../lib/utils'
+import '../App.css'
 
 type DemoState = {
   token: string
@@ -28,7 +18,7 @@ type DemoState = {
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-class Demo extends React.Component<{rgbIndex: number}, DemoState> {
+class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState> {
   /**
    * Maintain internal state of user session
    */
@@ -169,13 +159,7 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
     }
 
     return (
-      <div className="App">
-        <div className="App-header text-center">
-          <img src={logoSvg} className="App-logo" alt="logo" />
-          <h4 className="white-text">Playground of components under development </h4>
-        </div>
-        <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-
+      <div>
         <button
           role="button"
           className="btn btn-default"
@@ -192,25 +176,8 @@ class Demo extends React.Component<{rgbIndex: number}, DemoState> {
           type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
           loadingScreen={<div>loading... </div>}
         />
-        {/* tslint:disable-next-line */}
-{/* 
-        <StaticQueryWrapper
-            sql="SELECT * FROM syn17024173"
-            token={inDevEnv ? token! : this.state.token!}
-        >
-            <SynapseTableCardView
-              type={SynapseConstants.AMP_CONSORTIUM}
-            />
-        </StaticQueryWrapper>
-
-          <MarkdownSynapse
-            ownerId={"syn14306197"}
-            wikiId={"582150"}
-            token={inDevEnv ? token! : this.state.token!}
-          /> */}
-
       </div>
     )
   }
 }
-export default Demo
+export default QueryWrapperMenuDemo
