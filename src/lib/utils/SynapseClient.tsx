@@ -19,8 +19,21 @@ function delay(t: any) {
 function parseJSON(response: any) {
   return response.text()
   .then((text: string) => {
-    return text ? JSON.parse(text) : {}
-  })
+    let parsedJson = ''
+    try {
+      parsedJson = JSON.parse(text)
+    } catch (err) {
+      console.log('Caught exception with parsing json ', err)
+      parsedJson = text
+    }
+    return parsedJson ? parsedJson : {}
+  }).catch(
+    // this should never happen!
+    (err: string) => {
+      console.log('Caught exception loading response text ', err)
+      return {}
+    }
+  )
 }
 const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, retries: number): Promise<any> => {
   return fetch(url, options)
