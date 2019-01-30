@@ -115,7 +115,7 @@ export const doGet = (
     mode: 'cors'
   }
   if (initCredentials) {
-    options.headers.credentials = initCredentials
+    options.credentials = initCredentials
   }
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
