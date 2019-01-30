@@ -41,6 +41,8 @@
     ],
     // When this codebase becomes much more mature removing the line below could be considered
     "no-console": false,
-    "interface-name": [true, "never-prefix"]
+    "interface-name": [true, "never-prefix"],
+    // the closer jsx looks like an html template the better
+    "jsx-no-multiline-js": false
   }
 }

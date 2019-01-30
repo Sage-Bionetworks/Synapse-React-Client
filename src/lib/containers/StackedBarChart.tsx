@@ -331,7 +331,6 @@ export default class StackedBarChart extends
                               {obj.count}
                             </text>}
                           {
-                            // tslint:disable-next-line:jsx-no-multiline-js
                             (this.state.index === index || initRender) &&
                             (
                               <text

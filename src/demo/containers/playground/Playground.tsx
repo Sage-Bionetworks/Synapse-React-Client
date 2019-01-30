@@ -8,7 +8,6 @@ import SearchDemo from './SearchDemo'
  * module
  */
 const App = ({ match }: { match: match }) => {
-  console.log('match = ', match)
   return (
       <div>
         <h2>Links to components under development </h2>
