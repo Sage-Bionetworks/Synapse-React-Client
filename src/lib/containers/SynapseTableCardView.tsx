@@ -29,7 +29,7 @@ type RowContainerProps = {
 
 // Instead of giving each of the Study/Tool/etc components the same
 // props we make a simple container that does
-const RowContainer: React.SFC<RowContainerProps> = (props) => {
+export const RowContainer: React.SFC<RowContainerProps> = (props) => {
   const { type, ...rest } = props
   switch (type) {
     case STUDY:
@@ -88,6 +88,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     super(props)
     this.handleViewMore = this.handleViewMore.bind(this)
     this.getBufferData = this.getBufferData.bind(this)
+    this.gatherData = this.gatherData.bind(this)
     this.state = {
       cardLimit: PAGE_SIZE,
       hasLoadedBufferData: false,
@@ -104,32 +105,31 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
   public getBufferData() {
     // Load data ahead of the currently displayed data, do this recursively in case it needs more time
     if (!this.state.hasLoadedBufferData) {
-      setTimeout(() => {
-        if (!this.props.getLastQueryRequest) {
-          // parent component still setting up
-          this.getBufferData()
-          return
-        }
-        const queryRequest = this.props.getLastQueryRequest!()
-        if (!queryRequest.query) {
-          // parent component still setting up
-          this.getBufferData()
-          return
-        }
-        let offset = queryRequest.query.offset!
-        // if its a "previous" click subtract from the offset
-        // otherwise its next and we paginate forward
-        offset += PAGE_SIZE
-        queryRequest.query.offset = offset
-        this.props.getNextPageOfData!(queryRequest).then(
-          (hasMoreData) => {
-            this.setState({ hasMoreData, hasLoadedBufferData: true })
-          }
-        )
-      },
-                 1500
-    )
+      // the code is written this way to allow testing of gatherData
+      setTimeout(this.gatherData, 1500)
     }
+  }
+
+  public gatherData() {
+    if (!this.props.getLastQueryRequest) {
+      // parent component still setting up
+      this.getBufferData()
+      return
+    }
+    const queryRequest = this.props.getLastQueryRequest!()
+    if (!queryRequest.query) {
+      // parent component still setting up
+      this.getBufferData()
+      return
+    }
+    let offset = queryRequest.query.offset!
+    // if its a "previous" click subtract from the offset
+    // otherwise its next and we paginate forward
+    offset += PAGE_SIZE
+    queryRequest.query.offset = offset
+    this.props.getNextPageOfData!(queryRequest).then((hasMoreData) => {
+      this.setState({ hasMoreData, hasLoadedBufferData: true })
+    })
   }
 
   /**
@@ -238,7 +238,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     return (
       <div>
-        <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>
+        <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>
         {/*
           Below we loop through the rows of the table and we render a specific row, we can
           use the key={index} because the underlying table *shouldn't* be changing beneath
