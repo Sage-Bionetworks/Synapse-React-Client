@@ -58,7 +58,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             facetName: 'assay',
-            // tslint:disable-next-line:max-line-length
             sql:
             `SELECT id AS "File ID",
               fundingAgency AS "Funding Agency",
@@ -117,7 +116,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
     const QUERY = {
       entityId: 'syn12335586',
       partMask:
-        // tslint:disable-next-line
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |

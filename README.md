@@ -415,6 +415,17 @@ down once you can specify the query that will pull down the data for the child c
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
 | unitDescription | Specifies the unit description for the rows being displayed |
 
+#### SynapseTableCardViewWrapper
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| sql: string | The sql to be run against Synapse |
+| unitDescription: string | Fills in 'Displaying 50 <unitDescription> '   |
+| token?: string | Authentication token |
+| limit?: number | Used to constrain the number of cards shown |
+| type: string | Type of card to be rendered |
+| filter?: string | If rendering a faceted view this defines the facet that will be used |
+
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
 #### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).

@@ -37,8 +37,7 @@ library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
-// tslint:disable-next-line
-import {cloneDeep} from '../utils/modules/'
+import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
@@ -631,8 +630,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     const applyChanges = (_: React.SyntheticEvent<HTMLElement>) => {
       const facetValues: string[] = []
-      // tslint:disable-next-line
-      for (let i = 0; i < ref.current!.children.length; i++) {
+      for (let i = 0; i < ref.current!.children.length; i += 1) {
         const curElement = ref.current!.children[i] as HTMLLIElement
         const label = curElement.children[0] as HTMLLabelElement
         const checkbox = label.children[1] as HTMLInputElement

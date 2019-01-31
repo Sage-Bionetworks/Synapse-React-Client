@@ -58,9 +58,8 @@ describe('it performs basic functionality', () => {
       }
     )
 
-    // verify executeInitialQueryRequest was called
     const instance = wrapper.instance() as SynapseTableCardViewWrapper
-    // ensure that executeInitialQueryRequest was called
+    // verify executeInitialQueryRequest was called
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
     // await because there's async operations
     await instance.componentDidMount!()
@@ -76,7 +75,7 @@ describe('it performs basic functionality', () => {
             SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
             SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
             SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-            // NOTE: queryCount has been removed from the partmask here
+            // NOTE: queryCount has been removed from the partMask here
           ,
           query: {
             sql,
@@ -139,7 +138,6 @@ describe('it performs basic functionality', () => {
     )
 
     const instance = wrapper.instance() as SynapseTableCardViewWrapper
-    // await because there's async operations
     expect(instance.getLastQueryRequest()).toEqual({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
@@ -156,7 +154,7 @@ describe('it performs basic functionality', () => {
     })
   })
 
-  it('works with componenetDidUpdate', async () => {
+  it('componenetDidUpdate works', async () => {
     const wrapper = await mount(
       <SynapseTableCardViewWrapper
         sql={sql}

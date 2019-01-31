@@ -26,7 +26,6 @@ const App: React.SFC<{}> = () => {
         </ul>
 
         <Route exact={true} path="/" component={Demo}/>
-        {/* tslint:disable-next-line */}
         <Route path="/Playground" component={Playground}/>
       </div>
     </Router>

@@ -125,7 +125,6 @@ describe('it performs all functionality', () => {
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
     expect(wrapper.state('cardLimit')).toEqual(50)
-
   })
 
 })

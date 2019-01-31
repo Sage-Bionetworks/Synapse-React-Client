@@ -153,7 +153,6 @@ describe('it tests intuitively grabbing query table results ', () => {
     const queryBundleRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
-        // tslint:disable-next-line
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
