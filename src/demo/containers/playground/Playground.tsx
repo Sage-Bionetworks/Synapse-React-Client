@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Link, Route, match } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
+import SynapseTableCardViewDemo from './SynapseTableCardViewDemo'
 import SearchDemo from './SearchDemo'
 
 /**
@@ -17,6 +18,9 @@ const App = ({ match }: { match: match }) => {
           </li>
           <li>
             <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/SynapseTableCardViewDemo`}>SynapseTableCardViewDemo</Link>
           </li>
         </ul>
 
@@ -36,9 +40,16 @@ const App = ({ match }: { match: match }) => {
 
         <Route
           exact={true}
+          path={`${match.url}/SynapseTableCardViewDemo`}
+          // tslint:disable-next-line:jsx-no-lambda
+          component={SynapseTableCardViewDemo}
+        />
+
+        <Route
+          exact={true}
           path={match.path}
           // tslint:disable-next-line:jsx-no-lambda
-          render={() => <div/>}
+          component={() => <div/>}
         />
 
       </div>

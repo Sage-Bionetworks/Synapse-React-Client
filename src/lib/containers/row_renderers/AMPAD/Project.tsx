@@ -8,7 +8,6 @@ type ProjectState = {
 }
 
 type ProjectProps = {
-  isHeader?: boolean
   data?: any
   schema?: any
 }

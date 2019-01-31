@@ -79,7 +79,6 @@ class Demo extends React.Component<{}, DemoState> {
         menuConfig: [
           {
             facetName: 'assay',
-            // tslint:disable-next-line:max-line-length
             sql:
             `SELECT id AS "File ID",
               fundingAgency AS "Funding Agency",
@@ -139,9 +138,7 @@ class Demo extends React.Component<{}, DemoState> {
     // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
     const QUERY = {
       entityId: 'syn12335586',
-      // like it or not synapse has a bitwise protocol for parmask
       partMask:
-      // tslint:disable-next-line
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |

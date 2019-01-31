@@ -21,10 +21,8 @@ const PAGE_SIZE: number = 25
 type RowContainerProps = {
   data: any
   limit: number
-  hideOrganizationLink: boolean
   schema: any
   token?: string
-  ownerId?: string
   isHeader: boolean
   type: string
 }
@@ -66,10 +64,10 @@ type SynapseTableCardViewProps = {
   isQueryWrapperChild?: boolean
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => Promise<boolean>
-  executeInitialQueryRequest?: () => void,
   isLoading?: boolean
   filter?: string
-  unitDescription?: number
+  unitDescription?: string
+  totalResultsNoFacet?: number
 }
 
 type SynapseTableCardViewState = {
@@ -142,11 +140,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
   public handleViewMore() {
     const queryRequest = this.props.getLastQueryRequest!()
     let offset = queryRequest.query.offset!
-    // if its a "previous" click subtract from the offset
-    // otherwise its next and we paginate forward
+    // paginate forward
     offset += PAGE_SIZE
     queryRequest.query.offset = offset
-
     const { cardLimit } = this.state
     this.setState({ cardLimit: cardLimit + PAGE_SIZE })
 
@@ -162,12 +158,9 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
   public render() {
     const {
       data,
-      hideOrganizationLink = false,
       limit = Infinity,
       token = '',
-      ownerId = '',
       isHeader = false,
-      isQueryWrapperChild,
       filter,
       unitDescription,
       type
@@ -181,19 +174,17 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
         schema[element.name] = index
       })
 
-    let cardLimit = 0
-
-    // Either the number of cards to be shown is specified by the developer in the props
-    // or this card is under the query wrapper and we handle the view more button
-    cardLimit = isQueryWrapperChild ? this.state.cardLimit : limit!
+    const cardLimit = this.state.cardLimit
 
     // We want to hide the view more button if:
     //     1. On page load we get the initial results and find there are < 25 rows
+    //        or the limit was set to less than 25
     //     2. We have done a subsequent query request from init render and have found
     //        that there were no rows returned.
     //     3. If its loading then we want it to remove from the screen so the browser doesn't
     //        keep the button in focus (its a UX issue).
-    let showViewMore: boolean = isQueryWrapperChild! && data.queryResult.queryResults.rows.length >= PAGE_SIZE
+    //     4. The limit is set to less than 25
+    let showViewMore: boolean = limit >= 25 && data.queryResult.queryResults.rows.length >= PAGE_SIZE
     showViewMore = showViewMore && this.state.hasMoreData
     showViewMore = showViewMore && !this.props.isLoading
 
@@ -226,7 +217,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     } else {
       // If the user doesn't have a faceted view then we use length of the rows
-      total = data.queryResult.queryResults.rows.length
+      total = this.props.totalResultsNoFacet!
     }
 
     // Either the filter is defined and the count should be shown or the client defined the unit description
@@ -249,10 +240,12 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     return (
       <div>
-        {showCardCount && <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>}
-        {/* tslint:disable */}
-        {/* 
-          Below we loop through the rows of the table and we render a specific row, we can 
+        {
+          showCardCount &&
+          <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>
+        }
+        {/*
+          Below we loop through the rows of the table and we render a specific row, we can
           use the key={index} because the underlying table *shouldn't* be changing beneath
           us and does in fact act as a unique identifier
           */}
@@ -263,12 +256,10 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
                 <React.Fragment key={index}>
                   <RowContainer
                     type={type}
-                    hideOrganizationLink={hideOrganizationLink}
                     limit={cardLimit}
                     data={rowData.values}
                     schema={schema}
                     token={token}
-                    ownerId={ownerId}
                     isHeader={isHeader}
                   />
                 </React.Fragment>

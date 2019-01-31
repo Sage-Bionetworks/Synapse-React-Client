@@ -413,7 +413,6 @@ down once you can specify the query that will pull down the data for the child c
 | Props  | Explanation |
 | ------------- | ------------- |
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
-| hideOrganizationLink | This is a boolean, set to true it will hide the organization's link |
 | unitDescription | Specifies the unit description for the rows being displayed |
 
 

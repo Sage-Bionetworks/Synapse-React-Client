@@ -7,6 +7,7 @@ import StaticQueryWrapper from './containers/StaticQueryWrapper'
 import SynapseTable from './containers/SynapseTable'
 import Login from './containers/Login'
 import SynapseTableCardView from './containers/SynapseTableCardView'
+import SynapseTableCardViewWrapper from './containers/SynapseTableCardViewWrapper'
 import './style/Cards.css'
 import './style/Portal.css'
 import { SynapseClient, SynapseConstants } from './utils/'
@@ -20,6 +21,7 @@ const SynapseComponents = {
   SynapseTable,
   SynapseTableCardView,
   QueryWrapperMenu,
+  SynapseTableCardViewWrapper,
   Markdown: MarkdownSynapse
 }
 
