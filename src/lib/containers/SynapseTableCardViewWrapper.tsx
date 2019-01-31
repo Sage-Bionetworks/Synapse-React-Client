@@ -6,15 +6,16 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/modules'
 
-type QueryWrapperProps = {
+type SynapseTableCardViewWrapperProps = {
   sql: string
   token?: string
   limit?: number
   unitDescription: string
   type: string
+  filter?: string
 }
 
-type QueryWrapperState = {
+type State = {
   data: QueryResultBundle | undefined
   isLoadingNewData: boolean
   isLoading: boolean
@@ -29,7 +30,7 @@ type QueryWrapperState = {
  * @class QueryWrapper
  * @extends {React.Component}
  */
-export default class QueryWrapper extends React.Component<QueryWrapperProps, QueryWrapperState> {
+export default class SynapseTableCardViewWrapper extends React.Component<SynapseTableCardViewWrapperProps, State> {
 
   public static propTypes = {
     queryRequest: PropTypes.shape({
@@ -55,31 +56,16 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     token: ''
   }
 
-  constructor(props: QueryWrapperProps) {
+  constructor(props: SynapseTableCardViewWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
-    this.executeQueryRequest = this.executeQueryRequest.bind(this)
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.state = {
       data: undefined,
       isLoading: true,
       isLoadingNewData: true,
-      queryRequest: {
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-          SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-          ,
-        query: {
-          sql: this.props.sql,
-          isConsistent: false,
-          limit: 25,
-          offset: 0,
-        }
-      },
+      queryRequest: {} as QueryBundleRequest,
       totalResultsNoFacet: 0
     }
   }
@@ -118,39 +104,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @returns
    * @memberof QueryWrapper
    */
-  private getLastQueryRequest(): QueryBundleRequest {
+  public getLastQueryRequest(): QueryBundleRequest {
     return cloneDeep(this.state.queryRequest)
-  }
-
-  /**
-   * Execute the given query
-   *
-   * @param {*} queryRequest Query request as specified by
-   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-   * @memberof QueryWrapper
-   */
-  private executeQueryRequest(queryRequest: QueryBundleRequest) {
-    this.setState({
-      isLoading: true
-    })
-    SynapseClient.getIntuitiveQueryTableResults(
-      queryRequest,
-      this.props.token,
-      '',
-      this.state.data!
-    )
-      .then(
-        (data: QueryResultBundle) => {
-          const newState: any = {
-            data,
-            queryRequest: cloneDeep(queryRequest),
-            isLoading: false,
-          }
-          this.setState(newState)
-        }
-      ).catch((err: string) => {
-        console.log('Failed to get data ', err)
-      })
   }
 
   /**
@@ -160,7 +115,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private getNextPageOfData(queryRequest: QueryBundleRequest) {
+  public getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
@@ -191,16 +146,35 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private executeInitialQueryRequest() {
+  public executeInitialQueryRequest() {
     this.setState({
       isLoading: true,
       isLoadingNewData: true
     })
+
+    // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
+    // we need the sql to change
+    const initQueryRequest = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      partMask:
+        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+        SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+        ,
+      query: {
+        sql: this.props.sql,
+        isConsistent: false,
+        limit: 25,
+        offset: 0,
+      }
+    }
+
     SynapseClient
-      .getQueryTableResults(this.state.queryRequest, this.props.token)
+      .getQueryTableResults(initQueryRequest, this.props.token)
       .then(
         (data: QueryResultBundle) => {
-          const queryRequestWithoutCount = cloneDeep(this.state.queryRequest)
+          const queryRequestWithoutCount = cloneDeep(initQueryRequest)
           queryRequestWithoutCount.partMask = (
                                                 SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
                                                 SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -234,6 +208,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             unitDescription={this.props.unitDescription}
             getLastQueryRequest={this.getLastQueryRequest}
             getNextPageOfData={this.getNextPageOfData}
+            filter={this.props.filter}
           />
       </div>
     )

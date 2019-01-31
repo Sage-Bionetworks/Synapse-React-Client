@@ -181,7 +181,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     //        or the limit was set to less than 25
     //     2. We have done a subsequent query request from init render and have found
     //        that there were no rows returned.
-    //     3. If its loading then we want it to remove from the screen so the browser doesn't
+    //     3. If it's loading then we want it to remove from the screen so the browser doesn't
     //        keep the button in focus (its a UX issue).
     //     4. The limit is set to less than 25
     let showViewMore: boolean = limit >= 25 && data.queryResult.queryResults.rows.length >= PAGE_SIZE
@@ -216,13 +216,11 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
       }
 
     } else {
-      // If the user doesn't have a faceted view then we use length of the rows
+      // If the user isn't drilling down with a facet then we look at the total
+      // count passed into the view
       total = this.props.totalResultsNoFacet!
     }
 
-    // Either the filter is defined and the count should be shown or the client defined the unit description
-    // and the count should be shown.
-    const showCardCount = filter || (!filter && unitDescription)
     const showViewMoreButton = (
       showViewMore
       &&
@@ -240,10 +238,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     return (
       <div>
-        {
-          showCardCount &&
-          <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>
-        }
+        <p className="SRC-boldText SRC-text-title"> Displaying {total} {unitDescription}</p>
         {/*
           Below we loop through the rows of the table and we render a specific row, we can
           use the key={index} because the underlying table *shouldn't* be changing beneath

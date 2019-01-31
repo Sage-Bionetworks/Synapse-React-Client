@@ -4,20 +4,20 @@ import sinon from 'sinon'
 import StaticQueryWrapper from '../../../lib/containers/StaticQueryWrapper'
 import SynapseTableCardView from '../../../lib/containers/SynapseTableCardView'
 import { SynapseConstants } from '../../../lib'
-import syn16859448Json from '../../../mocks/syn16859448.json'
+import syn16787123Json from '../../../mocks/syn16787123.json'
 
 describe('it renders without crashing', () => {
   let SynapseClient
   beforeAll(() => {
     SynapseClient = require('../../../lib/utils/SynapseClient')
-    SynapseClient.getQueryTableResults = jest.fn(() =>  Promise.resolve(syn16859448Json))
+    SynapseClient.getQueryTableResults = jest.fn(() =>  Promise.resolve(syn16787123Json))
   })
 
   it('renders using json', async () => {
     const tree = await mount(
         <StaticQueryWrapper
             token={'1'}
-            json={syn16859448Json}
+            json={syn16787123Json}
         >
             <SynapseTableCardView
                 type={SynapseConstants.AMP_CONSORTIUM}

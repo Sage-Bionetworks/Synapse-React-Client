@@ -14,6 +14,7 @@ export default class SynapseTableCardViewDemo extends React.Component {
           type="study"
           sql="SELECT * FROM syn16787123"
           unitDescription="studies"
+          filter="diseaseFocus"
         />
     )
   }
