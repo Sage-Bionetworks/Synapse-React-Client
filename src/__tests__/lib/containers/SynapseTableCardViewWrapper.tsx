@@ -62,7 +62,7 @@ describe('it performs basic functionality', () => {
     // verify executeInitialQueryRequest was called
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
     // await because there's async operations
-    await instance.componentDidMount!()
+    await instance.componentDidMount()
     expect(spy).toHaveBeenCalled()
 
     // verify state was updated correctly, this also tests that executeInitialQueryRequest functions correctly

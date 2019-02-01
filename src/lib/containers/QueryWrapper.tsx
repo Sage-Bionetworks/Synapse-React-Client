@@ -134,7 +134,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @returns
    * @memberof QueryWrapper
    */
-  private getLastQueryRequest(): QueryBundleRequest {
+  public getLastQueryRequest(): QueryBundleRequest {
     return cloneDeep(this.state.lastQueryRequest)
   }
 
@@ -145,7 +145,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private executeQueryRequest(queryRequest: QueryBundleRequest) {
+  public executeQueryRequest(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
@@ -176,7 +176,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private getNextPageOfData(queryRequest: QueryBundleRequest) {
+  public getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
@@ -206,7 +206,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  private executeInitialQueryRequest() {
+  public executeInitialQueryRequest() {
     this.setState({
       isChecked: [],
       isLoading: true,
@@ -234,13 +234,13 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
   /**
    * Reset the initial set of facets for the lastQueryRequest object
    *
-   * @private
+   * @public
    * @param {QueryResultBundle} data
    * @param {string} filter the facet used to filter the synapse table
    * @returns
    * @memberof QueryWrapper
    */
-  private resetFacetSelection(data: QueryResultBundle, filter: string): QueryBundleRequest {
+  public resetFacetSelection(data: QueryResultBundle, filter: string): QueryBundleRequest {
     // we have to reset the facet selections by getting the original
     // facet corresponding to the original filter
     const facetsForFilter = data.facets.filter((obj: FacetColumnResultValues) => {
@@ -266,7 +266,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     return lastQueryRequest
   }
 
-  private updateParentState(update: any) {
+  public updateParentState(update: any) {
     // This is a hack needed because the barchart and the facets have to stay insync
     // with each other (their colors), but they exist side by side in the component tree, so we
     // have to pass the isChecked array up through querywrapper

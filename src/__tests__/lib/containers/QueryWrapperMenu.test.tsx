@@ -34,8 +34,8 @@ describe('it renders with basic functionality', () => {
     expect(tree).toBeDefined()
   })
 
-  it('renders a bar chart, table, and facets', () => {
-    const tree = mount(
+  it('renders a bar chart, table, and facets', async () => {
+    const tree = await mount(
         <QueryWrapperMenu
             menuConfig={[{ sql, facetName, synapseId, title: 'title' }]}
             token={token}
@@ -49,14 +49,14 @@ describe('it renders with basic functionality', () => {
     expect(tree.find(SynapseTable)).toHaveLength(1)
   })
 
-  it('renders a bar chart, cards, and facets', () => {
-    const tree = mount(
-        <QueryWrapperMenu
-            menuConfig={[{ sql, facetName, synapseId }]}
-            type={SynapseConstants.STUDY}
-            token={token}
-            rgbIndex={3}
-        />
+  it('renders a bar chart, cards, and facets', async () => {
+    const tree = await mount(
+      <QueryWrapperMenu
+          menuConfig={[{ sql, facetName, synapseId }]}
+          type={SynapseConstants.STUDY}
+          token={token}
+          rgbIndex={3}
+      />
     )
     expect(tree).toBeDefined()
     expect(tree.find(QueryWrapper)).toHaveLength(1)
