@@ -8,7 +8,7 @@ import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryR
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 
 // utility function
-const mountedComponentGenerator = async (mockRequest: QueryBundleRequest) => {
+const createMountedComponent = async (mockRequest: QueryBundleRequest) => {
   const wrapper = await mount(
     <QueryWrapper
       initQueryRequest={mockRequest}
@@ -20,7 +20,7 @@ const mountedComponentGenerator = async (mockRequest: QueryBundleRequest) => {
 }
 
 // utility function
-const shallowComponentGenerator = (mockRequest: QueryBundleRequest) => {
+const createShallowComponent = (mockRequest: QueryBundleRequest) => {
   const wrapper = shallow(
     <QueryWrapper
       initQueryRequest={mockRequest}
@@ -79,12 +79,12 @@ describe('basic functionality', () => {
   }
 
   it('renders without crashing', () => {
-    const { wrapper } = shallowComponentGenerator(request)
+    const { wrapper } = createShallowComponent(request)
     expect(wrapper).toBeDefined()
   })
 
   it('componentDidMountWorks', async () => {
-    const { instance, wrapper } = shallowComponentGenerator(request)
+    const { instance, wrapper } = createShallowComponent(request)
 
     expect(wrapper.state()).toEqual(QueryWrapper.initialState)
 
@@ -108,7 +108,7 @@ describe('basic functionality', () => {
   })
 
   it('componentDidUpdate works', async () => {
-    const { instance, wrapper } = await mountedComponentGenerator(request)
+    const { instance, wrapper } = await createMountedComponent(request)
 
     const newToken = '123'
     const newQueryRequest = cloneDeep(request)
@@ -130,12 +130,12 @@ describe('basic functionality', () => {
   })
 
   it('returns the last query request correctly ', async () => {
-    const { instance } = await mountedComponentGenerator(request)
+    const { instance } = await createMountedComponent(request)
     expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
   })
 
   it('Adds the next page of data correctly to the data', async () => {
-    const { instance, wrapper } = await mountedComponentGenerator(request)
+    const { instance, wrapper } = await createMountedComponent(request)
     await instance.getNextPageOfData(request)
     const data = wrapper.state('data') as QueryResultBundle
     expect(data.queryResult.queryResults.rows.length)
@@ -143,7 +143,7 @@ describe('basic functionality', () => {
   })
 
   it('executeQueryRequest works', async () => {
-    const { instance, wrapper } = await mountedComponentGenerator(request)
+    const { instance, wrapper } = await createMountedComponent(request)
 
     await instance.executeQueryRequest(request)
     expect(SynapseClient.getIntuitiveQueryTableResults).toHaveBeenCalled()
@@ -157,7 +157,7 @@ describe('basic functionality', () => {
   })
 
   it('addAllFacetsToSelection works correctly', async () => {
-    const { instance } = await mountedComponentGenerator(request)
+    const { instance } = await createMountedComponent(request)
 
     const castData = syn16787123Json as QueryResultBundle
     const output = instance.addAllFacetsToSelection(castData, 'projectStatus')
