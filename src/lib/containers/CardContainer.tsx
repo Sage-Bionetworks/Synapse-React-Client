@@ -190,7 +190,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     const { facets = [] } = data
     let total = 0
-    if (this.props.filter) {
+    if (filter) {
       const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === filter)
       // calculate the values chosen
       const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
@@ -220,7 +220,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       // count passed into the view
       total = this.props.totalResultsNoFacet!
     }
-
     const showViewMoreButton = (
       showViewMore
       &&

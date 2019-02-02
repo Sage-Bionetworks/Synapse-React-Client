@@ -66,7 +66,11 @@ describe('it performs all functionality', () => {
   })
 
   it('Renders total and RowContainer correctly without a faceted view', () => {
-    const wrapper = createShallowComponent(props)
+    const propsWithTotalQueryCount = {
+      ...props,
+      totalResultsNoFacet: 59
+    }
+    const wrapper = createShallowComponent(propsWithTotalQueryCount)
     expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
     expect(wrapper.find('button.pull-right').text()).toEqual('View More')
