@@ -2,16 +2,13 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 import sinon from 'sinon'
 import StaticQueryWrapper from '../../../lib/containers/StaticQueryWrapper'
-import SynapseTableCardView from '../../../lib/containers/SynapseTableCardView'
+import CardContainer from '../../../lib/containers/CardContainer'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 
 describe('it renders without crashing', () => {
-  let SynapseClient
-  beforeAll(() => {
-    SynapseClient = require('../../../lib/utils/SynapseClient')
-    SynapseClient.getQueryTableResults = jest.fn(() =>  Promise.resolve(syn16787123Json))
-  })
+  const SynapseClient = require('../../../lib/utils/SynapseClient')
+  SynapseClient.getQueryTableResults = jest.fn(() =>  Promise.resolve(syn16787123Json))
 
   it('renders using json', async () => {
     const tree = await mount(
@@ -19,13 +16,13 @@ describe('it renders without crashing', () => {
             token={'1'}
             json={syn16787123Json}
         >
-            <SynapseTableCardView
+            <CardContainer
                 type={SynapseConstants.AMP_CONSORTIUM}
             />
         </StaticQueryWrapper>
     )
     expect(tree).toBeDefined()
-    expect(tree.find(SynapseTableCardView)).toHaveLength(1)
+    expect(tree.find(CardContainer)).toHaveLength(1)
   })
 
   it('renders making an api call', async () => {
@@ -35,13 +32,13 @@ describe('it renders without crashing', () => {
                 token={'1'}
                 sql={'SELECT * FROM TEST'}
             >
-                <SynapseTableCardView
+                <CardContainer
                     type={SynapseConstants.AMP_CONSORTIUM}
                 />
             </StaticQueryWrapper>
         )
     expect(tree).toBeDefined()
-    expect(tree.find(SynapseTableCardView)).toHaveLength(1)
+    expect(tree.find(CardContainer)).toHaveLength(1)
     expect(spy.calledOnce).toBeTruthy()
   })
 })

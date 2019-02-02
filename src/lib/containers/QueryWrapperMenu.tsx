@@ -8,7 +8,7 @@ import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
-import SynapseTableCardView from './SynapseTableCardView'
+import CardContainer from './CardContainer'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -28,7 +28,7 @@ export type MenuConfig = {
   facetAliases?: {}
 }
 
-type Props = {
+export type QueryWrapperMenuProps = {
   menuConfig: MenuConfig []
   token: string
   type?: string
@@ -41,7 +41,7 @@ type Info = {
   originalColor: string
 }
 
-export default class QueryWrapperMenu extends React.Component<Props, MenuState> {
+export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuProps, MenuState> {
 
   public static propTypes = {
     facetName: PropTypes.string,
@@ -50,7 +50,7 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
     token: PropTypes.string
   }
 
-  constructor(props: Props) {
+  constructor(props: QueryWrapperMenuProps) {
     super(props)
     this.state = {
       menuIndex: 0
@@ -152,7 +152,7 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
               :
               <span/>
             }
-            {showCards ? <SynapseTableCardView type={type}/> : <span/>}
+            {showCards ? <CardContainer type={type}/> : <span/>}
           </QueryWrapper>
         </span>
       )

@@ -3,12 +3,41 @@ import { shallow, mount } from 'enzyme'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
-import { cloneDeep } from '../../..//lib/utils/modules'
-import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle'
+import { cloneDeep } from '../../../lib/utils/modules'
+import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
+import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
+
+// utility function
+const mountedComponentGenerator = async (mockRequest: QueryBundleRequest) => {
+  const wrapper = await mount(
+    <QueryWrapper
+      initQueryRequest={mockRequest}
+      facetName={'projectStatus'}
+    />
+  )
+  const instance = wrapper.instance() as QueryWrapper
+  return { instance, wrapper }
+}
+
+// utility function
+const shallowComponentGenerator = (mockRequest: QueryBundleRequest) => {
+  const wrapper = shallow(
+    <QueryWrapper
+      initQueryRequest={mockRequest}
+      facetName={'projectStatus'}
+    />
+  )
+  const instance = wrapper.instance() as QueryWrapper
+  return { instance, wrapper }
+}
 
 describe('basic functionality', () => {
-  let SynapseClient: any
-  const mockRequest = {
+  // Test setup
+  const SynapseClient = require('../../../lib/utils/SynapseClient')
+  SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
+  SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
+
+  const request = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
@@ -49,44 +78,24 @@ describe('basic functionality', () => {
     }
   }
 
-  beforeAll(() => {
-    SynapseClient = require('../../../lib/utils/SynapseClient')
-    SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
-    SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
-  })
-
   it('renders without crashing', () => {
-    const wrapper = shallow(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        token={''}
-        facetName={'projectStatus'}
-      />
-    )
+    const { wrapper } = shallowComponentGenerator(request)
     expect(wrapper).toBeDefined()
   })
 
   it('componentDidMountWorks', async () => {
-    const wrapper = shallow(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        facetName={'projectStatus'}
-      />
-    )
+    const { instance, wrapper } = shallowComponentGenerator(request)
 
-    expect(wrapper.state()).toEqual({
-      data: undefined,
-      isChecked: [],
-      isLoading: true,
-      isLoadingNewData: true,
-      lastQueryRequest: {}
-    })
+    expect(wrapper.state()).toEqual(QueryWrapper.initialState)
 
-    const instance = wrapper.instance() as QueryWrapper
-    const spy = jest.spyOn(instance, 'resetFacetSelection')
+    const spyOnResetFacetSelection = jest.spyOn(instance, 'addAllFacetsToSelection')
+    const spyOnExecute = jest.spyOn(instance, 'executeInitialQueryRequest')
+
     await instance.componentDidMount()
+
+    expect(spyOnExecute).toHaveBeenCalled()
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
-    expect(spy).toHaveBeenCalled()
+    expect(spyOnResetFacetSelection).toHaveBeenCalled()
     expect(wrapper.state()).toEqual(
       {
         lastQueryRequest,
@@ -99,17 +108,11 @@ describe('basic functionality', () => {
   })
 
   it('componentDidUpdate works', async () => {
-    const wrapper = await mount(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        facetName={'projectStatus'}
-      />
-    )
-    const newToken = '123'
-    const newQueryRequest = cloneDeep(mockRequest)
-    newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
+    const { instance, wrapper } = await mountedComponentGenerator(request)
 
-    const instance = wrapper.instance() as QueryWrapper
+    const newToken = '123'
+    const newQueryRequest = cloneDeep(request)
+    newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
 
     // test login
@@ -127,65 +130,43 @@ describe('basic functionality', () => {
   })
 
   it('returns the last query request correctly ', async () => {
-    const wrapper = await mount(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        facetName={'projectStatus'}
-      />
-    )
-    const instance = wrapper.instance() as QueryWrapper
+    const { instance } = await mountedComponentGenerator(request)
     expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
   })
 
   it('Adds the next page of data correctly to the data', async () => {
-    const wrapper = await mount(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        facetName={'projectStatus'}
-      />
-    )
-    const instance = wrapper.instance() as QueryWrapper
-    await instance.getNextPageOfData(mockRequest)
+    const { instance, wrapper } = await mountedComponentGenerator(request)
+    await instance.getNextPageOfData(request)
     const data = wrapper.state('data') as QueryResultBundle
     expect(data.queryResult.queryResults.rows.length)
     .toEqual(syn16787123Json.queryResult.queryResults.rows.length * 2)
   })
 
   it('executeQueryRequest works', async () => {
-    const wrapper = await mount(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        facetName={'projectStatus'}
-      />
-    )
-    const instance = wrapper.instance() as QueryWrapper
-    await instance.executeQueryRequest(mockRequest)
+    const { instance, wrapper } = await mountedComponentGenerator(request)
+
+    await instance.executeQueryRequest(request)
     expect(SynapseClient.getIntuitiveQueryTableResults).toHaveBeenCalled()
     expect(wrapper.state()).toEqual({
       isChecked: [],
       isLoadingNewData: false,
       data: syn16787123Json,
       isLoading: false,
-      lastQueryRequest: mockRequest
+      lastQueryRequest: request
     })
   })
 
-  it('resets the facet selection correctly', async () => {
-    const wrapper = await mount(
-      <QueryWrapper
-        initQueryRequest={mockRequest}
-        facetName={'projectStatus'}
-      />
-    )
-    const instance = wrapper.instance() as QueryWrapper
+  it('addAllFacetsToSelection works correctly', async () => {
+    const { instance } = await mountedComponentGenerator(request)
+
     const castData = syn16787123Json as QueryResultBundle
-    const output = instance.resetFacetSelection(castData, 'dataStatus')
+    const output = instance.addAllFacetsToSelection(castData, 'projectStatus')
     expect(output.query.selectedFacets).toEqual(
       [
         {
-          columnName: 'dataStatus',
+          columnName: 'projectStatus',
           concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: ['None', 'Partially Released', 'Published', 'Under Embargo']
+          facetValues: ['Active', 'Completed']
         }
       ]
     )

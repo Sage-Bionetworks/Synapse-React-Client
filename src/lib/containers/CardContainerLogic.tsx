@@ -1,12 +1,12 @@
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-import SynapseTableCardView from './SynapseTableCardView'
+import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import { SynapseClient, SynapseConstants } from '../utils/'
+import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 
-type SynapseTableCardViewWrapperProps = {
+export type CardContainerLogicProps = {
   sql: string
   token?: string
   limit?: number
@@ -24,13 +24,14 @@ type State = {
 }
 
 /**
- * Class wraps around any Synapse views that are dependent on a query bundle
- * Those classes then take in as props:
+ * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
+ * This same logic exists in QueryWrapper, but the two serve two distinct purposes, making this component
+ * sufficiently distinct.
  *
- * @class QueryWrapper
+ * @class CardContainerLogic
  * @extends {React.Component}
  */
-export default class SynapseTableCardViewWrapper extends React.Component<SynapseTableCardViewWrapperProps, State> {
+export default class CardContainerLogic extends React.Component<CardContainerLogicProps, State> {
 
   public static propTypes = {
     queryRequest: PropTypes.shape({
@@ -56,7 +57,7 @@ export default class SynapseTableCardViewWrapper extends React.Component<Synapse
     token: ''
   }
 
-  constructor(props: SynapseTableCardViewWrapperProps) {
+  constructor(props: CardContainerLogicProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
@@ -200,7 +201,7 @@ export default class SynapseTableCardViewWrapper extends React.Component<Synapse
   public render() {
     return (
       <div className="container-fluid">
-          <SynapseTableCardView
+          <CardContainer
             data={this.state.data}
             limit={this.props.limit}
             type={this.props.type}

@@ -320,7 +320,7 @@ import syn16787123 from 'folder/to/syn16787123.json'
 <SynapseComponents.StaticQueryWrapper
   json={syn16787123}
   >
-  <SynapseComponents.SynapseTableCardView
+  <SynapseComponents.CardContainer
       type={SynapseConstants.STUDY}
       limit={3}
   />
@@ -334,7 +334,7 @@ down once you can specify the query that will pull down the data for the child c
   sql={"SELECT * FROM syn1234567"}
   token={"1234..."}
   >
-  <SynapseComponents.SynapseTableCardView
+  <SynapseComponents.CardContainer
       type={SynapseConstants.STUDY}
       limit={3}
   />
@@ -408,14 +408,14 @@ down once you can specify the query that will pull down the data for the child c
 | loadingScreen | This is an optional loading screen to show when the barchart data is being updated |
 
 
-#### SynapseTableCardView
+#### CardContainer
 
 | Props  | Explanation |
 | ------------- | ------------- |
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
 | unitDescription | Specifies the unit description for the rows being displayed |
 
-#### SynapseTableCardViewWrapper
+#### CardContainerLogic
 
 | Props  | Explanation |
 | ------------- | ------------- |

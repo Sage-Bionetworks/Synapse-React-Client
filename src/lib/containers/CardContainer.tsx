@@ -53,7 +53,7 @@ export const RowContainer: React.SFC<RowContainerProps> = (props) => {
   }
 }
 
-type SynapseTableCardViewProps = {
+export type CardContainerProps = {
   type: string,
   data?: QueryResultBundle,
   limit?: number,
@@ -70,13 +70,13 @@ type SynapseTableCardViewProps = {
   totalResultsNoFacet?: number
 }
 
-type SynapseTableCardViewState = {
+type CardContainerState = {
   hasMoreData: boolean
   cardLimit: number
   hasLoadedBufferData: boolean
 }
 
-class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, SynapseTableCardViewState> {
+export class CardContainer extends React.Component<CardContainerProps, CardContainerState> {
 
   public static propTypes = {
     hideOrganizationLink: PropTypes.bool,
@@ -84,7 +84,7 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
     type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY])
   }
 
-  constructor(props: SynapseTableCardViewProps) {
+  constructor(props: CardContainerProps) {
     super(props)
     this.handleViewMore = this.handleViewMore.bind(this)
     this.getBufferData = this.getBufferData.bind(this)
@@ -190,8 +190,8 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
 
     const { facets = [] } = data
     let total = 0
-    const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === filter)
-    if (curFacetsIndex !== -1) {
+    if (this.props.filter) {
+      const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === filter)
       // calculate the values chosen
       const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
       // edge case -- if they are all false then they are considered all true..
@@ -268,4 +268,4 @@ class SynapseTableCardView extends React.Component<SynapseTableCardViewProps, Sy
   }
 }
 
-export default SynapseTableCardView
+export default CardContainer

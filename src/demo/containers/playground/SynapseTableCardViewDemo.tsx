@@ -1,5 +1,5 @@
 import * as React from 'react'
-import SynapseTableCardViewWrapper from '../../../lib/containers/SynapseTableCardViewWrapper'
+import CardContainerLogic from '../../../lib/containers/CardContainerLogic'
 
 export default class SynapseTableCardViewDemo extends React.Component {
 
@@ -10,7 +10,7 @@ export default class SynapseTableCardViewDemo extends React.Component {
 
   render() {
     return (
-        <SynapseTableCardViewWrapper
+        <CardContainerLogic
           type="study"
           sql="SELECT * FROM syn16787123"
           unitDescription="studies"

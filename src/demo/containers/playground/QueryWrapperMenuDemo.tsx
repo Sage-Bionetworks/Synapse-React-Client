@@ -77,6 +77,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
             synapseId: 'syn16858331',
             title: 'title',
+            unitDescription: 'descriptive unit'
           },
           {
             facetName: 'diagnosis',

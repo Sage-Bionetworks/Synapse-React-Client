@@ -1,52 +1,53 @@
 import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import SynapseTableCardViewWrapper from '../../../lib/containers/SynapseTableCardViewWrapper'
+import CardContainerLogic, { CardContainerLogicProps } from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
-import SynapseTableCardView from '../../../lib/containers/SynapseTableCardView'
+import CardContainer from '../../../lib/containers/CardContainer'
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle.js'
 
-describe('it performs basic functionality', () => {
-  let SynapseClient
-  const sql = 'SELECT * FROM syn16787123'
+const createShallowComponent = (props: CardContainerLogicProps) => {
+  const wrapper = shallow(
+    <CardContainerLogic
+      {...props}
+    />
+  )
+  return wrapper
+}
 
-  beforeAll(() => {
-    SynapseClient = require('../../../lib/utils/SynapseClient')
-    SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
-    SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
-  })
+const createMountedComponent = async (props: CardContainerLogicProps) => {
+  const wrapper = await mount(
+    <CardContainerLogic
+      {...props}
+    />)
+  const instance = wrapper.instance() as CardContainerLogic
+  return { wrapper, instance }
+}
+
+describe('it performs basic functionality', () => {
+  const sql = 'SELECT * FROM syn16787123'
+  const SynapseClient = require('../../../lib/utils/SynapseClient')
+  SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
+  SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
+  const props = {
+    sql,
+    unitDescription: 'files',
+    type: SynapseConstants.STUDY
+  }
 
   it('renders without crashing', () => {
-    const wrapper = shallow(
-      <SynapseTableCardViewWrapper
-        sql={sql}
-        unitDescription="files"
-        type={SynapseConstants.STUDY}
-      />
-    )
+    const wrapper = createShallowComponent(props)
     expect(wrapper).toBeDefined()
   })
 
-  it('renders a SynapseTableCardView', async () => {
-    const wrapper = shallow(
-      <SynapseTableCardViewWrapper
-        sql={sql}
-        unitDescription="files"
-        type={SynapseConstants.STUDY}
-      />
-    )
+  it('renders a CardContainer', () => {
+    const wrapper = createShallowComponent(props)
     expect(wrapper).toBeDefined()
-    expect(wrapper.find(SynapseTableCardView)).toHaveLength(1)
+    expect(wrapper.find(CardContainer)).toHaveLength(1)
   })
 
   it('mounts correctly', async () => {
-    const wrapper = shallow(
-      <SynapseTableCardViewWrapper
-        sql={sql}
-        unitDescription="files"
-        type={SynapseConstants.STUDY}
-      />
-    )
+    const wrapper = createShallowComponent(props)
     // test state was setup correctly
     expect(wrapper.state()).toEqual(
       {
@@ -58,7 +59,7 @@ describe('it performs basic functionality', () => {
       }
     )
 
-    const instance = wrapper.instance() as SynapseTableCardViewWrapper
+    const instance = wrapper.instance() as CardContainerLogic
     // verify executeInitialQueryRequest was called
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
     // await because there's async operations
@@ -92,15 +93,7 @@ describe('it performs basic functionality', () => {
   })
 
   it('grabs the next page of data', async () => {
-    const wrapper = await mount(
-      <SynapseTableCardViewWrapper
-        sql={sql}
-        unitDescription="files"
-        type={SynapseConstants.STUDY}
-      />
-    )
-
-    const instance = wrapper.instance() as SynapseTableCardViewWrapper
+    const { wrapper, instance } = await createMountedComponent(props)
     // test grabbing next page of data
     const getNextPageOfDataRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -129,15 +122,8 @@ describe('it performs basic functionality', () => {
   })
 
   it('returns the last query request', async () => {
-    const wrapper = await mount(
-      <SynapseTableCardViewWrapper
-        sql={sql}
-        unitDescription="files"
-        type={SynapseConstants.STUDY}
-      />
-    )
+    const { instance } = await createMountedComponent(props)
 
-    const instance = wrapper.instance() as SynapseTableCardViewWrapper
     expect(instance.getLastQueryRequest()).toEqual({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
@@ -155,18 +141,10 @@ describe('it performs basic functionality', () => {
   })
 
   it('componenetDidUpdate works', async () => {
-    const wrapper = await mount(
-      <SynapseTableCardViewWrapper
-        sql={sql}
-        unitDescription="files"
-        type={SynapseConstants.STUDY}
-        token={''}
-      />
-    )
+    const { wrapper, instance } = await createMountedComponent(props)
 
     const newSql = 'SELECT * FROM OTHER_TABLE'
     const newToken = '123'
-    const instance = wrapper.instance() as SynapseTableCardViewWrapper
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
     // if sql changes in props then we expect the component to have called executeInitialQueryRequest
     // since there's an entirely new sql statement

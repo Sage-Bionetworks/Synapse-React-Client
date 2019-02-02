@@ -8,7 +8,7 @@ import UserTeams from '../../lib/containers/demo_components/UserTeams'
 import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
 // import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
-import SynapseTableCardView from '../../lib/containers/SynapseTableCardView'
+import CardContainer from '../../lib/containers/CardContainer'
 // import TeamMemberList from '../../lib/containers/TeamMemberList'
 import UserBadgeBatch from '../../lib/containers/UserBadgeBatch'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
@@ -302,7 +302,7 @@ class Demo extends React.Component<{}, DemoState> {
             </label>
           </form>
           <StaticQueryWrapper sql={this.state.cardSql}>
-            <SynapseTableCardView limit={1} type={this.state.cardSelection} />
+            <CardContainer limit={1} type={this.state.cardSelection} />
           </StaticQueryWrapper>
         </div>
 
