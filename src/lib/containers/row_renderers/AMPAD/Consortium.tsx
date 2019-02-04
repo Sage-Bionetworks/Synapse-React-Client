@@ -15,7 +15,6 @@ type ConsortiumState = {
 
 type ConsortiumProps = {
   token?: string
-  ownerId?: string
   isHeader?: boolean
   data?: any
   schema?: any
@@ -40,9 +39,9 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
   }
 
   public getIcon(org: string, isHeader: boolean) {
-        // This CAN NOT be refactored below -- dynamic imports are currently not supported
-        // in es6, so the code below already has static references to the files below
-        // even though its baked into if else clauses.
+    // This CAN NOT be refactored below -- dynamic imports are currently not supported
+    // in es6, so the code below already has static references to the files below
+    // even though its baked into if else clauses.
     switch (org) {
       case 'AMP-AD':
         if (isHeader) {

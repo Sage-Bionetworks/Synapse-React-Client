@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
-import logoSvg from '../../images/logo.svg'
 import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
 import Login from '../../lib/containers/Login'
 import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
@@ -10,7 +8,7 @@ import UserTeams from '../../lib/containers/demo_components/UserTeams'
 import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
 // import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
-import SynapseTableCardView from '../../lib/containers/SynapseTableCardView'
+import CardContainer from '../../lib/containers/CardContainer'
 // import TeamMemberList from '../../lib/containers/TeamMemberList'
 import UserBadgeBatch from '../../lib/containers/UserBadgeBatch'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
@@ -81,7 +79,6 @@ class Demo extends React.Component<{}, DemoState> {
         menuConfig: [
           {
             facetName: 'assay',
-            // tslint:disable-next-line:max-line-length
             sql:
             `SELECT id AS "File ID",
               fundingAgency AS "Funding Agency",
@@ -141,9 +138,7 @@ class Demo extends React.Component<{}, DemoState> {
     // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
     const QUERY = {
       entityId: 'syn12335586',
-      // like it or not synapse has a bitwise protocol for parmask
       partMask:
-      // tslint:disable-next-line
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
@@ -231,16 +226,8 @@ class Demo extends React.Component<{}, DemoState> {
       inDevEnv = true
     }
     return (
-      <div className="App">
-        <div className="App-header text-center">
-          <img src={logoSvg} className="App-logo" alt="logo" />
-          <h4 className="white-text">Synapse React Client Demo</h4>
-        </div>
+      <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-
-        <div className="container">
-          <Link to="/Playground"> /To Playground </Link>
-        </div>
 
         <Login
           onTokenChange={this.handleChange}
@@ -284,7 +271,6 @@ class Demo extends React.Component<{}, DemoState> {
             token={inDevEnv ? token : this.state.token}
             wikiId={'587923'}
             ownerId={'syn17100797'}
-            // tslint:disable-next-line
             // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
             updateLoadState={this.handleChange}
           />
@@ -295,7 +281,6 @@ class Demo extends React.Component<{}, DemoState> {
             token={inDevEnv ? token : this.state.token}
             wikiId={'582150'}
             ownerId={'syn14306197'}
-            // tslint:disable-next-line
             // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
             updateLoadState={this.handleChange}
           />
@@ -317,7 +302,7 @@ class Demo extends React.Component<{}, DemoState> {
             </label>
           </form>
           <StaticQueryWrapper sql={this.state.cardSql}>
-            <SynapseTableCardView limit={1} type={this.state.cardSelection} />
+            <CardContainer limit={1} type={this.state.cardSelection} />
           </StaticQueryWrapper>
         </div>
 

@@ -1,7 +1,8 @@
 import * as React from 'react'
-import { HashRouter, Route, Switch } from 'react-router-dom'
+import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
+import logoSvg from '../../images/logo.svg'
 import Demo from './Demo'
-import Playground from './Playground'
+import Playground from './playground/Playground'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -9,13 +10,25 @@ import Playground from './Playground'
  */
 const App: React.SFC<{}> = () => {
   return (
-    <HashRouter>
-      <Switch>
+    <Router>
+      <div>
+      <div className="App-header text-center">
+          <img src={logoSvg} className="App-logo" alt="logo" />
+          <h4 className="white-text">Synapse React Client Demo</h4>
+        </div>
+        <ul>
+            <li>
+              <Link to="/">Demo</Link>
+            </li>
+            <li>
+              <Link to="/Playground">Playground</Link>
+            </li>
+        </ul>
+
         <Route exact={true} path="/" component={Demo}/>
-        {/* tslint:disable-next-line */}
-        <Route exact={true} path="/Playground" render={(_) => <Playground rgbIndex={0} />}/>
-      </Switch>
-    </HashRouter>
+        <Route path="/Playground" component={Playground}/>
+      </div>
+    </Router>
   )
 }
 

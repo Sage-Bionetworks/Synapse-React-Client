@@ -22,7 +22,6 @@ describe('it performs basic functionality', () => {
     const tree = await mount(
       <StackedBarChart
         data={mockData}
-        // tslint:disable-next-line:jsx-no-multiline-js
         facetAliases={
         {
           name: 'Name'

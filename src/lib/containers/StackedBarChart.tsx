@@ -3,8 +3,10 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
+// ignore because this is rollup requiring imports be named a certain way
 // tslint:disable-next-line
 import ReactMeasure from "react-measure"
+// ignore because this is rollup requiring imports be named a certain way
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
@@ -269,7 +271,6 @@ export default class StackedBarChart extends
           >
             {({ measureRef }) => (
               <div className="SRC-flex" ref={measureRef}>
-                {/* tslint:disable-next-line */}
                 {xData.map((obj, index) => {
                   const initRender: boolean = this.state.index === -1 && index === 0
                   const textColor: string = textColors[index]
@@ -331,7 +332,6 @@ export default class StackedBarChart extends
                               {obj.count}
                             </text>}
                           {
-                            // tslint:disable-next-line:jsx-no-multiline-js
                             (this.state.index === index || initRender) &&
                             (
                               <text

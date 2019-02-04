@@ -313,14 +313,14 @@ An example of a view with facets/stacked bar chart/table
 | token  | Session token to make authenticated calls  |
 | loadingScreen  | UI to show when a query is being run  |
 
-### StaticQueryWrapper Example
+### StaticQueryWrapper Example (**deprecated**)
 ```jsx
 import syn16787123 from 'folder/to/syn16787123.json'
 
 <SynapseComponents.StaticQueryWrapper
   json={syn16787123}
   >
-  <SynapseComponents.SynapseTableCardView
+  <SynapseComponents.CardContainer
       type={SynapseConstants.STUDY}
       limit={3}
   />
@@ -334,14 +334,14 @@ down once you can specify the query that will pull down the data for the child c
   sql={"SELECT * FROM syn1234567"}
   token={"1234..."}
   >
-  <SynapseComponents.SynapseTableCardView
+  <SynapseComponents.CardContainer
       type={SynapseConstants.STUDY}
       limit={3}
   />
 </SynapseComponents.StaticQueryWrapper>
 ```
 
-#### StaticQueryWrapper Props
+#### StaticQueryWrapper Props [**deprecated**]
 
 | Props  | Explanation |
 | ------------- | ------------- |
@@ -408,13 +408,25 @@ down once you can specify the query that will pull down the data for the child c
 | loadingScreen | This is an optional loading screen to show when the barchart data is being updated |
 
 
-#### SynapseTableCardView
+#### CardContainer
+CardContainer is used as either a child of QueryWrapperMenu/QueryWrapper OR CardContainerLogic. The two situations are sufficiently different that factoring out the logic into it's own component is not possible.
 
 | Props  | Explanation |
 | ------------- | ------------- |
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
-| hideOrganizationLink | This is a boolean, set to true it will hide the organization's link |
 | unitDescription | Specifies the unit description for the rows being displayed |
+
+#### CardContainerLogic
+This component is used to wrap CardContainer as a standalone renderer for cards, so the cards will appear without any other query based views, e.g. [the view under **Funded Studies**]   (https://nf.synapse.org/#/Organizations-CTF) 
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| sql: string | The sql to be run against Synapse |
+| unitDescription: string | Fills in 'Displaying 50 <unitDescription> '   |
+| token?: string | Authentication token |
+| limit?: number | Used to constrain the number of cards shown |
+| type: string | Type of card to be rendered |
+| filter?: string | If rendering a faceted view this defines the facet that will be used |
 
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)

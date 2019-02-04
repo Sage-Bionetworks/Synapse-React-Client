@@ -6,7 +6,8 @@ import StackedBarChart from './containers/StackedBarChart'
 import StaticQueryWrapper from './containers/StaticQueryWrapper'
 import SynapseTable from './containers/SynapseTable'
 import Login from './containers/Login'
-import SynapseTableCardView from './containers/SynapseTableCardView'
+import CardContainer from './containers/CardContainer'
+import CardContainerLogic from './containers/CardContainerLogic'
 import './style/Cards.css'
 import './style/Portal.css'
 import { SynapseClient, SynapseConstants } from './utils/'
@@ -18,8 +19,9 @@ const SynapseComponents = {
   StackedBarChart,
   StaticQueryWrapper,
   SynapseTable,
-  SynapseTableCardView,
+  CardContainer,
   QueryWrapperMenu,
+  CardContainerLogic,
   Markdown: MarkdownSynapse
 }
 

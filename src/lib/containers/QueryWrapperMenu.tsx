@@ -8,7 +8,7 @@ import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
-import SynapseTableCardView from './SynapseTableCardView'
+import CardContainer from './CardContainer'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -28,7 +28,7 @@ export type MenuConfig = {
   facetAliases?: {}
 }
 
-type Props = {
+export type QueryWrapperMenuProps = {
   menuConfig: MenuConfig []
   token: string
   type?: string
@@ -41,7 +41,7 @@ type Info = {
   originalColor: string
 }
 
-export default class QueryWrapperMenu extends React.Component<Props, MenuState> {
+export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuProps, MenuState> {
 
   public static propTypes = {
     facetName: PropTypes.string,
@@ -50,7 +50,7 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
     token: PropTypes.string
   }
 
-  constructor(props: Props) {
+  constructor(props: QueryWrapperMenuProps) {
     super(props)
     this.state = {
       menuIndex: 0
@@ -81,108 +81,8 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
   }
 
   public render() {
-    const { token, menuConfig, rgbIndex, type, loadingScreen } = this.props
-
-    const { colorPalette } = getColorPallette(rgbIndex, 1)
-    const originalColor = colorPalette[0]
-
-    const menuDropdown = menuConfig.map(
-      (config: MenuConfig, index: number) => {
-
-        const { facetName, facetAliases = {} } = config
-
-        const isSelected: boolean = (index === this.state.menuIndex)
-        const style: any = {}
-        let selectedStyling: string = ''
-
-        if (isSelected) {
-          // we have to programatically set the style since the color is chosen from a color
-          // wheel
-          style.background = originalColor
-          // below has to be set so the pseudo element created will inherit its color
-          // appropriately
-          style.borderLeftColor = originalColor
-          selectedStyling = 'SRC-pointed SRC-whiteText'
-        } else {
-          // change background to class
-          selectedStyling = 'SRC-blackText SRC-light-background'
-        }
-
-        const infoEnter: Info = { isSelected, originalColor }
-        const infoLeave: Info = { isSelected, originalColor: '#F5F5F5' }
-
-        const facetDisplayValue: string = facetAliases[facetName] || facetName
-
-        return (
-          <div
-            onMouseEnter={this.handleHoverLogic(infoEnter)}
-            onMouseLeave={this.handleHoverLogic(infoLeave)}
-            key={config.facetName}
-            className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
-            onClick={this.switchFacet(index)}
-            style={style}
-          >
-            {facetDisplayValue}
-          </div>
-        )
-      }
-    )
-    const queryWrapper = menuConfig.map(
-      (config: MenuConfig, index: number) => {
-        const isSelected: boolean = (this.state.menuIndex === index)
-        const { facetName, facetAliases, unitDescription = '', sql, synapseId, visibleColumnCount = 0, title } = config
-        let className = ''
-        if (!isSelected) {
-          className = 'SRC-hidden'
-        }
-        let showSynTable = <div />
-        if (title) {
-          showSynTable = (
-            <SynapseTable
-              title={title}
-              synapseId={synapseId}
-              // specify visible column count
-              visibleColumnCount={visibleColumnCount}
-            />)
-        }
-        return (
-          <span key={facetName} className={className} >
-            <QueryWrapper
-              showMenu={true}
-              initQueryRequest={{
-                concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-                partMask:
-                  // tslint:disable-next-line
-                  SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                  SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                  SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                query: {
-                  sql,
-                  isConsistent: false,
-                  limit: 25,
-                  offset: 0
-                }
-              }}
-              unitDescription={unitDescription}
-              facetName={facetName}
-              token={token}
-              rgbIndex={rgbIndex}
-              facetAliases={facetAliases}
-            >
-              <StackedBarChart
-                synapseId={synapseId}
-                unitDescription={unitDescription}
-                loadingScreen={loadingScreen}
-              />
-              <Facets
-              />
-              {showSynTable}
-              {type ? <SynapseTableCardView type={type} /> : (<div />)}
-            </QueryWrapper>
-          </span>
-        )
-      }
-    )
+    const menuDropdown = this.renderFacetMenu()
+    const queryWrapper = this.renderQueryChildren()
 
     return (
       <div className="container-fluid">
@@ -194,5 +94,109 @@ export default class QueryWrapperMenu extends React.Component<Props, MenuState> 
           </div>
       </div>
     )
+  }
+
+  private renderQueryChildren() {
+    const { menuConfig, token, rgbIndex, loadingScreen, type = '' } = this.props
+    return menuConfig.map((config: MenuConfig, index: number) => {
+      const isSelected: boolean = (this.state.menuIndex === index)
+      const {
+        facetName,
+        facetAliases,
+        unitDescription = '',
+        sql,
+        synapseId,
+        visibleColumnCount = 0,
+        title = ''
+      } = config
+      let className = ''
+      if (!isSelected) {
+        className = 'SRC-hidden'
+      }
+      const showCards = type !== ''
+      const showTable = title !== ''
+      return (
+        <span key={facetName} className={className}>
+          <QueryWrapper
+            showMenu={true}
+            initQueryRequest={{
+              concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+              partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+                SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+                SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+              query: {
+                sql,
+                isConsistent: false,
+                limit: 25,
+                offset: 0
+              }
+            }}
+            unitDescription={unitDescription}
+            facetName={facetName}
+            token={token}
+            rgbIndex={rgbIndex}
+            facetAliases={facetAliases}
+          >
+            <StackedBarChart
+              synapseId={synapseId}
+              unitDescription={unitDescription}
+              loadingScreen={loadingScreen}
+            />
+            <Facets />
+            {showTable ?
+              <SynapseTable
+                title={title}
+                synapseId={synapseId}
+                visibleColumnCount={visibleColumnCount}
+              />
+              :
+              <span/>
+            }
+            {showCards ? <CardContainer type={type}/> : <span/>}
+          </QueryWrapper>
+        </span>
+      )
+    }
+    )
+  }
+
+  private renderFacetMenu() {
+    const { menuConfig, rgbIndex } = this.props
+    const { colorPalette } = getColorPallette(rgbIndex, 1)
+    const originalColor = colorPalette[0]
+
+    return menuConfig.map((config: MenuConfig, index: number) => {
+      const { facetName, facetAliases = {} } = config
+      const isSelected: boolean = (index === this.state.menuIndex)
+      const style: any = {}
+      let selectedStyling: string = ''
+      if (isSelected) {
+        // we have to programatically set the style since the color is chosen from a color
+        // wheel
+        style.background = originalColor
+        // below has to be set so the pseudo element created will inherit its color
+        // appropriately
+        style.borderLeftColor = originalColor
+        selectedStyling = 'SRC-pointed SRC-whiteText'
+      } else {
+        // change background to class
+        selectedStyling = 'SRC-blackText SRC-light-background'
+      }
+      const infoEnter: Info = { isSelected, originalColor }
+      const infoLeave: Info = { isSelected, originalColor: '#F5F5F5' }
+      const facetDisplayValue: string = facetAliases[facetName] || facetName
+      return (
+        <div
+          onMouseEnter={this.handleHoverLogic(infoEnter)}
+          onMouseLeave={this.handleHoverLogic(infoLeave)}
+          key={config.facetName}
+          className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
+          onClick={this.switchFacet(index)}
+          style={style}
+        >
+          {facetDisplayValue}
+        </div>
+      )
+    })
   }
 }

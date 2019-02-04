@@ -269,8 +269,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const { data, filter } = this.props
     const { facets } = data
 
-    // tslint:disable-next-line
-    const curFacetsIndex = facets.findIndex((facet) => facet.columnName === filter && facet.facetType === "enumeration")
+    const curFacetsIndex = facets.findIndex(facet => facet.columnName === filter && facet.facetType === 'enumeration')
     // cast is necessary because filter returns an array of arrays
     const facetColumnResultValues = facets[curFacetsIndex] as FacetColumnResultValues
 
