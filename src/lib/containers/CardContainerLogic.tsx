@@ -57,18 +57,20 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
     token: ''
   }
 
+  public static defaultState = {
+    data: undefined,
+    isLoading: true,
+    isLoadingNewData: true,
+    queryRequest: {} as QueryBundleRequest,
+    totalResultsNoFacet: 0
+  }
+
   constructor(props: CardContainerLogicProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
-    this.state = {
-      data: undefined,
-      isLoading: true,
-      isLoadingNewData: true,
-      queryRequest: {} as QueryBundleRequest,
-      totalResultsNoFacet: 0
-    }
+    this.state = CardContainerLogic.defaultState
   }
 
   /**

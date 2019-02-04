@@ -177,14 +177,14 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     const cardLimit = this.state.cardLimit
 
     // We want to hide the view more button if:
-    //     1. On page load we get the initial results and find there are < 25 rows
-    //        or the limit was set to less than 25
+    //     1. On page load we get the initial results and find there are < PAGE_SIZE rows
+    //        or the limit was set to less than PAGE_SIZE
     //     2. We have done a subsequent query request from init render and have found
     //        that there were no rows returned.
     //     3. If it's loading then we want it to remove from the screen so the browser doesn't
     //        keep the button in focus (its a UX issue).
-    //     4. The limit is set to less than 25
-    let showViewMore: boolean = limit >= 25 && data.queryResult.queryResults.rows.length >= PAGE_SIZE
+    //     4. The limit is set to less than PAGE_SIZE
+    let showViewMore: boolean = limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
     showViewMore = showViewMore && this.state.hasMoreData
     showViewMore = showViewMore && !this.props.isLoading
 

@@ -49,15 +49,7 @@ describe('it performs basic functionality', () => {
   it('mounts correctly', async () => {
     const wrapper = createShallowComponent(props)
     // test state was setup correctly
-    expect(wrapper.state()).toEqual(
-      {
-        data: undefined,
-        isLoading: true,
-        isLoadingNewData: true,
-        queryRequest: {},
-        totalResultsNoFacet: 0
-      }
-    )
+    expect(wrapper.state()).toEqual(CardContainerLogic.defaultState)
 
     const instance = wrapper.instance() as CardContainerLogic
     // verify executeInitialQueryRequest was called
