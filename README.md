@@ -313,7 +313,7 @@ An example of a view with facets/stacked bar chart/table
 | token  | Session token to make authenticated calls  |
 | loadingScreen  | UI to show when a query is being run  |
 
-### StaticQueryWrapper Example
+### StaticQueryWrapper Example (**deprecated**)
 ```jsx
 import syn16787123 from 'folder/to/syn16787123.json'
 
@@ -341,7 +341,7 @@ down once you can specify the query that will pull down the data for the child c
 </SynapseComponents.StaticQueryWrapper>
 ```
 
-#### StaticQueryWrapper Props
+#### StaticQueryWrapper Props [**deprecated**]
 
 | Props  | Explanation |
 | ------------- | ------------- |
@@ -409,6 +409,7 @@ down once you can specify the query that will pull down the data for the child c
 
 
 #### CardContainer
+CardContainer is used as either a child of QueryWrapperMenu/QueryWrapper OR CardContainerLogic. The two situations are sufficiently different that factoring out the logic into it's own component is not possible.
 
 | Props  | Explanation |
 | ------------- | ------------- |
@@ -416,6 +417,7 @@ down once you can specify the query that will pull down the data for the child c
 | unitDescription | Specifies the unit description for the rows being displayed |
 
 #### CardContainerLogic
+This component is used to wrap CardContainer as a standalone renderer for cards, so the cards will appear without any other query based views, e.g. [the view under **Funded Studies**]   (https://nf.synapse.org/#/Organizations-CTF) 
 
 | Props  | Explanation |
 | ------------- | ------------- |
