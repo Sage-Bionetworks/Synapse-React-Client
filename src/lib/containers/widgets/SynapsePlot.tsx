@@ -95,12 +95,12 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
         title: ytitle
       }
     }
-        // init plot_data
+    // init plot_data
     const plotData: any = []
     const orientation = isHorizontal ? 'v' : 'h'
     const headers = queryData.queryData.queryResult.queryResults.headers
     for (let i = 0; i < headers.length - 1; i += 1) {
-            // make an entry for each set of data points
+      // make an entry for each set of data points
       plotData[i] = {
         orientation,
         name: headers[i + 1].name,
@@ -109,10 +109,10 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
         y: []
       }
     }
-        // grab all the data
+    // grab all the data
     for (const row of queryData.queryData.queryResult.queryResults.rows) {
       for (let j = 1; j < row.values.length; j += 1) {
-                // create pairs of data
+        // create pairs of data
         const rowValues: any = row.values
         plotData[j - 1].x.push(rowValues[0])
         plotData[j - 1].y.push(rowValues[j])
