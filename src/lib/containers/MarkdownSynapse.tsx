@@ -280,13 +280,13 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   /**
    * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
    */
-  public getWikiPageMarkdown() {
-    if (this.state.text.length === 0) {
+  public getWikiPageMarkdown(override: boolean = false) {
+    if (this.state.text.length === 0 || override) {
       SynapseClient.getEntityWiki(
         this.props.token,
         this.props.ownerId,
         this.props.wikiId
-      )
+        )
         .then((data: WikiPage) => {
           // on success grab text and append to the default text
           this.setState({
@@ -469,6 +469,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public processWidgetOrDomElement(widgetsToBe: string[], originalMarkup: string) {
     const widgets = []
+    let index = 0
     for (const text of widgetsToBe) {
       // test if widget is present
       if (text.indexOf('<span data-widgetparams') !== -1) {
@@ -479,9 +480,11 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         // Note-- this line below introduces an issue which is that there can be no inline synapse
         // widgets as react only allows you to set 'innerHTML' (as opposed to outerHTML), this creates a span
         // between two inline widgets
+        const key = index.toString() + text
         widgets.push(
-          <span key={uuidv4()} dangerouslySetInnerHTML={{ __html: text }} />
+          <span key={key} dangerouslySetInnerHTML={{ __html: text }} />
         )
+        index += 1
       }
     }
     return widgets
@@ -501,6 +504,9 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     widgetparamsMapped: any,
     originalMarkup: string
   ) {
+    // we make keys out of the widget params
+    const key = JSON.stringify(widgetparamsMapped)
+    widgetparamsMapped.reactKey = key
     switch (widgetType) {
       case 'buttonlink':
         return this.renderSynapseButton(widgetparamsMapped)
@@ -521,7 +527,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public renderSynapseButton(widgetparamsMapped: any) {
     return (
       <a
-        key={uuidv4()}
+        key={widgetparamsMapped.reactKey}
         href={widgetparamsMapped.url}
         className="btn btn-lg btn-info"
         role="button"
@@ -533,7 +539,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public renderSynapsePlot(widgetparamsMapped: any) {
     return (
       <SynapsePlot
-        key={uuidv4()}
+        key={widgetparamsMapped.reactKey}
         token={this.props.token}
         ownerId={this.props.ownerId}
         wikiId={this.props.wikiId}
@@ -547,13 +553,14 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       // ensure files are loaded
       return
     }
+    const { reactKey } = widgetparamsMapped
     if (widgetparamsMapped.fileName) {
       // if file name is attached then the fileHandle ID is located
       // in this wiki's file attachment list
       return (
         <SynapseImage
           params={widgetparamsMapped}
-          key={widgetparamsMapped.fileName}
+          key={reactKey}
           token={this.props.token}
           fileName={widgetparamsMapped.fileName}
           wikiId={this.props.wikiId}
@@ -567,7 +574,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       return (
         <SynapseImage
           params={widgetparamsMapped}
-          key={widgetparamsMapped.synapseId}
+          key={reactKey}
           token={this.props.token}
           synapseId={widgetparamsMapped.synapseId}
         />
@@ -576,6 +583,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     return
   }
   public renderSynapseTOC(originalMarkup: string) {
+    // TODO: Find a suitable key for this jsx
     // for TOC
     const elements: any[] = []
     const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
@@ -583,14 +591,13 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       elements.push(
         <div key={uuidv4()}>
           <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
-            {' '}
-            {p4}{' '}
+            {' '}{p4}{' '}
           </a>
         </div>
       )
       return ''
     })
-    return <div key={uuidv4()}>{elements}</div>
+    return (<div key={uuidv4()}>{elements}</div>)
   }
 
   public renderUserBadge(widgetparamsMapped: any) {
@@ -628,7 +635,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     // we have to carefully update the component so it doesn't encounter an infinite loop
     if (shouldUpdate && hasSynapseResources) {
       this.getWikiAttachments()
-      this.getWikiPageMarkdown()
+      this.getWikiPageMarkdown(true)
     }
     this.processMath()
   }

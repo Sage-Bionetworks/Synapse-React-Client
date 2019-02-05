@@ -59,7 +59,6 @@ describe('it performs all functionality', () => {
 
       // we only care to mock these functions and ensure they're called
       // Full functionality will get tested in the specific widget tests
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => { return Promise.resolve({}) })
       SynapseClient.getEntityWiki = jest.fn(() => { return Promise.resolve({ markdown: markdownPlaceholder }) })
 
       const spyOnWikiAttachmentsFromEntity = jest.spyOn(MarkdownSynapse.prototype, 'getWikiAttachments')
@@ -70,7 +69,6 @@ describe('it performs all functionality', () => {
 
       // verify functions were called
       expect(wrapper.state('text')).toEqual(markdownPlaceholder)
-      expect(spyOnMath).toHaveBeenCalled()
       expect(spyOnWikiAttachmentsFromEntity).toHaveBeenCalledTimes(1)
       expect(spyOnEntityWiki).toHaveBeenCalledTimes(1)
     })
@@ -83,14 +81,12 @@ describe('it performs all functionality', () => {
 
       // we only care to mock these functions and ensure they're called
       // Full functionality will get tested in the specific widget calls
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve({}))
       SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: 'text' }))
       const { wrapper } = await createShallowComponent(props)
 
-      // verify functions were called
-      expect(spyOnMath).toHaveBeenCalled()
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve({}))
+      // reset functions to test they were called inside of componentDidUpdate, from setProps
       SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: 'text' }))
+      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve(['']))
 
       await wrapper.setProps({
         token: '123'
@@ -98,8 +94,8 @@ describe('it performs all functionality', () => {
 
       // Note- verifying these API calls were made ensures that
       // getWikiAttachments and getWikiPageMarkdown were called
+      expect(SynapseClient.getEntityWiki).toHaveBeenCalledTimes(1)
       expect(SynapseClient.getWikiAttachmentsFromEntity).toHaveBeenCalledTimes(1)
-      // expect(SynapseClient.getEntityWiki).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -109,9 +105,6 @@ describe('it performs all functionality', () => {
         Promise.resolve({
           markdown: '${image?synapseId=syn7809125&align=None&responsive=true}'
         })
-      )
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() =>
-        Promise.resolve({})
       )
       const spyOnRenderImage = jest.spyOn(MarkdownSynapse.prototype, 'renderSynapseImage')
       const { wrapper } = await createShallowComponent({})
@@ -124,9 +117,6 @@ describe('it performs all functionality', () => {
         Promise.resolve({
           markdown: '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}'
         })
-      )
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() =>
-        Promise.resolve({})
       )
       const spyOnRenderImage = jest.spyOn(MarkdownSynapse.prototype, 'renderSynapseImage')
       const { wrapper } = await createShallowComponent({})
@@ -143,10 +133,6 @@ describe('it performs all functionality', () => {
           markdown: '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'
         })
       )
-      SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() =>
-        Promise.resolve({})
-      )
-
       const spyOnRenderPlot = jest.spyOn(MarkdownSynapse.prototype, 'renderSynapsePlot')
       const { wrapper } = await createShallowComponent({})
       expect(wrapper.find(SynapsePlot)).toHaveLength(1)
