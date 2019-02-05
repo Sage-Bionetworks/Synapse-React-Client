@@ -110,7 +110,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     if (params && params.align) {
       imgStyle.float = params.align.toLowerCase()
     }
-    if (this.state.isLoaded) {
+    if (this.state.isLoaded || !this.state.preSignedURL) {
       return null
     }
     return (

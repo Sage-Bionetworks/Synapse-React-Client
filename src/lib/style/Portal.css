@@ -96,6 +96,7 @@
   color: #f0ad4e; }
 
 .markdown code {
+  font-family: 'Courier New', Courier, monospace !important;
   background-clip: padding-box;
   border-radius: 3px 3px 3px 3px;
   padding: 0 5px 2px;

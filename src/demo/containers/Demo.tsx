@@ -265,8 +265,8 @@ class Demo extends React.Component<{}, DemoState> {
         <UserBadgeBatch principalIds={[3342573, 3374422, 1131050]} />
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
-{/*
-        <CustomMarkdownView>
+
+        {/* <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
             wikiId={'587923'}
@@ -274,7 +274,7 @@ class Demo extends React.Component<{}, DemoState> {
             // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
             updateLoadState={this.handleChange}
           />
-        </CustomMarkdownView>
+        </CustomMarkdownView> */}
 
         <CustomMarkdownView>
           <MarkdownSynapse
@@ -284,9 +284,9 @@ class Demo extends React.Component<{}, DemoState> {
             // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
             updateLoadState={this.handleChange}
           />
-        </CustomMarkdownView> */}
+        </CustomMarkdownView>
 
-        <CustomMarkdownView>
+        {/* <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
             wikiId={'588475'}
@@ -294,7 +294,7 @@ class Demo extends React.Component<{}, DemoState> {
             // markdown={'${image?synapseId=syn7809125&align=None&responsive=true}'}
             updateLoadState={this.handleChange}
           />
-        </CustomMarkdownView>
+        </CustomMarkdownView> */}
 
         <div className="container">
           <form>
