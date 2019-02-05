@@ -18,9 +18,7 @@ const TOC_CLASS = {
   5: 'toc-indent5',
   6: 'toc-indent6'
 }
-const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
-const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
-type MarkdownSynapseProps = {
+export type MarkdownSynapseProps = {
   errorMessageView?: JSX.Element;
   token?: string;
   ownerId?: string;
@@ -35,19 +33,15 @@ type MarkdownSynapseState = {
   md: any;
   text: string;
   fileHandles?: FileHandleResults;
-  isLoggedIn: boolean;
   errorMessage: string;
 }
 /**
- * Basic vanilla Markdownit functionality with latex support, synapse image support, plotly support
+ * Basic Markdown functionality for Synapse, supporting Images/Plots/References/Bookmarks/buttonlinks
  *
  * @class Markdown
  * @extends {React.Component}
  */
-class MarkdownSynapse extends React.Component<
-  MarkdownSynapseProps,
-  MarkdownSynapseState
-> {
+export default class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSynapseState> {
   public static propTypes = {
     errorMessageView: PropTypes.element,
     hasSynapseResources: PropTypes.bool,
@@ -58,7 +52,7 @@ class MarkdownSynapse extends React.Component<
     wikiId: PropTypes.string
   }
 
-  private markupRef: React.RefObject<HTMLInputElement>
+  public markupRef: React.RefObject<HTMLInputElement>
 
   /**
    * Creates an instance of Markdown.
@@ -87,7 +81,6 @@ class MarkdownSynapse extends React.Component<
       md,
       errorMessage: '',
       fileHandles: undefined,
-      isLoggedIn: this.props.token !== '',
       text: ''
     }
     this.markupRef = React.createRef()
@@ -108,6 +101,8 @@ class MarkdownSynapse extends React.Component<
     this.getErrorView = this.getErrorView.bind(this)
     this.createMarkup = this.createMarkup.bind(this)
     this.addBookmarks = this.addBookmarks.bind(this)
+    this.addIdsToReferenceWidgets = this.addIdsToReferenceWidgets.bind(this)
+    this.addIdsToTocWidgets = this.addIdsToTocWidgets.bind(this)
   }
 
   public componentDidCatch(err: any, info: any) {
@@ -132,6 +127,7 @@ class MarkdownSynapse extends React.Component<
       if (anchor.getAttribute('data-anchor') === null && anchor.id === '') {
         window.open(anchor.href, '_blank')
       } else if (anchor.id.substring(0, 3) === 'ref') {
+        // its a reference, so we scroll to the appropriate bookmark
         const referenceNumber = Number(event.currentTarget.id.substring(3)) // e.g. ref2 => '2'
         const goTo = this.markupRef.current!.querySelector(
           `#bookmark${referenceNumber}`
@@ -146,6 +142,7 @@ class MarkdownSynapse extends React.Component<
           console.log('error on scroll', e)
         }
       } else if (event.currentTarget.id !== null) {
+        // handle table of contents widget
         const idOfContent = anchor.getAttribute('data-anchor')
         const goTo = this.markupRef.current!.querySelector(`#${idOfContent}`)
         try {
@@ -224,6 +221,7 @@ class MarkdownSynapse extends React.Component<
     })
     return { __html: cleanText }
   }
+
   /**
    * Find all math identified elements of the form [id^=\"mathjax-\"]
    * (e.g. <dom element id="mathjax-10"> text </dom element>)
@@ -271,11 +269,9 @@ class MarkdownSynapse extends React.Component<
   public addBookmarks() {
     markdownitSynapse.resetFootnotes()
     this.createMarkup(this.state.text)
-    const footnotesHtml = this.createMarkup(markdownitSynapse.footnotes())
-      .__html
+    const footnotesHtml = this.createMarkup(markdownitSynapse.footnotes()).__html
     if (footnotesHtml.length > 0) {
-      const bookmarks = <Bookmarks footnotes={footnotesHtml} />
-      return bookmarks
+      return (<Bookmarks footnotes={footnotesHtml} />)
     }
     // ts doesn't like functions without explicit return statements
     return
@@ -285,7 +281,7 @@ class MarkdownSynapse extends React.Component<
    * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
    */
   public getWikiPageMarkdown() {
-    if (!this.state.text) {
+    if (this.state.text.length === 0) {
       SynapseClient.getEntityWiki(
         this.props.token,
         this.props.ownerId,
@@ -293,9 +289,8 @@ class MarkdownSynapse extends React.Component<
       )
         .then((data: WikiPage) => {
           // on success grab text and append to the default text
-          const initText = this.state.text
           this.setState({
-            text: initText + data.markdown
+            text: data.markdown
           })
           if (this.props.updateLoadState) {
             this.props.updateLoadState({ isLoading: false })
@@ -345,36 +340,70 @@ class MarkdownSynapse extends React.Component<
     }
     return
   }
-  public processWidgets() {
-    // (<span data-widgetparams.*?span>) captures widgets
-    let count = 1
-    let markup = this.createMarkup(this.state.text).__html.replace(
-      /<span id="wikiReference.*?<span data-widgetparams.*?span>/g,
+
+  public addIdsToReferenceWidgets(text: string) {
+    const referenceRegex = /<span id="wikiReference.*?<span data-widgetparams.*?span>/g
+    let referenceCount = 1
+
+    return text.replace(
+      referenceRegex,
       () => {
-        // replace all reference tags with id's that we can later target
-        const current = count
-        count += 1
+        // replace all reference tags with id's of the form id="ref<number>"" that we can read onClick
+        const current = referenceCount
+        referenceCount += 1
         return `<a href="" id="ref${current}">[${current}]</a>`
       }
     )
+  }
+
+  public addIdsToTocWidgets(text: string) {
     const tocId = 'SRC-header-'
     let tocIdCount = 1
-    markup = markup.replace(TOC_HEADER_REGEX, (match: string) => {
-      // replace with id so we can target them alter with click events
+    const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
+
+    return text.replace(TOC_HEADER_REGEX, (match: string) => {
+      // replace with id of the form id="toc" so we can read them with onclick events
       const curTocId = tocIdCount
       tocIdCount += 1
-      const matchWithId = `${match.substring(
-        0,
-        3
-      )} id="${tocId}${curTocId}"${match.substring(3)}`
+      const matchWithId = `${match.substring(0, 3)} id="${tocId}${curTocId}"${match.substring(3)}`
       return matchWithId
     })
-    const groups = markup.split(/(<span data-widgetparams.*?span>)/)
-    if (groups.length > 0) {
-      return this.processWidgetOrDomElement(groups, markup)
+  }
+
+  /**
+   * The 'main' method of this class that process all the markdown and transforms it to the appropriate
+   * Synapse widgets.
+   *
+   * @returns JSX of the markdown into widgets
+   * @memberof MarkdownSynapse
+   */
+  public processWidgets() {
+    // create initial markup
+    let markup = this.createMarkup(this.state.text).__html
+    // process reference widgets
+    markup = this.addIdsToReferenceWidgets(markup)
+    // process table of contents widgets
+    markup = this.addIdsToTocWidgets(markup)
+
+    // capture and process all other widgets
+    // (<span data-widgetparams.*?span>) captures widgets
+    const widgetRegex = /(<span data-widgetparams.*?span>)/
+    // widgets is an array of either plain text/html or specific synapse markdown
+    const widgets = markup.split(widgetRegex)
+    if (widgets.length > 0) {
+      return this.processWidgetOrDomElement(widgets, markup)
     }
     return
   }
+
+  /**
+   *  When the markdown string is transfered over the network certain characters get transformed,
+   * this does a simple transformation back to the original user's string.
+   *
+   * @param {string} xml
+   * @returns
+   * @memberof MarkdownSynapse
+   */
   public decodeXml(xml: string) {
     const escapedOneToXmlSpecialMap = {
       '&amp;': '&',
@@ -386,23 +415,38 @@ class MarkdownSynapse extends React.Component<
       return escapedOneToXmlSpecialMap[item]
     })
   }
-  public processWidgetMappings(
-    rawWidgetString: string,
-    originalMarkup: string
-  ) {
-    const widgetstringRegExp = rawWidgetString.match(
-      /data-widgetparams=("(.*?)")/
-    )
-    const widgetstring = this.decodeXml(widgetstringRegExp![2])
-    const questionIndex = widgetstring.indexOf('?')
+
+  /**
+   * Given widgetMap renders it in a React component (or originalMarkup in special cases.)
+   *
+   * @param {string} widgetMatch The synapse widget to be rendered
+   * @param {string} originalMarkup The original markup text, this is a special case for widgets that
+   * are html specific.
+   * @returns JSX of the widget to render
+   * @memberof MarkdownSynapse
+   */
+  public processWidgetMappings(widgetMatch: string, originalMarkup: string) {
+    // General workflow -
+    //   1. Capture widget parameters
+    //   2. Transform any widget xml parameters to standard text
+    //   3. Split those parameters into a map
+    //   4. Render that widget based on its parameters
+
+    // steps 1,2
+    const widgetParamsRegex = /data-widgetparams=("(.*?)")/
+    const widgetParamsMatchWithXML = widgetMatch.match(widgetParamsRegex)
+    const widgetParamsString = this.decodeXml(widgetParamsMatchWithXML![2])
+
+    // widgetParamsString look like {<widget>?param1=xxx&param2=yyy}
+    const questionIndex = widgetParamsString.indexOf('?')
     if (questionIndex === -1) {
       // e.g. toc is passed, there are no params
-      return this.renderWidget(widgetstring, {}, originalMarkup)
+      return this.renderWidget(widgetParamsString, {}, originalMarkup)
     }
-    const widgetType = widgetstring.substring(0, questionIndex)
+    const widgetType = widgetParamsString.substring(0, questionIndex)
     const widgetparamsMapped = {}
     // map out params and their values
-    widgetstring
+    widgetParamsString
       .substring(questionIndex + 1)
       .split('&')
       .forEach((keyPair) => {
@@ -412,15 +456,29 @@ class MarkdownSynapse extends React.Component<
       })
     return this.renderWidget(widgetType, widgetparamsMapped, originalMarkup)
   }
-  public processWidgetOrDomElement(
-    widgetsToBe: string[],
-    originalMarkup: string
-  ) {
+
+  /**
+   * Takes in widgetsToBe and parse it out to its respective html element
+   *
+   * @param {string[]} widgetsToBe This is an array of either synapse widgets, e.g. {plot?=...} or plain html
+   * that is not going to be process further.
+   * @param {string} originalMarkup This is the original markup that's maintained only because the table of contents
+   * widget renderer relies on it.
+   * @returns
+   * @memberof MarkdownSynapse
+   */
+  public processWidgetOrDomElement(widgetsToBe: string[], originalMarkup: string) {
     const widgets = []
     for (const text of widgetsToBe) {
+      // test if widget is present
       if (text.indexOf('<span data-widgetparams') !== -1) {
+        // process widget
         widgets.push(this.processWidgetMappings(text, originalMarkup))
       } else {
+        // Else its plain html/text.
+        // Note-- this line below introduces an issue which is that there can be no inline synapse
+        // widgets as react only allows you to set 'innerHTML' (as opposed to outerHTML), this creates a span
+        // between two inline widgets
         widgets.push(
           <span key={uuidv4()} dangerouslySetInnerHTML={{ __html: text }} />
         )
@@ -428,6 +486,16 @@ class MarkdownSynapse extends React.Component<
     }
     return widgets
   }
+
+  /**
+   *  Given widgetType renders the apppropriate widget
+   *
+   * @param {string} widgetType The type of synapse widget. (e.g. 'image', 'plot')
+   * @param {*} widgetparamsMapped The parameters for this widget
+   * @param {string} originalMarkup The original markup.
+   * @returns
+   * @memberof MarkdownSynapse
+   */
   public renderWidget(
     widgetType: string,
     widgetparamsMapped: any,
@@ -480,10 +548,12 @@ class MarkdownSynapse extends React.Component<
       return
     }
     if (widgetparamsMapped.fileName) {
+      // if file name is attached then the fileHandle ID is located
+      // in this wiki's file attachment list
       return (
         <SynapseImage
           params={widgetparamsMapped}
-          key={uuidv4()}
+          key={widgetparamsMapped.fileName}
           token={this.props.token}
           fileName={widgetparamsMapped.fileName}
           wikiId={this.props.wikiId}
@@ -492,12 +562,12 @@ class MarkdownSynapse extends React.Component<
       )
     }
     if (widgetparamsMapped.synapseId) {
-      // elements with synapseIds have to have their resources loaded first, their not located
-      // with the file attachnent list
+      // otherwise this image's fileHandle ID is not located
+      // in the file attachment list and will be loaded first
       return (
         <SynapseImage
           params={widgetparamsMapped}
-          key={uuidv4()}
+          key={widgetparamsMapped.synapseId}
           token={this.props.token}
           synapseId={widgetparamsMapped.synapseId}
         />
@@ -508,6 +578,7 @@ class MarkdownSynapse extends React.Component<
   public renderSynapseTOC(originalMarkup: string) {
     // for TOC
     const elements: any[] = []
+    const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
     originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, (p1, p2, p3, p4) => {
       elements.push(
         <div key={uuidv4()}>
@@ -533,8 +604,9 @@ class MarkdownSynapse extends React.Component<
         text: this.props.markdown
       })
     }
+    // we use this.markupRef.current && because in testing environment refs aren't defined
     // @ts-ignore
-    this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
+    this.markupRef.current && this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
     // unpack and set default value if not specified
     const { hasSynapseResources = true } = this.props
     if (hasSynapseResources) {
@@ -546,16 +618,17 @@ class MarkdownSynapse extends React.Component<
   }
 
   // on component update find and re-render the math/widget items accordingly
-  public componentDidUpdate() {
+  public componentDidUpdate(prevProps: any) {
+    const { hasSynapseResources = true } = this.props
+
+    let shouldUpdate = this.props.token !== prevProps.token
+    shouldUpdate = shouldUpdate || (this.props.ownerId !== prevProps.ownerId)
+    shouldUpdate = shouldUpdate || (this.props.wikiId !== prevProps.wikiId)
+
     // we have to carefully update the component so it doesn't encounter an infinite loop
-    if (this.props.token !== '' && !this.state.isLoggedIn) {
-      // this is true when user just logged
-      this.setState({ isLoggedIn: true })
-      // only if they didn't supply markdown should this happen
-      if (this.props.hasSynapseResources) {
-        this.getWikiAttachments()
-        this.getWikiPageMarkdown()
-      }
+    if (shouldUpdate && hasSynapseResources) {
+      this.getWikiAttachments()
+      this.getWikiPageMarkdown()
     }
     this.processMath()
   }
@@ -570,4 +643,3 @@ class MarkdownSynapse extends React.Component<
     )
   }
 }
-export default MarkdownSynapse

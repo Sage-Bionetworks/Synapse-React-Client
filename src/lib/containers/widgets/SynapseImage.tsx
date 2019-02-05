@@ -50,22 +50,23 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
   public getEntity() {
     const { token, synapseId } = this.props
     getEntity(token, synapseId!).then(
-            // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
-            (data: FileEntity) => {
-              const fileHandleAssociationList = [
-                {
-                  associateObjectId: synapseId,
-                  associateObjectType: 'FileEntity',
-                  fileHandleId: data.dataFileHandleId
-                }
-              ]
-              this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
-            })
+      // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
+      (data: FileEntity) => {
+        const fileHandleAssociationList = [
+          {
+            associateObjectId: synapseId,
+            associateObjectType: 'FileEntity',
+            fileHandleId: data.dataFileHandleId
+          }
+        ]
+        this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+      }
+    )
   }
   public getSynapseFiles(fileHandleAssociationList: any, id: string) {
-        // overload the method for two different use cases, one where
-        // the image is attached to an entity and creates a list on the spot,
-        // the other where list is passed in from componentDidMount in MarkdownSynapse
+    // overload the method for two different use cases, one where
+    // the image is attached to an entity and creates a list on the spot,
+    // the other where list is passed in from componentDidMount in MarkdownSynapse
     const request: any = {
       includeFileHandles: false,
       includePreSignedURLs: true,
@@ -73,20 +74,24 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
       requestedFiles: fileHandleAssociationList
     }
     getFiles(request, this.props.token).then(
-            (data: BatchFileResult) => {
-              const match = this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
-              this.setState({
-                preSignedURL: match[0].preSignedURL
-              })
-            })
+      (data: BatchFileResult) => {
+        const match = this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
+        this.setState({
+          preSignedURL: match[0].preSignedURL
+        })
+      }
+    )
   }
   public componentDidMount() {
     if (!this.props.token) {
       return
     }
     if (!this.props.hasOwnProperty('wikiId')) {
+      // Can get presigned url right away
       this.getEntity()
     } else {
+      // Can get presigned url right away, otherwise make extra API call to get this image's
+      // fileHandle ID.
       const { fileName, fileResults } = this.props
       const match = this.matchToHandle(this.compareById(fileName!, 'fileName'), fileResults!)
       const fileHandleAssociationList = [
