@@ -79,7 +79,8 @@ describe('it performs basic functionality', () => {
         },
         isLoading: false,
         isLoadingNewData: false,
-        totalResultsNoFacet: syn16787123Json.queryCount
+        totalResultsNoFacet: syn16787123Json.queryCount,
+        hasMoreData: true
       }
     )
   })
@@ -105,12 +106,13 @@ describe('it performs basic functionality', () => {
     // await because there's async operations
     await instance.getNextPageOfData(getNextPageOfDataRequest)
 
-    // grab the data from the state
-    const data: QueryResultBundle = wrapper.state('data')
-    // Since the stubbed method for getQueryTableResults returns syn16787123Json again
-    // we expect the results to be twice the length
-    expect(data.queryResult.queryResults.rows.length)
-    .toEqual(syn16787123Json.queryResult.queryResults.rows.length * 2)
+    /*
+      verify not loading after call finishes
+    */
+    const isLoading: boolean = wrapper.state('isLoading')
+    const lastQueryRequest = wrapper.state('queryRequest') as QueryResultBundle
+    expect(isLoading).toEqual(false)
+    expect(lastQueryRequest).toEqual(getNextPageOfDataRequest)
   })
 
   it('returns the last query request', async () => {

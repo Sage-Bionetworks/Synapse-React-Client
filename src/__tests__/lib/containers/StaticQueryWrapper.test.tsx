@@ -17,6 +17,7 @@ describe('it renders without crashing', () => {
             json={syn16787123Json}
         >
             <CardContainer
+                hasMoreData={false}
                 type={SynapseConstants.AMP_CONSORTIUM}
             />
         </StaticQueryWrapper>
@@ -33,6 +34,7 @@ describe('it renders without crashing', () => {
                 sql={'SELECT * FROM TEST'}
             >
                 <CardContainer
+                    hasMoreData={false}
                     type={SynapseConstants.AMP_CONSORTIUM}
                 />
             </StaticQueryWrapper>

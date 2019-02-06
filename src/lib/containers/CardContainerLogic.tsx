@@ -5,6 +5,7 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
+import { getNextPageOfData } from '../utils/modules/queryUtils'
 
 export type CardContainerLogicProps = {
   sql: string
@@ -20,7 +21,8 @@ type State = {
   isLoadingNewData: boolean
   isLoading: boolean
   queryRequest: QueryBundleRequest
-  totalResultsNoFacet: number
+  totalResultsNoFacet: number,
+  hasMoreData: boolean
 }
 
 /**
@@ -62,7 +64,8 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
     isLoading: true,
     isLoadingNewData: true,
     queryRequest: {} as QueryBundleRequest,
-    totalResultsNoFacet: 0
+    totalResultsNoFacet: 0,
+    hasMoreData: true
   }
 
   constructor(props: CardContainerLogicProps) {
@@ -118,28 +121,21 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  public getNextPageOfData(queryRequest: QueryBundleRequest) {
+  public async getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
-    return SynapseClient.getQueryTableResults(queryRequest, this.props.token)
-      .then(
-        (data: QueryResultBundle) => {
-          const oldData: QueryResultBundle = cloneDeep(this.state.data)!
-          // push on the new data retrieved from the API call
-          oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
-          const newState: any = {
-            data: oldData,
-            isLoading: false,
-            queryRequest: cloneDeep(queryRequest)
-          }
-          this.setState(newState)
-          return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
-        }
-      ).catch((err) => {
-        console.log('Failed to get data ', err)
-        return Promise.resolve(false)
-      })
+
+    await getNextPageOfData(queryRequest, this.state.data!, this.props.token)
+    .then(
+      (newState) => {
+        this.setState({
+          ...newState,
+          isLoading: false,
+          queryRequest: cloneDeep(queryRequest)
+        })
+      }
+    )
   }
 
   /**
@@ -183,7 +179,10 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
                                                 SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
                                                 SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
                                             )
+
+          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
           const newState = {
+            hasMoreData,
             data,
             queryRequest: queryRequestWithoutCount,
             isLoading: false,
@@ -212,6 +211,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
             getLastQueryRequest={this.getLastQueryRequest}
             getNextPageOfData={this.getNextPageOfData}
             filter={this.props.filter}
+            hasMoreData={this.state.hasMoreData}
           />
       </div>
     )
