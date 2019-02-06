@@ -86,10 +86,6 @@ describe('it performs all functionality', () => {
   it('handleViewMore works', async () => {
     const { wrapper, instance } = await createMountedComponent(props)
     expect(wrapper.state('hasLoadedBufferData')).toEqual(false)
-    // normally we would call componentDidMount, however, that function requires
-    // setTimeout, the combination of testing jest with both a timeout and a promise returned
-    // from that is not well defined so we test it this way
-    await instance.gatherData()
 
     // go through calling handle view more
     await instance.handleViewMore()

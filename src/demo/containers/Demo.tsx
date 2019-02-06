@@ -312,7 +312,11 @@ class Demo extends React.Component<{}, DemoState> {
             </label>
           </form>
           <StaticQueryWrapper sql={this.state.cardSql}>
-            <CardContainer limit={1} type={this.state.cardSelection} />
+            <CardContainer
+              limit={1}
+              type={this.state.cardSelection}
+              hasMoreData={false}
+            />
           </StaticQueryWrapper>
         </div>
 

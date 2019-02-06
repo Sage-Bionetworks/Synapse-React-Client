@@ -65,11 +65,10 @@ export type CardContainerProps = {
   filter?: string
   unitDescription?: string
   totalResultsNoFacet?: number
-  hasMoreData: boolean
+  hasMoreData?: boolean
 }
 
 type CardContainerState = {
-  hasMoreData: boolean
   cardLimit: number
   hasLoadedBufferData: boolean
 }
@@ -87,7 +86,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     this.state = {
       cardLimit: PAGE_SIZE,
       hasLoadedBufferData: false,
-      hasMoreData: true
     }
   }
 
@@ -139,7 +137,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     //        keep the button in focus (its a UX issue).
     //     4. The limit is set to less than PAGE_SIZE
     let showViewMore: boolean = limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
-    showViewMore = showViewMore && this.props.hasMoreData
+    showViewMore = showViewMore && this.props.hasMoreData!
     // showViewMore = showViewMore && !this.props.isLoading
 
     const { facets = [] } = data
