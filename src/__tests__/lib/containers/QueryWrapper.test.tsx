@@ -102,7 +102,8 @@ describe('basic functionality', () => {
         data: syn16787123Json,
         isChecked: [],
         isLoading: false,
-        isLoadingNewData: false
+        isLoadingNewData: false,
+        hasMoreData: true
       }
     )
   })
@@ -137,9 +138,10 @@ describe('basic functionality', () => {
   it('Adds the next page of data correctly to the data', async () => {
     const { instance, wrapper } = await createMountedComponent(request)
     await instance.getNextPageOfData(request)
-    const data = wrapper.state('data') as QueryResultBundle
-    expect(data.queryResult.queryResults.rows.length)
-    .toEqual(syn16787123Json.queryResult.queryResults.rows.length * 2)
+    const isLoading = wrapper.state('isLoading') as boolean
+    const lastQueryRequest = wrapper.state('lastQueryRequest') as QueryResultBundle
+    expect(isLoading).toEqual(false)
+    expect(lastQueryRequest).toEqual(request)
   })
 
   it('executeQueryRequest works', async () => {
@@ -152,7 +154,8 @@ describe('basic functionality', () => {
       isLoadingNewData: false,
       data: syn16787123Json,
       isLoading: false,
-      lastQueryRequest: request
+      lastQueryRequest: request,
+      hasMoreData: true
     })
   })
 

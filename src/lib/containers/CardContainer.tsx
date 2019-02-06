@@ -57,17 +57,15 @@ export type CardContainerProps = {
   type: string,
   data?: QueryResultBundle,
   limit?: number,
-  hideOrganizationLink?: boolean
   token?: string
-  ownerId?: string
   isHeader?: boolean
-  isQueryWrapperChild?: boolean
   getLastQueryRequest?: () => QueryBundleRequest
-  getNextPageOfData?: (queryRequest: QueryBundleRequest) => Promise<boolean>
+  getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   isLoading?: boolean
   filter?: string
   unitDescription?: string
   totalResultsNoFacet?: number
+  hasMoreData: boolean
 }
 
 type CardContainerState = {
@@ -79,7 +77,6 @@ type CardContainerState = {
 export class CardContainer extends React.Component<CardContainerProps, CardContainerState> {
 
   public static propTypes = {
-    hideOrganizationLink: PropTypes.bool,
     limit: PropTypes.number,
     type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY])
   }
@@ -87,59 +84,11 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
   constructor(props: CardContainerProps) {
     super(props)
     this.handleViewMore = this.handleViewMore.bind(this)
-    this.getBufferData = this.getBufferData.bind(this)
-    this.gatherData = this.gatherData.bind(this)
     this.state = {
       cardLimit: PAGE_SIZE,
       hasLoadedBufferData: false,
       hasMoreData: true
     }
-  }
-
-  public componentDidMount() {
-    // we try to load one page of data ahead of cards, this allows the "view more" behavior
-    // to be instant
-    this.getBufferData()
-  }
-
-  public componentDidUpdate(prevProps: CardContainerProps) {
-    const newRowLength =   this.props.data && this.props.data!.queryResult.queryResults.rows.length
-    // if the incoming row length is zero then we reset hasMoreData, this will only happen once
-    if ((newRowLength !== undefined && newRowLength === 0) && !this.state.hasMoreData) {
-      this.setState({
-        hasMoreData: true
-      })
-    }
-  }
-
-  public getBufferData() {
-    // Load data ahead of the currently displayed data, do this recursively in case it needs more time
-    if (!this.state.hasLoadedBufferData) {
-      // the code is written this way to allow testing of gatherData
-      setTimeout(this.gatherData, 1500)
-    }
-  }
-
-  public gatherData() {
-    if (!this.props.getLastQueryRequest) {
-      // parent component still setting up
-      this.getBufferData()
-      return
-    }
-    const queryRequest = this.props.getLastQueryRequest!()
-    if (!queryRequest.query) {
-      // parent component still setting up
-      this.getBufferData()
-      return
-    }
-    let offset = queryRequest.query.offset!
-    // if its a "previous" click subtract from the offset
-    // otherwise its next and we paginate forward
-    offset += PAGE_SIZE
-    queryRequest.query.offset = offset
-    this.props.getNextPageOfData!(queryRequest).then((hasMoreData) => {
-      this.setState({ hasMoreData, hasLoadedBufferData: true })
-    })
   }
 
   /**
@@ -156,11 +105,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     const { cardLimit } = this.state
     this.setState({ cardLimit: cardLimit + PAGE_SIZE })
 
-    this.props.getNextPageOfData!(queryRequest).then(
-      (hasMoreData) => {
-        this.setState({ hasMoreData })
-      }
-    )
+    this.props.getNextPageOfData!(queryRequest)
   }
 
   public render() {
@@ -174,7 +119,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       type
     } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
-      return <div className="container" />
+      return (<div className="container" />)
     }
     const schema = {}
     data.queryResult.queryResults.headers.forEach(
@@ -194,8 +139,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     //        keep the button in focus (its a UX issue).
     //     4. The limit is set to less than PAGE_SIZE
     let showViewMore: boolean = limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
-    showViewMore = showViewMore && this.state.hasMoreData
-    showViewMore = showViewMore && !this.props.isLoading
+    showViewMore = showViewMore && this.props.hasMoreData
+    // showViewMore = showViewMore && !this.props.isLoading
 
     const { facets = [] } = data
     let total = 0
@@ -246,7 +191,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     return (
       <div>
-        {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription} </p>}
+        {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
         {/*
           Below we loop through the rows of the table and we render a specific row, we can
           use the key={index} because the underlying table *shouldn't* be changing beneath

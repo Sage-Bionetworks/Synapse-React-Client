@@ -32,3 +32,4 @@ export const AMP_STUDY: string = 'AMP_Study'
 export const FUNDER: string = 'funder'
 export const PUBLICATION: string = 'publication'
 export const TOOL: string = 'tool'
+export const PAGE_SIZE: number = 25

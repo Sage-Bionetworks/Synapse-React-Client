@@ -25,7 +25,6 @@ const createMountedComponent = async (props: CardContainerProps) => {
 }
 
 describe('it performs all functionality', () => {
-
   // for our purposes its okay to return the same data again
   const getNextPageOfData = jest.fn((_arg: QueryBundleRequest) => { return Promise.resolve(true) })
   const getLastQueryRequest = jest.fn(() => {
@@ -57,7 +56,8 @@ describe('it performs all functionality', () => {
     sql,
     unitDescription,
     type,
-    data
+    data,
+    hasMoreData: true
   }
 
   it('renders without crashing', () => {
@@ -68,7 +68,7 @@ describe('it performs all functionality', () => {
   it('Renders total and RowContainer correctly without a faceted view', () => {
     const propsWithTotalQueryCount = {
       ...props,
-      totalResultsNoFacet: 59
+      totalResultsNoFacet: 59,
     }
     const wrapper = createShallowComponent(propsWithTotalQueryCount)
     expect(wrapper.find(RowContainer)).toHaveLength(25)
@@ -81,18 +81,6 @@ describe('it performs all functionality', () => {
     const wrapper = createShallowComponent({ ...props, filter: 'projectStatus' })
     expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
-  })
-
-  it('Loads buffer data correctly', async () => {
-    const { wrapper, instance } = await createMountedComponent(props)
-    expect(wrapper.state('hasLoadedBufferData')).toEqual(false)
-    // normally we would call componentDidMount, however, that function requires
-    // setTimeout, the combination of testing jest with both a timeout and a promise returned
-    // from that is not well defined so we test it this way
-    await instance.gatherData()
-    expect(getNextPageOfData).toHaveBeenCalled()
-    expect(wrapper.state('hasLoadedBufferData')).toEqual(true)
-    expect(wrapper.state('hasMoreData')).toEqual(true)
   })
 
   it('handleViewMore works', async () => {

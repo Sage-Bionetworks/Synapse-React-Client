@@ -3,8 +3,9 @@ import * as React from 'react'
 import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import { SynapseClient } from '../utils/'
+import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/modules'
+import { getNextPageOfData } from '../utils/modules/queryUtils'
 
 type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
@@ -24,6 +25,7 @@ type QueryWrapperState = {
   isLoadingNewData: boolean
   isLoading: boolean
   lastQueryRequest: QueryBundleRequest
+  hasMoreData: boolean
 }
 
 // Since the component is an HOC we export the props passed down
@@ -32,7 +34,7 @@ export type QueryWrapperChildProps = {
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
   executeInitialQueryRequest?: () => void
-  getNextPageOfData?: (queryRequest: QueryBundleRequest) => Promise<boolean>
+  getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
   isChecked?: boolean []
   data?: QueryResultBundle
@@ -82,7 +84,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     isChecked: [] as boolean [],
     isLoading: true,
     isLoadingNewData: true,
-    lastQueryRequest: {} as QueryBundleRequest
+    lastQueryRequest: {} as QueryBundleRequest,
+    hasMoreData: true
   }
 
   constructor(props: QueryWrapperProps) {
@@ -158,7 +161,10 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     )
       .then(
         (data: QueryResultBundle) => {
+          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+          hasMoreData
           const newState: any = {
+            hasMoreData,
             data,
             isLoading: false,
             lastQueryRequest: cloneDeep(queryRequest)
@@ -177,27 +183,21 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  public getNextPageOfData(queryRequest: QueryBundleRequest) {
+  public async getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true
     })
-    return SynapseClient.getQueryTableResults(queryRequest, this.props.token)
-      .then(
-        (data: QueryResultBundle) => {
-          const oldData: QueryResultBundle = cloneDeep(this.state.data)!
-          // push on the new data retrieved from the API call
-          oldData.queryResult.queryResults.rows.push(...data.queryResult.queryResults.rows)
-          const newState: any = {
-            data: oldData,
-            isLoading: false,
-            lastQueryRequest: cloneDeep(queryRequest)
-          }
-          this.setState(newState)
-          return Promise.resolve(data.queryResult.queryResults.rows.length > 0)
-        }
-      ).catch((err) => {
-        console.log('Failed to get data ', err)
-      })
+
+    await getNextPageOfData(queryRequest, this.state.data!, this.props.token)
+    .then(
+      (newState) => {
+        this.setState({
+          ...newState,
+          isLoading: false,
+          lastQueryRequest: cloneDeep(queryRequest)
+        })
+      }
+    )
   }
 
   /**
@@ -219,7 +219,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         (data: QueryResultBundle) => {
           const filter: string = this.props.facetName
           const lastQueryRequest: QueryBundleRequest = this.addAllFacetsToSelection(data, filter)
+          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
           const newState = {
+            hasMoreData,
             data,
             lastQueryRequest,
             isLoading: false,
@@ -296,7 +298,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         rgbIndex: this.props.rgbIndex,
         unitDescription: this.props.unitDescription,
         updateParentState: this.updateParentState,
-        isQueryWrapperChild: true
+        isQueryWrapperChild: true,
+        hasMoreData: this.state.hasMoreData
       })
     }))
 
