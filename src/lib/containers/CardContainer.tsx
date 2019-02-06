@@ -82,9 +82,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
   constructor(props: CardContainerProps) {
     super(props)
     this.handleViewMore = this.handleViewMore.bind(this)
-    this.state = {
-      cardLimit: PAGE_SIZE
-    }
   }
 
   /**
@@ -98,9 +95,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     // paginate forward
     offset += PAGE_SIZE
     queryRequest.query.offset = offset
-    const { cardLimit } = this.state
-    this.setState({ cardLimit: cardLimit + PAGE_SIZE })
-
     this.props.getNextPageOfData!(queryRequest)
   }
 
@@ -122,9 +116,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       (element: any, index: any) => {
         schema[element.name] = index
       })
-
-    // if limit specified is less than cardlimit we choose to constrain it
-    const cardLimit = Math.min(limit, this.state.cardLimit)
 
     // We want to hide the view more button if:
     //     1. Tne data fed in has !== PAGE_SIZE number of results
@@ -173,7 +164,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         <div>
           <button
             onClick={this.handleViewMore}
-            className="pull-right SRC-primary-background-color-hover SRC-viewMoreButton"
+            className="pull-right SRC-primary-background-color-hover SRC-next-color SRC-viewMoreButton"
           >
             View More
           </button>
@@ -190,14 +181,14 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
           us and does in fact act as a unique identifier
           */}
         {data.queryResult.queryResults.rows.map(
-          (rowData: any, index: number) => {
-            if (index < cardLimit) {
+          (rowData: any, index) => {
+            if (index < limit) {
               const key = JSON.stringify(rowData.values)
               return (
                 <RowContainer
                   key={key}
                   type={type}
-                  limit={cardLimit}
+                  limit={limit}
                   data={rowData.values}
                   schema={schema}
                   token={token}

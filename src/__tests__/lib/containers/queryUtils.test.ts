@@ -36,9 +36,9 @@ describe('get next page of data', () => {
 
   it('works when there is less then PAGE_SIZE results coming back', () => {
     // setup test to return half the number of rows
-    const halfData = cloneDeep(syn16787123Json)
-    halfData.queryResult.queryResults.rows = []
-    SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(halfData))
+    const emptyData = cloneDeep(syn16787123Json)
+    emptyData.queryResult.queryResults.rows = []
+    SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(emptyData))
 
     getNextPageOfData(getNextPageOfDataRequest, data, '').then(
       (partialState) => {
