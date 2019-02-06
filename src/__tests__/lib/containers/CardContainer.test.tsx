@@ -5,6 +5,7 @@ import { SynapseConstants } from '../../../lib'
 import syn16787123Json  from '../../../mocks/syn16787123.json'
 import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle'
+import { cloneDeep } from '../../../lib/utils/modules'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(
@@ -73,7 +74,7 @@ describe('it performs all functionality', () => {
     const wrapper = createShallowComponent(propsWithTotalQueryCount)
     expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
-    expect(wrapper.find('button.pull-right').text()).toEqual('View More')
+    expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
@@ -81,16 +82,37 @@ describe('it performs all functionality', () => {
     const wrapper = createShallowComponent({ ...props, filter: 'projectStatus' })
     expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
+    expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
   it('handleViewMore works', async () => {
     const { wrapper, instance } = await createMountedComponent(props)
-    expect(wrapper.state('hasLoadedBufferData')).toEqual(false)
 
     // go through calling handle view more
     await instance.handleViewMore()
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
     expect(wrapper.state('cardLimit')).toEqual(50)
+  })
+
+  it('show ViewMore does not render when number of data points less than 25', async () => {
+    const dataCopy = cloneDeep(syn16787123Json) as QueryResultBundle
+    dataCopy.queryResult.queryResults.rows.splice(0, 10)
+    const propsWithDataCopy = {
+      ...props,
+      data: dataCopy
+    }
+    const { wrapper } = await createMountedComponent(propsWithDataCopy)
+    expect(wrapper.find('button.SRC-viewMoreButton')).toHaveLength(0)
+  })
+
+  it('show ViewMore does not render when hasMoreData is false', async () => {
+    const propsWithHasMoreDataFalse = {
+      ...props,
+      hasMoreData: false
+    }
+    const { wrapper } = await createMountedComponent(propsWithHasMoreDataFalse)
+    expect(wrapper.find('button.SRC-viewMoreButton')).toHaveLength(0)
+
   })
 })

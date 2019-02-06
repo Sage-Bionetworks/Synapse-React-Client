@@ -70,7 +70,6 @@ export type CardContainerProps = {
 
 type CardContainerState = {
   cardLimit: number
-  hasLoadedBufferData: boolean
 }
 
 export class CardContainer extends React.Component<CardContainerProps, CardContainerState> {
@@ -84,8 +83,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     super(props)
     this.handleViewMore = this.handleViewMore.bind(this)
     this.state = {
-      cardLimit: PAGE_SIZE,
-      hasLoadedBufferData: false,
+      cardLimit: PAGE_SIZE
     }
   }
 
@@ -129,16 +127,12 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     const cardLimit = Math.min(limit, this.state.cardLimit)
 
     // We want to hide the view more button if:
-    //     1. On page load we get the initial results and find there are < PAGE_SIZE rows
-    //        or the limit was set to less than PAGE_SIZE
-    //     2. We have done a subsequent query request from init render and have found
-    //        that there were no rows returned.
-    //     3. If it's loading then we want it to remove from the screen so the browser doesn't
-    //        keep the button in focus (its a UX issue).
-    //     4. The limit is set to less than PAGE_SIZE
+    //     1. Tne data fed in has !== PAGE_SIZE number of results
+    //     2. The hasMoreData prop is false
+    //     3. The limit is set to less than PAGE_SIZE
+    // below we show the view more button by following the opposite logic from above.
     let showViewMore: boolean = limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
     showViewMore = showViewMore && this.props.hasMoreData!
-    // showViewMore = showViewMore && !this.props.isLoading
 
     const { facets = [] } = data
     let total = 0

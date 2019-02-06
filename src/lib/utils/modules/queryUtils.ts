@@ -1,12 +1,7 @@
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
-
 import { SynapseClient, SynapseConstants } from '../'
-
 import { QueryResultBundle } from '../jsonResponses/Table/QueryResultBundle'
-
-import { cloneDeep } from './'
-
-// getLastQueryRequest?: () => QueryBundleRequest
+import { cloneDeep } from './rollupCompatibleModules'
 
 type PartialStateObject = {
   hasMoreData: boolean,
@@ -26,10 +21,10 @@ export const getNextPageOfData = async (queryRequest: QueryBundleRequest, data: 
       const oldData: QueryResultBundle = cloneDeep(data)!
         // push on the new data retrieved from the API call
       const hasMoreData = newData
-                                            .queryResult
-                                            .queryResults
-                                            .rows
-                                            .length === SynapseConstants.PAGE_SIZE
+                          .queryResult
+                          .queryResults
+                          .rows
+                          .length === SynapseConstants.PAGE_SIZE
       oldData.queryResult.queryResults.rows.push(...newData.queryResult.queryResults.rows)
       const newState: PartialStateObject = {
         hasMoreData,
