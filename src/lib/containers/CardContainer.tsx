@@ -102,6 +102,16 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     this.getBufferData()
   }
 
+  public componentDidUpdate(prevProps: CardContainerProps) {
+    const newRowLength =   this.props.data && this.props.data!.queryResult.queryResults.rows.length
+    // if the incoming row length is zero then we reset hasMoreData, this will only happen once
+    if ((newRowLength !== undefined && newRowLength === 0) && !this.state.hasMoreData) {
+      this.setState({
+        hasMoreData: true
+      })
+    }
+  }
+
   public getBufferData() {
     // Load data ahead of the currently displayed data, do this recursively in case it needs more time
     if (!this.state.hasLoadedBufferData) {
@@ -148,9 +158,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     this.props.getNextPageOfData!(queryRequest).then(
       (hasMoreData) => {
-        if (!hasMoreData) {
-          this.setState({ hasMoreData: false })
-        }
+        this.setState({ hasMoreData })
       }
     )
   }
@@ -174,7 +182,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         schema[element.name] = index
       })
 
-    const cardLimit = this.state.cardLimit
+    // if limit specified is less than cardlimit we choose to constrain it
+    const cardLimit = Math.min(limit, this.state.cardLimit)
 
     // We want to hide the view more button if:
     //     1. On page load we get the initial results and find there are < PAGE_SIZE rows
@@ -237,7 +246,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     return (
       <div>
-        <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>
+        {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription} </p>}
         {/*
           Below we loop through the rows of the table and we render a specific row, we can
           use the key={index} because the underlying table *shouldn't* be changing beneath
@@ -246,17 +255,17 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {data.queryResult.queryResults.rows.map(
           (rowData: any, index: number) => {
             if (index < cardLimit) {
+              const key = JSON.stringify(rowData.values)
               return (
-                <React.Fragment key={index}>
-                  <RowContainer
-                    type={type}
-                    limit={cardLimit}
-                    data={rowData.values}
-                    schema={schema}
-                    token={token}
-                    isHeader={isHeader}
-                  />
-                </React.Fragment>
+                <RowContainer
+                  key={key}
+                  type={type}
+                  limit={cardLimit}
+                  data={rowData.values}
+                  schema={schema}
+                  token={token}
+                  isHeader={isHeader}
+                />
               )
             }
             return false

@@ -15,7 +15,6 @@ import { QueryWrapperChildProps } from './QueryWrapper'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
-import { uuidv4 } from '../utils/modules'
 const PREVIOUS_ITEM_CLICK = 'left click'
 const NEXT_CLICK = 'right click'
 
@@ -293,7 +292,7 @@ export default class StackedBarChart extends
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
                   }
                   const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
-                  const tooltipId = uuidv4()
+                  const tooltipId = label
                   // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
                   const value = obj.count as number
                   const numCharsInValue = value.toString().length * 4.5 // represents width of a character
@@ -301,7 +300,7 @@ export default class StackedBarChart extends
                   return (
                     // each svg represents one of the bars
                     // will need to change this to be responsive
-                    <React.Fragment key={uuidv4()}>
+                    <React.Fragment key={label}>
                       <span data-for={tooltipId} data-tip={label}>
                         <svg
                           className="SRC-hoverBox"
