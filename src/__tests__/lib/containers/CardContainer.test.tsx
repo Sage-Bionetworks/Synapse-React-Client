@@ -86,13 +86,12 @@ describe('it performs all functionality', () => {
   })
 
   it('handleViewMore works', async () => {
-    const { wrapper, instance } = await createMountedComponent(props)
+    const { instance } = await createMountedComponent(props)
 
     // go through calling handle view more
     await instance.handleViewMore()
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
-    expect(wrapper.state('cardLimit')).toEqual(50)
   })
 
   it('show ViewMore does not render when number of data points less than 25', async () => {

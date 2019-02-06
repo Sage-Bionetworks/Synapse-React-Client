@@ -107,7 +107,7 @@ export const doPost = (
     credentials: initCredentials
   }
   if (initCredentials) {
-    options.headers.credentials = initCredentials
+    options.credentials = initCredentials
   }
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
