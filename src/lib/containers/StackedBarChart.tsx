@@ -292,7 +292,9 @@ export default class StackedBarChart extends
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
                   }
                   const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
-                  const tooltipId = label
+                  // there was one bug where a new line character was in the obj.value, making data-for
+                  // break because its a special character, below we remove that
+                  const tooltipId = obj.value.replace(/(\r\n|\n|\r)/gm, '')
                   // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
                   const value = obj.count as number
                   const numCharsInValue = value.toString().length * 4.5 // represents width of a character

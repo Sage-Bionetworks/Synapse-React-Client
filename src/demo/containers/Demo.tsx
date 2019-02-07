@@ -49,30 +49,30 @@ class Demo extends React.Component<{}, DemoState> {
       version: 0,
       cardSql: 'SELECT * FROM syn16859448',
       cardSelection: SynapseConstants.TOOL,
-      showTabOne: false,
+      showTabOne: true,
       tabOne:
       {
         menuConfig: [
           {
-            // title: "Data",
+            title: 'Data',
             facetDisplayValue: 'Organism',
-            facetName: 'Organism',
-            sql: 'SELECT * FROM syn9886254',
-            synapseId: 'syn9886254',
-            unitDescription: 'data files',
+            facetName: 'study',
+            sql: 'SELECT * FROM syn11346063',
+            synapseId: 'syn11346063',
+            unitDescription: 'study',
             visibleColumnCount: 3,
           },
           {
+            title: 'Data',
             facetDisplayValue: 'Study',
-            facetName: 'Study',
-            sql: 'SELECT * FROM syn9886254',
-            synapseId: 'syn9886254',
-            unitDescription: 'data files',
+            facetName: 'species',
+            sql: 'SELECT * FROM syn11346063',
+            synapseId: 'syn11346063',
+            unitDescription: 'species',
             visibleColumnCount: 5,
           }
         ],
-        rgbIndex: 2,
-        type: SynapseConstants.AMP_STUDY
+        rgbIndex: 2
       }
     ,
       tabTwo: {
