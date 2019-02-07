@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import { mockData }   from '../../../mocks/'
 import QueryWrapperMenu, { QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
@@ -9,20 +9,12 @@ import CardContainer from '../../../lib/containers/CardContainer'
 import SynapseTable from '../../../lib/containers/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
 
-const createShallowComponent = (props: QueryWrapperMenuProps) => {
+const createShallowComponent = (props: QueryWrapperMenuProps, disableLifecycleMethods: boolean = false) => {
   const wrapper = shallow(
     <QueryWrapperMenu
       {...props}
-    />
-  )
-  return wrapper
-}
-
-const createMountedComponent = async (props: QueryWrapperMenuProps) => {
-  const wrapper = await mount(
-    <QueryWrapperMenu
-        {...props}
-    />
+    />,
+    { disableLifecycleMethods }
   )
   const instance = wrapper.instance() as QueryWrapperMenu
   return { wrapper, instance }
@@ -42,7 +34,7 @@ describe('it renders with basic functionality', () => {
   }
 
   it('renders without crashing', () => {
-    const wrapper = createShallowComponent(props)
+    const wrapper = createShallowComponent(props, true)
     expect(wrapper).toBeDefined()
   })
 
@@ -52,7 +44,7 @@ describe('it renders with basic functionality', () => {
       rgbIndex: 3,
       menuConfig: [{ sql, facetName, synapseId, title: 'title' }]
     }
-    const { wrapper } = await createMountedComponent(propsWithTitle)
+    const { wrapper } = await createShallowComponent(propsWithTitle)
     expect(wrapper).toBeDefined()
     expect(wrapper.find(QueryWrapper)).toHaveLength(1)
     expect(wrapper.find(StackedBarChart)).toHaveLength(1)
@@ -65,7 +57,7 @@ describe('it renders with basic functionality', () => {
       ...props,
       type: SynapseConstants.STUDY
     }
-    const { wrapper } = await createMountedComponent(propsWithType)
+    const { wrapper } = await createShallowComponent(propsWithType)
 
     expect(wrapper).toBeDefined()
     expect(wrapper.find(QueryWrapper)).toHaveLength(1)

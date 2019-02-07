@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
@@ -8,24 +8,13 @@ import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryR
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 
 // utility function
-const createMountedComponent = async (mockRequest: QueryBundleRequest) => {
-  const wrapper = await mount(
+const createShallowComponent = async (mockRequest: QueryBundleRequest, disableLifecycleMethods: boolean = false) => {
+  const wrapper = await shallow(
     <QueryWrapper
       initQueryRequest={mockRequest}
       facetName={'projectStatus'}
-    />
-  )
-  const instance = wrapper.instance() as QueryWrapper
-  return { instance, wrapper }
-}
-
-// utility function
-const createShallowComponent = (mockRequest: QueryBundleRequest) => {
-  const wrapper = shallow(
-    <QueryWrapper
-      initQueryRequest={mockRequest}
-      facetName={'projectStatus'}
-    />
+    />,
+    { disableLifecycleMethods }
   )
   const instance = wrapper.instance() as QueryWrapper
   return { instance, wrapper }
@@ -43,7 +32,6 @@ describe('basic functionality', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      // NOTE: queryCount has been removed from the partMask here
     ,
     query: {
       sql: 'SELECT * FROM syn16787123',
@@ -58,7 +46,6 @@ describe('basic functionality', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      // NOTE: queryCount has been removed from the partMask here
     ,
     query: {
       sql: 'SELECT * FROM syn16787123',
@@ -78,13 +65,13 @@ describe('basic functionality', () => {
     }
   }
 
-  it('renders without crashing', () => {
-    const { wrapper } = createShallowComponent(request)
+  it('renders without crashing', async () => {
+    const { wrapper } = await createShallowComponent(request, true)
     expect(wrapper).toBeDefined()
   })
 
   it('componentDidMountWorks', async () => {
-    const { instance, wrapper } = createShallowComponent(request)
+    const { instance, wrapper } = await createShallowComponent(request, true)
 
     expect(wrapper.state()).toEqual(QueryWrapper.initialState)
 
@@ -109,7 +96,7 @@ describe('basic functionality', () => {
   })
 
   it('componentDidUpdate works', async () => {
-    const { instance, wrapper } = await createMountedComponent(request)
+    const { instance, wrapper } = await createShallowComponent(request)
 
     const newToken = '123'
     const newQueryRequest = cloneDeep(request)
@@ -131,12 +118,12 @@ describe('basic functionality', () => {
   })
 
   it('returns the last query request correctly ', async () => {
-    const { instance } = await createMountedComponent(request)
+    const { instance } = await createShallowComponent(request)
     expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
   })
 
   it('Adds the next page of data correctly to the data', async () => {
-    const { instance, wrapper } = await createMountedComponent(request)
+    const { instance, wrapper } = await createShallowComponent(request)
     await instance.getNextPageOfData(request)
     const isLoading = wrapper.state('isLoading') as boolean
     const lastQueryRequest = wrapper.state('lastQueryRequest') as QueryResultBundle
@@ -145,7 +132,7 @@ describe('basic functionality', () => {
   })
 
   it('executeQueryRequest works', async () => {
-    const { instance, wrapper } = await createMountedComponent(request)
+    const { instance, wrapper } = await createShallowComponent(request)
 
     await instance.executeQueryRequest(request)
     expect(SynapseClient.getIntuitiveQueryTableResults).toHaveBeenCalled()
@@ -160,7 +147,7 @@ describe('basic functionality', () => {
   })
 
   it('addAllFacetsToSelection works correctly', async () => {
-    const { instance } = await createMountedComponent(request)
+    const { instance } = await createShallowComponent(request)
 
     const castData = syn16787123Json as QueryResultBundle
     const output = instance.addAllFacetsToSelection(castData, 'projectStatus')

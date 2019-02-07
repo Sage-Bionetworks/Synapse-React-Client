@@ -1,25 +1,20 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import CardContainerLogic, { CardContainerLogicProps } from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
 import CardContainer from '../../../lib/containers/CardContainer'
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle.js'
 
-const createShallowComponent = (props: CardContainerLogicProps) => {
-  const wrapper = shallow(
+const createShallowComponent = async (props: CardContainerLogicProps, disableLifecycleMethods: boolean = false) => {
+  const wrapper = await shallow(
     <CardContainerLogic
       {...props}
-    />
+    />,
+    {
+      disableLifecycleMethods
+    }
   )
-  return wrapper
-}
-
-const createMountedComponent = async (props: CardContainerLogicProps) => {
-  const wrapper = await mount(
-    <CardContainerLogic
-      {...props}
-    />)
   const instance = wrapper.instance() as CardContainerLogic
   return { wrapper, instance }
 }
@@ -35,23 +30,17 @@ describe('it performs basic functionality', () => {
     type: SynapseConstants.STUDY
   }
 
-  it('renders without crashing', () => {
-    const wrapper = createShallowComponent(props)
-    expect(wrapper).toBeDefined()
-  })
-
-  it('renders a CardContainer', () => {
-    const wrapper = createShallowComponent(props)
+  it('renders without crashing', async () => {
+    const { wrapper } = await createShallowComponent(props, true)
     expect(wrapper).toBeDefined()
     expect(wrapper.find(CardContainer)).toHaveLength(1)
   })
 
   it('mounts correctly', async () => {
-    const wrapper = createShallowComponent(props)
+    const { wrapper, instance } = await createShallowComponent(props, true)
     // test state was setup correctly
     expect(wrapper.state()).toEqual(CardContainerLogic.defaultState)
 
-    const instance = wrapper.instance() as CardContainerLogic
     // verify executeInitialQueryRequest was called
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
     // await because there's async operations
@@ -86,7 +75,7 @@ describe('it performs basic functionality', () => {
   })
 
   it('grabs the next page of data', async () => {
-    const { wrapper, instance } = await createMountedComponent(props)
+    const { wrapper, instance } = await createShallowComponent(props)
     // test grabbing next page of data
     const getNextPageOfDataRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -116,7 +105,7 @@ describe('it performs basic functionality', () => {
   })
 
   it('returns the last query request', async () => {
-    const { instance } = await createMountedComponent(props)
+    const { instance } = await createShallowComponent(props)
 
     expect(instance.getLastQueryRequest()).toEqual({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -135,7 +124,7 @@ describe('it performs basic functionality', () => {
   })
 
   it('componenetDidUpdate works', async () => {
-    const { wrapper, instance } = await createMountedComponent(props)
+    const { wrapper, instance } = await createShallowComponent(props)
 
     const newSql = 'SELECT * FROM OTHER_TABLE'
     const newToken = '123'
