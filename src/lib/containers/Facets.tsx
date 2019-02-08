@@ -8,8 +8,8 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
 
-const SELECT_ALL = 'select all'
-const DESELECT_ALL = 'deselect all'
+export const SELECT_ALL = 'select all'
+export const DESELECT_ALL = 'deselect all'
 
 // Add all icons to the library so you can use it in your page
 library.add(faTimes)
@@ -18,7 +18,7 @@ library.add(faPlus)
 type CheckboxGroupProps = {
   rgbIndex: number
   isChecked: any
-  element: any
+  facetColumnResult: FacetColumnResult
   clickHandler: any
   showAllFacets: boolean
 }
@@ -36,16 +36,16 @@ type Info = {
  */
 const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
 
-  const { element, showAllFacets } = props
+  const { facetColumnResult, showAllFacets } = props
   const children: any = []
 
-  element.facetValues.sort((a: any, b: any) => {
+  facetColumnResult.facetValues.sort((a: any, b: any) => {
     return b.count - a.count
   })
-  const { colorPalette, textColors } = getColorPallette(props.rgbIndex, element.facetValues.length)
-  element.facetValues.forEach((facetValue: any, index: any) => {
+  const { colorPalette, textColors } = getColorPallette(props.rgbIndex, facetColumnResult.facetValues.length)
+  facetColumnResult.facetValues.forEach((facetValue: any, index: any) => {
 
-    const uniqueId = `${element.columnName} ${facetValue.value} ${facetValue.count}`
+    const uniqueId = `${facetColumnResult.columnName} ${facetValue.value} ${facetValue.count}`
     const textColor = textColors[index]
     const curColor = colorPalette[index]
     let style: any = {}
@@ -69,7 +69,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         style={style}
         className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
         key={uniqueId}
-        onClick={props.clickHandler({ index, value: facetValue.value, columnName: element.columnName })}
+        onClick={props.clickHandler({ index, value: facetValue.value, columnName: facetColumnResult.columnName })}
       >
         <span className="SRC-facets-text">
           {' '}
@@ -113,43 +113,34 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     this.updateSelection = this.updateSelection.bind(this)
     this.showButtons = this.showButtons.bind(this)
   }
-    /**
-     * Display the view of the facets
-     *
-     * @returns
-     * @memberof Facets
-     */
+  /**
+   * Display the view of the facets
+   *
+   * @returns
+   * @memberof Facets
+   */
   public showFacetFilter() {
     // iterate through the loaded data and write out the appropriate checkboxes,
     // filling in the state of the checkboxes according to the current selection
-    const structuredRender: JSX.Element[] = this.props.data!.facets.map((element: FacetColumnResult) => {
-      // display the data -- currently we only support enumerations
-      if (element.columnName === this.props.filter && element.facetType === 'enumeration') {
-        return (
-          <CheckboxGroup
-            showAllFacets={this.state.showAllFacets}
-            rgbIndex={this.props.rgbIndex!}
-            key={element.columnName}
-            element={element}
-            isChecked={this.props.isChecked}
-            clickHandler={this.handleClick}
-          />
-        )
-      }
-            // throw away.
-      return (<span key={element.columnName}/>)
-    })
+    const facetColumnResult = this.props.data!.facets.
+      find((el: FacetColumnResult) => el.columnName === this.props.filter && el.facetType === 'enumeration')!
+
     return (
-      <React.Fragment>
-        {structuredRender}
-      </React.Fragment>
+      <CheckboxGroup
+        showAllFacets={this.state.showAllFacets}
+        rgbIndex={this.props.rgbIndex!}
+        key={facetColumnResult.columnName}
+        facetColumnResult={facetColumnResult}
+        isChecked={this.props.isChecked}
+        clickHandler={this.handleClick}
+      />
     )
   }
 
   /**
    * Handle checkbox click event
    */
-  public handleClick = (dict: Info) => (event: React.MouseEvent<HTMLSpanElement>) => {
+  public handleClick = (dict: Info) => (_event: React.MouseEvent<HTMLSpanElement>) => {
     if (!this.state.showAllFacets) {
       this.setState({
         showAllFacets: true
@@ -159,7 +150,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     const { selectedFacets } = queryRequest.query
     // grab the facet values associated for this column
-    const specificFacet = selectedFacets![0]
+    const specificFacet = selectedFacets!.find(el => el.columnName === this.props.filter)!
     // if its not selected then we add as having been chosen, otherwise we
     // have to delete it
     if (specificFacet.facetValues.indexOf(dict.value) === -1) {
@@ -170,6 +161,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     }
     const { isChecked } = cloneDeep(this.props)
     const isCheckedValue = isChecked![dict.index]
+    // if its undefined then it hasn't been seen before, in which case its considered 'true'
     isChecked![dict.index] = isCheckedValue === undefined ? false : !isChecked![dict.index]
 
     queryRequest.query.selectedFacets = selectedFacets
@@ -179,7 +171,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   }
 
   /**
-   * Handle select all or deselect all event, selection group specifies which
+   * Handle SELECT_ALL or  event, selection group specifies which
    * option was chosen
    *
    * @memberof Facets
@@ -187,12 +179,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   public updateSelection = (selectionGroup: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     const { isChecked } = cloneDeep(this.props)
-    const queryRequest = this.props.getLastQueryRequest!() as QueryBundleRequest
-    const { selectedFacets } = queryRequest.query
-
+    const lengthOfFacets = this.props.data!.facets!.find(el => el.columnName === this.props.filter)!.facetValues.length
     // we go through and set all facets as selected or deselected per the button
     // clicked that initiated this function call
-    for (let i = 0; i < 100; i += 1) {
+    for (let i = 0; i < lengthOfFacets; i += 1) {
       if (selectionGroup === SELECT_ALL) {
         isChecked![i] = true
       } else {
@@ -207,13 +197,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       // run the first query it was given
       this.props.executeInitialQueryRequest!()
     } else {
+      const queryRequest = this.props.getLastQueryRequest!() as QueryBundleRequest
+      const { selectedFacets } = queryRequest.query
       // if the user chose to deselect all facets then we zero out the facet selection
-      const facetColumnResultValues = selectedFacets!.filter(
-        (value) => {
-          return value.columnName === this.props.filter
-        }
-      )[0] as FacetColumnResultValues
-      facetColumnResultValues.facetValues = []
+      const facetColumnResultValues = selectedFacets!.find(value => (value.columnName === this.props.filter))
+      facetColumnResultValues!.facetValues = []
       this.props.executeQueryRequest!(queryRequest)
     }
 
@@ -228,6 +216,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
   public showButtons(showAllFacets: boolean, curFacetsLength: number) {
     if (showAllFacets) {
+      // this is hidden if there are > 5 facets, wait for user to make
+      // an action for this to appear
       return (
         <React.Fragment>
           <a
@@ -254,7 +244,12 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     }
 
     return (
-      <a href={''} className="SRC-primary-text-color SRC-no-text-decor" onClick={this.showAllFacets}>
+      <a
+        href={''}
+        id="showAllFacetsButton"
+        className="SRC-primary-text-color SRC-no-text-decor"
+        onClick={this.showAllFacets}
+      >
         {' '}
         Show All ({curFacetsLength}){' '}
       </a>
