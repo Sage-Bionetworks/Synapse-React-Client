@@ -4,7 +4,6 @@ import { Facets, CheckboxGroup, SELECT_ALL, DESELECT_ALL } from '../../../lib/co
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-// import { cloneDeep } from '../../../lib/utils/modules'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
 
@@ -19,10 +18,14 @@ const createShallowComponent = (props: QueryWrapperChildProps) => {
 }
 
 describe('it performs basic functionality', () => {
+  // Test setup
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.executeQueryRequest = jest.fn()
+  // column name that will get filtered on
   const filter = 'tumorType'
+  // facet 'value' that will get filtered on
   const JMML = 'JMML'
+  // location of JMML in isChecked
   const JMMLFacetValuesIndex = 2
   const lastQueryRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -82,6 +85,12 @@ describe('it performs basic functionality', () => {
   }
 
   beforeEach(() => {
+    /*
+       This isn't 'necessary' to use below (unsure of why its not),
+       all the tests will pass without the statement, however, it
+       does give a sanity check that no state is bleeding over from
+       one test to another.
+    */
     jest.clearAllMocks()
   })
 
@@ -134,10 +143,11 @@ describe('it performs basic functionality', () => {
       preventDefault: jest.fn()
     } as any
 
+    // the function updateSelection is curried so we have to call it this way
     instance.updateSelection(DESELECT_ALL)(mockedEvent)
 
     const lengthOfFacetSelection = syn16787123Json.facets.find(el => el.columnName === filter)!.facetValues.length
-    // below is unavoidabl
+    // below is unavoidable
     // tslint:disable-next-line:prefer-array-literal
     const allFalseFacetSelection = new Array(lengthOfFacetSelection).fill(false)
     expect(updateParentState).toHaveBeenCalledWith({ isChecked: allFalseFacetSelection })
@@ -175,7 +185,7 @@ describe('it performs basic functionality', () => {
     expect(executeQueryRequest).toHaveBeenCalledWith(queryRequestWithoutJMML)
   })
 
-  it.only('handle click works with adding a facet value', async () => {
+  it('handle click works with adding a facet value', async () => {
     /* Overview:
         1. To mock adding a facet value we have to give a query request that's last selection
         did not contain the facet being selected. Additionally, isChecked, although only used for the sake of

@@ -92,8 +92,6 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
 }
 
 type FacetsState = {
-  selectedFacets: {},
-  boxCount: number,
   showAllFacets: boolean
 }
 
@@ -103,10 +101,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     super(props)
     this.handleClick = this.handleClick.bind(this)
     this.state = {
-      boxCount: 0,
-            // we store the selected facets by column name for ease of use,
-            // this has to be later converted when making the api call
-      selectedFacets: {},
       showAllFacets: false
     }
     this.showAllFacets = this.showAllFacets.bind(this)
@@ -120,8 +114,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    * @memberof Facets
    */
   public showFacetFilter() {
-    // iterate through the loaded data and write out the appropriate checkboxes,
-    // filling in the state of the checkboxes according to the current selection
+    //  find the facetcolumn result according to the input filter
     const facetColumnResult = this.props.data!.facets.
       find((el: FacetColumnResult) => el.columnName === this.props.filter && el.facetType === 'enumeration')!
 
@@ -159,9 +152,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       // remove value
       specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
     }
+    // update ischecked to keep the barchart in sync
     const { isChecked } = cloneDeep(this.props)
     const isCheckedValue = isChecked![dict.index]
     // if its undefined then it hasn't been seen before, in which case its considered 'true'
+    // so we set the value to false
     isChecked![dict.index] = isCheckedValue === undefined ? false : !isChecked![dict.index]
 
     queryRequest.query.selectedFacets = selectedFacets
@@ -171,7 +166,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   }
 
   /**
-   * Handle SELECT_ALL or  event, selection group specifies which
+   * Handle SELECT_ALL or DESELECT_ALL event, selection group specifies which
    * option was chosen
    *
    * @memberof Facets
