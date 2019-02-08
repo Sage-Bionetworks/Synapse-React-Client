@@ -191,28 +191,6 @@ export default class StackedBarChart extends
     ]
   }
 
-  public advancedSearch(xData: any) {
-
-    const { chartSelectionIndex, chartSelectionFacetValue } = this.state
-    const { filter, synapseId = '' } = this.props
-
-    const hoverTextDisplay = chartSelectionIndex === -1 ? xData[0] && xData[0].value : chartSelectionFacetValue
-
-    // base 64 encode the json of the query and go to url with the encoded object
-    const lastQueryRequest = this.props.getLastQueryRequest!()
-    const { query } = lastQueryRequest
-    query.selectedFacets = [
-      {
-        columnName: filter,
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: [hoverTextDisplay]
-      }
-    ]
-    const encodedQuery = btoa(JSON.stringify(query))
-    const link = `https://www.synapse.org/#!Synapse:${synapseId}/tables/query/${encodedQuery}`
-    return link
-  }
-
   public render() {
     const {
       data,

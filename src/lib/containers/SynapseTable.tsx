@@ -45,27 +45,27 @@ const PREVIOUS = 'PREVIOUS'
 const SELECT_ALL = 'SELECT_ALL'
 const DESELECT_ALL = 'DESELECT_ALL'
 // double check these icons!
-const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
+export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
 type direction = ''|'ASC'|'DESC'
-const SORT_STATE: direction [] = ['', 'ASC', 'DESC']
+export const SORT_STATE: direction [] = ['', 'DESC', 'ASC']
 type Info = {
   index: number
   name: string
 }
 
-type SynapseTableState = {
-  sortSelection: SortItem []
+export type SynapseTableState = {
+  sortedColumnSelection: SortItem []
   offset: number
   isOpen: boolean
   isColumnSelected: boolean[]
-  columnIconState: number[],
+  columnIconSortState: number[],
   isFilterSelected: boolean []
-  applyClickedArray: boolean []
+  // applyClickedArray: boolean []
   filterClassList: string [],
   menuWallIsActive: boolean
 }
 
-type SynapseTableProps = {
+export type SynapseTableProps = {
   visibleColumnCount?: number
   synapseId: string
   title: string
@@ -94,17 +94,26 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
     this.showPaginationButtons = this.showPaginationButtons.bind(this)
     this.getFacetAliasIfDefined = this.getFacetAliasIfDefined.bind(this)
-        // store the offset and sorted selection that is currently held
+    // store the offset and sorted selection that is currently held
     this.state = {
-      applyClickedArray: Array(100).fill(false),
-      columnIconState: [],
+      // applyClickedArray: Array(100).fill(false),
+      /* columnIconSortState tells what icon to display for a table
+         header. There are three states for a particular header-
+          0 - show descending icon but *deselected*
+          1 - show descending icon selected
+          2 - show ascending icon selected
+      */
+      columnIconSortState: [],
       filterClassList: Array(100).fill(''),
       isColumnSelected: [],
       isFilterSelected: Array(100).fill(false),
       isOpen: false,
       menuWallIsActive: false,
       offset: 0,
-      sortSelection: []
+      // sortedColumnSelection contains the columns which are
+      // selected currently and their sort status as eithet
+      // off, desc, or asc.
+      sortedColumnSelection: []
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
   }
@@ -121,7 +130,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     if (this.props.data === undefined) {
       return (<div/>)
     }
-        // unpack all the data
+    // unpack all the data
     const { data, filter, isLoading, unitDescription } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
@@ -274,31 +283,32 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    *
    * @memberof SynapseTable
    */
-  private handleColumnSortPress = (dict: Info) => (_: React.SyntheticEvent) => {
+  public handleColumnSortPress = (dict: Info) => (_: React.SyntheticEvent) => {
     // by using Synthetic event we can use the handler on both key press and mouse click
-    let columnIconState = cloneDeep(this.state.columnIconState)
-    if (columnIconState.length === 0) {
-      columnIconState = Array(this.getLengthOfPropsData()).fill(0)
+    let columnIconSortState = cloneDeep(this.state.columnIconSortState)
+    if (columnIconSortState.length === 0) {
+      columnIconSortState = Array(this.getLengthOfPropsData()).fill(0)
     }
-    // get currently sorted items and remove/insert this selection
-    const sortSelection = cloneDeep(this.state.sortSelection)
-    const index = this.findSelectionIndex(sortSelection, dict.name)
+    // get currently sorted items and remove/insert/update this selection
+    const sortedColumnSelection = cloneDeep(this.state.sortedColumnSelection)
+    const index = this.findSelectionIndex(sortedColumnSelection, dict.name)
+    // if its present then remove it
     if (index !== -1) {
-      sortSelection.splice(index, 1)
+      sortedColumnSelection.splice(index, 1)
     }
-    columnIconState[dict.index] = (columnIconState[dict.index] + 1) % ICON_STATE.length
-    if (columnIconState[dict.index] > 0) {
-      sortSelection.unshift({
+    columnIconSortState[dict.index] = (columnIconSortState[dict.index] + 1) % ICON_STATE.length
+    if (columnIconSortState[dict.index] > 0) {
+      sortedColumnSelection.unshift({
         column: dict.name,
-        direction: SORT_STATE[columnIconState[dict.index]]
+        direction: SORT_STATE[columnIconSortState[dict.index]]
       })
     }
     const queryRequest = this.props.getLastQueryRequest!()
-    queryRequest.query.sort = sortSelection
+    queryRequest.query.sort = sortedColumnSelection
     this.props.executeQueryRequest!(queryRequest)
     this.setState({
-      columnIconState,
-      sortSelection
+      columnIconSortState,
+      sortedColumnSelection
     })
   }
 
@@ -334,12 +344,22 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     )
   }
 
+  /**
+   * Renders the dropdown menu to the top right of table that allows users
+   * to toggle a columnn from the view of the table
+   *
+   * @private
+   * @param {SelectColumn[]} headers
+   * @returns {React.ReactNode}
+   * @memberof SynapseTable
+   */
   private renderDropdownColumnMenu(headers: SelectColumn[]): React.ReactNode {
     return headers.map((header: any, index: number) => {
       let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index]
-      const { visibleColumnCount = 0 } = this.props
+      // if visibleColumnCount is not defined then show all columns
+      const { visibleColumnCount = Infinity } = this.props
       if (isColumnSelected === undefined) {
-        isColumnSelected = (index < visibleColumnCount) || (visibleColumnCount === 0)
+        isColumnSelected = (index < visibleColumnCount)
       }
       const iconStyle: any = { width: '11px', marginRight: '10px' }
       if (!isColumnSelected) {
@@ -350,7 +370,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (
         <li
           style={{ listStyle: 'none' }}
-          className="SRC-primary-background-color-hover SRC-nested-color"
+          className="SRC-table-dropdown-list SRC-primary-background-color-hover SRC-nested-color"
           key={header.name}
           onClick={this.toggleColumnSelection(index)}
         >
@@ -364,8 +384,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </a>
         </li>
       )
-    }
-        )
+    })
   }
 
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
@@ -376,7 +395,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       const rowContent = expRow.values.map(
         (value: string, j: number) => {
           const columnName = headers[j].name
-          const index = this.findSelectionIndex(this.state.sortSelection, columnName)
+          const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
           const { visibleColumnCount = 0 } = this.props
             // we have to check if this column is selected under initial load
             // there are two cases:
@@ -409,21 +428,20 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
-    const { isColumnSelected, sortSelection, columnIconState } = this.state
-    const { visibleColumnCount = 0 } = this.props
+    const { isColumnSelected, sortedColumnSelection, columnIconSortState } = this.state
+    const { visibleColumnCount = Infinity } = this.props
 
     return headers.map((column: SelectColumn, index: number) => {
       // two cases when rendering the column headers on init load
       // of the page we have to show only this.props.visibleColumnCount many
       // columns, afterwards we rely on the isColumnSelected to get choices
-      let initRender: boolean = index < visibleColumnCount && isColumnSelected.length === 0
-      initRender = initRender || (visibleColumnCount === 0 && isColumnSelected.length === 0)
+      const initRender: boolean = index < visibleColumnCount && isColumnSelected.length === 0
       const subsequentRender = isColumnSelected[index] && isColumnSelected.length !== 0
       if (initRender || subsequentRender) {
         // for background color
-        const isSelected: boolean = this.findSelectionIndex(sortSelection, column.name) !== -1
+        const isSelected: boolean = this.findSelectionIndex(sortedColumnSelection, column.name) !== -1
         // for icon state
-        const columnIndex: number = columnIconState[index] === undefined ? 0 : this.state.columnIconState[index]
+        const columnIndex: number = columnIconSortState[index] === undefined ? 0 : columnIconSortState[index]
         // we have to figure out if the current column is a facet selection
         const facetIndex: number = facets.findIndex((value: FacetColumnResult) => {
           return this.getFacetAliasIfDefined(value.columnName) === column.name
@@ -462,15 +480,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * Utility to search through array of objects and find object with key "column"
    * equal to input parameter "name"
    *
-   * @param {*} sortSelection
+   * @param {*} sortedColumnSelection
    * @param {*} name
    * @returns -1 if not present, otherwise the index of the object
    * @memberof SynapseTable
    */
-  private findSelectionIndex(sortSelection: SortItem [], name: string) {
-    if (sortSelection.length !== 0) {
+  private findSelectionIndex(sortedColumnSelection: SortItem [], name: string) {
+    if (sortedColumnSelection.length !== 0) {
       // find if the current selection exists already and remove it
-      return sortSelection.findIndex((el: SortItem) => el.column === name)
+      return sortedColumnSelection.findIndex((el: SortItem) => el.column === name)
     }
     return -1
   }
@@ -480,7 +498,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return
   }
 
-    // Direct user to synapse corresponding synapse table
+  // Direct user to synapse corresponding synapse table
   private advancedSearch(event: React.SyntheticEvent) {
     event.preventDefault()
     const lastQueryRequest = this.props.getLastQueryRequest!()
@@ -491,13 +509,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     window.open(`https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`, '_blank')
   }
 
-    /**
-     * Handles the opening and closing of the column select menu, this method
-     * is only necessary because react overrides the behavior that bootstrap
-     * embeds in its menus
-     *
-     * @memberof SynapseTable
-     */
+  /**
+   * Handles the opening and closing of the column select menu, this method
+   * is only necessary because react overrides the behavior that bootstrap
+   * embeds in its menus
+   *
+   * @memberof SynapseTable
+   */
   private toggleDropdown() {
     const { isOpen } = this.state
     const { isFilterSelected } = this.state
@@ -525,28 +543,31 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { data } = this.props
     return data!.queryResult.queryResults.headers.length
   }
-    /**
-     * Handles the toggle of a column select, this will cause the table to
-     * either show the column or hide depending on the prior state of the column
-     *
-     * @memberof SynapseTable
-     */
-  private toggleColumnSelection = (index: number) => (event: React.MouseEvent<HTMLLIElement>) => {
+  /**
+   * Handles the toggle of a column select, this will cause the table to
+   * either show the column or hide depending on the prior state of the column
+   *
+   * @memberof SynapseTable
+   */
+  public toggleColumnSelection = (index: number) => (event: React.MouseEvent<HTMLLIElement>) => {
     event.preventDefault()
-    // lazily update the component with this information
-    // this only runs once
     let isColumnSelected: boolean []
+    // lazily initialize isColumnSelected, at first it's empty
+    // and then on first column click we set it
     if (this.state.isColumnSelected.length === 0) {
+      const { visibleColumnCount = Infinity } = this.props
       // unpack all the data
       const lengthOfPropsData = this.getLengthOfPropsData()
       let defaultSelection
-      // fill visibleColumnCount with true and the rest as false
-      if (this.props.visibleColumnCount === 0) {
+      // fill up to visibleColumnCount with true and the rest as false
+      if (visibleColumnCount === Infinity) {
         // if set to zero then its all true
         defaultSelection = Array(lengthOfPropsData).fill(true)
       } else {
-        defaultSelection = Array(this.props.visibleColumnCount).fill(true)
-        defaultSelection.push(...Array(lengthOfPropsData - this.props.visibleColumnCount!).fill(false))
+        // fill in whole array as false
+        defaultSelection = Array(lengthOfPropsData).fill(false)
+        // then fill in up until lengthOfPropsData with true
+        defaultSelection.fill(true, 0, visibleColumnCount)
       }
       isColumnSelected = defaultSelection
     } else {
@@ -566,7 +587,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @returns
    * @memberof SynapseTable
    */
-  private configureFacetDropdown(index: number, facetColumnResults: FacetColumnResult[], facetIndex: number) {
+  public configureFacetDropdown(index: number, facetColumnResults: FacetColumnResult[], facetIndex: number) {
 
     // this grabs the specific facet selection
     const facetColumnResult = facetColumnResults[facetIndex] as FacetColumnResultValues
@@ -575,9 +596,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // this is related to whether we've selected this column or not
     const isCurFilterSelected = this.state.isFilterSelected[index]
 
-    const toggleDropdown = (event?: any) => {
+    const toggleDropdown = (_event?: any) => {
 
-      //  make param any for code re-use
       const isFilterSelected = cloneDeep(this.state.isFilterSelected)
       const filterClassList = cloneDeep(this.state.filterClassList)
       isFilterSelected[index] = !isCurFilterSelected
@@ -659,10 +679,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
       this.props.executeQueryRequest!(queryRequest)
       toggleDropdown()
-      const applyClickedArray = cloneDeep(this.state.applyClickedArray)
-      applyClickedArray[index] = true
+      // const applyClickedArray = cloneDeep(this.state.applyClickedArray)
+      // applyClickedArray[index] = true
       this.setState({
-        applyClickedArray,
+        // applyClickedArray,
         menuWallIsActive: false
       })
     }
@@ -676,7 +696,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       <div
         ref={refOuterDiv}
         style={style}
-        className={`btn-group SRC-tableHead ${isCurFilterSelected ? 'open SRC-anchor-light' : ''}`}
+        className={`SRC-table-facet-dropdown btn-group SRC-tableHead ${isCurFilterSelected ? 'open SRC-anchor-light' : ''}`}
       >
         <span
           tabIndex={0}
