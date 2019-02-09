@@ -60,7 +60,6 @@ export type SynapseTableState = {
   isColumnSelected: boolean[]
   columnIconSortState: number[],
   isFilterSelected: boolean []
-  // applyClickedArray: boolean []
   filterClassList: string [],
   menuWallIsActive: boolean
 }
@@ -86,7 +85,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
-    this.toggleDropdown = this.toggleDropdown.bind(this)
+    this.toggleMenuWall = this.toggleMenuWall.bind(this)
     this.advancedSearch = this.advancedSearch.bind(this)
     this.download = this.download.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
@@ -189,7 +188,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                   <span>
                       {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
                       <span className={isLoading ? 'spinner' : ''} style={isLoading ? {} : { display: 'none' }} />
-                      {isLoading && <strong> &nbsp;&nbsp; Table results updating... </strong>}
+                      {isLoading && <strong> {'    '} Table results updating... </strong>}
                   </span>
               </div>
           </div>
@@ -222,8 +221,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                               data-tip="Add / Remove Columns"
                               style={{ marginLeft: '10px' }}
                               className={addRemoveColClasses}
-                              onKeyPress={this.toggleDropdown}
-                              onClick={this.toggleDropdown}
+                              onKeyPress={this.toggleMenuWall}
+                              onClick={this.toggleMenuWall}
                               id="dropdownMenu1"
                           >
                               <FontAwesomeIcon color="white" icon="columns"/>
@@ -250,7 +249,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                               {this.createTableHeader(headers, facets)}
                           </tr>
                       </thead>
-                      {<tbody> {this.createTableRows(rows, headers)}</tbody>}
+                      {<tbody>{this.createTableRows(rows, headers)}</tbody>}
                   </table>
                   {total > 0 && this.showPaginationButtons(pastZero)}
               </div>
@@ -391,26 +390,25 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const rowsFormatted: JSX.Element[] = []
     const { isColumnSelected } = this.state
     const isColumnSelectedLen = isColumnSelected.length
-    rows.forEach((expRow: any, i: any) => {
-      const rowContent = expRow.values.map(
-        (value: string, j: number) => {
+    rows.forEach((row: any, i: any) => {
+      const rowContent = row.values.map(
+        (columnValue: string, j: number) => {
           const columnName = headers[j].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
-          const { visibleColumnCount = 0 } = this.props
-            // we have to check if this column is selected under initial load
-            // there are two cases:
-            // 1. If the user has just clicked on the screen, we should show the column if its within
-            // the limit of the rows specified
-            // 2. If the visibleColumnCount is not specified or set to zero AND there have not been
-            // any selections made then we don't show it
-          let isRowActiveInit: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
-          isRowActiveInit = isRowActiveInit || (visibleColumnCount === 0 && isColumnSelectedLen === 0)
-            // this is checking if the column is selected post load and interactions have taken place
-          const isRowActiveSubsequent = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
-          if (isRowActiveInit || isRowActiveSubsequent) {
+          const { visibleColumnCount = Infinity } = this.props
+          // we have to check if this column is selected under initial load
+          // there are two cases:
+          // 1. If the user has just clicked on the screen, we should show the column if its within
+          // the limit of the rows specified
+          // 2. If the visibleColumnCount is not specified or set to zero AND there have not been
+          // any selections made then we don't show it
+          const isColumnActive: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
+          // this is checking if the column is selected post load and interactions have taken place
+          const isColumnActivePastInit = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
+          if (isColumnActive || isColumnActivePastInit) {
             return (
               <td className="SRC_noBorderTop" key={`(${i},${j})`}>
-                  <p className={`${index === -1 ? '' : 'SRC-boldText'}`}> {value} </p>
+                  <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
               </td>
             )
           }
@@ -418,9 +416,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         })
 
       const rowFormatted = (
-        <tr key={expRow.rowId}>
-          {rowContent}
-        </tr>
+        <tr key={row.rowId}>{rowContent}</tr>
       )
       rowsFormatted.push(rowFormatted)
     })
@@ -516,19 +512,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    *
    * @memberof SynapseTable
    */
-  private toggleDropdown() {
-    const { isOpen } = this.state
-    const { isFilterSelected } = this.state
-
-    if (!isOpen) {
-      for (let i = 0; i < isFilterSelected.length; i += 1) {
-        isFilterSelected[i] = false
-      }
-    }
+  public toggleMenuWall() {
+    const { isOpen, isFilterSelected } = this.state
 
     if (!isOpen) {
       // the dropdown was closed coming into this method, so now it will be opened
       // so we activate the menu wall.
+      for (let i = 0; i < isFilterSelected.length; i += 1) {
+        isFilterSelected[i] = false
+      }
       this.setState({ menuWallIsActive: true })
     } else {
       // dropdown was open coming into this method, so we activate the menu wall
@@ -578,7 +570,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   /**
-   *
+   * Show the dropdown menu for a column that has been faceted
    *
    * @param {number} index this is column index of the query table data
    * @param {string} columnName this is the name of the column
@@ -639,7 +631,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
 
     // handle column selection
-    const handleSelector = (selector?: string) => (event: React.SyntheticEvent<HTMLElement>) => {
+    const handleSelector = (selector?: string) => (_event: React.SyntheticEvent<HTMLElement>) => {
       for (let i = 0; i < ref.current!.children.length; i += 1) {
         const curElement = ref.current!.children[i] as HTMLLIElement
         const label = curElement.children[0] as HTMLLabelElement
@@ -679,10 +671,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
       this.props.executeQueryRequest!(queryRequest)
       toggleDropdown()
-      // const applyClickedArray = cloneDeep(this.state.applyClickedArray)
-      // applyClickedArray[index] = true
       this.setState({
-        // applyClickedArray,
         menuWallIsActive: false
       })
     }
@@ -759,7 +748,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         </div>
       </div>
     )
-
   }
 
   private closeMenuClickHandler(_: React.SyntheticEvent) {
@@ -796,7 +784,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <li>
             <label className="dropdownList SRC-base-font containerCheckbox">
               {displayValue}
-              <span style={{ color: '#DDDDDF' }}> &nbsp;&nbsp;({dataPoint.count}) </span>
+              <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
               <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
               <span className="checkmark" />
             </label>

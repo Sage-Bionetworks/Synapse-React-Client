@@ -106,7 +106,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         unitDescription = '',
         sql,
         synapseId,
-        visibleColumnCount = 0,
+        visibleColumnCount = Infinity,
         title = ''
       } = config
       let className = ''
