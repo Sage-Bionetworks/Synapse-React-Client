@@ -57,10 +57,9 @@ class Demo extends React.Component<{}, DemoState> {
             title: 'Data',
             facetDisplayValue: 'Organism',
             facetName: 'dataStatus',
-            sql: 'SELECT * FROM syn16787123',
+            sql: 'SELECT projectStatus, dataStatus, tumorType, diseaseFocus FROM syn16787123',
             synapseId: 'syn16787123',
-            unitDescription: 'dataStatus',
-            visibleColumnCount: 3,
+            unitDescription: 'dataStatus'
           },
           {
             title: 'Data',

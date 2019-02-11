@@ -10,7 +10,6 @@ import { faCheck,
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-// tslint:disable-next-line
 import closeSvg from '../assets/icons/close.svg'
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
@@ -24,8 +23,6 @@ import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
-
-import { uuidv4 } from '../utils/modules'
 const MIN_SPACE_FACET_MENU = 700
 
 // Add all icons to the library so you can use it in your page
@@ -92,10 +89,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
     this.showPaginationButtons = this.showPaginationButtons.bind(this)
-    this.getFacetAliasIfDefined = this.getFacetAliasIfDefined.bind(this)
+    this.useFacetAliasIfDefined = this.useFacetAliasIfDefined.bind(this)
+    this.handleSelector = this.handleSelector.bind(this)
+    this.applyChanges = this.applyChanges.bind(this)
+    this.toggleFilterDropdown = this.toggleFilterDropdown.bind(this)
     // store the offset and sorted selection that is currently held
     this.state = {
-      // applyClickedArray: Array(100).fill(false),
       /* columnIconSortState tells what icon to display for a table
          header. There are three states for a particular header-
           0 - show descending icon but *deselected*
@@ -117,7 +116,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
   }
 
-  public getFacetAliasIfDefined(facetName: string) {
+  public useFacetAliasIfDefined(facetName: string) {
     const { facetAliases = {} } = this.props
     return facetAliases[facetName] || facetName
   }
@@ -173,8 +172,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       total = 0
     }
 
-    const tooltipIdOne = uuidv4()
-    const tooltipIdTwo = uuidv4()
+    const tooltipIdOne = 'openAdvancedSearch'
+    const tooltipIdTwo = 'addAndRemoveColumns'
     const { menuWallIsActive, isOpen } = this.state
     const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
     let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
@@ -182,78 +181,78 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     return (
       <React.Fragment>
-          <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
-          <div className="container-fluid">
-              <div className="row SRC-marginBottomTen">
-                  <span>
-                      {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
-                      <span className={isLoading ? 'spinner' : ''} style={isLoading ? {} : { display: 'none' }} />
-                      {isLoading && <strong> {'    '} Table results updating... </strong>}
-                  </span>
-              </div>
-          </div>
-          <div className="container-fluid" >
-              <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
-                  <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-                  <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
-                      <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
-                          <span
-                              tabIndex={0}
-                              data-for={tooltipIdOne}
-                              data-tip="Open Advanced Search in Synapse"
-                              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                              onKeyPress={this.advancedSearch}
-                              onClick={this.advancedSearch}
-                          >
-                              <FontAwesomeIcon size="1x" color="white"  icon="database"/>
-                          </span>
-                          <ReactTooltip
-                              delayShow={1500}
-                              place="bottom"
-                              type="dark"
-                              effect="solid"
-                              id={tooltipIdOne}
-                          />
+        <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
+        <div className="container-fluid">
+            <div className="row SRC-marginBottomTen">
+                <span>
+                    {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
+                    <span className={isLoading ? 'spinner' : ''} style={isLoading ? {} : { display: 'none' }} />
+                    {isLoading && <strong> {'    '} Table results updating... </strong>}
+                </span>
+            </div>
+        </div>
+        <div className="container-fluid" >
+            <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
+                <h3 className="SRC-tableHeader"> {this.props.title}</h3>
+                <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
+                    <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
+                        <span
+                            tabIndex={0}
+                            data-for={tooltipIdOne}
+                            data-tip="Open Advanced Search in Synapse"
+                            className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                            onKeyPress={this.advancedSearch}
+                            onClick={this.advancedSearch}
+                        >
+                            <FontAwesomeIcon size="1x" color="white"  icon="database"/>
+                        </span>
+                        <ReactTooltip
+                            delayShow={1500}
+                            place="bottom"
+                            type="dark"
+                            effect="solid"
+                            id={tooltipIdOne}
+                        />
 
-                          <span
-                              tabIndex={0}
-                              data-for={tooltipIdTwo}
-                              data-tip="Add / Remove Columns"
-                              style={{ marginLeft: '10px' }}
-                              className={addRemoveColClasses}
-                              onKeyPress={this.toggleMenuWall}
-                              onClick={this.toggleMenuWall}
-                              id="dropdownMenu1"
-                          >
-                              <FontAwesomeIcon color="white" icon="columns"/>
-                          </span>
-                          <ReactTooltip
-                              delayShow={1500}
-                              place="bottom"
-                              type="dark"
-                              effect="solid"
-                              id={tooltipIdTwo}
-                          />
-                          <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                              {this.renderDropdownColumnMenu(headers)}
-                          </ul>
-                      </span>
-                  </span>
-              </div>
-          </div>
-          <div className="container-fluid">
-              <div className="row SRC-overflowAuto">
-                  <table className="table table-striped table-condensed">
-                      <thead className="SRC_borderTop">
-                          <tr>
-                              {this.createTableHeader(headers, facets)}
-                          </tr>
-                      </thead>
-                      {<tbody>{this.createTableRows(rows, headers)}</tbody>}
-                  </table>
-                  {total > 0 && this.showPaginationButtons(pastZero)}
-              </div>
-          </div>
+                        <span
+                            tabIndex={0}
+                            data-for={tooltipIdTwo}
+                            data-tip="Add / Remove Columns"
+                            style={{ marginLeft: '10px' }}
+                            className={addRemoveColClasses}
+                            onKeyPress={this.toggleMenuWall}
+                            onClick={this.toggleMenuWall}
+                            id="dropdownMenu1"
+                        >
+                            <FontAwesomeIcon color="white" icon="columns"/>
+                        </span>
+                        <ReactTooltip
+                            delayShow={1500}
+                            place="bottom"
+                            type="dark"
+                            effect="solid"
+                            id={tooltipIdTwo}
+                        />
+                        <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                            {this.renderDropdownColumnMenu(headers)}
+                        </ul>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div className="container-fluid">
+            <div className="row SRC-overflowAuto">
+                <table className="table table-striped table-condensed">
+                    <thead className="SRC_borderTop">
+                        <tr>
+                            {this.createTableHeader(headers, facets)}
+                        </tr>
+                    </thead>
+                    {<tbody>{this.createTableRows(rows, headers)}</tbody>}
+                </table>
+                {total > 0 && this.showPaginationButtons(pastZero)}
+            </div>
+        </div>
       </React.Fragment>
     )
   }
@@ -440,7 +439,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const columnIndex: number = columnIconSortState[index] === undefined ? 0 : columnIconSortState[index]
         // we have to figure out if the current column is a facet selection
         const facetIndex: number = facets.findIndex((value: FacetColumnResult) => {
-          return this.getFacetAliasIfDefined(value.columnName) === column.name
+          return this.useFacetAliasIfDefined(value.columnName) === column.name
         })
         const isFacetSelection: boolean = facetIndex !== -1
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
@@ -588,98 +587,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // this is related to whether we've selected this column or not
     const isCurFilterSelected = this.state.isFilterSelected[index]
 
-    const toggleDropdown = (_event?: any) => {
-
-      const isFilterSelected = cloneDeep(this.state.isFilterSelected)
-      const filterClassList = cloneDeep(this.state.filterClassList)
-      isFilterSelected[index] = !isCurFilterSelected
-
-      // close all the other filters
-      for (let i = 0; i < isFilterSelected.length; i += 1) {
-        if (i !== index) {
-          isFilterSelected[i] = false
-        }
-      }
-
-      // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the
-      // front of the scrollable we can examine its parent bounding rect -- this gives a relative value
-      // (that changes on scroll) of the filter to a fixed left most point.
-      const tHeadLeftPosition = refOuterDiv.current!.parentElement!.getBoundingClientRect().left
-      let classNames = '' //  the classes to be applied to the filter dropdown menu
-
-      if (isFilterSelected[index]) {
-        classNames = tHeadLeftPosition < MIN_SPACE_FACET_MENU ?
-          'SRC-forceLeftDropdown dropdown-menu-left' : 'dropdown-menu-right'
-      } else {
-        classNames = ''
-      }
-      // set the class names for this dropdown item
-      filterClassList[index] = classNames
-
-      this.setState(
-        {
-          filterClassList,
-          isFilterSelected,
-          isOpen: false, // close the toggle dropdown if its even open
-          menuWallIsActive: !isCurFilterSelected
-        }
-      )
-
-    }
-
     const ref: React.RefObject<HTMLSpanElement> = React.createRef()
     const refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
-
-    // handle column selection
-    const handleSelector = (selector?: string) => (_event: React.SyntheticEvent<HTMLElement>) => {
-      for (let i = 0; i < ref.current!.children.length; i += 1) {
-        const curElement = ref.current!.children[i] as HTMLLIElement
-        const label = curElement.children[0] as HTMLLabelElement
-        const checkbox = label.children[1] as HTMLInputElement
-        checkbox.checked = selector === SELECT_ALL
-      }
-    }
-
-    const applyChanges = (_: React.SyntheticEvent<HTMLElement>) => {
-      const facetValues: string[] = []
-      for (let i = 0; i < ref.current!.children.length; i += 1) {
-        const curElement = ref.current!.children[i] as HTMLLIElement
-        const label = curElement.children[0] as HTMLLabelElement
-        const checkbox = label.children[1] as HTMLInputElement
-        const isSelected = checkbox.checked
-        if (isSelected) {
-          facetValues.push(checkbox.value)
-        }
-      }
-
-      const queryRequest: QueryBundleRequest = cloneDeep(this.props.getLastQueryRequest!())
-      const selectedFacets: FacetColumnRequest[] = queryRequest.query.selectedFacets!
-      // the facet index of the result and the request are the same
-      const currentFacetRequest: FacetColumnRequest = {
-        columnName,
-        facetValues,
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
-      }
-
-      const indexOfFacetInRequest = selectedFacets!.findIndex(el => el.columnName === columnName)
-
-      if (indexOfFacetInRequest === -1) {
-        queryRequest.query!.selectedFacets!.push(currentFacetRequest)
-      } else {
-        queryRequest.query!.selectedFacets![indexOfFacetInRequest] = currentFacetRequest
-      }
-
-      this.props.executeQueryRequest!(queryRequest)
-      toggleDropdown()
-      this.setState({
-        menuWallIsActive: false
-      })
-    }
 
     const applyPrimary = isCurFilterSelected ? 'SRC-primary-background-color' : 'SRC-primary-text-color'
     const numFacets: number = facetColumnResult.facetValues.length
     const classList = this.state.filterClassList[index]
-    const style = { alignItems: 'center', marginLeft: '15px', marginRight: '5px', color: 'black', display: 'flex' }
+    const style = { alignItems: 'center', marginLeft: '10px', marginRight: '3px', color: 'black', display: 'flex' }
 
     return (
       <div
@@ -690,8 +604,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         <span
           tabIndex={0}
           className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`}
-          onKeyPress={toggleDropdown}
-          onClick={toggleDropdown}
+          onKeyPress={this.toggleFilterDropdown(index, isCurFilterSelected, refOuterDiv)}
+          onClick={this.toggleFilterDropdown(index, isCurFilterSelected, refOuterDiv)}
+          style={{ outline: 'none' }}
         >
           <FontAwesomeIcon
             style={{ margin: 'auto' }}
@@ -710,11 +625,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                   className="SRC-flex SRC-table-dropdown-content"
                 >
                   <p className="SRC-table-dropdown-text">
-                    {this.getFacetAliasIfDefined(columnName)} ({numFacets})
+                    {this.useFacetAliasIfDefined(columnName)} ({numFacets})
                   </p>
                   <button
-                    className="SRC-table-dropdown-close btn pull-right"
-                    onClick={toggleDropdown}
+                    className="SRC-table-dropdown-close SRC-removeOutline btn pull-right"
+                    onClick={this.toggleFilterDropdown(index, isCurFilterSelected, refOuterDiv)}
                   >
                     <img src={closeSvg} />
                   </button>
@@ -730,27 +645,32 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <div className="borderTopTable SRC-flex">
             <span className="tableTextColor">
               <button
-                onClick={handleSelector(SELECT_ALL)}
+                onClick={this.handleSelector(SELECT_ALL, ref)}
                 className="tableDropdownSelector tableAll"
               >
                 All
               </button>
               <span> | </span>
               <button
-                onClick={handleSelector(DESELECT_ALL)}
+                onClick={this.handleSelector(DESELECT_ALL, ref)}
                 className="tableDropdownSelector tableClear"
               >
                 Clear
               </button>
             </span>
-            <button onClick={applyChanges} className="tableApply"> APPLY </button>
+            <button
+              onClick={this.applyChanges(ref, columnName, index, refOuterDiv)}
+              className="tableApply SRC-removeOutline"
+            >
+              APPLY
+            </button>
           </div>
         </div>
       </div>
     )
   }
 
-  private closeMenuClickHandler(_: React.SyntheticEvent) {
+  public closeMenuClickHandler(_: React.SyntheticEvent) {
     const { menuWallIsActive } = this.state
 
     const isFilterSelected = cloneDeep(this.state.isFilterSelected)
@@ -772,25 +692,116 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
   }
 
-  private renderFacetSelection(facetColumnResult: FacetColumnResultValues): React.ReactNode {
+  /**
+   * When user has the dropdown for the filter menu open they have the choice to deselect all or select all,
+   * this method handles that selection.
+   *
+   * @memberof SynapseTable
+   */
+  public handleSelector = (selector: string, ref: React.RefObject<HTMLSpanElement>) =>
+    (_event: React.SyntheticEvent<HTMLElement>) => {
+      for (let i = 0; i < ref.current!.children.length; i += 1) {
+        const curElement = ref.current!.children[i] as HTMLLIElement
+        const label = curElement.children[0] as HTMLLabelElement
+        const checkbox = label.children[1] as HTMLInputElement
+        checkbox.checked = selector === SELECT_ALL
+      }
+    }
+
+  public renderFacetSelection(facetColumnResult: FacetColumnResultValues): React.ReactNode {
     return facetColumnResult.facetValues.map((dataPoint: FacetColumnResultValueCount) => {
-      const idText = `${dataPoint.value}(${dataPoint.count})`
+      const idText = `${facetColumnResult.columnName}-${dataPoint.value}-${dataPoint.count}`
       let displayValue = dataPoint.value
       if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
         displayValue = 'unannotated'
       }
       return (
-        <React.Fragment key={idText}>
-          <li>
-            <label className="dropdownList SRC-base-font containerCheckbox">
-              {displayValue}
-              <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
-              <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
-              <span className="checkmark" />
-            </label>
-          </li>
-        </React.Fragment>
+        <li key={idText}>
+          <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
+            {displayValue}
+            <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
+            <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
+            <span className="checkmark" />
+          </label>
+        </li>
       )
     })
   }
+
+  /**
+   * When the user decides to submit their changes for the dropdown menu with the facet, they have an
+   * apply button, this method handles that submission.
+   *
+   * @memberof SynapseTable
+   */
+  public applyChanges = (
+      ref: React.RefObject<HTMLSpanElement>,
+      columnName: string,
+      index: number,
+      refOuterDiv: React.RefObject<HTMLDivElement>
+    ) => (_: React.SyntheticEvent<HTMLElement>) => {
+      const facetValues: string[] = []
+      // read over the checkboxes for this facet selection and see what was selected.
+      for (let i = 0; i < ref.current!.children.length; i += 1) {
+        const curElement = ref.current!.children[i] as HTMLLIElement
+        const label = curElement.children[0] as HTMLLabelElement
+        const checkbox = label.children[1] as HTMLInputElement
+        const isSelected = checkbox.checked
+        if (isSelected) {
+          facetValues.push(checkbox.value)
+        }
+      }
+
+      const queryRequest: QueryBundleRequest = cloneDeep(this.props.getLastQueryRequest!())
+      const selectedFacets: FacetColumnRequest[] = queryRequest.query.selectedFacets!
+      // the facet index of the result and the request are the same
+      const currentFacetRequest: FacetColumnRequest = {
+        columnName,
+        facetValues,
+        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+      }
+      const indexOfFacetInRequest = selectedFacets!.findIndex(el => el.columnName === columnName)
+
+      if (indexOfFacetInRequest === -1) {
+        queryRequest.query!.selectedFacets!.push(currentFacetRequest)
+      } else {
+        queryRequest.query!.selectedFacets![indexOfFacetInRequest] = currentFacetRequest
+      }
+
+      this.props.executeQueryRequest!(queryRequest)
+      // make sure to close out the menu
+      this.toggleFilterDropdown(index, true, refOuterDiv)()
+    }
+
+  public toggleFilterDropdown =
+   (index: number, isCurFilterSelected: boolean, refOuterDiv: React.RefObject<HTMLDivElement>) => (_event?: any) => {
+     const isFilterSelected = cloneDeep(this.state.isFilterSelected)
+     const filterClassList = cloneDeep(this.state.filterClassList)
+     isFilterSelected[index] = !isCurFilterSelected
+     // close all the other filters menus
+     for (let i = 0; i < isFilterSelected.length; i += 1) {
+       if (i !== index) {
+         isFilterSelected[i] = false
+       }
+     }
+     // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the
+     // front of the scrollable we can examine its parent bounding rect -- this gives a relative value
+     // (that changes on scroll) of the filter to a fixed left most point.
+     const tHeadLeftPosition = refOuterDiv.current!.parentElement!.getBoundingClientRect().left
+     let classNames = '' //  the classes to be applied to the filter dropdown menu
+     if (isFilterSelected[index]) {
+       classNames = tHeadLeftPosition < MIN_SPACE_FACET_MENU ?
+         'SRC-forceLeftDropdown dropdown-menu-left' : 'dropdown-menu-right'
+     } else {
+       classNames = ''
+     }
+     // set the class names for this dropdown item
+     filterClassList[index] = classNames
+     this.setState({
+       filterClassList,
+       isFilterSelected,
+       isOpen: false,
+       menuWallIsActive: !isCurFilterSelected
+     })
+   }
 }

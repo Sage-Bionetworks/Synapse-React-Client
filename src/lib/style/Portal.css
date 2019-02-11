@@ -627,6 +627,8 @@ checkmark styling end
   font-weight: 700; }
 
 .SRC-sortPadding {
+  outline: none;
+  margin-left: 6px;
   padding: 2px 3px; }
 
 .SRC-forceLeftDropdown {
@@ -684,3 +686,6 @@ checkmark styling end
   left: 150px;
   margin-right: 10px;
   margin-top: 5px; }
+
+.SRC-overflowWrap {
+  overflow-wrap: break-word; }
