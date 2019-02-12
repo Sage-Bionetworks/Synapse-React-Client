@@ -150,6 +150,12 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
+    console.log('Executing query request with following selected facets = ')
+    queryRequest.query.selectedFacets!.map(
+      (el) => {
+        console.log(el)
+      }
+    )
     this.setState({
       isLoading: true
     })

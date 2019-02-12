@@ -395,16 +395,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           const columnName = headers[j].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
           const { visibleColumnCount = Infinity } = this.props
-          // we have to check if this column is selected under initial load
-          // there are two cases:
-          // 1. If the user has just clicked on the screen, we should show the column if its within
-          // the limit of the rows specified
-          // 2. If the visibleColumnCount is not specified or set to zero AND there have not been
-          // any selections made then we don't show it
-          const isColumnActive: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
-          // this is checking if the column is selected post load and interactions have taken place
-          const isColumnActivePastInit = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
-          if (isColumnActive || isColumnActivePastInit) {
+          // on iniital load isColumnSelected is null and we by default show all columns that come
+          // before visibileColumnCount
+          const isColumnActiveInitLoad: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
+          // past the initial load -- when a user has started clicking items, then isColumnSelected is
+          // not null and we verify that this column is part of the selection.
+          const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
+          if (isColumnActiveInitLoad || isColumnActivePastInitLoad) {
             return (
               <td className="SRC_noBorderTop" key={`(${i}${columnValue}${j})`}>
                   <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
@@ -710,17 +707,17 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   public renderFacetSelection(facetColumnResult: FacetColumnResultValues): React.ReactNode {
     return facetColumnResult.facetValues.map((dataPoint: FacetColumnResultValueCount) => {
-      const idText = `${facetColumnResult.columnName}-${dataPoint.value}-${dataPoint.count}`
       let displayValue = dataPoint.value
       if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
         displayValue = 'unannotated'
       }
+      const key = dataPoint.value + dataPoint.count
       return (
-        <li key={idText}>
+        <li key={key}>
           <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
             {displayValue}
             <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
-            <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
+            <input defaultChecked={dataPoint.isSelected} type="checkbox" value={dataPoint.value} />
             <span className="checkmark" />
           </label>
         </li>
