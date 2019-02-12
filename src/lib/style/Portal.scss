@@ -368,17 +368,17 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 // if its focused don't use their background color
-.dropdown-menu>li>a.SRC-no-focus:focus, {
+.dropdown-menu>li>a.SRC-no-focus:focus {
   background: none;
  }
 
 // if its focused don't use their background color
-.dropdown-menu>li>a.SRC-no-focus:hover, {
+.dropdown-menu>li>a.SRC-no-focus:hover {
   background: unset;
  }
 
  // if its focused make sure the text display right
-.dropdown-menu>li.SRC-table-anchor-chosen>a.SRC-no-focus:focus, {
+.dropdown-menu>li.SRC-table-anchor-chosen>a.SRC-no-focus:focus {
   background: none;
   color: white;
  }
@@ -769,6 +769,8 @@ checkmark styling end
 }
 
 .SRC-sortPadding {
+  outline: none;
+  margin-left: 6px;
   padding: 2px 3px;
 }
 
@@ -840,4 +842,8 @@ checkmark styling end
   left: 150px;
   margin-right: 10px;
   margin-top: 5px;
+}
+
+.SRC-overflowWrap {
+  overflow-wrap: break-word;
 }

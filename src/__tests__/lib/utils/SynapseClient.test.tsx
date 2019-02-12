@@ -12,7 +12,7 @@ it('invalid call', () => {
     'https://repo-prod.prod.sagebase.org'
   ).catch((error) => {
     expect(error.statusCode).toEqual(404)
-    expect(error.reason).toEqual('Not Found')
+    expect(error.reason).toEqual('GET /repo/v1/invalid was not found. Please reference API documentation at https://docs.synapse.org/rest/')
   })
 })
 

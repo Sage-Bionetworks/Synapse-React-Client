@@ -15,8 +15,8 @@ import { QueryWrapperChildProps } from './QueryWrapper'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
-const PREVIOUS_ITEM_CLICK = 'left click'
-const NEXT_CLICK = 'right click'
+export const PREVIOUS_ITEM_CLICK = 'left click'
+export const NEXT_CLICK = 'right click'
 
 type Rect = {
   height: number
@@ -31,15 +31,15 @@ type MeasureRect = {
   bounds: Rect
 }
 
-type StackedBarChartState = {
-  hoverTextCount: number
-  hoverText: string
+export type StackedBarChartState = {
+  facetValueOccurence: number
+  chartSelectionFacetValue: string
   selectedFacets: {}
   dimensions: MeasureRect
-  index: number
+  chartSelectionIndex: number
 }
 
-type StackedBarChartProps = {
+export type StackedBarChartProps = {
   loadingScreen: any
   synapseId: string
   unitDescription: string
@@ -52,7 +52,7 @@ type Info = {
 }
 
 /**
- * Make a simple stacked bar char
+ * Make a simple stacked bar chart
  *
  * @class StackedBarChart
  * @extends {React.Component}
@@ -61,7 +61,9 @@ export default class StackedBarChart extends
     React.Component<StackedBarChartProps & QueryWrapperChildProps, StackedBarChartState> {
 
   public static propTypes = {
-    loadingScreen: PropTypes.element
+    loadingScreen: PropTypes.element,
+    synapseId: PropTypes.string,
+    unitDescription: PropTypes.string
   }
 
   constructor(props: StackedBarChartProps & QueryWrapperChildProps) {
@@ -70,15 +72,18 @@ export default class StackedBarChart extends
     this.handleExit = this.handleExit.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.handleArrowClick = this.handleArrowClick.bind(this)
-    this.getHoverText = this.getHoverText.bind(this)
+    this.getTextForChartSelection = this.getTextForChartSelection.bind(this)
     this.onMeasureResize = this.onMeasureResize.bind(this)
     this.rgba2rgb = this.rgba2rgb.bind(this)
     // the text currently under the cursor
     this.state = {
+      // the dimensions of the bar chart itself
       dimensions: { bounds: { height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0 } },
-      hoverText: '',
-      hoverTextCount: 0,
-      index: -1,
+      // the text of the current slice
+      chartSelectionFacetValue: '',
+      // the count of this facet value occurence
+      facetValueOccurence: 0,
+      chartSelectionIndex: -1,
       selectedFacets: {}
     }
     this.extractPropsData = this.extractPropsData.bind(this)
@@ -87,96 +92,94 @@ export default class StackedBarChart extends
   public componentDidUpdate(prevProps: any) {
     if (prevProps.filter !== this.props.filter || prevProps.isLoadingNewData !== this.props.isLoadingNewData) {
       this.setState({
-        hoverText: '',
-        hoverTextCount: 0,
-        index: -1
+        chartSelectionFacetValue: '',
+        facetValueOccurence: 0,
+        chartSelectionIndex: -1
       })
     }
   }
-    /**
-     * Updates the hover text and update the view
-     *
-     * @memberof StackedBarChart
-     */
+
+  /**
+   * Updates the hover text and update the view
+   *
+   * @memberof StackedBarChart
+   */
   public handleHover(event: React.MouseEvent<SVGRectElement>) {
-        // add box shadow
+    // add box shadow
     event.currentTarget.style.boxShadow = '25px 20px'
   }
-    /**
-     * Update the hover text and the view
-     *
-     * @param {*} event
-     * @memberof StackedBarChart
-     */
+
+  /**
+   * Update the hover text and the view
+   *
+   * @param {*} event
+   * @memberof StackedBarChart
+   */
   public handleExit(event: React.MouseEvent<SVGRectElement>) {
-        // remove box shadow
+    // remove box shadow
     event.currentTarget.style.boxShadow = ''
   }
-    /**
-     * Handle column click event
-     */
-  public handleClick = (dict: Info) => (event: React.MouseEvent<SVGElement>) => {
-        // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+
+  /**
+   * Handle column click event
+   */
+  public handleClick = (dict: Info) => (_event: React.MouseEvent<SVGElement>) => {
+    // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     this.setState({
-      hoverText: dict.value,
-      hoverTextCount: dict.count,
-      index: dict.index
+      chartSelectionFacetValue: dict.value,
+      facetValueOccurence: dict.count,
+      chartSelectionIndex: dict.index
     })
   }
 
-  public handleArrowClick = (direction: string) => (_: React.MouseEvent) => {
-    let { index } = this.state
-    if (index === -1) {
-      index = 0
+  public handleArrowClick = (direction: string) => (_event: React.MouseEvent) => {
+    let { chartSelectionIndex } = this.state
+    if (chartSelectionIndex === -1) {
+      chartSelectionIndex = 0
     }
     let dict: any = this.extractPropsData(this.props.data)
     const length = Object.keys(dict).length
     if (direction === PREVIOUS_ITEM_CLICK) {
-      if (index === 0) {
-                // wrap around
-        index = length - 1
-      } else {
-        index -= 1
-      }
+      chartSelectionIndex -= 1
+      // if its at zero then we want to wrap around to the end
+      chartSelectionIndex = chartSelectionIndex < 0 ? length - 1 : chartSelectionIndex
     } else {
-      if (index === length - 1) {
-        index = 0
-      } else {
-        index += 1
-      }
+      chartSelectionIndex += 1
     }
-    dict = dict[index]
+    chartSelectionIndex = chartSelectionIndex % length
+
+    dict = dict[chartSelectionIndex]
     this.setState({
-      index,
-      hoverText: dict.value,
-      hoverTextCount: dict.count
+      chartSelectionIndex,
+      chartSelectionFacetValue: dict.value,
+      facetValueOccurence: dict.count
     })
   }
 
-  public getHoverText(xData: any) {
-    const { index, hoverText } = this.state
+  public getTextForChartSelection(xData: any) {
+    const { chartSelectionIndex, chartSelectionFacetValue } = this.state
     const { facetAliases = {}, filter } = this.props
-    const hoverTextDisplay = index === -1 ? (xData[0] && xData[0].value) : hoverText
+    const facetValueDisplay = chartSelectionIndex === -1 ? (xData[0] && xData[0].value) : chartSelectionFacetValue
     const filterDisplay = facetAliases[filter!] || filter
     return (
       <span>
         <span className="SRC-text-title SRC-filter-display">
           {filterDisplay}
         </span> :
-        <span className="SRC-text-title">
+        <span className="SRC-facet-view SRC-text-title">
           {' '}
-          {hoverTextDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : hoverTextDisplay}
+          {facetValueDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : facetValueDisplay}
         </span>
       </span>
     )
   }
 
   public getFileCount(xData: any) {
-    if (this.state.index === -1) {
+    if (this.state.chartSelectionIndex === -1) {
       const hoverTextCount = xData[0] && xData[0].count
       return hoverTextCount
     }
-    return this.state.hoverTextCount
+    return this.state.facetValueOccurence
   }
 
   public rgba2rgb(background: number[], color: number[]) {
@@ -186,28 +189,6 @@ export default class StackedBarChart extends
       Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
       Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
     ]
-  }
-
-  public advancedSearch(xData: any) {
-
-    const { index, hoverText } = this.state
-    const { filter, synapseId = '' } = this.props
-
-    const hoverTextDisplay = index === -1 ? xData[0] && xData[0].value : hoverText
-
-    // base 64 encode the json of the query and go to url with the encoded object
-    const lastQueryRequest = this.props.getLastQueryRequest!()
-    const { query } = lastQueryRequest
-    query.selectedFacets = [
-      {
-        columnName: filter,
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: [hoverTextDisplay]
-      }
-    ]
-    const encodedQuery = btoa(JSON.stringify(query))
-    const link = `https://www.synapse.org/#!Synapse:${synapseId}/tables/query/${encodedQuery}`
-    return link
   }
 
   public render() {
@@ -271,7 +252,7 @@ export default class StackedBarChart extends
             {({ measureRef }) => (
               <div className="SRC-flex" ref={measureRef}>
                 {xData.map((obj, index) => {
-                  const initRender: boolean = this.state.index === -1 && index === 0
+                  const initRender: boolean = this.state.chartSelectionIndex === -1 && index === 0
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
@@ -288,7 +269,7 @@ export default class StackedBarChart extends
                   const svgHeight = 80
                   const svgWidth = obj.count / total * width
                   const style: any = {}
-                  if (this.state.index === index || initRender) {
+                  if (this.state.chartSelectionIndex === index || initRender) {
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
                   }
                   const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
@@ -333,17 +314,17 @@ export default class StackedBarChart extends
                               {obj.count}
                             </text>}
                           {
-                            (this.state.index === index || initRender) &&
-                            (
-                              <text
-                                fill={originalColor}
-                                x={0}
-                                y={svgHeight + 15}
-                                className="SRC-text-shadow SRC-text-large"
-                              >
-                                {'\u25BE'}
-                              </text>
-                            )
+                            (this.state.chartSelectionIndex === index || initRender) &&
+                              (
+                                <text
+                                  fill={originalColor}
+                                  x={0}
+                                  y={svgHeight + 15}
+                                  className="SRC-text-shadow SRC-text-large"
+                                >
+                                  {'\u25BE'}
+                                </text>
+                              )
                           }
                         </svg>
                       </span>
@@ -355,11 +336,9 @@ export default class StackedBarChart extends
         </div>
         <div className="row SRC-bar-border SRC-bar-border-bottom">
           <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
-            <strong>{this.getHoverText(xData)}</strong>
+            <strong>{this.getTextForChartSelection(xData)}</strong>
           </p>
-          <p
-            className="SRC-noMargin SRC-padding-chart SRC-text-chart"
-          >
+          <p id="fileCount" className="SRC-noMargin SRC-padding-chart SRC-text-chart">
             {this.getFileCount(xData)} {unitDescription}
           </p>
         </div>
@@ -369,6 +348,7 @@ export default class StackedBarChart extends
   public extractPropsData(data: any) {
     const xData: any[] = []
     const { filter } = this.props
+    // pull out the data corresponding to the filter in question
     data.facets.forEach(
       (item: any) => {
         if (item.facetType === 'enumeration' && item.columnName === filter) {
@@ -377,7 +357,8 @@ export default class StackedBarChart extends
               if (item.columnName) {
                 xData.push({ columnName: item.columnName, ...facetValue })
               }
-            })
+            }
+          )
         }
       }
     )
