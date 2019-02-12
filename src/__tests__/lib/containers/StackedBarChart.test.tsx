@@ -120,7 +120,7 @@ describe('it performs basic functionality', () => {
   it('renders the bar chart correctly', () => {
     /*
       Overview:
-      1. The data rendering the component has 11 facets, so we
+      1. The data rendering the component has 11 facet values, so we
       expect there to be 11 slices.
       2. The text being displayed under the chart should be the
       first facet selection and it should have the correct unit

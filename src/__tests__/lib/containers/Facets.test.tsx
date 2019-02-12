@@ -27,6 +27,18 @@ describe('it performs basic functionality', () => {
   const JMML = 'JMML'
   // location of JMML in isChecked
   const JMMLFacetValuesIndex = 2
+  const facetValuesWithoutJMML = [
+    'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+    'Cutaneous Neurofibroma',
+    'Low Grade Glioma',
+    'MPNST',
+    'Plexiform Neurofibroma',
+    'Plexiform Neurofibroma | MPNST',
+    'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
+    'Schwannoma',
+    'Schwannoma | Meningioma',
+    'SMN'
+  ]
   const lastQueryRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
@@ -105,7 +117,7 @@ describe('it performs basic functionality', () => {
     expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
   })
 
-  it('Show All is present when < 5 facets ', () => {
+  it('Show All is present when >= 5 facets ', () => {
     const propsWithTumorFacet = {
       ...props,
       filter
@@ -145,16 +157,27 @@ describe('it performs basic functionality', () => {
 
     // the function updateSelection is curried so we have to call it this way
     instance.updateSelection(DESELECT_ALL)(mockedEvent)
-
+    // asserts on arguments used from calling updateSelection method above
     const lengthOfFacetSelection = syn16787123Json.facets.find(el => el.columnName === filter)!.facetValues.length
     // below is unavoidable
     // tslint:disable-next-line:prefer-array-literal
     const allFalseFacetSelection = new Array(lengthOfFacetSelection).fill(false)
     expect(updateParentState).toHaveBeenCalledWith({ isChecked: allFalseFacetSelection })
-    const requestWithNoFacetsSelected = cloneDeep(lastQueryRequest)
-    // zero out the faceted selection
-    requestWithNoFacetsSelected.query.selectedFacets.find(el => el.columnName === filter)!.facetValues = []
-    expect(executeQueryRequest).toHaveBeenCalledWith(requestWithNoFacetsSelected)
+
+    // expect for the facet in use that all facet values are empty
+    expect(executeQueryRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        query: expect.objectContaining({
+          selectedFacets: expect.arrayContaining([
+            expect.objectContaining({
+              columnName: filter,
+              facetValues: []
+            })
+          ])
+        })
+      })
+    )
+
   })
 
   it('handle click with removing a facet value', async () => {
@@ -171,6 +194,8 @@ describe('it performs basic functionality', () => {
       value: JMML
     }
     await instance.handleClick(selection)(mockedEvent)
+
+    // verifications on arguments passed into functions stemming from handle click
     const queryRequestWithoutJMML = cloneDeep(lastQueryRequest)
     const facetValues = queryRequestWithoutJMML.query.selectedFacets[1].facetValues
     facetValues.splice(JMMLFacetValuesIndex, 1)  // remove JMML
@@ -181,51 +206,86 @@ describe('it performs basic functionality', () => {
     expect(updateParentState).toHaveBeenCalledWith({
       isChecked: [undefined, undefined, false]
     })
-    // verify it calls executeQueryRequest with JMML selected
-    expect(executeQueryRequest).toHaveBeenCalledWith(queryRequestWithoutJMML)
+    // verify it calls executeQueryRequest without JMML selected
+    // NOTE: the .not after the expect(...) call ensures that we are
+    // NOT getting the following object.
+    expect(executeQueryRequest).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        query: expect.objectContaining({
+          selectedFacets: expect.arrayContaining([
+            expect.objectContaining({
+              columnName: filter,
+              // expect it to have been called without jmml for
+              // filter entry in selectedFacets array
+              facetValues: expect.arrayContaining([
+                JMML
+              ])
+            })
+          ])
+        })
+      })
+    )
   })
 
   it('handle click works with adding a facet value', async () => {
-    /* Overview:
-        1. To mock adding a facet value we have to give a query request that's last selection
-        did not contain the facet being selected. Additionally, isChecked, although only used for the sake of
-        keeping StackedBarChart in sync, should also have its state indicating that the facet value is deselected.
-        by equaling false at the index of the facet
-        2. The resulting query that it builds will add that facet value to the facet values array
-        at the END of it
-    */
-
-    // step 1. remove JMML from the facet selection
-    const lastQueryRequestWithoutJMML = cloneDeep(lastQueryRequest)
-    lastQueryRequestWithoutJMML.query.selectedFacets
-        .find(el => el.columnName === filter)!.facetValues
-        .splice(JMMLFacetValuesIndex, 1)
-
-    // setup props to use the last query not having JMML
+    // step 1: Remove JMML from facet selection, since the above test verifies that removing a facet
+    // works we use this as a starting point
     const propsWithTumorFacet = {
       ...props,
-      filter,
-      getLastQueryRequest : jest.fn(() => cloneDeep(lastQueryRequestWithoutJMML)),
-      isChecked: [true, true, false]
+      filter
     }
     const { wrapper, instance } = createShallowComponent(propsWithTumorFacet)
-    const mockedEvent = { preventDefault: jest.fn() } as any
-    const selection = { index: 2, value: JMML }
+    const mockedEvent = {
+      preventDefault: jest.fn()
+    } as any
+    const selection = {
+      index: JMMLFacetValuesIndex,
+      value: JMML
+    }
+    // click JMML 'off'
     await instance.handleClick(selection)(mockedEvent)
 
-    // step 2. The API should have been called with JMML at the end of the array, so we copy/delete/add the value
-    // at the end of the array.
-    const queryRequestWithJMMLAtEnd = cloneDeep(lastQueryRequest)
-    queryRequestWithJMMLAtEnd.query.selectedFacets[1].facetValues.splice(JMMLFacetValuesIndex, 1)
-    queryRequestWithJMMLAtEnd.query.selectedFacets[1].facetValues.push(JMML)
+    // Since Facets is usually a child of QueryWrapper, we have to manually mock what QueryWrapper
+    // would normally do
 
-    expect(wrapper.state('showAllFacets')).toEqual(true)
     // verify it updates parent state correctly
-    expect(updateParentState).toHaveBeenCalledWith({
-      isChecked: [true, true, true]
+    expect(updateParentState.mock.calls[0]).toEqual([{ isChecked: [undefined, undefined, false] }])
+    // setup getLastQueryRequestWithoutJMML
+    const lastQueryRequestWithoutJMML = cloneDeep(lastQueryRequest)
+    lastQueryRequestWithoutJMML.query.selectedFacets[1].facetValues = facetValuesWithoutJMML
+    const getLastQueryRequestWithoutJMML = jest.fn(() => {
+      return lastQueryRequestWithoutJMML
     })
+
+    updateParentState.mockReset()
+    executeQueryRequest.mockReset()
+
+    await wrapper.setProps({
+      isChecked: [undefined, undefined, false],
+      getLastQueryRequest: getLastQueryRequestWithoutJMML
+    })
+
+    // beginning of the actual test
+    // Click JMML back 'on'
+    await instance.handleClick(selection)(mockedEvent)
+
+    // verify it updates parent state correctly
+    expect(updateParentState.mock.calls[0]).toEqual([{ isChecked: [undefined, undefined, true] }])
     // verify it calls executeQueryRequest with JMML selected
-    expect(executeQueryRequest).toHaveBeenCalledWith(queryRequestWithJMMLAtEnd)
+    expect(executeQueryRequest).toHaveBeenLastCalledWith(expect.objectContaining(
+      {
+        query: expect.objectContaining({
+          selectedFacets: expect.arrayContaining([
+            expect.objectContaining({
+              columnName: filter,
+              facetValues: expect.arrayContaining([
+                JMML
+              ])
+            })
+          ])
+        })
+      }
+    ))
   })
 
 })
