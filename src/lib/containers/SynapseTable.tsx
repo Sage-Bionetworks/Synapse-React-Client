@@ -406,7 +406,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           const isColumnActivePastInit = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
           if (isColumnActive || isColumnActivePastInit) {
             return (
-              <td className="SRC_noBorderTop" key={`(${i},${j})`}>
+              <td className="SRC_noBorderTop" key={`(${i}${columnValue}${j})`}>
                   <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
               </td>
             )
