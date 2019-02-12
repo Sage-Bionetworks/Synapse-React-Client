@@ -510,6 +510,7 @@ button.SRC-roundBorder {
   padding-right: 20px; }
 
 .tableApply {
+  outline: none;
   border-radius: 17px;
   padding: 6px 25px;
   background: #4E5491;

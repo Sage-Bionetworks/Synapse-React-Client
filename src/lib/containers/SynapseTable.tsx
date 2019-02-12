@@ -435,8 +435,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         // for icon state
         const columnIndex: number = columnIconSortState[index] === undefined ? 0 : columnIconSortState[index]
         // we have to figure out if the current column is a facet selection
-        const facetIndex: number = facets.findIndex((value: FacetColumnResult) => {
-          return this.useFacetAliasIfDefined(value.columnName) === column.name
+        const facetIndex: number = facets.findIndex((facetColumnResult: FacetColumnResult) => {
+          return this.useFacetAliasIfDefined(facetColumnResult.columnName) === column.name
         })
         const isFacetSelection: boolean = facetIndex !== -1
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
@@ -657,7 +657,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </span>
             <button
               onClick={this.applyChanges(ref, columnName, index, refOuterDiv)}
-              className="tableApply SRC-removeOutline"
+              className="tableApply"
             >
               APPLY
             </button>
@@ -712,12 +712,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         displayValue = 'unannotated'
       }
       const key = dataPoint.value + dataPoint.count
+      let defaultChecked = dataPoint.isSelected
+      if (facetColumnResult.columnName === this.props.filter && !this.props.hasLoadedPastInitQuery) {
+          // there's a special case on the first render of the column that's value is the
+          // same facet being rendered we have to set defaultChecked to true, this keeps
+          // the view in line with facets
+        defaultChecked = true
+      }
       return (
         <li key={key}>
           <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
             {displayValue}
             <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
-            <input defaultChecked={dataPoint.isSelected} type="checkbox" value={dataPoint.value} />
+            <input defaultChecked={defaultChecked} type="checkbox" value={dataPoint.value} />
             <span className="checkmark" />
           </label>
         </li>

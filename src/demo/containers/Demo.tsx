@@ -79,15 +79,14 @@ class Demo extends React.Component<{}, DemoState> {
           {
             facetName: 'assay',
             sql:
-            `SELECT id AS "File ID",
-              fundingAgency AS "Funding Agency",
-              assay AS "Assay", diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
-            `,
-            facetAliases: {
-              id: 'File ID',
-              fundingAgency: 'Funding Agency',
-              assay: 'Assay',
-            },
+            // tslint:disable-next-line:max-line-length
+            'SELECT * FROM syn16858331',
+            // facetAliases: {
+            //   id: 'File ID',
+            //   fundingAgency: 'Funding Agency',
+            //   assay: 'Assay',
+            //   dataType: 'Data Type'
+            // },
             synapseId: 'syn16858331',
             title: 'title',
             unitDescription: 'datum'

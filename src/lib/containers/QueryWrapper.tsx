@@ -26,6 +26,7 @@ type QueryWrapperState = {
   isLoading: boolean
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
+  hasLoadedPastInitQuery: boolean
 }
 
 // Since the component is an HOC we export the props passed down
@@ -43,6 +44,7 @@ export type QueryWrapperChildProps = {
   rgbIndex?: number
   unitDescription?: string
   facetAliases?: {}
+  hasLoadedPastInitQuery?: boolean
 }
 
 /**
@@ -85,8 +87,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     isLoading: true,
     isLoadingNewData: true,
     lastQueryRequest: {} as QueryBundleRequest,
-    hasMoreData: true
-  }
+    hasMoreData: true,
+    hasLoadedPastInitQuery: false
+  } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
     super(props)
@@ -150,12 +153,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
-    console.log('Executing query request with following selected facets = ')
-    queryRequest.query.selectedFacets!.map(
-      (el) => {
-        console.log(el)
-      }
-    )
     this.setState({
       isLoading: true
     })
@@ -173,7 +170,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             hasMoreData,
             data,
             isLoading: false,
-            lastQueryRequest: cloneDeep(queryRequest)
+            lastQueryRequest: cloneDeep(queryRequest),
+            hasLoadedPastInitQuery: true
           }
           this.setState(newState)
         }
@@ -305,7 +303,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         unitDescription: this.props.unitDescription,
         updateParentState: this.updateParentState,
         isQueryWrapperChild: true,
-        hasMoreData: this.state.hasMoreData
+        hasMoreData: this.state.hasMoreData,
+        hasLoadedPastInitQuery: this.state.hasLoadedPastInitQuery
       })
     }))
 
