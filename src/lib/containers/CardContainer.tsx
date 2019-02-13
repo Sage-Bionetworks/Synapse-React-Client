@@ -1,5 +1,7 @@
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
+// tslint:disable-next-line
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
@@ -172,32 +174,41 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       )
     )
 
+    // render the cards
+    const cards = data.queryResult.queryResults.rows.map(
+      (rowData: any, index) => {
+        if (index < limit) {
+          const key = JSON.stringify(rowData.values)
+          return (
+            <RowContainer
+              key={key}
+              type={type}
+              limit={limit}
+              data={rowData.values}
+              schema={schema}
+              token={token}
+              isHeader={isHeader}
+            />
+          )
+        }
+        return false
+      })
+
     return (
       <div>
         {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
         {/*
-          Below we loop through the rows of the table and we render a specific row, we can
-          use the key={index} because the underlying table *shouldn't* be changing beneath
-          us and does in fact act as a unique identifier
-          */}
-        {data.queryResult.queryResults.rows.map(
-          (rowData: any, index) => {
-            if (index < limit) {
-              const key = JSON.stringify(rowData.values)
-              return (
-                <RowContainer
-                  key={key}
-                  type={type}
-                  limit={limit}
-                  data={rowData.values}
-                  schema={schema}
-                  token={token}
-                  isHeader={isHeader}
-                />
-              )
-            }
-            return false
-          })}
+          ReactCSSTransitionGroup adds css fade in property for cards that come into view
+          <ReactCSSTransitionGroup
+            transitionName="SRC-card"
+            transitionEnterTimeout={300}
+            transitionLeaveTimeout={300}
+          >
+            {cards}
+          </ReactCSSTransitionGroup>
+        */}
+
+        {cards}
         {showViewMoreButton}
       </div>
     )

@@ -689,3 +689,17 @@ checkmark styling end
 
 .SRC-overflowWrap {
   overflow-wrap: break-word; }
+
+.SRC-card-enter {
+  opacity: 0.01; }
+
+.SRC-card-enter.SRC-card-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in; }
+
+.SRC-card-leave {
+  opacity: 1; }
+
+.SRC-card-leave.SRC-card-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in; }

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import CardContainerLogic from '../../../lib/containers/CardContainerLogic'
 
-export default class SynapseTableCardViewDemo extends React.Component {
+export default class CardContainerLogicDemo extends React.Component {
 
   constructor(props: any) {
     super(props)
