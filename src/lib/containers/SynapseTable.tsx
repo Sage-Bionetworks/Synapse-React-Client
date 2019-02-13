@@ -717,7 +717,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
             {displayValue}
             <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
-            <input defaultChecked={dataPoint.isSelected} type="checkbox" value={dataPoint.value} />
+            <input defaultChecked={true} type="checkbox" value={dataPoint.value} />
             <span className="checkmark" />
           </label>
         </li>
