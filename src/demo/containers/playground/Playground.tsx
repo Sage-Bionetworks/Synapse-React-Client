@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, Route, match } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
-import SynapseTableCardViewDemo from './SynapseTableCardViewDemo'
+import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 
 /**
@@ -20,7 +20,7 @@ const App = ({ match }: { match: match }) => {
             <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
           </li>
           <li>
-            <Link to={`${match.url}/SynapseTableCardViewDemo`}>SynapseTableCardViewDemo</Link>
+            <Link to={`${match.url}/SynapseTableCardViewDemo`}>CardContainerLogicDemo</Link>
           </li>
         </ul>
 
@@ -42,7 +42,7 @@ const App = ({ match }: { match: match }) => {
           exact={true}
           path={`${match.url}/SynapseTableCardViewDemo`}
           // tslint:disable-next-line:jsx-no-lambda
-          component={SynapseTableCardViewDemo}
+          component={CardContainerLogicDemo}
         />
 
         <Route
