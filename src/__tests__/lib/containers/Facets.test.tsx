@@ -191,9 +191,10 @@ describe('it performs basic functionality', () => {
     } as any
     const selection = {
       index: JMMLFacetValuesIndex,
-      value: JMML
+      value: JMML,
+      lastFacetValueSelected: ''
     }
-    await instance.handleClick(selection)(mockedEvent)
+    await instance.clickHandler(selection)(mockedEvent)
 
     // verifications on arguments passed into functions stemming from handle click
     const queryRequestWithoutJMML = cloneDeep(lastQueryRequest)
@@ -240,10 +241,11 @@ describe('it performs basic functionality', () => {
     } as any
     const selection = {
       index: JMMLFacetValuesIndex,
-      value: JMML
+      value: JMML,
+      lastFacetValueSelected: ''
     }
     // click JMML 'off'
-    await instance.handleClick(selection)(mockedEvent)
+    await instance.clickHandler(selection)(mockedEvent)
 
     // Since Facets is usually a child of QueryWrapper, we have to manually mock what QueryWrapper
     // would normally do
@@ -267,7 +269,7 @@ describe('it performs basic functionality', () => {
 
     // beginning of the actual test
     // Click JMML back 'on'
-    await instance.handleClick(selection)(mockedEvent)
+    await instance.clickHandler(selection)(mockedEvent)
 
     // verify it updates parent state correctly
     expect(updateParentState.mock.calls[0]).toEqual([{ isChecked: [undefined, undefined, true] }])

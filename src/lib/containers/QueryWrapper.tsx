@@ -27,6 +27,7 @@ type QueryWrapperState = {
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
   hasLoadedPastInitQuery: boolean
+  lastFacetValueSelected?: string
 }
 
 // Since the component is an HOC we export the props passed down
@@ -45,6 +46,7 @@ export type QueryWrapperChildProps = {
   unitDescription?: string
   facetAliases?: {}
   hasLoadedPastInitQuery?: boolean
+  lastFacetValueSelected?: string
 }
 
 /**
@@ -88,7 +90,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     isLoadingNewData: true,
     lastQueryRequest: {} as QueryBundleRequest,
     hasMoreData: true,
-    hasLoadedPastInitQuery: false
+    hasLoadedPastInitQuery: false,
+    lastFacetValueSelected: ''
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -304,19 +307,24 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         updateParentState: this.updateParentState,
         isQueryWrapperChild: true,
         hasMoreData: this.state.hasMoreData,
-        hasLoadedPastInitQuery: this.state.hasLoadedPastInitQuery
+        hasLoadedPastInitQuery: this.state.hasLoadedPastInitQuery,
+        lastFacetValueSelected: this.state.lastFacetValueSelected
       })
     }))
+
+    const loadingCusrorClass = this.state.isLoading ? 'SRC-logo-cursor' : ''
 
     if (this.props.showMenu) {
       // menu is to the left of the child components so we let that add its
       // own html
       return (
-        childrenWithProps
+        <span className={`container-fluid ${loadingCusrorClass}`}>
+          {childrenWithProps}
+        </span>
       )
     }
     return (
-      <div className="container-fluid">
+      <div className={`container-fluid ${loadingCusrorClass}`}>
           <div className={'col-xs-12'}>
               {childrenWithProps}
           </div>

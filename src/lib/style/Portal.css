@@ -704,3 +704,9 @@ checkmark styling end
 .SRC-card-leave.SRC-card-leave-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in; }
+
+span.SRC-logo-cursor * {
+  cursor: wait !important; }
+
+div.SRC-logo-cursor * {
+  cursor: wait !important; }

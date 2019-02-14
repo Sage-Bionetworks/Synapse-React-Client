@@ -21,11 +21,15 @@ type CheckboxGroupProps = {
   facetColumnResult: FacetColumnResult
   clickHandler: any
   showAllFacets: boolean
+  hasLoadedPastInitQuery: boolean
+  lastFacetValueSelected: string
+  isLoading: boolean
 }
 
 type Info = {
   index: number
   value: string
+  lastFacetValueSelected: string
 }
 
 /**
@@ -42,14 +46,18 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
   facetColumnResult.facetValues.sort((a: any, b: any) => {
     return b.count - a.count
   })
-  const { colorPalette, textColors } = getColorPallette(props.rgbIndex, facetColumnResult.facetValues.length)
-  facetColumnResult.facetValues.forEach((facetValue: any, index: any) => {
 
-    const uniqueId = `${facetColumnResult.columnName} ${facetValue.value} ${facetValue.count}`
+  const { colorPalette, textColors } = getColorPallette(props.rgbIndex, facetColumnResult.facetValues.length)
+  facetColumnResult.facetValues.forEach((facetValue: any, index: number) => {
+
+    const key = facetColumnResult.columnName + facetValue.value + facetValue.count
     const textColor = textColors[index]
     const curColor = colorPalette[index]
     let style: any = {}
-    const isChecked = props.isChecked[index] === undefined || props.isChecked[index]
+    let isChecked = !props.hasLoadedPastInitQuery || facetValue.isSelected
+    if (props.isLoading && props.lastFacetValueSelected === key) {
+      isChecked = !isChecked
+    }
     if (isChecked) {
       style = {
         background: curColor
@@ -68,8 +76,16 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
       <span
         style={style}
         className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
-        key={uniqueId}
-        onClick={props.clickHandler({ index, value: facetValue.value, columnName: facetColumnResult.columnName })}
+        key={key}
+        onClick={
+          props.clickHandler(
+            {
+              index,
+              value: facetValue.value,
+              columnName: facetColumnResult.columnName,
+              lastFacetValueSelected: key
+            })
+        }
       >
         <span className="SRC-facets-text">
           {' '}
@@ -99,7 +115,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
   constructor(props: QueryWrapperChildProps) {
     super(props)
-    this.handleClick = this.handleClick.bind(this)
+    this.clickHandler = this.clickHandler.bind(this)
     this.state = {
       showAllFacets: false
     }
@@ -120,12 +136,15 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     return (
       <CheckboxGroup
+        hasLoadedPastInitQuery={this.props.hasLoadedPastInitQuery!}
         showAllFacets={this.state.showAllFacets}
         rgbIndex={this.props.rgbIndex!}
         key={facetColumnResult.columnName}
         facetColumnResult={facetColumnResult}
         isChecked={this.props.isChecked}
-        clickHandler={this.handleClick}
+        clickHandler={this.clickHandler}
+        isLoading={this.props.isLoading!}
+        lastFacetValueSelected={this.props.lastFacetValueSelected!}
       />
     )
   }
@@ -133,7 +152,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   /**
    * Handle checkbox click event
    */
-  public handleClick = (dict: Info) => (_event: React.MouseEvent<HTMLSpanElement>) => {
+  public clickHandler = (dict: Info) => (_event: React.MouseEvent<HTMLSpanElement>) => {
     if (!this.state.showAllFacets) {
       this.setState({
         showAllFacets: true
@@ -161,7 +180,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     queryRequest.query.selectedFacets = selectedFacets
     queryRequest.query.offset = 0
-    this.props.updateParentState!({ isChecked })
+    this.props.updateParentState!({
+      isChecked,
+      lastFacetValueSelected: dict.lastFacetValueSelected
+    })
     this.props.executeQueryRequest!(queryRequest)
   }
 
