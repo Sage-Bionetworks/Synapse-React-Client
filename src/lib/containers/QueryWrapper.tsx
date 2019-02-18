@@ -27,7 +27,13 @@ type QueryWrapperState = {
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
   hasLoadedPastInitQuery: boolean
-  lastFacetValueSelected?: string
+  lastFacetSelection?: FacetSelection
+}
+
+export type FacetSelection = {
+  columnName: string
+  facetValue: string
+  selector: string
 }
 
 // Since the component is an HOC we export the props passed down
@@ -46,7 +52,7 @@ export type QueryWrapperChildProps = {
   unitDescription?: string
   facetAliases?: {}
   hasLoadedPastInitQuery?: boolean
-  lastFacetValueSelected?: string
+  lastFacetSelection?: FacetSelection
 }
 
 /**
@@ -91,7 +97,10 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     lastQueryRequest: {} as QueryBundleRequest,
     hasMoreData: true,
     hasLoadedPastInitQuery: false,
-    lastFacetValueSelected: ''
+    lastFacetSelection: {
+      columnName: '',
+      facetValue: ''
+    }
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -224,9 +233,18 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       .getQueryTableResults(this.props.initQueryRequest, this.props.token)
       .then(
         (data: QueryResultBundle) => {
-          const filter: string = this.props.facetName
-          const lastQueryRequest: QueryBundleRequest = this.addAllFacetsToSelection(data, filter)
+          const lastQueryRequest: QueryBundleRequest = this.addAllFacetsToSelection(data)
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+          const facets = data.facets as FacetColumnResultValues []
+          facets.forEach(
+            (el) => {
+              el.facetValues.forEach(
+                (facetValue) => {
+                  facetValue.isSelected = true
+                }
+              )
+            }
+          )
           const newState = {
             hasMoreData,
             data,
@@ -250,33 +268,29 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @returns
    * @memberof QueryWrapper
    */
-  public addAllFacetsToSelection(data: QueryResultBundle, filter: string): QueryBundleRequest {
-    // we have to reset the facet selections by getting the original
-    // facet corresponding to the original filter
-    const facetsForFilter = data.facets.filter((obj: FacetColumnResultValues) => {
-      return obj.columnName === filter
-    })[0] as FacetColumnResultValues
-
+  public addAllFacetsToSelection(data: QueryResultBundle): QueryBundleRequest {
     // next we have to selectively choose those facets and their
     // corresponding counts, we have to get the full counts because of
     // the nature that we are clicking elements and turning them "off"
     // this is a peculiarity due to UX and the synapse backend having different behavior
-    const facetsMapped: string[] = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
-      return el.value
-    })
-
-    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)!
-    lastQueryRequest.query.selectedFacets = [
-      {
-        columnName: filter,
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: facetsMapped
+    const selectedFacets = data.facets.map(
+      (el) => {
+        return {
+          columnName: el.columnName,
+          facetValues: el.facetValues.map((el: FacetColumnResultValueCount) => {
+            return el.value
+          }),
+          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+        }
       }
-    ]
+    )
+    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)!
+    lastQueryRequest.query.selectedFacets = selectedFacets
+    console.log('setting lastQueryRequest = ', lastQueryRequest)
     return lastQueryRequest
   }
 
-  public updateParentState(update: any) {
+  public updateParentState(update: QueryWrapperState) {
     // This is a hack needed because the barchart and the facets have to stay insync
     // with each other (their colors), but they exist side by side in the component tree, so we
     // have to pass the isChecked array up through querywrapper
@@ -308,7 +322,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         isQueryWrapperChild: true,
         hasMoreData: this.state.hasMoreData,
         hasLoadedPastInitQuery: this.state.hasLoadedPastInitQuery,
-        lastFacetValueSelected: this.state.lastFacetValueSelected
+        lastFacetSelection: this.state.lastFacetSelection
       })
     }))
 

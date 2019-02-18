@@ -2,14 +2,18 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-import { FacetColumnResult, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
+import {
+  FacetColumnResultValueCount,
+  FacetColumnResultValues,
+  FacetColumnResult
+} from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { getColorPallette } from './ColorGradient'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
 
-export const SELECT_ALL = 'select all'
-export const DESELECT_ALL = 'deselect all'
+import { SELECT_ALL, DESELECT_ALL } from './SynapseTable'
+import { getIsValueSelected, getIsCheckedArray } from '../utils/modules/facetUtils'
 
 // Add all icons to the library so you can use it in your page
 library.add(faTimes)
@@ -18,18 +22,13 @@ library.add(faPlus)
 type CheckboxGroupProps = {
   rgbIndex: number
   isChecked: any
-  facetColumnResult: FacetColumnResult
-  clickHandler: any
+  facetColumnResult: FacetColumnResultValues
+  handleClick: (ref: React.RefObject<HTMLSpanElement>, selector: string) =>
+    (_event: React.MouseEvent<HTMLSpanElement>) => void
   showAllFacets: boolean
   hasLoadedPastInitQuery: boolean
-  lastFacetValueSelected: string
+  lastFacetSelection: FacetSelection
   isLoading: boolean
-}
-
-type Info = {
-  index: number
-  value: string
-  lastFacetValueSelected: string
 }
 
 /**
@@ -40,25 +39,42 @@ type Info = {
  */
 const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
 
-  const { facetColumnResult, showAllFacets } = props
+  const {
+    facetColumnResult,
+    showAllFacets,
+    lastFacetSelection,
+    isLoading,
+    hasLoadedPastInitQuery,
+    rgbIndex
+  } = props
   const children: any = []
-
+  const ref: React.RefObject<HTMLSpanElement> = React.createRef()
+  // Note: this actually sorts the data when it appears in the
+  // table as it stands currently, this may change depending on
+  // if that arrangment is no longer desired
   facetColumnResult.facetValues.sort((a: any, b: any) => {
     return b.count - a.count
   })
+  const { colorPalette, textColors } = getColorPallette(rgbIndex, facetColumnResult.facetValues.length)
+  facetColumnResult.facetValues.forEach((facetColumnResultValues: FacetColumnResultValueCount, index: number) => {
 
-  const { colorPalette, textColors } = getColorPallette(props.rgbIndex, facetColumnResult.facetValues.length)
-  facetColumnResult.facetValues.forEach((facetValue: any, index: number) => {
-
-    const key = facetColumnResult.columnName + facetValue.value + facetValue.count
+    const key = facetColumnResult.columnName + facetColumnResultValues.value + facetColumnResultValues.count
     const textColor = textColors[index]
     const curColor = colorPalette[index]
     let style: any = {}
-    let isChecked = !props.hasLoadedPastInitQuery || facetValue.isSelected
-    if (props.isLoading && props.lastFacetValueSelected === key) {
-      isChecked = !isChecked
-    }
-    if (isChecked) {
+
+    const isSelected = getIsValueSelected({
+      hasLoadedPastInitQuery,
+      isLoading,
+      lastFacetSelection,
+      columnName: facetColumnResult.columnName,
+      curFacetSelection: {
+        isSelected: facetColumnResultValues.isSelected,
+        facetValue: facetColumnResultValues.value
+      }
+    })
+
+    if (isSelected) {
       style = {
         background: curColor
       }
@@ -68,29 +84,22 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
       }
     }
     style.color = textColor
-    const { value } = facetValue
-    facetValue.displayValue = value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : value
-    const icon = isChecked ? 'times' : 'plus'
+    const { value, count } = facetColumnResultValues
+    const displayValue = value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : value
+    const icon = isSelected ? 'times' : 'plus'
 
     children.push(
       <span
         style={style}
         className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
         key={key}
-        onClick={
-          props.clickHandler(
-            {
-              index,
-              value: facetValue.value,
-              columnName: facetColumnResult.columnName,
-              lastFacetValueSelected: key
-            })
-        }
+        onClick={props.handleClick(ref, '')}
       >
         <span className="SRC-facets-text">
           {' '}
-          &nbsp;&nbsp; {facetValue.displayValue} ({facetValue.count}){' '}
+          &nbsp;&nbsp; {displayValue} ({count}){' '}
         </span>
+        <input type="checkbox" value={value} className="SRC-hidden SRC-facet-checkboxes" />
         <span>&nbsp;&nbsp;</span>
         <FontAwesomeIcon className="SRC-facets-icon" icon={icon} />
         <span>&nbsp;&nbsp;</span>
@@ -101,9 +110,9 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
   // showAllFacets will be true.
   const childrenView = children.map((child: any, index: number) => !showAllFacets && index > 4 ? false : child)
   return (
-    <React.Fragment>
-        {childrenView}
-    </React.Fragment>
+    <span ref={ref}>
+      {childrenView}
+    </span>
   )
 }
 
@@ -115,7 +124,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
   constructor(props: QueryWrapperChildProps) {
     super(props)
-    this.clickHandler = this.clickHandler.bind(this)
+    this.handleClick = this.handleClick.bind(this)
     this.state = {
       showAllFacets: false
     }
@@ -142,9 +151,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         key={facetColumnResult.columnName}
         facetColumnResult={facetColumnResult}
         isChecked={this.props.isChecked}
-        clickHandler={this.clickHandler}
+        handleClick={this.handleClick}
         isLoading={this.props.isLoading!}
-        lastFacetValueSelected={this.props.lastFacetValueSelected!}
+        lastFacetSelection={this.props.lastFacetSelection!}
       />
     )
   }
@@ -152,12 +161,38 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   /**
    * Handle checkbox click event
    */
-  public clickHandler = (dict: Info) => (_event: React.MouseEvent<HTMLSpanElement>) => {
+  public handleClick = (ref: React.RefObject<HTMLSpanElement>, facetValue: string, selector :string) =>
+  (_event: React.MouseEvent<HTMLSpanElement>) => {
     if (!this.state.showAllFacets) {
       this.setState({
         showAllFacets: true
       })
     }
+
+    const facetValues: string[] = []
+    // read over the checkboxes for this facet selection and see what was selected.
+    for (let i = 0; i < ref.current!.children.length; i += 1) {
+      const curElement = ref.current!.children[i] as HTMLLIElement
+      const label = curElement.children[0] as HTMLLabelElement
+      const checkbox = label.children[1] as HTMLInputElement
+      if (checkbox.value === facetValue) {
+        if (checkbox.checked) {
+          // if it was checked coming in then we want it checked coming out
+          checkbox.checked = false
+        } else {
+          // otherwise we swap it
+          checkbox.checked = true
+        }
+      }
+      if (selector) {
+        checkbox.checked = selector === SELECT_ALL
+      }
+      const isSelected = checkbox.checked
+      if (isSelected) {
+        facetValues.push(checkbox.value)
+      }
+    }
+
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     const { selectedFacets } = queryRequest.query
@@ -171,18 +206,27 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       // remove value
       specificFacet.facetValues.splice(specificFacet.facetValues.indexOf(dict.value), 1)
     }
+
     // update ischecked to keep the barchart in sync
-    const { isChecked } = cloneDeep(this.props)
-    const isCheckedValue = isChecked![dict.index]
-    // if its undefined then it hasn't been seen before, in which case its considered 'true'
-    // so we set the value to false
-    isChecked![dict.index] = isCheckedValue === undefined ? false : !isChecked![dict.index]
+    let { isChecked } = cloneDeep(this.props)
+    isChecked = getIsCheckedArray({
+      isChecked,
+      indexOfFacetValue: dict.index,
+      facetValue: dict.value,
+      selector: ''
+    })
+
+    const lastFacetSelection = {
+      columnName: dict.columnName,
+      facetValue: dict.value,
+      selector: ''
+    } as FacetSelection
 
     queryRequest.query.selectedFacets = selectedFacets
     queryRequest.query.offset = 0
     this.props.updateParentState!({
       isChecked,
-      lastFacetValueSelected: dict.lastFacetValueSelected
+      lastFacetSelection
     })
     this.props.executeQueryRequest!(queryRequest)
   }
@@ -193,23 +237,28 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    *
    * @memberof Facets
    */
-  public updateSelection = (selectionGroup: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+  public updateSelection = (selector: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
-    const { isChecked } = cloneDeep(this.props)
-    const lengthOfFacets = this.props.data!.facets!.find(el => el.columnName === this.props.filter)!.facetValues.length
-    // we go through and set all facets as selected or deselected per the button
-    // clicked that initiated this function call
-    for (let i = 0; i < lengthOfFacets; i += 1) {
-      if (selectionGroup === SELECT_ALL) {
-        isChecked![i] = true
-      } else {
-        isChecked![i] = false
-      }
-    }
+
+    // update ischecked to keep the barchart in sync
+    let { isChecked } = cloneDeep(this.props)
+    isChecked = getIsCheckedArray({
+      isChecked,
+      selector,
+      facetValue: '',
+      indexOfFacetValue: -1
+    })
+
+    const lastFacetSelection = {
+      selector,
+      columnName: this.props.filter,
+      facetValue: ''
+    } as FacetSelection
+
     // we update the parent state with isChecked so that the barchart will reflect
     // in the graph slices on or off
-    this.props.updateParentState!({ isChecked })
-    if (selectionGroup === SELECT_ALL) {
+    this.props.updateParentState!({ isChecked, lastFacetSelection })
+    if (selector === SELECT_ALL) {
       // if the user chose to select all facets then we can have the parent component
       // run the first query it was given
       this.props.executeInitialQueryRequest!()

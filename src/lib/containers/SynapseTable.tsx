@@ -22,7 +22,11 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from './ColorGradient'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
+import { cloneDeep } from '../utils/modules/'
+import { SortItem } from '../utils/jsonResponses/Table/Query'
+import { getIsValueSelected, getIsCheckedArray } from '../utils/modules/facetUtils'
+
 const MIN_SPACE_FACET_MENU = 700
 
 // Add all icons to the library so you can use it in your page
@@ -34,13 +38,11 @@ library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
-import { cloneDeep } from '../utils/modules/'
-import { SortItem } from '../utils/jsonResponses/Table/Query'
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
-const SELECT_ALL = 'SELECT_ALL'
-const DESELECT_ALL = 'DESELECT_ALL'
+export const SELECT_ALL = 'SELECT_ALL'
+export const DESELECT_ALL = 'DESELECT_ALL'
 // double check these icons!
 export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
 type direction = ''|'ASC'|'DESC'
@@ -648,14 +650,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <div className="borderTopTable SRC-flex">
             <span className="tableTextColor">
               <button
-                onClick={this.applyChanges(ref, columnName, '', -1, SELECT_ALL)}
+                onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
                 className="tableDropdownSelector tableAll"
               >
                 All
               </button>
               <span> | </span>
               <button
-                onClick={this.applyChanges(ref, columnName, '', -1, DESELECT_ALL)}
+                onClick={this.applyChanges({ ref, columnName, selector: DESELECT_ALL })}
                 className="tableDropdownSelector tableClear"
               >
                 Clear
@@ -695,38 +697,42 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     columnName: string,
   ): React.ReactNode {
 
-    return facetColumnResult.facetValues.map((dataPoint: FacetColumnResultValueCount, indexOfFacet) => {
-      let displayValue = dataPoint.value
-      if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-        displayValue = 'unannotated'
-      }
-      const key = columnName + dataPoint.value + dataPoint.count
-      let isChecked = dataPoint.isSelected
-      if (!this.props.hasLoadedPastInitQuery) {
-        // there's a special case on the first render of the column that's value is the
-        // same facet being rendered we have to set defaultChecked to true, this keeps
-        // the view in line with facets
-        isChecked = true
-      } else if (this.props.isLoading && this.props.lastFacetValueSelected! === key) {
-        isChecked = !isChecked
-      }
-      return (
-        <li key={key}>
-          <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
-            {displayValue}
-            <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({dataPoint.count}) </span>
-            <input
-              onClick={this.applyChanges(ref, columnName, key, indexOfFacet, '')}
-              onChange={this.applyChanges(ref, columnName, key, indexOfFacet, '')}
-              checked={isChecked}
-              type="checkbox"
-              value={dataPoint.value}
-            />
-            <span className="checkmark" />
-          </label>
-        </li>
-      )
-    })
+    const { lastFacetSelection, isLoading, hasLoadedPastInitQuery } = this.props
+    return facetColumnResult.facetValues.map(
+      (facetColumnResultValueCount: FacetColumnResultValueCount, indexOfFacetValue) => {
+        const { value: facetValue, count, isSelected } = facetColumnResultValueCount
+        let displayValue = facetValue
+        if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
+          displayValue = 'unannotated'
+        }
+        const key = columnName + facetValue + count
+        const isChecked = getIsValueSelected({
+          hasLoadedPastInitQuery,
+          columnName,
+          isLoading,
+          lastFacetSelection,
+          curFacetSelection: {
+            isSelected,
+            facetValue,
+          },
+        })
+        return (
+          <li key={key}>
+            <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
+              {displayValue}
+              <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
+              <input
+                onClick={this.applyChanges({ ref, columnName, facetValue, indexOfFacetValue })}
+                onChange={this.applyChanges({ ref, columnName, facetValue, indexOfFacetValue })}
+                checked={isChecked}
+                type="checkbox"
+                value={facetValue}
+              />
+              <span className="checkmark" />
+            </label>
+          </li>
+        )
+      })
   }
 
   /**
@@ -735,13 +741,20 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    *
    * @memberof SynapseTable
    */
-  public applyChanges = (
+  public applyChanges = ({
+      ref,
+      columnName,
+      facetValue = '',
+      indexOfFacetValue = -1,
+      selector = ''
+    }: {
       ref: React.RefObject<HTMLSpanElement>,
       columnName: string,
-      lastFacetValueSelected: string,
-      indexOfFacetValue: number,
-      selector: string
-    ) => (_: React.SyntheticEvent<HTMLElement>) => {
+      facetValue?: string,
+      indexOfFacetValue?: number,
+      selector?: string
+    }) => (_: React.SyntheticEvent<HTMLElement>) => {
+
       const facetValues: string[] = []
       // read over the checkboxes for this facet selection and see what was selected.
       for (let i = 0; i < ref.current!.children.length; i += 1) {
@@ -774,30 +787,34 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         queryRequest.query!.selectedFacets![indexOfFacetInRequest] = currentFacetRequest
       }
 
-      // update isChecked to keep the barchart in sync
-      let { isChecked } = cloneDeep(this.props)
-      const isCheckedValue = isChecked![indexOfFacetValue]
+      const lastFacetSelection = {
+        columnName,
+        facetValue,
+        selector
+      } as FacetSelection
+      this.props.updateParentState!({
+        lastFacetSelection,
+      })
 
-      // we need to know if this was a single checkbox click or if it was with all/clear
+      // update isChecked to keep the barchart in sync
       if (columnName === this.props.filter) {
-        // it came from a checkbox click
-        if (lastFacetValueSelected) {
-          // if its un  defined then it hasn't been seen before, in which case its considered 'true'
-          // so we set the value to false
-          isChecked![indexOfFacetValue] = isCheckedValue === undefined ? false : !isChecked![indexOfFacetValue]
-        } else {
-          // need to deselect all on isChecked
-          // if its undefined then it hasn't been seen before, in which case its considered 'true'
-          // so we set the value to false
-          // tslint:disable-next-line:prefer-array-literal
-          isChecked = new Array(100).fill(selector === SELECT_ALL)
-        }
+        let { isChecked } = cloneDeep(this.props)
+        isChecked = getIsCheckedArray({
+          isChecked,
+          indexOfFacetValue,
+          facetValue,
+          selector
+        })
+        this.props.updateParentState!({
+          isChecked,
+          lastFacetSelection
+        })
+      } else {
+        this.props.updateParentState!({
+          lastFacetSelection,
+        })
       }
 
-      this.props.updateParentState!({
-        lastFacetValueSelected,
-        isChecked
-      })
       this.props.executeQueryRequest!(queryRequest)
     }
 

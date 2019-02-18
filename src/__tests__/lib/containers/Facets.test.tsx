@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { Facets, CheckboxGroup, SELECT_ALL, DESELECT_ALL } from '../../../lib/containers/Facets'
+import { Facets, CheckboxGroup } from '../../../lib/containers/Facets'
+import { SELECT_ALL, DESELECT_ALL  } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
@@ -190,11 +191,12 @@ describe('it performs basic functionality', () => {
       preventDefault: jest.fn()
     } as any
     const selection = {
+      columnName: filter,
       index: JMMLFacetValuesIndex,
       value: JMML,
       lastFacetValueSelected: ''
     }
-    await instance.clickHandler(selection)(mockedEvent)
+    await instance.handleClick(selection)(mockedEvent)
 
     // verifications on arguments passed into functions stemming from handle click
     const queryRequestWithoutJMML = cloneDeep(lastQueryRequest)
@@ -240,12 +242,13 @@ describe('it performs basic functionality', () => {
       preventDefault: jest.fn()
     } as any
     const selection = {
+      columnName: filter,
       index: JMMLFacetValuesIndex,
       value: JMML,
       lastFacetValueSelected: ''
     }
     // click JMML 'off'
-    await instance.clickHandler(selection)(mockedEvent)
+    await instance.handleClick(selection)(mockedEvent)
 
     // Since Facets is usually a child of QueryWrapper, we have to manually mock what QueryWrapper
     // would normally do
@@ -269,7 +272,7 @@ describe('it performs basic functionality', () => {
 
     // beginning of the actual test
     // Click JMML back 'on'
-    await instance.clickHandler(selection)(mockedEvent)
+    await instance.handleClick(selection)(mockedEvent)
 
     // verify it updates parent state correctly
     expect(updateParentState.mock.calls[0]).toEqual([{ isChecked: [undefined, undefined, true] }])

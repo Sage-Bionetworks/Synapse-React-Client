@@ -6,6 +6,7 @@ import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
 import { FaceFacetColumnValuesRequest } from './jsonResponses/Table/FacetColumnRequest'
+import { FacetColumnResultValues } from './jsonResponses/Table/FacetColumnResult'
 
 // TODO: Create JSON response types for return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
@@ -196,6 +197,18 @@ export const getIntuitiveQueryTableResults = (
   if (facetsForFilter.facetValues.length === 0) {
     // zero out the rows
     lastQueryResult.queryResult.queryResults.rows = []
+    const facetColumnResultValues = lastQueryResult.facets.find(
+      (value) => {
+        return value.columnName === filter
+      }
+    ) as FacetColumnResultValues
+
+    facetColumnResultValues.facetValues.forEach(
+      (el) => {
+        el.isSelected = false
+      }
+    )
+
     return Promise.resolve(lastQueryResult)
   }
 

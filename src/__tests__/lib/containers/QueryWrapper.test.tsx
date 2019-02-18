@@ -150,7 +150,7 @@ describe('basic functionality', () => {
     const { instance } = await createShallowComponent(request)
 
     const castData = syn16787123Json as QueryResultBundle
-    const output = instance.addAllFacetsToSelection(castData, 'projectStatus')
+    const output = instance.addAllFacetsToSelection(castData)
     expect(output.query.selectedFacets).toEqual(
       [
         {
