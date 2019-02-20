@@ -220,9 +220,9 @@ class Demo extends React.Component<{}, DemoState> {
     let token: string | undefined = ''
     let inDevEnv = false
     if (process.env.NODE_ENV === 'development') {
-      token = process.env.REACT_APP_DEV_TOKEN
       inDevEnv = true
     }
+    token = ''
     return (
       <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>

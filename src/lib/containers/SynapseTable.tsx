@@ -13,7 +13,6 @@ import * as React from 'react'
 import closeSvg from '../assets/icons/close.svg'
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
-import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
 import { FacetColumnResult,
          FacetColumnResultValueCount,
          FacetColumnResultValues
@@ -25,7 +24,7 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
-import { getIsValueSelected, getIsCheckedArray } from '../utils/modules/facetUtils'
+import { getIsValueSelected, getIsCheckedArray, readFacetValues } from '../utils/modules/facetUtils'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -699,14 +698,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     const { lastFacetSelection, isLoading, hasLoadedPastInitQuery } = this.props
     return facetColumnResult.facetValues.map(
-      (facetColumnResultValueCount: FacetColumnResultValueCount, indexOfFacetValue) => {
+      (facetColumnResultValueCount: FacetColumnResultValueCount) => {
         const { value: facetValue, count, isSelected } = facetColumnResultValueCount
         let displayValue = facetValue
         if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
           displayValue = 'unannotated'
         }
         const key = columnName + facetValue + count
-        const isChecked = getIsValueSelected({
+        const isValueSelected = getIsValueSelected({
           hasLoadedPastInitQuery,
           columnName,
           isLoading,
@@ -722,9 +721,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               {displayValue}
               <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
               <input
-                onClick={this.applyChanges({ ref, columnName, facetValue, indexOfFacetValue })}
-                onChange={this.applyChanges({ ref, columnName, facetValue, indexOfFacetValue })}
-                checked={isChecked}
+                onChange={this.applyChanges({ ref, columnName, facetValue })}
+                checked={isValueSelected}
+                className="SRC-facet-checkboxes"
                 type="checkbox"
                 value={facetValue}
               />
@@ -745,63 +744,32 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       ref,
       columnName,
       facetValue = '',
-      indexOfFacetValue = -1,
-      selector = ''
+      selector = '',
     }: {
       ref: React.RefObject<HTMLSpanElement>,
       columnName: string,
       facetValue?: string,
-      indexOfFacetValue?: number,
-      selector?: string
+      selector?: string,
     }) => (_: React.SyntheticEvent<HTMLElement>) => {
-
-      const facetValues: string[] = []
-      // read over the checkboxes for this facet selection and see what was selected.
-      for (let i = 0; i < ref.current!.children.length; i += 1) {
-        const curElement = ref.current!.children[i] as HTMLLIElement
-        const label = curElement.children[0] as HTMLLabelElement
-        const checkbox = label.children[1] as HTMLInputElement
-        if (selector) {
-          checkbox.checked = selector === SELECT_ALL
-        }
-        const isSelected = checkbox.checked
-        if (isSelected) {
-          facetValues.push(checkbox.value)
-        }
-      }
-
-      // setup API call
-      const queryRequest: QueryBundleRequest = cloneDeep(this.props.getLastQueryRequest!())
-      const selectedFacets: FacetColumnRequest[] = queryRequest.query.selectedFacets!
-      // the facet index of the result and the request are the same
-      const currentFacetRequest: FacetColumnRequest = {
-        columnName,
-        facetValues,
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
-      }
-      const indexOfFacetInRequest = selectedFacets!.findIndex(el => el.columnName === columnName)
-
-      if (indexOfFacetInRequest === -1) {
-        queryRequest.query!.selectedFacets!.push(currentFacetRequest)
-      } else {
-        queryRequest.query!.selectedFacets![indexOfFacetInRequest] = currentFacetRequest
-      }
+      const htmlCheckboxes = ref.current!.querySelectorAll('.SRC-facet-checkboxes')
+      const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
+      const { newQueryRequest } = readFacetValues({
+        htmlCheckboxes,
+        queryRequest,
+        selector,
+        filter: columnName
+      })
 
       const lastFacetSelection = {
         columnName,
         facetValue,
         selector
       } as FacetSelection
-      this.props.updateParentState!({
-        lastFacetSelection,
-      })
 
-      // update isChecked to keep the barchart in sync
       if (columnName === this.props.filter) {
         let { isChecked } = cloneDeep(this.props)
         isChecked = getIsCheckedArray({
           isChecked,
-          indexOfFacetValue,
           facetValue,
           selector
         })
@@ -815,7 +783,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         })
       }
 
-      this.props.executeQueryRequest!(queryRequest)
+      this.props.executeQueryRequest!(newQueryRequest)
     }
 
   public toggleFilterDropdown =

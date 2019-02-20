@@ -11,6 +11,7 @@ import ReactMeasure from "react-measure"
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
+import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -251,12 +252,12 @@ export default class StackedBarChart extends
           >
             {({ measureRef }) => (
               <div className="SRC-flex" ref={measureRef}>
-                {xData.map((obj, index) => {
+                {xData.map((obj: FacetColumnResultValueCount, index) => {
                   const initRender: boolean = this.state.chartSelectionIndex === -1 && index === 0
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
-                  const check = isChecked![index] === undefined || isChecked![index]
+                  const check = isChecked![obj.value] === undefined || isChecked![obj.value]
                   if (check) {
                     rectStyle = {
                       fill: rgbColor

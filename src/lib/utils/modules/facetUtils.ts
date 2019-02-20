@@ -1,5 +1,6 @@
 import { FacetSelection } from '../../containers/QueryWrapper'
 import { SELECT_ALL, DESELECT_ALL } from '../../containers/SynapseTable'
+import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
 
 /**
  *  Calculates the state of a specific facet value given the current state
@@ -59,42 +60,73 @@ export const getIsValueSelected =
  *
  * @param
  *   isChecked: any
- *   indexOfFacetValue: string
- *   filter: string
- *   columnName: string
  *   facetValue: string
  *   selector: string
  * @returns
  */
 export const getIsCheckedArray = ({
   isChecked,
-  indexOfFacetValue,
   facetValue,
   selector
 } : {
   isChecked: any,
-  indexOfFacetValue: number,
   facetValue: string,
   selector: string
 }) => {
   // we pass in a deep clone so we don't need to worry about any reference
   // issues, below we call it a copy but its really to avoid linter complaints
-  let isCheckedCopy = isChecked
+  const isCheckedCopy = isChecked
 
   // update isChecked to keep the barchart in sync
   // we need to know if this was a single facet value click or if it was with all/clear
   if (facetValue) {
     // it came from a single click, only update this facet value
-    const isCheckedValue = isCheckedCopy![indexOfFacetValue]
+    const isCheckedValue = isCheckedCopy![facetValue]
     // if its un  defined then it hasn't been seen before, in which case its considered 'true'
     // so we set the value to false
-    isCheckedCopy![indexOfFacetValue] = isCheckedValue === undefined ? false : !isCheckedCopy![indexOfFacetValue]
+    isCheckedCopy![facetValue] = isCheckedValue === undefined ? false : !isCheckedCopy![facetValue]
   } else {
     // need to deselect all on isChecked
     // if its undefined then it hasn't been seen before, in which case its considered 'true'
     // so we set the value to false
-    // tslint:disable-next-line:prefer-array-literal
-    isCheckedCopy = new Array(100).fill(selector === SELECT_ALL)
+    for (const key in isCheckedCopy) {
+      isCheckedCopy[key] = selector === SELECT_ALL
+    }
   }
+  console.log('returning ischeckedcopy = ', isCheckedCopy)
   return isCheckedCopy
+}
+
+export const readFacetValues = ({
+  htmlCheckboxes,
+  selector,
+  queryRequest,
+  filter
+}: {
+  htmlCheckboxes: any,
+  selector : string,
+  queryRequest: QueryBundleRequest,
+  filter: string
+}) => {
+  const facetValues: string[] = []
+  console.log('checkboxes = ', htmlCheckboxes)
+  // read over the checkboxes for this facet selection and see what was selected.
+  for (let i = 0; i < htmlCheckboxes.length; i += 1) {
+    const checkbox = htmlCheckboxes[i] as HTMLInputElement
+    if (selector) {
+      checkbox.checked = selector === SELECT_ALL
+    }
+    const isSelected = checkbox.checked
+    if (isSelected) {
+      facetValues.push(checkbox.value)
+    }
+  }
+  // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+  const newQueryRequest: QueryBundleRequest = queryRequest
+  const { selectedFacets } = newQueryRequest.query
+  // grab the facet values associated for this column
+  const specificFacet = selectedFacets!.find(el => el.columnName === filter)!
+  specificFacet.facetValues = facetValues
+
+  return { newQueryRequest }
 }
