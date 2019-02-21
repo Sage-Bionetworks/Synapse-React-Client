@@ -50,53 +50,6 @@ export const getIsValueSelected =
   return curFacetSelection.isSelected
 }
 
-/**
- *  isChecked is used to keep the barchart and the current facet selection
- *  in sync. This lets the two views sync without requiring an API call
- *  to update the barchart.
- *
- *  Note: isChecked is ONLY applicable to the facet that is being drilled down
- *  on in the view.
- *
- * @param
- *   isChecked: any
- *   facetValue: string
- *   selector: string
- * @returns
- */
-export const getIsCheckedArray = ({
-  isChecked,
-  facetValue,
-  selector
-} : {
-  isChecked: any,
-  facetValue: string,
-  selector: string
-}) => {
-  // we pass in a deep clone so we don't need to worry about any reference
-  // issues, below we call it a copy but its really to avoid linter complaints
-  const isCheckedCopy = isChecked
-
-  // update isChecked to keep the barchart in sync
-  // we need to know if this was a single facet value click or if it was with all/clear
-  if (facetValue) {
-    // it came from a single click, only update this facet value
-    const isCheckedValue = isCheckedCopy![facetValue]
-    // if its un  defined then it hasn't been seen before, in which case its considered 'true'
-    // so we set the value to false
-    isCheckedCopy![facetValue] = isCheckedValue === undefined ? false : !isCheckedCopy![facetValue]
-  } else {
-    // need to deselect all on isChecked
-    // if its undefined then it hasn't been seen before, in which case its considered 'true'
-    // so we set the value to false
-    for (const key in isCheckedCopy) {
-      isCheckedCopy[key] = selector === SELECT_ALL
-    }
-  }
-  console.log('returning ischeckedcopy = ', isCheckedCopy)
-  return isCheckedCopy
-}
-
 export const readFacetValues = ({
   htmlCheckboxes,
   selector,
@@ -109,7 +62,6 @@ export const readFacetValues = ({
   filter: string
 }) => {
   const facetValues: string[] = []
-  console.log('checkboxes = ', htmlCheckboxes)
   // read over the checkboxes for this facet selection and see what was selected.
   for (let i = 0; i < htmlCheckboxes.length; i += 1) {
     const checkbox = htmlCheckboxes[i] as HTMLInputElement

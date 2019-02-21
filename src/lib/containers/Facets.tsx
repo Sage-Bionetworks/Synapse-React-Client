@@ -10,10 +10,9 @@ import {
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
-import { cloneDeep } from '../utils/modules/'
 
 import { SELECT_ALL, DESELECT_ALL } from './SynapseTable'
-import { getIsValueSelected, getIsCheckedArray, readFacetValues } from '../utils/modules/facetUtils'
+import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 
 // Add all icons to the library so you can use it in your page
 library.add(faTimes)
@@ -21,7 +20,6 @@ library.add(faPlus)
 
 type CheckboxGroupProps = {
   rgbIndex: number
-  isChecked: any
   facetColumnResult: FacetColumnResultValues
   applyChanges: (ref: React.RefObject<HTMLSpanElement>, facetValue: string, selector: string) =>
     (_event: React.MouseEvent<HTMLSpanElement>) => void
@@ -155,7 +153,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         rgbIndex={this.props.rgbIndex!}
         key={facetColumnResult.columnName}
         facetColumnResult={facetColumnResult}
-        isChecked={this.props.isChecked}
         applyChanges={this.applyChanges}
         isLoading={this.props.isLoading!}
         lastFacetSelection={this.props.lastFacetSelection!}
@@ -175,13 +172,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       })
     }
 
-    // update ischecked to keep the barchart in sync
-    let { isChecked } = cloneDeep(this.props)
-    isChecked = getIsCheckedArray({
-      isChecked,
-      facetValue,
-      selector
-    })
     const { filter = '' } = this.props
 
     const lastFacetSelection = {
@@ -191,7 +181,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     } as FacetSelection
 
     this.props.updateParentState!({
-      isChecked,
       lastFacetSelection
     })
 

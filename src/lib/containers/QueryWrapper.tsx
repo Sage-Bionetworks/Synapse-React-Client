@@ -21,7 +21,6 @@ type QueryWrapperProps = {
 
 type QueryWrapperState = {
   data: QueryResultBundle | undefined
-  isChecked: {}  // keep Facets and BarChart colors in sync
   isLoadingNewData: boolean
   isLoading: boolean
   lastQueryRequest: QueryBundleRequest
@@ -44,7 +43,6 @@ export type QueryWrapperChildProps = {
   executeInitialQueryRequest?: () => void
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
-  isChecked?: {}
   data?: QueryResultBundle
   filter?: string
   updateParentState?: (param: any) => void
@@ -91,7 +89,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
 
   public static initialState = {
     data: undefined,
-    isChecked: {},
     isLoading: true,
     isLoadingNewData: true,
     lastQueryRequest: {} as QueryBundleRequest,
@@ -225,7 +222,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    */
   public executeInitialQueryRequest() {
     this.setState({
-      isChecked: {},
       isLoading: true,
       isLoadingNewData: true
     })
@@ -311,7 +307,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,
         getNextPageOfData: this.getNextPageOfData,
-        isChecked: this.state.isChecked,
         isLoading: this.state.isLoading,
         isLoadingNewData: this.state.isLoadingNewData,
         filter: this.props.facetName,

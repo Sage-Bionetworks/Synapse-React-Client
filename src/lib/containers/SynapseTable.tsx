@@ -24,7 +24,7 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
-import { getIsValueSelected, getIsCheckedArray, readFacetValues } from '../utils/modules/facetUtils'
+import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -248,7 +248,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </div>
         </div>
         <div className="container-fluid">
-            <div className="row SRC-overflowAuto">
+            <div style={{ minHeight: '300px' }} className="row SRC-overflowAuto">
                 <table className="table table-striped table-condensed">
                     <thead className="SRC_borderTop">
                         <tr>
@@ -269,7 +269,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    *
    * @memberof SynapseTable
    */
-  private handlePaginationClick = (eventType: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+  private handlePaginationClick = (eventType: string) => (_event: React.MouseEvent<HTMLButtonElement>) => {
     const queryRequest = this.props.getLastQueryRequest!()
     let currentOffset = queryRequest.query.offset!
         // if its a "previous" click subtract from the offset
@@ -766,22 +766,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         selector
       } as FacetSelection
 
-      if (columnName === this.props.filter) {
-        let { isChecked } = cloneDeep(this.props)
-        isChecked = getIsCheckedArray({
-          isChecked,
-          facetValue,
-          selector
-        })
-        this.props.updateParentState!({
-          isChecked,
-          lastFacetSelection
-        })
-      } else {
-        this.props.updateParentState!({
-          lastFacetSelection,
-        })
-      }
+      this.props.updateParentState!({
+        lastFacetSelection,
+      })
 
       this.props.executeQueryRequest!(newQueryRequest)
     }

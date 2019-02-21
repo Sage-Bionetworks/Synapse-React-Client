@@ -706,7 +706,7 @@ checkmark styling end
   transition: opacity 300ms ease-in; }
 
 span.SRC-logo-cursor * {
-  cursor: wait !important; }
+  cursor: wait; }
 
 div.SRC-logo-cursor * {
-  cursor: wait !important; }
+  cursor: wait; }

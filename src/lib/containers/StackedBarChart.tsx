@@ -12,6 +12,7 @@ import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
+import { getIsValueSelected } from '../utils/modules/facetUtils'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -198,9 +199,11 @@ export default class StackedBarChart extends
       isLoadingNewData,
       loadingScreen,
       rgbIndex,
-      isChecked,
-      filter,
-      unitDescription
+      filter = '',
+      unitDescription,
+      hasLoadedPastInitQuery,
+      isLoading,
+      lastFacetSelection
     } = this.props
     // while loading
     if (isLoadingNewData) {
@@ -217,6 +220,7 @@ export default class StackedBarChart extends
     }
     const { colorPalette, textColors } = getColorPallette(rgbIndex!, xData.length)
     const originalColor = colorPalette[0]
+
     return (
       <div className="container-fluid">
         <div className="row SRC-center-text">
@@ -257,8 +261,17 @@ export default class StackedBarChart extends
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
-                  const check = isChecked![obj.value] === undefined || isChecked![obj.value]
-                  if (check) {
+                  const isValueSelected = getIsValueSelected({
+                    hasLoadedPastInitQuery,
+                    isLoading,
+                    lastFacetSelection,
+                    columnName: filter,
+                    curFacetSelection: {
+                      isSelected: obj.isSelected,
+                      facetValue: obj.value
+                    }
+                  })
+                  if (isValueSelected) {
                     rectStyle = {
                       fill: rgbColor
                     }
