@@ -286,9 +286,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
   }
 
   public updateParentState(update: QueryWrapperState) {
-    // This is a hack needed because the barchart and the facets have to stay insync
-    // with each other (their colors), but they exist side by side in the component tree, so we
-    // have to pass the isChecked array up through querywrapper
     this.setState(update)
   }
 
