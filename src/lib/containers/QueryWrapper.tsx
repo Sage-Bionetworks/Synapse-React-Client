@@ -174,22 +174,22 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       this.props.facetName,
       this.state.data!
     )
-      .then(
-        (data: QueryResultBundle) => {
-          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          hasMoreData
-          const newState: any = {
-            hasMoreData,
-            data,
-            isLoading: false,
-            lastQueryRequest: cloneDeep(queryRequest),
-            hasLoadedPastInitQuery: true
-          }
-          this.setState(newState)
+    .then(
+      (data: QueryResultBundle) => {
+        const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+        hasMoreData
+        const newState: any = {
+          hasMoreData,
+          data,
+          isLoading: false,
+          lastQueryRequest: cloneDeep(queryRequest),
+          hasLoadedPastInitQuery: true
         }
-      ).catch((err: string) => {
-        console.log('Failed to get data ', err)
-      })
+        this.setState(newState)
+      }
+    ).catch((err: string) => {
+      console.log('Failed to get data ', err)
+    })
   }
 
   /**
