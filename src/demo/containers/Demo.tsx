@@ -327,7 +327,7 @@ class Demo extends React.Component<{}, DemoState> {
           >
             toggle tabs for query wrapper menu
           </button>
-
+          <a href="#table"> Table Demo </a>
           <QueryWrapperMenu
             token={inDevEnv ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}

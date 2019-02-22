@@ -59,9 +59,9 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           {
             facetName: 'assay',
             sql:
-            `SELECT id AS "File ID",
+            `SELECT assay as "Assay", id AS "File ID",
               fundingAgency AS "Funding Agency",
-              assay AS "Assay", diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
+              diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
             `,
             facetAliases: {
               id: 'File ID',
@@ -148,34 +148,26 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
   }
 
   public render(): JSX.Element {
-    let token: string | undefined = ''
-    let inDevEnv = false
-    if (process.env.NODE_ENV === 'development') {
-      token = process.env.REACT_APP_DEV_TOKEN
-      inDevEnv = true
-    } else {
-      token = this.state.token
-    }
 
     return (
       <div>
-        <button
+        {/* <button
           role="button"
           className="btn btn-default"
           // tslint:disable-next-line
           onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
         >
           toggle tabs
-        </button>
-
-        <QueryWrapperMenu
-          token={inDevEnv ? token! : this.state.token!}
-          menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
-          rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
-          type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
-          loadingScreen={<div>loading... </div>}
-        />
-      </div>
+        </button> */}
+        <h2>Demo of table</h2>
+          <QueryWrapperMenu
+            token={''}
+            menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
+            rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
+            type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
+            loadingScreen={<div>loading... </div>}
+          />
+        </div>
     )
   }
 }
