@@ -75,14 +75,14 @@ describe('basic functionality', () => {
 
     expect(wrapper.state()).toEqual(QueryWrapper.initialState)
 
-    const spyOnResetFacetSelection = jest.spyOn(instance, 'addAllFacetsToSelection')
+    // const spyOnResetFacetSelection = jest.spyOn(instance, 'addAllFacetsToSelection')
     const spyOnExecute = jest.spyOn(instance, 'executeInitialQueryRequest')
 
     await instance.componentDidMount()
 
     expect(spyOnExecute).toHaveBeenCalled()
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
-    expect(spyOnResetFacetSelection).toHaveBeenCalled()
+    // expect(spyOnResetFacetSelection).toHaveBeenCalled()
     expect(wrapper.state()).toEqual(
       {
         lastQueryRequest,
@@ -146,20 +146,20 @@ describe('basic functionality', () => {
     })
   })
 
-  it('addAllFacetsToSelection works correctly', async () => {
-    const { instance } = await createShallowComponent(request)
+  // it('addAllFacetsToSelection works correctly', async () => {
+  //   const { instance } = await createShallowComponent(request)
 
-    const castData = syn16787123Json as QueryResultBundle
-    const output = instance.addAllFacetsToSelection(castData)
-    expect(output.query.selectedFacets).toEqual(
-      [
-        {
-          columnName: 'projectStatus',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: ['Active', 'Completed']
-        }
-      ]
-    )
-  })
+  //   const castData = syn16787123Json as QueryResultBundle
+  //   // const output = instance.addAllFacetsToSelection(castData)
+  //   expect(output.query.selectedFacets).toEqual(
+  //     [
+  //       {
+  //         columnName: 'projectStatus',
+  //         concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+  //         facetValues: ['Active', 'Completed']
+  //       }
+  //     ]
+  //   )
+  // })
 
 })

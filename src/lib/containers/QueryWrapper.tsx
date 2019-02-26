@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils/'
@@ -20,6 +19,7 @@ type QueryWrapperProps = {
 }
 
 type QueryWrapperState = {
+  isApplyFilterSelectedForFacet: {}
   data: QueryResultBundle | undefined
   isLoadingNewData: boolean
   isLoading: boolean
@@ -37,6 +37,7 @@ export type FacetSelection = {
 
 // Since the component is an HOC we export the props passed down
 export type QueryWrapperChildProps = {
+  isApplyFilterSelectedForFacet?: {}
   isLoading?: boolean
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
@@ -97,7 +98,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     lastFacetSelection: {
       columnName: '',
       facetValue: ''
-    }
+    },
+    isApplyFilterSelectedForFacet: {}
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -106,7 +108,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.executeQueryRequest = this.executeQueryRequest.bind(this)
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
-    this.addAllFacetsToSelection = this.addAllFacetsToSelection.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
     this.state = QueryWrapper.initialState
   }
@@ -229,19 +230,14 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       .getQueryTableResults(this.props.initQueryRequest, this.props.token)
       .then(
         (data: QueryResultBundle) => {
-          const lastQueryRequest: QueryBundleRequest = this.addAllFacetsToSelection(data)
+          const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          const facets = data.facets as FacetColumnResultValues []
-          facets.forEach(
-            (el) => {
-              el.facetValues.forEach(
-                (facetValue) => {
-                  facetValue.isSelected = true
-                }
-              )
-            }
-          )
+          const isApplyFilterSelectedForFacet = cloneDeep(this.state.isApplyFilterSelectedForFacet)
+          data.facets.forEach((el) => {
+            isApplyFilterSelectedForFacet[el.columnName] = true
+          })
           const newState = {
+            isApplyFilterSelectedForFacet,
             hasMoreData,
             data,
             lastQueryRequest,
@@ -253,36 +249,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       ).catch((err) => {
         console.log('Failed to get data ', err)
       })
-  }
-
-  /**
-   * Reset the initial set of facets for the lastQueryRequest object
-   *
-   * @public
-   * @param {QueryResultBundle} data
-   * @param {string} filter the facet used to filter the synapse table
-   * @returns
-   * @memberof QueryWrapper
-   */
-  public addAllFacetsToSelection(data: QueryResultBundle): QueryBundleRequest {
-    // next we have to selectively choose those facets and their
-    // corresponding counts, we have to get the full counts because of
-    // the nature that we are clicking elements and turning them "off"
-    // this is a peculiarity due to UX and the synapse backend having different behavior
-    const selectedFacets = data.facets.map(
-      (el) => {
-        return {
-          columnName: el.columnName,
-          facetValues: el.facetValues.map((el: FacetColumnResultValueCount) => {
-            return el.value
-          }),
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
-        }
-      }
-    )
-    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)!
-    lastQueryRequest.query.selectedFacets = selectedFacets
-    return lastQueryRequest
   }
 
   public updateParentState(update: QueryWrapperState) {
@@ -299,6 +265,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
       return React.cloneElement(child, {
         facetAliases,
+        isApplyFilterSelectedForFacet: this.state.isApplyFilterSelectedForFacet,
         data: this.state.data,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,

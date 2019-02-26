@@ -451,6 +451,9 @@ button.SRC-roundBorder {
 .SRC-bar-border {
   background: #F9F9F9; }
 
+.SRC-border-bottom-only {
+  border-bottom: 1px solid #dddddf; }
+
 .SRC-bar-border-bottom {
   border-bottom: 1px solid #dddddf;
   border-left: 1px solid #dddddf;

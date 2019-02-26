@@ -5,8 +5,7 @@ import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
-import { FaceFacetColumnValuesRequest } from './jsonResponses/Table/FacetColumnRequest'
-import { FacetColumnResultValues } from './jsonResponses/Table/FacetColumnResult'
+// import { FaceFacetColumnValuesRequest } from './jsonResponses/Table/FacetColumnRequest'
 
 // TODO: Create JSON response types for return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
@@ -187,30 +186,17 @@ export const getIntuitiveQueryTableResults = (
   endpoint: string = DEFAULT_ENDPOINT
 ): Promise<QueryResultBundle> => {
 
-  const facetSelection = queryBundleRequest.query.selectedFacets as FaceFacetColumnValuesRequest []
+  // const { selectedFacets = [] } = queryBundleRequest.query
+  // const facetsForFilter = selectedFacets.find((obj: FaceFacetColumnValuesRequest) => {
+  //   return obj.columnName === filter
+  // }) as FaceFacetColumnValuesRequest
 
-  const facetsForFilter = facetSelection.filter((obj: FaceFacetColumnValuesRequest) => {
-    return obj.columnName === filter
-  })[0] as FaceFacetColumnValuesRequest
-
-  // check if the current set of facets being used is empty or not
-  if (facetsForFilter.facetValues.length === 0) {
-    // zero out the rows
-    lastQueryResult.queryResult.queryResults.rows = []
-    const facetColumnResultValues = lastQueryResult.facets.find(
-      (value) => {
-        return value.columnName === filter
-      }
-    ) as FacetColumnResultValues
-
-    facetColumnResultValues.facetValues.forEach(
-      (el) => {
-        el.isSelected = false
-      }
-    )
-
-    return Promise.resolve(lastQueryResult)
-  }
+  // // check if the current set of facets being used is empty or not
+  // if (!facetsForFilter || facetsForFilter.facetValues.length === 0) {
+  //   // zero out the rows
+  //   lastQueryResult.queryResult.queryResults.rows = []
+  //   return Promise.resolve(lastQueryResult)
+  // }
 
   return getQueryTableResults(queryBundleRequest, sessionToken, endpoint)
 }
