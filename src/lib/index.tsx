@@ -1,3 +1,4 @@
+import 'react-app-polyfill/ie11'
 import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
