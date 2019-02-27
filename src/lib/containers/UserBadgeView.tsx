@@ -1,6 +1,5 @@
 // FILE NOT EXPORTED - DEMO ONLY
 import * as React from 'react'
-import { uuidv4 } from '../utils/modules'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -53,7 +52,14 @@ const UserBadgeView: React.SFC<UserBadgeViewProps> = ({ data, loadingBar = (<div
   }
   return data && data.list.map((userProfile: any) => {
     if (userProfile.preSignedURL) {
-      return <img key={uuidv4()} className="userProfileImage" alt="User Profile" src={userProfile.preSignedURL} />
+      return (
+        <img
+          key={userProfile.preSignedURL}
+          className="userProfileImage"
+          alt="User Profile"
+          src={userProfile.preSignedURL}
+        />
+      )
     }
     const hashedUserName = hash(userProfile.userName)
     const color = getColor(hashedUserName)

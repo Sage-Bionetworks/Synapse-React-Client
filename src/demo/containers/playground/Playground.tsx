@@ -3,6 +3,7 @@ import { Link, Route, match } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
+import UserCardlDemo from './UserCardlDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -20,7 +21,13 @@ const App = ({ match }: { match: match }) => {
             <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
           </li>
           <li>
+            <Link to={`${match.url}/CardContainerLogic`}>CardContainerLogicDemo</Link>
+          </li>
+          <li>
             <Link to={`${match.url}/SynapseTableCardViewDemo`}>CardContainerLogicDemo</Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/UserBadgeDemo`}>UserBadgeDemo</Link>
           </li>
         </ul>
 
@@ -43,6 +50,13 @@ const App = ({ match }: { match: match }) => {
           path={`${match.url}/SynapseTableCardViewDemo`}
           // tslint:disable-next-line:jsx-no-lambda
           component={CardContainerLogicDemo}
+        />
+
+        <Route
+          exact={true}
+          path={`${match.url}/UserBadgeDemo`}
+          // tslint:disable-next-line:jsx-no-lambda
+          component={() => <UserCardlDemo/>}
         />
 
         <Route

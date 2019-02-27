@@ -6,6 +6,7 @@ import QueryWrapper from './containers/QueryWrapper'
 import StackedBarChart from './containers/StackedBarChart'
 import StaticQueryWrapper from './containers/StaticQueryWrapper'
 import SynapseTable from './containers/SynapseTable'
+import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
@@ -23,6 +24,7 @@ const SynapseComponents = {
   CardContainer,
   QueryWrapperMenu,
   CardContainerLogic,
+  UserCard,
   Markdown: MarkdownSynapse
 }
 

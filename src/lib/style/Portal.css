@@ -179,9 +179,9 @@
 
 .userProfileImage {
   border-radius: 50%;
-  max-width: none;
   height: 23px;
-  width: 23px; }
+  width: 23px;
+  min-width: 23px; }
 
 /*-------------------------------------------------------*/
 /* ### Loading spinner ### */

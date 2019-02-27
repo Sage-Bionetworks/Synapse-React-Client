@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import getUserProfileData from './getUserProfileData'
+import getUserProfile from './getUserData'
 import UserBadgeView from './UserBadgeView'
 
 export default class UserBadgeBatch extends React.Component {

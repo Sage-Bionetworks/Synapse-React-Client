@@ -10,12 +10,11 @@ import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
 import CardContainer from '../../lib/containers/CardContainer'
 // import TeamMemberList from '../../lib/containers/TeamMemberList'
-import UserBadgeBatch from '../../lib/containers/UserBadgeBatch'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import TeamMemberList from '../../lib/containers/TeamMemberList'
+// import TeamMemberList from '../../lib/containers/TeamMemberList'
 
 type DemoState = {
   token: string
@@ -260,8 +259,6 @@ class Demo extends React.Component<{}, DemoState> {
           getUserTeamEndpoint={SynapseClient.getUserTeamList}
         />
 
-        <UserBadgeBatch principalIds={[3342573, 3374422, 1131050]} />
-
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
 
         {/* <CustomMarkdownView>
@@ -336,7 +333,7 @@ class Demo extends React.Component<{}, DemoState> {
             loadingScreen={<div className="container">loading... </div>}
           />
         </div>
-        <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
+        {/* <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} /> */}
       </div>
     )
   }

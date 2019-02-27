@@ -1,5 +1,5 @@
 import * as React from 'react'
-import getUserProfileData from './getUserProfileData'
+import { getUserProfile } from './getUserData'
 import UserBadgeView from './UserBadgeView'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 
@@ -24,7 +24,7 @@ export default class UserBadge extends React.Component<UserBadgeProps, UserBadge
     if (alias) {
       getPrincipalAliasRequest(this.props.token, alias, type).then(
         (aliasData: any) => {
-          getUserProfileData([aliasData.principalId], this.props.token)
+          getUserProfile([aliasData.principalId], this.props.token)
           .then(
             (userProfileData: any) => {
               this.setState({ userProfileData })

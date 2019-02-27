@@ -355,6 +355,16 @@ export const createProject = (name: string,
 export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
   return doGet('/repo/v1/userProfile', sessionToken, undefined, endpoint)
 }
+
+/**
+ * Return this user's profile bundle
+ * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
+ */
+export const getUserBundle = (
+  id: string, mask: number, sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT
+) => {
+  return doGet(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
+}
 /**
  * Return the User Profiles for the given list of user IDs
  * http://docs.synapse.org/rest/POST/userProfile.html
