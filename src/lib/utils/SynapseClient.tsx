@@ -181,8 +181,6 @@ export const getQueryTableResultsFromJobId = (
 export const getIntuitiveQueryTableResults = (
   queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
-  filter: string,
-  lastQueryResult: QueryResultBundle,
   endpoint: string = DEFAULT_ENDPOINT
 ): Promise<QueryResultBundle> => {
 

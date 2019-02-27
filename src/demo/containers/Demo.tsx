@@ -273,7 +273,7 @@ class Demo extends React.Component<{}, DemoState> {
 
         <CustomMarkdownView>
           <MarkdownSynapse
-            token={inDevEnv ? token : this.state.token}
+            token={'25ded697-0e8a-401c-90bf-ecc19f19888f'}
             wikiId={'582150'}
             ownerId={'syn14306197'}
             // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}

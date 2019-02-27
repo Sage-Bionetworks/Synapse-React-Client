@@ -107,6 +107,7 @@ describe('it performs basic functionality', () => {
     unitDescription,
     getLastQueryRequest,
     data: castData,
+    isApplyFilterSelectedForFacet: {},
     synapseId: 'syn16787123',
     loadingScreen: <div/>,
     isChecked: []

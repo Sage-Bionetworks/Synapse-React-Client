@@ -2,7 +2,7 @@ import { FacetSelection } from '../../containers/QueryWrapper'
 import { SELECT_ALL } from '../../containers/SynapseTable'
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
 import { FaceFacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
-import { SELECT_SINGLE_FACET } from 'src/lib/containers/Facets'
+import { SELECT_SINGLE_FACET } from '../../containers/Facets'
 
 /**
  *  Calculates the state of a specific facet value given the current state

@@ -166,11 +166,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.setState({
       isLoading: true
     })
-    SynapseClient.getIntuitiveQueryTableResults(
+    SynapseClient.getQueryTableResults(
       queryRequest,
       this.props.token,
-      this.props.facetName,
-      this.state.data!
     )
     .then(
       (data: QueryResultBundle) => {
