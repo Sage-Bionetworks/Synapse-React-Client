@@ -1,5 +1,5 @@
 import { FacetSelection } from '../../containers/QueryWrapper'
-import { SELECT_ALL } from '../../containers/SynapseTable'
+// import { SELECT_ALL } from '../../containers/SynapseTable'
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
 import { FaceFacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
 import { SELECT_SINGLE_FACET } from '../../containers/Facets'
@@ -33,9 +33,6 @@ export const getIsValueSelected =
     if (lastFacetSelection!.facetValue === curFacetSelection.facetValue) {
       return !curFacetSelection.isSelected
     // tslint:disable-next-line:no-else-after-return
-    } else if (lastFacetSelection!.selector === SELECT_ALL) {
-      // select all was hit
-      return true
     } else if (lastFacetSelection!.selector === SELECT_SINGLE_FACET) {
       return false
     }
@@ -57,29 +54,20 @@ export const readFacetValues = ({
   value?: string
 }) => {
   const facetValues: string[] = []
-  // if select all was clicked then we send nothing back (e.g. - empty facet values)
-  // there is no filter getting applied
-  if (selector !== SELECT_ALL) {
-    // read over the checkboxes for this facet selection and see what was selected.
+
+  if (!selector) {
+    // no selector was clicked -- read over facet values as normal and see what was clicked
     for (let i = 0; i < htmlCheckboxes.length; i += 1) {
       const checkbox = htmlCheckboxes[i] as HTMLInputElement
-      /* Two different behaviors we have to expect of the checkboxes coming-
-          1. The checkboxes behave as normal checkboxes
-          2. The checkboxes behave as radios, despite their name, the reason a checkbox is
-          being used passed in is because it allows for state to be held without us tracking it,
-          its just a placeholder inside Facets.tsx
-      */
-      if (selector === SELECT_SINGLE_FACET && checkbox.value === value) {
-        // this is the single value selection for the checkbox
-        facetValues.push(value)
-      } else {
-        const isSelected = checkbox.checked
-        if (isSelected) {
-          facetValues.push(checkbox.value)
-        }
+      const isSelected = checkbox.checked
+      if (isSelected) {
+        facetValues.push(checkbox.value)
       }
     }
-  }
+  } else if (selector === SELECT_SINGLE_FACET) {
+    // SELECT_SINGLE_FACET acts as a radio selection, thats the only selection
+    facetValues.push(value!)
+  } // else selector === SELECT_ALL, we don't add any values, empty is treated as SELECT_ALL
   const newQueryRequest: QueryBundleRequest = queryRequest
   const { selectedFacets = [] } = newQueryRequest.query
 
