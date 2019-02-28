@@ -10,8 +10,6 @@ import { faCheck,
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-// @ts-ignore
-import closeSvg from '../assets/icons/close.svg'
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { FacetColumnResult,
@@ -60,8 +58,7 @@ export type SynapseTableState = {
   columnIconSortState: number[],
   isFilterSelected: boolean []
   filterClassList: string [],
-  menuWallIsActive: boolean,
-  lastChecked: string
+  menuWallIsActive: boolean
 }
 
 export type SynapseTableProps = {
@@ -113,8 +110,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
-      sortedColumnSelection: [],
-      lastChecked: ''
+      sortedColumnSelection: []
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
   }
@@ -132,7 +128,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (<div/>)
     }
     // unpack all the data
-    // @ts-ignore
     const { data, filter, isLoading, unitDescription } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
@@ -249,6 +244,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </div>
         </div>
         <div className="container-fluid">
+            {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
             <div style={{ minHeight: '300px' }} className="row SRC-overflowAuto">
                 <table className="table table-striped table-condensed">
                     <thead className="SRC_borderTop">
@@ -596,7 +592,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
 
     const applyPrimary = isCurFilterSelected ? 'SRC-primary-background-color' : 'SRC-primary-text-color'
-    // const numFacets: number = facetColumnResult.facetValues.length
     const classList = this.state.filterClassList[index]
     const style = { alignItems: 'center', marginLeft: '10px', marginRight: '3px', color: 'black', display: 'flex' }
 
@@ -625,21 +620,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         <div className={`dropdown-menu SRC-minDropdownWidth ${classList}`}>
           <div className="paddingMenuDropdown">
             <ul style={{ listStyleType: 'none' }} className="scrollable">
-              {/* <li>
-                <div
-                  className="SRC-flex SRC-table-dropdown-content"
-                >
-                  <p className="SRC-table-dropdown-text">
-                    {this.useFacetAliasIfDefined(columnName)} ({numFacets})
-                  </p>
-                  <button
-                    className="SRC-table-dropdown-close SRC-removeOutline btn pull-right"
-                    onClick={this.toggleFilterDropdown(index, isCurFilterSelected, refOuterDiv)}
-                  >
-                    <img src={closeSvg} />
-                  </button>
-                </div>
-              </li> */}
               <br />
               <label
                 style={{ paddingBottom: '8px' }}
@@ -648,7 +628,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 All
                 <input
                   onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-                  checked={this.props.isApplyFilterSelectedForFacet![columnName]}
+                  checked={this.props.isAllFilterSelectedForFacet![columnName]}
                   className="SRC-facet-checkboxes"
                   type="checkbox"
                 />
@@ -660,23 +640,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </ul>
 
           </div>
-          {/* <div className="borderTopTable SRC-flex">
-            <span className="tableTextColor">
-              <button
-                onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-                className="tableDropdownSelector tableAll"
-              >
-                All
-              </button>
-              <span> | </span>
-              <button
-                onClick={this.applyChanges({ ref, columnName, selector: DESELECT_ALL })}
-                className="tableDropdownSelector tableClear"
-              >
-                Clear
-              </button>
-            </span>
-          </div> */}
         </div>
       </div>
     )
@@ -710,7 +673,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     columnName: string,
   ): React.ReactNode {
 
-    const { lastFacetSelection, isLoading, isApplyFilterSelectedForFacet } = this.props
+    const { lastFacetSelection, isLoading, isAllFilterSelectedForFacet } = this.props
     return facetColumnResult.facetValues.map(
       (facetColumnResultValueCount: FacetColumnResultValueCount) => {
         const { value: facetValue, count, isSelected } = facetColumnResultValueCount
@@ -719,7 +682,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           displayValue = 'unannotated'
         }
         const key = columnName + facetValue + count
-        const isValueSelected = isApplyFilterSelectedForFacet![columnName] ? false :  getIsValueSelected({
+        const isValueSelected = isAllFilterSelectedForFacet![columnName] ? false :  getIsValueSelected({
           columnName,
           isLoading,
           lastFacetSelection,
@@ -766,7 +729,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }) => (_: React.SyntheticEvent<HTMLElement>) => {
       const htmlCheckboxes = ref.current!.querySelectorAll('.SRC-facet-checkboxes')
       const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
-      const { isApplyFilterSelectedForFacet } = this.props
+      const { isAllFilterSelectedForFacet } = this.props
       const { newQueryRequest } = readFacetValues({
         htmlCheckboxes,
         queryRequest,
@@ -779,10 +742,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         facetValue,
         selector
       } as FacetSelection
-      isApplyFilterSelectedForFacet![columnName] = selector === SELECT_ALL
+      isAllFilterSelectedForFacet![columnName] = selector === SELECT_ALL
       this.props.updateParentState!({
         lastFacetSelection,
-        isApplyFilterSelectedForFacet
+        isAllFilterSelectedForFacet
       })
 
       this.props.executeQueryRequest!(newQueryRequest)

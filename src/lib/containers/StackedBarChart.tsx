@@ -203,7 +203,7 @@ export default class StackedBarChart extends
       unitDescription,
       isLoading,
       lastFacetSelection,
-      isApplyFilterSelectedForFacet
+      isAllFilterSelectedForFacet
     } = this.props
     // while loading
     if (isLoadingNewData) {
@@ -261,7 +261,7 @@ export default class StackedBarChart extends
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
-                  const isValueSelected = isApplyFilterSelectedForFacet![filter] ? true : getIsValueSelected({
+                  const isValueSelected = isAllFilterSelectedForFacet![filter] ? true : getIsValueSelected({
                     isLoading,
                     lastFacetSelection,
                     columnName: filter,

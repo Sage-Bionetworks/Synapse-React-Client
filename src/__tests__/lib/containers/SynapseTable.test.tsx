@@ -73,7 +73,7 @@ describe('basic functionality', () => {
     executeQueryRequest,
     synapseId,
     title,
-    isApplyFilterSelectedForFacet: {},
+    isAllFilterSelectedForFacet: {},
     data: castData,
   } as SynapseTableProps & QueryWrapperChildProps
 

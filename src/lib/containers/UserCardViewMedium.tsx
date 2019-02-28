@@ -52,7 +52,7 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
 
-  if (userProfile.preSignedURLa) {
+  if (userProfile.preSignedURL) {
     img = (
       <img
         key={userProfile.preSignedURL}

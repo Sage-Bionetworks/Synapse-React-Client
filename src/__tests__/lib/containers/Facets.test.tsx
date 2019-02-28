@@ -92,7 +92,7 @@ describe('it performs basic functionality', () => {
     executeInitialQueryRequest,
     executeQueryRequest,
     getLastQueryRequest,
-    isApplyFilterSelectedForFacet: {},
+    isAllFilterSelectedForFacet: {},
     data: castData,
     filter: 'projectStatus',
     isChecked: []

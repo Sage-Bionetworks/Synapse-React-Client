@@ -9,7 +9,6 @@ import { SELECT_SINGLE_FACET } from '../../containers/Facets'
  *  of the application.
  *
  * @param
- *     hasLoadedPastInitQuery: boolean | undefined,
  *     isLoading: boolean | undefined,
  *     lastFacetSelection: FacetSelection | undefined,
  *     curFacetSelection: any,
@@ -61,15 +60,25 @@ export const readFacetValues = ({
   // read over the checkboxes for this facet selection and see what was selected.
   for (let i = 0; i < htmlCheckboxes.length; i += 1) {
     const checkbox = htmlCheckboxes[i] as HTMLInputElement
-    // two differet cases when looking at checkbox values
+    /* two differet cases when looking at checkbox values
+        1. the click came from the facets -- these act as radio
+        buttons and only one will get turned on and the others
+        turned off
+        2. the click came from the table dropdown, that will
+        act as a traditional check  box
+    */
     if (selector === SELECT_SINGLE_FACET) {
       if (checkbox.value === value) {
+        // only the one value click is selected
         facetValues.push(value)
       } else {
+        // all others are false
         checkbox.checked = false
       }
     } else {
-      if (selector) {
+      if (selector === SELECT_ALL) {
+        // In the case of the checkboxes the values are
+        // all clicked 'off'
         checkbox.checked = false
       }
       const isSelected = checkbox.checked

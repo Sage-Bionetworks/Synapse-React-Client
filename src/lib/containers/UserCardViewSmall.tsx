@@ -52,7 +52,7 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
   const tooltipId = JSON.stringify(userProfile)
   let img
   let marginLeft
-  // @ts-ignore
+  // TODO: get the correct label
   const label = 'a very good label'
   if (userProfile.preSignedURL) {
     marginLeft = '3px'

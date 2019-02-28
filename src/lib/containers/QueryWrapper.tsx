@@ -19,14 +19,17 @@ type QueryWrapperProps = {
 }
 
 type QueryWrapperState = {
-  isApplyFilterSelectedForFacet: {}
+  /* isAllFilterSelectedForFacet tracks whether for a particular
+     facet if the 'All' button has been selected, this tracks the
+     click event and syncs Facets.tsx and SynapseTable.tsx
+  */
+  isAllFilterSelectedForFacet: {}
   data: QueryResultBundle | undefined
   isLoadingNewData: boolean
   isLoading: boolean
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
-  hasLoadedPastInitQuery: boolean
-  lastFacetSelection?: FacetSelection
+  lastFacetSelection: FacetSelection
 }
 
 export type FacetSelection = {
@@ -37,7 +40,7 @@ export type FacetSelection = {
 
 // Since the component is an HOC we export the props passed down
 export type QueryWrapperChildProps = {
-  isApplyFilterSelectedForFacet?: {}
+  isAllFilterSelectedForFacet?: {}
   isLoading?: boolean
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
@@ -50,7 +53,6 @@ export type QueryWrapperChildProps = {
   rgbIndex?: number
   unitDescription?: string
   facetAliases?: {}
-  hasLoadedPastInitQuery?: boolean
   lastFacetSelection?: FacetSelection
 }
 
@@ -94,12 +96,12 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     isLoadingNewData: true,
     lastQueryRequest: {} as QueryBundleRequest,
     hasMoreData: true,
-    hasLoadedPastInitQuery: false,
     lastFacetSelection: {
       columnName: '',
-      facetValue: ''
+      facetValue: '',
+      selector: ''
     },
-    isApplyFilterSelectedForFacet: {}
+    isAllFilterSelectedForFacet: {}
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -109,7 +111,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
-    this.state = QueryWrapper.initialState
+    this.state = QueryWrapper.initialState as QueryWrapperState
   }
 
   /**
@@ -129,7 +131,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
 
   /**
    * @memberof QueryWrapper
-   *
    */
   public componentDidUpdate(prevProps: any) {
     /**
@@ -178,8 +179,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           hasMoreData,
           data,
           isLoading: false,
-          lastQueryRequest: cloneDeep(queryRequest),
-          hasLoadedPastInitQuery: true
+          lastQueryRequest: cloneDeep(queryRequest)
         }
         this.setState(newState)
       }
@@ -230,12 +230,16 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         (data: QueryResultBundle) => {
           const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          const isApplyFilterSelectedForFacet = cloneDeep(this.state.isApplyFilterSelectedForFacet)
+          const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
           data.facets.forEach((el) => {
-            isApplyFilterSelectedForFacet[el.columnName] = true
+            /*
+              this is done for convenience, we could evalulate isAllFilterSelectedForFacet lazily
+              for each facet, but it would require an 'undefined' check which is less than ideal
+            */
+            isAllFilterSelectedForFacet[el.columnName] = true
           })
           const newState = {
-            isApplyFilterSelectedForFacet,
+            isAllFilterSelectedForFacet,
             hasMoreData,
             data,
             lastQueryRequest,
@@ -263,7 +267,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
       return React.cloneElement(child, {
         facetAliases,
-        isApplyFilterSelectedForFacet: this.state.isApplyFilterSelectedForFacet,
+        isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.state.data,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
@@ -277,7 +281,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         updateParentState: this.updateParentState,
         isQueryWrapperChild: true,
         hasMoreData: this.state.hasMoreData,
-        hasLoadedPastInitQuery: this.state.hasLoadedPastInitQuery,
         lastFacetSelection: this.state.lastFacetSelection
       })
     }))

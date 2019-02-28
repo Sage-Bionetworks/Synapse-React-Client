@@ -1,7 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
-// @ts-ignore
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import {
   FacetColumnResultValueCount,
@@ -21,7 +19,7 @@ library.add(faTimes)
 library.add(faPlus)
 
 type CheckboxGroupProps = {
-  applyFilterIsSelected: boolean
+  allFilterIsSelected: boolean
   rgbIndex: number
   facetColumnResult: FacetColumnResultValues
   applyChanges: (
@@ -51,7 +49,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     lastFacetSelection,
     isLoading,
     rgbIndex,
-    applyFilterIsSelected
+    allFilterIsSelected
   } = props
   const children: any = []
   const ref: React.RefObject<HTMLSpanElement> = React.createRef()
@@ -69,7 +67,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     const curColor = colorPalette[index]
     let style: any = {}
 
-    const isSelected = applyFilterIsSelected ? true : getIsValueSelected({
+    const isSelected = allFilterIsSelected ? true : getIsValueSelected({
       isLoading,
       lastFacetSelection,
       columnName: facetColumnResult.columnName,
@@ -113,7 +111,6 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
           className="SRC-hidden SRC-facet-checkboxes"
         />
         <span>&nbsp;&nbsp;</span>
-        {/* <FontAwesomeIcon className="SRC-facets-icon" icon={icon} /> */}
         <span>&nbsp;&nbsp;</span>
       </label>
     )
@@ -156,7 +153,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     return (
       <CheckboxGroup
-        applyFilterIsSelected={this.props.isApplyFilterSelectedForFacet![this.props.filter!]}
+        allFilterIsSelected={this.props.isAllFilterSelectedForFacet![this.props.filter!]}
         showAllFacets={this.state.showAllFacets}
         rgbIndex={this.props.rgbIndex!}
         key={facetColumnResult.columnName}
@@ -184,19 +181,19 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       })
     }
 
-    const { filter = '', isApplyFilterSelectedForFacet = {} } = this.props
+    const { filter = '', isAllFilterSelectedForFacet = {} } = this.props
 
     const lastFacetSelection = {
       facetValue,
       selector,
       columnName: filter,
     } as FacetSelection
-
-    isApplyFilterSelectedForFacet[filter] = selector === SELECT_ALL
+    console.log('setting lastfacetsleeciotn = ', lastFacetSelection)
+    isAllFilterSelectedForFacet[filter] = selector === SELECT_ALL
 
     this.props.updateParentState!({
       lastFacetSelection,
-      isApplyFilterSelectedForFacet
+      isAllFilterSelectedForFacet
     })
 
     // read input and fetch data
