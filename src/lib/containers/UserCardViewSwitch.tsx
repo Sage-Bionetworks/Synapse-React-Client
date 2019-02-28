@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { SynapseConstants } from '../utils'
 import { UserCardViewSmall } from './UserCardViewSmall'
+import { UserBundle } from '../utils/jsonResponses/UserBundle'
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: any
+  userBundle: UserBundle
   size: string
 }
 

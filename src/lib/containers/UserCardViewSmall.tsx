@@ -5,55 +5,38 @@ import ReactTooltip from "react-tooltip"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { getColor } from './getUserData'
+import { UserBundle } from '../utils/jsonResponses/UserBundle'
 
 library.add(faCircle)
 
-const COLORS: string[] = [
-  'chocolate',
-  'black',
-  'firebrick',
-  'maroon',
-  'olive',
-  'limegreen',
-  'forestgreen',
-  'darkturquoise',
-  'teal',
-  'blue',
-  'navy',
-  'darkmagenta',
-  'purple',
-  'stateblue',
-  'orangered',
-  'forestblue',
-  'blueviolet'
-]
-
-const getColor = (hash: number) => {
-  return COLORS[hash % COLORS.length]
-}
-
-const hash = (userName: string) => {
-  const val = userName
-                .split('')
-                .reduce((prevHash, currVal) => (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0)
-  return Math.abs(val)
-}
-
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: any
+  userBundle: UserBundle
 }
 
 export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle }) => {
   const { userProfile } = userBundle
-  const hashedUserName = hash(userProfile.userName)
-  const color = getColor(hashedUserName)
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   const tooltipId = JSON.stringify(userProfile)
   let img
   let marginLeft
   // TODO: get the correct label
-  const label = 'a very good label'
+  let label = ''
+  if (userProfile.displayName) {
+    label += userProfile.displayName
+  } else if (userProfile.firstName && userProfile.lastName) {
+    label += (userProfile.firstName + userProfile.lastName)
+  }
+  if (userProfile.userName) {
+    label += ` (${userProfile.userName})`
+  }
+  if (userProfile.position) {
+    label += ` <br/>${userProfile.position}`
+  }
+  if (userProfile.location) {
+    label += ` <br/>${userProfile.location}`
+  }
   if (userProfile.preSignedURL) {
     marginLeft = '3px'
     img = (
@@ -65,6 +48,7 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
       />
     )
   } else {
+    const color = getColor(userProfile.userName)
     marginLeft = '30px'
     img = (
       <React.Fragment>
@@ -80,7 +64,7 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
         <span data-for={tooltipId} data-tip={label}>
           {img}
         </span>
-        <ReactTooltip delayShow={1000} id={tooltipId} />
+        <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
         <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>
     </a>
   )
