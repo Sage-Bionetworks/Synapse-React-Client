@@ -19,7 +19,7 @@ library.add(faTimes)
 library.add(faPlus)
 
 type CheckboxGroupProps = {
-  allFilterIsSelected: boolean
+  isAllFilterSelected: boolean
   rgbIndex: number
   facetColumnResult: FacetColumnResultValues
   applyChanges: (
@@ -49,7 +49,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     lastFacetSelection,
     isLoading,
     rgbIndex,
-    allFilterIsSelected
+    isAllFilterSelected
   } = props
   const children: any = []
   const ref: React.RefObject<HTMLSpanElement> = React.createRef()
@@ -67,7 +67,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     const curColor = colorPalette[index]
     let style: any = {}
 
-    const isSelected = allFilterIsSelected ? true : getIsValueSelected({
+    const isSelected = isAllFilterSelected ? true : getIsValueSelected({
       isLoading,
       lastFacetSelection,
       columnName: facetColumnResult.columnName,
@@ -153,7 +153,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     return (
       <CheckboxGroup
-        allFilterIsSelected={this.props.isAllFilterSelectedForFacet![this.props.filter!]}
+        isAllFilterSelected={this.props.isAllFilterSelectedForFacet![this.props.filter!]}
         showAllFacets={this.state.showAllFacets}
         rgbIndex={this.props.rgbIndex!}
         key={facetColumnResult.columnName}
