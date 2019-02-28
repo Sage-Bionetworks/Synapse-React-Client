@@ -57,37 +57,29 @@ export const readFacetValues = ({
   value?: string
 }) => {
   const facetValues: string[] = []
-  // read over the checkboxes for this facet selection and see what was selected.
-  for (let i = 0; i < htmlCheckboxes.length; i += 1) {
-    const checkbox = htmlCheckboxes[i] as HTMLInputElement
-    /* two differet cases when looking at checkbox values
-        1. the click came from the facets -- these act as radio
-        buttons and only one will get turned on and the others
-        turned off
-        2. the click came from the table dropdown, that will
-        act as a traditional check  box
-    */
-    if (selector === SELECT_SINGLE_FACET) {
-      if (checkbox.value === value) {
-        // only the one value click is selected
+  // if select all was clicked then we send nothing back (e.g. - empty facet values)
+  // there is no filter getting applied
+  if (selector !== SELECT_ALL) {
+    // read over the checkboxes for this facet selection and see what was selected.
+    for (let i = 0; i < htmlCheckboxes.length; i += 1) {
+      const checkbox = htmlCheckboxes[i] as HTMLInputElement
+      /* Two different behaviors we have to expect of the checkboxes coming-
+          1. The checkboxes behave as normal checkboxes
+          2. The checkboxes behave as radios, despite their name, the reason a checkbox is
+          being used passed in is because it allows for state to be held without us tracking it,
+          its just a placeholder inside Facets.tsx
+      */
+      if (selector === SELECT_SINGLE_FACET && checkbox.value === value) {
+        // this is the single value selection for the checkbox
         facetValues.push(value)
       } else {
-        // all others are false
-        checkbox.checked = false
-      }
-    } else {
-      if (selector === SELECT_ALL) {
-        // In the case of the checkboxes the values are
-        // all clicked 'off'
-        checkbox.checked = false
-      }
-      const isSelected = checkbox.checked
-      if (isSelected) {
-        facetValues.push(checkbox.value)
+        const isSelected = checkbox.checked
+        if (isSelected) {
+          facetValues.push(checkbox.value)
+        }
       }
     }
   }
-  // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
   const newQueryRequest: QueryBundleRequest = queryRequest
   const { selectedFacets = [] } = newQueryRequest.query
 
