@@ -2,14 +2,11 @@ import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
-import { SynapseClient } from '../utils/'
+import { SynapseClient, SynapseConstants } from '../utils/'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
-import {
-  uuidv4
-} from '../utils/modules'
-// import UserBadge from './UserBadge'
+import UserCard from './UserCard'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -516,9 +513,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         return this.renderSynapsePlot(widgetparamsMapped)
       case 'toc':
         return this.renderSynapseTOC(originalMarkup)
-      // TODO: Finish user badge
-      // case 'badge':
-      //   return this.renderUserBadge(widgetparamsMapped)
+      case 'badge':
+        return this.renderUserBadge(widgetparamsMapped)
       default:
         return
     }
@@ -583,13 +579,13 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     return
   }
   public renderSynapseTOC(originalMarkup: string) {
-    // TODO: Find a suitable key for this jsx
-    // for TOC
     const elements: any[] = []
     const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
+    let text = ''
     originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, (p1, p2, p3, p4) => {
+      text += p4
       elements.push(
-        <div key={uuidv4()}>
+        <div key={p4}>
           <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
             {' '}{p4}{' '}
           </a>
@@ -597,12 +593,18 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       )
       return ''
     })
-    return (<div key={uuidv4()}>{elements}</div>)
+    return (<div key={text}>{elements}</div>)
   }
 
   public renderUserBadge(widgetparamsMapped: any) {
-    // TODO: Finish UserBadge
-    // return <UserBadge alias={widgetparamsMapped.alias} type={'USER_NAME'}/>
+    return (
+      <UserCard
+        key={JSON.stringify(widgetparamsMapped)}
+        mask={63}
+        size={SynapseConstants.SMALL_USER_CARD}
+        alias={widgetparamsMapped.alias}
+      />
+    )
   }
 
   public componentDidMount() {

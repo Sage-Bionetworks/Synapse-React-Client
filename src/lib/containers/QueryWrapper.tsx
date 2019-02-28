@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
-import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils/'
@@ -20,29 +19,41 @@ type QueryWrapperProps = {
 }
 
 type QueryWrapperState = {
+  /* isAllFilterSelectedForFacet tracks whether for a particular
+     facet if the 'All' button has been selected, this tracks the
+     click event and syncs Facets.tsx and SynapseTable.tsx
+  */
+  isAllFilterSelectedForFacet: {}
   data: QueryResultBundle | undefined
-  isChecked: boolean []  // keep Facets and BarChart colors in sync
   isLoadingNewData: boolean
   isLoading: boolean
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
+  lastFacetSelection: FacetSelection
+}
+
+export type FacetSelection = {
+  columnName: string
+  facetValue: string
+  selector: string
 }
 
 // Since the component is an HOC we export the props passed down
 export type QueryWrapperChildProps = {
+  isAllFilterSelectedForFacet?: {}
   isLoading?: boolean
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
   executeInitialQueryRequest?: () => void
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
-  isChecked?: boolean []
   data?: QueryResultBundle
   filter?: string
   updateParentState?: (param: any) => void
   rgbIndex?: number
   unitDescription?: string
   facetAliases?: {}
+  lastFacetSelection?: FacetSelection
 }
 
 /**
@@ -81,12 +92,17 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
 
   public static initialState = {
     data: undefined,
-    isChecked: [] as boolean [],
     isLoading: true,
     isLoadingNewData: true,
     lastQueryRequest: {} as QueryBundleRequest,
-    hasMoreData: true
-  }
+    hasMoreData: true,
+    lastFacetSelection: {
+      columnName: '',
+      facetValue: '',
+      selector: ''
+    },
+    isAllFilterSelectedForFacet: {}
+  } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
     super(props)
@@ -94,9 +110,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.executeQueryRequest = this.executeQueryRequest.bind(this)
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
-    this.addAllFacetsToSelection = this.addAllFacetsToSelection.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
-    this.state = QueryWrapper.initialState
+    this.state = QueryWrapper.initialState as QueryWrapperState
   }
 
   /**
@@ -116,7 +131,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
 
   /**
    * @memberof QueryWrapper
-   *
    */
   public componentDidUpdate(prevProps: any) {
     /**
@@ -153,27 +167,25 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.setState({
       isLoading: true
     })
-    SynapseClient.getIntuitiveQueryTableResults(
+    SynapseClient.getQueryTableResults(
       queryRequest,
       this.props.token,
-      this.props.facetName,
-      this.state.data!
     )
-      .then(
-        (data: QueryResultBundle) => {
-          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          hasMoreData
-          const newState: any = {
-            hasMoreData,
-            data,
-            isLoading: false,
-            lastQueryRequest: cloneDeep(queryRequest)
-          }
-          this.setState(newState)
+    .then(
+      (data: QueryResultBundle) => {
+        const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+        hasMoreData
+        const newState: any = {
+          hasMoreData,
+          data,
+          isLoading: false,
+          lastQueryRequest: cloneDeep(queryRequest)
         }
-      ).catch((err: string) => {
-        console.log('Failed to get data ', err)
-      })
+        this.setState(newState)
+      }
+    ).catch((err: string) => {
+      console.log('Failed to get data ', err)
+    })
   }
 
   /**
@@ -209,7 +221,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    */
   public executeInitialQueryRequest() {
     this.setState({
-      isChecked: [],
       isLoading: true,
       isLoadingNewData: true
     })
@@ -217,10 +228,18 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       .getQueryTableResults(this.props.initQueryRequest, this.props.token)
       .then(
         (data: QueryResultBundle) => {
-          const filter: string = this.props.facetName
-          const lastQueryRequest: QueryBundleRequest = this.addAllFacetsToSelection(data, filter)
+          const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+          const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
+          data.facets.forEach((el) => {
+            /*
+              this is done for convenience, we could evalulate isAllFilterSelectedForFacet lazily
+              for each facet, but it would require an 'undefined' check which is less than ideal
+            */
+            isAllFilterSelectedForFacet[el.columnName] = true
+          })
           const newState = {
+            isAllFilterSelectedForFacet,
             hasMoreData,
             data,
             lastQueryRequest,
@@ -234,45 +253,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       })
   }
 
-  /**
-   * Reset the initial set of facets for the lastQueryRequest object
-   *
-   * @public
-   * @param {QueryResultBundle} data
-   * @param {string} filter the facet used to filter the synapse table
-   * @returns
-   * @memberof QueryWrapper
-   */
-  public addAllFacetsToSelection(data: QueryResultBundle, filter: string): QueryBundleRequest {
-    // we have to reset the facet selections by getting the original
-    // facet corresponding to the original filter
-    const facetsForFilter = data.facets.filter((obj: FacetColumnResultValues) => {
-      return obj.columnName === filter
-    })[0] as FacetColumnResultValues
-
-    // next we have to selectively choose those facets and their
-    // corresponding counts, we have to get the full counts because of
-    // the nature that we are clicking elements and turning them "off"
-    // this is a peculiarity due to UX and the synapse backend having different behavior
-    const facetsMapped: string[] = facetsForFilter.facetValues.map((el: FacetColumnResultValueCount) => {
-      return el.value
-    })
-
-    const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest)!
-    lastQueryRequest.query.selectedFacets = [
-      {
-        columnName: filter,
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: facetsMapped
-      }
-    ]
-    return lastQueryRequest
-  }
-
-  public updateParentState(update: any) {
-    // This is a hack needed because the barchart and the facets have to stay insync
-    // with each other (their colors), but they exist side by side in the component tree, so we
-    // have to pass the isChecked array up through querywrapper
+  public updateParentState(update: QueryWrapperState) {
     this.setState(update)
   }
 
@@ -286,12 +267,12 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
       return React.cloneElement(child, {
         facetAliases,
+        isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.state.data,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,
         getNextPageOfData: this.getNextPageOfData,
-        isChecked: this.state.isChecked,
         isLoading: this.state.isLoading,
         isLoadingNewData: this.state.isLoadingNewData,
         filter: this.props.facetName,
@@ -299,19 +280,24 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         unitDescription: this.props.unitDescription,
         updateParentState: this.updateParentState,
         isQueryWrapperChild: true,
-        hasMoreData: this.state.hasMoreData
+        hasMoreData: this.state.hasMoreData,
+        lastFacetSelection: this.state.lastFacetSelection
       })
     }))
+
+    const loadingCusrorClass = this.state.isLoading ? 'SRC-logo-cursor' : ''
 
     if (this.props.showMenu) {
       // menu is to the left of the child components so we let that add its
       // own html
       return (
-        childrenWithProps
+        <span className={`container-fluid ${loadingCusrorClass}`}>
+          {childrenWithProps}
+        </span>
       )
     }
     return (
-      <div className="container-fluid">
+      <div className={`container-fluid ${loadingCusrorClass}`}>
           <div className={'col-xs-12'}>
               {childrenWithProps}
           </div>

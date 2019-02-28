@@ -10,12 +10,11 @@ import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
 import CardContainer from '../../lib/containers/CardContainer'
 // import TeamMemberList from '../../lib/containers/TeamMemberList'
-import UserBadgeBatch from '../../lib/containers/UserBadgeBatch'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import TeamMemberList from '../../lib/containers/TeamMemberList'
+// import TeamMemberList from '../../lib/containers/TeamMemberList'
 
 type DemoState = {
   token: string
@@ -79,15 +78,14 @@ class Demo extends React.Component<{}, DemoState> {
           {
             facetName: 'assay',
             sql:
-            `SELECT id AS "File ID",
-              fundingAgency AS "Funding Agency",
-              assay AS "Assay", diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
-            `,
-            facetAliases: {
-              id: 'File ID',
-              fundingAgency: 'Funding Agency',
-              assay: 'Assay',
-            },
+            // tslint:disable-next-line:max-line-length
+            'SELECT * FROM syn16858331',
+            // facetAliases: {
+            //   id: 'File ID',
+            //   fundingAgency: 'Funding Agency',
+            //   assay: 'Assay',
+            //   dataType: 'Data Type'
+            // },
             synapseId: 'syn16858331',
             title: 'title',
             unitDescription: 'datum'
@@ -221,9 +219,9 @@ class Demo extends React.Component<{}, DemoState> {
     let token: string | undefined = ''
     let inDevEnv = false
     if (process.env.NODE_ENV === 'development') {
-      token = process.env.REACT_APP_DEV_TOKEN
       inDevEnv = true
     }
+    token = ''
     return (
       <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
@@ -260,8 +258,6 @@ class Demo extends React.Component<{}, DemoState> {
           ownerId={this.state.ownerId}
           getUserTeamEndpoint={SynapseClient.getUserTeamList}
         />
-
-        <UserBadgeBatch principalIds={[3342573, 3374422, 1131050]} />
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
 
@@ -328,7 +324,7 @@ class Demo extends React.Component<{}, DemoState> {
           >
             toggle tabs for query wrapper menu
           </button>
-
+          <a href="#table"> Table Demo </a>
           <QueryWrapperMenu
             token={inDevEnv ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
@@ -337,7 +333,7 @@ class Demo extends React.Component<{}, DemoState> {
             loadingScreen={<div className="container">loading... </div>}
           />
         </div>
-        <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} />
+        {/* <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} /> */}
       </div>
     )
   }

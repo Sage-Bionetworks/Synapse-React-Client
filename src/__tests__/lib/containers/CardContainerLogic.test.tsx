@@ -67,7 +67,6 @@ describe('it performs basic functionality', () => {
           }
         },
         isLoading: false,
-        isLoadingNewData: false,
         totalResultsNoFacet: syn16787123Json.queryCount,
         hasMoreData: true
       }

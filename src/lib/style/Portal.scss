@@ -195,9 +195,9 @@
 
 .userProfileImage {
   border-radius: 50%;
-  max-width: none;
   height: 23px;
   width: 23px;
+  min-width: 23px;
 }
 
 /*-------------------------------------------------------*/
@@ -551,6 +551,10 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   background: #F9F9F9;
 }
 
+.SRC-border-bottom-only {
+  border-bottom:1px solid #dddddf;
+}
+
 .SRC-bar-border-bottom {
   border-bottom:1px solid #dddddf;
   border-left:1px solid #dddddf;
@@ -627,6 +631,7 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .tableApply {
+  outline: none;
   border-radius: 17px;
   padding: 6px 25px;
   background: #4E5491;
@@ -865,4 +870,12 @@ checkmark styling end
 .SRC-card-leave.SRC-card-leave-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
+}
+
+span.SRC-logo-cursor * {
+  cursor: wait;
+}
+
+div.SRC-logo-cursor * {
+  cursor: wait;
 }

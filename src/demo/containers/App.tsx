@@ -10,7 +10,9 @@ import Playground from './playground/Playground'
  */
 const App: React.SFC<{}> = () => {
   return (
-    <Router>
+    <Router
+      basename={process.env.PUBLIC_URL}
+    >
       <div>
       <div className="App-header text-center">
           <img src={logoSvg} className="App-logo" alt="logo" />

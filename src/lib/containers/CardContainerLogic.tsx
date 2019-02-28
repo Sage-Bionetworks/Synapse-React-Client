@@ -18,7 +18,6 @@ export type CardContainerLogicProps = {
 
 type State = {
   data: QueryResultBundle | undefined
-  isLoadingNewData: boolean
   isLoading: boolean
   queryRequest: QueryBundleRequest
   totalResultsNoFacet: number,
@@ -62,7 +61,6 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
   public static defaultState = {
     data: undefined,
     isLoading: true,
-    isLoadingNewData: true,
     queryRequest: {} as QueryBundleRequest,
     totalResultsNoFacet: 0,
     hasMoreData: true
@@ -148,7 +146,6 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
   public executeInitialQueryRequest() {
     this.setState({
       isLoading: true,
-      isLoadingNewData: true
     })
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
@@ -186,7 +183,6 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
             data,
             queryRequest: queryRequestWithoutCount,
             isLoading: false,
-            isLoadingNewData: false,
             totalResultsNoFacet: data.queryCount!
           }
           this.setState(newState)
