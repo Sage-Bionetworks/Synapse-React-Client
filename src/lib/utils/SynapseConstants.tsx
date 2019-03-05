@@ -32,6 +32,7 @@ export const AMP_STUDY: string = 'AMP_Study'
 export const FUNDER: string = 'funder'
 export const PUBLICATION: string = 'publication'
 export const TOOL: string = 'tool'
+export const CSBC_PROJECT: string = 'CSBC_STUDY'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: string = 'SMALL USER CARD'

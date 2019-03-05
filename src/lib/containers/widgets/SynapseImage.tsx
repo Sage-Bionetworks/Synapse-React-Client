@@ -83,9 +83,6 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     )
   }
   public componentDidMount() {
-    if (!this.props.token) {
-      return
-    }
     if (!this.props.hasOwnProperty('wikiId')) {
       // Can get presigned url right away
       this.getEntity()
