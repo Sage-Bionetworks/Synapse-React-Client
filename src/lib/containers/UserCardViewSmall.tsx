@@ -18,7 +18,6 @@ type UserBadgeViewProps = {
 export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle }) => {
   const { userProfile } = userBundle
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
-  const tooltipId = JSON.stringify(userProfile)
   let img
   let marginLeft
   // TODO: get the correct label
@@ -37,6 +36,7 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
   if (userProfile.location) {
     label += ` <br/>${userProfile.location}`
   }
+  const tooltipId = label
   if (userProfile.preSignedURL) {
     marginLeft = '3px'
     img = (

@@ -1,67 +1,60 @@
 import * as React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
+import { faCircle, faEllipsisV, faClipboard } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { getColor } from './getUserData'
+import { UserBundle } from '../utils/jsonResponses/UserBundle'
 
 library.add(faCircle)
-
-const COLORS: string[] = [
-  'chocolate',
-  'black',
-  'firebrick',
-  'maroon',
-  'olive',
-  'limegreen',
-  'forestgreen',
-  'darkturquoise',
-  'teal',
-  'blue',
-  'navy',
-  'darkmagenta',
-  'purple',
-  'stateblue',
-  'orangered',
-  'forestblue',
-  'blueviolet'
-]
-
-const getColor = (hash: number) => {
-  return COLORS[hash % COLORS.length]
-}
-
-const hash = (userName: string) => {
-  const val = userName
-                .split('')
-                .reduce((prevHash, currVal) => (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0)
-  return Math.abs(val)
-}
-
-const openLink = (link: string) => {
-  window.open(link, '_blank')
-}
+library.add(faEllipsisV)
+library.add(faClipboard)
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: any
+  userBundle: UserBundle
 }
 
-export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle }) => {
-  const { userProfile } = userBundle
-  const hashedUserName = hash(userProfile.userName)
-  const color = getColor(hashedUserName)
-  const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
-  let img
+// tslint:disable-next-line:function-name
+export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
+  const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
 
+  function copyToClipboard(_e: any) {
+    textAreaRef.current!.select()
+    document.execCommand('copy')
+  }
+
+  const { userProfile } = userBundle
+  const {
+    displayName,
+    userName,
+    firstName,
+    lastName,
+    position
+  } = userProfile
+  // configure info to display
+  let img
+  let name = ''
+  if (displayName) {
+    name = displayName
+  } else if (firstName && lastName) {
+    name = (firstName + lastName)
+  }
+  if (userName) {
+    name = userName
+  }
   if (userProfile.preSignedURL) {
     img = (
       <img
+        style={{ borderRadius: '50%', padding: '5px' }}
+        width={'67px'}
+        height={'67px'}
         key={userProfile.preSignedURL}
-        className="userProfileImage"
         alt="User Profile"
         src={userProfile.preSignedURL}
       />
     )
   } else {
+    const color = getColor(userProfile.userName)
     img = (
       <React.Fragment>
         <FontAwesomeIcon className="fa-stack-2x" color={color} icon={'circle'} />
@@ -72,11 +65,32 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
     )
   }
   return (
-    // tslint:disable-next-line:jsx-no-lambda
-    <span onClick={() => openLink(link)} className="fa-layers fa-fw">
-      <a style={{ marginLeft: '16px' }} href={link}>
-        {img} @{userProfile.firstName} {userProfile.lastName} ({userProfile.userName})
-      </a>
-    </span>
+    <div className="SRC-centerContent col-xs-3">
+      {img}
+      <span style={{ display: 'inline-block', paddingLeft: '17px', paddingTop: '10px', paddingBottom: '10px' }}>
+        <p>
+          {name}
+        </p>
+        <p>
+          {position}
+        </p>
+        {/* textarea is placeholder for email text */}
+        <textarea
+          style={{ border: 'none', backgroundColor: 'transparent', resize: 'none', outline: 'none', disable: 'inline' }}
+          ref={textAreaRef}
+          onClick={copyToClipboard}
+          value={`${userName}@synapse.org`}
+          readOnly={true}
+        >
+          <FontAwesomeIcon color="gray" icon="clipboard"/>
+        </textarea>
+      </span>
+      <span
+        role={'button'}
+        style={{ display: 'inline-block', paddingLeft: '17px', paddingTop: '10px', paddingBottom: '10px' }}
+      >
+        <FontAwesomeIcon color="blue" icon="ellipsis-v"/>
+      </span>
+    </div>
   )
 }
