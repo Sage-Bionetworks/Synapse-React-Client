@@ -13,10 +13,12 @@ import {
   FUNDER,
   PUBLICATION,
   STUDY,
-  TOOL
+  TOOL,
+  CSBC_PROJECT
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
+import CSBCProject from './row_renderers/CSBC/CSBCProject'
 
 const PAGE_SIZE: number = 25
 
@@ -50,6 +52,8 @@ export const RowContainer: React.SFC<RowContainerProps> = (props) => {
       return <Consortium {...rest} />
     case AMP_STUDY:
       return <AMP_Study {...rest} />
+    case CSBC_PROJECT:
+      return <CSBCProject {...rest} />
     default:
       return (<div />) // this should never happen
   }

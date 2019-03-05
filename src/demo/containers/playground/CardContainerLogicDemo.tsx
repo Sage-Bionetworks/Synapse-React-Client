@@ -1,5 +1,6 @@
 import * as React from 'react'
 import CardContainerLogic from '../../../lib/containers/CardContainerLogic'
+import { SynapseConstants } from 'src/lib'
 
 export default class CardContainerLogicDemo extends React.Component {
 
@@ -11,10 +12,9 @@ export default class CardContainerLogicDemo extends React.Component {
   render() {
     return (
         <CardContainerLogic
-          type="study"
-          sql="SELECT * FROM syn16787123"
+          type={SynapseConstants.CSBC_PROJECT}
+          sql="SELECT * FROM syn10142562"
           unitDescription="studies"
-          filter="diseaseFocus"
         />
     )
   }

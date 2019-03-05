@@ -1,10 +1,12 @@
 import * as React from 'react'
 import { SynapseConstants } from '../utils'
 import { UserCardViewSmall } from './UserCardViewSmall'
+import { UserBundle } from '../utils/jsonResponses/UserBundle'
+import { UserCardViewMedium } from './UserCardViewMedium'
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: any
+  userBundle: UserBundle
   size: string
 }
 
@@ -16,7 +18,7 @@ export const UserCardViewSwitch: React.SFC<UserBadgeViewProps> = ({ userBundle, 
     case SynapseConstants.SMALL_USER_CARD:
       return (<UserCardViewSmall userBundle={userBundle}/>)
     default:
-      return (<div/>)
+      return (<UserCardViewMedium userBundle={userBundle}/>)
   }
 }
 

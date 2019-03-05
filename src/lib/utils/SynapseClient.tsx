@@ -5,9 +5,9 @@ import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
-// import { FaceFacetColumnValuesRequest } from './jsonResponses/Table/FacetColumnRequest'
+import { UserBundle } from './jsonResponses/UserBundle'
 
-// TODO: Create JSON response types for return types
+// TODO: Create JSON response types for all return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 
@@ -90,11 +90,12 @@ const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, re
 }
 
 export const doPost = (
-                        url: string,
-                        requestJsonObject: any,
-                        sessionToken: string | undefined,
-                        initCredentials: string | undefined,
-                        endpoint: string): Promise<any> => {
+  url: string,
+  requestJsonObject: any,
+  sessionToken: string | undefined,
+  initCredentials: string | undefined,
+  endpoint: string
+  ): Promise<any> => {
   const options: any = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -360,7 +361,7 @@ export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFA
  */
 export const getUserBundle = (
   id: string, mask: number, sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT
-) => {
+): Promise<UserBundle> => {
   return doGet(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
 }
 /**

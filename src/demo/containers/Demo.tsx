@@ -2,7 +2,7 @@ import * as React from 'react'
 import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
 import Login from '../../lib/containers/Login'
 import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
-import UserProfile from '../../lib/containers/demo_components/UserProfile'
+import UserProfileDemo from '../../lib/containers/demo_components/UserProfileDemo'
 import UserProjects from '../../lib/containers/demo_components/UserProjects'
 import UserTeams from '../../lib/containers/demo_components/UserTeams'
 import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
@@ -246,7 +246,7 @@ class Demo extends React.Component<{}, DemoState> {
           getUserProjectsEndpoint={SynapseClient.getUserProjectList}
         />
 
-        <UserProfile
+        <UserProfileDemo
           onProfileChange={this.handleChange}
           token={inDevEnv ? token : this.state.token}
           ownerId={this.state.ownerId}

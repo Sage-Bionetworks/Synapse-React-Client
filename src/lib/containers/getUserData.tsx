@@ -1,4 +1,9 @@
 import { SynapseClient } from '../utils'
+import { UserBundle } from '../utils/jsonResponses/UserBundle'
+
+/*
+  Utility functions for UserCards
+*/
 
 function getUserProfile(principalIds: number [], token?: string) {
   return SynapseClient.getUserProfiles(principalIds).then(
@@ -50,7 +55,7 @@ function getUserProfile(principalIds: number [], token?: string) {
     })
 }
 
-function getUserBundle(ownerId: string, mask: number, token?: string) {
+function getUserBundleWithProfilePic(ownerId: string, mask: number, token?: string): Promise<UserBundle> {
   return SynapseClient.getUserBundle(ownerId, mask, token).then(
     (data: any) => {
       const { userProfile } = data
@@ -91,4 +96,36 @@ function getUserBundle(ownerId: string, mask: number, token?: string) {
     })
 }
 
-export { getUserProfile, getUserBundle }
+const COLORS: string[] = [
+  'chocolate',
+  'black',
+  'firebrick',
+  'maroon',
+  'olive',
+  'limegreen',
+  'forestgreen',
+  'darkturquoise',
+  'teal',
+  'blue',
+  'navy',
+  'darkmagenta',
+  'purple',
+  'stateblue',
+  'orangered',
+  'forestblue',
+  'blueviolet'
+]
+
+const hash = (userName: string) => {
+  const val = userName
+  .split('')
+  .reduce((prevHash, currVal) => (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0)
+  return Math.abs(val)
+}
+
+const getColor = (userName: string) => {
+  const hashedUserName = hash(userName)
+  return COLORS[hashedUserName % COLORS.length]
+}
+
+export { getUserProfile, getUserBundleWithProfilePic, getColor }

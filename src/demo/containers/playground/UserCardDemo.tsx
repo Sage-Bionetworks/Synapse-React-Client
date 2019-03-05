@@ -25,6 +25,11 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             mask={63}
             size={SynapseConstants.SMALL_USER_CARD}
           />
+          <UserCard
+            ownerId={'273960'}
+            mask={63}
+            size={SynapseConstants.SMALL_USER_CARD}
+          />
           <br/>
           <p>inside of markdown-</p>
             <MarkdownSynapse
@@ -38,13 +43,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
           <UserCard
             ownerId={'1131050'}
             mask={63}
-            size={SynapseConstants.SMALL_USER_CARD}
-          />
-          <p> sans photo- </p>
-          <UserCard
-            ownerId={'1131050'}
-            mask={63}
-            size={SynapseConstants.SMALL_USER_CARD}
+            size={SynapseConstants.MEDIUM_USER_CARD}
           />
         </div>
       </div>
