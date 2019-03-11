@@ -4,9 +4,8 @@ import * as React from 'react'
 import ReactTooltip from "react-tooltip"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getColor } from './getUserData'
 import { UserBundle } from '../utils/jsonResponses/UserBundle'
+import { getColor } from './getUserData'
 
 library.add(faCircle)
 
@@ -20,7 +19,6 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
-  // TODO: get the correct label
   let label = ''
   if (userProfile.displayName) {
     label += userProfile.displayName
@@ -49,23 +47,36 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
     )
   } else {
     const color = getColor(userProfile.userName)
-    marginLeft = '30px'
+    marginLeft = '3px'
     img = (
       <React.Fragment>
-        <FontAwesomeIcon className="fa-stack-2x" color={color} icon={'circle'} />
-          <strong style={{ top: '-5px', right: '-10px' }} className="fa-stack-1x SRC-whiteText">
-           {userProfile.firstName[0] || userProfile.userName[0]}
-          </strong>
+        <svg height={24} width={24}>
+          <circle
+            r={12}
+            cx={'50%'}
+            cy={'50%'}
+            fill={color}
+          />
+          <text
+            textAnchor={'middle'}
+            alignmentBaseline={'middle'}
+            x={'50%'}
+            y={'50%'}
+            fill={'white'}
+          >
+            {userProfile.firstName[0] || userProfile.userName[0]}
+          </text>
+        </svg>
       </React.Fragment>
     )
   }
   return (
-    <a href={link} className="fa-layers fa-fw SRC-centerContent">
-        <span data-for={tooltipId} data-tip={label}>
-          {img}
-        </span>
-        <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
-        <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>
+    <a href={link} className="SRC-userCardViewSmall">
+      <span data-for={tooltipId} data-tip={label}>
+        {img}
+      </span>
+      <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
+      <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>
     </a>
   )
 }

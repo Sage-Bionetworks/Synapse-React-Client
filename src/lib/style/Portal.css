@@ -666,6 +666,10 @@ checkmark styling end
   display: flex;
   align-items: center; }
 
+.SRC-centerContentInline {
+  display: inline-flex;
+  align-items: center; }
+
 .SRC-tableHeader {
   margin: 0px;
   display: inline-block;
@@ -713,3 +717,7 @@ span.SRC-logo-cursor * {
 
 div.SRC-logo-cursor * {
   cursor: wait; }
+
+.SRC-userCardViewSmall {
+  display: inline-flex;
+  margin: 0px 4px; }
