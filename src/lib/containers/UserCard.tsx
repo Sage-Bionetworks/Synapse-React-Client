@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { getUserBundleWithProfilePic } from './getUserData'
+import { getUserProfileWithProfilePic } from './getUserData'
 import UserCardViewSwitch from './UserCardViewSwitch'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 
@@ -21,11 +21,11 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
   constructor(props: any) {
     super(props)
     this.state = { userProfileBundle: undefined }
-    this.getUserBundleInfo = this.getUserBundleInfo.bind(this)
+    this.getUserProfile = this.getUserProfile.bind(this)
   }
 
   public componentDidMount() {
-    const { userProfileBundle, ownerId, mask, alias } = this.props
+    const { userProfileBundle, ownerId, alias } = this.props
     if (userProfileBundle) {
       return
     }
@@ -33,16 +33,16 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
       getPrincipalAliasRequest(this.props.token, alias, 'USER_NAME')
       .then(
         (aliasData: any) => {
-          this.getUserBundleInfo(aliasData.principalId!, mask)
+          this.getUserProfile(aliasData.principalId!)
         }
       )
     } else {
-      this.getUserBundleInfo(ownerId!, mask)
+      this.getUserProfile(ownerId!)
     }
   }
 
-  public getUserBundleInfo(ownerId: string, mask: number) {
-    getUserBundleWithProfilePic(ownerId!, mask, this.props.token)
+  public getUserProfile(ownerId: string) {
+    getUserProfileWithProfilePic(ownerId!, this.props.token)
     .then(
       (data) => {
         this.setState({ userProfileBundle: data })

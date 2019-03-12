@@ -1,21 +1,20 @@
 import * as React from 'react'
 // ignore because this is rollup requiring imports be named a certain way
 // tslint:disable-next-line
-// import ReactTooltip from "react-tooltip"
+import ReactTooltip from "react-tooltip"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
-import { UserBundle } from '../utils/jsonResponses/UserBundle'
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { getColor } from './getUserData'
 
 library.add(faCircle)
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: UserBundle
+  userProfile: UserProfile
 }
 
-export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle }) => {
-  const { userProfile } = userBundle
+export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userProfile }) => {
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
@@ -73,7 +72,7 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
   return (
     <a href={link} className="SRC-userCard">
       {img}
-      {/* <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/> */}
+      <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
       <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>
     </a>
   )

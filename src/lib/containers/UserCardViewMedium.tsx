@@ -3,7 +3,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle, faEllipsisV, faClipboard } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from './getUserData'
-import { UserBundle } from '../utils/jsonResponses/UserBundle'
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -11,11 +11,11 @@ library.add(faClipboard)
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: UserBundle
+  userProfile: UserProfile
 }
 
 // tslint:disable-next-line:function-name
-export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
+export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
 
   function copyToClipboard(_e: any) {
@@ -23,7 +23,6 @@ export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
     document.execCommand('copy')
   }
 
-  const { userProfile } = userBundle
   const {
     displayName,
     userName,
@@ -94,16 +93,17 @@ export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
         }
         {/* textarea is placeholder for email text to get copied to clipboard */}
         <div
-          className="SRC-eqHeightRow SRC-inlineFlex"
+          className="SRC-eqHeightRow SRC-inlineFlex SRC-copyContainer"
+          onClick={copyToClipboard}
         >
           <textarea
-            className="SRC-textareaCopy SRC-eqHeightRow"
+            className="SRC-hidden"
             ref={textAreaRef}
-            onClick={copyToClipboard}
             value={`${userName}@synapse.org`}
             readOnly={true}
           />
-          <FontAwesomeIcon color="gray" icon="clipboard"/>
+          {userName}@synapse.org
+          <FontAwesomeIcon style={{ marginLeft: '4px' }} color="gray" icon="clipboard"/>
         </div>
       </div>
       <span

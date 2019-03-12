@@ -925,3 +925,9 @@ div.SRC-logo-cursor * {
   display: inline-flex;
   align-items: center;
 }
+
+.SRC-copyContainer {
+  color: #337ab7;
+  cursor: pointer;
+  z-index: 2;
+}

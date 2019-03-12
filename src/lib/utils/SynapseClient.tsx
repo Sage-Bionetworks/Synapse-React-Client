@@ -356,6 +356,15 @@ export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFA
 }
 
 /**
+ * Return this user's UserProfile
+ * http://docs.synapse.org/rest/GET/userProfile.html
+ */
+export const getUserProfileById = (
+  sessionToken: string | undefined, ownerId: string, endpoint = DEFAULT_ENDPOINT) => {
+  return doGet(`/repo/v1/userProfile/${ownerId}`, sessionToken, undefined, endpoint)
+}
+
+/**
  * Return this user's profile bundle
  * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
  */
