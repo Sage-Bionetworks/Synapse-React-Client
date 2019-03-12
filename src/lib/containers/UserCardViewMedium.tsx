@@ -16,11 +16,22 @@ type UserBadgeViewProps = {
 
 // tslint:disable-next-line:function-name
 export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
-  const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
+  const fauxTextAreaRef = React.useRef<HTMLDivElement>(null)
 
-  function copyToClipboard(_e: any) {
-    textAreaRef.current!.select()
-    document.execCommand('copy')
+  function copyToClipboard(value: string) {
+    return function _copyToClipboard(_e: any) {
+      // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+      const el = document.createElement('textarea')
+      el.value = value
+      el.setAttribute('readonly', '')
+      el.style.position = 'absolute'
+      el.style.left = '-9999px'
+      fauxTextAreaRef.current!.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      fauxTextAreaRef.current!.removeChild(el)
+      document.execCommand('copy')
+    }
   }
 
   const {
@@ -91,17 +102,11 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
             {position}
           </div>
         }
-        {/* textarea is placeholder for email text to get copied to clipboard */}
         <div
           className="SRC-eqHeightRow SRC-inlineFlex SRC-copyContainer"
-          onClick={copyToClipboard}
+          onClick={copyToClipboard(`${userName}@synapse.org`)}
+          ref={fauxTextAreaRef}
         >
-          <textarea
-            className="SRC-hidden"
-            ref={textAreaRef}
-            value={`${userName}@synapse.org`}
-            readOnly={true}
-          />
           {userName}@synapse.org
           <FontAwesomeIcon style={{ marginLeft: '4px' }} color="gray" icon="clipboard"/>
         </div>

@@ -772,11 +772,10 @@ div.SRC-logo-cursor * {
 .SRC-grid-item {
   height: 120px;
   flex-basis: 20%;
-  flex-grow: 1;
   -ms-flex: auto;
   width: 400px;
   position: relative;
-  margin: 10px;
+  margin: 10px auto;
   box-sizing: border-box; }
 
 @media (max-width: 1333px) {

@@ -951,12 +951,11 @@ $cardWidth : 400px;
 .SRC-grid-item {
   height: 120px;
   flex-basis: 20%;
-  flex-grow: 1;
   -ms-flex: auto;
   // flex: auto;
   width: $cardWidth;
   position: relative;
-  margin: 10px;
+  margin: 10px auto;
   box-sizing: border-box;
 }
 
