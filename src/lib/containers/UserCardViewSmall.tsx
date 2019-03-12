@@ -1,7 +1,7 @@
 import * as React from 'react'
 // ignore because this is rollup requiring imports be named a certain way
 // tslint:disable-next-line
-import ReactTooltip from "react-tooltip"
+// import ReactTooltip from "react-tooltip"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
 import { UserBundle } from '../utils/jsonResponses/UserBundle'
@@ -39,6 +39,8 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
     marginLeft = '3px'
     img = (
       <img
+        data-for={tooltipId}
+        data-tip={label}
         key={userProfile.preSignedURL}
         className="userProfileImage"
         alt="User Profile"
@@ -49,33 +51,29 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userBundle })
     const color = getColor(userProfile.userName)
     marginLeft = '3px'
     img = (
-      <React.Fragment>
-        <svg height={24} width={24}>
-          <circle
-            r={12}
-            cx={'50%'}
-            cy={'50%'}
-            fill={color}
-          />
-          <text
-            textAnchor={'middle'}
-            alignmentBaseline={'middle'}
-            x={'50%'}
-            y={'50%'}
-            fill={'white'}
-          >
-            {userProfile.firstName[0] || userProfile.userName[0]}
-          </text>
-        </svg>
-      </React.Fragment>
+      <svg height={24} width={24} data-for={tooltipId} data-tip={label}>
+        <circle
+          r={12}
+          cx={'50%'}
+          cy={'50%'}
+          fill={color}
+        />
+        <text
+          textAnchor={'middle'}
+          alignmentBaseline={'middle'}
+          x={'50%'}
+          y={'50%'}
+          fill={'white'}
+        >
+          {userProfile.firstName[0] || userProfile.userName[0]}
+        </text>
+      </svg>
     )
   }
   return (
-    <a href={link} className="SRC-userCardViewSmall">
-      <span data-for={tooltipId} data-tip={label}>
-        {img}
-      </span>
-      <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
+    <a href={link} className="SRC-userCard">
+      {img}
+      {/* <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/> */}
       <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>
     </a>
   )

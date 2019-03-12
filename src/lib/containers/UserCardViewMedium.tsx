@@ -34,6 +34,7 @@ export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
   // configure info to display
   let img
   let name = ''
+  const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   if (displayName) {
     name = displayName
   } else if (firstName && lastName) {
@@ -45,7 +46,7 @@ export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
   if (userProfile.preSignedURL) {
     img = (
       <img
-        style={{ borderRadius: '50%', padding: '5px' }}
+        style={{ borderRadius: '50%', padding: '5px', marginLeft: '26px' }}
         width={'67px'}
         height={'67px'}
         key={userProfile.preSignedURL}
@@ -54,42 +55,62 @@ export function UserCardViewMedium({ userBundle }: UserBadgeViewProps) {
       />
     )
   } else {
+    const radius = 40
     const color = getColor(userProfile.userName)
     img = (
-      <React.Fragment>
-        <FontAwesomeIcon className="fa-stack-2x" color={color} icon={'circle'} />
-          <strong style={{ top: '-5px', right: '-10px' }} className="fa-stack-1x SRC-whiteText">
-           {userProfile.firstName[0] || userProfile.userName[0]}
-          </strong>
-      </React.Fragment>
+      <svg style={{ marginLeft: '26px' }} height={radius * 2} width={radius * 2}>
+        <circle
+          r={radius}
+          cx={'50%'}
+          cy={'50%'}
+          fill={color}
+        />
+        <text
+          textAnchor={'middle'}
+          alignmentBaseline={'middle'}
+          fontSize={26}
+          x={'50%'}
+          y={'50%'}
+          fill={'white'}
+        >
+          {userProfile.firstName[0] || userProfile.userName[0]}
+        </text>
+      </svg>
     )
   }
   return (
-    <div className="SRC-centerContent col-xs-3">
+    <div className="SRC-userCard SRC-userCardMedium">
       {img}
-      <span style={{ display: 'inline-block', paddingLeft: '17px', paddingTop: '10px', paddingBottom: '10px' }}>
-        <p>
-          {name}
-        </p>
-        <p>
-          {position}
-        </p>
-        {/* textarea is placeholder for email text */}
-        <textarea
-          style={{ border: 'none', backgroundColor: 'transparent', resize: 'none', outline: 'none', disable: 'inline' }}
-          ref={textAreaRef}
-          onClick={copyToClipboard}
-          value={`${userName}@synapse.org`}
-          readOnly={true}
+      <div className="SRC-cardMetaData">
+        <div className="SRC-eqHeightRow">
+          <a href={link}>
+            {name}
+          </a>
+        </div>
+        {position &&
+          <div className="SRC-eqHeightRow">
+            {position}
+          </div>
+        }
+        {/* textarea is placeholder for email text to get copied to clipboard */}
+        <div
+          className="SRC-eqHeightRow SRC-inlineFlex"
         >
+          <textarea
+            className="SRC-textareaCopy SRC-eqHeightRow"
+            ref={textAreaRef}
+            onClick={copyToClipboard}
+            value={`${userName}@synapse.org`}
+            readOnly={true}
+          />
           <FontAwesomeIcon color="gray" icon="clipboard"/>
-        </textarea>
-      </span>
+        </div>
+      </div>
       <span
         role={'button'}
-        style={{ display: 'inline-block', paddingLeft: '17px', paddingTop: '10px', paddingBottom: '10px' }}
+        className="SRC-inlineBlock SRC-cardMenuButton"
       >
-        <FontAwesomeIcon color="blue" icon="ellipsis-v"/>
+        <FontAwesomeIcon color="#4393C7" icon="ellipsis-v"/>
       </span>
     </div>
   )

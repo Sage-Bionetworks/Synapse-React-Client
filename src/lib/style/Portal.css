@@ -718,6 +718,36 @@ span.SRC-logo-cursor * {
 div.SRC-logo-cursor * {
   cursor: wait; }
 
-.SRC-userCardViewSmall {
+.SRC-userCard {
   display: inline-flex;
+  align-items: center;
   margin: 0px 4px; }
+
+.SRC-userCardMedium {
+  border: 1px solid #DDDDDF;
+  height: 120px;
+  width: 400px; }
+
+.SRC-eqHeightRow {
+  height: 20px; }
+
+.SRC-cardMetaData {
+  display: inline-flex;
+  flex-direction: column;
+  padding-left: 17px; }
+
+.SRC-textareaCopy {
+  border: none;
+  background-color: transparent;
+  resize: none;
+  outline: none;
+  color: #337ab7;
+  cursor: pointer; }
+
+.SRC-cardMenuButton {
+  margin-left: auto;
+  margin-right: 16px; }
+
+.SRC-inlineFlex {
+  display: inline-flex;
+  align-items: center; }

@@ -50,6 +50,11 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             mask={63}
             size={SynapseConstants.MEDIUM_USER_CARD}
           />
+          <UserCard
+            ownerId={'3374422'}
+            mask={63}
+            size={SynapseConstants.MEDIUM_USER_CARD}
+          />
         </div>
       </div>
     )
