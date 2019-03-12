@@ -42,24 +42,24 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   if (userName) {
     name = userName
   }
+  const diameter = 80
   if (userProfile.preSignedURL) {
     img = (
       <img
         style={{ borderRadius: '50%', padding: '5px', marginLeft: '26px' }}
-        width={'67px'}
-        height={'67px'}
+        width={diameter}
+        height={diameter}
         key={userProfile.preSignedURL}
         alt="User Profile"
         src={userProfile.preSignedURL}
       />
     )
   } else {
-    const radius = 40
     const color = getColor(userProfile.userName)
     img = (
-      <svg style={{ marginLeft: '26px' }} height={radius * 2} width={radius * 2}>
+      <svg style={{ marginLeft: '26px' }} height={diameter} width={diameter}>
         <circle
-          r={radius}
+          r={diameter / 2}
           cx={'50%'}
           cy={'50%'}
           fill={color}
