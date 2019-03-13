@@ -794,3 +794,20 @@ div.SRC-logo-cursor * {
 
 .SRC-showGrayOnHover:hover > svg {
   color: gray; }
+
+.SRC-modal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  bottom: 20px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  background: #25A2B7;
+  color: white;
+  width: 344px;
+  height: 48px;
+  border-radius: 4px; }

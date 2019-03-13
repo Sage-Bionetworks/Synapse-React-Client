@@ -1,11 +1,13 @@
 import * as React from 'react'
+// tslint:disable-next-line
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle, faEllipsisV, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 // tslint:disable-next-line
-import ReactTooltip from "react-tooltip"
+// import ReactTooltip from "react-tooltip"
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -20,6 +22,7 @@ type UserBadgeViewProps = {
 // tslint:disable-next-line:function-name
 export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   const htmlDivRef = React.useRef<HTMLDivElement>(null)
+  const [showModal, setShowModal] = React.useState(false)
 
   /**
    * Function handles copying to clipboard the user's email address
@@ -30,6 +33,7 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   function copyToClipboard(value: string) {
     return function _copyToClipboard(_e: any) {
       // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+      // this copies the email to the clipoard
       const el = document.createElement('textarea')
       el.value = value
       el.setAttribute('readonly', '')
@@ -39,6 +43,14 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
       el.select()
       document.execCommand('copy')
       htmlDivRef.current!.removeChild(el)
+      setShowModal(true)
+      // hide it after 4 seconds
+      setTimeout(
+        () => {
+          setShowModal(false)
+        },
+        4000
+      )
     }
   }
 
@@ -102,6 +114,17 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   }
   return (
     <div className="SRC-userCard SRC-userCardMedium">
+      <ReactCSSTransitionGroup
+        transitionName="SRC-card"
+        transitionEnterTimeout={500}
+        transitionLeaveTimeout={500}
+      >
+        {showModal
+          &&
+          <div className="SRC-modal">
+          Copied text to clipboard!
+        </div>}
+      </ReactCSSTransitionGroup>
       {img}
       <div className="SRC-cardMetaData">
         <div className="SRC-eqHeightRow">
@@ -116,10 +139,8 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
         }
         <div
           className="SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex SRC-copyContainer"
-          onClick={copyToClipboard(`${userName}@synapse.org`)}
+          onClick={copyToClipboard(email)}
           ref={htmlDivRef}
-          data-tip="Email copied to clipboard!"
-          data-for={email}
         >
           {userName}@synapse.org
           <FontAwesomeIcon
@@ -128,16 +149,6 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
             icon="copy"
           />
         </div>
-        <ReactTooltip
-          isCapture={true}
-          event={'click'}
-          eventOff={'click'}
-          delayHide={1500}
-          place="bottom"
-          type="dark"
-          effect="solid"
-          id={email}
-        />
       </div>
       <span
         role={'button'}
