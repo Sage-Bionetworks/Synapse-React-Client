@@ -729,7 +729,7 @@ div.SRC-logo-cursor * {
 .SRC-userCardMedium {
   border: 1px solid #DDDDDF;
   height: 120px;
-  width: 400px; }
+  width: -webkit-fill-available; }
 
 .SRC-eqHeightRow {
   height: 20px; }
@@ -772,10 +772,8 @@ div.SRC-logo-cursor * {
 .SRC-grid-item {
   height: 120px;
   flex-basis: 20%;
-  -ms-flex: auto;
-  width: 400px;
+  width: 350px;
   position: relative;
-  margin: 10px auto;
   box-sizing: border-box; }
 
 @media (max-width: 1333px) {

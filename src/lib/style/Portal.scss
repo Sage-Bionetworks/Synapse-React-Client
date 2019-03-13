@@ -894,12 +894,12 @@ div.SRC-logo-cursor * {
   margin: 0px 4px;
 }
 
-$cardWidth : 400px;
+// $cardWidth : 400px;
 
 .SRC-userCardMedium {
   border: 1px solid #DDDDDF;
   height: 120px;
-  width: $cardWidth;
+  width: -webkit-fill-available;
 }
 
 .SRC-eqHeightRow {
@@ -951,11 +951,8 @@ $cardWidth : 400px;
 .SRC-grid-item {
   height: 120px;
   flex-basis: 20%;
-  -ms-flex: auto;
-  // flex: auto;
-  width: $cardWidth;
+  width: 350px;
   position: relative;
-  margin: 10px auto;
   box-sizing: border-box;
 }
 

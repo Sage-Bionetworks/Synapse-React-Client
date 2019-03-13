@@ -21,11 +21,16 @@ type UserBadgeViewProps = {
 export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   const htmlDivRef = React.useRef<HTMLDivElement>(null)
 
+  /**
+   * Function handles copying to clipboard the user's email address
+   *
+   * @param {string} value the email address of the user
+   * @returns
+   */
   function copyToClipboard(value: string) {
     return function _copyToClipboard(_e: any) {
       // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
       const el = document.createElement('textarea')
-      console.log('setting value to ', value)
       el.value = value
       el.setAttribute('readonly', '')
       el.style.position = 'absolute'
@@ -47,6 +52,9 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   // configure info to display
   let img
   let name = ''
+  // should pass in the userprofile json object
+  // Need a clickhandler, need to provide the base url all together
+  // link should be a prop, but with default for now
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   const email = `${userName}@synapse.org`
   if (displayName) {
