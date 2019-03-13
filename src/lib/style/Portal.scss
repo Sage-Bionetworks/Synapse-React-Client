@@ -979,3 +979,9 @@ $cardWidth : 400px;
     flex-basis: 100%;
   }
 }
+
+.SRC-showGrayOnHover:hover {
+  & > svg {
+    color: gray;
+  }
+}

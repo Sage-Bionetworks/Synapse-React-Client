@@ -1,36 +1,39 @@
 import * as React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircle, faEllipsisV, faClipboard } from '@fortawesome/free-solid-svg-icons'
+import { faCircle, faEllipsisV, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
+// tslint:disable-next-line
+import ReactTooltip from "react-tooltip"
 
 library.add(faCircle)
 library.add(faEllipsisV)
-library.add(faClipboard)
+library.add(faCopy)
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
   userProfile: UserProfile
 }
 
+// Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
 export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
-  const fauxTextAreaRef = React.useRef<HTMLDivElement>(null)
+  const htmlDivRef = React.useRef<HTMLDivElement>(null)
 
   function copyToClipboard(value: string) {
     return function _copyToClipboard(_e: any) {
       // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
       const el = document.createElement('textarea')
+      console.log('setting value to ', value)
       el.value = value
       el.setAttribute('readonly', '')
       el.style.position = 'absolute'
-      el.style.display = 'hidden'
       el.style.left = '-9999px'
-      fauxTextAreaRef.current!.appendChild(el)
+      htmlDivRef.current!.appendChild(el)
       el.select()
       document.execCommand('copy')
-      fauxTextAreaRef.current!.removeChild(el)
+      htmlDivRef.current!.removeChild(el)
     }
   }
 
@@ -45,6 +48,7 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   let img
   let name = ''
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+  const email = `${userName}@synapse.org`
   if (displayName) {
     name = displayName
   } else if (firstName && lastName) {
@@ -103,13 +107,29 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
           </div>
         }
         <div
-          className="SRC-eqHeightRow SRC-inlineFlex SRC-copyContainer"
+          className="SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex SRC-copyContainer"
           onClick={copyToClipboard(`${userName}@synapse.org`)}
-          ref={fauxTextAreaRef}
+          ref={htmlDivRef}
+          data-tip="Email copied to clipboard!"
+          data-for={email}
         >
           {userName}@synapse.org
-          <FontAwesomeIcon style={{ marginLeft: '4px' }} color="gray" icon="clipboard"/>
+          <FontAwesomeIcon
+            style={{ marginLeft: '4px' }}
+            color="lightgray"
+            icon="copy"
+          />
         </div>
+        <ReactTooltip
+          isCapture={true}
+          event={'click'}
+          eventOff={'click'}
+          delayHide={1500}
+          place="bottom"
+          type="dark"
+          effect="solid"
+          id={email}
+        />
       </div>
       <span
         role={'button'}

@@ -793,3 +793,6 @@ div.SRC-logo-cursor * {
 @media (max-width: 555px) {
   .SRC-grid-item {
     flex-basis: 100%; } }
+
+.SRC-showGrayOnHover:hover > svg {
+  color: gray; }
