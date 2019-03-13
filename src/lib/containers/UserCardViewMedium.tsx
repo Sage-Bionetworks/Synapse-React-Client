@@ -25,12 +25,12 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
       el.value = value
       el.setAttribute('readonly', '')
       el.style.position = 'absolute'
+      el.style.display = 'hidden'
       el.style.left = '-9999px'
       fauxTextAreaRef.current!.appendChild(el)
       el.select()
       document.execCommand('copy')
       fauxTextAreaRef.current!.removeChild(el)
-      document.execCommand('copy')
     }
   }
 

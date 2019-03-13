@@ -12,7 +12,7 @@ type UserBadgeProps = {
   alias?: string
   ownerId?: string
   size: string
-  mask: number
+  mask?: number
   token?: string
   type?: string
 }

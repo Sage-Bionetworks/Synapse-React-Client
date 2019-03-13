@@ -7,8 +7,11 @@ import json from 'rollup-plugin-json'
 import postprocess from 'rollup-plugin-postprocess';
 import { uglify } from 'rollup-plugin-uglify';
 import commonjs from 'rollup-plugin-commonjs'
-
-
+/* 
+	TODO: 
+		1. inline svgs for css don't work
+		2. if css transition group gets used it will need a rollup plugin
+*/
 export default {
 	input: 'src/lib/index.tsx',
 	external: [
