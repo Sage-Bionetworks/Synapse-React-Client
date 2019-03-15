@@ -1,6 +1,5 @@
 import * as React from 'react'
-// tslint:disable-next-line
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle, faEllipsisV, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -44,7 +43,7 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
       document.execCommand('copy')
       htmlDivRef.current!.removeChild(el)
       setShowModal(true)
-      // hide it after 4 seconds
+      // hide after 4 seconds
       setTimeout(
         () => {
           setShowModal(false)
@@ -114,17 +113,18 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   }
   return (
     <div className="SRC-userCard SRC-userCardMedium">
-      <ReactCSSTransitionGroup
-        transitionName="SRC-card"
-        transitionEnterTimeout={500}
-        transitionLeaveTimeout={500}
-      >
-        {showModal
+      <TransitionGroup>
+        {
+          showModal
           &&
-          <div className="SRC-modal">
-          Copied text to clipboard!
-        </div>}
-      </ReactCSSTransitionGroup>
+        <CSSTransition
+          key={email}
+          classNames="SRC-card"
+          timeout={{ enter: 500, exit: 300 }}
+        >
+          <div key={link} className="SRC-modal"> Copied text to clipboard! </div>
+        </CSSTransition>}
+      </TransitionGroup>
       {img}
       <div className="SRC-cardMetaData">
         <div className="SRC-eqHeightRow">

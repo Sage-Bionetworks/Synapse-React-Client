@@ -14,7 +14,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
           <div className="row">
             <h3>User Card Small </h3>
              <p> sans photo- </p>
-            <UserCard
+            {/* <UserCard
               ownerId={'3374422'}
               mask={63}
               size={SynapseConstants.SMALL_USER_CARD}
@@ -23,10 +23,10 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               ownerId={'3374422'}
               mask={63}
               size={SynapseConstants.SMALL_USER_CARD}
-            />
+            /> */}
             <br/>
             <p> with photo- </p>
-            <UserCard
+            {/* <UserCard
               ownerId={'1131050'}
               mask={63}
               size={SynapseConstants.SMALL_USER_CARD}
@@ -35,7 +35,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               ownerId={'273960'}
               mask={63}
               size={SynapseConstants.SMALL_USER_CARD}
-            />
+            /> */}
             <br/>
             <p>inside of markdown-</p>
               <MarkdownSynapse

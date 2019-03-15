@@ -868,11 +868,11 @@ checkmark styling end
   transition: opacity 300ms ease-in;
 }
 
-.SRC-card-leave {
+.SRC-card-exit {
   opacity: 1;
 }
 
-.SRC-card-leave.SRC-card-leave-active {
+.SRC-card-exit.SRC-card-exit-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
 }
