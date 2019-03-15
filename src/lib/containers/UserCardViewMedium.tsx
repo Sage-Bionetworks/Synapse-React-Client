@@ -5,6 +5,7 @@ import { faCircle, faEllipsisV, faCopy } from '@fortawesome/free-solid-svg-icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
+import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 // tslint:disable-next-line
 // import ReactTooltip from "react-tooltip"
 
@@ -15,13 +16,15 @@ library.add(faCopy)
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
   userProfile: UserProfile
+  menuActions?: MenuAction []
 }
 
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
-export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
+export function UserCardViewMedium({ userProfile, menuActions }: UserBadgeViewProps) {
   const htmlDivRef = React.useRef<HTMLDivElement>(null)
   const [showModal, setShowModal] = React.useState(false)
+  const [showContextMenu, setShowContextMenu] = React.useState(false)
 
   /**
    * Function handles copying to clipboard the user's email address
@@ -53,6 +56,10 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
     }
   }
 
+  function toggleContextMenu(_event: any) {
+    setShowContextMenu(!showContextMenu)
+  }
+
   const {
     displayName,
     userName,
@@ -60,6 +67,7 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
     lastName,
     position
   } = userProfile
+  const diameter = 80
   // configure info to display
   let img
   let name = ''
@@ -76,7 +84,6 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
   if (userName) {
     name = userName
   }
-  const diameter = 80
   if (userProfile.preSignedURL) {
     img = (
       <img
@@ -89,14 +96,13 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
       />
     )
   } else {
-    const color = getColor(userProfile.userName)
     img = (
       <svg style={{ marginLeft: '26px' }} height={diameter} width={diameter}>
         <circle
           r={diameter / 2}
           cx={'50%'}
           cy={'50%'}
-          fill={color}
+          fill={getColor(userProfile.userName)}
         />
         <text
           textAnchor={'middle'}
@@ -152,9 +158,18 @@ export function UserCardViewMedium({ userProfile }: UserBadgeViewProps) {
       </div>
       <span
         role={'button'}
-        className="SRC-inlineBlock SRC-cardMenuButton"
+        className={`
+          SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock SRC-cardMenuButton
+          ${showContextMenu ? 'SRC-primary-background-color' : ''}
+        `}
+        onClick={toggleContextMenu}
       >
-        <FontAwesomeIcon color="#4393C7" icon="ellipsis-v"/>
+        <FontAwesomeIcon color={showContextMenu ? 'white' : '#4393C7'} icon="ellipsis-v"/>
+        {
+          showContextMenu
+          &&
+          <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
+        }
       </span>
     </div>
   )

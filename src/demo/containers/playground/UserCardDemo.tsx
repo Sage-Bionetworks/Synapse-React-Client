@@ -24,7 +24,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               mask={63}
               size={SynapseConstants.SMALL_USER_CARD}
             /> */}
-            <br/>
+            <hr/>
             <p> with photo- </p>
             {/* <UserCard
               ownerId={'1131050'}
@@ -36,7 +36,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               mask={63}
               size={SynapseConstants.SMALL_USER_CARD}
             /> */}
-            <br/>
+            <hr/>
             <p>inside of markdown-</p>
               <MarkdownSynapse
                 wikiId={'588827'}
@@ -65,6 +65,23 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                   return (
                     <div className="SRC-grid-item" key={index}>
                       <UserCard
+                        menuActions={[
+                          {
+                            field: 'Projects',
+                            callback: (userProfile) => { console.log(userProfile) }
+                          },
+                          {
+                            field: 'Profile',
+                            callback: (userProfile) => { console.log(userProfile) }
+                          },
+                          {
+                            field: 'SEPERATOR',
+                          },
+                          {
+                            field: 'Teams',
+                            callback: (userProfile) => { console.log(userProfile) }
+                          }
+                        ]}
                         ownerId={'1131050'}
                         mask={63}
                         size={SynapseConstants.MEDIUM_USER_CARD}

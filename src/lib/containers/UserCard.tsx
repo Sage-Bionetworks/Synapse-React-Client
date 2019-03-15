@@ -2,6 +2,7 @@ import * as React from 'react'
 import { getUserProfileWithProfilePic } from './getUserData'
 import UserCardViewSwitch from './UserCardViewSwitch'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
+import { MenuAction } from './UserCardContextMenu'
 
 type UserBadgeState = {
   userProfileBundle: any
@@ -15,6 +16,7 @@ type UserBadgeProps = {
   mask?: number
   token?: string
   type?: string
+  menuActions? : MenuAction[]
 }
 
 export default class UserProfileSmall extends React.Component<UserBadgeProps, UserBadgeState> {
@@ -54,18 +56,17 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
     )
   }
   public render() {
-    const { userProfileBundle, size } = this.props
+    const { userProfileBundle, size, menuActions } = this.props
+    let userBundle
     if (!userProfileBundle) {
-      return (
-        <UserCardViewSwitch
-          userBundle={this.state.userProfileBundle}
-          size={size}
-        />
-      )
+      userBundle = this.state.userProfileBundle
+    } else {
+      userBundle = this.props.userProfileBundle
     }
     return (
       <UserCardViewSwitch
-        userBundle={this.props.userProfileBundle}
+        menuActions={menuActions}
+        userBundle={userBundle}
         size={size}
       />
     )

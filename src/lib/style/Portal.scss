@@ -1001,3 +1001,25 @@ div.SRC-logo-cursor * {
   height: 48px;
   border-radius: 4px;
 }
+
+.SRC-menuAction {
+  background: none;
+  border: none;
+}
+
+.SRC-break {
+  margin: 0px;
+  border: 1px solid #DCDCDC;
+}
+
+.SRC-menu-item {
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  color: #515359;
+}
+
+.SRC-contextMenuDropdown {
+  border:1px solid #DCDCDC;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
