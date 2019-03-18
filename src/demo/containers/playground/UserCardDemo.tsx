@@ -59,6 +59,22 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               size={SynapseConstants.MEDIUM_USER_CARD}
             />
           </div>
+          <div className="row">
+            <h3> User Card Large </h3>
+            <p> with photo- </p>
+            <UserCard
+              ownerId={'1131050'}
+              // tslint:disable-next-line:jsx-no-lambda
+              profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
+              size={SynapseConstants.LARGE_USER_CARD}
+            />
+            <UserCard
+              ownerId={'3374422'}
+              // tslint:disable-next-line:jsx-no-lambda
+              profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
+              size={SynapseConstants.LARGE_USER_CARD}
+            />
+          </div>
         </div>
         <h3> User Card Medium Wrapping Example </h3>
         <div className="SRC-cardContainer">

@@ -722,8 +722,7 @@ div.SRC-logo-cursor * {
 */
 .SRC-userCard {
   display: inline-flex;
-  align-items: center;
-  margin: 0px 4px; }
+  align-items: center; }
 
 .SRC-userCardMedium {
   border: 1px solid #DDDDDF;
@@ -770,7 +769,8 @@ div.SRC-logo-cursor * {
 
 .SRC-grid-item {
   height: 120px;
-  flex-basis: 20%;
+  flex-basis: 31%;
+  margin: 10px 10px;
   width: 350px;
   position: relative;
   box-sizing: border-box; }
@@ -828,3 +828,6 @@ div.SRC-logo-cursor * {
 .SRC-contextMenuDropdown {
   border: 1px solid #DCDCDC;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+
+.SRC-card-metadata-title {
+  color: #ABABAC; }

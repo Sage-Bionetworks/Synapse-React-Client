@@ -140,6 +140,7 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
           <a
             onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
             href={profileClickHandlerWithParam ? 'javascript:' : link}
+            className="SRC-primary-text-color"
           >
             {name}
           </a>
@@ -150,7 +151,7 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
           </div>
         }
         <div
-          className="SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex SRC-copyContainer"
+          className="SRC-primary-text-color SRC-hand-cursor SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex"
           onClick={copyToClipboard(email)}
           ref={htmlDivRef}
         >
@@ -170,7 +171,10 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
         `}
         onClick={toggleContextMenu}
       >
-        <FontAwesomeIcon color={showContextMenu ? 'white' : '#4393C7'} icon="ellipsis-v"/>
+        <FontAwesomeIcon
+          className={showContextMenu ? 'SRC-whiteText' : 'SRC-primary-text-color'}
+          icon="ellipsis-v"
+        />
         {
           showContextMenu
           &&

@@ -78,11 +78,11 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = (
     <a
       onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
       href={profileClickHandlerWithParam ? 'javascript:' : link}
-      className="SRC-userCard"
+      className="SRC-userCard SRC-primary-text-color"
     >
       {img}
       <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
-      {!hideText && <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
+      {!hideText && <span className="SRC-primary-text-color" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
     </a>
   )
 }
