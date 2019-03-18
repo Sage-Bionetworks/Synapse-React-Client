@@ -10,8 +10,8 @@ type UserBadgeState = {
   isLoading: boolean
 }
 
-// add comments
 type UserBadgeProps = {
+  // Note - either specify userProfile OR (alias or ownerId)
   userProfile?: UserProfile
   loadingBar?: JSX.Element
   alias?: string
