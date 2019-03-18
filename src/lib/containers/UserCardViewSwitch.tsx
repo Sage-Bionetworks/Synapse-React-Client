@@ -7,22 +7,19 @@ import { MenuAction } from './UserCardContextMenu'
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
-  userBundle: UserProfile
+  userProfile: UserProfile
   size: string
   menuActions?: MenuAction []
 }
 
 export const UserCardViewSwitch: React.SFC<UserBadgeViewProps> = (
-  { userBundle, loadingBar = (<div/>), size, menuActions }
+  { size, loadingBar, ...rest }
 ) => {
-  if (!userBundle) {
-    return loadingBar || false
-  }
   switch (size) {
     case SynapseConstants.SMALL_USER_CARD:
-      return (<UserCardViewSmall userProfile={userBundle}/>)
+      return (<UserCardViewSmall {...rest}/>)
     default:
-      return (<UserCardViewMedium menuActions={menuActions} userProfile={userBundle}/>)
+      return (<UserCardViewMedium {...rest}/>)
   }
 }
 

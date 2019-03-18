@@ -6,22 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
-// tslint:disable-next-line
-// import ReactTooltip from "react-tooltip"
 
 library.add(faCircle)
 library.add(faEllipsisV)
 library.add(faCopy)
 
 type UserBadgeViewProps = {
-  loadingBar?: JSX.Element
   userProfile: UserProfile
   menuActions?: MenuAction []
+  profileClickHandler?: (userProfile: UserProfile) => void
 }
 
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
-export function UserCardViewMedium({ userProfile, menuActions }: UserBadgeViewProps) {
+export function UserCardViewMedium({ userProfile, menuActions, profileClickHandler }: UserBadgeViewProps) {
   const htmlDivRef = React.useRef<HTMLDivElement>(null)
   const [showModal, setShowModal] = React.useState(false)
   const [showContextMenu, setShowContextMenu] = React.useState(false)
@@ -76,6 +74,8 @@ export function UserCardViewMedium({ userProfile, menuActions }: UserBadgeViewPr
   // link should be a prop, but with default for now
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   const email = `${userName}@synapse.org`
+    // call the click handler with userProfile handed to it -- only if its defined
+  const profileClickHandlerWithParam = profileClickHandler && (() => profileClickHandler(userProfile))
   if (displayName) {
     name = displayName
   } else if (firstName && lastName) {
@@ -118,7 +118,10 @@ export function UserCardViewMedium({ userProfile, menuActions }: UserBadgeViewPr
     )
   }
   return (
-    <div className="SRC-userCard SRC-userCardMedium">
+    <div
+      className={`SRC-userCard SRC-userCardMedium ${showContextMenu ? 'SRC-hand-cursor' : ''}`}
+      onClick={showContextMenu ? toggleContextMenu : undefined}
+    >
       <TransitionGroup>
         {
           showModal
@@ -134,7 +137,10 @@ export function UserCardViewMedium({ userProfile, menuActions }: UserBadgeViewPr
       {img}
       <div className="SRC-cardMetaData">
         <div className="SRC-eqHeightRow">
-          <a href={link}>
+          <a
+            onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+            href={profileClickHandlerWithParam ? 'javascript:' : link}
+          >
             {name}
           </a>
         </div>

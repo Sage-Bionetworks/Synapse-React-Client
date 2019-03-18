@@ -3,36 +3,40 @@ import { getUserProfileWithProfilePic } from './getUserData'
 import UserCardViewSwitch from './UserCardViewSwitch'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
 type UserBadgeState = {
-  userProfileBundle: any
+  userProfile: UserProfile | undefined
+  isLoading: boolean
 }
 
+// add comments
 type UserBadgeProps = {
-  userProfileBundle?: any
+  userProfile?: UserProfile
+  loadingBar?: JSX.Element
   alias?: string
   ownerId?: string
   size: string
-  mask?: number
   token?: string
-  type?: string
+  hideText?: boolean
+  profileClickHandler?: (userProfile: UserProfile) => void
   menuActions? : MenuAction[]
 }
 
 export default class UserProfileSmall extends React.Component<UserBadgeProps, UserBadgeState> {
   constructor(props: any) {
     super(props)
-    this.state = { userProfileBundle: undefined }
+    this.state = { userProfile: undefined, isLoading: true }
     this.getUserProfile = this.getUserProfile.bind(this)
   }
 
   public componentDidMount() {
-    const { userProfileBundle, ownerId, alias } = this.props
-    if (userProfileBundle) {
+    const { userProfile, ownerId, alias, token } = this.props
+    if (userProfile) {
       return
     }
     if (alias) {
-      getPrincipalAliasRequest(this.props.token, alias, 'USER_NAME')
+      getPrincipalAliasRequest(token, alias, 'USER_NAME')
       .then(
         (aliasData: any) => {
           this.getUserProfile(aliasData.principalId!)
@@ -47,7 +51,7 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
     getUserProfileWithProfilePic(ownerId!, this.props.token)
     .then(
       (data) => {
-        this.setState({ userProfileBundle: data })
+        this.setState({ userProfile: data, isLoading: false })
       }
     ).catch(
       (err) => {
@@ -56,18 +60,23 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
     )
   }
   public render() {
-    const { userProfileBundle, size, menuActions } = this.props
-    let userBundle
-    if (!userProfileBundle) {
-      userBundle = this.state.userProfileBundle
+    const { userProfile, loadingBar = <span/>, ...rest } = this.props
+    let userProfileAtRender
+    if (!userProfile) {
+      // userProfile wans't passed in from props
+      if (this.state.isLoading) {
+        // still making the API call
+        return loadingBar
+      }
+      userProfileAtRender = this.state.userProfile
     } else {
-      userBundle = this.props.userProfileBundle
+      // otherwise we have the profile from props
+      userProfileAtRender = userProfile
     }
     return (
       <UserCardViewSwitch
-        menuActions={menuActions}
-        userBundle={userBundle}
-        size={size}
+        userProfile={userProfileAtRender!}
+        {...rest}
       />
     )
   }

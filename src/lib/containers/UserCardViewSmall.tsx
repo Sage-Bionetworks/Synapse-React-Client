@@ -10,15 +10,20 @@ import { getColor } from './getUserData'
 library.add(faCircle)
 
 type UserBadgeViewProps = {
-  loadingBar?: JSX.Element
   userProfile: UserProfile
+  hideText?: boolean
+  profileClickHandler?: (userProfile: UserProfile) => void
 }
 
-export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userProfile }) => {
+export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = (
+  { userProfile, hideText = false, profileClickHandler }
+) => {
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
   let label = ''
+  // call the click handler with userProfile handed to it -- only if its defined
+  const profileClickHandlerWithParam = profileClickHandler && (() => profileClickHandler(userProfile))
   if (userProfile.displayName) {
     label += userProfile.displayName
   } else if (userProfile.firstName && userProfile.lastName) {
@@ -70,10 +75,14 @@ export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = ({ userProfile }
     )
   }
   return (
-    <a href={link} className="SRC-userCard">
+    <a
+      onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+      href={profileClickHandlerWithParam ? 'javascript:' : link}
+      className="SRC-userCard"
+    >
       {img}
       <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
-      <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>
+      {!hideText && <span style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
     </a>
   )
 }
