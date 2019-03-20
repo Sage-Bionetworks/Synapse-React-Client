@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { getUserProfileWithProfilePic } from './getUserData'
-import UserCardViewSwitch from './UserCardViewSwitch'
+import UserCardSwitch from './UserCardSwitch'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
@@ -74,7 +74,7 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
       userProfileAtRender = userProfile
     }
     return (
-      <UserCardViewSwitch
+      <UserCardSwitch
         userProfile={userProfileAtRender!}
         {...rest}
       />

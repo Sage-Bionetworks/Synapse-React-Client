@@ -28,6 +28,7 @@ export default class UserCardContextMenu extends React.Component<UserCardProps, 
           {
             menuActions.map(
               (menuAction, index) => {
+                const callback = () => menuAction.callback!(userProfile)
                 if (menuAction.field === SEPERATOR) {
                   return <hr className="SRC-break" key={menuAction.field + index}/>
                 }
@@ -38,8 +39,7 @@ export default class UserCardContextMenu extends React.Component<UserCardProps, 
                     className="
                       SRC-menu-item SRC-table-dropdown-list SRC-primary-background-color-hover SRC-nested-color
                     "
-                    // tslint:disable-next-line:jsx-no-lambda
-                    onClick={() => menuAction.callback!(userProfile)}
+                    onClick={callback}
                   >
                     <button className="SRC-menuAction">
                       {menuAction.field}

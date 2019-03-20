@@ -15,7 +15,7 @@ type UserBadgeViewProps = {
   profileClickHandler?: (userProfile: UserProfile) => void
 }
 
-export const UserCardViewSmall: React.SFC<UserBadgeViewProps> = (
+export const UserCardSmall: React.SFC<UserBadgeViewProps> = (
   { userProfile, hideText = false, profileClickHandler }
 ) => {
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`

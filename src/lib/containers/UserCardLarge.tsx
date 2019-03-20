@@ -13,20 +13,21 @@ type UserBadgeViewProps = {
 
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
-export function UserCardViewLarge({ userProfile }: UserBadgeViewProps) {
+export function UserCardLarge({ userProfile }: UserBadgeViewProps) {
 
   const {
     summary,
+    industry,
+    location,
     url
   } = userProfile
 
   return (
-    <div>
+    <div className="SRC-cardMetaData">
       {
         summary && (
           <div>
-            <p className="SRC-card-metadata-title"> Bio: </p>
-            <br/>
+            <p className="SRC-card-metadata-title"> Bio </p>
             <p>
               {summary}
             </p>
@@ -37,24 +38,30 @@ export function UserCardViewLarge({ userProfile }: UserBadgeViewProps) {
         url && (
           <div>
             <p className="SRC-card-metadata-title"> More Info </p>
-            <br/>
             <p>
               {url}
             </p>
           </div>
         )
       }
-      {/* {
-        summary && (
-          <div>
-            <p className="SRC-card-metadata-title"> Bio </p>
-            <br/>
+      {
+        industry &&
+        <div>
+            <p className="SRC-card-metadata-title"> Industry </p>
             <p>
-              {summary}
+              {industry}
             </p>
           </div>
-        )
-      } */}
+      }
+      {
+        location &&
+        <div>
+            <p className="SRC-card-metadata-title"> Location </p>
+            <p>
+              {location}
+            </p>
+          </div>
+      }
     </div>
   )
 }

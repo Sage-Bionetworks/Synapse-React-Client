@@ -640,6 +640,7 @@ checkmark styling end
   left: 0; }
 
 .SRC-menu-wall {
+  position: absolute;
   height: 100vh;
   width: 100vw;
   background: none;
@@ -724,15 +725,14 @@ div.SRC-logo-cursor * {
   display: inline-flex;
   align-items: center; }
 
-.SRC-userCardMedium {
-  border: 1px solid #DDDDDF;
+.SRC-userCardMediumUp {
   height: 120px;
   width: -webkit-fill-available; }
 
 .SRC-eqHeightRow {
   height: 20px; }
 
-.SRC-cardMetaData {
+.SRC-cardContent {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
@@ -831,3 +831,6 @@ div.SRC-logo-cursor * {
 
 .SRC-card-metadata-title {
   color: #ABABAC; }
+
+.SRC-cardMetaData {
+  padding: 10px 33px; }

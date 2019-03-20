@@ -10,7 +10,6 @@ import commonjs from 'rollup-plugin-commonjs'
 /* 
 	TODO: 
 		1. inline svgs for css don't work
-		2. if css transition group gets used it will need a rollup plugin
 */
 export default {
 	input: 'src/lib/index.tsx',

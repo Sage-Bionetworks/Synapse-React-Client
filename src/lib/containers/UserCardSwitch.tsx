@@ -1,10 +1,9 @@
 import * as React from 'react'
 import { SynapseConstants } from '../utils'
-import { UserCardViewSmall } from './UserCardViewSmall'
+import { UserCardSmall } from './UserCardSmall'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
-import { UserCardViewMedium } from './UserCardViewMedium'
+import { UserCardMedium } from './UserCardMedium'
 import { MenuAction } from './UserCardContextMenu'
-import { UserCardViewLarge } from './UserCardViewLarge'
 
 type UserBadgeViewProps = {
   loadingBar?: JSX.Element
@@ -13,24 +12,21 @@ type UserBadgeViewProps = {
   menuActions?: MenuAction []
 }
 
-export const UserCardViewSwitch: React.SFC<UserBadgeViewProps> = (
+export const UserCardSwitch: React.SFC<UserBadgeViewProps> = (
   { size, loadingBar, ...rest }
 ) => {
   switch (size) {
     case SynapseConstants.SMALL_USER_CARD:
-      return (<UserCardViewSmall {...rest}/>)
+      return (<UserCardSmall {...rest}/>)
     case SynapseConstants.MEDIUM_USER_CARD:
-      return (<UserCardViewMedium {...rest}/>)
+      return (<UserCardMedium {...rest}/>)
     case SynapseConstants.LARGE_USER_CARD:
       return (
-        <div>
-          <UserCardViewMedium {...rest} />
-          <UserCardViewLarge {...rest}/>
-        </div>
+        <UserCardMedium isLarge={true} {...rest} />
       )
     default:
       return <span/>
   }
 }
 
-export default UserCardViewSwitch
+export default UserCardSwitch

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
+import { UserCardLarge } from './UserCardLarge'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -14,15 +15,18 @@ library.add(faCopy)
 type UserBadgeViewProps = {
   userProfile: UserProfile
   menuActions?: MenuAction []
+  isLarge?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
 }
 
-// Disable function name because compiler has to know that its a class
+// Disable function name because compiler has to know that its a React class
 // tslint:disable-next-line:function-name
-export function UserCardViewMedium({ userProfile, menuActions, profileClickHandler }: UserBadgeViewProps) {
+export function UserCardMedium(
+    { userProfile, menuActions, profileClickHandler, isLarge = false }: UserBadgeViewProps
+  ) {
   const htmlDivRef = React.useRef<HTMLDivElement>(null)
   const [showModal, setShowModal] = React.useState(false)
-  const [showContextMenu, setShowContextMenu] = React.useState(false)
+  const [isContextMenuOpen, setShowContextMenu] = React.useState(false)
 
   /**
    * Function handles copying to clipboard the user's email address
@@ -43,6 +47,7 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
       el.select()
       document.execCommand('copy')
       htmlDivRef.current!.removeChild(el)
+      // show modal and hide after 4 seconds, the timing is per Material Design
       setShowModal(true)
       // hide after 4 seconds
       setTimeout(
@@ -55,7 +60,7 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
   }
 
   function toggleContextMenu(_event: any) {
-    setShowContextMenu(!showContextMenu)
+    setShowContextMenu(!isContextMenuOpen)
   }
 
   const {
@@ -66,15 +71,12 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
     position
   } = userProfile
   const diameter = 80
-  // configure info to display
   let img
   let name = ''
-  // should pass in the userprofile json object
-  // Need a clickhandler, need to provide the base url all together
-  // link should be a prop, but with default for now
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+  // link is overriden by custom click handler
   const email = `${userName}@synapse.org`
-    // call the click handler with userProfile handed to it -- only if its defined
+  // call the click handler with userProfile handed to it -- only if its defined
   const profileClickHandlerWithParam = profileClickHandler && (() => profileClickHandler(userProfile))
   if (displayName) {
     name = displayName
@@ -117,48 +119,51 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
       </svg>
     )
   }
-  return (
-    <div
-      className={`SRC-userCard SRC-userCardMedium ${showContextMenu ? 'SRC-hand-cursor' : ''}`}
-      onClick={showContextMenu ? toggleContextMenu : undefined}
-    >
+  const mediumCard = (
+    <React.Fragment>
       <TransitionGroup>
-        {
-          showModal
-          &&
+      {
+        showModal
+        &&
         <CSSTransition
           key={email}
           classNames="SRC-card"
           timeout={{ enter: 500, exit: 300 }}
         >
-          <div key={link} className="SRC-modal"> Copied text to clipboard! </div>
-        </CSSTransition>}
+        <div key={link} className="SRC-modal"> Copied text to clipboard! </div>
+        </CSSTransition>
+      }
       </TransitionGroup>
       {img}
-      <div className="SRC-cardMetaData">
+      <div className="SRC-cardContent">
         <div className="SRC-eqHeightRow">
-          <a
-            onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
-            href={profileClickHandlerWithParam ? 'javascript:' : link}
-            className="SRC-primary-text-color"
-          >
-            {name}
-          </a>
+          {/* if its a medium component the header should be clickable, if its large then it should NOT be clickable */}
+          {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
+              <a
+                onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+                className={'SRC-hand-cursor SRC-primary-text-color'}
+              >
+                {name}
+              </a>
+            )}
         </div>
         {position &&
-          <div className="SRC-eqHeightRow">
+          <div className={`${isLarge ? 'SRC-whiteText' : ''} SRC-eqHeightRow`}>
             {position}
           </div>
         }
         <div
-          className="SRC-primary-text-color SRC-hand-cursor SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex"
+          className={`
+            ${isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
+            SRC-hand-cursor SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex
+          `}
           onClick={copyToClipboard(email)}
           ref={htmlDivRef}
         >
           {userName}@synapse.org
           <FontAwesomeIcon
             style={{ marginLeft: '4px' }}
-            color="lightgray"
+            color={isLarge ? 'white' : 'lightgray'}
             icon="copy"
           />
         </div>
@@ -167,20 +172,45 @@ export function UserCardViewMedium({ userProfile, menuActions, profileClickHandl
         role={'button'}
         className={`
           SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock SRC-cardMenuButton
-          ${showContextMenu ? 'SRC-primary-background-color' : ''}
+          ${isContextMenuOpen ? 'SRC-primary-background-color' : ''}
         `}
         onClick={toggleContextMenu}
       >
         <FontAwesomeIcon
-          className={showContextMenu ? 'SRC-whiteText' : 'SRC-primary-text-color'}
+          className={isContextMenuOpen || isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
           icon="ellipsis-v"
         />
         {
-          showContextMenu
+          isContextMenuOpen
           &&
           <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
         }
       </span>
+    </React.Fragment>
+  )
+
+  if (!isLarge) {
+    return (
+      <div
+        style={{ border: '1px solid #DDDDDF' }}
+        className={`SRC-userCard SRC-userCardMediumUp ${isContextMenuOpen ? 'SRC-hand-cursor' : ''}`}
+        onClick={isContextMenuOpen ? toggleContextMenu : undefined}
+      >
+        {mediumCard}
+      </div>
+    )
+  }
+  // when the component is large we have to set the click handler to wrap both the top and bottom portion
+  return (
+    <div
+      style={{ boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
+      className={isContextMenuOpen ? 'SRC-hand-cursor' : ''}
+      onClick={isContextMenuOpen ? toggleContextMenu : undefined}
+    >
+      <div className={`SRC-primary-background-color SRC-userCard SRC-userCardMediumUp ${isContextMenuOpen ? 'SRC-hand-cursor' : ''}`}>
+        {mediumCard}
+      </div>
+      {isLarge ? <UserCardLarge userProfile={userProfile}/> : false}
     </div>
   )
 }

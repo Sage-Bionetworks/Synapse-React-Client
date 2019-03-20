@@ -133,7 +133,7 @@
       size: SRC.SynapseConstants.SMALL_USER_CARD
     }
 
-    const userCardMediumContainer = document.querySelector('#panel4');
+    const UserCardMediumAndLargeContainer = document.querySelector('#panel4');
     const userCardPropsMedium = {
       ownerId: '3374422',
       size: SRC.SynapseConstants.MEDIUM_USER_CARD
@@ -142,7 +142,7 @@
     ReactDOM.render(e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null), queryWrapperMenuContainer)
     ReactDOM.render(e(SRC.SynapseComponents.Markdown, markdownProps, null), markdownContainer)
     ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null), userCardSmallContainer)
-    ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null), userCardMediumContainer)
+    ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null), UserCardMediumAndLargeContainer)
 
   </script>
 </html>
