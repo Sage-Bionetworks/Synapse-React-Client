@@ -11,6 +11,12 @@ type UserBadgeViewProps = {
   userProfile: UserProfile
 }
 
+/**
+ * UserCardLarge wraps around UserCardMedium
+ *
+ * @export UserCardLarge
+ * @param {UserBadgeViewProps} { userProfile }
+ */
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
 export function UserCardLarge({ userProfile }: UserBadgeViewProps) {

@@ -947,6 +947,7 @@ div.SRC-logo-cursor * {
 .SRC-grid-item {
   height: 120px;
   flex-basis: 31%;
+  flex-grow: 1;
   margin: 10px 10px;
   width: 350px;
   position: relative;

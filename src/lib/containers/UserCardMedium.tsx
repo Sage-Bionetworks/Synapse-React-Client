@@ -136,7 +136,7 @@ export function UserCardMedium(
       </TransitionGroup>
       {img}
       <div className="SRC-cardContent">
-        <div className="SRC-eqHeightRow">
+        <p className="SRC-eqHeightRow">
           {/* if its a medium component the header should be clickable, if its large then it should NOT be clickable */}
           {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
               <a
@@ -146,13 +146,14 @@ export function UserCardMedium(
                 {name}
               </a>
             )}
-        </div>
-        {position &&
-          <div className={`${isLarge ? 'SRC-whiteText' : ''} SRC-eqHeightRow`}>
+        </p>
+        {
+          position &&
+          <p className={`${isLarge ? 'SRC-whiteText' : ''} SRC-eqHeightRow`}>
             {position}
-          </div>
+          </p>
         }
-        <div
+        <p
           className={`
             ${isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
             SRC-hand-cursor SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex
@@ -166,7 +167,7 @@ export function UserCardMedium(
             color={isLarge ? 'white' : 'lightgray'}
             icon="copy"
           />
-        </div>
+        </p>
       </div>
       <span
         role={'button'}
