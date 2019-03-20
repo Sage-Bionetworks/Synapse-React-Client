@@ -2,12 +2,14 @@ import * as React from 'react'
 import UserCard from 'src/lib/containers/UserCard'
 import { SynapseConstants } from 'src/lib'
 import MarkdownSynapse from 'src/lib/containers/MarkdownSynapse'
+import { UserProfile } from '../../../lib/utils/jsonResponses/UserProfile'
 
 export default class UserBadgeSmallDemo extends React.Component<any, any> {
   constructor(props: any) {
     super(props)
   }
   public render() {
+    const goToGoole = (userProfile: UserProfile) => { window.location.href = 'https://google.com' }
     return (
       <React.Fragment>
         <div className="container">
@@ -17,8 +19,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <UserCard
               ownerId={'3374422'}
               size={SynapseConstants.SMALL_USER_CARD}
-              // tslint:disable-next-line:jsx-no-lambda
-              profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
+              profileClickHandler={goToGoole}
             />
             <p> without text </p>
             <UserCard

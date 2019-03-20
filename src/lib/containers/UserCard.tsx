@@ -5,12 +5,12 @@ import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
-type UserBadgeState = {
+type UserCardState = {
   userProfile: UserProfile | undefined
   isLoading: boolean
 }
 
-type UserBadgeProps = {
+export type UserCardProps = {
   // Note - either specify userProfile OR (alias or ownerId)
   userProfile?: UserProfile
   loadingBar?: JSX.Element
@@ -23,7 +23,7 @@ type UserBadgeProps = {
   menuActions? : MenuAction[]
 }
 
-export default class UserProfileSmall extends React.Component<UserBadgeProps, UserBadgeState> {
+export default class UserCard extends React.Component<UserCardProps, UserCardState> {
   constructor(props: any) {
     super(props)
     this.state = { userProfile: undefined, isLoading: true }

@@ -5,14 +5,14 @@ import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { UserCardMedium } from './UserCardMedium'
 import { MenuAction } from './UserCardContextMenu'
 
-type UserBadgeViewProps = {
+export type UserCardSwitchProps = {
   loadingBar?: JSX.Element
   userProfile: UserProfile
   size: string
   menuActions?: MenuAction []
 }
 
-export const UserCardSwitch: React.SFC<UserBadgeViewProps> = (
+export const UserCardSwitch: React.SFC<UserCardSwitchProps> = (
   { size, loadingBar, ...rest }
 ) => {
   switch (size) {
