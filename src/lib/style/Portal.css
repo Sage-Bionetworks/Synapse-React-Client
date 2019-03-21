@@ -834,4 +834,6 @@ div.SRC-logo-cursor * {
   color: #ABABAC; }
 
 .SRC-cardMetaData {
-  padding: 10px 33px; }
+  padding: 10px 33px;
+  max-height: 558px;
+  overflow-y: auto; }

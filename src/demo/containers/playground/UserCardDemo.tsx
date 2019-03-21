@@ -73,29 +73,13 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               ]}
             />
             <br/>
+            <p> sans photo- </p>
             <br/>
             <UserCard
               ownerId={'3374422'}
               // tslint:disable-next-line:jsx-no-lambda
               profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
               size={SynapseConstants.LARGE_USER_CARD}
-              menuActions={[
-                {
-                  field: 'Projects',
-                  callback: (userProfile) => { console.log(userProfile) }
-                },
-                {
-                  field: 'Profile',
-                  callback: (userProfile) => { console.log(userProfile) }
-                },
-                {
-                  field: 'SEPERATOR',
-                },
-                {
-                  field: 'Teams',
-                  callback: (userProfile) => { console.log(userProfile) }
-                }
-              ]}
             />
             <br/>
             <br/>

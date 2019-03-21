@@ -181,26 +181,28 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             />
           </p>
         </div>
-        <span
-          role={'button'}
-          className={`
-            SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock SRC-cardMenuButton
-            ${isContextMenuOpen ? 'SRC-primary-background-color' : ''}
-          `}
-          onClick={this.toggleContextMenu}
-        >
-          <FontAwesomeIcon
-            className={isContextMenuOpen || isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
-            icon="ellipsis-v"
-          />
-          {
-            isContextMenuOpen
-            &&
-            menuActions
-            &&
-            <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
-          }
-        </span>
+        {/* conditionally render menu actions, if its not defined then we don't show the button */}
+        {
+          menuActions &&
+          <span
+            role={'button'}
+            className={`
+              SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock SRC-cardMenuButton
+              ${isContextMenuOpen ? 'SRC-primary-background-color' : ''}
+            `}
+            onClick={this.toggleContextMenu}
+          >
+            <FontAwesomeIcon
+              className={isContextMenuOpen || isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
+              icon="ellipsis-v"
+            />
+            {
+              isContextMenuOpen
+              &&
+              <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
+            }
+          </span>
+        }
       </React.Fragment>
     )
 
