@@ -1,7 +1,7 @@
 import { UserProfile } from '../lib/utils/jsonResponses/UserProfile'
 
 export const mockUserProfileData: UserProfile = {
-  summary : "",
+  summary : "my summary data",
   firstName : "Michael",
   lastName : "Lee",
   location : "Seattle,WA,USA",

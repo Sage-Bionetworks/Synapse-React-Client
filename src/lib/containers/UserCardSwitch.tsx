@@ -2,7 +2,7 @@ import * as React from 'react'
 import { SynapseConstants } from '../utils'
 import { UserCardSmall } from './UserCardSmall'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
-import { UserCardMedium } from './UserCardMedium'
+import UserCardMedium from './UserCardMedium'
 import { MenuAction } from './UserCardContextMenu'
 
 export type UserCardSwitchProps = {

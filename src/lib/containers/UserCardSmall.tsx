@@ -9,13 +9,13 @@ import { getColor } from './getUserData'
 
 library.add(faCircle)
 
-type UserBadgeViewProps = {
+export type UserCardSmallProps = {
   userProfile: UserProfile
   hideText?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
 }
 
-export const UserCardSmall: React.SFC<UserBadgeViewProps> = (
+export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   { userProfile, hideText = false, profileClickHandler }
 ) => {
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`

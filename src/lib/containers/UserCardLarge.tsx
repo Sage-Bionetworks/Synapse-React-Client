@@ -7,7 +7,7 @@ library.add(faCircle)
 library.add(faEllipsisV)
 library.add(faCopy)
 
-type UserBadgeViewProps = {
+type UserCardLargeProps = {
   userProfile: UserProfile
 }
 
@@ -15,11 +15,11 @@ type UserBadgeViewProps = {
  * UserCardLarge wraps around UserCardMedium
  *
  * @export UserCardLarge
- * @param {UserBadgeViewProps} { userProfile }
+ * @param {UserCardLargeProps} { userProfile }
  */
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
-export function UserCardLarge({ userProfile }: UserBadgeViewProps) {
+export function UserCardLarge({ userProfile }: UserCardLargeProps) {
 
   const {
     summary,

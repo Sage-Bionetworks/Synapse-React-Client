@@ -1,16 +1,49 @@
 import * as React from 'react'
-import { mount } from 'enzyme'
+import { mount, shallow } from 'enzyme'
 import { SynapseConstants } from '../../../lib/utils/'
 import UserCard, { UserCardProps } from '../../../lib/containers/UserCard'
 import { UserCardSmall } from '../../../lib/containers/UserCardSmall'
-import { UserCardMedium } from '../../../lib/containers/UserCardMedium'
+import UserCardMedium, { UserCardMediumProps } from '../../../lib/containers/UserCardMedium'
 import { UserCardLarge } from '../../../lib/containers/UserCardLarge'
-import { UserCardSwitch, UserCardSwitchProps } from '../../../lib/containers/UserCardSwitch'
+import { UserCardSwitchProps } from '../../../lib/containers/UserCardSwitch'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
+import { cloneDeep } from '../../../lib/utils/modules'
+import UserCardContextMenu, { UserCardContextMenuProps, MenuAction } from '../../../lib/containers/UserCardContextMenu'
+import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
 
-const createMountedComponentSwitch = (props: UserCardSwitchProps) => {
-  const wrapper = mount(
-      <UserCardSwitch
+const createUserCardContextMenu = (props: UserCardContextMenuProps) => {
+  const wrapper = shallow(
+      <UserCardContextMenu
+        {...props}
+      />
+    )
+  return { wrapper }
+}
+
+const createLargeComponent = (props: UserCardMediumProps) => {
+  const wrapper = shallow(
+      <UserCardMedium
+        {...props}
+        isLarge={true}
+      />
+    )
+  const instance = wrapper.instance() as UserCard
+  return { wrapper, instance }
+}
+
+const createMediumComponent = (props: UserCardMediumProps) => {
+  const wrapper = shallow(
+      <UserCardMedium
+        {...props}
+      />
+    )
+  const instance = wrapper.instance() as UserCard
+  return { wrapper, instance }
+}
+
+const createSmallComponent = (props: UserCardSwitchProps) => {
+  const wrapper = shallow(
+      <UserCardSmall
         {...props}
       />
     )
@@ -29,7 +62,7 @@ const createMountedComponent = (props: UserCardProps) => {
   return { wrapper, instance }
 }
 
-describe('it renders the cards without failing', () => {
+describe('it renders the different sized cards without failing', () => {
 
   const props = {
     ownerId : '3374422',
@@ -62,15 +95,116 @@ describe('it creates the correct UI for the small card', () => {
 
   const props = {
     ownerId : '3374422',
-    userProfile: mockUserProfileData
+    userProfile: mockUserProfileData,
+    size : SynapseConstants.SMALL_USER_CARD
   }
 
-  it('renders the UI correctly', () => {
-    const size = SynapseConstants.SMALL_USER_CARD
-    const { wrapper } = createMountedComponentSwitch({ ...props, size })
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(UserCardSmall)).toHaveLength(1)
+  it('displays an svg for a user without an img', () => {
+    const { wrapper } = createSmallComponent({ ...props })
     expect(wrapper.render().find('svg')).toHaveLength(1)
   })
 
+  it('displays an img for a user with an img set', () => {
+    const mockUserProfileDataWithImg = cloneDeep(mockUserProfileData)
+    mockUserProfileDataWithImg.preSignedURL = 'link-to-user-img.com'
+    const { wrapper } = createSmallComponent({ ...props, userProfile: mockUserProfileDataWithImg })
+    expect(wrapper.render().find('img')).toHaveLength(1)
+  })
+
+})
+
+describe('it creates the correct UI for the medium card', () => {
+
+  const props = {
+    ownerId : '3374422',
+    userProfile: mockUserProfileData,
+    size : SynapseConstants.MEDIUM_USER_CARD
+  }
+
+  it('displays an svg for a user without an img', () => {
+    const { wrapper } = createMediumComponent({ ...props })
+    // one svg is for the clipboard icon, one for the ellipsis,
+    // and one is for the user svg
+    expect(wrapper.render().find('svg')).toHaveLength(3)
+  })
+
+  it('displays an img for a user with an img set', () => {
+    const mockUserProfileDataWithImg = cloneDeep(mockUserProfileData)
+    mockUserProfileDataWithImg.preSignedURL = 'link-to-user-img.com'
+    const { wrapper } = createMediumComponent({ ...props, userProfile: mockUserProfileDataWithImg })
+    expect(wrapper.render().find('img')).toHaveLength(1)
+  })
+
+  it('displays the context menu on toggle', async () => {
+    const menuActions = [
+      {
+        field: 'text',
+        callback: () => {}
+      }
+    ] as MenuAction []
+    const { wrapper } = createMediumComponent({ ...props, menuActions })
+    const instance = wrapper.instance() as UserCardMedium
+    const _event = {} as any
+    await instance.toggleContextMenu(_event)
+    expect(wrapper.render().find('div.dropdown')).toHaveLength(1)
+  })
+})
+
+describe('it creates the correct UI for the UserCardContextMenu', () => {
+
+  const props = {
+    userProfile: mockUserProfileData,
+  }
+
+  it('renders without crashing', () => {
+    const menuActions = [
+      {
+        field: 'text',
+        callback: () => {}
+      }
+    ] as MenuAction []
+    const { wrapper } = createUserCardContextMenu({ ...props, menuActions })
+    // one svg is for the clipboard icon, one for the ellipsis,
+    // and one is for the user svg
+    expect(wrapper).toBeDefined()
+  })
+
+  it('renders a break with SEPERATOR in menuActions', () => {
+    const menuActions = [
+      {
+        field: 'text',
+        callback: () => {}
+      },
+      {
+        field: SEPERATOR,
+        callback: () => {}
+      },
+      {
+        field: 'other text',
+        callback: () => {}
+      }
+    ] as MenuAction []
+    const { wrapper } = createUserCardContextMenu({ ...props, menuActions })
+    // one svg is for the clipboard icon, one for the ellipsis,
+    // and one is for the user svg
+    expect(wrapper.find('hr.SRC-break')).toHaveLength(1)
+  })
+
+})
+
+describe('it creates the correct UI for the large card', () => {
+
+  const props = {
+    ownerId : '3374422',
+    userProfile: mockUserProfileData,
+    size : SynapseConstants.LARGE_USER_CARD
+  }
+
+  it('displays the user\'s information', async () => {
+    const { wrapper } = createLargeComponent({ ...props })
+    expect(wrapper.render().find('div.SRC-cardMetaData')).toHaveLength(1)
+    // only two fields are set for the mock profile, so there should only be two
+    // fields shown
+    expect(wrapper.render().find('div.SRC-cardMetaData').children()).toHaveLength(2)
+  })
 })

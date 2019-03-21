@@ -1,19 +1,18 @@
 import * as React from 'react'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
-
-const SEPERATOR = 'SEPERATOR'
+import { SEPERATOR } from '../utils/SynapseConstants'
 
 export type MenuAction = {
   field: string
   callback?: (userProfile: UserProfile) => void
 }
 
-type UserCardProps = {
+export type UserCardContextMenuProps = {
   userProfile : UserProfile
-  menuActions?: MenuAction []
+  menuActions: MenuAction []
 }
 
-const UserCardContextMenu:React.SFC<UserCardProps> = (props) => {
+const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props) => {
   const { menuActions = [], userProfile } = props
   return (
     <div className="dropdown open">
