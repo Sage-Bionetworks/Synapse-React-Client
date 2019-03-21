@@ -28,7 +28,7 @@ export type UserCardMediumProps = {
 // tslint:disable-next-line:function-name
 export default class UserCardMedium extends React.Component<UserCardMediumProps, UserCardState> {
 
-  htmlDivRef = React.createRef<HTMLDivElement>()
+  public htmlDivRef = React.createRef<HTMLDivElement>()
 
   constructor(props: UserCardMediumProps) {
     super(props)

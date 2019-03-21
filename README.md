@@ -433,7 +433,7 @@ UserCard represents a synapse user, it is responsible for three different sized 
 
 | Props  | Explanation |
 | ------------- | ------------- |
-|  userProfile: [UserProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) | A [userProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) object can get passed in for the component to use as its data|
+|  userProfile: [UserProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) | A [userProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) object can get passed in for the component to use as its data. NOTE: If going this route, you can pass a user's img by manually adding the `preSignedURL` field to the userProfile object.|
 |  loadingBar: Html Element | An html element can get passed in to show while the component loads data (only applies if userProfile is NOT specified).|
 |  alias: string | An alias that resolves the ownerId for the UserProfile |
 |  ownerId: string | The ownerId of the UserProfile |
@@ -441,7 +441,7 @@ UserCard represents a synapse user, it is responsible for three different sized 
 |  token: string | Auth token |
 |  hideText: boolean | ONLY applies to small user card, hides the text next the user profile image. |
 |  profileClickHandler: fn | Function has shape - (userProfile: UserProfile) => void, if specified this handles clicking the user name. |
-|  menuActions | Array of MenuActions[], where MenuAction is an object of the form - {field:string, callback?: (userProfile: UserProfile) => void}, specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. |
+|  menuActions | Array of MenuActions[], where MenuAction is an object of the form - {field:string, callback?: (userProfile: UserProfile) => void}, specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. NOTE: If left undefined the menu will not render to the screen. |
 
 
 #### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
