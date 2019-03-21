@@ -123,9 +123,8 @@ describe('it creates the correct UI for the medium card', () => {
 
   it('displays an svg for a user without an img', () => {
     const { wrapper } = createMediumComponent({ ...props })
-    // one svg is for the clipboard icon, one for the ellipsis,
-    // and one is for the user svg
-    expect(wrapper.render().find('svg')).toHaveLength(3)
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.render().find('svg')).toHaveLength(2)
   })
 
   it('displays an img for a user with an img set', () => {
