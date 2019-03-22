@@ -28,9 +28,9 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   if (userProfile.displayName) {
     label += userProfile.displayName
   } else if (userProfile.firstName && userProfile.lastName) {
-    label += (userProfile.firstName + userProfile.lastName)
+    label += (`${userProfile.firstName} ${userProfile.lastName}`)
   }
-  if (userProfile.userName) {
+  if (userProfile.userName && !userProfile.userName.includes('TEMPORARY-')) {
     label += ` (${userProfile.userName})`
   }
   if (userProfile.position) {
@@ -39,14 +39,12 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   if (userProfile.location) {
     label += ` <br/>${userProfile.location}`
   }
-  const tooltipId = label
   if (preSignedURL) {
     marginLeft = '3px'
     img = (
       <img
-        data-for={tooltipId}
+        data-for={label}
         data-tip={label}
-        key={preSignedURL}
         className="userProfileImage"
         alt="User Profile"
         src={preSignedURL}
@@ -56,7 +54,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     const color = getColor(userProfile.userName)
     marginLeft = '3px'
     img = (
-      <svg height={24} width={24} data-for={tooltipId} data-tip={label}>
+      <svg height={24} width={24} data-for={label} data-tip={label}>
         <circle
           r={12}
           cx={'50%'}
@@ -67,7 +65,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
           textAnchor={'middle'}
           alignmentBaseline={'middle'}
           x={'50%'}
-          y={'50%'}
+          y={'55%'}
           fill={'white'}
         >
           {userProfile.firstName[0] || userProfile.userName[0]}
@@ -82,7 +80,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
       className="SRC-userCard SRC-primary-text-color"
     >
       {img}
-      <ReactTooltip delayShow={1000} id={tooltipId} multiline={true}/>
+      <ReactTooltip delayShow={1000} id={label} multiline={true}/>
       {!hideText && <span className="SRC-primary-text-color" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
     </a>
   )

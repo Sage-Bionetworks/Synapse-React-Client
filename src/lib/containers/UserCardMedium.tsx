@@ -112,7 +112,6 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
           style={{ borderRadius: '50%', padding: '5px', marginLeft: '26px' }}
           width={diameter}
           height={diameter}
-          key={preSignedURL}
           alt="User Profile"
           src={preSignedURL}
         />
@@ -168,7 +167,9 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
           <p className="SRC-eqHeightRow">
             {/* if its a medium component the header should be clickable,
               if its large then it should NOT be clickable */}
+            {/* make SRC-whiteText overridable with a good name! */}
             {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
+                // consolidate click events
                 <a
                   href={link}
                   onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
@@ -242,6 +243,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
         </div>
       )
     }
+    // else return medium card inside large component
     // when the component is large we have to set the click handler to wrap both the top and bottom portion
     return (
       <div

@@ -150,7 +150,7 @@ const COLORS: string[] = [
   'firebrick',
   'maroon',
   'olive',
-  'limegreen',
+  'green',
   'forestgreen',
   'darkturquoise',
   'teal',
@@ -158,9 +158,8 @@ const COLORS: string[] = [
   'navy',
   'darkmagenta',
   'purple',
-  'stateblue',
+  'blue',
   'orangered',
-  'forestblue',
   'blueviolet'
 ]
 

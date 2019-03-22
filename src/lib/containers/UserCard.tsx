@@ -20,7 +20,6 @@ export type UserCardProps = {
   alias?: string
   ownerId?: string
   size: string
-  token?: string
   hideText?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
   menuActions? : MenuAction[]
@@ -34,24 +33,25 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
   }
 
   public componentDidMount() {
-    const { userProfile, ownerId, alias, token } = this.props
+    const { userProfile, ownerId, alias } = this.props
     if (userProfile) {
       return
     }
     if (alias) {
-      getPrincipalAliasRequest(token, alias, 'USER_NAME')
+      getPrincipalAliasRequest('', alias, 'USER_NAME')
       .then(
         (aliasData: any) => {
           this.getUserProfile(aliasData.principalId!)
         }
       )
     } else {
+      // check for ownerId!
       this.getUserProfile(ownerId!)
     }
   }
 
   public getUserProfile(ownerId: string) {
-    getUserProfileWithProfilePic(ownerId!, this.props.token)
+    getUserProfileWithProfilePic(ownerId!, '')
     .then(
       (data) => {
         const { userProfile, preSignedURL } = data
@@ -64,7 +64,7 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
     )
   }
   public render() {
-    const { userProfile, loadingBar = <span/>, ...rest } = this.props
+    const { userProfile, loadingBar = <span/>, preSignedURL, ...rest } = this.props
     let userProfileAtRender
     let preSignedURLAtRender
     if (!userProfile) {
@@ -78,7 +78,7 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
     } else {
       // otherwise we have the profile from props
       userProfileAtRender = userProfile
-      preSignedURLAtRender = this.props.preSignedURL
+      preSignedURLAtRender = preSignedURL
     }
     return (
       <UserCardSwitch

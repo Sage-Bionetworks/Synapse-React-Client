@@ -20,23 +20,23 @@ const createUserCardContextMenu = (props: UserCardContextMenuProps) => {
 }
 
 const createLargeComponent = (props: UserCardMediumProps) => {
-  const wrapper = shallow(
+  const wrapper = shallow<UserCardMedium>(
       <UserCardMedium
         {...props}
         isLarge={true}
       />
     )
-  const instance = wrapper.instance() as UserCard
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
 const createMediumComponent = (props: UserCardMediumProps) => {
-  const wrapper = shallow(
+  const wrapper = shallow<UserCardMedium>(
       <UserCardMedium
         {...props}
       />
     )
-  const instance = wrapper.instance() as UserCard
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
@@ -46,25 +46,24 @@ const createSmallComponent = (props: UserCardSwitchProps) => {
         {...props}
       />
     )
-  const instance = wrapper.instance() as UserCard
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
 // need mount because of the deep render of the children
 const createMountedComponent = (props: UserCardProps) => {
-  const wrapper = mount(
+  const wrapper = mount<UserCard>(
       <UserCard
         {...props}
       />
     )
-  const instance = wrapper.instance() as UserCard
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
 describe('it renders the different sized cards without failing', () => {
 
   const props = {
-    ownerId : '3374422',
     userProfile: mockUserProfileData
   }
 
@@ -93,7 +92,6 @@ describe('it renders the different sized cards without failing', () => {
 describe('it creates the correct UI for the small card', () => {
 
   const props = {
-    ownerId : '3374422',
     userProfile: mockUserProfileData,
     size : SynapseConstants.SMALL_USER_CARD
   }
@@ -125,7 +123,6 @@ describe('it creates the correct UI for the small card', () => {
 describe('it creates the correct UI for the medium card', () => {
 
   const props = {
-    ownerId : '3374422',
     userProfile: mockUserProfileData,
     size : SynapseConstants.MEDIUM_USER_CARD
   }
@@ -201,17 +198,13 @@ describe('it creates the correct UI for the UserCardContextMenu', () => {
       }
     ] as MenuAction []
     const { wrapper } = createUserCardContextMenu({ ...props, menuActions })
-    // one svg is for the clipboard icon, one for the ellipsis,
-    // and one is for the user svg
     expect(wrapper.find('hr.SRC-break')).toHaveLength(1)
   })
 
 })
-
 describe('it creates the correct UI for the large card', () => {
 
   const props = {
-    ownerId : '3374422',
     userProfile: mockUserProfileData,
     size : SynapseConstants.LARGE_USER_CARD
   }
