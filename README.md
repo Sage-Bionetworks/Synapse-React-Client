@@ -433,7 +433,9 @@ UserCard represents a synapse user, it is responsible for three different sized 
 
 | Props  | Explanation |
 | ------------- | ------------- |
-|  userProfile: [UserProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) | A [userProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) object can get passed in for the component to use as its data. NOTE: If going this route, you can pass a user's img by manually adding the `preSignedURL` field to the userProfile object.|
+|  userProfile: [UserProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) | A [userProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) object can get passed in for the component to use as its data|
+|  preSignedURL: string | If set will show the corresponding img for the user|
+|  hideEmail: boolean | If set will hide the user's email |
 |  loadingBar: Html Element | An html element can get passed in to show while the component loads data (only applies if userProfile is NOT specified).|
 |  alias: string | An alias that resolves the ownerId for the UserProfile |
 |  ownerId: string | The ownerId of the UserProfile |
