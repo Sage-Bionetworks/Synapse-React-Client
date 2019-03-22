@@ -812,8 +812,17 @@ checkmark styling end
   background: white;
 }
 
+.dropdown:focus ul.dropdown-menu {
+  display: block;
+}
+
 .SRC-centerContent {
   display: flex;
+  align-items: center;
+}
+
+.SRC-centerContentInline {
+  display: inline-flex;
   align-items: center;
 }
 
@@ -863,11 +872,11 @@ checkmark styling end
   transition: opacity 300ms ease-in;
 }
 
-.SRC-card-leave {
+.SRC-card-exit {
   opacity: 1;
 }
 
-.SRC-card-leave.SRC-card-leave-active {
+.SRC-card-exit.SRC-card-exit-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
 }
@@ -878,4 +887,157 @@ span.SRC-logo-cursor * {
 
 div.SRC-logo-cursor * {
   cursor: wait;
+}
+
+/*
+  UserCard Styling
+*/
+
+svg.SRC-userImg {
+  overflow: visible;
+}
+
+.SRC-userCard {
+  display: inline-flex;
+  padding-right: 10px;
+  align-items: center;
+}
+
+.SRC-userCardMediumUp {
+  height: 120px;
+  width: -webkit-fill-available;
+}
+
+.SRC-eqHeightRow {
+  height: 20px;
+}
+
+.SRC-cardContent {
+  display: inline-flex;
+  flex-direction: column;
+  padding-left: 17px;
+}
+
+.SRC-textareaCopy {
+  border: none;
+  background-color: transparent;
+  resize: none;
+  outline: none;
+  color: #337ab7;
+  cursor: pointer;
+}
+
+.SRC-cardMenuButton {
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.SRC-inlineFlex {
+  display: inline-flex;
+  align-items: center;
+}
+
+.SRC-copyContainer {
+  color: #337ab7;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.SRC-cardContainer {
+  max-width: 1335px;
+  margin: 0 auto;
+}
+
+.SRC-card-grid-row {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}
+
+.SRC-grid-item {
+  height: 120px;
+  flex-basis: 31%;
+  flex-grow: 1;
+  margin: 10px 10px;
+  width: 350px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+@media(max-width: 1333px) {
+  .SRC-grid-item {
+    flex-basis: 33.33%;
+  }
+}
+@media(max-width: 1073px) {
+   .SRC-grid-item {
+    flex-basis: 33.33%;
+  }
+}
+@media(max-width: 815px) {
+  .SRC-grid-item {
+    flex-basis: 50%;
+  }
+}
+@media(max-width: 555px) {
+  .SRC-grid-item {
+    flex-basis: 100%;
+  }
+}
+
+.SRC-showGrayOnHover:hover {
+  & > svg {
+    color: gray;
+  }
+}
+
+// https://material.io/design/components/snackbars.html#spec
+.SRC-modal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  bottom: 20px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  background: #25A2B7;
+  color: white;
+  width: 344px;
+  height: 48px;
+  border-radius: 4px;
+}
+
+.SRC-menuAction {
+  background: none;
+  border: none;
+}
+
+.SRC-break {
+  margin: 0px;
+  border: 1px solid #DCDCDC;
+}
+
+.SRC-menu-item {
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  color: #515359;
+}
+
+.SRC-contextMenuDropdown {
+  border:1px solid #DCDCDC;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.SRC-card-metadata-title {
+  color: #ABABAC;
+}
+
+.SRC-cardMetaData {
+  padding: 10px 33px;
+  max-height: 558px;
+  overflow-y: auto;
 }

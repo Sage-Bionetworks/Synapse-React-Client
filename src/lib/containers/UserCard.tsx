@@ -1,51 +1,61 @@
 import * as React from 'react'
-import { getUserBundleWithProfilePic } from './getUserData'
-import UserCardViewSwitch from './UserCardViewSwitch'
+import { getUserProfileWithProfilePic } from './getUserData'
+import UserCardSwitch from './UserCardSwitch'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
+import { MenuAction } from './UserCardContextMenu'
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
-type UserBadgeState = {
-  userProfileBundle: any
+type UserCardState = {
+  userProfile: UserProfile | undefined
+  preSignedURL: string
+  isLoading: boolean
 }
 
-type UserBadgeProps = {
-  userProfileBundle?: any
+export type UserCardProps = {
+  // Note - either specify userProfile OR (alias or ownerId)
+  userProfile?: UserProfile
+  loadingBar?: JSX.Element
+  hideEmail?: boolean
+  preSignedURL?: string
   alias?: string
   ownerId?: string
   size: string
-  mask: number
-  token?: string
-  type?: string
+  hideText?: boolean
+  profileClickHandler?: (userProfile: UserProfile) => void
+  menuActions? : MenuAction[]
 }
 
-export default class UserProfileSmall extends React.Component<UserBadgeProps, UserBadgeState> {
+export default class UserCard extends React.Component<UserCardProps, UserCardState> {
   constructor(props: any) {
     super(props)
-    this.state = { userProfileBundle: undefined }
-    this.getUserBundleInfo = this.getUserBundleInfo.bind(this)
+    this.state = { userProfile: undefined, isLoading: true, preSignedURL: '' }
+    this.getUserProfile = this.getUserProfile.bind(this)
   }
 
   public componentDidMount() {
-    const { userProfileBundle, ownerId, mask, alias } = this.props
-    if (userProfileBundle) {
+    const { userProfile, ownerId, alias } = this.props
+    if (userProfile) {
       return
     }
     if (alias) {
-      getPrincipalAliasRequest(this.props.token, alias, 'USER_NAME')
+      getPrincipalAliasRequest('', alias, 'USER_NAME')
       .then(
         (aliasData: any) => {
-          this.getUserBundleInfo(aliasData.principalId!, mask)
+          this.getUserProfile(aliasData.principalId!)
         }
       )
     } else {
-      this.getUserBundleInfo(ownerId!, mask)
+      // check for ownerId!
+      this.getUserProfile(ownerId!)
     }
   }
 
-  public getUserBundleInfo(ownerId: string, mask: number) {
-    getUserBundleWithProfilePic(ownerId!, mask, this.props.token)
+  public getUserProfile(ownerId: string) {
+    getUserProfileWithProfilePic(ownerId!, '')
     .then(
       (data) => {
-        this.setState({ userProfileBundle: data })
+        const { userProfile, preSignedURL } = data
+        this.setState({ userProfile, preSignedURL, isLoading: false })
       }
     ).catch(
       (err) => {
@@ -54,19 +64,27 @@ export default class UserProfileSmall extends React.Component<UserBadgeProps, Us
     )
   }
   public render() {
-    const { userProfileBundle, size } = this.props
-    if (!userProfileBundle) {
-      return (
-        <UserCardViewSwitch
-          userBundle={this.state.userProfileBundle}
-          size={size}
-        />
-      )
+    const { userProfile, loadingBar = <span/>, preSignedURL, ...rest } = this.props
+    let userProfileAtRender
+    let preSignedURLAtRender
+    if (!userProfile) {
+      // userProfile wans't passed in from props
+      if (this.state.isLoading) {
+        // still making the API call
+        return loadingBar
+      }
+      userProfileAtRender = this.state.userProfile
+      preSignedURLAtRender = this.state.preSignedURL
+    } else {
+      // otherwise we have the profile from props
+      userProfileAtRender = userProfile
+      preSignedURLAtRender = preSignedURL
     }
     return (
-      <UserCardViewSwitch
-        userBundle={this.props.userProfileBundle}
-        size={size}
+      <UserCardSwitch
+        userProfile={userProfileAtRender!}
+        preSignedURL={preSignedURLAtRender}
+        {...rest}
       />
     )
   }

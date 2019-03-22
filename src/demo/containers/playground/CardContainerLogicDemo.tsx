@@ -12,8 +12,8 @@ export default class CardContainerLogicDemo extends React.Component {
   render() {
     return (
         <CardContainerLogic
-          type={SynapseConstants.CSBC_PROJECT}
-          sql="SELECT * FROM syn10142562"
+          type={SynapseConstants.CSBC_PUBLICATION}
+          sql={`SELECT * FROM syn10923842 WHERE ( ( "grantType" = 'U54' OR "grantType" = 'U01' ) AND ( "Consortium" = 'PS-ON' OR "Consortium" = 'CSBC' OR "Consortium" = 'PS-ON,CSBC' ) )`}
           unitDescription="studies"
         />
     )

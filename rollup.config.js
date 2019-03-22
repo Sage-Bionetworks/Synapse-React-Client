@@ -7,8 +7,10 @@ import json from 'rollup-plugin-json'
 import postprocess from 'rollup-plugin-postprocess';
 import { uglify } from 'rollup-plugin-uglify';
 import commonjs from 'rollup-plugin-commonjs'
-
-
+/* 
+	TODO: 
+		1. inline svgs for css don't work
+*/
 export default {
 	input: 'src/lib/index.tsx',
 	external: [
@@ -32,6 +34,7 @@ export default {
 		'markdownitBr',
 		'markdownitMath',
 		'sanitizeHtml',
+		'react-transition-group'
 	],
 	onwarn: function(warning) {
 		// Skip certain warnings
@@ -44,7 +47,7 @@ export default {
 	},
 	plugins: [
 		image(),
-        typescript(),
+		typescript(),
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
 		resolve(),
 		svg(),
@@ -57,7 +60,11 @@ export default {
 		postprocess([
             [
 				/React.createElement\(Plot, { data: plotData, layout: layout }\)/g, 
-				'React.createElement(createPlotlyComponent(Plotly), { data: plotData, layout: layout })']
+				'React.createElement(createPlotlyComponent(Plotly), { data: plotData, layout: layout })'],
+				[
+					/reactTransitionGroup/g,
+					'ReactTransitionGroup'
+				]
 		]),
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),
@@ -68,6 +75,7 @@ export default {
 		globals: {
 			'react' : 'React',
 			'katex' : 'katex',
+			'react-transition-group': 'ReactTransitionGroup',
 			'react-plotly.js': 'createPlotlyComponent(Plotly)',
 			'react-measure': 'ReactMeasure',
 			'react-tooltip': 'ReactTooltip',
@@ -89,7 +97,6 @@ export default {
 		},
 		format: 'umd',
 		name: 'SRC',
-		file: './src/umd/synapse-react-client.production.min.js',
-		sourcemap: 'inline'
+		file: './src/umd/synapse-react-client.production.min.js'
 	}
 }

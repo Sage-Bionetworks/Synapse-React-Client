@@ -600,7 +600,6 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     return (
       <UserCard
         key={JSON.stringify(widgetparamsMapped)}
-        mask={63}
         size={SynapseConstants.SMALL_USER_CARD}
         alias={widgetparamsMapped.alias}
       />

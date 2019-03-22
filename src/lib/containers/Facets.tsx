@@ -11,7 +11,7 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 
 export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
-import { SELECT_ALL,  } from './SynapseTable'
+import { SELECT_ALL } from './SynapseTable'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 
 // Add all icons to the library so you can use it in your page

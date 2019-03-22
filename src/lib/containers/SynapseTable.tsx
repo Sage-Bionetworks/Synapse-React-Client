@@ -372,7 +372,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (
         <li
           style={{ listStyle: 'none' }}
-          className="SRC-table-dropdown-list SRC-primary-background-color-hover SRC-nested-color"
+          className="SRC-table-dropdown-list SRC-primary-background-color-hover"
           key={header.name}
           onClick={this.toggleColumnSelection(index)}
         >

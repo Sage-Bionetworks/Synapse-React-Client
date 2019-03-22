@@ -1,5 +1,6 @@
 import { SynapseClient } from '../utils'
 import { UserBundle } from '../utils/jsonResponses/UserBundle'
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
 /*
   Utility functions for UserCards
@@ -96,13 +97,60 @@ function getUserBundleWithProfilePic(ownerId: string, mask: number, token?: stri
     })
 }
 
+type UserProfileAndImg = {
+  userProfile: UserProfile
+  preSignedURL: string
+}
+function getUserProfileWithProfilePic(ownerId: string, token?: string): Promise<UserProfileAndImg> {
+  return SynapseClient.getUserProfileById(token, ownerId).then(
+    (userProfile: UserProfile) => {
+      // people will either have a profile pic file handle id
+      // or they won't. Have to break this down into two groups.
+      if (!userProfile.profilePicureFileHandleId) {
+        return Promise.resolve({ userProfile }) as any
+      }
+
+      const fileHandleAssociationList = [{
+        associateObjectId: ownerId,
+        associateObjectType: 'UserProfileAttachment',
+        fileHandleId: userProfile.profilePicureFileHandleId
+      }]
+
+      const request: any = {
+        includeFileHandles: false,
+        includePreSignedURLs: true,
+        includePreviewPreSignedURLs: false,
+        requestedFiles: fileHandleAssociationList
+      }
+
+      return SynapseClient.getFiles(request, token)
+        .then(
+          (fileHandleList: any) => {
+            // we retrieve all the persons with profile pic file handles
+            // so we next loop through them, find the original person in the data.list
+            // and add a field with their pre-signed url
+            const firstElement = fileHandleList.requestedFiles[0]
+            if (firstElement.fileHandleId === userProfile.profilePicureFileHandleId) {
+              userProfile.preSignedURL = firstElement.preSignedURL
+            }
+            return Promise.resolve({
+              userProfile,
+              preSignedURL: firstElement.preSignedURL
+            })
+          })
+        .catch((err) => {
+          console.log({ err })
+        })
+    })
+}
+
 const COLORS: string[] = [
   'chocolate',
   'black',
   'firebrick',
   'maroon',
   'olive',
-  'limegreen',
+  'green',
   'forestgreen',
   'darkturquoise',
   'teal',
@@ -110,9 +158,8 @@ const COLORS: string[] = [
   'navy',
   'darkmagenta',
   'purple',
-  'stateblue',
+  'blue',
   'orangered',
-  'forestblue',
   'blueviolet'
 ]
 
@@ -128,4 +175,4 @@ const getColor = (userName: string) => {
   return COLORS[hashedUserName % COLORS.length]
 }
 
-export { getUserProfile, getUserBundleWithProfilePic, getColor }
+export { getUserProfile, getUserBundleWithProfilePic, getColor, getUserProfileWithProfilePic }

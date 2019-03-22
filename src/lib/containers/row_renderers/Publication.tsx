@@ -30,25 +30,25 @@ class Publication extends React.Component<PublicationProps, PublicationState> {
     const projectName = data[schema.projectName]
     const values = [['DOI', doi], ['FUNDER', fundingAgency], ['STUDY', projectName]]
     return (
-        <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
-            <div className="SRC-cardThumbnail">
-                <Utils.Icon type={PUBLICATION} />
-            </div>
-            <div className="SRC-cardContent">
-                <div className="SRC-type">Publication</div>
-                <div className="SRC-title">
-                    <h3>
-                        <a target="_blank" href={`https://dx.doi.org/${doi}`}>
-                            {citation}
-                        </a>
-                    </h3>
-                </div>
-                <div className="SRC-cardAnnotations">
-                    <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
-                </div>
-            </div>
-            <Utils.CardFooter values={values} />
-        </div>
+      <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
+          <div className="SRC-cardThumbnail">
+              <Utils.Icon type={PUBLICATION} />
+          </div>
+          <div className="SRC-cardContent">
+              <div className="SRC-type">Publication</div>
+              <div className="SRC-title">
+                  <h3>
+                      <a target="_blank" href={`https://dx.doi.org/${doi}`}>
+                          {citation}
+                      </a>
+                  </h3>
+              </div>
+              <div className="SRC-cardAnnotations">
+                  <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
+              </div>
+          </div>
+          <Utils.CardFooter values={values} />
+      </div>
     )
   }
 }

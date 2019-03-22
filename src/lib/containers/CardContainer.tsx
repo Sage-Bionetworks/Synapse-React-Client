@@ -14,11 +14,13 @@ import {
   PUBLICATION,
   STUDY,
   TOOL,
-  CSBC_PROJECT
+  CSBC_PROJECT,
+  CSBC_PUBLICATION
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
 import CSBCProject from './row_renderers/CSBC/CSBCProject'
+import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 
 const PAGE_SIZE: number = 25
 
@@ -54,6 +56,8 @@ export const RowContainer: React.SFC<RowContainerProps> = (props) => {
       return <AMP_Study {...rest} />
     case CSBC_PROJECT:
       return <CSBCProject {...rest} />
+    case CSBC_PUBLICATION:
+      return <CSBCPublication {...rest} />
     default:
       return (<div />) // this should never happen
   }
@@ -82,7 +86,20 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
   public static propTypes = {
     limit: PropTypes.number,
-    type: PropTypes.oneOf([STUDY, DATASET, FUNDER, PUBLICATION, TOOL, AMP_PROJECT, AMP_CONSORTIUM, AMP_STUDY])
+    type: PropTypes.oneOf(
+      [
+        STUDY,
+        DATASET,
+        FUNDER,
+        PUBLICATION,
+        TOOL,
+        AMP_PROJECT,
+        AMP_CONSORTIUM,
+        AMP_STUDY,
+        CSBC_PROJECT,
+        CSBC_PUBLICATION
+      ]
+    )
   }
 
   constructor(props: CardContainerProps) {
