@@ -7,6 +7,7 @@ import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
 type UserCardState = {
   userProfile: UserProfile | undefined
+  preSignedURL: string
   isLoading: boolean
 }
 
@@ -14,6 +15,8 @@ export type UserCardProps = {
   // Note - either specify userProfile OR (alias or ownerId)
   userProfile?: UserProfile
   loadingBar?: JSX.Element
+  hideEmail?: boolean
+  preSignedURL?: string
   alias?: string
   ownerId?: string
   size: string
@@ -26,7 +29,7 @@ export type UserCardProps = {
 export default class UserCard extends React.Component<UserCardProps, UserCardState> {
   constructor(props: any) {
     super(props)
-    this.state = { userProfile: undefined, isLoading: true }
+    this.state = { userProfile: undefined, isLoading: true, preSignedURL: '' }
     this.getUserProfile = this.getUserProfile.bind(this)
   }
 
@@ -51,7 +54,8 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
     getUserProfileWithProfilePic(ownerId!, this.props.token)
     .then(
       (data) => {
-        this.setState({ userProfile: data, isLoading: false })
+        const { userProfile, preSignedURL } = data
+        this.setState({ userProfile, preSignedURL, isLoading: false })
       }
     ).catch(
       (err) => {
@@ -62,6 +66,7 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
   public render() {
     const { userProfile, loadingBar = <span/>, ...rest } = this.props
     let userProfileAtRender
+    let preSignedURLAtRender
     if (!userProfile) {
       // userProfile wans't passed in from props
       if (this.state.isLoading) {
@@ -69,13 +74,16 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
         return loadingBar
       }
       userProfileAtRender = this.state.userProfile
+      preSignedURLAtRender = this.state.preSignedURL
     } else {
       // otherwise we have the profile from props
       userProfileAtRender = userProfile
+      preSignedURLAtRender = this.props.preSignedURL
     }
     return (
       <UserCardSwitch
         userProfile={userProfileAtRender!}
+        preSignedURL={preSignedURLAtRender}
         {...rest}
       />
     )

@@ -109,40 +109,39 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
           </div>
         </div>
         <h3> User Card Medium Wrapping Example </h3>
-        <div className="SRC-cardContainer">
-          <div className="SRC-card-grid-row">
-            {
-              [1, 2, 3, 4, 5, 6].map(
-                (_el, index) => {
-                  return (
-                    <div className="SRC-grid-item" key={index}>
-                      <UserCard
-                        menuActions={[
-                          {
-                            field: 'Projects',
-                            callback: (userProfile) => { console.log(userProfile) }
-                          },
-                          {
-                            field: 'Profile',
-                            callback: (userProfile) => { console.log(userProfile) }
-                          },
-                          {
-                            field: 'SEPERATOR',
-                          },
-                          {
-                            field: 'Teams',
-                            callback: (userProfile) => { console.log(userProfile) }
-                          }
-                        ]}
-                        ownerId={'1131050'}
-                        size={SynapseConstants.MEDIUM_USER_CARD}
-                      />
-                    </div>
-                  )
-                }
-              )
-            }
-          </div>
+        <div className="SRC-card-grid-row">
+          {
+            [1, 2, 3, 4, 5, 6].map(
+              (_el, index) => {
+                return (
+                  <div className="SRC-grid-item" key={index}>
+                    <UserCard
+                      hideEmail={true}
+                      menuActions={[
+                        {
+                          field: 'Projects',
+                          callback: (userProfile) => { console.log(userProfile) }
+                        },
+                        {
+                          field: 'Profile',
+                          callback: (userProfile) => { console.log(userProfile) }
+                        },
+                        {
+                          field: 'SEPERATOR',
+                        },
+                        {
+                          field: 'Teams',
+                          callback: (userProfile) => { console.log(userProfile) }
+                        }
+                      ]}
+                      ownerId={'1131050'}
+                      size={SynapseConstants.MEDIUM_USER_CARD}
+                    />
+                  </div>
+                )
+              }
+            )
+          }
         </div>
       </React.Fragment>
     )

@@ -8,6 +8,9 @@ import { MenuAction } from './UserCardContextMenu'
 export type UserCardSwitchProps = {
   loadingBar?: JSX.Element
   userProfile: UserProfile
+  preSignedURL?: string
+  hideText?: boolean
+  hideEmail?: boolean
   size: string
   menuActions?: MenuAction []
 }

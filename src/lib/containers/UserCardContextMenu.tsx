@@ -16,7 +16,7 @@ const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props) => {
   const { menuActions = [], userProfile } = props
   return (
     <div className="dropdown open">
-      <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+      <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
         {
           menuActions.map(
             (menuAction, index) => {
@@ -32,10 +32,11 @@ const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props) => {
                     SRC-menu-item SRC-table-dropdown-list SRC-primary-background-color-hover SRC-nested-color
                   "
                   onClick={callback}
+                  onKeyPress={callback}
                 >
-                  <button className="SRC-menuAction">
+                  <a role="button" tabIndex={0} className="SRC-menuAction">
                     {menuAction.field}
-                  </button>
+                  </a>
                 </li>
               )
             }

@@ -7,7 +7,6 @@ import UserCardMedium, { UserCardMediumProps } from '../../../lib/containers/Use
 import { UserCardLarge } from '../../../lib/containers/UserCardLarge'
 import { UserCardSwitchProps } from '../../../lib/containers/UserCardSwitch'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
-import { cloneDeep } from '../../../lib/utils/modules'
 import UserCardContextMenu, { UserCardContextMenuProps, MenuAction } from '../../../lib/containers/UserCardContextMenu'
 import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
 
@@ -105,10 +104,20 @@ describe('it creates the correct UI for the small card', () => {
   })
 
   it('displays an img for a user with an img set', () => {
-    const mockUserProfileDataWithImg = cloneDeep(mockUserProfileData)
-    mockUserProfileDataWithImg.preSignedURL = 'link-to-user-img.com'
-    const { wrapper } = createSmallComponent({ ...props, userProfile: mockUserProfileDataWithImg })
+    const { wrapper } = createSmallComponent(
+      { ...props, preSignedURL : 'link-to-user-img.com' }
+    )
     expect(wrapper.render().find('img')).toHaveLength(1)
+  })
+
+  it("doesn't hide text by default", () => {
+    const { wrapper } = createSmallComponent({ ...props, preSignedURL : 'link-to-user-img.com' })
+    expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(1)
+  })
+
+  it('hides text when hideText is set to true', () => {
+    const { wrapper } = createSmallComponent({ ...props, preSignedURL : 'link-to-user-img.com', hideText: true })
+    expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(0)
   })
 
 })
@@ -128,10 +137,18 @@ describe('it creates the correct UI for the medium card', () => {
   })
 
   it('displays an img for a user with an img set', () => {
-    const mockUserProfileDataWithImg = cloneDeep(mockUserProfileData)
-    mockUserProfileDataWithImg.preSignedURL = 'link-to-user-img.com'
-    const { wrapper } = createMediumComponent({ ...props, userProfile: mockUserProfileDataWithImg })
+    const { wrapper } = createMediumComponent({ ...props, preSignedURL: 'my-img-url' })
     expect(wrapper.render().find('img')).toHaveLength(1)
+  })
+
+  it("doesn't hide user email by default", () => {
+    const { wrapper } = createMediumComponent({ ...props })
+    expect(wrapper.render().find('p.SRC-emailText')).toHaveLength(1)
+  })
+
+  it("hide's user email by when hideEmail set ", () => {
+    const { wrapper } = createMediumComponent({ ...props, hideEmail: true })
+    expect(wrapper.render().find('p.SRC-emailText')).toHaveLength(0)
   })
 
   it('displays the context menu on toggle', async () => {

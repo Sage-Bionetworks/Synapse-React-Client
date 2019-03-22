@@ -11,12 +11,13 @@ library.add(faCircle)
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
+  preSignedURL?: string
   hideText?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
 }
 
 export const UserCardSmall: React.SFC<UserCardSmallProps> = (
-  { userProfile, hideText = false, profileClickHandler }
+  { userProfile, hideText = false, profileClickHandler, preSignedURL }
 ) => {
   const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
@@ -39,16 +40,16 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     label += ` <br/>${userProfile.location}`
   }
   const tooltipId = label
-  if (userProfile.preSignedURL) {
+  if (preSignedURL) {
     marginLeft = '3px'
     img = (
       <img
         data-for={tooltipId}
         data-tip={label}
-        key={userProfile.preSignedURL}
+        key={preSignedURL}
         className="userProfileImage"
         alt="User Profile"
-        src={userProfile.preSignedURL}
+        src={preSignedURL}
       />
     )
   } else {

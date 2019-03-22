@@ -20,6 +20,8 @@ type UserCardState = {
 export type UserCardMediumProps = {
   userProfile: UserProfile
   menuActions?: MenuAction []
+  preSignedURL?: string
+  hideEmail?: boolean
   isLarge?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
 }
@@ -72,7 +74,14 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
   }
 
   render () {
-    const { userProfile, menuActions, profileClickHandler, isLarge = false } = this.props
+    const {
+      userProfile,
+      menuActions,
+      profileClickHandler,
+      isLarge = false,
+      preSignedURL,
+      hideEmail = false
+    } = this.props
     const { isContextMenuOpen, showModal } = this.state
     const {
       displayName,
@@ -97,54 +106,63 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     if (userName) {
       name = userName
     }
-    if (userProfile.preSignedURL) {
+    if (preSignedURL) {
       img = (
         <img
           style={{ borderRadius: '50%', padding: '5px', marginLeft: '26px' }}
           width={diameter}
           height={diameter}
-          key={userProfile.preSignedURL}
+          key={preSignedURL}
           alt="User Profile"
-          src={userProfile.preSignedURL}
+          src={preSignedURL}
         />
       )
     } else {
       img = (
-        <svg style={{ marginLeft: '26px' }} height={diameter} width={diameter}>
-          <circle
-            r={diameter / 2}
-            cx={'50%'}
-            cy={'50%'}
-            fill={getColor(userProfile.userName)}
-          />
-          <text
-            textAnchor={'middle'}
-            alignmentBaseline={'middle'}
-            fontSize={26}
-            x={'50%'}
-            y={'50%'}
-            fill={'white'}
+          <svg
+            className="SRC-userImg"
+            style={{ marginLeft: '26px' }}
+            height={diameter}
+            width={diameter}
           >
-            {userProfile.firstName[0] || userProfile.userName[0]}
-          </text>
-        </svg>
+            <circle
+              r={diameter / 2}
+              cx={'50%'}
+              cy={'50%'}
+              fill={getColor(userProfile.userName)}
+            />
+            <text
+              textAnchor={'middle'}
+              alignmentBaseline={'middle'}
+              fontSize={26}
+              x={'50%'}
+              y={'50%'}
+              fill={'white'}
+            >
+              {userProfile.firstName[0] || userProfile.userName[0]}
+            </text>
+          </svg>
       )
     }
     const mediumCard = (
       <React.Fragment>
-        <TransitionGroup>
         {
-          showModal
+          !hideEmail
           &&
-          <CSSTransition
-            key={email}
-            classNames="SRC-card"
-            timeout={{ enter: 500, exit: 300 }}
-          >
-          <div key={link} className="SRC-modal"> Copied text to clipboard! </div>
-          </CSSTransition>
+          <TransitionGroup>
+          {
+            showModal
+            &&
+            <CSSTransition
+              key={email}
+              classNames="SRC-card"
+              timeout={{ enter: 500, exit: 300 }}
+            >
+            <div key={email} className="SRC-modal"> Copied text to clipboard! </div>
+            </CSSTransition>
+          }
+          </TransitionGroup>
         }
-        </TransitionGroup>
         {img}
         <div className="SRC-cardContent">
           <p className="SRC-eqHeightRow">
@@ -152,7 +170,10 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               if its large then it should NOT be clickable */}
             {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
                 <a
+                  href={link}
                   onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+                  onKeyPress={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+                  tabIndex={0}
                   className={'SRC-hand-cursor SRC-primary-text-color'}
                 >
                   {name}
@@ -165,32 +186,36 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               {position}
             </p>
           }
-          <p
-            className={`
-              ${isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
-              SRC-hand-cursor SRC-showGrayOnHover SRC-eqHeightRow SRC-inlineFlex
-            `}
-            onClick={this.copyToClipboard(email)}
-            ref={this.htmlDivRef}
-          >
-            {`${userName}@synapse.org`}
-            <FontAwesomeIcon
-              style={{ marginLeft: '4px' }}
-              color={isLarge ? 'white' : 'lightgray'}
-              icon="copy"
-            />
-          </p>
+          {
+            !hideEmail
+            &&
+            <p
+              className={`${isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'} SRC-hand-cursor SRC-showGrayOnHover
+              SRC-eqHeightRow SRC-inlineFlex SRC-emailText`}
+              onClick={this.copyToClipboard(email)}
+              onKeyPress={this.copyToClipboard(email)}
+              tabIndex={0}
+              ref={this.htmlDivRef}
+            >
+              {`${userName}@synapse.org`}
+              <FontAwesomeIcon
+                style={{ marginLeft: '4px' }}
+                color={isLarge ? 'white' : 'lightgray'}
+                icon="copy"
+              />
+            </p>
+          }
         </div>
         {/* conditionally render menu actions, if its not defined then we don't show the button */}
         {
           menuActions &&
           <span
-            role={'button'}
-            className={`
-              SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock SRC-cardMenuButton
-              ${isContextMenuOpen ? 'SRC-primary-background-color' : ''}
-            `}
+            className={`SRC-extraPadding SRC-hand-cursor SRC-primary-background-color-hover SRC-inlineBlock
+            SRC-cardMenuButton ${isContextMenuOpen ? 'SRC-primary-background-color' : ''}`}
+            style={{ outline: 'none' }}
+            tabIndex={0}
             onClick={this.toggleContextMenu}
+            onKeyPress={this.toggleContextMenu}
           >
             <FontAwesomeIcon
               className={isContextMenuOpen || isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}

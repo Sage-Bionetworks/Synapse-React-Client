@@ -812,6 +812,10 @@ checkmark styling end
   background: white;
 }
 
+.dropdown:focus ul.dropdown-menu {
+  display: block;
+}
+
 .SRC-centerContent {
   display: flex;
   align-items: center;
@@ -888,8 +892,14 @@ div.SRC-logo-cursor * {
 /*
   UserCard Styling
 */
+
+svg.SRC-userImg {
+  overflow: visible;
+}
+
 .SRC-userCard {
   display: inline-flex;
+  padding-right: 10px;
   align-items: center;
 }
 

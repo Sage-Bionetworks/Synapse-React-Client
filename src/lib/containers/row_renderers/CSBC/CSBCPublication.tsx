@@ -22,7 +22,6 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
 
   public render() {
     const { data, schema } = this.props
-    console.log('data = ', data)
     const title = data[schema.Title]
     const authors = data[schema.Authors]
     const diseaseType = data[schema.diseaseType]

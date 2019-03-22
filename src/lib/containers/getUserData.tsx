@@ -97,13 +97,17 @@ function getUserBundleWithProfilePic(ownerId: string, mask: number, token?: stri
     })
 }
 
-function getUserProfileWithProfilePic(ownerId: string, token?: string): Promise<UserProfile> {
+type UserProfileAndImg = {
+  userProfile: UserProfile
+  preSignedURL: string
+}
+function getUserProfileWithProfilePic(ownerId: string, token?: string): Promise<UserProfileAndImg> {
   return SynapseClient.getUserProfileById(token, ownerId).then(
-    (userProfile: any) => {
+    (userProfile: UserProfile) => {
       // people will either have a profile pic file handle id
       // or they won't. Have to break this down into two groups.
       if (!userProfile.profilePicureFileHandleId) {
-        return userProfile
+        return Promise.resolve({ userProfile }) as any
       }
 
       const fileHandleAssociationList = [{
@@ -129,7 +133,10 @@ function getUserProfileWithProfilePic(ownerId: string, token?: string): Promise<
             if (firstElement.fileHandleId === userProfile.profilePicureFileHandleId) {
               userProfile.preSignedURL = firstElement.preSignedURL
             }
-            return Promise.resolve(userProfile)
+            return Promise.resolve({
+              userProfile,
+              preSignedURL: firstElement.preSignedURL
+            })
           })
         .catch((err) => {
           console.log({ err })
