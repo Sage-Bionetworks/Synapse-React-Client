@@ -9,7 +9,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
     super(props)
   }
   public render() {
-    const goToGoole = (userProfile: UserProfile) => { window.location.href = 'https://google.com' }
+    const goToGoole = (userProfile: UserProfile) => { console.log('userProfile = ', userProfile) }
     return (
       <React.Fragment>
         <div className="container">
@@ -52,7 +52,6 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <UserCard
               ownerId={'1131050'}
               // tslint:disable-next-line:jsx-no-lambda
-              profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
               size={SynapseConstants.LARGE_USER_CARD}
               menuActions={[
                 {
@@ -85,8 +84,6 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <br/>
             <UserCard
               ownerId={'273960'}
-              // tslint:disable-next-line:jsx-no-lambda
-              profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
               size={SynapseConstants.LARGE_USER_CARD}
               menuActions={[
                 {
@@ -116,6 +113,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                 return (
                   <div className="SRC-grid-item" key={index}>
                     <UserCard
+                      profileClickHandler={goToGoole}
                       hideEmail={true}
                       menuActions={[
                         {
