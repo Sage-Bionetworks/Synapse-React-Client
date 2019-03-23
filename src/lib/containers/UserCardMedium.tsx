@@ -46,7 +46,8 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
    * @param {string} value the email address of the user
    * @returns
    */
-  public copyToClipboard = (value: string) => (_e: any) => {
+  public copyToClipboard = (value: string) => (event: React.SyntheticEvent) => {
+    event.preventDefault()
     // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
     // this copies the email to the clipoard
     const el = document.createElement('textarea')
@@ -97,7 +98,12 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     // link is overriden by custom click handler
     const email = `${userName}@synapse.org`
     // call the click handler with userProfile handed to it -- only if its defined
-    const profileClickHandlerWithParam = profileClickHandler && (() => profileClickHandler(userProfile))
+    const profileClickHandlerWithParam = profileClickHandler && (
+      (event: React.SyntheticEvent) => {
+        event.preventDefault()
+        profileClickHandler(userProfile)
+      }
+    )
     if (displayName) {
       name = displayName
     } else if (firstName && lastName) {

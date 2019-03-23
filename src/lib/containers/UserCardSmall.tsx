@@ -24,7 +24,12 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   let marginLeft
   let label = ''
   // call the click handler with userProfile handed to it -- only if its defined
-  const profileClickHandlerWithParam = profileClickHandler && (() => profileClickHandler(userProfile))
+  const profileClickHandlerWithParam = profileClickHandler && (
+    (event: React.SyntheticEvent) => {
+      event.preventDefault()
+      profileClickHandler(userProfile)
+    }
+  )
   if (userProfile.displayName) {
     label += userProfile.displayName
   } else if (userProfile.firstName && userProfile.lastName) {
@@ -75,8 +80,8 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   }
   return (
     <a
-      onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
-      href={profileClickHandlerWithParam ? 'javascript:' : link}
+      onClick={profileClickHandlerWithParam  ? profileClickHandlerWithParam : undefined}
+      href={link}
       className="SRC-userCard SRC-primary-text-color"
     >
       {img}
