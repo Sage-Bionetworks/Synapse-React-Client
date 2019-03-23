@@ -47,7 +47,6 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
    * @returns
    */
   public copyToClipboard = (value: string) => (event: React.SyntheticEvent) => {
-    console.log('event = ', event)
     event.preventDefault()
     // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
     // this copies the email to the clipoard
