@@ -19,7 +19,7 @@ export type UserCardSmallProps = {
 export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   { userProfile, hideText = false, profileClickHandler, preSignedURL }
 ) => {
-  const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+  const link = profileClickHandler ? 'javascript:' : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
   let label = ''
@@ -27,6 +27,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   const profileClickHandlerWithParam = profileClickHandler && (
     (event: React.SyntheticEvent) => {
       event.preventDefault()
+      event.stopPropagation()
       profileClickHandler(userProfile)
     }
   )
