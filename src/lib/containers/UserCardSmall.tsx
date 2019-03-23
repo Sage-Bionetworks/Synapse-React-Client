@@ -80,7 +80,6 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   }
   return (
     <a
-      // tslint:disable-next-line:max-line-length
       onClick={profileClickHandlerWithParam  ? profileClickHandlerWithParam : undefined}
       href={link}
       className="SRC-userCard SRC-primary-text-color"
