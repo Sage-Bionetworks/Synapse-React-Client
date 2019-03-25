@@ -734,7 +734,8 @@ svg.SRC-userImg {
 
 .SRC-userCardMediumUp {
   height: 120px;
-  width: -webkit-fill-available; }
+  width: -webkit-fill-available;
+  width: -moz-available; }
 
 .SRC-eqHeightRow {
   height: 20px; }
