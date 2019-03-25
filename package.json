@@ -119,6 +119,6 @@
     "build": "npm run build-css && npm run build:js && npm run build:js-cleanup && npm run build:rollup",
     "build:js": "rm -rf dist && babel src/lib --copy-files --out-dir dist --extensions \".js,.ts,.tsx\" --source-maps inline",
     "build:js-cleanup": "rm -rf dist/containers/demo_components && rm -rf dist/utils/jsonResponses",
-    "build:rollup": "rollup -c"
+    "build:rollup": "rollup -c && cp -r src/umd dist/"
   }
 }
