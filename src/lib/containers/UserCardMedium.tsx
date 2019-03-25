@@ -94,13 +94,14 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     const diameter = 80
     let img
     let name = ''
-    const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+    const link = profileClickHandler ? 'javascript:' : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
     // link is overriden by custom click handler
     const email = `${userName}@synapse.org`
     // call the click handler with userProfile handed to it -- only if its defined
     const profileClickHandlerWithParam = profileClickHandler && (
       (event: React.SyntheticEvent) => {
         event.preventDefault()
+        event.stopPropagation()
         profileClickHandler(userProfile)
       }
     )
