@@ -19,12 +19,18 @@ export type UserCardSmallProps = {
 export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   { userProfile, hideText = false, profileClickHandler, preSignedURL }
 ) => {
-  const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+  const link = profileClickHandler ? 'javascript:' : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
   let label = ''
   // call the click handler with userProfile handed to it -- only if its defined
-  const profileClickHandlerWithParam = profileClickHandler && (() => profileClickHandler(userProfile))
+  const profileClickHandlerWithParam = profileClickHandler && (
+    (event: React.SyntheticEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      profileClickHandler(userProfile)
+    }
+  )
   if (userProfile.displayName) {
     label += userProfile.displayName
   } else if (userProfile.firstName && userProfile.lastName) {
@@ -75,8 +81,8 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   }
   return (
     <a
-      onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
-      href={profileClickHandlerWithParam ? 'javascript:' : link}
+      onClick={profileClickHandlerWithParam  ? profileClickHandlerWithParam : undefined}
+      href={link}
       className="SRC-userCard SRC-primary-text-color"
     >
       {img}
