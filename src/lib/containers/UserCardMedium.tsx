@@ -164,14 +164,19 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               classNames="SRC-card"
               timeout={{ enter: 500, exit: 300 }}
             >
-            <div key={email} className="SRC-modal"> Copied text to clipboard! </div>
+            <div key={email} className="SRC-modal"> Email address copied to clipboard </div>
             </CSSTransition>
           }
           </TransitionGroup>
         }
-        {img}
+        <a
+          href={link}
+          onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+        >
+          {img}
+        </a>
         <div className="SRC-cardContent">
-          <p className="SRC-eqHeightRow">
+          <p className="SRC-eqHeightRow SRC-userCardName">
             {/* if its a medium component the header should be clickable,
               if its large then it should NOT be clickable */}
             {/* make SRC-whiteText overridable with a good name! */}

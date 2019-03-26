@@ -906,7 +906,10 @@ svg.SRC-userImg {
   padding-right: 10px;
   align-items: center;
 }
-
+.SRC-userCardName {
+  font-weight: bold;
+  font-size: 16px;
+}
 .SRC-userCardMediumUp {
   height: 120px;
   width: -webkit-fill-available; // for chrome
