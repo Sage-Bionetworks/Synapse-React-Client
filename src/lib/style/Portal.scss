@@ -1042,3 +1042,15 @@ svg.SRC-userImg {
   max-height: 558px;
   overflow-y: auto;
 }
+
+.SRC-menu-wall {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  position: fixed;
+  z-index: 900;
+  background: transparent;
+  border: none; 
+}

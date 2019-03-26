@@ -232,6 +232,15 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             {
               isContextMenuOpen
               &&
+              <button
+                className="SRC-menu-wall"
+                type="button"
+                onClick={this.toggleContextMenu}
+              />
+            }
+            {
+              isContextMenuOpen
+              &&
               <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
             }
           </span>
