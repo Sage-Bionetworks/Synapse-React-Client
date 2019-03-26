@@ -21,6 +21,7 @@ export type UserCardProps = {
   ownerId?: string
   size: string
   hideText?: boolean
+  hideTooltip?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
   menuActions? : MenuAction[]
 }

@@ -28,6 +28,18 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               size={SynapseConstants.SMALL_USER_CARD}
             />
             <hr/>
+            <p> without tooltip </p>
+            <UserCard
+              ownerId={'3374422'}
+              hideTooltip={true}
+              size={SynapseConstants.SMALL_USER_CARD}
+            />
+            <UserCard
+              ownerId={'1131050'}
+              hideTooltip={true}
+              size={SynapseConstants.SMALL_USER_CARD}
+            />
+            <hr/>
             <p> with photo- </p>
             <UserCard
               ownerId={'1131050'}

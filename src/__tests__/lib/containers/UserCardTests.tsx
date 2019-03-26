@@ -117,7 +117,6 @@ describe('it creates the correct UI for the small card', () => {
     const { wrapper } = createSmallComponent({ ...props, preSignedURL : 'link-to-user-img.com', hideText: true })
     expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(0)
   })
-
 })
 
 describe('it creates the correct UI for the medium card', () => {
@@ -156,11 +155,9 @@ describe('it creates the correct UI for the medium card', () => {
       }
     ] as MenuAction []
     const { wrapper } = createMediumComponent({ ...props, menuActions })
-    expect(wrapper.render().find('SRC-menu-wall')).toHaveLength(0)
     const instance = wrapper.instance() as UserCardMedium
     const _event = {} as any
     await instance.toggleContextMenu(_event)
-    expect(wrapper.render().find('SRC-menu-wall')).toHaveLength(1)
     expect(wrapper.render().find('div.dropdown')).toHaveLength(1)
   })
 })
