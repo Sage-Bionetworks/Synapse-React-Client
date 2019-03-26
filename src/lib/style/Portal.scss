@@ -785,11 +785,15 @@ checkmark styling end
 }
 
 .SRC-menu-wall {
-  position: absolute;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  position: fixed;
+  z-index: 900;
   background: none;
-  border: none;
+  border: none; 
   &:focus {
     outline: none;
   }
@@ -1041,16 +1045,4 @@ svg.SRC-userImg {
   padding: 10px 33px;
   max-height: 558px;
   overflow-y: auto;
-}
-
-.SRC-menu-wall {
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-  position: fixed;
-  z-index: 900;
-  background: transparent;
-  border: none; 
 }
