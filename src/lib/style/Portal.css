@@ -733,7 +733,6 @@ svg.SRC-userImg {
 
 .SRC-userCard {
   display: inline-flex;
-  padding-left: 25px;
   align-items: center; }
 
 .SRC-userCardName {
@@ -743,7 +742,8 @@ svg.SRC-userImg {
 .SRC-userCardMediumUp {
   height: 120px;
   width: -webkit-fill-available;
-  width: -moz-available; }
+  width: -moz-available;
+  padding-left: 25px; }
 
 .SRC-eqHeightRow {
   height: 20px; }
@@ -752,6 +752,8 @@ svg.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
+  .SRC-cardContent p {
+    margin: 0px 0px 4px 0px; }
 
 .SRC-textareaCopy {
   border: none;
