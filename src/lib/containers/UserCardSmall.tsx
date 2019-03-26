@@ -13,11 +13,12 @@ export type UserCardSmallProps = {
   userProfile: UserProfile
   preSignedURL?: string
   hideText?: boolean
+  hideTooltip?: boolean
   profileClickHandler?: (userProfile: UserProfile) => void
 }
 
 export const UserCardSmall: React.SFC<UserCardSmallProps> = (
-  { userProfile, hideText = false, profileClickHandler, preSignedURL }
+  { userProfile, hideText = false, hideTooltip = false, profileClickHandler, preSignedURL }
 ) => {
   const link = profileClickHandler ? 'javascript:' : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
@@ -31,19 +32,21 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
       profileClickHandler(userProfile)
     }
   )
-  if (userProfile.displayName) {
-    label += userProfile.displayName
-  } else if (userProfile.firstName && userProfile.lastName) {
-    label += (`${userProfile.firstName} ${userProfile.lastName}`)
-  }
-  if (userProfile.userName && !userProfile.userName.includes('TEMPORARY-')) {
-    label += ` (${userProfile.userName})`
-  }
-  if (userProfile.position) {
-    label += ` <br/>${userProfile.position}`
-  }
-  if (userProfile.location) {
-    label += ` <br/>${userProfile.location}`
+  if (!hideTooltip) {
+    if (userProfile.displayName) {
+      label += userProfile.displayName
+    } else if (userProfile.firstName && userProfile.lastName) {
+      label += (`${userProfile.firstName} ${userProfile.lastName}`)
+    }
+    if (userProfile.userName && !userProfile.userName.includes('TEMPORARY-')) {
+      label += ` (${userProfile.userName})`
+    }
+    if (userProfile.position) {
+      label += ` <br/>${userProfile.position}`
+    }
+    if (userProfile.location) {
+      label += ` <br/>${userProfile.location}`
+    }
   }
   if (preSignedURL) {
     marginLeft = '3px'
@@ -86,8 +89,8 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
       className="SRC-userCard SRC-primary-text-color"
     >
       {img}
-      <ReactTooltip delayShow={1000} id={label} multiline={true}/>
-      {!hideText && <span className="SRC-primary-text-color" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
+        <ReactTooltip delayShow={1000} id={label} multiline={true}/>
+        {!hideText && <span className="SRC-primary-text-color" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
     </a>
   )
 }

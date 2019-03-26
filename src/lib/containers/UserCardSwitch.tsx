@@ -10,6 +10,7 @@ export type UserCardSwitchProps = {
   userProfile: UserProfile
   preSignedURL?: string
   hideText?: boolean
+  hideTooltip?: boolean
   hideEmail?: boolean
   size: string
   menuActions?: MenuAction []
