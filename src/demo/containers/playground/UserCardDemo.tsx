@@ -120,7 +120,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
         <h3> User Card Medium Wrapping Example </h3>
         <div className="SRC-card-grid-row">
           {
-            [1, 2, 3, 4, 5, 6].map(
+            [1, 2, 3, 4, 5].map(
               (_el, index) => {
                 return (
                   <div className="SRC-grid-item" key={index}>
