@@ -961,27 +961,32 @@ svg.SRC-userImg {
 
 .SRC-grid-item {
   height: 120px;
-  flex-basis: 31%;
-  flex-grow: 1;
+  flex-grow: 0;
+  flex-shrink: 1;
   margin: 10px 10px;
   width: 350px;
   position: relative;
   box-sizing: border-box;
 }
 
-@media(max-width: 1333px) {
+@media(min-width: 1501px) {
   .SRC-grid-item {
-    flex-basis: 33.33%;
+    flex-basis: 32%;
+  }
+}
+@media(max-width: 1500px) {
+  .SRC-grid-item {
+    flex-basis: 31%;
   }
 }
 @media(max-width: 1073px) {
    .SRC-grid-item {
-    flex-basis: 33.33%;
+    flex-basis: 30%;
   }
 }
 @media(max-width: 815px) {
   .SRC-grid-item {
-    flex-basis: 50%;
+    flex-basis: 45%;
   }
 }
 @media(max-width: 555px) {
