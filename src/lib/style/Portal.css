@@ -733,7 +733,7 @@ svg.SRC-userImg {
 
 .SRC-userCard {
   display: inline-flex;
-  padding-right: 10px;
+  padding-left: 25px;
   align-items: center; }
 
 .SRC-userCardName {

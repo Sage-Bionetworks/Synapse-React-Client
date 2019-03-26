@@ -116,7 +116,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     if (preSignedURL) {
       img = (
         <img
-          style={{ borderRadius: '50%', padding: '5px', marginLeft: '26px' }}
+          style={{ borderRadius: '50%', padding: '5px' }}
           width={diameter}
           height={diameter}
           alt="User Profile"
@@ -127,7 +127,6 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       img = (
           <svg
             className="SRC-userImg"
-            style={{ marginLeft: '26px' }}
             height={diameter}
             width={diameter}
           >
@@ -250,6 +249,12 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
             }
           </span>
+        }
+        {
+          !menuActions &&
+          <span
+            style={{ padding: '0px 0px 0px 35px' }}
+          />
         }
       </React.Fragment>
     )
