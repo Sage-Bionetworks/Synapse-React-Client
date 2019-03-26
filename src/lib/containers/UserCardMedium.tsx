@@ -233,6 +233,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             <FontAwesomeIcon
               className={isContextMenuOpen || isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
               icon="ellipsis-v"
+              fixedWidth={true}
             />
             {
               isContextMenuOpen
