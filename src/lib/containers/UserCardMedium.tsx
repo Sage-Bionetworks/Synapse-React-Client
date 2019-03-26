@@ -89,7 +89,8 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       userName,
       firstName,
       lastName,
-      position
+      position,
+      company
     } = userProfile
     const diameter = 80
     let img
@@ -108,9 +109,8 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     if (displayName) {
       name = displayName
     } else if (firstName && lastName) {
-      name = (firstName + lastName)
-    }
-    if (userName) {
+      name = `${firstName} ${lastName}`
+    } else if (userName) {
       name = userName
     }
     if (preSignedURL) {
@@ -189,9 +189,9 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               )}
           </p>
           {
-            position &&
-            <p className={`${isLarge ? 'SRC-whiteText' : ''} SRC-eqHeightRow`}>
-              {position}
+            (position || company) &&
+            <p className={`${isLarge ? 'SRC-whiteText' : ''}`}>
+              {position} {position ? ', ' : ''} {company}
             </p>
           }
           {
