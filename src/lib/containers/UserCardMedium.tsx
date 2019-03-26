@@ -89,7 +89,8 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       userName,
       firstName,
       lastName,
-      position
+      position,
+      company
     } = userProfile
     const diameter = 80
     let img
@@ -108,15 +109,14 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     if (displayName) {
       name = displayName
     } else if (firstName && lastName) {
-      name = (firstName + lastName)
-    }
-    if (userName) {
+      name = `${firstName} ${lastName}`
+    } else if (userName) {
       name = userName
     }
     if (preSignedURL) {
       img = (
         <img
-          style={{ borderRadius: '50%', padding: '5px', marginLeft: '26px' }}
+          style={{ borderRadius: '50%', padding: '5px' }}
           width={diameter}
           height={diameter}
           alt="User Profile"
@@ -127,7 +127,6 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       img = (
           <svg
             className="SRC-userImg"
-            style={{ marginLeft: '26px' }}
             height={diameter}
             width={diameter}
           >
@@ -164,14 +163,19 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               classNames="SRC-card"
               timeout={{ enter: 500, exit: 300 }}
             >
-            <div key={email} className="SRC-modal"> Copied text to clipboard! </div>
+            <div key={email} className="SRC-modal"> Email address copied to clipboard </div>
             </CSSTransition>
           }
           </TransitionGroup>
         }
-        {img}
+        <a
+          href={link}
+          onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+        >
+          {img}
+        </a>
         <div className="SRC-cardContent">
-          <p className="SRC-eqHeightRow">
+          <p className="SRC-eqHeightRow SRC-userCardName">
             {/* if its a medium component the header should be clickable,
               if its large then it should NOT be clickable */}
             {/* make SRC-whiteText overridable with a good name! */}
@@ -189,9 +193,9 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               )}
           </p>
           {
-            position &&
-            <p className={`${isLarge ? 'SRC-whiteText' : ''} SRC-eqHeightRow`}>
-              {position}
+            (position || company) &&
+            <p className={`${isLarge ? 'SRC-whiteText' : ''}`}>
+              {position} {position ? ', ' : ''} {company}
             </p>
           }
           {
@@ -228,6 +232,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             <FontAwesomeIcon
               className={isContextMenuOpen || isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'}
               icon="ellipsis-v"
+              fixedWidth={true}
             />
             {
               isContextMenuOpen
@@ -244,6 +249,12 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               <UserCardContextMenu menuActions={menuActions} userProfile={userProfile}/>
             }
           </span>
+        }
+        {
+          !menuActions &&
+          <span
+            style={{ padding: '0px 0px 0px 35px' }}
+          />
         }
       </React.Fragment>
     )
