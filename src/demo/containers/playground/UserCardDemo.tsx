@@ -95,7 +95,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <br/>
             <br/>
             <UserCard
-              ownerId={'273960'}
+              ownerId={'345424'}
               size={SynapseConstants.LARGE_USER_CARD}
               menuActions={[
                 {
@@ -144,7 +144,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                           callback: (userProfile) => { console.log(userProfile) }
                         }
                       ]}
-                      ownerId={'1131050'}
+                      ownerId={'273960'}
                       size={SynapseConstants.MEDIUM_USER_CARD}
                     />
                   </div>
