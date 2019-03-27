@@ -7,6 +7,8 @@ import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
+// @ts-ignore
+import IconCopy  from '../assets/icons/IconCopy'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -116,11 +118,12 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     if (preSignedURL) {
       img = (
         <img
-          style={{ borderRadius: '50%', padding: '5px' }}
+          style={{ borderRadius: '50%' }}
           width={diameter}
           height={diameter}
           alt="User Profile"
           src={preSignedURL}
+          className="SRC-userImg"
         />
       )
     } else {
@@ -171,6 +174,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
         <a
           href={link}
           onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+          className={isLarge ? 'SRC-isLargeCard' : ''}
         >
           {img}
         </a>
@@ -202,19 +206,17 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             !hideEmail
             &&
             <p
-              className={`${isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color'} SRC-hand-cursor SRC-showGrayOnHover
-              SRC-eqHeightRow SRC-inlineFlex SRC-emailText`}
+              className={`${isLarge ? 'SRC-whiteText' : 'SRC-primary-text-color SRC-primary-color-hover'}
+              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
               onClick={this.copyToClipboard(email)}
               onKeyPress={this.copyToClipboard(email)}
               tabIndex={0}
               ref={this.htmlDivRef}
             >
+              <span style={{ paddingRight: '5px' }}>
               {`${userName}@synapse.org`}
-              <FontAwesomeIcon
-                style={{ marginLeft: '4px' }}
-                color={isLarge ? 'white' : 'lightgray'}
-                icon="copy"
-              />
+              </span>
+              {IconCopy}
             </p>
           }
         </div>

@@ -442,6 +442,12 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   .SRC-primary-text-color {
     color: $primaryColor;
   }
+  
+  // These classes have to get overriden
+  .SRC-primary-color-hover:hover * {
+    color: $primaryColor;
+    fill: $primaryColor;
+  }
 
  .SRC-primary-background-color {
    background-color: $primaryColor;
@@ -460,10 +466,12 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    }
  }
 
- .SRC-marginFifteen {
-   margin-left: 15px;
-   margin-right: 15px;
- }
+// end overrides
+
+.SRC-marginFifteen {
+  margin-left: 15px;
+  margin-right: 15px;
+}
 
 
  button.SRC-roundBorder {
@@ -897,10 +905,30 @@ div.SRC-logo-cursor * {
   UserCard Styling
 */
 
-svg.SRC-userImg {
+.SRC-userImg {
   overflow: visible;
+  text-transform: uppercase;
 }
 
+img.SRC-userImg {
+  border: 1px solid #DCDCDC;
+}
+
+svg.SRC-userImg {
+  stroke: #DCDCDC;
+  stroke-width: 1px;
+}
+
+.SRC-isLargeCard {
+  img {
+    border: 1px solid white;
+  }
+  svg {
+    stroke: white;
+  }
+}
+
+ 
 .SRC-userCard {
   display: inline-flex;
   align-items: center;
@@ -1002,12 +1030,6 @@ svg.SRC-userImg {
   }
 }
 
-.SRC-showGrayOnHover:hover {
-  & > svg {
-    color: gray;
-  }
-}
-
 // https://material.io/design/components/snackbars.html#spec
 .SRC-modal {
   position: fixed;
@@ -1020,7 +1042,7 @@ svg.SRC-userImg {
   display: flex;
   align-items: center;
   justify-content: left;
-  background: #25A2B7;
+  background: #1A1C29;
   color: white;
   width: 344px;
   height: 48px;
@@ -1048,11 +1070,25 @@ svg.SRC-userImg {
 }
 
 .SRC-card-metadata-title {
-  color: #ABABAC;
+  color: #ABABAC; 
+  margin-top: 16px; 
+  margin-bottom: 0px;
 }
 
 .SRC-cardMetaData {
   padding: 10px 33px;
   max-height: 558px;
   overflow-y: auto;
+}
+
+.SRC-emailText:hover {
+  text-decoration: underline;
+}
+
+.SRC-cardSvg.SRC-whiteText > svg {
+  opacity: 0.5;
+}
+
+.SRC-cardSvg:hover > svg {
+  opacity: 1;
 }

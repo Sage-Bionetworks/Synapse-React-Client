@@ -10,6 +10,14 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
   }
   public render() {
     const goToGoole = (userProfile: UserProfile) => { console.log('userProfile = ', userProfile) }
+    const profiles = [
+      '3376985',
+      '1131050',
+      '273960',
+      '3374422',
+      '1131050',
+      '273960'
+    ]
     return (
       <React.Fragment>
         <div className="container">
@@ -126,7 +134,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                   <div className="SRC-grid-item" key={index}>
                     <UserCard
                       profileClickHandler={goToGoole}
-                      hideEmail={true}
+                      hideEmail={(index % 2) === 0}
                       menuActions={[
                         {
                           field: 'Projects',
@@ -144,7 +152,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                           callback: (userProfile) => { console.log(userProfile) }
                         }
                       ]}
-                      ownerId={'273960'}
+                      ownerId={profiles[index]}
                       size={SynapseConstants.MEDIUM_USER_CARD}
                     />
                   </div>

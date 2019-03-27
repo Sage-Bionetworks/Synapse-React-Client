@@ -370,6 +370,10 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-text-color {
   color: #D53F77; }
 
+.SRC-primary-color-hover:hover * {
+  color: #D53F77;
+  fill: #D53F77; }
+
 .SRC-primary-background-color {
   background-color: #D53F77; }
 
@@ -728,8 +732,22 @@ div.SRC-logo-cursor * {
 /*
   UserCard Styling
 */
+.SRC-userImg {
+  overflow: visible;
+  text-transform: uppercase; }
+
+img.SRC-userImg {
+  border: 1px solid #DCDCDC; }
+
 svg.SRC-userImg {
-  overflow: visible; }
+  stroke: #DCDCDC;
+  stroke-width: 1px; }
+
+.SRC-isLargeCard img {
+  border: 1px solid white; }
+
+.SRC-isLargeCard svg {
+  stroke: white; }
 
 .SRC-userCard {
   display: inline-flex;
@@ -815,9 +833,6 @@ svg.SRC-userImg {
   .SRC-grid-item {
     flex-basis: 100%; } }
 
-.SRC-showGrayOnHover:hover > svg {
-  color: gray; }
-
 .SRC-modal {
   position: fixed;
   left: 0;
@@ -829,7 +844,7 @@ svg.SRC-userImg {
   display: flex;
   align-items: center;
   justify-content: left;
-  background: #25A2B7;
+  background: #1A1C29;
   color: white;
   width: 344px;
   height: 48px;
@@ -852,9 +867,20 @@ svg.SRC-userImg {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
 
 .SRC-card-metadata-title {
-  color: #ABABAC; }
+  color: #ABABAC;
+  margin-top: 16px;
+  margin-bottom: 0px; }
 
 .SRC-cardMetaData {
   padding: 10px 33px;
   max-height: 558px;
   overflow-y: auto; }
+
+.SRC-emailText:hover {
+  text-decoration: underline; }
+
+.SRC-cardSvg.SRC-whiteText > svg {
+  opacity: 0.5; }
+
+.SRC-cardSvg:hover > svg {
+  opacity: 1; }
