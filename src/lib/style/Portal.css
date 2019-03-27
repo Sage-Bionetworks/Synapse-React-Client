@@ -733,7 +733,7 @@ div.SRC-logo-cursor * {
   UserCard Styling
 */
 .SRC-userImg {
-  overflow: visible;
+  overflow: visible !important;
   text-transform: uppercase; }
 
 img.SRC-userImg {
