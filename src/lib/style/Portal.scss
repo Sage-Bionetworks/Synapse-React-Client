@@ -933,6 +933,11 @@ svg.SRC-userImg {
   display: inline-flex;
   align-items: center;
 }
+
+.SRC-userCard svg {
+  text-transform: uppercase;
+}
+
 .SRC-userCardName {
   font-weight: bold;
   font-size: 16px;
