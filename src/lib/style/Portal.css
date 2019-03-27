@@ -879,7 +879,7 @@ svg.SRC-userImg {
 .SRC-emailText:hover {
   text-decoration: underline; }
 
-.SRC-cardSvg > svg {
+.SRC-cardSvg.SRC-whiteText > svg {
   opacity: 0.5; }
 
 .SRC-cardSvg:hover > svg {
