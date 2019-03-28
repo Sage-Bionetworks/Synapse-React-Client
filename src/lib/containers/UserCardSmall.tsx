@@ -77,7 +77,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
           y={'55%'}
           fill={'white'}
         >
-          {userProfile.firstName[0] || userProfile.userName[0]}
+          {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
         </text>
       </svg>
     )
@@ -90,7 +90,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     >
       {img}
         <ReactTooltip delayShow={1000} id={label} multiline={true}/>
-        {!hideText && <span className="SRC-primary-text-color" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@ ${userProfile.firstName} ${userProfile.lastName} (${userProfile.userName})`}</span>}
+        {!hideText && <span className="SRC-primary-text-color" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@${userProfile.userName}`}</span>}
     </a>
   )
 }
