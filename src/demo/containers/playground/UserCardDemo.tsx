@@ -15,8 +15,8 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
       '1131050',
       '273960',
       '3374422',
-      '1131050',
-      '273960'
+      '273950',
+      '273950'
     ]
     return (
       <React.Fragment>
@@ -25,7 +25,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <h3>User Card Small </h3>
              <p> sans photo- </p>
             <UserCard
-              ownerId={'3374422'}
+              ownerId={'273950'}
               size={SynapseConstants.SMALL_USER_CARD}
               profileClickHandler={goToGoole}
             />

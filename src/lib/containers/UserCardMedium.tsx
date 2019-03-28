@@ -147,7 +147,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               y={'50%'}
               fill={'white'}
             >
-              {userProfile.firstName[0] || userProfile.userName[0]}
+              {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
             </text>
           </svg>
       )
