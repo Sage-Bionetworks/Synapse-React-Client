@@ -13,7 +13,7 @@ export default class CardContainerLogicDemo extends React.Component {
     return (
         <CardContainerLogic
           type={SynapseConstants.CSBC_PUBLICATION}
-          sql={`SELECT * FROM syn10923842 WHERE ( ( "experimentalStrategy" = 'ChIPSeq' ) )`}
+          sql={'SELECT * FROM syn10923842'}
           unitDescription="studies"
         />
     )
