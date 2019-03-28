@@ -37,9 +37,9 @@ $text-color-lighter: #898989;
   h3{
     margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
     padding: 0;
+    font-size: $text-size-title !important;
     a {
         margin: 0;
-        font-size: $text-size-title !important;
         font-weight: 700;
       }
     }
@@ -118,7 +118,7 @@ $text-color-lighter: #898989;
       > * {
         min-width: 100px;
       }
-      &.extraWide > * {
+      & .extraWide {
         min-width: 150px;
       }
     }

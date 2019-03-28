@@ -24,20 +24,27 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
     const { data, schema } = this.props
     const title = data[schema.Title]
     const authors = data[schema.Authors]
-    const diseaseType = data[schema.diseaseType]
     const experimentalStrategy = data[schema.experimentalStrategy]
-    const pubMed = data[schema.PubMed]
-    const site = data[schema.site]
     const doi = data[schema.doi]
     const consortum = data[schema.Consortum]
-    const grantType = data[schema.grantType]
-    const grant = data[schema.grant]
     const datasets = data[schema.datasets]
+    const journal = data[schema.Journal]
+    const year = data[schema['Publication Year']]
+    const grantType = data[schema.grantType]
+    const theme = data[schema.Theme]
+    const diseaseType = data[schema.diseaseType]
+    const studies = data[schema.studies]
 
     const values = [
-      ['DISEASE', diseaseType], ['EXPERIMENTAL STRATEGY', experimentalStrategy],
-      ['SITE', site], ['DOI', doi], ['PROGRAM', consortum],
-      ['GRANT TYPE', grantType], ['GRANT', grant], ['DATASETS', datasets]
+      ['Journal', journal],
+      ['Publication Year', year],
+      ['Consortium', consortum],
+      ['Grant Type', grantType],
+      ['Theme', theme],
+      ['Disease', diseaseType],
+      ['Experimental Strategy', experimentalStrategy],
+      ['datasets', datasets],
+      ['studies', studies]
     ]
     return (
       <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
@@ -47,10 +54,17 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
           <div className="SRC-cardContent">
               <div className="SRC-type">Publication</div>
               <div className="SRC-title">
-                <h3 style={{ margin: 'none' }}>
-                  <a className="SRC-primary-text-color" target="_blank" href={doi ? `https://dx.doi.org/${doi}` : pubMed}>
-                    {title}
-                  </a>
+                <h3 className="SRC-boldText SRC-primary-text-color" style={{ margin: 'none' }}>
+                  {
+                    doi &&
+                    (<a target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
+                      {title}
+                    </a>)
+                  }
+                  {
+                    !doi &&
+                    title
+                  }
                 </h3>
               </div>
               <p>
@@ -59,7 +73,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
                 </i>
               </p>
           </div>
-          <Utils.CardFooter values={values} />
+          <Utils.CardFooter extraWide={true} values={values} />
       </div>
     )
   }

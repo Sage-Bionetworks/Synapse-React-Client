@@ -5,7 +5,7 @@ type CardFooterProps = {
   extraWide?: boolean
 }
 
-const getFormattedRows = (values: string [][]) => {
+const getFormattedRows = (values: string [][], extraWide = false) => {
   return values.map((kv, index) => {
     if (kv[0].toUpperCase() === 'DOI') {
       return (
@@ -20,9 +20,10 @@ const getFormattedRows = (values: string [][]) => {
         </div>
       )
     }
+    const extraWideClass = extraWide ? 'extraWide' : ''
     return (
       <div key={index} className={'row'}>
-          <div className="SRC-verticalAlignTop SRC-row-label"> {kv[0]} </div>
+          <div className={`SRC-verticalAlignTop SRC-row-label ${extraWideClass}`}> {kv[0]} </div>
           <div className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </div>
       </div>
     )
@@ -47,7 +48,7 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) =
   }
   return (
     <div className="SRC-cardMetadata">
-      {getFormattedRows(valuesFiltered)}
+      {getFormattedRows(valuesFiltered, extraWide)}
     </div>
   )
 }
