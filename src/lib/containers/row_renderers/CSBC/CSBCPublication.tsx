@@ -54,10 +54,10 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
           <div className="SRC-cardContent">
               <div className="SRC-type">Publication</div>
               <div className="SRC-title">
-                <h3 className="SRC-boldText SRC-primary-text-color" style={{ margin: 'none' }}>
+                <h3 className="SRC-boldText" style={{ margin: 'none' }}>
                   {
                     doi &&
-                    (<a target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
+                    (<a className="SRC-primary-text-color" target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
                       {title}
                     </a>)
                   }
