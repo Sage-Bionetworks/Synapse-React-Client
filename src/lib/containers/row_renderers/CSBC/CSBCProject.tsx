@@ -60,7 +60,7 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
               <div className="SRC-type">Project</div>
               <div className="SRC-title">
                   <h3>
-                      <a target="_blank" href={link}>
+                      <a className="SRC-primary-text-color" target="_blank" href={link}>
                           {name}
                       </a>
                   </h3>
