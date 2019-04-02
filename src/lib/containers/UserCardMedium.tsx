@@ -138,6 +138,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             <text
               textAnchor={'middle'}
               alignmentBaseline={'middle'}
+              dominantBaseline={'middle'}
               fontSize={26}
               x={'50%'}
               y={'50%'}

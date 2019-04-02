@@ -73,7 +73,8 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
           textAnchor={'middle'}
           alignmentBaseline={'middle'}
           x={'50%'}
-          y={'55%'}
+          y={'50%'}
+          dominantBaseline={'middle'}
           fill={'white'}
         >
           {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}

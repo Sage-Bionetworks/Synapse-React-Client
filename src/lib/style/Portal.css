@@ -769,7 +769,8 @@ svg.SRC-userImg {
   align-items: center; }
 
 .SRC-userCard svg {
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  overflow: visible !important; }
 
 .SRC-userCardName {
   font-weight: bold;
