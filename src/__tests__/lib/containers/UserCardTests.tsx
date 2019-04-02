@@ -105,7 +105,7 @@ describe('it creates the correct UI for the small card', () => {
     const { wrapper } = createSmallComponent(
       { ...props, preSignedURL : 'link-to-user-img.com' }
     )
-    expect(wrapper.render().find('img')).toHaveLength(1)
+    expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
   })
 
   it("doesn't hide text by default", () => {
@@ -134,7 +134,7 @@ describe('it creates the correct UI for the medium card', () => {
 
   it('displays an img for a user with an img set', () => {
     const { wrapper } = createMediumComponent({ ...props, preSignedURL: 'my-img-url' })
-    expect(wrapper.render().find('img')).toHaveLength(1)
+    expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
   })
 
   it("doesn't hide user email by default", () => {
