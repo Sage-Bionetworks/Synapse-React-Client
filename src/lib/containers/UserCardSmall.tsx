@@ -70,6 +70,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
           fill={color}
         />
         <text
+          fontSize={'14px'}
           textAnchor={'middle'}
           alignmentBaseline={'middle'}
           x={'50%'}
