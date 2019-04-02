@@ -59,6 +59,25 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     this.switchFacet = this.switchFacet.bind(this)
   }
 
+  componentDidUpdate(_prevProps: QueryWrapperMenuProps, prevState: MenuState) {
+    /*
+       A component updates from either the props changing OR the state changing.
+       The state here is a single item, menuIndex, if that hasn't changed then the props have.
+       Portals currently use the QueryWrapperMenu such that the props changes on page navigation,
+       in which case we want to reset the menuIndex back to the first facet item.
+       A future alternative would be to hold the menuIndex value on a per page basis, but that would
+       be more difficult.
+    */
+    const hasStateChanged = prevState.menuIndex !== this.state.menuIndex
+    if (!hasStateChanged  && this.state.menuIndex !== 0) {
+      // check this isn't an update from the state changing
+      // and that we haven't already set the menuIndex back to zero
+      this.setState({
+        menuIndex: 0
+      })
+    }
+  }
+
   /**
    * Handle the user hovering over a facet selection, it must be programatically
    * handled because the color used is dynamic
@@ -76,7 +95,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    *
    * @memberof Menu
    */
-  public switchFacet = (menuIndex: number) => (_: React.MouseEvent<HTMLDivElement>) => {
+  public switchFacet = (menuIndex: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
     this.setState({ menuIndex })
   }
 
@@ -86,12 +105,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
     return (
       <div className="container-fluid">
-          <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
-              {menuDropdown}
-          </div>
-          <div className="col-xs-10">
-              {queryWrapper}
-          </div>
+        <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
+          {menuDropdown}
+        </div>
+        <div className="col-xs-10">
+          {queryWrapper}
+        </div>
       </div>
     )
   }
@@ -190,8 +209,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
+          className={`SRC-no-outline SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
           onClick={this.switchFacet(index)}
+          onKeyPress={this.switchFacet(index)}
+          role="button"
+          tabIndex={0}
           style={style}
         >
           {facetDisplayValue}
