@@ -51,12 +51,11 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   if (preSignedURL) {
     marginLeft = '3px'
     img = (
-      <img
+      <div
+        className="SRC-userImgSmall"
+        style={{ borderRadius: '50%', backgroundImage: `url(${preSignedURL})` }}
         data-for={label}
         data-tip={label}
-        className="userProfileImage"
-        alt="User Profile"
-        src={preSignedURL}
       />
     )
   } else {

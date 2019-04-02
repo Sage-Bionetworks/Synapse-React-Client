@@ -733,17 +733,32 @@ div.SRC-logo-cursor * {
   UserCard Styling
 */
 .SRC-userImg {
-  overflow: visible !important;
   text-transform: uppercase; }
 
-img.SRC-userImg {
+.SRC-userImgSmall {
+  border-radius: 50%;
+  height: 23px;
+  width: 23px;
+  min-width: 23px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid #DCDCDC; }
+
+div.SRC-userImg {
+  text-transform: uppercase;
+  height: 80px;
+  width: 80px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   border: 1px solid #DCDCDC; }
 
 svg.SRC-userImg {
   stroke: #DCDCDC;
   stroke-width: 1px; }
 
-.SRC-isLargeCard img {
+.SRC-isLargeCard div {
   border: 1px solid white; }
 
 .SRC-isLargeCard svg {
@@ -774,7 +789,8 @@ svg.SRC-userImg {
   flex-direction: column;
   padding-left: 17px; }
   .SRC-cardContent p {
-    margin: 0px 0px 4px 0px; }
+    margin: 0px 0px 4px 0px;
+    line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;

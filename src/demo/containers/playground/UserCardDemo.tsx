@@ -14,9 +14,10 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
       '3376985',
       '1131050',
       '273960',
+      '3346401',
       '3374422',
       '273950',
-      '273950'
+      '273950',
     ]
     return (
       <React.Fragment>
@@ -43,12 +44,16 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
               size={SynapseConstants.SMALL_USER_CARD}
             />
             <UserCard
-              ownerId={'1131050'}
+              ownerId={'3346401'}
               hideTooltip={true}
               size={SynapseConstants.SMALL_USER_CARD}
             />
             <hr/>
             <p> with photo- </p>
+            <UserCard
+              ownerId={'3346401'}
+              size={SynapseConstants.SMALL_USER_CARD}
+            />
             <UserCard
               ownerId={'1131050'}
               size={SynapseConstants.SMALL_USER_CARD}
