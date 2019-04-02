@@ -51,12 +51,11 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   if (preSignedURL) {
     marginLeft = '3px'
     img = (
-      <img
+      <div
+        className="SRC-userImgSmall"
+        style={{ borderRadius: '50%', backgroundImage: `url(${preSignedURL})` }}
         data-for={label}
         data-tip={label}
-        className="userProfileImage"
-        alt="User Profile"
-        src={preSignedURL}
       />
     )
   } else {
@@ -74,7 +73,8 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
           textAnchor={'middle'}
           alignmentBaseline={'middle'}
           x={'50%'}
-          y={'55%'}
+          y={'50%'}
+          dominantBaseline={'middle'}
           fill={'white'}
         >
           {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}

@@ -906,11 +906,30 @@ div.SRC-logo-cursor * {
 */
 
 .SRC-userImg {
-  overflow: visible !important;
   text-transform: uppercase;
 }
 
-img.SRC-userImg {
+// this avoid stretching the img at the cost of accessbility
+// object-fit on a img would work but this has limited browser
+// support
+.SRC-userImgSmall {
+  border-radius: 50%;
+  height: 23px;
+  width: 23px;
+  min-width: 23px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid #DCDCDC;
+}
+
+div.SRC-userImg {
+  text-transform: uppercase;
+  height: 80px;
+  width: 80px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   border: 1px solid #DCDCDC;
 }
 
@@ -920,7 +939,7 @@ svg.SRC-userImg {
 }
 
 .SRC-isLargeCard {
-  img {
+  div {
     border: 1px solid white;
   }
   svg {
@@ -936,6 +955,7 @@ svg.SRC-userImg {
 
 .SRC-userCard svg {
   text-transform: uppercase;
+  overflow: visible !important;
 }
 
 .SRC-userCardName {
@@ -959,6 +979,7 @@ svg.SRC-userImg {
   padding-left: 17px;
   p {
     margin: 0px 0px 4px 0px;
+    line-height: 120%;
   }
 }
 

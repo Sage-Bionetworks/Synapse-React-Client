@@ -102,7 +102,7 @@
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
-    "prepublish": "npm run build && npm run test:coverage",
+    "prepublishOnly": "npm run build && npm run test:coverage",
     "predeploy": "npm run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts-ts build",
     "deploy": "gh-pages -d build",
