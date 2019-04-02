@@ -53,7 +53,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     img = (
       <div
         className="SRC-userImgSmall"
-        style={{ borderRadius: '50%', backgroundImage: `url(${preSignedURL})` }}
+        style={{ backgroundImage: `url(${preSignedURL})` }}
         data-for={label}
         data-tip={label}
       />
