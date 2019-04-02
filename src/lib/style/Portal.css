@@ -904,3 +904,6 @@ svg.SRC-userImg {
 
 .SRC-cardSvg:hover > svg {
   opacity: 1; }
+
+.SRC-no-outline:focus {
+  outline: none; }
