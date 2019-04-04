@@ -1,6 +1,7 @@
 import {
   getIsValueSelected,
-  readFacetValues
+  readFacetValues,
+  SyntheticHTMLInputElement
 } from '../../../lib/utils/modules/facetUtils'
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
@@ -100,6 +101,22 @@ describe('getIsValueSelected works', () => {
 })
 
 describe('readFacetValues works', () => {
-  readFacetValues
+
+  it('selects nothing without a selection made', () => {
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+      {
+        checked: false,
+        value: 'value'
+      },
+      {
+        checked: false,
+        value: 'value'
+      },
+      {
+        checked: false,
+        value: 'value'
+      },
+    ]
+  })
 
 })
