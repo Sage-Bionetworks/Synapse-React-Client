@@ -35,8 +35,9 @@ const CardFooter: React.SFC<CardFooterProps> = ({ values, extraWide = false }) =
   if (valuesFiltered.length > 4) {
     // split into two even sections
     const length = valuesFiltered.length
-    const firstHalf = getFormattedRows(valuesFiltered.slice(0, length / 2))
-    const secondHalf = getFormattedRows(valuesFiltered.slice(length / 2))
+    // put the majority on the left hand side
+    const firstHalf = getFormattedRows(valuesFiltered.slice(0, (length / 2) + 1))
+    const secondHalf = getFormattedRows(valuesFiltered.slice((length / 2) + 1))
     return(
       <div className="SRC-cardMetadataColumn">
         <div className="SRC-halfWidth">
