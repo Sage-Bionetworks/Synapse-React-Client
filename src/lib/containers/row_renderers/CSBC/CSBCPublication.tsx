@@ -42,7 +42,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
       ['Grant Type', grantType],
       ['Theme', theme],
       ['Disease', diseaseType],
-      ['Experimental Strategy', experimentalStrategy],
+      ['Assay', experimentalStrategy],
       ['datasets', datasets],
       ['studies', studies]
     ]
