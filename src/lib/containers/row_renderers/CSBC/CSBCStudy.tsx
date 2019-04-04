@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { PUBLICATION } from '../../../utils/SynapseConstants'
+import { STUDY } from '../../../utils/SynapseConstants'
 import * as Utils from './../utils'
 
 type CSBCPublicationState = {
@@ -18,60 +18,60 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
     this.state = {
       showMore: false
     }
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  public handleClick(_event: React.SyntheticEvent) {
+    this.setState({
+      showMore: !this.state.showMore
+    })
   }
 
   public render() {
     const { data, schema } = this.props
-    const title = data[schema.Title]
-    const authors = data[schema.Authors]
-    const experimentalStrategy = data[schema.experimentalStrategy]
+    const name = data[schema.name]
+    const assay = data[schema.experimentalStrategy]
     const doi = data[schema.doi]
-    const consortum = data[schema.Consortum]
-    const datasets = data[schema.datasets]
-    const journal = data[schema.Journal]
-    const year = data[schema['Publication Year']]
+    const consortium = data[schema.consortium]
+    const diseaseType = data[schema.tumorType]
+    const centerName = data[schema.centerName]
     const grantType = data[schema.grantType]
     const theme = data[schema.Theme]
-    const diseaseType = data[schema.diseaseType]
-    const studies = data[schema.studies]
+    const description = data[schema.description]
 
     const values = [
-      ['Journal', journal],
-      ['Publication Year', year],
-      ['Consortium', consortum],
-      ['Grant Type', grantType],
       ['Theme', theme],
-      ['Disease', diseaseType],
-      ['Experimental Strategy', experimentalStrategy],
-      ['datasets', datasets],
-      ['studies', studies]
+      ['Assay', assay],
+      ['Disease Type', diseaseType],
+      ['Grant Type', grantType],
+      ['Program', consortium],
     ]
+
     return (
       <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
           <div className="SRC-cardThumbnail">
-              <Utils.Icon type={PUBLICATION} />
+              <Utils.Icon type={STUDY} />
           </div>
           <div className="SRC-cardContent">
-              <div className="SRC-type">Publication</div>
+              <div className="SRC-type"> Study </div>
               <div className="SRC-title">
                 <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
                   {
                     doi &&
                     (<a className="SRC-primary-text-color" target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
-                      {title}
+                      {name}
                     </a>)
                   }
                   {
                     !doi &&
-                    title
+                    name
                   }
                 </h3>
               </div>
-              <p>
-                <i>
-                  {authors}
-                </i>
-              </p>
+              <div className="SRC-author"> {centerName} </div>
+              <span className="SRC-font-size-base">
+                {description}
+              </span>
           </div>
           <Utils.CardFooter extraWide={true} values={values} />
       </div>
