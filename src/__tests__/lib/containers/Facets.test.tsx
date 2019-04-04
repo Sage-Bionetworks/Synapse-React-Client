@@ -23,7 +23,7 @@ describe('it performs basic functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.executeQueryRequest = jest.fn()
   // column name that will get filtered on
-  // const filter = 'tumorType'
+  const filter = 'tumorType'
   // facet 'value' that will get filtered on
   // const JMML = 'JMML'
   // location of JMML in isChecked
@@ -114,19 +114,19 @@ describe('it performs basic functionality', () => {
     expect(wrapper.find(CheckboxGroup)).toHaveLength(1)
   })
 
-  // it('Show All is not present when < 5 facets ', () => {
-  //   const { wrapper } = createShallowComponent(props)
-  //   expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
-  // })
+  it('Show All is not present when < 5 facets ', () => {
+    const { wrapper } = createShallowComponent(props)
+    expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
+  })
 
-  // it('Show All is present when >= 5 facets ', () => {
-  //   const propsWithTumorFacet = {
-  //     ...props,
-  //     filter
-  //   }
-  //   const { wrapper } = createShallowComponent(propsWithTumorFacet)
-  //   expect(wrapper.find('#showAllFacetsButton')).toHaveLength(1)
-  // })
+  it('Show All is present when >= 5 facets ', () => {
+    const propsWithTumorFacet = {
+      ...props,
+      filter
+    }
+    const { wrapper } = createShallowComponent(propsWithTumorFacet)
+    expect(wrapper.find('#showAllFacetsButton')).toHaveLength(1)
+  })
 
   it('Select All works ', () => {
     /* TODO:

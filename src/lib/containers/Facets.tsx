@@ -71,10 +71,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
       isLoading,
       lastFacetSelection,
       columnName: facetColumnResult.columnName,
-      curFacetSelection: {
-        isSelected: facetColumnResultValues.isSelected,
-        facetValue: facetColumnResultValues.value
-      }
+      curFacetSelection: facetColumnResultValues
     })
 
     if (isSelected) {
@@ -194,7 +191,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     })
 
     // read input and fetch data
-    const htmlCheckboxes = ref.current!.querySelectorAll('.SRC-facet-checkboxes')
+    const htmlCheckboxes = Array.from(ref.current!.querySelectorAll('.SRC-facet-checkboxes')) as HTMLInputElement[]
     // queryRequest is a deep clone
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     const { newQueryRequest } = readFacetValues({
