@@ -31,12 +31,12 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
     const { data, schema } = this.props
     const name = data[schema.name]
     const assay = data[schema.experimentalStrategy]
-    const doi = data[schema.doi]
     const consortium = data[schema.consortium]
     const diseaseType = data[schema.tumorType]
     const centerName = data[schema.centerName]
     const grantType = data[schema.grantType]
     const theme = data[schema.Theme]
+    const id = data[schema.id]
     const description = data[schema.description]
 
     const values = [
@@ -57,13 +57,13 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
               <div className="SRC-title">
                 <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
                   {
-                    doi &&
-                    (<a className="SRC-primary-text-color" target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
+                    id &&
+                    (<a className="SRC-primary-text-color" target="_blank" href={id ? `https://www.synapse.org/#!Synapse:${id}` : undefined}>
                       {name}
                     </a>)
                   }
                   {
-                    !doi &&
+                    !id &&
                     name
                   }
                 </h3>
