@@ -1,5 +1,4 @@
 import { FacetSelection } from '../../containers/QueryWrapper'
-// import { SELECT_ALL } from '../../containers/SynapseTable'
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
 import { FaceFacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
 import { SELECT_SINGLE_FACET } from '../../containers/Facets'

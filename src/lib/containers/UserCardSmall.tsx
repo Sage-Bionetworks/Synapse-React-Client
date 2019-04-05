@@ -38,7 +38,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     } else if (userProfile.firstName && userProfile.lastName) {
       label += (`${userProfile.firstName} ${userProfile.lastName}`)
     }
-    if (userProfile.userName && !userProfile.userName.includes('TEMPORARY-')) {
+    if (userProfile.userName) {
       label += ` (${userProfile.userName})`
     }
     if (userProfile.position) {
