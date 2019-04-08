@@ -1,6 +1,6 @@
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnValuesRequest.html
 
-export type FaceFacetColumnValuesRequest = {
+export type FacetColumnValuesRequest = {
   concreteType?: string
   columnName?: string	    // The name of the faceted column
   facetValues?: any	// The set of facet values that were selected
@@ -15,4 +15,4 @@ export type FacetColumnRangeRequest = {
 }
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnRequest.html
-export type FacetColumnRequest = FaceFacetColumnValuesRequest & FacetColumnRangeRequest
+export type FacetColumnRequest = FacetColumnValuesRequest & FacetColumnRangeRequest

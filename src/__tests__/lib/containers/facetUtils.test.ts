@@ -6,6 +6,8 @@ import {
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
 import { SELECT_SINGLE_FACET } from '../../../lib/containers/Facets'
+import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest'
+import { FacetColumnValuesRequest } from 'src/lib/utils/jsonResponses/Table/FacetColumnRequest'
 
 describe('getIsValueSelected works', () => {
   const columnName = 'projectStatus'
@@ -102,21 +104,144 @@ describe('getIsValueSelected works', () => {
 
 describe('readFacetValues works', () => {
 
+  const queryRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    partMask: 0x2,
+    query: {
+      sql: 'SELECT * FROM syn123456789'
+    }
+  }
+
   it('selects nothing without a selection made', () => {
     const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
       {
         checked: false,
-        value: 'value'
+        value: 'stub1'
       },
       {
         checked: false,
-        value: 'value'
+        value: 'stub2'
       },
       {
         checked: false,
-        value: 'value'
+        value: 'stub2'
       },
     ]
+
+    /* When we test the method we don't have to worry about stubbing actual
+    data, its sufficient to stub only the parts we need.
+    */
+    const filter = 'FILTER_STUB'
+    const { newQueryRequest } = readFacetValues({
+      queryRequest,
+      filter,
+      htmlCheckboxes: syntheticHTMLInputElement,
+      selector: ''
+    })
+    const expectedRequest = [{
+      columnName: filter,
+      facetValues: []  // should be empty, isSelected is false for all values
+    }] as FacetColumnValuesRequest[]
+    // sanity check
+    expect(newQueryRequest).toBeDefined()
+    expect(expect.objectContaining(
+      {
+        query: expect.objectContaining(
+          {
+            selectedFacets: expect.arrayContaining(expectedRequest)
+          }
+        )
+      }
+    ))
   })
 
+  it('contains a single facet with a single checkbox clicked', () => {
+    const singleSelection = 'stub1'
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+      {
+        checked: true,
+        value: singleSelection
+      },
+      {
+        checked: false,
+        value: 'stub2'
+      },
+      {
+        checked: false,
+        value: 'stub2'
+      },
+    ]
+
+    /* When we test the method we don't have to worry about stubbing actual
+    data, its sufficient to stub only the parts we need.
+    */
+    const filter = 'FILTER_STUB'
+    const { newQueryRequest } = readFacetValues({
+      queryRequest,
+      filter,
+      htmlCheckboxes: syntheticHTMLInputElement,
+      selector: ''
+    })
+    const expectedRequest = [{
+      columnName: filter,
+      facetValues: [singleSelection]  // should be empty, isSelected is false for all values
+    }] as FacetColumnValuesRequest[]
+    // sanity check
+    expect(newQueryRequest).toBeDefined()
+    expect(expect.objectContaining(
+      {
+        query: expect.objectContaining(
+          {
+            selectedFacets: expect.arrayContaining(expectedRequest)
+          }
+        )
+      }
+    ))
+  })
+
+  it('contains multiple facet values with multiple checkboxes selected', () => {
+    const stub1 = 'stub1'
+    const stub2 = 'stub2'
+    const stub3 = 'stub3'
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+      {
+        checked: true,
+        value: stub1
+      },
+      {
+        checked: false,
+        value: stub2
+      },
+      {
+        checked: false,
+        value: stub3
+      },
+    ]
+
+    /* When we test the method we don't have to worry about stubbing actual
+    data, its sufficient to stub only the parts we need.
+    */
+    const filter = 'FILTER_STUB'
+    const { newQueryRequest } = readFacetValues({
+      queryRequest,
+      filter,
+      htmlCheckboxes: syntheticHTMLInputElement,
+      selector: ''
+    })
+    const expectedRequest = [{
+      columnName: filter,
+      facetValues: [stub1, stub2, stub3]  // should be empty, isSelected is false for all values
+    }] as FacetColumnValuesRequest[]
+    // sanity check
+    expect(newQueryRequest).toBeDefined()
+    expect(expect.objectContaining(
+      {
+        query: expect.objectContaining(
+          {
+            selectedFacets: expect.arrayContaining(expectedRequest)
+          }
+        )
+      }
+    ))
+  })
 })

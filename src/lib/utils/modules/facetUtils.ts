@@ -1,6 +1,6 @@
 import { FacetSelection } from '../../containers/QueryWrapper'
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
-import { FaceFacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
+import { FacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
 import { SELECT_SINGLE_FACET } from '../../containers/Facets'
 import { FacetColumnResultValueCount } from '../jsonResponses/Table/FacetColumnResult'
 
@@ -37,10 +37,17 @@ export const getIsValueSelected = ({
     }
   }
   return curFacetSelection.isSelected
+
+}
+
+export type SyntheticHTMLInputElement = {
+  value: string
+  checked: boolean
 }
 
 /**
- * Function reads over a set of checkboxes and then de
+ * Function reads over a set of checkboxes and then returns a corresponding
+ * queryRequest given the state of the prior queryRequest
  *   htmlCheckboxes: any,
  *   selector : string,
  *   queryRequest: QueryBundleRequest,
@@ -56,7 +63,7 @@ export const readFacetValues = ({
   filter,
   value
 }: {
-  htmlCheckboxes: HTMLInputElement [],
+  htmlCheckboxes: SyntheticHTMLInputElement [],
   selector : string,
   queryRequest: QueryBundleRequest,
   filter: string,
@@ -82,12 +89,12 @@ export const readFacetValues = ({
 
   const specificFacet = selectedFacets!.find(el => el.columnName === filter)!
   if (!specificFacet) {
-    const faceFacetColumnValuesRequest: FaceFacetColumnValuesRequest =  {
+    const facetColumnValuesRequest: FacetColumnValuesRequest =  {
       facetValues,
       concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
       columnName: filter
     }
-    selectedFacets.push(faceFacetColumnValuesRequest)
+    selectedFacets.push(facetColumnValuesRequest)
     // align the reference to selectedFacets
     newQueryRequest.query.selectedFacets = selectedFacets
   } else {

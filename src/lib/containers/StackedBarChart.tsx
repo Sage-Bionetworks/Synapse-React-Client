@@ -265,10 +265,7 @@ export default class StackedBarChart extends
                     isLoading,
                     lastFacetSelection,
                     columnName: filter,
-                    curFacetSelection: {
-                      isSelected: obj.isSelected,
-                      facetValue: obj.value
-                    }
+                    curFacetSelection: obj
                   })
                   if (isValueSelected) {
                     rectStyle = {

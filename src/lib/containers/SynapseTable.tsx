@@ -724,7 +724,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       facetValue?: string,
       selector?: string,
     }) => (_: React.SyntheticEvent<HTMLElement>) => {
-      const htmlCheckboxes = ref.current!.querySelectorAll('.SRC-facet-checkboxes')
+      const htmlCheckboxes = Array.from(ref.current!.querySelectorAll('.SRC-facet-checkboxes')) as HTMLInputElement []
       const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
       const { isAllFilterSelectedForFacet } = this.props
       const { newQueryRequest } = readFacetValues({
