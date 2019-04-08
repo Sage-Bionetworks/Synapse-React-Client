@@ -103,7 +103,10 @@ describe('getIsValueSelected works', () => {
 })
 
 describe('readFacetValues works', () => {
-
+  /*
+    When we test this method we don't have to worry about stubbing actual
+    data, its sufficient to stub only the parts we need.
+  */
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: 0x2,
@@ -128,9 +131,6 @@ describe('readFacetValues works', () => {
       },
     ]
 
-    /* When we test the method we don't have to worry about stubbing actual
-    data, its sufficient to stub only the parts we need.
-    */
     const filter = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
@@ -144,7 +144,7 @@ describe('readFacetValues works', () => {
     }] as FacetColumnValuesRequest[]
     // sanity check
     expect(newQueryRequest).toBeDefined()
-    expect(expect.objectContaining(
+    expect(newQueryRequest).toMatchObject(
       {
         query: expect.objectContaining(
           {
@@ -152,7 +152,7 @@ describe('readFacetValues works', () => {
           }
         )
       }
-    ))
+    )
   })
 
   it('contains a single facet with a single checkbox clicked', () => {
@@ -172,9 +172,6 @@ describe('readFacetValues works', () => {
       },
     ]
 
-    /* When we test the method we don't have to worry about stubbing actual
-    data, its sufficient to stub only the parts we need.
-    */
     const filter = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
@@ -184,11 +181,9 @@ describe('readFacetValues works', () => {
     })
     const expectedRequest = [{
       columnName: filter,
-      facetValues: [singleSelection]  // should be empty, isSelected is false for all values
+      facetValues: [singleSelection]
     }] as FacetColumnValuesRequest[]
-    // sanity check
-    expect(newQueryRequest).toBeDefined()
-    expect(expect.objectContaining(
+    expect(newQueryRequest).toMatchObject(
       {
         query: expect.objectContaining(
           {
@@ -196,7 +191,7 @@ describe('readFacetValues works', () => {
           }
         )
       }
-    ))
+    )
   })
 
   it('contains multiple facet values with multiple checkboxes selected', () => {
@@ -218,9 +213,6 @@ describe('readFacetValues works', () => {
       },
     ]
 
-    /* When we test the method we don't have to worry about stubbing actual
-    data, its sufficient to stub only the parts we need.
-    */
     const filter = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
@@ -230,11 +222,9 @@ describe('readFacetValues works', () => {
     })
     const expectedRequest = [{
       columnName: filter,
-      facetValues: [stub1, stub2, stub3]  // should be empty, isSelected is false for all values
+      facetValues: [stub1, stub2, stub3]
     }] as FacetColumnValuesRequest[]
-    // sanity check
-    expect(newQueryRequest).toBeDefined()
-    expect(expect.objectContaining(
+    expect(newQueryRequest).toMatchObject(
       {
         query: expect.objectContaining(
           {
@@ -242,6 +232,48 @@ describe('readFacetValues works', () => {
           }
         )
       }
-    ))
+    )
+  })
+
+  it('contains a single facet value when SELECT_SINGLE_FACET is passed', () => {
+    const stub1 = 'stub1'
+    const stub2 = 'stub2'
+    const stub3 = 'stub3'
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+      {
+        checked: true,
+        value: stub1
+      },
+      {
+        checked: true,
+        value: stub2
+      },
+      {
+        checked: true,
+        value: stub3
+      },
+    ]
+
+    const filter = 'FILTER_STUB'
+    const { newQueryRequest } = readFacetValues({
+      queryRequest,
+      filter,
+      htmlCheckboxes: syntheticHTMLInputElement,
+      selector: SELECT_SINGLE_FACET,
+      value: stub1
+    })
+    const expectedRequest = [{
+      columnName: filter,
+      facetValues: [stub1]
+    }] as FacetColumnValuesRequest[]
+    expect(newQueryRequest).toMatchObject(
+      {
+        query: expect.objectContaining(
+          {
+            selectedFacets: expect.arrayContaining(expectedRequest)
+          }
+        )
+      }
+    )
   })
 })
