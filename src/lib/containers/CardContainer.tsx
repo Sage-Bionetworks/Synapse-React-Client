@@ -16,13 +16,15 @@ import {
   TOOL,
   CSBC_PROJECT,
   CSBC_PUBLICATION,
-  CSBC_STUDY
+  CSBC_STUDY,
+  CSBC_DATASET
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
 import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
+import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
 
 const PAGE_SIZE: number = 25
 
@@ -62,6 +64,8 @@ export const RowContainer: React.SFC<RowContainerProps> = (props) => {
       return <CSBCPublication {...rest} />
     case CSBC_STUDY:
       return <CSBCStudy {...rest} />
+    case CSBC_DATASET:
+      return <CSBCDataset {...rest} />
     default:
       return (<div />) // this should never happen
   }
@@ -102,7 +106,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         AMP_STUDY,
         CSBC_PROJECT,
         CSBC_PUBLICATION,
-        CSBC_STUDY
+        CSBC_STUDY,
+        CSBC_DATASET
       ]
     )
   }

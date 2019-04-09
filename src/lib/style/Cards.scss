@@ -28,7 +28,19 @@ $text-color-lighter: #898989;
   margin-top: 30px; // just for test page
   margin-bottom: 30px; // just for test page
 
-  
+  .SRC-downloadData {
+    background-color: $text-color-active;
+    border-radius: 20px;
+    text-align: center;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    a {
+      padding: 5px 20px!important;
+      color: white;
+    }
+  }
 
   a {
     color: $text-color-active;
