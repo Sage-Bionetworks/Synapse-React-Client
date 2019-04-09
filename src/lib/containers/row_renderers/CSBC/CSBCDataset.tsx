@@ -63,8 +63,6 @@ class CSBCDataset extends React.Component<DatasetProps, {}> {
             <a className="download" href={`https://www.synapse.org/#!Synapse:${id}`}>
               Download Dataset
             </a>
-            {/* <button onClick={this.handleLinkClick(id)} type="button">
-            </button> */}
           </div>
           <div className="SRC-description"> {summary} </div>
         </div>
