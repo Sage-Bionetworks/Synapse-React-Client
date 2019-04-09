@@ -100,7 +100,7 @@ describe('getIsValueSelected works', () => {
   })
 })
 
-describe('readFacetValues works', () => {
+describe('readFacetValues functions as a checkbox', () => {
   /*
     When we test this method we don't have to worry about stubbing actual
     data, its sufficient to stub only the parts we need.
@@ -116,6 +116,8 @@ describe('readFacetValues works', () => {
   }
 
   it('selects nothing without a selection made', () => {
+    // Note - this also tests the ALL button on the SynapseTable dropdown in addition
+    // to the checkbox state without any selections made
     const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
       {
         checked: false,
@@ -216,22 +218,80 @@ describe('readFacetValues works', () => {
     }] as FacetColumnValuesRequest[]
     expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
   })
+})
 
-  it('contains a single facet value when SELECT_SINGLE_FACET is passed', () => {
+describe('readFacetValues functions as a radio checkbox', () => {
+  /*
+    When we test this method we don't have to worry about stubbing actual
+    data, its sufficient to stub only the parts we need.
+
+    This tests clicking on the pills under the barchart, where the selection
+    as a radio
+
+  */
+  const concreteTypeFacetsRequest = 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+
+  const queryRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    partMask: 0x2,
+    query: {
+      sql: 'SELECT * FROM syn123456789'
+    }
+  }
+  it('contains a single facet value when SELECT_SINGLE_FACET and isChecked is true', () => {
     const stub1 = 'stub1'
     const stub2 = 'stub2'
     const stub3 = 'stub3'
     const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
       {
+        /*
+           radios always have a default selection, so when this first value is clicked
+           we check that it doesn't get clicked 'off'
+        */
         checked: true,
         value: stub1
       },
       {
-        checked: true,
+        checked: false,
         value: stub2
       },
       {
-        checked: true,
+        checked: false,
+        value: stub3
+      },
+    ]
+
+    const filter = 'FILTER_STUB'
+    const { newQueryRequest } = readFacetValues({
+      queryRequest,
+      filter,
+      htmlCheckboxes: syntheticHTMLInputElement,
+      selector: SELECT_SINGLE_FACET,
+      value: stub1
+    })
+    const expectedRequest = [{
+      concreteType: concreteTypeFacetsRequest,
+      columnName: filter,
+      facetValues: [stub1]
+    }] as FacetColumnValuesRequest[]
+    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
+  })
+
+  it('contains a single facet value when SELECT_SINGLE_FACET is passed and isChecked is false', () => {
+    const stub1 = 'stub1'
+    const stub2 = 'stub2'
+    const stub3 = 'stub3'
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+      {
+        checked: false,
+        value: stub1
+      },
+      {
+        checked: false,
+        value: stub2
+      },
+      {
+        checked: false,
         value: stub3
       },
     ]
