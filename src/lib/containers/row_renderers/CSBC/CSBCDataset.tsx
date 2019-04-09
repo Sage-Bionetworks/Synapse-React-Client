@@ -12,12 +12,6 @@ class CSBCDataset extends React.Component<DatasetProps, {}> {
 
   constructor(props: DatasetProps) {
     super(props)
-    this.handleLinkClick = this.handleLinkClick.bind(this)
-  }
-
-  public handleLinkClick = (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    window.open(`https://www.synapse.org/#!Synapse:${link}`, '_blank')
   }
 
   public render() {
