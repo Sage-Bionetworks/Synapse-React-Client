@@ -17,8 +17,6 @@ describe('getIsValueSelected works', () => {
     facetValue,
     selector: ''
   }
-  const FALSE_BOOL = false
-  const TRUE_BOOL = true
 
   /*
     We test the following cases:
@@ -40,7 +38,7 @@ describe('getIsValueSelected works', () => {
     expect(getIsValueSelected({
       curFacetSelection,
       columnName,
-      isLoading:FALSE_BOOL,
+      isLoading: false,
       lastFacetSelection: lastFacetSelectionNoSelector
     })).toEqual(curFacetSelection.isSelected)
   })
@@ -53,7 +51,7 @@ describe('getIsValueSelected works', () => {
     expect(getIsValueSelected({
       curFacetSelection,
       columnName,
-      isLoading:FALSE_BOOL,
+      isLoading: false,
       lastFacetSelection: lastFacetSelectionNoSelector
     })).toEqual(curFacetSelection.isSelected)
   })
@@ -66,7 +64,7 @@ describe('getIsValueSelected works', () => {
     expect(getIsValueSelected({
       columnName,
       curFacetSelection,
-      isLoading: TRUE_BOOL,
+      isLoading: true,
       lastFacetSelection: lastFacetSelectionNoSelector
     })).toEqual(!curFacetSelection.isSelected)
   })
@@ -79,7 +77,7 @@ describe('getIsValueSelected works', () => {
     expect(getIsValueSelected({
       columnName,
       curFacetSelection,
-      isLoading: TRUE_BOOL,
+      isLoading: true,
       lastFacetSelection: lastFacetSelectionNoSelector
     })).toEqual(!curFacetSelection.isSelected)
   })
@@ -93,12 +91,12 @@ describe('getIsValueSelected works', () => {
     expect(getIsValueSelected({
       columnName,
       curFacetSelection,
-      isLoading: TRUE_BOOL,
+      isLoading: true,
       lastFacetSelection: {
         ...lastFacetSelectionNoSelector,
         selector: SELECT_SINGLE_FACET
       }
-    })).toEqual(FALSE_BOOL)
+    })).toEqual(false)
   })
 })
 
@@ -107,6 +105,8 @@ describe('readFacetValues works', () => {
     When we test this method we don't have to worry about stubbing actual
     data, its sufficient to stub only the parts we need.
   */
+  const concreteTypeFacetsRequest = 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: 0x2,
@@ -139,19 +139,15 @@ describe('readFacetValues works', () => {
       selector: ''
     })
     const expectedRequest = [{
+      concreteType: concreteTypeFacetsRequest,
       columnName: filter,
       facetValues: []  // should be empty, isSelected is false for all values
     }] as FacetColumnValuesRequest[]
     // sanity check
-    expect(newQueryRequest).toBeDefined()
-    expect(newQueryRequest).toMatchObject(
-      {
-        query: expect.objectContaining(
-          {
-            selectedFacets: expect.arrayContaining(expectedRequest)
-          }
-        )
-      }
+    expect(newQueryRequest.query.selectedFacets).toEqual(
+      expect.arrayContaining(
+        expectedRequest
+      )
     )
   })
 
@@ -180,18 +176,11 @@ describe('readFacetValues works', () => {
       selector: ''
     })
     const expectedRequest = [{
+      concreteType: concreteTypeFacetsRequest,
       columnName: filter,
       facetValues: [singleSelection]
     }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest).toMatchObject(
-      {
-        query: expect.objectContaining(
-          {
-            selectedFacets: expect.arrayContaining(expectedRequest)
-          }
-        )
-      }
-    )
+    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
   })
 
   it('contains multiple facet values with multiple checkboxes selected', () => {
@@ -204,11 +193,11 @@ describe('readFacetValues works', () => {
         value: stub1
       },
       {
-        checked: false,
+        checked: true,
         value: stub2
       },
       {
-        checked: false,
+        checked: true,
         value: stub3
       },
     ]
@@ -221,18 +210,11 @@ describe('readFacetValues works', () => {
       selector: ''
     })
     const expectedRequest = [{
+      concreteType: concreteTypeFacetsRequest,
       columnName: filter,
       facetValues: [stub1, stub2, stub3]
     }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest).toMatchObject(
-      {
-        query: expect.objectContaining(
-          {
-            selectedFacets: expect.arrayContaining(expectedRequest)
-          }
-        )
-      }
-    )
+    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
   })
 
   it('contains a single facet value when SELECT_SINGLE_FACET is passed', () => {
@@ -263,17 +245,10 @@ describe('readFacetValues works', () => {
       value: stub1
     })
     const expectedRequest = [{
+      concreteType: concreteTypeFacetsRequest,
       columnName: filter,
       facetValues: [stub1]
     }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest).toMatchObject(
-      {
-        query: expect.objectContaining(
-          {
-            selectedFacets: expect.arrayContaining(expectedRequest)
-          }
-        )
-      }
-    )
+    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
   })
 })
