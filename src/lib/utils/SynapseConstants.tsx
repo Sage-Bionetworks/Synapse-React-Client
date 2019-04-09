@@ -35,6 +35,7 @@ export const TOOL: string = 'tool'
 export const CSBC_PROJECT: string = 'CSBC_PROJECT'
 export const CSBC_PUBLICATION: string = 'CSBC_PUBLICATION'
 export const CSBC_STUDY: string = 'CSBC_STUDY'
+export const CSBC_DATASET: string = 'CSBC_DATSET'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: string = 'SMALL USER CARD'

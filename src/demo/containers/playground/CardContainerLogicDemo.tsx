@@ -11,11 +11,11 @@ export default class CardContainerLogicDemo extends React.Component {
 
   render() {
     return (
-        <CardContainerLogic
-          type={SynapseConstants.CSBC_STUDY}
-          sql={`SELECT * FROM syn18483791 WHERE ( ( "is.study" = 'TRUE' ) )`}
-          unitDescription="studies"
-        />
+      <CardContainerLogic
+        type={SynapseConstants.CSBC_DATASET}
+        sql={`SELECT * FROM syn18488466 WHERE ( ( "is.dataset" = 'TRUE' ) )`}
+        unitDescription="studies"
+      />
     )
   }
 }
