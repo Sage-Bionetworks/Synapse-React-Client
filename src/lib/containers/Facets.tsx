@@ -35,6 +35,9 @@ type CheckboxGroupProps = {
   isLoading: boolean
 }
 
+export const FACET_SELECTED_CLASS = 'FACET_SELECTED_CLASS'
+export const FACET_NOT_SELECTED_CLASS = 'FACET_NOT_SELECTED_CLASS'
+
 /**
  * Checkbox group represents one column's set of checkbox filters
  *
@@ -83,6 +86,8 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         background: '#C4C4C4'
       }
     }
+    // we add this to the input for testability
+    const backgroundClass = isSelected ? FACET_SELECTED_CLASS : FACET_NOT_SELECTED_CLASS
     style.color = textColor
     const { value, count } = facetColumnResultValues
     const displayValue = value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : value
@@ -94,8 +99,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         key={key}
       >
         <span className="SRC-facets-text">
-          {' '}
-          &nbsp;&nbsp; {displayValue} ({count}){' '}
+          {displayValue} ({count}){' '}
         </span>
         <input
           // @ts-ignore
@@ -103,10 +107,8 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
           checked={isSelected}
           type="checkbox"
           value={value}
-          className="SRC-hidden SRC-facet-checkboxes"
+          className={`SRC-hidden SRC-facet-checkboxes ${backgroundClass}`}
         />
-        <span>&nbsp;&nbsp;</span>
-        <span>&nbsp;&nbsp;</span>
       </label>
     )
   })

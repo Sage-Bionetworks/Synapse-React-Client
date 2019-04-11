@@ -96,7 +96,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    * @memberof Menu
    */
   public switchFacet = (menuIndex: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
-    this.setState({ menuIndex })
+    // there's an odd bug where clicking a menu item twice will select the first tab,
+    // this is a fix for that, but this shouldn't be necessary
+    if (this.state.menuIndex !== menuIndex) {
+      this.setState({ menuIndex })
+    }
   }
 
   public render() {
@@ -211,7 +215,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           key={config.facetName}
           className={`SRC-no-outline SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
           onClick={this.switchFacet(index)}
-          onKeyPress={this.switchFacet(index)}
+          // onKeyPress={this.switchFacet(index)}
           role="button"
           tabIndex={0}
           style={style}
