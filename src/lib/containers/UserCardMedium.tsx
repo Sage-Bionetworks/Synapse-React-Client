@@ -117,7 +117,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     if (preSignedURL) {
       img = (
         <div
-          style={{ borderRadius: '50%', backgroundImage: `url(${preSignedURL})` }}
+          style={{ backgroundImage: `url(${preSignedURL})` }}
           className="SRC-userImg"
         />
       )

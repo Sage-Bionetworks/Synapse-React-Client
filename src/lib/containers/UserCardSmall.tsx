@@ -49,9 +49,6 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     }
   }
 
-  // <div style={{ background: color }} className="SRC-userImgSmall">
-  //   {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
-  // </div>
   if (preSignedURL) {
     marginLeft = '3px'
     img = (
