@@ -25,7 +25,7 @@ const Icon: React.SFC<IconProps> = ({ type }) => {
     case PUBLICATION:
       return <img className="iconImg" alt="" src={PublicationSvg} />
     case DATASET:
-      return <img className="iconImg" alt="" src={DNA_TwoSvg} />
+      return <img className="iconImg" alt="" src={Data2Svg} />
     case FUNDER:
       return <img className="iconImg" alt="" src={Data2Svg} />
     case STUDY_ACTIVE:
