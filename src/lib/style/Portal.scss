@@ -836,6 +836,7 @@ checkmark styling end
 .SRC-centerContentInline {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .SRC-tableHeader {
@@ -907,6 +908,10 @@ div.SRC-logo-cursor * {
 
 .SRC-userImg {
   text-transform: uppercase;
+  border-radius: 50%;
+  height: 80px;
+  width: 80px;
+  font-size: 26px;
 }
 
 // this avoid stretching the img at the cost of accessbility
@@ -921,6 +926,8 @@ div.SRC-logo-cursor * {
   background-repeat: no-repeat;
   background-size: cover;
   border: 1px solid #DCDCDC;
+  text-transform: capitalize;
+  color: white;
 }
 
 div.SRC-userImg {
@@ -931,6 +938,8 @@ div.SRC-userImg {
   background-repeat: no-repeat;
   background-size: cover;
   border: 1px solid #DCDCDC;
+  text-transform: capitalize;
+  color: white;
 }
 
 svg.SRC-userImg {
