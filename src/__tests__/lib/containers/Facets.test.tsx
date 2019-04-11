@@ -1,12 +1,19 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import { Facets, CheckboxGroup, FACET_SELECTED_CLASS } from '../../../lib/containers/Facets'
+import {
+  Facets,
+  CheckboxGroup,
+  FACET_SELECTED_CLASS,
+  SELECT_SINGLE_FACET,
+  FACET_NOT_SELECTED_CLASS
+} from '../../../lib/containers/Facets'
 // import { SELECT_ALL, DESELECT_ALL  } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
+import { SELECT_ALL } from '../../../lib/containers/SynapseTable'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
   const wrapper = mount(
@@ -97,16 +104,6 @@ describe('it performs basic functionality', () => {
     rgbIndex: 0,
   } as QueryWrapperChildProps
 
-  beforeEach(() => {
-    /*
-       This isn't 'necessary' to use below (unsure of why its not),
-       all the tests will pass without the statement, however, it
-       does give a sanity check that no state is bleeding over from
-       one test to another.
-    */
-    jest.clearAllMocks()
-  })
-
   it('renders without crashing', () => {
     const { wrapper } = createMountedComponent(props)
     expect(wrapper).toBeDefined()
@@ -140,25 +137,50 @@ describe('it performs basic functionality', () => {
     expect(wrapper.find('input')).toHaveLength(11)
   })
 
-  it('Onload all facets are considered selected', async () => {
+  it('Onload all inputs are considered selected', async () => {
     const { wrapper } = await createMountedComponent(cloneDeep(props))
     const checkbox = wrapper.find(CheckboxGroup)
-    const labels = checkbox.find(`input.SRC-hidden.SRC-facet-checkboxes.${FACET_SELECTED_CLASS}`)
-    expect(labels).toHaveLength(5)
+    const inputs = checkbox.find(`input.SRC-hidden.SRC-facet-checkboxes.${FACET_SELECTED_CLASS}`)
+    expect(inputs).toHaveLength(5)
   })
 
-  it('Clicking an individual selects that pill and deselects all others', async () => {
+  it('Clicking an individual facet selects that facet and deselects all others', async () => {
     const { wrapper } = await createMountedComponent(cloneDeep(props))
     const checkbox = wrapper.find(CheckboxGroup)
     const labels = checkbox.find('label')
-    // select the second pill
     const secondPill = labels.at(1).find('input')
     await secondPill.simulate('change')
-    expect(checkbox.find('input.FACET_NOT_SELECTED_CLASS')).toHaveLength(10)
-    expect(checkbox.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(1)
+    /*
+      The setup below is usually handled by the QueryWrapper component, so we have to mock the behvaior.
+      Ideally, this wouldn't be necessary, however its a tricky scenario because its an async process
+      that has to get mocked, we essentially freeze the state during which the backend is fetching data.
+    */
+    await wrapper.setProps({
+      isLoading: true,
+      lastFacetSelection: { columnName: filter, facetValue: 'Cutaneous Neurofibroma', selector: SELECT_SINGLE_FACET }
+    })
+    // end mocking QueryWrapper behvaior
+    expect(wrapper.find(`input.${FACET_NOT_SELECTED_CLASS}`)).toHaveLength(10)
+    expect(wrapper.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(1)
   })
 
-  it('Clicking two pills only colors the last one', async () => {
+  it('Select all works', async () => {
+    const { wrapper } = await createMountedComponent(cloneDeep(props))
+    const showAllButton = wrapper.find('#showAllFacetsButton')
+
+    await showAllButton.simulate('click')
+    const selectAllButton = wrapper.find('a.SRC-facet-select-all')
+    await selectAllButton.simulate('click')
+    /*
+      See note above on mocking behavior
+    */
+    await wrapper.setProps({
+      isLoading: true,
+      lastFacetSelection: { columnName: filter, facetValue: '', selector: SELECT_ALL }
+    })
+    // end mocking QueryWrapper behvaior
+    // at this point all facets should be considered 'selected'
+    expect(wrapper.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(11)
   })
 
 })

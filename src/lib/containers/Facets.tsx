@@ -223,11 +223,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         <React.Fragment>
           <a
             href={''}
-            className="SRC-primary-text-color SRC-no-text-decor"
+            className="SRC-primary-text-color SRC-facet-select-all SRC-no-text-decor"
             onClick={this.applyChanges(ref, '', SELECT_ALL)}
           >
-            {' '}
-            Select All{' '}
+            Select All
           </a>
         </React.Fragment>
       )

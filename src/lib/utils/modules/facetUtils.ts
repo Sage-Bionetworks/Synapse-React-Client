@@ -36,6 +36,10 @@ export const getIsValueSelected = ({
       return false
     }
   }
+  /*
+    else, the information has come back from the server and we can
+    rely on that
+  */
   return curFacetSelection.isSelected
 
 }
