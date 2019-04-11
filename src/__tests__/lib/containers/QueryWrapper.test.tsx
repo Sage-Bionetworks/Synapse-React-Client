@@ -1,10 +1,9 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import QueryWrapper from '../../../lib/containers/QueryWrapper'
+import QueryWrapper, { QueryWrapperState } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
 import { cloneDeep } from '../../../lib/utils/modules'
-import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 
 // utility function
@@ -26,7 +25,7 @@ describe('basic functionality', () => {
   SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
   SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
 
-  const request = {
+  const lastQueryRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
@@ -40,65 +39,36 @@ describe('basic functionality', () => {
       offset: 0
     }
   }
-  const lastQueryRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-    ,
-    query: {
-      sql: 'SELECT * FROM syn16787123',
-      isConsistent: false,
-      limit: 25,
-      offset: 0,
-      selectedFacets: [
-        {
-          columnName: 'projectStatus',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: [
-            'Active',
-            'Completed',
-          ],
-        }
-      ]
-    }
-  }
 
   it('renders without crashing', async () => {
-    const { wrapper } = await createShallowComponent(request, true)
+    const { wrapper } = await createShallowComponent(lastQueryRequest, true)
     expect(wrapper).toBeDefined()
   })
 
-  it.skip('componentDidMountWorks', async () => {
-    const { instance, wrapper } = await createShallowComponent(request, true)
+  it('componentDidMountWorks', async () => {
+    const { instance, wrapper } = await createShallowComponent(lastQueryRequest, true)
 
     expect(wrapper.state()).toEqual(QueryWrapper.initialState)
-
-    // const spyOnResetFacetSelection = jest.spyOn(instance, 'addAllFacetsToSelection')
     const spyOnExecute = jest.spyOn(instance, 'executeInitialQueryRequest')
-
     await instance.componentDidMount()
-
     expect(spyOnExecute).toHaveBeenCalled()
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
-    expect(wrapper.state()).toEqual(
+    const state = wrapper.state() as QueryWrapperState
+    expect(state.isAllFilterSelectedForFacet).toEqual(
       {
-        lastQueryRequest,
-        data: syn16787123Json,
-        isLoading: false,
-        isLoadingNewData: false,
-        hasMoreData: true
-      }
+        dataStatus: true,
+        diseaseFocus: true,
+        fundingAgency: true,
+        projectStatus: true,
+        tumorType: true,
+      },
     )
   })
 
-  it.skip('componentDidUpdate works', async () => {
-    const { instance, wrapper } = await createShallowComponent(request)
+  it('componentDidUpdate works', async () => {
+    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
 
     const newToken = '123'
-    const newQueryRequest = cloneDeep(request)
-    newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
 
     // test login
@@ -107,7 +77,9 @@ describe('basic functionality', () => {
     })
     expect(spy).toHaveBeenCalled()
 
-    // test new query request
+    const newQueryRequest = cloneDeep(lastQueryRequest)
+    newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
+    // test new query lastQueryRequest
     spy.mockReset()
     wrapper.setProps({
       initQueryRequest: newQueryRequest
@@ -115,48 +87,17 @@ describe('basic functionality', () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  it.skip('returns the last query request correctly ', async () => {
-    const { instance } = await createShallowComponent(request)
+  it('returns the last query lastQueryRequest correctly ', async () => {
+    const { instance } = await createShallowComponent(lastQueryRequest)
     expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
   })
 
-  it('Adds the next page of data correctly to the data', async () => {
-    const { instance, wrapper } = await createShallowComponent(request)
-    await instance.getNextPageOfData(request)
-    const isLoading = wrapper.state('isLoading') as boolean
-    const lastQueryRequest = wrapper.state('lastQueryRequest') as QueryResultBundle
-    expect(isLoading).toEqual(false)
-    expect(lastQueryRequest).toEqual(request)
+  it('executeQueryRequest works', async () => {
+    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
+    const state = wrapper.state() as QueryWrapperState
+    await instance.executeQueryRequest(lastQueryRequest)
+    expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
+    expect(state.hasMoreData).toEqual(true)
   })
-
-  it.skip('executeQueryRequest works', async () => {
-    const { instance, wrapper } = await createShallowComponent(request)
-
-    await instance.executeQueryRequest(request)
-    expect(SynapseClient.getIntuitiveQueryTableResults).toHaveBeenCalled()
-    expect(wrapper.state()).toEqual({
-      isLoadingNewData: false,
-      data: syn16787123Json,
-      isLoading: false,
-      lastQueryRequest: request,
-      hasMoreData: true
-    })
-  })
-
-  // it('addAllFacetsToSelection works correctly', async () => {
-  //   const { instance } = await createShallowComponent(request)
-
-  //   const castData = syn16787123Json as QueryResultBundle
-  //   // const output = instance.addAllFacetsToSelection(castData)
-  //   expect(output.query.selectedFacets).toEqual(
-  //     [
-  //       {
-  //         columnName: 'projectStatus',
-  //         concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-  //         facetValues: ['Active', 'Completed']
-  //       }
-  //     ]
-  //   )
-  // })
 
 })

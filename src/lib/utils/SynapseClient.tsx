@@ -163,42 +163,7 @@ export const getQueryTableResultsFromJobId = (
       throw error
     })
 }
-/**
- * This method is necesary because the backend service returns ALL table results when
- * a particular facet is empty, the rationale being that it is a slight optimization
- * for when a client first gets table results. However, it introduces an edge case on the front
- * end that when the user "deselects" all facets inside Facets.tsx, uninutitive to the user,
- * all results would be returned, so we have to make this a special case.
- *
- * Note: This is under the context that the user is exploring with only a single facet in mind,
- * beyond that this issue becomes much more confusing.
- *
- * @param {*} queryBundleRequest
- * @param {*} sessionToken
- * @param {*} lastQueryResult
- * @param {*} filter
- * @param {*} endpoint
- */
-export const getIntuitiveQueryTableResults = (
-  queryBundleRequest: QueryBundleRequest,
-  sessionToken: string | undefined = undefined,
-  endpoint: string = DEFAULT_ENDPOINT
-): Promise<QueryResultBundle> => {
 
-  // const { selectedFacets = [] } = queryBundleRequest.query
-  // const facetsForFilter = selectedFacets.find((obj: FaceFacetColumnValuesRequest) => {
-  //   return obj.columnName === filter
-  // }) as FaceFacetColumnValuesRequest
-
-  // // check if the current set of facets being used is empty or not
-  // if (!facetsForFilter || facetsForFilter.facetValues.length === 0) {
-  //   // zero out the rows
-  //   lastQueryResult.queryResult.queryResults.rows = []
-  //   return Promise.resolve(lastQueryResult)
-  // }
-
-  return getQueryTableResults(queryBundleRequest, sessionToken, endpoint)
-}
 /**
  * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
  * @param {*} queryBundleRequest
