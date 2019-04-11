@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { mount, shallow } from 'enzyme'
-import { SynapseConstants } from '../../../lib/utils/'
+import { SynapseConstants } from '../../../lib/utils'
 import UserCard, { UserCardProps } from '../../../lib/containers/UserCard'
 import { UserCardSmall } from '../../../lib/containers/UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from '../../../lib/containers/UserCardMedium'
@@ -9,6 +9,8 @@ import { UserCardSwitchProps } from '../../../lib/containers/UserCardSwitch'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
 import UserCardContextMenu, { UserCardContextMenuProps, MenuAction } from '../../../lib/containers/UserCardContextMenu'
 import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
+
+const { firstName } = mockUserProfileData
 
 const createUserCardContextMenu = (props: UserCardContextMenuProps) => {
   const wrapper = shallow(
@@ -96,9 +98,10 @@ describe('it creates the correct UI for the small card', () => {
     size : SynapseConstants.SMALL_USER_CARD
   }
 
-  it('displays an svg for a user without an img', () => {
+  it('displays a div with text for a user without an img', () => {
     const { wrapper } = createSmallComponent({ ...props })
-    expect(wrapper.render().find('svg')).toHaveLength(1)
+    expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
+    expect(wrapper.render().find('div.SRC-userImgSmall').text()).toEqual(firstName[0])
   })
 
   it('displays an img for a user with an img set', () => {
@@ -129,7 +132,8 @@ describe('it creates the correct UI for the medium card', () => {
   it('displays an svg for a user without an img', () => {
     const { wrapper } = createMediumComponent({ ...props })
     // one svg is for the clipboard icon, the other is for the user
-    expect(wrapper.render().find('svg')).toHaveLength(2)
+    expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.render().find('div.SRC-userImg').text()).toEqual(firstName[0])
   })
 
   it('displays an img for a user with an img set', () => {

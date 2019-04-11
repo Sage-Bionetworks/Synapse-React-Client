@@ -679,7 +679,8 @@ checkmark styling end
 
 .SRC-centerContentInline {
   display: inline-flex;
-  align-items: center; }
+  align-items: center;
+  justify-content: center; }
 
 .SRC-tableHeader {
   margin: 0px;
@@ -733,7 +734,11 @@ div.SRC-logo-cursor * {
   UserCard Styling
 */
 .SRC-userImg {
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  border-radius: 50%;
+  height: 80px;
+  width: 80px;
+  font-size: 26px; }
 
 .SRC-userImgSmall {
   border-radius: 50%;
@@ -743,7 +748,9 @@ div.SRC-logo-cursor * {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 1px solid #DCDCDC; }
+  border: 1px solid #DCDCDC;
+  text-transform: capitalize;
+  color: white; }
 
 div.SRC-userImg {
   text-transform: uppercase;
@@ -752,7 +759,9 @@ div.SRC-userImg {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 1px solid #DCDCDC; }
+  border: 1px solid #DCDCDC;
+  text-transform: capitalize;
+  color: white; }
 
 svg.SRC-userImg {
   stroke: #DCDCDC;
