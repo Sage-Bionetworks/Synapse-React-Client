@@ -10,8 +10,8 @@ import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
-import './style/Cards.css'
-import './style/Portal.css'
+import './style/Cards.scss'
+import './style/Portal.scss'
 import { SynapseClient, SynapseConstants } from './utils/'
 
 const SynapseComponents = {
