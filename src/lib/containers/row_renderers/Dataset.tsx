@@ -53,7 +53,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
           </div>
           <div className="SRC-description"> {summary} </div>
           <div className="SRC-cardAnnotations">
-              <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
+            <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
           </div>
         </div>
         <Utils.CardFooter values={values} />
