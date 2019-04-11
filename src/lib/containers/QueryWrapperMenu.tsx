@@ -215,7 +215,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           key={config.facetName}
           className={`SRC-no-outline SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
           onClick={this.switchFacet(index)}
-          // onKeyPress={this.switchFacet(index)}
+          onKeyPress={this.switchFacet(index)}
           role="button"
           tabIndex={0}
           style={style}

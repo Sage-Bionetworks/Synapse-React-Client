@@ -4,7 +4,6 @@ import { FileHandleResults } from './jsonResponses/FileHandleResults'
 import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
-import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
 import { UserBundle } from './jsonResponses/UserBundle'
 
 // TODO: Create JSON response types for all return types

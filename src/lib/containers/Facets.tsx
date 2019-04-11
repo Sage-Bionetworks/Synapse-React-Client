@@ -86,7 +86,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         background: '#C4C4C4'
       }
     }
-    // we add this to the input for testability
+    // we add this class for testability
     const backgroundClass = isSelected ? FACET_SELECTED_CLASS : FACET_NOT_SELECTED_CLASS
     style.color = textColor
     const { value, count } = facetColumnResultValues

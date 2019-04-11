@@ -907,3 +907,6 @@ svg.SRC-userImg {
 
 .SRC-no-outline:focus {
   outline: none; }
+
+.SRC-facet-select-all {
+  padding: 4px 12px; }
