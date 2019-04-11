@@ -48,6 +48,10 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
       label += ` <br/>${userProfile.location}`
     }
   }
+
+  // <div style={{ background: color }} className="SRC-userImgSmall">
+  //   {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
+  // </div>
   if (preSignedURL) {
     marginLeft = '3px'
     img = (
@@ -62,23 +66,9 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     const color = getColor(userProfile.userName)
     marginLeft = '3px'
     img = (
-      <svg height={24} width={24} data-for={label} data-tip={label}>
-        <circle
-          r={12}
-          cx={'50%'}
-          cy={'50%'}
-          fill={color}
-        />
-        <text
-          textAnchor={'middle'}
-          alignmentBaseline={'middle'}
-          x={'50%'}
-          y={'55%'}
-          fill={'white'}
-        >
-          {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
-        </text>
-      </svg>
+      <div style={{ background: color }} className="SRC-userImgSmall SRC-centerContentInline">
+        {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
+      </div>
     )
   }
   return (

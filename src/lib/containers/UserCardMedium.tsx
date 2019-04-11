@@ -94,7 +94,6 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       position,
       company
     } = userProfile
-    const diameter = 80
     let img
     let name = ''
     const link = profileClickHandler ? 'javascript:' : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
@@ -124,29 +123,9 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       )
     } else {
       img = (
-          <svg
-            className="SRC-userImg"
-            height={diameter}
-            width={diameter}
-          >
-            <circle
-              r={diameter / 2}
-              cx={'50%'}
-              cy={'50%'}
-              fill={getColor(userProfile.userName)}
-            />
-            <text
-              textAnchor={'middle'}
-              alignmentBaseline={'middle'}
-              dominantBaseline={'middle'}
-              fontSize={26}
-              x={'50%'}
-              y={'50%'}
-              fill={'white'}
-            >
-              {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
-            </text>
-          </svg>
+        <div style={{ background: getColor(userName) }} className="SRC-userImg SRC-centerContentInline">
+          {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
+        </div>
       )
     }
     const mediumCard = (
