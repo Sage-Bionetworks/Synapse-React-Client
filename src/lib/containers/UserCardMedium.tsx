@@ -150,7 +150,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
         <a
           href={link}
           onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
-          className={`SRC-no-text-decor-on-hover ${isLarge ? 'SRC-isLargeCard' : ''}`}
+          className={`SRC-no-underline-on-hover ${isLarge ? 'SRC-isLargeCard' : ''}`}
         >
           {img}
         </a>

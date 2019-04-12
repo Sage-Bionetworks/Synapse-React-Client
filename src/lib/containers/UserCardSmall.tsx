@@ -72,7 +72,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     <a
       onClick={profileClickHandlerWithParam  ? profileClickHandlerWithParam : undefined}
       href={link}
-      className="SRC-userCard SRC-primary-text-color SRC-no-text-decor-on-hover"
+      className="SRC-userCard SRC-primary-text-color SRC-no-underline-on-hover"
     >
       {img}
         <ReactTooltip delayShow={1000} id={label} multiline={true}/>

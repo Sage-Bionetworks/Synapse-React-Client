@@ -367,7 +367,7 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-no-text-decor {
   text-decoration: none; }
 
-.SRC-no-text-decor-on-hover:hover {
+.SRC-no-underline-on-hover:hover {
   text-decoration: none; }
 
 .SRC-underline-on-hover:hover {
