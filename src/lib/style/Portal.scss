@@ -436,6 +436,14 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
  .SRC-no-text-decor {
    text-decoration: none;
   }
+ 
+ .SRC-no-text-decor-on-hover:hover {
+   text-decoration: none;
+  }
+ 
+ .SRC-underline-on-hover:hover {
+   text-decoration: underline;
+  }
 
   $primaryColor: #D53F77;
   
@@ -914,9 +922,6 @@ div.SRC-logo-cursor * {
   font-size: 26px;
 }
 
-// this avoid stretching the img at the cost of accessbility
-// object-fit on a img would work but this has limited browser
-// support
 .SRC-userImgSmall {
   border-radius: 50%;
   height: 23px;
@@ -925,7 +930,6 @@ div.SRC-logo-cursor * {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 1px solid #DCDCDC;
   text-transform: capitalize;
   color: white;
 }
@@ -942,29 +946,16 @@ div.SRC-userImg {
   color: white;
 }
 
-svg.SRC-userImg {
-  stroke: #DCDCDC;
-  stroke-width: 1px;
-}
-
 .SRC-isLargeCard {
   div {
     border: 1px solid white;
-  }
-  svg {
-    stroke: white;
   }
 }
 
  
 .SRC-userCard {
   display: inline-flex;
-  align-items: center;
-}
-
-.SRC-userCard svg {
-  text-transform: uppercase;
-  overflow: visible !important;
+  align-items: center
 }
 
 .SRC-userCardName {

@@ -74,7 +74,7 @@ $text-color-lighter: #898989;
       margin: auto;
       display: block;
       &.iconImg {
-        max-width: 75px;
+        max-width: 60px;
       }
     }
     > div { // icon label
@@ -232,4 +232,6 @@ $text-color-lighter: #898989;
   }
 }
 
-
+.iconImg.SRC-datasetIcon {
+  max-width: 60px;
+}
