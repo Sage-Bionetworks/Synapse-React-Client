@@ -367,6 +367,12 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-no-text-decor {
   text-decoration: none; }
 
+.SRC-no-underline-on-hover:hover {
+  text-decoration: none; }
+
+.SRC-underline-on-hover:hover {
+  text-decoration: underline; }
+
 .SRC-primary-text-color {
   color: #D53F77; }
 
@@ -748,7 +754,6 @@ div.SRC-logo-cursor * {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 1px solid #DCDCDC;
   text-transform: capitalize;
   color: white; }
 
@@ -763,23 +768,12 @@ div.SRC-userImg {
   text-transform: capitalize;
   color: white; }
 
-svg.SRC-userImg {
-  stroke: #DCDCDC;
-  stroke-width: 1px; }
-
 .SRC-isLargeCard div {
   border: 1px solid white; }
-
-.SRC-isLargeCard svg {
-  stroke: white; }
 
 .SRC-userCard {
   display: inline-flex;
   align-items: center; }
-
-.SRC-userCard svg {
-  text-transform: uppercase;
-  overflow: visible !important; }
 
 .SRC-userCardName {
   font-weight: bold;
