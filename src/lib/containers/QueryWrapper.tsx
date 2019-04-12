@@ -18,8 +18,9 @@ type QueryWrapperProps = {
   facetAliases?: {}
 }
 
-type QueryWrapperState = {
-  /* isAllFilterSelectedForFacet tracks whether for a particular
+export type QueryWrapperState = {
+  /*
+    isAllFilterSelectedForFacet tracks whether for a particular
      facet if the 'All' button has been selected, this tracks the
      click event and syncs Facets.tsx and SynapseTable.tsx
   */
@@ -174,7 +175,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     .then(
       (data: QueryResultBundle) => {
         const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-        hasMoreData
         const newState: any = {
           hasMoreData,
           data,

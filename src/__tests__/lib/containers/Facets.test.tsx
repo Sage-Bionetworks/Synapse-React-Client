@@ -1,15 +1,22 @@
 import * as React from 'react'
-import { shallow } from 'enzyme'
-import { Facets, CheckboxGroup } from '../../../lib/containers/Facets'
+import { mount } from 'enzyme'
+import {
+  Facets,
+  CheckboxGroup,
+  FACET_SELECTED_CLASS,
+  SELECT_SINGLE_FACET,
+  FACET_NOT_SELECTED_CLASS
+} from '../../../lib/containers/Facets'
 // import { SELECT_ALL, DESELECT_ALL  } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
+import { SELECT_ALL } from '../../../lib/containers/SynapseTable'
 
-const createShallowComponent = (props: QueryWrapperChildProps) => {
-  const wrapper = shallow(
+const createMountedComponent = (props: QueryWrapperChildProps) => {
+  const wrapper = mount(
       <Facets
         {...props}
       />
@@ -23,23 +30,8 @@ describe('it performs basic functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.executeQueryRequest = jest.fn()
   // column name that will get filtered on
-  // const filter = 'tumorType'
-  // facet 'value' that will get filtered on
-  // const JMML = 'JMML'
-  // location of JMML in isChecked
-  // const JMMLFacetValuesIndex = 2
-  // const facetValuesWithoutJMML = [
-  //   'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
-  //   'Cutaneous Neurofibroma',
-  //   'Low Grade Glioma',
-  //   'MPNST',
-  //   'Plexiform Neurofibroma',
-  //   'Plexiform Neurofibroma | MPNST',
-  //   'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
-  //   'Schwannoma',
-  //   'Schwannoma | Meningioma',
-  //   'SMN'
-  // ]
+  const filter = 'tumorType'
+
   const lastQueryRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
@@ -87,224 +79,108 @@ describe('it performs basic functionality', () => {
   const executeQueryRequest = jest.fn()
   const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
 
+  /*
+    We have to clone deep the props in each test because isAllFilterSelectedForFacet
+    gets modified by the Facets class, most test cases don't involve classes that modify
+  */
   const props = {
     updateParentState,
+    filter,
     executeInitialQueryRequest,
     executeQueryRequest,
     getLastQueryRequest,
-    isAllFilterSelectedForFacet: {},
+    isAllFilterSelectedForFacet: {
+      tumorType: true,
+      projectStatus: true
+    },
+    isLoading: false,
+    lastFacetSelection: {
+      columnName: '',
+      facetValue: '',
+      selector: ''
+    },
     data: castData,
-    filter: 'projectStatus',
-    isChecked: []
+    isChecked: [],
+    rgbIndex: 0,
   } as QueryWrapperChildProps
 
-  beforeEach(() => {
-    /*
-       This isn't 'necessary' to use below (unsure of why its not),
-       all the tests will pass without the statement, however, it
-       does give a sanity check that no state is bleeding over from
-       one test to another.
-    */
-    jest.clearAllMocks()
-  })
-
   it('renders without crashing', () => {
-    const { wrapper } = createShallowComponent(props)
+    const { wrapper } = createMountedComponent(props)
     expect(wrapper).toBeDefined()
     expect(wrapper.find(CheckboxGroup)).toHaveLength(1)
   })
 
-  // it('Show All is not present when < 5 facets ', () => {
-  //   const { wrapper } = createShallowComponent(props)
-  //   expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
-  // })
-
-  // it('Show All is present when >= 5 facets ', () => {
-  //   const propsWithTumorFacet = {
-  //     ...props,
-  //     filter
-  //   }
-  //   const { wrapper } = createShallowComponent(propsWithTumorFacet)
-  //   expect(wrapper.find('#showAllFacetsButton')).toHaveLength(1)
-  // })
-
-  it('Select All works ', () => {
-    /* TODO:
-        Refactor to test query update in its own method
-    */
-    // const propsWithTumorFacet = {
-    //   ...props,
-    //   filter
-    // }
-    // const { instance } = createShallowComponent(propsWithTumorFacet)
-    // const mockedEvent = {
-    //   preventDefault: jest.fn()
-    // } as any
-
-    // instance.handleClick(SELECT_ALL)(mockedEvent)
-
-    // const lengthOfFacetSelection = syn16787123Json.facets.find(el => el.columnName === filter)!.facetValues.length
-    // // tslint:disable-next-line:prefer-array-literal
-    // const allTrueFacetSelection = new Array(lengthOfFacetSelection).fill(true)
-    // expect(updateParentState).toHaveBeenCalledWith({ isChecked: allTrueFacetSelection })
-    // expect(executeInitialQueryRequest).toHaveBeenCalled()
+  it('Show All is not present when < 5 facets ', () => {
+    // override default
+    const { wrapper } = createMountedComponent(
+      {
+        ...props,
+        filter: 'projectStatus'
+      }
+    )
+    expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
   })
 
-  it('Deselect All works ', () => {
-    /* TODO:
-        Refactor to test query update in its own method
-    */
-    // const propsWithTumorFacet = {
-    //   ...props,
-    //   filter
-    // }
-    // const { instance } = createShallowComponent(propsWithTumorFacet)
-    // const mockedEvent = {
-    //   preventDefault: jest.fn()
-    // } as any
-
-    // // the function updateSelection is curried so we have to call it this way
-    // instance.handleClick(DESELECT_ALL)(mockedEvent)
-    // // asserts on arguments used from calling updateSelection method above
-    // const lengthOfFacetSelection = syn16787123Json.facets.find(el => el.columnName === filter)!.facetValues.length
-    // // below is unavoidable
-    // // tslint:disable-next-line:prefer-array-literal
-    // const allFalseFacetSelection = new Array(lengthOfFacetSelection).fill(false)
-    // expect(updateParentState).toHaveBeenCalledWith({ isChecked: allFalseFacetSelection })
-
-    // // expect for the facet in use that all facet values are empty
-    // expect(executeQueryRequest).toHaveBeenCalledWith(
-    //   expect.objectContaining({
-    //     query: expect.objectContaining({
-    //       selectedFacets: expect.arrayContaining([
-    //         expect.objectContaining({
-    //           columnName: filter,
-    //           facetValues: []
-    //         })
-    //       ])
-    //     })
-    //   })
-    // )
-
+  it('Show All is present when >= 5 facets ', () => {
+    const { wrapper } = createMountedComponent(props)
+    expect(wrapper.find('#showAllFacetsButton')).toHaveLength(1)
   })
 
-  it('handle click with removing a facet value', async () => {
-    /* TODO:
-        Refactor to test different logic
-    */
-    // const propsWithTumorFacet = {
-    //   ...props,
-    //   filter
-    // }
-    // const { wrapper, instance } = createShallowComponent(propsWithTumorFacet)
-    // const mockedEvent = {
-    //   preventDefault: jest.fn()
-    // } as any
-    // const selection = {
-    //   columnName: filter,
-    //   index: JMMLFacetValuesIndex,
-    //   value: JMML,
-    //   lastFacetValueSelected: ''
-    // }
-    // await instance.handleClick(selection)(mockedEvent)
-
-    // // verifications on arguments passed into functions stemming from handle click
-    // const queryRequestWithoutJMML = cloneDeep(lastQueryRequest)
-    // const facetValues = queryRequestWithoutJMML.query.selectedFacets[1].facetValues
-    // facetValues.splice(JMMLFacetValuesIndex, 1)  // remove JMML
-    // queryRequestWithoutJMML.query.selectedFacets[1].facetValues = facetValues
-
-    // expect(wrapper.state('showAllFacets')).toEqual(true)
-    // // verify it updates parent state correctly
-    // expect(updateParentState).toHaveBeenCalledWith({
-    //   isChecked: [undefined, undefined, false]
-    // })
-    // // verify it calls executeQueryRequest without JMML selected
-    // // NOTE: the .not after the expect(...) call ensures that we are
-    // // NOT getting the following object.
-    // expect(executeQueryRequest).not.toHaveBeenCalledWith(
-    //   expect.objectContaining({
-    //     query: expect.objectContaining({
-    //       selectedFacets: expect.arrayContaining([
-    //         expect.objectContaining({
-    //           columnName: filter,
-    //           // expect it to have been called without jmml for
-    //           // filter entry in selectedFacets array
-    //           facetValues: expect.arrayContaining([
-    //             JMML
-    //           ])
-    //         })
-    //       ])
-    //     })
-    //   })
-    // )
+  it('Clicking a pill shows the rest of the facet when not already shown', async () => {
+    const { wrapper } = await createMountedComponent(cloneDeep(props))
+    const checkbox = wrapper.find(CheckboxGroup)
+    const labels = checkbox.find('label')
+    // only 5 shown by default
+    expect(wrapper.find('input')).toHaveLength(5)
+    await labels.at(0).find('input').simulate('change')
+    // after click event it expands to show all 11 per the mocked data above
+    expect(wrapper.find('input')).toHaveLength(11)
   })
 
-  it('handle click works with adding a facet value', async () => {
-    /* TODO:
-        Refactor to test query update in its own method
+  it('Onload all inputs are considered selected', async () => {
+    const { wrapper } = await createMountedComponent(cloneDeep(props))
+    const checkbox = wrapper.find(CheckboxGroup)
+    const inputs = checkbox.find(`input.SRC-hidden.SRC-facet-checkboxes.${FACET_SELECTED_CLASS}`)
+    expect(inputs).toHaveLength(5)
+  })
+
+  it('Clicking an individual facet selects that facet and deselects all others', async () => {
+    const { wrapper } = await createMountedComponent(cloneDeep(props))
+    const checkbox = wrapper.find(CheckboxGroup)
+    const labels = checkbox.find('label')
+    const secondPill = labels.at(1).find('input')
+    await secondPill.simulate('change')
+    /*
+      The setup below is usually handled by the QueryWrapper component, so we have to mock the behvaior.
+      Ideally, this wouldn't be necessary, however its a tricky scenario because its an async process
+      that has to get mocked, we essentially freeze the state during which the backend is fetching data.
     */
+    await wrapper.setProps({
+      isLoading: true,
+      lastFacetSelection: { columnName: filter, facetValue: 'Cutaneous Neurofibroma', selector: SELECT_SINGLE_FACET }
+    })
+    // end mocking QueryWrapper behvaior
+    expect(wrapper.find(`input.${FACET_NOT_SELECTED_CLASS}`)).toHaveLength(10)
+    expect(wrapper.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(1)
+  })
 
-  //   // step 1: Remove JMML from facet selection, since the above test verifies that removing a facet
-  //   // works we use this as a starting point
-  //   const propsWithTumorFacet = {
-  //     ...props,
-  //     filter
-  //   }
-  //   const { wrapper, instance } = createShallowComponent(propsWithTumorFacet)
-  //   const mockedEvent = {
-  //     preventDefault: jest.fn()
-  //   } as any
-  //   const selection = {
-  //     columnName: filter,
-  //     index: JMMLFacetValuesIndex,
-  //     value: JMML,
-  //     lastFacetValueSelected: ''
-  //   }
-  //   // click JMML 'off'
-  //   await instance.handleClick(selection)(mockedEvent)
+  it('Select all works', async () => {
+    const { wrapper } = await createMountedComponent(cloneDeep(props))
+    const showAllButton = wrapper.find('#showAllFacetsButton')
 
-  //   // Since Facets is usually a child of QueryWrapper, we have to manually mock what QueryWrapper
-  //   // would normally do
-
-  //   // verify it updates parent state correctly
-  //   expect(updateParentState.mock.calls[0]).toEqual([{ isChecked: [undefined, undefined, false] }])
-  //   // setup getLastQueryRequestWithoutJMML
-  //   const lastQueryRequestWithoutJMML = cloneDeep(lastQueryRequest)
-  //   lastQueryRequestWithoutJMML.query.selectedFacets[1].facetValues = facetValuesWithoutJMML
-  //   const getLastQueryRequestWithoutJMML = jest.fn(() => {
-  //     return lastQueryRequestWithoutJMML
-  //   })
-
-  //   updateParentState.mockReset()
-  //   executeQueryRequest.mockReset()
-
-  //   await wrapper.setProps({
-  //     isChecked: [undefined, undefined, false],
-  //     getLastQueryRequest: getLastQueryRequestWithoutJMML
-  //   })
-
-  //   // beginning of the actual test
-  //   // Click JMML back 'on'
-  //   await instance.handleClick(selection)(mockedEvent)
-
-  //   // verify it updates parent state correctly
-  //   expect(updateParentState.mock.calls[0]).toEqual([{ isChecked: [undefined, undefined, true] }])
-  //   // verify it calls executeQueryRequest with JMML selected
-  //   expect(executeQueryRequest).toHaveBeenLastCalledWith(expect.objectContaining(
-  //     {
-  //       query: expect.objectContaining({
-  //         selectedFacets: expect.arrayContaining([
-  //           expect.objectContaining({
-  //             columnName: filter,
-  //             facetValues: expect.arrayContaining([
-  //               JMML
-  //             ])
-  //           })
-  //         ])
-  //       })
-  //     }
-  //   ))
+    await showAllButton.simulate('click')
+    const selectAllButton = wrapper.find('a.SRC-facet-select-all')
+    await selectAllButton.simulate('click')
+    /*
+      See note above on mocking behavior
+    */
+    await wrapper.setProps({
+      isLoading: true,
+      lastFacetSelection: { columnName: filter, facetValue: '', selector: SELECT_ALL }
+    })
+    // end mocking QueryWrapper behvaior
+    // at this point all facets should be considered 'selected'
+    expect(wrapper.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(11)
   })
 
 })

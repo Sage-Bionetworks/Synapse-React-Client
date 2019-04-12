@@ -676,7 +676,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { lastFacetSelection, isLoading, isAllFilterSelectedForFacet } = this.props
     return facetColumnResult.facetValues.map(
       (facetColumnResultValueCount: FacetColumnResultValueCount) => {
-        const { value: facetValue, count, isSelected } = facetColumnResultValueCount
+        const { value: facetValue, count } = facetColumnResultValueCount
         let displayValue = facetValue
         if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
           displayValue = 'unannotated'
@@ -686,10 +686,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           columnName,
           isLoading,
           lastFacetSelection,
-          curFacetSelection: {
-            isSelected,
-            facetValue,
-          },
+          curFacetSelection: facetColumnResultValueCount,
         })
         return (
           <li key={key}>
@@ -727,7 +724,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       facetValue?: string,
       selector?: string,
     }) => (_: React.SyntheticEvent<HTMLElement>) => {
-      const htmlCheckboxes = ref.current!.querySelectorAll('.SRC-facet-checkboxes')
+      const htmlCheckboxes = Array.from(ref.current!.querySelectorAll('.SRC-facet-checkboxes')) as HTMLInputElement []
       const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
       const { isAllFilterSelectedForFacet } = this.props
       const { newQueryRequest } = readFacetValues({

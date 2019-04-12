@@ -96,7 +96,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    * @memberof Menu
    */
   public switchFacet = (menuIndex: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
-    this.setState({ menuIndex })
+    // there's an odd bug where clicking a menu item twice will select the first tab,
+    // this is a fix for that, but this shouldn't be necessary
+    if (this.state.menuIndex !== menuIndex) {
+      this.setState({ menuIndex })
+    }
   }
 
   public render() {

@@ -1,7 +1,8 @@
 import { FacetSelection } from '../../containers/QueryWrapper'
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
-import { FaceFacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
+import { FacetColumnValuesRequest } from '../jsonResponses/Table/FacetColumnRequest'
 import { SELECT_SINGLE_FACET } from '../../containers/Facets'
+import { FacetColumnResultValueCount } from '../jsonResponses/Table/FacetColumnResult'
 
 /**
  *  Calculates the state of a specific facet value given the current state
@@ -12,11 +13,10 @@ import { SELECT_SINGLE_FACET } from '../../containers/Facets'
  *     lastFacetSelection: FacetSelection | undefined,
  *     curFacetSelection: any,
  *     columnName: string
- * @returns
+ * @returns boolean
  */
 
-export const getIsValueSelected =
-({
+export const getIsValueSelected = ({
   isLoading,
   lastFacetSelection,
   curFacetSelection,
@@ -24,21 +24,42 @@ export const getIsValueSelected =
 } : {
   isLoading: boolean | undefined,
   lastFacetSelection: FacetSelection | undefined,
-  curFacetSelection: any,
+  curFacetSelection: FacetColumnResultValueCount,
   columnName: string
 }) => {
   if (isLoading && columnName === lastFacetSelection!.columnName) {
-    // indicates theres a selection made with this current facet value
-    if (lastFacetSelection!.facetValue === curFacetSelection.facetValue) {
+    // indicates there is a selection made with this current facet value
+    if (lastFacetSelection!.facetValue === curFacetSelection.value) {
       return !curFacetSelection.isSelected
-    // tslint:disable-next-line:no-else-after-return
-    } else if (lastFacetSelection!.selector === SELECT_SINGLE_FACET) {
+    }
+    if (lastFacetSelection!.selector === SELECT_SINGLE_FACET) {
       return false
     }
   }
+  /*
+    else, the information has come back from the server and we can
+    rely on that
+  */
   return curFacetSelection.isSelected
+
 }
 
+export type SyntheticHTMLInputElement = {
+  value: string
+  checked: boolean
+}
+
+/**
+ * Function reads over a set of checkboxes and then returns a corresponding
+ * queryRequest given the state of the prior queryRequest
+ *   htmlCheckboxes: any,
+ *   selector : string,
+ *   queryRequest: QueryBundleRequest,
+ *   filter: string,
+ *   value?: string
+ * }
+ * @returns
+ */
 export const readFacetValues = ({
   htmlCheckboxes,
   selector,
@@ -46,7 +67,7 @@ export const readFacetValues = ({
   filter,
   value
 }: {
-  htmlCheckboxes: any,
+  htmlCheckboxes: SyntheticHTMLInputElement [],
   selector : string,
   queryRequest: QueryBundleRequest,
   filter: string,
@@ -57,7 +78,7 @@ export const readFacetValues = ({
   if (!selector) {
     // no selector was clicked -- read over facet values as normal and see what was clicked
     for (let i = 0; i < htmlCheckboxes.length; i += 1) {
-      const checkbox = htmlCheckboxes[i] as HTMLInputElement
+      const checkbox = htmlCheckboxes[i]
       const isSelected = checkbox.checked
       if (isSelected) {
         facetValues.push(checkbox.value)
@@ -72,12 +93,12 @@ export const readFacetValues = ({
 
   const specificFacet = selectedFacets!.find(el => el.columnName === filter)!
   if (!specificFacet) {
-    const faceFacetColumnValuesRequest: FaceFacetColumnValuesRequest =  {
+    const facetColumnValuesRequest: FacetColumnValuesRequest =  {
       facetValues,
       concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
       columnName: filter
     }
-    selectedFacets.push(faceFacetColumnValuesRequest)
+    selectedFacets.push(facetColumnValuesRequest)
     // align the reference to selectedFacets
     newQueryRequest.query.selectedFacets = selectedFacets
   } else {

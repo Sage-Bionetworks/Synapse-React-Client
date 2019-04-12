@@ -278,7 +278,7 @@ body * {
 }
 
 .SRC-facets {
-  padding: 4px;
+  padding: 4px 12px;
   border-radius: 20px;
   margin-right: 6px;
   margin-bottom: 5px;
@@ -1130,4 +1130,8 @@ svg.SRC-userImg {
 
 .SRC-no-outline:focus {
   outline: none;
+}
+
+.SRC-facet-select-all {
+  padding: 4px 12px;
 }
