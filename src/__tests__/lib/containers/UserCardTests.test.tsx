@@ -163,7 +163,6 @@ describe('it creates the correct UI for the medium card', () => {
     const instance = wrapper.instance() as UserCardMedium
     const _event = {} as any
     await instance.toggleContextMenu(_event)
-    expect(wrapper.render().find('.SRC-menu-wall')).toHaveLength(1)
     expect(wrapper.render().find('div.dropdown')).toHaveLength(1)
   })
 })
