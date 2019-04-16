@@ -223,7 +223,7 @@ export default class StackedBarChart extends
 
     return (
       <React.Fragment>
-        <div className="row SRC-center-text">
+        <div className="SRC-chart SRC-chart-nav SRC-center-text">
           <button
             className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
             onClick={this.handleArrowClick(NEXT_CLICK)}
@@ -246,7 +246,7 @@ export default class StackedBarChart extends
           </button>
         </div>
         {/* TODO: Refactor the chart into its own component */}
-        <div className="row SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
+        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
           <ReactMeasure
             bounds={true}
             // tslint:disable-next-line
@@ -344,7 +344,7 @@ export default class StackedBarChart extends
               </div>)}
           </ReactMeasure>
         </div>
-        <div className="row SRC-bar-border SRC-bar-border-bottom">
+        <div className="SRC-bar-border SRC-bar-border-bottom">
           <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
             <strong>{this.getTextForChartSelection(xData)}</strong>
           </p>

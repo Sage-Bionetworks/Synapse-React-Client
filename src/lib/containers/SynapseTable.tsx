@@ -181,7 +181,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return (
       <React.Fragment>
         <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
-        <div className="row SRC-marginBottomTen">
+        <div className="SRC-marginBottomTen">
           <p style={{ height:'20px' }}>
             {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
             {isLoading &&
@@ -192,7 +192,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             }
           </p>
         </div>
-        <div className="row SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
+        <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
             <h3 className="SRC-tableHeader"> {this.props.title}</h3>
             <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
                 <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
@@ -240,7 +240,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </span>
         </div>
         {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
-        <div style={{ minHeight: '300px' }} className="row SRC-overflowAuto">
+        <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
             <table className="table table-striped table-condensed">
                 <thead className="SRC_borderTop">
                     <tr>

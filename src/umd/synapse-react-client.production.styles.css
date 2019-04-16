@@ -1121,3 +1121,9 @@ div.SRC-userImg {
 
 .SRC-menuLayout {
   padding-right: 40px; }
+
+.SRC-chart-btn {
+  border: none; }
+
+.SRC-chart-nav {
+  height: 30px; }

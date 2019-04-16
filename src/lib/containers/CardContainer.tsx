@@ -1,7 +1,6 @@
 import * as PropTypes from 'prop-types'
 import * as React from 'react'
 // tslint:disable-next-line
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
@@ -211,20 +210,15 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         if (index < limit) {
           const key = JSON.stringify(rowData.values)
           return (
-            <CSSTransition
+            <RowContainer
               key={key}
-              classNames="SRC-card"
-              timeout={{ enter: 500, exit: 300 }}
-            >
-              <RowContainer
-                type={type}
-                limit={limit}
-                data={rowData.values}
-                schema={schema}
-                token={token}
-                isHeader={isHeader}
-              />
-            </CSSTransition>
+              type={type}
+              limit={limit}
+              data={rowData.values}
+              schema={schema}
+              token={token}
+              isHeader={isHeader}
+            />
           )
         }
         return false
@@ -234,9 +228,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       <div>
         {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
-        <TransitionGroup>
-          {cards}
-        </TransitionGroup>
+        {cards}
         {showViewMoreButton}
       </div>
     )
