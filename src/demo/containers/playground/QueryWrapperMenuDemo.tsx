@@ -28,7 +28,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: false,
+      showTabOne: true,
       tabOne:
       {
         menuConfig: [
@@ -150,15 +150,15 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
   public render(): JSX.Element {
 
     return (
-      <div>
-        {/* <button
+      <div className="container">
+        <button
           role="button"
           className="btn btn-default"
           // tslint:disable-next-line
           onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
         >
           toggle tabs
-        </button> */}
+        </button>
         <h2>Demo of table</h2>
           <QueryWrapperMenu
             token={''}

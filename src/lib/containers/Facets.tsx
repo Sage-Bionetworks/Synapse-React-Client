@@ -116,6 +116,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
   // showAllFacets will be true.
   const childrenView = children.map((child: any, index: number) => !showAllFacets && index > 4 ? false : child)
   return (
+    // need a span so that we can have a ref attachable
     <span ref={ref}>
       {childrenView}
     </span>
@@ -267,17 +268,15 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     }
     const ref: React.RefObject<HTMLDivElement> = React.createRef()
     return (
-      <div className="container-fluid SRC-syn-border-spacing ">
-        <div className="col-xs">
-          <form>
-            <div ref={ref} className="SRC-marginFive form-group">
-              {this.showFacetFilter()}
-              <span className="SRC-inlineBlock">
-                {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length, ref)}
-              </span>
-            </div>
-          </form>
-        </div>
+      <div className="SRC-syn-border-spacing">
+        <form>
+          <div ref={ref} className="SRC-marginFive form-group">
+            {this.showFacetFilter()}
+            <span className="SRC-inlineBlock">
+              {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length, ref)}
+            </span>
+          </div>
+        </form>
       </div>
     )
   }

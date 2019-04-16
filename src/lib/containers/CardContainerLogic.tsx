@@ -197,19 +197,17 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    */
   public render() {
     return (
-      <div className="container-fluid">
-        <CardContainer
-          data={this.state.data}
-          limit={this.props.limit}
-          type={this.props.type}
-          totalResultsNoFacet={this.state.totalResultsNoFacet}
-          unitDescription={this.props.unitDescription}
-          getLastQueryRequest={this.getLastQueryRequest}
-          getNextPageOfData={this.getNextPageOfData}
-          filter={this.props.filter}
-          hasMoreData={this.state.hasMoreData}
-        />
-      </div>
+      <CardContainer
+        data={this.state.data}
+        limit={this.props.limit}
+        type={this.props.type}
+        totalResultsNoFacet={this.state.totalResultsNoFacet}
+        unitDescription={this.props.unitDescription}
+        getLastQueryRequest={this.getLastQueryRequest}
+        getNextPageOfData={this.getNextPageOfData}
+        filter={this.props.filter}
+        hasMoreData={this.state.hasMoreData}
+      />
     )
   }
 

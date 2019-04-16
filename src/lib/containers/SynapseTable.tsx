@@ -181,81 +181,75 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return (
       <React.Fragment>
         <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
-        <div className="container-fluid">
-            <div className="row SRC-marginBottomTen">
-              <p style={{ height:'20px' }}>
-                {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
-                {isLoading &&
-                  <React.Fragment>
-                    <span className={'spinner'}/>
-                    <strong> {'    '} Table results updating...</strong>
-                  </React.Fragment>
-                }
-              </p>
-            </div>
+        <div className="row SRC-marginBottomTen">
+          <p style={{ height:'20px' }}>
+            {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
+            {isLoading &&
+              <React.Fragment>
+                <span className={'spinner'}/>
+                <strong> {'    '} Table results updating...</strong>
+              </React.Fragment>
+            }
+          </p>
         </div>
-        <div className="container-fluid" >
-            <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
-                <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-                <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
-                    <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
-                        <span
-                            tabIndex={0}
-                            data-for={tooltipIdOne}
-                            data-tip="Open Advanced Search in Synapse"
-                            className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                            onKeyPress={this.advancedSearch}
-                            onClick={this.advancedSearch}
-                        >
-                            <FontAwesomeIcon size="1x" color="white"  icon="database"/>
-                        </span>
-                        <ReactTooltip
-                            delayShow={1500}
-                            place="bottom"
-                            type="dark"
-                            effect="solid"
-                            id={tooltipIdOne}
-                        />
-
-                        <span
-                            tabIndex={0}
-                            data-for={tooltipIdTwo}
-                            data-tip="Add / Remove Columns"
-                            style={{ marginLeft: '10px' }}
-                            className={addRemoveColClasses}
-                            onKeyPress={this.toggleMenuWall}
-                            onClick={this.toggleMenuWall}
-                            id="dropdownMenu1"
-                        >
-                            <FontAwesomeIcon color="white" icon="columns"/>
-                        </span>
-                        <ReactTooltip
-                            delayShow={1500}
-                            place="bottom"
-                            type="dark"
-                            effect="solid"
-                            id={tooltipIdTwo}
-                        />
-                        <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                            {this.renderDropdownColumnMenu(headers)}
-                        </ul>
+        <div className="row SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
+            <h3 className="SRC-tableHeader"> {this.props.title}</h3>
+            <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
+                <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
+                    <span
+                        tabIndex={0}
+                        data-for={tooltipIdOne}
+                        data-tip="Open Advanced Search in Synapse"
+                        className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                        onKeyPress={this.advancedSearch}
+                        onClick={this.advancedSearch}
+                    >
+                        <FontAwesomeIcon size="1x" color="white"  icon="database"/>
                     </span>
+                    <ReactTooltip
+                        delayShow={1500}
+                        place="bottom"
+                        type="dark"
+                        effect="solid"
+                        id={tooltipIdOne}
+                    />
+
+                    <span
+                        tabIndex={0}
+                        data-for={tooltipIdTwo}
+                        data-tip="Add / Remove Columns"
+                        style={{ marginLeft: '10px' }}
+                        className={addRemoveColClasses}
+                        onKeyPress={this.toggleMenuWall}
+                        onClick={this.toggleMenuWall}
+                        id="dropdownMenu1"
+                    >
+                        <FontAwesomeIcon color="white" icon="columns"/>
+                    </span>
+                    <ReactTooltip
+                        delayShow={1500}
+                        place="bottom"
+                        type="dark"
+                        effect="solid"
+                        id={tooltipIdTwo}
+                    />
+                    <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                        {this.renderDropdownColumnMenu(headers)}
+                    </ul>
                 </span>
-            </div>
+            </span>
         </div>
-        <div className="container-fluid">
-            {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
-            <div style={{ minHeight: '300px' }} className="row SRC-overflowAuto">
-                <table className="table table-striped table-condensed">
-                    <thead className="SRC_borderTop">
-                        <tr>
-                            {this.createTableHeader(headers, facets)}
-                        </tr>
-                    </thead>
-                    {<tbody>{this.createTableRows(rows, headers)}</tbody>}
-                </table>
-                {total > 0 && this.showPaginationButtons(pastZero)}
-            </div>
+        {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
+        <div style={{ minHeight: '300px' }} className="row SRC-overflowAuto">
+            <table className="table table-striped table-condensed">
+                <thead className="SRC_borderTop">
+                    <tr>
+                        {this.createTableHeader(headers, facets)}
+                    </tr>
+                </thead>
+                {<tbody>{this.createTableRows(rows, headers)}</tbody>}
+            </table>
+            {total > 0 && this.showPaginationButtons(pastZero)}
         </div>
       </React.Fragment>
     )

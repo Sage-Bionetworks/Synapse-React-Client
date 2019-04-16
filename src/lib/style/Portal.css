@@ -220,7 +220,7 @@ svg.SRC-hoverBox:hover:after {
   border-width: 1px; }
 
 .SRC-syn-border-spacing {
-  padding: 10px;
+  padding: 10px 0px;
   margin-bottom: 10px; }
 
 .SRC-syn-lightbackground {
@@ -385,11 +385,13 @@ table.SRC-paddingRight > tbody > tr > td {
 
 .SRC-primary-background-color-hover:hover {
   background-color: #D53F77; }
-  .SRC-primary-background-color-hover:hover > svg {
-    color: white; }
-  .SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
-    background-color: #D53F77;
-    color: white; }
+
+.SRC-primary-background-color-hover:hover > svg {
+  color: white; }
+
+.SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
+  background-color: #D53F77;
+  color: white; }
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -540,8 +542,9 @@ button.SRC-roundBorder {
   font-weight: 600;
   border: none;
   background: white; }
-  .tableDropdownSelector:focus {
-    outline: none; }
+
+.tableDropdownSelector:focus {
+  outline: none; }
 
 .SRC-extraPadding {
   padding: 5px; }
@@ -567,8 +570,9 @@ button.SRC-roundBorder {
   width: 130px;
   height: 40px;
   margin: 21px; }
-  .SRC-viewMoreButton:focus {
-    outline: none; }
+
+.SRC-viewMoreButton:focus {
+  outline: none; }
 
 /*
   checkmark styling start
@@ -659,8 +663,9 @@ checkmark styling end
   z-index: 900;
   background: none;
   border: none; }
-  .SRC-menu-wall:focus {
-    outline: none; }
+
+.SRC-menu-wall:focus {
+  outline: none; }
 
 .SRC-table-dropdown-content {
   align-items: center;
@@ -792,9 +797,10 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-  .SRC-cardContent p {
-    margin: 0px 0px 4px 0px;
-    line-height: 120%; }
+
+.SRC-cardContent p {
+  margin: 0px 0px 4px 0px;
+  line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
@@ -913,3 +919,9 @@ div.SRC-userImg {
 
 .SRC-facet-select-all {
   padding: 4px 12px; }
+
+.SRC-menuLayout {
+  padding-right: 40px; }
+
+.SRC-chart-btn {
+  border: none; }

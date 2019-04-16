@@ -222,10 +222,10 @@ export default class StackedBarChart extends
     const originalColor = colorPalette[0]
 
     return (
-      <div className="container-fluid">
+      <React.Fragment>
         <div className="row SRC-center-text">
           <button
-            className="btn btn-default btn-sm SRC-floatRight"
+            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
             onClick={this.handleArrowClick(NEXT_CLICK)}
           >
             <FontAwesomeIcon
@@ -235,7 +235,7 @@ export default class StackedBarChart extends
             />
           </button>
           <button
-            className="btn btn-default btn-sm SRC-floatRight"
+            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
             onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}
           >
             <FontAwesomeIcon
@@ -352,7 +352,7 @@ export default class StackedBarChart extends
             {this.getFileCount(xData)} {unitDescription}
           </p>
         </div>
-      </div>
+      </React.Fragment>
     )
   }
   public extractPropsData(data: any) {
