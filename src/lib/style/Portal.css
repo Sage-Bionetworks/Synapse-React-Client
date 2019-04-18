@@ -781,6 +781,7 @@ div.SRC-userImg {
 
 .SRC-userCardMediumUp {
   height: 120px;
+  width: 100%;
   width: -webkit-fill-available;
   width: -moz-available;
   padding-left: 25px; }
