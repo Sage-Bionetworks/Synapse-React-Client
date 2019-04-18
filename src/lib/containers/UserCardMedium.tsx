@@ -77,22 +77,22 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
 
   public componentDidMount() {
     // SWC-4778: https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
-    window.addEventListener('mouseup', this.pageClick, false);
+    window.addEventListener('mouseup', this.pageClick, false)
   }
-  
+
   public componentWillUnMount() {
-    window.removeEventListener('mouseup', this.pageClick, false);
+    window.removeEventListener('mouseup', this.pageClick, false)
   }
 
   public pageClick = (_event: any) => {
     if (!this.state.isContextMenuOpen) {
-        return;
+      return
     }
     // hide content menu (deferred, to allow menu action to process)
     setTimeout(
       () => {
         if (this.state.isContextMenuOpen) {
-          this.toggleContextMenu(_event);
+          this.toggleContextMenu(_event)
         }
       },
       10

@@ -108,14 +108,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const queryWrapper = this.renderQueryChildren()
 
     return (
-      <div className="container-fluid">
+      <React.Fragment>
         <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
           {menuDropdown}
         </div>
         <div className="col-xs-10">
           {queryWrapper}
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 
