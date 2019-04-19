@@ -22,8 +22,8 @@ export type UserCardProps = {
   size: string
   hideText?: boolean
   hideTooltip?: boolean
-  profileClickHandler?: (userProfile: UserProfile) => void
   menuActions? : MenuAction[]
+  link?: string
 }
 
 export default class UserCard extends React.Component<UserCardProps, UserCardState> {

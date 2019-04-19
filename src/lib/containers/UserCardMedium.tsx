@@ -25,7 +25,7 @@ export type UserCardMediumProps = {
   preSignedURL?: string
   hideEmail?: boolean
   isLarge?: boolean
-  profileClickHandler?: (userProfile: UserProfile) => void
+  link?: string
 }
 
 // Disable function name because compiler has to know that its a React class
@@ -76,14 +76,38 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     this.setState({ isContextMenuOpen: !this.state.isContextMenuOpen })
   }
 
+  public componentDidMount() {
+    // SWC-4778: https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
+    window.addEventListener('mouseup', this.pageClick, false)
+  }
+
+  public componentWillUnMount() {
+    window.removeEventListener('mouseup', this.pageClick, false)
+  }
+
+  public pageClick = (_event: any) => {
+    if (!this.state.isContextMenuOpen) {
+      return
+    }
+    // hide content menu (deferred, to allow menu action to process)
+    setTimeout(
+      () => {
+        if (this.state.isContextMenuOpen) {
+          this.toggleContextMenu(_event)
+        }
+      },
+      10
+    )
+  }
+
   render () {
     const {
       userProfile,
       menuActions,
-      profileClickHandler,
       isLarge = false,
       preSignedURL,
-      hideEmail = false
+      hideEmail = false,
+      link
     } = this.props
     const { isContextMenuOpen, showModal } = this.state
     const {
@@ -96,17 +120,9 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     } = userProfile
     let img
     let name = ''
-    const link = profileClickHandler ? 'javascript:' : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
-    // link is overriden by custom click handler
+    const linkLocation = link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+    // linkLocation is overriden by custom click handler
     const email = `${userName}@synapse.org`
-    // call the click handler with userProfile handed to it -- only if its defined
-    const profileClickHandlerWithParam = profileClickHandler && (
-      (event: React.SyntheticEvent) => {
-        event.preventDefault()
-        event.stopPropagation()
-        profileClickHandler(userProfile)
-      }
-    )
     if (displayName) {
       name = displayName
     } else if (firstName && lastName) {
@@ -148,8 +164,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
           </TransitionGroup>
         }
         <a
-          href={link}
-          onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+          href={linkLocation}
           className={`SRC-no-underline-on-hover ${isLarge ? 'SRC-isLargeCard' : ''}`}
         >
           {img}
@@ -162,9 +177,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
                 // consolidate click events
                 <a
-                  href={link}
-                  onClick={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
-                  onKeyPress={profileClickHandlerWithParam ? profileClickHandlerWithParam : undefined}
+                  href={linkLocation}
                   tabIndex={0}
                   className={'SRC-hand-cursor SRC-primary-text-color'}
                 >
@@ -212,15 +225,6 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
               icon="ellipsis-v"
               fixedWidth={true}
             />
-            {
-              isContextMenuOpen
-              &&
-              <button
-                className="SRC-menu-wall"
-                type="button"
-                onClick={this.toggleContextMenu}
-              />
-            }
             {
               isContextMenuOpen
               &&

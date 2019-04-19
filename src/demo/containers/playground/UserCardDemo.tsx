@@ -2,14 +2,12 @@ import * as React from 'react'
 import UserCard from 'src/lib/containers/UserCard'
 import { SynapseConstants } from 'src/lib'
 import MarkdownSynapse from 'src/lib/containers/MarkdownSynapse'
-import { UserProfile } from '../../../lib/utils/jsonResponses/UserProfile'
 
 export default class UserBadgeSmallDemo extends React.Component<any, any> {
   constructor(props: any) {
     super(props)
   }
   public render() {
-    const goToGoole = (userProfile: UserProfile) => { console.log('userProfile = ', userProfile) }
     const profiles = [
       '3376985',
       '1131050',
@@ -28,13 +26,25 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <UserCard
               ownerId={'273950'}
               size={SynapseConstants.SMALL_USER_CARD}
-              profileClickHandler={goToGoole}
             />
             <p> without text </p>
             <UserCard
               ownerId={'3374422'}
               hideText={true}
               size={SynapseConstants.SMALL_USER_CARD}
+            />
+            <hr/>
+             <p> with custom link- </p>
+            <UserCard
+              ownerId={'273950'}
+              size={SynapseConstants.SMALL_USER_CARD}
+              link={'https://google.com'}
+            />
+            <UserCard
+              ownerId={'3374422'}
+              hideText={true}
+              size={SynapseConstants.SMALL_USER_CARD}
+              link={'https://google.com'}
             />
             <hr/>
             <p> without tooltip </p>
@@ -103,8 +113,6 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <br/>
             <UserCard
               ownerId={'3374422'}
-              // tslint:disable-next-line:jsx-no-lambda
-              profileClickHandler={(userProfile) => { window.location.href = 'https://google.com' }}
               size={SynapseConstants.LARGE_USER_CARD}
             />
             <br/>
@@ -140,7 +148,6 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                 return (
                   <div className="SRC-grid-item" key={index}>
                     <UserCard
-                      profileClickHandler={goToGoole}
                       hideEmail={(index % 2) === 0}
                       menuActions={[
                         {
@@ -161,6 +168,7 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
                       ]}
                       ownerId={profiles[index]}
                       size={SynapseConstants.MEDIUM_USER_CARD}
+                      link={index % 2 ? 'https://google.com' : ''}
                     />
                   </div>
                 )

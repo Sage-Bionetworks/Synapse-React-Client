@@ -246,7 +246,7 @@ svg.SRC-hoverBox {
   border-width: 1px;
 }
 .SRC-syn-border-spacing { 
-  padding: 10px;
+  padding: 10px 0px;
   margin-bottom: 10px;
 }
 .SRC-syn-lightbackground {
@@ -964,6 +964,7 @@ div.SRC-userImg {
 }
 .SRC-userCardMediumUp {
   height: 120px;
+  width: 100%;
   width: -webkit-fill-available; // for chrome
   width: -moz-available;  // for firefox
   padding-left: 25px;
@@ -1125,4 +1126,16 @@ div.SRC-userImg {
 
 .SRC-facet-select-all {
   padding: 4px 12px;
+}
+
+.SRC-menuLayout {
+  padding-right: 40px;
+}
+
+.SRC-chart-btn {
+  border: none;
+}
+
+.SRC-chart-nav {
+  height: 30px;
 }

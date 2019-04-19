@@ -291,16 +291,14 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       // menu is to the left of the child components so we let that add its
       // own html
       return (
-        <span className={`container-fluid ${loadingCusrorClass}`}>
+        <div className={`${loadingCusrorClass}`}>
           {childrenWithProps}
-        </span>
+        </div>
       )
     }
     return (
-      <div className={`container-fluid ${loadingCusrorClass}`}>
-          <div className={'col-xs-12'}>
-              {childrenWithProps}
-          </div>
+      <div className={`${loadingCusrorClass}`}>
+        {childrenWithProps}
       </div>
     )
   }
