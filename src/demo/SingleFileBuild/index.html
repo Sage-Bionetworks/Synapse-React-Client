@@ -24,7 +24,7 @@
     <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"> </script>
 
     <!-- plotly -->
-    <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script crossorigin src="https://cdn.plot.ly/plotly-basic-1.47.3.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"></script>
 
     <!-- markdown imports  -->
@@ -49,7 +49,7 @@
 
     <!-- local imports-- change in prod -->
     <link rel="stylesheet" href="../../umd/synapse-react-client.production.styles.css"/>
-    <script src="https://cdn.jsdelivr.net/gh/leem42/Synapse-React-Client/src/umd/synapse-react-client.production.min.js"> </script>
+    <script src="../../umd/synapse-react-client.production.min.js"> </script>
     
     <!--
       Notice the use of %PUBLIC_URL% in the tag above.
@@ -122,7 +122,7 @@
     }
     const markdownContainer = document.querySelector('#panel2');
     const markdownProps = {
-      token: "",
+      token: '',
       wikiId: '582150',
       ownerId: 'syn14306197',
     }

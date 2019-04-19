@@ -9,7 +9,8 @@ import { uglify } from 'rollup-plugin-uglify';
 import commonjs from 'rollup-plugin-commonjs'
 /* 
 	TODO: 
-		1. inline svgs for css don't work
+		1. inline svgs for css don't work, easy work around is convert svg to exported
+		.tsx file
 */
 export default {
 	input: 'src/lib/index.tsx',
@@ -17,7 +18,8 @@ export default {
 		'react',
 		'prop-types',
 		'react-measure',
-		'react-plotly.js',
+		'react-plotly.js/factory',
+		'plotly.js-basic-dist',
 		'katex',
 		'react-tooltip',
 		'markdownit',
@@ -76,7 +78,8 @@ export default {
 			'react' : 'React',
 			'katex' : 'katex',
 			'react-transition-group': 'ReactTransitionGroup',
-			'react-plotly.js': 'createPlotlyComponent(Plotly)',
+			'react-plotly.js/factory': 'createPlotlyComponent',
+			'plotly.js-basic-dist': 'Plotly',
 			'react-measure': 'ReactMeasure',
 			'react-tooltip': 'ReactTooltip',
 			'prop-types': 'PropTypes',
