@@ -1,9 +1,12 @@
 import * as React from 'react'
-// tslint:disable-next-line
-import Plot from "react-plotly.js"
+// tslint:disable-next-line:import-name
+import Plotly from 'plotly.js-basic-dist'
+// tslint:disable-next-line:import-name
+import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
 import { SynapseConstants } from '../../utils/'
+const Plot = createPlotlyComponent(Plotly)
 
 type SynapsePlotProps = {
   token?: string
@@ -32,11 +35,11 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
   public componentDidMount() {
     this.fetchPlotlyData()
   }
-    /**
-     * Get data for plotly
-     *
-     * @returns data corresponding to plotly widget
-     */
+  /**
+   * Get data for plotly
+   *
+   * @returns data corresponding to plotly widget
+   */
   public fetchPlotlyData() {
     const { token } = this.props
     const { query } = this.props.widgetparamsMapped
@@ -118,13 +121,14 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
         plotData[j - 1].y.push(rowValues[j])
       }
     }
-    return <Plot data={plotData} layout={layout} />
+    return <Plot layout={layout} data={plotData} />
   }
+
   public render() {
     if (!this.state.isLoaded) {
       return null
     }
-    return <React.Fragment>{this.showPlot()}</React.Fragment>
+    return (this.showPlot())
   }
 }
 export default SynapsePlot
