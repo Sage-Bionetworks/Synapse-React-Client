@@ -14,12 +14,13 @@ export type UserCardSmallProps = {
   preSignedURL?: string
   hideText?: boolean
   hideTooltip?: boolean
+  link?: string
 }
 
 export const UserCardSmall: React.SFC<UserCardSmallProps> = (
-  { userProfile, hideText = false, hideTooltip = false, preSignedURL }
+  { userProfile, hideText = false, hideTooltip = false, preSignedURL, link }
 ) => {
-  const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+  const linkLocation = link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
   let label = ''
@@ -61,7 +62,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
   }
   return (
     <a
-      href={link}
+      href={linkLocation}
       className="SRC-userCard SRC-primary-text-color SRC-no-underline-on-hover"
     >
       {img}
