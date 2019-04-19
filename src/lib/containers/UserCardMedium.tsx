@@ -25,6 +25,7 @@ export type UserCardMediumProps = {
   preSignedURL?: string
   hideEmail?: boolean
   isLarge?: boolean
+  link?: string
 }
 
 // Disable function name because compiler has to know that its a React class
@@ -105,7 +106,8 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       menuActions,
       isLarge = false,
       preSignedURL,
-      hideEmail = false
+      hideEmail = false,
+      link
     } = this.props
     const { isContextMenuOpen, showModal } = this.state
     const {
@@ -118,8 +120,8 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     } = userProfile
     let img
     let name = ''
-    const link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
-    // link is overriden by custom click handler
+    const linkLocation = link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+    // linkLocation is overriden by custom click handler
     const email = `${userName}@synapse.org`
     if (displayName) {
       name = displayName
@@ -162,7 +164,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
           </TransitionGroup>
         }
         <a
-          href={link}
+          href={linkLocation}
           className={`SRC-no-underline-on-hover ${isLarge ? 'SRC-isLargeCard' : ''}`}
         >
           {img}
@@ -175,7 +177,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
             {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
                 // consolidate click events
                 <a
-                  href={link}
+                  href={linkLocation}
                   tabIndex={0}
                   className={'SRC-hand-cursor SRC-primary-text-color'}
                 >
