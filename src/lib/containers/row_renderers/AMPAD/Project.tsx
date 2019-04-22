@@ -64,10 +64,19 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
           <div className="SRC-cardContent">
               <div className="SRC-type">Project</div>
               <div className="SRC-title">
-                  <h3>
+                  <h3 className="SRC-boldText">
+                    {
+                      link
+                      &&
                       <a target="_blank" href={link}>
                           {name}
                       </a>
+                    }
+                    {
+                      !link
+                      &&
+                      name
+                    }
                   </h3>
               </div>
               <div className="SRC-author SRC-boldText">{investigators}</div>
