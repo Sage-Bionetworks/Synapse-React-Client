@@ -2,5 +2,5 @@ language: node_js
 node_js:
   - "10.15.3"
 script:
-  - npm run test:coverage
-  - npm run build
+  - yarn test:coverage
+  - yarn build
