@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { mockData }   from '../../../mocks/'
+import { mockData }   from '../../../mocks'
 import QueryWrapperMenu, { QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import StackedBarChart from '../../../lib/containers/StackedBarChart'

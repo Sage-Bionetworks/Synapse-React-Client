@@ -1,11 +1,11 @@
 import * as React from 'react'
-import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
+// import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
 import Login from '../../lib/containers/Login'
-import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
-import UserProfileDemo from '../../lib/containers/demo_components/UserProfileDemo'
-import UserProjects from '../../lib/containers/demo_components/UserProjects'
-import UserTeams from '../../lib/containers/demo_components/UserTeams'
-import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
+// import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
+// import UserProfileDemo from '../../lib/containers/demo_components/UserProfileDemo'
+// import UserProjects from '../../lib/containers/demo_components/UserProjects'
+// import UserTeams from '../../lib/containers/demo_components/UserTeams'
+// import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
 // import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
 import CardContainer from '../../lib/containers/CardContainer'
@@ -236,7 +236,7 @@ class Demo extends React.Component<{}, DemoState> {
           redirectURL={redirectUrl}
         />
 
-        <UserFavorites
+        {/* <UserFavorites
           token={inDevEnv ? token : this.state.token}
           getUserFavoritesEndpoint={SynapseClient.getUserFavorites}
         />
@@ -257,7 +257,7 @@ class Demo extends React.Component<{}, DemoState> {
           token={inDevEnv ? token : this.state.token}
           ownerId={this.state.ownerId}
           getUserTeamEndpoint={SynapseClient.getUserTeamList}
-        />
+        /> */}
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
 
@@ -271,7 +271,7 @@ class Demo extends React.Component<{}, DemoState> {
           />
         </CustomMarkdownView> */}
 
-        <CustomMarkdownView>
+        {/* <CustomMarkdownView>
           <MarkdownSynapse
             token={inDevEnv ? token : this.state.token}
             wikiId={'582150'}
@@ -279,7 +279,7 @@ class Demo extends React.Component<{}, DemoState> {
             // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
             updateLoadState={this.handleChange}
           />
-        </CustomMarkdownView>
+        </CustomMarkdownView> */}
 
         {/* <CustomMarkdownView>
           <MarkdownSynapse

@@ -3,6 +3,7 @@
   "version": "1.11.27",
   "private": false,
   "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
   "module": "dist/index.js",
   "homepage": "https://leem42.github.io/Synapse-React-Client/",
   "files": [
@@ -118,9 +119,7 @@
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
     "type-check:watch": "yarn run type-check --watch",
-    "build": "yarn run babel-version && yarn run build-css && yarn run build:js && yarn run build:js-cleanup && yarn run build:rollup",
-    "build:js": "rm -rf dist && babel src/lib --copy-files --out-dir dist --extensions \".js,.ts,.tsx\" --source-maps inline",
-    "build:js-cleanup": "rm -rf dist/containers/demo_components && rm -rf dist/utils/jsonResponses",
-    "build:rollup": "rollup -c && cp -r src/umd dist/"
+    "build": "yarn run babel-version && yarn run build-css && yarn run build:js",
+    "build:js": "rm -rf dist && ./node_modules/typescript/bin/tsc --p tsconfig.build.json"
   }
 }
