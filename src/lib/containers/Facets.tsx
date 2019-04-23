@@ -103,7 +103,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         </span>
         <input
           // @ts-ignore
-          onChange={props.applyChanges(ref, value , SELECT_SINGLE_FACET)}
+          onChange={props.applyChanges(ref, value , SELECT_SINGLE_FACET, index)}
           checked={isSelected}
           type="checkbox"
           value={value}
@@ -170,6 +170,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     ref: React.RefObject<HTMLSpanElement>,
     facetValue: string,
     selector :string,
+    index?: number
   ) =>
   (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault()
@@ -190,7 +191,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     this.props.updateParentState!({
       lastFacetSelection,
-      isAllFilterSelectedForFacet
+      isAllFilterSelectedForFacet,
+      chartSelectionIndex: index
     })
 
     // read input and fetch data

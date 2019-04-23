@@ -34,11 +34,8 @@ type MeasureRect = {
 }
 
 export type StackedBarChartState = {
-  facetValueOccurence: number
-  chartSelectionFacetValue: string
   selectedFacets: {}
   dimensions: MeasureRect
-  chartSelectionIndex: number
 }
 
 export type StackedBarChartProps = {
@@ -82,23 +79,10 @@ export default class StackedBarChart extends
       // the dimensions of the bar chart itself
       dimensions: { bounds: { height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0 } },
       // the text of the current slice
-      chartSelectionFacetValue: '',
       // the count of this facet value occurence
-      facetValueOccurence: 0,
-      chartSelectionIndex: -1,
       selectedFacets: {}
     }
     this.extractPropsData = this.extractPropsData.bind(this)
-  }
-
-  public componentDidUpdate(prevProps: any) {
-    if (prevProps.filter !== this.props.filter || prevProps.isLoadingNewData !== this.props.isLoadingNewData) {
-      this.setState({
-        chartSelectionFacetValue: '',
-        facetValueOccurence: 0,
-        chartSelectionIndex: -1
-      })
-    }
   }
 
   /**
@@ -127,18 +111,11 @@ export default class StackedBarChart extends
    */
   public handleClick = (dict: Info) => (_event: React.MouseEvent<SVGElement>) => {
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-    this.setState({
-      chartSelectionFacetValue: dict.value,
-      facetValueOccurence: dict.count,
-      chartSelectionIndex: dict.index
-    })
+    this.props.updateParentState!({ chartSelectionIndex: dict.index })
   }
 
   public handleArrowClick = (direction: string) => (_event: React.MouseEvent) => {
-    let { chartSelectionIndex } = this.state
-    if (chartSelectionIndex === -1) {
-      chartSelectionIndex = 0
-    }
+    let { chartSelectionIndex = 0 } = this.props
     let dict: any = this.extractPropsData(this.props.data)
     const length = Object.keys(dict).length
     if (direction === PREVIOUS_ITEM_CLICK) {
@@ -151,17 +128,15 @@ export default class StackedBarChart extends
     chartSelectionIndex = chartSelectionIndex % length
 
     dict = dict[chartSelectionIndex]
-    this.setState({
-      chartSelectionIndex,
-      chartSelectionFacetValue: dict.value,
-      facetValueOccurence: dict.count
-    })
+    this.props.updateParentState!({ chartSelectionIndex })
+    // return is only for testing purposes
+    return chartSelectionIndex
   }
 
   public getTextForChartSelection(xData: any) {
-    const { chartSelectionIndex, chartSelectionFacetValue } = this.state
+    const { chartSelectionIndex = 0 } = this.props
     const { facetAliases = {}, filter } = this.props
-    const facetValueDisplay = chartSelectionIndex === -1 ? (xData[0] && xData[0].value) : chartSelectionFacetValue
+    const facetValueDisplay = xData[chartSelectionIndex] && xData[chartSelectionIndex].value
     const filterDisplay = facetAliases[filter!] || filter
     return (
       <span>
@@ -177,11 +152,8 @@ export default class StackedBarChart extends
   }
 
   public getFileCount(xData: any) {
-    if (this.state.chartSelectionIndex === -1) {
-      const hoverTextCount = xData[0] && xData[0].count
-      return hoverTextCount
-    }
-    return this.state.facetValueOccurence
+    const { chartSelectionIndex = 1 } = this.props
+    return xData[chartSelectionIndex] && xData[chartSelectionIndex].count
   }
 
   public rgba2rgb(background: number[], color: number[]) {
@@ -203,7 +175,8 @@ export default class StackedBarChart extends
       unitDescription,
       isLoading,
       lastFacetSelection,
-      isAllFilterSelectedForFacet
+      isAllFilterSelectedForFacet,
+      chartSelectionIndex
     } = this.props
     // while loading
     if (isLoadingNewData) {
@@ -257,7 +230,6 @@ export default class StackedBarChart extends
             {({ measureRef }) => (
               <div className="SRC-flex" ref={measureRef}>
                 {xData.map((obj: FacetColumnResultValueCount, index) => {
-                  const initRender: boolean = this.state.chartSelectionIndex === -1 && index === 0
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
@@ -279,7 +251,7 @@ export default class StackedBarChart extends
                   const svgHeight = 80
                   const svgWidth = obj.count / total * width
                   const style: any = {}
-                  if (this.state.chartSelectionIndex === index || initRender) {
+                  if (chartSelectionIndex === index) {
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
                   }
                   const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
@@ -324,7 +296,7 @@ export default class StackedBarChart extends
                               {obj.count}
                             </text>}
                           {
-                            (this.state.chartSelectionIndex === index || initRender) &&
+                            (chartSelectionIndex === index) &&
                               (
                                 <text
                                   fill={originalColor}

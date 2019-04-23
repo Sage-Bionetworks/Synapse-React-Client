@@ -110,7 +110,9 @@ describe('it performs basic functionality', () => {
     isAllFilterSelectedForFacet: {},
     synapseId: 'syn16787123',
     loadingScreen: <div/>,
-    isChecked: []
+    isChecked: [],
+    chartSelectionIndex: 0,
+    updateParentState: jest.fn(() => {})
   } as StackedBarChartProps & QueryWrapperChildProps
 
   it('renders without crashing', () => {
@@ -139,22 +141,15 @@ describe('it performs basic functionality', () => {
 
   it('handles arrow click correctly', async () => {
     /*
-      Overview:
-      1. Handle toggling between chart slices using the arrows
+      We test the handle arrow click as a static method
     */
-    const { wrapper, instance } = createShallowComponent(props)
-    const mockEvent = {} as any
-    // wrap around backwards
-    await instance.handleArrowClick(PREVIOUS_ITEM_CLICK)(mockEvent)
-    expect(wrapper.state('chartSelectionIndex')).toEqual(10)
-    expect(wrapper.state('chartSelectionFacetValue')).toEqual('SMN')
-    expect(wrapper.state('facetValueOccurence')).toEqual(1)
-
-    // wrap around forwards
-    await instance.handleArrowClick(NEXT_CLICK)(mockEvent)
-    expect(wrapper.state('chartSelectionIndex')).toEqual(0)
-    expect(wrapper.state('chartSelectionFacetValue')).toEqual(facetValueWithMaxCount)
-    expect(wrapper.state('facetValueOccurence')).toEqual(28)
+    const { instance } = createShallowComponent(props)
+    // cast and ignore, event doesn't get used in the method
+    const mockedEvent = {} as React.MouseEvent
+    // it wraps backwards
+    expect(instance.handleArrowClick(PREVIOUS_ITEM_CLICK)(mockedEvent)).toEqual(10)
+    // goes forward
+    expect(instance.handleArrowClick(NEXT_CLICK)(mockedEvent)).toEqual(1)
   })
 
   it('handles componentDidUpdate correctly', async () => {

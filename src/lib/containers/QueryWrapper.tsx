@@ -31,6 +31,7 @@ export type QueryWrapperState = {
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
   lastFacetSelection: FacetSelection
+  chartSelectionIndex: number
 }
 
 export type FacetSelection = {
@@ -55,6 +56,7 @@ export type QueryWrapperChildProps = {
   unitDescription?: string
   facetAliases?: {}
   lastFacetSelection?: FacetSelection
+  chartSelectionIndex?: number
 }
 
 /**
@@ -102,6 +104,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       facetValue: '',
       selector: ''
     },
+    chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {}
   } as QueryWrapperState
 
@@ -222,7 +225,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
   public executeInitialQueryRequest() {
     this.setState({
       isLoading: true,
-      isLoadingNewData: true
+      isLoadingNewData: true,
+      chartSelectionIndex: 0
     })
     SynapseClient
       .getQueryTableResults(this.props.initQueryRequest, this.props.token)
@@ -281,7 +285,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         updateParentState: this.updateParentState,
         isQueryWrapperChild: true,
         hasMoreData: this.state.hasMoreData,
-        lastFacetSelection: this.state.lastFacetSelection
+        lastFacetSelection: this.state.lastFacetSelection,
+        chartSelectionIndex: this.state.chartSelectionIndex
       })
     }))
 
