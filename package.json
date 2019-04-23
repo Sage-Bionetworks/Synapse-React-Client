@@ -103,6 +103,7 @@
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
+    "babel-version": "babel --version",
     "prepublishOnly": "yarn run build && yarn run test:coverage",
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts-ts build",
@@ -112,12 +113,12 @@
     "start-js": "react-scripts-ts start",
     "start": "npm-run-all -p watch-css start-js",
     "test": "react-scripts-ts test --env=jsdom  --setupFiles ./src/setupTests.js ",
-    "test:coverage": "yarn test -- --coverage",
+    "test:coverage": "yarn test --coverage",
     "eject": "react-scripts-ts eject",
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
-    "type-check:watch": "yarn run type-check -- --watch",
-    "build": "yarn run build-css && yarn run build:js && yarn run build:js-cleanup && yarn run build:rollup",
+    "type-check:watch": "yarn run type-check --watch",
+    "build": "yarn run babel-version && yarn run build-css && yarn run build:js && yarn run build:js-cleanup && yarn run build:rollup",
     "build:js": "rm -rf dist && babel src/lib --copy-files --out-dir dist --extensions \".js,.ts,.tsx\" --source-maps inline",
     "build:js-cleanup": "rm -rf dist/containers/demo_components && rm -rf dist/utils/jsonResponses",
     "build:rollup": "rollup -c && cp -r src/umd dist/"
