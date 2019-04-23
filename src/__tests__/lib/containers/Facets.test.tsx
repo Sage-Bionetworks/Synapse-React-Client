@@ -99,6 +99,7 @@ describe('it performs basic functionality', () => {
       facetValue: '',
       selector: ''
     },
+    chartSelectionIndex: 0,
     data: castData,
     isChecked: [],
     rgbIndex: 0,
