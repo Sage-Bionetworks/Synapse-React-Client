@@ -93,7 +93,7 @@
     "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-scss": "^0.4.0",
     "rollup-plugin-svg": "^1.0.1",
-    "rollup-plugin-typescript2": "^0.18.1",
+    "rollup-plugin-typescript2": "^0.21.0",
     "rollup-plugin-uglify": "^6.0.1",
     "sinon": "^7.2.2",
     "tslint-config-airbnb": "^5.11.1",
@@ -119,7 +119,8 @@
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
     "type-check:watch": "yarn run type-check --watch",
-    "build": "yarn run babel-version && yarn run build-css && yarn run build:js",
-    "build:js": "rm -rf dist && ./node_modules/typescript/bin/tsc --p tsconfig.build.json"
+    "build": "yarn run babel-version && yarn run build-css && yarn run build:js && yarn build:rollup",
+    "build:js": "rm -rf dist && ./node_modules/typescript/bin/tsc --p tsconfig.build.json",
+    "build:rollup": "./node_modules/rollup/bin/rollup -c && cp -r src/umd dist/umd"
   }
 }

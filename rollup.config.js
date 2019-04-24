@@ -49,7 +49,9 @@ export default {
 	},
 	plugins: [
 		image(),
-		typescript(),
+		typescript({
+			verbosity: 3,
+		}),
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
 		resolve(),
 		svg(),
@@ -71,7 +73,7 @@ export default {
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),
 		// minify the bundle with uglify
-		uglify()
+		// uglify()
 	],
 	output: {
 		globals: {

@@ -4,7 +4,6 @@
       { "name": "typescript-tslint-plugin" }
     ],
     "outDir": "dist",
-    "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -35,6 +34,6 @@
     "acceptance-tests",
     "webpack",
     "jest",
-    "setupTests.js",
+    "setupTests.js"
   ]
 }
