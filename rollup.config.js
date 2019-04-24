@@ -73,7 +73,7 @@ export default {
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),
 		// minify the bundle with uglify
-		// uglify()
+		uglify()
 	],
 	output: {
 		globals: {

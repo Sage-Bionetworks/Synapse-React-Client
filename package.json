@@ -121,6 +121,6 @@
     "type-check:watch": "yarn run type-check --watch",
     "build": "yarn run babel-version && yarn run build-css && yarn run build:js && yarn build:rollup",
     "build:js": "rm -rf dist && ./node_modules/typescript/bin/tsc --p tsconfig.build.json",
-    "build:rollup": "./node_modules/rollup/bin/rollup -c && cp -r src/umd dist/umd"
+    "build:rollup": "rollup -c && cp -r src/umd dist/umd"
   }
 }
