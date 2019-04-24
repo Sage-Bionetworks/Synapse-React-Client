@@ -49,9 +49,7 @@ export default {
 	},
 	plugins: [
 		image(),
-		typescript({
-			verbosity: 3,
-		}),
+		typescript(),
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
 		resolve(),
 		svg(),
