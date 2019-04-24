@@ -3,6 +3,7 @@
   "version": "1.11.27",
   "private": false,
   "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
   "module": "dist/index.js",
   "homepage": "https://leem42.github.io/Synapse-React-Client/",
   "files": [
@@ -92,7 +93,7 @@
     "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-scss": "^0.4.0",
     "rollup-plugin-svg": "^1.0.1",
-    "rollup-plugin-typescript2": "^0.18.1",
+    "rollup-plugin-typescript2": "^0.21.0",
     "rollup-plugin-uglify": "^6.0.1",
     "sinon": "^7.2.2",
     "tslint-config-airbnb": "^5.11.1",
@@ -103,7 +104,6 @@
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
-    "babel-version": "babel --version",
     "prepublishOnly": "yarn run build && yarn run test:coverage",
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts-ts build",
@@ -118,9 +118,8 @@
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
     "type-check:watch": "yarn run type-check --watch",
-    "build": "yarn run babel-version && yarn run build-css && yarn run build:js && yarn run build:js-cleanup && yarn run build:rollup",
-    "build:js": "rm -rf dist && babel src/lib --copy-files --out-dir dist --extensions \".js,.ts,.tsx\" --source-maps inline",
-    "build:js-cleanup": "rm -rf dist/containers/demo_components && rm -rf dist/utils/jsonResponses",
-    "build:rollup": "rollup -c && cp -r src/umd dist/"
+    "build": "yarn run build-css && yarn run build:js && yarn build:rollup",
+    "build:js": "rm -rf dist && ./node_modules/typescript/bin/tsc --p tsconfig.build.json",
+    "build:rollup": "rollup -c && cp -r src/umd dist/umd"
   }
 }

@@ -1,20 +1,11 @@
 import * as React from 'react'
-import CustomMarkdownView from '../../lib/containers/demo_components/CustomMarkdownView'
 import Login from '../../lib/containers/Login'
-import UserFavorites from '../../lib/containers/demo_components/UserFavorites'
-import UserProfileDemo from '../../lib/containers/demo_components/UserProfileDemo'
-import UserProjects from '../../lib/containers/demo_components/UserProjects'
-import UserTeams from '../../lib/containers/demo_components/UserTeams'
-import MarkdownSynapse from '../../lib/containers/MarkdownSynapse'
-// import QueryWrapperMenu from "../../lib/containers/QuerryWrapperMenu"
 import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
 import CardContainer from '../../lib/containers/CardContainer'
-// import TeamMemberList from '../../lib/containers/TeamMemberList'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-// import TeamMemberList from '../../lib/containers/TeamMemberList'
 
 type DemoState = {
   token: string
@@ -236,60 +227,7 @@ class Demo extends React.Component<{}, DemoState> {
           redirectURL={redirectUrl}
         />
 
-        <UserFavorites
-          token={inDevEnv ? token : this.state.token}
-          getUserFavoritesEndpoint={SynapseClient.getUserFavorites}
-        />
-
-        <UserProjects
-          token={inDevEnv ? token : this.state.token}
-          getUserProjectsEndpoint={SynapseClient.getUserProjectList}
-        />
-
-        <UserProfileDemo
-          onProfileChange={this.handleChange}
-          token={inDevEnv ? token : this.state.token}
-          ownerId={this.state.ownerId}
-          getUserProfileEndpoint={SynapseClient.getUserProfile}
-        />
-
-        <UserTeams
-          token={inDevEnv ? token : this.state.token}
-          ownerId={this.state.ownerId}
-          getUserTeamEndpoint={SynapseClient.getUserTeamList}
-        />
-
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
-
-        {/* <CustomMarkdownView>
-          <MarkdownSynapse
-            token={inDevEnv ? token : this.state.token}
-            wikiId={'587923'}
-            ownerId={'syn17100797'}
-            // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
-            updateLoadState={this.handleChange}
-          />
-        </CustomMarkdownView> */}
-
-        <CustomMarkdownView>
-          <MarkdownSynapse
-            token={inDevEnv ? token : this.state.token}
-            wikiId={'582150'}
-            ownerId={'syn14306197'}
-            // markdown={'## The Perelman School of Medicine (Penn) study ${reference?inlineWidget=true&text=google%2Ecom}'}
-            updateLoadState={this.handleChange}
-          />
-        </CustomMarkdownView>
-
-        {/* <CustomMarkdownView>
-          <MarkdownSynapse
-            token={inDevEnv ? token : this.state.token}
-            wikiId={'588475'}
-            ownerId={'syn18142975'}
-            // markdown={'${image?synapseId=syn7809125&align=None&responsive=true}'}
-            updateLoadState={this.handleChange}
-          />
-        </CustomMarkdownView> */}
 
         <div className="container">
           <form>
@@ -333,7 +271,6 @@ class Demo extends React.Component<{}, DemoState> {
             loadingScreen={<div className="container">loading... </div>}
           />
         </div>
-        {/* <TeamMemberList id={3379644} token={inDevEnv ? token : this.state.token} /> */}
       </div>
     )
   }
