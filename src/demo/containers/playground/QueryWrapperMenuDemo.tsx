@@ -33,25 +33,14 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       {
         menuConfig: [
           {
-            // title: "Data",
-            facetDisplayValue: 'Organism',
-            facetName: 'Organism',
-            sql: 'SELECT * FROM syn9886254',
-            synapseId: 'syn9886254',
+            title: 'title',
+            facetName: 'col',
+            sql: 'SELECT * FROM syn18580706',
+            synapseId: 'syn18580706',
             unitDescription: 'data files',
             visibleColumnCount: 3,
           },
-          {
-            facetDisplayValue: 'Study',
-            facetName: 'Study',
-            sql: 'SELECT * FROM syn9886254',
-            synapseId: 'syn9886254',
-            unitDescription: 'data files',
-            visibleColumnCount: 5,
-          }
         ],
-        rgbIndex: 2,
-        type: SynapseConstants.AMP_STUDY
       }
     ,
       tabTwo: {
@@ -162,8 +151,9 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         <h2>Demo of table</h2>
           <QueryWrapperMenu
             token={''}
+            isConsistent={true}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
-            rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
+            rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
             type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
             loadingScreen={<div>loading... </div>}
           />

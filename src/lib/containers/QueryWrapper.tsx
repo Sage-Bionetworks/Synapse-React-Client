@@ -265,7 +265,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * Render the children without any formatting
    */
   public render() {
-
+    const { isLoading } = this.state
     const { facetAliases = {} } = this.props
     // inject props in children of this component
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
@@ -290,8 +290,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       })
     }))
 
-    const loadingCusrorClass = this.state.isLoading ? 'SRC-logo-cursor' : ''
-
+    const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     if (this.props.showMenu) {
       // menu is to the left of the child components so we let that add its
       // own html

@@ -5,6 +5,7 @@ import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { UserBundle } from './jsonResponses/UserBundle'
+import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
 
 // TODO: Create JSON response types for all return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
@@ -175,11 +176,10 @@ export const getQueryTableResults = (
   endpoint: string = DEFAULT_ENDPOINT
 ): Promise<QueryResultBundle> => {
   return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, undefined, endpoint)
-  .then((resp: any) => {
-      // started query, now attempt to get the results.
+  .then((resp: AsyncJobId) => {
     return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint)
   })
-  .catch((error) => {
+  .catch((error: any) => {
     throw error
   })
 }

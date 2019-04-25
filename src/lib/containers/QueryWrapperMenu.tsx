@@ -30,7 +30,8 @@ export type MenuConfig = {
 
 export type QueryWrapperMenuProps = {
   menuConfig: MenuConfig []
-  token: string
+  isConsistent?: boolean
+  token?: string
   type?: string
   rgbIndex: number
   loadingScreen?: JSX.Element
@@ -120,7 +121,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   private renderQueryChildren() {
-    const { menuConfig, token, rgbIndex, loadingScreen, type = '' } = this.props
+    const { menuConfig, token, rgbIndex, loadingScreen, isConsistent = false, type = '' } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = (this.state.menuIndex === index)
       const {
@@ -149,7 +150,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
               query: {
                 sql,
-                isConsistent: false,
+                isConsistent,
                 limit: 25,
                 offset: 0
               }
