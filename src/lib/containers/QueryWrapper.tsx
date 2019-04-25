@@ -294,7 +294,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }))
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
-    if (asyncJobStatus && asyncJobStatus.progressMessage) {
+    if (asyncJobStatus && asyncJobStatus.progressMessage && this.state.isLoading) {
       return (
         <div className={`${loadingCusrorClass}`}>
           {asyncJobStatus.progressMessage}
