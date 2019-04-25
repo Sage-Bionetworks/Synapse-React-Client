@@ -5,6 +5,7 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
+import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
 
 type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
@@ -32,6 +33,7 @@ export type QueryWrapperState = {
   hasMoreData: boolean
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
+  asyncJobStatus?: AsynchronousJobStatus
 }
 
 export type FacetSelection = {
@@ -174,6 +176,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     SynapseClient.getQueryTableResults(
       queryRequest,
       this.props.token,
+      this.updateParentState
     )
     .then(
       (data: QueryResultBundle) => {
@@ -229,7 +232,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       chartSelectionIndex: 0
     })
     SynapseClient
-      .getQueryTableResults(this.props.initQueryRequest, this.props.token)
+      .getQueryTableResults(this.props.initQueryRequest, this.props.token, this.updateParentState)
       .then(
         (data: QueryResultBundle) => {
           const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
@@ -265,7 +268,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * Render the children without any formatting
    */
   public render() {
-    const { isLoading } = this.state
+    const { isLoading, asyncJobStatus } = this.state
     const { facetAliases = {} } = this.props
     // inject props in children of this component
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
@@ -291,6 +294,13 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     }))
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
+    if (asyncJobStatus && asyncJobStatus.progressMessage) {
+      return (
+        <div className={`${loadingCusrorClass}`}>
+          {asyncJobStatus.progressMessage}
+        </div>
+      )
+    }
     if (this.props.showMenu) {
       // menu is to the left of the child components so we let that add its
       // own html
