@@ -33,6 +33,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       {
         menuConfig: [
           {
+            facetName: 'projectStatus',
             title: 'title',
             sql: 'SELECT * FROM syn16787123',
             synapseId: 'syn16787123',

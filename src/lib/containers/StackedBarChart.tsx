@@ -13,7 +13,6 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
-import { BarLoader } from 'react-spinners'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -187,9 +186,13 @@ export default class StackedBarChart extends
     if (asyncJobStatus) {
       return (
         <div className="SRC-loadingContainer SRC-centerContentColumn">
-          <BarLoader loading={true} />
-          <div style={{ marginTop: 5 }}>
-            Waiting for the table index to become available...
+          {/*
+            check loading screen is not undefined or null and show
+            it if so
+          */}
+          {!!loadingScreen && loadingScreen}
+          <div>
+            {asyncJobStatus.progressMessage}
           </div>
         </div>
       )

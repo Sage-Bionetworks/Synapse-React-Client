@@ -293,7 +293,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
         chartSelectionIndex: this.state.chartSelectionIndex,
-        asyncJobStatus: {}
+        asyncJobStatus: this.state.asyncJobStatus
       })
     }))
 
