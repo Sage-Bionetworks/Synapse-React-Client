@@ -5,6 +5,7 @@ import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { UserBundle } from './jsonResponses/UserBundle'
+import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
 
 // TODO: Create JSON response types for all return types
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
@@ -144,15 +145,19 @@ export const getQueryTableResultsFromJobId = (
   entityId: string,
   jobId: string,
   sessionToken: string | undefined = undefined,
-  endpoint: string = DEFAULT_ENDPOINT
+  endpoint: string = DEFAULT_ENDPOINT,
+  updateParentState?: any
 ): Promise<QueryResultBundle> => {
   return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, undefined, endpoint)
     .then((resp: any) => {
       // is this the job status?
       if (resp.jobState && resp.jobState !== 'FAILED') {
+        updateParentState && updateParentState({
+          asyncJobStatus: resp
+        })
         // still processing, wait for a second and try again
         return delay(500).then(() => {
-          return getQueryTableResultsFromJobId(entityId, jobId, sessionToken, endpoint)
+          return getQueryTableResultsFromJobId(entityId, jobId, sessionToken, endpoint, updateParentState)
         })
       }
       // these must be the query results!
@@ -172,14 +177,16 @@ export const getQueryTableResultsFromJobId = (
 export const getQueryTableResults = (
   queryBundleRequest: any,
   sessionToken: string | undefined = undefined,
-  endpoint: string = DEFAULT_ENDPOINT
+  updateParentState?: any,
+  endpoint: string = DEFAULT_ENDPOINT,
 ): Promise<QueryResultBundle> => {
   return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, undefined, endpoint)
-  .then((resp: any) => {
-      // started query, now attempt to get the results.
-    return getQueryTableResultsFromJobId(queryBundleRequest.entityId, resp.token, sessionToken, endpoint)
+  .then((resp: AsyncJobId) => {
+    return getQueryTableResultsFromJobId(
+      queryBundleRequest.entityId, resp.token, sessionToken, endpoint, updateParentState
+    )
   })
-  .catch((error) => {
+  .catch((error: any) => {
     throw error
   })
 }
