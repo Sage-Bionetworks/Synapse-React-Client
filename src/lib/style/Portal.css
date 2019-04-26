@@ -683,6 +683,12 @@ checkmark styling end
   display: flex;
   align-items: center; }
 
+.SRC-centerContentColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; }
+
 .SRC-centerContentInline {
   display: inline-flex;
   align-items: center;
@@ -923,3 +929,6 @@ div.SRC-userImg {
 
 .SRC-chart-nav {
   height: 30px; }
+
+.SRC-loadingContainer {
+  min-height: 100px; }

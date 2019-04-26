@@ -176,11 +176,26 @@ export default class StackedBarChart extends
       isLoading,
       lastFacetSelection,
       isAllFilterSelectedForFacet,
-      chartSelectionIndex
+      chartSelectionIndex,
+      asyncJobStatus
     } = this.props
     // while loading
     if (isLoadingNewData) {
       return loadingScreen || <div/>
+    }
+    if (asyncJobStatus) {
+      return (
+        <div className="SRC-loadingContainer SRC-centerContentColumn">
+          {/*
+            check loading screen is not undefined or null and show
+            it if so
+          */}
+          {!!loadingScreen && loadingScreen}
+          <div>
+            {asyncJobStatus.progressMessage}
+          </div>
+        </div>
+      )
     }
     const xData = this.extractPropsData(data)
     let total: number = 0
