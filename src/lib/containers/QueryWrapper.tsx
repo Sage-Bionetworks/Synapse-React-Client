@@ -59,6 +59,7 @@ export type QueryWrapperChildProps = {
   facetAliases?: {}
   lastFacetSelection?: FacetSelection
   chartSelectionIndex?: number
+  asyncJobStatus?: AsynchronousJobStatus
 }
 
 /**
@@ -185,7 +186,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           hasMoreData,
           data,
           isLoading: false,
-          lastQueryRequest: cloneDeep(queryRequest)
+          lastQueryRequest: cloneDeep(queryRequest),
+          asyncJobStatus: undefined
         }
         this.setState(newState)
       }
@@ -251,7 +253,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
             data,
             lastQueryRequest,
             isLoading: false,
-            isLoadingNewData: false
+            isLoadingNewData: false,
+            asyncJobStatus: undefined
           }
           this.setState(newState)
         }
@@ -268,7 +271,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * Render the children without any formatting
    */
   public render() {
-    const { isLoading, asyncJobStatus } = this.state
+    const { isLoading } = this.state
     const { facetAliases = {} } = this.props
     // inject props in children of this component
     const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
@@ -289,18 +292,12 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         isQueryWrapperChild: true,
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
-        chartSelectionIndex: this.state.chartSelectionIndex
+        chartSelectionIndex: this.state.chartSelectionIndex,
+        asyncJobStatus: {}
       })
     }))
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
-    if (asyncJobStatus && asyncJobStatus.progressMessage && this.state.isLoading) {
-      return (
-        <div className={`${loadingCusrorClass}`}>
-          {asyncJobStatus.progressMessage}
-        </div>
-      )
-    }
     if (this.props.showMenu) {
       // menu is to the left of the child components so we let that add its
       // own html

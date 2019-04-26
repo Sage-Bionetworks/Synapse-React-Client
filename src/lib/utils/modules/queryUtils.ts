@@ -19,7 +19,7 @@ export const getNextPageOfData = async (queryRequest: QueryBundleRequest, data: 
     .then(
     (newData: QueryResultBundle) => {
       const oldData: QueryResultBundle = cloneDeep(data)!
-        // push on the new data retrieved from the API call
+      // push on the new data retrieved from the API call
       const hasMoreData = newData
                           .queryResult
                           .queryResults

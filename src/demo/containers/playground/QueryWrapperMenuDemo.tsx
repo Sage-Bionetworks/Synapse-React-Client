@@ -34,9 +34,8 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             title: 'title',
-            facetName: 'col',
-            sql: 'SELECT * FROM syn18580706',
-            synapseId: 'syn18580706',
+            sql: 'SELECT * FROM syn16787123',
+            synapseId: 'syn16787123',
             unitDescription: 'data files',
             visibleColumnCount: 3,
           },

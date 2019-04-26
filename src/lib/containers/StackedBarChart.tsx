@@ -13,6 +13,7 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
+import { BarLoader } from 'react-spinners'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -176,11 +177,22 @@ export default class StackedBarChart extends
       isLoading,
       lastFacetSelection,
       isAllFilterSelectedForFacet,
-      chartSelectionIndex
+      chartSelectionIndex,
+      asyncJobStatus
     } = this.props
     // while loading
     if (isLoadingNewData) {
       return loadingScreen || <div/>
+    }
+    if (asyncJobStatus) {
+      return (
+        <div className="SRC-loadingContainer SRC-centerContentColumn">
+          <BarLoader loading={true} />
+          <div style={{ marginTop: 5 }}>
+            Waiting for the table index to become available...
+          </div>
+        </div>
+      )
     }
     const xData = this.extractPropsData(data)
     let total: number = 0
