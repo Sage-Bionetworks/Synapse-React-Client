@@ -50,7 +50,6 @@
     "markdown-it-synapse-table": "^1.0.6",
     "node-sass": "^4.11.0",
     "plotly.js-basic-dist": "^1.47.3",
-    "prop-types": "^15.6.2",
     "raf": "^3.4.1",
     "react": "latest",
     "react-app-polyfill": "^0.2.1",
