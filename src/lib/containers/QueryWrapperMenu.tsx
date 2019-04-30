@@ -1,6 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
-import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { SynapseConstants } from '../utils/'
 import { getColorPallette } from './ColorGradient'
@@ -43,13 +42,6 @@ type Info = {
 }
 
 export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuProps, MenuState> {
-
-  public static propTypes = {
-    facetName: PropTypes.string,
-    menuConfig: PropTypes.arrayOf(PropTypes.any),
-    rgbIndex: PropTypes.number,
-    token: PropTypes.string
-  }
 
   constructor(props: QueryWrapperMenuProps) {
     super(props)

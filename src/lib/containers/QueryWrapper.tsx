@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
@@ -70,26 +69,6 @@ export type QueryWrapperChildProps = {
  * @extends {React.Component}
  */
 export default class QueryWrapper extends React.Component<QueryWrapperProps, QueryWrapperState> {
-
-  public static propTypes = {
-    filter: PropTypes.string,
-    initQueryRequest: PropTypes.shape({
-      concreteType: PropTypes.string,
-      partMask: PropTypes.number,
-      query: PropTypes.shape({
-        isConsistent: PropTypes.bool,
-        limit: PropTypes.number,
-        offset: PropTypes.number,
-        selectedFacets: PropTypes.array,
-        sort: PropTypes.array,
-        sql: PropTypes.string
-      })
-    }),
-    json: PropTypes.object,
-    loadingScreen: PropTypes.element,
-    rgbIndex: PropTypes.number,
-    token: PropTypes.string
-  }
 
   public static defaultProps = {
     json: null,

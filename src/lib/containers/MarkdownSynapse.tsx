@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
@@ -39,16 +38,6 @@ type MarkdownSynapseState = {
  * @extends {React.Component}
  */
 export default class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSynapseState> {
-  public static propTypes = {
-    errorMessageView: PropTypes.element,
-    hasSynapseResources: PropTypes.bool,
-    markdown: PropTypes.string,
-    ownerId: PropTypes.string,
-    token: PropTypes.string,
-    updateLoadState: PropTypes.func,
-    wikiId: PropTypes.string
-  }
-
   public markupRef: React.RefObject<HTMLInputElement>
 
   /**

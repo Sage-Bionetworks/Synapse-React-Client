@@ -50,7 +50,6 @@
     "markdown-it-synapse-table": "^1.0.6",
     "node-sass": "^4.11.0",
     "plotly.js-basic-dist": "^1.47.3",
-    "prop-types": "^15.6.2",
     "raf": "^3.4.1",
     "react": "latest",
     "react-app-polyfill": "^0.2.1",
@@ -118,8 +117,9 @@
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
     "type-check:watch": "yarn run type-check --watch",
-    "build": "yarn run build-css && yarn run build:js && yarn build:rollup",
-    "build:js": "rm -rf dist && ./node_modules/typescript/bin/tsc --p tsconfig.build.json",
+    "build": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
+    "build:js": "rm -rf dist && tsc --p tsconfig.build.json",
+    "build:copy-assets": "cd src/lib && find . -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/umd"
   }
 }

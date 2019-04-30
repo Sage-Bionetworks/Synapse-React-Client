@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types'
 import * as React from 'react'
 import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
@@ -11,7 +10,7 @@ export type CardContainerLogicProps = {
   sql: string
   token?: string
   limit?: number
-  unitDescription: string
+  unitDescription?: string
   type: string
   filter?: string
 }
@@ -33,25 +32,6 @@ type State = {
  * @extends {React.Component}
  */
 export default class CardContainerLogic extends React.Component<CardContainerLogicProps, State> {
-
-  public static propTypes = {
-    queryRequest: PropTypes.shape({
-      concreteType: PropTypes.string,
-      partMask: PropTypes.number,
-      query: PropTypes.shape({
-        isConsistent: PropTypes.bool,
-        limit: PropTypes.number,
-        offset: PropTypes.number,
-        selectedFacets: PropTypes.array,
-        sort: PropTypes.array,
-        sql: PropTypes.string
-      })
-    }),
-    json: PropTypes.object,
-    loadingScreen: PropTypes.element,
-    rgbIndex: PropTypes.number,
-    token: PropTypes.string
-  }
 
   public static defaultProps = {
     json: null,

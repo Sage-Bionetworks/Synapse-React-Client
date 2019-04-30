@@ -82,7 +82,6 @@ export default {
 			'plotly.js-basic-dist': 'Plotly',
 			'react-measure': 'ReactMeasure',
 			'react-tooltip': 'ReactTooltip',
-			'prop-types': 'PropTypes',
 			'markdownit': 'markdownit' ,
 			'markdownitSynapse': 'markdownitSynapse' ,
 			'markdownitSub': 'markdownitSub',

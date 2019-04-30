@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types'
 import * as React from 'react'
 // tslint:disable-next-line
 import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
@@ -90,26 +89,6 @@ type CardContainerState = {
 }
 
 export class CardContainer extends React.Component<CardContainerProps, CardContainerState> {
-
-  public static propTypes = {
-    limit: PropTypes.number,
-    type: PropTypes.oneOf(
-      [
-        STUDY,
-        DATASET,
-        FUNDER,
-        PUBLICATION,
-        TOOL,
-        AMP_PROJECT,
-        AMP_CONSORTIUM,
-        AMP_STUDY,
-        CSBC_PROJECT,
-        CSBC_PUBLICATION,
-        CSBC_STUDY,
-        CSBC_DATASET
-      ]
-    )
-  }
 
   constructor(props: CardContainerProps) {
     super(props)

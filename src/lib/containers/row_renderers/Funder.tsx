@@ -44,10 +44,10 @@ export default class Funder extends React.Component<FunderProps, {}> {
     let showOrgLink
     if (!isOnOrgPath) {
       showOrgLink = (
-            <div className="SRC-marginAuto SRC-cardAction">
-            <button onClick={this.handleLinkClick(orgPath)} type="button">
+        <div className="SRC-marginAuto SRC-cardAction">
+          <button onClick={this.handleLinkClick(orgPath)} type="button">
             View Funded Research
-            </button>
+          </button>
         </div>
         )
     } else {
