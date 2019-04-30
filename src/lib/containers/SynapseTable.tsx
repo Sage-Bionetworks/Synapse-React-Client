@@ -8,7 +8,6 @@ import { faCheck,
          faSortAmountUp,
          faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import * as PropTypes from 'prop-types'
 import * as React from 'react'
 // tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
@@ -69,12 +68,6 @@ export type SynapseTableProps = {
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps &
                                                           SynapseTableProps, SynapseTableState> {
-
-  protected static propTypes = {
-    synapseId: PropTypes.string,
-    title: PropTypes.string,
-    visibleColumnCount: PropTypes.number
-  }
 
   constructor(props: QueryWrapperChildProps & SynapseTableProps) {
     super(props)
