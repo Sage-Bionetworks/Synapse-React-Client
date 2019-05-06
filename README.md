@@ -8,6 +8,8 @@ This project helps you integrate your app with the Synapse API backend.
 
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
 
+Interested in contributing to this project?  See the Available Scripts section below.
+
 ## Installation with npm
 Run the following command:<br>
 `npm install synapse-react-client`
@@ -510,13 +512,13 @@ We commit to keeping the breaking changes minimal so you can upgrade `react-scri
 
 ## Available Scripts
 
-As with all npm based projects, before doing anything else run:
+Before doing anything else run:
 
-### `npm install`
+### `yarn` (or `yarn install`)
 
 In the project directory, you can run:
 
-### `npm start`
+### `yarn start`
 
 Runs the Synapse React Client demo app in the development mode.<br>
 Open [http://127.0.0.1:3000](http://127.0.0.1:3000) to view it in the browser.
@@ -526,7 +528,7 @@ It will automatically open localhost, but you need to use 127.0.0.1 for CORS pre
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
-### `npm test`
+### `yarn test`
 
 Launches the test runner in the interactive watch mode.<br>
 
@@ -534,18 +536,18 @@ The client has its configuration file for tests in `src/setupTests.js`.
 * Any predefined functionality must be defined there and CDN dependencies must imported there as npm modules. 
 
 
-### `npm test:coverage`
+### `yarn test:coverage`
 
 Launches the test runner in the non-interactive mode to run all tests and calculate test coverage.<br>
 
-### `npm run build`
+### `yarn run build`
 
 Builds the app for production to the `build` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 It produces a build for npm distribution and umd. <br>
 
-### `npm run build:rollup`
+### `yarn run build:rollup`
 
 This project can be built as a umd bundle. It produces two files `synapse-react-client.production.min.js` and `synapse-react-client.production.min.styles.css`.
 
