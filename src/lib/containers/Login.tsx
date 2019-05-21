@@ -147,7 +147,7 @@ class Login extends React.Component<Props, State> {
     return false
   }
   public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
-    // TODO: save current route (so that we can go back here after SSO)
+    // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
     SynapseClient.oAuthUrlRequest(this.props.authProvider, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
