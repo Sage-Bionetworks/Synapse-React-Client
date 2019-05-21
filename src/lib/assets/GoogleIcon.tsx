@@ -1,7 +1,15 @@
 import * as React from 'react'
 // @ts-nocheck
 export default ({ active }: {active : boolean }) => (
-  <div style={{ marginRight: 10, background: active ? '#eee' : '#fff', padding: 10, borderRadius: 2 }}>
+  <div
+    style={{
+      background: active ? '#fff' : '#eee',
+      paddingTop: 7,
+      paddingRight:10,
+      paddingBottom:4,
+      paddingLeft:10,
+      borderRadius: 2 }}
+  >
     <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
       <g fill="#000" fillRule="evenodd">
         <path

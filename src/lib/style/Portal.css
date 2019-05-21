@@ -268,6 +268,9 @@ span.SRC-facets svg.SRC-facets-icon {
 .SRC-hand-cursor {
   cursor: pointer; }
 
+.SRC-deemphasized-text {
+  color: #B7B7B7; }
+
 .SRC-google-button {
   display: inline-flex;
   align-items: center;
@@ -277,7 +280,8 @@ span.SRC-facets svg.SRC-facets-icon {
   border: 1px solid transparent;
   font-size: 14;
   font-weight: 500;
-  font-family: Lato sans-serif; }
+  font-family: Lato sans-serif;
+  width: 100%; }
 
 .SRC-google-button-dark-color {
   color: #fff;
@@ -385,11 +389,13 @@ table.SRC-paddingRight > tbody > tr > td {
 
 .SRC-primary-background-color-hover:hover {
   background-color: #D53F77; }
-  .SRC-primary-background-color-hover:hover > svg {
-    color: white; }
-  .SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
-    background-color: #D53F77;
-    color: white; }
+
+.SRC-primary-background-color-hover:hover > svg {
+  color: white; }
+
+.SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
+  background-color: #D53F77;
+  color: white; }
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -540,8 +546,9 @@ button.SRC-roundBorder {
   font-weight: 600;
   border: none;
   background: white; }
-  .tableDropdownSelector:focus {
-    outline: none; }
+
+.tableDropdownSelector:focus {
+  outline: none; }
 
 .SRC-extraPadding {
   padding: 5px; }
@@ -567,8 +574,9 @@ button.SRC-roundBorder {
   width: 130px;
   height: 40px;
   margin: 21px; }
-  .SRC-viewMoreButton:focus {
-    outline: none; }
+
+.SRC-viewMoreButton:focus {
+  outline: none; }
 
 /*
   checkmark styling start
@@ -623,6 +631,9 @@ button.SRC-roundBorder {
 .containerCheckbox input:checked ~ .checkmark:after {
   display: block; }
 
+.loginContainer {
+  max-width: 350px; }
+
 .SRC-minDropdownWidth {
   width: 240px; }
 
@@ -659,8 +670,9 @@ checkmark styling end
   z-index: 900;
   background: none;
   border: none; }
-  .SRC-menu-wall:focus {
-    outline: none; }
+
+.SRC-menu-wall:focus {
+  outline: none; }
 
 .SRC-table-dropdown-content {
   align-items: center;
@@ -799,9 +811,10 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-  .SRC-cardContent p {
-    margin: 0px 0px 4px 0px;
-    line-height: 120%; }
+
+.SRC-cardContent p {
+  margin: 0px 0px 4px 0px;
+  line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
