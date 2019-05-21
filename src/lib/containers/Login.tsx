@@ -13,13 +13,13 @@ type State = {
 }
 
 type Props = {
-  onTokenChange: ((val: {}) => void)
   token: string | undefined
   theme: string
   icon: boolean
-  buttonText: string
-  authProvider: string
-  redirectURL: string
+}
+export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+export const getRootURL = () => {
+  return `${window.location.protocol}//${window.location.hostname}`
 }
 
 /**
@@ -77,14 +77,16 @@ class Login extends React.Component<Props, State> {
     clickEvent.preventDefault() // avoid page refresh
     SynapseClient.login(this.state.username, this.state.password)
             .then((data: any) => {
-              SynapseClient.setSessionTokenCookie(data.sessionToken).catch((errSetSession) => {
-                console.log('Could not set session token cookie', errSetSession)
-              })
-              this.props.onTokenChange({ token: data.sessionToken })
-              this.setState({
-                errorMessage: '',
-                hasLoginInFailed: false,
-                isSignedIn: true
+              SynapseClient.setSessionTokenCookie(data.sessionToken).then(() => {
+                // on session change, reload the page so that all components get the new token from the cookie
+                window.location.reload()
+              }).catch((errSetSession) => {
+                console.log('Could not set session token cookie!', errSetSession)
+                this.setState({
+                  errorMessage: errSetSession.reason,
+                  hasLoginInFailed: true,
+                  isSignedIn: false
+                })
               })
             })
             .catch((err: any) => {
@@ -150,7 +152,7 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    SynapseClient.oAuthUrlRequest(this.props.authProvider, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
+    SynapseClient.oAuthUrlRequest(AUTH_PROVIDER, `${getRootURL()}?provider=${AUTH_PROVIDER}`)
             .then((data: any) => {
               const authUrl = data.authorizationUrl
               window.location = authUrl // ping the url
@@ -160,7 +162,7 @@ class Login extends React.Component<Props, State> {
             })
   }
   public render() {
-    const { theme, icon, buttonText } = this.props
+    const { theme, icon } = this.props
     const googleTheme = theme === 'dark' ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color'
     return (
             <div id="loginPage" className="container loginContainer SRC-syn-border-spacing">
@@ -169,7 +171,7 @@ class Login extends React.Component<Props, State> {
                     <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}>
                         <GoogleIcon key={1} active={true} />
                         <ButtonContent icon={icon} key={2}>
-                            {buttonText}
+                            Sign in with Google
                         </ButtonContent>
                     </button>
                 </form>

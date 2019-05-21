@@ -834,7 +834,8 @@ button.SRC-roundBorder {
   display: block; }
 
 .loginContainer {
-  max-width: 350px; }
+  max-width: 350px;
+  background: white; }
 
 .SRC-minDropdownWidth {
   width: 240px; }
