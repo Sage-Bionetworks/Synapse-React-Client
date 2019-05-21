@@ -232,6 +232,9 @@ body * {
 .SRC-noMargin {
   margin: 0px; }
 
+.SRC-floatLeft {
+  float: left; }
+
 .SRC-floatRight {
   float: right; }
 
