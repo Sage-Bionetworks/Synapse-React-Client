@@ -1,12 +1,14 @@
-import { SynapseClient } from '../utils'
+import { SynapseClient } from '.'
 
 /*
-During SSO login, the authorization provider (Google) will send user back to the portal with the authorization code,
+During SSO login, the authorization provider (Google) will
+send the user back to the portal with an authorization code,
 which can be exchanged for a Synapse user session.
-This function should be called whenever the root App is initialized (to look for this code parameter and complete the round-trip).
+This function should be called whenever the root App is initialized
+(to look for this code parameter and complete the round-trip).
 */
 function detectSSOCode(authProvider: string, redirectURL: string) {
-  // TODO: 'code' handling (from SSO) needs to be moved to root page, and then redirect to original route.
+  // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
   let code: URL | null | string = new URL(window.location.href)
   // in test environment the searchParams isn't defined
   const { searchParams } = code
@@ -38,4 +40,9 @@ function detectSSOCode(authProvider: string, redirectURL: string) {
   }
 }
 
-export { detectSSOCode }
+function signOut() {
+  SynapseClient.setSessionTokenCookie(undefined).catch((err) => {
+    console.error('err when clearing the session cookie ', err)
+  })
+}
+export { detectSSOCode, signOut }

@@ -10,7 +10,6 @@ type State = {
   isSignedIn: boolean
   hasLoginInFailed: boolean
   errorMessage: string
-  dissmissButtonClicked: boolean
 }
 
 type Props = {
@@ -44,7 +43,6 @@ class Login extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      dissmissButtonClicked: false,
       email: '',
       errorMessage: '',
       hasLoginInFailed: false,
@@ -56,10 +54,7 @@ class Login extends React.Component<Props, State> {
     this.handleLogin = this.handleLogin.bind(this)
     this.getTokenView = this.getTokenView.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
-    this.getSignInStateView = this.getSignInStateView.bind(this)
-    this.onSignOut = this.onSignOut.bind(this)
     this.onSignIn = this.onSignIn.bind(this)
-    this.setDismissButton = this.setDismissButton.bind(this)
   }
     /**
      * Updates internal state with the event that was triggered
@@ -149,64 +144,7 @@ class Login extends React.Component<Props, State> {
                 </p>
       )
     }
-    if (!this.state.dissmissButtonClicked) {
-      return (
-                <div>
-                    <p>
-                        {' '}
-                        You are currently{' '}
-                        <strong>
-                            {' '}
-                            <i> signed in </i>{' '}
-                        </strong>{' '}
-                        to Synapse{' '}
-                    </p>
-                    <div className="bg-success" role="alert">
-                        Synapse login successful
-                        <button
-                            type="button"
-                            className="close"
-                            onClick={this.setDismissButton}
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                </div>
-      )
-    }
     return false
-  }
-  public componentDidMount() {
-    // TODO: 'code' handling (from SSO) needs to be moved to root page, and then redirect to original route.
-    let code: URL | null | string = new URL(window.location.href)
-        // in test environment the searchParams isn't defined
-    const { searchParams } = code
-    if (!searchParams) {
-      return
-    }
-    code = searchParams.get('code')
-    if (code) {
-      SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
-                .then((synToken: any) => {
-                  SynapseClient.setSessionTokenCookie(synToken.sessionToken).then(() => {
-                    // go back to original route after successful SSO login
-                    const originalUrl = localStorage.getItem('after-sso-login-url')
-                    localStorage.removeItem('after-sso-login-url')
-                    if (originalUrl) {
-                      window.location.replace(originalUrl)
-                    }
-                  }).catch((errSetSession) => {
-                    console.error('Error on set sesion token cookie ', errSetSession)
-                  })
-                })
-                .catch((err: any) => {
-                  if (err.statusCode === 404) {
-                    // Synapse account not found, send to registration page
-                    window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
-                  }
-                  console.error('Error on sso sign in ', err)
-                })
-    }
   }
   public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
     // TODO: save current route (so that we can go back here after SSO)
@@ -220,17 +158,6 @@ class Login extends React.Component<Props, State> {
             .catch((err: any) => {
               console.log('Error on oAuth url ', err)
             })
-  }
-  public onSignOut(event: any) {
-    // TODO: move to Sign In or Sign Out button in portal (where sign in pops up the modal that contains the Login component)
-    event.preventDefault()
-    SynapseClient.setSessionTokenCookie(undefined).catch((err) => { console.log('err on set session cookie ', err) })
-    this.props.onTokenChange({ token: '' })
-    this.setState({
-      errorMessage: '',
-      hasLoginInFailed: false,
-      isSignedIn: false
-    })
   }
   public render() {
     const { theme, icon, buttonText } = this.props
@@ -293,10 +220,6 @@ class Login extends React.Component<Props, State> {
                 </div>
             </div>
     )
-  }
-
-  public setDismissButton(event: React.MouseEvent<HTMLButtonElement>)  {
-    this.setState({ dissmissButtonClicked: true })
   }
 }
 export default Login
