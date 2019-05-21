@@ -10,8 +10,6 @@ type State = {
   isSignedIn: boolean
   hasLoginInFailed: boolean
   errorMessage: string
-  dissmissButtonClicked: boolean
-  showRegistration: boolean
 }
 
 type Props = {
@@ -45,23 +43,18 @@ class Login extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      dissmissButtonClicked: false,
       email: '',
       errorMessage: '',
       hasLoginInFailed: false,
       isSignedIn: false,
       password: '',
-      showRegistration: false,
       username: ''
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
     this.getTokenView = this.getTokenView.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
-    this.getSignInStateView = this.getSignInStateView.bind(this)
-    this.onSignOut = this.onSignOut.bind(this)
     this.onSignIn = this.onSignIn.bind(this)
-    this.setDismissButton = this.setDismissButton.bind(this)
   }
     /**
      * Updates internal state with the event that was triggered
@@ -104,9 +97,6 @@ class Login extends React.Component<Props, State> {
             })
   }
 
-  public handleRegistration(event: React.SyntheticEvent) {
-    event.preventDefault() // avoid page refresh
-  }
     /**
      * Shows user session token if they've signed in
      *
@@ -154,65 +144,11 @@ class Login extends React.Component<Props, State> {
                 </p>
       )
     }
-    if (!this.state.dissmissButtonClicked) {
-      return (
-                <div>
-                    <p>
-                        {' '}
-                        You are currently{' '}
-                        <strong>
-                            {' '}
-                            <i> signed in </i>{' '}
-                        </strong>{' '}
-                        to Synapse{' '}
-                    </p>
-                    <div className="bg-success" role="alert">
-                        Synapse login successfull
-                        <button
-                            type="button"
-                            className="close"
-                            onClick={this.setDismissButton}
-                        >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                </div>
-      )
-    }
     return false
   }
-  public componentDidMount() {
-    let code: URL | null | string = new URL(window.location.href)
-        // in test environment the searchParams isn't defined
-    const { searchParams } = code
-    if (!searchParams) {
-      return
-    }
-    code = searchParams.get('code')
-    if (code) {
-      SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
-                .then((synToken: any) => {
-                  SynapseClient.setSessionTokenCookie(synToken.sessionToken).catch((errSetSession) => {
-                    console.log('Error on set sesion token cookie ', errSetSession)
-                  })
-                  this.props.onTokenChange({ token: synToken.sessionToken })
-                  this.setState({
-                    errorMessage: '',
-                    hasLoginInFailed: false,
-                    isSignedIn: true
-                  })
-                })
-                .catch((err: any) => {
-                  if (err.statusCode === 404) {
-                    this.setState({
-                      showRegistration: true
-                    })
-                  }
-                  console.log('Error on sso sign in ', err)
-                })
-    }
-  }
   public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
+    // save current route (so that we can go back here after SSO)
+    localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
     SynapseClient.oAuthUrlRequest(this.props.authProvider, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
             .then((data: any) => {
@@ -223,106 +159,67 @@ class Login extends React.Component<Props, State> {
               console.log('Error on oAuth url ', err)
             })
   }
-  public onSignOut(event: any) {
-    event.preventDefault()
-    SynapseClient.setSessionTokenCookie(undefined).catch((err) => { console.log('err on set session cookie ', err) })
-    this.props.onTokenChange({ token: '' })
-    this.setState({
-      errorMessage: '',
-      hasLoginInFailed: false,
-      isSignedIn: false
-    })
-  }
   public render() {
     const { theme, icon, buttonText } = this.props
-    const { showRegistration } = this.state
     const googleTheme = theme === 'dark' ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color'
-    if (showRegistration) {
-      return (
-                <div id="loginPage" className="container SRC-syn-border SRC-syn-border-spacing">
-                    <h3>Create Synapse Account</h3>
-                    <p>
-                        {' '}
-                        Please enter your email address and we will send you the instructions on how to complete the registration process through <a href={'https://www.synapse.org/'}>Synapse</a>.{' '}
-                    </p>
-                    <form onSubmit={this.handleLogin}>
-                        <div className="form-group">
-                            <input
-                                autoComplete="email"
-                                placeholder="Email Address"
-                                className="form-control"
-                                id="exampleEmail"
-                                name="email"
-                                type="text"
-                                value={this.state.email}
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <button onSubmit={this.handleRegistration} type="submit" className="btn btn-success">
-                            Send Registration Info
-                        </button>
-                    </form>
-                </div>
-      )
-    }
     return (
-            <div id="loginPage" className="container SRC-syn-border SRC-syn-border-spacing">
+            <div id="loginPage" className="container loginContainer SRC-syn-border-spacing">
+                  <form>
+                    {/* tslint:disable-next-line */}
+                    <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}>
+                        <GoogleIcon key={1} active={true} />
+                        <ButtonContent icon={icon} key={2}>
+                            {buttonText}
+                        </ButtonContent>
+                    </button>
+                </form>
+                <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
+                <div className="SRC-center-text SRC-marginBottomTen">Sign in with your Synapse account</div>
                 <form onSubmit={this.handleLogin}>
                     <div className="form-group">
                         <input
                                 autoComplete="email"
-                                placeholder="Username or Email Address"
+                                placeholder="username or email"
                                 className="form-control"
                                 id="exampleEmail"
                                 name="username"
                                 type="text"
                                 value={this.state.username}
                                 onChange={this.handleChange}
+                                data-lpignore="true"
                         />
                     </div>
                     <div className="form-group">
                         <input
                                 autoComplete="password"
-                                placeholder="Password"
+                                placeholder="password"
                                 className="form-control"
                                 id="examplePassword"
                                 name="password"
                                 type="password"
                                 value={this.state.password}
                                 onChange={this.handleChange}
+                                data-lpignore="true"
                         />
                     </div>
                     {this.getLoginFailureView()}
-                    <button onSubmit={this.handleLogin} type="submit" className="btn btn-primary m-1">
+                    <button
+                      onSubmit={this.handleLogin}
+                      type="submit"
+                      className="btn btn-primary m-1 SRC-google-button SRC-marginBottomTen"
+                    >
+                      <ButtonContent>
                         Sign in
+                      </ButtonContent>
                     </button>
                 </form>
-                <p>Or Sign in with Google</p>
-                <form>
-                    {/* tslint:disable-next-line */}
-                    {!this.state.isSignedIn && (
-                        <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme}`}>
-                            <GoogleIcon key={1} active={true} />
-                            <ButtonContent icon={icon} key={2}>
-                                {buttonText}
-                            </ButtonContent>
-                        </button>
-                    )}
-                    {/* tslint:disable-next-line */}
-                    {this.state.isSignedIn && (
-                        <button onClick={this.onSignOut} className={`SRC-google-button ${googleTheme}`}>
-                            <ButtonContent icon={icon} key={3}>
-                                Sign out
-                            </ButtonContent>
-                        </button>
-                    )}
-                </form>
+                <div>
+                  <a href="https://www.synapse.org/#!PasswordReset:0" className="SRC-floatLeft">Forgot password?</a>
+                  <span className="SRC-deemphasized-text SRC-floatRight">&nbsp;It's free!</span>
+                  <a href="https://www.synapse.org/#!RegisterAccount:0" className="SRC-floatRight">Register</a>
+                </div>
             </div>
     )
-  }
-
-  public setDismissButton(event: React.MouseEvent<HTMLButtonElement>)  {
-    this.setState({ dissmissButtonClicked: true })
   }
 }
 export default Login

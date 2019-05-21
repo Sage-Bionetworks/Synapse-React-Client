@@ -261,6 +261,10 @@ body * {
   margin: 0px
 }
 
+.SRC-floatLeft {
+  float: left;
+}
+
 .SRC-floatRight {
   float: right;
 }
@@ -306,6 +310,10 @@ span.SRC-facets svg.SRC-facets-icon {
   cursor: pointer;
 }
 
+.SRC-deemphasized-text {
+  color: #B7B7B7;
+}
+
 .SRC-google-button {
   display: inline-flex;
   align-items: center;
@@ -316,6 +324,7 @@ span.SRC-facets svg.SRC-facets-icon {
   font-size: 14;
   font-weight: 500;
   font-family: Lato sans-serif;
+  width: 100%;
 }
 
 .SRC-google-button-dark-color {
@@ -767,6 +776,9 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   display: block;
 }
 
+.loginContainer {
+  max-width: 350px;
+}
 
 .SRC-minDropdownWidth {
   width: 240px;
