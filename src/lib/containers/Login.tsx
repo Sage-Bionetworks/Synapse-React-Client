@@ -188,14 +188,15 @@ class Login extends React.Component<Props, State> {
     if (code) {
       SynapseClient.oAuthSessionRequest(this.props.authProvider, code, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
                 .then((synToken: any) => {
-                  SynapseClient.setSessionTokenCookie(synToken.sessionToken).catch((errSetSession) => {
-                    console.log('Error on set sesion token cookie ', errSetSession)
-                  })
-                  this.props.onTokenChange({ token: synToken.sessionToken })
-                  this.setState({
-                    errorMessage: '',
-                    hasLoginInFailed: false,
-                    isSignedIn: true
+                  SynapseClient.setSessionTokenCookie(synToken.sessionToken).then(() => {
+                    // go back to original route after successful SSO login
+                    const originalUrl = localStorage.getItem('after-sso-login-url')
+                    localStorage.removeItem('after-sso-login-url')
+                    if (originalUrl) {
+                      window.location.replace(originalUrl)
+                    }
+                  }).catch((errSetSession) => {
+                    console.error('Error on set sesion token cookie ', errSetSession)
                   })
                 })
                 .catch((err: any) => {
@@ -203,12 +204,13 @@ class Login extends React.Component<Props, State> {
                     // Synapse account not found, send to registration page
                     window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
                   }
-                  console.log('Error on sso sign in ', err)
+                  console.error('Error on sso sign in ', err)
                 })
     }
   }
   public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
     // TODO: save current route (so that we can go back here after SSO)
+    localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
     SynapseClient.oAuthUrlRequest(this.props.authProvider, `${this.props.redirectURL}?provider=${this.props.authProvider}`)
             .then((data: any) => {

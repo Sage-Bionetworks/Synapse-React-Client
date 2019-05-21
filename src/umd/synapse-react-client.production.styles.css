@@ -431,6 +431,9 @@ body * {
 .SRC-noMargin {
   margin: 0px; }
 
+.SRC-floatLeft {
+  float: left; }
+
 .SRC-floatRight {
   float: right; }
 
@@ -467,6 +470,9 @@ span.SRC-facets svg.SRC-facets-icon {
 .SRC-hand-cursor {
   cursor: pointer; }
 
+.SRC-deemphasized-text {
+  color: #B7B7B7; }
+
 .SRC-google-button {
   display: inline-flex;
   align-items: center;
@@ -476,7 +482,8 @@ span.SRC-facets svg.SRC-facets-icon {
   border: 1px solid transparent;
   font-size: 14;
   font-weight: 500;
-  font-family: Lato sans-serif; }
+  font-family: Lato sans-serif;
+  width: 100%; }
 
 .SRC-google-button-dark-color {
   color: #fff;
@@ -825,6 +832,9 @@ button.SRC-roundBorder {
 /* Show the checkmark when checked */
 .containerCheckbox input:checked ~ .checkmark:after {
   display: block; }
+
+.loginContainer {
+  max-width: 350px; }
 
 .SRC-minDropdownWidth {
   width: 240px; }
