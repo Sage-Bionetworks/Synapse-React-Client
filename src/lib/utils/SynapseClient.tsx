@@ -8,6 +8,8 @@ import { UserBundle } from './jsonResponses/UserBundle'
 import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
 
 // TODO: Create JSON response types for all return types
+export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
+export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 
@@ -486,14 +488,28 @@ export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefine
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
 export const setSessionTokenCookie = (token: string | undefined) => {
-  return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  if (!IS_DEV_ENV) {
+    return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  }
+  // else (is in dev env)
+  if (token) {
+    localStorage.setItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY, token)
+  } else {
+    localStorage.removeItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
+  }
+  return Promise.resolve()
 }
 /**
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
 export const getSessionTokenFromCookie = () => {
-  return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  if (!IS_DEV_ENV) {
+    return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  }
+  // else (is in dev env)
+  const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
+  return Promise.resolve(sessionToken)
 }
 export const getPrincipalAliasRequest = (sessionToken: string | undefined,
                                          alias: string,
