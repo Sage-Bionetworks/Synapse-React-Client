@@ -203,10 +203,6 @@ class Demo extends React.Component<{}, DemoState> {
       })
   }
   public render(): JSX.Element {
-    let redirectUrl: string = 'http://localhost:3000/'
-    if (process.env.NODE_ENV === 'production') {
-      redirectUrl = 'https://leem42.github.io/Synapse-React-Client/'
-    }
     let token: string | undefined = ''
     let inDevEnv = false
     if (process.env.NODE_ENV === 'development') {
@@ -218,13 +214,9 @@ class Demo extends React.Component<{}, DemoState> {
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
 
         <Login
-          onTokenChange={this.handleChange}
           token={inDevEnv ? token : this.state.token}
           theme={'light'}
           icon={true}
-          buttonText={'Sign in with Google'}
-          authProvider={'GOOGLE_OAUTH_2_0'}
-          redirectURL={redirectUrl}
         />
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}

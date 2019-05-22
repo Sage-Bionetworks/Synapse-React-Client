@@ -7,12 +7,8 @@ describe('test ', () => {
     const tree = shallow(
       <Login
         icon={true}
-        onTokenChange={jest.fn(() => {})}
         token={'1'}
         theme={'dark'}
-        buttonText={'login'}
-        authProvider={'google'}
-        redirectURL={'http://localhost:3000/'}
       />)
     expect(tree).toBeDefined()
   })
