@@ -12,7 +12,6 @@ import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
 import './style/Cards.css'
 import './style/Portal.css'
-import * as SynapseLoginUtils from './utils/LoginUtils'
 import { SynapseClient, SynapseConstants } from './utils/'
 
 const SynapseComponents = {
@@ -29,4 +28,4 @@ const SynapseComponents = {
   Markdown: MarkdownSynapse
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents, SynapseLoginUtils }
+export { SynapseClient, SynapseConstants, SynapseComponents }

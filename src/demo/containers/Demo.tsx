@@ -6,7 +6,6 @@ import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import { detectSSOCode, signOut } from 'src/lib/utils/LoginUtils'
 
 type DemoState = {
   token: string
@@ -197,7 +196,7 @@ class Demo extends React.Component<{}, DemoState> {
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
-    detectSSOCode()
+    SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
     .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
     .catch((error: any) => {
@@ -216,7 +215,7 @@ class Demo extends React.Component<{}, DemoState> {
               You are logged in.&nbsp;
               <button
                   type="button"
-                  onClick={signOut}
+                  onClick={SynapseClient.signOut}
               >
                   <span aria-hidden="true">Sign out</span>
               </button>

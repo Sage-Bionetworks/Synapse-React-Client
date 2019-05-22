@@ -17,10 +17,6 @@ type Props = {
   theme: string
   icon: boolean
 }
-export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
-export const getRootURL = () => {
-  return `${window.location.protocol}//${window.location.hostname}:${window.location.port}/`
-}
 
 /**
  *  Demo of user session, show login screen and handling user login submission.
@@ -152,7 +148,7 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    SynapseClient.oAuthUrlRequest(AUTH_PROVIDER, `${getRootURL()}?provider=${AUTH_PROVIDER}`)
+    SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`)
             .then((data: any) => {
               const authUrl = data.authorizationUrl
               window.location = authUrl // ping the url
