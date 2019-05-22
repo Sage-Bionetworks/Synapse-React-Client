@@ -19,7 +19,7 @@ type Props = {
 }
 export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
 export const getRootURL = () => {
-  return `${window.location.protocol}//${window.location.hostname}`
+  return `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
 }
 
 /**
