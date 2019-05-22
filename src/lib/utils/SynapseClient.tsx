@@ -8,8 +8,15 @@ import { UserBundle } from './jsonResponses/UserBundle'
 import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
 
 // TODO: Create JSON response types for all return types
+export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
+export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
+
+export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+export const getRootURL = () => {
+  return `${window.location.protocol}//${window.location.hostname}:${window.location.port}/`
+}
 
 function delay(t: any) {
   return new Promise((resolve) => {
@@ -486,14 +493,28 @@ export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefine
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
 export const setSessionTokenCookie = (token: string | undefined) => {
-  return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  if (!IS_DEV_ENV) {
+    return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  }
+  // else (is in dev env)
+  if (token) {
+    localStorage.setItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY, token)
+  } else {
+    localStorage.removeItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
+  }
+  return Promise.resolve()
 }
 /**
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
 export const getSessionTokenFromCookie = () => {
-  return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  if (!IS_DEV_ENV) {
+    return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  }
+  // else (is in dev env)
+  const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
+  return Promise.resolve(sessionToken)
 }
 export const getPrincipalAliasRequest = (sessionToken: string | undefined,
                                          alias: string,
@@ -501,4 +522,53 @@ export const getPrincipalAliasRequest = (sessionToken: string | undefined,
                                          endpoint: string = DEFAULT_ENDPOINT) => {
   const url = 'repo/v1/principal/alias'
   return doPost(url, { alias, type }, sessionToken, undefined, endpoint)
+}
+
+/*
+During SSO login, the authorization provider (Google) will
+send the user back to the portal with an authorization code,
+which can be exchanged for a Synapse user session.
+This function should be called whenever the root App is initialized
+(to look for this code parameter and complete the round-trip).
+*/
+export const detectSSOCode = () => {
+  const redirectURL = getRootURL()
+  // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
+  let code: URL | null | string = new URL(window.location.href)
+  // in test environment the searchParams isn't defined
+  const { searchParams } = code
+  if (!searchParams) {
+    return
+  }
+  code = searchParams.get('code')
+  if (code) {
+    oAuthSessionRequest(AUTH_PROVIDER, code, `${redirectURL}?provider=${AUTH_PROVIDER}`)
+              .then((synToken: any) => {
+                setSessionTokenCookie(synToken.sessionToken).then(() => {
+                  // go back to original route after successful SSO login
+                  const originalUrl = localStorage.getItem('after-sso-login-url')
+                  localStorage.removeItem('after-sso-login-url')
+                  if (originalUrl) {
+                    window.location.replace(originalUrl)
+                  }
+                }).catch((errSetSession) => {
+                  console.error('Error on set sesion token cookie ', errSetSession)
+                })
+              })
+              .catch((err: any) => {
+                if (err.statusCode === 404) {
+                  // Synapse account not found, send to registration page
+                  window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
+                }
+                console.error('Error on sso sign in ', err)
+              })
+  }
+}
+
+export const signOut = () => {
+  setSessionTokenCookie(undefined).then(() => {
+    window.location.reload()
+  }).catch((err) => {
+    console.error('err when clearing the session cookie ', err)
+  })
 }

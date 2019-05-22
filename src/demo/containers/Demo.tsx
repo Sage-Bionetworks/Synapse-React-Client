@@ -196,25 +196,33 @@ class Demo extends React.Component<{}, DemoState> {
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
+    SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-      .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
-      .catch((error: any) => {
-        console.error(error)
-      })
+    .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
+    .catch((error: any) => {
+      console.error(error)
+    })
   }
   public render(): JSX.Element {
     let token: string | undefined = ''
-    let inDevEnv = false
-    if (process.env.NODE_ENV === 'development') {
-      inDevEnv = true
-    }
     token = ''
     return (
       <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-
+        {
+            (this.state.token && this.state.token !== '') &&
+            <div className="bg-success text-center" role="alert">
+              You are logged in.&nbsp;
+              <button
+                  type="button"
+                  onClick={SynapseClient.signOut}
+              >
+                  <span aria-hidden="true">Sign out</span>
+              </button>
+            </div>
+        }
         <Login
-          token={inDevEnv ? token : this.state.token}
+          token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
           theme={'light'}
           icon={true}
         />
@@ -256,7 +264,7 @@ class Demo extends React.Component<{}, DemoState> {
           </button>
           <a href="#table"> Table Demo </a>
           <QueryWrapperMenu
-            token={inDevEnv ? token! : this.state.token!}
+            token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
             type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
