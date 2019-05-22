@@ -6,7 +6,7 @@ import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import { detectSSOCode } from 'src/lib/utils/LoginUtils'
+import { detectSSOCode, signOut } from 'src/lib/utils/LoginUtils'
 
 type DemoState = {
   token: string
@@ -210,7 +210,18 @@ class Demo extends React.Component<{}, DemoState> {
     return (
       <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-
+        {
+            (this.state.token && this.state.token !== '') &&
+            <div className="bg-success text-center" role="alert">
+              You are logged in.&nbsp;
+              <button
+                  type="button"
+                  onClick={signOut}
+              >
+                  <span aria-hidden="true">Sign out</span>
+              </button>
+            </div>
+        }
         <Login
           token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
           theme={'light'}

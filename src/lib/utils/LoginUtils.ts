@@ -42,7 +42,9 @@ export const detectSSOCode = () => {
 }
 
 export const signOut = () => {
-  SynapseClient.setSessionTokenCookie(undefined).catch((err) => {
+  SynapseClient.setSessionTokenCookie(undefined).then(() => {
+    window.location.reload()
+  }).catch((err) => {
     console.error('err when clearing the session cookie ', err)
   })
 }
