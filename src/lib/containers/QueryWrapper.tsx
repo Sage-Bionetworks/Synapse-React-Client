@@ -6,7 +6,7 @@ import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
 
-type QueryWrapperProps = {
+export type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
   rgbIndex?: number
   json?: QueryResultBundle
