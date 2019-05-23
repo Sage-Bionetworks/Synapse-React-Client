@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "module": "esnext",
+    "module": "commonjs",
     "target": "es5",
     "lib": ["es6", "dom"],
     "sourceMap": true,
