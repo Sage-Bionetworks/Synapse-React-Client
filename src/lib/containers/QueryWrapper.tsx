@@ -6,10 +6,6 @@ import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
 
-export type LazyLoad = {
-  load: boolean
-}
-
 export type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
   rgbIndex?: number
@@ -19,7 +15,7 @@ export type QueryWrapperProps = {
   loadingScreen?: JSX.Element
   unitDescription?: string
   facetAliases?: {}
-  lazyLoad?: LazyLoad
+  loadNow?: boolean
 }
 
 export type QueryWrapperState = {
@@ -38,7 +34,7 @@ export type QueryWrapperState = {
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
   facetAliases?: {}
-  lazyLoadComplete: boolean
+  loadNowStarted: boolean
 }
 
 export type FacetSelection = {
@@ -93,7 +89,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     },
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
-    lazyLoadComplete: false
+    loadNowStarted: false
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -112,10 +108,10 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public componentDidMount() {
-    if (this.props.lazyLoad && !this.props.lazyLoad.load) {
-      return
+    const { loadNow = true } = this.props
+    if (loadNow) {
+      this.executeInitialQueryRequest()
     }
-    this.executeInitialQueryRequest()
   }
 
   /**
@@ -127,7 +123,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
      *  sql query has changed of the component then perform an update.
      */
 
-    if (this.props.lazyLoad && this.props.lazyLoad.load && !this.state.lazyLoadComplete) {
+    const { loadNow = true } = this.props
+    if (loadNow && !this.state.loadNowStarted) {
       this.executeInitialQueryRequest()
     } else if (this.props.token !== '' && prevProps.token === '') {
       this.executeInitialQueryRequest()
@@ -216,7 +213,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       isLoading: true,
       isLoadingNewData: true,
       chartSelectionIndex: 0,
-      lazyLoadComplete: true
+      loadNowStarted: true
     })
     SynapseClient
       .getQueryTableResults(this.props.initQueryRequest, this.props.token, this.updateParentState)
