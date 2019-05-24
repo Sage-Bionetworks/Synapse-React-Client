@@ -1,19 +1,21 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { SynapseConstants } from '../utils/'
+import { SynapseConstants, SynapseClient } from '../utils/'
 import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
 import CardContainer from './CardContainer'
+import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
 type MenuState = {
   menuIndex: number
+  [index: string]: number | string
 }
 
 export type MenuConfig = {
@@ -46,28 +48,49 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   constructor(props: QueryWrapperMenuProps) {
     super(props)
     this.state = {
-      menuIndex: 0
+      menuIndex: 0,
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
+    this.calculateRowCount = this.calculateRowCount.bind(this)
   }
 
-  componentDidUpdate(_prevProps: QueryWrapperMenuProps, prevState: MenuState) {
+  componentDidMount() {
+    this.calculateRowCount()
+  }
+
+  calculateRowCount() {
+    const { menuConfig } = this.props
+    const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
+    if (this.state[sql]) {
+      return
+    }
+    const request: QueryBundleRequest = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      query: {
+        sql,
+      },
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+    }
+    SynapseClient.getQueryTableResults(request).then(
+      (data) => {
+        this.setState({ [sql]: data.queryCount! })
+      }
+    )
+  }
+
+  componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
     /*
-       A component updates from either the props changing OR the state changing.
-       The state here is a single item, menuIndex, if that hasn't changed then the props have.
-       Portals currently use the QueryWrapperMenu such that the props changes on page navigation,
-       in which case we want to reset the menuIndex back to the first facet item.
-       A future alternative would be to hold the menuIndex value on a per page basis, but that would
-       be more difficult.
+      Update the row count or the menu index if the props changed by looking at whether the sql or the rgbIndex
+      changed
     */
-    const hasStateChanged = prevState.menuIndex !== this.state.menuIndex
-    if (!hasStateChanged  && this.state.menuIndex !== 0) {
-      // check this isn't an update from the state changing
-      // and that we haven't already set the menuIndex back to zero
+    const { menuConfig, rgbIndex } = this.props
+    const hasPropsChanged = prevProps.menuConfig[0].sql !== menuConfig[0].sql || prevProps.rgbIndex !== rgbIndex
+    if (hasPropsChanged) {
       this.setState({
-        menuIndex: 0
+        menuIndex: 0,
       })
+      this.calculateRowCount()
     }
   }
 
@@ -99,9 +122,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   public render() {
     const menuDropdown = this.renderFacetMenu()
     const queryWrapper = this.renderQueryChildren()
-
+    const name = window.location.hash.substring(10) || ''
+    const { menuConfig } = this.props
+    const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
+    const queryCount = this.state[sql] || ''
     return (
       <React.Fragment>
+        <h3 id="exploreCount" className="SRC-boldText">
+            {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */}
+            {name} ({queryCount && queryCount.toLocaleString()})
+          </h3>
+          <div className="break">
+            <hr/>
+          </div>
         <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
           {menuDropdown}
         </div>
