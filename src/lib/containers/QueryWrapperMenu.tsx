@@ -4,7 +4,7 @@ import * as React from 'react'
 import { SynapseConstants, SynapseClient } from '../utils/'
 import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
-import QueryWrapper from './QueryWrapper'
+import QueryWrapper, { LazyLoad } from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
 import CardContainer from './CardContainer'
@@ -164,9 +164,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const showCards = type !== ''
       const showTable = title !== ''
+      const lazyLoad: LazyLoad = {
+        load: isSelected
+      }
       return (
         <span key={facetName} className={className}>
           <QueryWrapper
+            lazyLoad={lazyLoad}
             showMenu={true}
             initQueryRequest={{
               concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

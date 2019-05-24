@@ -6,16 +6,20 @@ import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
 
+export type LazyLoad = {
+  load: boolean
+}
+
 export type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
   rgbIndex?: number
-  json?: QueryResultBundle
   token?: string
   showMenu?: boolean
   facetName: string
   loadingScreen?: JSX.Element
   unitDescription?: string
   facetAliases?: {}
+  lazyLoad?: LazyLoad
 }
 
 export type QueryWrapperState = {
@@ -26,13 +30,15 @@ export type QueryWrapperState = {
   */
   isAllFilterSelectedForFacet: {}
   data: QueryResultBundle | undefined
-  isLoadingNewData: boolean
-  isLoading: boolean
+  isLoadingNewData: boolean  // occurs when props change
+  isLoading: boolean         // occurs when state changes
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
+  facetAliases?: {}
+  lazyLoadComplete: boolean
 }
 
 export type FacetSelection = {
@@ -71,7 +77,6 @@ export type QueryWrapperChildProps = {
 export default class QueryWrapper extends React.Component<QueryWrapperProps, QueryWrapperState> {
 
   public static defaultProps = {
-    json: null,
     token: ''
   }
 
@@ -87,7 +92,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       selector: ''
     },
     chartSelectionIndex: 0,
-    isAllFilterSelectedForFacet: {}
+    isAllFilterSelectedForFacet: {},
+    lazyLoadComplete: false
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -106,13 +112,10 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public componentDidMount() {
-    if (this.props.json === null) {
-      this.executeInitialQueryRequest()
-    } else {
-      this.setState({
-        data: cloneDeep(this.props.json)
-      })
+    if (this.props.lazyLoad && !this.props.lazyLoad.load) {
+      return
     }
+    this.executeInitialQueryRequest()
   }
 
   /**
@@ -124,7 +127,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
      *  sql query has changed of the component then perform an update.
      */
 
-    if (this.props.token !== '' && prevProps.token === '' && !this.props.json) {
+    if (this.props.lazyLoad && this.props.lazyLoad.load && !this.state.lazyLoadComplete) {
+      this.executeInitialQueryRequest()
+    } else if (this.props.token !== '' && prevProps.token === '') {
       this.executeInitialQueryRequest()
     } else if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest!.query.sql) {
       this.executeInitialQueryRequest()
@@ -210,7 +215,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.setState({
       isLoading: true,
       isLoadingNewData: true,
-      chartSelectionIndex: 0
+      chartSelectionIndex: 0,
+      lazyLoadComplete: true
     })
     SynapseClient
       .getQueryTableResults(this.props.initQueryRequest, this.props.token, this.updateParentState)
