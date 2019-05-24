@@ -64,11 +64,10 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   calculateRowCount() {
     const { menuConfig } = this.props
     const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
-    console.log('calculated row count called with sql = ', sql)
     if (this.state[sql]) {
-      console.log('stopped early !')
       return
     }
+    console.log('calculating row count')
     const request: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       query: {
@@ -83,20 +82,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     )
   }
 
-  componentDidUpdate(prevProps: QueryWrapperMenuProps, prevState: MenuState) {
+  componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
     /*
-       A component updates from either the props changing OR the state changing.
-       The state here is a single item, menuIndex, if that hasn't changed then the props have.
-       Portals currently use the QueryWrapperMenu such that the props changes on page navigation,
-       in which case we want to reset the menuIndex back to the first facet item.
-       A future alternative would be to hold the menuIndex value on a per page basis, but that would
-       be more difficult.
+      Check if the component updated by looking at the props
     */
-    const { menuIndex, queryCount } = this.state
-    const hasMenuIndexChanged = menuIndex !== prevState.menuIndex
-    const hasQueryCountChanged = queryCount !== prevState.queryCount
-    const hasStateChanged = hasMenuIndexChanged || hasQueryCountChanged
-    if (!hasStateChanged && menuIndex !== 0 && !this.state[this.props.menuConfig[0].sql]) {
+    const { menuConfig, rgbIndex } = this.props
+    const hasPropsChanged = prevProps.menuConfig[0].sql !== menuConfig[0].sql || prevProps.rgbIndex !== rgbIndex
+    if (hasPropsChanged) {
       // check this isn't an update from the state changing and that we haven't already set the menuIndex back to zero
       // also check if the row count was already calculated
       this.setState({
