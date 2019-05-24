@@ -15,7 +15,6 @@ library.add(faAngleRight)
 
 type MenuState = {
   menuIndex: number
-  queryCount: number | string
   [index: string]: number | string
 }
 
@@ -50,7 +49,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     super(props)
     this.state = {
       menuIndex: 0,
-      queryCount: '',
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -67,7 +65,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     if (this.state[sql]) {
       return
     }
-    console.log('calculating row count')
     const request: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       query: {
