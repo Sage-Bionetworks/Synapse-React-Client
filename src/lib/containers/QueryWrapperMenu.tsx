@@ -81,13 +81,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
     /*
-      Check if the component updated by looking at the props
+      Update the row count or the menu index if the props changed by looking at whether the sql or the rgbIndex
+      changed
     */
     const { menuConfig, rgbIndex } = this.props
     const hasPropsChanged = prevProps.menuConfig[0].sql !== menuConfig[0].sql || prevProps.rgbIndex !== rgbIndex
     if (hasPropsChanged) {
-      // check this isn't an update from the state changing and that we haven't already set the menuIndex back to zero
-      // also check if the row count was already calculated
       this.setState({
         menuIndex: 0,
       })
