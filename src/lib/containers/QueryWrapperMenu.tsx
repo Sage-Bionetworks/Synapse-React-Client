@@ -122,7 +122,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   public render() {
     const menuDropdown = this.renderFacetMenu()
     const queryWrapper = this.renderQueryChildren()
-    const name = window.location.hash.substring('#/Explore/'.length) || 'Grants'
+    const name = window.location.hash.substring(10) || ''
     const { menuConfig } = this.props
     const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
     const queryCount = this.state[sql] || ''
