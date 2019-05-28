@@ -9,13 +9,13 @@ import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/Asynchronous
 export type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
   rgbIndex?: number
-  json?: QueryResultBundle
   token?: string
   showMenu?: boolean
   facetName: string
   loadingScreen?: JSX.Element
   unitDescription?: string
   facetAliases?: {}
+  loadNow?: boolean
 }
 
 export type QueryWrapperState = {
@@ -26,13 +26,15 @@ export type QueryWrapperState = {
   */
   isAllFilterSelectedForFacet: {}
   data: QueryResultBundle | undefined
-  isLoadingNewData: boolean
-  isLoading: boolean
+  isLoadingNewData: boolean  // occurs when props change
+  isLoading: boolean         // occurs when state changes
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
+  facetAliases?: {}
+  loadNowStarted: boolean
 }
 
 export type FacetSelection = {
@@ -71,7 +73,6 @@ export type QueryWrapperChildProps = {
 export default class QueryWrapper extends React.Component<QueryWrapperProps, QueryWrapperState> {
 
   public static defaultProps = {
-    json: null,
     token: ''
   }
 
@@ -87,7 +88,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       selector: ''
     },
     chartSelectionIndex: 0,
-    isAllFilterSelectedForFacet: {}
+    isAllFilterSelectedForFacet: {},
+    loadNowStarted: false
   } as QueryWrapperState
 
   constructor(props: QueryWrapperProps) {
@@ -106,12 +108,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public componentDidMount() {
-    if (this.props.json === null) {
+    const { loadNow = true } = this.props
+    if (loadNow) {
       this.executeInitialQueryRequest()
-    } else {
-      this.setState({
-        data: cloneDeep(this.props.json)
-      })
     }
   }
 
@@ -124,7 +123,10 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
      *  sql query has changed of the component then perform an update.
      */
 
-    if (this.props.token !== '' && prevProps.token === '' && !this.props.json) {
+    const { loadNow = true } = this.props
+    if (loadNow && !this.state.loadNowStarted) {
+      this.executeInitialQueryRequest()
+    } else if (this.props.token !== '' && prevProps.token === '') {
       this.executeInitialQueryRequest()
     } else if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest!.query.sql) {
       this.executeInitialQueryRequest()
@@ -210,7 +212,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.setState({
       isLoading: true,
       isLoadingNewData: true,
-      chartSelectionIndex: 0
+      chartSelectionIndex: 0,
+      loadNowStarted: true
     })
     SynapseClient
       .getQueryTableResults(this.props.initQueryRequest, this.props.token, this.updateParentState)

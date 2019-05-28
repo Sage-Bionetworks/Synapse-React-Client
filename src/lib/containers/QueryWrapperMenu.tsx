@@ -164,9 +164,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const showCards = type !== ''
       const showTable = title !== ''
+      const loadNow = isSelected
       return (
         <span key={facetName} className={className}>
           <QueryWrapper
+            loadNow={loadNow}
             showMenu={true}
             initQueryRequest={{
               concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
