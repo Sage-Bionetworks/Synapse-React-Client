@@ -178,7 +178,7 @@ export const putRefreshSessionToken = (sessionToken: string, endpoint: string = 
   return doPut('/auth/v1/session', { sessionToken }, undefined, undefined, endpoint)
 }
 
-export const putSessionToken = (
+export const putSessionTokenAndTermsOfUse = (
   sessionToken: string,
   acceptTermsOfUse: boolean,
   endpoint: string = DEFAULT_ENDPOINT
