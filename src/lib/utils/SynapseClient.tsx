@@ -178,14 +178,6 @@ export const putRefreshSessionToken = (sessionToken: string, endpoint: string = 
   return doPut('/auth/v1/session', { sessionToken }, undefined, undefined, endpoint)
 }
 
-export const putSessionTokenAndTermsOfUse = (
-  sessionToken: string,
-  acceptTermsOfUse: boolean,
-  endpoint: string = DEFAULT_ENDPOINT
-) => {
-  return doPut('/auth/v1/session', { sessionToken, acceptTermsOfUse }, undefined, undefined, endpoint)
-}
-
 export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
   return doGet('/repo/v1/version', undefined, undefined, endpoint) as Promise<SynapseVersion>
 }
@@ -558,18 +550,7 @@ export const getSessionTokenFromCookie = () => {
   const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
   return Promise.resolve(sessionToken)
 }
-/**
- * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
- * a .synapse.org subdomain.
- */
-export const refreshSessionToken = () => {
-  if (!IS_DEV_ENV) {
-    return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
-  }
-  // else (is in dev env)
-  const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
-  return Promise.resolve(sessionToken)
-}
+
 export const getPrincipalAliasRequest = (sessionToken: string | undefined,
                                          alias: string,
                                          type: string,
