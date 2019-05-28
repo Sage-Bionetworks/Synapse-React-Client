@@ -46,6 +46,10 @@ const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, re
   return fetch(url, options)
     .then((resp) => {
       if (resp.status > 199 && resp.status < 300) {
+        if (resp.status === 204) {
+          // the response is empty, don't try to parse an empty response
+          return resp
+        }
         // ok!
         return parseJSON(resp)
       }
@@ -142,6 +146,44 @@ export const doGet = (
     options.headers.sessionToken = sessionToken
   }
   return fetchWithExponentialTimeout(endpoint + url, options, 1000, 5)
+}
+
+export const doPut = (
+  url: string,
+  requestJsonObject: any,
+  sessionToken: string | undefined,
+  initCredentials: string | undefined,
+  endpoint: string
+) => {
+  const options: any = {
+    body: JSON.stringify(requestJsonObject),
+    headers: {
+      Accept: '*/*',
+      'Access-Control-Request-Headers': 'sessiontoken',
+      'Content-Type': 'application/json',
+    },
+    method: 'PUT',
+    mode: 'cors'
+  }
+  if (initCredentials) {
+    options.credentials = initCredentials
+  }
+  if (sessionToken) {
+    options.headers.sessionToken = sessionToken
+  }
+  return fetchWithExponentialTimeout(endpoint + url, options, 1000, 5)
+}
+
+export const putRefreshSessionToken = (sessionToken: string, endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPut('/auth/v1/session', { sessionToken }, undefined, undefined, endpoint)
+}
+
+export const putSessionToken = (
+  sessionToken: string,
+  acceptTermsOfUse: boolean,
+  endpoint: string = DEFAULT_ENDPOINT
+) => {
+  return doPut('/auth/v1/session', { sessionToken, acceptTermsOfUse }, undefined, undefined, endpoint)
 }
 
 export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
@@ -509,6 +551,18 @@ export const setSessionTokenCookie = (token: string | undefined) => {
  * a .synapse.org subdomain.
  */
 export const getSessionTokenFromCookie = () => {
+  if (!IS_DEV_ENV) {
+    return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+  }
+  // else (is in dev env)
+  const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
+  return Promise.resolve(sessionToken)
+}
+/**
+ * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
+ * a .synapse.org subdomain.
+ */
+export const refreshSessionToken = () => {
   if (!IS_DEV_ENV) {
     return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
   }
