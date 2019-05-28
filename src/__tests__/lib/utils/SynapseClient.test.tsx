@@ -147,6 +147,10 @@ it('get user teams', () => {
     })
 })
 
+it('get root page url', () => {
+  expect(SynapseClient.getRootURL()).toBeDefined()
+})
+
 // describe.skip('it tests intuitively grabbing query table results ', () => {
 //   it('gets zero results back ', () => {
 //     const filter: string = 'isFruit'
