@@ -245,7 +245,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
   }
 
   public updateParentState = (update: QueryWrapperState) => {
-    console.log('updating state with update =  ', update)
     this.setState(update)
   }
 

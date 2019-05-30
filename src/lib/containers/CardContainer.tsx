@@ -86,7 +86,7 @@ export type CardContainerProps = {
   unitDescription?: string
   totalResultsNoFacet?: number
   hasMoreData?: boolean
-  loadingBar?: JSX.Element
+  loadingScreen?: JSX.Element
 }
 
 type CardContainerState = {
@@ -124,12 +124,12 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       unitDescription,
       type,
       isLoading,
-      loadingBar
+      loadingScreen
     } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
       return (
         <div>
-         {(isLoading && loadingBar !== undefined) && loadingBar}
+         {(isLoading && loadingScreen !== undefined) && loadingScreen}
         </div>
       )
     }
@@ -219,7 +219,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
-        {(isLoading && loadingBar !== undefined) && loadingBar}
+        {(isLoading && loadingScreen !== undefined) && loadingScreen}
         {showViewMoreButton}
       </div>
     )

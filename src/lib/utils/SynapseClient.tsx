@@ -194,7 +194,6 @@ export const getQueryTableResultsFromJobId = (
     .then((resp: any) => {
       // is this the job status?
       if (resp.jobState && resp.jobState !== 'FAILED') {
-        console.log('updating parent status with status ', resp)
         updateParentState && updateParentState({
           asyncJobStatus: resp
         })

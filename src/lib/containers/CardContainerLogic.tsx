@@ -13,7 +13,7 @@ export type CardContainerLogicProps = {
   unitDescription?: string
   type: string
   filter?: string
-  loadingBar?: JSX.Element
+  loadingScreen?: JSX.Element
 }
 
 type State = {
@@ -187,7 +187,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         getNextPageOfData={this.getNextPageOfData}
         filter={this.props.filter}
         hasMoreData={this.state.hasMoreData}
-        loadingBar={this.props.loadingBar}
+        loadingScreen={this.props.loadingScreen}
         isLoading={this.state.isLoading}
       />
     )
