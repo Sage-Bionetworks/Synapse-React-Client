@@ -19,12 +19,12 @@ export default class Study extends React.Component<StudyProps, StudyState> {
     super(props)
     this.state = {
       hasCreatedIndex: false,
-      showMore: false
+      showMore: false,
     }
     this.handleClick = this.handleClick.bind(this)
   }
 
-  public handleClick(event: React.SyntheticEvent) {
+  public handleClick(_event: React.SyntheticEvent) {
     this.setState({
       showMore: !this.state.showMore
     })
@@ -57,36 +57,36 @@ export default class Study extends React.Component<StudyProps, StudyState> {
     const dataTypes  = data[schema.DataType_All]
 
     const values: string [][] = [
-                                        ['Data Types', dataTypes],
-                                        ['SPECIES', `${species} ${model}`],
-                                        ['INDIVIDUALS', individuals],
-                                        ['PROGRAM', program],
-                                        ['GRANT', grant]
+      ['Data Types', dataTypes],
+      ['SPECIES', `${species} ${model}`],
+      ['INDIVIDUALS', individuals],
+      ['PROGRAM', program],
+      ['GRANT', grant]
     ]
 
     return (
-            <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
-                <div className="SRC-cardThumbnail">
-                    {this.getIcon(accessType)}
-                </div>
-                <div className="SRC-cardContent">
-                    <div className="SRC-type">Study</div>
-                    <div className="SRC-title">
-                        {' '}
-                        <h3>
-                            {' '}
-                            <a target="_blank" href={link}>
-                                {studyName}
-                            </a>{' '}
-                        </h3>{' '}
-                    </div>
-                    <div className="SRC-author">{dataContributors}</div>
-                    <span className="SRC-font-size-base">
-                        <Utils.ShowMore onClick={this.handleClick} summary={studyDescription} />
-                    </span>
-                </div>
-                <Utils.CardFooter values={values} />
-            </div>
+      <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+        <div className="SRC-cardThumbnail">
+          {this.getIcon(accessType)}
+        </div>
+        <div className="SRC-cardContent">
+          <div className="SRC-type">Study</div>
+          <div className="SRC-title">
+            {' '}
+            <h3>
+              {' '}
+              <a target="_blank" href={link}>
+                {studyName}
+              </a>{' '}
+            </h3>{' '}
+          </div>
+          <div className="SRC-author">{dataContributors}</div>
+          <span className="SRC-font-size-base">
+              <Utils.ShowMore onClick={this.handleClick} summary={studyDescription} />
+          </span>
+        </div>
+        <Utils.CardFooter values={values} />
+      </div>
     )
   }
 }

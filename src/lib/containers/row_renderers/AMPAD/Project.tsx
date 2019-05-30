@@ -18,12 +18,13 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
     super(props)
     this.state = {
       hasCreatedIndex: false,
-      showMore: false
+      showMore: false,
+
     }
     this.handleClick = this.handleClick.bind(this)
   }
 
-  public handleClick(event: React.SyntheticEvent) {
+  public handleClick(_event: React.SyntheticEvent) {
     this.setState({
       showMore: !this.state.showMore
     })
@@ -84,7 +85,7 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
                   <Utils.ShowMore onClick={this.handleClick} summary={abstract} />
               </span>
           </div>
-          <Utils.CardFooter extraWide={true} values={values} />
+          <Utils.CardFooter values={values} />
       </div>
     )
   }

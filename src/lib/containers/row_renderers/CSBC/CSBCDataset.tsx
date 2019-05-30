@@ -60,7 +60,7 @@ class CSBCDataset extends React.Component<DatasetProps, {}> {
           </div>
           <div className="SRC-description"> {summary} </div>
         </div>
-        <Utils.CardFooter values={values} extraWide={true} />
+        <Utils.CardFooter values={values} />
       </div>
     )
   }

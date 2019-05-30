@@ -73,7 +73,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
                 </i>
               </p>
           </div>
-          <Utils.CardFooter extraWide={true} values={values} />
+          <Utils.CardFooter values={values} />
       </div>
     )
   }

@@ -24,7 +24,7 @@ import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
 import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
-import GenericCard from './GenericCard'
+import GenericCard, { GenericCardSchema } from './GenericCard'
 
 const PAGE_SIZE: number = 25
 
@@ -35,6 +35,7 @@ type RowContainerProps = {
   token?: string
   isHeader: boolean
   type: string
+  genericCardSchema?: GenericCardSchema
 }
 
 // Instead of giving each of the Study/Tool/etc components the same
@@ -67,7 +68,7 @@ export const RowContainer: React.SFC<RowContainerProps> = (props) => {
     case CSBC_DATASET:
       return <CSBCDataset {...rest} />
     case GENERIC_CARD:
-      return <GenericCard {...rest} />
+      return <GenericCard {...{ ...rest, genericCardSchema: rest.genericCardSchema! }} />
     default:
       return (<div />) // this should never happen
   }
@@ -87,6 +88,7 @@ export type CardContainerProps = {
   totalResultsNoFacet?: number
   hasMoreData?: boolean
   loadingScreen?: JSX.Element
+  genericCardSchema?: GenericCardSchema
 }
 
 type CardContainerState = {
@@ -208,6 +210,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
               schema={schema}
               token={token}
               isHeader={isHeader}
+              genericCardSchema={this.props.genericCardSchema}
             />
           )
         }

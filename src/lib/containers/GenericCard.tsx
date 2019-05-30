@@ -1,23 +1,32 @@
 import * as React from 'react'
 import * as Utils from './row_renderers/utils'
 
+type KeyAndAlias = {
+  key: string
+  alias?: string
+}
+
+type KeyAndAliasMap = {
+  [index: number]: KeyAndAlias
+}
+
 export type GenericCardSchema = {
   type: string
   title: string
   subTitle: string
   description: string
   icon: string
-  secondaryLabels: []
+  secondaryLabels: KeyAndAliasMap
 }
 
 export type GenericCardProps = {
-  schema: GenericCardSchema,
+  genericCardSchema: GenericCardSchema,
+  schema: any,
   data: any
 }
 
 export type GenericCardState = {
   showMoreDescription: boolean
-  showMoreSecondayLabels: boolean
 }
 
 export default class GenericCard extends React.Component<GenericCardProps, GenericCardState> {
@@ -26,7 +35,6 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     super(props)
     this.state = {
       showMoreDescription: false,
-      showMoreSecondayLabels: false
     }
   }
 
@@ -36,24 +44,19 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  public toggleshowMoreSecondayLabels(_event: React.SyntheticEvent) {
-    this.setState({
-      showMoreSecondayLabels: !this.state.showMoreSecondayLabels
-    })
-  }
-
   render() {
-    const { schema, data } = this.props
-    const type = data[schema.type]
-    const title = data[schema.title]
-    const subTitle = data[schema.subTitle]
-    const description = data[schema.description]
-    const icon = data[schema.icon]
+    const { schema, data, genericCardSchema } = this.props
+    const type = genericCardSchema.type
+    const title = data[schema[genericCardSchema.title]]
+    const subTitle = data[schema[genericCardSchema.subTitle]]
+    const description = data[schema[genericCardSchema.description]]
+    const icon = data[schema[genericCardSchema.icon]]
 
     const values: string [][] = []
-    for (let i = 0; i < schema.secondaryLabels.length; i += 1) {
-      const key =  schema.secondaryLabels[i]
-      const keyValue = [key, data[key]]
+    for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
+      const { key, alias = '' } =  genericCardSchema.secondaryLabels[i]
+      const displayValue = alias ? alias : key
+      const keyValue = [displayValue, data[schema[key]]]
       values.push(keyValue)
     }
 

@@ -126,7 +126,7 @@ $text-color-lighter: #898989;
     background-color: $color-gray-background;
     margin-top: $baseline-grid;
     padding: $baseline-grid $baseline-grid $baseline-grid 15%;
-    .row {
+    .row{
       margin: 5px !important;
       > * {
         min-width: 100px;
@@ -139,11 +139,11 @@ $text-color-lighter: #898989;
       display: inline-block;
       color: $text-color-lighter;
       text-transform: uppercase;
+      margin-right: 40px;
     }
     .SRC-row-data {
       font-weight: 400;
       display: inline-block;
-      padding-left: $baseline-grid;
       a {
         font-size: 14px !important;
       }
@@ -161,7 +161,7 @@ $text-color-lighter: #898989;
     .SRC-halfWidth {
       flex-grow: 1;
     }
-    .row {
+    .row{
       margin: 5px !important;
       > * {
         min-width: 200px;
@@ -185,10 +185,10 @@ $text-color-lighter: #898989;
   }
 
   &.SRC-typeDataset {  // single row metadata for dataset type
-    .row {
+    .row{
       display: inline-block;
     }
-    .row > * {
+    .row> * {
       min-width: 0;
     }
     .SRC-row-data {

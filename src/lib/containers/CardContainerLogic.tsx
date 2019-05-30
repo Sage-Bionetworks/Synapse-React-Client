@@ -5,6 +5,7 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
+import { GenericCardSchema } from './GenericCard'
 
 export type CardContainerLogicProps = {
   sql: string
@@ -14,6 +15,7 @@ export type CardContainerLogicProps = {
   type: string
   filter?: string
   loadingScreen?: JSX.Element
+  genericCardSchema?: GenericCardSchema
 }
 
 type State = {
@@ -186,6 +188,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         filter={this.props.filter}
+        genericCardSchema={this.props.genericCardSchema}
         hasMoreData={this.state.hasMoreData}
         loadingScreen={this.props.loadingScreen}
         isLoading={this.state.isLoading}
