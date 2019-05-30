@@ -28,7 +28,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabOne:
       {
         menuConfig: [
@@ -46,18 +46,10 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       tabTwo: {
         menuConfig: [
           {
-            facetName: 'assay',
+            facetName: 'study',
             sql:
-            `SELECT assay as "Assay", id AS "File ID",
-              fundingAgency AS "Funding Agency",
-              diagnosis AS "DIAG", dataType AS "DATA" FROM syn16858331
+            `SELECT * FROM syn11346063
             `,
-            facetAliases: {
-              id: 'File ID',
-              fundingAgency: 'Funding Agency',
-              assay: 'Assay',
-            },
-            synapseId: 'syn16858331',
             title: 'title',
             unitDescription: 'datum'
           },

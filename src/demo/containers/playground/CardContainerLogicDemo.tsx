@@ -15,6 +15,13 @@ export default class CardContainerLogicDemo extends React.Component {
         type={SynapseConstants.CSBC_DATASET}
         sql={`SELECT * FROM syn18488466 WHERE ( ( "is.dataset" = 'TRUE' ) )`}
         unitDescription="studies"
+        loadingBar={
+          <div
+            style={{ height: 320, width: 320, background: 'green', color: 'white' }}
+          >
+            I'm loading as fast I can!!
+          </div>
+        }
       />
     )
   }
