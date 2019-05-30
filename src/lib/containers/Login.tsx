@@ -207,7 +207,7 @@ class Login extends React.Component<Props, State> {
                       className="btn SRC-primary-background-color SRC-hoverWhiteText
                         SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
                     >
-                      <ButtonContent>
+                      <ButtonContent icon={icon}>
                         Sign in
                       </ButtonContent>
                     </button>
@@ -215,14 +215,14 @@ class Login extends React.Component<Props, State> {
                 <div>
                   <a
                     href="https://www.synapse.org/#!PasswordReset:0"
-                    className="SRC-floatLeft"
+                    className="SRC-floatLeft SRC-primary-text-color"
                   >
                     Forgot password?
                   </a>
                   <span className="SRC-deemphasized-text SRC-floatRight">&nbsp;It's free!</span>
                   <a
                     href="https://www.synapse.org/#!RegisterAccount:0"
-                    className="SRC-floatRight"
+                    className="SRC-floatRight SRC-primary-text-color"
                   >
                     Register
                   </a>

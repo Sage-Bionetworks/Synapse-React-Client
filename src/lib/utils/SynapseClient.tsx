@@ -15,7 +15,7 @@ const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 
 export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
 export const getRootURL = () => {
-  let portString = window.location.port ? `:${window.location.port}` : ''
+  const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
