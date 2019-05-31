@@ -10,6 +10,7 @@ type StudyState = {
 type StudyProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?:number
 }
 
 export default class Study extends React.Component<StudyProps, StudyState> {
@@ -72,7 +73,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
                   <Utils.ChipContainer chips={chips} />
               </div>
           </div>
-          <Utils.CardFooter values={values} />
+          <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

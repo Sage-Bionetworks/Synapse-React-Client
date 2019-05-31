@@ -5,12 +5,12 @@ import studyActiveSvg from '../../../assets/icons/study-active.svg'
 
 type StudyState = {
   showMore: boolean
-  hasCreatedIndex: boolean
 }
 
 type StudyProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?: number
 }
 
 export default class Study extends React.Component<StudyProps, StudyState> {
@@ -18,7 +18,6 @@ export default class Study extends React.Component<StudyProps, StudyState> {
   constructor(props: StudyProps) {
     super(props)
     this.state = {
-      hasCreatedIndex: false,
       showMore: false,
     }
     this.handleClick = this.handleClick.bind(this)
@@ -85,7 +84,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
               <Utils.ShowMore onClick={this.handleClick} summary={studyDescription} />
           </span>
         </div>
-        <Utils.CardFooter values={values} />
+        <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

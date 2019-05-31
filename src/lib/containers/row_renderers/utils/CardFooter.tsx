@@ -105,7 +105,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     // if the total length of values is less than the secondaryLabelLimit or they've clicked
     // show more then show all the values, otherwise use the secondaryLabelLimit passed in as a prop
     let valuesFiltered = values.filter(el => el[1])
-    if (values.length < secondaryLabelLimit || isShowMoreOn) {
+    if (values.length <= secondaryLabelLimit || isShowMoreOn) {
       valuesFiltered = valuesFiltered.slice(0, Infinity)
     } else {
       valuesFiltered = valuesFiltered.slice(0, secondaryLabelLimit)
@@ -116,7 +116,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
           <tbody>
             {getFormattedRows(valuesFiltered, isDesktop)}
             {
-              values.length >= secondaryLabelLimit &&
+              values.length > secondaryLabelLimit &&
               <tr className="SRC-cardRow">
                 <td>
                 <button

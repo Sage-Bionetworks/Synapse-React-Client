@@ -110,6 +110,7 @@
   min-width: 150px; }
 
 .SRC-portalCard .SRC-cardMetadata .SRC-row-label {
+  white-space: nowrap;
   color: #898989;
   text-transform: uppercase;
   margin-right: 40px; }
@@ -143,7 +144,7 @@
   min-width: 150px; }
 
 .SRC-portalCard .SRC-cardMetadataColumn .SRC-row-label {
-  display: inline-block;
+  white-space: nowrap;
   color: #898989;
   text-transform: uppercase; }
 

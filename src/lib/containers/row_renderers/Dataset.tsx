@@ -6,6 +6,7 @@ import * as Utils from './utils'
 type DatasetProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?:number
 }
 
 class Dataset extends React.Component<DatasetProps, {}> {
@@ -56,7 +57,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
             <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
           </div>
         </div>
-        <Utils.CardFooter values={values} />
+        <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

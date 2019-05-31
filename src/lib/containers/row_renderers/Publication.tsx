@@ -9,6 +9,7 @@ type PublicationState = {
 type PublicationProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?:number
 }
 
 class Publication extends React.Component<PublicationProps, PublicationState> {
@@ -47,7 +48,7 @@ class Publication extends React.Component<PublicationProps, PublicationState> {
                   <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
               </div>
           </div>
-          <Utils.CardFooter values={values} />
+          <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

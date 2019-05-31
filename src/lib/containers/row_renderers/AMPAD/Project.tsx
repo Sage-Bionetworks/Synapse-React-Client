@@ -4,12 +4,12 @@ import projectSvg from '../../../assets/icons/project.svg'
 
 type ProjectState = {
   showMore: boolean
-  hasCreatedIndex: boolean
 }
 
 type ProjectProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?: number
 }
 
 export default class Project extends React.Component<ProjectProps, ProjectState> {
@@ -17,7 +17,6 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
   constructor(props: ProjectProps) {
     super(props)
     this.state = {
-      hasCreatedIndex: false,
       showMore: false,
 
     }
@@ -85,7 +84,7 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
                   <Utils.ShowMore onClick={this.handleClick} summary={abstract} />
               </span>
           </div>
-          <Utils.CardFooter values={values} />
+          <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

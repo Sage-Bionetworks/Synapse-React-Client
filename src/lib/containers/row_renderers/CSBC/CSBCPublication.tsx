@@ -9,6 +9,7 @@ type CSBCPublicationState = {
 type CSBCPublicationProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?:number
 }
 
 class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicationState> {
@@ -73,7 +74,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
                 </i>
               </p>
           </div>
-          <Utils.CardFooter values={values} />
+          <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }
