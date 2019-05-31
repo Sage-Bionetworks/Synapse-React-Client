@@ -36,6 +36,7 @@ type RowContainerProps = {
   isHeader: boolean
   type: string
   genericCardSchema?: GenericCardSchema
+  secondaryLabelLimit?: number
 }
 
 // Instead of giving each of the Study/Tool/etc components the same
@@ -89,6 +90,7 @@ export type CardContainerProps = {
   hasMoreData?: boolean
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema
+  secondaryLabelLimit?: number
 }
 
 type CardContainerState = {
@@ -126,7 +128,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       unitDescription,
       type,
       isLoading,
-      loadingScreen
+      loadingScreen,
+      secondaryLabelLimit
     } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
       return (
@@ -211,6 +214,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
               token={token}
               isHeader={isHeader}
               genericCardSchema={this.props.genericCardSchema}
+              secondaryLabelLimit={secondaryLabelLimit}
             />
           )
         }

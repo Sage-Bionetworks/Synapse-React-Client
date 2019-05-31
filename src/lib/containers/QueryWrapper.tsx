@@ -98,6 +98,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.executeQueryRequest = this.executeQueryRequest.bind(this)
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
+    this.updateParentState = this.updateParentState.bind(this)
     this.state = QueryWrapper.initialState as QueryWrapperState
   }
 
@@ -244,7 +245,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       })
   }
 
-  public updateParentState = (update: QueryWrapperState) => {
+  public updateParentState (update: QueryWrapperState) {
     this.setState(update)
   }
 

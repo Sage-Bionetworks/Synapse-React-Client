@@ -11,6 +11,7 @@ export type CardContainerLogicProps = {
   sql: string
   token?: string
   limit?: number
+  secondaryLabelLimit?: number
   unitDescription?: string
   type: string
   filter?: string
@@ -192,6 +193,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         hasMoreData={this.state.hasMoreData}
         loadingScreen={this.props.loadingScreen}
         isLoading={this.state.isLoading}
+        secondaryLabelLimit={this.props.secondaryLabelLimit}
       />
     )
   }

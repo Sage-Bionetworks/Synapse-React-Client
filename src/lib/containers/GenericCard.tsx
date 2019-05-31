@@ -23,6 +23,7 @@ export type GenericCardProps = {
   genericCardSchema: GenericCardSchema,
   schema: any,
   data: any
+  secondaryLabelLimit?: number
 }
 
 export type GenericCardState = {
@@ -45,7 +46,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
   }
 
   render() {
-    const { schema, data, genericCardSchema } = this.props
+    const { schema, data, genericCardSchema, secondaryLabelLimit } = this.props
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
     const subTitle = data[schema[genericCardSchema.subTitle]]
@@ -79,7 +80,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
             <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
           </span>
         </div>
-        <Utils.CardFooter values={values}/>
+        <Utils.CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>
       </div>
     )
   }

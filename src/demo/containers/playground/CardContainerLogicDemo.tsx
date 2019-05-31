@@ -38,6 +38,7 @@ export default class CardContainerLogicDemo extends React.Component {
           sql={'SELECT * FROM syn17083367'}
           unitDescription="studies"
           genericCardSchema={genericCardSchema}
+          secondaryLabelLimit={1}
           loadingScreen={
             <div
               style={{ background: 'green', color: 'white' }}
