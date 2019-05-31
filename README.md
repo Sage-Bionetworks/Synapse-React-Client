@@ -418,7 +418,7 @@ CardContainer is used as either a child of QueryWrapperMenu/QueryWrapper OR Card
 | type | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER  |
 | unitDescription | Specifies the unit description for the rows being displayed, NOTE: If not specified then no label will render |
 
-#### CardContainerLogic
+#### CardContainerLogic 
 This component is used to wrap CardContainer as a standalone renderer for cards, so the cards will appear without any other query based views, e.g. [the view under **Funded Studies**]   (https://nf.synapse.org/#/Organizations-CTF) 
 
 | Props  | Explanation |
@@ -426,9 +426,12 @@ This component is used to wrap CardContainer as a standalone renderer for cards,
 | sql: string | The sql to be run against Synapse |
 | unitDescription: string | Fills in 'Displaying 50 <unitDescription>', NOTE: If not specified then no label will render |
 | token?: string | Authentication token |
-| limit?: number | Used to constrain the number of cards shown |
-| type: string | Type of card to be rendered |
+| limit?: number | Used to constrain the number of cards shown, defaults to Infinity |
+|  secondaryLabelLimit?: number | Used to constraint the number of secondary labels shown, defaults to three |
+| type: string | Type of card to be rendered.  |
 | filter?: string | If rendering a faceted view this defines the facet that will be used |
+| loadingScreen?: JSX.Element | If rendering a faceted view this defines the facet that will be used |
+| genericCardSchema?: GenericCardSchema | Defines schema to be used by cards |
 
 #### UserCard
 UserCard represents a synapse user, it is responsible for three different sized cards, small, medium, and large.
