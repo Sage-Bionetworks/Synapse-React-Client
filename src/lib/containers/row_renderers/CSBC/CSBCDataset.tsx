@@ -6,6 +6,7 @@ import * as Utils from '../utils'
 type DatasetProps = {
   data?: any
   schema?: any
+  secondaryLabelLimit?: number
 }
 
 class CSBCDataset extends React.Component<DatasetProps, {}> {
@@ -60,7 +61,7 @@ class CSBCDataset extends React.Component<DatasetProps, {}> {
           </div>
           <div className="SRC-description"> {summary} </div>
         </div>
-        <Utils.CardFooter values={values} extraWide={true} />
+        <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

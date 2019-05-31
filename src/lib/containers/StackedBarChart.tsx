@@ -174,9 +174,6 @@ export default class StackedBarChart extends
     } = this.props
     // while loading
     if (isLoadingNewData) {
-      return loadingScreen || <div/>
-    }
-    if (asyncJobStatus) {
       return (
         <div className="SRC-loadingContainer SRC-centerContentColumn">
           {/*
@@ -185,7 +182,7 @@ export default class StackedBarChart extends
           */}
           {!!loadingScreen && loadingScreen}
           <div>
-            {asyncJobStatus.progressMessage}
+            {asyncJobStatus && asyncJobStatus.progressMessage}
           </div>
         </div>
       )

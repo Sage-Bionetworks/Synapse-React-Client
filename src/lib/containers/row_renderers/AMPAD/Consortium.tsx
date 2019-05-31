@@ -10,14 +10,13 @@ import resilienceIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/resi
 
 type ConsortiumState = {
   showMore: boolean
-  hasCreatedIndex: boolean
 }
 
 type ConsortiumProps = {
-  token?: string
   isHeader?: boolean
   data?: any
   schema?: any
+  secondaryLabelLimit?: number
 }
 
 export default class Consortium extends React.Component<ConsortiumProps, ConsortiumState> {
@@ -25,7 +24,6 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
   constructor(props: ConsortiumProps) {
     super(props)
     this.state = {
-      hasCreatedIndex: false,
       showMore: false
     }
     this.handleClick = this.handleClick.bind(this)
@@ -81,27 +79,26 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
     const isOnOrgPath = window.location.hash.substring(1) === path
 
     return (
-            <div
-                style={{ paddingBottom: '32px' }}
-                className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata"
-            >
-                <div className="SRC-cardThumbnail">
-                    {this.getIcon(org, isOnOrgPath)}
-                </div>
-                <div className="SRC-cardContent">
-                    <div className="SRC-type">Program</div>
-                    <div className="SRC-title">
-                        <h3>
-                            {!isOnOrgPath && <a target="_blank" href={orgPath}> {name} </a>}
-                            {isOnOrgPath && name}
-                        </h3>
-                    </div>
-                    <span className="SRC-font-size-base">
-                        {description}
-                    </span>
-                </div>
-            </div>
-
+      <div
+          style={{ paddingBottom: '32px' }}
+          className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata"
+      >
+        <div className="SRC-cardThumbnail">
+          {this.getIcon(org, isOnOrgPath)}
+        </div>
+        <div className="SRC-cardContent">
+          <div className="SRC-type">Program</div>
+          <div className="SRC-title">
+            <h3>
+                {!isOnOrgPath && <a target="_blank" href={orgPath}> {name} </a>}
+                {isOnOrgPath && name}
+            </h3>
+          </div>
+          <span className="SRC-font-size-base">
+              {description}
+          </span>
+        </div>
+      </div>
     )
   }
 }

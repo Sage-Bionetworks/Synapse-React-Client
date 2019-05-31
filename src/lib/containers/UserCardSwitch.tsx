@@ -6,7 +6,7 @@ import UserCardMedium from './UserCardMedium'
 import { MenuAction } from './UserCardContextMenu'
 
 export type UserCardSwitchProps = {
-  loadingBar?: JSX.Element
+  loadingScreen?: JSX.Element
   userProfile: UserProfile
   preSignedURL?: string
   hideText?: boolean
@@ -17,7 +17,7 @@ export type UserCardSwitchProps = {
 }
 
 export const UserCardSwitch: React.SFC<UserCardSwitchProps> = (
-  { size, loadingBar, ...rest }
+  { size, loadingScreen, ...rest }
 ) => {
   switch (size) {
     case SynapseConstants.SMALL_USER_CARD:

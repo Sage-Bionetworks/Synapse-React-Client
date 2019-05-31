@@ -15,7 +15,8 @@ import {
   CSBC_PROJECT,
   CSBC_PUBLICATION,
   CSBC_STUDY,
-  CSBC_DATASET
+  CSBC_DATASET,
+  GENERIC_CARD
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
@@ -23,6 +24,7 @@ import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
 import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
+import GenericCard, { GenericCardSchema } from './GenericCard'
 
 const PAGE_SIZE: number = 25
 
@@ -33,6 +35,8 @@ type RowContainerProps = {
   token?: string
   isHeader: boolean
   type: string
+  genericCardSchema?: GenericCardSchema
+  secondaryLabelLimit?: number
 }
 
 // Instead of giving each of the Study/Tool/etc components the same
@@ -64,6 +68,8 @@ export const RowContainer: React.SFC<RowContainerProps> = (props) => {
       return <CSBCStudy {...rest} />
     case CSBC_DATASET:
       return <CSBCDataset {...rest} />
+    case GENERIC_CARD:
+      return <GenericCard {...{ ...rest, genericCardSchema: rest.genericCardSchema! }} />
     default:
       return (<div />) // this should never happen
   }
@@ -82,6 +88,9 @@ export type CardContainerProps = {
   unitDescription?: string
   totalResultsNoFacet?: number
   hasMoreData?: boolean
+  loadingScreen?: JSX.Element
+  genericCardSchema?: GenericCardSchema
+  secondaryLabelLimit?: number
 }
 
 type CardContainerState = {
@@ -117,10 +126,17 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       isHeader = false,
       filter,
       unitDescription,
-      type
+      type,
+      isLoading,
+      loadingScreen,
+      secondaryLabelLimit
     } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
-      return (<div/>)
+      return (
+        <div>
+         {(isLoading && loadingScreen !== undefined) && loadingScreen}
+        </div>
+      )
     }
     const schema = {}
     data.queryResult.queryResults.headers.forEach(
@@ -197,6 +213,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
               schema={schema}
               token={token}
               isHeader={isHeader}
+              genericCardSchema={this.props.genericCardSchema}
+              secondaryLabelLimit={secondaryLabelLimit}
             />
           )
         }
@@ -208,6 +226,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
+        {(isLoading && loadingScreen !== undefined) && loadingScreen}
         {showViewMoreButton}
       </div>
     )

@@ -14,7 +14,7 @@ type UserCardState = {
 export type UserCardProps = {
   // Note - either specify userProfile OR (alias or ownerId)
   userProfile?: UserProfile
-  loadingBar?: JSX.Element
+  loadingScreen?: JSX.Element
   hideEmail?: boolean
   preSignedURL?: string
   alias?: string
@@ -65,14 +65,14 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
     )
   }
   public render() {
-    const { userProfile, loadingBar = <span/>, preSignedURL, ...rest } = this.props
+    const { userProfile, loadingScreen = <span/>, preSignedURL, ...rest } = this.props
     let userProfileAtRender
     let preSignedURLAtRender
     if (!userProfile) {
       // userProfile wans't passed in from props
       if (this.state.isLoading) {
         // still making the API call
-        return loadingBar
+        return loadingScreen
       }
       userProfileAtRender = this.state.userProfile
       preSignedURLAtRender = this.state.preSignedURL

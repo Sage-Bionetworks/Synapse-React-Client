@@ -16,7 +16,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
   constructor(props: CSBCPublicationProps) {
     super(props)
     this.state = {
-      showMore: false
+      showMore: false,
     }
     this.handleClick = this.handleClick.bind(this)
   }
@@ -73,7 +73,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
                 {description}
               </span>
           </div>
-          <Utils.CardFooter extraWide={true} values={values} />
+          <Utils.CardFooter  values={values} />
       </div>
     )
   }

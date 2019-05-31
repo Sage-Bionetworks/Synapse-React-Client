@@ -943,3 +943,8 @@ div.SRC-userImg {
 
 .SRC-loadingContainer {
   min-height: 100px; }
+
+.SRC-basicButton {
+  border: none;
+  background: none;
+  color: #D53F77; }

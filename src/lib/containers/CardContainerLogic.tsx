@@ -5,14 +5,18 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
+import { GenericCardSchema } from './GenericCard'
 
 export type CardContainerLogicProps = {
   sql: string
   token?: string
   limit?: number
+  secondaryLabelLimit?: number
   unitDescription?: string
   type: string
   filter?: string
+  loadingScreen?: JSX.Element
+  genericCardSchema?: GenericCardSchema
 }
 
 type State = {
@@ -34,7 +38,6 @@ type State = {
 export default class CardContainerLogic extends React.Component<CardContainerLogicProps, State> {
 
   public static defaultProps = {
-    json: null,
     token: ''
   }
 
@@ -186,7 +189,11 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         filter={this.props.filter}
+        genericCardSchema={this.props.genericCardSchema}
         hasMoreData={this.state.hasMoreData}
+        loadingScreen={this.props.loadingScreen}
+        isLoading={this.state.isLoading}
+        secondaryLabelLimit={this.props.secondaryLabelLimit}
       />
     )
   }

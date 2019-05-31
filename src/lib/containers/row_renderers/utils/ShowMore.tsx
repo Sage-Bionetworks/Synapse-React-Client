@@ -33,7 +33,7 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
   }
 
   public render() {
-        // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
+      // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
     const { summary } = this.props
     let summaryView = ''
     const meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
@@ -60,11 +60,11 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
             </a>)
         )
     return (
-            <React.Fragment>
-                {!this.state.showMore && summaryView}
-                {this.state.showMore && summary}
-                {!this.state.showMore && showMoreButton}
-            </React.Fragment>
+      <React.Fragment>
+        {!this.state.showMore && summaryView}
+        {this.state.showMore && summary}
+        {!this.state.showMore && showMoreButton}
+      </React.Fragment>
     )
   }
 }

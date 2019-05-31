@@ -89,13 +89,12 @@
       .SRC-portalCard .SRC-cardMetadata .row .extraWide {
         min-width: 150px; }
     .SRC-portalCard .SRC-cardMetadata .SRC-row-label {
-      display: inline-block;
+      white-space: nowrap;
       color: #898989;
-      text-transform: uppercase; }
+      text-transform: uppercase;
+      margin-right: 40px; }
     .SRC-portalCard .SRC-cardMetadata .SRC-row-data {
-      font-weight: 400;
-      display: inline-block;
-      padding-left: 21px; }
+      font-weight: 400; }
       .SRC-portalCard .SRC-cardMetadata .SRC-row-data a {
         font-size: 14px !important; }
   .SRC-portalCard .SRC-cardMetadataColumn {
@@ -115,7 +114,7 @@
       .SRC-portalCard .SRC-cardMetadataColumn .row.extraWide > * {
         min-width: 150px; }
     .SRC-portalCard .SRC-cardMetadataColumn .SRC-row-label {
-      display: inline-block;
+      white-space: nowrap;
       color: #898989;
       text-transform: uppercase; }
     .SRC-portalCard .SRC-cardMetadataColumn .SRC-row-data {
@@ -153,3 +152,14 @@
 
 img.iconImg.SRC-datasetIcon {
   max-width: 60px !important; }
+
+@media only screen and (min-width: 600px) {
+  .SRC-cardRow > td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0px;
+    padding-right: 20px; } }
+
+@media only screen and (max-width: 600px) {
+  .SRC-cardRow:nth-child(even) > td {
+    padding-bottom: 10px; } }
