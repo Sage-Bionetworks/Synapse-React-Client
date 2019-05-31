@@ -136,6 +136,7 @@ $text-color-lighter: #898989;
       }
     }
     .SRC-row-label {
+      white-space: nowrap;
       color: $text-color-lighter;
       text-transform: uppercase;
       margin-right: 40px;
@@ -169,7 +170,7 @@ $text-color-lighter: #898989;
       }
     }
     .SRC-row-label {
-      display: inline-block;
+      white-space: nowrap;
       color: $text-color-lighter;
       text-transform: uppercase;
     }
@@ -246,6 +247,8 @@ img.iconImg.SRC-datasetIcon {
 }
 
 @media only screen and (max-width: 600px) {
+  // every two row elements represents a key-value
+  // this adds spacing between every two elements
   .SRC-cardRow:nth-child(even) {
     > td {
       padding-bottom: 10px;

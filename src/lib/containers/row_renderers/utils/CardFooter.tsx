@@ -102,27 +102,37 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   render() {
     const { values, limit = 3 } = this.props
     const { isShowMoreOn, isDesktop } = this.state
-    const limitUsed = isShowMoreOn ? Infinity : limit
-    const valuesFiltered = values.filter(el => el[1]).slice(0, limitUsed)
+    // if the total length of values is less than the limit or they've clicked
+    // show more then show all the values, otherwise use the limit passed in as a prop
+    let valuesFiltered = values.filter(el => el[1])
+    if (values.length < limit || isShowMoreOn) {
+      valuesFiltered = valuesFiltered.slice(0, Infinity)
+    } else {
+      valuesFiltered = valuesFiltered.slice(0, limit)
+    }
     return (
       <div className="SRC-cardMetadata">
         <table>
           <tbody>
             {getFormattedRows(valuesFiltered, isDesktop)}
-            <tr className="SRC-cardRow">
-              <td>
-              <button
-                style={{ textAlign: 'left', margin: 0, padding: 0 }}
-                className="SRC-primary-text-color SRC-basicButton"
-                onClick={this.toggleShowMore}
-              >Show {isShowMoreOn ?  'Less' : 'More'}
-                <FontAwesomeIcon
-                  style={{ marginLeft: '5px' }}
-                  icon={isShowMoreOn ? 'long-arrow-alt-up' : 'long-arrow-alt-down'}
-                />
-              </button>
-              </td>
-            </tr>
+            {
+              values.length >= limit &&
+              <tr className="SRC-cardRow">
+                <td>
+                <button
+                  style={{ textAlign: 'left', margin: 0, padding: 0 }}
+                  className="SRC-primary-text-color SRC-basicButton"
+                  onClick={this.toggleShowMore}
+                >
+                  Show {isShowMoreOn ?  'Less' : 'More'}
+                  <FontAwesomeIcon
+                    style={{ marginLeft: '5px' }}
+                    icon={isShowMoreOn ? 'long-arrow-alt-up' : 'long-arrow-alt-down'}
+                  />
+                </button>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
