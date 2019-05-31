@@ -136,14 +136,12 @@ $text-color-lighter: #898989;
       }
     }
     .SRC-row-label {
-      display: inline-block;
       color: $text-color-lighter;
       text-transform: uppercase;
       margin-right: 40px;
     }
     .SRC-row-data {
       font-weight: 400;
-      display: inline-block;
       a {
         font-size: 14px !important;
       }
@@ -234,4 +232,23 @@ $text-color-lighter: #898989;
 
 img.iconImg.SRC-datasetIcon {
   max-width: 60px !important;
+}
+
+@media only screen and (min-width: 600px) {
+  .SRC-cardRow {
+    > td {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 0px;
+      padding-right: 20px;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .SRC-cardRow:nth-child(even) {
+    > td {
+      padding-bottom: 10px;
+    }
+  }
 }

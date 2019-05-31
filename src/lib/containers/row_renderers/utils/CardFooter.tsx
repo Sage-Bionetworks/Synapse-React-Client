@@ -5,32 +5,62 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
-const getFormattedRows = (values: string [][]) => {
+const getFormattedRows = (values: string [][], isDesktop: boolean) => {
+  if (isDesktop) {
+    return values.map((kv, index) => {
+      if (kv[0].toUpperCase() === 'DOI') {
+        return (
+          <tr className="SRC-cardRow" key={index}>
+            <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
+            <td className="SRC-row-data SRC-limitMaxWidth SRC-cardCell">
+              <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
+                {kv[1]}
+              </a>
+            </td>
+          </tr>
+        )
+      }
+      return (
+        <tr className="SRC-cardRow" key={index}>
+          <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
+          <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+        </tr>
+      )
+    })
+  }
   return values.map((kv, index) => {
     if (kv[0].toUpperCase() === 'DOI') {
       return (
-        <div key={index} className="row">
-          <div className="SRC-row-label"> {kv[0]} </div>
-          <div className="SRC-row-data">
-            {' '}
-            <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
-              {kv[1]}
-            </a>
-          </div>
-        </div>
+        <React.Fragment key={index}>
+          <tr className="SRC-cardRow">
+            <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
+          </tr>
+          <tr className="SRC-cardRow">
+            <td className="SRC-row-data SRC-limitMaxWidth">
+              <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
+                {kv[1]}
+              </a>
+            </td>
+          </tr>
+        </React.Fragment>
       )
     }
     return (
-      <div key={index} className={'row'}>
-        <div className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </div>
-        <div className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </div>
-      </div>
+      <React.Fragment key={index}>
+        <tr className="SRC-cardRow">
+          <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
+        </tr>
+        <tr className="SRC-cardRow">
+          <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+        </tr>
+      </React.Fragment>
     )
   })
 }
 
 type State = {
   isShowMoreOn: boolean
+  isDesktop: boolean
 }
 
 type CardFooterProps = {
@@ -43,9 +73,11 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   constructor(props: CardFooterProps) {
     super(props)
     this.state = {
-      isShowMoreOn: false
+      isShowMoreOn: false,
+      isDesktop: false
     }
     this.toggleShowMore = this.toggleShowMore.bind(this)
+    this.updatePredicate = this.updatePredicate.bind(this)
   }
 
   toggleShowMore() {
@@ -53,26 +85,46 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       isShowMoreOn: !this.state.isShowMoreOn
     })
   }
+
+  componentDidMount() {
+    this.updatePredicate()
+    window.addEventListener('resize', this.updatePredicate)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updatePredicate)
+  }
+
+  updatePredicate() {
+    this.setState({ isDesktop: window.innerWidth > 600 })
+  }
+
   render() {
     const { values, limit = 3 } = this.props
-    const { isShowMoreOn } = this.state
+    const { isShowMoreOn, isDesktop } = this.state
     const limitUsed = isShowMoreOn ? Infinity : limit
     const valuesFiltered = values.filter(el => el[1]).slice(0, limitUsed)
     return (
       <div className="SRC-cardMetadata">
-        {getFormattedRows(valuesFiltered)}
-        <div className="row">
-          <button
-            style={{ textAlign: 'left', margin: 0, padding: 0 }}
-            className="SRC-primary-action-color SRC-basicButton"
-            onClick={this.toggleShowMore}
-          >Show {isShowMoreOn ?  'Less' : 'More'}
-            <FontAwesomeIcon
-              style={{ marginLeft: '5px' }}
-              icon={isShowMoreOn ? 'long-arrow-alt-up' : 'long-arrow-alt-down'}
-            />
-          </button>
-        </div>
+        <table>
+          <tbody>
+            {getFormattedRows(valuesFiltered, isDesktop)}
+            <tr className="SRC-cardRow">
+              <td>
+              <button
+                style={{ textAlign: 'left', margin: 0, padding: 0 }}
+                className="SRC-primary-text-color SRC-basicButton"
+                onClick={this.toggleShowMore}
+              >Show {isShowMoreOn ?  'Less' : 'More'}
+                <FontAwesomeIcon
+                  style={{ marginLeft: '5px' }}
+                  icon={isShowMoreOn ? 'long-arrow-alt-up' : 'long-arrow-alt-down'}
+                />
+              </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     )
   }
