@@ -429,7 +429,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const facetIndex: number = facets.findIndex((facetColumnResult: FacetColumnResult) => {
           return this.useFacetAliasIfDefined(facetColumnResult.columnName) === column.name
         })
-        const isFacetSelection: boolean = facetIndex !== -1
+        // the header must be included in the facets and it has to be enumerable for current rendering capabilities
+        const isFacetSelection: boolean = facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
         const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
