@@ -121,5 +121,8 @@
     "build:js": "rm -rf dist && tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/umd"
+  },
+  "resolutions": {
+    "fstream": "1.0.12"
   }
 }
