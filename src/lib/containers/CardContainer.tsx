@@ -24,7 +24,7 @@ import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
 import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
-import GenericCard, { GenericCardSchema } from './GenericCard'
+import GenericCard, { GenericCardSchema, IconOptions } from './GenericCard'
 
 const PAGE_SIZE: number = 25
 
@@ -32,11 +32,12 @@ type RowContainerProps = {
   data: any
   limit: number
   schema: any
-  token?: string
   isHeader: boolean
   type: string
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
+  backgroundColor?: string
+  iconOptions?: IconOptions
 }
 
 // Instead of giving each of the Study/Tool/etc components the same
@@ -79,7 +80,6 @@ export type CardContainerProps = {
   type: string,
   data?: QueryResultBundle,
   limit?: number,
-  token?: string
   isHeader?: boolean
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
@@ -91,6 +91,8 @@ export type CardContainerProps = {
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
+  backgroundColor?: string
+  iconOptions?: IconOptions
 }
 
 type CardContainerState = {
@@ -122,14 +124,16 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     const {
       data,
       limit = Infinity,
-      token = '',
       isHeader = false,
       filter,
       unitDescription,
       type,
       isLoading,
       loadingScreen,
-      secondaryLabelLimit
+      secondaryLabelLimit,
+      genericCardSchema,
+      backgroundColor,
+      iconOptions
     } = this.props
     if (data === undefined || Object.keys(data).length === 0) {
       return (
@@ -211,10 +215,11 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
               limit={limit}
               data={rowData.values}
               schema={schema}
-              token={token}
               isHeader={isHeader}
-              genericCardSchema={this.props.genericCardSchema}
+              genericCardSchema={genericCardSchema}
               secondaryLabelLimit={secondaryLabelLimit}
+              backgroundColor={backgroundColor}
+              iconOptions={iconOptions}
             />
           )
         }

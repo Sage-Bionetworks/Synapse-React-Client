@@ -255,3 +255,11 @@ img.iconImg.SRC-datasetIcon {
     }
   }
 }
+
+.SRC-cardHeader {
+  padding-bottom: 30px;
+  padding-top: 25px;
+  div.SRC-type, span, h3, .SRC-author {
+    color: white;
+  }
+}
