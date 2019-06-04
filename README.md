@@ -421,6 +421,8 @@ CardContainer is used as either a child of QueryWrapperMenu/QueryWrapper OR Card
 #### CardContainerLogic 
 This component is used to wrap CardContainer as a standalone renderer for cards, so the cards will appear without any other query based views, e.g. [the view under **Funded Studies**]   (https://nf.synapse.org/#/Organizations-CTF) 
 
+This card can be used in two ways - as a standard row renderer or as a 'Header' where the card content is meant to stretch across the screen and give an overview of whatever content comes below. 
+
 | Props  | Explanation |
 | ------------- | ------------- |
 | sql: string | The sql to be run against Synapse |
@@ -432,6 +434,9 @@ This component is used to wrap CardContainer as a standalone renderer for cards,
 | filter?: string | If rendering a faceted view this defines the facet that will be used |
 | loadingScreen?: JSX.Element | If rendering a faceted view this defines the facet that will be used |
 | genericCardSchema?: GenericCardSchema | Defines schema to be used by cards |
+| isHeader?: boolean | Styles the card to be used as a header -- e.g. doesnt have a 'Show More' for description, no secondaryLabels are shown |
+| backgroundColor?: string | Used as background color for the card in header mode|
+| iconOptions?: IconOptions | In order to not bloat SRC with custom icons per portal, only a subset of icons will be used across portals. For special icons like when the card is used in 'header mode' it requires a dictionary of key-value pairs with the key being the column value and the value being a corresponding SVG icon |
 
 #### UserCard
 UserCard represents a synapse user, it is responsible for three different sized cards, small, medium, and large.

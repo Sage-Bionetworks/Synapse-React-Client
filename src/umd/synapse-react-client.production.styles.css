@@ -207,6 +207,13 @@ img.iconImg.SRC-datasetIcon {
   .SRC-cardRow:nth-child(even) > td {
     padding-bottom: 10px; } }
 
+.SRC-cardHeader {
+  padding-bottom: 30px;
+  padding-top: 25px; }
+
+.SRC-cardHeader div.SRC-type, .SRC-cardHeader span, .SRC-cardHeader h3, .SRC-cardHeader .SRC-author {
+  color: white; }
+
 .markdowntable {
   border: 1px solid #dddddd;
   border-collapse: separate;

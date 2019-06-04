@@ -2,6 +2,10 @@ import * as React from 'react'
 import CardContainerLogic from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from 'src/lib'
 import { GenericCardSchema } from 'src/lib/containers/GenericCard'
+import brainSvg from './icons/brain.svg'
+import circleSvg from './icons/circle.svg'
+import mouseSvg from './icons/mouse.svg'
+import resilienceadSvg from './icons/resiliencead.svg'
 
 export default class CardContainerLogicDemo extends React.Component {
 
@@ -11,6 +15,13 @@ export default class CardContainerLogicDemo extends React.Component {
   }
 
   render() {
+    const iconOptions = {
+      'AMP-AD': circleSvg,
+      'M2OVE-AD': brainSvg,
+      'MODEL-AD': mouseSvg,
+      'Resilience-AD': resilienceadSvg
+    }
+
     const genericCardSchema: GenericCardSchema = {
       type: 'Study',
       title: 'Study_Name',
@@ -29,10 +40,26 @@ export default class CardContainerLogicDemo extends React.Component {
         8: { key: 'Grant' },
       }
     }
+    const genericCardSchemaHeader: GenericCardSchema = {
+      type: 'PROGRAM',
+      title: 'Full Name',
+      subTitle: 'Short Description',
+      description: 'Long Description',
+      icon: 'Program',
+    }
     return (
       <div>
         <hr/>
         <p> Generic Card Rendering </p>
+        <CardContainerLogic
+          type={SynapseConstants.GENERIC_CARD}
+          sql={'SELECT * FROM syn17024173'}
+          unitDescription="studies"
+          genericCardSchema={genericCardSchemaHeader}
+          backgroundColor={'#5960a5'}
+          isHeader={true}
+          iconOptions={iconOptions}
+        />
         <CardContainerLogic
           type={SynapseConstants.GENERIC_CARD}
           sql={'SELECT * FROM syn17083367'}
