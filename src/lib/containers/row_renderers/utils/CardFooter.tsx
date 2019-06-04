@@ -5,37 +5,38 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
-const getFormattedRows = (values: string [][], isDesktop: boolean) => {
-  if (isDesktop) {
-    return values.map((kv, index) => {
-      if (kv[0].toUpperCase() === 'DOI') {
-        return (
-          <tr className="SRC-cardRow" key={index}>
-            <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
-            <td className="SRC-row-data SRC-limitMaxWidth SRC-cardCell">
-              <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
-                {kv[1]}
-              </a>
-            </td>
-          </tr>
-        )
-      }
+const getDesktopFormattedRows = (values: string [][]) => {
+  return values.map((kv, index) => {
+    if (kv[0].toUpperCase() === 'DOI') {
       return (
-        <tr className="SRC-cardRow" key={index}>
-          <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
-          <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+        <tr className="SRC-cardRowDesktop" key={index}>
+          <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
+          <td className="SRC-row-data SRC-limitMaxWidth SRC-cardCell">
+            <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
+              {kv[1]}
+            </a>
+          </td>
         </tr>
       )
-    })
-  }
+    }
+    return (
+      <tr className="SRC-cardRowDesktop" key={index}>
+        <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
+        <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+      </tr>
+    )
+  })
+}
+
+const getMobileFormattedRows = (values: string [][]) => {
   return values.map((kv, index) => {
     if (kv[0].toUpperCase() === 'DOI') {
       return (
         <React.Fragment key={index}>
-          <tr className="SRC-cardRow">
+          <tr className="SRC-cardRowMobile">
             <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
           </tr>
-          <tr className="SRC-cardRow">
+          <tr className="SRC-cardRowMobile">
             <td className="SRC-row-data SRC-limitMaxWidth">
               <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
                 {kv[1]}
@@ -47,10 +48,10 @@ const getFormattedRows = (values: string [][], isDesktop: boolean) => {
     }
     return (
       <React.Fragment key={index}>
-        <tr className="SRC-cardRow">
+        <tr className="SRC-cardRowMobile">
           <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
         </tr>
-        <tr className="SRC-cardRow">
+        <tr className="SRC-cardRowMobile">
           <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
         </tr>
       </React.Fragment>
@@ -114,7 +115,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       <div className="SRC-cardMetadata">
         <table>
           <tbody>
-            {getFormattedRows(valuesFiltered, isDesktop)}
+            {isDesktop ? getDesktopFormattedRows(valuesFiltered) : getMobileFormattedRows(valuesFiltered)}
             {
               values.length > secondaryLabelLimit &&
               <tr className="SRC-cardRow">

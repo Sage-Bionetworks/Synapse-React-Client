@@ -39,13 +39,6 @@ export default class CardContainerLogicDemo extends React.Component {
           unitDescription="studies"
           genericCardSchema={genericCardSchema}
           secondaryLabelLimit={1}
-          loadingScreen={
-            <div
-              style={{ background: 'green', color: 'white' }}
-            >
-              I'm loading as fast I can!!
-            </div>
-          }
         />
       </div>
     )

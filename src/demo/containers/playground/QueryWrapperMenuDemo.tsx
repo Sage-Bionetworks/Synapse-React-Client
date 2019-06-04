@@ -47,19 +47,17 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             facetName: 'study',
-            sql:
-            `SELECT * FROM syn11346063
-            `,
+            sql: 'SELECT * FROM syn11346063',
             title: 'title',
             unitDescription: 'datum'
           },
-          {
-            facetName: 'dataType',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            synapseId: 'syn16858331',
-            title: 'title',
-            unitDescription: 'descriptive unit'
-          },
+          // {
+          //   facetName: 'dataType',
+          //   sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+          //   synapseId: 'syn16858331',
+          //   title: 'title',
+          //   unitDescription: 'descriptive unit'
+          // },
           {
             facetName: 'diagnosis',
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
@@ -147,6 +145,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
             type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
+            secondaryLabelLimit={2}
             loadingScreen={<div>loading... </div>}
           />
         </div>
