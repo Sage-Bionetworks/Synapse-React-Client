@@ -235,24 +235,20 @@ img.iconImg.SRC-datasetIcon {
   max-width: 60px !important;
 }
 
-@media only screen and (min-width: 600px) {
-  .SRC-cardRow {
-    > td {
-      padding-top: 5px;
-      padding-bottom: 5px;
-      padding-left: 0px;
-      padding-right: 20px;
-    }
+.SRC-cardRowDesktop {
+  > td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0px;
+    padding-right: 20px;
   }
 }
 
-@media only screen and (max-width: 600px) {
-  // every two row elements represents a key-value
-  // this adds spacing between every two elements
-  .SRC-cardRow:nth-child(even) {
-    > td {
-      padding-bottom: 10px;
-    }
+// every two row elements represents a key-value
+// this adds spacing between every two elements
+.SRC-cardRowMobile:nth-child(even) {
+  > td {
+    padding-bottom: 10px;
   }
 }
 

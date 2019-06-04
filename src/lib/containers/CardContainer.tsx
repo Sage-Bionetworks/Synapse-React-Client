@@ -135,10 +135,10 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       backgroundColor,
       iconOptions
     } = this.props
-    if (data === undefined || Object.keys(data).length === 0) {
+    if (!data || isLoading) {
       return (
         <div>
-         {(isLoading && loadingScreen !== undefined) && loadingScreen}
+         {isLoading && loadingScreen}
         </div>
       )
     }
@@ -231,7 +231,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
-        {(isLoading && loadingScreen !== undefined) && loadingScreen}
+        {isLoading && loadingScreen}
         {showViewMoreButton}
       </div>
     )

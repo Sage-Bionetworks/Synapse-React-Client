@@ -34,6 +34,7 @@ export type QueryWrapperMenuProps = {
   isConsistent?: boolean
   token?: string
   type?: string
+  secondaryLabelLimit?: number
   rgbIndex: number
   loadingScreen?: JSX.Element
 }
@@ -146,7 +147,15 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   private renderQueryChildren() {
-    const { menuConfig, token, rgbIndex, loadingScreen, isConsistent = false, type = '' } = this.props
+    const {
+      menuConfig,
+      token,
+      rgbIndex,
+      loadingScreen,
+      isConsistent = false,
+      type = '',
+      secondaryLabelLimit =  3
+    } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = (this.state.menuIndex === index)
       const {
@@ -203,7 +212,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
               :
               <span/>
             }
-            {showCards ? <CardContainer type={type}/> : <span/>}
+            {showCards ? <CardContainer secondaryLabelLimit={secondaryLabelLimit}  type={type}/> : <span/>}
           </QueryWrapper>
         </span>
       )
