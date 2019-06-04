@@ -1,7 +1,5 @@
 import * as React from 'react'
 import Login from '../../lib/containers/Login'
-import StaticQueryWrapper from '../../lib/containers/StaticQueryWrapper'
-import CardContainer from '../../lib/containers/CardContainer'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
@@ -244,13 +242,6 @@ class Demo extends React.Component<{}, DemoState> {
               </select>
             </label>
           </form>
-          <StaticQueryWrapper sql={this.state.cardSql}>
-            <CardContainer
-              limit={1}
-              type={this.state.cardSelection}
-              hasMoreData={false}
-            />
-          </StaticQueryWrapper>
         </div>
 
         <div className="container">
@@ -264,6 +255,7 @@ class Demo extends React.Component<{}, DemoState> {
           </button>
           <a href="#table"> Table Demo </a>
           <QueryWrapperMenu
+            isConsistent={true}
             token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}

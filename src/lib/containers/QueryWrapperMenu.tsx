@@ -203,6 +203,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
               :
               <span/>
             }
+            {/* TODO: Add secondaryLabelLimit prop to card container */}
             {showCards ? <CardContainer type={type}/> : <span/>}
           </QueryWrapper>
         </span>
