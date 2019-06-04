@@ -77,9 +77,15 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       }
     }
 
+    const style: React.CSSProperties = {
+      background: backgroundColor,
+      // undefined, take default value from class
+      marginTop: isHeader ? '0px' : undefined,
+      marginBottom: isHeader ? '0px' : undefined
+    }
     return (
       <div
-        style={{ background: backgroundColor }}
+        style={style}
         className={`SRC-portalCard SRC-layoutLandscape SRC-showMetadata ${isHeader ? 'SRC-cardHeader' : ''} `}
       >
         <div className="SRC-cardThumbnail">
