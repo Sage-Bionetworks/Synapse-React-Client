@@ -103,10 +103,10 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   render() {
     const { values, secondaryLabelLimit = 3 } = this.props
     const { isShowMoreOn, isDesktop } = this.state
-    // if the total length of values is less than the secondaryLabelLimit or they've clicked
-    // show more then show all the values, otherwise use the secondaryLabelLimit passed in as a prop
     let valuesFiltered = values.filter(el => el[1])
-    if (values.length <= secondaryLabelLimit || isShowMoreOn) {
+    const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
+    // don't slice if the number of values < limit or if they've clicked showMore
+    if (!hasMoreValuesThanLimit || isShowMoreOn) {
       valuesFiltered = valuesFiltered.slice(0, Infinity)
     } else {
       valuesFiltered = valuesFiltered.slice(0, secondaryLabelLimit)
@@ -117,22 +117,22 @@ class CardFooter extends React.Component<CardFooterProps, State> {
           <tbody>
             {isDesktop ? getDesktopFormattedRows(valuesFiltered) : getMobileFormattedRows(valuesFiltered)}
             {
-              values.length > secondaryLabelLimit &&
-              <tr className="SRC-cardRow">
-                <td>
-                <button
-                  style={{ textAlign: 'left', margin: 0, padding: 0 }}
-                  className="SRC-primary-text-color SRC-basicButton"
-                  onClick={this.toggleShowMore}
-                >
-                  Show {isShowMoreOn ?  'Less' : 'More'}
-                  <FontAwesomeIcon
-                    style={{ marginLeft: '5px' }}
-                    icon={isShowMoreOn ? 'long-arrow-alt-up' : 'long-arrow-alt-down'}
-                  />
-                </button>
-                </td>
-              </tr>
+              hasMoreValuesThanLimit &&
+                <tr className="SRC-cardRow">
+                  <td>
+                  <button
+                    style={{ textAlign: 'left', margin: 0, padding: 0 }}
+                    className="SRC-primary-text-color SRC-basicButton"
+                    onClick={this.toggleShowMore}
+                  >
+                    Show {isShowMoreOn ?  'Less' : 'More'}
+                    <FontAwesomeIcon
+                      style={{ marginLeft: '5px' }}
+                      icon={isShowMoreOn ? 'long-arrow-alt-up' : 'long-arrow-alt-down'}
+                    />
+                  </button>
+                  </td>
+                </tr>
             }
           </tbody>
         </table>
