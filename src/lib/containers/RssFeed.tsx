@@ -2,7 +2,8 @@ import * as React from 'react'
 import rssParser from 'rss-parser'
 
 type RssState = {
-  rssFeed: rssParser.Output
+  rssFeed: rssParser.Output,
+  isLoadingError: boolean
 }
 
 export type RssFeedProps = {
@@ -13,7 +14,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
 
   constructor(props: RssFeedProps) {
     super(props)
-    this.state = { rssFeed: {} }
+    this.state = { rssFeed: {}, isLoadingError: false }
   }
 
   componentDidMount() {
@@ -23,7 +24,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
     const parser = new rssParser()
     parser.parseURL(url)
       .then(feed => this.setState({ rssFeed: feed }))
-    // TODO : error handling (rss feed unavailable, show something?
+      .catch(err => this.setState({ isLoadingError: true }))
   }
 
   render() {
@@ -42,6 +43,12 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
               </li>
             )
           })
+        }
+        {
+          this.state.isLoadingError &&
+          <div>
+            Unable to load feed: {this.props.url}
+          </div>
         }
       </ul>
     )
