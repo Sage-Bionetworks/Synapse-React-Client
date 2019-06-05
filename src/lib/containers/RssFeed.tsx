@@ -13,7 +13,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
 
   constructor(props: RssFeedProps) {
     super(props)
-    this.state = { rssFeed: [] }
+    this.state = { rssFeed: {} }
   }
 
   componentDidMount() {
@@ -23,6 +23,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
     const parser = new rssParser()
     parser.parseURL(url)
       .then(feed => this.setState({ rssFeed: feed }))
+    // TODO : error handling (rss feed unavailable, show something?
   }
 
   render() {
