@@ -1169,3 +1169,19 @@ div.SRC-userImg {
   background: none;
   color: $primaryColor;
 }
+
+// sample style for rss (news) feed
+.srcRssFeed {
+  list-style: none;
+}
+.srcRssFeedItem {
+  color: $primaryColor;
+}
+.srcRssFeedItemTitle {
+  color: $primaryColor;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+.srcRssFeedItemContent {
+  font-size: 12px;
+}

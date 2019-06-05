@@ -948,3 +948,17 @@ div.SRC-userImg {
   border: none;
   background: none;
   color: #D53F77; }
+
+.srcRssFeed {
+  list-style: none; }
+
+.srcRssFeedItem {
+  color: #D53F77; }
+
+.srcRssFeedItemTitle {
+  color: #D53F77;
+  padding-bottom: 5px;
+  font-weight: bold; }
+
+.srcRssFeedItemContent {
+  font-size: 12px; }
