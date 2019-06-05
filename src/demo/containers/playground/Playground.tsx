@@ -4,6 +4,7 @@ import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import UserCardDemo from './UserCardDemo'
+import { MarkdownSynapseDemo } from './MarkdownSynapseDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -25,6 +26,9 @@ const App = ({ match }: { match: match }) => {
           </li>
           <li>
             <Link to={`${match.url}/UserBadgeDemo`}>UserBadgeDemo</Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/MarkdownSynapseDemo`}>MarkdownSynapseDemo</Link>
           </li>
         </ul>
 
@@ -54,6 +58,13 @@ const App = ({ match }: { match: match }) => {
           path={`${match.url}/UserBadgeDemo`}
           // tslint:disable-next-line:jsx-no-lambda
           component={() => <UserCardDemo/>}
+        />
+
+        <Route
+          exact={true}
+          path={`${match.url}/MarkdownSynapseDemo`}
+          // tslint:disable-next-line:jsx-no-lambda
+          component={() => <MarkdownSynapseDemo/>}
         />
 
         <Route

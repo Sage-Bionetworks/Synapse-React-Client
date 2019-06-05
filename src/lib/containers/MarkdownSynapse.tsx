@@ -91,28 +91,19 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     this.addIdsToTocWidgets = this.addIdsToTocWidgets.bind(this)
   }
 
-  public componentDidCatch(err: any, info: any) {
-    console.log('error ', err)
-    console.log('info ', info)
-  }
-
   public componentWillUnmount() {
-    // @ts-ignore TODO: give justification for ignoring this line
+    // @ts-ignore TODO: find better documentation on typescript/react event params
     this.markupRef.current!.removeEventListener('click', this.handleLinkClicks)
   }
 
-  // manually handle clicks to anchor tags
+  // Manually handle clicks to anchor tags where the scrollto isn't handled by page hash
   public handleLinkClicks(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault()
 
-    // because this listener acts on the whole page (which is desired)
-    // we have to cast the event to an anchor because that's what were interested in
-    // responding to
-    const anchor = event.target as HTMLAnchorElement
-    if (anchor.tagName === 'A') {
-      if (anchor.getAttribute('data-anchor') === null && anchor.id === '') {
-        window.open(anchor.href, '_blank')
-      } else if (anchor.id.substring(0, 3) === 'ref') {
+    const genericElement = event.target as HTMLElement
+    if (genericElement.tagName === 'A') {
+      const anchor = event.target as HTMLAnchorElement
+      if (anchor.id.substring(0, 3) === 'ref') {
+        event.preventDefault()
         // its a reference, so we scroll to the appropriate bookmark
         const referenceNumber = Number(event.currentTarget.id.substring(3)) // e.g. ref2 => '2'
         const goTo = this.markupRef.current!.querySelector(
@@ -127,7 +118,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         } catch (e) {
           console.log('error on scroll', e)
         }
-      } else if (event.currentTarget.id !== null) {
+      } else if (event.currentTarget.id !== null && anchor.getAttribute('data-anchor')) {
+        event.preventDefault()
         // handle table of contents widget
         const idOfContent = anchor.getAttribute('data-anchor')
         const goTo = this.markupRef.current!.querySelector(`#${idOfContent}`)
@@ -153,7 +145,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const initText = this.state.md.render(text)
     const cleanText = sanitizeHtml(initText, {
       allowedAttributes: {
-        a: ['href'],
+        a: ['href', 'target'],
         button: ['class'],
         div: ['class', 'style'],
         h1: ['toc'],
@@ -224,8 +216,6 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     // go through all obtained elements and transform them with katex
     mathExpressions.forEach((element: any) => {
       katex.render(element.textContent, element, {
-        // @ts-ignore: The docs for katex report conflicting information
-        // about the typescript docs for katex usage
         delimiters: [
           {
             display: true,
