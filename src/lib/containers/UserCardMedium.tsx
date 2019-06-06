@@ -28,8 +28,6 @@ export type UserCardMediumProps = {
   link?: string
 }
 
-// Disable function name because compiler has to know that its a React class
-// tslint:disable-next-line:function-name
 export default class UserCardMedium extends React.Component<UserCardMediumProps, UserCardState> {
 
   public htmlDivRef = React.createRef<HTMLDivElement>()
@@ -188,7 +186,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
           {
             (position || company) &&
             <p className={`${isLarge ? 'SRC-whiteText' : ''}`}>
-              {position} {position ? ', ' : ''} {company}
+              {position} {position ? ' / ' : ''} {company}
             </p>
           }
           {
