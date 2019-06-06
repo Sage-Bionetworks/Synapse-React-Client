@@ -101,8 +101,7 @@ export default {
 			'markdownitInlineComments': 'markdownitInlineComments',
 			'markdownitBr': 'markdownitBr',
 			'markdownitMath': 'markdownitMath',
-			'sanitizeHtml': 'sanitizeHtml',
-			'process': 'process'
+			'sanitizeHtml': 'sanitizeHtml'
 		},
 		format: 'umd',
 		name: 'SRC',
