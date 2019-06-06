@@ -60,13 +60,19 @@ export default {
 		// doesn't work because the plotly CDN exposes a method createPlotlyComponent and not a class Plotly, so
 		// we have to do this text transformation.
 		postprocess([
-            [
+			[
 				/React.createElement\(Plot, { data: plotData, layout: layout }\)/g, 
-				'React.createElement(createPlotlyComponent(Plotly), { data: plotData, layout: layout })'],
-				[
-					/reactTransitionGroup/g,
-					'ReactTransitionGroup'
-				]
+				'React.createElement(createPlotlyComponent(Plotly), { data: plotData, layout: layout })'
+			],
+			[
+				/reactTransitionGroup/g,
+				'ReactTransitionGroup'
+			],
+			[
+				// production is surrounded in "" so that its replaced as a string instead of as a variable
+				// https://github.com/rollup/rollup/issues/487
+				/process.env.NODE_ENV/g, '"production"' 
+			]
 		]),
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),
@@ -95,7 +101,8 @@ export default {
 			'markdownitInlineComments': 'markdownitInlineComments',
 			'markdownitBr': 'markdownitBr',
 			'markdownitMath': 'markdownitMath',
-			'sanitizeHtml': 'sanitizeHtml'
+			'sanitizeHtml': 'sanitizeHtml',
+			'process': 'process'
 		},
 		format: 'umd',
 		name: 'SRC',
