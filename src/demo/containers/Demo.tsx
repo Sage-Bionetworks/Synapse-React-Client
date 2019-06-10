@@ -4,6 +4,7 @@ import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
+import Uploader from 'src/lib/containers/Uploader'
 
 type DemoState = {
   token: string
@@ -226,8 +227,13 @@ class Demo extends React.Component<{}, DemoState> {
         />
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
-
         <div className="container">
+          <hr/>
+          <h2>File upload demo</h2>
+          <Uploader
+            token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
+          />
+          <hr/>
           <form>
             <label>
               Pick a card type
