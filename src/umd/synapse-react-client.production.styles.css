@@ -66,6 +66,9 @@
   display: inline-block;
   padding-top: 21px; }
 
+.SRC-portalCard .SRC-cardContent.SRC-dataset {
+  width: 80%; }
+
 .SRC-portalCard .SRC-cardContent .SRC-author {
   font-style: italic;
   padding-bottom: 10.5px; }
@@ -164,9 +167,6 @@
 .SRC-portalCard.SRC-typeDataset .SRC-row-data {
   padding-right: 42px; }
 
-.SRC-portalCard.SRC-typeDataset .SRC-cardAction {
-  margin-left: 15%; }
-
 .SRC-portalCard.SRC-typeFunder .SRC-cardThumbnail {
   display: inline;
   float: right; }
@@ -183,9 +183,6 @@
   display: inline-block;
   font-size: 14px;
   padding-bottom: 10.5px; }
-
-.SRC-portalCard.SRC-typeFunder .SRC-description {
-  padding-bottom: 0; }
 
 .SRC-portalCard.SRC-typeFunder .SRC-cardAction {
   margin: 21px 0 21px 42px; }
@@ -211,6 +208,18 @@ img.iconImg.SRC-datasetIcon {
 
 .SRC-cardHeader div.SRC-type, .SRC-cardHeader span, .SRC-cardHeader h3, .SRC-cardHeader .SRC-author {
   color: white; }
+
+.SRC-description-dataset {
+  display: flex;
+  flex-wrap: wrap; }
+
+.SRC-description-dataset p.SRC-description-text {
+  flex-basis: 65%;
+  display: inline-block;
+  padding-right: 15px; }
+
+.SRC-description-dataset div button {
+  white-space: nowrap; }
 
 .markdowntable {
   border: 1px solid #dddddd;

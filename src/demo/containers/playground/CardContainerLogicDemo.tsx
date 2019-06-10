@@ -15,13 +15,14 @@ export default class CardContainerLogicDemo extends React.Component {
   }
 
   render() {
+    // @ts-ignore
     const iconOptions = {
       'AMP-AD': circleSvg,
       'M2OVE-AD': brainSvg,
       'MODEL-AD': mouseSvg,
       'Resilience-AD': resilienceadSvg
     }
-
+    // @ts-ignore
     const genericCardSchema: GenericCardSchema = {
       type: 'Study',
       title: 'Study_Name',
@@ -40,6 +41,7 @@ export default class CardContainerLogicDemo extends React.Component {
         8: { key: 'Grant' },
       }
     }
+    // @ts-ignore
     const genericCardSchemaHeader: GenericCardSchema = {
       type: 'PROGRAM',
       title: 'Full Name',
@@ -51,7 +53,7 @@ export default class CardContainerLogicDemo extends React.Component {
       <div>
         <hr/>
         <p> Generic Card Rendering </p>
-        <CardContainerLogic
+        {/* <CardContainerLogic
           type={SynapseConstants.GENERIC_CARD}
           sql={'SELECT * FROM syn17024173'}
           unitDescription="studies"
@@ -66,6 +68,10 @@ export default class CardContainerLogicDemo extends React.Component {
           unitDescription="studies"
           genericCardSchema={genericCardSchema}
           secondaryLabelLimit={3}
+        /> */}
+        <CardContainerLogic
+          type={SynapseConstants.DATASET}
+          sql={'SELECT * FROM syn16859580'}
         />
       </div>
     )
