@@ -38,7 +38,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
           <Utils.Icon type={DATASET} />
           <div>{fileSize}</div>
         </div>
-        <div className="SRC-cardContent">
+        <div className="SRC-cardContent SRC-dataset">
           <div className="SRC-type">Dataset </div>
           <div className="SRC-title">
             <h3>
@@ -47,12 +47,16 @@ class Dataset extends React.Component<DatasetProps, {}> {
               </a>
             </h3>
           </div>
-          <div className="SRC-cardAction SRC-floatRight">
-            <button onClick={this.handleLinkClick(id)} type="button">
-              Download Dataset
-            </button>
+          <div className="SRC-description-dataset">
+            <p className="SRC-description-text">
+              {summary}
+            </p>
+            <div className="SRC-cardAction">
+              <button className="SRC-datasetButton" onClick={this.handleLinkClick(id)} type="button">
+                Download Dataset
+              </button>
+            </div>
           </div>
-          <div className="SRC-description"> {summary} </div>
           <div className="SRC-cardAnnotations">
             <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
           </div>
