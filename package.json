@@ -125,6 +125,7 @@
     "build:rollup": "rollup -c && cp -r src/umd dist/umd"
   },
   "resolutions": {
-    "fstream": "1.0.12"
+    "fstream": "1.0.12",
+    "js-yaml": "3.13.1"
   }
 }
