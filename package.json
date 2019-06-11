@@ -30,6 +30,7 @@
     "@types/react-tooltip": "^3.9.0",
     "@types/sinon": "^7.0.2",
     "@types/xml2js": "^0.4.4",
+    "browser-md5-file": "^1.1.1",
     "es6-promise": "^4.2.5",
     "gh-pages": "^2.0.0",
     "i": "^0.3.6",

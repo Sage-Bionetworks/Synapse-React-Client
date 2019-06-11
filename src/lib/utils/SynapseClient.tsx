@@ -6,6 +6,8 @@ import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { UserBundle } from './jsonResponses/UserBundle'
 import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
+import { MultipartUploadRequest } from './jsonResponses/MultipartUploadRequest'
+import browserMd5File from 'browser-md5-file'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -14,6 +16,7 @@ const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 
 export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export const getRootURL = () => {
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
@@ -607,4 +610,67 @@ export const signOut = () => {
   }).catch((err) => {
     console.error('err when clearing the session cookie ', err)
   })
+}
+
+/**
+ * Upload files to the given parent container. Currently only supports Synapse storage (Sage s3 bucket)
+ * @param sessionToken
+ * @param fileList
+ * @param parentEntityId
+ * @param endpoint
+ */
+export const uploadFiles = (
+  sessionToken: string | undefined,
+  fileList: FileList,
+  parentEntityId: string,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  Array.from(fileList).forEach((file) => {
+    uploadFile(sessionToken, file, parentEntityId, endpoint)
+  })
+}
+
+export const uploadFile = (
+  sessionToken: string | undefined,
+  file: File,
+  parentEntityId: string,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  // TODO: check for existing filename in parent folder before upload
+  // (EntityLookupRequest, using /entity/child)
+  // Set up MultipartUploadRequest
+  const request : MultipartUploadRequest = {}
+  request.contentType = file.type
+  request.fileName = file.name
+  request.fileSizeBytes = file.size
+  const partSize: number = Math.max(5242880, (file.size / 10000))
+  request.partSizeBytes = partSize
+  request.storageLocationId = SYNAPSE_STORAGE_LOCATION_ID
+  // Calculate md5!
+  const bmf = new browserMd5File()
+  // SWC-4362.mov : b9aa30a609764c39074da4518a653293
+  // large_image.bmp : 5c21e0e537e07bc7644c7cef03c20241
+  bmf.md5(
+    file,
+    (err: any, md5: string) => {
+      if (md5) {
+        request.contentMD5Hex = md5
+        console.log('filename: ', file.name, ' md5 string: ', md5)
+        startMultipartUpload(sessionToken, file, parentEntityId, request, endpoint)
+      } else if (err) {
+        console.log('filename: ', file.name, ' err: ', err)
+      }
+    },
+    (progress: number) => {
+      console.log('filename: ', file.name, ' progress number: ', progress)
+    }
+  )
+  console.log(file)
+  console.log(request)
+}
+
+export const startMultipartUpload = (
+  sessionToken: string | undefined,
+  file: File,
+  parentEntityId: string,
+  request: MultipartUploadRequest,
+  endpoint: string = DEFAULT_ENDPOINT) => {
 }
