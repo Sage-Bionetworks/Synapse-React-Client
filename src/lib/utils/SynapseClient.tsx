@@ -10,6 +10,7 @@ import { MultipartUploadRequest } from './jsonResponses/MultipartUploadRequest'
 import { BatchPresignedUploadUrlRequest } from './jsonResponses/BatchPresignedUploadUrlRequest'
 import { BatchPresignedUploadUrlResponse } from './jsonResponses/BatchPresignedUploadUrlResponse'
 import { MultipartUploadStatus } from './jsonResponses/MultipartUploadStatus'
+import { FileUploadComplete } from './jsonResponses/FileUploadComplete'
 import browserMd5File from 'browser-md5-file'
 import { AddPartResponse } from './jsonResponses/AddPartResponse'
 
@@ -617,46 +618,32 @@ export const signOut = () => {
 }
 
 /**
- * Upload files to the given parent container. Currently only supports Synapse storage (Sage s3 bucket)
+ * Upload file.  Note that this currently only supports Synapse storage (Sage s3 bucket)
  * @param sessionToken
- * @param fileList
- * @param parentEntityId
+ * @param file
  * @param endpoint
  */
-export const uploadFiles = (
-  sessionToken: string | undefined,
-  fileList: FileList,
-  parentEntityId: string,
-  endpoint: string = DEFAULT_ENDPOINT) => {
-  return new Promise((finalResolve, finalReject) => {
-    Array.from(fileList).forEach((file) => {
-      uploadFile(sessionToken, file, parentEntityId, finalResolve, finalReject, endpoint)
-    })
-  })
-}
-
 export const uploadFile = (
   sessionToken: string | undefined,
   file: File,
-  parentEntityId: string,
-  finalResolve: () => void,
-  finalReject: () => void,
   endpoint: string = DEFAULT_ENDPOINT,
 ) => {
-  // TODO: check for existing filename in parent folder before upload
-  // (EntityLookupRequest, using /entity/child)
-  const partSize: number = Math.max(5242880, (file.size / 10000))
-  const request: MultipartUploadRequest = {
-    contentType: file.type,
-    fileName: file.name,
-    fileSizeBytes: file.size,
-    partSizeBytes: partSize,
-    storageLocationId: SYNAPSE_STORAGE_LOCATION_ID
-  }
-  calculateMd5(file).then((md5: string) => {
-    console.log('filename: ', file.name, ' md5: ', md5)
-    request.contentMD5Hex = md5
-    startMultipartUpload(sessionToken, file, parentEntityId, request, finalResolve, finalReject, endpoint)
+  return new Promise((fileUploadResolve, fileUploadReject) => {
+    // TODO: check for existing filename in parent folder before upload
+    // (EntityLookupRequest, using /entity/child)
+    const partSize: number = Math.max(5242880, (file.size / 10000))
+    const request: MultipartUploadRequest = {
+      contentType: file.type,
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      partSizeBytes: partSize,
+      storageLocationId: SYNAPSE_STORAGE_LOCATION_ID
+    }
+    calculateMd5(file).then((md5: string) => {
+      console.log('filename: ', file.name, ' md5: ', md5)
+      request.contentMD5Hex = md5
+      startMultipartUpload(sessionToken, file, request, fileUploadResolve, fileUploadReject, endpoint)
+    })
   })
 }
 
@@ -687,12 +674,12 @@ const processFilePart = async (
   sessionToken: string | undefined,
   file: File,
   request: MultipartUploadRequest,
-  finalResolve: () => void,
-  finalReject: (reason: any) => void,
+  fileUploadResolve: (fileUpload: FileUploadComplete) => void,
+  fileUploadReject: (reason: any) => void,
   endpoint: string = DEFAULT_ENDPOINT
 ) => {
   if (multipartUploadStatus.clientSidePartsState &&
-    multipartUploadStatus.clientSidePartsState[partNumber]) {
+    multipartUploadStatus.clientSidePartsState[partNumber - 1]) {
     // no-op. this part has already been processed!
     return
   }
@@ -723,20 +710,26 @@ const processFilePart = async (
             if (addPartResponse.addPartState === 'ADD_SUCCESS') {
               // done with this part!
               if (multipartUploadStatus.clientSidePartsState) {
-                multipartUploadStatus.clientSidePartsState[partNumber] = true
+                multipartUploadStatus.clientSidePartsState[partNumber - 1] = true
               }
-              checkUploadComplete(multipartUploadStatus, sessionToken, finalResolve, finalReject, endpoint)
+              checkUploadComplete(
+                multipartUploadStatus,
+                file.name,
+                sessionToken,
+                fileUploadResolve,
+                fileUploadReject,
+                endpoint)
             } else {
               // retry after a brief delay
-              delay(3000).then(() => {
+              delay(1000).then(() => {
                 processFilePart(
                   partNumber,
                   multipartUploadStatus,
                   sessionToken,
                   file,
                   request,
-                  finalResolve,
-                  finalReject,
+                  fileUploadResolve,
+                  fileUploadReject,
                   endpoint)
               })
             }
@@ -746,20 +739,21 @@ const processFilePart = async (
 }
 export const checkUploadComplete = (
   status: MultipartUploadStatus,
+  fileHandleName: string,
   sessionToken: string | undefined,
-  finalResolve: () => void,
-  finalReject: (reason: any) => void,
+  fileUploadResolve: (fileUpload: FileUploadComplete) => void,
+  fileUploadReject: (reason: any) => void,
   endpoint: string = DEFAULT_ENDPOINT) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
   if (status.clientSidePartsState) {
     // if all values are true, then all parts have been uploaded and we can finish!
     if (status.clientSidePartsState.every((v) => { return v })) {
       const url = `/file/v1/file/multipart/${status.uploadId}/complete`
-      doPut(url, undefined, sessionToken, undefined, endpoint).then((status: MultipartUploadStatus) => {
+      doPut(url, undefined, sessionToken, undefined, endpoint).then((newStatus: MultipartUploadStatus) => {
         // success!
-        finalResolve()
+        fileUploadResolve({ fileHandleId: newStatus.resultFileHandleId, fileName: fileHandleName })
       }).catch((error) => {
-        finalReject(error)
+        fileUploadReject(error)
       })
     }
   }
@@ -776,10 +770,9 @@ const uploadFilePart = async (presignedUrl: string, file: any, contentType: stri
 export const startMultipartUpload = (
   sessionToken: string | undefined,
   file: File,
-  parentEntityId: string,
   request: MultipartUploadRequest,
-  finalResolve: () => void,
-  finalReject: (reason: any) => void,
+  fileUploadResolve: (fileUpload: FileUploadComplete) => void,
+  fileUploadReject: (reason: any) => void,
   endpoint: string = DEFAULT_ENDPOINT) => {
   const url = 'file/v1/file/multipart'
   doPost(url, request, sessionToken, undefined, endpoint).then(async (status: MultipartUploadStatus) => {
@@ -793,13 +786,13 @@ export const startMultipartUpload = (
     status.clientSidePartsState = clientSidePartsState
     for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
       if (!clientSidePartsState[i]) {
-        // upload this part!
-        await processFilePart(i, status, sessionToken, file, request, finalResolve, finalReject, endpoint)
+        // upload this part.  note that partNumber is always the index+1
+        await processFilePart(i + 1, status, sessionToken, file, request, fileUploadResolve, fileUploadReject, endpoint)
       }
     }
     // in case there is no upload work to do!
-    checkUploadComplete(status, sessionToken, finalResolve, finalReject, endpoint)
+    checkUploadComplete(status, file.name, sessionToken, fileUploadResolve, fileUploadReject, endpoint)
   }).catch((error) => {
-    finalReject(error)
+    fileUploadReject(error)
   })
 }

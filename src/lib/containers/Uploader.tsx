@@ -1,7 +1,11 @@
 import * as React from 'react'
-import { uploadFiles } from '../utils/SynapseClient'
+import { FileEntity } from '../utils/jsonResponses/FileEntity'
+import { uploadFile, createEntity } from '../utils/SynapseClient'
+import { FileUploadComplete } from '../utils/jsonResponses/FileUploadComplete'
 
 type UploaderState = {
+  token?: string,
+  error?: any
 }
 
 export type UploaderProps = {
@@ -30,7 +34,20 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
   }
 
   handleFilesChanged = (selectorFiles: FileList) => {
-    uploadFiles(this.props.token, selectorFiles, 'syn18987891')
+    Array.from(selectorFiles).forEach((file) => {
+      uploadFile(this.props.token, file).then((fileUploadComplete: FileUploadComplete) => {
+        console.log('successfully created file handle: ', fileUploadComplete.fileHandleId)
+        const newFileEntity: FileEntity = {
+          parentId: 'syn18987891',
+          name: fileUploadComplete.fileName,
+          dataFileHandleId: fileUploadComplete.fileHandleId,
+          concreteType: 'org.sagebionetworks.repo.model.FileEntity'
+        }
+        createEntity(newFileEntity, this.props.token)
+      }).catch((error: any) => {
+        this.setState({ error: { error } })
+      })
+    })
   }
 
   render() {
@@ -44,6 +61,12 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
           multiple={true}
         />
         <button onClick={this.showOpenFileDlg}>Browse...</button>
+        {
+          this.state.error &&
+          <p>
+            {this.state.error}
+          </p>
+        }
       </div>
     )
   }
