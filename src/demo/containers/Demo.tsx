@@ -228,11 +228,12 @@ class Demo extends React.Component<{}, DemoState> {
 
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
         <div className="container">
-          <hr/>
-          <h2>File upload demo</h2>
-          <Uploader
-            token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
-          />
+          {
+            (this.state.token && this.state.token !== '') &&
+            <Uploader
+              token={this.state.token!}
+            />
+          }
           <hr/>
           <form>
             <label>

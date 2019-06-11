@@ -2,10 +2,10 @@
 
 export type MultipartUploadRequest = {
   contentMD5Hex?: string
-  contentType?: string
-  fileSizeBytes?: number
-  partSizeBytes?: number
-  fileName?: string
-  storageLocationId?: number
+  contentType: string
+  fileSizeBytes: number
+  partSizeBytes: number
+  fileName: string
+  storageLocationId: number
   generatePreview?: boolean
 }
