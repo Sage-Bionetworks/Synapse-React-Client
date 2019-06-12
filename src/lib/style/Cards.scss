@@ -87,6 +87,9 @@ $text-color-lighter: #898989;
     max-width: 80%;
     display: inline-block;
     padding-top: $baseline-grid;
+    &.SRC-dataset {
+      width: 80%;
+    }
 
     .SRC-author {
       font-style: italic;
@@ -193,9 +196,6 @@ $text-color-lighter: #898989;
     .SRC-row-data {
       padding-right: $baseline-grid * 2;
     }
-    .SRC-cardAction {
-      margin-left: 15%;
-    }
   }
 
   &.SRC-typeFunder {
@@ -216,9 +216,6 @@ $text-color-lighter: #898989;
         padding-bottom: $baseline-grid / 2;
       }
     }
-    .SRC-description {
-      padding-bottom: 0;
-    } 
     .SRC-cardAction {
       margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
     }
@@ -257,5 +254,19 @@ img.iconImg.SRC-datasetIcon {
   padding-top: 25px;
   div.SRC-type, span, h3, .SRC-author {
     color: white;
+  }
+}
+
+// this should be removed in the future
+.SRC-description-dataset {
+  display: flex;
+  flex-wrap: wrap;
+  p.SRC-description-text {
+    flex-basis: 65%;
+    display: inline-block;
+    padding-right: 15px;
+  }
+  div button {
+    white-space: nowrap;
   }
 }
