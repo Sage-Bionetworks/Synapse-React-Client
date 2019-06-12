@@ -133,9 +133,10 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       secondaryLabelLimit,
       genericCardSchema,
       backgroundColor,
-      iconOptions
+      iconOptions,
     } = this.props
-    if (!data || isLoading) {
+    // the cards only show the loading screen on initial load, this occurs when data is undefined
+    if (!data) {
       return (
         <div>
          {isLoading && loadingScreen}
@@ -149,7 +150,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       })
 
     // We want to hide the view more button if:
-    //     1. Tne data fed in has !== PAGE_SIZE number of results
+    //     1. The data fed in has !== PAGE_SIZE number of results
     //     2. The hasMoreData prop is false
     //     3. The limit is set to less than PAGE_SIZE
     // below we show the view more button by following the opposite logic from above.
@@ -228,10 +229,20 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     return (
       <div>
-        {unitDescription && <p className="SRC-boldText SRC-text-title">Displaying {total} {unitDescription}</p>}
+        {unitDescription &&
+          <p className="SRC-boldText SRC-text-title SRC-centerContent">Displaying {total} {unitDescription}
+            {/*
+              add loading spinner to the right of the display information to show content is loading on view more click
+            */}
+            {isLoading &&
+              <React.Fragment>
+                <span style={{ marginLeft: '2px' }} className={'spinner'}/>
+              </React.Fragment>
+            }
+          </p>
+        }
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
-        {isLoading && loadingScreen}
         {showViewMoreButton}
       </div>
     )

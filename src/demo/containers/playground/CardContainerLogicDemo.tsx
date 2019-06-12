@@ -72,6 +72,7 @@ export default class CardContainerLogicDemo extends React.Component {
         <CardContainerLogic
           type={SynapseConstants.DATASET}
           sql={'SELECT * FROM syn16859580'}
+          loadingScreen={<div> I'm loading as fast I can !!! </div>}
         />
       </div>
     )
