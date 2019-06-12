@@ -629,7 +629,6 @@ export const uploadFile = (
   endpoint: string = DEFAULT_ENDPOINT,
 ) => {
   return new Promise((fileUploadResolve, fileUploadReject) => {
-    // TODO: check for existing filename in parent folder before upload
     // (EntityLookupRequest, using /entity/child)
     const partSize: number = Math.max(5242880, (file.size / 10000))
     const request: MultipartUploadRequest = {

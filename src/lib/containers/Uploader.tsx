@@ -35,6 +35,9 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
 
   handleFilesChanged = (selectorFiles: FileList) => {
     Array.from(selectorFiles).forEach((file) => {
+      // TODO: check for existing filename in parent folder before upload (add new version if exists?)
+      // TODO: make parentId (container) configurable.
+      // TODO: add progress of some kind!
       uploadFile(this.props.token, file).then((fileUploadComplete: FileUploadComplete) => {
         console.log('successfully created file handle: ', fileUploadComplete.fileHandleId)
         const newFileEntity: FileEntity = {
