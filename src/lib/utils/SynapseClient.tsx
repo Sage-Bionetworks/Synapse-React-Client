@@ -13,6 +13,7 @@ import { MultipartUploadStatus } from './jsonResponses/MultipartUploadStatus'
 import { FileUploadComplete } from './jsonResponses/FileUploadComplete'
 import browserMd5File from 'browser-md5-file'
 import { AddPartResponse } from './jsonResponses/AddPartResponse'
+import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -411,6 +412,17 @@ export const getEntityChildren = (request: any,
   return doPost('/repo/v1/entity/children', request, sessionToken, undefined, endpoint)
 }
 /**
+ * Retrieve an entityId for a given parent ID and entity name.
+ * https://docs.synapse.org/rest/POST/entity/child.html
+ */
+export const lookupChildEntity = (
+  request: EntityLookupRequest,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost('/repo/v1/entity/child', request, sessionToken, undefined, endpoint)
+}
+
+/**
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
  */
@@ -432,6 +444,15 @@ export const getEntity = (sessionToken: string | undefined = undefined,
   const url = `/repo/v1/entity/${entityId}`
   return doGet(url, sessionToken, undefined, endpoint)
 }
+
+export const updateEntity = (
+  entity: Entity,
+  sessionToken: string | undefined = undefined,
+  endpoint = DEFAULT_ENDPOINT): Promise<Entity> => {
+  const url = `/repo/v1/entity/${entity.id}`
+  return doPut(url, entity, sessionToken, undefined, endpoint)
+}
+
 /**
  * Bundled access to Entity and related data components.
  * An EntityBundle can be used to create, fetch, or update an Entity and
@@ -629,7 +650,6 @@ export const uploadFile = (
   endpoint: string = DEFAULT_ENDPOINT,
 ) => {
   return new Promise((fileUploadResolve, fileUploadReject) => {
-    // (EntityLookupRequest, using /entity/child)
     const partSize: number = Math.max(5242880, (file.size / 10000))
     const request: MultipartUploadRequest = {
       contentType: file.type,

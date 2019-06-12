@@ -232,6 +232,7 @@ class Demo extends React.Component<{}, DemoState> {
             (this.state.token && this.state.token !== '') &&
             <Uploader
               token={this.state.token!}
+              parentContainerId="syn18987891"
             />
           }
           <hr/>
