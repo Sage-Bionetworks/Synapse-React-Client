@@ -266,6 +266,7 @@ img.iconImg.SRC-datasetIcon {
   }
 }
 
+// TODO: keep this scss as the source of truth
 .SRC-portalCardHeader {
   color: white;
   font-family: 'Lato', sans-serif;
@@ -289,8 +290,13 @@ img.iconImg.SRC-datasetIcon {
     text-transform: uppercase;
   }
 
-  img {
-    padding-top: $baseline-grid;
+  .iconContainer {
+    @media (min-width: 992px) {
+      text-align: center;
+    }
+    img.iconImg {
+      padding-top: $baseline-grid;
+    }
   }
 
   .SRC-cardContent {

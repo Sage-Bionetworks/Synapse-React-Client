@@ -54,7 +54,7 @@ export default class HeaderCard extends React.Component<HeaderCardProps, HeaderC
       >
         <div className="container-fluid">
           <div className="row">
-            <div className="col-md-1">
+            <div className="col-md-1 iconContainer">
               <img src={iconOptions![icon]} className="iconImg"/>
             </div>
             <div className="SRC-cardContent col-md-10">

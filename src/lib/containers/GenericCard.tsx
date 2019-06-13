@@ -100,7 +100,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     return (
       <div
         style={style}
-        className={`SRC-portalCard   ${isHeader ? 'SRC-cardHeader' : ''} `}
+        className={'SRC-portalCard'}
       >
         <div className="SRC-cardThumbnail">
           {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Utils.Icon type={icon} />}
@@ -109,19 +109,14 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           <div className="SRC-type">{type}</div>
           <div className="SRC-title">
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
-              {
-                isHeader ?
-                    title
-                    :
-                    <a className="SRC-primary-text-color" target="_blank" href={''}>
-                      {title}
-                    </a>
-              }
+              <a className="SRC-primary-text-color" target="_blank" href={''}>
+                {title}
+              </a>
             </h3>
           </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
           <span className="SRC-font-size-base">
-            {isHeader ? description : <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />}
+            <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
           </span>
         </div>
         {genericCardSchema.secondaryLabels
