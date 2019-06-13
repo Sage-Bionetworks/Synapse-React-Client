@@ -6,7 +6,11 @@ import { EntityId } from '../utils/jsonResponses/EntityId'
 
 type UploaderState = {
   token?: string,
-  error?: any
+  error?: any,
+  totalFilesToUploadCount: number,
+  filesUploadedCount: number,
+  isUploading?: boolean,
+  successfullyUploaded: boolean
 }
 
 export type UploaderProps = {
@@ -19,7 +23,13 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
 
   constructor(props: UploaderProps) {
     super(props)
-    this.state = { token: '' }
+    this.state = {
+      token: '',
+      isUploading: false,
+      filesUploadedCount: 0,
+      totalFilesToUploadCount: 0,
+      successfullyUploaded: false
+    }
     this.inputOpenFileRef = React.createRef()
   }
 
@@ -35,17 +45,39 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
     }
   }
 
+  finishedProcessingOneFile = () => {
+    const incrementedFilesUploadedCount = this.state.filesUploadedCount + 1
+    const isStillUploading = incrementedFilesUploadedCount < this.state.totalFilesToUploadCount
+    this.setState(
+      {
+        isUploading: isStillUploading,
+        filesUploadedCount: incrementedFilesUploadedCount,
+        successfullyUploaded: !isStillUploading
+      })
+  }
+
+  handleUploadError = (error: any) => {
+    this.finishedProcessingOneFile()
+    this.setState({ error: { error } })
+  }
+
   handleFilesChanged = (selectorFiles: FileList) => {
-    this.setState({ error: undefined })
+    this.setState(
+      {
+        error: undefined,
+        isUploading: true,
+        filesUploadedCount: 0,
+        totalFilesToUploadCount: selectorFiles.length,
+        successfullyUploaded: false,
+      })
     Array.from(selectorFiles).forEach((file) => {
       // check for existing filename in parent folder before upload (add new version if exists).
       // note that the parent container (project/folder) is configurable.
-      // TODO: add progress of some kind!
       const newFileEntity: FileEntity = {
         parentId: this.props.parentContainerId,
         name: file.name,
         concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-        dataFileHandleId: ''
+        dataFileHandleId: '',
       }
       lookupChildEntity(
         {
@@ -61,15 +93,14 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
               this.updateEntityFile(newFileEntity, file)
             }
           }).catch((error: any) => {
-            this.setState({ error: { error } })
+            this.handleUploadError(error)
           })
         }).catch((error: any) => {
-          debugger
           if (error.statusCode === 404) {
             // great, it's a new file!
             this.updateEntityFile(newFileEntity, file)
           } else {
-            this.setState({ error: { error } })
+            this.handleUploadError(error)
           }
         })
     })
@@ -79,13 +110,14 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
     uploadFile(this.props.token, file).then((fileUploadComplete: FileUploadComplete) => {
       const isCreate = fileEntity.dataFileHandleId === ''
       fileEntity.dataFileHandleId = fileUploadComplete.fileHandleId
-      if (isCreate) {
-        createEntity(fileEntity, this.props.token)
-      } else {
-        updateEntity(fileEntity, this.props.token)
-      }
+      const createOrUpdate = isCreate ? createEntity : updateEntity
+      createOrUpdate(fileEntity, this.props.token).then(() => {
+        this.finishedProcessingOneFile()
+      }).catch((error: any) => {
+        this.handleUploadError(error)
+      })
     }).catch((error: any) => {
-      this.setState({ error: { error } })
+      this.handleUploadError(error)
     })
   }
 
@@ -100,6 +132,22 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
           multiple={true}
         />
         <button onClick={this.showOpenFileDlg}>Browse...</button>
+        {
+          this.state.isUploading &&
+          <React.Fragment>
+            <span style={{ marginLeft: '10px' }}>
+              {this.state.filesUploadedCount} / {this.state.totalFilesToUploadCount} file(s)
+            </span>
+            <span style={{ marginLeft: '2px' }} className={'spinner'} />
+          </React.Fragment>
+        }
+        {
+          this.state.successfullyUploaded &&
+          <span style={{ marginLeft: '10px' }}>
+            Successfully uploaded {this.state.totalFilesToUploadCount} file(s) to
+            <a style={{ marginLeft: '2px' }} href={`https://www.synapse.org/#!Synapse:${this.props.parentContainerId}`} target="_blank">{this.props.parentContainerId}</a>
+          </span>
+        }
         {
           this.state.error &&
           <p>

@@ -225,17 +225,20 @@ class Demo extends React.Component<{}, DemoState> {
           theme={'light'}
           icon={true}
         />
-
-        {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
-        <div className="container">
-          {
-            (this.state.token && this.state.token !== '') &&
+        <hr />
+        {
+          (this.state.token && this.state.token !== '') &&
+          <div className="container">
+            <h5>Upload File(s) Demo</h5>
             <Uploader
               token={this.state.token!}
               parentContainerId="syn18987891"
             />
-          }
-          <hr/>
+          </div>
+        }
+        <hr />
+        {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
+        <div className="container">
           <form>
             <label>
               Pick a card type

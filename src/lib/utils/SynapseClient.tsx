@@ -778,6 +778,9 @@ export const checkUploadComplete = (
   }
 }
 const uploadFilePart = async (presignedUrl: string, file: any, contentType: string) => {
+  // TODO: could try using axios to get upload progress, then update the client-side part state (change to numbers from 0-1)
+  // This would give progress for the single file (across all parts).
+  // The parent would still need to figure out progress (for the total file set).
   await fetch(presignedUrl, {
     method: 'PUT',
     headers: {
