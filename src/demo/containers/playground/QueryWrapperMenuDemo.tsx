@@ -28,15 +28,15 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: false,
+      showTabOne: true,
       tabOne:
       {
+        type: SynapseConstants.CSBC_DATASET,
         menuConfig: [
           {
-            facetName: 'projectStatus',
-            title: 'title',
-            sql: 'SELECT * FROM syn16787123',
-            synapseId: 'syn16787123',
+            facetName: 'tumorType',
+            sql: 'SELECT * FROM syn18488466',
+            synapseId: 'syn18488466',
             unitDescription: 'data files',
             visibleColumnCount: 3,
           },
