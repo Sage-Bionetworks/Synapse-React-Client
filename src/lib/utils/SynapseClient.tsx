@@ -699,8 +699,7 @@ const processFilePart = (
   fileUploadReject: (reason: any) => void,
   endpoint: string = DEFAULT_ENDPOINT
 ) => {
-  if (multipartUploadStatus.clientSidePartsState &&
-    multipartUploadStatus.clientSidePartsState[partNumber - 1]) {
+  if (multipartUploadStatus.clientSidePartsState![partNumber - 1]) {
     // no-op. this part has already been processed!
     return
   }
@@ -730,9 +729,7 @@ const processFilePart = (
           (addPartResponse: AddPartResponse) => {
             if (addPartResponse.addPartState === 'ADD_SUCCESS') {
               // done with this part!
-              if (multipartUploadStatus.clientSidePartsState) {
-                multipartUploadStatus.clientSidePartsState[partNumber - 1] = true
-              }
+              multipartUploadStatus.clientSidePartsState![partNumber - 1] = true
               checkUploadComplete(
                 multipartUploadStatus,
                 fileName,
@@ -767,17 +764,14 @@ export const checkUploadComplete = (
   fileUploadReject: (reason: any) => void,
   endpoint: string = DEFAULT_ENDPOINT) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
-  if (status.clientSidePartsState) {
-    // if all values are true, then all parts have been uploaded and we can finish!
-    if (status.clientSidePartsState.every((v) => { return v })) {
-      const url = `/file/v1/file/multipart/${status.uploadId}/complete`
-      doPut(url, undefined, sessionToken, undefined, endpoint).then((newStatus: MultipartUploadStatus) => {
-        // success!
-        fileUploadResolve({ fileHandleId: newStatus.resultFileHandleId, fileName: fileHandleName })
-      }).catch((error) => {
-        fileUploadReject(error)
-      })
-    }
+  if (status.clientSidePartsState!.every((v) => { return v })) {
+    const url = `/file/v1/file/multipart/${status.uploadId}/complete`
+    doPut(url, undefined, sessionToken, undefined, endpoint).then((newStatus: MultipartUploadStatus) => {
+      // success!
+      fileUploadResolve({ fileHandleId: newStatus.resultFileHandleId, fileName: fileHandleName })
+    }).catch((error) => {
+      fileUploadReject(error)
+    })
   }
 }
 const uploadFilePart = async (presignedUrl: string, file: any, contentType: string) => {
