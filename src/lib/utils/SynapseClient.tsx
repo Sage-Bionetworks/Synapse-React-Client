@@ -688,7 +688,7 @@ const calculateMd5 = (
   })
 }
 
-const processFilePart = async (
+const processFilePart = (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
   sessionToken: string | undefined,
@@ -712,7 +712,7 @@ const processFilePart = async (
     uploadId: uploadID
   }
   const presignedUrlUrl = `/file/v1/file/multipart/${uploadID}/presigned/url/batch`
-  await doPost(presignedUrlUrl, presignedUploadUrlRequest, sessionToken, undefined, endpoint).then(
+  doPost(presignedUrlUrl, presignedUploadUrlRequest, sessionToken, undefined, endpoint).then(
     async (presignedUrlResponse: BatchPresignedUploadUrlResponse) => {
       const presignedUrl = presignedUrlResponse.partPresignedUrls[0].uploadPresignedUrl
       // calculate the byte range
