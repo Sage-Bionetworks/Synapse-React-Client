@@ -54,7 +54,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
       style.paddingBottom = '42px'
     }
     return (
-        <div className="SRC-portalCard SRC-typeFunder SRC-layoutLandscape" style={style}>
+        <div className="SRC-portalCard SRC-typeFunder " style={style}>
             <div className="SRC-cardContent">
                 <div className="SRC-type">Organization</div>
                 <div className="SRC-cardThumbnail">

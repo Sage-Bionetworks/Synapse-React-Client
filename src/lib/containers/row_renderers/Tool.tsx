@@ -25,7 +25,7 @@ export default class Tool extends React.Component<ToolProps, {}> {
     const summary = data[schema.summary]
     const softwareLink = data[schema.softwareLink]
     return (
-            <div className="SRC-portalCard SRC-typeTool SRC-layoutLandscape SRC-showMetadata">
+            <div className="SRC-portalCard SRC-typeTool  ">
                 <div className="SRC-cardThumbnail">
                     <Utils.Icon type={TOOL} />
                 </div>

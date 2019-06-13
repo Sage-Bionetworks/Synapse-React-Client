@@ -48,7 +48,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
       ['studies', studies]
     ]
     return (
-      <div className="SRC-portalCard SRC-typePublication SRC-layoutLandscape SRC-showMetadata">
+      <div className="SRC-portalCard SRC-typePublication  ">
           <div className="SRC-cardThumbnail">
               <Utils.Icon type={PUBLICATION} />
           </div>

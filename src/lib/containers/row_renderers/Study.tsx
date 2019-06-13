@@ -49,7 +49,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
     ]
     const chips: string [] = [tumorType, diseaseFocus]
     return (
-      <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+      <div className="SRC-portalCard SRC-typeStudy  ">
           <div className="SRC-cardThumbnail">
               <Utils.Icon type={projectStatus === 'Active' ? STUDY_ACTIVE : STUDY_COMPLETE}/>
               <div>{projectStatus}</div>

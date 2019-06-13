@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as Utils from './row_renderers/utils'
+import HeaderCard from './HeaderCard'
 
 type KeyAndAlias = {
   key: string
@@ -83,10 +84,23 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined
     }
+    if (isHeader) {
+      return (
+        <HeaderCard
+          type={type}
+          title={title}
+          subTitle={subTitle}
+          backgroundColor={backgroundColor}
+          description={description}
+          icon={icon}
+          iconOptions={iconOptions}
+        />
+      )
+    }
     return (
       <div
         style={style}
-        className={`SRC-portalCard SRC-layoutLandscape SRC-showMetadata ${isHeader ? 'SRC-cardHeader' : ''} `}
+        className={`SRC-portalCard   ${isHeader ? 'SRC-cardHeader' : ''} `}
       >
         <div className="SRC-cardThumbnail">
           {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Utils.Icon type={icon} />}

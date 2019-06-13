@@ -53,27 +53,32 @@ export default class CardContainerLogicDemo extends React.Component {
       <div>
         <hr/>
         <p> Generic Card Rendering </p>
-        {/* <CardContainerLogic
+        <CardContainerLogic
           type={SynapseConstants.GENERIC_CARD}
-          sql={'SELECT * FROM syn17024173'}
-          unitDescription="studies"
+          sql={'SELECT * FROM syn17024173 LIMIT 1'}
           genericCardSchema={genericCardSchemaHeader}
           backgroundColor={'#5960a5'}
           isHeader={true}
           iconOptions={iconOptions}
         />
-        <CardContainerLogic
-          type={SynapseConstants.GENERIC_CARD}
-          sql={'SELECT * FROM syn17083367 LIMIT 1'}
-          unitDescription="studies"
-          genericCardSchema={genericCardSchema}
-          secondaryLabelLimit={3}
-        /> */}
-        <CardContainerLogic
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-10 col-md-offset-1">
+              <CardContainerLogic
+                type={SynapseConstants.GENERIC_CARD}
+                sql={'SELECT * FROM syn17083367 LIMIT 1'}
+                unitDescription="studies"
+                genericCardSchema={genericCardSchema}
+                secondaryLabelLimit={3}
+              />
+            </div>
+          </div>
+        </div>
+        {/* <CardContainerLogic
           type={SynapseConstants.DATASET}
           sql={'SELECT * FROM syn16859580'}
           loadingScreen={<div> I'm loading as fast I can !!! </div>}
-        />
+        /> */}
       </div>
     )
   }
