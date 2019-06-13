@@ -1,12 +1,12 @@
 import typescript from 'rollup-plugin-typescript2'
 import scss from 'rollup-plugin-scss'
 import image from 'rollup-plugin-image'
-import resolve from 'rollup-plugin-node-resolve';
-import svg from 'rollup-plugin-svg';
+import resolve from 'rollup-plugin-node-resolve'
+import svg from 'rollup-plugin-svg'
 import json from 'rollup-plugin-json'
-import postprocess from 'rollup-plugin-postprocess';
-import { uglify } from 'rollup-plugin-uglify';
+import postprocess from 'rollup-plugin-postprocess'
 import commonjs from 'rollup-plugin-commonjs'
+import minify from 'rollup-plugin-babel-minify'
 /* 
 	TODO: 
 		1. inline svgs for css don't work, easy work around is convert svg to exported
@@ -76,8 +76,8 @@ export default {
 		]),
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),
-		// minify the bundle with uglify
-		uglify()
+		// minify the bundle
+		minify()
 	],
 	output: {
 		globals: {
