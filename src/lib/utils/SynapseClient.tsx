@@ -14,6 +14,7 @@ import { FileUploadComplete } from './jsonResponses/FileUploadComplete'
 import browserMd5File from 'browser-md5-file'
 import { AddPartResponse } from './jsonResponses/AddPartResponse'
 import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
+import { FileEntity } from './jsonResponses/FileEntity'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -646,22 +647,22 @@ export const signOut = () => {
  */
 export const uploadFile = (
   sessionToken: string | undefined,
-  file: File,
+  filename: string,
+  file: Blob,
   endpoint: string = DEFAULT_ENDPOINT,
 ) => {
   return new Promise((fileUploadResolve, fileUploadReject) => {
     const partSize: number = Math.max(5242880, (file.size / 10000))
     const request: MultipartUploadRequest = {
       contentType: file.type,
-      fileName: file.name,
+      fileName: filename,
       fileSizeBytes: file.size,
       partSizeBytes: partSize,
       storageLocationId: SYNAPSE_STORAGE_LOCATION_ID
     }
     calculateMd5(file).then((md5: string) => {
-      console.log('filename: ', file.name, ' md5: ', md5)
       request.contentMD5Hex = md5
-      startMultipartUpload(sessionToken, file, request, fileUploadResolve, fileUploadReject, endpoint)
+      startMultipartUpload(sessionToken, filename, file, request, fileUploadResolve, fileUploadReject, endpoint)
     })
   })
 }
@@ -681,7 +682,7 @@ const calculateMd5 = (
         }
       },
       (progress: number) => {
-        console.log('progress: ', progress)
+        // console.log('progress: ', progress)
       }
     )
   })
@@ -691,7 +692,8 @@ const processFilePart = async (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
   sessionToken: string | undefined,
-  file: File,
+  fileName: string,
+  file: Blob,
   request: MultipartUploadRequest,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
@@ -733,7 +735,7 @@ const processFilePart = async (
               }
               checkUploadComplete(
                 multipartUploadStatus,
-                file.name,
+                fileName,
                 sessionToken,
                 fileUploadResolve,
                 fileUploadReject,
@@ -745,6 +747,7 @@ const processFilePart = async (
                   partNumber,
                   multipartUploadStatus,
                   sessionToken,
+                  fileName,
                   file,
                   request,
                   fileUploadResolve,
@@ -791,7 +794,8 @@ const uploadFilePart = async (presignedUrl: string, file: any, contentType: stri
 }
 export const startMultipartUpload = (
   sessionToken: string | undefined,
-  file: File,
+  fileName: string,
+  file: Blob,
   request: MultipartUploadRequest,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
@@ -809,12 +813,76 @@ export const startMultipartUpload = (
     for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
       if (!clientSidePartsState[i]) {
         // upload this part.  note that partNumber is always the index+1
-        await processFilePart(i + 1, status, sessionToken, file, request, fileUploadResolve, fileUploadReject, endpoint)
+        await processFilePart(
+          i + 1,
+          status,
+          sessionToken,
+          fileName,
+          file,
+          request,
+          fileUploadResolve,
+          fileUploadReject,
+          endpoint)
       }
     }
     // in case there is no upload work to do!
-    checkUploadComplete(status, file.name, sessionToken, fileUploadResolve, fileUploadReject, endpoint)
+    checkUploadComplete(status, fileName, sessionToken, fileUploadResolve, fileUploadReject, endpoint)
   }).catch((error) => {
     fileUploadReject(error)
+  })
+}
+
+/**
+ * Return the content of the file (latest version) associated to the given FileEntity.
+ * Be aware that if the target file size > 5MB, this method will throw an error.
+ * @param sessionToken
+ * @param fileEntity
+ * @param endpoint
+ */
+export const getFileEntityContent = (
+  sessionToken: string,
+  fileEntity: FileEntity,
+  endpoint: string = DEFAULT_ENDPOINT
+): Promise<any> => {
+  // get the presigned URL, download the data, and send that back (via resolve())
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList = [
+      {
+        associateObjectId: fileEntity.id,
+        associateObjectType: 'FileEntity',
+        fileHandleId: fileEntity.dataFileHandleId
+      }
+    ]
+    const request: any = {
+      includeFileHandles: true,
+      includePreSignedURLs: true,
+      includePreviewPreSignedURLs: false,
+      requestedFiles: fileHandleAssociationList
+    }
+    getFiles(request, sessionToken, endpoint).then(
+      (data: BatchFileResult) => {
+        const presignedUrl = data.requestedFiles[0].preSignedURL
+        const fileHandle = data.requestedFiles[0].fileHandle
+        // sanity check!  must be less than 5MB
+        if (fileHandle.contentSize < 5242880) {
+          fetch(presignedUrl, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+              'Content-Type': fileHandle.contentType,
+            }
+          }).then((response) => {
+            response.text().then((text) => {
+              resolve(text)
+            })
+          })
+        } else {
+          reject('File size exceeds max (5MB)')
+        }
+      }
+    ).catch((err) => {
+      reject(err)
+    })
   })
 }

@@ -92,8 +92,6 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
             } else {
               this.updateEntityFile(newFileEntity, file)
             }
-          }).catch((error: any) => {
-            this.handleUploadError(error)
           })
         }).catch((error: any) => {
           if (error.statusCode === 404) {
@@ -107,14 +105,12 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
   }
 
   updateEntityFile = (fileEntity: FileEntity, file: File) => {
-    uploadFile(this.props.token, file).then((fileUploadComplete: FileUploadComplete) => {
+    uploadFile(this.props.token, file.name, file).then((fileUploadComplete: FileUploadComplete) => {
       const isCreate = fileEntity.dataFileHandleId === ''
       fileEntity.dataFileHandleId = fileUploadComplete.fileHandleId
       const createOrUpdate = isCreate ? createEntity : updateEntity
       createOrUpdate(fileEntity, this.props.token).then(() => {
         this.finishedProcessingOneFile()
-      }).catch((error: any) => {
-        this.handleUploadError(error)
       })
     }).catch((error: any) => {
       this.handleUploadError(error)
@@ -131,7 +127,7 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
           onChange={this.handleChange}
           multiple={true}
         />
-        <button onClick={this.showOpenFileDlg}>Browse...</button>
+        <button onClick={this.showOpenFileDlg} className="SRC-uploadButton">Browse...</button>
         {
           this.state.isUploading &&
           <React.Fragment>
