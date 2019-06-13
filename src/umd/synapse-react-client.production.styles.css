@@ -237,7 +237,11 @@ img.iconImg.SRC-datasetIcon {
 .SRC-portalCardHeader .SRC-type, .SRC-portalCardHeader .SRC-cardThumbnail {
   text-transform: uppercase; }
 
-.SRC-portalCardHeader img {
+@media (min-width: 992px) {
+  .SRC-portalCardHeader .iconContainer {
+    text-align: center; } }
+
+.SRC-portalCardHeader .iconContainer img.iconImg {
   padding-top: 21px; }
 
 .SRC-portalCardHeader .SRC-cardContent {
