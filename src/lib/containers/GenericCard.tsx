@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as Utils from './row_renderers/utils'
+import HeaderCard from './HeaderCard'
 
 type KeyAndAlias = {
   key: string
@@ -83,10 +84,23 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined
     }
+    if (isHeader) {
+      return (
+        <HeaderCard
+          type={type}
+          title={title}
+          subTitle={subTitle}
+          backgroundColor={backgroundColor}
+          description={description}
+          icon={icon}
+          iconOptions={iconOptions}
+        />
+      )
+    }
     return (
       <div
         style={style}
-        className={`SRC-portalCard SRC-layoutLandscape SRC-showMetadata ${isHeader ? 'SRC-cardHeader' : ''} `}
+        className={'SRC-portalCard'}
       >
         <div className="SRC-cardThumbnail">
           {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Utils.Icon type={icon} />}
@@ -95,19 +109,14 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           <div className="SRC-type">{type}</div>
           <div className="SRC-title">
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
-              {
-                isHeader ?
-                    title
-                    :
-                    <a className="SRC-primary-text-color" target="_blank" href={''}>
-                      {title}
-                    </a>
-              }
+              <a className="SRC-primary-text-color" target="_blank" href={''}>
+                {title}
+              </a>
             </h3>
           </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
           <span className="SRC-font-size-base">
-            {isHeader ? description : <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />}
+            <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
           </span>
         </div>
         {genericCardSchema.secondaryLabels
