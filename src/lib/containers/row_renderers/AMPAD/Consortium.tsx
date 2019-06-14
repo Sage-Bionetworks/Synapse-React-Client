@@ -81,7 +81,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
     return (
       <div
           style={{ paddingBottom: '32px' }}
-          className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata"
+          className="SRC-portalCard SRC-typeStudy  "
       >
         <div className="SRC-cardThumbnail">
           {this.getIcon(org, isOnOrgPath)}

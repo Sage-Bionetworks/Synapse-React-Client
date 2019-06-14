@@ -40,7 +40,7 @@ class CSBCDataset extends React.Component<DatasetProps, {}> {
       ['Grant', centerName]
     ]
     return (
-      <div className="SRC-portalCard SRC-layoutLandscape SRC-showMetadata">
+      <div className="SRC-portalCard  ">
         <div className="SRC-cardThumbnail">
           <Utils.Icon type={DATASET} />
           <div>{fileSize}</div>

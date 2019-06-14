@@ -53,7 +53,7 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
     }
 
     return (
-      <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+      <div className="SRC-portalCard SRC-typeStudy  ">
         <div className="SRC-cardThumbnail">
           <img className="iconImg" alt="" src={projectSvg}/>
         </div>

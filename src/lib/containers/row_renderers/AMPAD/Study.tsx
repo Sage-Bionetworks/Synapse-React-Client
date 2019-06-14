@@ -64,7 +64,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
     ]
 
     return (
-      <div className="SRC-portalCard SRC-typeStudy SRC-layoutLandscape SRC-showMetadata">
+      <div className="SRC-portalCard SRC-typeStudy  ">
         <div className="SRC-cardThumbnail">
           {this.getIcon(accessType)}
         </div>
