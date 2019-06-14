@@ -3,6 +3,7 @@ import { FileEntity } from '../utils/jsonResponses/FileEntity'
 import { uploadFile, createEntity, updateEntity, lookupChildEntity, getEntity } from '../utils/SynapseClient'
 import { FileUploadComplete } from '../utils/jsonResponses/FileUploadComplete'
 import { EntityId } from '../utils/jsonResponses/EntityId'
+import { EntityLookupRequest } from '../utils/jsonResponses/EntityLookupRequest'
 
 type UploaderState = {
   token?: string,
@@ -58,7 +59,7 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
 
   handleUploadError = (error: any) => {
     this.finishedProcessingOneFile()
-    this.setState({ error: { error } })
+    this.setState({ error })
   }
 
   handleFilesChanged = (selectorFiles: FileList) => {
@@ -79,28 +80,24 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
         concreteType: 'org.sagebionetworks.repo.model.FileEntity',
         dataFileHandleId: '',
       }
-      lookupChildEntity(
-        {
-          entityName: file.name,
-          parentId: this.props.parentContainerId
-        },
-        this.props.token).then((entityId: EntityId) => {
-          // ok, found an entity of the same name.
-          getEntity(this.props.token, entityId.id).then((existingEntity: FileEntity) => {
-            if (existingEntity.concreteType === 'org.sagebionetworks.repo.model.FileEntity') {
-              this.updateEntityFile(existingEntity, file)
-            } else {
-              this.updateEntityFile(newFileEntity, file)
-            }
-          })
-        }).catch((error: any) => {
-          if (error.statusCode === 404) {
-            // great, it's a new file!
-            this.updateEntityFile(newFileEntity, file)
+      const entityLookupRequest: EntityLookupRequest = { entityName: file.name, parentId: this.props.parentContainerId }
+      lookupChildEntity(entityLookupRequest, this.props.token).then((entityId: EntityId) => {
+        // ok, found an entity of the same name.
+        getEntity(this.props.token, entityId.id).then((existingEntity: FileEntity) => {
+          if (existingEntity.concreteType === 'org.sagebionetworks.repo.model.FileEntity') {
+            this.updateEntityFile(existingEntity, file)
           } else {
-            this.handleUploadError(error)
+            this.updateEntityFile(newFileEntity, file)
           }
         })
+      }).catch((error: any) => {
+        if (error.statusCode === 404) {
+          // great, it's a new file!
+          this.updateEntityFile(newFileEntity, file)
+        } else {
+          this.handleUploadError(error)
+        }
+      })
     })
   }
 
@@ -120,6 +117,7 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
   render() {
     return (
       <div>
+        {/** This input field is used for it's functionally (browse for files), the button acts as the UI. */}
         <input
           ref={this.inputOpenFileRef}
           type="file"

@@ -21,8 +21,11 @@ export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : fals
 export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
+// Max size file that we will allow the caller to read into memory (5MB)
+const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 
 export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+// This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export const getRootURL = () => {
   const portString = window.location.port ? `:${window.location.port}` : ''
@@ -704,13 +707,13 @@ const processFilePart = (
     return
   }
 
-  const uploadID = multipartUploadStatus.uploadId
+  const uploadId = multipartUploadStatus.uploadId
   const presignedUploadUrlRequest: BatchPresignedUploadUrlRequest = {
+    uploadId,
     contentType: 'application/octet-stream', // each part is binary
     partNumbers: [partNumber],
-    uploadId: uploadID
   }
-  const presignedUrlUrl = `/file/v1/file/multipart/${uploadID}/presigned/url/batch`
+  const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
   doPost(presignedUrlUrl, presignedUploadUrlRequest, sessionToken, undefined, endpoint).then(
     async (presignedUrlResponse: BatchPresignedUploadUrlResponse) => {
       const presignedUrl = presignedUrlResponse.partPresignedUrls[0].uploadPresignedUrl
@@ -724,7 +727,7 @@ const processFilePart = (
       await uploadFilePart(presignedUrl, fileSlice, presignedUploadUrlRequest.contentType)
       // uploaded the part.  calculate md5 of the part and add the part to the upload
       calculateMd5(fileSlice).then((md5: string) => {
-        const addPartUrl = `/file/v1/file/multipart/${uploadID}/add/${partNumber}?partMD5Hex=${md5}`
+        const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
         doPut(addPartUrl, undefined, sessionToken, undefined, endpoint).then(
           (addPartResponse: AddPartResponse) => {
             if (addPartResponse.addPartState === 'ADD_SUCCESS') {
@@ -798,11 +801,7 @@ export const startMultipartUpload = (
   doPost(url, request, sessionToken, undefined, endpoint).then(async (status: MultipartUploadStatus) => {
     // started the upload
     // keep track of the part state client-side
-    const clientSidePartsState: boolean[] = []
-    for (let i = 0; i < status.partsState.length; i = i + 1) {
-      const partState = status.partsState.charAt(i)
-      clientSidePartsState[i] = partState === '1'
-    }
+    const clientSidePartsState: boolean[] = status.partsState.split('').map(bit => bit === '1')
     status.clientSidePartsState = clientSidePartsState
     for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
       if (!clientSidePartsState[i]) {
@@ -858,7 +857,7 @@ export const getFileEntityContent = (
         const presignedUrl = data.requestedFiles[0].preSignedURL
         const fileHandle = data.requestedFiles[0].fileHandle
         // sanity check!  must be less than 5MB
-        if (fileHandle.contentSize < 5242880) {
+        if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
           fetch(presignedUrl, {
             method: 'GET',
             mode: 'cors',
