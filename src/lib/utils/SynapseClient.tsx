@@ -6,14 +6,27 @@ import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
 import { UserBundle } from './jsonResponses/UserBundle'
 import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
+import { MultipartUploadRequest } from './jsonResponses/MultipartUploadRequest'
+import { BatchPresignedUploadUrlRequest } from './jsonResponses/BatchPresignedUploadUrlRequest'
+import { BatchPresignedUploadUrlResponse } from './jsonResponses/BatchPresignedUploadUrlResponse'
+import { MultipartUploadStatus } from './jsonResponses/MultipartUploadStatus'
+import { FileUploadComplete } from './jsonResponses/FileUploadComplete'
+import browserMd5File from 'browser-md5-file'
+import { AddPartResponse } from './jsonResponses/AddPartResponse'
+import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
+import { FileEntity } from './jsonResponses/FileEntity'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
 export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
 const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
+// Max size file that we will allow the caller to read into memory (5MB)
+const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 
 export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+// This corresponds to the Synapse-managed S3 storage location:
+export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export const getRootURL = () => {
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
@@ -403,6 +416,17 @@ export const getEntityChildren = (request: any,
   return doPost('/repo/v1/entity/children', request, sessionToken, undefined, endpoint)
 }
 /**
+ * Retrieve an entityId for a given parent ID and entity name.
+ * https://docs.synapse.org/rest/POST/entity/child.html
+ */
+export const lookupChildEntity = (
+  request: EntityLookupRequest,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost('/repo/v1/entity/child', request, sessionToken, undefined, endpoint)
+}
+
+/**
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
  */
@@ -424,6 +448,15 @@ export const getEntity = (sessionToken: string | undefined = undefined,
   const url = `/repo/v1/entity/${entityId}`
   return doGet(url, sessionToken, undefined, endpoint)
 }
+
+export const updateEntity = (
+  entity: Entity,
+  sessionToken: string | undefined = undefined,
+  endpoint = DEFAULT_ENDPOINT): Promise<Entity> => {
+  const url = `/repo/v1/entity/${entity.id}`
+  return doPut(url, entity, sessionToken, undefined, endpoint)
+}
+
 /**
  * Bundled access to Entity and related data components.
  * An EntityBundle can be used to create, fetch, or update an Entity and
@@ -606,5 +639,243 @@ export const signOut = () => {
     window.location.reload()
   }).catch((err) => {
     console.error('err when clearing the session cookie ', err)
+  })
+}
+
+/**
+ * Upload file.  Note that this currently only supports Synapse storage (Sage s3 bucket)
+ * @param sessionToken
+ * @param file
+ * @param endpoint
+ */
+export const uploadFile = (
+  sessionToken: string | undefined,
+  filename: string,
+  file: Blob,
+  endpoint: string = DEFAULT_ENDPOINT,
+) => {
+  return new Promise((fileUploadResolve, fileUploadReject) => {
+    const partSize: number = Math.max(5242880, (file.size / 10000))
+    const request: MultipartUploadRequest = {
+      contentType: file.type,
+      fileName: filename,
+      fileSizeBytes: file.size,
+      partSizeBytes: partSize,
+      storageLocationId: SYNAPSE_STORAGE_LOCATION_ID
+    }
+    calculateMd5(file).then((md5: string) => {
+      request.contentMD5Hex = md5
+      startMultipartUpload(sessionToken, filename, file, request, fileUploadResolve, fileUploadReject, endpoint)
+    })
+  })
+}
+
+const calculateMd5 = (
+  fileBlob: File | Blob
+) => {
+  const bmf = new browserMd5File()
+  return new Promise((resolve, reject) => {
+    bmf.md5(
+      fileBlob,
+      (error: any, md5: string) => {
+        if (md5) {
+          resolve(md5)
+        } else if (error) {
+          reject(error)
+        }
+      },
+      (progress: number) => {
+        // console.log('progress: ', progress)
+      }
+    )
+  })
+}
+
+const processFilePart = (
+  partNumber: number,
+  multipartUploadStatus: MultipartUploadStatus,
+  sessionToken: string | undefined,
+  fileName: string,
+  file: Blob,
+  request: MultipartUploadRequest,
+  fileUploadResolve: (fileUpload: FileUploadComplete) => void,
+  fileUploadReject: (reason: any) => void,
+  endpoint: string = DEFAULT_ENDPOINT
+) => {
+  if (multipartUploadStatus.clientSidePartsState![partNumber - 1]) {
+    // no-op. this part has already been processed!
+    return
+  }
+
+  const uploadId = multipartUploadStatus.uploadId
+  const presignedUploadUrlRequest: BatchPresignedUploadUrlRequest = {
+    uploadId,
+    contentType: 'application/octet-stream', // each part is binary
+    partNumbers: [partNumber],
+  }
+  const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
+  doPost(presignedUrlUrl, presignedUploadUrlRequest, sessionToken, undefined, endpoint).then(
+    async (presignedUrlResponse: BatchPresignedUploadUrlResponse) => {
+      const presignedUrl = presignedUrlResponse.partPresignedUrls[0].uploadPresignedUrl
+      // calculate the byte range
+      const startByte = (partNumber - 1) * request.partSizeBytes
+      let endByte = partNumber * request.partSizeBytes - 1
+      if (endByte >= request.fileSizeBytes) {
+        endByte = request.fileSizeBytes - 1
+      }
+      const fileSlice = file.slice(startByte, endByte + 1, presignedUploadUrlRequest.contentType)
+      await uploadFilePart(presignedUrl, fileSlice, presignedUploadUrlRequest.contentType)
+      // uploaded the part.  calculate md5 of the part and add the part to the upload
+      calculateMd5(fileSlice).then((md5: string) => {
+        const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
+        doPut(addPartUrl, undefined, sessionToken, undefined, endpoint).then(
+          (addPartResponse: AddPartResponse) => {
+            if (addPartResponse.addPartState === 'ADD_SUCCESS') {
+              // done with this part!
+              multipartUploadStatus.clientSidePartsState![partNumber - 1] = true
+              checkUploadComplete(
+                multipartUploadStatus,
+                fileName,
+                sessionToken,
+                fileUploadResolve,
+                fileUploadReject,
+                endpoint)
+            } else {
+              // retry after a brief delay
+              delay(1000).then(() => {
+                processFilePart(
+                  partNumber,
+                  multipartUploadStatus,
+                  sessionToken,
+                  fileName,
+                  file,
+                  request,
+                  fileUploadResolve,
+                  fileUploadReject,
+                  endpoint)
+              })
+            }
+          })
+      })
+    })
+}
+export const checkUploadComplete = (
+  status: MultipartUploadStatus,
+  fileHandleName: string,
+  sessionToken: string | undefined,
+  fileUploadResolve: (fileUpload: FileUploadComplete) => void,
+  fileUploadReject: (reason: any) => void,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
+  if (status.clientSidePartsState!.every((v) => { return v })) {
+    const url = `/file/v1/file/multipart/${status.uploadId}/complete`
+    doPut(url, undefined, sessionToken, undefined, endpoint).then((newStatus: MultipartUploadStatus) => {
+      // success!
+      fileUploadResolve({ fileHandleId: newStatus.resultFileHandleId, fileName: fileHandleName })
+    }).catch((error) => {
+      fileUploadReject(error)
+    })
+  }
+}
+const uploadFilePart = async (presignedUrl: string, file: any, contentType: string) => {
+  // TODO: could try using axios to get upload progress, then update the client-side part state (change to numbers from 0-1)
+  // This would give progress for the single file (across all parts).
+  // The parent would still need to figure out progress (for the total file set).
+  await fetch(presignedUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': contentType
+    },
+    body: file
+  })
+}
+export const startMultipartUpload = (
+  sessionToken: string | undefined,
+  fileName: string,
+  file: Blob,
+  request: MultipartUploadRequest,
+  fileUploadResolve: (fileUpload: FileUploadComplete) => void,
+  fileUploadReject: (reason: any) => void,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  const url = 'file/v1/file/multipart'
+  doPost(url, request, sessionToken, undefined, endpoint).then(async (status: MultipartUploadStatus) => {
+    // started the upload
+    // keep track of the part state client-side
+    const clientSidePartsState: boolean[] = status.partsState.split('').map(bit => bit === '1')
+    status.clientSidePartsState = clientSidePartsState
+    for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
+      if (!clientSidePartsState[i]) {
+        // upload this part.  note that partNumber is always the index+1
+        await processFilePart(
+          i + 1,
+          status,
+          sessionToken,
+          fileName,
+          file,
+          request,
+          fileUploadResolve,
+          fileUploadReject,
+          endpoint)
+      }
+    }
+    // in case there is no upload work to do!
+    checkUploadComplete(status, fileName, sessionToken, fileUploadResolve, fileUploadReject, endpoint)
+  }).catch((error) => {
+    fileUploadReject(error)
+  })
+}
+
+/**
+ * Return the content of the file (latest version) associated to the given FileEntity.
+ * Be aware that if the target file size > 5MB, this method will throw an error.
+ * @param sessionToken
+ * @param fileEntity
+ * @param endpoint
+ */
+export const getFileEntityContent = (
+  sessionToken: string,
+  fileEntity: FileEntity,
+  endpoint: string = DEFAULT_ENDPOINT
+): Promise<any> => {
+  // get the presigned URL, download the data, and send that back (via resolve())
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList = [
+      {
+        associateObjectId: fileEntity.id,
+        associateObjectType: 'FileEntity',
+        fileHandleId: fileEntity.dataFileHandleId
+      }
+    ]
+    const request: any = {
+      includeFileHandles: true,
+      includePreSignedURLs: true,
+      includePreviewPreSignedURLs: false,
+      requestedFiles: fileHandleAssociationList
+    }
+    getFiles(request, sessionToken, endpoint).then(
+      (data: BatchFileResult) => {
+        const presignedUrl = data.requestedFiles[0].preSignedURL
+        const fileHandle = data.requestedFiles[0].fileHandle
+        // sanity check!  must be less than 5MB
+        if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
+          fetch(presignedUrl, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+              'Content-Type': fileHandle.contentType,
+            }
+          }).then((response) => {
+            response.text().then((text) => {
+              resolve(text)
+            })
+          })
+        } else {
+          reject('File size exceeds max (5MB)')
+        }
+      }
+    ).catch((err) => {
+      reject(err)
+    })
   })
 }

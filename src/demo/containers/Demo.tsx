@@ -4,6 +4,8 @@ import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
+import Uploader from 'src/lib/containers/Uploader'
+import FileContentDownloadUploadDemo from 'src/lib/containers/FileContentDownloadUploadDemo'
 
 type DemoState = {
   token: string
@@ -224,9 +226,30 @@ class Demo extends React.Component<{}, DemoState> {
           theme={'light'}
           icon={true}
         />
-
+        <hr />
+        {
+          (this.state.token && this.state.token !== '') &&
+          <div className="container">
+            <h5>Upload File(s) Demo</h5>
+            <Uploader
+              token={this.state.token!}
+              parentContainerId="syn18987891"
+            />
+            <hr />
+          </div>
+        }
+        {
+          (this.state.token && this.state.token !== '') &&
+          <div className="container">
+            <h5>Download File Content Demo (syn12196718)</h5>
+            <FileContentDownloadUploadDemo
+              token={this.state.token!}
+              targetEntityId="syn12196718"
+            />
+            <hr />
+          </div>
+        }
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
-
         <div className="container">
           <form>
             <label>
