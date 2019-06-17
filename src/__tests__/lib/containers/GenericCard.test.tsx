@@ -116,7 +116,6 @@ describe('it grabs the correct URL' , () => {
 
   it('creates an external link', () => {
     const googleWebsite = 'https://google.com'
-    // test external link
     const { linkDisplay, target } = getLink(googleWebsite)
     expect(linkDisplay).toEqual(googleWebsite)
     expect(target).toEqual(BLANK)
