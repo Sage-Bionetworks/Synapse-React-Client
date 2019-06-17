@@ -30,8 +30,8 @@ const PAGE_SIZE: number = 25
 
 type RowContainerProps = {
   data: any
-  limit: number
   schema: any
+  hasInternalLink?: boolean
   isHeader: boolean
   type: string
   genericCardSchema?: GenericCardSchema
@@ -80,6 +80,7 @@ export type CardContainerProps = {
   type: string,
   data?: QueryResultBundle,
   limit?: number,
+  hasInternalLink?: boolean
   isHeader?: boolean
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
@@ -213,8 +214,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
             <RowContainer
               key={key}
               type={type}
-              limit={limit}
               data={rowData.values}
+              hasInternalLink={this.props.hasInternalLink}
               schema={schema}
               isHeader={isHeader}
               genericCardSchema={genericCardSchema}

@@ -20,6 +20,7 @@ export type CardContainerLogicProps = {
   backgroundColor?:string
   isHeader?:boolean
   iconOptions?: IconOptions
+  hasInternalLink?: boolean
 }
 
 type State = {
@@ -184,6 +185,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
   public render() {
     return (
       <CardContainer
+        hasInternalLink={this.props.hasInternalLink}
         data={this.state.data}
         limit={this.props.limit}
         type={this.props.type}

@@ -18,6 +18,7 @@ export type GenericCardSchema = {
   description: string
   icon: string
   secondaryLabels?: KeyAndAliasMap
+  link: string
 }
 
 export type IconOptions = {
@@ -31,11 +32,18 @@ export type GenericCardProps = {
   schema: any,
   data: any
   secondaryLabelLimit?: number
+  hasInternalLink?: boolean
 }
 
 export type GenericCardState = {
   showMoreDescription: boolean
 }
+
+// doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+// note - had to add an escape character for the second slash in the regex above
+const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/
+// check for 'syn' followed and ended by a digit of unlimited length
+const SYNAPSE_REGX = /syn\d+$/
 
 export default class GenericCard extends React.Component<GenericCardProps, GenericCardState> {
 
@@ -46,10 +54,25 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     }
   }
 
-  public toggleShowMoreDescription(_event: React.SyntheticEvent) {
+  public toggleShowMoreDescription = (_event: React.SyntheticEvent) => {
     this.setState({
       showMoreDescription: !this.state.showMoreDescription
     })
+  }
+
+  public getLink (link: string, hasInternalLink = false) {
+    let linkDisplay = link
+    let target = '_blank'
+    if (link.match(SYNAPSE_REGX)) {
+      // its a synId
+      linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
+    } else if (hasInternalLink) {
+      // only case when it should point inward
+      target = '_self'
+    } else if (link.match(DOI_REGEX)) {
+      linkDisplay = `https://dx.doi.org/${link}`
+    }
+    return { linkDisplay, target }
   }
 
   render() {
@@ -60,14 +83,17 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       secondaryLabelLimit,
       backgroundColor,
       iconOptions,
-      isHeader = false
+      isHeader = false,
+      hasInternalLink=  false
     } = this.props
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description]]
     const icon = data[schema[genericCardSchema.icon]]
-
+    // wrap link in parens because undefined would throw an error
+    const link: string = data[schema[genericCardSchema.link]] || ''
+    const { linkDisplay, target } = this.getLink(link.toLowerCase(), hasInternalLink)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
@@ -109,9 +135,13 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           <div className="SRC-type">{type}</div>
           <div className="SRC-title">
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
-              <a className="SRC-primary-text-color" target="_blank" href={''}>
-                {title}
-              </a>
+              {linkDisplay ?
+                <a className="SRC-primary-text-color" target={target} href={linkDisplay}>
+                  {title}
+                </a>
+                :
+                title
+              }
             </h3>
           </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
