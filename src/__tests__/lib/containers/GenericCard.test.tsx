@@ -114,13 +114,6 @@ describe('it grabs the correct URL' , () => {
   const SELF = '_self'
   const BLANK = '_blank'
 
-  it('creates an external link', () => {
-    const googleWebsite = 'https://google.com'
-    const { linkDisplay, target } = getLink(googleWebsite)
-    expect(linkDisplay).toEqual(googleWebsite)
-    expect(target).toEqual(BLANK)
-  })
-
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`

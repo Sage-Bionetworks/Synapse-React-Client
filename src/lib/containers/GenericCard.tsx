@@ -41,9 +41,7 @@ export type GenericCardState = {
 
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second slash in the regex above
-const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:A-Z0-9]+$/i
-// https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
+const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:A-Z0-9]+$/
 // check for 'syn' followed and ended by a digit of unlimited length
 const SYNAPSE_REGX = /syn\d+$/
 
@@ -63,24 +61,17 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
   }
 
   public getLink (link: string, hasInternalLink = false) {
-    let linkDisplay = ''
+    let linkDisplay = link
     let target = '_blank'
     if (link.match(SYNAPSE_REGX)) {
       // its a synId
       linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
-    } else if (link.match(URL_REGEX)) {
-      // its a standard web url
-      linkDisplay = link
     } else if (hasInternalLink) {
-      linkDisplay = link
       // only case when it should point inward
       target = '_self'
     } else if (link.match(DOI_REGEX)) {
       linkDisplay = `https://dx.doi.org/${link}`
-    } else {
-      linkDisplay = link
     }
-    // else its undefined
     return { linkDisplay, target }
   }
 
