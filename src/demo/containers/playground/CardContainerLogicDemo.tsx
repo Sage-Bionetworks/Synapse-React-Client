@@ -64,7 +64,7 @@ export default class CardContainerLogicDemo extends React.Component {
             <div className="col-md-10 col-md-offset-1">
               <CardContainerLogic
                 type={SynapseConstants.GENERIC_CARD}
-                sql={'SELECT * FROM syn16859448 LIMIT 4'}
+                sql={'SELECT * FROM syn16859448'}
                 unitDescription="studies"
                 genericCardSchema={genericToolSchema}
                 secondaryLabelLimit={3}

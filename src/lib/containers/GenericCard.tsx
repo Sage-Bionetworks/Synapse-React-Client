@@ -39,7 +39,7 @@ export type GenericCardState = {
   showMoreDescription: boolean
 }
 
-// see link to regex above here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+// doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second slash in the regex above
 const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:A-Z0-9]+$/i
 // https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
