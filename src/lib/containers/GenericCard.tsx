@@ -39,6 +39,14 @@ export type GenericCardState = {
   showMoreDescription: boolean
 }
 
+// see link to regex above here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+// note - had to add an escape character for the second slash in the regex above
+const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:A-Z0-9]+$/i
+// https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
+// check for 'syn' followed and ended by a digit of unlimited length
+const SYNAPSE_REGX = /syn\d+$/
+
 export default class GenericCard extends React.Component<GenericCardProps, GenericCardState> {
 
   constructor(props: GenericCardProps) {
@@ -57,19 +65,20 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
   public getLink (link: string, hasInternalLink = false) {
     let linkDisplay = ''
     let target = '_blank'
-    if (link.slice(0, 3) === 'syn') {
+    if (link.match(SYNAPSE_REGX)) {
       // its a synId
       linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
-    } else if (link.slice(0, 4) === 'http') {
+    } else if (link.match(URL_REGEX)) {
       // its a standard web url
       linkDisplay = link
     } else if (hasInternalLink) {
       linkDisplay = link
       // only case when it should point inward
       target = '_self'
-    } else if (link) {
-      // else we assume its a DOI
+    } else if (link.match(DOI_REGEX)) {
       linkDisplay = `https://dx.doi.org/${link}`
+    } else {
+      linkDisplay = link
     }
     // else its undefined
     return { linkDisplay, target }
@@ -91,8 +100,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description]]
     const icon = data[schema[genericCardSchema.icon]]
-    const link = data[schema[genericCardSchema.link]] || ''
-    const { linkDisplay, target } = this.getLink(link, hasInternalLink)
+    // wrap link in parens because undefined would throw an error
+    const link: string = data[schema[genericCardSchema.link]] || ''
+    const { linkDisplay, target } = this.getLink(link.toLowerCase(), hasInternalLink)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {

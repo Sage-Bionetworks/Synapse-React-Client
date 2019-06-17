@@ -130,7 +130,7 @@ describe('it grabs the correct URL' , () => {
   })
 
   it('creates a DOI link ', () => {
-    const doi = '10.0000'
+    const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
     const { linkDisplay, target } = getLink(doi)
     expect(linkDisplay).toEqual(doiLink)
