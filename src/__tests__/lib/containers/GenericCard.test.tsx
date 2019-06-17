@@ -26,6 +26,7 @@ describe('it renders the UI correctly', () => {
     subTitle: 'subtitle',
     description: 'description',
     icon: 'icon',
+    link: 'link',
   }
   const genericCardSchema: GenericCardSchema = {
     ...commonProps,
@@ -43,7 +44,8 @@ describe('it renders the UI correctly', () => {
     description: 2,
     icon: 3,
     labelOne: 4,
-    labelTwo: 5
+    labelTwo: 5,
+    link: 6
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -52,6 +54,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_ICON = 'AMP-AD'
   const MOCKED_LABELONE = 'MOCKED_LABELONE'
   const MOCKED_LABELTWO = 'MOCKED_LABELONE'
+  const MOCKED_LINK = 'MOCKED_LINK'
 
   const data = [
     MOCKED_TITLE,
@@ -59,7 +62,8 @@ describe('it renders the UI correctly', () => {
     MOCKED_DESCRIPTION,
     MOCKED_ICON,
     MOCKED_LABELONE,
-    MOCKED_LABELTWO
+    MOCKED_LABELTWO,
+    MOCKED_LINK
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
@@ -103,4 +107,41 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find(Utils.CardFooter)).toHaveLength(0)
   })
 
+})
+
+describe('it grabs the correct URL' , () => {
+  const getLink = GenericCard.prototype.getLink
+  const SELF = '_self'
+  const BLANK = '_blank'
+
+  it('creates an external link', () => {
+    const googleWebsite = 'https://google.com'
+    // test external link
+    const { linkDisplay, target } = getLink(googleWebsite)
+    expect(linkDisplay).toEqual(googleWebsite)
+    expect(target).toEqual(BLANK)
+  })
+
+  it('creates a link to synapse', () => {
+    const synId = 'syn12345678'
+    const synLink = `https://www.synapse.org/#!Synapse:${synId}`
+    const { linkDisplay, target } = getLink(synId)
+    expect(linkDisplay).toEqual(synLink)
+    expect(target).toEqual(BLANK)
+  })
+
+  it('creates a DOI link ', () => {
+    const doi = '10.0000'
+    const doiLink = `https://dx.doi.org/${doi}`
+    const { linkDisplay, target } = getLink(doi)
+    expect(linkDisplay).toEqual(doiLink)
+    expect(target).toEqual(BLANK)
+  })
+
+  it('creates an internal link ', () => {
+    const internalLink = 'programs:?GRANT=123456'
+    const { linkDisplay, target } = getLink(internalLink, true)
+    expect(linkDisplay).toEqual(internalLink)
+    expect(target).toEqual(SELF)
+  })
 })

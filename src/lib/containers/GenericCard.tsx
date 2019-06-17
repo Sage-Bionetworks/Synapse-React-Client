@@ -18,6 +18,7 @@ export type GenericCardSchema = {
   description: string
   icon: string
   secondaryLabels?: KeyAndAliasMap
+  link: string
 }
 
 export type IconOptions = {
@@ -31,6 +32,7 @@ export type GenericCardProps = {
   schema: any,
   data: any
   secondaryLabelLimit?: number
+  hasInternalLink?: boolean
 }
 
 export type GenericCardState = {
@@ -46,10 +48,31 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     }
   }
 
-  public toggleShowMoreDescription(_event: React.SyntheticEvent) {
+  public toggleShowMoreDescription = (_event: React.SyntheticEvent) => {
     this.setState({
       showMoreDescription: !this.state.showMoreDescription
     })
+  }
+
+  public getLink (link: string, hasInternalLink = false) {
+    let linkDisplay = ''
+    let target = '_blank'
+    if (link.slice(0, 3) === 'syn') {
+      // its a synId
+      linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
+    } else if (link.slice(0, 4) === 'http') {
+      // its a standard web url
+      linkDisplay = link
+    } else if (hasInternalLink) {
+      linkDisplay = link
+      // only case when it should point inward
+      target = '_self'
+    } else if (link) {
+      // else we assume its a DOI
+      linkDisplay = `https://dx.doi.org/${link}`
+    }
+    // else its undefined
+    return { linkDisplay, target }
   }
 
   render() {
@@ -60,14 +83,16 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       secondaryLabelLimit,
       backgroundColor,
       iconOptions,
-      isHeader = false
+      isHeader = false,
+      hasInternalLink=  false
     } = this.props
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description]]
     const icon = data[schema[genericCardSchema.icon]]
-
+    const link = data[schema[genericCardSchema.link]] || ''
+    const { linkDisplay, target } = this.getLink(link, hasInternalLink)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
@@ -109,9 +134,13 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           <div className="SRC-type">{type}</div>
           <div className="SRC-title">
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
-              <a className="SRC-primary-text-color" target="_blank" href={''}>
-                {title}
-              </a>
+              {linkDisplay ?
+                <a className="SRC-primary-text-color" target={target} href={linkDisplay}>
+                  {title}
+                </a>
+                :
+                title
+              }
             </h3>
           </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
