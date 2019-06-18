@@ -224,7 +224,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       const listIds = data.queryResult.queryResults.rows.map(
         el => el.values[userIdColumnIndex]
       )
-      console.log('passing listIds to usercardlist = ,', listIds)
       cards = <UserCardList list={listIds} size={MEDIUM_USER_CARD}/>
     } else {
       // render the cards

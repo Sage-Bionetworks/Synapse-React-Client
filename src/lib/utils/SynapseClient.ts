@@ -401,7 +401,7 @@ export const getUserBundle = (
   return doGet(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
 }
 
-type UserProfileList = { list: UserProfile [] }
+export type UserProfileList = { list: UserProfile [] }
 /**
  * Return the User Profiles for the given list of user IDs
  * http://docs.synapse.org/rest/POST/userProfile.html
