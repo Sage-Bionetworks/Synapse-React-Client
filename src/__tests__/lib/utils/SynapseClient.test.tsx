@@ -24,7 +24,7 @@ it('version call', () => {
 })
 
 it('get user profiles', () => {
-  return SynapseClient.getUserProfiles([345424, 273978, 273991])
+  return SynapseClient.getUserProfiles(['345424', '273978', '273991'])
     .then((data) => {
       expect(data.list).toBeDefined()
       expect(data.list.length).toEqual(3)

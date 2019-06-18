@@ -5,7 +5,7 @@ import { UserProfile } from '../utils/jsonResponses/UserProfile'
   Utility functions for UserCards
 */
 
-function getUserProfileWithProfilePicAttached(principalIds: number [], token?: string) {
+function getUserProfileWithProfilePicAttached(principalIds: string [], token?: string) {
   return SynapseClient.getUserProfiles(principalIds).then(
     (data) => {
       // people will either have a profile pic file handle id

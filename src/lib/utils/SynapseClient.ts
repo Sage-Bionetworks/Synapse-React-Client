@@ -408,7 +408,7 @@ export type UserProfileList = { list: UserProfile [] }
  */
 export const getUserProfiles =
   (
-    list: number[],
+    list: string[],
     sessionToken: string | undefined = undefined,
     endpoint: string = DEFAULT_ENDPOINT
   ): Promise<UserProfileList> => {

@@ -6,7 +6,7 @@ import { getUserProfileWithProfilePicAttached } from './getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 
 export type UserCardListProps = {
-  list: number []
+  list: string []
   size?: string
 }
 
@@ -30,21 +30,30 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     this.update(list)
   }
 
+  difference(setA: Set<String>, setB: Set<String>) {
+    const _difference = new Set(setA)
+    for (const elem of Array.from(setB)) {
+      _difference.delete(elem)
+    }
+    return _difference
+  }
+
   componentDidUpdate(prevProps: UserCardListProps) {
-    const prevPropsAsNumber = prevProps.list.map(el => Number(el))
-    const activeData = this.props.list.map(el => Number(el))
-    // check that the props have changed
-    if (!activeData.every(el => prevPropsAsNumber.includes(el))) {
-      const internalData = Object.keys(this.state.userProfileMap).map(el => Number(el))
-      // get the set difference between the current list and the prior list
-      const difference = activeData.filter(el => !internalData.includes(Number(el))).filter(el => el !== 0)
+    const priorListOfIds = new Set(prevProps.list)
+    const curListOfIds = new Set(this.props.list.filter(el => el !== null))
+    // check that the props have changed by seeing that at least one element is different
+    if (this.difference(curListOfIds, priorListOfIds).size > 0) {
+      const internalData = new Set(Object.keys(this.state.userProfileMap))
+      // get the set difference between the current list and whats stored in state, describes what
+      // needs to get looked up.
+      const difference = Array.from(this.difference(curListOfIds, internalData)) as string []
       if (difference.length > 0) {
         this.update(difference)
       }
     }
   }
 
-  update = (list: number []) => {
+  update = (list: string []) => {
     getUserProfileWithProfilePicAttached(list).then(
       (data: UserProfileList) => {
         const newEntries = {}
@@ -59,7 +68,7 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
         })
       }
     ).catch(
-      (err) => {
+      (err: string) => {
         console.log('Error on batch call =', err)
       }
     )
