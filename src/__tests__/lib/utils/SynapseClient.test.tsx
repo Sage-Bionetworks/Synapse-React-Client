@@ -1,8 +1,5 @@
 import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
-// import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest'
-// import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle'
-// import { syn17328596 } from '../../../mocks/syn17328596'
 
 it('invalid call', () => {
   return SynapseClient.doGet(
@@ -150,43 +147,6 @@ it('get user teams', () => {
 it('get root page url', () => {
   expect(SynapseClient.getRootURL()).toBeDefined()
 })
-
-// describe.skip('it tests intuitively grabbing query table results ', () => {
-//   it('gets zero results back ', () => {
-//     const filter: string = 'isFruit'
-//     const queryBundleRequest: QueryBundleRequest = {
-//       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-//       partMask:
-//         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-//         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-//         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-//       query: {
-//         isConsistent: false,
-//         limit: 25,
-//         offset: 0,
-//         sql: 'SELECT * FROM syn17328596',
-//         selectedFacets: [
-//           {
-//             columnName: 'isVegetable',
-//             facetValues: ['true']
-//           },
-//           {
-//             columnName: 'isFruit',
-//             facetValues: [] // zero facets selected
-//           }
-//         ]
-//       }
-//     }
-//     return SynapseClient.getIntuitiveQueryTableResults(
-//       queryBundleRequest,
-//       '',
-//       filter,
-//       syn17328596
-//     ).then((data: QueryResultBundle) => {
-//       expect(data.queryResult.queryResults.rows.length).toEqual(0)
-//     })
-
-//   })
 
 // })
 // ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL

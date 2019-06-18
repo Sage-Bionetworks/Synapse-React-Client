@@ -15,6 +15,7 @@ import browserMd5File from 'browser-md5-file'
 import { AddPartResponse } from './jsonResponses/AddPartResponse'
 import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
 import { FileEntity } from './jsonResponses/FileEntity'
+import { UserProfile } from './jsonResponses/UserProfile'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -399,13 +400,21 @@ export const getUserBundle = (
 ): Promise<UserBundle> => {
   return doGet(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
 }
+
+type UserProfileList = { list: UserProfile [] }
 /**
  * Return the User Profiles for the given list of user IDs
  * http://docs.synapse.org/rest/POST/userProfile.html
  */
-export const getUserProfiles = (userIdsArray: number[] = [], endpoint: string = DEFAULT_ENDPOINT) => {
-  return doPost('/repo/v1/userProfile', { list: userIdsArray }, undefined, undefined, endpoint)
-}
+export const getUserProfiles =
+  (
+    list: number[],
+    sessionToken: string | undefined = undefined,
+    endpoint: string = DEFAULT_ENDPOINT
+  ): Promise<UserProfileList> => {
+    return doPost('/repo/v1/userProfile', { list }, sessionToken, undefined, endpoint)
+  }
+
 /**
  * Return the children (Files/Folders) of the given entity (Project or Folder).
  * http://docs.synapse.org/rest/POST/entity/children.html

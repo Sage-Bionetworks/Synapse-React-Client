@@ -1,14 +1,13 @@
 import { SynapseClient } from '../utils'
-import { UserBundle } from '../utils/jsonResponses/UserBundle'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 
 /*
   Utility functions for UserCards
 */
 
-function getUserProfile(principalIds: number [], token?: string) {
+function getUserProfileWithProfilePicAttached(principalIds: number [], token?: string) {
   return SynapseClient.getUserProfiles(principalIds).then(
-    (data: any) => {
+    (data) => {
       // people will either have a profile pic file handle id
       // or they won't. Have to break this down into two groups.
       const withProfilePic = data.list.filter(
@@ -20,7 +19,7 @@ function getUserProfile(principalIds: number [], token?: string) {
         return data
       }
       const fileHandleAssociationList = withProfilePic.map(
-        (value: any) => {
+        (value) => {
           return {
             associateObjectId: value.ownerId,
             associateObjectType: 'UserProfileAttachment',
@@ -35,64 +34,23 @@ function getUserProfile(principalIds: number [], token?: string) {
       }
       return SynapseClient.getFiles(request, token)
         .then(
-          (fileHandleList: any) => {
+          (fileHandleList) => {
             // we retrieve all the persons with profile pic file handles
             // so we next loop through them, find the original person in the data.list
             // and add a field with their pre-signed url
             fileHandleList.requestedFiles.forEach(
-              (fileHandle: any) => {
+              (fileHandle) => {
                 const matchingPersonIndex = data.list.findIndex(
-                  (el: any) => {
+                  (el) => {
                     return fileHandle.fileHandleId === el.profilePicureFileHandleId
                   }
                 )
-                data.list[matchingPersonIndex].preSignedURL = fileHandle.preSignedURL
+                data.list[matchingPersonIndex].clientPreSignedURL = fileHandle.preSignedURL
               })
             return Promise.resolve(data)
           })
         .catch((err) => {
-          console.log({ err })
-        })
-    })
-}
-
-function getUserBundleWithProfilePic(ownerId: string, mask: number, token?: string): Promise<UserBundle> {
-  return SynapseClient.getUserBundle(ownerId, mask, token).then(
-    (data: any) => {
-      const { userProfile } = data
-      // people will either have a profile pic file handle id
-      // or they won't. Have to break this down into two groups.
-      if (!userProfile.profilePicureFileHandleId) {
-        return data
-      }
-
-      const fileHandleAssociationList = [{
-        associateObjectId: ownerId,
-        associateObjectType: 'UserProfileAttachment',
-        fileHandleId: userProfile.profilePicureFileHandleId
-      }]
-
-      const request: any = {
-        includeFileHandles: false,
-        includePreSignedURLs: true,
-        includePreviewPreSignedURLs: false,
-        requestedFiles: fileHandleAssociationList
-      }
-
-      return SynapseClient.getFiles(request, token)
-        .then(
-          (fileHandleList: any) => {
-            // we retrieve all the persons with profile pic file handles
-            // so we next loop through them, find the original person in the data.list
-            // and add a field with their pre-signed url
-            const firstElement = fileHandleList.requestedFiles[0]
-            if (firstElement.fileHandleId === userProfile.profilePicureFileHandleId) {
-              userProfile.preSignedURL = firstElement.preSignedURL
-            }
-            return Promise.resolve(data)
-          })
-        .catch((err) => {
-          console.log({ err })
+          return err
         })
     })
 }
@@ -125,14 +83,11 @@ function getUserProfileWithProfilePic(ownerId: string, token?: string): Promise<
 
       return SynapseClient.getFiles(request, token)
         .then(
-          (fileHandleList: any) => {
+          (fileHandleList) => {
             // we retrieve all the persons with profile pic file handles
             // so we next loop through them, find the original person in the data.list
             // and add a field with their pre-signed url
             const firstElement = fileHandleList.requestedFiles[0]
-            if (firstElement.fileHandleId === userProfile.profilePicureFileHandleId) {
-              userProfile.preSignedURL = firstElement.preSignedURL
-            }
             return Promise.resolve({
               userProfile,
               preSignedURL: firstElement.preSignedURL
@@ -175,4 +130,4 @@ const getColor = (userName: string) => {
   return COLORS[hashedUserName % COLORS.length]
 }
 
-export { getUserProfile, getUserBundleWithProfilePic, getColor, getUserProfileWithProfilePic }
+export { getUserProfileWithProfilePicAttached, getColor, getUserProfileWithProfilePic }
