@@ -66,6 +66,7 @@
     "rollup-plugin-babel-minify": "^8.0.0",
     "rss-parser": "^3.7.1",
     "sanitize-html": "^1.18.4",
+    "sql-parser": "^0.5.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

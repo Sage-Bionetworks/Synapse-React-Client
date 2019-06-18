@@ -9909,6 +9909,11 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
+sql-parser@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/sql-parser/-/sql-parser-0.5.0.tgz#a79b6e66452f3d615b211989f006f34033bc436a"
+  integrity sha1-p5tuZkUvPWFbIRmJ8AbzQDO8Q2o=
+
 srcset@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/srcset/-/srcset-1.0.0.tgz#a5669de12b42f3b1d5e83ed03c71046fc48f41ef"

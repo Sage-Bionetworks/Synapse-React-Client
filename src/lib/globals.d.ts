@@ -21,3 +21,4 @@ declare var markdownitMath: any
 declare module 'plotly.js-basic-dist'
 declare module 'react-plotly.js/factory'
 declare module 'browser-md5-file'
+declare module 'sql-parser'

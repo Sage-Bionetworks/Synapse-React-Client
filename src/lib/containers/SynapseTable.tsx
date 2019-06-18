@@ -23,6 +23,7 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
+import { lexer, parser } from 'sql-parser'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -130,7 +131,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { facets } = data
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const backgroundColor = colorPalette[0]
-
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
@@ -246,6 +246,24 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         </div>
       </React.Fragment>
     )
+  }
+
+  private showGroupRowData = (row: Row) => (_event: React.MouseEvent<HTMLButtonElement>) => {
+    // TODO: magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
+    const queryRequestCopy = cloneDeep(this.props.getLastQueryRequest!())
+    let tokens: string[][] = lexer.tokenize(queryRequestCopy.query.sql)
+    // remove all tokens after group (by truncating array)
+    tokens.length = tokens.findIndex(el => el[0] === 'GROUP')
+    // remove all function and distinct tokens
+    tokens = tokens.filter((el) => {
+      return el[0] !== 'FUNCTION' && el[0] !== 'DISTINCT'
+    })
+    // TODO: add new items to where clause, but only if the column name corresponds to a real column in the table/view!
+    // use row.values
+
+    // TODO: encode this query request copy
+    // TODO: open this in a new window on synapse.org
+    queryRequestCopy.query.sql = parser.parse(tokens).toString()
   }
 
   /**
@@ -380,6 +398,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const rowsFormatted: JSX.Element[] = []
     const { isColumnSelected } = this.state
     const isColumnSelectedLen = isColumnSelected.length
+    // PORTALS-527: if aggregate query, also include a column to dive into underlying results
+    const sql = this.props.getLastQueryRequest!().query.sql
+    const isAggregate = sql.toLowerCase().includes('group by')
     rows.forEach((row: any, i: any) => {
       const rowContent = row.values.map(
         (columnValue: string, j: number) => {
@@ -401,7 +422,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           }
           return (<td className="SRC-hidden" key={`(${i},${j})`}/>)
         })
-
+      if (isAggregate) {
+        rowContent.push(
+          <td className="SRC_noBorderTop" style={{ width: '62px' }} key={`(underlying-data-row-${i})`}>
+              <button onClick={this.showGroupRowData(row)}>
+                Show
+              </button>
+          </td>
+        )
+      }
       const rowFormatted = (
         <tr key={row.rowId}>{rowContent}</tr>
       )
@@ -411,10 +440,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
+    const columnElements: JSX.Element[] = []
     const { isColumnSelected, sortedColumnSelection, columnIconSortState } = this.state
     const { visibleColumnCount = Infinity } = this.props
-
-    return headers.map((column: SelectColumn, index: number) => {
+    const isAggregate = this.props.getLastQueryRequest!().query.sql.toLowerCase().includes('group by')
+    headers.map((column: SelectColumn, index: number) => {
       // two cases when rendering the column headers on init load
       // of the page we have to show only this.props.visibleColumnCount many
       // columns, afterwards we rely on the isColumnSelected to get choices
@@ -434,7 +464,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
         const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
-        return (
+        columnElements.push(
           <th key={column.name}>
             <div className="SRC-centerContent">
               <span style={{ whiteSpace: 'nowrap' }}>
@@ -456,8 +486,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </th>
         )
       }
-      return (<th className="SRC-hidden" key={column.name} />)
+      columnElements.push(<th className="SRC-hidden" key={column.name} />)
     })
+    // PORTALS-527: if aggregate query, also include a column to dive into underlying results
+    if (isAggregate) {
+      columnElements.push(<th style={{ width: '62px' }} key={'underlying-row-data'} />)
+    }
+    return columnElements
   }
 
   /**
@@ -635,7 +670,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   public closeMenuClickHandler(_: React.SyntheticEvent) {
     const { menuWallIsActive } = this.state
-
     const isFilterSelected = cloneDeep(this.state.isFilterSelected)
     const filterClassList = cloneDeep(this.state.filterClassList)
 
