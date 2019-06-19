@@ -16,7 +16,8 @@ import {
   CSBC_PUBLICATION,
   CSBC_STUDY,
   CSBC_DATASET,
-  GENERIC_CARD
+  GENERIC_CARD,
+  MEDIUM_USER_CARD
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
@@ -25,6 +26,7 @@ import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
 import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
 import GenericCard, { GenericCardSchema, IconOptions } from './GenericCard'
+import UserCardList from './UserCardList'
 
 const PAGE_SIZE: number = 25
 
@@ -146,7 +148,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     }
     const schema = {}
     data.queryResult.queryResults.headers.forEach(
-      (element: any, index: any) => {
+      (element, index) => {
         schema[element.name] = index
       })
 
@@ -204,29 +206,45 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         </div>
       )
     )
-
-    // render the cards
-    const cards = data.queryResult.queryResults.rows.map(
-      (rowData: any, index) => {
-        if (index < limit) {
-          const key = JSON.stringify(rowData.values)
-          return (
-            <RowContainer
-              key={key}
-              type={type}
-              data={rowData.values}
-              hasInternalLink={this.props.hasInternalLink}
-              schema={schema}
-              isHeader={isHeader}
-              genericCardSchema={genericCardSchema}
-              secondaryLabelLimit={secondaryLabelLimit}
-              backgroundColor={backgroundColor}
-              iconOptions={iconOptions}
-            />
-          )
+    let cards
+    if (type === MEDIUM_USER_CARD) {
+      // Hard coding ownerId as a column name containing the user profile ownerId
+      // for each row, grab the column with the ownerId
+      const userIdColumnIndex = data.queryResult.queryResults.headers.findIndex(
+        el => el.columnType === 'USERID'
+      )
+      if (userIdColumnIndex === -1) {
+        throw Error('Type MEDIUM_USER_CARD specified but no columnType USERID found')
+      }
+      const listIds = data.queryResult.queryResults.rows.map(
+        el => el.values[userIdColumnIndex]
+      )
+      cards = <UserCardList list={listIds} size={MEDIUM_USER_CARD}/>
+    } else {
+      // render the cards
+      cards = data.queryResult.queryResults.rows.map(
+        (rowData: any, index) => {
+          if (index < limit) {
+            const key = JSON.stringify(rowData.values)
+            return (
+              <RowContainer
+                key={key}
+                type={type}
+                data={rowData.values}
+                hasInternalLink={this.props.hasInternalLink}
+                schema={schema}
+                isHeader={isHeader}
+                genericCardSchema={genericCardSchema}
+                secondaryLabelLimit={secondaryLabelLimit}
+                backgroundColor={backgroundColor}
+                iconOptions={iconOptions}
+              />
+            )
+          }
+          return false
         }
-        return false
-      })
+      )
+    }
 
     return (
       <div>
@@ -235,11 +253,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
             {/*
               add loading spinner to the right of the display information to show content is loading on view more click
             */}
-            {isLoading &&
-              <React.Fragment>
-                <span style={{ marginLeft: '2px' }} className={'spinner'}/>
-              </React.Fragment>
-            }
+            {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'}/>}
           </p>
         }
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}

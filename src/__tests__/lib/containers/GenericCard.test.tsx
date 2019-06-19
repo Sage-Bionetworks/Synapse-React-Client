@@ -97,7 +97,7 @@ describe('it renders the UI correctly', () => {
   })
 
   it('renders as a Header without crashing', () => {
-    const { wrapper } = createShallowComponent(propsForHeaderMode)
+    const { wrapper } = createShallowComponent(propsForHeaderMode)
     expect(wrapper).toBeDefined()
     expect(wrapper.find('img').prop('src')).toEqual(iconOptions['AMP-AD'])
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)

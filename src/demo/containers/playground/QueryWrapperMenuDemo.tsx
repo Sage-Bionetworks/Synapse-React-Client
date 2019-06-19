@@ -31,14 +31,12 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       showTabOne: true,
       tabOne:
       {
-        type: SynapseConstants.CSBC_DATASET,
+        type: SynapseConstants.MEDIUM_USER_CARD,
         menuConfig: [
           {
-            facetName: 'tumorType',
-            sql: 'SELECT * FROM syn18488466',
-            synapseId: 'syn18488466',
-            unitDescription: 'data files',
-            visibleColumnCount: 3,
+            unitDescription: 'people',
+            facetName: 'Program',
+            sql: 'SELECT ownerID as ownerId from syn13897207',
           },
         ],
       }

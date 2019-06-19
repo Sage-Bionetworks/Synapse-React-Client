@@ -47,6 +47,25 @@ export default class CardContainerLogicDemo extends React.Component {
       description: 'Long Description',
       icon: 'Program',
     }
+    // @ts-ignore
+    const genericCardSchema: GenericCardSchema = {
+      type: 'Study',
+      title: 'Study_Name',
+      subTitle: 'Data_Contributor',
+      description: 'Study_Description',
+      icon: 'Access_Type',
+      secondaryLabels: {
+        0: { key: 'DataType_All', alias: 'Data Types' },
+        1: { key: 'Diagnosis_or_Model_System', alias: 'Diagnosis' },
+        2: { key: 'Number_of_Individuals', alias: 'Individuals' },
+        3: { key: 'Sample_Type', alias: 'Tissue' },
+        4: { key: 'Species ' },
+        5: { key: 'Cohort_Type', alias: 'Cohort Type' },
+        6: { key: 'Study_Status', alias: 'Study Status' },
+        7: { key: 'Consortium', alias: 'Program' },
+        8: { key: 'Grant' },
+      }
+    }
     return (
       <div>
         <hr/>
@@ -71,12 +90,13 @@ export default class CardContainerLogicDemo extends React.Component {
               />
             </div>
           </div>
-        </div>
-        {/* <CardContainerLogic
-          type={SynapseConstants.DATASET}
-          sql={'SELECT * FROM syn16859580'}
+        </div> */}
+        <CardContainerLogic
+          type={SynapseConstants.MEDIUM_USER_CARD}
+          token={'62b5a493-6b56-4775-b70a-c488414a5942'}
+          sql={'SELECT ownerID as ownerId FROM syn13897207'}
           loadingScreen={<div> I'm loading as fast I can !!! </div>}
-        /> */}
+        />
       </div>
     )
   }
