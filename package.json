@@ -54,7 +54,6 @@
     "plotly.js-basic-dist": "^1.47.3",
     "raf": "^3.4.1",
     "react": "latest",
-    "react-app-polyfill": "^0.2.1",
     "react-dom": "latest",
     "react-measure": "^2.1.2",
     "react-plotly.js": "^2.3.0",
