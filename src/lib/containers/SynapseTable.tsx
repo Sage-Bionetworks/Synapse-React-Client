@@ -250,17 +250,20 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   private showGroupRowData = (row: Row) => (_event: React.MouseEvent<HTMLButtonElement>) => {
     // TODO: magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
-    const queryRequestCopy = cloneDeep(this.props.getLastQueryRequest!())
-    let tokens: string[][] = lexer.tokenize(queryRequestCopy.query.sql)
+    const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
+    let tokens: string[][] = lexer.tokenize(queryCopy.sql)
     // remove all tokens after group (by truncating array)
     tokens.length = tokens.findIndex(el => el[0] === 'GROUP')
+    // replace all columns with *
+    const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
+    const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
+    tokens.splice(selectIndex + 1, fromIndex - selectIndex - 1, ['STAR', '*', '1'])
     // remove all function and distinct tokens
     tokens = tokens.filter((el) => {
       return el[0] !== 'FUNCTION' && el[0] !== 'DISTINCT'
     })
-    // TODO: add new items to where clause, but only if the column name corresponds to a real column in the table/view!
+    // add new items to where clause, but only if the column name corresponds to a real column in the table/view!
     // use row.values
-    const whereTokenIndex = tokens.findIndex(el => el[0] === 'WHERE')
     if (this.props.data === undefined) {
       return
     }
@@ -272,25 +275,28 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     // look for headers in column models, if they match then add a where clause
     headers.map((header: any, index: number) => {
-      const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header)
+      const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
       if (matchingColumnModel) {
         const rowValue = row.values[index]
-        tokens.splice(
-          whereTokenIndex,
-          0,
+        tokens.push(
+          ['CONDITIONAL', 'AND', '1'],
           ['LITERAL', matchingColumnModel.name, '1'],
           ['OPERATOR', '=', '1'],
           ['STRING', rowValue, '1'],
-          ['CONDITIONAL', 'AND', '1']
         )
       }
     })
-    debugger
+    tokens.push(['EOF', '', '1'])
+    // remove backtick from output sql (for table name): `syn1234` becomes syn1234
+    const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
     const newSql = parser.parse(tokens).toString()
-    console.log(newSql)
-    debugger
-    // TODO: encode this query request copy
-    // TODO: open this in a new window on synapse.org
+    const splitString = `\`${synId}\``
+    queryCopy.sql = newSql.split(splitString).join(synId)
+    const queryJSON = JSON.stringify(queryCopy)
+    // encode this query request copy
+    const encodedQuery = btoa(queryJSON)
+    // open this in a new window on synapse.org
+    window.open(`https://www.synapse.org/#!Synapse:${synId}/tables/query/${encodedQuery}`, '_blank')
   }
 
   /**
