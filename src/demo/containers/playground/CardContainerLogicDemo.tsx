@@ -23,22 +23,20 @@ export default class CardContainerLogicDemo extends React.Component {
       'Resilience-AD': resilienceadSvg
     }
     // @ts-ignore
-    const genericCardSchema: GenericCardSchema = {
-      type: 'Study',
-      title: 'Study_Name',
-      subTitle: 'Data_Contributor',
-      description: 'Study_Description',
-      icon: 'Access_Type',
+    const genericToolSchema: GenericCardSchema = {
+      type: 'Tool',
+      title: 'name',
+      subTitle: 'contact',
+      description: 'summary',
+      icon: 'type',
+      link: 'link',
       secondaryLabels: {
-        0: { key: 'DataType_All', alias: 'Data Types' },
-        1: { key: 'Diagnosis_or_Model_System', alias: 'Diagnosis' },
-        2: { key: 'Number_of_Individuals', alias: 'Individuals' },
+        0: { key: 'subtype', alias: 'Subtype' },
+        1: { key: 'disease', alias: 'Disease' },
+        2: { key: 'manifestation', alias: 'Manifestation' },
         3: { key: 'Sample_Type', alias: 'Tissue' },
-        4: { key: 'Species ' },
-        5: { key: 'Cohort_Type', alias: 'Cohort Type' },
-        6: { key: 'Study_Status', alias: 'Study Status' },
-        7: { key: 'Consortium', alias: 'Program' },
-        8: { key: 'Grant' },
+        4: { key: 'fundingAgency', alias: 'Funding Agency' },
+        5: { key: 'studyName', alias: 'Study Name' }
       }
     }
     // @ts-ignore
@@ -79,15 +77,15 @@ export default class CardContainerLogicDemo extends React.Component {
           backgroundColor={'#5960a5'}
           isHeader={true}
           iconOptions={iconOptions}
-        />
+        /> */}
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-10 col-md-offset-1">
               <CardContainerLogic
                 type={SynapseConstants.GENERIC_CARD}
-                sql={'SELECT * FROM syn17083367 LIMIT 1'}
+                sql={'SELECT * FROM syn16859448'}
                 unitDescription="studies"
-                genericCardSchema={genericCardSchema}
+                genericCardSchema={genericToolSchema}
                 secondaryLabelLimit={3}
               />
             </div>
