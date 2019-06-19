@@ -131,3 +131,4 @@ const getColor = (userName: string) => {
 }
 
 export { getUserProfileWithProfilePicAttached, getColor, getUserProfileWithProfilePic }
+export default { getUserProfileWithProfilePicAttached, getColor, getUserProfileWithProfilePic }

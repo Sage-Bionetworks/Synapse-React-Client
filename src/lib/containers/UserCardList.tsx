@@ -23,6 +23,7 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     this.state = {
       userProfileMap: {}
     }
+    this.update = this.update.bind(this)
   }
 
   componentDidMount() {
@@ -53,7 +54,7 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     }
   }
 
-  update = (list: string []) => {
+  update (list: string []) {
     getUserProfileWithProfilePicAttached(list).then(
       (data: UserProfileList) => {
         const newEntries = {}
