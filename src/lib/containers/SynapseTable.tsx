@@ -260,10 +260,37 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     })
     // TODO: add new items to where clause, but only if the column name corresponds to a real column in the table/view!
     // use row.values
+    const whereTokenIndex = tokens.findIndex(el => el[0] === 'WHERE')
+    if (this.props.data === undefined) {
+      return
+    }
+    // unpack all the data
+    const { data } = this.props
+    const { queryResult, columnModels } = data
+    const { queryResults } = queryResult
+    const { headers } = queryResults
 
+    // look for headers in column models, if they match then add a where clause
+    headers.map((header: any, index: number) => {
+      const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header)
+      if (matchingColumnModel) {
+        const rowValue = row.values[index]
+        tokens.splice(
+          whereTokenIndex,
+          0,
+          ['LITERAL', matchingColumnModel.name, '1'],
+          ['OPERATOR', '=', '1'],
+          ['STRING', rowValue, '1'],
+          ['CONDITIONAL', 'AND', '1']
+        )
+      }
+    })
+    debugger
+    const newSql = parser.parse(tokens).toString()
+    console.log(newSql)
+    debugger
     // TODO: encode this query request copy
     // TODO: open this in a new window on synapse.org
-    queryRequestCopy.query.sql = parser.parse(tokens).toString()
   }
 
   /**
