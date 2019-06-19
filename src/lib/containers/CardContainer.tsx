@@ -123,12 +123,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     this.props.getNextPageOfData!(queryRequest)
   }
 
-  componentDidMount() {
-    if (this.props.type === MEDIUM_USER_CARD) {
-
-    }
-  }
-
   public render() {
     const {
       data,
@@ -152,9 +146,9 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         </div>
       )
     }
-    const schema: any = {}
+    const schema = {}
     data.queryResult.queryResults.headers.forEach(
-      (element: any, index: any) => {
+      (element, index) => {
         schema[element.name] = index
       })
 
@@ -220,7 +214,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         el => el.columnType === 'USERID'
       )
       if (userIdColumnIndex === -1) {
-        throw Error('Type MEDIUM_USER_CARD specified but no column with USERID specified')
+        throw Error('Type MEDIUM_USER_CARD specified but no columnType USERID found')
       }
       const listIds = data.queryResult.queryResults.rows.map(
         el => el.values[userIdColumnIndex]
