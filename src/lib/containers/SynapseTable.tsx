@@ -286,18 +286,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     headers: SelectColumn[],
     columnModels: ColumnModel[]
   ): { synId: string, newSql: string } {
-    // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
-    let tokens: string[][] = lexer.tokenize(originalSql)
+    const tokens: string[][] = lexer.tokenize(originalSql)
     // remove all tokens after group (by truncating array)
     tokens.length = tokens.findIndex(el => el[0] === 'GROUP')
     // replace all columns with *
     const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
     const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
     tokens.splice(selectIndex + 1, fromIndex - selectIndex - 1, ['STAR', '*', '1'])
-    // remove all function and distinct tokens
-    tokens = tokens.filter((el) => {
-      return el[0] !== 'FUNCTION' && el[0] !== 'DISTINCT'
-    })
     // add new items to where clause, but only if the column name corresponds to a real column in the table/view!
     // use row.values
     if (this.props.data === undefined) {
