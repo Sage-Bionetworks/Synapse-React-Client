@@ -36,7 +36,8 @@ export default {
 		'markdownitBr',
 		'markdownitMath',
 		'sanitizeHtml',
-		'react-transition-group'
+		'react-transition-group',
+		'sql-parser',
 	],
 	onwarn: function(warning) {
 		// Skip certain warnings
@@ -101,7 +102,9 @@ export default {
 			'markdownitInlineComments': 'markdownitInlineComments',
 			'markdownitBr': 'markdownitBr',
 			'markdownitMath': 'markdownitMath',
-			'sanitizeHtml': 'sanitizeHtml'
+			'sanitizeHtml': 'sanitizeHtml',
+			'prop-types' : 'PropTypes',
+			'sql-parser' : 'sqlParser'
 		},
 		format: 'umd',
 		name: 'SRC',
