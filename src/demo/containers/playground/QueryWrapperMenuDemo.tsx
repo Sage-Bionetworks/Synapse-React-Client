@@ -29,7 +29,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       ownerId: '',
       showMarkdown: true,
       showTabOne: true,
-      tabOne:
+      tabTwo:
       {
         type: SynapseConstants.MEDIUM_USER_CARD,
         menuConfig: [
@@ -41,8 +41,15 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         ],
       }
     ,
-      tabTwo: {
+      tabOne: {
         menuConfig: [
+          {
+            facetName: 'diagnosis',
+            sql: 'SELECT study, assay, count(distinct id) AS files' +
+              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
+            synapseId: 'syn17024112',
+            title: 'title'
+          },
           {
             facetName: 'study',
             sql: 'SELECT * FROM syn11346063',
@@ -56,12 +63,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           //   title: 'title',
           //   unitDescription: 'descriptive unit'
           // },
-          {
-            facetName: 'diagnosis',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            synapseId: 'syn16858331',
-            title: 'title'
-          }
         ] as MenuConfig[]
         ,
         rgbIndex: 5
