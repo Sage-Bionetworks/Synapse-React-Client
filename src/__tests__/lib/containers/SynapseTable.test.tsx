@@ -6,6 +6,9 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
+import { Row } from 'src/lib/utils/jsonResponses/Table/QueryResult';
+import { SelectColumn } from 'src/lib/utils/jsonResponses/Table/SelectColumn'
+import { ColumnModel } from 'src/lib/utils/jsonResponses/Table/ColumnModel'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow(
@@ -106,6 +109,32 @@ describe('basic functionality', () => {
       expect(wrapper.state('isColumnSelected')).toEqual(
         [true, true, true, false, false, true, false, false, false, false, false, false, false]
       )
+    })
+  })
+  describe('PORTALS-527: aggregate query support (show underlying data)', () => {
+    it('sql parsing test', async () => {
+      const { instance } = createShallowComponent(props)
+      const originalSql: string = 'SELECT bar, baz, count(distinct file_id) AS biz FROM syn987654321 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 asc'
+      const headers: SelectColumn[] = [
+        {columnType: 'STRING', name: 'bar', id: '1'},
+        {columnType: 'STRING', name: 'baz', id: '2'},
+        {columnType: 'INTEGER', name: 'biz', id: '3'},
+      ]
+      const columnModels: ColumnModel[] = [
+        {columnType: 'ENTITYID', name: 'id', id: '1111'},
+        {columnType: 'STRING', facetType: 'enumeration', name: 'bar', id: '2222'},
+        {columnType: 'STRING', facetType: 'enumeration', name: 'baz', id: '333'},
+        {columnType: 'STRING', name: 'species', id: '444'},
+        {columnType: 'STRING', name: 'assay', id: '555'},
+      ]
+      const testRow: Row = {
+        rowId: 123,
+        values: ['bar1', 'baz1', '10'],
+        versionNumber: 8
+      }
+      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql, headers, columnModels)
+      expect(sql.synId).toEqual('syn987654321')
+      expect(sql.newSql).toEqual('SELECT *\n  FROM syn987654321\n  WHERE ((((`species` = \'Human\') AND (`assay` = \'rnaSeq\')) AND (`bar` = \'bar1\')) AND (`baz` = \'baz1\'))')
     })
   })
 

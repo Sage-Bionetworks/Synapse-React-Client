@@ -24,6 +24,7 @@ import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 import { lexer, parser } from 'sql-parser'
+import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -115,7 +116,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return facetAliases[facetName] || facetName
   }
 
-  public isAggregate() {
+  public isAggregate(): boolean {
     if (this.props.getLastQueryRequest && this.props.getLastQueryRequest().query) {
       const sql = this.props.getLastQueryRequest().query.sql
       return AGGREGATE_REGEX.test(sql)
@@ -258,10 +259,35 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     )
   }
 
-  private showGroupRowData = (row: Row) => (_event: React.MouseEvent<HTMLButtonElement>) => {
+  private showGroupRowData = (selectedRow: Row) => (_event: React.MouseEvent<HTMLButtonElement>) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
-    let tokens: string[][] = lexer.tokenize(queryCopy.sql)
+    // unpack all the data
+    const { data } = this.props
+    const { queryResult, columnModels } = data!
+    const { queryResults } = queryResult
+    const { headers } = queryResults
+    const parsed = this.getSqlUnderlyingDataForRow(
+      selectedRow,
+      queryCopy.sql,
+      headers,
+      columnModels)
+    queryCopy.sql = parsed.newSql
+    const queryJSON = JSON.stringify(queryCopy)
+    // encode this copy of the query (json)
+    const encodedQuery = btoa(queryJSON)
+    // open this in a new window on synapse.org
+    window.open(`https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`, '_blank')
+  }
+
+  public getSqlUnderlyingDataForRow(
+    selectedRow: Row,
+    originalSql: string,
+    headers: SelectColumn[],
+    columnModels: ColumnModel[]
+  ): { synId: string, newSql: string } {
+    // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
+    let tokens: string[][] = lexer.tokenize(originalSql)
     // remove all tokens after group (by truncating array)
     tokens.length = tokens.findIndex(el => el[0] === 'GROUP')
     // replace all columns with *
@@ -275,19 +301,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // add new items to where clause, but only if the column name corresponds to a real column in the table/view!
     // use row.values
     if (this.props.data === undefined) {
-      return
+      return { synId: '', newSql: '' }
     }
-    // unpack all the data
-    const { data } = this.props
-    const { queryResult, columnModels } = data
-    const { queryResults } = queryResult
-    const { headers } = queryResults
 
     // look for headers in column models, if they match then add a where clause
     headers.map((header: any, index: number) => {
       const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
       if (matchingColumnModel) {
-        const rowValue = row.values[index]
+        const rowValue = selectedRow.values[index]
         tokens.push(
           ['CONDITIONAL', 'AND', '1'],
           ['LITERAL', matchingColumnModel.name, '1'],
@@ -301,12 +322,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
     const newSql = parser.parse(tokens).toString()
     const splitString = `\`${synId}\``
-    queryCopy.sql = newSql.split(splitString).join(synId)
-    const queryJSON = JSON.stringify(queryCopy)
-    // encode this copy of the query (json)
-    const encodedQuery = btoa(queryJSON)
-    // open this in a new window on synapse.org
-    window.open(`https://www.synapse.org/#!Synapse:${synId}/tables/query/${encodedQuery}`, '_blank')
+    return { synId, newSql: newSql.split(splitString).join(synId) }
   }
 
   /**
