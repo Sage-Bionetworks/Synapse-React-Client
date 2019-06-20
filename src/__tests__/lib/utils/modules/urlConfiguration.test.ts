@@ -1,4 +1,4 @@
-import { insertWhereClauseFromURL } from '../../../../lib/utils/modules/urlConfiguration'
+import { insertWhereClauseFromURL } from '../../../../lib/utils/modules/sqlFunctions'
 
 describe('inserting into WHERE clause from URL works', () => {
   const searchParams = {

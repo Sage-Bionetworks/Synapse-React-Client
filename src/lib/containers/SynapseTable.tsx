@@ -25,7 +25,7 @@ import { SortItem } from '../utils/jsonResponses/Table/Query'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
-import { formatSQLFromParser } from '../utils/modules/urlConfiguration'
+import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
 
 const MIN_SPACE_FACET_MENU = 700
 

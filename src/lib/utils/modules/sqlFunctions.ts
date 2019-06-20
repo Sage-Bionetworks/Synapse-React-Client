@@ -6,7 +6,6 @@ export type KeyValue = {
 
 // This will construct a sql query by adding the conditions in searchParams
 // to the WHERE clause, preserving all other clauses
-export type URLConfiguation = KeyValue
 
 export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) => {
   const tokens: string[][] = lexer.tokenize(sql)
@@ -30,6 +29,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) =>
         ['STRING', searchParams[key], '1'],
       ]
       if (index < searchParamsLen - 1) {
+        // make sure to chain the ANDs until the last one
         token.push(['OPERATOR', 'AND', '1'])
       }
       tokens.splice(indexAfterWhereClause, 0, ...token)

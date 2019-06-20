@@ -6,7 +6,7 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/urlConfiguration'
+import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
 
 export interface CardContainerLogicProps {
   token?: string
@@ -141,7 +141,6 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
     if (this.props.searchParams) {
       sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql)
     }
-    console.log('sql used = ', sqlUsed)
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
