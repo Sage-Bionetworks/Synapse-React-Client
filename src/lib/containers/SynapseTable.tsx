@@ -540,8 +540,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </div>
           </th>
         )
+      } else {
+        columnElements.push(<th className="SRC-hidden" key={column.name} />)
       }
-      columnElements.push(<th className="SRC-hidden" key={column.name} />)
     })
     // PORTALS-527: if aggregate query, also include a column to dive into underlying results
     if (this.isAggregate()) {
