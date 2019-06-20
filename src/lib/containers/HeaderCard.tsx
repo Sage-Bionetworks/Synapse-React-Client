@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { CardFooter } from './row_renderers/utils'
 
 export type IconOptions = {
   [index: string]: string
@@ -11,6 +12,8 @@ export type HeaderCardProps = {
   subTitle: string
   description: string
   icon: string
+  secondaryLabelLimit?: number
+  values?: string [][]
 }
 
 const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
@@ -20,7 +23,9 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
   description,
   iconOptions,
   icon,
-  backgroundColor
+  backgroundColor,
+  values,
+  secondaryLabelLimit
 }) => {
   const style: React.CSSProperties = {
     background: backgroundColor,
@@ -46,6 +51,9 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
             <span className="SRC-font-size-base">
               {description}
             </span>
+            <div style={{ borderTop: '1px solid rgba(26, 28, 41, 0.2)', marginTop: '15px', paddingTop: '5px' }}>
+              {values && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
+            </div>
           </div>
         </div>
       </div>

@@ -6,9 +6,10 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+import { URLConfiguation } from '../utils/modules/urlConfiguration'
+import { XOR } from '../utils/util-types'
 
-export type CardContainerLogicProps = {
-  sql: string
+interface CommonProps {
   token?: string
   limit?: number
   secondaryLabelLimit?: number
@@ -22,6 +23,19 @@ export type CardContainerLogicProps = {
   iconOptions?: IconOptions
   hasInternalLink?: boolean
 }
+
+interface CommonPropsWithSQL extends CommonProps {
+  sql: string
+}
+
+interface CommonPropsWithURLConfiguration extends CommonProps {
+  // searchParams is search params parsed and sent through the URL
+  urlConfiguration: URLConfiguation
+}
+
+// XOR here describes that CardContainerLogicProps must be given either a SQL string or URLConfiguration
+// but not both
+export type CardContainerLogicProps = XOR<CommonPropsWithSQL, CommonPropsWithURLConfiguration>
 
 type State = {
   data: QueryResultBundle | undefined
@@ -74,7 +88,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    * @memberof QueryWrapper
    *
    */
-  public componentDidUpdate(prevProps: any) {
+  public componentDidUpdate(prevProps: CardContainerLogicProps) {
     /**
      *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
      *  sql query has changed of the component then perform an update.
@@ -159,10 +173,10 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         (data: QueryResultBundle) => {
           const queryRequestWithoutCount = cloneDeep(initQueryRequest)
           queryRequestWithoutCount.partMask = (
-                                                SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                                                SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                                                SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-                                            )
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+          )
 
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
           const newState = {

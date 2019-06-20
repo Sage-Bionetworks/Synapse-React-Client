@@ -46,6 +46,10 @@ export default class CardContainerLogicDemo extends React.Component {
       subTitle: 'Short Description',
       description: 'Long Description',
       icon: 'Program',
+      secondaryLabels: {
+        0: { key: 'PROGRAM' },
+        1: { key: 'Full Name' }
+      }
     }
     // @ts-ignore
     const genericCardSchema: GenericCardSchema = {
@@ -70,14 +74,14 @@ export default class CardContainerLogicDemo extends React.Component {
       <div>
         <hr/>
         <p> Generic Card Rendering </p>
-        {/* <CardContainerLogic
+        <CardContainerLogic
           type={SynapseConstants.GENERIC_CARD}
           sql={'SELECT * FROM syn17024173 LIMIT 1'}
           genericCardSchema={genericCardSchemaHeader}
           backgroundColor={'#5960a5'}
           isHeader={true}
           iconOptions={iconOptions}
-        /> */}
+        />
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-10 col-md-offset-1">
@@ -93,7 +97,6 @@ export default class CardContainerLogicDemo extends React.Component {
         </div> */}
         <CardContainerLogic
           type={SynapseConstants.MEDIUM_USER_CARD}
-          token={'62b5a493-6b56-4775-b70a-c488414a5942'}
           sql={'SELECT ownerID as ownerId FROM syn13897207'}
           loadingScreen={<div> I'm loading as fast I can !!! </div>}
         />

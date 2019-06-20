@@ -1,14 +1,15 @@
 import * as React from 'react'
-import * as Utils from './row_renderers/utils'
 import HeaderCard from './HeaderCard'
+import { CardFooter, ShowMore, Icon } from './row_renderers/utils'
 
-type KeyAndAlias = {
+export type KeyAndAlias = {
   key: string
   alias?: string
 }
 
-type KeyAndAliasMap = {
+export type KeyAndAliasMap = {
   [index: number]: KeyAndAlias
+  [index: string]: KeyAndAlias
 }
 
 export type GenericCardSchema = {
@@ -120,6 +121,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           description={description}
           icon={icon}
           iconOptions={iconOptions}
+          values={values}
+          secondaryLabelLimit={secondaryLabelLimit}
         />
       )
     }
@@ -129,7 +132,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         className={'SRC-portalCard'}
       >
         <div className="SRC-cardThumbnail">
-          {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Utils.Icon type={icon} />}
+          {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Icon type={icon} />}
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>
@@ -146,12 +149,10 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
           <span className="SRC-font-size-base">
-            <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
+            <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
           </span>
         </div>
-        {genericCardSchema.secondaryLabels
-          && <Utils.CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>
-        }
+        {genericCardSchema.secondaryLabels && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
       </div>
     )
   }
