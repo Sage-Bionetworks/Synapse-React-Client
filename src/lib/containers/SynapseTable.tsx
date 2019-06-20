@@ -117,11 +117,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   public isAggregate(): boolean {
-    if (this.props.getLastQueryRequest && this.props.getLastQueryRequest().query) {
-      const sql = this.props.getLastQueryRequest().query.sql
-      return AGGREGATE_REGEX.test(sql)
-    }
-    return false
+    return AGGREGATE_REGEX.test(this.props.getLastQueryRequest!().query.sql)
   }
     /**
      * Display the view
@@ -286,9 +282,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     headers: SelectColumn[],
     columnModels: ColumnModel[]
   ): { synId: string, newSql: string } {
-    const tokens: string[][] = lexer.tokenize(originalSql)
-    // remove all tokens after group (by truncating array)
-    tokens.length = tokens.findIndex(el => el[0] === 'GROUP')
+    let tokens: string[][] = lexer.tokenize(originalSql)
+    // remove all tokens after (and including) group
+    tokens = tokens.slice(0, tokens.findIndex(el => el[0] === 'GROUP'))
     // replace all columns with *
     const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
     const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
