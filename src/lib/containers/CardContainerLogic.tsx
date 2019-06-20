@@ -6,10 +6,9 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { URLConfiguation } from '../utils/modules/urlConfiguration'
-import { XOR } from '../utils/util-types'
+import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/urlConfiguration'
 
-interface CommonProps {
+export interface CardContainerLogicProps {
   token?: string
   limit?: number
   secondaryLabelLimit?: number
@@ -22,20 +21,9 @@ interface CommonProps {
   isHeader?:boolean
   iconOptions?: IconOptions
   hasInternalLink?: boolean
-}
-
-interface CommonPropsWithSQL extends CommonProps {
   sql: string
+  searchParams?: KeyValue
 }
-
-interface CommonPropsWithURLConfiguration extends CommonProps {
-  // searchParams is search params parsed and sent through the URL
-  urlConfiguration: URLConfiguation
-}
-
-// XOR here describes that CardContainerLogicProps must be given either a SQL string or URLConfiguration
-// but not both
-export type CardContainerLogicProps = XOR<CommonPropsWithSQL, CommonPropsWithURLConfiguration>
 
 type State = {
   data: QueryResultBundle | undefined
@@ -149,6 +137,12 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
       isLoading: true,
     })
 
+    let sqlUsed = this.props.sql
+    if (this.props.searchParams) {
+      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql)
+    }
+    console.log('sql used = ', sqlUsed)
+
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
     const initQueryRequest = {
@@ -160,7 +154,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT
         ,
       query: {
-        sql: this.props.sql,
+        sql: sqlUsed,
         isConsistent: false,
         limit: 25,
         offset: 0,

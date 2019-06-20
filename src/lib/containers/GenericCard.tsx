@@ -98,6 +98,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
+        if (!genericCardSchema.secondaryLabels[i]) {
+          throw Error(`Keys in genericCardSchema.secondaryLabels must be sequential, missing key: ${i}`)
+        }
         const { key, alias = '' } =  genericCardSchema.secondaryLabels[i]
         const displayValue = alias ? alias : key
         const keyValue = [displayValue, data[schema[key]]]

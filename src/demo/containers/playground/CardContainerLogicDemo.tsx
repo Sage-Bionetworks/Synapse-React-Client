@@ -47,8 +47,7 @@ export default class CardContainerLogicDemo extends React.Component {
       description: 'Long Description',
       icon: 'Program',
       secondaryLabels: {
-        0: { key: 'PROGRAM' },
-        1: { key: 'Full Name' }
+        0: { key: 'Full Name' }
       }
     }
     // @ts-ignore
@@ -76,13 +75,15 @@ export default class CardContainerLogicDemo extends React.Component {
         <p> Generic Card Rendering </p>
         <CardContainerLogic
           type={SynapseConstants.GENERIC_CARD}
-          sql={'SELECT * FROM syn17024173 LIMIT 1'}
+          // tslint:disable-next-line
+          sql={"SELECT * FROM syn17024173"}
+          searchParams={{ Program: 'AMP-AD' }}
           genericCardSchema={genericCardSchemaHeader}
           backgroundColor={'#5960a5'}
           isHeader={true}
           iconOptions={iconOptions}
         />
-        <div className="container-fluid">
+        {/* <div className="container-fluid">
           <div className="row">
             <div className="col-md-10 col-md-offset-1">
               <CardContainerLogic
