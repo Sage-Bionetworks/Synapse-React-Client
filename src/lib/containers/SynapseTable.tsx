@@ -52,7 +52,7 @@ type Info = {
   name: string
 }
 // look for "group by", multi-line and case insensitive
-const AGGREGATE_REGEX = /group by/mi
+const GROUP_BY_REGEX = /group by/mi
 export type SynapseTableState = {
   sortedColumnSelection: SortItem []
   offset: number
@@ -117,8 +117,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return facetAliases[facetName] || facetName
   }
 
-  public isAggregate(): boolean {
-    return AGGREGATE_REGEX.test(this.props.getLastQueryRequest!().query.sql)
+  public isGroupByInSql(): boolean {
+    return GROUP_BY_REGEX.test(this.props.getLastQueryRequest!().query.sql)
   }
     /**
      * Display the view
@@ -211,7 +211,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         id={tooltipIdOne}
                     />
                     {
-                      !this.isAggregate() &&
+                      !this.isGroupByInSql() &&
                       <React.Fragment>
                         <span
                             tabIndex={0}
@@ -295,20 +295,35 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     if (this.props.data === undefined) {
       return { synId: '', newSql: '' }
     }
-
+    const whereIndex = tokens.findIndex(el => el[0] === 'WHERE')
+    if (whereIndex === -1) {
+      // does not contain a where clause
+      tokens.push(
+        ['WHERE', 'WHERE', '1'],
+      )
+    } else {
+      // alreay contains a where clause, add the first AND
+      tokens.push(
+        ['CONDITIONAL', 'AND', '1'],
+      )
+    }
     // look for headers in column models, if they match then add a where clause
     headers.map((header: any, index: number) => {
       const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
       if (matchingColumnModel) {
         const rowValue = selectedRow.values[index]
         tokens.push(
-          ['CONDITIONAL', 'AND', '1'],
           ['LITERAL', matchingColumnModel.name, '1'],
           ['OPERATOR', '=', '1'],
           ['STRING', rowValue, '1'],
+          ['CONDITIONAL', 'AND', '1'],
         )
       }
     })
+    // remove the last AND
+    tokens.pop()
+    tokens.push(['EOF', '', '1'])
+    // remove backtick from output sql (for table name): `syn1234` becomes syn1234
     const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
     tokens.push(['EOF', '', '1'])
     return { synId, newSql: formatSQLFromParser(tokens) }
@@ -467,7 +482,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           }
           return (<td className="SRC-hidden" key={`(${i},${j})`}/>)
         })
-      if (this.isAggregate()) {
+      if (this.isGroupByInSql()) {
         rowContent.push(
           <td className="SRC_noBorderTop" style={{ width: '62px' }} key={`(underlying-data-row-${i})`}>
               <button onClick={this.showGroupRowData(row)}>
@@ -533,8 +548,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         columnElements.push(<th className="SRC-hidden" key={column.name} />)
       }
     })
-    // PORTALS-527: if aggregate query, also include a column to dive into underlying results
-    if (this.isAggregate()) {
+    // PORTALS-527: if group by is in sql, also include a column to dive into underlying results
+    if (this.isGroupByInSql()) {
       columnElements.push(<th style={{ width: '62px' }} key={'underlying-row-data'} />)
     }
     return columnElements
