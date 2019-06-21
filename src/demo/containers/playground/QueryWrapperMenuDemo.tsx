@@ -45,7 +45,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             facetName: 'diagnosis',
-            sql: 'SELECT study, assay, count(distinct id) AS files' +
+            sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
               ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
             synapseId: 'syn17024112',
             title: 'title'
