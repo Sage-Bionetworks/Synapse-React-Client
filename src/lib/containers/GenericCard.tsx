@@ -19,7 +19,7 @@ export type GenericCardSchema = {
   description: string
   icon: string
   secondaryLabels?: KeyAndAliasMap
-  link: string
+  link?: string
 }
 
 export type IconOptions = {
@@ -85,16 +85,17 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       backgroundColor,
       iconOptions,
       isHeader = false,
-      hasInternalLink=  false
+      hasInternalLink=  false,
     } = this.props
+    const { link = '' } = genericCardSchema
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description]]
     const icon = data[schema[genericCardSchema.icon]]
     // wrap link in parens because undefined would throw an error
-    const link: string = data[schema[genericCardSchema.link]] || ''
-    const { linkDisplay, target } = this.getLink(link.toLowerCase(), hasInternalLink)
+    const linkValue: string = data[schema[link]] || ''
+    const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), hasInternalLink)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
@@ -150,7 +151,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
               }
             </h3>
           </div>
-            {subTitle && <div className="SRC-author"> {subTitle} </div>}
+          {subTitle && <div className="SRC-author"> {subTitle} </div>}
           <span className="SRC-font-size-base">
             <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
           </span>
