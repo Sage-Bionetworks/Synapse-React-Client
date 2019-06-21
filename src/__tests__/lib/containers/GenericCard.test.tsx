@@ -104,7 +104,7 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find('h3').text()).toEqual(data[0])
     expect(wrapper.find(Utils.ShowMore)).toHaveLength(0)
     expect(wrapper.find('.SRC-font-size-base').text()).toEqual(data[2])
-    expect(wrapper.find(Utils.CardFooter)).toHaveLength(0)
+    expect(wrapper.find(Utils.CardFooter)).toHaveLength(1)
   })
 
 })
