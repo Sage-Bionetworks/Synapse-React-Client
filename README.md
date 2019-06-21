@@ -436,6 +436,7 @@ This card can be used in two ways - as a standard row renderer or as a 'Header' 
 | genericCardSchema?: GenericCardSchema | Defines schema to be used by cards |
 | isHeader?: boolean | Styles the card to be used as a header -- e.g. doesnt have a 'Show More' for description, no secondaryLabels are shown |
 | backgroundColor?: string | Used as background color for the card in header mode|
+| searchParams?: {} | Feeds in additional sql WHERE clause conditions to the SQL provided given a set of key value pairs |
 | iconOptions?: IconOptions | In order to not bloat SRC with custom icons per portal, only a subset of icons will be used across portals. For special icons like when the card is used in 'header mode' it requires a dictionary of key-value pairs with the key being the column value and the value being a corresponding SVG icon |
 
 #### UserCard
