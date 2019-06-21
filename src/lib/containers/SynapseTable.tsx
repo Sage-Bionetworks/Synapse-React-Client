@@ -23,8 +23,9 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
-import { lexer, parser } from 'sql-parser'
+import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
+import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -324,9 +325,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     tokens.push(['EOF', '', '1'])
     // remove backtick from output sql (for table name): `syn1234` becomes syn1234
     const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
-    const newSql = parser.parse(tokens).toString()
-    const splitString = `\`${synId}\``
-    return { synId, newSql: newSql.split(splitString).join(synId) }
+    tokens.push(['EOF', '', '1'])
+    return { synId, newSql: formatSQLFromParser(tokens) }
   }
 
   /**

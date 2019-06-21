@@ -1,14 +1,15 @@
 import * as React from 'react'
-import * as Utils from './row_renderers/utils'
 import HeaderCard from './HeaderCard'
+import { CardFooter, ShowMore, Icon } from './row_renderers/utils'
 
-type KeyAndAlias = {
+export type KeyAndAlias = {
   key: string
   alias?: string
 }
 
-type KeyAndAliasMap = {
+export type KeyAndAliasMap = {
   [index: number]: KeyAndAlias
+  [index: string]: KeyAndAlias
 }
 
 export type GenericCardSchema = {
@@ -18,7 +19,7 @@ export type GenericCardSchema = {
   description: string
   icon: string
   secondaryLabels?: KeyAndAliasMap
-  link: string
+  link?: string
 }
 
 export type IconOptions = {
@@ -84,19 +85,23 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       backgroundColor,
       iconOptions,
       isHeader = false,
-      hasInternalLink=  false
+      hasInternalLink=  false,
     } = this.props
+    const { link = '' } = genericCardSchema
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description]]
     const icon = data[schema[genericCardSchema.icon]]
     // wrap link in parens because undefined would throw an error
-    const link: string = data[schema[genericCardSchema.link]] || ''
-    const { linkDisplay, target } = this.getLink(link.toLowerCase(), hasInternalLink)
+    const linkValue: string = data[schema[link]] || ''
+    const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), hasInternalLink)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
+        if (!genericCardSchema.secondaryLabels[i]) {
+          throw Error(`Keys in genericCardSchema.secondaryLabels must be sequential, missing key: ${i}`)
+        }
         const { key, alias = '' } =  genericCardSchema.secondaryLabels[i]
         const displayValue = alias ? alias : key
         const keyValue = [displayValue, data[schema[key]]]
@@ -120,6 +125,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           description={description}
           icon={icon}
           iconOptions={iconOptions}
+          values={values}
+          secondaryLabelLimit={secondaryLabelLimit}
         />
       )
     }
@@ -129,7 +136,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         className={'SRC-portalCard'}
       >
         <div className="SRC-cardThumbnail">
-          {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Utils.Icon type={icon} />}
+          {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Icon type={icon} />}
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>
@@ -144,14 +151,12 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
               }
             </h3>
           </div>
-            {subTitle && <div className="SRC-author"> {subTitle} </div>}
+          {subTitle && <div className="SRC-author"> {subTitle} </div>}
           <span className="SRC-font-size-base">
-            <Utils.ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
+            <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
           </span>
         </div>
-        {genericCardSchema.secondaryLabels
-          && <Utils.CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>
-        }
+        {genericCardSchema.secondaryLabels && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
       </div>
     )
   }

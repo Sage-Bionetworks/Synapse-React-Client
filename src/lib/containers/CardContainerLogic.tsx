@@ -6,9 +6,9 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
 
-export type CardContainerLogicProps = {
-  sql: string
+export interface CardContainerLogicProps {
   token?: string
   limit?: number
   secondaryLabelLimit?: number
@@ -21,6 +21,8 @@ export type CardContainerLogicProps = {
   isHeader?:boolean
   iconOptions?: IconOptions
   hasInternalLink?: boolean
+  sql: string
+  searchParams?: KeyValue
 }
 
 type State = {
@@ -74,7 +76,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    * @memberof QueryWrapper
    *
    */
-  public componentDidUpdate(prevProps: any) {
+  public componentDidUpdate(prevProps: CardContainerLogicProps) {
     /**
      *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
      *  sql query has changed of the component then perform an update.
@@ -135,6 +137,11 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
       isLoading: true,
     })
 
+    let sqlUsed = this.props.sql
+    if (this.props.searchParams) {
+      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql)
+    }
+
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
     const initQueryRequest = {
@@ -146,7 +153,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT
         ,
       query: {
-        sql: this.props.sql,
+        sql: sqlUsed,
         isConsistent: false,
         limit: 25,
         offset: 0,
@@ -159,10 +166,10 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         (data: QueryResultBundle) => {
           const queryRequestWithoutCount = cloneDeep(initQueryRequest)
           queryRequestWithoutCount.partMask = (
-                                                SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                                                SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                                                SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-                                            )
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+          )
 
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
           const newState = {

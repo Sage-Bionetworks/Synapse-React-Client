@@ -7390,7 +7390,6 @@ npm-user-validate@~1.0.0:
 npm@^6.9.0:
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/npm/-/npm-6.9.0.tgz#5296720486814a64a7fb082de00c4b5cfd11211f"
-  integrity sha512-91V+zB5hDxO+Jyp2sUKS7juHlIM95dGQxTeQtmZI1nAI/7kjWXFipPrtwwKjhyKmV4GsS2LzJhrxRjGWsU9z/w==
   dependencies:
     JSONStream "^1.3.5"
     abbrev "~1.1.1"
@@ -9861,7 +9860,6 @@ sprintf-js@~1.0.2:
 sql-parser@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/sql-parser/-/sql-parser-0.5.0.tgz#a79b6e66452f3d615b211989f006f34033bc436a"
-  integrity sha1-p5tuZkUvPWFbIRmJ8AbzQDO8Q2o=
 
 srcset@^1.0.0:
   version "1.0.0"
