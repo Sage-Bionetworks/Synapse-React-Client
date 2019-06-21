@@ -166,6 +166,38 @@ describe('basic functionality', () => {
       expect(sql.newSql).toEqual('SELECT *\n  FROM syn987654321\n  WHERE ((`bar` = \'bar1\') AND (`baz` = \'baz1\'))')
     })
   })
+  describe('PORTALS-527: get count function column indexes', () => {
+    it('not group by', async () => {
+      const { instance } = createShallowComponent(props)
+      const originalSql: string =
+        'SELECT bar, baz' +
+        'FROM syn987654321 ' +
+        'WHERE species=\'Human\' ' +
+        'AND assay=\'rnaSeq\''
+      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(originalSql)
+      expect(columnIndexes).toHaveLength(0)
+    })
+    it('group by with count function', async () => {
+      const { instance } = createShallowComponent(props)
+      const originalSql: string =
+        'SELECT bar, baz, count(distinct id) as files, concat(biz)' +
+        'FROM syn987654321 ' +
+        'WHERE species=\'Human\' ' +
+        'AND assay=\'rnaSeq\' group by 1, 2'
+      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(originalSql)
+      expect(columnIndexes).toEqual([2])
+    })
+    it('group by without count function', async () => {
+      const { instance } = createShallowComponent(props)
+      const originalSql: string =
+        'SELECT bar, baz, concat(distinct id) as files, concat(biz)' +
+        'FROM syn987654321 ' +
+        'WHERE species=\'Human\' ' +
+        'AND assay=\'rnaSeq\' group by 1, 2'
+      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(originalSql)
+      expect(columnIndexes).toHaveLength(0)
+    })
+  })
 
   describe('create table headers works', () => {
     it('renders correctly', () => {

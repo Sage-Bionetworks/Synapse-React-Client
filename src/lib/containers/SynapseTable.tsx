@@ -117,8 +117,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return facetAliases[facetName] || facetName
   }
 
-  public isGroupByInSql(): boolean {
-    return GROUP_BY_REGEX.test(this.props.getLastQueryRequest!().query.sql)
+  public isGroupByInSql(sql?: string): boolean {
+    const testSql = sql ? sql : this.props.getLastQueryRequest!().query.sql
+    return GROUP_BY_REGEX.test(testSql)
   }
     /**
      * Display the view
@@ -256,7 +257,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     )
   }
 
-  private showGroupRowData = (selectedRow: Row) => (_event: React.MouseEvent<HTMLButtonElement>) => {
+  private showGroupRowData = (selectedRow: Row) => (_event: React.MouseEvent<HTMLAnchorElement>) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
     // unpack all the data
@@ -275,6 +276,32 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const encodedQuery = btoa(queryJSON)
     // open this in a new window on synapse.org
     window.open(`https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`, '_blank')
+  }
+
+  /**
+   * Return the select column indexes for columns that use the aggregate count function.
+   * If sql does not have a GROUP BY, this returns an empty array.
+   * @param originalSql
+   */
+  public getCountFunctionColumnIndexes(originalSql: string): number[] {
+    const indexes: number[] = []
+    if (this.isGroupByInSql(originalSql)) {
+      const tokens: string[][] = lexer.tokenize(originalSql)
+      const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
+      const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
+      let columnIndex = 0
+      for (let index = selectIndex + 1; index < fromIndex - selectIndex - 1; index += 1) {
+        const token = tokens[index]
+        if (token[0] === 'FUNCTION' && token[1].toLowerCase() === 'count') {
+          // found a count column!
+          indexes.push(columnIndex)
+        } else if (token[0] === 'SEPARATOR') {
+          // next column
+          columnIndex += 1
+        }
+      }
+    }
+    return indexes
   }
 
   public getSqlUnderlyingDataForRow(
@@ -322,7 +349,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     })
     // remove the last AND
     tokens.pop()
-    tokens.push(['EOF', '', '1'])
     // remove backtick from output sql (for table name): `syn1234` becomes syn1234
     const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
     tokens.push(['EOF', '', '1'])
@@ -461,6 +487,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const rowsFormatted: JSX.Element[] = []
     const { isColumnSelected } = this.state
     const isColumnSelectedLen = isColumnSelected.length
+    // find column indices that are COUNT type
+    const countColumnIndexes = this.getCountFunctionColumnIndexes(this.props.getLastQueryRequest!().query.sql)
+
     rows.forEach((row: any, i: any) => {
       const rowContent = row.values.map(
         (columnValue: string, j: number) => {
@@ -473,24 +502,25 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           // past the initial load -- when a user has started clicking items, then isColumnSelected is
           // not null and we verify that this column is part of the selection.
           const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
+          const isCountColumn = countColumnIndexes.includes(j)
           if (isColumnActiveInitLoad || isColumnActivePastInitLoad) {
             return (
               <td className="SRC_noBorderTop" key={`(${i}${columnValue}${j})`}>
-                  <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                  {
+                    isCountColumn &&
+                    <a href="" onClick={this.showGroupRowData(row)}>
+                      <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                    </a>
+                  }
+                  {
+                    !isCountColumn &&
+                    <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                  }
               </td>
             )
           }
           return (<td className="SRC-hidden" key={`(${i},${j})`}/>)
         })
-      if (this.isGroupByInSql()) {
-        rowContent.push(
-          <td className="SRC_noBorderTop" style={{ width: '62px' }} key={`(underlying-data-row-${i})`}>
-              <button onClick={this.showGroupRowData(row)}>
-                Show
-              </button>
-          </td>
-        )
-      }
       const rowFormatted = (
         <tr key={row.rowId}>{rowContent}</tr>
       )
@@ -548,10 +578,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         columnElements.push(<th className="SRC-hidden" key={column.name} />)
       }
     })
-    // PORTALS-527: if group by is in sql, also include a column to dive into underlying results
-    if (this.isGroupByInSql()) {
-      columnElements.push(<th style={{ width: '62px' }} key={'underlying-row-data'} />)
-    }
     return columnElements
   }
 
