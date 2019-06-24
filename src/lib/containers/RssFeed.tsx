@@ -34,7 +34,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
           this.state.rssFeed.items &&
           this.state.rssFeed.items.map((item: any) => {
             return (
-              <li key={item.guid} className="srcRssFeedItem">
+              <li key={item.id} className="srcRssFeedItem">
                 <a className="srcRssFeedItemTitle" href={item.links[0].url}>
                   {item.title}
                 </a>
