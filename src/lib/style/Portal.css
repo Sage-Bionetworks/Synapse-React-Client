@@ -968,12 +968,13 @@ div.SRC-userImg {
   list-style: none; }
 
 .srcRssFeedItem {
-  color: #D53F77; }
+  border-bottom: 1px solid #dddddf;
+  padding-top: 20px; }
 
 .srcRssFeedItemTitle {
-  color: #D53F77;
   padding-bottom: 5px;
-  font-weight: bold; }
+  font-weight: bold;
+  font-size: 20px; }
 
 .srcRssFeedItemContent {
-  font-size: 12px; }
+  padding-top: 10px; }

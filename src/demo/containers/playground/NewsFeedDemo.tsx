@@ -5,7 +5,7 @@ export const NewsFeedDemo:React.SFC = () => {
   return (
     <div className="container">
       <RssFeed
-        url={'https://99u.adobe.com/feed'}
+        url={'https://www.houstonzoo.org/feed'}
       />
     </div>
   )

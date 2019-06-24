@@ -1,8 +1,8 @@
 import * as React from 'react'
-import rssParser from 'rss-parser'
+import reactNativeRssParser from 'react-native-rss-parser'
 
 type RssState = {
-  rssFeed: rssParser.Output,
+  rssFeed: any,
   isLoadingError: boolean
 }
 
@@ -11,7 +11,6 @@ export type RssFeedProps = {
 }
 
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
-
   constructor(props: RssFeedProps) {
     super(props)
     this.state = { rssFeed: {}, isLoadingError: false }
@@ -21,9 +20,10 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
     const {
       url
     } = this.props
-    const parser = new rssParser()
-    parser.parseURL(url)
-      .then(feed => this.setState({ rssFeed: feed }))
+    fetch(url)
+      .then(response => response.text())
+      .then(responseData => reactNativeRssParser.parse(responseData))
+      .then(rss => this.setState({ rssFeed: rss }))
       .catch(err => this.setState({ isLoadingError: true }))
   }
 
@@ -32,14 +32,13 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
       <ul className="srcRssFeed">
         {
           this.state.rssFeed.items &&
-          this.state.rssFeed.items.map((item: rssParser.Item) => {
+          this.state.rssFeed.items.map((item: any) => {
             return (
-              // TODO : style!
-              <li key={item.guid} className="srcRssFeedItem">
-                <a className="srcRssFeedItemTitle" href={item.link}>
+              <li key={item.id} className="srcRssFeedItem">
+                <a className="srcRssFeedItemTitle" href={item.links[0].url}>
                   {item.title}
                 </a>
-                <p className="srcRssFeedItemContent">{item.content}</p>
+                <div className="srcRssFeedItemContent" dangerouslySetInnerHTML={{ __html: item.content }} />
               </li>
             )
           })
