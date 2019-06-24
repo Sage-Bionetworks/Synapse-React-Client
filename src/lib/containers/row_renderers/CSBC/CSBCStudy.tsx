@@ -58,7 +58,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
                 <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
                   {
                     id &&
-                    (<a className="SRC-primary-text-color" target="_blank" href={id ? `https://www.synapse.org/#!Synapse:${id}` : undefined}>
+                    (<a className="SRC-primary-text-color" target="_self" href={id ? `https://www.synapse.org/#!Synapse:${id}` : undefined}>
                       {name}
                     </a>)
                   }

@@ -275,7 +275,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // encode this copy of the query (json)
     const encodedQuery = btoa(queryJSON)
     // open this in a new window on synapse.org
-    window.open(`https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`, '_blank')
+    window.open(`https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`, '_self')
   }
 
   /**

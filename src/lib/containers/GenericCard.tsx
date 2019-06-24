@@ -63,15 +63,15 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
 
   public getLink (link: string, hasInternalLink = false) {
     let linkDisplay = link
-    let target = '_blank'
+    let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
       // its a synId
       linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
-    } else if (hasInternalLink) {
-      // only case when it should point inward
-      target = '_self'
     } else if (link.match(DOI_REGEX)) {
+      target = '_blank'
       linkDisplay = `https://dx.doi.org/${link}`
+    } else if (!hasInternalLink) {
+      target = '_blank'
     }
     return { linkDisplay, target }
   }
