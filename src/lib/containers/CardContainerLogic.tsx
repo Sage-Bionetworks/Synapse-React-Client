@@ -8,22 +8,26 @@ import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
 
-export interface CardContainerLogicProps {
+export type CommonCardProps = {
+  genericCardSchema?: GenericCardSchema
+  hasInternalLink?: boolean
+  iconOptions?: IconOptions
+  secondaryLabelLimit?: number
+}
+
+export type CardContainerLogicProps = {
   token?: string
   limit?: number
-  secondaryLabelLimit?: number
   unitDescription?: string
+  searchParams?: KeyValue
   type: string
   filter?: string
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema
   backgroundColor?:string
   isHeader?:boolean
-  iconOptions?: IconOptions
-  hasInternalLink?: boolean
   sql: string
-  searchParams?: KeyValue
-}
+} & CommonCardProps
 
 type State = {
   data: QueryResultBundle | undefined
@@ -193,22 +197,22 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
     return (
       <CardContainer
         hasInternalLink={this.props.hasInternalLink}
-        data={this.state.data}
         limit={this.props.limit}
         type={this.props.type}
-        totalResultsNoFacet={this.state.totalResultsNoFacet}
-        unitDescription={this.props.unitDescription}
-        getLastQueryRequest={this.getLastQueryRequest}
-        getNextPageOfData={this.getNextPageOfData}
+        data={this.state.data}
         filter={this.props.filter}
-        genericCardSchema={this.props.genericCardSchema}
-        hasMoreData={this.state.hasMoreData}
         loadingScreen={this.props.loadingScreen}
-        isLoading={this.state.isLoading}
         secondaryLabelLimit={this.props.secondaryLabelLimit}
         backgroundColor={this.props.backgroundColor}
         isHeader={this.props.isHeader}
         iconOptions={this.props.iconOptions}
+        unitDescription={this.props.unitDescription}
+        genericCardSchema={this.props.genericCardSchema}
+        totalResultsNoFacet={this.state.totalResultsNoFacet}
+        getLastQueryRequest={this.getLastQueryRequest}
+        getNextPageOfData={this.getNextPageOfData}
+        hasMoreData={this.state.hasMoreData}
+        isLoading={this.state.isLoading}
       />
     )
   }

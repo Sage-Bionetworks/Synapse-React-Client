@@ -2,14 +2,14 @@ import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, ShowMore, Icon } from './row_renderers/utils'
 
-export type KeyAndAlias = {
+export type KeyToAlias = {
   key: string
   alias?: string
 }
 
-export type KeyAndAliasMap = {
-  [index: number]: KeyAndAlias
-  [index: string]: KeyAndAlias
+export type KeyToAliasMap = {
+  [index: number]: KeyToAlias
+  [index: string]: KeyToAlias
 }
 
 export type GenericCardSchema = {
@@ -18,7 +18,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description: string
   icon: string
-  secondaryLabels?: KeyAndAliasMap
+  secondaryLabels?: KeyToAliasMap
   link?: string
 }
 
@@ -92,7 +92,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const title = data[schema[genericCardSchema.title]]
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description]]
-    const icon = data[schema[genericCardSchema.icon]]
+    const iconValue = data[schema[genericCardSchema.icon]]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
     const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), hasInternalLink)
@@ -123,7 +123,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           subTitle={subTitle}
           backgroundColor={backgroundColor}
           description={description}
-          icon={icon}
+          iconValue={iconValue}
           iconOptions={iconOptions}
           values={values}
           secondaryLabelLimit={secondaryLabelLimit}
@@ -136,7 +136,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         className={'SRC-portalCard'}
       >
         <div className="SRC-cardThumbnail">
-          {iconOptions ? <img src={iconOptions[icon]} className="iconImg"/> : <Icon type={icon} />}
+          <Icon iconOptions={iconOptions} value={iconValue} type={type} />
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>

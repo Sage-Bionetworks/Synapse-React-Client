@@ -133,7 +133,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       type,
       isLoading,
       loadingScreen,
-      secondaryLabelLimit,
+      secondaryLabelLimit = 3,
       genericCardSchema,
       backgroundColor,
       iconOptions,

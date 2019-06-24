@@ -9,6 +9,8 @@ import StackedBarChart from './StackedBarChart'
 import SynapseTable from './SynapseTable'
 import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
+import { CommonCardProps } from './CardContainerLogic'
+import { KeyValue } from '../utils/modules/sqlFunctions'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -24,7 +26,6 @@ export type MenuConfig = {
   facetDisplayValue?: string
   title?: string
   visibleColumnCount?: number
-  unitDescription?: string
   synapseId: string
   facetAliases?: {}
 }
@@ -34,9 +35,11 @@ export type QueryWrapperMenuProps = {
   isConsistent?: boolean
   token?: string
   type?: string
-  secondaryLabelLimit?: number
   rgbIndex: number
   loadingScreen?: JSX.Element
+  unitDescription?: string
+  cardConfiguration: CommonCardProps
+  searchParams?: KeyValue
 }
 
 type Info = {
@@ -130,12 +133,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return (
       <React.Fragment>
         <h3 id="exploreCount" className="SRC-boldText">
-            {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */}
-            {name} ({queryCount && queryCount.toLocaleString()})
-          </h3>
-          <div className="break">
-            <hr/>
-          </div>
+          {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */}
+          {name} ({queryCount && queryCount.toLocaleString()})
+        </h3>
+        <div className="break">
+          <hr/>
+        </div>
         <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
           {menuDropdown}
         </div>
@@ -154,14 +157,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       loadingScreen,
       isConsistent = false,
       type = '',
-      secondaryLabelLimit =  3
+      unitDescription = '',
+      cardConfiguration,
     } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = (this.state.menuIndex === index)
       const {
         facetName,
         facetAliases,
-        unitDescription = '',
         sql,
         synapseId,
         visibleColumnCount = Infinity,
@@ -171,6 +174,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       if (!isSelected) {
         className = 'SRC-hidden'
       }
+      const showBarChart = type !== ''
       const showCards = type !== ''
       const showTable = title !== ''
       const loadNow = isSelected
@@ -197,22 +201,27 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            <StackedBarChart
-              synapseId={synapseId}
-              unitDescription={unitDescription}
-              loadingScreen={loadingScreen}
-            />
+            {showBarChart &&
+              <StackedBarChart
+                unitDescription={unitDescription}
+                loadingScreen={loadingScreen}
+              />
+            }
             <Facets />
-            {showTable ?
+            {showTable &&
               <SynapseTable
                 title={title}
                 synapseId={synapseId}
                 visibleColumnCount={visibleColumnCount}
               />
-              :
-              <span/>
             }
-            {showCards ? <CardContainer secondaryLabelLimit={secondaryLabelLimit}  type={type}/> : <span/>}
+            {showCards &&
+              <CardContainer
+                {...cardConfiguration}
+                unitDescription={unitDescription}
+                type={type}
+              />
+            }
           </QueryWrapper>
         </span>
       )
