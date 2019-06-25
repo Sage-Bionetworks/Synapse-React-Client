@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { CardFooter } from './row_renderers/utils'
+import { CardFooter, Icon } from './row_renderers/utils'
 
 export type IconOptions = {
   [index: string]: string
@@ -11,7 +11,7 @@ export type HeaderCardProps = {
   title: string
   subTitle: string
   description: string
-  icon: string
+  iconValue: string
   secondaryLabelLimit?: number
   values?: string [][]
 }
@@ -22,7 +22,7 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
   subTitle,
   description,
   iconOptions,
-  icon,
+  iconValue,
   backgroundColor,
   values,
   secondaryLabelLimit
@@ -38,7 +38,7 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-1 iconContainer">
-            <img src={iconOptions![icon]} className="iconImg"/>
+            <Icon value={iconValue} iconOptions={iconOptions} type={type} />
           </div>
           <div className="SRC-cardContent col-md-10">
             <div className="SRC-type">{type}</div>
