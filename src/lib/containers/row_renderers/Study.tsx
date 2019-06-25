@@ -60,7 +60,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
                   {' '}
                   <h3>
                       {' '}
-                      <a target="_blank" href={link}>
+                      <a target="_self" href={link}>
                           {projectName}
                       </a>{' '}
                   </h3>{' '}

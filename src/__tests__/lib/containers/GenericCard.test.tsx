@@ -119,7 +119,7 @@ describe('it grabs the correct URL' , () => {
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
     const { linkDisplay, target } = getLink(synId)
     expect(linkDisplay).toEqual(synLink)
-    expect(target).toEqual(BLANK)
+    expect(target).toEqual(SELF)
   })
 
   it('creates a DOI link ', () => {
