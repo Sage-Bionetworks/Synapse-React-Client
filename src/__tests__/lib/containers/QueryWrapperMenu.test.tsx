@@ -27,9 +27,9 @@ describe('it renders with basic functionality', () => {
   const facetName : string = 'name'
   const synapseId : string = 'syn5604373'
   const token: string = ''
-  const props = {
+  const props: QueryWrapperMenuProps = {
     token,
-    menuConfig: [{ sql, facetName, synapseId }],
+    menuConfig: [{ sql, facetName }],
     rgbIndex: 3
   }
 
@@ -39,10 +39,14 @@ describe('it renders with basic functionality', () => {
   })
 
   it('renders a bar chart, table, and facets', async () => {
-    const propsWithTitle = {
+    const propsWithTitle: QueryWrapperMenuProps = {
       token,
       rgbIndex: 3,
-      menuConfig: [{ sql, facetName, synapseId, title: 'title' }]
+      tableConfiguration: {
+        synapseId,
+        title: 'title'
+      },
+      menuConfig: [{ sql, facetName }]
     }
     const { wrapper } = await createShallowComponent(propsWithTitle)
     expect(wrapper).toBeDefined()
@@ -53,9 +57,11 @@ describe('it renders with basic functionality', () => {
   })
 
   it('renders a bar chart, cards, and facets', async () => {
-    const propsWithType = {
+    const propsWithType: QueryWrapperMenuProps = {
       ...props,
-      type: SynapseConstants.STUDY
+      cardConfiguration: {
+        type: SynapseConstants.STUDY
+      }
     }
     const { wrapper } = await createShallowComponent(propsWithType)
 
