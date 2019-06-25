@@ -6,11 +6,10 @@ import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
-import SynapseTable from './SynapseTable'
+import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { CommonCardProps } from './CardContainerLogic'
-import { KeyValue } from '../utils/modules/sqlFunctions'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -24,9 +23,6 @@ export type MenuConfig = {
   sql: string
   facetName: string
   facetDisplayValue?: string
-  title?: string
-  visibleColumnCount?: number
-  synapseId: string
   facetAliases?: {}
 }
 
@@ -38,8 +34,8 @@ export type QueryWrapperMenuProps = {
   rgbIndex: number
   loadingScreen?: JSX.Element
   unitDescription?: string
-  cardConfiguration: CommonCardProps
-  searchParams?: KeyValue
+  tableConfiguration?: SynapseTableProps
+  cardConfiguration?: CommonCardProps
 }
 
 type Info = {
@@ -156,9 +152,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       rgbIndex,
       loadingScreen,
       isConsistent = false,
-      type = '',
       unitDescription = '',
       cardConfiguration,
+      tableConfiguration
     } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = (this.state.menuIndex === index)
@@ -166,17 +162,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         facetName,
         facetAliases,
         sql,
-        synapseId,
-        visibleColumnCount = Infinity,
-        title = ''
       } = config
       let className = ''
       if (!isSelected) {
         className = 'SRC-hidden'
       }
-      const showBarChart = type !== ''
-      const showCards = type !== ''
-      const showTable = title !== ''
       const loadNow = isSelected
       return (
         <span key={facetName} className={className}>
@@ -201,27 +191,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            {showBarChart &&
-              <StackedBarChart
-                unitDescription={unitDescription}
-                loadingScreen={loadingScreen}
-              />
-            }
+            <StackedBarChart loadingScreen={loadingScreen}/>
             <Facets />
-            {showTable &&
-              <SynapseTable
-                title={title}
-                synapseId={synapseId}
-                visibleColumnCount={visibleColumnCount}
-              />
-            }
-            {showCards &&
-              <CardContainer
-                {...cardConfiguration}
-                unitDescription={unitDescription}
-                type={type}
-              />
-            }
+            {/*
+                Using a conditional render fails here because QueryWrapper can't clone an undefined element
+                which will happen if either configuration is undefined.
+            */}
+            {tableConfiguration ? <SynapseTable {...tableConfiguration}/> : <React.Fragment/>}
+            {cardConfiguration ? <CardContainer {...cardConfiguration}/> : <React.Fragment/>}
           </QueryWrapper>
         </span>
       )

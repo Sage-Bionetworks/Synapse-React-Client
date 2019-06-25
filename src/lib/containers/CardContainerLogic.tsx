@@ -9,6 +9,7 @@ import { GenericCardSchema, IconOptions } from './GenericCard'
 import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
 
 export type CommonCardProps = {
+  type: string
   genericCardSchema?: GenericCardSchema
   hasInternalLink?: boolean
   iconOptions?: IconOptions
@@ -20,7 +21,6 @@ export type CardContainerLogicProps = {
   limit?: number
   unitDescription?: string
   searchParams?: KeyValue
-  type: string
   filter?: string
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema

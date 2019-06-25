@@ -39,7 +39,6 @@ export type StackedBarChartState = {
 
 export type StackedBarChartProps = {
   loadingScreen: any
-  unitDescription: string
 }
 
 type Info = {
