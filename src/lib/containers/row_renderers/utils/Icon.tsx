@@ -6,7 +6,10 @@ import {
   STUDY_ACTIVE,
   STUDY_COMPLETE,
   TOOL,
-  STUDY
+  STUDY,
+  EXPERIMENTAL,
+  COMPUTATIONAL,
+  CLINICAL
 } from '../../../utils/SynapseConstants'
 
 import PublicationSvg from '../../../assets/icons/Publication.svg'
@@ -15,6 +18,10 @@ import studyActiveSvg from '../../../assets/icons/study-active.svg'
 import studySvg from '../../../assets/icons/study.svg'
 import studyCompleteSvg from '../../../assets/icons/study-complete.svg'
 import DNA_TwoSvg from '../../../assets/icons/DNA_Two.svg'
+import ToolClinicalSvg from '../../../assets/icons/ToolClinical.svg'
+import ToolComputationalSvg from '../../../assets/icons/ToolComputational.svg'
+import ToolExperimentalSvg from '../../../assets/icons/ToolExperimental.svg'
+
 import { KeyValue } from '../../../../lib/utils/modules/sqlFunctions'
 
 type IconProps = {
@@ -31,6 +38,9 @@ const defaultIcons = {
   [STUDY_COMPLETE]: studyCompleteSvg,
   [STUDY]: studySvg,
   [TOOL]: DNA_TwoSvg,
+  [EXPERIMENTAL]: ToolExperimentalSvg,
+  [COMPUTATIONAL]: ToolComputationalSvg,
+  [CLINICAL]: ToolClinicalSvg,
 }
 const Icon: React.FunctionComponent<IconProps> = ({ type, value = '', iconOptions }) => {
   const iconSet = { ...defaultIcons, ...iconOptions }
