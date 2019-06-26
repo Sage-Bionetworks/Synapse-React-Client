@@ -349,7 +349,8 @@ span.SRC-facets svg.SRC-facets-icon {
 
 .SRC-chart-rect-style {
   margin: 0px;
-  stroke-width: 0px;
+  stroke-width: 1px;
+  stroke: rgba(0, 0, 0, 0.1);
   box-shadow: 20px 20px;
 }
 

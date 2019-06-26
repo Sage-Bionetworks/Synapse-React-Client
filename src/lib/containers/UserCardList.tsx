@@ -83,6 +83,13 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     )
   }
 
+  /**
+   * Given data this will find rows where there is no userId columnType and create faux user profiles
+   * using firstName, lastName, and instituion (company in UserProfile object).
+   * @param {QueryResultBundle} data
+   * @returns list of UserProfiles with firstName, lastName, company, userName (first letter of firstName) filled out.
+   * @memberof UserCardList
+   */
   manuallyExtractData(data: QueryResultBundle) {
     const firstNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'firstName')
     const lastNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'lastName')
@@ -113,8 +120,8 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
         {
           // we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
           list.map(
-            (ownerId, index) => {
-              const userProfile = this.state.userProfileMap[ownerId]
+            (ownerId) => {
+              const userProfile = userProfileMap[ownerId]
               if (userProfile) {
                 return (
                   <div key={JSON.stringify(userProfile)} className="SRC-grid-item SRC-narrow-grid-item">
@@ -122,14 +129,14 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
                   </div>
                 )
               }
-              if (Object.keys(userProfileMap).length !== 0 && !fauxUserProfilesList) {
-                throw Error(`No mapping for list: ${list}, index: ${index}`)
-              }
-              const fauxUserProfile = fauxUserProfilesList![fauxUserProfileIndex]
-              fauxUserProfileIndex += 1
+              const fauxUserProfile = fauxUserProfilesList && fauxUserProfilesList[fauxUserProfileIndex]
               if (!fauxUserProfile) {
+                // This could happen in one of two cases:
+                // - The props just updated with a new userlist where the data is being gathered for this particular user
+                //   OR there is no mapping for this user
                 return false
               }
+              fauxUserProfileIndex += 1
               return (
                 <div key={JSON.stringify(fauxUserProfile)} className="SRC-grid-item SRC-narrow-grid-item">
                   <UserCard
