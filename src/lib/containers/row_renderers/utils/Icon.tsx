@@ -15,29 +15,30 @@ import studyActiveSvg from '../../../assets/icons/study-active.svg'
 import studySvg from '../../../assets/icons/study.svg'
 import studyCompleteSvg from '../../../assets/icons/study-complete.svg'
 import DNA_TwoSvg from '../../../assets/icons/DNA_Two.svg'
+import { KeyValue } from '../../../../lib/utils/modules/sqlFunctions'
 
 type IconProps = {
   type: string
+  iconOptions?: KeyValue
+  value?: string
 }
 
-const Icon: React.SFC<IconProps> = ({ type }) => {
-  switch (type) {
-    case PUBLICATION:
-      return <img className="iconImg" alt="" src={PublicationSvg} />
-    case DATASET:
-      return <img className="iconImg SRC-datasetIcon" alt="" src={Data2Svg} />
-    case FUNDER:
-      return <img className="iconImg" alt="" src={Data2Svg} />
-    case STUDY_ACTIVE:
-      return <img className="iconImg" alt="" src={studyActiveSvg} />
-    case STUDY_COMPLETE:
-      return <img className="iconImg" alt="" src={studyCompleteSvg} />
-    case STUDY:
-      return <img className="iconImg" alt="" src={studySvg} />
-    case TOOL:
-      return <img className="iconImg" alt="" src={DNA_TwoSvg} />
-    default:
-      return null
-  }
+const defaultIcons = {
+  [PUBLICATION]: PublicationSvg,
+  [DATASET]: Data2Svg,
+  [FUNDER]: Data2Svg,
+  [STUDY_ACTIVE]: studyActiveSvg,
+  [STUDY_COMPLETE]: studyCompleteSvg,
+  [STUDY]: studySvg,
+  [TOOL]: DNA_TwoSvg,
+}
+const Icon: React.FunctionComponent<IconProps> = ({ type, value = '', iconOptions }) => {
+  const iconSet = { ...defaultIcons, ...iconOptions }
+  // see if the value has a corresponding icon, e.g. 'Active' in a studies table
+  // or if the type of card has a corresponding icon, e.g. 'Publication'
+  const icon = iconSet[value] || iconSet[type]
+  // TODO: get rid of dataset icon class, none of the icons should be special cased
+  const datasetIconClass = (value === DATASET) || (type === DATASET) ? 'SRC-datasetIcon' : ''
+  return (<img className={`iconImg  ${datasetIconClass}`} src={icon} />)
 }
 export default Icon

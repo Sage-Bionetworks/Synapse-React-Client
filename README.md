@@ -356,26 +356,26 @@ down once you can specify the query that will pull down the data for the child c
 ```jsx
 <QueryWrapperMenu
   token={inDevEnv ? token! : this.state.token!}
+  tableConfiguration={
+    {
+      title: "my title here",
+      synapseId: "syn16858331",
+    }
+  }
+  unitDescription={"files"}
   menuConfig={
     [ 
       { sql: "SELECT * FROM syn16858331",
-        title: "my title here",
         facetDisplayValue:"Assay",
-        synapseId: "syn16858331",
         facetName: "assay",
-        unitDescription: "data types"
       },
       { sql: "SELECT * FROM syn16858331",
-        title: "Facet is dataType",
-        synapseId: "syn16858331",
         facetName: "Data Type",
-        unitDescription: "files",
         visibleColumnCount: 3
       }
     ]
   }
   rgbIndex={4}
-  type={SynapseConstants.PROJECT}
 />
 
 ```
@@ -385,9 +385,11 @@ down once you can specify the query that will pull down the data for the child c
 | ------------- | ------------- |
 | token | Session token to make authenticated calls to Synapse |
 | rgbIndex | The index into the color pallette starting the color gradient for the view |
+| unitDescription | The units of data for the query  |
+| tableConfiguration, has keys: synapseId, title, visibleColumnCount | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/>  **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table  |
+| cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, hasInternalLink? | The configuration for cards to be show given the query |
 | MenuConfig [] | Specifications for each view under the facet |
-| MenuConfig has keys: sql,  title,  synapseId,  facet, unitDescription, visibleColumnCount, facetDisplayValue, facetAliases  | **sql**: The query driving the specific's facets view <br/>**title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/> **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> facet: the facet being selected <br/> **unitDescription**: This gives the units under the barchart <br/> **visibleColumnCount**: The number of columns to be shown for the table (NOTE: title must be specified with a non-empty string for the table to show) <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
-| type | The type of card to show for this table view. NOTE: If not specified then no cards will render. |
+| MenuConfig has keys: sql, facetDisplayValue, facetAliases, facetName  | **sql**: The query driving the specific's facets view <br/> **facetName**: the facet being selected <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
 
 #### Facets
 

@@ -6,9 +6,10 @@ import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
-import SynapseTable from './SynapseTable'
+import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
+import { CommonCardProps } from './CardContainerLogic'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -22,10 +23,6 @@ export type MenuConfig = {
   sql: string
   facetName: string
   facetDisplayValue?: string
-  title?: string
-  visibleColumnCount?: number
-  unitDescription?: string
-  synapseId: string
   facetAliases?: {}
 }
 
@@ -34,9 +31,11 @@ export type QueryWrapperMenuProps = {
   isConsistent?: boolean
   token?: string
   type?: string
-  secondaryLabelLimit?: number
   rgbIndex: number
   loadingScreen?: JSX.Element
+  unitDescription?: string
+  tableConfiguration?: SynapseTableProps
+  cardConfiguration?: CommonCardProps
 }
 
 type Info = {
@@ -130,12 +129,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return (
       <React.Fragment>
         <h3 id="exploreCount" className="SRC-boldText">
-            {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */}
-            {name} ({queryCount && queryCount.toLocaleString()})
-          </h3>
-          <div className="break">
-            <hr/>
-          </div>
+          {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */}
+          {name} ({queryCount && queryCount.toLocaleString()})
+        </h3>
+        <div className="break">
+          <hr/>
+        </div>
         <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
           {menuDropdown}
         </div>
@@ -153,26 +152,21 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       rgbIndex = 0,
       loadingScreen,
       isConsistent = false,
-      type = '',
-      secondaryLabelLimit =  3
+      unitDescription = '',
+      cardConfiguration,
+      tableConfiguration
     } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = (this.state.menuIndex === index)
       const {
         facetName,
         facetAliases,
-        unitDescription = '',
         sql,
-        synapseId,
-        visibleColumnCount = Infinity,
-        title = ''
       } = config
       let className = ''
       if (!isSelected) {
         className = 'SRC-hidden'
       }
-      const showCards = type !== ''
-      const showTable = title !== ''
       const loadNow = isSelected
       return (
         <span key={facetName} className={className}>
@@ -197,22 +191,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            <StackedBarChart
-              synapseId={synapseId}
-              unitDescription={unitDescription}
-              loadingScreen={loadingScreen}
-            />
+            <StackedBarChart loadingScreen={loadingScreen}/>
             <Facets />
-            {showTable ?
-              <SynapseTable
-                title={title}
-                synapseId={synapseId}
-                visibleColumnCount={visibleColumnCount}
-              />
-              :
-              <span/>
-            }
-            {showCards ? <CardContainer secondaryLabelLimit={secondaryLabelLimit}  type={type}/> : <span/>}
+            {/*
+                Using a conditional render fails here because QueryWrapper can't clone an undefined element
+                which will happen if either configuration is undefined.
+            */}
+            {tableConfiguration ? <SynapseTable {...tableConfiguration}/> : <React.Fragment/>}
+            {cardConfiguration ? <CardContainer {...cardConfiguration}/> : <React.Fragment/>}
           </QueryWrapper>
         </span>
       )
