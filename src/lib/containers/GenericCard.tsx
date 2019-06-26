@@ -16,8 +16,8 @@ export type GenericCardSchema = {
   type: string
   title: string
   subTitle?: string
-  description: string
-  icon: string
+  description?: string
+  icon?: string
   secondaryLabels?: KeyToAliasMap
   link?: string
 }
@@ -91,8 +91,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
     const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
-    const description = data[schema[genericCardSchema.description]]
-    const iconValue = data[schema[genericCardSchema.icon]]
+    const description = data[schema[genericCardSchema.description || '']]
+    const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
     const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), hasInternalLink)
@@ -152,9 +152,12 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
             </h3>
           </div>
           {subTitle && <div className="SRC-author"> {subTitle} </div>}
-          <span className="SRC-font-size-base">
-            <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
-          </span>
+          {
+            description &&
+              <span className="SRC-font-size-base">
+                <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
+              </span>
+          }
         </div>
         {genericCardSchema.secondaryLabels && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
       </div>
