@@ -4,10 +4,14 @@ import UserCard from './UserCard'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import { getUserProfileWithProfilePicAttached } from './getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 
 export type UserCardListProps = {
   list: string []
   size?: string
+  // Data should not be needed, however, it gives the option to fill in a user profile with other column
+  // fields. This is required specifically by AMP-AD Explore/People page
+  data?: QueryResultBundle
 }
 
 type MapOwnerIdToUserProfile = {
@@ -79,15 +83,45 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     )
   }
 
+  /**
+   * Given data this will find rows where there is no userId columnType and create faux user profiles
+   * using firstName, lastName, and instituion (company in UserProfile object).
+   * @param {QueryResultBundle} data
+   * @returns list of UserProfiles with firstName, lastName, company, userName (first letter of firstName) filled out.
+   * @memberof UserCardList
+   */
+  manuallyExtractData(data: QueryResultBundle) {
+    const firstNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'firstName')
+    const lastNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'lastName')
+    const institutionIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'institution')
+    const ownerId = data.queryResult.queryResults.headers.findIndex(el => el.columnType === 'USERID')
+    const nullOwnerIdsRows = data.queryResult.queryResults.rows.filter(el => !el.values[ownerId])
+    return nullOwnerIdsRows.map<UserProfile>(
+      (el) => {
+        const values = el.values
+        return {
+          firstName: values[firstNameIndex],
+          lastName: values[lastNameIndex],
+          company: values[institutionIndex],
+          ownerId: '',
+          userName: values[firstNameIndex][0]
+        }
+      }
+    )
+  }
+
   render() {
-    const { size = MEDIUM_USER_CARD } = this.props
+    const { size = MEDIUM_USER_CARD, data, list } = this.props
+    const { userProfileMap = {} } = this.state
+    const fauxUserProfilesList = data && this.manuallyExtractData(data)
+    let fauxUserProfileIndex = 0
     return (
       <div className="SRC-card-grid-row SRC-adjust-for-bootstrap-margin">
         {
           // we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
-          this.props.list.map(
+          list.map(
             (ownerId) => {
-              const userProfile = this.state.userProfileMap[ownerId]
+              const userProfile = userProfileMap[ownerId]
               if (userProfile) {
                 return (
                   <div key={JSON.stringify(userProfile)} className="SRC-grid-item SRC-narrow-grid-item">
@@ -95,8 +129,24 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
                   </div>
                 )
               }
-              // e.g. still loading
-              return false
+              const fauxUserProfile = fauxUserProfilesList && fauxUserProfilesList[fauxUserProfileIndex]
+              if (!fauxUserProfile) {
+                // This could happen in one of two cases:
+                // - The props just updated with a new userlist where the data is being gathered for this particular user
+                //   OR there is no mapping for this user
+                return false
+              }
+              fauxUserProfileIndex += 1
+              return (
+                <div key={JSON.stringify(fauxUserProfile)} className="SRC-grid-item SRC-narrow-grid-item">
+                  <UserCard
+                    disableLink={true}
+                    hideEmail={true}
+                    size={size}
+                    userProfile={fauxUserProfile}
+                  />
+                </div>
+              )
             }
           )
         }

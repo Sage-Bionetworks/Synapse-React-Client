@@ -2,10 +2,9 @@ import * as React from 'react'
 import { mount, shallow } from 'enzyme'
 import { SynapseConstants } from '../../../lib/utils'
 import UserCard, { UserCardProps } from '../../../lib/containers/UserCard'
-import { UserCardSmall } from '../../../lib/containers/UserCardSmall'
+import { UserCardSmall, UserCardSmallProps } from '../../../lib/containers/UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from '../../../lib/containers/UserCardMedium'
 import { UserCardLarge } from '../../../lib/containers/UserCardLarge'
-import { UserCardSwitchProps } from '../../../lib/containers/UserCardSwitch'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
 import UserCardContextMenu, { UserCardContextMenuProps, MenuAction } from '../../../lib/containers/UserCardContextMenu'
 import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
@@ -42,7 +41,7 @@ const createMediumComponent = (props: UserCardMediumProps) => {
   return { wrapper, instance }
 }
 
-const createSmallComponent = (props: UserCardSwitchProps) => {
+const createSmallComponent = (props: UserCardSmallProps) => {
   const wrapper = shallow(
       <UserCardSmall
         {...props}

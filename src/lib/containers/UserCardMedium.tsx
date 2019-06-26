@@ -7,7 +7,6 @@ import { getColor } from './getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
-// @ts-ignore
 import IconCopy  from '../assets/icons/IconCopy'
 
 library.add(faCircle)
@@ -26,6 +25,7 @@ export type UserCardMediumProps = {
   hideEmail?: boolean
   isLarge?: boolean
   link?: string
+  disableLink?: boolean
 }
 
 export default class UserCardMedium extends React.Component<UserCardMediumProps, UserCardState> {
@@ -105,6 +105,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
       isLarge = false,
       preSignedURL,
       hideEmail = false,
+      disableLink = false,
       link
     } = this.props
     const { isContextMenuOpen, showModal } = this.state
@@ -161,18 +162,31 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
           }
           </TransitionGroup>
         }
-        <a
-          href={linkLocation}
-          className={`SRC-no-underline-on-hover ${isLarge ? 'SRC-isLargeCard' : ''}`}
-        >
-          {img}
-        </a>
+        {
+          disableLink
+          &&
+          img
+        }
+        {
+          !disableLink
+          &&
+          <a
+            href={linkLocation}
+            className={`SRC-no-underline-on-hover ${isLarge ? 'SRC-isLargeCard' : ''}`}
+          >
+            {img}
+          </a>
+        }
         <div className="SRC-cardContent">
           <p className="SRC-eqHeightRow SRC-userCardName">
-            {/* if its a medium component the header should be clickable,
-              if its large then it should NOT be clickable */}
+            {/*
+              if its a medium component the header should be clickable (unless disableLink is set),
+              if its large then it should NOT be clickable
+            */}
             {/* make SRC-whiteText overridable with a good name! */}
-            {isLarge ? <span className="SRC-whiteText"> {name} </span> :  (
+            {(isLarge || disableLink) ?
+              <span className={isLarge ? 'SRC-whiteText' :  'SRC-blackText'}> {name} </span>
+              :
                 // consolidate click events
                 <a
                   href={linkLocation}
@@ -180,8 +194,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
                   className={'SRC-hand-cursor SRC-primary-text-color'}
                 >
                   {name}
-                </a>
-              )}
+                </a>}
           </p>
           {
             (position || company) &&

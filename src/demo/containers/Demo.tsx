@@ -84,13 +84,10 @@ class Demo extends React.Component<{}, DemoState> {
           {
             facetName: 'dataType',
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            synapseId: 'syn16858331',
-            title: 'title',
           },
           {
             facetName: 'diagnosis',
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            synapseId: 'syn16858331',
             title: 'title'
           }
         ] as MenuConfig[]
@@ -282,7 +279,6 @@ class Demo extends React.Component<{}, DemoState> {
             token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
-            type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
             loadingScreen={<div className="container">loading... </div>}
           />
         </div>

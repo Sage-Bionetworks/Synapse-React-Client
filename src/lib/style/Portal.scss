@@ -349,7 +349,8 @@ span.SRC-facets svg.SRC-facets-icon {
 
 .SRC-chart-rect-style {
   margin: 0px;
-  stroke-width: 0px;
+  stroke-width: 1px;
+  stroke: rgba(0, 0, 0, 0.1);
   box-shadow: 20px 20px;
 }
 
@@ -1056,10 +1057,6 @@ div.SRC-userImg {
   margin-right: -15px;
 }
 
-.SRC-narrow-grid-item {
-  flex-grow: 1;
-}
-
 @media(min-width: 1501px) {
   .SRC-grid-item {
     flex-basis: 32%;
@@ -1084,6 +1081,12 @@ div.SRC-userImg {
     flex-basis: 45%;
   }
 }
+@media(max-width: 991px) {
+  .SRC-grid-item.SRC-narrow-grid-item {
+    flex-grow: 1 !important;
+  }
+}
+
 @media(max-width: 815px) {
   .SRC-grid-item {
     flex-basis: 45%;

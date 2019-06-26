@@ -30,7 +30,6 @@ export type QueryWrapperMenuProps = {
   menuConfig: MenuConfig []
   isConsistent?: boolean
   token?: string
-  type?: string
   rgbIndex: number
   loadingScreen?: JSX.Element
   unitDescription?: string
@@ -149,7 +148,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const {
       menuConfig,
       token,
-      rgbIndex,
+      rgbIndex = 0,
       loadingScreen,
       isConsistent = false,
       unitDescription = '',

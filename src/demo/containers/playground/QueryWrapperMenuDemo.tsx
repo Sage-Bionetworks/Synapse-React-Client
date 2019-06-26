@@ -28,33 +28,35 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabTwo:
       {
-        type: SynapseConstants.MEDIUM_USER_CARD,
+        cardConfiguration: {
+          type: SynapseConstants.MEDIUM_USER_CARD,
+        },
         menuConfig: [
           {
             unitDescription: 'people',
-            facetName: 'Program',
-            sql: 'SELECT ownerID as ownerId from syn13897207',
+            facetName: 'institution',
+            sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
           },
         ],
       }
     ,
       tabOne: {
+        tableConfiguration: {
+          title: 'title',
+          unitDescription: 'datum'
+        },
         menuConfig: [
           {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
               ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
-            synapseId: 'syn17024112',
-            title: 'title'
           },
           {
             facetName: 'study',
             sql: 'SELECT * FROM syn11346063',
-            title: 'title',
-            unitDescription: 'datum'
           },
           // {
           //   facetName: 'dataType',
@@ -127,6 +129,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
 
   public render(): JSX.Element {
 
+    const props = this.state.showTabOne ? this.state.tabOne : this.state.tabTwo
     return (
       <div className="container">
         <button
@@ -141,10 +144,8 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           <QueryWrapperMenu
             token={''}
             isConsistent={true}
-            menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
+            {...props}
             rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
-            type={this.state.showTabOne ? this.state.tabOne.type : this.state.tabTwo.type}
-            secondaryLabelLimit={2}
             loadingScreen={<div>loading... </div>}
           />
         </div>
