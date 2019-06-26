@@ -1,9 +1,11 @@
 import * as React from 'react'
 import { getUserProfileWithProfilePic } from './getUserData'
-import UserCardSwitch from './UserCardSwitch'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
+import { SynapseConstants } from '../utils/'
+import { UserCardSmall } from './UserCardSmall'
+import UserCardMedium from './UserCardMedium'
 
 type UserCardState = {
   userProfile: UserProfile | undefined
@@ -24,6 +26,7 @@ export type UserCardProps = {
   hideTooltip?: boolean
   menuActions? : MenuAction[]
   link?: string
+  disableLink?: boolean
 }
 
 export default class UserCard extends React.Component<UserCardProps, UserCardState> {
@@ -64,8 +67,9 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
       }
     )
   }
+
   public render() {
-    const { userProfile, loadingScreen = <span/>, preSignedURL, ...rest } = this.props
+    const { userProfile, loadingScreen = <span/>, preSignedURL, size, ...rest } = this.props
     let userProfileAtRender
     let preSignedURLAtRender
     if (!userProfile) {
@@ -81,12 +85,20 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
       userProfileAtRender = userProfile
       preSignedURLAtRender = preSignedURL
     }
-    return (
-      <UserCardSwitch
-        userProfile={userProfileAtRender!}
-        preSignedURL={preSignedURLAtRender}
-        {...rest}
-      />
-    )
+    const propsForChild = {
+      userProfile: userProfileAtRender!,
+      preSignedURL: preSignedURLAtRender,
+      ...rest
+    }
+    switch (size) {
+      case SynapseConstants.SMALL_USER_CARD:
+        return <UserCardSmall {...propsForChild}/>
+      case SynapseConstants.MEDIUM_USER_CARD:
+        return <UserCardMedium {...propsForChild}/>
+      case SynapseConstants.LARGE_USER_CARD:
+        return <UserCardMedium isLarge={true} {...propsForChild} />
+      default:
+        return <span/>
+    }
   }
 }

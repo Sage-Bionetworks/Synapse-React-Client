@@ -150,7 +150,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const {
       menuConfig,
       token,
-      rgbIndex,
+      rgbIndex = 0,
       loadingScreen,
       isConsistent = false,
       type = '',

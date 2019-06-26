@@ -4,10 +4,14 @@ import UserCard from './UserCard'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import { getUserProfileWithProfilePicAttached } from './getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 
 export type UserCardListProps = {
   list: string []
   size?: string
+  // Data should not be needed, however, it gives the option to fill in a user profile with other column
+  // fields. This is required specifically by AMP-AD Explore/People page
+  data?: QueryResultBundle
 }
 
 type MapOwnerIdToUserProfile = {
@@ -79,14 +83,37 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     )
   }
 
+  manuallyExtractData(data: QueryResultBundle) {
+    const firstNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'firstName')
+    const lastNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'lastName')
+    const institutionIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'institution')
+    const ownerId = data.queryResult.queryResults.headers.findIndex(el => el.columnType === 'USERID')
+    const nullOwnerIdsRows = data.queryResult.queryResults.rows.filter(el => !el.values[ownerId])
+    return nullOwnerIdsRows.map<UserProfile>(
+      (el) => {
+        const values = el.values
+        return {
+          firstName: values[firstNameIndex],
+          lastName: values[lastNameIndex],
+          company: values[institutionIndex],
+          ownerId: '',
+          userName: values[firstNameIndex][0]
+        }
+      }
+    )
+  }
+
   render() {
-    const { size = MEDIUM_USER_CARD } = this.props
+    const { size = MEDIUM_USER_CARD, data, list } = this.props
+    const { userProfileMap = {} } = this.state
+    const fauxUserProfilesList = data && this.manuallyExtractData(data)
+    let fauxUserProfileIndex = 0
     return (
       <div className="SRC-card-grid-row SRC-adjust-for-bootstrap-margin">
         {
           // we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
-          this.props.list.map(
-            (ownerId) => {
+          list.map(
+            (ownerId, index) => {
               const userProfile = this.state.userProfileMap[ownerId]
               if (userProfile) {
                 return (
@@ -95,8 +122,24 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
                   </div>
                 )
               }
-              // e.g. still loading
-              return false
+              if (Object.keys(userProfileMap).length !== 0 && !fauxUserProfilesList) {
+                throw Error(`No mapping for list: ${list}, index: ${index}`)
+              }
+              const fauxUserProfile = fauxUserProfilesList![fauxUserProfileIndex]
+              fauxUserProfileIndex += 1
+              if (!fauxUserProfile) {
+                return false
+              }
+              return (
+                <div key={JSON.stringify(fauxUserProfile)} className="SRC-grid-item SRC-narrow-grid-item">
+                  <UserCard
+                    disableLink={true}
+                    hideEmail={true}
+                    size={size}
+                    userProfile={fauxUserProfile}
+                  />
+                </div>
+              )
             }
           )
         }

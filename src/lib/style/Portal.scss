@@ -1056,10 +1056,6 @@ div.SRC-userImg {
   margin-right: -15px;
 }
 
-.SRC-narrow-grid-item {
-  flex-grow: 1;
-}
-
 @media(min-width: 1501px) {
   .SRC-grid-item {
     flex-basis: 32%;
@@ -1084,6 +1080,12 @@ div.SRC-userImg {
     flex-basis: 45%;
   }
 }
+@media(max-width: 991px) {
+  .SRC-grid-item.SRC-narrow-grid-item {
+    flex-grow: 1 !important;
+  }
+}
+
 @media(max-width: 815px) {
   .SRC-grid-item {
     flex-basis: 45%;

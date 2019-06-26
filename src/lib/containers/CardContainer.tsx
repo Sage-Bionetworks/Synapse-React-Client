@@ -216,10 +216,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       if (userIdColumnIndex === -1) {
         throw Error('Type MEDIUM_USER_CARD specified but no columnType USERID found')
       }
-      const listIds = data.queryResult.queryResults.rows.map(
-        el => el.values[userIdColumnIndex]
-      )
-      cards = <UserCardList list={listIds} size={MEDIUM_USER_CARD}/>
+      const listIds = data.queryResult.queryResults.rows.map(el => el.values[userIdColumnIndex])
+      cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD}/>
     } else {
       // render the cards
       cards = data.queryResult.queryResults.rows.map(

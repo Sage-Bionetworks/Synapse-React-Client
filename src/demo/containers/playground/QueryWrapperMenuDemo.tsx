@@ -28,15 +28,15 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabTwo:
       {
         type: SynapseConstants.MEDIUM_USER_CARD,
         menuConfig: [
           {
             unitDescription: 'people',
-            facetName: 'Program',
-            sql: 'SELECT ownerID as ownerId from syn13897207',
+            facetName: 'institution',
+            sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
           },
         ],
       }

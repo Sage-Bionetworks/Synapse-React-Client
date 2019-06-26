@@ -12,6 +12,7 @@ export type UserCardSwitchProps = {
   hideText?: boolean
   hideTooltip?: boolean
   hideEmail?: boolean
+  hideLink?: boolean
   size: string
   menuActions?: MenuAction []
 }
