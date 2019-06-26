@@ -30,7 +30,6 @@ export type QueryWrapperMenuProps = {
   menuConfig: MenuConfig []
   isConsistent?: boolean
   token?: string
-  type?: string
   rgbIndex: number
   loadingScreen?: JSX.Element
   unitDescription?: string
