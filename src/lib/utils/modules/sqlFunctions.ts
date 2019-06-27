@@ -30,7 +30,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) =>
       ]
       if (index < searchParamsLen - 1) {
         // make sure to chain the ANDs until the last one
-        token.push(['OPERATOR', 'AND', '1'])
+        token.unshift(['CONDITIONAL', 'AND', '1'])
       }
       tokens.splice(indexAfterWhereClause, 0, ...token)
     }
@@ -42,6 +42,7 @@ export const formatSQLFromParser = (tokens: string [][]) => {
   // remove backtick from output sql (for table name): `syn1234` becomes syn1234
   const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
   const newSql = parser.parse(tokens).toString()
+  console.log('newSql = ', newSql)
   const splitString = `\`${synId}\``
   return newSql.split(splitString).join(synId)
 }

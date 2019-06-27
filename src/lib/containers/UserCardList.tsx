@@ -49,7 +49,7 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     // described here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
     // the use below with primitives is well defined.
     const priorListOfIds = new Set(prevProps.list)
-    const curListOfIds = new Set(this.props.list.filter(el => el !== null))
+    const curListOfIds = new Set(this.props.list.filter(el => el))
     // check that the props have changed by seeing that at least one element is different
     if (this.difference(curListOfIds, priorListOfIds).size > 0) {
       const internalData = new Set(Object.keys(this.state.userProfileMap))
@@ -63,7 +63,7 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
   }
 
   update (list: string []) {
-    getUserProfileWithProfilePicAttached(list).then(
+    getUserProfileWithProfilePicAttached(list.filter(el => el)).then(
       (data: UserProfileList) => {
         const newEntries = {}
         data.list.map(

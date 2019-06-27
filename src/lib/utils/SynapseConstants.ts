@@ -40,6 +40,7 @@ export const GENERIC_CARD: string = 'GENERIC_CARD'
 export const COMPUTATIONAL: string = 'computational'
 export const EXPERIMENTAL: string = 'experimental'
 export const CLINICAL: string = 'clinical'
+export const PROJECT: string = 'Project'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: string = 'SMALL USER CARD'
