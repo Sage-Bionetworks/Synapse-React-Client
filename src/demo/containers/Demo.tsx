@@ -6,6 +6,7 @@ import './App.css'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
 import Uploader from 'src/lib/containers/Uploader'
 import FileContentDownloadUploadDemo from 'src/lib/containers/FileContentDownloadUploadDemo'
+import EntityForm from 'src/lib/containers/EntityForm'
 
 type DemoState = {
   token: string
@@ -224,6 +225,14 @@ class Demo extends React.Component<{}, DemoState> {
           icon={true}
         />
         <hr />
+        {
+          <div className="container">
+            <EntityForm
+              token={this.state.token!}
+              parentContainerId="syn18987891"
+            />
+          </div>
+        }
         {
           (this.state.token && this.state.token !== '') &&
           <div className="container">
