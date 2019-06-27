@@ -71,7 +71,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     this.props.getNextPageOfData!(queryRequest)
   }
 
-  public renderCard(props: any, type: string) {
+  public renderCard = (props: any, type: string) => {
     switch (type) {
       case STUDY:
         return <Study {...props} />

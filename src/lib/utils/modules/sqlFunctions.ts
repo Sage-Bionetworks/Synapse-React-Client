@@ -42,7 +42,6 @@ export const formatSQLFromParser = (tokens: string [][]) => {
   // remove backtick from output sql (for table name): `syn1234` becomes syn1234
   const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
   const newSql = parser.parse(tokens).toString()
-  console.log('newSql = ', newSql)
   const splitString = `\`${synId}\``
   return newSql.split(splitString).join(synId)
 }
