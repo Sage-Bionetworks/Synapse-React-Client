@@ -17,6 +17,8 @@ type EntityFormState = {
   userprofile?: UserProfile,
   successMessage?: string,
   evaluation?: Evaluation,
+  currentFileEntity?: FileEntity, // file holding user form data
+  initFormData?: any,
   formSchema?: any,
   formUiSchema?: any
 }
@@ -71,40 +73,30 @@ export default class EntityForm
   }
 
   createEntityFile = (fileContentsBlob: Blob) => {
-    // create or update file entity for this form
     const fileName = `${this.state.formSchema.title}.json`
-    const entityLookupRequest = { entityName: fileName, parentId: this.state.containerId! }
-
     SynapseClient.uploadFile(this.props.token, fileName, fileContentsBlob).then(
       (fileUploadComplete: any) => {
         // do we need to create a new file entity, or update an existing file entity?
         const newFileHandleId = fileUploadComplete.fileHandleId
-        return SynapseClient.lookupChildEntity(entityLookupRequest, this.props.token).then((entityId:EntityId) => {
-          // ok, found the existing file
-          return SynapseClient.getEntity(this.props.token, entityId.id).then((existingEntity: FileEntity) => {
-            existingEntity.dataFileHandleId = newFileHandleId
-            return SynapseClient.updateEntity(existingEntity, this.props.token)
-          })
-        }).catch((error: any) => {
-          if (error.statusCode === 404) {
-            // it's a new file entity
-            const newFileEntity: FileEntity = {
-              parentId: this.state.containerId!,
-              name: fileName,
-              concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-              dataFileHandleId: newFileHandleId,
-            }
-            return SynapseClient.createEntity(newFileEntity, this.props.token)
-          }
-          return Promise.reject(error)
-        }).then((fileEntity: FileEntity) => {
-          // by this point we've either found and updated the existing file entity, or created a new one.
-          if (this.state.evaluation) {
-            this.submitToEvaluation(fileEntity)
-          } else {
-            this.finishedProcessing('Successfully uploaded.')
-          }
-        })
+        if (this.state.currentFileEntity) {
+          this.state.currentFileEntity.dataFileHandleId = newFileHandleId
+          return SynapseClient.updateEntity(this.state.currentFileEntity, this.props.token)
+        }
+        // else, it's a new file entity
+        const newFileEntity: FileEntity = {
+          parentId: this.state.containerId!,
+          name: fileName,
+          concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+          dataFileHandleId: newFileHandleId,
+        }
+        return SynapseClient.createEntity(newFileEntity, this.props.token)
+      }).then((fileEntity: FileEntity) => {
+        // by this point we've either found and updated the existing file entity, or created a new one.
+        if (this.state.evaluation) {
+          this.submitToEvaluation(fileEntity)
+        } else {
+          this.finishedProcessing('Successfully uploaded.')
+        }
       }).catch((error: any) => {
         this.onError(error)
       })
@@ -138,41 +130,69 @@ export default class EntityForm
       }
       Promise.all(promises).then((values) => {
         const userprofile: UserProfile = values[0]
-        this.getTargetFolder(userprofile, this.props.token!)
-        const formSchemaFileEntity: FileEntity = values[1]
-        const formUiSchemaFileEntity: FileEntity = values[2]
-        this.getSchemaFileContent(formSchemaFileEntity, formUiSchemaFileEntity)
-        if (values[3]) {
-          const evaluation: Evaluation = values[3]
-          this.setState({ evaluation })
-        }
+        this.getTargetFolder(userprofile, this.props.token!).then((targetFolderId: string) => {
+          const formSchemaFileEntity: FileEntity = values[1]
+          const formUiSchemaFileEntity: FileEntity = values[2]
+          this.getSchemaFileContent(targetFolderId, formSchemaFileEntity, formUiSchemaFileEntity)
+          if (values[3]) {
+            const evaluation: Evaluation = values[3]
+            this.setState({ evaluation })
+          }
+        })
       }).catch((error) => {
         this.onError(error)
       })
     }
   }
 
-  getSchemaFileContent = (formSchemaFileEntity: FileEntity, formUiSchemaFileEntity: FileEntity) => {
+  getSchemaFileContent = (
+    targetFolderId: string,
+    formSchemaFileEntity: FileEntity,
+    formUiSchemaFileEntity: FileEntity
+  ) => {
     const promises = [
       SynapseClient.getFileEntityContent(this.props.token!, formSchemaFileEntity),
       SynapseClient.getFileEntityContent(this.props.token!, formUiSchemaFileEntity),
     ]
     Promise.all(promises).then((values) => {
-      const formSchemaContent: string = values[0]
-      const formUiSchemaContent: string = values[1]
-      this.setState(
-        {
-          formSchema: JSON.parse(formSchemaContent),
-          formUiSchema: JSON.parse(formUiSchemaContent)
-        })
+      const formSchemaContent = JSON.parse(values[0])
+      const formUiSchemaContent = JSON.parse(values[1])
+      this.getExistingFileData(targetFolderId, formSchemaContent, formUiSchemaContent)
     }).catch((error) => {
       this.onError(error)
     })
   }
-  getTargetFolder = (userprofile: UserProfile, token: string) => {
+
+  getExistingFileData = (targetFolderId: string, formSchemaContent: any, formUiSchemaContent: any) => {
+    // if data already exists, prefill form
+    const fileName = `${formSchemaContent.title}.json`
+    const entityLookupRequest = { entityName: fileName, parentId: targetFolderId }
+    let initFormData: any
+    let currentFileEntity: FileEntity
+    SynapseClient.lookupChildEntity(entityLookupRequest, this.props.token).then((entityId:EntityId) => {
+      // ok, found the existing file
+      return SynapseClient.getEntity(this.props.token, entityId.id).then((entity: FileEntity) => {
+        currentFileEntity = entity
+        return SynapseClient.getFileEntityContent(this.props.token!, currentFileEntity).then((existingFileData) => {
+          initFormData = JSON.parse(existingFileData)
+        })
+      })
+    }).finally(() => {
+      this.setState(
+        {
+          initFormData,
+          currentFileEntity,
+          formSchema: formSchemaContent,
+          formUiSchema: formUiSchemaContent
+        })
+    })
+  }
+
+  getTargetFolder = async (userprofile: UserProfile, token: string) => {
     const folderName = `${userprofile.userName} (form files)`
     const entityLookupRequest = { entityName: folderName, parentId: this.props.parentContainerId }
-    SynapseClient.lookupChildEntity(entityLookupRequest, token).then((entityId) => {
+    try {
+      const entityId = await SynapseClient.lookupChildEntity(entityLookupRequest, token)
       // ok, found an entity of the same name.
       console.log(`EntityForm uploading to https://www.synapse.org/#!Synapse:${entityId.id}`)
       this.setState({
@@ -180,28 +200,29 @@ export default class EntityForm
         containerId: entityId.id,
         isLoading: false
       })
-    }).catch((error: any) => {
+      return entityId.id
+    } catch (error) {
       if (error.statusCode === 404) {
         // ok, it's a new folder
         return this.createTargetFolder(folderName, userprofile, token)
       }
       return this.onError(error)
-    })
+    }
   }
 
-  createTargetFolder = (folderName: string, userprofile: UserProfile, token: string) => {
+  createTargetFolder = async (folderName: string, userprofile: UserProfile, token: string) => {
     const newEntity = {
       name: folderName,
       parentId: this.props.parentContainerId,
       concreteType: 'org.sagebionetworks.repo.model.Folder'
     }
-    return SynapseClient.createEntity(newEntity, token).then((entity) => {
+    try {
+      const entity = await SynapseClient.createEntity(newEntity, token)
       // and set the acl to private by default
       const resourceAccess: ResourceAccess[] = [
         {
           principalId: parseInt(userprofile.ownerId, 10),
-          accessType:
-          ['READ', 'DOWNLOAD', 'UPDATE', 'DELETE',
+          accessType: ['READ', 'DOWNLOAD', 'UPDATE', 'DELETE',
             'CREATE', 'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE']
         }
       ]
@@ -209,17 +230,18 @@ export default class EntityForm
         resourceAccess,
         id: entity.id,
       }
-      SynapseClient.createACL(entity.id, acl, token).then((acl: AccessControlList) => {
+      SynapseClient.createACL(entity.id, acl, token).then((newAcl: AccessControlList) => {
         console.log(`EntityForm uploading to https://www.synapse.org/#!Synapse:${entity.id}`)
         this.setState({
           userprofile,
           containerId: entity.id,
           isLoading: false
         })
+        return entity.id
       })
-    }).catch((error: any) => {
+    } catch (error) {
       return this.onError(error)
-    })
+    }
   }
 
   render() {
@@ -233,6 +255,7 @@ export default class EntityForm
           this.state.formSchema &&
           this.state.formUiSchema &&
           <Form
+            formData={this.state.initFormData}
             schema={this.state.formSchema}
             uiSchema={this.state.formUiSchema}
             onSubmit={this.onSubmit}
