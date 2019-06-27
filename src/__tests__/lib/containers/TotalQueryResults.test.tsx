@@ -45,7 +45,6 @@ describe('it works', () => {
   })
 
   it('displays the total sum with zero facets selected in the given data', () => {
-    // inject filter prop
     const cloneData = cloneDeep(data)
     cloneData.facets[FUNDING_AGENCY_FACET_INDEX].facetValues.forEach(
       (element: FacetColumnResultValueCount) => {

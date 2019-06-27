@@ -67,7 +67,6 @@ describe('it performs all functionality', () => {
     const { wrapper } = createShallowComponent(propsWithTotalQueryCount)
     expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
-    // expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
@@ -75,7 +74,6 @@ describe('it performs all functionality', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({ ...props, filter: 'projectStatus' })
     expect(wrapper.find(RowContainer)).toHaveLength(25)
-    // expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
