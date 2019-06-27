@@ -7,6 +7,7 @@ import { ResourceAccess } from '../utils/jsonResponses/ResourceAccess'
 import { Evaluation } from '../utils/jsonResponses/Evaluation'
 import { Submission } from '../utils/jsonResponses/Submission'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
+import { EntityId } from '../utils/jsonResponses/EntityId'
 
 type EntityFormState = {
   error?: any,
@@ -70,18 +71,36 @@ export default class EntityForm
   }
 
   createEntityFile = (fileContentsBlob: Blob) => {
-    const newFileEntity: any = {
-      parentId: this.state.containerId,
-      name: `${Math.floor(Date.now() / 1000).toString()}.json`,
-      concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-      dataFileHandleId: '',
-    }
-    SynapseClient.uploadFile(this.props.token, newFileEntity.name, fileContentsBlob).then(
+    // create or update file entity for this form
+    const fileName = `${this.state.formSchema.title}.json`
+    const entityLookupRequest = { entityName: fileName, parentId: this.state.containerId! }
+
+    SynapseClient.uploadFile(this.props.token, fileName, fileContentsBlob).then(
       (fileUploadComplete: any) => {
-        newFileEntity.dataFileHandleId = fileUploadComplete.fileHandleId
-        SynapseClient.createEntity(newFileEntity, this.props.token).then((updatedEntity) => {
+        // do we need to create a new file entity, or update an existing file entity?
+        const newFileHandleId = fileUploadComplete.fileHandleId
+        return SynapseClient.lookupChildEntity(entityLookupRequest, this.props.token).then((entityId:EntityId) => {
+          // ok, found the existing file
+          return SynapseClient.getEntity(this.props.token, entityId.id).then((existingEntity: FileEntity) => {
+            existingEntity.dataFileHandleId = newFileHandleId
+            return SynapseClient.updateEntity(existingEntity, this.props.token)
+          })
+        }).catch((error: any) => {
+          if (error.statusCode === 404) {
+            // it's a new file entity
+            const newFileEntity: FileEntity = {
+              parentId: this.state.containerId!,
+              name: fileName,
+              concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+              dataFileHandleId: newFileHandleId,
+            }
+            return SynapseClient.createEntity(newFileEntity, this.props.token)
+          }
+          return Promise.reject(error)
+        }).then((fileEntity: FileEntity) => {
+          // by this point we've either found and updated the existing file entity, or created a new one.
           if (this.state.evaluation) {
-            this.submitToEvaluation(updatedEntity)
+            this.submitToEvaluation(fileEntity)
           } else {
             this.finishedProcessing('Successfully uploaded.')
           }
