@@ -5,9 +5,12 @@ import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
 import { AccessControlList } from '../utils/jsonResponses/AccessControlList'
 import { ResourceAccess } from '../utils/jsonResponses/ResourceAccess'
+import { Evaluation } from '../utils/jsonResponses/Evaluation'
+import { Submission } from '../utils/jsonResponses/Submission'
+import { FileEntity } from '../utils/jsonResponses/FileEntity'
 
 // 3. If evaluation queue id is set, then submit to that queue too (and report the submission receipt message if successful)
-// 4. Refactor schema definitions into Synapse entity files (props)!
+// 4. Refactor schema definitions into Synapse entity files (props)
 const schema: JSONSchema6 = {
   title: 'IDG DREAM Round 2 Survey',
   type: 'object',
@@ -66,7 +69,8 @@ type EntityFormState = {
   successfullyUploaded: boolean,
   containerId?: string,
   userprofile?: UserProfile,
-  successMessage?: string
+  successMessage?: string,
+  evaluation?: Evaluation
 }
 
 export type EntityFormProps = {
@@ -127,9 +131,28 @@ export default class EntityForm
     SynapseClient.uploadFile(this.props.token, newFileEntity.name, fileContentsBlob).then(
       (fileUploadComplete: any) => {
         newFileEntity.dataFileHandleId = fileUploadComplete.fileHandleId
-        SynapseClient.createEntity(newFileEntity, this.props.token).then(() => {
-          this.finishedProcessing('Successfully uploaded.')
+        SynapseClient.createEntity(newFileEntity, this.props.token).then((updatedEntity) => {
+          if (this.state.evaluation) {
+            this.submitToEvaluation(updatedEntity)
+          } else {
+            this.finishedProcessing('Successfully uploaded.')
+          }
         })
+      }).catch((error: any) => {
+        this.onError(error)
+      })
+  }
+
+  submitToEvaluation = (entity: FileEntity) => {
+    const submission: Submission = {
+      entityId: entity.id!,
+      versionNumber: entity.versionNumber!,
+      userId: this.state.userprofile!.ownerId,
+      evaluationId: this.state.evaluation!.id,
+    }
+    SynapseClient.submitToEvaluation(submission, entity.etag!, this.props.token).then(
+      () => {
+        this.finishedProcessing(this.state.evaluation!.submissionReceiptMessage)
       }).catch((error: any) => {
         this.onError(error)
       })
@@ -143,6 +166,16 @@ export default class EntityForm
       }).catch((_err) => {
         console.log('user profile could not be fetched ', _err)
       })
+      if (this.props.evaluationId) {
+        SynapseClient.getEvaluation(this.props.evaluationId, this.props.token).then(
+          (evaluation: Evaluation) => {
+            this.setState({ evaluation })
+          }).catch((error: any) => {
+            this.onError(error)
+          })
+      } else {
+        this.setState({ evaluation: undefined })
+      }
     }
   }
 
@@ -151,6 +184,7 @@ export default class EntityForm
     const entityLookupRequest = { entityName: folderName, parentId: this.props.parentContainerId }
     SynapseClient.lookupChildEntity(entityLookupRequest, token).then((entityId) => {
       // ok, found an entity of the same name.
+      console.log(`EntityForm uploading to https://www.synapse.org/#!Synapse:${entityId.id}`)
       this.setState({
         userprofile,
         containerId: entityId.id,
@@ -186,6 +220,7 @@ export default class EntityForm
         id: entity.id,
       }
       SynapseClient.createACL(entity.id, acl, token).then((acl: AccessControlList) => {
+        console.log(`EntityForm uploading to https://www.synapse.org/#!Synapse:${entity.id}`)
         this.setState({
           userprofile,
           containerId: entity.id,
@@ -226,7 +261,6 @@ export default class EntityForm
           this.state.successfullyUploaded &&
           <span style={{ marginLeft: '10px' }}>
             {this.state.successMessage}
-            <a style={{ marginLeft: '2px' }} href={`https://www.synapse.org/#!Synapse:${this.state.containerId}`} target="_blank">{this.state.containerId}</a>
           </span>
         }
         {
