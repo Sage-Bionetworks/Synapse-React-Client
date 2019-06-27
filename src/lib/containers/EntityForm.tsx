@@ -3,9 +3,11 @@ import { default as Form } from 'react-jsonschema-form'
 import { JSONSchema6 } from 'json-schema'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
+import { AccessControlList } from '../utils/jsonResponses/AccessControlList'
+import { ResourceAccess } from '../utils/jsonResponses/ResourceAccess'
 
-// 3. Refactor schema definitions into Synapse entity files!
-// 4. Create component that uses this one to create a submission (configure with evaluation queue ID)
+// 3. If evaluation queue id is set, then submit to that queue too (and report the submission receipt message if successful)
+// 4. Refactor schema definitions into Synapse entity files (props)!
 const schema: JSONSchema6 = {
   title: 'IDG DREAM Round 2 Survey',
   type: 'object',
@@ -156,22 +158,41 @@ export default class EntityForm
       })
     }).catch((error: any) => {
       if (error.statusCode === 404) {
-        // great, it's a new project!
-        const newEntity = {
-          name: folderName,
-          parentId: this.props.parentContainerId,
-          concreteType: 'org.sagebionetworks.repo.model.Folder'
-        }
-        return SynapseClient.createEntity(newEntity, token).then((entity) => {
-          this.setState({
-            userprofile,
-            containerId: entity.id,
-            isLoading: false
-          })
-        }).catch((error: any) => {
-          return this.onError(error)
-        })
+        // ok, it's a new folder
+        return this.createTargetFolder(folderName, userprofile, token)
       }
+      return this.onError(error)
+    })
+  }
+
+  createTargetFolder = (folderName: string, userprofile: UserProfile, token: string) => {
+    const newEntity = {
+      name: folderName,
+      parentId: this.props.parentContainerId,
+      concreteType: 'org.sagebionetworks.repo.model.Folder'
+    }
+    return SynapseClient.createEntity(newEntity, token).then((entity) => {
+      // and set the acl to private by default
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: parseInt(userprofile.ownerId, 10),
+          accessType:
+          ['READ', 'DOWNLOAD', 'UPDATE', 'DELETE',
+            'CREATE', 'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE']
+        }
+      ]
+      const acl: AccessControlList = {
+        resourceAccess,
+        id: entity.id,
+      }
+      SynapseClient.createACL(entity.id, acl, token).then((acl: AccessControlList) => {
+        this.setState({
+          userprofile,
+          containerId: entity.id,
+          isLoading: false
+        })
+      })
+    }).catch((error: any) => {
       return this.onError(error)
     })
   }
@@ -204,7 +225,7 @@ export default class EntityForm
           this.props.token &&
           this.state.successfullyUploaded &&
           <span style={{ marginLeft: '10px' }}>
-            ${this.state.successMessage}
+            {this.state.successMessage}
             <a style={{ marginLeft: '2px' }} href={`https://www.synapse.org/#!Synapse:${this.state.containerId}`} target="_blank">{this.state.containerId}</a>
           </span>
         }

@@ -16,6 +16,7 @@ import { AddPartResponse } from './jsonResponses/AddPartResponse'
 import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
 import { FileEntity } from './jsonResponses/FileEntity'
 import { UserProfile } from './jsonResponses/UserProfile'
+import { AccessControlList } from './jsonResponses/AccessControlList'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -887,4 +888,16 @@ export const getFileEntityContent = (
       reject(err)
     })
   })
+}
+
+/**
+ * Create an ACL
+ * https://docs.synapse.org/rest/POST/entity/id/acl.html
+ */
+export const createACL = (
+  entityId: string,
+  acl: AccessControlList,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost(`/repo/v1/entity/${entityId}/acl`, acl, sessionToken, undefined, endpoint)
 }
