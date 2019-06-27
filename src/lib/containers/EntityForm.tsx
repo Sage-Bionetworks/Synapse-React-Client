@@ -18,7 +18,7 @@ type EntityFormState = {
   successMessage?: string,
   evaluation?: Evaluation, // if evaluation id was provided, submit to this evaluation
   currentFileEntity?: FileEntity, // file holding user form data
-  initFormData?: any, // form data that prepopulates the form
+  formData?: any, // form data that prepopulates the form
   formSchema?: any, // schema that drives the form
   formUiSchema?: any // ui schema that directs how to render the form elements
 }
@@ -27,6 +27,7 @@ export type EntityFormProps = {
   parentContainerId: string, // container (project/folder) to create our form folder in (that holds the form files)
   formSchemaEntityId: string, // Synapse file that contains the form schema
   formUiSchemaEntityId: string, // Synapse file that contains the form ui schema
+  initFormData: boolean // set to true if you would like to download and prefill the form with the user's previous response
   token?: string, // user's session token
   evaluationId?: string // optional: submits the new form entity to the evaluation queue
 }
@@ -92,20 +93,24 @@ export default class EntityForm
     // if data already exists, save a reference to the existing entity and prefill the form
     const fileName = `${formSchemaContent.title}.json`
     const entityLookupRequest = { entityName: fileName, parentId: targetFolderId }
-    let initFormData: any
+    let formData: any
     let currentFileEntity: FileEntity
     SynapseClient.lookupChildEntity(entityLookupRequest, this.props.token).then((entityId:EntityId) => {
       // ok, found the existing file
       return SynapseClient.getEntity(this.props.token, entityId.id).then((entity: FileEntity) => {
         currentFileEntity = entity
-        return SynapseClient.getFileEntityContent(this.props.token!, currentFileEntity).then((existingFileData) => {
-          initFormData = JSON.parse(existingFileData)
-        })
+        if (this.props.initFormData) {
+          return SynapseClient.getFileEntityContent(this.props.token!, currentFileEntity).then((existingFileData) => {
+            formData = JSON.parse(existingFileData)
+          })
+        }
+        // else we're done
+        return Promise.resolve()
       })
     }).finally(() => {
       this.setState(
         {
-          initFormData,
+          formData,
           currentFileEntity,
           formSchema: formSchemaContent,
           formUiSchema: formUiSchemaContent
@@ -255,7 +260,7 @@ export default class EntityForm
           this.state.formSchema &&
           this.state.formUiSchema &&
           <Form
-            formData={this.state.initFormData}
+            formData={this.state.formData}
             schema={this.state.formSchema}
             uiSchema={this.state.formUiSchema}
             onSubmit={this.onSubmit}
