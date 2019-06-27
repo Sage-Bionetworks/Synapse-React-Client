@@ -231,6 +231,8 @@ class Demo extends React.Component<{}, DemoState> {
               token={this.state.token!}
               parentContainerId="syn18987891"
               evaluationId="9614256"
+              formSchemaEntityId="syn20184776"
+              formUiSchemaEntityId="syn20184771"
             />
           </div>
         }

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { default as Form } from 'react-jsonschema-form'
-import { JSONSchema6 } from 'json-schema'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
 import { AccessControlList } from '../utils/jsonResponses/AccessControlList'
@@ -9,60 +8,6 @@ import { Evaluation } from '../utils/jsonResponses/Evaluation'
 import { Submission } from '../utils/jsonResponses/Submission'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
 
-// 3. If evaluation queue id is set, then submit to that queue too (and report the submission receipt message if successful)
-// 4. Refactor schema definitions into Synapse entity files (props)
-const schema: JSONSchema6 = {
-  title: 'IDG DREAM Round 2 Survey',
-  type: 'object',
-  required: ['file'],
-  properties: {
-    file: {
-      type: 'string',
-      format: 'data-url',
-      title: 'Submission File'
-    },
-    custom: {
-      type: 'string', title: 'If you used any \'named\' algorithms or methods, please list them here',
-      default: ''
-    },
-    multipleChoicesList: {
-      type: 'array',
-      title: 'What public training data did you use?',
-      items: {
-        type: 'string',
-        enum: [
-          'DrugTargetCommons',
-          'IDG Pharos',
-          'ChEMBL',
-          'Drug-Target Explorer'
-        ]
-      },
-      uniqueItems: true
-    },
-    toggle: {
-      title: 'Did you use any private data?',
-      type: 'boolean',
-      oneOf: [
-        {
-          title: 'Yes',
-          const: true
-        },
-        {
-          title: 'No',
-          const: false
-        }
-      ]
-    }
-  }
-}
-const uiSchema = {
-  multipleChoicesList: {
-    'ui:widget': 'checkboxes'
-  },
-  toggle: {
-    'ui:widget': 'radio'
-  }
-}
 type EntityFormState = {
   error?: any,
   isLoading?: boolean,
@@ -70,14 +15,17 @@ type EntityFormState = {
   containerId?: string,
   userprofile?: UserProfile,
   successMessage?: string,
-  evaluation?: Evaluation
+  evaluation?: Evaluation,
+  formSchema?: any,
+  formUiSchema?: any
 }
 
 export type EntityFormProps = {
-  parentContainerId: string,
-  token?: string,
-  // if evaluationId is set, then also submit the new form entity to an evaluation queue
-  evaluationId?: string
+  parentContainerId: string, // container (project/folder) to create our form folder in (that holds the form files)
+  formSchemaEntityId: string, // Synapse file that contains the form schema
+  formUiSchemaEntityId: string, // Synapse file that contains the form ui schema
+  token?: string, // user's session token
+  evaluationId?: string // optional: submits the new form entity to the evaluation queue
 }
 
 export default class EntityForm
@@ -161,26 +109,49 @@ export default class EntityForm
   componentDidUpdate(prevProps: any) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate && this.props.token) {
-      SynapseClient.getUserProfile(this.props.token, 'https://repo-prod.prod.sagebase.org').then((profile: any) => {
-        this.getTargetFolder(profile, this.props.token!)
-      }).catch((_err) => {
-        console.log('user profile could not be fetched ', _err)
-      })
+      const promises = [
+        SynapseClient.getUserProfile(this.props.token, 'https://repo-prod.prod.sagebase.org'),
+        SynapseClient.getEntity(this.props.token, this.props.formSchemaEntityId),
+        SynapseClient.getEntity(this.props.token, this.props.formUiSchemaEntityId),
+      ]
       if (this.props.evaluationId) {
-        SynapseClient.getEvaluation(this.props.evaluationId, this.props.token).then(
-          (evaluation: Evaluation) => {
-            this.setState({ evaluation })
-          }).catch((error: any) => {
-            this.onError(error)
-          })
-      } else {
-        this.setState({ evaluation: undefined })
+        promises.push(SynapseClient.getEvaluation(this.props.evaluationId, this.props.token))
       }
+      Promise.all(promises).then((values) => {
+        const userprofile: UserProfile = values[0]
+        this.getTargetFolder(userprofile, this.props.token!)
+        const formSchemaFileEntity: FileEntity = values[1]
+        const formUiSchemaFileEntity: FileEntity = values[2]
+        this.getSchemaFileContent(formSchemaFileEntity, formUiSchemaFileEntity)
+        if (values[3]) {
+          const evaluation: Evaluation = values[3]
+          this.setState({ evaluation })
+        }
+      }).catch((error) => {
+        this.onError(error)
+      })
     }
   }
 
+  getSchemaFileContent = (formSchemaFileEntity: FileEntity, formUiSchemaFileEntity: FileEntity) => {
+    const promises = [
+      SynapseClient.getFileEntityContent(this.props.token!, formSchemaFileEntity),
+      SynapseClient.getFileEntityContent(this.props.token!, formUiSchemaFileEntity),
+    ]
+    Promise.all(promises).then((values) => {
+      const formSchemaContent: string = values[0]
+      const formUiSchemaContent: string = values[1]
+      this.setState(
+        {
+          formSchema: JSON.parse(formSchemaContent),
+          formUiSchema: JSON.parse(formUiSchemaContent)
+        })
+    }).catch((error) => {
+      this.onError(error)
+    })
+  }
   getTargetFolder = (userprofile: UserProfile, token: string) => {
-    const folderName = `${userprofile.userName} - ${schema.title} (submissions)`
+    const folderName = `${userprofile.userName} (form files)`
     const entityLookupRequest = { entityName: folderName, parentId: this.props.parentContainerId }
     SynapseClient.lookupChildEntity(entityLookupRequest, token).then((entityId) => {
       // ok, found an entity of the same name.
@@ -240,9 +211,11 @@ export default class EntityForm
           this.props.token &&
           !this.state.isLoading &&
           !this.state.successfullyUploaded &&
+          this.state.formSchema &&
+          this.state.formUiSchema &&
           <Form
-            schema={schema}
-            uiSchema={uiSchema}
+            schema={this.state.formSchema}
+            uiSchema={this.state.formUiSchema}
             onSubmit={this.onSubmit}
             showErrorList={true}
           />
