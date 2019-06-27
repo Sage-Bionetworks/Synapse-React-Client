@@ -24,12 +24,13 @@ type EntityFormState = {
 }
 
 export type EntityFormProps = {
-  parentContainerId: string, // container (project/folder) to create our form folder in (that holds the form files)
-  formSchemaEntityId: string, // Synapse file that contains the form schema
-  formUiSchemaEntityId: string, // Synapse file that contains the form ui schema
-  initFormData: boolean // set to true if you would like to download and prefill the form with the user's previous response
+  parentContainerId: string, // A container (project/folder) to create the user’s form folder in (which holds all of their form files).
+  // By default, only the user will have access to this subfolder (and files within).
+  formSchemaEntityId: string, // Synapse file that contains the form schema.
+  formUiSchemaEntityId: string, // Synapse file that contains the form ui schema.
+  initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
   token?: string, // user's session token
-  evaluationId?: string // optional: submits the new form entity to the evaluation queue
+  evaluationId?: string // Optional: Will submit the new form entity to the given evaluation queue on submit.
 }
 
 export default class EntityForm
