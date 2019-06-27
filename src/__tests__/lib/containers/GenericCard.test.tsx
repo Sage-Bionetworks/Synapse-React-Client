@@ -144,13 +144,13 @@ describe('it grabs the correct URL' , () => {
       [columnValues[1]]: 1
     }
     const internalLinkConfiguration: InternalLinkConfiguration = {
-      baseURL: '/Explore/Projects',
+      baseURL: 'Explore/Projects',
       columnValues: [
         columnValues[0],
         columnValues[1]
       ]
     }
-    const expectedLink = `/Explore/Projects?Grant%20Number=${grantNumberValue}&Funder=${funderValue}`
+    const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
     const { linkDisplay, target } = getLink('', internalLinkConfiguration, data, schema)
     expect(linkDisplay).toEqual(expectedLink)
     expect(target).toEqual(SELF)

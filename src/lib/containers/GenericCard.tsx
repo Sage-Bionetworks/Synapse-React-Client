@@ -81,7 +81,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       const columnValuesLength = internalLinkConfiguration.columnValues.length
       const urlParams = internalLinkConfiguration.columnValues.map(
         (el, index) => {
-          if (!schema[el]) {
+          if (!schema.hasOwnProperty(el)) {
             console.error(`Could not find match for data: ${data} with columnName ${el}`)
           }
           const stringEnd = index < columnValuesLength - 1 ? '&' : ''
