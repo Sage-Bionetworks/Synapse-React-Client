@@ -16,6 +16,7 @@ export type QueryWrapperProps = {
   unitDescription?: string
   facetAliases?: {}
   loadNow?: boolean
+  showBarChart?: boolean
 }
 
 export type QueryWrapperState = {
@@ -61,6 +62,7 @@ export type QueryWrapperChildProps = {
   lastFacetSelection?: FacetSelection
   chartSelectionIndex?: number
   asyncJobStatus?: AsynchronousJobStatus
+  showBarChart?: boolean
 }
 
 /**
@@ -275,7 +277,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
         chartSelectionIndex: this.state.chartSelectionIndex,
-        asyncJobStatus: this.state.asyncJobStatus
+        asyncJobStatus: this.state.asyncJobStatus,
+        showBarChart: this.props.showBarChart
       })
     }))
 

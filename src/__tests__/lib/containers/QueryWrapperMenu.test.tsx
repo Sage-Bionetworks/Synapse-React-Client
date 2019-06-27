@@ -56,6 +56,24 @@ describe('it renders with basic functionality', () => {
     expect(wrapper.find(SynapseTable)).toHaveLength(1)
   })
 
+  it('renders cards and no bar chart', async () => {
+    const propsWithTitle: QueryWrapperMenuProps = {
+      token,
+      rgbIndex: 3,
+      cardConfiguration: {
+        type: SynapseConstants.STUDY
+      },
+      showBarChart: false,
+      menuConfig: [{ sql, facetName }]
+    }
+    const { wrapper } = await createShallowComponent(propsWithTitle)
+    expect(wrapper).toBeDefined()
+    expect(wrapper.find(QueryWrapper)).toHaveLength(1)
+    expect(wrapper.find(StackedBarChart)).toHaveLength(0)
+    expect(wrapper.find(Facets)).toHaveLength(1)
+    expect(wrapper.find(CardContainer)).toHaveLength(1)
+  })
+
   it('renders a bar chart, cards, and facets', async () => {
     const propsWithType: QueryWrapperMenuProps = {
       ...props,

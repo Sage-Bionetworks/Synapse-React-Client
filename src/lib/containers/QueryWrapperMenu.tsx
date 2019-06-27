@@ -35,6 +35,7 @@ export type QueryWrapperMenuProps = {
   unitDescription?: string
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
+  showBarChart?: boolean
 }
 
 type Info = {
@@ -122,7 +123,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const menuDropdown = this.renderFacetMenu()
     const queryWrapper = this.renderQueryChildren()
     const name = window.location.hash.substring(10) || ''
-    const { menuConfig } = this.props
+    const { menuConfig, showBarChart = true } = this.props
     const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
     const queryCount = this.state[sql] || ''
     return (
@@ -134,7 +135,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         <div className="break">
           <hr/>
         </div>
-        <div className="col-xs-2 SRC-menuLayout SRC-paddingTopNoMargin">
+        <div className={`col-xs-2 SRC-menuLayout ${showBarChart ? 'SRC-menuPadding' : 'SRC-menuPaddingLess'}`}>
           {menuDropdown}
         </div>
         <div className="col-xs-10">
@@ -153,7 +154,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       isConsistent = false,
       unitDescription = '',
       cardConfiguration,
-      tableConfiguration
+      tableConfiguration,
+      showBarChart = true
     } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = (this.state.menuIndex === index)
@@ -170,6 +172,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       return (
         <span key={facetName} className={className}>
           <QueryWrapper
+            showBarChart={showBarChart}
             loadNow={loadNow}
             showMenu={true}
             initQueryRequest={{
@@ -190,7 +193,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            <StackedBarChart loadingScreen={loadingScreen}/>
+            {showBarChart ? <StackedBarChart loadingScreen={loadingScreen}/> : <React.Fragment/>}
             <Facets />
             {/*
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element

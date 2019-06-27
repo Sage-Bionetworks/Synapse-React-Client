@@ -715,8 +715,12 @@ checkmark styling end
   visibility: hidden;
   display: none; }
 
-#root .SRC-paddingTopNoMargin {
+#root .SRC-menuPadding {
   padding-top: 29px;
+  margin-top: 0px; }
+
+#root .SRC-menuPaddingLess {
+  padding-top: 15px;
   margin-top: 0px; }
 
 .SRC-searchBar {
