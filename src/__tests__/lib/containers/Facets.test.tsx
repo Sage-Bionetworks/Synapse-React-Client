@@ -14,6 +14,7 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
 import { SELECT_ALL } from '../../../lib/containers/SynapseTable'
+import { TotalQueryResults } from '../../../lib/containers/TotalQueryResults'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
   const wrapper = mount(
@@ -182,6 +183,11 @@ describe('it performs basic functionality', () => {
     // end mocking QueryWrapper behvaior
     // at this point all facets should be considered 'selected'
     expect(wrapper.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(11)
+  })
+
+  it('renders the total count when showBarChart is false', async () => {
+    const { wrapper } = await createMountedComponent(cloneDeep({ ...props, showBarChart: false }))
+    expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
   })
 
 })

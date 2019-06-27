@@ -13,6 +13,7 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
 import { SELECT_ALL } from './SynapseTable'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
+import { TotalQueryResults } from './TotalQueryResults'
 
 // Add all icons to the library so you can use it in your page
 library.add(faTimes)
@@ -52,7 +53,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
     lastFacetSelection,
     isLoading,
     rgbIndex,
-    isAllFilterSelected
+    isAllFilterSelected,
   } = props
   const children: any = []
   const ref: React.RefObject<HTMLSpanElement> = React.createRef()
@@ -253,7 +254,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       return (<div/>)
     }
     let { showAllFacets } = this.state
-    const { data, filter } = this.props
+    const { data, filter, unitDescription, isLoading, showBarChart = true } = this.props
     const { facets } = data
 
     const curFacetsIndex = facets.findIndex(facet => facet.columnName === filter && facet.facetType === 'enumeration')
@@ -271,6 +272,16 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const ref: React.RefObject<HTMLDivElement> = React.createRef()
     return (
       <div className="SRC-syn-border-spacing">
+        {
+          !showBarChart
+          &&
+          <TotalQueryResults
+            data={data}
+            filter={filter}
+            unitDescription={unitDescription!}
+            isLoading={isLoading!}
+          />
+        }
         <form>
           <div ref={ref} className="SRC-marginFive form-group">
             {this.showFacetFilter()}

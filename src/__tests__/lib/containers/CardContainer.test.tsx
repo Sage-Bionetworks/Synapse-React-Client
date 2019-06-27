@@ -3,9 +3,10 @@ import { shallow } from 'enzyme'
 import CardContainer, { RowContainer, CardContainerProps } from '../../../lib/containers/CardContainer'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json  from '../../../mocks/syn16787123.json'
-import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle'
+import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
+import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
+import { TotalQueryResults } from '../../../lib/containers/TotalQueryResults'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(
@@ -65,7 +66,7 @@ describe('it performs all functionality', () => {
     }
     const { wrapper } = createShallowComponent(propsWithTotalQueryCount)
     expect(wrapper.find(RowContainer)).toHaveLength(25)
-    expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
+    expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
@@ -73,7 +74,6 @@ describe('it performs all functionality', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({ ...props, filter: 'projectStatus' })
     expect(wrapper.find(RowContainer)).toHaveLength(25)
-    expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual('Displaying 59 studies')
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
