@@ -16,11 +16,11 @@ type EntityFormState = {
   containerId?: string,
   userprofile?: UserProfile,
   successMessage?: string,
-  evaluation?: Evaluation,
+  evaluation?: Evaluation, // if evaluation id was provided, submit to this evaluation
   currentFileEntity?: FileEntity, // file holding user form data
-  initFormData?: any,
-  formSchema?: any,
-  formUiSchema?: any
+  initFormData?: any, // form data that prepopulates the form
+  formSchema?: any, // schema that drives the form
+  formUiSchema?: any // ui schema that directs how to render the form elements
 }
 
 export type EntityFormProps = {
@@ -40,81 +40,6 @@ export default class EntityForm
       isLoading: true,
       successfullyUploaded: false,
     }
-  }
-
-  finishedProcessing = (successMessage: string) => {
-    this.setState(
-      {
-        successMessage,
-        isLoading: false,
-        successfullyUploaded: true,
-      })
-  }
-
-  onError = (error: any) => {
-    this.setState({
-      error,
-      isLoading: false,
-      successfullyUploaded: false
-    })
-  }
-
-  onSubmit = ({ formData }: any) => {
-    this.setState(
-      {
-        isLoading: true,
-        successfullyUploaded: false
-      })
-
-    const submissionFileAndForm: Blob = new Blob([JSON.stringify(formData)], {
-      type: 'text/json'
-    })
-    this.createEntityFile(submissionFileAndForm)
-  }
-
-  createEntityFile = (fileContentsBlob: Blob) => {
-    const fileName = `${this.state.formSchema.title}.json`
-    SynapseClient.uploadFile(this.props.token, fileName, fileContentsBlob).then(
-      (fileUploadComplete: any) => {
-        // do we need to create a new file entity, or update an existing file entity?
-        const newFileHandleId = fileUploadComplete.fileHandleId
-        if (this.state.currentFileEntity) {
-          this.state.currentFileEntity.dataFileHandleId = newFileHandleId
-          return SynapseClient.updateEntity(this.state.currentFileEntity, this.props.token)
-        }
-        // else, it's a new file entity
-        const newFileEntity: FileEntity = {
-          parentId: this.state.containerId!,
-          name: fileName,
-          concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-          dataFileHandleId: newFileHandleId,
-        }
-        return SynapseClient.createEntity(newFileEntity, this.props.token)
-      }).then((fileEntity: FileEntity) => {
-        // by this point we've either found and updated the existing file entity, or created a new one.
-        if (this.state.evaluation) {
-          this.submitToEvaluation(fileEntity)
-        } else {
-          this.finishedProcessing('Successfully uploaded.')
-        }
-      }).catch((error: any) => {
-        this.onError(error)
-      })
-  }
-
-  submitToEvaluation = (entity: FileEntity) => {
-    const submission: Submission = {
-      entityId: entity.id!,
-      versionNumber: entity.versionNumber!,
-      userId: this.state.userprofile!.ownerId,
-      evaluationId: this.state.evaluation!.id,
-    }
-    SynapseClient.submitToEvaluation(submission, entity.etag!, this.props.token).then(
-      () => {
-        this.finishedProcessing(this.state.evaluation!.submissionReceiptMessage)
-      }).catch((error: any) => {
-        this.onError(error)
-      })
   }
 
   componentDidUpdate(prevProps: any) {
@@ -164,7 +89,7 @@ export default class EntityForm
   }
 
   getExistingFileData = (targetFolderId: string, formSchemaContent: any, formUiSchemaContent: any) => {
-    // if data already exists, prefill form
+    // if data already exists, save a reference to the existing entity and prefill the form
     const fileName = `${formSchemaContent.title}.json`
     const entityLookupRequest = { entityName: fileName, parentId: targetFolderId }
     let initFormData: any
@@ -242,6 +167,81 @@ export default class EntityForm
     } catch (error) {
       return this.onError(error)
     }
+  }
+
+  finishedProcessing = (successMessage: string) => {
+    this.setState(
+      {
+        successMessage,
+        isLoading: false,
+        successfullyUploaded: true,
+      })
+  }
+
+  onError = (error: any) => {
+    this.setState({
+      error,
+      isLoading: false,
+      successfullyUploaded: false
+    })
+  }
+
+  onSubmit = ({ formData }: any) => {
+    this.setState(
+      {
+        isLoading: true,
+        successfullyUploaded: false
+      })
+
+    const submissionFileAndForm: Blob = new Blob([JSON.stringify(formData)], {
+      type: 'text/json'
+    })
+    this.createEntityFile(submissionFileAndForm)
+  }
+
+  createEntityFile = (fileContentsBlob: Blob) => {
+    const fileName = `${this.state.formSchema.title}.json`
+    SynapseClient.uploadFile(this.props.token, fileName, fileContentsBlob).then(
+      (fileUploadComplete: any) => {
+        // do we need to create a new file entity, or update an existing file entity?
+        const newFileHandleId = fileUploadComplete.fileHandleId
+        if (this.state.currentFileEntity) {
+          this.state.currentFileEntity.dataFileHandleId = newFileHandleId
+          return SynapseClient.updateEntity(this.state.currentFileEntity, this.props.token)
+        }
+        // else, it's a new file entity
+        const newFileEntity: FileEntity = {
+          parentId: this.state.containerId!,
+          name: fileName,
+          concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+          dataFileHandleId: newFileHandleId,
+        }
+        return SynapseClient.createEntity(newFileEntity, this.props.token)
+      }).then((fileEntity: FileEntity) => {
+        // by this point we've either found and updated the existing file entity, or created a new one.
+        if (this.state.evaluation) {
+          this.submitToEvaluation(fileEntity)
+        } else {
+          this.finishedProcessing('Successfully uploaded.')
+        }
+      }).catch((error: any) => {
+        this.onError(error)
+      })
+  }
+
+  submitToEvaluation = (entity: FileEntity) => {
+    const submission: Submission = {
+      entityId: entity.id!,
+      versionNumber: entity.versionNumber!,
+      userId: this.state.userprofile!.ownerId,
+      evaluationId: this.state.evaluation!.id,
+    }
+    SynapseClient.submitToEvaluation(submission, entity.etag!, this.props.token).then(
+      () => {
+        this.finishedProcessing(this.state.evaluation!.submissionReceiptMessage)
+      }).catch((error: any) => {
+        this.onError(error)
+      })
   }
 
   render() {
