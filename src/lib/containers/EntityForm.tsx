@@ -270,6 +270,20 @@ export default class EntityForm
         {
           !this.state.error &&
           this.props.token &&
+          !this.state.isLoading &&
+          !this.state.successfullyUploaded &&
+          this.state.formSchema &&
+          this.state.formUiSchema &&
+          this.state.evaluation &&
+          <div className="bg-warning" style={{ padding: '10px' }}>
+            &#42; The information that you have entered in this form will be sent to the
+            administrators of this evaluation:
+            <strong style={{ marginLeft: '5px' }}>{this.state.evaluation.name}</strong>
+          </div>
+        }
+        {
+          !this.state.error &&
+          this.props.token &&
           this.state.isLoading &&
           <React.Fragment>
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
