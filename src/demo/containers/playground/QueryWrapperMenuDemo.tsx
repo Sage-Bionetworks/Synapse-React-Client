@@ -31,9 +31,12 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       showTabOne: false,
       tabTwo:
       {
+        showBarChart: false,
+        unitDescription: 'persons',
         cardConfiguration: {
           type: SynapseConstants.MEDIUM_USER_CARD,
         },
+        rgbIndex: 1,
         menuConfig: [
           {
             unitDescription: 'people',

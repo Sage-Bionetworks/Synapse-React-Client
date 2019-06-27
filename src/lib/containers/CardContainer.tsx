@@ -1,6 +1,4 @@
 import * as React from 'react'
-// tslint:disable-next-line
-import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import {
@@ -27,6 +25,7 @@ import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
 import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
 import GenericCard, { GenericCardSchema, IconOptions } from './GenericCard'
 import UserCardList from './UserCardList'
+import { TotalQueryResults } from './TotalQueryResults'
 
 const PAGE_SIZE: number = 25
 
@@ -96,6 +95,7 @@ export type CardContainerProps = {
   secondaryLabelLimit?: number
   backgroundColor?: string
   iconOptions?: IconOptions
+  showBarChart?: boolean
 }
 
 type CardContainerState = {
@@ -137,6 +137,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       genericCardSchema,
       backgroundColor,
       iconOptions,
+      showBarChart = true
     } = this.props
     // the cards only show the loading screen on initial load, this occurs when data is undefined
     if (!data) {
@@ -160,38 +161,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     let showViewMore: boolean = limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
     showViewMore = showViewMore && this.props.hasMoreData!
 
-    const { facets = [] } = data
-    let total = 0
-    if (filter) {
-      const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === filter)
-      // calculate the values chosen
-      const curFacets = data.facets[curFacetsIndex] as FacetColumnResultValues
-      // edge case -- if they are all false then they are considered all true..
-      // sum up the counts of data
-      let anyTrue = false
-      let totalAllFalseCase = 0
-      let totalStandardCase = 0
-
-      if (curFacets) {
-        for (const key of curFacets.facetValues) {
-          anyTrue = anyTrue || key.isSelected
-          totalAllFalseCase += key.count
-          totalStandardCase += key.isSelected ? key.count : 0
-        }
-      }
-      total = anyTrue ? totalStandardCase : totalAllFalseCase
-
-      if (data.queryResult.queryResults.rows.length === 0) {
-        // we override the statements above if there are zero results because the current UI
-        // would be showing zero cards
-        total = 0
-      }
-
-    } else {
-      // If the user isn't drilling down with a facet then we look at the total
-      // count passed into the view
-      total = this.props.totalResultsNoFacet!
-    }
     const showViewMoreButton = (
       showViewMore
       &&
@@ -246,13 +215,13 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     return (
       <div>
-        {unitDescription &&
-          <p className="SRC-boldText SRC-text-title SRC-centerContent">Displaying {total} {unitDescription}
-            {/*
-              add loading spinner to the right of the display information to show content is loading on view more click
-            */}
-            {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'}/>}
-          </p>
+        {(unitDescription && showBarChart) &&
+          <TotalQueryResults
+            data={data}
+            filter={filter}
+            unitDescription={unitDescription!}
+            isLoading={isLoading!}
+          />
         }
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
         {cards}
