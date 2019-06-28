@@ -8,12 +8,18 @@ import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
 
+export type InternalLinkConfiguration = {
+  baseURL: string
+  columnValues: string []
+}
+
 export type CommonCardProps = {
   type: string
   genericCardSchema?: GenericCardSchema
   hasInternalLink?: boolean
   iconOptions?: IconOptions
   secondaryLabelLimit?: number
+  internalLinkConfiguration?: InternalLinkConfiguration
 }
 
 export type CardContainerLogicProps = {

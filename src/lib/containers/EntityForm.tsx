@@ -2,12 +2,11 @@ import * as React from 'react'
 import { default as Form } from 'react-jsonschema-form'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
-import { AccessControlList } from '../utils/jsonResponses/AccessControlList'
-import { ResourceAccess } from '../utils/jsonResponses/ResourceAccess'
 import { Evaluation } from '../utils/jsonResponses/Evaluation'
 import { Submission } from '../utils/jsonResponses/Submission'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
 import { EntityId } from '../utils/jsonResponses/EntityId'
+import { EntityLookupRequest } from '../utils/jsonResponses/EntityLookupRequest'
 
 type EntityFormState = {
   error?: any,
@@ -24,7 +23,6 @@ type EntityFormState = {
 }
 
 export type EntityFormProps = {
-  parentContainerId: string, // A container (project/folder) to create the user’s form folder in (which holds all of their form files).
   // By default, only the user will have access to this subfolder (and files within).
   formSchemaEntityId: string, // Synapse file that contains the form schema.
   formUiSchemaEntityId: string, // Synapse file that contains the form ui schema.
@@ -57,10 +55,10 @@ export default class EntityForm
       }
       Promise.all(promises).then((values) => {
         const userprofile: UserProfile = values[0]
-        this.getTargetFolder(userprofile, this.props.token!).then((targetFolderId: string) => {
+        this.getTargetContainer(userprofile, this.props.token!).then((targetContainerId: string) => {
           const formSchemaFileEntity: FileEntity = values[1]
           const formUiSchemaFileEntity: FileEntity = values[2]
-          this.getSchemaFileContent(targetFolderId, formSchemaFileEntity, formUiSchemaFileEntity)
+          this.getSchemaFileContent(targetContainerId, formSchemaFileEntity, formUiSchemaFileEntity)
           if (values[3]) {
             const evaluation: Evaluation = values[3]
             this.setState({ evaluation })
@@ -119,9 +117,9 @@ export default class EntityForm
     })
   }
 
-  getTargetFolder = async (userprofile: UserProfile, token: string) => {
-    const folderName = `${userprofile.userName} (form files)`
-    const entityLookupRequest = { entityName: folderName, parentId: this.props.parentContainerId }
+  getTargetContainer = async (userprofile: UserProfile, token: string) => {
+    const projectName = `.${userprofile.userName}_form_data`
+    const entityLookupRequest: EntityLookupRequest = { entityName: projectName }
     try {
       const entityId = await SynapseClient.lookupChildEntity(entityLookupRequest, token)
       // ok, found an entity of the same name.
@@ -135,41 +133,25 @@ export default class EntityForm
     } catch (error) {
       if (error.statusCode === 404) {
         // ok, it's a new folder
-        return this.createTargetFolder(folderName, userprofile, token)
+        return this.createTargetProject(projectName, userprofile, token)
       }
       return this.onError(error)
     }
   }
 
-  createTargetFolder = async (folderName: string, userprofile: UserProfile, token: string) => {
+  createTargetProject = async (projectName: string, userprofile: UserProfile, token: string) => {
     const newEntity = {
-      name: folderName,
-      parentId: this.props.parentContainerId,
-      concreteType: 'org.sagebionetworks.repo.model.Folder'
+      name: projectName,
+      concreteType: 'org.sagebionetworks.repo.model.Project'
     }
     try {
       const entity = await SynapseClient.createEntity(newEntity, token)
-      // and set the acl to private by default
-      const resourceAccess: ResourceAccess[] = [
-        {
-          principalId: parseInt(userprofile.ownerId, 10),
-          accessType: ['READ', 'DOWNLOAD', 'UPDATE', 'DELETE',
-            'CREATE', 'CHANGE_PERMISSIONS', 'CHANGE_SETTINGS', 'MODERATE']
-        }
-      ]
-      const acl: AccessControlList = {
-        resourceAccess,
-        id: entity.id,
-      }
-      SynapseClient.createACL(entity.id, acl, token).then((newAcl: AccessControlList) => {
-        console.log(`EntityForm uploading to https://www.synapse.org/#!Synapse:${entity.id}`)
-        this.setState({
-          userprofile,
-          containerId: entity.id,
-          isLoading: false
-        })
-        return entity.id
+      this.setState({
+        userprofile,
+        containerId: entity.id,
+        isLoading: false
       })
+      return entity.id
     } catch (error) {
       return this.onError(error)
     }

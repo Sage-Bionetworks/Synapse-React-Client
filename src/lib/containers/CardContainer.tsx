@@ -23,65 +23,16 @@ import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
 import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
-import GenericCard, { GenericCardSchema, IconOptions } from './GenericCard'
+import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
 import { TotalQueryResults } from './TotalQueryResults'
+import { CommonCardProps } from './CardContainerLogic'
 
 const PAGE_SIZE: number = 25
 
-type RowContainerProps = {
-  data: any
-  schema: any
-  hasInternalLink?: boolean
-  isHeader: boolean
-  type: string
-  genericCardSchema?: GenericCardSchema
-  secondaryLabelLimit?: number
-  backgroundColor?: string
-  iconOptions?: IconOptions
-}
-
-// Instead of giving each of the Study/Tool/etc components the same
-// props we make a simple container that does
-export const RowContainer: React.SFC<RowContainerProps> = (props) => {
-  const { type, ...rest } = props
-  switch (type) {
-    case STUDY:
-      return <Study {...rest} />
-    case DATASET:
-      return <Dataset {...rest} />
-    case FUNDER:
-      return <Funder {...rest} />
-    case PUBLICATION:
-      return <Publication {...rest} />
-    case TOOL:
-      return <Tool {...rest} />
-    case AMP_PROJECT:
-      return <Project {...rest} />
-    case AMP_CONSORTIUM:
-      return <Consortium {...rest} />
-    case AMP_STUDY:
-      return <AMP_Study {...rest} />
-    case CSBC_PROJECT:
-      return <CSBCProject {...rest} />
-    case CSBC_PUBLICATION:
-      return <CSBCPublication {...rest} />
-    case CSBC_STUDY:
-      return <CSBCStudy {...rest} />
-    case CSBC_DATASET:
-      return <CSBCDataset {...rest} />
-    case GENERIC_CARD:
-      return <GenericCard {...{ ...rest, genericCardSchema: rest.genericCardSchema! }} />
-    default:
-      return (<div />) // this should never happen
-  }
-}
-
 export type CardContainerProps = {
-  type: string,
   data?: QueryResultBundle,
   limit?: number,
-  hasInternalLink?: boolean
   isHeader?: boolean
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
@@ -91,12 +42,9 @@ export type CardContainerProps = {
   totalResultsNoFacet?: number
   hasMoreData?: boolean
   loadingScreen?: JSX.Element
-  genericCardSchema?: GenericCardSchema
-  secondaryLabelLimit?: number
   backgroundColor?: string
-  iconOptions?: IconOptions
   showBarChart?: boolean
-}
+} & CommonCardProps
 
 type CardContainerState = {
   cardLimit: number
@@ -123,6 +71,39 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     this.props.getNextPageOfData!(queryRequest)
   }
 
+  public renderCard = (props: any, type: string) => {
+    switch (type) {
+      case STUDY:
+        return <Study {...props} />
+      case DATASET:
+        return <Dataset {...props} />
+      case FUNDER:
+        return <Funder {...props} />
+      case PUBLICATION:
+        return <Publication {...props} />
+      case TOOL:
+        return <Tool {...props} />
+      case AMP_PROJECT:
+        return <Project {...props} />
+      case AMP_CONSORTIUM:
+        return <Consortium {...props} />
+      case AMP_STUDY:
+        return <AMP_Study {...props} />
+      case CSBC_PROJECT:
+        return <CSBCProject {...props} />
+      case CSBC_PUBLICATION:
+        return <CSBCPublication {...props} />
+      case CSBC_STUDY:
+        return <CSBCStudy {...props} />
+      case CSBC_DATASET:
+        return <CSBCDataset {...props} />
+      case GENERIC_CARD:
+        return <GenericCard {...props} />
+      default:
+        return (<div />) // this should never happen
+    }
+  }
+
   public render() {
     const {
       data,
@@ -137,6 +118,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       genericCardSchema,
       backgroundColor,
       iconOptions,
+      internalLinkConfiguration,
       showBarChart = true
     } = this.props
     // the cards only show the loading screen on initial load, this occurs when data is undefined
@@ -193,20 +175,19 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         (rowData: any, index) => {
           if (index < limit) {
             const key = JSON.stringify(rowData.values)
-            return (
-              <RowContainer
-                key={key}
-                type={type}
-                data={rowData.values}
-                hasInternalLink={this.props.hasInternalLink}
-                schema={schema}
-                isHeader={isHeader}
-                genericCardSchema={genericCardSchema}
-                secondaryLabelLimit={secondaryLabelLimit}
-                backgroundColor={backgroundColor}
-                iconOptions={iconOptions}
-              />
-            )
+            const propsForCard = {
+              key,
+              type,
+              internalLinkConfiguration,
+              schema,
+              isHeader,
+              genericCardSchema,
+              secondaryLabelLimit,
+              backgroundColor,
+              iconOptions,
+              data: rowData.values,
+            }
+            return this.renderCard(propsForCard, type)
           }
           return false
         }

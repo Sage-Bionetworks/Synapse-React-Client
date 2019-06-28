@@ -229,7 +229,6 @@ class Demo extends React.Component<{}, DemoState> {
           <div className="container">
             <EntityForm
               token={this.state.token!}
-              parentContainerId="syn18987891"
               formSchemaEntityId="syn20184776"
               formUiSchemaEntityId="syn20184771"
               initFormData={false}
