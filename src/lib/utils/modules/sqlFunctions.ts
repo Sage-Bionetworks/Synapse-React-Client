@@ -30,7 +30,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) =>
       ]
       if (index < searchParamsLen - 1) {
         // make sure to chain the ANDs until the last one
-        token.push(['OPERATOR', 'AND', '1'])
+        token.unshift(['CONDITIONAL', 'AND', '1'])
       }
       tokens.splice(indexAfterWhereClause, 0, ...token)
     }

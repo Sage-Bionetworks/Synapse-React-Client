@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import CardContainer, { RowContainer, CardContainerProps } from '../../../lib/containers/CardContainer'
+import CardContainer, { CardContainerProps } from '../../../lib/containers/CardContainer'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json  from '../../../mocks/syn16787123.json'
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
@@ -65,7 +65,6 @@ describe('it performs all functionality', () => {
       totalResultsNoFacet: 59,
     }
     const { wrapper } = createShallowComponent(propsWithTotalQueryCount)
-    expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
@@ -73,7 +72,6 @@ describe('it performs all functionality', () => {
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({ ...props, filter: 'projectStatus' })
-    expect(wrapper.find(RowContainer)).toHaveLength(25)
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 

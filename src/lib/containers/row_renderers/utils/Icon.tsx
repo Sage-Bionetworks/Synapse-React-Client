@@ -9,7 +9,8 @@ import {
   STUDY,
   EXPERIMENTAL,
   COMPUTATIONAL,
-  CLINICAL
+  CLINICAL,
+  PROJECT
 } from '../../../utils/SynapseConstants'
 
 import PublicationSvg from '../../../assets/icons/Publication.svg'
@@ -21,6 +22,7 @@ import DNA_TwoSvg from '../../../assets/icons/DNA_Two.svg'
 import ToolClinicalSvg from '../../../assets/icons/ToolClinical.svg'
 import ToolComputationalSvg from '../../../assets/icons/ToolComputational.svg'
 import ToolExperimentalSvg from '../../../assets/icons/ToolExperimental.svg'
+import projectSvg from '../../../assets/icons/project.svg'
 
 import { KeyValue } from '../../../../lib/utils/modules/sqlFunctions'
 
@@ -41,6 +43,7 @@ const defaultIcons = {
   [EXPERIMENTAL]: ToolExperimentalSvg,
   [COMPUTATIONAL]: ToolComputationalSvg,
   [CLINICAL]: ToolClinicalSvg,
+  [PROJECT]: projectSvg
 }
 const Icon: React.FunctionComponent<IconProps> = ({ type, value = '', iconOptions }) => {
   const iconSet = { ...defaultIcons, ...iconOptions }

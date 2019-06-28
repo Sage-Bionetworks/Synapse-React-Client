@@ -1,6 +1,7 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, ShowMore, Icon } from './row_renderers/utils'
+import { InternalLinkConfiguration } from './CardContainerLogic'
 
 export type KeyToAlias = {
   key: string
@@ -34,6 +35,7 @@ export type GenericCardProps = {
   data: any
   secondaryLabelLimit?: number
   hasInternalLink?: boolean
+  internalLinkConfiguration?: InternalLinkConfiguration
 }
 
 export type GenericCardState = {
@@ -61,7 +63,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  public getLink (link: string, hasInternalLink = false) {
+  public getLink (link: string, internalLinkConfiguration?: InternalLinkConfiguration, data?: string [], schema?: any) {
     let linkDisplay = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
@@ -70,8 +72,24 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     } else if (link.match(DOI_REGEX)) {
       target = '_blank'
       linkDisplay = `https://dx.doi.org/${link}`
-    } else if (!hasInternalLink) {
+    } else if (!internalLinkConfiguration) {
       target = '_blank'
+    } else if (internalLinkConfiguration) {
+      if (!data || !schema) {
+        throw Error('Must specify internalLinkConfiguration and data for linking to work')
+      }
+      const columnValuesLength = internalLinkConfiguration.columnValues.length
+      const urlParams = internalLinkConfiguration.columnValues.map(
+        (el, index) => {
+          if (!schema.hasOwnProperty(el)) {
+            console.error(`Could not find match for data: ${data} with columnName ${el}`)
+          }
+          const stringEnd = index < columnValuesLength - 1 ? '&' : ''
+          return `${el}=${data[schema[el]]}${stringEnd}`
+        }
+      ).join('')
+      // tested this link on the browser, there's no need to encode the URL, the browser picks up on that automatically
+      linkDisplay = `#/${internalLinkConfiguration.baseURL}?${urlParams}`
     }
     return { linkDisplay, target }
   }
@@ -85,7 +103,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       backgroundColor,
       iconOptions,
       isHeader = false,
-      hasInternalLink=  false,
+      internalLinkConfiguration
     } = this.props
     const { link = '' } = genericCardSchema
     const type = genericCardSchema.type
@@ -95,7 +113,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), hasInternalLink)
+    const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), internalLinkConfiguration, data, schema)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
