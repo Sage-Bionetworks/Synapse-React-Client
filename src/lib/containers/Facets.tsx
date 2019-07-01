@@ -224,15 +224,13 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       // this is hidden if there are > 5 facets, wait for user to make
       // an action for this to appear
       return (
-        <React.Fragment>
-          <a
-            href={''}
-            className="SRC-primary-text-color SRC-facet-select-all SRC-no-text-decor"
-            onClick={this.applyChanges(ref, '', SELECT_ALL)}
-          >
-            Select All
-          </a>
-        </React.Fragment>
+        <a
+          href={''}
+          className="SRC-primary-text-color SRC-facet-select-all SRC-no-text-decor"
+          onClick={this.applyChanges(ref, '', SELECT_ALL)}
+        >
+          Select All
+        </a>
       )
     }
 
@@ -250,7 +248,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
   }
 
   public render() {
-    if (this.props.data === undefined) {
+    if (!this.props.data) {
       return (<div/>)
     }
     let { showAllFacets } = this.state

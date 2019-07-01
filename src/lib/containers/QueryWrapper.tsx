@@ -5,6 +5,7 @@ import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
+import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export type QueryWrapperProps = {
   initQueryRequest?: QueryBundleRequest
@@ -224,17 +225,24 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
           const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
-          data.facets.forEach((el) => {
-            /*
-              this is done for convenience, we could evalulate isAllFilterSelectedForFacet lazily
-              for each facet, but it would require an 'undefined' check which is less than ideal
-            */
-            isAllFilterSelectedForFacet[el.columnName] = true
+          let { chartSelectionIndex } = this.state
+          data.facets.forEach((el: FacetColumnResultValues) => {
+            // isAll is only true iff there are no facets selected or all elements are selected
+            const { facetValues } = el
+            const isAllFalse = facetValues.every(facet => !facet.isSelected)
+            const isAllTrue =  facetValues.every(facet => facet.isSelected)
+            const isByDefaultSelected = isAllFalse || isAllTrue
+            isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
+            if (el.columnName === this.props.facetName && !isAllFalse) {
+              // Note - this picks the first selected facet
+              chartSelectionIndex = facetValues.sort((a, b) => b.count - a.count).findIndex(facet => facet.isSelected)
+            }
           })
           const newState = {
             isAllFilterSelectedForFacet,
             hasMoreData,
             data,
+            chartSelectionIndex,
             lastQueryRequest,
             isLoading: false,
             isLoadingNewData: false,

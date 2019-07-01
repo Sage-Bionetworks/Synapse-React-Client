@@ -200,20 +200,17 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    * Render the children without any formatting
    */
   public render() {
+    // only forward the necessary props
+    const {
+      sql,
+      searchParams,
+      token,
+      ...rest
+    } = this.props
     return (
       <CardContainer
-        hasInternalLink={this.props.hasInternalLink}
-        limit={this.props.limit}
-        type={this.props.type}
+        {...rest}
         data={this.state.data}
-        filter={this.props.filter}
-        loadingScreen={this.props.loadingScreen}
-        secondaryLabelLimit={this.props.secondaryLabelLimit}
-        backgroundColor={this.props.backgroundColor}
-        isHeader={this.props.isHeader}
-        iconOptions={this.props.iconOptions}
-        unitDescription={this.props.unitDescription}
-        genericCardSchema={this.props.genericCardSchema}
         totalResultsNoFacet={this.state.totalResultsNoFacet}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}

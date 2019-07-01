@@ -121,7 +121,7 @@
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
     "type-check:watch": "yarn run type-check --watch",
     "build": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
-    "build:js": "rm -rf dist && tsc --p tsconfig.build.json",
+    "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/umd"
   },

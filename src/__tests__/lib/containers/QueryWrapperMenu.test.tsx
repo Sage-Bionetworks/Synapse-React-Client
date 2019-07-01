@@ -27,8 +27,10 @@ describe('it renders with basic functionality', () => {
   const facetName : string = 'name'
   const synapseId : string = 'syn5604373'
   const token: string = ''
+  const name = 'Studies'
   const props: QueryWrapperMenuProps = {
     token,
+    name,
     menuConfig: [{ sql, facetName }],
     rgbIndex: 3
   }
@@ -41,6 +43,7 @@ describe('it renders with basic functionality', () => {
   it('renders a bar chart, table, and facets', async () => {
     const propsWithTitle: QueryWrapperMenuProps = {
       token,
+      name,
       rgbIndex: 3,
       tableConfiguration: {
         synapseId,
@@ -59,6 +62,7 @@ describe('it renders with basic functionality', () => {
   it('renders cards and no bar chart', async () => {
     const propsWithTitle: QueryWrapperMenuProps = {
       token,
+      name,
       rgbIndex: 3,
       cardConfiguration: {
         type: SynapseConstants.STUDY
