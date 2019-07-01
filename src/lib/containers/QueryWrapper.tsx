@@ -228,8 +228,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           let { chartSelectionIndex } = this.state
           data.facets.forEach((el: FacetColumnResultValues) => {
             // isAll is only true iff there are no facets selected or all elements are selected
-            // tslint:disable-next-line:prefer-array-literal
-            // const facetValues = new Array(...el.facetValues)
             const { facetValues } = el
             const isAllFalse = facetValues.every(facet => !facet.isSelected)
             const isAllTrue =  facetValues.every(facet => facet.isSelected)
