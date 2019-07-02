@@ -3,9 +3,7 @@ import Login from '../../lib/containers/Login'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
-import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import Uploader from 'src/lib/containers/Uploader'
-import FileContentDownloadUploadDemo from 'src/lib/containers/FileContentDownloadUploadDemo'
+import { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
 import EntityForm from 'src/lib/containers/EntityForm'
 
 type DemoState = {
@@ -219,81 +217,26 @@ class Demo extends React.Component<{}, DemoState> {
               </button>
             </div>
         }
-        <Login
-          token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
-          theme={'light'}
-          icon={true}
-        />
-        <hr />
         {
+          (!this.state.token || this.state.token === '') &&
+          <Login
+            token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
+            theme={'light'}
+            icon={true}
+          />
+        }
+        {
+          (this.state.token && this.state.token !== '') &&
           <div className="container">
             <EntityForm
+              parentContainerId="syn20355732"
               token={this.state.token!}
               formSchemaEntityId="syn20184776"
               formUiSchemaEntityId="syn20184771"
               initFormData={false}
-              evaluationId="9614256" // optional
             />
           </div>
         }
-        {
-          (this.state.token && this.state.token !== '') &&
-          <div className="container">
-            <h5>Upload File(s) Demo</h5>
-            <Uploader
-              token={this.state.token!}
-              parentContainerId="syn18987891"
-            />
-            <hr />
-          </div>
-        }
-        {
-          (this.state.token && this.state.token !== '') &&
-          <div className="container">
-            <h5>Download File Content Demo (syn12196718)</h5>
-            <FileContentDownloadUploadDemo
-              token={this.state.token!}
-              targetEntityId="syn12196718"
-            />
-            <hr />
-          </div>
-        }
-        {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
-        <div className="container">
-          <form>
-            <label>
-              Pick a card type
-            <select value={this.state.cardSelection} onChange={this.handleCardSelection}>
-                <option value={SynapseConstants.AMP_STUDY}>{SynapseConstants.AMP_STUDY}</option>
-                <option value={SynapseConstants.AMP_CONSORTIUM}>{SynapseConstants.AMP_CONSORTIUM}</option>
-                <option value={SynapseConstants.AMP_PROJECT}>{SynapseConstants.AMP_PROJECT}</option>
-                <option value={SynapseConstants.DATASET}>{SynapseConstants.DATASET}</option>
-                <option value={SynapseConstants.TOOL}>{SynapseConstants.TOOL}</option>
-                {/* <option value={SynapseConstants.FUNDER}>{SynapseConstants.FUNDER}</option> */}
-                <option value={SynapseConstants.PUBLICATION}>{SynapseConstants.PUBLICATION}</option>
-              </select>
-            </label>
-          </form>
-        </div>
-
-        <div className="container">
-          <button
-            role="button"
-            className="btn btn-default"
-            // tslint:disable-next-line
-            onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
-          >
-            toggle tabs for query wrapper menu
-          </button>
-          <a href="#table"> Table Demo </a>
-          <QueryWrapperMenu
-            isConsistent={true}
-            token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
-            menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
-            rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
-            loadingScreen={<div className="container">loading... </div>}
-          />
-        </div>
       </div>
     )
   }

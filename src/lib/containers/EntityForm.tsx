@@ -2,12 +2,11 @@ import * as React from 'react'
 import { default as Form } from 'react-jsonschema-form'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
-import { Evaluation } from '../utils/jsonResponses/Evaluation'
-import { Submission } from '../utils/jsonResponses/Submission'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
 import { EntityId } from '../utils/jsonResponses/EntityId'
 import { EntityLookupRequest } from '../utils/jsonResponses/EntityLookupRequest'
-
+// contributor list!!! (fill in submission)
+// select file entity (fill in submission)
 type EntityFormState = {
   error?: any,
   isLoading?: boolean,
@@ -15,7 +14,6 @@ type EntityFormState = {
   containerId?: string,
   userprofile?: UserProfile,
   successMessage?: string,
-  evaluation?: Evaluation, // if evaluation id was provided, submit to this evaluation
   currentFileEntity?: FileEntity, // file holding user form data
   formData?: any, // form data that prepopulates the form
   formSchema?: any, // schema that drives the form
@@ -23,12 +21,14 @@ type EntityFormState = {
 }
 
 export type EntityFormProps = {
-  // By default, only the user will have access to this subfolder (and files within).
+  // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
+  parentContainerId: string,
   formSchemaEntityId: string, // Synapse file that contains the form schema.
   formUiSchemaEntityId: string, // Synapse file that contains the form ui schema.
   initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
   token?: string, // user's session token
-  evaluationId?: string // Optional: Will submit the new form entity to the given evaluation queue on submit.
+  synIdCallback?: (synId: string) => void, // callback.  Once the form output has been saved to a FileEntity, will send synID back
+  manuallySubmit? : () => void,
 }
 
 export default class EntityForm
@@ -42,27 +42,30 @@ export default class EntityForm
     }
   }
 
+  componentDidMount() {
+    this.refresh()
+  }
+
   componentDidUpdate(prevProps: any) {
     const shouldUpdate = this.props.token !== prevProps.token
-    if (shouldUpdate && this.props.token) {
+    if (shouldUpdate) {
+      this.refresh()
+    }
+  }
+
+  refresh = () => {
+    if (this.props.token) {
       const promises = [
         SynapseClient.getUserProfile(this.props.token, 'https://repo-prod.prod.sagebase.org'),
         SynapseClient.getEntity(this.props.token, this.props.formSchemaEntityId),
         SynapseClient.getEntity(this.props.token, this.props.formUiSchemaEntityId),
       ]
-      if (this.props.evaluationId) {
-        promises.push(SynapseClient.getEvaluation(this.props.evaluationId, this.props.token))
-      }
       Promise.all(promises).then((values) => {
         const userprofile: UserProfile = values[0]
         this.getTargetContainer(userprofile, this.props.token!).then((targetContainerId: string) => {
           const formSchemaFileEntity: FileEntity = values[1]
           const formUiSchemaFileEntity: FileEntity = values[2]
           this.getSchemaFileContent(targetContainerId, formSchemaFileEntity, formUiSchemaFileEntity)
-          if (values[3]) {
-            const evaluation: Evaluation = values[3]
-            this.setState({ evaluation })
-          }
         })
       }).catch((error) => {
         this.onError(error)
@@ -118,8 +121,10 @@ export default class EntityForm
   }
 
   getTargetContainer = async (userprofile: UserProfile, token: string) => {
-    const projectName = `.${userprofile.userName}_form_data`
-    const entityLookupRequest: EntityLookupRequest = { entityName: projectName }
+    const entityLookupRequest: EntityLookupRequest = {
+      entityName: userprofile.ownerId,
+      parentId: this.props.parentContainerId
+    }
     try {
       const entityId = await SynapseClient.lookupChildEntity(entityLookupRequest, token)
       // ok, found an entity of the same name.
@@ -130,28 +135,6 @@ export default class EntityForm
         isLoading: false
       })
       return entityId.id
-    } catch (error) {
-      if (error.statusCode === 404) {
-        // ok, it's a new folder
-        return this.createTargetProject(projectName, userprofile, token)
-      }
-      return this.onError(error)
-    }
-  }
-
-  createTargetProject = async (projectName: string, userprofile: UserProfile, token: string) => {
-    const newEntity = {
-      name: projectName,
-      concreteType: 'org.sagebionetworks.repo.model.Project'
-    }
-    try {
-      const entity = await SynapseClient.createEntity(newEntity, token)
-      this.setState({
-        userprofile,
-        containerId: entity.id,
-        isLoading: false
-      })
-      return entity.id
     } catch (error) {
       return this.onError(error)
     }
@@ -207,26 +190,10 @@ export default class EntityForm
         return SynapseClient.createEntity(newFileEntity, this.props.token)
       }).then((fileEntity: FileEntity) => {
         // by this point we've either found and updated the existing file entity, or created a new one.
-        if (this.state.evaluation) {
-          this.submitToEvaluation(fileEntity)
-        } else {
-          this.finishedProcessing('Successfully uploaded.')
+        this.finishedProcessing('Successfully uploaded.')
+        if (this.props.synIdCallback) {
+          this.props.synIdCallback(fileEntity.id!)
         }
-      }).catch((error: any) => {
-        this.onError(error)
-      })
-  }
-
-  submitToEvaluation = (entity: FileEntity) => {
-    const submission: Submission = {
-      entityId: entity.id!,
-      versionNumber: entity.versionNumber!,
-      userId: this.state.userprofile!.ownerId,
-      evaluationId: this.state.evaluation!.id,
-    }
-    SynapseClient.submitToEvaluation(submission, entity.etag!, this.props.token).then(
-      () => {
-        this.finishedProcessing(this.state.evaluation!.submissionReceiptMessage)
       }).catch((error: any) => {
         this.onError(error)
       })
@@ -248,21 +215,11 @@ export default class EntityForm
             uiSchema={this.state.formUiSchema}
             onSubmit={this.onSubmit}
             showErrorList={true}
-          />
-        }
-        {
-          !this.state.error &&
-          this.props.token &&
-          !this.state.isLoading &&
-          !this.state.successfullyUploaded &&
-          this.state.formSchema &&
-          this.state.formUiSchema &&
-          this.state.evaluation &&
-          <div className="bg-warning" style={{ padding: '10px' }}>
-            &#42; The information that you have entered in this form will be sent to the
-            administrators of this evaluation:
-            <strong style={{ marginLeft: '5px' }}>{this.state.evaluation.name}</strong>
-          </div>
+          >
+            <div>
+              <button type="submit" className="btn btn-info">Submit</button>
+            </div>
+          </Form>
         }
         {
           !this.state.error &&
