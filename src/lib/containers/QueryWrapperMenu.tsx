@@ -10,6 +10,8 @@ import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { CommonCardProps } from './CardContainerLogic'
+import { KeyValue } from '../utils/modules/sqlFunctions'
+import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
@@ -26,6 +28,11 @@ export type MenuConfig = {
   facetAliases?: {}
 }
 
+interface MenuSearchParams extends KeyValue {
+  menuIndex: string
+  facetValue: string
+}
+
 export type QueryWrapperMenuProps = {
   menuConfig: MenuConfig []
   isConsistent?: boolean
@@ -36,6 +43,8 @@ export type QueryWrapperMenuProps = {
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
   showBarChart?: boolean
+  searchParams?: MenuSearchParams
+  name: string
 }
 
 type Info = {
@@ -47,8 +56,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   constructor(props: QueryWrapperMenuProps) {
     super(props)
+    // See here - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
+    const { searchParams } = this.props
+    const menuIndex = (searchParams && Number(searchParams.menuIndex)) || 0
     this.state = {
-      menuIndex: 0,
+      menuIndex: 0 || menuIndex
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -122,8 +134,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   public render() {
     const menuDropdown = this.renderFacetMenu()
     const queryWrapper = this.renderQueryChildren()
-    const name = window.location.hash.substring(10) || ''
-    const { menuConfig, showBarChart = true } = this.props
+    const { menuConfig, showBarChart = true, name } = this.props
     const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
     const queryCount = this.state[sql] || ''
     return (
@@ -155,10 +166,17 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       unitDescription = '',
       cardConfiguration,
       tableConfiguration,
-      showBarChart = true
+      showBarChart = true,
+      searchParams,
     } = this.props
+
+    let facetValue = ''
+    let menuIndexFromProps = ''
+    if (searchParams) {
+      ({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
+    }
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const isSelected: boolean = (this.state.menuIndex === index)
+      const isSelected: boolean = this.state.menuIndex === index
       const {
         facetName,
         facetAliases,
@@ -167,6 +185,16 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       let className = ''
       if (!isSelected) {
         className = 'SRC-hidden'
+      }
+      let selectedFacets: FacetColumnValuesRequest [] = []
+      if (Number(menuIndexFromProps) === index && facetName && facetValue) {
+        selectedFacets = [
+          {
+            concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            facetValues: [facetValue],
+            columnName: facetName
+          }
+        ]
       }
       const loadNow = isSelected
       return (
@@ -182,6 +210,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
               query: {
                 sql,
+                selectedFacets,
                 isConsistent,
                 limit: 25,
                 offset: 0
@@ -212,7 +241,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const { menuConfig, rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 1)
     const originalColor = colorPalette[0]
-
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName, facetAliases = {} } = config
       const isSelected: boolean = (index === this.state.menuIndex)

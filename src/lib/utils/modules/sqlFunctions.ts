@@ -26,7 +26,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) =>
       const token = [
         ['LITERAL', key, '1'],
         ['OPERATOR', 'LIKE', '1'],
-        ['STRING', searchParams[key], '1'],
+        ['STRING', `%${searchParams[key]}%`, '1'],
       ]
       if (index < searchParamsLen - 1) {
         // make sure to chain the ANDs until the last one

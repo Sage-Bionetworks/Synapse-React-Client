@@ -146,6 +146,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         <h2>Demo of table</h2>
           <QueryWrapperMenu
             token={''}
+            name={'Studies'}
             isConsistent={true}
             {...props}
             rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
