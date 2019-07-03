@@ -210,7 +210,6 @@ export default class EntityForm
     return (
       <div>
         {
-          !this.state.error &&
           this.props.token &&
           !this.state.isLoading &&
           !this.state.successfullyUploaded &&
@@ -234,6 +233,7 @@ export default class EntityForm
           this.props.token &&
           this.state.isLoading &&
           <React.Fragment>
+            <span>Saving&hellip;</span>
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           </React.Fragment>
         }
