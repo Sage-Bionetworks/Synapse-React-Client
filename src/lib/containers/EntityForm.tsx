@@ -143,6 +143,10 @@ export default class EntityForm
       })
       return entityId.id
     } catch (error) {
+      if (error.statusCode === 404) {
+        return this.onError(new Error('Your folder has not yet been set up, please retry in a few minutes.'))
+      }
+      // else
       return this.onError(error)
     }
   }
@@ -228,6 +232,7 @@ export default class EntityForm
           !this.state.successfullyUploaded &&
           this.state.formSchema &&
           this.state.formUiSchema &&
+          !this.state.error &&
           <Form
             formData={this.state.formData}
             schema={this.state.formSchema}
