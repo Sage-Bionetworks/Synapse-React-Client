@@ -1,3 +1,7 @@
+// EntityForm:
+// Will generate a Form (based on your schema files).
+// Gathers user input (including files)
+// Will give you the Synapse ID of the FileEntity that contains the user form data.
 import * as React from 'react'
 import { default as Form } from 'react-jsonschema-form'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
@@ -5,8 +9,16 @@ import { SynapseClient } from '../utils'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
 import { EntityId } from '../utils/jsonResponses/EntityId'
 import { EntityLookupRequest } from '../utils/jsonResponses/EntityLookupRequest'
-// contributor list!!! (fill in submission)
-// select file entity (fill in submission)
+
+export type EntityFormProps = {
+  // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
+  parentContainerId: string,
+  formSchemaEntityId: string, // Synapse file that contains the form schema.
+  formUiSchemaEntityId: string, // Synapse file that contains the form ui schema.
+  initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
+  token?: string, // user's session token
+  synIdCallback: (synId: string) => void, // callback.  Once the form output has been saved to a FileEntity, will send synID back
+}
 type EntityFormState = {
   error?: any,
   isLoading?: boolean,
@@ -18,17 +30,6 @@ type EntityFormState = {
   formData?: any, // form data that prepopulates the form
   formSchema?: any, // schema that drives the form
   formUiSchema?: any, // ui schema that directs how to render the form elements
-}
-
-export type EntityFormProps = {
-  // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
-  parentContainerId: string,
-  formSchemaEntityId: string, // Synapse file that contains the form schema.
-  formUiSchemaEntityId: string, // Synapse file that contains the form ui schema.
-  initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
-  token?: string, // user's session token
-  synIdCallback?: (synId: string) => void, // callback.  Once the form output has been saved to a FileEntity, will send synID back
-  manuallySubmit? : () => void
 }
 
 export default class EntityForm
@@ -237,17 +238,9 @@ export default class EntityForm
           </React.Fragment>
         }
         {
-          !this.state.error &&
-          this.props.token &&
-          this.state.successfullyUploaded &&
-          <span style={{ marginLeft: '10px' }}>
-            {this.state.successMessage}
-          </span>
-        }
-        {
           this.state.error &&
           <p>
-            Error: {this.state.error.name || this.state.error.reason}
+            Error: {this.state.error.name} {this.state.error.reason} {this.state.error.message}
           </p>
         }
       </div>
