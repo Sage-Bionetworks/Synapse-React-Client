@@ -210,6 +210,19 @@ export default class EntityForm
     return (
       <div>
         {
+          this.state.error &&
+          <div className="panel panel-danger errors">
+            <div className="panel-heading">
+              <h3 className="panel-title">Error</h3>
+            </div>
+            <ul className="list-group">
+              <li className="list-group-item text-danger">
+                {this.state.error.name} {this.state.error.reason} {this.state.error.message}
+              </li>
+            </ul>
+          </div>
+        }
+        {
           this.props.token &&
           !this.state.isLoading &&
           !this.state.successfullyUploaded &&
@@ -236,12 +249,6 @@ export default class EntityForm
             <span>Saving&hellip;</span>
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           </React.Fragment>
-        }
-        {
-          this.state.error &&
-          <p>
-            Error: {this.state.error.name} {this.state.error.reason} {this.state.error.message}
-          </p>
         }
       </div>
     )
