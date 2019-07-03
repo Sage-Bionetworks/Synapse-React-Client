@@ -27,11 +27,13 @@ type DemoState = {
 
  */
 class Demo extends React.Component<{}, DemoState> {
+  entityFormRef: any
   /**
    * Maintain internal state of user session
    */
   constructor(props: any) {
     super(props)
+    this.entityFormRef = React.createRef()
     this.state = {
       isLoading: true,
       ownerId: '',
@@ -101,7 +103,13 @@ class Demo extends React.Component<{}, DemoState> {
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
     this.handleCardSelection = this.handleCardSelection.bind(this)
+    this.onSubmitEntityForm = this.onSubmitEntityForm.bind(this)
   }
+
+  public onSubmitEntityForm() {
+    this.entityFormRef.current.submitForm()
+  }
+
   /**
    * Get the current version of Synapse
    */
@@ -239,7 +247,14 @@ class Demo extends React.Component<{}, DemoState> {
               formSchemaEntityId="syn20184776"
               formUiSchemaEntityId="syn20184771"
               initFormData={false}
+              ref={this.entityFormRef}
             />
+            <button
+              onClick={this.onSubmitEntityForm}
+              className="btn btn-info"
+            >
+              Programmatically Call Submit
+            </button>
           </div>
         }
         {

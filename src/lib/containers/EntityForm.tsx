@@ -17,7 +17,7 @@ type EntityFormState = {
   currentFileEntity?: FileEntity, // file holding user form data
   formData?: any, // form data that prepopulates the form
   formSchema?: any, // schema that drives the form
-  formUiSchema?: any // ui schema that directs how to render the form elements
+  formUiSchema?: any, // ui schema that directs how to render the form elements
 }
 
 export type EntityFormProps = {
@@ -28,14 +28,16 @@ export type EntityFormProps = {
   initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
   token?: string, // user's session token
   synIdCallback?: (synId: string) => void, // callback.  Once the form output has been saved to a FileEntity, will send synID back
-  manuallySubmit? : () => void,
+  manuallySubmit? : () => void
 }
 
 export default class EntityForm
   extends React.Component<EntityFormProps, EntityFormState> {
+  formRef: any
 
   constructor(props: EntityFormProps) {
     super(props)
+    this.formRef = React.createRef()
     this.state = {
       isLoading: true,
       successfullyUploaded: false,
@@ -51,6 +53,10 @@ export default class EntityForm
     if (shouldUpdate) {
       this.refresh()
     }
+  }
+
+  submitForm = () => {
+    this.formRef.current.submit()
   }
 
   refresh = () => {
@@ -215,8 +221,9 @@ export default class EntityForm
             uiSchema={this.state.formUiSchema}
             onSubmit={this.onSubmit}
             showErrorList={true}
+            ref={this.formRef}
           >
-            <div>
+            <div style={{ display: 'none' }}>
               <button type="submit" className="btn btn-info">Submit</button>
             </div>
           </Form>
