@@ -63,7 +63,7 @@ export default class EntityForm
   refresh = () => {
     if (this.props.token) {
       const promises = [
-        SynapseClient.getUserProfile(this.props.token, 'https://repo-prod.prod.sagebase.org'),
+        SynapseClient.getUserProfile(this.props.token),
         SynapseClient.getEntity(this.props.token, this.props.formSchemaEntityId),
         SynapseClient.getEntity(this.props.token, this.props.formUiSchemaEntityId),
       ]
