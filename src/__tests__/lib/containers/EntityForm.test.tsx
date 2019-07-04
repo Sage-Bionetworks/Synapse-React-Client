@@ -3,6 +3,7 @@ import { mount } from 'enzyme'
 import formschemaJson from '../../../mocks/formschema.json'
 import EntityForm, { EntityFormProps } from '../../../lib/containers/EntityForm'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
+import { mockFileEntity } from '../../../mocks/mock_file_entity'
 import Form from 'react-jsonschema-form';
 
 const createShallowComponent = (props: EntityFormProps) => {
@@ -22,6 +23,7 @@ describe('it basic tests', () => {
   SynapseClient.getUserProfile = jest.fn(() => Promise.resolve(mockUserProfileData))
   const targetFolderId = "syn9988882982"
   SynapseClient.lookupChildEntity = jest.fn(() => Promise.resolve(targetFolderId))
+  SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
   const token: string = "123444"
   const parentContainerId: string = "syn20355732"
   const formSchemaEntityId: string = "syn20184776"
