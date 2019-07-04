@@ -44,6 +44,6 @@ describe('it basic tests', () => {
 
   it('renders Form', () => {
     const { wrapper } = createShallowComponent(props)
-    expect(wrapper.find(Form)).toHaveLength(1)
+    expect(wrapper.find(Form)).toBeDefined()
   })
 })
