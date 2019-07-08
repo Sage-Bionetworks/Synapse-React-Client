@@ -79,7 +79,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     window.addEventListener('mouseup', this.pageClick, false)
   }
 
-  public componentWillUnMount() {
+  public componentWillUnmount() {
     window.removeEventListener('mouseup', this.pageClick, false)
   }
 
@@ -139,7 +139,7 @@ export default class UserCardMedium extends React.Component<UserCardMediumProps,
     } else {
       img = (
         <div style={{ background: getColor(userName) }} className="SRC-userImg SRC-centerContentInline">
-          {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
+          {userProfile.firstName && (userProfile.firstName[0] || userProfile.userName[0])}
         </div>
       )
     }

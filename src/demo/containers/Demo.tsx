@@ -3,9 +3,9 @@ import Login from '../../lib/containers/Login'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
-import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import Uploader from 'src/lib/containers/Uploader'
-import FileContentDownloadUploadDemo from 'src/lib/containers/FileContentDownloadUploadDemo'
+import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
+import Uploader from '../../lib/containers/Uploader'
+import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 
 type DemoState = {
   token: string
@@ -211,8 +211,7 @@ class Demo extends React.Component<{}, DemoState> {
             <div className="bg-success text-center" role="alert">
               You are logged in.&nbsp;
               <button
-                  type="button"
-                  onClick={SynapseClient.signOut}
+                onClick={SynapseClient.signOut}
               >
                   <span aria-hidden="true">Sign out</span>
               </button>

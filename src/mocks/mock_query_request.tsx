@@ -1,4 +1,4 @@
-import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest';
+import { QueryBundleRequest } from '../lib/utils/jsonResponses/Table/QueryBundleRequest'
 
 let mockRequest: QueryBundleRequest = {
     partMask: 0,

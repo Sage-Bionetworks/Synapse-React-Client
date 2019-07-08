@@ -59,7 +59,7 @@
     "react-native-rss-parser": "^1.3.0",
     "react-plotly.js": "^2.3.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts-ts": "^3.1.0",
+    "react-scripts": "^3.0.1",
     "react-test-renderer": "^16.4.2",
     "react-tooltip": "^3.9.2",
     "react-transition-group": "2.6.0",
@@ -86,6 +86,8 @@
     "@types/react-transition-group": "^2.0.16",
     "enzyme": "^3.5.0",
     "enzyme-adapter-react-16": "^1.3.1",
+    "eslint": "5.16.0",
+    "eslint-plugin-react": "^7.14.2",
     "npm": "^6.9.0",
     "npm-run-all": "^4.1.3",
     "rollup": "^1.1.0",
@@ -108,15 +110,15 @@
     "postinstall": "npm rebuild node-sass",
     "prepublishOnly": "yarn run build && yarn run test:coverage",
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
-    "build-gh": "react-scripts-ts build",
+    "build-gh": "react-scripts build",
     "deploy": "gh-pages -d build",
     "build-css": "node-sass src/ -o src/",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
-    "start-js": "react-scripts-ts start",
+    "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
-    "test": "react-scripts-ts test --env=jsdom  --setupFiles ./src/setupTests.js ",
+    "test": "react-scripts test --env=jsdom  --setupFiles ./src/setupTests.js ",
     "test:coverage": "yarn test --coverage",
-    "eject": "react-scripts-ts eject",
+    "eject": "react-scripts eject",
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
     "type-check:watch": "yarn run type-check --watch",
@@ -128,5 +130,18 @@
   "resolutions": {
     "fstream": "1.0.12",
     "js-yaml": "3.13.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "last 1 ie version"
+    ]
   }
 }

@@ -103,7 +103,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         return (<div />) // this should never happen
     }
   }
-
   public render() {
     const {
       data,

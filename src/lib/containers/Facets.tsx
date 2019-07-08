@@ -10,11 +10,11 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 
-export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
 import { SELECT_ALL } from './SynapseTable'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 import { TotalQueryResults } from './TotalQueryResults'
 
+export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
 // Add all icons to the library so you can use it in your page
 library.add(faTimes)
 library.add(faPlus)
@@ -104,7 +104,7 @@ const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
         </span>
         <input
           // @ts-ignore
-          onChange={props.applyChanges(ref, value , SELECT_SINGLE_FACET, index)}
+          onChange={props.applyChanges(ref, value , SELECT_SINGLE_FACET)}
           checked={isSelected}
           type="checkbox"
           value={value}

@@ -63,7 +63,6 @@ export type SynapseTableState = {
   filterClassList: string [],
   menuWallIsActive: boolean,
 }
-
 export type SynapseTableProps = {
   visibleColumnCount?: number
   synapseId: string

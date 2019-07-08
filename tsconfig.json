@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-    "plugins": [
-      { "name": "typescript-tslint-plugin" }
-    ],
     "allowJs": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "module": "esnext",
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "sourceMap": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "moduleResolution": "node",
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
@@ -22,7 +22,11 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "isolatedModules": true,
+    "noEmit": true
   },
   "exclude": [
     "rollup.config.js",
@@ -35,5 +39,8 @@
     "webpack",
     "jest",
     "setupTests.js"
+  ],
+  "include": [
+    "src"
   ]
 }

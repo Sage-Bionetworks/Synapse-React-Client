@@ -49,7 +49,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
 
   public getEntity() {
     const { token, synapseId } = this.props
-    getEntity(token, synapseId!).then(
+    getEntity<FileEntity>(token, synapseId!).then(
       // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
       (data: FileEntity) => {
         const fileHandleAssociationList = [

@@ -136,9 +136,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
     return (
       <div className="container">
         <button
-          role="button"
           className="btn btn-default"
-          // tslint:disable-next-line
           onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
         >
           toggle tabs
