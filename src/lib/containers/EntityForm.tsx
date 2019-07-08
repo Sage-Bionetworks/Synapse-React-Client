@@ -25,7 +25,6 @@ type EntityFormState = {
   successfullyUploaded: boolean,
   containerId?: string,
   userprofile?: UserProfile,
-  successMessage?: string,
   currentFileEntity?: FileEntity, // file holding user form data
   formData?: any, // form data that prepopulates the form
   formSchema?: any, // schema that drives the form
@@ -151,10 +150,9 @@ export default class EntityForm
     }
   }
 
-  finishedProcessing = (successMessage: string) => {
+  finishedProcessing = () => {
     this.setState(
       {
-        successMessage,
         isLoading: false,
         successfullyUploaded: true,
       })
@@ -201,7 +199,7 @@ export default class EntityForm
         return SynapseClient.createEntity(newFileEntity, this.props.token)
       }).then((fileEntity: FileEntity) => {
         // by this point we've either found and updated the existing file entity, or created a new one.
-        this.finishedProcessing('Successfully uploaded.')
+        this.finishedProcessing()
         if (this.props.synIdCallback) {
           this.props.synIdCallback(fileEntity.id!)
         }
