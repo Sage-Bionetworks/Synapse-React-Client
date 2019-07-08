@@ -3,6 +3,7 @@ import Login from '../../lib/containers/Login'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
+import EntityForm from 'src/lib/containers/EntityForm'
 import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
 import Uploader from 'src/lib/containers/Uploader'
 import FileContentDownloadUploadDemo from 'src/lib/containers/FileContentDownloadUploadDemo'
@@ -18,6 +19,7 @@ type DemoState = {
   tabOne: any
   tabTwo: any
   showTabOne: boolean
+  userFormDataSynId?: string
 }
 
 /**
@@ -26,11 +28,13 @@ type DemoState = {
 
  */
 class Demo extends React.Component<{}, DemoState> {
+  entityFormRef: any
   /**
    * Maintain internal state of user session
    */
   constructor(props: any) {
     super(props)
+    this.entityFormRef = React.createRef()
     this.state = {
       isLoading: true,
       ownerId: '',
@@ -100,7 +104,18 @@ class Demo extends React.Component<{}, DemoState> {
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
     this.handleCardSelection = this.handleCardSelection.bind(this)
+    this.onSubmitEntityForm = this.onSubmitEntityForm.bind(this)
+    this.onEntityFormSubmitted = this.onEntityFormSubmitted.bind(this)
   }
+
+  public onSubmitEntityForm() {
+    this.entityFormRef.current.submitForm()
+  }
+
+  public onEntityFormSubmitted(synId: string) {
+    this.setState({ userFormDataSynId: synId })
+  }
+
   /**
    * Get the current version of Synapse
    */
@@ -203,6 +218,7 @@ class Demo extends React.Component<{}, DemoState> {
   public render(): JSX.Element {
     let token: string | undefined = ''
     token = ''
+    const userFormSynLink = `https://www.synapse.org/#!Synapse:${this.state.userFormDataSynId}`
     return (
       <div>
         <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
@@ -218,12 +234,50 @@ class Demo extends React.Component<{}, DemoState> {
               </button>
             </div>
         }
-        <Login
-          token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
-          theme={'light'}
-          icon={true}
-        />
-        <hr />
+        {
+          (!this.state.token || this.state.token === '') &&
+          <div>
+            <Login
+              token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
+              theme={'light'}
+              icon={true}
+            />
+            <hr />
+          </div>
+        }
+        {
+          (this.state.token && this.state.token !== '') &&
+          <div className="container">
+            <EntityForm
+              parentContainerId="syn20355732"
+              token={this.state.token!}
+              formSchemaEntityId="syn20184776"
+              formUiSchemaEntityId="syn20184771"
+              initFormData={false}
+              ref={this.entityFormRef}
+              synIdCallback={this.onEntityFormSubmitted}
+            />
+          </div>
+        }
+        {
+          (this.state.token && this.state.token !== '') &&
+          !this.state.userFormDataSynId &&
+          <div className="container">
+            <button
+              onClick={this.onSubmitEntityForm}
+              className="btn btn-info"
+            >
+              Programmatically Call Submit
+            </button>
+          </div>
+        }
+        {
+          (this.state.token && this.state.token !== '') &&
+          this.state.userFormDataSynId &&
+          <div className="container">
+            <a href={userFormSynLink} target="_blank">User Form Data Synapse FileEntity created/updated</a>
+          </div>
+        }
         {
           (this.state.token && this.state.token !== '') &&
           <div className="container">

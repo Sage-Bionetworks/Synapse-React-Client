@@ -2,5 +2,5 @@
 
 export interface EntityLookupRequest {
   entityName:	string
-  parentId:	string
+  parentId?:	string
 }

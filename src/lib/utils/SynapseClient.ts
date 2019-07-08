@@ -16,6 +16,8 @@ import { AddPartResponse } from './jsonResponses/AddPartResponse'
 import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
 import { FileEntity } from './jsonResponses/FileEntity'
 import { UserProfile } from './jsonResponses/UserProfile'
+import { AccessControlList } from './jsonResponses/AccessControlList'
+import { Submission } from './jsonResponses/Submission'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -887,4 +889,39 @@ export const getFileEntityContent = (
       reject(err)
     })
   })
+}
+
+/**
+ * Create an ACL
+ * https://docs.synapse.org/rest/POST/entity/id/acl.html
+ */
+export const createACL = (
+  entityId: string,
+  acl: AccessControlList,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost(`/repo/v1/entity/${entityId}/acl`, acl, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Submit an entity to an evaluation queue
+ * https://docs.synapse.org/rest/POST/evaluation/submission.html
+ */
+export const submitToEvaluation = (
+  submission: Submission,
+  etag: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost(`/repo/v1/evaluation/submission?etag=${etag}`, submission, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Get an evaluation queue
+ * https://docs.synapse.org/rest/GET/evaluation/evalId.html
+ */
+export const getEvaluation = (
+  evalId: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doGet(`/repo/v1/evaluation/${evalId}`, sessionToken, undefined, endpoint)
 }
