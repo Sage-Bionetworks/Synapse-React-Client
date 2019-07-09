@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2'
+import babel from 'rollup-plugin-babel'
 import scss from 'rollup-plugin-scss'
 import image from 'rollup-plugin-image'
 import resolve from 'rollup-plugin-node-resolve'
@@ -6,12 +6,10 @@ import svg from 'rollup-plugin-svg'
 import json from 'rollup-plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from 'rollup-plugin-commonjs'
-import minify from 'rollup-plugin-babel-minify'
-/* 
-	TODO: 
-		1. inline svgs for css don't work, easy work around is convert svg to exported
-		.tsx file
-*/
+// import minify from 'rollup-plugin-babel-minify'
+
+const extensions = ['.js', '.jsx', '.ts', '.tsx']
+
 export default {
 	input: 'src/lib/index.tsx',
 	external: [
@@ -49,10 +47,16 @@ export default {
 		console.warn( warning.message );
 	},
 	plugins: [
+		resolve( { extensions } ),
+		babel({
+			exclude: 'node_modules/**',
+			runtimeHelpers: false,
+			extensions
+		}),
+		commonjs( { extensions }),
+		// Common js is used to handle the import of older javascript modules not using es6 
 		image(),
-		typescript(),
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
-		resolve(),
 		svg(),
 		json(),
 		// The plugin below is used to mitigate a limitation of rollup, which is that an import statement
@@ -75,10 +79,8 @@ export default {
 				/process.env.NODE_ENV/g, '"production"' 
 			]
 		]),
-		// Common js is used to handle the import of older javascript modules not using es6 
-		commonjs(),
 		// minify the bundle
-		minify()
+		// minify()
 	],
 	output: {
 		globals: {

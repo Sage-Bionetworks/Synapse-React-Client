@@ -30,7 +30,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
     this.getIcon = this.getIcon.bind(this)
   }
 
-  public handleClick(event: React.SyntheticEvent) {
+  public handleClick(_event: React.SyntheticEvent) {
     this.setState({
       showMore: !this.state.showMore
     })

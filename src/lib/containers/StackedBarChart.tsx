@@ -2,11 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-// ignore because this is rollup requiring imports be named a certain way
-// tslint:disable-next-line
 import ReactMeasure from "react-measure"
-// ignore because this is rollup requiring imports be named a certain way
-// tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
@@ -202,6 +198,7 @@ export default class StackedBarChart extends
       <React.Fragment>
         <div className="SRC-chart SRC-chart-nav SRC-center-text">
           <button
+            type="button"
             className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
             onClick={this.handleArrowClick(NEXT_CLICK)}
           >

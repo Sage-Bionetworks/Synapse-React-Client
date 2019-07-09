@@ -23,3 +23,10 @@ declare module 'react-plotly.js/factory'
 declare module 'browser-md5-file'
 declare module 'sql-parser'
 declare module 'react-native-rss-parser'
+
+declare module "*.svg" {
+  const content: any;
+  export default content;
+}
+
+declare module '*.scss'
