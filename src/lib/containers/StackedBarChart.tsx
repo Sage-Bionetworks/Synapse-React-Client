@@ -8,7 +8,6 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
-import styles from './StackedBarChart.module.scss' // Import css modules stylesheet as styles
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -320,9 +319,6 @@ export default class StackedBarChart extends
         <div className="SRC-bar-border SRC-bar-border-bottom">
           <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
             <strong>{this.getTextForChartSelection(xData)}</strong>
-          </p>
-          <p className={styles.error}>
-            dummy text
           </p>
           <p id="fileCount" className="SRC-noMargin SRC-padding-chart SRC-text-chart">
             {this.getFileCount(xData)} {unitDescription}

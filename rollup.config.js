@@ -6,8 +6,7 @@ import svg from 'rollup-plugin-svg'
 import json from 'rollup-plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from 'rollup-plugin-commonjs'
-// import minify from 'rollup-plugin-babel-minify'
-
+import minify from 'rollup-plugin-babel-minify'
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
 export default {
@@ -42,19 +41,18 @@ export default {
 	
 		// Skip warning about AOT compiler (babel) use of the 'this' keyword
 		if ( warning.code === 'THIS_IS_UNDEFINED' ) { return; }
-	
-		// console.warn everything else
+		
 		console.warn( warning.message );
+		// console.warn everything else
 	},
 	plugins: [
 		resolve( { extensions } ),
 		babel({
-			exclude: 'node_modules/**',
 			runtimeHelpers: false,
 			extensions
 		}),
-		commonjs( { extensions }),
 		// Common js is used to handle the import of older javascript modules not using es6 
+		commonjs(),	
 		image(),
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
 		svg(),
@@ -80,7 +78,7 @@ export default {
 			]
 		]),
 		// minify the bundle
-		// minify()
+		minify()
 	],
 	output: {
 		globals: {
