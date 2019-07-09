@@ -55,6 +55,8 @@ export default {
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),	
 		image(),
+		// until css modules package is updated we can't opt into css modules
+		// see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
 		svg(),
 		json(),
