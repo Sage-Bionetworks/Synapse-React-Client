@@ -45,11 +45,12 @@ export default {
 		console.warn( warning.message );
 		// console.warn everything else
 	},
+	// NOTE - the order matters for the extensions below
 	plugins: [
 		resolve( { extensions } ),
 		babel({
-			runtimeHelpers: false,
-			extensions
+			extensions,
+			exclude: 'node_modules/*.*'
 		}),
 		// Common js is used to handle the import of older javascript modules not using es6 
 		commonjs(),	
