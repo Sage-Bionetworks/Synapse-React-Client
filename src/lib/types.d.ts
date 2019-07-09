@@ -3,7 +3,7 @@ declare var katex: any
 declare var markdownitSynapse: any
 declare var markdownit: any
 declare var markdownitSub: any
-declare var markdownitSup: any
+declare var markdownitsSup: any
 declare var markdownitCentertext: any
 declare var markdownitSynapseHeading: any
 declare var markdownitSynapseTable: any
@@ -23,6 +23,7 @@ declare module 'react-plotly.js/factory'
 declare module 'browser-md5-file'
 declare module 'sql-parser'
 declare module 'react-native-rss-parser'
+declare module 'lodash.clonedeep'
 
 declare module "*.svg" {
   const content: any;
