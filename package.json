@@ -131,7 +131,11 @@
   },
   "resolutions": {
     "fstream": "1.0.12",
-    "js-yaml": "3.13.1"
+    "js-yaml": "3.13.1",
+    "minimatch": "3.0.4",
+    "webpack-dev-server": "^3.1.11",
+    "lodash": "^4.17.11",
+    "mem": "^4.0.0"
   },
   "browserslist": {
     "production": [
