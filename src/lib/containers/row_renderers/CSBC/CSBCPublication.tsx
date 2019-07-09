@@ -58,7 +58,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
                 <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
                   {
                     doi &&
-                    (<a className="SRC-primary-text-color" target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
+                    (<a className="SRC-primary-text-color" rel="noopener noreferrer" target="_blank" href={doi ? `https://dx.doi.org/${doi}` : undefined}>
                       {title}
                     </a>)
                   }

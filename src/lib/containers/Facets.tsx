@@ -45,7 +45,7 @@ export const FACET_NOT_SELECTED_CLASS = 'FACET_NOT_SELECTED_CLASS'
  * @class CheckboxGroup
  * @extends {React.Component}
  */
-const CheckboxGroup: React.SFC<CheckboxGroupProps> = (props) => {
+const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (props: CheckboxGroupProps) => {
 
   const {
     facetColumnResult,

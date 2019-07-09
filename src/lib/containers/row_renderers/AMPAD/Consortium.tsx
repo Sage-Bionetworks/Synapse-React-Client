@@ -40,27 +40,31 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
     // This CAN NOT be refactored below -- dynamic imports are currently not supported
     // in es6, so the code below already has static references to the files below
     // even though its baked into if else clauses.
+    const ampIconDescription = "amp-ad icon"
+    const moveIconDescription = "M2OVE icon"
+    const modelIconDescription = "Model icon"
+    const resillienceIconDescription = "Resillience icon"
     switch (org) {
       case 'AMP-AD':
         if (isHeader) {
-          return <img src={ampIconHeaderSvg}/>
+          return <img alt={ampIconDescription} src={ampIconHeaderSvg}/>
         }
-        return <img src={ampIconSvg}/>
+        return <img alt={ampIconDescription} src={ampIconSvg}/>
       case 'M2OVE-AD':
         if (isHeader) {
-          return <img src={moveIconHeaderSvg}/>
+          return <img alt={moveIconDescription} src={moveIconHeaderSvg}/>
         }
-        return <img src={moveIconSvg}/>
+        return <img alt={moveIconDescription} src={moveIconSvg}/>
       case 'MODEL-AD':
         if  (isHeader) {
-          return <img src={ModelADIconHeaderSvg}/>
+          return <img alt={modelIconDescription} src={ModelADIconHeaderSvg}/>
         }
-        return <img src={ModelADIconSvg}/>
+        return <img alt={modelIconDescription} src={ModelADIconSvg}/>
       case 'Resilience-AD':
         if (isHeader) {
-          return <img src={resilienceIconHeaderSvg}/>
+          return <img alt={resillienceIconDescription} src={resilienceIconHeaderSvg}/>
         }
-        return <img src={resilienceIconSvg}/>
+        return <img alt={resillienceIconDescription} src={resilienceIconSvg}/>
       default:
         return (false)
     }
@@ -90,7 +94,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
           <div className="SRC-type">Program</div>
           <div className="SRC-title">
             <h3>
-                {!isOnOrgPath && <a target="_blank" href={orgPath}> {name} </a>}
+                {!isOnOrgPath && <a target="_blank" rel="noopener noreferrer" href={orgPath}> {name} </a>}
                 {isOnOrgPath && name}
             </h3>
           </div>

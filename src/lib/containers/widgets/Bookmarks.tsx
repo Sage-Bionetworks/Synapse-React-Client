@@ -25,7 +25,7 @@ class Bookmarks extends React.Component<BookmarksProps, {}> {
     let matchedGroup: RegExpExecArray | null
     const output = []
     // below we use regex.exec to find the find matched group containing the citation source
-    while (matchedGroup = regex.exec(copyFootnotes)) {
+    while ((matchedGroup = regex.exec(copyFootnotes))) {
       output.push(matchedGroup[1])
     }
 

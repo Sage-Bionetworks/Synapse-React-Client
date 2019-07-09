@@ -68,7 +68,7 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
                     {
                       link
                       &&
-                      <a target="_blank" href={link}>
+                      <a rel="noopener noreferrer" target="_blank" href={link}>
                           {name}
                       </a>
                     }

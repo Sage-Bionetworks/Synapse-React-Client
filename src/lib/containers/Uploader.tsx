@@ -139,7 +139,12 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
           this.state.successfullyUploaded &&
           <span style={{ marginLeft: '10px' }}>
             Successfully uploaded {this.state.totalFilesToUploadCount} file(s) to
-            <a style={{ marginLeft: '2px' }} href={`https://www.synapse.org/#!Synapse:${this.props.parentContainerId}`} target="_blank">{this.props.parentContainerId}</a>
+            <a 
+              style={{ marginLeft: '2px' }} 
+              href={`https://www.synapse.org/#!Synapse:${this.props.parentContainerId}`} 
+              rel="noopener noreferrer" 
+              target="_blank">{this.props.parentContainerId}
+            </a>
           </span>
         }
         {

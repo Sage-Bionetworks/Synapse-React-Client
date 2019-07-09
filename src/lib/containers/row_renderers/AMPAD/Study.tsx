@@ -32,9 +32,9 @@ export default class Study extends React.Component<StudyProps, StudyState> {
   public getIcon(name: string) {
     switch (name) {
       case 'Controlled':
-        return (<img src={controlledStudySvg}/>)
+        return (<img alt="controlled study" src={controlledStudySvg}/>)
       default:
-        return (<img src={studyActiveSvg}/>)
+        return (<img alt="active study" src={studyActiveSvg}/>)
     }
   }
 

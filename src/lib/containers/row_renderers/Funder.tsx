@@ -67,7 +67,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
                     </h3>
                 </div>
                 <div className="SRC-website">
-                    <a target="_blank" href={website}>
+                    <a rel="noopener noreferrer" target="_blank" href={website}>
                         {websiteDisplayName}
                     </a>
                 </div>

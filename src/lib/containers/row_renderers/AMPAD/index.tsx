@@ -5,4 +5,4 @@ import Study from './Study'
 export {
     Project,
     Consortium,
-    Study as AMP_Study }
+    Study as AMPStudy }

@@ -12,7 +12,7 @@ const getDesktopFormattedRows = (values: string [][]) => {
         <tr className="SRC-cardRowDesktop" key={index}>
           <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
           <td className="SRC-row-data SRC-limitMaxWidth SRC-cardCell">
-            <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
+            <a target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
               {kv[1]}
             </a>
           </td>
@@ -38,7 +38,7 @@ const getMobileFormattedRows = (values: string [][]) => {
           </tr>
           <tr className="SRC-cardRowMobile">
             <td className="SRC-row-data SRC-limitMaxWidth">
-              <a target="_blank" href={`https://dx.doi.org/${kv[1]}`}>
+              <a target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
                 {kv[1]}
               </a>
             </td>

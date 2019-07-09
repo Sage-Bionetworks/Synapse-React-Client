@@ -334,7 +334,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       )
     }
     // look for headers in column models, if they match then add a where clause
-    headers.map((header: any, index: number) => {
+    headers.forEach((header: any, index: number) => {
       const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
       if (matchingColumnModel) {
         const rowValue = selectedRow.values[index]

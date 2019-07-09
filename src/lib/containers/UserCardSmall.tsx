@@ -17,7 +17,7 @@ export type UserCardSmallProps = {
   link?: string
 }
 
-export const UserCardSmall: React.SFC<UserCardSmallProps> = (
+export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = (
   { userProfile, hideText = false, hideTooltip = false, preSignedURL, link }
 ) => {
   const linkLocation = link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
@@ -56,7 +56,7 @@ export const UserCardSmall: React.SFC<UserCardSmallProps> = (
     marginLeft = '3px'
     img = (
       <div style={{ background: color }} className="SRC-userImgSmall SRC-centerContentInline">
-        {userProfile.firstName && userProfile.firstName[0] || userProfile.userName[0]}
+        {(userProfile.firstName && userProfile.firstName[0]) || userProfile.userName[0]}
       </div>
     )
   }

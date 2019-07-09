@@ -12,7 +12,7 @@ export type UserCardContextMenuProps = {
   menuActions: MenuAction []
 }
 
-const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props) => {
+const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props: UserCardContextMenuProps) => {
   const { menuActions = [], userProfile } = props
   return (
     <div className="dropdown open">

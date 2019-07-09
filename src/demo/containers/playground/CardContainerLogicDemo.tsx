@@ -15,7 +15,6 @@ export default class CardContainerLogicDemo extends React.Component {
   }
 
   render() {
-    // @ts-ignore
     const iconOptions = {
       'AMP-AD': circleSvg,
       'M2OVE-AD': brainSvg,
@@ -39,7 +38,6 @@ export default class CardContainerLogicDemo extends React.Component {
         5: { key: 'studyName', alias: 'Study Name' }
       }
     }
-    // @ts-ignore
     const genericCardSchemaHeader: GenericCardSchema = {
       type: 'PROGRAM',
       title: 'Full Name',
@@ -99,7 +97,7 @@ export default class CardContainerLogicDemo extends React.Component {
         <CardContainerLogic
           type={SynapseConstants.MEDIUM_USER_CARD}
           sql={'SELECT ownerID as ownerId FROM syn13897207'}
-          loadingScreen={<div> I'm loading as fast I can !!! </div>}
+          loadingScreen={<div> Im loading as fast I can !!! </div>}
         />
       </div>
     )
