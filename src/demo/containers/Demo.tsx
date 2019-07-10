@@ -331,7 +331,7 @@ class Demo extends React.Component<{}, DemoState> {
             token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
-            stackedBarChartProps={
+            stackedBarChartConfiguration={
               {
                 loadingScreen: <div/>
               }

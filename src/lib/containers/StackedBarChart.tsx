@@ -199,7 +199,6 @@ export default class StackedBarChart extends
       <React.Fragment>
         <div className="SRC-chart SRC-chart-nav SRC-center-text">
           <button
-            type="button"
             className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
             onClick={this.handleArrowClick(NEXT_CLICK)}
           >
