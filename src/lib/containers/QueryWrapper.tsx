@@ -227,15 +227,17 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
           let { chartSelectionIndex } = this.state
           data.facets.forEach((el: FacetColumnResultValues) => {
-            // isAll is only true iff there are no facets selected or all elements are selected
-            const { facetValues } = el
-            const isAllFalse = facetValues.every(facet => !facet.isSelected)
-            const isAllTrue =  facetValues.every(facet => facet.isSelected)
-            const isByDefaultSelected = isAllFalse || isAllTrue
-            isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
-            if (el.columnName === this.props.facetName && !isAllFalse) {
-              // Note - this picks the first selected facet
-              chartSelectionIndex = facetValues.sort((a, b) => b.count - a.count).findIndex(facet => facet.isSelected)
+            if (el.facetType === 'enumeration') {
+              // isAll is only true iff there are no facets selected or all elements are selected
+              const { facetValues } = el
+              const isAllFalse = facetValues.every(facet => !facet.isSelected)
+              const isAllTrue =  facetValues.every(facet => facet.isSelected)
+              const isByDefaultSelected = isAllFalse || isAllTrue
+              isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
+              if (el.columnName === this.props.facetName && !isAllFalse) {
+                // Note - this picks the first selected facet
+                chartSelectionIndex = facetValues.sort((a, b) => b.count - a.count).findIndex(facet => facet.isSelected)
+              }
             }
           })
           const newState = {
