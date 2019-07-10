@@ -42,7 +42,7 @@ export type QueryWrapperMenuProps = {
   unitDescription?: string
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
-  stackedBarChartProps?: StackedBarChartProps
+  stackedBarChartConfiguration?: StackedBarChartProps
   showBarChart?: boolean
   searchParams?: MenuSearchParams
   name: string
@@ -167,7 +167,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       cardConfiguration,
       tableConfiguration,
       showBarChart = true,
-      stackedBarChartProps,
+      stackedBarChartConfiguration,
       searchParams,
     } = this.props
     let facetValue = ''
@@ -222,7 +222,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            {stackedBarChartProps ? <StackedBarChart {...stackedBarChartProps} /> : <React.Fragment/>}
+            {stackedBarChartConfiguration ? <StackedBarChart {...stackedBarChartConfiguration} /> : <React.Fragment/>}
             <Facets />
             {/*
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
