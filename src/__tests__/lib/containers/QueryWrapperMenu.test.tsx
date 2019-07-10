@@ -33,7 +33,7 @@ describe('it renders with basic functionality', () => {
     name,
     menuConfig: [{ sql, facetName }],
     rgbIndex: 3,
-    stackedBarChartProps: {
+    stackedBarChartConfiguration: {
       loadingScreen: <div/>
     }
   }
@@ -52,7 +52,7 @@ describe('it renders with basic functionality', () => {
         synapseId,
         title: 'title'
       },
-      stackedBarChartProps: {
+      stackedBarChartConfiguration: {
         loadingScreen: <div/>
       },
       menuConfig: [{ sql, facetName }]
@@ -89,7 +89,7 @@ describe('it renders with basic functionality', () => {
       cardConfiguration: {
         type: SynapseConstants.STUDY
       },
-      stackedBarChartProps: {
+      stackedBarChartConfiguration: {
         loadingScreen: <div/>
       },
     }
