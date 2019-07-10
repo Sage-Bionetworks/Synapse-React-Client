@@ -3,7 +3,7 @@
 // Gathers user input (including files)
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import * as React from 'react'
-import { default as Form } from 'react-jsonschema-form'
+import Form from 'react-jsonschema-form'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
@@ -105,7 +105,7 @@ export default class EntityForm
     let currentFileEntity: FileEntity
     SynapseClient.lookupChildEntity(entityLookupRequest, this.props.token).then((entityId:EntityId) => {
       // ok, found the existing file
-      return SynapseClient.getEntity<FileEntity>(this.props.token, entityId.id).then((entity: FileEntity) => {
+      return SynapseClient.getEntity(this.props.token, entityId.id).then((entity: FileEntity) => {
         currentFileEntity = entity
         if (this.props.initFormData) {
           return SynapseClient.getFileEntityContent(this.props.token!, currentFileEntity).then((existingFileData) => {
