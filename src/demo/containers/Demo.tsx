@@ -3,10 +3,10 @@ import Login from '../../lib/containers/Login'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import './App.css'
-import EntityForm from 'src/lib/containers/EntityForm'
-import QueryWrapperMenu, { MenuConfig } from 'src/lib/containers/QueryWrapperMenu'
-import Uploader from 'src/lib/containers/Uploader'
-import FileContentDownloadUploadDemo from 'src/lib/containers/FileContentDownloadUploadDemo'
+import EntityForm from '../../lib/containers/EntityForm'
+import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
+import Uploader from '../../lib/containers/Uploader'
+import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 
 type DemoState = {
   token: string
@@ -227,8 +227,7 @@ class Demo extends React.Component<{}, DemoState> {
             <div className="bg-success text-center" role="alert">
               You are logged in.&nbsp;
               <button
-                  type="button"
-                  onClick={SynapseClient.signOut}
+                onClick={SynapseClient.signOut}
               >
                   <span aria-hidden="true">Sign out</span>
               </button>
@@ -320,9 +319,7 @@ class Demo extends React.Component<{}, DemoState> {
 
         <div className="container">
           <button
-            role="button"
             className="btn btn-default"
-            // tslint:disable-next-line
             onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
           >
             toggle tabs for query wrapper menu
@@ -334,7 +331,11 @@ class Demo extends React.Component<{}, DemoState> {
             token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
-            loadingScreen={<div className="container">loading... </div>}
+            stackedBarChartConfiguration={
+              {
+                loadingScreen: <div/>
+              }
+            }
           />
         </div>
       </div>

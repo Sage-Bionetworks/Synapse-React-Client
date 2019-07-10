@@ -83,7 +83,7 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
       const entityLookupRequest: EntityLookupRequest = { entityName: file.name, parentId: this.props.parentContainerId }
       lookupChildEntity(entityLookupRequest, this.props.token).then((entityId: EntityId) => {
         // ok, found an entity of the same name.
-        getEntity(this.props.token, entityId.id).then((existingEntity: FileEntity) => {
+        getEntity<FileEntity>(this.props.token, entityId.id).then((existingEntity: FileEntity) => {
           if (existingEntity.concreteType === 'org.sagebionetworks.repo.model.FileEntity') {
             this.updateEntityFile(existingEntity, file)
           } else {
@@ -125,7 +125,7 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
           onChange={this.handleChange}
           multiple={true}
         />
-        <button onClick={this.showOpenFileDlg} className="SRC-uploadButton">Browse...</button>
+        <button type="button" onClick={this.showOpenFileDlg} className="SRC-uploadButton">Browse...</button>
         {
           this.state.isUploading &&
           <React.Fragment>
@@ -139,7 +139,12 @@ export default class Uploader extends React.Component<UploaderProps, UploaderSta
           this.state.successfullyUploaded &&
           <span style={{ marginLeft: '10px' }}>
             Successfully uploaded {this.state.totalFilesToUploadCount} file(s) to
-            <a style={{ marginLeft: '2px' }} href={`https://www.synapse.org/#!Synapse:${this.props.parentContainerId}`} target="_blank">{this.props.parentContainerId}</a>
+            <a 
+              style={{ marginLeft: '2px' }} 
+              href={`https://www.synapse.org/#!Synapse:${this.props.parentContainerId}`} 
+              rel="noopener noreferrer" 
+              target="_blank">{this.props.parentContainerId}
+            </a>
           </span>
         }
         {

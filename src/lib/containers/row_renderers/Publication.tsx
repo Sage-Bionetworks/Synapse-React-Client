@@ -39,7 +39,7 @@ class Publication extends React.Component<PublicationProps, PublicationState> {
               <div className="SRC-type">Publication</div>
               <div className="SRC-title">
                   <h3>
-                      <a target="_blank" href={`https://dx.doi.org/${doi}`}>
+                      <a target="_blank" rel="noopener noreferrer" href={`https://dx.doi.org/${doi}`}>
                           {citation}
                       </a>
                   </h3>

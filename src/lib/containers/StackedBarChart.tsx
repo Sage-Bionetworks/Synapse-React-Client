@@ -2,17 +2,13 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-// ignore because this is rollup requiring imports be named a certain way
-// tslint:disable-next-line
 import ReactMeasure from "react-measure"
-// ignore because this is rollup requiring imports be named a certain way
-// tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
-
+import { Link } from 'react-router-dom'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -38,7 +34,9 @@ export type StackedBarChartState = {
 }
 
 export type StackedBarChartProps = {
-  loadingScreen: any
+  loadingScreen: React.FunctionComponent | JSX.Element
+  link?: string
+  linkText?: string
 }
 
 type Info = {
@@ -225,7 +223,6 @@ export default class StackedBarChart extends
         <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
           <ReactMeasure
             bounds={true}
-            // tslint:disable-next-line
             onResize={(contentRect: any) => {
               this.setState({ dimensions: contentRect })
             }}
@@ -326,6 +323,12 @@ export default class StackedBarChart extends
           <p id="fileCount" className="SRC-noMargin SRC-padding-chart SRC-text-chart">
             {this.getFileCount(xData)} {unitDescription}
           </p>
+          {
+            this.props.link &&
+              <div className="SRC-chart-link">
+                <Link to={this.props.link}> { this.props.linkText } </Link>
+              </div>
+          }
         </div>
       </React.Fragment>
     )

@@ -18,7 +18,7 @@ import {
   MEDIUM_USER_CARD
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
-import { AMP_Study, Consortium, Project } from './row_renderers/AMPAD'
+import { AMPStudy, Consortium, Project } from './row_renderers/AMPAD'
 import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
@@ -88,7 +88,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       case AMP_CONSORTIUM:
         return <Consortium {...props} />
       case AMP_STUDY:
-        return <AMP_Study {...props} />
+        return <AMPStudy {...props} />
       case CSBC_PROJECT:
         return <CSBCProject {...props} />
       case CSBC_PUBLICATION:
@@ -103,7 +103,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         return (<div />) // this should never happen
     }
   }
-
   public render() {
     const {
       data,

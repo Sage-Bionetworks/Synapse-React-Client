@@ -21,7 +21,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) =>
     tokens.splice(indexAfterWhereClause, 0, ['CONDITIONAL', 'AND', '1'])
   }
   const searchParamsLen = Object.keys(searchParams).length
-  Object.keys(searchParams).map(
+  Object.keys(searchParams).forEach(
     (key, index) => {
       const token = [
         ['LITERAL', key, '1'],

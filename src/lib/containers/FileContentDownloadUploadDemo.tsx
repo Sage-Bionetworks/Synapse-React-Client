@@ -60,14 +60,15 @@ export default class FileContentDownloadUploadDemo
           // now update the entity!
           if (this.state.targetEntity) {
             this.state.targetEntity.dataFileHandleId = fileUploadComplete.fileHandleId
-            updateEntity(this.state.targetEntity, this.props.token).then((entity: FileEntity) => {
+            updateEntity(this.state.targetEntity, this.props.token).then((entity: Entity) => {
+              const fileEntity = entity as FileEntity
               // updated the target entity, force it to get the updated entity
-              this.setState({ targetEntity: entity, isLoading: false })
-            }).catch((err) => {
+              this.setState({ targetEntity: fileEntity, isLoading: false })
+            }).catch((err: string) => {
               this.setState({ error: err, isLoading: false })
             })
           }
-        }).catch((err) => {
+        }).catch((err: string) => {
           this.setState({ error: err, isLoading: false })
         })
     }

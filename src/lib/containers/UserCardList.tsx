@@ -66,7 +66,7 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     getUserProfileWithProfilePicAttached(list.filter(el => el)).then(
       (data: UserProfileList) => {
         const newEntries = {}
-        data.list.map(
+        data.list.forEach(
           (el) => {
             const { ownerId } = el
             newEntries[ownerId] = el

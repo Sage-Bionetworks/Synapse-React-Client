@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2'
+import babel from 'rollup-plugin-babel'
 import scss from 'rollup-plugin-scss'
 import image from 'rollup-plugin-image'
 import resolve from 'rollup-plugin-node-resolve'
@@ -7,16 +7,14 @@ import json from 'rollup-plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from 'rollup-plugin-commonjs'
 import minify from 'rollup-plugin-babel-minify'
-/* 
-	TODO: 
-		1. inline svgs for css don't work, easy work around is convert svg to exported
-		.tsx file
-*/
+const extensions = ['.js', '.jsx', '.ts', '.tsx']
+
 export default {
 	input: 'src/lib/index.tsx',
 	external: [
 		'react',
 		'prop-types',
+		'react-router-dom',
 		'react-measure',
 		'react-plotly.js/factory',
 		'plotly.js-basic-dist',
@@ -44,15 +42,23 @@ export default {
 	
 		// Skip warning about AOT compiler (babel) use of the 'this' keyword
 		if ( warning.code === 'THIS_IS_UNDEFINED' ) { return; }
-	
-		// console.warn everything else
+		
 		console.warn( warning.message );
+		// console.warn everything else
 	},
+	// NOTE - the order matters for the extensions below
 	plugins: [
+		resolve( { extensions } ),
+		babel({
+			extensions,
+			exclude: 'node_modules/*.*'
+		}),
+		// Common js is used to handle the import of older javascript modules not using es6 
+		commonjs(),	
 		image(),
-		typescript(),
+		// until css modules package is updated we can't opt into css modules
+		// see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
 		scss({output: './src/umd/synapse-react-client.production.styles.css'}),
-		resolve(),
 		svg(),
 		json(),
 		// The plugin below is used to mitigate a limitation of rollup, which is that an import statement
@@ -75,15 +81,13 @@ export default {
 				/process.env.NODE_ENV/g, '"production"' 
 			]
 		]),
-		// Common js is used to handle the import of older javascript modules not using es6 
-		commonjs(),
 		// minify the bundle
 		minify()
 	],
 	output: {
 		globals: {
 			'react' : 'React',
-			'katex' : 'katex',
+			'react-router-dom': 'ReactRouterDom',
 			'react-transition-group': 'ReactTransitionGroup',
 			'react-plotly.js/factory': 'createPlotlyComponent',
 			'plotly.js-basic-dist': 'Plotly',

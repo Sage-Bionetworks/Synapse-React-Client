@@ -33,7 +33,7 @@ export default class Tool extends React.Component<ToolProps, {}> {
                     <div className="SRC-type">Tool</div>
                     <div className="SRC-title">
                         <h3>
-                            <a href={softwareLink} target="_blank">
+                            <a href={softwareLink} target="_blank" rel="noopener noreferrer">
                                 {softwareName}
                             </a>
                         </h3>

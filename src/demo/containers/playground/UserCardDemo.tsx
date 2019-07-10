@@ -1,7 +1,7 @@
 import * as React from 'react'
-import UserCard from 'src/lib/containers/UserCard'
-import { SynapseConstants } from 'src/lib'
-import MarkdownSynapse from 'src/lib/containers/MarkdownSynapse'
+import UserCard from '../../../lib/containers/UserCard'
+import { SynapseConstants } from '../../../lib'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 
 export default class UserBadgeSmallDemo extends React.Component<any, any> {
   constructor(props: any) {

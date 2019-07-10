@@ -1,7 +1,7 @@
 import { Entity } from './Entity'
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
-type FileEntitySpec = {
+export interface FileEntity extends Entity {
   versionNumber?:	number              // 	The version number issued to this version on the object.
   versionLabel?:	string              // 	The version label for this entity
   versionComment?:	string              // 	The version comment for this entity
@@ -10,5 +10,3 @@ type FileEntitySpec = {
   dataFileHandleId:	string          // 	ID of the file associated with this entity.
   fileNameOverride?:	string          // 	An optional replacement for the name of the uploaded file. This is distinct from the entity name. If omitted the file will retain its original name.
 }
-
-export type FileEntity = FileEntitySpec & Entity

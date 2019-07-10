@@ -40,6 +40,12 @@ Note there are a number of CDNs required to finish this functionality-
   <script src="https://unpkg.com/prop-types@15.6/prop-types.min.js"></script>
 ```
 
+**react router dom**
+``` html
+  <script src="https://unpkg.com/react-router/umd/react-router.min.js"></script>
+  <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
+```
+
 **katex**
 ``` html
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous"/>
@@ -388,6 +394,7 @@ down once you can specify the query that will pull down the data for the child c
 | unitDescription | The units of data for the query  |
 | tableConfiguration, has keys: synapseId, title, visibleColumnCount | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/>  **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table  |
 | cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, hasInternalLink? | The configuration for cards to be show given the query |
+| stackedBarChartConfiguration, has keys: loadingScreen, link, linkText  | The configuration for the bar chart |
 | MenuConfig [] | Specifications for each view under the facet |
 | MenuConfig has keys: sql, facetDisplayValue, facetAliases, facetName  | **sql**: The query driving the specific's facets view <br/> **facetName**: the facet being selected <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
 
@@ -410,6 +417,8 @@ down once you can specify the query that will pull down the data for the child c
 | Props  | Explanation |
 | ------------- | ------------- |
 | loadingScreen | This is an optional loading screen to show when the barchart data is being updated |
+| link | If specified this will show a button link at the bottom right of the bar chart that will direct to `link` |
+| linkText | If the `link` prop is specified then the text displayed slink will be `linkText`  |
 
 
 #### CardContainer

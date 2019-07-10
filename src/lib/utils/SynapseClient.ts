@@ -22,7 +22,7 @@ import { Submission } from './jsonResponses/Submission'
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
 export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
-const DEFAULT_ENDPOINT = 'https://repo-prod.prod.sagebase.org/'
+const DEFAULT_ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
@@ -37,7 +37,7 @@ export const getRootURL = () => {
 
 function delay(t: any) {
   return new Promise((resolve) => {
-    setTimeout(resolve.bind(null, null), t)
+    setTimeout(resolve.bind(null, {}), t)
   })
 }
 function parseJSON(response: any) {
@@ -171,7 +171,7 @@ export const doPut = (
   sessionToken: string | undefined,
   initCredentials: string | undefined,
   endpoint: string
-) => {
+): Promise<any> => {
   const options: any = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -453,11 +453,13 @@ export const getFiles = (request: any,
  * See SynapseClient.test.js for an example partsMask.
  * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
  */
-export const getEntity = (sessionToken: string | undefined = undefined,
+type GetEntity = <T extends Entity>(sessionToken: string | undefined, entityId: string | number, endpoint?: string) => Promise<T>
+
+export const getEntity: GetEntity = <T>(sessionToken: string | undefined = undefined,
                           entityId: string | number,
-                          endpoint = DEFAULT_ENDPOINT): Promise<Entity> => {
+                          endpoint: string = DEFAULT_ENDPOINT) => {
   const url = `/repo/v1/entity/${entityId}`
-  return doGet(url, sessionToken, undefined, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint) as Promise<T>
 }
 
 export const updateEntity = (
@@ -665,7 +667,7 @@ export const uploadFile = (
   file: Blob,
   endpoint: string = DEFAULT_ENDPOINT,
 ) => {
-  return new Promise((fileUploadResolve, fileUploadReject) => {
+  return new Promise<FileUploadComplete>((fileUploadResolve, fileUploadReject) => {
     const partSize: number = Math.max(5242880, (file.size / 10000))
     const request: MultipartUploadRequest = {
       contentType: file.type,
@@ -683,7 +685,7 @@ export const uploadFile = (
 
 const calculateMd5 = (
   fileBlob: File | Blob
-) => {
+): Promise<string> => {
   const bmf = new browserMd5File()
   return new Promise((resolve, reject) => {
     bmf.md5(

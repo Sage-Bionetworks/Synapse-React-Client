@@ -308,5 +308,4 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       </div>
     )
   }
-
 }

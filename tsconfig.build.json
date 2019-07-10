@@ -1,8 +1,5 @@
 {
   "compilerOptions": {
-    "plugins": [
-      { "name": "typescript-tslint-plugin" }
-    ],
     "outDir": "dist",
     "declaration": true,
     "resolveJsonModule": true,

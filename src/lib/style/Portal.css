@@ -391,6 +391,12 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-background-color {
   background-color: #D53F77; }
 
+.SRC-chart-link a:hover {
+  transition: all 400ms; }
+
+.SRC-chart-link a:hover {
+  box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.5); }
+
 .SRC-primary-background-color-hover:hover {
   background-color: #D53F77; }
   .SRC-primary-background-color-hover:hover > svg {
@@ -961,6 +967,24 @@ div.SRC-userImg {
 
 .SRC-chart-nav {
   height: 30px; }
+
+.SRC-chart-link {
+  position: relative; }
+  .SRC-chart-link a {
+    position: absolute;
+    bottom: 8px;
+    right: 50px;
+    border-radius: 24px;
+    background-color: #D53F77;
+    color: white !important;
+    height: 44px;
+    width: 257px;
+    text-transform: uppercase;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none !important; }
 
 .SRC-loadingContainer {
   min-height: 100px; }

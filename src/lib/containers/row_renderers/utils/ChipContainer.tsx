@@ -1,16 +1,15 @@
 import * as React from 'react'
-import { uuidv4 } from '../../../utils/modules'
 
 type ChipContainerProps = {
   chips: any []
 }
 
 const ChipContainer: React.SFC<ChipContainerProps> = ({ chips }) => {
-  const chipsFormatted = chips.map((el) => {
+  const chipsFormatted = chips.map((el, index) => {
     if (!el) {
       return false
     }
-    return <span key={uuidv4()}> {el}</span>
+    return <span key={index}> {el}</span>
   })
   return (
         <React.Fragment>

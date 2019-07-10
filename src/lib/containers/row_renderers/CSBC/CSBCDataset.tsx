@@ -11,10 +11,6 @@ type DatasetProps = {
 
 class CSBCDataset extends React.Component<DatasetProps, {}> {
 
-  constructor(props: DatasetProps) {
-    super(props)
-  }
-
   public render() {
     const { data, schema } = this.props
     const name = data[schema.name]
