@@ -471,7 +471,15 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    background-color: $primaryColor;
  }
 
- .SRC-primary-background-color-hover:hover {
+ %hoverFade {
+    transition: all 400ms;
+  }
+
+  %defaultBoxShadow {
+    box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5);
+  }
+
+  .SRC-primary-background-color-hover:hover {
    background-color: $primaryColor; 
    > svg {
      color: white;
@@ -1186,6 +1194,30 @@ div.SRC-userImg {
 
 .SRC-chart-nav {
   height: 30px;
+}
+
+.SRC-chart-link {
+  position: relative;
+  a {
+    position: absolute;
+    bottom: 8px;
+    right: 50px;
+    border-radius: 24px;
+    background-color: $primaryColor;
+    color: white !important;
+    height: 44px;
+    width: 257px;
+    text-transform: uppercase;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none !important;
+    &:hover {
+      @extend %hoverFade;
+      @extend %defaultBoxShadow;
+    }
+  }
 }
 
 .SRC-loadingContainer {

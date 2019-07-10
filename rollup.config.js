@@ -14,6 +14,7 @@ export default {
 	external: [
 		'react',
 		'prop-types',
+		'react-router-dom',
 		'react-measure',
 		'react-plotly.js/factory',
 		'plotly.js-basic-dist',
@@ -86,7 +87,7 @@ export default {
 	output: {
 		globals: {
 			'react' : 'React',
-			'katex' : 'katex',
+			'react-router-dom': 'ReactRouterDom',
 			'react-transition-group': 'ReactTransitionGroup',
 			'react-plotly.js/factory': 'createPlotlyComponent',
 			'plotly.js-basic-dist': 'Plotly',

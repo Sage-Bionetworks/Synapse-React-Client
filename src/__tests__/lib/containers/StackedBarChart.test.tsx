@@ -128,8 +128,10 @@ describe('it performs basic functionality', () => {
       2. The text being displayed under the chart should be the
       first facet selection and it should have the correct unit
       description and count displayed
+      3. There's a link that should be displayed only if link and linkText
+      are set as props
     */
-    const { wrapper } = createShallowComponent(props)
+    let { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
     // 1.
     expect(wrapper.render().find('svg.SRC-hoverBox')).toHaveLength(11)
@@ -137,6 +139,10 @@ describe('it performs basic functionality', () => {
     expect(wrapper.find('span.SRC-text-title.SRC-filter-display').text()).toEqual(filter)
     expect(wrapper.find('span.SRC-facet-view').text()).toEqual(` ${facetValueWithMaxCount}`)
     expect(wrapper.find('#fileCount').text()).toEqual(`28 ${unitDescription}`)
+    // shouldn't have a link unless link and linkText are specified
+    expect(wrapper.find('.SRC-chart-link')).toHaveLength(0);
+    ({ wrapper } = createShallowComponent({ ...props, link: 'mywebsite.com', linkText: 'Explore Data' }))
+    expect(wrapper.find('.SRC-chart-link')).toHaveLength(1)
   })
 
   it('handles arrow click correctly', async () => {
