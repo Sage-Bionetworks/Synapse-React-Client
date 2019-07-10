@@ -32,7 +32,10 @@ describe('it renders with basic functionality', () => {
     token,
     name,
     menuConfig: [{ sql, facetName }],
-    rgbIndex: 3
+    rgbIndex: 3,
+    stackedBarChartProps: {
+      loadingScreen: <div/>
+    }
   }
 
   it('renders without crashing', () => {
@@ -48,6 +51,9 @@ describe('it renders with basic functionality', () => {
       tableConfiguration: {
         synapseId,
         title: 'title'
+      },
+      stackedBarChartProps: {
+        loadingScreen: <div/>
       },
       menuConfig: [{ sql, facetName }]
     }
@@ -67,7 +73,6 @@ describe('it renders with basic functionality', () => {
       cardConfiguration: {
         type: SynapseConstants.STUDY
       },
-      showBarChart: false,
       menuConfig: [{ sql, facetName }]
     }
     const { wrapper } = await createShallowComponent(propsWithTitle)
@@ -83,7 +88,10 @@ describe('it renders with basic functionality', () => {
       ...props,
       cardConfiguration: {
         type: SynapseConstants.STUDY
-      }
+      },
+      stackedBarChartProps: {
+        loadingScreen: <div/>
+      },
     }
     const { wrapper } = await createShallowComponent(propsWithType)
 

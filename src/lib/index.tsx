@@ -2,9 +2,9 @@ import 'regenerator-runtime/runtime'
 import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
-import QueryWrapper from './containers/QueryWrapper'
-import StackedBarChart from './containers/StackedBarChart'
-import SynapseTable from './containers/SynapseTable'
+// import QueryWrapper from './containers/QueryWrapper'
+// import StackedBarChart from './containers/StackedBarChart'
+// import SynapseTable from './containers/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import CardContainer from './containers/CardContainer'
@@ -16,9 +16,6 @@ import { SynapseConstants, SynapseClient } from './utils/'
 const SynapseComponents = {
   Facets,
   Login,
-  QueryWrapper,
-  StackedBarChart,
-  SynapseTable,
   CardContainer,
   QueryWrapperMenu,
   CardContainerLogic,

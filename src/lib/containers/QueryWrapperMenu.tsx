@@ -10,6 +10,7 @@ import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { CommonCardProps } from './CardContainerLogic'
+import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue } from '../utils/modules/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
 
@@ -38,10 +39,10 @@ export type QueryWrapperMenuProps = {
   isConsistent?: boolean
   token?: string
   rgbIndex: number
-  loadingScreen?: JSX.Element
   unitDescription?: string
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
+  stackedBarChartProps?: StackedBarChartProps
   showBarChart?: boolean
   searchParams?: MenuSearchParams
   name: string
@@ -161,15 +162,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       menuConfig,
       token,
       rgbIndex = 0,
-      loadingScreen,
       isConsistent = false,
       unitDescription = '',
       cardConfiguration,
       tableConfiguration,
       showBarChart = true,
+      stackedBarChartProps,
       searchParams,
     } = this.props
-
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
@@ -222,7 +222,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            {showBarChart ? <StackedBarChart loadingScreen={loadingScreen}/> : <React.Fragment/>}
+            {stackedBarChartProps ? <StackedBarChart {...stackedBarChartProps} /> : <React.Fragment/>}
             <Facets />
             {/*
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
