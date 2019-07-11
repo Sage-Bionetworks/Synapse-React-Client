@@ -51,6 +51,9 @@
     <!-- react-css-transition-group -->
     <script src="https://unpkg.com/react-transition-group@2.6.0/dist/react-transition-group.min.js"></script>
 
+    <!-- react json schema form -->
+    <script src="https://unpkg.com/react-jsonschema-form/dist/react-jsonschema-form.js"></script>
+
     <!-- local imports-- change in prod -->
     <link rel="stylesheet" href="../../umd/synapse-react-client.production.styles.css"/>
     <script src="../../umd/synapse-react-client.production.min.js"> </script>
@@ -85,6 +88,7 @@
     <div id="panel2"></div>
     <div id="panel3"></div>
     <div id="panel4"></div>
+    <div id="panel5"></div>
     <div style="height: 300px"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -142,5 +146,15 @@
     ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null), userCardSmallContainer)
     ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null), UserCardMediumAndLargeContainer)
 
+    const formContainer = document.querySelector('#panel5');
+    const entityFormProps = {
+      parentContainerId: 'syn20355732',
+				token:'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+				formSchemaEntityId:'syn20184776',
+				formUiSchemaEntityId:'syn20184771',
+				initFormData:false
+    }
+    ReactDOM.render(e(SRC.SynapseComponents.EntityForm, entityFormProps, null), formContainer)
+    
   </script>
 </html>
