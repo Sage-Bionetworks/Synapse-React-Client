@@ -92,7 +92,7 @@ export default {
 			'react-transition-group': 'ReactTransitionGroup',
 			'react-plotly.js/factory': 'createPlotlyComponent',
 			'plotly.js-basic-dist': 'Plotly',
-			'react-jsonschema-form': 'Form',
+			'react-jsonschema-form': 'JSONSchemaForm',
 			'react-measure': 'ReactMeasure',
 			'react-tooltip': 'ReactTooltip',
 			'markdownit': 'markdownit' ,
