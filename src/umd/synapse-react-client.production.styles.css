@@ -1,4 +1,256 @@
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700,900");
+.SRC-font-size-base {
+  font-size: 14px; }
+
+.SRC-portalCard {
+  display: block;
+  color: #1A1C29;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  line-height: 21px;
+  border: 1px solid #DDDDDF;
+  margin-top: 30px;
+  margin-bottom: 30px; }
+
+.SRC-portalCard .SRC-downloadData {
+  background-color: #C94281;
+  border-radius: 20px;
+  text-align: center;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.SRC-portalCard .SRC-downloadData a {
+  font-size: 16px;
+  padding: 5px 20px !important;
+  color: white; }
+
+.SRC-portalCard a {
+  color: #C94281; }
+
+.SRC-portalCard h3 {
+  margin: 21px, 0, 10.5px, 0 !important;
+  padding: 0;
+  font-size: 18px !important; }
+
+.SRC-portalCard h3 a {
+  margin: 0;
+  font-weight: 700; }
+
+.SRC-portalCard .SRC-type, .SRC-portalCard .SRC-cardThumbnail {
+  text-transform: uppercase;
+  color: #898989; }
+
+.SRC-portalCard .SRC-cardThumbnail {
+  display: inline-block;
+  width: 15%;
+  vertical-align: top;
+  padding-top: 21px; }
+
+.SRC-portalCard .SRC-cardThumbnail img {
+  vertical-align: top;
+  width: 50%;
+  margin: auto;
+  display: block; }
+
+.SRC-portalCard .SRC-cardThumbnail img.iconImg {
+  max-width: 75px; }
+
+.SRC-portalCard .SRC-cardThumbnail > div {
+  margin-top: 10.5px;
+  text-align: center; }
+
+.SRC-portalCard .SRC-cardContent {
+  padding-left: 0px;
+  max-width: 80%;
+  display: inline-block;
+  padding-top: 21px; }
+
+.SRC-portalCard .SRC-cardContent.SRC-dataset {
+  width: 80%; }
+
+.SRC-portalCard .SRC-cardContent .SRC-author {
+  font-style: italic;
+  padding-bottom: 10.5px; }
+
+.SRC-portalCard .SRC-cardContent .SRC-cardAnnotations {
+  margin: 10.5px 0; }
+
+.SRC-portalCard .SRC-cardContent .SRC-cardAnnotations span {
+  background: #3C4A63;
+  color: white;
+  display: inline-block;
+  padding: 2px 15px 4px 15px;
+  margin: 0 10px 5px 0;
+  border-radius: 15px; }
+
+.SRC-portalCard .SRC-cardAction {
+  display: inline-block; }
+
+.SRC-portalCard .SRC-cardAction button {
+  background-color: #C94281;
+  font-size: 16px;
+  color: white;
+  display: inline-block;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 20px;
+  padding: 5px 20px !important; }
+
+.SRC-portalCard .SRC-cardMetadata {
+  display: block;
+  background-color: #F9F9F9;
+  margin-top: 21px;
+  padding: 21px 21px 21px 15%; }
+
+.SRC-portalCard .SRC-cardMetadata .row {
+  margin: 5px !important; }
+
+.SRC-portalCard .SRC-cardMetadata .row > * {
+  min-width: 100px; }
+
+.SRC-portalCard .SRC-cardMetadata .row .extraWide {
+  min-width: 150px; }
+
+.SRC-portalCard .SRC-cardMetadata .SRC-row-label {
+  white-space: nowrap;
+  color: #898989;
+  text-transform: uppercase;
+  margin-right: 40px; }
+
+.SRC-portalCard .SRC-cardMetadata .SRC-row-data {
+  font-weight: 400; }
+
+.SRC-portalCard .SRC-cardMetadata .SRC-row-data a {
+  font-size: 14px !important; }
+
+.SRC-portalCard .SRC-cardMetadataColumn {
+  display: flex;
+  background-color: #F9F9F9;
+  margin-top: 21px;
+  padding: 20px 20px; }
+
+@media (max-width: 568px) {
+  .SRC-portalCard .SRC-cardMetadataColumn {
+    flex-direction: column !important; } }
+
+.SRC-portalCard .SRC-cardMetadataColumn .SRC-halfWidth {
+  flex-grow: 1; }
+
+.SRC-portalCard .SRC-cardMetadataColumn .row {
+  margin: 5px !important; }
+
+.SRC-portalCard .SRC-cardMetadataColumn .row > * {
+  min-width: 200px; }
+
+.SRC-portalCard .SRC-cardMetadataColumn .row.extraWide > * {
+  min-width: 150px; }
+
+.SRC-portalCard .SRC-cardMetadataColumn .SRC-row-label {
+  white-space: nowrap;
+  color: #898989;
+  text-transform: uppercase; }
+
+.SRC-portalCard .SRC-cardMetadataColumn .SRC-row-data {
+  font-weight: 400;
+  display: inline-block; }
+
+.SRC-portalCard .SRC-cardMetadataColumn .SRC-row-data a {
+  font-size: 14px !important; }
+
+.SRC-portalCard.SRC-typeDataset .row {
+  display: inline-block; }
+
+.SRC-portalCard.SRC-typeDataset .row > * {
+  min-width: 0; }
+
+.SRC-portalCard.SRC-typeDataset .SRC-row-data {
+  padding-right: 42px; }
+
+.SRC-portalCard.SRC-typeFunder .SRC-cardThumbnail {
+  display: inline;
+  float: right; }
+
+.SRC-portalCard.SRC-typeFunder .SRC-cardThumbnail img {
+  width: 65%; }
+
+.SRC-portalCard.SRC-typeFunder .SRC-cardContent {
+  max-width: 100%;
+  width: 90% !important;
+  margin-left: 42px; }
+
+.SRC-portalCard.SRC-typeFunder .SRC-cardContent .SRC-website a {
+  display: inline-block;
+  font-size: 14px;
+  padding-bottom: 10.5px; }
+
+.SRC-portalCard.SRC-typeFunder .SRC-cardAction {
+  margin: 21px 0 21px 42px; }
+
+.SRC-portalCard.SRC-typeTool .SRC-cardAction {
+  margin: 21px 0 21px 15%; }
+
+img.iconImg.SRC-datasetIcon {
+  max-width: 60px !important; }
+
+.SRC-cardRowDesktop > td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 0px;
+  padding-right: 20px; }
+
+.SRC-cardRowMobile:nth-child(even) > td {
+  padding-bottom: 10px; }
+
+.SRC-description-dataset {
+  display: flex;
+  flex-wrap: wrap; }
+
+.SRC-description-dataset p.SRC-description-text {
+  flex-basis: 65%;
+  display: inline-block;
+  padding-right: 15px; }
+
+.SRC-description-dataset div button {
+  white-space: nowrap; }
+
+.SRC-portalCardHeader {
+  color: white;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  line-height: 21px;
+  border: 1px solid #DDDDDF;
+  padding-bottom: 30px;
+  padding-top: 25px; }
+
+.SRC-portalCardHeader h3 {
+  margin: 21px, 0, 10.5px, 0 !important;
+  color: white;
+  padding: 0;
+  font-size: 18px !important; }
+
+.SRC-portalCardHeader h3 a {
+  margin: 0;
+  font-weight: 700; }
+
+.SRC-portalCardHeader .SRC-type, .SRC-portalCardHeader .SRC-cardThumbnail {
+  text-transform: uppercase; }
+
+@media (min-width: 992px) {
+  .SRC-portalCardHeader .iconContainer {
+    text-align: center; } }
+
+.SRC-portalCardHeader .iconContainer img.iconImg {
+  padding-top: 21px; }
+
+.SRC-portalCardHeader .SRC-cardContent {
+  padding-top: 21px; }
+
+.SRC-portalCardHeader .SRC-cardContent .SRC-author {
+  font-style: italic;
+  padding-bottom: 10.5px; }
+
 .markdowntable {
   border: 1px solid #dddddd;
   border-collapse: separate;
@@ -1016,255 +1268,3 @@ div.SRC-userImg {
 
 .srcRssFeedItemContent {
   padding-top: 10px; }
-
-.SRC-font-size-base {
-  font-size: 14px; }
-
-.SRC-portalCard {
-  display: block;
-  color: #1A1C29;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  line-height: 21px;
-  border: 1px solid #DDDDDF;
-  margin-top: 30px;
-  margin-bottom: 30px; }
-
-.SRC-portalCard .SRC-downloadData {
-  background-color: #C94281;
-  border-radius: 20px;
-  text-align: center;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center; }
-
-.SRC-portalCard .SRC-downloadData a {
-  font-size: 16px;
-  padding: 5px 20px !important;
-  color: white; }
-
-.SRC-portalCard a {
-  color: #C94281; }
-
-.SRC-portalCard h3 {
-  margin: 21px, 0, 10.5px, 0 !important;
-  padding: 0;
-  font-size: 18px !important; }
-
-.SRC-portalCard h3 a {
-  margin: 0;
-  font-weight: 700; }
-
-.SRC-portalCard .SRC-type, .SRC-portalCard .SRC-cardThumbnail {
-  text-transform: uppercase;
-  color: #898989; }
-
-.SRC-portalCard .SRC-cardThumbnail {
-  display: inline-block;
-  width: 15%;
-  vertical-align: top;
-  padding-top: 21px; }
-
-.SRC-portalCard .SRC-cardThumbnail img {
-  vertical-align: top;
-  width: 50%;
-  margin: auto;
-  display: block; }
-
-.SRC-portalCard .SRC-cardThumbnail img.iconImg {
-  max-width: 75px; }
-
-.SRC-portalCard .SRC-cardThumbnail > div {
-  margin-top: 10.5px;
-  text-align: center; }
-
-.SRC-portalCard .SRC-cardContent {
-  padding-left: 0px;
-  max-width: 80%;
-  display: inline-block;
-  padding-top: 21px; }
-
-.SRC-portalCard .SRC-cardContent.SRC-dataset {
-  width: 80%; }
-
-.SRC-portalCard .SRC-cardContent .SRC-author {
-  font-style: italic;
-  padding-bottom: 10.5px; }
-
-.SRC-portalCard .SRC-cardContent .SRC-cardAnnotations {
-  margin: 10.5px 0; }
-
-.SRC-portalCard .SRC-cardContent .SRC-cardAnnotations span {
-  background: #3C4A63;
-  color: white;
-  display: inline-block;
-  padding: 2px 15px 4px 15px;
-  margin: 0 10px 5px 0;
-  border-radius: 15px; }
-
-.SRC-portalCard .SRC-cardAction {
-  display: inline-block; }
-
-.SRC-portalCard .SRC-cardAction button {
-  background-color: #C94281;
-  font-size: 16px;
-  color: white;
-  display: inline-block;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 20px;
-  padding: 5px 20px !important; }
-
-.SRC-portalCard .SRC-cardMetadata {
-  display: block;
-  background-color: #F9F9F9;
-  margin-top: 21px;
-  padding: 21px 21px 21px 15%; }
-
-.SRC-portalCard .SRC-cardMetadata .row {
-  margin: 5px !important; }
-
-.SRC-portalCard .SRC-cardMetadata .row > * {
-  min-width: 100px; }
-
-.SRC-portalCard .SRC-cardMetadata .row .extraWide {
-  min-width: 150px; }
-
-.SRC-portalCard .SRC-cardMetadata .SRC-row-label {
-  white-space: nowrap;
-  color: #898989;
-  text-transform: uppercase;
-  margin-right: 40px; }
-
-.SRC-portalCard .SRC-cardMetadata .SRC-row-data {
-  font-weight: 400; }
-
-.SRC-portalCard .SRC-cardMetadata .SRC-row-data a {
-  font-size: 14px !important; }
-
-.SRC-portalCard .SRC-cardMetadataColumn {
-  display: flex;
-  background-color: #F9F9F9;
-  margin-top: 21px;
-  padding: 20px 20px; }
-
-@media (max-width: 568px) {
-  .SRC-portalCard .SRC-cardMetadataColumn {
-    flex-direction: column !important; } }
-
-.SRC-portalCard .SRC-cardMetadataColumn .SRC-halfWidth {
-  flex-grow: 1; }
-
-.SRC-portalCard .SRC-cardMetadataColumn .row {
-  margin: 5px !important; }
-
-.SRC-portalCard .SRC-cardMetadataColumn .row > * {
-  min-width: 200px; }
-
-.SRC-portalCard .SRC-cardMetadataColumn .row.extraWide > * {
-  min-width: 150px; }
-
-.SRC-portalCard .SRC-cardMetadataColumn .SRC-row-label {
-  white-space: nowrap;
-  color: #898989;
-  text-transform: uppercase; }
-
-.SRC-portalCard .SRC-cardMetadataColumn .SRC-row-data {
-  font-weight: 400;
-  display: inline-block; }
-
-.SRC-portalCard .SRC-cardMetadataColumn .SRC-row-data a {
-  font-size: 14px !important; }
-
-.SRC-portalCard.SRC-typeDataset .row {
-  display: inline-block; }
-
-.SRC-portalCard.SRC-typeDataset .row > * {
-  min-width: 0; }
-
-.SRC-portalCard.SRC-typeDataset .SRC-row-data {
-  padding-right: 42px; }
-
-.SRC-portalCard.SRC-typeFunder .SRC-cardThumbnail {
-  display: inline;
-  float: right; }
-
-.SRC-portalCard.SRC-typeFunder .SRC-cardThumbnail img {
-  width: 65%; }
-
-.SRC-portalCard.SRC-typeFunder .SRC-cardContent {
-  max-width: 100%;
-  width: 90% !important;
-  margin-left: 42px; }
-
-.SRC-portalCard.SRC-typeFunder .SRC-cardContent .SRC-website a {
-  display: inline-block;
-  font-size: 14px;
-  padding-bottom: 10.5px; }
-
-.SRC-portalCard.SRC-typeFunder .SRC-cardAction {
-  margin: 21px 0 21px 42px; }
-
-.SRC-portalCard.SRC-typeTool .SRC-cardAction {
-  margin: 21px 0 21px 15%; }
-
-img.iconImg.SRC-datasetIcon {
-  max-width: 60px !important; }
-
-.SRC-cardRowDesktop > td {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 0px;
-  padding-right: 20px; }
-
-.SRC-cardRowMobile:nth-child(even) > td {
-  padding-bottom: 10px; }
-
-.SRC-description-dataset {
-  display: flex;
-  flex-wrap: wrap; }
-
-.SRC-description-dataset p.SRC-description-text {
-  flex-basis: 65%;
-  display: inline-block;
-  padding-right: 15px; }
-
-.SRC-description-dataset div button {
-  white-space: nowrap; }
-
-.SRC-portalCardHeader {
-  color: white;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  line-height: 21px;
-  border: 1px solid #DDDDDF;
-  padding-bottom: 30px;
-  padding-top: 25px; }
-
-.SRC-portalCardHeader h3 {
-  margin: 21px, 0, 10.5px, 0 !important;
-  color: white;
-  padding: 0;
-  font-size: 18px !important; }
-
-.SRC-portalCardHeader h3 a {
-  margin: 0;
-  font-weight: 700; }
-
-.SRC-portalCardHeader .SRC-type, .SRC-portalCardHeader .SRC-cardThumbnail {
-  text-transform: uppercase; }
-
-@media (min-width: 992px) {
-  .SRC-portalCardHeader .iconContainer {
-    text-align: center; } }
-
-.SRC-portalCardHeader .iconContainer img.iconImg {
-  padding-top: 21px; }
-
-.SRC-portalCardHeader .SRC-cardContent {
-  padding-top: 21px; }
-
-.SRC-portalCardHeader .SRC-cardContent .SRC-author {
-  font-style: italic;
-  padding-bottom: 10.5px; }
