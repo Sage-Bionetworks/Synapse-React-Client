@@ -252,7 +252,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       return (<div/>)
     }
     let { showAllFacets } = this.state
-    const { data, filter, unitDescription, isLoading, showBarChart = true } = this.props
+    const { data, filter, unitDescription, isLoading } = this.props
     const { facets } = data
 
     const curFacetsIndex = facets.findIndex(facet => facet.columnName === filter && facet.facetType === 'enumeration')
@@ -271,8 +271,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     return (
       <div className="SRC-syn-border-spacing">
         {
-          !showBarChart
-          &&
           <TotalQueryResults
             data={data}
             filter={filter}
