@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { SynapseClient } from '../../../lib'
-import QueryWrapperMenu, { MenuConfig } from '../../../lib/containers/QueryWrapperMenu'
+import QueryWrapperMenu, { MenuConfig, QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../../lib/utils'
 import '../App.css'
 
@@ -11,7 +11,7 @@ type DemoState = {
   showMarkdown: boolean
   version: number
   tabOne: any
-  tabTwo: any
+  tabTwo: QueryWrapperMenuProps
   showTabOne: boolean
 }
 /**
@@ -28,18 +28,44 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: false,
+      showTabOne: true,
       tabTwo:
       {
         showBarChart: false,
+        name: 'Demo',
         unitDescription: 'persons',
         cardConfiguration: {
           type: SynapseConstants.MEDIUM_USER_CARD,
         },
         rgbIndex: 1,
+        accordionConfig: [
+          {
+            cardConfiguration: {
+              type: SynapseConstants.MEDIUM_USER_CARD,
+            },  
+            menuConfig: [{
+              facetName: 'institution',
+              sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
+            }],
+          },
+          {
+            cardConfiguration: {
+              type: SynapseConstants.MEDIUM_USER_CARD,
+            },  
+            menuConfig: [
+              {
+              facetName: 'institution',
+              sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
+            },
+              {
+              facetName: 'institution',
+              sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
+            }
+          ],
+          },
+        ],
         menuConfig: [
           {
-            unitDescription: 'people',
             facetName: 'institution',
             sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
           },
