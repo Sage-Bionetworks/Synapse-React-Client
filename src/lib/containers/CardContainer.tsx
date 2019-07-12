@@ -3,8 +3,6 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import {
   AMP_CONSORTIUM,
-  AMP_PROJECT,
-  AMP_STUDY,
   DATASET,
   FUNDER,
   PUBLICATION,
@@ -18,7 +16,7 @@ import {
   MEDIUM_USER_CARD
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
-import { AMPStudy, Consortium, Project } from './row_renderers/AMPAD'
+import { Consortium } from './row_renderers/AMPAD'
 import CSBCProject from './row_renderers/CSBC/CSBCProject'
 import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
 import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
@@ -83,12 +81,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         return <Publication {...props} />
       case TOOL:
         return <Tool {...props} />
-      case AMP_PROJECT:
-        return <Project {...props} />
       case AMP_CONSORTIUM:
         return <Consortium {...props} />
-      case AMP_STUDY:
-        return <AMPStudy {...props} />
       case CSBC_PROJECT:
         return <CSBCProject {...props} />
       case CSBC_PUBLICATION:

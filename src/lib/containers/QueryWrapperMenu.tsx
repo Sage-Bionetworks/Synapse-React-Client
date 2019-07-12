@@ -1,14 +1,14 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { SynapseConstants, SynapseClient } from '../utils/'
+import { SynapseConstants } from '../utils/'
 import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
+import QueryCount from './QueryCount'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue } from '../utils/modules/sqlFunctions'
@@ -19,7 +19,6 @@ library.add(faAngleRight)
 
 type MenuState = {
   menuIndex: number
-  [index: string]: number | string
 }
 
 export type MenuConfig = {
@@ -65,31 +64,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
-    this.calculateRowCount = this.calculateRowCount.bind(this)
-  }
-
-  componentDidMount() {
-    this.calculateRowCount()
-  }
-
-  calculateRowCount() {
-    const { menuConfig } = this.props
-    const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
-    if (this.state[sql]) {
-      return
-    }
-    const request: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      query: {
-        sql,
-      },
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-    }
-    SynapseClient.getQueryTableResults(request).then(
-      (data) => {
-        this.setState({ [sql]: data.queryCount! })
-      }
-    )
   }
 
   componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
@@ -97,13 +71,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       Update the row count or the menu index if the props changed by looking at whether the sql or the rgbIndex
       changed
     */
-    const { menuConfig, rgbIndex } = this.props
-    const hasPropsChanged = prevProps.menuConfig[0].sql !== menuConfig[0].sql || prevProps.rgbIndex !== rgbIndex
+    const { rgbIndex } = this.props
+    const hasPropsChanged = prevProps.rgbIndex !== rgbIndex
     if (hasPropsChanged) {
       this.setState({
         menuIndex: 0,
       })
-      this.calculateRowCount()
     }
   }
 
@@ -135,14 +108,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   public render() {
     const menuDropdown = this.renderFacetMenu()
     const queryWrapper = this.renderQueryChildren()
-    const { menuConfig, showBarChart = true, name } = this.props
-    const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
-    const queryCount = this.state[sql] || ''
+    const { menuConfig, stackedBarChartConfiguration, name } = this.props
+    const { sql } = menuConfig[this.state.menuIndex]
+    const showBarChart = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
         <h3 id="exploreCount" className="SRC-boldText">
-          {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */}
-          {name} ({queryCount && queryCount.toLocaleString()})
+          <QueryCount name={name} sql={sql} />
         </h3>
         <div className="break">
           <hr/>
@@ -166,7 +138,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       unitDescription = '',
       cardConfiguration,
       tableConfiguration,
-      showBarChart = true,
       stackedBarChartConfiguration,
       searchParams,
     } = this.props
@@ -175,6 +146,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     if (searchParams) {
       ({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
     }
+    const showBarChart = stackedBarChartConfiguration !== undefined
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = this.state.menuIndex === index
       const {

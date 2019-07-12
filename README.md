@@ -420,6 +420,13 @@ down once you can specify the query that will pull down the data for the child c
 | link | If specified this will show a button link at the bottom right of the bar chart that will direct to `link` |
 | linkText | If the `link` prop is specified then the text displayed slink will be `linkText`  |
 
+#### QueryCount
+
+| Props  | Explanation |
+| ------------- | ------------- |
+| sql | sql statement |
+| name | Text to display next to the query count |
+
 
 #### CardContainer
 CardContainer is used as either a child of QueryWrapperMenu/QueryWrapper OR CardContainerLogic. The two situations are sufficiently different that factoring out the logic into it's own component is not possible.

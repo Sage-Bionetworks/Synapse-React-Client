@@ -252,7 +252,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       return (<div/>)
     }
     let { showAllFacets } = this.state
-    const { data, filter, unitDescription, isLoading, showBarChart = true } = this.props
+    const { data, filter, unitDescription, isLoading, showBarChart } = this.props
     const { facets } = data
 
     const curFacetsIndex = facets.findIndex(facet => facet.columnName === filter && facet.facetType === 'enumeration')
