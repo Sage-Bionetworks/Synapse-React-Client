@@ -1,7 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { SynapseConstants, SynapseClient } from '../utils/'
+import { SynapseConstants } from '../utils/'
 import { getColorPallette } from './ColorGradient'
 import { Facets } from './Facets'
 import QueryCount from './QueryCount'
@@ -9,7 +9,6 @@ import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue } from '../utils/modules/sqlFunctions'
@@ -20,7 +19,6 @@ library.add(faAngleRight)
 
 type MenuState = {
   menuIndex: number
-  [index: string]: number | string
 }
 
 export type MenuConfig = {
@@ -66,31 +64,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
-    this.calculateRowCount = this.calculateRowCount.bind(this)
-  }
-
-  componentDidMount() {
-    this.calculateRowCount()
-  }
-
-  calculateRowCount() {
-    const { menuConfig } = this.props
-    const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
-    if (this.state[sql]) {
-      return
-    }
-    const request: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      query: {
-        sql,
-      },
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-    }
-    SynapseClient.getQueryTableResults(request).then(
-      (data) => {
-        this.setState({ [sql]: data.queryCount! })
-      }
-    )
   }
 
   componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
@@ -104,7 +77,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       this.setState({
         menuIndex: 0,
       })
-      this.calculateRowCount()
     }
   }
 
