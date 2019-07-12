@@ -7,6 +7,7 @@ import StackedBarChart from './containers/StackedBarChart'
 import SynapseTable from './containers/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
+import QueryCount from './containers/QueryCount'
 import EntityForm from './containers/EntityForm'
 import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
@@ -25,6 +26,7 @@ const SynapseComponents = {
   CardContainerLogic,
   EntityForm,
   UserCard,
+  QueryCount,
   Markdown: MarkdownSynapse
 }
 

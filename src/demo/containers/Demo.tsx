@@ -176,9 +176,6 @@ class Demo extends React.Component<{}, DemoState> {
       case SynapseConstants.AMP_STUDY:
         sql = 'SELECT * FROM syn9886254'
         break
-      case SynapseConstants.AMP_PROJECT:
-        sql = 'SELECT * FROM syn17024229'
-        break
       case SynapseConstants.AMP_CONSORTIUM:
         sql = 'SELECT * FROM syn17024173'
         break
@@ -307,7 +304,6 @@ class Demo extends React.Component<{}, DemoState> {
             <select value={this.state.cardSelection} onChange={this.handleCardSelection}>
                 <option value={SynapseConstants.AMP_STUDY}>{SynapseConstants.AMP_STUDY}</option>
                 <option value={SynapseConstants.AMP_CONSORTIUM}>{SynapseConstants.AMP_CONSORTIUM}</option>
-                <option value={SynapseConstants.AMP_PROJECT}>{SynapseConstants.AMP_PROJECT}</option>
                 <option value={SynapseConstants.DATASET}>{SynapseConstants.DATASET}</option>
                 <option value={SynapseConstants.TOOL}>{SynapseConstants.TOOL}</option>
                 {/* <option value={SynapseConstants.FUNDER}>{SynapseConstants.FUNDER}</option> */}

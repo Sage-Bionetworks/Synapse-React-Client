@@ -1248,8 +1248,8 @@
     "@types/enzyme" "*"
 
 "@types/enzyme@*", "@types/enzyme@^3.1.15":
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.10.1.tgz#74a7f7345075a4c03e574661068d3f96a054f495"
+  version "3.10.2"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.10.2.tgz#455d34854611fc8dbec70338fe0651ab692c74ea"
   dependencies:
     "@types/cheerio" "*"
     "@types/react" "*"
@@ -1302,8 +1302,8 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.136.tgz#413e85089046b865d960c9ff1d400e04c31ab60f"
 
 "@types/node@*", "@types/node@^12.0.10":
-  version "12.6.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.1.tgz#d5544f6de0aae03eefbb63d5120f6c8be0691946"
+  version "12.6.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.2.tgz#a5ccec6abb6060d5f20d256fb03ed743e9774999"
 
 "@types/node@^10.12.2":
   version "10.14.12"
@@ -1343,8 +1343,8 @@
     "@types/react" "*"
 
 "@types/react-jsonschema-form@^1.3.2":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@types/react-jsonschema-form/-/react-jsonschema-form-1.6.1.tgz#d1cf242f7b420815169c0eb355e155cf3b5dd10b"
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@types/react-jsonschema-form/-/react-jsonschema-form-1.6.2.tgz#52c229b5cad2bca079cd92942f5a4263cefd6c31"
   dependencies:
     "@types/json-schema" "*"
     "@types/react" "*"
@@ -2609,7 +2609,7 @@ cache-base@^1.0.1:
     union-value "^1.0.0"
     unset-value "^1.0.0"
 
-call-limit@~1.1.0:
+call-limit@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/call-limit/-/call-limit-1.1.1.tgz#ef15f2670db3f1992557e2d965abc459e6e358d4"
 
@@ -2677,8 +2677,8 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000939, caniuse-lite@^1.0.30000955, caniuse-lite@^1.0.30000980, caniuse-lite@^1.0.30000981:
-  version "1.0.30000981"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000981.tgz#5b6828803362363e5a1deba2eb550185cf6cec8f"
+  version "1.0.30000983"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000983.tgz#ab3c70061ca2a3467182a10ac75109b199b647f8"
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -2753,7 +2753,7 @@ chokidar@^2.0.0, chokidar@^2.0.2, chokidar@^2.0.4:
   optionalDependencies:
     fsevents "^1.2.7"
 
-chownr@^1.1.1:
+chownr@^1.1.1, chownr@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.2.tgz#a18f1e0b269c8a6a5d3c86eb298beb14c3dd7bf6"
 
@@ -3449,7 +3449,7 @@ debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "^2.1.1"
 
-debuglog@^1.0.1:
+debuglog@*, debuglog@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/debuglog/-/debuglog-1.0.1.tgz#aa24ffb9ac3df9a2351837cfb2d279360cd78492"
 
@@ -3755,8 +3755,8 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.3.122, electron-to-chromium@^1.3.188:
-  version "1.3.188"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.188.tgz#e28e1afe4bb229989e280bfd3b395c7ec03c8b7a"
+  version "1.3.190"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.190.tgz#5bf599519983bfffd9d4387817039a3ed7ca085f"
 
 elliptic@^6.0.0:
   version "6.5.0"
@@ -3809,6 +3809,10 @@ enhanced-resolve@^4.1.0:
 entities@^1.1.1, entities@~1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.2.tgz#bdfa735299664dfafd34529ed4f8522a275fea56"
+
+env-paths@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-1.0.0.tgz#4168133b42bb05c38a35b1ae4397c8298ab369e0"
 
 enzyme-adapter-react-16@^1.3.1:
   version "1.14.0"
@@ -5235,7 +5239,7 @@ import-local@^2.0.0:
     pkg-dir "^3.0.0"
     resolve-cwd "^2.0.0"
 
-imurmurhash@^0.1.4:
+imurmurhash@*, imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
 
@@ -5260,7 +5264,7 @@ inflight@^1.0.4, inflight@~1.0.6:
     once "^1.3.0"
     wrappy "1"
 
-inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.0, inherits@~2.0.1, inherits@~2.0.3:
+inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.0, inherits@~2.0.1, inherits@~2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
 
@@ -5308,8 +5312,8 @@ inquirer@6.2.2:
     through "^2.3.6"
 
 inquirer@^6.2.2:
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-6.4.1.tgz#7bd9e5ab0567cd23b41b0180b68e0cfa82fc3c0b"
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-6.5.0.tgz#2303317efc9a4ea7ec2e2df6f86569b734accf42"
   dependencies:
     ansi-escapes "^3.2.0"
     chalk "^2.4.2"
@@ -5317,7 +5321,7 @@ inquirer@^6.2.2:
     cli-width "^2.0.0"
     external-editor "^3.0.3"
     figures "^2.0.0"
-    lodash "^4.17.11"
+    lodash "^4.17.12"
     mute-stream "0.0.7"
     run-async "^2.2.0"
     rxjs "^6.4.0"
@@ -6335,9 +6339,9 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libcipm@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/libcipm/-/libcipm-3.0.3.tgz#2e764effe0b90d458790dab3165794c804075ed3"
+libcipm@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/libcipm/-/libcipm-4.0.0.tgz#30053bee09b0b1f4df855137d631a6d27f5d59de"
   dependencies:
     bin-links "^1.1.2"
     bluebird "^3.5.1"
@@ -6347,7 +6351,7 @@ libcipm@^3.0.3:
     ini "^1.3.5"
     lock-verify "^2.0.2"
     mkdirp "^0.5.1"
-    npm-lifecycle "^2.0.3"
+    npm-lifecycle "^3.0.0"
     npm-logical-tree "^1.2.1"
     npm-package-arg "^6.1.0"
     pacote "^9.1.0"
@@ -6355,9 +6359,9 @@ libcipm@^3.0.3:
     rimraf "^2.6.2"
     worker-farm "^1.6.0"
 
-libnpm@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/libnpm/-/libnpm-2.0.1.tgz#a48fcdee3c25e13c77eb7c60a0efe561d7fb0d8f"
+libnpm@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/libnpm/-/libnpm-3.0.0.tgz#9a4b5e1b1d4af68c168c9cbfbc4364529cb0a8dc"
   dependencies:
     bin-links "^1.1.2"
     bluebird "^3.5.3"
@@ -6370,7 +6374,7 @@ libnpm@^2.0.1:
     libnpmsearch "^2.0.0"
     libnpmteam "^1.0.1"
     lock-verify "^2.0.2"
-    npm-lifecycle "^2.1.0"
+    npm-lifecycle "^3.0.0"
     npm-logical-tree "^1.2.1"
     npm-package-arg "^6.1.0"
     npm-profile "^4.0.1"
@@ -6380,7 +6384,7 @@ libnpm@^2.0.1:
     read-package-json "^2.0.13"
     stringify-package "^1.0.0"
 
-libnpmaccess@^3.0.1:
+libnpmaccess@*, libnpmaccess@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/libnpmaccess/-/libnpmaccess-3.0.1.tgz#5b3a9de621f293d425191aa2e779102f84167fa8"
   dependencies:
@@ -6406,7 +6410,7 @@ libnpmhook@^5.0.2:
     get-stream "^4.0.0"
     npm-registry-fetch "^3.8.0"
 
-libnpmorg@^1.0.0:
+libnpmorg@*, libnpmorg@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/libnpmorg/-/libnpmorg-1.0.0.tgz#979b868c48ba28c5820e3bb9d9e73c883c16a232"
   dependencies:
@@ -6429,7 +6433,7 @@ libnpmpublish@^1.1.0:
     semver "^5.5.1"
     ssri "^6.0.1"
 
-libnpmsearch@^2.0.0:
+libnpmsearch@^2.0.0, libnpmsearch@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/libnpmsearch/-/libnpmsearch-2.0.1.tgz#eccc73a8fbf267d765d18082b85daa2512501f96"
   dependencies:
@@ -6437,7 +6441,7 @@ libnpmsearch@^2.0.0:
     get-stream "^4.0.0"
     npm-registry-fetch "^3.8.0"
 
-libnpmteam@^1.0.1:
+libnpmteam@*, libnpmteam@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/libnpmteam/-/libnpmteam-1.0.1.tgz#ff704b1b6c06ea674b3b1101ac3e305f5114f213"
   dependencies:
@@ -6460,8 +6464,8 @@ libnpx@^10.2.0:
     yargs "^11.0.0"
 
 linkify-it@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-2.1.0.tgz#c4caf38a6cd7ac2212ef3c7d2bde30a91561f9db"
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-2.2.0.tgz#e3b54697e78bf915c70a38acd78fd09e0058b1cf"
   dependencies:
     uc.micro "^1.0.1"
 
@@ -6539,6 +6543,10 @@ lockfile@^1.0.4:
   dependencies:
     signal-exit "^3.0.2"
 
+lodash._baseindexof@*:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/lodash._baseindexof/-/lodash._baseindexof-3.1.0.tgz#fe52b53a1c6761e42618d654e4a25789ed61822c"
+
 lodash._baseuniq@~4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash._baseuniq/-/lodash._baseuniq-4.6.0.tgz#0ebb44e456814af7905c6212fa2c9b2d51b841e8"
@@ -6546,11 +6554,29 @@ lodash._baseuniq@~4.6.0:
     lodash._createset "~4.0.0"
     lodash._root "~3.0.0"
 
+lodash._bindcallback@*:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/lodash._bindcallback/-/lodash._bindcallback-3.0.1.tgz#e531c27644cf8b57a99e17ed95b35c748789392e"
+
+lodash._cacheindexof@*:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/lodash._cacheindexof/-/lodash._cacheindexof-3.0.2.tgz#3dc69ac82498d2ee5e3ce56091bafd2adc7bde92"
+
+lodash._createcache@*:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/lodash._createcache/-/lodash._createcache-3.1.2.tgz#56d6a064017625e79ebca6b8018e17440bdcf093"
+  dependencies:
+    lodash._getnative "^3.0.0"
+
 lodash._createset@~4.0.0:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/lodash._createset/-/lodash._createset-4.0.3.tgz#0f4659fbb09d75194fa9e2b88a6644d363c9fe26"
 
-lodash._reinterpolate@~3.0.0:
+lodash._getnative@*, lodash._getnative@^3.0.0:
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/lodash._getnative/-/lodash._getnative-3.9.1.tgz#570bc7dede46d61cdcde687d65d3eecbaa3aaff5"
+
+lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
 
@@ -6591,8 +6617,12 @@ lodash.memoize@^4.1.2:
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
 
 lodash.mergewith@^4.6.1:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.1.tgz#639057e726c3afbdb3e7d42741caa8d6e4335927"
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.2.tgz#617121f89ac55f59047c7aec1ccd6654c6590f55"
+
+lodash.restparam@*:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
 
 lodash.some@^4.6.0:
   version "4.6.0"
@@ -6606,18 +6636,18 @@ lodash.tail@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.tail/-/lodash.tail-4.1.1.tgz#d2333a36d9e7717c8ad2f7cacafec7c32b444664"
 
-lodash.template@^4.2.4, lodash.template@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.template/-/lodash.template-4.4.0.tgz#e73a0385c8355591746e020b99679c690e68fba0"
+lodash.template@^4.4.0, lodash.template@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.template/-/lodash.template-4.5.0.tgz#f976195cf3f347d0d5f52483569fe8031ccce8ab"
   dependencies:
-    lodash._reinterpolate "~3.0.0"
+    lodash._reinterpolate "^3.0.0"
     lodash.templatesettings "^4.0.0"
 
 lodash.templatesettings@^4.0.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/lodash.templatesettings/-/lodash.templatesettings-4.1.0.tgz#2b4d4e95ba440d915ff08bc899e4553666713316"
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.templatesettings/-/lodash.templatesettings-4.2.0.tgz#e481310f049d3cf6d47e912ad09313b154f0fb33"
   dependencies:
-    lodash._reinterpolate "~3.0.0"
+    lodash._reinterpolate "^3.0.0"
 
 lodash.topath@^4.5.2:
   version "4.5.2"
@@ -6639,9 +6669,9 @@ lodash.without@~4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.without/-/lodash.without-4.4.0.tgz#3cd4574a00b67bae373a94b748772640507b7aac"
 
-"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.5, lodash@~4.17.10:
-  version "4.17.13"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.13.tgz#0bdc3a6adc873d2f4e0c4bac285df91b64fc7b93"
+"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.5, lodash@~4.17.10:
+  version "4.17.14"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
 
 loglevel@^1.4.1:
   version "1.6.3"
@@ -6672,7 +6702,7 @@ lowercase-keys@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-1.0.1.tgz#6f9e30b47084d971a7c820ff15a6c5167b74c26f"
 
-lru-cache@^4.0.1, lru-cache@^4.1.5:
+lru-cache@^4.0.1:
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-4.1.5.tgz#8bbe50ea85bed59bc9e33dcab8235ee9bcf443cd"
   dependencies:
@@ -7201,16 +7231,16 @@ node-gyp@^3.8.0:
     tar "^2.0.0"
     which "1"
 
-node-gyp@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-4.0.0.tgz#972654af4e5dd0cd2a19081b4b46fe0442ba6f45"
+node-gyp@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-5.0.2.tgz#422f7b7550d2c37952ac184e2a5a2d9fe49a8b77"
   dependencies:
+    env-paths "^1.0.0"
     glob "^7.0.3"
     graceful-fs "^4.1.2"
     mkdirp "^0.5.0"
     nopt "2 || 3"
     npmlog "0 || 1 || 2 || 3 || 4"
-    osenv "0"
     request "^2.87.0"
     rimraf "2"
     semver "~5.3.0"
@@ -7382,13 +7412,13 @@ npm-install-checks@~3.0.0:
   dependencies:
     semver "^2.3.0 || 3.x || 4 || 5"
 
-npm-lifecycle@^2.0.3, npm-lifecycle@^2.1.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/npm-lifecycle/-/npm-lifecycle-2.1.1.tgz#0027c09646f0fd346c5c93377bdaba59c6748fdf"
+npm-lifecycle@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/npm-lifecycle/-/npm-lifecycle-3.0.0.tgz#a3018cb8f1bc5e63a7f85d79f58f7701b2699ac2"
   dependencies:
     byline "^5.0.0"
     graceful-fs "^4.1.15"
-    node-gyp "^4.0.0"
+    node-gyp "^5.0.2"
     resolve-from "^4.0.0"
     slide "^1.1.6"
     uid-number "0.0.6"
@@ -7423,7 +7453,7 @@ npm-pick-manifest@^2.2.3:
     npm-package-arg "^6.0.0"
     semver "^5.4.1"
 
-npm-profile@^4.0.1:
+npm-profile@*, npm-profile@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/npm-profile/-/npm-profile-4.0.1.tgz#d350f7a5e6b60691c7168fbb8392c3603583f5aa"
   dependencies:
@@ -7431,7 +7461,7 @@ npm-profile@^4.0.1:
     figgy-pudding "^3.4.1"
     npm-registry-fetch "^3.8.0"
 
-npm-registry-fetch@^3.8.0, npm-registry-fetch@^3.9.0:
+npm-registry-fetch@^3.8.0, npm-registry-fetch@^3.9.1:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/npm-registry-fetch/-/npm-registry-fetch-3.9.1.tgz#00ff6e4e35d3f75a172b332440b53e93f4cb67de"
   dependencies:
@@ -7467,8 +7497,8 @@ npm-user-validate@~1.0.0:
   resolved "https://registry.yarnpkg.com/npm-user-validate/-/npm-user-validate-1.0.0.tgz#8ceca0f5cea04d4e93519ef72d0557a75122e951"
 
 npm@^6.9.0:
-  version "6.10.0"
-  resolved "https://registry.yarnpkg.com/npm/-/npm-6.10.0.tgz#7ed37211db53ad486643418c8028092d1ed8b24d"
+  version "6.10.1"
+  resolved "https://registry.yarnpkg.com/npm/-/npm-6.10.1.tgz#2ee87146028d4f2bfa0bbae56c5f188c5099dfe9"
   dependencies:
     JSONStream "^1.3.5"
     abbrev "~1.1.1"
@@ -7480,8 +7510,8 @@ npm@^6.9.0:
     bluebird "^3.5.5"
     byte-size "^5.0.1"
     cacache "^11.3.3"
-    call-limit "~1.1.0"
-    chownr "^1.1.1"
+    call-limit "^1.1.1"
+    chownr "^1.1.2"
     ci-info "^2.0.0"
     cli-columns "^3.1.2"
     cli-table3 "^0.5.1"
@@ -7497,21 +7527,22 @@ npm@^6.9.0:
     fs-vacuum "~1.2.10"
     fs-write-stream-atomic "~1.0.10"
     gentle-fs "^2.0.1"
-    glob "^7.1.3"
+    glob "^7.1.4"
     graceful-fs "^4.2.0"
     has-unicode "~2.0.1"
     hosted-git-info "^2.7.1"
     iferr "^1.0.2"
     inflight "~1.0.6"
-    inherits "~2.0.3"
+    inherits "^2.0.4"
     ini "^1.3.5"
     init-package-json "^1.10.3"
     is-cidr "^3.0.0"
     json-parse-better-errors "^1.0.2"
     lazy-property "~1.0.0"
-    libcipm "^3.0.3"
-    libnpm "^2.0.1"
+    libcipm "^4.0.0"
+    libnpm "^3.0.0"
     libnpmhook "^5.0.2"
+    libnpmsearch "^2.0.1"
     libnpx "^10.2.0"
     lock-verify "^2.1.0"
     lockfile "^1.0.4"
@@ -7520,22 +7551,22 @@ npm@^6.9.0:
     lodash.union "~4.6.0"
     lodash.uniq "~4.5.0"
     lodash.without "~4.4.0"
-    lru-cache "^4.1.5"
+    lru-cache "^5.1.1"
     meant "~1.0.1"
     mississippi "^3.0.0"
     mkdirp "~0.5.1"
     move-concurrently "^1.0.1"
-    node-gyp "^3.8.0"
+    node-gyp "^5.0.2"
     nopt "~4.0.1"
     normalize-package-data "^2.5.0"
     npm-audit-report "^1.3.2"
     npm-cache-filename "~1.0.2"
     npm-install-checks "~3.0.0"
-    npm-lifecycle "^2.1.0"
+    npm-lifecycle "^3.0.0"
     npm-package-arg "^6.1.0"
     npm-packlist "^1.4.4"
     npm-pick-manifest "^2.2.3"
-    npm-registry-fetch "^3.9.0"
+    npm-registry-fetch "^3.9.1"
     npm-user-validate "~1.0.0"
     npmlog "~4.1.2"
     once "~1.4.0"
@@ -7545,20 +7576,20 @@ npm@^6.9.0:
     path-is-inside "~1.0.2"
     promise-inflight "~1.0.1"
     qrcode-terminal "^0.12.0"
-    query-string "^6.4.0"
+    query-string "^6.8.1"
     qw "~1.0.1"
     read "~1.0.7"
     read-cmd-shim "~1.0.1"
     read-installed "~4.0.3"
     read-package-json "^2.0.13"
     read-package-tree "^5.3.1"
-    readable-stream "^3.3.0"
+    readable-stream "^3.4.0"
     readdir-scoped-modules "^1.1.0"
     request "^2.88.0"
     retry "^0.12.0"
     rimraf "^2.6.3"
     safe-buffer "^5.1.2"
-    semver "^5.6.0"
+    semver "^5.7.0"
     sha "^3.0.0"
     slide "~1.1.6"
     sorted-object "~2.0.1"
@@ -7577,7 +7608,7 @@ npm@^6.9.0:
     validate-npm-package-license "^3.0.4"
     validate-npm-package-name "~3.0.0"
     which "^1.3.1"
-    worker-farm "^1.6.0"
+    worker-farm "^1.7.0"
     write-file-atomic "^2.4.3"
 
 "npmlog@0 || 1 || 2 || 3 || 4", npmlog@^4.0.0, npmlog@^4.0.2, npmlog@^4.1.2, npmlog@~4.1.2:
@@ -8134,8 +8165,8 @@ pnp-webpack-plugin@1.2.1:
     ts-pnp "^1.0.0"
 
 portfinder@^1.0.9:
-  version "1.0.20"
-  resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.20.tgz#bea68632e54b2e13ab7b0c4775e9b41bf270e44a"
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.21.tgz#60e1397b95ac170749db70034ece306b9a27e324"
   dependencies:
     async "^1.5.2"
     debug "^2.2.0"
@@ -8324,10 +8355,10 @@ postcss-image-set-function@^3.0.1:
     postcss-values-parser "^2.0.0"
 
 postcss-initial@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/postcss-initial/-/postcss-initial-3.0.0.tgz#1772512faf11421b791fb2ca6879df5f68aa0517"
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/postcss-initial/-/postcss-initial-3.0.1.tgz#99d319669a13d6c06ef8e70d852f68cb1b399b61"
   dependencies:
-    lodash.template "^4.2.4"
+    lodash.template "^4.5.0"
     postcss "^7.0.2"
 
 postcss-lab-function@^2.0.1:
@@ -8915,7 +8946,7 @@ query-string@^4.1.0:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.4.0:
+query-string@^6.8.1:
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.8.1.tgz#62c54a7ef37d01b538c8fd56f95740c81d438a26"
   dependencies:
@@ -9302,7 +9333,7 @@ read@1, read@~1.0.1, read@~1.0.7:
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.3.0:
+readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.4.0.tgz#a51c26754658e0a3c21dbf59163bd45ba6f447fc"
   dependencies:
@@ -10190,8 +10221,8 @@ spdx-expression-parse@^3.0.0:
     spdx-license-ids "^3.0.0"
 
 spdx-license-ids@^3.0.0:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.4.tgz#75ecd1a88de8c184ef015eafb51b5b48bfd11bb1"
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz#3694b5804567a458d3c8045842a6358632f62654"
 
 spdy-transport@^3.0.0:
   version "3.0.0"
