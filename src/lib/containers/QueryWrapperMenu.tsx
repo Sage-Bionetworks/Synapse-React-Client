@@ -19,8 +19,11 @@ library.add(faAngleLeft)
 library.add(faAngleRight)
 
 type MenuState = {
+  // menuIndex contains the currently selected index assuming that the accordion view is not specified
   menuIndex: number
-  [index: string]: number | string
+  // Converely, accordionIndices contains an array of indices representing the selection of menu indices in the 
+  // accordion dropdown iff specified
+  accordionIndices: number []
 }
 
 export type MenuConfig = {
@@ -35,19 +38,27 @@ interface MenuSearchParams extends KeyValue {
   facetValue: string
 }
 
-export type QueryWrapperMenuProps = {
-  menuConfig: MenuConfig []
-  isConsistent?: boolean
-  token?: string
-  rgbIndex: number
-  unitDescription?: string
+type CommonMenuProps = {
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
   stackedBarChartConfiguration?: StackedBarChartProps
   showBarChart?: boolean
+}
+
+type AccordionConfig = {
+  menuConfig: MenuConfig []
+} & CommonMenuProps
+
+export type QueryWrapperMenuProps = {
+  menuConfig: MenuConfig []
+  accordionConfig?: AccordionConfig []
+  isConsistent?: boolean
+  token?: string
+  rgbIndex: number
+  unitDescription?: string
   searchParams?: MenuSearchParams
   name: string
-}
+} & CommonMenuProps
 
 type Info = {
   isSelected: boolean
@@ -58,39 +69,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   constructor(props: QueryWrapperMenuProps) {
     super(props)
-    // See here - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
-    const { searchParams } = this.props
+    // See note about initializing props from state here
+    //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
+    
+    // searchParams is not used for the accordionConfig, only single set of dropdowns
+    const { searchParams, accordionConfig } = this.props
     const menuIndex = (searchParams && Number(searchParams.menuIndex)) || 0
+    const accordionIndices = accordionConfig ? Array(accordionConfig.length).fill(0): []
     this.state = {
-      menuIndex: 0 || menuIndex
+      menuIndex: 0 || menuIndex,
+      accordionIndices
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
-    this.calculateRowCount = this.calculateRowCount.bind(this)
-  }
-
-  componentDidMount() {
-    this.calculateRowCount()
-  }
-
-  calculateRowCount() {
-    const { menuConfig } = this.props
-    const { sql } = menuConfig[0]  // grab the first one and calculate the count from that
-    if (this.state[sql]) {
-      return
-    }
-    const request: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      query: {
-        sql,
-      },
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-    }
-    SynapseClient.getQueryTableResults(request).then(
-      (data) => {
-        this.setState({ [sql]: data.queryCount! })
-      }
-    )
   }
 
   componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
@@ -104,7 +95,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       this.setState({
         menuIndex: 0,
       })
-      this.calculateRowCount()
     }
   }
 
@@ -157,18 +147,20 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     )
   }
 
-  private renderQueryChildren() {
+  private renderMenuConfig(menuConfig: MenuConfig [], queryConfig: CommonMenuProps)  {
     const {
-      menuConfig,
       token,
       rgbIndex = 0,
       isConsistent = false,
       unitDescription = '',
+      searchParams,
+    } = this.props
+
+    const {
       cardConfiguration,
       tableConfiguration,
       stackedBarChartConfiguration,
-      searchParams,
-    } = this.props
+    } = queryConfig
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
@@ -235,6 +227,22 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       )
     }
     )
+  }
+
+  private renderQueryChildren() {
+    const {
+      accordionConfig,
+      menuConfig,
+    } = this.props
+    if (accordionConfig) {
+      return accordionConfig.map(
+        (el) => {
+          return this.renderMenuConfig(el.menuConfig, el)
+        }
+      )
+    } else {
+      return this.renderMenuConfig(menuConfig, this.props)
+    }
   }
 
   private renderFacetMenu() {
