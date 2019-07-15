@@ -306,12 +306,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 role="button"
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`SRC-accordion-item SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
+                className={`SRC-accordion-key SRC-gap SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
                 onClick={this.toggleSelectionLevel(index)}
               >
                   {el.name}
                   <span className="menu-icon">
-                    <FontAwesomeIcon size={'xs'} color={isSelected ? 'white': 'black'} icon={isSelected ? 'minus' : 'plus'} />
+                    <FontAwesomeIcon className={isSelected ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isSelected ? 'white': 'black'} icon={isSelected ? 'minus' : 'plus'} />
                   </span>
               </div>
               <div className={isSelected ? '' : 'SRC-hidden'}>
@@ -360,7 +360,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-accordion-item': ''} `}
+          className={`SRC-gap SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-gap-between': ''} `}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"

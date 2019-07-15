@@ -465,6 +465,7 @@ button.SRC-roundBorder {
 
 .SRC-menu-button-base {
   min-height: 51px;
+  border: 1px solid transparent;
   height: 51px;
   line-height: 51px;
   text-align: center;
@@ -1034,10 +1035,16 @@ div.SRC-userImg {
 .srcRssFeedItemContent {
   padding-top: 10px; }
 
-.SRC-accordion-item {
+.SRC-gap {
   display: flex;
   justify-content: space-between;
   padding-left: 10px; }
 
-.SRC-accordion-item span {
+.SRC-gap span {
   padding-right: 10px; }
+
+.SRC-accordion-key {
+  border: 1px solid #DCDCDC; }
+
+.SRC-accordion-key:hover .SRC-accordion-not-selected {
+  color: #F5F5F5; }

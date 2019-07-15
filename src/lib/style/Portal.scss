@@ -1268,11 +1268,20 @@ div.SRC-userImg {
   padding-top: 10px;
 }
 
-.SRC-accordion-item {
+.SRC-gap {
   display: flex;
   justify-content: space-between;
   padding-left: 10px;
   span {
     padding-right: 10px;
+  }
+}
+
+.SRC-accordion-key {
+  border: 1px solid #DCDCDC;
+  &:hover {
+    .SRC-accordion-not-selected {
+      color: #F5F5F5;
+    }
   }
 }
