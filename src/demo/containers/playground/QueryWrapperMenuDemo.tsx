@@ -3,6 +3,7 @@ import { SynapseClient } from '../../../lib'
 import QueryWrapperMenu, { MenuConfig, QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../../lib/utils'
 import '../App.css'
+import { GenericCardSchema } from 'lib/containers/GenericCard'
 
 type DemoState = {
   token: string
@@ -24,44 +25,77 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
    */
   constructor(props: any) {
     super(props)
+    const experimentalSql = "SELECT * FROM syn20337467 WHERE toolType = 'experimental'" 
+    const computationalSql = "SELECT * FROM syn20337467 WHERE toolType = 'computational'" 
+    const genericCardSchema: GenericCardSchema = {
+      title: 'Title',
+      type: 'Generic Tool',
+      subTitle: 'softwareType',
+      description: 'summary',
+      icon: 'icon',
+      secondaryLabels: {
+        0: { key: 'contributor', alias: 'Contributor' },
+        1: { key: 'diagnosis', alias: 'Diagnosis' },
+        2: { key: 'program', alias: 'Program' }
+      }
+    }
     this.state = {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabTwo:
       {
         showBarChart: false,
         name: 'Demo',
         unitDescription: 'persons',
         cardConfiguration: {
+          genericCardSchema,
           type: SynapseConstants.MEDIUM_USER_CARD,
         },
         rgbIndex: 1,
         accordionConfig: [
           {
+            name: 'Clinical',
             cardConfiguration: {
-              type: SynapseConstants.MEDIUM_USER_CARD,
-            },  
-            menuConfig: [{
-              facetName: 'institution',
-              sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
-            }],
-          },
-          {
-            cardConfiguration: {
-              type: SynapseConstants.MEDIUM_USER_CARD,
+              type: SynapseConstants.GENERIC_CARD,
+              genericCardSchema
             },  
             menuConfig: [
               {
-              facetName: 'institution',
-              sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
-            },
+                facetName: 'grant',
+                sql: computationalSql,
+              },
               {
-              facetName: 'institution',
-              sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
-            }
-          ],
+                facetName: 'modelSystemName',
+                sql: computationalSql,
+              },
+              {
+                facetName: 'modelType',
+                sql: computationalSql,
+              },
+            ],
+          },
+          {
+            name: 'Experimental',
+            cardConfiguration: {
+              type: SynapseConstants.GENERIC_CARD,
+              genericCardSchema
+            },  
+            menuConfig: [
+              {
+                facetName: 'program',
+                sql: experimentalSql,
+              },
+              {
+                facetName: 'reagentType',
+                sql: experimentalSql,
+              },
+              {
+                facetName: 'softwareType',
+                sql: experimentalSql,
+              },
+            ],
           },
         ],
         menuConfig: [

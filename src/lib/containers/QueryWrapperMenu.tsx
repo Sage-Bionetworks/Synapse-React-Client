@@ -13,9 +13,13 @@ import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue } from '../utils/modules/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faAngleLeft)
 library.add(faAngleRight)
+library.add(faMinus)
+library.add(faPlus)
 
 type MenuState = {
   // If accordionConfig is not specified then this array is of length 1 since there's only one level of 
@@ -45,6 +49,7 @@ type CommonMenuProps = {
 
 type AccordionConfig = {
   menuConfig: MenuConfig []
+  name: string
 } & CommonMenuProps
 
 export type QueryWrapperMenuProps = {
@@ -130,15 +135,22 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
   }
 
+  /**
+   * Handle user clicking menu item, event isn't used so we denote it as an _
+   *
+   * @memberof Menu
+   */
+  public toggleSelectionLevel = (selectionLevel: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
+    this.setState({
+      selectionLevel
+    })
+  }
+
   public render() {
     const { stackedBarChartConfiguration, name, menuConfig, accordionConfig } = this.props
     let sql = ''
     const curIndexSelection = this.state.menuIndexSelection[this.state.selectionLevel]
     if (accordionConfig) { 
-      console.log('accordionConfig = ', accordionConfig)
-      console.log('accordionConfig[selection level] = ', accordionConfig[this.state.selectionLevel])
-      console.log('curIndexSelection = ', curIndexSelection)
-      console.log('selectionLevel = ', this.state.selectionLevel)
       sql = accordionConfig[this.state.selectionLevel].menuConfig[curIndexSelection].sql
     } else if (accordionConfig) {
       sql = menuConfig[curIndexSelection].sql
@@ -265,10 +277,45 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderMenuDropdown() {
     const { accordionConfig, menuConfig } = this.props
+    const { selectionLevel } = this.state
+    const { rgbIndex } = this.props
+    const { colorPalette } = getColorPallette(rgbIndex, 5)
     if (accordionConfig) {
       return accordionConfig.map(
         (el, index) => {
-          return this.renderFacetMenu(el.menuConfig, index)
+          const isSelected = selectionLevel === index
+          // const color = isSelected ? colorPalette[0] : 'white'
+          const style: React.CSSProperties = {
+            background: isSelected ? colorPalette[0]: '#F9F9F9'
+          }
+          // const hoverEnter: Info = {
+          //   isSelected,
+          //   originalColor: color
+          // }
+          // const hoverLeave: Info = {
+          //   isSelected,
+          //   originalColor: color
+          // }
+          return (
+            <div>
+              <div 
+                style={style}
+                role="button"
+                // onMouseEnter={this.handleHoverLogic(hoverEnter)}
+                // onMouseLeave={this.handleHoverLogic(hoverLeave)}
+                className={`SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText': ''}`}
+                onClick={this.toggleSelectionLevel(index)}
+              >
+                  {el.name}
+                  <span className="menu-icon">
+                    <FontAwesomeIcon size={'xs'} color={isSelected ? 'white': 'black'} icon={isSelected ? 'minus' : 'plus'} />
+                  </span>
+              </div>
+              <div className={isSelected ? '' : 'SRC-hidden'}>
+                {this.renderFacetMenu(el.menuConfig, index)}
+              </div>
+            </div>
+          )
         }
       )
     }
@@ -277,7 +324,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
     const { rgbIndex } = this.props
-    const originalColor = getColorPallette(rgbIndex, 1).colorPalette[0]
+    const { colorPalette } = getColorPallette(rgbIndex, 5)
+    const originalColor = colorPalette[0]
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName, facetAliases = {} } = config
       const selectedIndexOnLevel = this.state.menuIndexSelection[curLevel]
@@ -294,7 +342,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         selectedStyling = 'SRC-pointed SRC-whiteText'
       } else {
         // change background to class
-        selectedStyling = 'SRC-blackText SRC-light-background'
+        selectedStyling = 'SRC-blackText'
+        style.background = colorPalette[4]
       }
       const infoEnter: Info = { isSelected, originalColor }
       const infoLeave: Info = { isSelected, originalColor: '#F5F5F5' }
@@ -304,7 +353,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-no-outline SRC-hoverWhiteText SRC-menu SRC-hand-cursor SRC-menu-hover SRC-hoverBox SRC-text-chart ${selectedStyling}`}
+          className={`SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${selectedStyling}`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"

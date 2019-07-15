@@ -528,13 +528,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    display: table-cell;
  }
 
-.SRC-menu {
-  min-height: 51px;
-  height: 51px;
-  line-height: 51px;
-  text-align: center;
-}
-
 .SRC-pointed {
   position: relative;
 }  
@@ -550,6 +543,19 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent;
+}
+
+.SRC-menu-button-base {
+  min-height: 51px;
+  height: 51px;
+  line-height: 51px;
+  text-align: center;
+  font-size: 16px;
+  background: unset;
+}
+
+.SRC-menu-button-base:focus {
+  outline: none;
 }
 
 .SRC-text-shadow {
@@ -1174,10 +1180,6 @@ div.SRC-userImg {
 
 .SRC-cardSvg:hover > svg {
   opacity: 1;
-}
-
-.SRC-no-outline:focus {
-  outline: none;
 }
 
 .SRC-facet-select-all {
