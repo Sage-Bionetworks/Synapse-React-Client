@@ -432,10 +432,10 @@ button.SRC-roundBorder {
 .SRC-table-row div {
   display: table-cell; }
 
-.SRC-pointed {
+.SRC-pointed-triangle-right {
   position: relative; }
 
-.SRC-pointed:after, .SRC-pointed::after {
+.SRC-pointed-triangle-right:after, .SRC-pointed-triangle-right::after {
   position: absolute;
   right: -10px;
   top: 15px;
@@ -446,6 +446,22 @@ button.SRC-roundBorder {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent; }
+
+.SRC-pointed-triangle-down {
+  position: relative; }
+
+.SRC-pointed-triangle-down:after, .SRC-pointed-triangle-down::after {
+  position: absolute;
+  left: 10px;
+  bottom: -10px;
+  content: '';
+  z-index: 10;
+  width: 0;
+  height: 0;
+  border-top: solid 10px;
+  border-top-color: inherit;
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent; }
 
 .SRC-menu-button-base {
   min-height: 51px;
@@ -1017,3 +1033,11 @@ div.SRC-userImg {
 
 .srcRssFeedItemContent {
   padding-top: 10px; }
+
+.SRC-accordion-item {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10px; }
+
+.SRC-accordion-item span {
+  padding-right: 10px; }

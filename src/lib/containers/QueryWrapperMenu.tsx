@@ -280,30 +280,33 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const { selectionLevel } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
+    const lightColor = '#F5F5F5'
     if (accordionConfig) {
       return accordionConfig.map(
         (el, index) => {
           const isSelected = selectionLevel === index
-          // const color = isSelected ? colorPalette[0] : 'white'
+          const primaryColor = colorPalette[0]
           const style: React.CSSProperties = {
-            background: isSelected ? colorPalette[0]: '#F9F9F9'
+            background: isSelected ? primaryColor : lightColor,
+            borderTopColor: isSelected ? primaryColor : ''
           }
-          // const hoverEnter: Info = {
-          //   isSelected,
-          //   originalColor: color
-          // }
-          // const hoverLeave: Info = {
-          //   isSelected,
-          //   originalColor: color
-          // }
+          const hoverEnter: Info = {
+            isSelected,
+            originalColor: primaryColor
+
+          }
+          const hoverLeave: Info = {
+            isSelected,
+            originalColor: lightColor
+          }
           return (
             <div>
               <div 
                 style={style}
                 role="button"
-                // onMouseEnter={this.handleHoverLogic(hoverEnter)}
-                // onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText': ''}`}
+                onMouseEnter={this.handleHoverLogic(hoverEnter)}
+                onMouseLeave={this.handleHoverLogic(hoverLeave)}
+                className={`SRC-accordion-item SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
                 onClick={this.toggleSelectionLevel(index)}
               >
                   {el.name}
@@ -323,9 +326,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
-    const { rgbIndex } = this.props
+    const { rgbIndex, accordionConfig } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
-    const originalColor = colorPalette[0]
+    const originalColor = colorPalette[2]
+    let defaultColor = '#F5F5F5'
+    if (accordionConfig) {
+      defaultColor = colorPalette[4]
+    }
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName, facetAliases = {} } = config
       const selectedIndexOnLevel = this.state.menuIndexSelection[curLevel]
@@ -339,21 +346,21 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         // below has to be set so the pseudo element created will inherit its color
         // appropriately
         style.borderLeftColor = originalColor
-        selectedStyling = 'SRC-pointed SRC-whiteText'
+        selectedStyling = 'SRC-pointed-triangle-right SRC-whiteText'
       } else {
         // change background to class
         selectedStyling = 'SRC-blackText'
-        style.background = colorPalette[4]
+        style.background = defaultColor
       }
       const infoEnter: Info = { isSelected, originalColor }
-      const infoLeave: Info = { isSelected, originalColor: '#F5F5F5' }
+      const infoLeave: Info = { isSelected, originalColor: defaultColor }
       const facetDisplayValue: string = facetAliases[facetName] || facetName
       return (
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${selectedStyling}`}
+          className={`SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-accordion-item': ''} `}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"

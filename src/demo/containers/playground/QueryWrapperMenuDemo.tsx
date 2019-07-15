@@ -67,7 +67,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
                 sql: computationalSql,
               },
               {
-                facetName: 'modelSystemName',
+                facetName: 'diagnosis',
                 sql: computationalSql,
               },
               {

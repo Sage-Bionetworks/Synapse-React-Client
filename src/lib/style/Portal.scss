@@ -528,11 +528,11 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
    display: table-cell;
  }
 
-.SRC-pointed {
+.SRC-pointed-triangle-right {
   position: relative;
 }  
 
-.SRC-pointed:after, .SRC-pointed::after{
+.SRC-pointed-triangle-right:after, .SRC-pointed-triangle-right::after{
   position: absolute;
   right: -10px;
   top: 15px;
@@ -543,6 +543,24 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent;
+}
+
+.SRC-pointed-triangle-down {
+  position: relative;
+}  
+
+.SRC-pointed-triangle-down:after, .SRC-pointed-triangle-down::after{
+  position: absolute;
+  left: 10px;
+  bottom: -10px;
+  content: '';
+  z-index: 10;
+  width: 0;
+  height: 0;
+  border-top: solid 10px;
+  border-top-color: inherit;
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent;
 }
 
 .SRC-menu-button-base {
@@ -1242,11 +1260,19 @@ div.SRC-userImg {
   padding-top: 20px;
 }
 .srcRssFeedItemTitle {
-  // color: $primaryColor;
   padding-bottom: 5px;
   font-weight: bold;
   font-size: 20px;
 }
 .srcRssFeedItemContent {
   padding-top: 10px;
+}
+
+.SRC-accordion-item {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10px;
+  span {
+    padding-right: 10px;
+  }
 }
