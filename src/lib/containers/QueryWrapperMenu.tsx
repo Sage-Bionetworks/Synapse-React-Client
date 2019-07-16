@@ -1,5 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import * as React from 'react'
 import { SynapseConstants } from '../utils/'
 import { getColorPallette } from './ColorGradient'
@@ -25,7 +26,7 @@ type MenuState = {
   // If accordionConfig is not specified then this array is of length 1 since there's only one level of 
   // indices, otherwise its of length accordionConfig.length
   menuIndexSelection: number[]
-  selectionLevel: number
+  selectionLevel: number | undefined
 }
 
 export type MenuConfig = {
@@ -66,6 +67,7 @@ export type QueryWrapperMenuProps = {
 type Info = {
   isSelected: boolean
   originalColor: string
+  hoverWhiteTextClass?: string
 }
 
 export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuProps, MenuState> {
@@ -86,7 +88,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.state = {
       menuIndexSelection,
-      selectionLevel: 0
+      selectionLevel: undefined
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -117,6 +119,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
     if (!info.isSelected && event.currentTarget.tagName === 'DIV') {
       event.currentTarget.style.backgroundColor = info.originalColor
+      if (info.hoverWhiteTextClass) {
+        event.currentTarget.classList.add(info.hoverWhiteTextClass)
+      } else {
+        event.currentTarget.classList.remove('SRC-hoverWhiteText')
+      }
     }
   }
 
@@ -129,7 +136,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const { menuIndexSelection, selectionLevel } = this.state
     // there's an odd bug where clicking a menu item twice will select the first tab,
     // this is a fix for that, but this shouldn't be necessary
-    if (this.state.menuIndexSelection[selectionLevel] !== selectedIndex) {
+    if (this.state.menuIndexSelection[selectionLevel!] !== selectedIndex) {
       menuIndexSelection[level] = selectedIndex
       this.setState({ menuIndexSelection })
     }
@@ -140,18 +147,26 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    *
    * @memberof Menu
    */
-  public toggleSelectionLevel = (selectionLevel: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
-    this.setState({
-      selectionLevel
-    })
+  public toggleSelectionLevel = (selectionLevelIn: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
+    const { selectionLevel } = this.state
+    if (selectionLevel === selectionLevelIn) {
+      this.setState({
+        selectionLevel: undefined
+      })
+    } else {
+      this.setState({
+        selectionLevel: selectionLevelIn
+      })
+    }
   }
 
   public render() {
     const { stackedBarChartConfiguration, name, menuConfig, accordionConfig } = this.props
+    const { selectionLevel = 0 } = this.state
     let sql = ''
-    const curIndexSelection = this.state.menuIndexSelection[this.state.selectionLevel]
+    const curIndexSelection = this.state.menuIndexSelection[selectionLevel]
     if (accordionConfig) { 
-      sql = accordionConfig[this.state.selectionLevel].menuConfig[curIndexSelection].sql
+      sql = accordionConfig[selectionLevel].menuConfig[curIndexSelection].sql
     } else if (accordionConfig) {
       sql = menuConfig[curIndexSelection].sql
     }
@@ -190,6 +205,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       tableConfiguration,
       stackedBarChartConfiguration,
     } = queryConfig
+    
+    const {
+      selectionLevel = 0
+    } = this.state
+
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
@@ -197,7 +217,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     const showBarChart = stackedBarChartConfiguration !== undefined
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const selectedIndexOnLevel = this.state.menuIndexSelection[this.state.selectionLevel]
+      const selectedIndexOnLevel = this.state.menuIndexSelection[selectionLevel]
       const isSelected: boolean = selectedIndexOnLevel === index
       const {
         facetName,
@@ -292,21 +312,21 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           }
           const hoverEnter: Info = {
             isSelected,
-            originalColor: primaryColor
-
+            originalColor: primaryColor,
+            hoverWhiteTextClass: 'SRC-hoverWhiteText'
           }
           const hoverLeave: Info = {
             isSelected,
             originalColor: lightColor
           }
           return (
-            <div>
+            <React.Fragment>
               <div 
                 style={style}
                 role="button"
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`SRC-accordion-key SRC-gap SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
+                className={`SRC-accordion-key SRC-gap SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
                 onClick={this.toggleSelectionLevel(index)}
               >
                   {el.name}
@@ -314,10 +334,22 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                     <FontAwesomeIcon className={isSelected ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isSelected ? 'white': 'black'} icon={isSelected ? 'minus' : 'plus'} />
                   </span>
               </div>
-              <div className={isSelected ? '' : 'SRC-hidden'}>
-                {this.renderFacetMenu(el.menuConfig, index)}
-              </div>
-            </div>
+              <TransitionGroup>
+                {
+                  isSelected
+                  &&
+                  <CSSTransition
+                    key={JSON.stringify(el)}
+                    classNames="SRC-accordion-menu"
+                    timeout={{ enter: 300, exit: 500 }}
+                  >
+                    <div className="SRC-accordion-menu">
+                      {this.renderFacetMenu(el.menuConfig, index)}
+                    </div>
+                  </CSSTransition>
+                }
+              </TransitionGroup>
+            </React.Fragment>
           )
         }
       )
@@ -360,7 +392,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-gap SRC-hoverWhiteText SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-gap-between': ''} `}
+          className={`SRC-gap SRC-hand-cursor SRC-menu-button-base ${selectedStyling}`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"

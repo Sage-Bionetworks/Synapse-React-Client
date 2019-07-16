@@ -465,7 +465,6 @@ button.SRC-roundBorder {
 
 .SRC-menu-button-base {
   min-height: 51px;
-  border: 1px solid transparent;
   height: 51px;
   line-height: 51px;
   text-align: center;
@@ -1046,5 +1045,25 @@ div.SRC-userImg {
 .SRC-accordion-key {
   border: 1px solid #DCDCDC; }
 
-.SRC-accordion-key:hover .SRC-accordion-not-selected {
+.SRC-accordion-key.SRC-hoverWhiteText:hover .SRC-accordion-not-selected {
   color: #F5F5F5; }
+
+.SRC-accordion-menu {
+  overflow: hidden; }
+
+.SRC-accordion-menu-enter-done {
+  overflow: visible; }
+
+.SRC-accordion-menu-enter {
+  max-height: 0px; }
+
+.SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
+  max-height: 200px;
+  transition: max-height 500ms linear; }
+
+.SRC-accordion-menu-exit {
+  max-height: 200px; }
+
+.SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
+  max-height: 0px;
+  transition: max-height 500ms linear; }
