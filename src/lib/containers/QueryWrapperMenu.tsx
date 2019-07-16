@@ -26,8 +26,9 @@ type MenuState = {
   // If accordionConfig is not specified then this array is of length 1 since there's only one level of 
   // indices, otherwise its of length accordionConfig.length
   menuIndexSelection: number[]
-  accordionIndex: number | undefined
-  lastAccordionIndex: number | undefined
+  visibleAccordionIndex: number | undefined
+  lastAccordionIndexWithSelection: number,
+  hasClickedMenuItemOnce: boolean
 }
 
 export type MenuConfig = {
@@ -89,8 +90,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.state = {
       menuIndexSelection,
-      accordionIndex: undefined,
-      lastAccordionIndex: undefined
+      visibleAccordionIndex: undefined,
+      lastAccordionIndexWithSelection: 0,
+      hasClickedMenuItemOnce: false
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -105,7 +107,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const accordionConfigPrev = prevProps.accordionConfig
     if ((!accordionConfigPrev && accordionConfig)) {
       this.setState({
-        accordionIndex: 0,
+        visibleAccordionIndex: undefined,
+        lastAccordionIndexWithSelection: 0,
         menuIndexSelection: accordionConfig.map(_el => 0)
       })
     }
@@ -134,14 +137,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    * @memberof Menu
    */
   public switchFacet = (accordionIndexIn: number, level: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
-    const { menuIndexSelection, accordionIndex } = this.state
+    const { menuIndexSelection, visibleAccordionIndex } = this.state
     // there's an odd bug where clicking a menu item twice will select the first tab,
     // this is a fix for that, but this shouldn't be necessary
-    if (this.state.menuIndexSelection[accordionIndex!] !== accordionIndexIn) {
+    if (this.state.menuIndexSelection[visibleAccordionIndex!] !== accordionIndexIn) {
       const updatedSelection = menuIndexSelection.map(
         (_el, index) => index === level ? accordionIndexIn : -1
       )
-      this.setState({ menuIndexSelection: updatedSelection })
+      this.setState({ menuIndexSelection: updatedSelection, lastAccordionIndexWithSelection: level })
+    }
+    if (!this.state.hasClickedMenuItemOnce) {
+      this.setState({
+        hasClickedMenuItemOnce: true
+      })
     }
   }
 
@@ -151,26 +159,26 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    * @memberof Menu
    */
   public toggleSelectionLevel = (accordionIndexIn: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
-    const { accordionIndex } = this.state
-    if (accordionIndex === accordionIndexIn) {
+    const { visibleAccordionIndex } = this.state
+    if (visibleAccordionIndex === accordionIndexIn) {
       this.setState({
-        accordionIndex: undefined,
-        lastAccordionIndex: accordionIndex
+        // all are closed in this case
+        visibleAccordionIndex: undefined
       })
     } else {
       this.setState({
-        accordionIndex: accordionIndexIn
+        visibleAccordionIndex: accordionIndexIn
       })
     }
   }
 
   public render() {
     const { stackedBarChartConfiguration, name, menuConfig, accordionConfig } = this.props
-    const { accordionIndex = 0 } = this.state
+    const { lastAccordionIndexWithSelection } = this.state
     let sql = ''
-    const curIndexSelection = this.state.menuIndexSelection[accordionIndex]
+    const curIndexSelection = this.state.menuIndexSelection[lastAccordionIndexWithSelection]
     if (accordionConfig) { 
-      sql = accordionConfig[accordionIndex].menuConfig[curIndexSelection].sql
+      sql = accordionConfig[lastAccordionIndexWithSelection].menuConfig[curIndexSelection].sql
     } else if (accordionConfig) {
       sql = menuConfig[curIndexSelection].sql
     }
@@ -210,9 +218,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       stackedBarChartConfiguration,
     } = queryConfig
     
-    const {
-      accordionIndex = 0
-    } = this.state
+    const { lastAccordionIndexWithSelection = 0 } = this.state
 
     let facetValue = ''
     let menuIndexFromProps = ''
@@ -221,7 +227,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     const showBarChart = stackedBarChartConfiguration !== undefined
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const selectedIndexOnLevel = this.state.menuIndexSelection[accordionIndex]
+      const selectedIndexOnLevel = this.state.menuIndexSelection[lastAccordionIndexWithSelection]
       const isSelected: boolean = selectedIndexOnLevel === index
       const {
         facetName,
@@ -289,15 +295,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       menuConfig,
     } = this.props
     const {
-      lastAccordionIndex = 0,
-      accordionIndex
+      lastAccordionIndexWithSelection,
     } = this.state
     if (accordionConfig) {
       return accordionConfig.map(
         (el, index) => {
-          const levelToUse = accordionIndex === undefined ? lastAccordionIndex : accordionIndex
           return (
-            <div className={levelToUse === index ? '' : 'SRC-hidden'}>
+            <div className={lastAccordionIndexWithSelection === index ? '' : 'SRC-hidden'}>
               {this.renderMenuConfig(el.menuConfig, el)}
             </div>
           )
@@ -310,28 +314,36 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderMenuDropdown() {
     const { accordionConfig, menuConfig } = this.props
-    const { accordionIndex, lastAccordionIndex } = this.state
+    const { visibleAccordionIndex, lastAccordionIndexWithSelection, hasClickedMenuItemOnce } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     const lightColor = '#F5F5F5'
-    const indexToUse = accordionIndex === undefined ? lastAccordionIndex : accordionIndex
     if (accordionConfig) {
       return accordionConfig.map(
         (el, index) => {
-          const isSelected = indexToUse === index
+          const doExpand = visibleAccordionIndex === index
+          const isLastActiveSelection = (lastAccordionIndexWithSelection === index) && hasClickedMenuItemOnce
+          const isActive = doExpand || isLastActiveSelection
           const primaryColor = colorPalette[0]
-          const style: React.CSSProperties = {
-            background: isSelected ? primaryColor : lightColor,
-            color: isSelected ? 'white' : '',
-            borderTopColor: isSelected ? primaryColor : ''
+          let style: React.CSSProperties = {
+            background: isActive ? primaryColor : lightColor,
+            color: doExpand ? 'white' : '',
+          }
+          let indicatorClasses = isActive ? 'SRC-whiteText ' : ''
+          if (doExpand) {
+            indicatorClasses += 'SRC-pointed-triangle-down'
+            style.borderTopColor = primaryColor
+          } else if (isLastActiveSelection) {
+            indicatorClasses += 'SRC-pointed-triangle-right'
+            style.borderLeftColor = primaryColor
           }
           const hoverEnter: Info = {
-            isSelected,
+            isSelected: isActive,
             originalColor: primaryColor,
             hoverWhiteTextClass: 'SRC-hoverWhiteText'
           }
           const hoverLeave: Info = {
-            isSelected,
+            isSelected: isActive,
             originalColor: lightColor
           }
           return (
@@ -341,17 +353,17 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 role="button"
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`SRC-accordion-key SRC-gap SRC-hand-cursor SRC-menu-button-base ${accordionIndex === index ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
+                className={`SRC-accordion-key SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
                 onClick={this.toggleSelectionLevel(index)}
               >
                   {el.name}
                   <span className="menu-icon">
-                    <FontAwesomeIcon className={isSelected ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isSelected ? 'white': 'black'} icon={isSelected ? 'minus' : 'plus'} />
+                    <FontAwesomeIcon className={isActive ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isActive ? 'white': 'black'} icon={doExpand ? 'minus' : 'plus'} />
                   </span>
               </div>
               <TransitionGroup>
                 {
-                  accordionIndex === index
+                  visibleAccordionIndex === index
                   &&
                   <CSSTransition
                     key={JSON.stringify(el)}
