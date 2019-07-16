@@ -27,6 +27,7 @@ type MenuState = {
   // indices, otherwise its of length accordionConfig.length
   menuIndexSelection: number[]
   selectionLevel: number | undefined
+  lastSelectionLevel: number | undefined
 }
 
 export type MenuConfig = {
@@ -88,7 +89,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.state = {
       menuIndexSelection,
-      selectionLevel: undefined
+      selectionLevel: undefined,
+      lastSelectionLevel: undefined
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -151,7 +153,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const { selectionLevel } = this.state
     if (selectionLevel === selectionLevelIn) {
       this.setState({
-        selectionLevel: undefined
+        selectionLevel: undefined,
+        lastSelectionLevel: selectionLevel
       })
     } else {
       this.setState({
@@ -284,10 +287,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       accordionConfig,
       menuConfig,
     } = this.props
+    const {
+      lastSelectionLevel = 0,
+      selectionLevel
+    } = this.state
     if (accordionConfig) {
       return accordionConfig.map(
-        (el) => {
-          return this.renderMenuConfig(el.menuConfig, el)
+        (el, index) => {
+          const levelToUse = selectionLevel === undefined ? lastSelectionLevel : selectionLevel
+          return (
+            <div className={levelToUse === index ? '' : 'SRC-hidden'}>
+              {this.renderMenuConfig(el.menuConfig, el)}
+            </div>
+          )
         }
       )
     } else {
@@ -297,17 +309,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderMenuDropdown() {
     const { accordionConfig, menuConfig } = this.props
-    const { selectionLevel } = this.state
+    const { selectionLevel, lastSelectionLevel } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     const lightColor = '#F5F5F5'
+    const indexToUse = selectionLevel === undefined ? lastSelectionLevel : selectionLevel
     if (accordionConfig) {
       return accordionConfig.map(
         (el, index) => {
-          const isSelected = selectionLevel === index
+          const isSelected = indexToUse === index
           const primaryColor = colorPalette[0]
           const style: React.CSSProperties = {
             background: isSelected ? primaryColor : lightColor,
+            color: isSelected ? 'white' : '',
             borderTopColor: isSelected ? primaryColor : ''
           }
           const hoverEnter: Info = {
@@ -326,7 +340,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 role="button"
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`SRC-accordion-key SRC-gap SRC-hand-cursor SRC-menu-button-base ${isSelected ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
+                className={`SRC-accordion-key SRC-gap SRC-hand-cursor SRC-menu-button-base ${selectionLevel === index ? 'SRC-whiteText SRC-pointed-triangle-down': ''}`}
                 onClick={this.toggleSelectionLevel(index)}
               >
                   {el.name}
@@ -336,7 +350,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
               </div>
               <TransitionGroup>
                 {
-                  isSelected
+                  selectionLevel === index
                   &&
                   <CSSTransition
                     key={JSON.stringify(el)}
