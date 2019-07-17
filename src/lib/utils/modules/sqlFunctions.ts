@@ -4,34 +4,28 @@ export type KeyValue = {
   [index: string]: string
 }
 
-export const SQLOperators = {
-  LIKE: 'LIKE',
-  EQ: '='
-}
-export type OneOfSQLOperators = 'LIKE' | '='
+export type SQLOperator = 'LIKE' | '='
 
-const generateTokenUsingOperator = (literal: string, operator: OneOfSQLOperators, match: string) => {
+const generateTokenUsingOperator = (literal: string, operator: SQLOperator, match: string) => {
   switch (operator) {
-    case SQLOperators.LIKE:
+    case 'LIKE':
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
         ['STRING', `%${match}%`, '1'], 
       ]
-    case SQLOperators.EQ:
+    case '=':
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
         ['STRING', match, '1'], 
       ]
-    default:
-      throw Error(`Operator should be one of: ${Object.keys(SQLOperators)}`)
   } 
 }
 
 // This will construct a sql query by adding the conditions in searchParams
 // to the WHERE clause, preserving all other clauses
-export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string, operator: OneOfSQLOperators = 'LIKE') => {
+export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string, operator: SQLOperator = 'LIKE') => {
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
