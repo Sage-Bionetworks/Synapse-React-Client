@@ -6,7 +6,7 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
+import { insertWhereClauseFromURL, KeyValue, SQLOperator } from '../utils/modules/sqlFunctions'
 
 export type InternalLinkConfiguration = {
   baseURL: string
@@ -26,6 +26,7 @@ export type CardContainerLogicProps = {
   token?: string
   limit?: number
   unitDescription?: string
+  sqlOperator?: SQLOperator
   searchParams?: KeyValue
   filter?: string
   loadingScreen?: JSX.Element
@@ -149,7 +150,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
 
     let sqlUsed = this.props.sql
     if (this.props.searchParams) {
-      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql)
+      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql, this.props.sqlOperator)
     }
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
