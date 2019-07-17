@@ -6,7 +6,7 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { insertWhereClauseFromURL, KeyValue } from '../utils/modules/sqlFunctions'
+import { insertWhereClauseFromURL, KeyValue, OneOfSQLOperators } from '../utils/modules/sqlFunctions'
 
 export type InternalLinkConfiguration = {
   baseURL: string
@@ -26,7 +26,7 @@ export type CardContainerLogicProps = {
   token?: string
   limit?: number
   unitDescription?: string
-  sqlOperator?: string
+  sqlOperator?: OneOfSQLOperators
   searchParams?: KeyValue
   filter?: string
   loadingScreen?: JSX.Element
