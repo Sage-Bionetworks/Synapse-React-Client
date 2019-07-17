@@ -114,7 +114,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return (
       <React.Fragment>
         <h3 id="exploreCount" className="SRC-boldText">
-          <QueryCount name={name} sql={sql} />
+          <QueryCount token={this.props.token} name={name} sql={sql} />
         </h3>
         <div className="break">
           <hr/>

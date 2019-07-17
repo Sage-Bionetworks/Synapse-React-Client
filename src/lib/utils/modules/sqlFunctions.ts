@@ -4,10 +4,28 @@ export type KeyValue = {
   [index: string]: string
 }
 
+const constructTokenWithOperator = (literal: string, operator: string, match: string) => {
+  switch (operator) {
+    case 'LIKE':
+      return [
+        ['LITERAL', literal, '1'],
+        ['OPERATOR', operator, '1'],
+        ['STRING', `%${match}%`, '1'], 
+      ]
+    case '=':
+      return [
+        ['LITERAL', literal, '1'],
+        ['OPERATOR', operator, '1'],
+        ['STRING', match, '1'], 
+      ]
+    default:
+      return [] as never
+  } 
+}
+
 // This will construct a sql query by adding the conditions in searchParams
 // to the WHERE clause, preserving all other clauses
-
-export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) => {
+export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string, operator: string = 'LIKE') => {
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
@@ -23,11 +41,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string) =>
   const searchParamsLen = Object.keys(searchParams).length
   Object.keys(searchParams).forEach(
     (key, index) => {
-      const token = [
-        ['LITERAL', key, '1'],
-        ['OPERATOR', 'LIKE', '1'],
-        ['STRING', `%${searchParams[key]}%`, '1'],
-      ]
+      const token = constructTokenWithOperator(key, operator, searchParams[key])
       if (index < searchParamsLen - 1) {
         // make sure to chain the ANDs until the last one
         token.unshift(['CONDITIONAL', 'AND', '1'])

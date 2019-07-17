@@ -26,6 +26,7 @@ export type CardContainerLogicProps = {
   token?: string
   limit?: number
   unitDescription?: string
+  sqlOperator?: string
   searchParams?: KeyValue
   filter?: string
   loadingScreen?: JSX.Element
@@ -149,7 +150,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
 
     let sqlUsed = this.props.sql
     if (this.props.searchParams) {
-      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql)
+      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql, this.props.sqlOperator)
     }
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
