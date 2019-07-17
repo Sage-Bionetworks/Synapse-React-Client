@@ -5,6 +5,7 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 export type QueryCountProps = {
   sql: string
   name: string
+  token?: string
 }
 
 type QueryCountState = {
@@ -36,7 +37,7 @@ export default class QueryCount extends React.Component<QueryCountProps, QueryCo
   }
   
   calculateRowCount() {
-    const { sql } = this.props
+    const { sql, token } = this.props
     if (this.state[sql]) {
       return
     }
@@ -47,7 +48,7 @@ export default class QueryCount extends React.Component<QueryCountProps, QueryCo
       },
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT
     }
-    SynapseClient.getQueryTableResults(request).then(
+    SynapseClient.getQueryTableResults(request, token).then(
       (data) => {
         this.setState({ [sql]: data.queryCount! })
       }

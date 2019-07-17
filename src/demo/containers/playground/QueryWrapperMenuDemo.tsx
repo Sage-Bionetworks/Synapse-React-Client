@@ -52,14 +52,16 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         cardConfiguration: {
           genericCardSchema,
           type: SynapseConstants.MEDIUM_USER_CARD,
+          loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
         },
         rgbIndex: 1,
         accordionConfig: [
           {
             name: 'Clinical',
             cardConfiguration: {
+              genericCardSchema,
               type: SynapseConstants.GENERIC_CARD,
-              genericCardSchema
+              loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
             },  
             menuConfig: [
               {
@@ -68,19 +70,20 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'diagnosis',
-                sql: computationalSql,
+                sql: `${computationalSql} LIMIT 1 `,
               },
               {
                 facetName: 'modelType',
-                sql: computationalSql,
+                sql: `${computationalSql} LIMIT 2`,
               },
             ],
           },
           {
             name: 'Experimental',
             cardConfiguration: {
+              genericCardSchema,
               type: SynapseConstants.GENERIC_CARD,
-              genericCardSchema
+              loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
             },  
             menuConfig: [
               {
@@ -89,11 +92,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'reagentType',
-                sql: experimentalSql,
+                sql: `${experimentalSql} LIMIT 1`,
               },
               {
                 facetName: 'softwareType',
-                sql: experimentalSql,
+                sql: `${experimentalSql} LIMIT 2`,
               },
             ],
           },
