@@ -4,7 +4,7 @@ export type KeyValue = {
   [index: string]: string
 }
 
-const constructTokenWithOperator = (literal: string, operator: string, match: string) => {
+const generateTokenUsingOperator = (literal: string, operator: string, match: string) => {
   switch (operator) {
     case 'LIKE':
       return [
@@ -41,7 +41,7 @@ export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string, op
   const searchParamsLen = Object.keys(searchParams).length
   Object.keys(searchParams).forEach(
     (key, index) => {
-      const token = constructTokenWithOperator(key, operator, searchParams[key])
+      const token = generateTokenUsingOperator(key, operator, searchParams[key])
       if (index < searchParamsLen - 1) {
         // make sure to chain the ANDs until the last one
         token.unshift(['CONDITIONAL', 'AND', '1'])
