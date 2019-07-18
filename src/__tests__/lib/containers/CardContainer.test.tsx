@@ -75,6 +75,12 @@ describe('it performs all functionality', () => {
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 
+  it('Renders with a title', () => {
+    const title = 'HelloWorld'
+    const { wrapper } = createShallowComponent({ ...props, title })
+    expect(wrapper.find('h2.SRC-title').text()).toEqual(title)
+  })
+
   it('handleViewMore works', () => {
     const { instance } = createShallowComponent(props)
     // go through calling handle view more

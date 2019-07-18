@@ -725,29 +725,25 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           />
         </span>
 
-        <div className={`dropdown-menu SRC-minDropdownWidth ${classList}`}>
-          <div className="paddingMenuDropdown">
-            <ul style={{ listStyleType: 'none' }} className="scrollable">
-              <br />
-              <label
-                style={{ paddingBottom: '8px' }}
-                className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font containerCheckbox"
-              >
-                All
-                <input
-                  onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-                  checked={this.props.isAllFilterSelectedForFacet![columnName]}
-                  className="SRC-facet-checkboxes"
-                  type="checkbox"
-                />
-                <span className="checkmark" />
-              </label>
-              <span ref={ref}>
-                {this.renderFacetSelection(facetColumnResult, ref, columnName)}
-              </span>
-            </ul>
-
-          </div>
+        <div className={`dropdown-menu dropdown-menu-override SRC-minDropdownWidth ${classList}`}>
+          <ul style={{ listStyleType: 'none' }} className="scrollable">
+            <label
+              style={{ paddingBottom: '8px' }}
+              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font containerCheckbox"
+            >
+              All
+              <input
+                onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
+                checked={this.props.isAllFilterSelectedForFacet![columnName]}
+                className="SRC-facet-checkboxes"
+                type="checkbox"
+              />
+              <span className="checkmark" />
+            </label>
+            <span ref={ref}>
+              {this.renderFacetSelection(facetColumnResult, ref, columnName)}
+            </span>
+          </ul>
         </div>
       </div>
     )

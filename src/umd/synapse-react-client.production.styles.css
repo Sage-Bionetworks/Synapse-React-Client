@@ -758,10 +758,12 @@ button.SRC-roundBorder {
   margin-bottom: 10px; }
 
 .scrollable {
-  height: 300px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+  max-height: 300px;
   overflow: hidden;
-  overflow-y: scroll;
-  padding-left: 0px; }
+  overflow-y: scroll; }
 
 .SRC-padding {
   padding: 3px; }
@@ -781,10 +783,6 @@ button.SRC-roundBorder {
 .dropdownList {
   font-weight: 100;
   padding-left: 7px; }
-
-.paddingMenuDropdown {
-  padding-left: 30px;
-  padding-right: 30px; }
 
 .borderTopTable {
   border-top: 1px solid #dddddf;
@@ -1268,3 +1266,9 @@ div.SRC-userImg {
 
 .srcRssFeedItemContent {
   padding-top: 10px; }
+
+.SRC-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 21px;
+  margin: 20px 0px; }
