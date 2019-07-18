@@ -92,7 +92,7 @@ export default class Consortium extends React.Component<ConsortiumProps, Consort
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">Program</div>
-          <div className="SRC-title">
+          <div >
             <h3>
                 {!isOnOrgPath && <a target="_blank" rel="noopener noreferrer" href={orgPath}> {name} </a>}
                 {isOnOrgPath && name}

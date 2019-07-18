@@ -78,7 +78,7 @@ describe('it performs all functionality', () => {
   it('Renders with a title', () => {
     const title = 'HelloWorld'
     const { wrapper } = createShallowComponent({ ...props, title })
-    expect(wrapper.find('h2.SRC-title').text()).toEqual(title)
+    expect(wrapper.find('h2.SRC-card-overview-title').text()).toEqual(title)
   })
 
   it('handleViewMore works', () => {

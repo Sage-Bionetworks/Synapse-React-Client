@@ -43,7 +43,7 @@ class CSBCDataset extends React.Component<DatasetProps, {}> {
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">Dataset </div>
-          <div className="SRC-title">
+          <div >
             <h3>
               <a target="_self" href={`https://www.synapse.org/#!Synapse:${id}`}>
                 {name}
