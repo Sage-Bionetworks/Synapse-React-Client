@@ -70,7 +70,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">Study</div>
-          <div className="""">
+          <div >
             {' '}
             <h3>
               {' '}

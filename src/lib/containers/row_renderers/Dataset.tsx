@@ -40,7 +40,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
         </div>
         <div className="SRC-cardContent SRC-dataset">
           <div className="SRC-type">Dataset </div>
-          <div className="""">
+          <div>
             <h3>
               <a target="_self" href={`https://www.synapse.org/#!Synapse:${id}`}>
                 {datasetName}

@@ -59,7 +59,7 @@ export default class Project extends React.Component<ProjectProps, ProjectState>
         </div>
         <div className="SRC-cardContent">
             <div className="SRC-type">Project</div>
-            <div className="""">
+            <div >
               <h3>
                 <a className="SRC-primary-text-color" target="_self" href={link}>
                   {name}

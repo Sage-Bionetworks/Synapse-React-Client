@@ -60,7 +60,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
                 <div className="SRC-cardThumbnail">
                     <img alt="funder logo" className="SRC-logo" src={logo} />
                 </div>
-                <div className="""">
+                <div >
                     <h3>
                         {isOnOrgPath && organizationName}
                         {!isOnOrgPath && <a href={orgPath}>{organizationName}</a>}

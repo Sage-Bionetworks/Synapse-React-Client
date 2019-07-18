@@ -42,7 +42,7 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
           </div>
           <div className="SRC-cardContent col-md-10">
             <div className="SRC-type">{type}</div>
-            <div className="""">
+            <div >
               <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
                 {title}
               </h3>
