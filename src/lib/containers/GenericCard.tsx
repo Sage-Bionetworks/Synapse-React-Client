@@ -158,7 +158,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>
-          <div className="SRC-title">
+          <div className="""">
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
               {linkDisplay ?
                 <a className="SRC-primary-text-color" target={target} href={linkDisplay}>

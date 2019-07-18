@@ -120,7 +120,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
     if (!data) {
       return (
         <div>
-          {title &&  <h2 className="SRC-title"> {title} </h2>}
           {isLoading && loadingScreen}
         </div>
       )
@@ -197,7 +196,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     return (
       <div>
-        {title &&  <h2 className="SRC-title">{title}</h2>}
+        {title &&  <h2 className="SRC-card-overview-title"> {title} </h2>}
         {(!title && unitDescription && showBarChart) &&
           <TotalQueryResults
             data={data}
