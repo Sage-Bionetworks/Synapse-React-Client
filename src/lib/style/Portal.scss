@@ -622,10 +622,12 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 }
 
 .scrollable {
-  height: 300px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+  max-height: 300px;
   overflow: hidden;
   overflow-y: scroll;
-  padding-left: 0px
 }
 
 .SRC-padding {
@@ -651,11 +653,6 @@ li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
 .dropdownList {
   font-weight: 100;
   padding-left: 7px
-}
-
-.paddingMenuDropdown {
-  padding-left: 30px;
-  padding-right: 30px;
 }
 
 .borderTopTable {
