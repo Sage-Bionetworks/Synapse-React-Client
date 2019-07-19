@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
-import { WikiPage } from '../utils/jsonResponses/WikiPage'
 import { SynapseClient, SynapseConstants } from '../utils/'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
