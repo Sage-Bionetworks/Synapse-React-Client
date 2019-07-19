@@ -54,14 +54,14 @@ type AccordionConfig = {
 } & CommonMenuProps
 
 export type QueryWrapperMenuProps = {
-  menuConfig: MenuConfig []
+  menuConfig?: MenuConfig []
   accordionConfig?: AccordionConfig []
   isConsistent?: boolean
   token?: string
   rgbIndex: number
   unitDescription?: string
   searchParams?: MenuSearchParams
-  name: string
+  name?: string
 } & CommonMenuProps
 
 type Info = {
@@ -168,7 +168,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     let sql = ''
     if (accordionConfig) { 
       sql = accordionConfig[lastAccordionIndexWithSelection].menuConfig[activeMenuIndex].sql
-    } else if (accordionConfig) {
+    } else if (menuConfig) {
       sql = menuConfig[activeMenuIndex].sql
     }
     const menuDropdown = this.renderMenuDropdown()
@@ -176,9 +176,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const showBarChart = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
-        <h3 id="exploreCount" className="SRC-boldText">
-          <QueryCount token={this.props.token} name={name} sql={sql} />
-        </h3>
+        {
+          !accordionConfig && name
+          &&
+          <h3 id="exploreCount" className="SRC-boldText">
+            <QueryCount token={this.props.token} name={name} sql={sql} />
+          </h3>
+        }
         <div className="break">
           <hr/>
         </div>
@@ -296,7 +300,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         }
       )
     } else {
-      return this.renderMenuConfig(menuConfig, this.props)
+      return this.renderMenuConfig(menuConfig!, this.props)
     }
   }
 
@@ -369,7 +373,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         }
       )
     }
-    return this.renderFacetMenu(menuConfig, 0)
+    return this.renderFacetMenu(menuConfig!, 0)
   }
 
   private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
