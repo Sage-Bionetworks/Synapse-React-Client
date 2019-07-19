@@ -35,9 +35,7 @@ class Bookmarks extends React.Component<BookmarksProps, {}> {
         const isBeforeLastElement = index < output.length - 1
         return (
           <React.Fragment key={index}>
-            <span>
-              <a href={''} id={`bookmark${index}`}>[{index + 1}]</a>
-            </span>
+            <button className="SRC-markdown-bookmark" id={`bookmark${index}`}>[{index + 1}]</button>
             {el}
             {isBeforeLastElement && <br/>}
           </React.Fragment>

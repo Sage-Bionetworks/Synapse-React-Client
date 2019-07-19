@@ -321,20 +321,6 @@ span.SRC-facets svg.SRC-facets-icon {
 a.SRC-anchor-light {
   color: white; }
 
-li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
-  background: #505050;
-  color: white; }
-
-.dropdown-menu > li > a.SRC-no-focus:focus {
-  background: none; }
-
-.dropdown-menu > li > a.SRC-no-focus:hover {
-  background: unset; }
-
-.dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
-  background: none;
-  color: white; }
-
 .SRC-marginRightFivePx .SRC-paddingSevenPx {
   margin-right: 5px;
   padding: 7px; }
@@ -399,11 +385,13 @@ table.SRC-paddingRight > tbody > tr > td {
 
 .SRC-primary-background-color-hover:hover {
   background-color: #D53F77; }
-  .SRC-primary-background-color-hover:hover > svg {
-    color: white; }
-  .SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
-    background-color: #D53F77;
-    color: white; }
+
+.SRC-primary-background-color-hover:hover > svg {
+  color: white; }
+
+.SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
+  background-color: #D53F77;
+  color: white; }
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -552,8 +540,9 @@ button.SRC-roundBorder {
   font-weight: 600;
   border: none;
   background: white; }
-  .tableDropdownSelector:focus {
-    outline: none; }
+
+.tableDropdownSelector:focus {
+  outline: none; }
 
 .SRC-extraPadding {
   padding: 5px; }
@@ -579,8 +568,9 @@ button.SRC-roundBorder {
   width: 130px;
   height: 40px;
   margin: 21px; }
-  .SRC-viewMoreButton:focus {
-    outline: none; }
+
+.SRC-viewMoreButton:focus {
+  outline: none; }
 
 /*
   checkmark styling start
@@ -675,8 +665,9 @@ checkmark styling end
   z-index: 900;
   background: none;
   border: none; }
-  .SRC-menu-wall:focus {
-    outline: none; }
+
+.SRC-menu-wall:focus {
+  outline: none; }
 
 .SRC-table-dropdown-content {
   align-items: center;
@@ -819,9 +810,10 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-  .SRC-cardContent p {
-    margin: 0px 0px 4px 0px;
-    line-height: 120%; }
+
+.SRC-cardContent p {
+  margin: 0px 0px 4px 0px;
+  line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
@@ -916,10 +908,6 @@ div.SRC-userImg {
   height: 48px;
   border-radius: 4px; }
 
-.SRC-menuAction {
-  background: none;
-  border: none; }
-
 .SRC-break {
   margin: 0px;
   border: 1px solid #DCDCDC; }
@@ -968,21 +956,22 @@ div.SRC-userImg {
 
 .SRC-chart-link {
   position: relative; }
-  .SRC-chart-link a {
-    position: absolute;
-    bottom: 8px;
-    right: 50px;
-    border-radius: 24px;
-    background-color: #D53F77;
-    color: white !important;
-    height: 44px;
-    width: 257px;
-    text-transform: uppercase;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none !important; }
+
+.SRC-chart-link a {
+  position: absolute;
+  bottom: 8px;
+  right: 50px;
+  border-radius: 24px;
+  background-color: #D53F77;
+  color: white !important;
+  height: 44px;
+  width: 257px;
+  text-transform: uppercase;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none !important; }
 
 .SRC-loadingContainer {
   min-height: 100px; }
@@ -1006,3 +995,23 @@ div.SRC-userImg {
 
 .srcRssFeedItemContent {
   padding-top: 10px; }
+
+.SRC-card-overview-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 21px;
+  margin: 20px 0px; }
+
+button {
+  background: none;
+  border: none;
+  outline: none; }
+
+.SRC-markdown-bookmark {
+  color: #337ab7; }
+
+.SRC-markdown-bookmark:hover {
+  text-decoration: underline; }
+
+.SRC-block {
+  display: block; }

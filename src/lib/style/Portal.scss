@@ -371,28 +371,6 @@ a.SRC-anchor-light {
   color: white ;
 }
 
-// if its selected put a black background with white text on
-li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
-  background: #505050;
-  color: white;
-}
-
-// if its focused don't use their background color
-.dropdown-menu>li>a.SRC-no-focus:focus {
-  background: none;
- }
-
-// if its focused don't use their background color
-.dropdown-menu>li>a.SRC-no-focus:hover {
-  background: unset;
- }
-
- // if its focused make sure the text display right
-.dropdown-menu>li.SRC-table-anchor-chosen>a.SRC-no-focus:focus {
-  background: none;
-  color: white;
- }
-
  .SRC-marginRightFivePx .SRC-paddingSevenPx {
    margin-right: 5px;
    padding: 7px;
@@ -1129,11 +1107,6 @@ div.SRC-userImg {
   border-radius: 4px;
 }
 
-.SRC-menuAction {
-  background: none;
-  border: none;
-}
-
 .SRC-break {
   margin: 0px;
   border: 1px solid #DCDCDC;
@@ -1250,4 +1223,22 @@ div.SRC-userImg {
   font-weight: bold;
   font-size: 21px;
   margin: 20px 0px;
+}
+
+button {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.SRC-markdown-bookmark {
+  color: #337ab7;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+
+.SRC-block {
+  display: block;
 }

@@ -28,7 +28,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: false,
+      showTabOne: true,
       tabTwo:
       {
         showBarChart: false,
@@ -53,13 +53,13 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         },
         menuConfig: [
           {
+            facetName: 'study',
+            sql: 'SELECT * FROM syn11346063',
+          },
+          {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
               ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
-          },
-          {
-            facetName: 'study',
-            sql: 'SELECT * FROM syn11346063',
           },
           // {
           //   facetName: 'dataType',

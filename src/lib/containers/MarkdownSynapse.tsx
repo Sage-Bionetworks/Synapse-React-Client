@@ -116,7 +116,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public handleLinkClicks(event: React.MouseEvent<HTMLElement>) {
 
     const genericElement = event.target as HTMLElement
-    if (genericElement.tagName === 'A') {
+    if (genericElement.tagName === 'A' || genericElement.tagName === 'BUTTON') {
       const anchor = event.target as HTMLAnchorElement
       if (anchor.id.substring(0, 3) === 'ref') {
         event.preventDefault()

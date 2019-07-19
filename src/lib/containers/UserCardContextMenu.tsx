@@ -34,9 +34,9 @@ const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props: UserCard
                   onClick={callback}
                   onKeyPress={callback}
                 >
-                  <a role="button" tabIndex={0} className="SRC-menuAction">
+                  <button className="SRC-menuAction">
                     {menuAction.field}
-                  </a>
+                  </button>
                 </li>
               )
             }
