@@ -34,13 +34,11 @@ declare var sanitizeHtml: any
 declare var markdownitMath: any
 
 export type MarkdownSynapseProps = {
-  errorMessageView?: JSX.Element;
+  errorMessageView?: React.FunctionComponent;
   token?: string;
   ownerId?: string;
   wikiId?: string;
   markdown?: string;
-  hasSynapseResources?: boolean;
-  updateLoadState?: any;
 }
 const md = markdownit({ html: true })
 
@@ -86,7 +84,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       md,
       errorMessage: '',
       fileHandles: undefined,
-      text: ''
+      text: '',
     }
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -282,14 +280,11 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         this.props.ownerId,
         this.props.wikiId
         )
-        .then((data: WikiPage) => {
+        .then((data) => {
           // on success grab text and append to the default text
           this.setState({
             text: data.markdown
           })
-          if (this.props.updateLoadState) {
-            this.props.updateLoadState({ isLoading: false })
-          }
         })
         .catch((err) => {
           console.log('Error on wiki markdown load\n', err)
@@ -324,13 +319,11 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public getErrorView() {
     if (this.state.errorMessage && this.props.errorMessageView) {
-      const errorViewWithProps = React.cloneElement(this.props.errorMessageView, {
-        message: this.state.errorMessage
-      })
+      const ErrorView = this.props.errorMessageView as React.FC
       return (
-        <React.Fragment>
-          {errorViewWithProps}
-        </React.Fragment>
+        <ErrorView>
+          {this.state.errorMessage}
+        </ErrorView>
       )
     }
     return
@@ -609,30 +602,26 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       this.setState({
         text: this.props.markdown
       })
+      return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
     // @ts-ignore
     this.markupRef.current && this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
     // unpack and set default value if not specified
-    const { hasSynapseResources = true } = this.props
-    if (hasSynapseResources) {
       // get wiki attachments
-      this.getWikiAttachments()
-      this.getWikiPageMarkdown()
-    }
+    this.getWikiAttachments()
+    this.getWikiPageMarkdown()
     this.processMath()
   }
 
   // on component update find and re-render the math/widget items accordingly
-  public componentDidUpdate(prevProps: any) {
-    const { hasSynapseResources = true } = this.props
-
+  public componentDidUpdate(prevProps: MarkdownSynapseProps) {
     let shouldUpdate = this.props.token !== prevProps.token
     shouldUpdate = shouldUpdate || (this.props.ownerId !== prevProps.ownerId)
     shouldUpdate = shouldUpdate || (this.props.wikiId !== prevProps.wikiId)
 
     // we have to carefully update the component so it doesn't encounter an infinite loop
-    if (shouldUpdate && hasSynapseResources) {
+    if (shouldUpdate) {
       this.getWikiAttachments()
       this.getWikiPageMarkdown(true)
     }
