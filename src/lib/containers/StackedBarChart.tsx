@@ -283,7 +283,6 @@ export default class StackedBarChart extends
                             // can't remove inline style due to dynamic fill
                             style={rectStyle}
                           />
-                          {/* tslint:disable-next-line */}
                           {index < 3 && svgWidth > numCharsInValue &&
                             <text
                               textAnchor="middle"
@@ -304,7 +303,7 @@ export default class StackedBarChart extends
                                   y={svgHeight + 15}
                                   className="SRC-text-shadow SRC-text-large"
                                 >
-                                  {'\u25BE'}
+                                  {'\u25CF'}
                                 </text>
                               )
                           }

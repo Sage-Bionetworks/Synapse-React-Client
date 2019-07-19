@@ -26,6 +26,7 @@ export type CommonCardProps = {
 export type CardContainerLogicProps = {
   token?: string
   limit?: number
+  title?: string
   unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: KeyValue

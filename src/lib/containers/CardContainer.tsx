@@ -32,6 +32,7 @@ export type CardContainerProps = {
   data?: QueryResultBundle,
   limit?: number,
   isHeader?: boolean
+  title?: string
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   isLoading?: boolean
@@ -112,15 +113,21 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       backgroundColor,
       iconOptions,
       internalLinkConfiguration,
-      showBarChart = true
+      showBarChart = true,
+      title
     } = this.props
     // the cards only show the loading screen on initial load, this occurs when data is undefined
     if (!data) {
       return (
         <div>
-         {isLoading && loadingScreen}
+          {isLoading && loadingScreen}
         </div>
       )
+    } else if (data && data.queryResult.queryResults.rows.length === 0) {
+      // data was retrieved from the backend but there is none to show, we return a empty fragment
+      // there could be a more informed UX decision here but the current use case right now
+      // should display nothing
+      return <React.Fragment/>
     }
     const schema = {}
     data.queryResult.queryResults.headers.forEach(
@@ -189,7 +196,8 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
 
     return (
       <div>
-        {(unitDescription && showBarChart) &&
+        {title &&  <h2 className="SRC-card-overview-title">{title}</h2>}
+        {(!title && unitDescription && showBarChart) &&
           <TotalQueryResults
             data={data}
             filter={filter}

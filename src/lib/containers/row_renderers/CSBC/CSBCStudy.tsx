@@ -54,7 +54,7 @@ class CSBCPublication extends React.Component<CSBCPublicationProps, CSBCPublicat
           </div>
           <div className="SRC-cardContent">
               <div className="SRC-type"> Study </div>
-              <div className="SRC-title">
+              <div >
                 <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
                   {
                     id &&

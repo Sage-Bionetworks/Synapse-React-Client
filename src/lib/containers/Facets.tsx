@@ -2,9 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
 import {
-  FacetColumnResultValueCount,
   FacetColumnResultValues,
-  FacetColumnResult
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { getColorPallette } from './ColorGradient'
@@ -64,7 +62,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (props: Check
     return b.count - a.count
   })
   const { colorPalette, textColors } = getColorPallette(rgbIndex, facetColumnResult.facetValues.length)
-  facetColumnResult.facetValues.forEach((facetColumnResultValues: FacetColumnResultValueCount, index: number) => {
+  facetColumnResult.facetValues.forEach((facetColumnResultValues, index: number) => {
 
     const key = facetColumnResult.columnName + facetColumnResultValues.value + facetColumnResultValues.count
     const textColor = textColors[index]
@@ -146,9 +144,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    * @memberof Facets
    */
   public showFacetFilter() {
-    //  find the facetcolumn result according to the input filter
-    const facetColumnResult = this.props.data!.facets.
-      find((el: FacetColumnResult) => el.columnName === this.props.filter && el.facetType === 'enumeration')!
+    // Find the facetcolumn result according to the input filter
+    const facetColumnResult = this.props.data!.facets.find(el => el.columnName === this.props.filter && el.facetType === 'enumeration')
+    if (!facetColumnResult) {
+      throw Error('Error no matching facet found given specified facet')
+    }
 
     return (
       <CheckboxGroup
@@ -212,7 +212,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     this.props.executeQueryRequest!(newQueryRequest)
   }
 
-  public showAllFacets(event: React.MouseEvent<HTMLAnchorElement>) {
+  public showAllFacets(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault()
     this.setState({
       showAllFacets: true
@@ -224,26 +224,24 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       // this is hidden if there are > 5 facets, wait for user to make
       // an action for this to appear
       return (
-        <a
-          href={''}
+        <button
           className="SRC-primary-text-color SRC-facet-select-all SRC-no-text-decor"
           onClick={this.applyChanges(ref, '', SELECT_ALL)}
         >
           Select All
-        </a>
+        </button>
       )
     }
 
     return (
-      <a
-        href={''}
+      <button
         id="showAllFacetsButton"
         className="SRC-primary-text-color SRC-no-text-decor"
         onClick={this.showAllFacets}
       >
         {' '}
         Show All ({curFacetsLength}){' '}
-      </a>
+      </button>
     )
   }
 
@@ -283,9 +281,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         <form>
           <div ref={ref} className="SRC-marginFive form-group">
             {this.showFacetFilter()}
-            <span className="SRC-inlineBlock">
-              {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length, ref)}
-            </span>
+            {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length, ref)}
           </div>
         </form>
       </div>

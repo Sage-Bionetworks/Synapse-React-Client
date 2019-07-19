@@ -321,20 +321,6 @@ span.SRC-facets svg.SRC-facets-icon {
 a.SRC-anchor-light {
   color: white; }
 
-li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
-  background: #505050;
-  color: white; }
-
-.dropdown-menu > li > a.SRC-no-focus:focus {
-  background: none; }
-
-.dropdown-menu > li > a.SRC-no-focus:hover {
-  background: unset; }
-
-.dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
-  background: none;
-  color: white; }
-
 .SRC-marginRightFivePx .SRC-paddingSevenPx {
   margin-right: 5px;
   padding: 7px; }
@@ -524,10 +510,12 @@ button.SRC-roundBorder {
   margin-bottom: 10px; }
 
 .scrollable {
-  height: 300px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+  max-height: 300px;
   overflow: hidden;
-  overflow-y: scroll;
-  padding-left: 0px; }
+  overflow-y: scroll; }
 
 .SRC-padding {
   padding: 3px; }
@@ -547,10 +535,6 @@ button.SRC-roundBorder {
 .dropdownList {
   font-weight: 100;
   padding-left: 7px; }
-
-.paddingMenuDropdown {
-  padding-left: 30px;
-  padding-right: 30px; }
 
 .borderTopTable {
   border-top: 1px solid #dddddf;
@@ -939,10 +923,6 @@ div.SRC-userImg {
   height: 48px;
   border-radius: 4px; }
 
-.SRC-menuAction {
-  background: none;
-  border: none; }
-
 .SRC-break {
   margin: 0px;
   border: 1px solid #DCDCDC; }
@@ -1058,3 +1038,22 @@ div.SRC-userImg {
 .SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
   max-height: 0px;
   transition: max-height 500ms linear; }
+
+.SRC-card-overview-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 21px;
+  margin: 20px 0px; }
+
+button {
+  background: none;
+  border: none;
+  outline: none; }
+
+.SRC-markdown-bookmark {
+  color: #337ab7; }
+  .SRC-markdown-bookmark:hover {
+    text-decoration: underline; }
+
+.SRC-block {
+  display: block; }
