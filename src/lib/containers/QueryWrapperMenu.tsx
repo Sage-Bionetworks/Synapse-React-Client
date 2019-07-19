@@ -407,7 +407,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-gap SRC-hand-cursor SRC-menu-button-base ${selectedStyling}`}
+          className={`SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-gap': ''}`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"
