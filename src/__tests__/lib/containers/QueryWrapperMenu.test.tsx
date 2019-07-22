@@ -144,7 +144,7 @@ describe('it renders an accordion config', () => {
     const classIndicatingOpenAccordion = 'SRC-pointed-triangle-down'
     const classIndiciatingAccordionKey = 'div.SRC-accordion-key'
     const childOne = 0
-    const childTwo = 0
+    const childTwo = 1
     expect(wrapper.find('div.SRC-pointed-triangle-down')).toHaveLength(0)
     // click the first top level key           
     await wrapper.find(classIndiciatingAccordionKey).at(childOne).simulate('click')

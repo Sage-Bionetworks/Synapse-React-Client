@@ -348,10 +348,10 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 className={`SRC-accordion-key SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
                 onClick={this.toggleSelectionLevel(index)}
               >
-                  {el.name}
-                  <span className="menu-icon">
-                    <FontAwesomeIcon className={isActive ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isActive ? 'white': 'black'} icon={doExpand ? 'minus' : 'plus'} />
-                  </span>
+                {el.name}
+                <span className="menu-icon">
+                  <FontAwesomeIcon className={isActive ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isActive ? 'white': 'black'} icon={doExpand ? 'minus' : 'plus'} />
+                </span>
               </div>
               <TransitionGroup>
                 {
