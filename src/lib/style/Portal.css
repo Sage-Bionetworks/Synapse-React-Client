@@ -1029,15 +1029,15 @@ div.SRC-userImg {
   max-height: 0px; }
 
 .SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
-  max-height: 200px;
-  transition: max-height 500ms linear; }
+  max-height: 1000px;
+  transition: max-height 2000ms ease-in-out; }
 
 .SRC-accordion-menu-exit {
-  max-height: 200px; }
+  max-height: 1000px; }
 
 .SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
   max-height: 0px;
-  transition: max-height 500ms linear; }
+  transition: max-height 1000ms ease-out; }
 
 .SRC-card-overview-title {
   text-transform: uppercase;

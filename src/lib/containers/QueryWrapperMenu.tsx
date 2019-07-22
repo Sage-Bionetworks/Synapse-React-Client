@@ -46,6 +46,7 @@ type CommonMenuProps = {
   cardConfiguration?: CommonCardProps
   stackedBarChartConfiguration?: StackedBarChartProps
   showBarChart?: boolean
+  unitDescription?: string
 }
 
 type AccordionConfig = {
@@ -59,7 +60,6 @@ export type QueryWrapperMenuProps = {
   isConsistent?: boolean
   token?: string
   rgbIndex: number
-  unitDescription?: string
   searchParams?: MenuSearchParams
   name?: string
 } & CommonMenuProps
@@ -201,14 +201,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       token,
       rgbIndex = 0,
       isConsistent = false,
-      unitDescription = '',
       searchParams,
     } = this.props
-
+    
     const {
       cardConfiguration,
       tableConfiguration,
       stackedBarChartConfiguration,
+      unitDescription = '',
     } = queryConfig
     
     const { activeMenuIndex } = this.state
@@ -360,7 +360,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                   <CSSTransition
                     key={JSON.stringify(el)}
                     classNames="SRC-accordion-menu"
-                    timeout={{ enter: 300, exit: 500 }}
+                    timeout={{ enter: 2000, exit: 1000 }}
                   >
                     <div className="SRC-accordion-menu">
                       {this.renderFacetMenu(el.menuConfig, index)}
