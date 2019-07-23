@@ -171,7 +171,7 @@ describe('it performs basic functionality', () => {
     const showAllButton = wrapper.find('#showAllFacetsButton')
 
     await showAllButton.simulate('click')
-    const selectAllButton = wrapper.find('a.SRC-facet-select-all')
+    const selectAllButton = wrapper.find('button.SRC-facet-select-all')
     await selectAllButton.simulate('click')
     /*
       See note above on mocking behavior

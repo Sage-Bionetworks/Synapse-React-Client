@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { SynapseClient } from '../../../lib'
-import QueryWrapperMenu, { MenuConfig } from '../../../lib/containers/QueryWrapperMenu'
+import QueryWrapperMenu, { MenuConfig, QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../../lib/utils'
 import '../App.css'
+import { GenericCardSchema } from 'lib/containers/GenericCard'
 
 type DemoState = {
   token: string
@@ -11,7 +12,7 @@ type DemoState = {
   showMarkdown: boolean
   version: number
   tabOne: any
-  tabTwo: any
+  tabTwo: QueryWrapperMenuProps
   showTabOne: boolean
 }
 /**
@@ -24,6 +25,20 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
    */
   constructor(props: any) {
     super(props)
+    const experimentalSql = "SELECT * FROM syn20337467 WHERE toolType = 'experimental'" 
+    const computationalSql = "SELECT * FROM syn20337467 WHERE toolType = 'computational'" 
+    const genericCardSchema: GenericCardSchema = {
+      title: 'Title',
+      type: 'Generic Tool',
+      subTitle: 'softwareType',
+      description: 'summary',
+      icon: 'icon',
+      secondaryLabels: {
+        0: { key: 'contributor', alias: 'Contributor' },
+        1: { key: 'diagnosis', alias: 'Diagnosis' },
+        2: { key: 'program', alias: 'Program' }
+      }
+    }
     this.state = {
       isLoading: true,
       ownerId: '',
@@ -32,16 +47,58 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       tabTwo:
       {
         showBarChart: false,
+        name: 'Demo',
         unitDescription: 'persons',
         cardConfiguration: {
+          genericCardSchema,
           type: SynapseConstants.MEDIUM_USER_CARD,
+          loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
         },
         rgbIndex: 1,
-        menuConfig: [
+        accordionConfig: [
           {
-            unitDescription: 'people',
-            facetName: 'institution',
-            sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
+            name: 'Clinical',
+            cardConfiguration: {
+              genericCardSchema,
+              type: SynapseConstants.GENERIC_CARD,
+              loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
+            },  
+            menuConfig: [
+              {
+                facetName: 'grant',
+                sql: computationalSql,
+              },
+              {
+                facetName: 'diagnosis',
+                sql: `${computationalSql} LIMIT 1 `,
+              },
+              {
+                facetName: 'modelType',
+                sql: `${computationalSql} LIMIT 2`,
+              },
+            ],
+          },
+          {
+            name: 'Experimental',
+            cardConfiguration: {
+              genericCardSchema,
+              type: SynapseConstants.GENERIC_CARD,
+              loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
+            },  
+            menuConfig: [
+              {
+                facetName: 'program',
+                sql: experimentalSql,
+              },
+              {
+                facetName: 'reagentType',
+                sql: `${experimentalSql} LIMIT 1`,
+              },
+              {
+                facetName: 'softwareType',
+                sql: `${experimentalSql} LIMIT 2`,
+              },
+            ],
           },
         ],
       }
@@ -53,13 +110,13 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         },
         menuConfig: [
           {
+            facetName: 'study',
+            sql: 'SELECT * FROM syn11346063',
+          },
+          {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
               ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
-          },
-          {
-            facetName: 'study',
-            sql: 'SELECT * FROM syn11346063',
           },
           // {
           //   facetName: 'dataType',

@@ -159,7 +159,7 @@ describe('it performs all functionality', () => {
       SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: '${reference?text=google.com}' }))
       const { wrapper } = await createShallowComponent({})
       expect(wrapper.find(Bookmarks)).toHaveLength(1)
-      expect(wrapper.render().find('a#bookmark0')).toHaveLength(1)
+      expect(wrapper.render().find('button#bookmark0')).toHaveLength(1)
     })
   })
 

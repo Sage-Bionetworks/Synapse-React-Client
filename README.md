@@ -143,22 +143,15 @@ SynapseClient.getQueryTableResults(request, sessionToken)
 #### Markdown Rendering Example
 View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
 
-To use the synapse markdown-it component you must pass it a wiki page id and an owner id. You can configure its wrapping html by creating your own component to pass it into. In the example below there is a "CustomMarkdownView" component which does this. Additionally, you can configure an error view to display.
+To use the synapse markdown-it component you must pass it a wiki page id and an owner id. Additionally, you can configure an error view to display.
 
-*Note* the *Custom\** components serve as template of what a client might do.
-
-```js
-  Markdown props:
-  ownerId:  String, ownerId for the synapse page
-
-  wikiId:   String, wikiId for the synapse page
-
-  markdown: String, markdown that is to be rendered
-
-  updateLoadState: Function, take a function that tells the parent component isLoading: false once componentDidMount has finished
-
-  hasSynapseResrouces: Boolean, indicates whether this widget needs to contact synapse to load resources for the component
-```
+| Props  | Explanation |
+| ------------- | ------------- |
+| ownerId: String | ownerId for the synapse page |
+| wikiId: String | wikiId for the synapse page |
+| markdown: String | markdown that is to be rendered |
+| errorMessageView?: React.FunctionComponent | Should accept and render an error message to the string |
+| token?: string | auth token from synapse |
 
 Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
 
@@ -180,77 +173,13 @@ Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
 Example 2: Rendering a Synapse Wiki page with the markdown already loaded
 
 ```jsx
-
   import {SynapseComponents} from 'synapse-react-client'
  
   <CustomMarkdownView>
     <SynapseComponents.Markdown 
       token={this.state.token}
-      ownerId={"syn14568473"}
-      wikiId={"582406"}
-      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+      markdown={"# an h1 header in markdown"}
       >
-    </SynapseComponents.Markdown>
-  </CustomMarkdownView>
-
-```
-
-Example 3: Rendering a Synapse Wiki page with the markdown already loaded with a loading call back
-
-```jsx
-
-  import {SynapseComponents} from 'synapse-react-client'
-  import React from 'react'
-
-  export default class Demo extends React.Component {
-
-    /**
-     * Update internal state
-     * @param {Object} updatedState new state to be updated by the component
-     */
-    constructor () {
-      this.state = {
-        isLoading: true
-      }
-    }
-
-    handleChange(updatedState) {
-      this.setState(
-        updatedState
-      );
-    }
-
-    render () {
-
-      {this.state.isLoading ? "Component loading..." : ""}
-      // updateLoadState will notify this that loading from
-      // componentDidMount is over
-      <CustomMarkdownView>
-        <SynapseComponents.Markdown token={this.state.token}
-            ownerId={"syn14568473"}
-            wikiId={"582406"}
-            markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
-            updateLoadState={this.handleChange}
-            >
-        </SynapseComponents.Markdown>
-      </CustomMarkdownView>
-
-    }
-  }
-```
-
-Example 3: Rendering ONLY markdown (if you know that a  wiki page has no synapse resources)
-
-```jsx
-
-  import {SynapseComponents} from 'synapse-react-client'
- 
-
-  <CustomMarkdownView>
-    <SynapseComponents.Markdown token={this.state.token}
-      markdown={"# my first wiki page!"}
-      hasSynapseResources={false}
-    >
     </SynapseComponents.Markdown>
   </CustomMarkdownView>
 
@@ -317,46 +246,10 @@ An example of a view with facets/stacked bar chart/table
 | ------------- | ------------- |
 | initQueryRequest  | This is the default query to be run on the first render of the component  |
 | rgbIndex | Specifies the starting index of the following color wheel: turquoise, blueberry, rose, royal, butterscotch, powder, slate, apricot, fern, lavender, apple |
-| filter | This is the facet that will be default filtered on if using any of StackedBarChart/Facets/Menu. |
+| facetName | This is the facet that will be default filtered on if using any of StackedBarChart/Facets/Menu. |
 | token  | Session token to make authenticated calls  |
 | loadingScreen  | UI to show when a query is being run  |
-
-### StaticQueryWrapper Example (**deprecated**)
-```jsx
-import syn16787123 from 'folder/to/syn16787123.json'
-
-<SynapseComponents.StaticQueryWrapper
-  json={syn16787123}
-  >
-  <SynapseComponents.CardContainer
-      type={SynapseConstants.STUDY}
-      limit={3}
-  />
-</SynapseComponents.StaticQueryWrapper>
-
-/** An alternative usecase for static query wrapper is if the data only needs to be pulled
-down once you can specify the query that will pull down the data for the child components.
-**/
-
-<SynapseComponents.StaticQueryWrapper
-  sql={"SELECT * FROM syn1234567"}
-  token={"1234..."}
-  >
-  <SynapseComponents.CardContainer
-      type={SynapseConstants.STUDY}
-      limit={3}
-  />
-</SynapseComponents.StaticQueryWrapper>
-```
-
-#### StaticQueryWrapper Props [**deprecated**]
-
-| Props  | Explanation |
-| ------------- | ------------- |
-| json  | Preloaded data from Synapse  |
-| token  | Session token to make authenticated requests to synapse  |
-| limit | The number of cards to show, e.g limit = 3 will only render 3 cards  |
-| sql  | SQL query to be run on Synapse  |
+| facetAliases: {} | Object with key = columnName and value as alias from query |
 
 #### QueryWrapperMenu
 ```jsx
@@ -395,6 +288,7 @@ down once you can specify the query that will pull down the data for the child c
 | tableConfiguration, has keys: synapseId, title, visibleColumnCount | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/>  **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table  |
 | cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, hasInternalLink? | The configuration for cards to be show given the query |
 | stackedBarChartConfiguration, has keys: loadingScreen, link, linkText  | The configuration for the bar chart |
+| accordionConfig: AccordionConfig [] | For using an accordion dropdown. An individual accordion config contains: menuConfig: MenuConfig [], name: string, cardConfiguration, tableConfiguration, stackedBarChartConfiguration. |
 | MenuConfig [] | Specifications for each view under the facet |
 | MenuConfig has keys: sql, facetDisplayValue, facetAliases, facetName  | **sql**: The query driving the specific's facets view <br/> **facetName**: the facet being selected <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
 
@@ -426,6 +320,7 @@ down once you can specify the query that will pull down the data for the child c
 | ------------- | ------------- |
 | sql | sql statement |
 | name | Text to display next to the query count |
+| token | auth token from synapse | 
 
 
 #### CardContainer
@@ -505,10 +400,8 @@ UserCard represents a synapse user, it is responsible for three different sized 
 
 ### Configuration Files
 ```
-./globals.d.ts       In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.
-./images.d.ts        File that tells TS how to handle various file extensions.
+./types.d.ts       In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.
 ./tsconfig.json      Typescript configuration
-./tslint.json        tslint config
 ./rollup.config.json rollup config
 ```
 
@@ -518,8 +411,6 @@ This project's core dependencies are [Typescript](https://www.typescriptlang.org
 Motivation for dependencies-
   
   * Typescript is a superset of Javascript that provides static typing. This catches many bugs at compile time and makes the client much more self-documenting.
-
-  * tslint is a linter for typescript, it analyzes the code for both coding style and potential issues.
 
   * rollup allows the client to be built as a UMD bundle **without** having to eject the application from react's built in webpack configuation.
 

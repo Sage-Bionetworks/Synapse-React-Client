@@ -2,12 +2,13 @@ import * as React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { DOI_REGEX } from '../../GenericCard'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
 const getDesktopFormattedRows = (values: string [][]) => {
   return values.map((kv, index) => {
-    if (kv[0].toUpperCase() === 'DOI') {
+    if (kv[1].toUpperCase().match(DOI_REGEX)) {
       return (
         <tr className="SRC-cardRowDesktop" key={index}>
           <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
