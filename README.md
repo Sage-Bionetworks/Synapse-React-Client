@@ -178,7 +178,7 @@ Example 2: Rendering a Synapse Wiki page with the markdown already loaded
   <CustomMarkdownView>
     <SynapseComponents.Markdown 
       token={this.state.token}
-      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+      markdown={"# an h1 header in markdown"}
       >
     </SynapseComponents.Markdown>
   </CustomMarkdownView>

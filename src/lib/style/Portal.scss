@@ -646,7 +646,18 @@ a.SRC-anchor-light {
 
 .SRC-hoverWhiteText:hover {
   color: white;
+  svg {
+    color: white;
+  }
 }
+
+.SRC-hoverBlackText:hover {
+  color: black !important;
+  svg {
+    color: black !important;
+  }
+}
+
 
 .SRC-light-background {
   background: #F5F5F5;
@@ -1249,11 +1260,6 @@ div.SRC-userImg {
 
 .SRC-accordion-key {
   border: 1px solid #DCDCDC;
-  &.SRC-hoverWhiteText:hover {
-    .SRC-accordion-not-selected {
-      color: #F5F5F5;
-    }
-  }
 }
 
 .SRC-accordion-menu {
@@ -1271,7 +1277,7 @@ div.SRC-userImg {
 
 .SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
   max-height: 1000px;
-  transition: max-height 2000ms ease-in-out;
+  transition: max-height 1000ms ease-in-out;
 }
 
 .SRC-accordion-menu-exit {
@@ -1280,7 +1286,7 @@ div.SRC-userImg {
 
 .SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
   max-height: 0px;
-  transition: max-height 1000ms ease-out;
+  transition: max-height 500ms ease-out;
 }
 .SRC-card-overview-title {
   text-transform: uppercase;

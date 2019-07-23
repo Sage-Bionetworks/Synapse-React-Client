@@ -43,7 +43,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabTwo:
       {
         showBarChart: false,

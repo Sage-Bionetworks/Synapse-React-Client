@@ -528,6 +528,13 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white; }
+  .SRC-hoverWhiteText:hover svg {
+    color: white; }
+
+.SRC-hoverBlackText:hover {
+  color: black !important; }
+  .SRC-hoverBlackText:hover svg {
+    color: black !important; }
 
 .SRC-light-background {
   background: #F5F5F5; }
@@ -1016,8 +1023,6 @@ div.SRC-userImg {
 
 .SRC-accordion-key {
   border: 1px solid #DCDCDC; }
-  .SRC-accordion-key.SRC-hoverWhiteText:hover .SRC-accordion-not-selected {
-    color: #F5F5F5; }
 
 .SRC-accordion-menu {
   overflow: hidden; }
@@ -1030,14 +1035,14 @@ div.SRC-userImg {
 
 .SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
   max-height: 1000px;
-  transition: max-height 2000ms ease-in-out; }
+  transition: max-height 1000ms ease-in-out; }
 
 .SRC-accordion-menu-exit {
   max-height: 1000px; }
 
 .SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
   max-height: 0px;
-  transition: max-height 1000ms ease-out; }
+  transition: max-height 500ms ease-out; }
 
 .SRC-card-overview-title {
   text-transform: uppercase;
