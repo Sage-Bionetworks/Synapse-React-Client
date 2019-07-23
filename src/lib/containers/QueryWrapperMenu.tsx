@@ -116,13 +116,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    * @memberof Menu
    */
   public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
+    // This prevents a bug where there is both light text and a light background,
+    // otherwise SRC-hoverWhiteText would be placed on the group and item keys statically
+    if (!event.currentTarget.classList.contains('SRC-hoverWhiteText')) {
+      event.currentTarget.classList.add('SRC-hoverWhiteText')
+    }
     if (!info.isSelected && event.currentTarget.tagName === 'DIV') {
       event.currentTarget.style.backgroundColor = info.originalColor
-      // This prevents a bug where there is both light text and a light background,
-      // otherwise SRC-hoverWhiteText would be placed on the group and item keys statically
-      if (!event.currentTarget.classList.contains('SRC-hoverWhiteText')) {
-        event.currentTarget.classList.add('SRC-hoverWhiteText')
-      }
     }
   }
 
@@ -323,7 +323,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             background: isActive ? primaryColor : lightColor,
             color: isExpanded ? 'white' : '',
           }
-          let indicatorClasses = isActive ? 'SRC-whiteText' : ''
+          let indicatorClasses = isActive ? 'SRC-whiteText ' : ''
           if (isExpanded) {
             indicatorClasses += SELECTED_GROUP_INDEX
             style.borderTopColor = primaryColor
@@ -346,7 +346,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 role="button"
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${GROUP_INDEX} SRC-blackText SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
+                className={`${GROUP_INDEX} SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
                 onClick={this.toggleGroupAccordionIndex(index)}
               >
                 {el.name}

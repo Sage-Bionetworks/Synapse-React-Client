@@ -101,12 +101,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             ],
           },
         ],
-        menuConfig: [
-          {
-            facetName: 'institution',
-            sql: 'SELECT ownerID as ownerId, firstName, lastName, institution from syn13897207',
-          },
-        ],
       }
     ,
       tabOne: {
