@@ -20,6 +20,7 @@ export type CommonCardProps = {
   iconOptions?: IconOptions
   secondaryLabelLimit?: number
   internalLinkConfiguration?: InternalLinkConfiguration
+  loadingScreen?: React.FunctionComponent | JSX.Element
 }
 
 export type CardContainerLogicProps = {

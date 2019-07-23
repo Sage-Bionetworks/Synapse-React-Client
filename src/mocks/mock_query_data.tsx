@@ -17,7 +17,17 @@ let mockData: QueryResultBundle = {
             concreteType: "a",
             facetType: "enumeration",
             columnName: "name",
-            facetValues: [{value: "a", count: 1, isSelected: true}]
+            facetValues: [
+                {
+                    value: "a", count: 1, isSelected: true
+                },
+                {
+                    value: "b", count: 10, isSelected: true
+                },
+                {
+                    value: "c", count: 4, isSelected: true
+                },
+            ]
         } as FacetColumnResultValues
     ],
     queryResult: {

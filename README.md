@@ -178,7 +178,7 @@ Example 2: Rendering a Synapse Wiki page with the markdown already loaded
   <CustomMarkdownView>
     <SynapseComponents.Markdown 
       token={this.state.token}
-      markdown={"<wiki markdown that corresponds to syn14568473/582406>"}
+      markdown={"# an h1 header in markdown"}
       >
     </SynapseComponents.Markdown>
   </CustomMarkdownView>
@@ -288,6 +288,7 @@ An example of a view with facets/stacked bar chart/table
 | tableConfiguration, has keys: synapseId, title, visibleColumnCount | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/>  **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table  |
 | cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, hasInternalLink? | The configuration for cards to be show given the query |
 | stackedBarChartConfiguration, has keys: loadingScreen, link, linkText  | The configuration for the bar chart |
+| accordionConfig: AccordionConfig [] | For using an accordion dropdown. An individual accordion config contains: menuConfig: MenuConfig [], name: string, cardConfiguration, tableConfiguration, stackedBarChartConfiguration. |
 | MenuConfig [] | Specifications for each view under the facet |
 | MenuConfig has keys: sql, facetDisplayValue, facetAliases, facetName  | **sql**: The query driving the specific's facets view <br/> **facetName**: the facet being selected <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
 

@@ -574,20 +574,6 @@ span.SRC-facets svg.SRC-facets-icon {
 a.SRC-anchor-light {
   color: white; }
 
-li.SRC-table-anchor-chosen, li.SRC-table-anchor-chosen > a {
-  background: #505050;
-  color: white; }
-
-.dropdown-menu > li > a.SRC-no-focus:focus {
-  background: none; }
-
-.dropdown-menu > li > a.SRC-no-focus:hover {
-  background: unset; }
-
-.dropdown-menu > li.SRC-table-anchor-chosen > a.SRC-no-focus:focus {
-  background: none;
-  color: white; }
-
 .SRC-marginRightFivePx .SRC-paddingSevenPx {
   margin-right: 5px;
   padding: 7px; }
@@ -685,16 +671,10 @@ button.SRC-roundBorder {
 .SRC-table-row div {
   display: table-cell; }
 
-.SRC-menu {
-  min-height: 51px;
-  height: 51px;
-  line-height: 51px;
-  text-align: center; }
-
-.SRC-pointed {
+.SRC-pointed-triangle-right {
   position: relative; }
 
-.SRC-pointed:after, .SRC-pointed::after {
+.SRC-pointed-triangle-right:after, .SRC-pointed-triangle-right::after {
   position: absolute;
   right: -10px;
   top: 15px;
@@ -705,6 +685,33 @@ button.SRC-roundBorder {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent; }
+
+.SRC-pointed-triangle-down {
+  position: relative; }
+
+.SRC-pointed-triangle-down:after, .SRC-pointed-triangle-down::after {
+  position: absolute;
+  left: 10px;
+  bottom: -10px;
+  content: '';
+  z-index: 10;
+  width: 0;
+  height: 0;
+  border-top: solid 10px;
+  border-top-color: inherit;
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent; }
+
+.SRC-menu-button-base {
+  min-height: 51px;
+  height: 51px;
+  line-height: 51px;
+  text-align: center;
+  font-size: 16px;
+  background: unset; }
+
+.SRC-menu-button-base:focus {
+  outline: none; }
 
 .SRC-text-shadow {
   text-shadow: #505050 2px 2px 4px; }
@@ -776,6 +783,15 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white; }
+
+.SRC-hoverWhiteText:hover svg {
+  color: white; }
+
+.SRC-hoverBlackText:hover {
+  color: black !important; }
+
+.SRC-hoverBlackText:hover svg {
+  color: black !important; }
 
 .SRC-light-background {
   background: #F5F5F5; }
@@ -1175,10 +1191,6 @@ div.SRC-userImg {
   height: 48px;
   border-radius: 4px; }
 
-.SRC-menuAction {
-  background: none;
-  border: none; }
-
 .SRC-break {
   margin: 0px;
   border: 1px solid #DCDCDC; }
@@ -1209,9 +1221,6 @@ div.SRC-userImg {
 
 .SRC-cardSvg:hover > svg {
   opacity: 1; }
-
-.SRC-no-outline:focus {
-  outline: none; }
 
 .SRC-facet-select-all {
   padding: 4px 12px; }
@@ -1266,3 +1275,54 @@ div.SRC-userImg {
 
 .srcRssFeedItemContent {
   padding-top: 10px; }
+
+.SRC-gap {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10px; }
+
+.SRC-gap span {
+  padding-right: 10px; }
+
+.SRC-accordion-key {
+  border: 1px solid #DCDCDC; }
+
+.SRC-accordion-menu {
+  overflow: hidden; }
+
+.SRC-accordion-menu-enter-done {
+  overflow: visible; }
+
+.SRC-accordion-menu-enter {
+  max-height: 0px; }
+
+.SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
+  max-height: 1000px;
+  transition: max-height 1000ms ease-in-out; }
+
+.SRC-accordion-menu-exit {
+  max-height: 1000px; }
+
+.SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
+  max-height: 0px;
+  transition: max-height 500ms ease-out; }
+
+.SRC-card-overview-title {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 21px;
+  margin: 20px 0px; }
+
+button {
+  background: none;
+  border: none;
+  outline: none; }
+
+.SRC-markdown-bookmark {
+  color: #337ab7; }
+
+.SRC-markdown-bookmark:hover {
+  text-decoration: underline; }
+
+.SRC-block {
+  display: block; }

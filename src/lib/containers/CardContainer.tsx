@@ -40,7 +40,7 @@ export type CardContainerProps = {
   unitDescription?: string
   totalResultsNoFacet?: number
   hasMoreData?: boolean
-  loadingScreen?: JSX.Element
+  loadingScreen?: React.FunctionComponent | JSX.Element
   backgroundColor?: string
   showBarChart?: boolean
 } & CommonCardProps

@@ -48,10 +48,8 @@ export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> 
     }
     return (
       <p className="SRC-boldText SRC-text-title SRC-centerContent">Displaying {total} {unitDescription}
-          {/*
-            add loading spinner if isLoading
-          */}
-          {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'}/>}
-        </p>
+        {/* show loading spinner if isLoading */}
+        {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'}/>}
+      </p>
     )
   }

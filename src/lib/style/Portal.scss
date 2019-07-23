@@ -506,18 +506,11 @@ a.SRC-anchor-light {
    display: table-cell;
  }
 
-.SRC-menu {
-  min-height: 51px;
-  height: 51px;
-  line-height: 51px;
-  text-align: center;
-}
-
-.SRC-pointed {
+.SRC-pointed-triangle-right {
   position: relative;
 }  
 
-.SRC-pointed:after, .SRC-pointed::after{
+.SRC-pointed-triangle-right:after, .SRC-pointed-triangle-right::after{
   position: absolute;
   right: -10px;
   top: 15px;
@@ -528,6 +521,37 @@ a.SRC-anchor-light {
   border-left-color: inherit;
   border-bottom: solid 10px transparent;
   border-top: solid 10px transparent;
+}
+
+.SRC-pointed-triangle-down {
+  position: relative;
+}  
+
+.SRC-pointed-triangle-down:after, .SRC-pointed-triangle-down::after{
+  position: absolute;
+  left: 10px;
+  bottom: -10px;
+  content: '';
+  z-index: 10;
+  width: 0;
+  height: 0;
+  border-top: solid 10px;
+  border-top-color: inherit;
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent;
+}
+
+.SRC-menu-button-base {
+  min-height: 51px;
+  height: 51px;
+  line-height: 51px;
+  text-align: center;
+  font-size: 16px;
+  background: unset;
+}
+
+.SRC-menu-button-base:focus {
+  outline: none;
 }
 
 .SRC-text-shadow {
@@ -622,7 +646,18 @@ a.SRC-anchor-light {
 
 .SRC-hoverWhiteText:hover {
   color: white;
+  svg {
+    color: white;
+  }
 }
+
+.SRC-hoverBlackText:hover {
+  color: black !important;
+  svg {
+    color: black !important;
+  }
+}
+
 
 .SRC-light-background {
   background: #F5F5F5;
@@ -1146,10 +1181,6 @@ div.SRC-userImg {
   opacity: 1;
 }
 
-.SRC-no-outline:focus {
-  outline: none;
-}
-
 .SRC-facet-select-all {
   padding: 4px 12px;
 }
@@ -1210,13 +1241,52 @@ div.SRC-userImg {
   padding-top: 20px;
 }
 .srcRssFeedItemTitle {
-  // color: $primaryColor;
   padding-bottom: 5px;
   font-weight: bold;
   font-size: 20px;
 }
 .srcRssFeedItemContent {
   padding-top: 10px;
+}
+
+.SRC-gap {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10px;
+  span {
+    padding-right: 10px;
+  }
+}
+
+.SRC-accordion-key {
+  border: 1px solid #DCDCDC;
+}
+
+.SRC-accordion-menu {
+  overflow: hidden;
+}
+
+.SRC-accordion-menu-enter-done {
+  overflow: visible;
+}
+
+// this implements the fade in for cards
+.SRC-accordion-menu-enter {
+  max-height: 0px;
+}
+
+.SRC-accordion-menu-enter.SRC-accordion-menu-enter-active {
+  max-height: 1000px;
+  transition: max-height 1000ms ease-in-out;
+}
+
+.SRC-accordion-menu-exit {
+  max-height: 1000px;
+}
+
+.SRC-accordion-menu-exit.SRC-accordion-menu-exit-active {
+  max-height: 0px;
+  transition: max-height 500ms ease-out;
 }
 .SRC-card-overview-title {
   text-transform: uppercase;
