@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
 import { mockData }   from '../../../mocks'
-import QueryWrapperMenu, { QueryWrapperMenuProps, SELECTED_GROUP_INDEX, GROUP_INDEX } from '../../../lib/containers/QueryWrapperMenu'
+import QueryWrapperMenu, { QueryWrapperMenuProps, GROUP_INDEX_CSS, GROUP_INDEX_SELECTED_CSS } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import StackedBarChart from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
@@ -135,31 +135,31 @@ describe('it renders an accordion config', () => {
 
   it('renders with all the top level keys closed initially', async () => {
     const { wrapper } = await createShallowComponent(props)
-    expect(wrapper.find(`div.${SELECTED_GROUP_INDEX}`)).toHaveLength(0)
-    expect(wrapper.find(`div.${GROUP_INDEX}`)).toHaveLength(2)
+    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(0)
+    expect(wrapper.find(`div.${GROUP_INDEX_CSS}`)).toHaveLength(2)
   })
 
   it('performs open, open, close', async () => {
     const { wrapper } = await createShallowComponent(props)
-    const classIndiciatingAccordionKey = `div.${GROUP_INDEX}`
+    const classIndiciatingAccordionKey = `div.${GROUP_INDEX_CSS}`
     const childOne = 0
     const childTwo = 1
-    expect(wrapper.find(`div.${SELECTED_GROUP_INDEX}`)).toHaveLength(0)
+    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(0)
     // click the first top level key           
     await wrapper.find(classIndiciatingAccordionKey).at(childOne).simulate('click')
     // check the first key is open and second is closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(SELECTED_GROUP_INDEX)).toBeTruthy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(SELECTED_GROUP_INDEX)).toBeFalsy()
+    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
+    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
     // click the second top level key
     await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
     // check the second key is open and first is closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(SELECTED_GROUP_INDEX)).toBeFalsy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(SELECTED_GROUP_INDEX)).toBeTruthy()
+    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
+    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
     // click the second top level key again
     await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
     // check that both keys are now closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(SELECTED_GROUP_INDEX)).toBeFalsy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(SELECTED_GROUP_INDEX)).toBeFalsy()
+    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
+    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
   })
 
 })

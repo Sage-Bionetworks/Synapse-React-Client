@@ -37,8 +37,8 @@ export type MenuConfig = {
 }
 
 // utility for testing
-export const GROUP_INDEX = 'SRC-accordion-key'
-export const SELECTED_GROUP_INDEX = 'SRC-pointed-triangle-down'
+export const GROUP_INDEX_CSS = 'SRC-accordion-key'
+export const GROUP_INDEX_SELECTED_CSS = 'SRC-pointed-triangle-down'
 
 interface MenuSearchParams extends KeyValue {
   menuIndex: string
@@ -325,7 +325,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           }
           let indicatorClasses = isActive ? 'SRC-whiteText ' : ''
           if (isExpanded) {
-            indicatorClasses += SELECTED_GROUP_INDEX
+            indicatorClasses += GROUP_INDEX_SELECTED_CSS
             style.borderTopColor = primaryColor
           } else if (isLastActiveSelection) {
             indicatorClasses += 'SRC-pointed-triangle-right'
@@ -346,7 +346,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 role="button"
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${GROUP_INDEX} SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
+                className={`${GROUP_INDEX_CSS} SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
                 onClick={this.toggleGroupAccordionIndex(index)}
               >
                 {el.name}
