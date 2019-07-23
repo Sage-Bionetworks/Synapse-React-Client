@@ -8,19 +8,11 @@ import {
   PUBLICATION,
   STUDY,
   TOOL,
-  CSBC_PROJECT,
-  CSBC_PUBLICATION,
-  CSBC_STUDY,
-  CSBC_DATASET,
   GENERIC_CARD,
   MEDIUM_USER_CARD
 } from '../utils/SynapseConstants'
 import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { Consortium } from './row_renderers/AMPAD'
-import CSBCProject from './row_renderers/CSBC/CSBCProject'
-import CSBCPublication from './row_renderers/CSBC/CSBCPublication'
-import CSBCStudy from './row_renderers/CSBC/CSBCStudy'
-import CSBCDataset from './row_renderers/CSBC/CSBCDataset'
 import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
 import { TotalQueryResults } from './TotalQueryResults'
@@ -84,14 +76,6 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         return <Tool {...props} />
       case AMP_CONSORTIUM:
         return <Consortium {...props} />
-      case CSBC_PROJECT:
-        return <CSBCProject {...props} />
-      case CSBC_PUBLICATION:
-        return <CSBCPublication {...props} />
-      case CSBC_STUDY:
-        return <CSBCStudy {...props} />
-      case CSBC_DATASET:
-        return <CSBCDataset {...props} />
       case GENERIC_CARD:
         return <GenericCard {...props} />
       default:

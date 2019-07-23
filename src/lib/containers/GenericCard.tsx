@@ -34,7 +34,6 @@ export type GenericCardProps = {
   schema: any,
   data: any
   secondaryLabelLimit?: number
-  hasInternalLink?: boolean
   internalLinkConfiguration?: InternalLinkConfiguration
 }
 
@@ -113,7 +112,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.getLink(linkValue.toLowerCase(), internalLinkConfiguration, data, schema)
+    const { linkDisplay, target } = this.getLink(linkValue, internalLinkConfiguration, data, schema)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
@@ -123,16 +122,22 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         const { key, alias = '' } =  genericCardSchema.secondaryLabels[i]
         const displayValue = alias ? alias : key
         const keyValue = [displayValue, data[schema[key]]]
-        values.push(keyValue)
+        if (data[schema[key]]) {
+          values.push(keyValue)
+        }
       }
     }
+
+    const showFooter = genericCardSchema.secondaryLabels && values.length > 0
 
     const style: React.CSSProperties = {
       background: backgroundColor,
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
-      marginBottom: isHeader ? '0px' : undefined
+      marginBottom: isHeader ? '0px' : undefined,
+      paddingBottom: showFooter ? undefined : '15px'
     }
+
     if (isHeader) {
       return (
         <HeaderCard
@@ -177,7 +182,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
               </span>
           }
         </div>
-        {genericCardSchema.secondaryLabels && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
+        {showFooter && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
       </div>
     )
   }
