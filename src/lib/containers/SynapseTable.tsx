@@ -1,12 +1,15 @@
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
-import { faCheck,
-         faColumns,
-         faDatabase,
-         faFilter,
-         faSort,
-         faSortAmountDown,
-         faSortAmountUp,
-         faTimes } from '@fortawesome/free-solid-svg-icons'
+import { 
+  faCheck,
+  faColumns,
+  faDatabase,
+  faFilter,
+  faSort,
+  faSortAmountDown,
+  faSortAmountUp,
+  faTimes,
+  faDownload
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 // tslint:disable-next-line
@@ -38,6 +41,7 @@ library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
+library.add(faDownload)
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
@@ -171,6 +175,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     const tooltipIdOne = 'openAdvancedSearch'
     const tooltipIdTwo = 'addAndRemoveColumns'
+    const tooltipIdThree = 'download'
     const { menuWallIsActive, isOpen } = this.state
     const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
     let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
@@ -190,55 +195,75 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </p>
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
-            <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-            <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
-                <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
-                    <span
-                        tabIndex={0}
-                        data-for={tooltipIdOne}
-                        data-tip="Open Advanced Search in Synapse"
-                        className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                        onKeyPress={this.advancedSearch}
-                        onClick={this.advancedSearch}
-                    >
-                        <FontAwesomeIcon size="1x" color="white"  icon="database"/>
-                    </span>
-                    <ReactTooltip
-                        delayShow={1500}
-                        place="bottom"
-                        type="dark"
-                        effect="solid"
-                        id={tooltipIdOne}
-                    />
-                    {
-                      !this.isGroupByInSql() &&
-                      <React.Fragment>
-                        <span
-                            tabIndex={0}
-                            data-for={tooltipIdTwo}
-                            data-tip="Add / Remove Columns"
-                            style={{ marginLeft: '10px' }}
-                            className={addRemoveColClasses}
-                            onKeyPress={this.toggleMenuWall}
-                            onClick={this.toggleMenuWall}
-                            id="dropdownMenu1"
-                        >
-                            <FontAwesomeIcon color="white" icon="columns"/>
-                        </span>
-                        <ReactTooltip
-                            delayShow={1500}
-                            place="bottom"
-                            type="dark"
-                            effect="solid"
-                            id={tooltipIdTwo}
-                        />
-                        <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                            {this.renderDropdownColumnMenu(headers)}
-                        </ul>
-                      </React.Fragment>
-                    }
-                </span>
+          <h3 className="SRC-tableHeader"> {this.props.title}</h3>
+          <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
+            <span
+              tabIndex={0}
+              data-for={tooltipIdOne}
+              data-tip="Open Advanced Search in Synapse"
+              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+              onKeyPress={this.advancedSearch}
+              onClick={this.advancedSearch}
+            >
+              <FontAwesomeIcon size="1x" color="white"  icon="database"/>
             </span>
+            <ReactTooltip
+                delayShow={1500}
+                place="bottom"
+                type="dark"
+                effect="solid"
+                id={tooltipIdThree}
+            />
+            <span
+              tabIndex={0}
+              style={{ marginLeft: '10px' }}
+              data-for={tooltipIdThree}
+              data-tip="Export Table"
+              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+              onKeyPress={this.advancedSearch}
+              onClick={this.advancedSearch}
+            >
+              <FontAwesomeIcon size="1x" color="white"  icon="download"/>
+            </span>
+            <ReactTooltip
+                delayShow={1500}
+                place="bottom"
+                type="dark"
+                effect="solid"
+                id={tooltipIdOne}
+            />
+            {
+              // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
+              // allow this option if there isn't a groupBy clause 
+              !this.isGroupByInSql() &&
+              <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
+                <React.Fragment>
+                  <span
+                      tabIndex={0}
+                      data-for={tooltipIdTwo}
+                      data-tip="Add / Remove Columns"
+                      style={{ marginLeft: '10px' }}
+                      className={addRemoveColClasses}
+                      onKeyPress={this.toggleMenuWall}
+                      onClick={this.toggleMenuWall}
+                      id="dropdownMenu1"
+                  >
+                      <FontAwesomeIcon color="white" icon="columns"/>
+                  </span>
+                  <ReactTooltip
+                      delayShow={1500}
+                      place="bottom"
+                      type="dark"
+                      effect="solid"
+                      id={tooltipIdTwo}
+                  />
+                  <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                      {this.renderDropdownColumnMenu(headers)}
+                  </ul>
+                  </React.Fragment>
+                </span>
+            }
+          </span>
         </div>
         {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
         <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
