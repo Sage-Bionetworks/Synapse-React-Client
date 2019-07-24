@@ -36,7 +36,7 @@ const App = ({ match }: { match: match }) => {
             <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
           </li>
           <li>
-            <Link to={`${match.url}/ModalDownload`}>ModalDownload</Link>
+            <Link to={`${match.url}/ModalDownloadDemo`}>ModalDownload</Link>
           </li>
         </ul>
 

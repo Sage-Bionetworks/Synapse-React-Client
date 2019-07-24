@@ -161,73 +161,72 @@ class Login extends React.Component<Props, State> {
     const { theme, icon } = this.props
     const googleTheme = theme === 'dark' ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color'
     return (
-            <div id="loginPage" className="container loginContainer SRC-syn-border-spacing">
-                  <form>
-                    {/* tslint:disable-next-line */}
-                    <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}>
-                        <GoogleIcon key={1} active={true} />
-                        <ButtonContent icon={icon} key={2}>
-                            Sign in with Google
-                        </ButtonContent>
-                    </button>
-                </form>
-                <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
-                <div className="SRC-center-text SRC-marginBottomTen">Sign in with your Synapse account</div>
-                <form onSubmit={this.handleLogin}>
-                    <div className="form-group">
-                        <input
-                                autoComplete="email"
-                                placeholder="username or email"
-                                className="form-control"
-                                id="exampleEmail"
-                                name="username"
-                                type="text"
-                                value={this.state.username}
-                                onChange={this.handleChange}
-                                data-lpignore="true"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <input
-                                autoComplete="password"
-                                placeholder="password"
-                                className="form-control"
-                                id="examplePassword"
-                                name="password"
-                                type="password"
-                                value={this.state.password}
-                                onChange={this.handleChange}
-                                data-lpignore="true"
-                        />
-                    </div>
-                    {this.getLoginFailureView()}
-                    <button
-                      onSubmit={this.handleLogin}
-                      type="submit"
-                      className="btn SRC-primary-background-color SRC-hoverWhiteText
-                        SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
-                    >
-                      <ButtonContent icon={icon}>
-                        Sign in
-                      </ButtonContent>
-                    </button>
-                </form>
-                <div>
-                  <a
-                    href="https://www.synapse.org/#!PasswordReset:0"
-                    className="SRC-floatLeft SRC-primary-text-color"
-                  >
-                    Forgot password?
-                  </a>
-                  <span className="SRC-deemphasized-text SRC-floatRight">&nbsp;It's free!</span>
-                  <a
-                    href="https://www.synapse.org/#!RegisterAccount:0"
-                    className="SRC-floatRight SRC-primary-text-color"
-                  >
-                    Register
-                  </a>
-                </div>
-            </div>
+      <div id="loginPage" className="container loginContainer SRC-syn-border-spacing">
+        <form>
+          <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}>
+          <GoogleIcon key={1} active={true} />
+          <ButtonContent icon={icon} key={2}>
+              Sign in with Google
+          </ButtonContent>
+          </button>
+        </form>
+        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
+        <div className="SRC-center-text SRC-marginBottomTen">Sign in with your Synapse account</div>
+        <form onSubmit={this.handleLogin}>
+          <div className="form-group">
+            <input
+              autoComplete="email"
+              placeholder="username or email"
+              className="form-control"
+              id="exampleEmail"
+              name="username"
+              type="text"
+              value={this.state.username}
+              onChange={this.handleChange}
+              data-lpignore="true"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              autoComplete="password"
+              placeholder="password"
+              className="form-control"
+              id="examplePassword"
+              name="password"
+              type="password"
+              value={this.state.password}
+              onChange={this.handleChange}
+              data-lpignore="true"
+            />
+          </div>
+            {this.getLoginFailureView()}
+            <button
+              onSubmit={this.handleLogin}
+              type="submit"
+              className="btn SRC-primary-background-color SRC-hoverWhiteText
+                SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
+            >
+              <ButtonContent icon={icon}>
+                Sign in
+              </ButtonContent>
+            </button>
+        </form>
+        <div>
+          <a
+            href="https://www.synapse.org/#!PasswordReset:0"
+            className="SRC-floatLeft SRC-primary-text-color"
+          >
+            Forgot password?
+          </a>
+          <span className="SRC-deemphasized-text SRC-floatRight">&nbsp;It's free!</span>
+          <a
+            href="https://www.synapse.org/#!RegisterAccount:0"
+            className="SRC-floatRight SRC-primary-text-color"
+          >
+            Register
+          </a>
+        </div>
+      </div>
     )
   }
 }

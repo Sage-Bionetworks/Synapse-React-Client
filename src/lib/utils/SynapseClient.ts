@@ -18,6 +18,8 @@ import { FileEntity } from './jsonResponses/FileEntity'
 import { UserProfile } from './jsonResponses/UserProfile'
 import { AccessControlList } from './jsonResponses/AccessControlList'
 import { Submission } from './jsonResponses/Submission'
+import { DownloadFromTableRequest } from './jsonResponses/Table/DownloadFromTableRequest';
+import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTableResult';
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -197,6 +199,54 @@ export const putRefreshSessionToken = (sessionToken: string, endpoint: string = 
 
 export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
   return doGet('/repo/v1/version', undefined, undefined, endpoint) as Promise<SynapseVersion>
+}
+
+/**
+ * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
+ * @param {*} queryBundleRequest
+ * @param {*} sessionToken
+ * @param {*} endpoint
+ */
+export const getDownloadFromTableRequest = (
+  request: DownloadFromTableRequest,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT,
+  updateParentState?: any,
+) => {
+  return doPost(`/repo/v1/entity/${request.entityId}/table/download/csv/async/start`, request, sessionToken, undefined, endpoint)
+  .then((resp: AsyncJobId) => {
+    const requestUrl = `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${resp.token}`
+    return getAsyncResultFromJob<DownloadFromTableResult>(requestUrl, sessionToken, endpoint, updateParentState)
+  })
+  .catch((error: any) => {
+    throw error
+  })
+}
+
+export const getAsyncResultFromJob = <T>(
+  urlRequest: string,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT,
+  updateParentState?: any
+): Promise<T> => {
+  return doGet(urlRequest, sessionToken, undefined, endpoint)
+  .then((resp: any) => {
+    // is this the job status?
+    if (resp.jobState && resp.jobState !== 'FAILED') {
+      updateParentState && updateParentState({
+        asyncJobStatus: resp
+      })
+      // still processing, wait for a second and try again
+      return delay(500).then(() => {
+        return getAsyncResultFromJob(urlRequest, sessionToken, endpoint, updateParentState)
+      })
+    }
+    // these must be the query results!
+    return resp
+  })
+  .catch((error) => {
+    throw error
+  })
 }
 
 export const getQueryTableResultsFromJobId = (

@@ -1,12 +1,13 @@
 import * as React from 'react'
 import ModalDownload from '../../../lib/containers/ModalDownload'
-import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest';
 
 const ModalDownloadDemo = () => {
   return (
     <div className="container">
       <ModalDownload
-        queryRequest={{} as QueryBundleRequest}
+        sql={'SELECT * from syn18941147'}
+        entityId={'syn18941147'}
+        onClose={() => {console.log('was closed')}}
       />
     </div>
   )
