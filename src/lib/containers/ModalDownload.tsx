@@ -115,12 +115,12 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
       borderRadius: 6
     }
     return (
-      <div className="SRC-modal">
+      <div className="SRC-modal custom-checkbox-container">
         <div className="container-fluid SRC-fullWidth">
           <div className="row">
             <div className="SRC-modal-content col-xs-6 col-xs-offset-3">
               <button style={closeBtn} onClick={this.props.onClose}>
-                <FontAwesomeIcon size="2x" icon="times" />
+                <FontAwesomeIcon style={{fontSize: '21px'}} icon="times" />
               </button>
               <Form
                 schema={formSchemaArray[this.state.step]}
