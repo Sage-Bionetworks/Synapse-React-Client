@@ -622,7 +622,7 @@ export const setSessionTokenCookie = (token: string | undefined) => {
  */
 export const getSessionTokenFromCookie = () => {
   if (!IS_DEV_ENV) {
-    return doGet('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+    return doGet<string>('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
   }
   // else (is in dev env)
   const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
