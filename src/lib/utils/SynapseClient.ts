@@ -61,7 +61,7 @@ function parseJSON(response: any) {
     }
   )
 }
-const fetchWithExponentialTimeout = (url: string, options: any, delayMs: any, retries: number): Promise<any> => {
+const fetchWithExponentialTimeout = <T>(url: string, options: any, delayMs: any, retries: number): Promise<T> => {
   return fetch(url, options)
     .then((resp) => {
       if (resp.status > 199 && resp.status < 300) {
@@ -145,7 +145,7 @@ export const doPost = (
   }
   return fetchWithExponentialTimeout(endpoint + url, options, 1000, 5)
 }
-export const doGet = (
+export const doGet = <T>(
                       url: string,
                       sessionToken: string | undefined,
                       initCredentials: string | undefined,
@@ -164,7 +164,7 @@ export const doGet = (
   if (sessionToken) {
     options.headers.sessionToken = sessionToken
   }
-  return fetchWithExponentialTimeout(endpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout<T>(endpoint + url, options, 1000, 5)
 }
 
 export const doPut = (
@@ -198,14 +198,11 @@ export const putRefreshSessionToken = (sessionToken: string, endpoint: string = 
 }
 
 export const getVersion = (endpoint: string = DEFAULT_ENDPOINT): Promise<SynapseVersion> => {
-  return doGet('/repo/v1/version', undefined, undefined, endpoint) as Promise<SynapseVersion>
+  return doGet<SynapseVersion>('/repo/v1/version', undefined, undefined, endpoint)
 }
 
 /**
- * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
- * @param {*} queryBundleRequest
- * @param {*} sessionToken
- * @param {*} endpoint
+ * https://docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
  */
 export const getDownloadFromTableRequest = (
   request: DownloadFromTableRequest,
@@ -216,14 +213,27 @@ export const getDownloadFromTableRequest = (
   return doPost(`/repo/v1/entity/${request.entityId}/table/download/csv/async/start`, request, sessionToken, undefined, endpoint)
   .then((resp: AsyncJobId) => {
     const requestUrl = `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${resp.token}`
-    return getAsyncResultFromJob<DownloadFromTableResult>(requestUrl, sessionToken, endpoint, updateParentState)
+    return getAsyncResultFromJobId<DownloadFromTableResult>(requestUrl, sessionToken, endpoint, updateParentState)
   })
   .catch((error: any) => {
     throw error
   })
 }
 
-export const getAsyncResultFromJob = <T>(
+/**
+* https://docs.synapse.org/rest/GET/fileHandle/handleId/url.html
+* @return a short lived presignedURL to be redirected with
+**/
+export const getFileHandleByIdURL = (
+  handleId: string,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT,
+) => {
+  // downloads a CSV, there is no return
+  return doGet<string>(`file/v1/fileHandle/${handleId}/url?redirect=false`, sessionToken, undefined, endpoint)
+}
+
+export const getAsyncResultFromJobId = <T>(
   urlRequest: string,
   sessionToken: string | undefined = undefined,
   endpoint: string = DEFAULT_ENDPOINT,
@@ -238,7 +248,7 @@ export const getAsyncResultFromJob = <T>(
       })
       // still processing, wait for a second and try again
       return delay(500).then(() => {
-        return getAsyncResultFromJob(urlRequest, sessionToken, endpoint, updateParentState)
+        return getAsyncResultFromJobId<T>(urlRequest, sessionToken, endpoint, updateParentState)
       })
     }
     // these must be the query results!
@@ -247,33 +257,6 @@ export const getAsyncResultFromJob = <T>(
   .catch((error) => {
     throw error
   })
-}
-
-export const getQueryTableResultsFromJobId = (
-  entityId: string,
-  jobId: string,
-  sessionToken: string | undefined = undefined,
-  endpoint: string = DEFAULT_ENDPOINT,
-  updateParentState?: any
-): Promise<QueryResultBundle> => {
-  return doGet(`/repo/v1/entity/${entityId}/table/query/async/get/${jobId}`, sessionToken, undefined, endpoint)
-    .then((resp: any) => {
-      // is this the job status?
-      if (resp.jobState && resp.jobState !== 'FAILED') {
-        updateParentState && updateParentState({
-          asyncJobStatus: resp
-        })
-        // still processing, wait for a second and try again
-        return delay(500).then(() => {
-          return getQueryTableResultsFromJobId(entityId, jobId, sessionToken, endpoint, updateParentState)
-        })
-      }
-      // these must be the query results!
-      return resp
-    })
-    .catch((error) => {
-      throw error
-    })
 }
 
 /**
@@ -289,10 +272,8 @@ export const getQueryTableResults = (
   endpoint: string = DEFAULT_ENDPOINT,
 ): Promise<QueryResultBundle> => {
   return doPost(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`, queryBundleRequest, sessionToken, undefined, endpoint)
-  .then((resp: AsyncJobId) => {
-    return getQueryTableResultsFromJobId(
-      queryBundleRequest.entityId, resp.token, sessionToken, endpoint, updateParentState
-    )
+  .then((resp) => {
+    return getAsyncResultFromJobId<QueryResultBundle>(`/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${resp.token}`, sessionToken, endpoint, updateParentState)
   })
   .catch((error: any) => {
     throw error
@@ -431,7 +412,7 @@ export const createProject = (name: string,
  * http://docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
-  return doGet('/repo/v1/userProfile', sessionToken, undefined, endpoint)
+  return doGet<UserProfile>('/repo/v1/userProfile', sessionToken, undefined, endpoint)
 }
 
 /**
@@ -440,7 +421,7 @@ export const getUserProfile = (sessionToken: string | undefined, endpoint = DEFA
  */
 export const getUserProfileById = (
   sessionToken: string | undefined, ownerId: string, endpoint = DEFAULT_ENDPOINT) => {
-  return doGet(`/repo/v1/userProfile/${ownerId}`, sessionToken, undefined, endpoint)
+  return doGet<UserProfile>(`/repo/v1/userProfile/${ownerId}`, sessionToken, undefined, endpoint)
 }
 
 /**
@@ -450,7 +431,7 @@ export const getUserProfileById = (
 export const getUserBundle = (
   id: string, mask: number, sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT
 ): Promise<UserBundle> => {
-  return doGet(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
+  return doGet<UserBundle>(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
 }
 
 export type UserProfileList = { list: UserProfile [] }

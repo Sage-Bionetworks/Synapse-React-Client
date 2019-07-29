@@ -12,18 +12,17 @@ const stepOneFormSchema: JSONSchema6 = {
   type: 'object',
   properties: {
     'File Type'  : {
-      type: "boolean",
+      type: "string",
       oneOf: [
         {
-          const: true,
+          const: csvOption,
           title: csvOption
         },
         {
-          const: false,
+          const: tsvOption,
           title: tsvOption
         }
       ],
-      default: true
     },
     Contents : {
       type: "array",
@@ -32,7 +31,6 @@ const stepOneFormSchema: JSONSchema6 = {
         type: 'string',
         enum: [writeHeaderOption, includeRowIdAndRowVersionOption],
       },
-      default: [writeHeaderOption, includeRowIdAndRowVersionOption],
       uniqueItems: true
     }
   }
@@ -52,7 +50,6 @@ const stepTwoFormSchema: JSONSchema6 = {
   title: 'Download query results',
   description: 'File is ready for download. Select the download button to download the file.',
   type: 'object',
-  properties: {}
 }
 
 const stepTwoFormUISchema: UiSchema = {

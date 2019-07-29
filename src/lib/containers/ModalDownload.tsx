@@ -6,11 +6,17 @@ import { SynapseClient } from 'lib/utils'
 import { DownloadFromTableResult } from 'lib/utils/jsonResponses/Table/DownloadFromTableResult'
 import { SortItem } from 'lib/utils/jsonResponses/Table/Query'
 import { FacetColumnRequest } from 'lib/utils/jsonResponses/Table/FacetColumnRequest'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+library.add(faTimes)
 
 export type ModalDownloadState = {
   isLoading: boolean
   step: number,
   data?: DownloadFromTableResult
+  formData: {}
 }
 
 export type ModalDownloadProps = {
@@ -23,7 +29,7 @@ export type ModalDownloadProps = {
   isConsistent?: boolean
   offset?: number
   limit?: number
-  sorT?: SortItem []
+  sort?: SortItem []
 }
 
 export default class ModalDownload extends React.Component<ModalDownloadProps, ModalDownloadState> {
@@ -32,7 +38,11 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
     super(props)
     this.state = {
       isLoading: false,
-      step: 0
+      step: 0,
+      formData: {
+        'File Type': csvOption,
+        Contents: [writeHeaderOption, includeRowIdAndRowVersionOption]
+      }
     }
   }
 
@@ -51,7 +61,7 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
     const { formData } = event
     const fileType = formData['File Type']
     const contents = formData.Contents as string []
-    const { token, ...rest } = this.props
+    const { token, onClose, ...rest } = this.props
     const separator = fileType === csvOption ? ',': '\t'
     const writeHeader = contents.includes(writeHeaderOption)
     const includeRowIdAndRowVersion = contents.includes(includeRowIdAndRowVersionOption)
@@ -76,26 +86,49 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
   }
 
   onDownload = () => {
-    // if calling this then data will be defined
     const { data } = this.state
-    window.open(`https://repo-prod.prod.sagebase.org/file/v1/fileHandle/${data!.resultsFileHandleId}/url`)
+    const { token } = this.props
+    // data will always be defined if calling this function
+    SynapseClient.getFileHandleByIdURL(data!.resultsFileHandleId, token).then(
+      url => {
+        window.location.href = url
+      }
+    )
     this.props.onClose()
   }
 
+  handleChange = (event: IChangeEvent) => {
+    const { formData } = event
+    this.setState({
+      formData
+    })
+  }
+
   render() {
+    const closeBtn: React.CSSProperties = {
+      position: 'absolute',
+      top: 10,
+      right: 10
+    }
+    const submitBtn: React.CSSProperties = {
+      padding: '6px 10px',
+      borderRadius: 6
+    }
     return (
       <div className="SRC-modal">
         <div className="container-fluid SRC-fullWidth">
           <div className="row">
             <div className="SRC-modal-content col-xs-6 col-xs-offset-3">
+              <button style={closeBtn} onClick={this.props.onClose}>
+                <FontAwesomeIcon size="2x" icon="times" />
+              </button>
               <Form
-                formData={{
-                  boolean: {default: true}
-                }}
                 schema={formSchemaArray[this.state.step]}
                 uiSchema={formSchemaUIArray[this.state.step]}
+                onChange={this.handleChange}
+                formData={this.state.formData}
                 onSubmit={this.handleSubmit}
-                >
+              >
                 {
                   this.state.isLoading
                   &&
@@ -109,8 +142,8 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
                 }
                 <hr/>
                 <div style={{textAlign: 'right'}}>
-                  <button onClick={this.props.onClose} className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover " type="button"> Cancel </button>
-                  <button className="SRC-primary-background-color SRC-roundBorder SRC-whiteText" type="submit"> {this.state.step === 0 ? 'Next': 'Download' } </button>
+                  <button id="cancelBtn" onClick={this.props.onClose} className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover " type="button"> Cancel </button>
+                  <button id="submitBtn" style={submitBtn} className="SRC-primary-background-color SRC-roundBorder SRC-whiteText" type="submit">{this.state.step === 0 ? 'Next': 'Download' }</button>
                 </div>
               </Form>
             </div>
@@ -119,5 +152,4 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
       </div>
     )
   }
-
 }

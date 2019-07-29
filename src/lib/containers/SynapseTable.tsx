@@ -29,6 +29,7 @@ import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils
 import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
 import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
+import ModalDownload from './ModalDownload'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -59,13 +60,13 @@ type Info = {
 const GROUP_BY_REGEX = /group by/mi
 export type SynapseTableState = {
   sortedColumnSelection: SortItem []
-  offset: number
-  isOpen: boolean
+  isDropdownColumnMenuOpen: boolean
   isColumnSelected: boolean[]
   columnIconSortState: number[],
   isFilterSelected: boolean []
   filterClassList: string [],
   menuWallIsActive: boolean,
+  isModalDownloadOpen: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -92,6 +93,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.useFacetAliasIfDefined = this.useFacetAliasIfDefined.bind(this)
     this.applyChanges = this.applyChanges.bind(this)
     this.toggleFilterDropdown = this.toggleFilterDropdown.bind(this)
+    this.toggleModalDownload = this.toggleModalDownload.bind(this)
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -104,9 +106,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       filterClassList: Array(100).fill(''),
       isColumnSelected: [],
       isFilterSelected: Array(100).fill(false),
-      isOpen: false,
+      isDropdownColumnMenuOpen: false,
       menuWallIsActive: false,
-      offset: 0,
+      isModalDownloadOpen: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -124,6 +126,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const testSql = sql ? sql : this.props.getLastQueryRequest!().query.sql
     return GROUP_BY_REGEX.test(testSql)
   }
+
+  public toggleModalDownload()  {
+    this.setState({
+      isModalDownloadOpen: !this.state.isModalDownloadOpen
+    })
+  }
     /**
      * Display the view
      */
@@ -132,7 +140,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (<div/>)
     }
     // unpack all the data
-    const { data, filter, isLoading, unitDescription } = this.props
+    const { data, filter, isLoading, unitDescription, token, synapseId } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
@@ -176,12 +184,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const tooltipIdOne = 'openAdvancedSearch'
     const tooltipIdTwo = 'addAndRemoveColumns'
     const tooltipIdThree = 'download'
-    const { menuWallIsActive, isOpen } = this.state
+    const { menuWallIsActive, isDropdownColumnMenuOpen, isModalDownloadOpen } = this.state
     const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
     let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
-    addRemoveColClasses += (isOpen ? 'SRC-primary-background-color' : '')
+    addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
+    const queryRequest = this.props.getLastQueryRequest!()
+    const {
+      sql,
+      selectedFacets
+    } = queryRequest.query
+    const modalDownloadOrEmpty = isModalDownloadOpen ? <ModalDownload onClose={this.toggleModalDownload} sql={sql} selectedFacets={selectedFacets} token={token} entityId={synapseId} />: <React.Fragment/>
     return (
       <React.Fragment>
+        {modalDownloadOrEmpty}
         <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
         <div className="SRC-marginBottomTen">
           <p style={{ height:'20px' }}>
@@ -214,17 +229,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 effect="solid"
                 id={tooltipIdThree}
             />
-            <span
-              tabIndex={0}
+            <button
               style={{ marginLeft: '10px' }}
               data-for={tooltipIdThree}
               data-tip="Export Table"
               className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-              onKeyPress={this.advancedSearch}
-              onClick={this.advancedSearch}
+              onClick={this.toggleModalDownload}
             >
               <FontAwesomeIcon size="1x" color="white"  icon="download"/>
-            </span>
+            </button>
             <ReactTooltip
                 delayShow={1500}
                 place="bottom"
@@ -236,7 +249,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
               // allow this option if there isn't a groupBy clause 
               !this.isGroupByInSql() &&
-              <span className={` dropdown ${this.state.isOpen ? 'open' : ''}`}>
+              <span className={` dropdown ${this.state.isDropdownColumnMenuOpen ? 'open' : ''}`}>
                 <React.Fragment>
                   <span
                       tabIndex={0}
@@ -646,9 +659,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @memberof SynapseTable
    */
   public toggleMenuWall() {
-    const { isOpen, isFilterSelected } = this.state
+    const { isDropdownColumnMenuOpen, isFilterSelected } = this.state
 
-    if (!isOpen) {
+    if (!isDropdownColumnMenuOpen) {
       // the dropdown was closed coming into this method, so now it will be opened
       // so we activate the menu wall.
       for (let i = 0; i < isFilterSelected.length; i += 1) {
@@ -661,7 +674,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       this.setState({ menuWallIsActive: false })
     }
 
-    this.setState({ isFilterSelected, isOpen: !isOpen })
+    this.setState({ isFilterSelected, isDropdownColumnMenuOpen: !isDropdownColumnMenuOpen })
   }
 
   private getLengthOfPropsData() {
@@ -789,7 +802,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       this.setState({
         filterClassList,
         isFilterSelected,
-        isOpen: false,
+        isDropdownColumnMenuOpen: false,
         menuWallIsActive: false
       })
     }
@@ -903,7 +916,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      this.setState({
        filterClassList,
        isFilterSelected,
-       isOpen: false,
+       isDropdownColumnMenuOpen: false,
        menuWallIsActive: !isCurFilterSelected
      })
    }

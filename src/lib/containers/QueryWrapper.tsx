@@ -49,6 +49,7 @@ export type FacetSelection = {
 export type QueryWrapperChildProps = {
   isAllFilterSelectedForFacet?: {}
   isLoading?: boolean
+  token?: string
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
   executeInitialQueryRequest?: () => void
@@ -273,6 +274,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         facetAliases,
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.state.data,
+        token: this.props.token,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,
