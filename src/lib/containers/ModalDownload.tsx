@@ -132,7 +132,7 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
                 {
                   this.state.isLoading
                   &&
-                  <div className="SRC-centerContent">
+                  <div className="SRC-centerAndJustifyContent">
                     <div className="SRC-center-text">
                       <p> Creating the File </p>
                       <div style={{height: 50, width: 50, backgroundSize: 50}} className="spinner" />

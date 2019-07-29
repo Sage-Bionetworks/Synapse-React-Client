@@ -711,6 +711,10 @@ checkmark styling end
 
 .SRC-centerContent {
   display: flex;
+  align-items: center; }
+
+.SRC-centerAndJustifyContent {
+  display: flex;
   align-items: center;
   justify-content: center; }
 
