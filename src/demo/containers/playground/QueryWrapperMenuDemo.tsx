@@ -3,7 +3,7 @@ import { SynapseClient } from '../../../lib'
 import QueryWrapperMenu, { MenuConfig, QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../../lib/utils'
 import '../App.css'
-import { GenericCardSchema } from 'lib/containers/GenericCard'
+import { GenericCardSchema } from '../../../containers/GenericCard'
 
 type DemoState = {
   token: string

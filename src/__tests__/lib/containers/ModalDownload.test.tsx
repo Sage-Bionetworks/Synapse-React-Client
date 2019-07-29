@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
 import ModalDownload, { ModalDownloadProps } from '../../../lib/containers/ModalDownload'
-import { csvOption, tsvOption, writeHeaderOption, includeRowIdAndRowVersionOption } from 'lib/containers/ModalDownload.FormSchema'
+import { csvOption, tsvOption, writeHeaderOption, includeRowIdAndRowVersionOption } from '../../../lib/containers/ModalDownload.FormSchema'
 
 const createShallowComponent = (props: ModalDownloadProps) => {
   const wrapper = mount<ModalDownload>(
