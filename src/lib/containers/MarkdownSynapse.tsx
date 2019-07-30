@@ -226,11 +226,10 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       return
     }
     // use regex to grab all elements
-    const mathExpressions = this.markupRef.current.querySelectorAll(
-      '[id^="mathjax-"]'
-    )
     // go through all obtained elements and transform them with katex
-    mathExpressions.forEach((element: any) => {
+    var mathExpressions = [].slice.call(document.querySelectorAll('[id^="mathjax-"]'));
+    for (let index = 0; index < mathExpressions.length; index++) {
+      const element: any = mathExpressions[index];
       katex.render(element.textContent, element, {
         delimiters: [
           {
@@ -250,8 +249,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
           }
         ],
         throwOnError: false
-      })
-    })
+      })      
+    }
   }
   /**
    * Process all the corresponding bookmark tags of the references made throughout the page
@@ -377,7 +376,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const widgetRegex = /(<span data-widgetparams.*?span>)/
     // widgets is an array of either plain text/html or specific synapse markdown
     const widgets = markup.split(widgetRegex)
-    if (widgets.length > 0) {
+    if (markup.length > 0 && widgets.length > 0) {
       return this.processWidgetOrDomElement(widgets, markup)
     }
     return
