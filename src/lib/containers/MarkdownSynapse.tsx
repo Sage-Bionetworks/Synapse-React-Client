@@ -377,7 +377,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const widgetRegex = /(<span data-widgetparams.*?span>)/
     // widgets is an array of either plain text/html or specific synapse markdown
     const widgets = markup.split(widgetRegex)
-    if (widgets.length > 0) {
+    if (markup.length > 0 && widgets.length > 0) {
       return this.processWidgetOrDomElement(widgets, markup)
     }
     return
