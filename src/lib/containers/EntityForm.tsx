@@ -65,7 +65,7 @@ export default class EntityForm
         SynapseClient.getUserProfile(this.props.token),
         SynapseClient.getEntity(this.props.token, this.props.formSchemaEntityId),
         SynapseClient.getEntity(this.props.token, this.props.formUiSchemaEntityId),
-      ]
+      ] as Promise<any> []
       Promise.all(promises).then((values) => {
         const userprofile: UserProfile = values[0]
         this.getTargetContainer(userprofile, this.props.token!).then((targetContainerId: string) => {

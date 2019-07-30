@@ -389,8 +389,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName, facetAliases = {} } = config
-      const isSelected: boolean = this.state.activeMenuIndex === index && curLevel == this.state.accordionGroupIndex
-      const style: any = {}
+      const isSelected: boolean = this.state.activeMenuIndex === index && curLevel === this.state.accordionGroupIndex
+      const style: React.CSSProperties = {}
       let selectedStyling: string = ''
       if (isSelected) {
         // we have to programatically set the style since the color is chosen from a color

@@ -3,6 +3,7 @@ import { Link, Route, match } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
+import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
 import { MarkdownSynapseDemo } from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
@@ -34,53 +35,55 @@ const App = ({ match }: { match: match }) => {
           <li>
             <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
           </li>
+          <li>
+            <Link to={`${match.url}/ModalDownloadDemo`}>ModalDownload</Link>
+          </li>
         </ul>
 
         <Route
           exact={true}
           path={`${match.url}/QueryWrapperMenuDemo`}
-          // tslint:disable-next-line:jsx-no-lambda
           render={() => <QueryWrapperMenuDemo rgbIndex={0}/>}
         />
 
         <Route
           exact={true}
           path={`${match.url}/SearchDemo`}
-          // tslint:disable-next-line:jsx-no-lambda
           render={() => <SearchDemo />}
         />
 
         <Route
           exact={true}
           path={`${match.url}/CardContainerLogicDemo`}
-          // tslint:disable-next-line:jsx-no-lambda
           component={CardContainerLogicDemo}
         />
 
         <Route
           exact={true}
           path={`${match.url}/UserBadgeDemo`}
-          // tslint:disable-next-line:jsx-no-lambda
           component={() => <UserCardDemo/>}
         />
 
         <Route
           exact={true}
           path={`${match.url}/MarkdownSynapseDemo`}
-          // tslint:disable-next-line:jsx-no-lambda
           component={() => <MarkdownSynapseDemo/>}
         />
         <Route
           exact={true}
           path={`${match.url}/NewsFeedDemo`}
-          // tslint:disable-next-line:jsx-no-lambda
           component={() => <NewsFeedDemo/>}
         />
 
         <Route
           exact={true}
+          path={`${match.url}/ModalDownloadDemo`}
+          component={() => <ModalDownloadDemo/>}
+        />
+
+        <Route
+          exact={true}
           path={match.path}
-          // tslint:disable-next-line:jsx-no-lambda
           component={() => <div/>}
         />
 

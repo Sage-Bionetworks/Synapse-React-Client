@@ -713,6 +713,11 @@ checkmark styling end
   display: flex;
   align-items: center; }
 
+.SRC-centerAndJustifyContent {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
 .SRC-centerContentColumn {
   display: flex;
   flex-direction: column;

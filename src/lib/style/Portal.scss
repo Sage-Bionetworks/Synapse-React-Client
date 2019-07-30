@@ -481,7 +481,7 @@ a.SRC-anchor-light {
  button.SRC-roundBorder {
    border-radius: 15px;
  }
- 
+
  .SRC-marginBottomTen {
    margin-bottom: 10px;
  }
@@ -871,6 +871,12 @@ checkmark styling end
 .SRC-centerContent {
   display: flex;
   align-items: center;
+}
+
+.SRC-centerAndJustifyContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .SRC-centerContentColumn {
@@ -1307,7 +1313,6 @@ button {
     text-decoration: underline;
   }
 }
-
 
 .SRC-block {
   display: block;

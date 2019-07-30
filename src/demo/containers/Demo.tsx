@@ -46,44 +46,38 @@ class Demo extends React.Component<{}, DemoState> {
       showTabOne: false,
       tabOne:
       {
+        tableConfiguration: {
+          title: 'title',
+          synapseId: 'syn16787123',
+          unitDescription: 'datum'
+        },
         menuConfig: [
           {
             title: 'Data',
             facetDisplayValue: 'Organism',
             facetName: 'dataStatus',
             sql: 'SELECT projectStatus, dataStatus, tumorType, diseaseFocus FROM syn16787123',
-            synapseId: 'syn16787123',
-            unitDescription: 'dataStatus'
           },
           {
             title: 'Data',
             facetDisplayValue: 'Study',
             facetName: 'projectStatus',
             sql: 'SELECT * FROM syn16787123',
-            synapseId: 'syn16787123',
-            unitDescription: 'projectStatus',
-            visibleColumnCount: 5,
           }
         ],
         rgbIndex: 2
       }
     ,
       tabTwo: {
+        tableConfiguration: {
+          title: 'title',
+          synapseId: 'syn16858331',
+          unitDescription: 'datum'
+        },
         menuConfig: [
           {
             facetName: 'assay',
-            sql:
-            // tslint:disable-next-line:max-line-length
-            'SELECT * FROM syn16858331',
-            // facetAliases: {
-            //   id: 'File ID',
-            //   fundingAgency: 'Funding Agency',
-            //   assay: 'Assay',
-            //   dataType: 'Data Type'
-            // },
-            synapseId: 'syn16858331',
-            title: 'title',
-            unitDescription: 'datum'
+            sql: 'SELECT * FROM syn16858331',
           },
           {
             facetName: 'dataType',
@@ -92,7 +86,6 @@ class Demo extends React.Component<{}, DemoState> {
           {
             facetName: 'diagnosis',
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-            title: 'title'
           }
         ] as MenuConfig[]
         ,
@@ -321,6 +314,7 @@ class Demo extends React.Component<{}, DemoState> {
             isConsistent={true}
             name={'Demo'}
             token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
+            tableConfiguration={this.state.showTabOne ? this.state.tabOne.tableConfiguration : this.state.tabTwo.tableConfiguration}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
             stackedBarChartConfiguration={
