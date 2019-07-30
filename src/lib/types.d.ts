@@ -6,7 +6,6 @@ declare module 'browser-md5-file'
 declare module 'sql-parser'
 declare module 'react-native-rss-parser'
 declare module 'lodash.clonedeep'
-declare module 'es6-object-assign'
 
 declare module "*.svg" {
   const content: any;
