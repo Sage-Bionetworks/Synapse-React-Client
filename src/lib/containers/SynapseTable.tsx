@@ -181,9 +181,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       total = 0
     }
 
-    const tooltipIdOne = 'openAdvancedSearch'
-    const tooltipIdTwo = 'addAndRemoveColumns'
-    const tooltipIdThree = 'download'
+    const tooltipAdvancedSearchId = 'openAdvancedSearch'
+    const tooltipColumnSelectionId = 'addAndRemoveColumns'
+    const tooltipDownloadId = 'download'
     const { menuWallIsActive, isDropdownColumnMenuOpen, isModalDownloadOpen } = this.state
     const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
     let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
@@ -193,10 +193,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       sql,
       selectedFacets
     } = queryRequest.query
-    const modalDownloadOrEmpty = isModalDownloadOpen ? <ModalDownload onClose={this.toggleModalDownload} sql={sql} selectedFacets={selectedFacets} token={token} entityId={synapseId} />: <React.Fragment/>
     return (
       <React.Fragment>
-        {modalDownloadOrEmpty}
+        {
+          isModalDownloadOpen
+          &&
+          <ModalDownload
+            onClose={this.toggleModalDownload}
+            sql={sql}
+            selectedFacets={selectedFacets}
+            token={token}
+            entityId={synapseId}
+          />
+        }
         <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
         <div className="SRC-marginBottomTen">
           <p style={{ height:'20px' }}>
@@ -214,7 +223,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
             <span
               tabIndex={0}
-              data-for={tooltipIdOne}
+              data-for={tooltipAdvancedSearchId}
               data-tip="Open Advanced Search in Synapse"
               className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
               onKeyPress={this.advancedSearch}
@@ -227,11 +236,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 place="bottom"
                 type="dark"
                 effect="solid"
-                id={tooltipIdThree}
+                id={tooltipDownloadId}
             />
             <button
               style={{ marginLeft: '10px' }}
-              data-for={tooltipIdThree}
+              data-for={tooltipDownloadId}
               data-tip="Export Table"
               className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
               onClick={this.toggleModalDownload}
@@ -243,7 +252,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 place="bottom"
                 type="dark"
                 effect="solid"
-                id={tooltipIdOne}
+                id={tooltipAdvancedSearchId}
             />
             {
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
@@ -253,7 +262,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 <React.Fragment>
                   <span
                       tabIndex={0}
-                      data-for={tooltipIdTwo}
+                      data-for={tooltipColumnSelectionId}
                       data-tip="Add / Remove Columns"
                       style={{ marginLeft: '10px' }}
                       className={addRemoveColClasses}
@@ -268,7 +277,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                       place="bottom"
                       type="dark"
                       effect="solid"
-                      id={tooltipIdTwo}
+                      id={tooltipColumnSelectionId}
                   />
                   <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                       {this.renderDropdownColumnMenu(headers)}

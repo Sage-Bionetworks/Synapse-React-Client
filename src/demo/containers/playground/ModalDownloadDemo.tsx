@@ -21,6 +21,7 @@ class ModalDownloadDemo extends React.Component<{}, State> {
   }
 
   onOpen = () => {
+    console.log('opening')
     this.setState({
       showModal: true
     })
@@ -34,8 +35,8 @@ class ModalDownloadDemo extends React.Component<{}, State> {
           this.state.showModal
           &&
           <ModalDownload
-            sql={'SELECT * from syn18941147'}
-            entityId={'syn18941147'}
+            sql={'SELECT * from syn17328596'}
+            entityId={'syn17328596'}
             onClose={this.onClose}
           />
         }

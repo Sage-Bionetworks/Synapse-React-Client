@@ -92,9 +92,9 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
     SynapseClient.getFileHandleByIdURL(data!.resultsFileHandleId, token).then(
       url => {
         window.location.href = url
+        this.props.onClose()
       }
     )
-    this.props.onClose()
   }
 
   handleChange = (event: IChangeEvent) => {
@@ -108,20 +108,27 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
     const closeBtn: React.CSSProperties = {
       position: 'absolute',
       top: 10,
-      right: 10
+      right: 10,
+      zIndex: 10
     }
     const submitBtn: React.CSSProperties = {
       padding: '6px 10px',
       borderRadius: 6
     }
+    const spinnerStyle: React.CSSProperties = {
+      height: 50,
+      width: 50,
+      backgroundSize: 50
+    }
     return (
-      <div className="SRC-modal custom-checkbox-container">
-        <div className="container-fluid SRC-fullWidth">
-          <div className="row">
-            <div className="SRC-modal-content col-xs-6 col-xs-offset-3">
+      <React.Fragment>
+        <div className="modal fade in SRC-block" role="dialog" tabIndex={-1}>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
               <button style={closeBtn} onClick={this.props.onClose}>
                 <FontAwesomeIcon style={{fontSize: '21px'}} icon="times" />
               </button>
+              <div className="modal-body">
               <Form
                 schema={formSchemaArray[this.state.step]}
                 uiSchema={formSchemaUIArray[this.state.step]}
@@ -129,16 +136,16 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
                 formData={this.state.formData}
                 onSubmit={this.handleSubmit}
               >
-                {
-                  this.state.isLoading
-                  &&
-                  <div className="SRC-centerAndJustifyContent">
-                    <div className="SRC-center-text">
-                      <p> Creating the File </p>
-                      <div style={{height: 50, width: 50, backgroundSize: 50}} className="spinner" />
-                      <p> Loading... </p>
-                    </div>
+              {
+                this.state.isLoading
+                &&
+                <div className="SRC-centerAndJustifyContent">
+                  <div className="SRC-center-text">
+                    <p> Creating the File </p>
+                    <div style={spinnerStyle} className="spinner" />
+                    <p> Loading... </p>
                   </div>
+                </div>
                 }
                 <hr/>
                 <div style={{textAlign: 'right'}}>
@@ -146,10 +153,12 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
                   <button id="submitBtn" style={submitBtn} className="SRC-primary-background-color SRC-roundBorder SRC-whiteText" type="submit">{this.state.step === 0 ? 'Next': 'Download' }</button>
                 </div>
               </Form>
+              </div>
             </div>
           </div>
-        </div>
       </div>
-    )
+      <div className="modal-backdrop in"/>
+      </React.Fragment>
+   )
   }
 }
