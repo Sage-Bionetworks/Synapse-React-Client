@@ -1,6 +1,7 @@
 $primaryColor: #D53F77;
 
 .custom-checkbox-container {
+  overflow-y: hidden;
   .checkbox, .radio {
     padding-left: 0px;
     min-width: 27px;

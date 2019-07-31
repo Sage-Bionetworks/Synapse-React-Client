@@ -106,7 +106,8 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       tabOne: {
         tableConfiguration: {
           title: 'title',
-          unitDescription: 'datum'
+          unitDescription: 'datum',
+          synapseId: 'syn11346063'
         },
         menuConfig: [
           {
@@ -116,7 +117,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
-              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc syn11346063 limit 1000',
+              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
           },
           // {
           //   facetName: 'dataType',

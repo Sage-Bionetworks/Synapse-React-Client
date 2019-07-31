@@ -29,10 +29,10 @@ import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
 import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
 import ModalDownload from './ModalDownload'
-import { SynapseClient } from 'lib/utils';
-import { ReferenceList } from 'lib/utils/jsonResponses/ReferenceList'
-import { EntityHeader } from 'lib/utils/jsonResponses/EntityHeader';
-import { EntityLink } from './EntityLink';
+import { SynapseClient } from '../utils'
+import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
+import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
+import { EntityLink } from './EntityLink'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -74,6 +74,7 @@ export type SynapseTableState = {
   menuWallIsActive: boolean,
   isModalDownloadOpen: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
+  isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -101,6 +102,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.applyChanges = this.applyChanges.bind(this)
     this.toggleFilterDropdown = this.toggleFilterDropdown.bind(this)
     this.toggleModalDownload = this.toggleModalDownload.bind(this)
+    this.toggleDropdownDownloadOptions = this.toggleDropdownDownloadOptions.bind(this)
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -116,6 +118,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       isDropdownColumnMenuOpen: false,
       menuWallIsActive: false,
       isModalDownloadOpen: false,
+      isDropdownDownloadOptionsOpen: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -204,6 +207,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     })
   }
 
+  public toggleDropdownDownloadOptions()  {
+    this.setState({
+      isDropdownDownloadOptionsOpen: !this.state.isDropdownDownloadOptionsOpen
+    })
+  }
+
   /**
    * Display the view
    */
@@ -256,7 +265,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipColumnSelectionId = 'addAndRemoveColumns'
     const tooltipDownloadId = 'download'
-    const { menuWallIsActive, isDropdownColumnMenuOpen, isModalDownloadOpen } = this.state
+    const { menuWallIsActive, isDropdownColumnMenuOpen, isModalDownloadOpen, isDropdownDownloadOptionsOpen } = this.state
     const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
     let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
     addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
@@ -310,27 +319,30 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 effect="solid"
                 id={tooltipDownloadId}
             />
-            <button
-              style={{ marginLeft: '10px' }}
-              data-for={tooltipDownloadId}
-              data-tip="Export Table"
-              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-              onClick={this.toggleModalDownload}
-            >
-              <FontAwesomeIcon size="1x" color="white"  icon="download"/>
-            </button>
-            <ReactTooltip
-                delayShow={1500}
-                place="bottom"
-                type="dark"
-                effect="solid"
-                id={tooltipAdvancedSearchId}
-            />
+            <span className={` dropdown ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
+              <button
+                style={{ marginLeft: '10px' }}
+                data-for={tooltipDownloadId}
+                data-tip="Download Options"
+                className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                onClick={this.toggleDropdownDownloadOptions}
+              >
+                <FontAwesomeIcon size="1x" color="white"  icon="download"/>
+              </button>
+              <ReactTooltip
+                  delayShow={1500}
+                  place="bottom"
+                  type="dark"
+                  effect="solid"
+                  id={tooltipAdvancedSearchId}
+              />
+              {this.renderDownloadOptionsDropdown()}
+            </span>
             {
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
               // allow this option if there isn't a groupBy clause 
               !this.isGroupByInSql() &&
-              <span className={` dropdown ${this.state.isDropdownColumnMenuOpen ? 'open' : ''}`}>
+              <span className={` dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>
                 <React.Fragment>
                   <span
                       tabIndex={0}
@@ -352,7 +364,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                       id={tooltipColumnSelectionId}
                   />
                   <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                      {this.renderDropdownColumnMenu(headers)}
+                    {this.renderDropdownColumnMenu(headers)}
                   </ul>
                   </React.Fragment>
                 </span>
@@ -567,6 +579,40 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @returns {React.ReactNode}
    * @memberof SynapseTable
    */
+  private renderDownloadOptionsDropdown() {
+    return (
+      <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+        <li
+          style={{ listStyle: 'none' }}
+          className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+          onClick={this.toggleModalDownload}
+        >
+          <a className="SRC-no-focus" href="javascript:void">
+            Export Table
+          </a>
+        </li>
+          <li
+            style={{ listStyle: 'none' }}
+            className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+            onClick={this.advancedSearch}
+          >
+          <a className="SRC-no-focus" href="">
+            Download Files
+          </a>
+        </li>
+      </ul>
+    )
+  }
+
+  /**
+   * Renders the dropdown menu to the top right of table that allows users
+   * to toggle a columnn from the view of the table
+   *
+   * @private
+   * @param {SelectColumn[]} headers
+   * @returns {React.ReactNode}
+   * @memberof SynapseTable
+   */
   private renderDropdownColumnMenu(headers: SelectColumn[]): React.ReactNode {
     return headers.map((header: any, index: number) => {
       let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index]
@@ -600,7 +646,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       )
     })
   }
-
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
     const { isColumnSelected, mapEntityIdToHeader } = this.state
@@ -628,16 +673,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               <td className="SRC_noBorderTop" key={`(${rowIndex}${columnValue}${colIndex})`}>
                   {
                     isCountColumn &&
-                    <a href="" onClick={this.showGroupRowData(row)}>
+                    <a href="javascript:void" onClick={this.showGroupRowData(row)}>
                       <p className={isBold}>{columnValue}</p>
                     </a>
                   }
                   {
-                    !isCountColumn && entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)
+                    !isCountColumn && (
+                      entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)
                       ?
                       <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
                       :
                       <p className={isBold}> {columnValue} </p>
+                      )
                   }
               </td>
             )
