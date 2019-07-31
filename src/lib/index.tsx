@@ -14,6 +14,7 @@ import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import './style/Cards.css'
 import './style/Portal.css'
+import './style/Input.css'
 import { SynapseConstants, SynapseClient } from './utils/'
 
 const SynapseComponents = {

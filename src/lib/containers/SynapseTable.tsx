@@ -12,7 +12,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-// tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { FacetColumnResult,
          FacetColumnResultValueCount,
@@ -30,6 +29,10 @@ import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
 import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
 import ModalDownload from './ModalDownload'
+import { SynapseClient } from 'lib/utils';
+import { ReferenceList } from 'lib/utils/jsonResponses/ReferenceList'
+import { EntityHeader } from 'lib/utils/jsonResponses/EntityHeader';
+import { EntityLink } from './EntityLink';
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -56,6 +59,9 @@ type Info = {
   index: number
   name: string
 }
+interface Dictionary<T> {
+  [key: string]: T;
+}
 // look for "group by", multi-line and case insensitive
 const GROUP_BY_REGEX = /group by/mi
 export type SynapseTableState = {
@@ -67,6 +73,7 @@ export type SynapseTableState = {
   filterClassList: string [],
   menuWallIsActive: boolean,
   isModalDownloadOpen: boolean
+  mapEntityIdToHeader: Dictionary<EntityHeader>
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -113,8 +120,72 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       // selected currently and their sort status as eithet
       // off, desc, or asc.
       sortedColumnSelection: [],
+      mapEntityIdToHeader: {}
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
+    this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
+    this.getEntityColumnIndicies = this.getEntityColumnIndicies.bind(this)
+  }
+
+  componentDidMount() {
+    this.getEntityHeadersInData()
+  }
+
+  componentDidUpdate() {
+    this.getEntityHeadersInData()
+  }
+
+  public getEntityHeadersInData() {
+    const { data, token } = this.props
+    if (!data) {
+      return
+    }
+    const { mapEntityIdToHeader } = this.state
+    const entityColumnIndicies = this.getEntityColumnIndicies()
+    const distinctEntities = new Set<string>()
+    data!.queryResult.queryResults.rows.forEach(
+      (row) => {
+        row.values.forEach((el, colIndex) => {
+          // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
+          if (entityColumnIndicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el)) {
+            distinctEntities.add(el)
+          }
+        }
+      )
+    })
+    if (distinctEntities.size === 0) {
+      return
+    }
+    const referenceList: ReferenceList = Array.from(distinctEntities).map(id => { return { targetId: id }})
+    console.log('calling getEntityHeader')
+    SynapseClient.getEntityHeader(referenceList, token).then(
+      data => {
+        const { results } = data
+        results.forEach(
+          el => {
+            mapEntityIdToHeader[el.id] = el
+          }
+        )
+        this.setState({
+          mapEntityIdToHeader
+        })
+      }
+    ).catch(
+      err => {
+        console.log('Error on retrieving entity header list , ', err)
+      }
+    )
+  }
+
+  public getEntityColumnIndicies() {
+    const { data } = this.props
+    const columnsOfTypeEntity: number [] = []
+    data && data.selectColumns && data.selectColumns.forEach((el, index) => {
+      if (el.columnType === 'ENTITYID') {
+        columnsOfTypeEntity.push(index)
+      } 
+    })
+    return columnsOfTypeEntity
   }
 
   public useFacetAliasIfDefined(facetName: string) {
@@ -132,9 +203,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       isModalDownloadOpen: !this.state.isModalDownloadOpen
     })
   }
-    /**
-     * Display the view
-     */
+
+  /**
+   * Display the view
+   */
   public render() {
     if (this.props.data === undefined) {
       return (<div/>)
@@ -531,41 +603,46 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
-    const { isColumnSelected } = this.state
+    const { isColumnSelected, mapEntityIdToHeader } = this.state
+    const entityColumnIndicies = this.getEntityColumnIndicies()
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(this.props.getLastQueryRequest!().query.sql)
 
-    rows.forEach((row: any, i: any) => {
+    rows.forEach((row: any, rowIndex) => {
       const rowContent = row.values.map(
-        (columnValue: string, j: number) => {
-          const columnName = headers[j].name
+        (columnValue: string, colIndex: number) => {
+          const columnName = headers[colIndex].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
           const { visibleColumnCount = Infinity } = this.props
           // on iniital load isColumnSelected is null and we by default show all columns that come
           // before visibileColumnCount
-          const isColumnActiveInitLoad: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
+          const isColumnActiveInitLoad: boolean = colIndex < visibleColumnCount && isColumnSelectedLen === 0
           // past the initial load -- when a user has started clicking items, then isColumnSelected is
           // not null and we verify that this column is part of the selection.
-          const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
-          const isCountColumn = countColumnIndexes.includes(j)
+          const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[colIndex]
+          const isCountColumn = countColumnIndexes.includes(colIndex)
+          const isBold = index === -1 ? '' : 'SRC-boldText'
           if (isColumnActiveInitLoad || isColumnActivePastInitLoad) {
             return (
-              <td className="SRC_noBorderTop" key={`(${i}${columnValue}${j})`}>
+              <td className="SRC_noBorderTop" key={`(${rowIndex}${columnValue}${colIndex})`}>
                   {
                     isCountColumn &&
                     <a href="" onClick={this.showGroupRowData(row)}>
-                      <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                      <p className={isBold}>{columnValue}</p>
                     </a>
                   }
                   {
-                    !isCountColumn &&
-                    <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                    !isCountColumn && entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)
+                      ?
+                      <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
+                      :
+                      <p className={isBold}> {columnValue} </p>
                   }
               </td>
             )
           }
-          return (<td className="SRC-hidden" key={`(${i},${j})`}/>)
+          return (<td className="SRC-hidden" key={`(${rowIndex},${colIndex})`}/>)
         })
       const rowFormatted = (
         <tr key={row.rowId}>{rowContent}</tr>

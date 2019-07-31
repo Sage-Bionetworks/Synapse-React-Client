@@ -20,6 +20,9 @@ import { AccessControlList } from './jsonResponses/AccessControlList'
 import { Submission } from './jsonResponses/Submission'
 import { DownloadFromTableRequest } from './jsonResponses/Table/DownloadFromTableRequest';
 import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTableResult';
+import { ReferenceList } from './jsonResponses/ReferenceList';
+import { EntityHeader } from './jsonResponses/EntityHeader';
+import { PaginatedResults } from './jsonResponses/PaginatedResults';
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -491,6 +494,17 @@ export const getEntity: GetEntity = <T>(sessionToken: string | undefined = undef
                           endpoint: string = DEFAULT_ENDPOINT) => {
   const url = `/repo/v1/entity/${entityId}`
   return doGet(url, sessionToken, undefined, endpoint) as Promise<T>
+}
+
+/**
+ * Get the EntityHeader for a list of references with a POST. 
+ * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.
+ * https://docs.synapse.org/rest/POST/entity/header.html
+ */
+export const getEntityHeader = (references: ReferenceList,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost('repo/v1/entity/header', { references }, sessionToken, undefined, endpoint) as Promise<PaginatedResults<EntityHeader>>
 }
 
 export const updateEntity = (

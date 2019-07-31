@@ -111,12 +111,12 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             facetName: 'study',
-            sql: 'SELECT * FROM syn11346063',
+            sql: 'SELECT * FROM syn11346063 limit 1000',
           },
           {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
-              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
+              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc syn11346063 limit 1000',
           },
           // {
           //   facetName: 'dataType',
