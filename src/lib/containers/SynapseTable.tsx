@@ -263,12 +263,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
 
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
-    const tooltipColumnSelectionId = 'addAndRemoveColumns'
     const tooltipDownloadId = 'download'
-    const { menuWallIsActive, isDropdownColumnMenuOpen, isModalDownloadOpen, isDropdownDownloadOptionsOpen } = this.state
+    const { menuWallIsActive, isModalDownloadOpen } = this.state
     const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
-    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
-    addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     const queryRequest = this.props.getLastQueryRequest!()
     const {
       sql,
@@ -277,6 +274,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return (
       <React.Fragment>
         {
+          // modal can render anywhere, this is not a particular location
           isModalDownloadOpen
           &&
           <ModalDownload
@@ -319,55 +317,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 effect="solid"
                 id={tooltipDownloadId}
             />
-            <span className={` dropdown ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
-              <button
-                style={{ marginLeft: '10px' }}
-                data-for={tooltipDownloadId}
-                data-tip="Download Options"
-                className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                onClick={this.toggleDropdownDownloadOptions}
-              >
-                <FontAwesomeIcon size="1x" color="white"  icon="download"/>
-              </button>
-              <ReactTooltip
-                  delayShow={1500}
-                  place="bottom"
-                  type="dark"
-                  effect="solid"
-                  id={tooltipAdvancedSearchId}
-              />
-              {this.renderDownloadOptionsDropdown()}
-            </span>
+            {this.renderDropdownDownloadOptions()}
             {
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
               // allow this option if there isn't a groupBy clause 
-              !this.isGroupByInSql() &&
-              <span className={` dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>
-                <React.Fragment>
-                  <span
-                      tabIndex={0}
-                      data-for={tooltipColumnSelectionId}
-                      data-tip="Add / Remove Columns"
-                      style={{ marginLeft: '10px' }}
-                      className={addRemoveColClasses}
-                      onKeyPress={this.toggleMenuWall}
-                      onClick={this.toggleMenuWall}
-                      id="dropdownMenu1"
-                  >
-                      <FontAwesomeIcon color="white" icon="columns"/>
-                  </span>
-                  <ReactTooltip
-                      delayShow={1500}
-                      place="bottom"
-                      type="dark"
-                      effect="solid"
-                      id={tooltipColumnSelectionId}
-                  />
-                  <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                    {this.renderDropdownColumnMenu(headers)}
-                  </ul>
-                  </React.Fragment>
-                </span>
+              !this.isGroupByInSql() && this.renderDropdownColumnMenu(headers)
             }
           </span>
         </div>
@@ -406,6 +360,41 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const encodedQuery = btoa(queryJSON)
     // open this in a new window on synapse.org
     window.open(`https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`, '_self')
+  }
+
+  private renderDropdownDownloadOptions = () => {
+    const { isDropdownDownloadOptionsOpen } = this.state
+    const tooltipAdvancedSearchId = 'openAdvancedSearch'
+    const tooltipDownloadId = 'download'
+    return (
+      <span className={` dropdown ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
+        <button style={{ marginLeft: '10px' }} data-for={tooltipDownloadId} data-tip="Download Options" className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" onClick={this.toggleDropdownDownloadOptions}>
+          <FontAwesomeIcon size="1x" color="white" icon="download" />
+        </button>
+        <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid" id={tooltipAdvancedSearchId} />
+        {this.renderDownloadOptionsDropdown()}
+      </span>
+    )
+  }
+
+  private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
+    const { isDropdownColumnMenuOpen } = this.state
+    const tooltipColumnSelectionId = 'addAndRemoveColumns'
+    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
+    addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
+    return (
+      <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>
+        <React.Fragment>
+          <span tabIndex={0} data-for={tooltipColumnSelectionId} data-tip="Add / Remove Columns" style={{ marginLeft: '10px' }} className={addRemoveColClasses} onKeyPress={this.toggleMenuWall} onClick={this.toggleMenuWall} id="dropdownMenu1">
+            <FontAwesomeIcon color="white" icon="columns" />
+          </span>
+          <ReactTooltip delayShow={1500} place="bottom" type="dark" effect="solid" id={tooltipColumnSelectionId} />
+          <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+            {this.renderDropdownColumnMenuItems(headers)}
+          </ul>
+        </React.Fragment>
+      </span>
+    )
   }
 
   /**
@@ -613,7 +602,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @returns {React.ReactNode}
    * @memberof SynapseTable
    */
-  private renderDropdownColumnMenu(headers: SelectColumn[]): React.ReactNode {
+  private renderDropdownColumnMenuItems = (headers: SelectColumn[]) => {
     return headers.map((header: any, index: number) => {
       let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index]
       // if visibleColumnCount is not defined then show all columns
@@ -700,10 +689,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
-    const columnElements: JSX.Element[] = []
     const { isColumnSelected, sortedColumnSelection, columnIconSortState } = this.state
     const { visibleColumnCount = Infinity } = this.props
-    headers.map((column: SelectColumn, index: number) => {
+    return headers.map((column: SelectColumn, index: number) => {
       // two cases when rendering the column headers on init load
       // of the page we have to show only this.props.visibleColumnCount many
       // columns, afterwards we rely on the isColumnSelected to get choices
@@ -723,7 +711,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
         const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
-        columnElements.push(
+        return (
           <th key={column.name}>
             <div className="SRC-centerContent">
               <span style={{ whiteSpace: 'nowrap' }}>
@@ -745,10 +733,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </th>
         )
       } else {
-        columnElements.push(<th className="SRC-hidden" key={column.name} />)
+        return <th className="SRC-hidden" key={column.name} />
       }
     })
-    return columnElements
   }
 
   /**
