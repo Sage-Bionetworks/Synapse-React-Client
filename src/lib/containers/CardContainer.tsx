@@ -120,9 +120,9 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       })
 
     // We want to hide the view more button if:
-    //     1. The data fed in has !== PAGE_SIZE number of results
-    //     2. The hasMoreData prop is false
-    //     3. The limit is set to less than PAGE_SIZE
+    //   1. The data fed in has !== PAGE_SIZE number of results
+    //   2. The hasMoreData prop is false
+    //   3. The limit is set to less than PAGE_SIZE
     // below we show the view more button by following the opposite logic from above.
     let showViewMore: boolean = limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
     showViewMore = showViewMore && this.props.hasMoreData!

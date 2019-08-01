@@ -22,7 +22,7 @@ export type ModalDownloadState = {
 export type ModalDownloadProps = {
   entityId: string
   sql: string
-  onClose: () => void
+  onClose: (...args: any []) => void
   token?: string
   includeEntityEtag?: boolean
   selectedFacets?: FacetColumnRequest [] // The selected facet filters.
