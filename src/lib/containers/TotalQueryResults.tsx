@@ -6,11 +6,13 @@ export type TotalQueryResultsProps = {
   filter?: string
   totalResultsNoFacet?: number
   isLoading: boolean
-  unitDescription: string
+  style?: React.CSSProperties
+  doneLoadingTextFunction:(total: number, loader: JSX.Element ) => JSX.Element | string
+  isLoadingTextFunction:  (total: number, loader: JSX.Element ) => JSX.Element | string
 }
 
 export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> =
-  ({ data, filter, totalResultsNoFacet, isLoading, unitDescription }) => {
+  ({ data, filter, totalResultsNoFacet, isLoading, style, doneLoadingTextFunction, isLoadingTextFunction }) => {
     const { facets = [] } = data
     let total = 0
     if (filter) {
@@ -46,10 +48,11 @@ export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> 
       }
       total = totalResultsNoFacet
     }
+    const loader = <span style={{ marginLeft: '2px' }} className={'spinner'}/> 
     return (
-      <p className="SRC-boldText SRC-text-title SRC-centerContent">Displaying {total} {unitDescription}
-        {/* show loading spinner if isLoading */}
-        {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'}/>}
+      <p style={style} className="SRC-boldText SRC-text-title SRC-centerContent">
+        {!isLoading && doneLoadingTextFunction(total, loader)}
+        {isLoading &&  isLoadingTextFunction(total, loader)}
       </p>
     )
   }

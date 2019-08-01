@@ -104,9 +104,9 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       }
     ,
       tabOne: {
+        unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
-          unitDescription: 'datum',
           synapseId: 'syn11346063'
         },
         menuConfig: [

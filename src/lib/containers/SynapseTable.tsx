@@ -33,6 +33,7 @@ import { SynapseClient } from '../utils'
 import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
 import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { EntityLink } from './EntityLink'
+import { TotalQueryResults } from './TotalQueryResults';
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -221,7 +222,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (<div/>)
     }
     // unpack all the data
-    const { data, filter, isLoading, unitDescription, token, synapseId } = this.props
+    const { data, filter, isLoading = true, unitDescription, token, synapseId } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
@@ -286,16 +287,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           />
         }
         <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
-        <div className="SRC-marginBottomTen">
-          <p style={{ height:'20px' }}>
-            {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
-            {isLoading &&
-              <React.Fragment>
-                <span className={'spinner'}/>
-                <strong> {'    '} Table results updating...</strong>
-              </React.Fragment>
-            }
-          </p>
+        <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
+          <TotalQueryResults 
+            filter={this.props.filter}
+            data={this.props.data}
+            isLoading={isLoading}
+            style={{fontSize: 15}}
+            doneLoadingTextFunction={(total, _loader) => `Showing ${total} ${unitDescription}`}
+            isLoadingTextFunction={(_total, loader) => <React.Fragment>  {loader} Table results updating... </React.Fragment>}
+          />
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
           <h3 className="SRC-tableHeader"> {this.props.title}</h3>
@@ -577,7 +577,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           onClick={this.toggleModalDownload}
         >
           <a className="SRC-no-focus" href="javascript:void">
-            Export Table
+            Export Metadata
           </a>
         </li>
           <li

@@ -185,8 +185,9 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
           <TotalQueryResults
             data={data}
             filter={filter}
-            unitDescription={unitDescription!}
             isLoading={isLoading!}
+            doneLoadingTextFunction={(total, _loader) => <React.Fragment> Displaying {total} {unitDescription} </React.Fragment>}
+            isLoadingTextFunction={(total, loader) => <React.Fragment> Displaying {total} {unitDescription} {loader} </React.Fragment>}
           />
         }
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
