@@ -133,33 +133,38 @@ describe('it renders an accordion config', () => {
     expect(wrapper).toBeDefined()
   })
 
-  it('renders with all the top level keys closed initially', async () => {
+  it('renders with the first top level key rendered initially', async () => {
     const { wrapper } = await createShallowComponent(props)
-    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(0)
+    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(1)
+    // check first option under group index is selected
+    expect(wrapper.find('.SRC-menuLayout').childAt(1).find('.SRC-pointed-triangle-right')).toHaveLength(1)
     expect(wrapper.find(`div.${GROUP_INDEX_CSS}`)).toHaveLength(2)
   })
 
-  it('performs open, open, close', async () => {
+  it('performs open group, selection, open group, selection, open group', async () => {
     const { wrapper } = await createShallowComponent(props)
     const classIndiciatingAccordionKey = `div.${GROUP_INDEX_CSS}`
     const childOne = 0
     const childTwo = 1
-    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(0)
-    // click the first top level key           
-    await wrapper.find(classIndiciatingAccordionKey).at(childOne).simulate('click')
-    // check the first key is open and second is closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
-    // click the second top level key
+    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(1)
+    // click the second top level key           
     await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
-    // check the second key is open and first is closed
+    // check the first key is closed and second is open with first child also open
     expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
     expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
-    // click the second top level key again
-    await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
-    // check that both keys are now closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
+    console.log(wrapper.find('.SRC-menuLayout').childAt(1 ).html())
+    expect(wrapper.find('.SRC-menuLayout').childAt(childTwo)).toHaveLength(1)
+    // click the first top level key
+    await wrapper.find(classIndiciatingAccordionKey).at(childOne).simulate('click')
+    await wrapper.find(classIndiciatingAccordionKey).at(childOne + 1).find('.SRC-accordion-menu').childAt(1).simulate('click')
+    // check the second key is open and first is closed
+    // expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
+    // expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
+    // // click the second top level key again
+    // await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
+    // // check that both keys are now closed
+    // expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
+    // expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
   })
 
 })

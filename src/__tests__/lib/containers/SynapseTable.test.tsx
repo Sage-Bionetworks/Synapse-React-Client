@@ -6,9 +6,9 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
-import { Row } from 'src/lib/utils/jsonResponses/Table/QueryResult'
-import { SelectColumn } from 'src/lib/utils/jsonResponses/Table/SelectColumn'
-import { ColumnModel } from 'src/lib/utils/jsonResponses/Table/ColumnModel'
+import { Row } from '../../../lib/utils/jsonResponses/Table/QueryResult'
+import { SelectColumn } from '../../../lib/utils/jsonResponses/Table/SelectColumn'
+import { ColumnModel } from '../../../lib/utils/jsonResponses/Table/ColumnModel'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow(

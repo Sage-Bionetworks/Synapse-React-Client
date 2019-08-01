@@ -1,5 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import * as React from 'react'
 import { SynapseConstants } from '../utils/'
@@ -14,12 +12,10 @@ import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue } from '../utils/modules/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
+import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faAngleLeft)
-library.add(faAngleRight)
-library.add(faMinus)
 library.add(faPlus)
 
 type MenuState = {
@@ -317,7 +313,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             background: isActive ? primaryColor : lightColor,
             color: isActive ? 'white' : '',
           }
-          let indicatorClasses = isActive ? 'SRC-whiteText ' : ''
+          let indicatorClasses = isActive ? 'SRC-whiteText ' : ' SRC-hand-cursor '
           if (isActive) {
             indicatorClasses += GROUP_INDEX_SELECTED_CSS
             style.borderTopColor = primaryColor
@@ -334,18 +330,18 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             <React.Fragment>
               <div 
                 style={style}
-                role="button"
+                role={isActive ? "": "role"}
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${GROUP_INDEX_CSS} SRC-gap SRC-hand-cursor SRC-menu-button-base ${indicatorClasses}`}
-                onClick={this.toggleGroupAccordionIndex(index)}
+                className={`${GROUP_INDEX_CSS} SRC-gap SRC-menu-button-base ${indicatorClasses}`}
+                onClick={!isActive ? this.toggleGroupAccordionIndex(index) : undefined }
               >
                 {el.name}
                 <span className="menu-icon">
                   {
                     !isActive
                     &&
-                    <FontAwesomeIcon className={isActive ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isActive ? 'white': 'black'} icon={isActive ? 'minus' : 'plus'} />
+                    <FontAwesomeIcon size={'xs'} color={'black'} icon={'plus'} />
                   }
                 </span>
               </div>
@@ -356,7 +352,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                   <CSSTransition
                     key={JSON.stringify(el)}
                     classNames="SRC-accordion-menu"
-                    // try one or the other
                     timeout={{ enter: 1000, exit: 500 }}
                   >
                     <div className="SRC-accordion-menu">
