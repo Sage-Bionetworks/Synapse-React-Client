@@ -1267,7 +1267,8 @@ div.SRC-userImg {
   color: #D53F77; }
 
 .srcRssFeed {
-  list-style: none; }
+  list-style: none;
+  padding-left: 0px; }
 
 .srcRssFeedItem {
   border: 1px solid #dddddf;
@@ -1347,3 +1348,20 @@ button {
 
 .SRC-block {
   display: block; }
+
+.SRC-mailchimpSubscribeContainer {
+  border: 1px solid #dddddd;
+  padding: 10px 20px 10px 20px;
+  margin-bottom: 20px; }
+
+.SRC-mailchimpSubscribeContainer input {
+  width: 400px; }
+
+.SRC-mailchimpSubscribeContainer button {
+  display: block;
+  margin-top: 5px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  background-color: #DFDFDF; }
