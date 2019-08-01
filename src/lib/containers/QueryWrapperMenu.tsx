@@ -23,10 +23,8 @@ library.add(faMinus)
 library.add(faPlus)
 
 type MenuState = {
-  activeMenuIndex: number
-  visibleGroupAccordionIndex: number | undefined
+  activeMenuIndices: number []
   accordionGroupIndex: number,
-  hasClickedMenuItemOnce: boolean
 }
 
 export type MenuConfig = {
@@ -81,14 +79,17 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     // See note about initializing props from state here
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
     
-    const { searchParams } = this.props
+    const { searchParams, accordionConfig } = this.props
+    let activeMenuIndices = []
     const indexFromURLOrDefaultZero = (searchParams && Number(searchParams.menuIndex)) || 0
-    const activeMenuIndex = indexFromURLOrDefaultZero
+    if (accordionConfig) {
+      activeMenuIndices = new Array(accordionConfig.length).fill(0)
+    } else {
+      activeMenuIndices = [indexFromURLOrDefaultZero]
+    }
     this.state = {
-      activeMenuIndex,
-      visibleGroupAccordionIndex: undefined,
-      accordionGroupIndex: 0,
-      hasClickedMenuItemOnce: false
+      activeMenuIndices,
+      accordionGroupIndex: 0
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -99,12 +100,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       Update the row count or the menu index if the props changed by looking at whether the sql or the rgbIndex
       changed
     */
-    const { rgbIndex } = this.props
+    let { activeMenuIndices } = this.state
+    const { rgbIndex, accordionConfig } = this.props
     if (rgbIndex !== prevProps.rgbIndex) {
+      activeMenuIndices = accordionConfig ? new Array(accordionConfig.length).fill(0): [0] 
       this.setState({
-        visibleGroupAccordionIndex: undefined,
+        activeMenuIndices,
         accordionGroupIndex: 0,
-        activeMenuIndex: 0,
       })
     }
   }
@@ -132,17 +134,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    * @memberof Menu
    */
   public switchFacet = (menuIndexIn: number, accordionIndexIn: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
-    const { activeMenuIndex, accordionGroupIndex } = this.state
+    const { activeMenuIndices, accordionGroupIndex } = this.state
     // there's an odd bug where clicking a menu item twice will select the first tab,
     // this is a fix for that, but this shouldn't be necessary
-    const isClickingCurrentSelection = accordionGroupIndex === accordionIndexIn && activeMenuIndex === menuIndexIn
+    const isClickingCurrentSelection = accordionGroupIndex === accordionIndexIn && activeMenuIndices[accordionIndexIn] === menuIndexIn
+    activeMenuIndices[accordionIndexIn] = menuIndexIn
     if (!isClickingCurrentSelection) {
-      this.setState({ activeMenuIndex: menuIndexIn, accordionGroupIndex: accordionIndexIn })
-    }
-    if (!this.state.hasClickedMenuItemOnce) {
-      this.setState({
-        hasClickedMenuItemOnce: true
-      })
+      this.setState({ activeMenuIndices, accordionGroupIndex: accordionIndexIn })
     }
   }
 
@@ -151,26 +149,23 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    *
    * @memberof Menu
    */
-  public toggleGroupAccordionIndex = (accordionGroupIndexIn: number) => (event: React.SyntheticEvent<HTMLDivElement>) => {
-    const { visibleGroupAccordionIndex } = this.state
-    if (visibleGroupAccordionIndex === accordionGroupIndexIn) {
-      this.setState({
-        // all are closed in this case
-        visibleGroupAccordionIndex: undefined
-      })
+  public toggleGroupAccordionIndex = (accordionGroupIndexIn: number) => (_event: React.SyntheticEvent<HTMLDivElement>) => {
+    const { accordionGroupIndex } = this.state
+    if (accordionGroupIndex === accordionGroupIndexIn) {
+      return
     } else {
       this.setState({
-        visibleGroupAccordionIndex: accordionGroupIndexIn
+        accordionGroupIndex: accordionGroupIndexIn
       })
     }
   }
 
   public render() {
     const { stackedBarChartConfiguration, name, menuConfig } = this.props
-    const { activeMenuIndex } = this.state
+    const { activeMenuIndices } = this.state
     let sql = ''
     if (menuConfig) {
-      sql = menuConfig[activeMenuIndex].sql
+      sql = menuConfig[activeMenuIndices[0]].sql
     }
     const menuDropdown = this.renderMenuDropdown()
     const queryWrapper = this.renderQueryChildren()
@@ -212,7 +207,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       unitDescription = '',
     } = queryConfig
     
-    const { activeMenuIndex } = this.state
+    const { activeMenuIndices, accordionGroupIndex } = this.state
 
     let facetValue = ''
     let menuIndexFromProps = ''
@@ -221,7 +216,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     const showBarChart = stackedBarChartConfiguration !== undefined
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const isSelected: boolean = activeMenuIndex === index
+      const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index
       const {
         facetName,
         facetAliases,
@@ -309,28 +304,23 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   private renderMenuDropdown() {
     const { accordionConfig, menuConfig } = this.props
     // accordionGroupIndex ??
-    const { visibleGroupAccordionIndex, accordionGroupIndex, hasClickedMenuItemOnce } = this.state
+    const { accordionGroupIndex } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     const lightColor = '#F5F5F5'
     if (accordionConfig) {
       return accordionConfig.map(
         (el, index) => {
-          const isExpanded = visibleGroupAccordionIndex === index
-          const isLastActiveSelection = (accordionGroupIndex === index) && hasClickedMenuItemOnce
-          const isActive = isExpanded || isLastActiveSelection
+          const isActive = accordionGroupIndex === index
           const primaryColor = colorPalette[0]
           let style: React.CSSProperties = {
             background: isActive ? primaryColor : lightColor,
-            color: isExpanded ? 'white' : '',
+            color: isActive ? 'white' : '',
           }
           let indicatorClasses = isActive ? 'SRC-whiteText ' : ''
-          if (isExpanded) {
+          if (isActive) {
             indicatorClasses += GROUP_INDEX_SELECTED_CSS
             style.borderTopColor = primaryColor
-          } else if (isLastActiveSelection) {
-            indicatorClasses += 'SRC-pointed-triangle-right'
-            style.borderLeftColor = primaryColor
           }
           const hoverEnter: Info = {
             isSelected: isActive,
@@ -352,12 +342,16 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
               >
                 {el.name}
                 <span className="menu-icon">
-                  <FontAwesomeIcon className={isActive ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isActive ? 'white': 'black'} icon={isExpanded ? 'minus' : 'plus'} />
+                  {
+                    !isActive
+                    &&
+                    <FontAwesomeIcon className={isActive ? '' : 'SRC-accordion-not-selected'} size={'xs'} color={isActive ? 'white': 'black'} icon={isActive ? 'minus' : 'plus'} />
+                  }
                 </span>
               </div>
               <TransitionGroup>
                 {
-                  visibleGroupAccordionIndex === index
+                  isActive
                   &&
                   <CSSTransition
                     key={JSON.stringify(el)}
@@ -381,6 +375,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
     const { rgbIndex, accordionConfig } = this.props
+    const { activeMenuIndices, accordionGroupIndex } = this.state
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     let originalColor = colorPalette[0]
     let defaultColor = '#F5F5F5'
@@ -390,7 +385,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName, facetAliases = {} } = config
-      const isSelected: boolean = this.state.activeMenuIndex === index && curLevel === this.state.accordionGroupIndex
+      const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
       const style: React.CSSProperties = {}
       let selectedStyling: string = ''
       if (isSelected) {

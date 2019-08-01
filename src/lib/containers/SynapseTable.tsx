@@ -136,11 +136,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.getEntityHeadersInData()
   }
 
-  closeMenuWall = (event: MouseEvent) => {
-    const { currentTarget } = event
-    if (currentTarget) {
-      
-    }
+  componentDidUpdate() {
+    this.getEntityHeadersInData()
   }
 
   public getEntityHeadersInData() {
@@ -248,7 +245,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           isModalDownloadOpen
           &&
           <ModalDownload
-            onClose={this.toggleStateVariables('isDropdownDownloadOptionsOpen', 'menuWallIsActive')}
+            onClose={this.closeMenuClickHandler}
             sql={sql}
             selectedFacets={selectedFacets}
             token={token}
