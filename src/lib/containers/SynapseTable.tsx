@@ -33,7 +33,7 @@ import { SynapseClient } from '../utils'
 import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
 import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { EntityLink } from './EntityLink'
-import { TotalQueryResults } from './TotalQueryResults';
+import { TotalQueryResults } from './TotalQueryResults'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -54,8 +54,10 @@ export const SELECT_ALL = 'SELECT_ALL'
 export const DESELECT_ALL = 'DESELECT_ALL'
 // double check these icons!
 export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
-type direction = ''|'ASC'|'DESC'
-export const SORT_STATE: direction [] = ['', 'DESC', 'ASC']
+type Direction = ''|'ASC'|'DESC'
+export const SORT_STATE: Direction [] = ['', 'DESC', 'ASC']
+export const METADATA_BTN_ID= 'SRC-tables-metadata-btn'
+export const DOWNLOAD_FILES_BTN_ID= 'SRC-tables-download-btn'
 type Info = {
   index: number
   name: string
@@ -97,7 +99,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
     this.toggleIsDropdownColumnMenuOpen = this.toggleIsDropdownColumnMenuOpen.bind(this)
     this.advancedSearch = this.advancedSearch.bind(this)
-    this.download = this.download.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
@@ -565,6 +566,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return (
       <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
         <li
+          id={METADATA_BTN_ID}
           style={{ listStyle: 'none' }}
           className="SRC-table-dropdown-list SRC-primary-background-color-hover"
           onClick={this.toggleStateVariables('isModalDownloadOpen', 'menuWallIsActive')}
@@ -573,15 +575,16 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             Export Metadata
           </a>
         </li>
-          <li
-            style={{ listStyle: 'none' }}
-            className="SRC-table-dropdown-list SRC-primary-background-color-hover"
-            onClick={this.advancedSearch}
-          >
-          <a className="SRC-no-focus" href="">
-            Download Files
-          </a>
-        </li>
+        <li
+          id={DOWNLOAD_FILES_BTN_ID}
+          style={{ listStyle: 'none' }}
+          className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+          onClick={this.advancedSearch}
+        >
+        <a className="SRC-no-focus" href="">
+          Download Files
+        </a>
+      </li>
       </ul>
     )
   }
@@ -748,14 +751,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return -1
   }
 
-  // TODO: implement this method
-  private download() {
-    return
-  }
-
-  // Direct user to synapse corresponding synapse table
+  // Direct user to corresponding query on synapse
   private advancedSearch(event: React.SyntheticEvent) {
-    event.preventDefault()
+    event && event.preventDefault()
     const lastQueryRequest = this.props.getLastQueryRequest!()
     const { query } = lastQueryRequest
         // base 64 encode the json of the query and go to url with the encoded object
