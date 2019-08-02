@@ -19,15 +19,15 @@ const createShallowComponent = (props: TotalQueryResultsProps) => {
 describe('it works', () => {
   const FUNDING_AGENCY_COUNT = 59
   const FUNDING_AGENCY_FACET_INDEX = 2
-  const UNIT_DESCRIPTION = 'agencies'
-
+  const displayText = 'Displaying'
   // cast the data to ignore ts warning
   const data = syn16787123Json as QueryResultBundle
   const props: TotalQueryResultsProps = {
     data,
     isLoading: false,
-    unitDescription: UNIT_DESCRIPTION,
-    filter: 'fundingAgency'
+    filter: 'fundingAgency',
+    doneLoadingTextFunction: (total, loader) => <React.Fragment>{displayText} {total}{loader}</React.Fragment>,
+    isLoadingTextFunction: (total, loader) => <React.Fragment>{displayText} {total}{loader}</React.Fragment>
   }
   it('renders without crashing', () => {
     const tree = createShallowComponent(props)
@@ -36,7 +36,7 @@ describe('it works', () => {
 
   it('renders with a faceted view correctly', async () => {
     const { wrapper } = createShallowComponent(props)
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(`Displaying ${FUNDING_AGENCY_COUNT} ${UNIT_DESCRIPTION}`)
+    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT}`)
   })
 
   it('renders with a loading spinner when loading', async () => {
@@ -52,11 +52,11 @@ describe('it works', () => {
       }
     )
     const { wrapper } = createShallowComponent({ ...props, data: cloneData })
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(`Displaying ${FUNDING_AGENCY_COUNT} ${UNIT_DESCRIPTION}`)
+    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT}`)
   })
 
   it('renders without a faceted view correctly', async () => {
     const { wrapper } = createShallowComponent({ ...props, totalResultsNoFacet: 59, filter: '' })
-    expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual(`Displaying ${FUNDING_AGENCY_COUNT} ${UNIT_DESCRIPTION}`)
+    expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT}`)
   })
 })
