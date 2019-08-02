@@ -33,6 +33,8 @@ export type MenuConfig = {
 // utility for testing
 export const GROUP_INDEX_CSS = 'SRC-accordion-key'
 export const GROUP_INDEX_SELECTED_CSS = 'SRC-IS-ACTIVE'
+export const MENU_GROUP_CSS = 'SRC-menuLayout'
+export const MENU_ITEM_SELECTED_CSS = 'SRC-pointed-triangle-right'
 
 interface MenuSearchParams extends KeyValue {
   menuIndex: string

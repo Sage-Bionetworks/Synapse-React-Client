@@ -91,7 +91,7 @@ describe('basic functionality', () => {
       const { wrapper } = createShallowComponent(props)
       // there are a total of 13 columns in view, so we expect
       // 13 list elements
-      expect(wrapper.find('li.SRC-table-dropdown-list')).toHaveLength(totalColumns)
+      expect(wrapper.find('.SRC-column-menu li.SRC-table-dropdown-list')).toHaveLength(totalColumns)
     })
 
     it('toggle column selection functions correctly', async () => {

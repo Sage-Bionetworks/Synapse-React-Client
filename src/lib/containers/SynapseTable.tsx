@@ -382,7 +382,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             effect="solid" 
             id={tooltipColumnSelectionId} 
           />
-          <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+          <ul className="dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
             {this.renderDropdownColumnMenuItems(headers)}
           </ul>
         </React.Fragment>
