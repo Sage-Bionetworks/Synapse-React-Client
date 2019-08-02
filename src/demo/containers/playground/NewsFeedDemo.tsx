@@ -8,6 +8,7 @@ export const NewsFeedDemo:React.SFC = () => {
     <div className="container">
       <RssFeed
         url={'https://portalnewsdev.wpengine.com/?feed=rss2&cat=2'}
+        maxItemsToShow={2}
       />
       <div className="SRC-mailchimpSubscribeContainer">
         <p>Sign up to receive the AD Knowledge Portal's quarterly newsletter</p>
