@@ -70,11 +70,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'diagnosis',
-                sql: `${computationalSql} LIMIT 1 `,
+                sql: `${computationalSql}`,
               },
               {
                 facetName: 'modelType',
-                sql: `${computationalSql} LIMIT 2`,
+                sql: `${computationalSql}`,
               },
             ],
           },
@@ -92,11 +92,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'reagentType',
-                sql: `${experimentalSql} LIMIT 1`,
+                sql: `${experimentalSql}`,
               },
               {
                 facetName: 'softwareType',
-                sql: `${experimentalSql} LIMIT 2`,
+                sql: `${experimentalSql}`,
               },
             ],
           },
@@ -202,7 +202,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         <h2>Demo of table</h2>
           <QueryWrapperMenu
             token={''}
-            name={'Studies'}
             isConsistent={true}
             {...props}
             rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}

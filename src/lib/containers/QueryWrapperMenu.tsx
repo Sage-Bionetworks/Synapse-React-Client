@@ -32,7 +32,7 @@ export type MenuConfig = {
 
 // utility for testing
 export const GROUP_INDEX_CSS = 'SRC-accordion-key'
-export const GROUP_INDEX_SELECTED_CSS = 'SRC-pointed-triangle-down'
+export const GROUP_INDEX_SELECTED_CSS = 'SRC-IS-ACTIVE'
 
 interface MenuSearchParams extends KeyValue {
   menuIndex: string
@@ -313,9 +313,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             background: isActive ? primaryColor : lightColor,
             color: isActive ? 'white' : '',
           }
-          let indicatorClasses = isActive ? 'SRC-whiteText ' : ' SRC-hand-cursor '
+          let indicatorClasses = isActive ? 'SRC-whiteText SRC-pointed-triangle-down' : ' SRC-hand-cursor '
           if (isActive) {
-            indicatorClasses += GROUP_INDEX_SELECTED_CSS
             style.borderTopColor = primaryColor
           }
           const hoverEnter: Info = {
@@ -327,7 +326,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             originalColor: lightColor
           }
           return (
-            <React.Fragment>
+            <div className={isActive ? GROUP_INDEX_SELECTED_CSS : ''}>
               <div 
                 style={style}
                 role={isActive ? "": "role"}
@@ -345,7 +344,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                   }
                 </span>
               </div>
-              <TransitionGroup>
+              <TransitionGroup component={null}>
                 {
                   isActive
                   &&
@@ -354,13 +353,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                     classNames="SRC-accordion-menu"
                     timeout={{ enter: 1000, exit: 500 }}
                   >
-                    <div className="SRC-accordion-menu">
+                    <div className={"SRC-accordion-menu "}>
                       {this.renderFacetMenu(el.menuConfig, index)}
                     </div>
                   </CSSTransition>
                 }
               </TransitionGroup>
-            </React.Fragment>
+            </div>
           )
         }
       )
