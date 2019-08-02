@@ -1,4 +1,5 @@
-import "isomorphic-fetch" // polyfill for fetch
+import 'react-app-polyfill/ie11'
+import 'react-app-polyfill/stable'
 import 'raf/polyfill'     // polyfill for requestAnimationFrame
 import {configure} from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16';
