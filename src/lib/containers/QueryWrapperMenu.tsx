@@ -190,7 +190,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     )
   }
 
-  private renderMenuConfig(menuConfig: MenuConfig [], queryConfig: CommonMenuProps)  {
+  private renderMenuConfig(menuConfig: MenuConfig [], queryConfig: CommonMenuProps, groupIndex: number)  {
     const {
       token,
       rgbIndex = 0,
@@ -214,7 +214,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     const showBarChart = stackedBarChartConfiguration !== undefined
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index
+      const isSelected: boolean = groupIndex === accordionGroupIndex && activeMenuIndices[accordionGroupIndex] === index
       const {
         facetName,
         facetAliases,
@@ -289,13 +289,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         (el, index) => {
           return (
             <div className={accordionGroupIndex === index ? '' : 'SRC-hidden'}>
-              {this.renderMenuConfig(el.menuConfig, el)}
+              {this.renderMenuConfig(el.menuConfig, el, index)}
             </div>
           )
         }
       )
     } else {
-      return this.renderMenuConfig(menuConfig!, this.props)
+      return this.renderMenuConfig(menuConfig!, this.props, 0)
     }
   }
 
