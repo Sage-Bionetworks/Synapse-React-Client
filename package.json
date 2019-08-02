@@ -107,7 +107,7 @@
     "tslint-config-airbnb": "^5.11.1",
     "tslint-react": "^3.6.0",
     "typescript": "3.5.3",
-    "yarn": "1.15.2"
+    "yarn": "1.17.3"
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
