@@ -27,7 +27,6 @@ export type MenuConfig = {
   sql: string
   facetName: string
   facetDisplayValue?: string
-  facetAliases?: {}
 }
 
 // utility for testing
@@ -55,6 +54,7 @@ type AccordionConfig = {
 } & CommonMenuProps
 
 export type QueryWrapperMenuProps = {
+  facetAliases?: {}
   menuConfig?: MenuConfig []
   accordionConfig?: AccordionConfig []
   isConsistent?: boolean
@@ -196,17 +196,17 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       rgbIndex = 0,
       isConsistent = false,
       searchParams,
+      accordionConfig = [],
+      facetAliases = {}
     } = this.props
-    
     const {
       cardConfiguration,
       tableConfiguration,
       stackedBarChartConfiguration,
       unitDescription = '',
     } = queryConfig
-    
     const { activeMenuIndices, accordionGroupIndex } = this.state
-
+    
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
@@ -217,9 +217,15 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       const isSelected: boolean = groupIndex === accordionGroupIndex && activeMenuIndices[accordionGroupIndex] === index
       const {
         facetName,
-        facetAliases,
         sql,
       } = config
+      let usedUnitDescription = unitDescription
+      // This is hardcoded to the current use case
+      if (accordionConfig.length > 0 && !usedUnitDescription) {
+        const facetDisplayName = facetAliases[facetName] || facetName
+        const name = accordionConfig[groupIndex].name
+        usedUnitDescription = `${name} Tools by ${facetDisplayName}`
+      }
       let className = ''
       if (!isSelected) {
         className = 'SRC-hidden'
@@ -255,7 +261,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 offset: 0
               }
             }}
-            unitDescription={unitDescription}
+            unitDescription={usedUnitDescription}
             facetName={facetName}
             token={token}
             rgbIndex={rgbIndex}
@@ -370,7 +376,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
-    const { rgbIndex, accordionConfig } = this.props
+    const { rgbIndex, accordionConfig, facetAliases = {} } = this.props
     const { activeMenuIndices, accordionGroupIndex } = this.state
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     let originalColor = colorPalette[0]
@@ -380,7 +386,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       defaultColor = colorPalette[4]
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const { facetName, facetAliases = {} } = config
+      const { facetName } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
       const style: React.CSSProperties = {}
       let selectedStyling: string = ''

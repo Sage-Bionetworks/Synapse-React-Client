@@ -55,9 +55,12 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
         },
         rgbIndex: 1,
+        facetAliases: {
+          grant: 'Grant'
+        },
         accordionConfig: [
           {
-            name: 'Clinical',
+            name: 'Compuational',
             cardConfiguration: {
               genericCardSchema,
               type: SynapseConstants.GENERIC_CARD,
@@ -70,11 +73,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'diagnosis',
-                sql: `${computationalSql}`,
+                sql: computationalSql,
               },
               {
                 facetName: 'modelType',
-                sql: `${computationalSql}`,
+                sql: computationalSql,
               },
             ],
           },
@@ -92,11 +95,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'reagentType',
-                sql: `${experimentalSql}`,
+                sql: experimentalSql,
               },
               {
                 facetName: 'softwareType',
-                sql: `${experimentalSql}`,
+                sql: experimentalSql,
               },
             ],
           },
