@@ -26,7 +26,6 @@ type MenuState = {
 export type MenuConfig = {
   sql: string
   facetName: string
-  facetDisplayValue?: string
 }
 
 // utility for testing
