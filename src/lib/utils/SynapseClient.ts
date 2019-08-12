@@ -18,11 +18,11 @@ import { FileEntity } from './jsonResponses/FileEntity'
 import { UserProfile } from './jsonResponses/UserProfile'
 import { AccessControlList } from './jsonResponses/AccessControlList'
 import { Submission } from './jsonResponses/Submission'
-import { DownloadFromTableRequest } from './jsonResponses/Table/DownloadFromTableRequest';
-import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTableResult';
-import { ReferenceList } from './jsonResponses/ReferenceList';
-import { EntityHeader } from './jsonResponses/EntityHeader';
-import { PaginatedResults } from './jsonResponses/PaginatedResults';
+import { DownloadFromTableRequest } from './jsonResponses/Table/DownloadFromTableRequest'
+import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTableResult'
+import { ReferenceList } from './jsonResponses/ReferenceList'
+import { EntityHeader } from './jsonResponses/EntityHeader'
+import { PaginatedResults } from './jsonResponses/PaginatedResults'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false

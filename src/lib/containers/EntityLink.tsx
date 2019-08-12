@@ -52,7 +52,7 @@ const EntityTypeIcon: React.SFC<EntityTypeIconProps> = ({ type }) => {
     marginRight: 5
   }
   if (iconType === '') {
-    console.log('type = ', type)
+    console.log('Entity Type not mapped = ', type)
     return <React.Fragment />
   }
   return <FontAwesomeIcon style={iconStyle} icon={iconType}/>
