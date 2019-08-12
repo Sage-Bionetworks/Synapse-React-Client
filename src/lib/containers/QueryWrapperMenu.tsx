@@ -15,6 +15,7 @@ import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColu
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { SearchProps } from './Search'
 
 library.add(faPlus)
 
@@ -45,6 +46,7 @@ type CommonMenuProps = {
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
   stackedBarChartConfiguration?: StackedBarChartProps
+  searchProps?: SearchProps
   showBarChart?: boolean
   unitDescription?: string
 }

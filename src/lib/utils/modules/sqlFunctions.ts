@@ -25,7 +25,7 @@ const generateTokenUsingOperator = (literal: string, operator: SQLOperator, matc
 
 // This will construct a sql query by adding the conditions in searchParams
 // to the WHERE clause, preserving all other clauses
-export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string, operator: SQLOperator = 'LIKE') => {
+export const insertWhereClauseFromSearchParams = (searchParams: KeyValue, sql: string, operator: SQLOperator = 'LIKE') => {
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
