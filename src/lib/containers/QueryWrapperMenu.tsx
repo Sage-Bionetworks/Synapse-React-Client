@@ -220,8 +220,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         sql,
       } = config
       let usedUnitDescription = unitDescription
-      // This is hardcoded to the current use case
       if (accordionConfig.length > 0 && !usedUnitDescription) {
+        // This is a hardcoded setting, could change 'Tools' to a prop in the future
         const facetDisplayName = facetAliases[facetName] || facetName
         const name = accordionConfig[groupIndex].name
         usedUnitDescription = `${name} Tools by ${facetDisplayName}`
