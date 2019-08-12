@@ -15,7 +15,7 @@ type SearchState = {
   searchText: string
 }
 export type Searchable = {
-  key: number
+  key: string
   alias: string
   hintText: string
 } []
@@ -26,7 +26,7 @@ export type SearchProps = {
 
 type InternalSearchProps = QueryWrapperChildProps & SearchProps
 
-export default class Search extends React.Component<InternalSearchProps, SearchState> {
+class Search extends React.Component<InternalSearchProps, SearchState> {
 
   constructor(props: InternalSearchProps) {
     super(props)
@@ -73,34 +73,40 @@ export default class Search extends React.Component<InternalSearchProps, SearchS
     const { searchable } = this.props
     const { isSearchableDropdownOpen, searchableIndex } = this.state
     const searchableItem = searchable[searchableIndex]
+    const containerStyle = {
+      border: '1px solid'
+    }
     return (
-      <div>
+      <div style={containerStyle}>
         {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
         <div>
-          <div>
-            { searchableItem.alias ? searchableItem.alias: searchableItem.key }
+          <div className="SRC-inlineBlock">
             <button onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
+              { searchableItem.alias ? searchableItem.alias: searchableItem.key }
               <FontAwesomeIcon icon={'caret-down'} />
             </button>
-          </div>
-          <div className={"dropdown-menu " + isSearchableDropdownOpen? 'open' : ''}>
-            {
-              searchable.map(
-                (el, index) => {
-                  const displayName = el.alias ? el.alias: el.key
-                  return (
-                    <li 
-                      onClick={this.setSearchableIndex(index)}
-                      key={displayName}
-                    >
-                      {displayName}
-                    </li>
+            <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
+              <ul className="dropdown-menu">
+                {
+                  searchable.map(
+                    (el, index) => {
+                      const displayName = el.alias ? el.alias: el.key
+                      return (
+                        <li 
+                          onClick={this.setSearchableIndex(index)}
+                          key={displayName}
+                          className="SRC-hand-cursor"
+                        >
+                          {displayName}
+                        </li>
+                      )
+                    }
                   )
                 }
-              )
-            }
+              </ul>
+            </div>
           </div>
-          <form onSubmit={this.search}>
+          <form className="SRC-inlineBlock" onSubmit={this.search}>
             <input 
               placeholder={`e.g. ${searchableItem.hintText}`} 
               onChange={this.handleChange}
@@ -112,5 +118,6 @@ export default class Search extends React.Component<InternalSearchProps, SearchS
       </div>
     )
   }
-
 }
+
+export default Search
