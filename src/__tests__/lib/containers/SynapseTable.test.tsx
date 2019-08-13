@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE, METADATA_BTN_ID } from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
@@ -80,6 +80,7 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
+    filter: 'tumorType'
   } as SynapseTableProps & QueryWrapperChildProps
 
   it('renders without crashing', async () => {
@@ -90,9 +91,9 @@ describe('basic functionality', () => {
   describe('Dropdown column menu works', () => {
     it('renders dropdown column menu', async () => {
       const { wrapper } = createShallowComponent(props)
-      // there are a total of 13 columns in view, so we expect
-      // 13 list elements
-      expect(wrapper.find('.SRC-column-menu li.SRC-table-dropdown-list')).toHaveLength(totalColumns)
+      // There are multiple dropdowns so we look at the dropdown with class SRC-column-menu
+      // Since there are a total of 13 columns in view, so we expect 13 list elements
+      expect(wrapper.find('.SRC-column-menu .SRC-table-dropdown-list')).toHaveLength(totalColumns)
     })
 
     it('toggle column selection functions correctly', async () => {
@@ -117,9 +118,9 @@ describe('basic functionality', () => {
       const { wrapper } = await createShallowComponent(props)
       // Double check its not showing be default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
-
+      
       // Click the dropdown
-      await wrapper.find(`#${METADATA_BTN_ID}`).simulate('click')
+      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
       // See that modal download is
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
 

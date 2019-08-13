@@ -56,8 +56,7 @@ export const DESELECT_ALL = 'DESELECT_ALL'
 export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
 type Direction = ''|'ASC'|'DESC'
 export const SORT_STATE: Direction [] = ['', 'DESC', 'ASC']
-export const METADATA_BTN_ID= 'SRC-tables-metadata-btn'
-export const DOWNLOAD_FILES_BTN_ID= 'SRC-tables-download-btn'
+export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container' 
 type Info = {
   index: number
   name: string
@@ -281,7 +280,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             {
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
               // allow this option if there isn't a groupBy clause 
-              this.isGroupByInSql() && this.renderDropdownColumnMenu(headers)
+              !this.isGroupByInSql() && this.renderDropdownColumnMenu(headers)
             }
           </span>
         </div>
@@ -293,9 +292,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         {this.createTableHeader(headers, facets)}
                     </tr>
                 </thead>
-                {<tbody>{this.createTableRows(rows, headers)}</tbody>}
+                <tbody>{this.createTableRows(rows, headers)}</tbody>
             </table>
-            {this.showPaginationButtons(pastZero)}
+            {rows.length > 0 && this.showPaginationButtons(pastZero)}
         </div>
       </React.Fragment>
     )
@@ -327,7 +326,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
     return (
-      <span className={` dropdown ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
+      <span className={`dropdown ${DOWNLOAD_OPTIONS_CONTAINER_CLASS} ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
         <button 
           style={{ marginLeft: '10px' }}
           data-for={tooltipDownloadId} 
@@ -346,7 +345,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         />
         <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
           <li
-            id={METADATA_BTN_ID}
             style={{ listStyle: 'none' }}
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')}
@@ -356,12 +354,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </a>
           </li>
           <li
-            id={DOWNLOAD_FILES_BTN_ID}
             style={{ listStyle: 'none' }}
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.advancedSearch}
           >
-          <a className="SRC-no-focus" href="">
+          <a className="SRC-no-focus" href="javascript:void">
             Download Files
           </a>
         </li>
@@ -376,31 +373,29 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
     addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     return (
-      <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>
-        <React.Fragment>
-          <span 
-            tabIndex={0} 
-            data-for={tooltipColumnSelectionId} 
-            data-tip="Add / Remove Columns" 
-            style={{ marginLeft: '10px' }} 
-            className={addRemoveColClasses} 
-            onKeyPress={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
-            onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
-            id="dropdownMenu1"
-          >
-            <FontAwesomeIcon color="white" icon="columns" />
-          </span>
-          <ReactTooltip 
-            delayShow={1500} 
-            place="bottom" 
-            type="dark" 
-            effect="solid" 
-            id={tooltipColumnSelectionId} 
-          />
-          <ul className="dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
-            {this.renderDropdownColumnMenuItems(headers)}
-          </ul>
-        </React.Fragment>
+      <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
+        <span 
+          tabIndex={0} 
+          data-for={tooltipColumnSelectionId} 
+          data-tip="Add / Remove Columns" 
+          style={{ marginLeft: '10px' }} 
+          className={addRemoveColClasses} 
+          onKeyPress={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
+          onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
+          id="dropdownMenu1"
+        >
+          <FontAwesomeIcon color="white" icon="columns" />
+        </span>
+        <ReactTooltip 
+          delayShow={1500} 
+          place="bottom" 
+          type="dark" 
+          effect="solid" 
+          id={tooltipColumnSelectionId} 
+        />
+        <ul className="dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
+          {this.renderDropdownColumnMenuItems(headers)}
+        </ul>
       </span>
     )
   }
@@ -955,7 +950,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
 
   public toggleFilterDropdown =
-   (index: number, isCurFilterSelected: boolean, refOuterDiv: React.RefObject<HTMLDivElement>) => (_event?: any) => {
+   (index: number, isCurFilterSelected: boolean, refOuterDiv: React.RefObject<HTMLDivElement>) => (_event: any) => {
      // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the
      // front of the scrollable we can examine its parent bounding rect -- this gives a relative value
      // (that changes on scroll) of the filter to a fixed left most point.
