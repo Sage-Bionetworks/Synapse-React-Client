@@ -550,7 +550,7 @@ body * {
 .SRC-noMargin {
   margin: 0px; }
 
-.SRC-floatLeft {
+.SRC-floatLeft, .wp-block-image .alignleft {
   float: left; }
 
 .SRC-floatRight {
@@ -1335,11 +1335,13 @@ div.SRC-userImg {
   color: #D53F77; }
 
 .srcRssFeed {
-  list-style: none; }
+  list-style: none;
+  padding-left: 0px; }
 
 .srcRssFeedItem {
-  border-bottom: 1px solid #dddddf;
-  padding-top: 20px; }
+  border: 1px solid #dddddf;
+  padding: 25px 35px 25px 35px;
+  margin-bottom: 30px; }
 
 .srcRssFeedItemTitle {
   padding-bottom: 5px;
@@ -1348,6 +1350,21 @@ div.SRC-userImg {
 
 .srcRssFeedItemContent {
   padding-top: 10px; }
+
+.wp-block-media-text.is-vertically-aligned-top {
+  align-items: start; }
+
+.wp-block-media-text {
+  display: grid;
+  grid-template-rows: auto;
+  align-items: center;
+  grid-template-areas: "media-text-media media-text-content";
+  grid-template-columns: 50% auto; }
+
+.wp-block-media-text > figure > img, .wp-block-media-text > figure > video {
+  max-width: unset;
+  width: 100%;
+  vertical-align: middle; }
 
 .SRC-gap {
   display: flex;
@@ -1399,3 +1416,20 @@ button {
 
 .SRC-block {
   display: block; }
+
+.SRC-mailchimpSubscribeContainer {
+  border: 1px solid #dddddd;
+  padding: 10px 20px 10px 20px;
+  margin-bottom: 20px; }
+
+.SRC-mailchimpSubscribeContainer input {
+  width: 400px; }
+
+.SRC-mailchimpSubscribeContainer button {
+  display: block;
+  margin-top: 5px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  background-color: #DFDFDF; }
