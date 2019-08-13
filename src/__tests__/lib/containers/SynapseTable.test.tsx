@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE, METADATA_BTN_ID, DOWNLOAD_FILES_BTN_ID } from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps, SORT_STATE, METADATA_BTN_ID } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
