@@ -46,10 +46,10 @@ class Demo extends React.Component<{}, DemoState> {
       showTabOne: false,
       tabOne:
       {
+        unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
           synapseId: 'syn16787123',
-          unitDescription: 'datum'
         },
         menuConfig: [
           {
@@ -69,10 +69,10 @@ class Demo extends React.Component<{}, DemoState> {
       }
     ,
       tabTwo: {
+        unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
           synapseId: 'syn16858331',
-          unitDescription: 'datum'
         },
         menuConfig: [
           {
@@ -314,6 +314,7 @@ class Demo extends React.Component<{}, DemoState> {
             isConsistent={true}
             name={'Demo'}
             token={SynapseClient.IS_DEV_ENV ? token! : this.state.token!}
+            unitDescription={this.state.showTabOne ? this.state.tabOne.unitDescription : this.state.tabTwo.unitDescription}
             tableConfiguration={this.state.showTabOne ? this.state.tabOne.tableConfiguration : this.state.tabTwo.tableConfiguration}
             menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
             rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}

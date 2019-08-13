@@ -30,7 +30,6 @@ export type CardContainerProps = {
   isLoading?: boolean
   filter?: string
   unitDescription?: string
-  totalResultsNoFacet?: number
   hasMoreData?: boolean
   loadingScreen?: React.FunctionComponent | JSX.Element
   backgroundColor?: string
@@ -184,10 +183,10 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {(!title && unitDescription && showBarChart) &&
           <TotalQueryResults
             data={data}
-            filter={filter}
+            filter={filter!}
             isLoading={isLoading!}
-            doneLoadingTextFunction={(total, _loader) => <React.Fragment> Displaying {total} {unitDescription} </React.Fragment>}
-            isLoadingTextFunction={(total, loader) => <React.Fragment> Displaying {total} {unitDescription} {loader} </React.Fragment>}
+            unitDescription={unitDescription}
+            frontText={'Displaying'}
           />
         }
         {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}

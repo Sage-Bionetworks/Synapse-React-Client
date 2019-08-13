@@ -248,12 +248,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
         <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
           <TotalQueryResults 
-            filter={this.props.filter}
+            filter={this.props.filter!}
             data={this.props.data}
             isLoading={isLoading}
             style={{fontSize: 15}}
-            doneLoadingTextFunction={(total, _loader) => `Showing ${total} ${unitDescription}`}
-            isLoadingTextFunction={(_total, loader) => <React.Fragment>  {loader} Table results updating... </React.Fragment>}
+            unitDescription={unitDescription!}
+            frontText={'Showing'}
           />
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
