@@ -206,7 +206,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       unitDescription = '',
     } = queryConfig
     const { activeMenuIndices, accordionGroupIndex } = this.state
-    
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
@@ -307,7 +306,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderMenuDropdown() {
     const { accordionConfig, menuConfig } = this.props
-    // accordionGroupIndex ??
     const { accordionGroupIndex } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
@@ -357,6 +355,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                   isActive
                   &&
                   <CSSTransition
+                    // The component doesn't run a transition on mount, we override this
+                    // by setting appear to true because otherwise the triangle indicator wouldn't show
+                    appear={true}
                     key={JSON.stringify(el)}
                     classNames="SRC-accordion-menu"
                     timeout={{ enter: 1000, exit: 500 }}
@@ -385,9 +386,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       originalColor = colorPalette[2]
       defaultColor = colorPalette[4]
     }
+    console.log('curLevel === accordionGroupIndex ', curLevel === accordionGroupIndex)
+    console.log('activeMenuIndices[accordionGroupIndex] = ', activeMenuIndices[accordionGroupIndex])
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
+      console.log('isSelected = ', isSelected)
       const style: React.CSSProperties = {}
       let selectedStyling: string = ''
       if (isSelected) {
