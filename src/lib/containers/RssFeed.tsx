@@ -12,6 +12,8 @@ export type RssFeedProps = {
   maxItemsToShow: number
 }
 
+const parser = new DOMParser()
+
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   constructor(props: RssFeedProps) {
     super(props)
@@ -32,7 +34,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   public onClickReadMore = (itemId: string) => (event: React.SyntheticEvent<HTMLButtonElement>) => {
     let feedItemContentDiv = document.getElementById(itemId)
     if (feedItemContentDiv) {
-      for (var i = 0; i < feedItemContentDiv.children.length; i++) {
+      for (let i = 0; i < feedItemContentDiv.children.length; i++) {
           let child = feedItemContentDiv.children[i]
           child.classList.remove('hidden')
         }
@@ -52,14 +54,13 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
           this.state.rssFeed.items.map((item: any, index: any) => {
             // There are 2 "more" buttons here.  One is to hide long article content.  See moreElement and onClickReadMore()
             // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-            let parser = new DOMParser()
             let parsedHtml = parser.parseFromString(item.content, 'text/html')
             let bodyElement = parsedHtml.querySelector('body')
             let moreElement = parsedHtml.querySelector('[id^="more-"]')
             if (moreElement && bodyElement) {
               let foundMoreElement = false
-              var children = bodyElement.children
-              for (var i = 0; i < children.length; i++) {
+              const children = bodyElement.children
+              for (let i = 0; i < children.length; i++) {
                 let child = children[i]
                 if (foundMoreElement) {
                   child.classList.add('hidden')
