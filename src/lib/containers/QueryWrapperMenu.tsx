@@ -27,15 +27,14 @@ type MenuState = {
 export type MenuConfig = {
   sql: string
   facetName: string
-  facetDisplayValue?: string
-  facetAliases?: {}
 }
 
-// utility for testing
-export const GROUP_INDEX_CSS = 'SRC-accordion-key'
-export const GROUP_INDEX_SELECTED_CSS = 'SRC-IS-ACTIVE'
-export const MENU_GROUP_CSS = 'SRC-menuLayout'
-export const MENU_ITEM_SELECTED_CSS = 'SRC-pointed-triangle-right'
+// represents the entirety of the menu
+export const MENU_DROPDOWN_CSS = 'SRC-menuLayout'
+// represent an accordiong 'group' within the menu
+export const ACCORDION_GROUP_CSS = 'SRC-accordion-key'
+// represents the single accordiong group which is active within the menu
+export const ACCORDION_GROUP_ACTIVE_CSS = 'SRC-IS-ACTIVE'
 
 interface MenuSearchParams extends KeyValue {
   menuIndex: string
@@ -57,6 +56,7 @@ type AccordionConfig = {
 } & CommonMenuProps
 
 export type QueryWrapperMenuProps = {
+  facetAliases?: {}
   menuConfig?: MenuConfig []
   accordionConfig?: AccordionConfig []
   isConsistent?: boolean
@@ -198,17 +198,16 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       rgbIndex = 0,
       isConsistent = false,
       searchParams,
+      accordionConfig = [],
+      facetAliases = {}
     } = this.props
-    
     const {
       cardConfiguration,
       tableConfiguration,
       stackedBarChartConfiguration,
       unitDescription = '',
     } = queryConfig
-    
     const { activeMenuIndices, accordionGroupIndex } = this.state
-
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
@@ -219,9 +218,15 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       const isSelected: boolean = groupIndex === accordionGroupIndex && activeMenuIndices[accordionGroupIndex] === index
       const {
         facetName,
-        facetAliases,
         sql,
       } = config
+      let usedUnitDescription = unitDescription
+      if (accordionConfig.length > 0 && !usedUnitDescription) {
+        // This is a hardcoded setting, could change 'Tools' to a prop in the future
+        const facetDisplayName = facetAliases[facetName] || facetName
+        const name = accordionConfig[groupIndex].name
+        usedUnitDescription = `${name} Tools by ${facetDisplayName}`
+      }
       let className = ''
       if (!isSelected) {
         className = 'SRC-hidden'
@@ -257,7 +262,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 offset: 0
               }
             }}
-            unitDescription={unitDescription}
+            unitDescription={usedUnitDescription}
             facetName={facetName}
             token={token}
             rgbIndex={rgbIndex}
@@ -303,7 +308,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
 
   private renderMenuDropdown() {
     const { accordionConfig, menuConfig } = this.props
-    // accordionGroupIndex ??
     const { accordionGroupIndex } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
@@ -330,13 +334,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             originalColor: lightColor
           }
           return (
-            <div className={isActive ? GROUP_INDEX_SELECTED_CSS : ''}>
+            <div className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}>
               <div 
                 style={style}
-                role={isActive ? "": "role"}
+                role={isActive ? "": "button"}
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${GROUP_INDEX_CSS} SRC-gap SRC-menu-button-base ${indicatorClasses}`}
+                className={`${ACCORDION_GROUP_CSS} SRC-gap SRC-menu-button-base ${indicatorClasses}`}
                 onClick={!isActive ? this.toggleGroupAccordionIndex(index) : undefined }
               >
                 {el.name}
@@ -353,11 +357,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                   isActive
                   &&
                   <CSSTransition
+                    // The component doesn't run a transition on mount, we override this
+                    // by setting appear to true because otherwise the triangle indicator wouldn't show
+                    appear={true}
                     key={JSON.stringify(el)}
                     classNames="SRC-accordion-menu"
                     timeout={{ enter: 1000, exit: 500 }}
                   >
-                    <div className={"SRC-accordion-menu "}>
+                    <div className={"SRC-accordion-menu"}>
                       {this.renderFacetMenu(el.menuConfig, index)}
                     </div>
                   </CSSTransition>
@@ -372,7 +379,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
-    const { rgbIndex, accordionConfig } = this.props
+    const { rgbIndex, accordionConfig, facetAliases = {} } = this.props
     const { activeMenuIndices, accordionGroupIndex } = this.state
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     let originalColor = colorPalette[0]
@@ -381,9 +388,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       originalColor = colorPalette[2]
       defaultColor = colorPalette[4]
     }
+    console.log('curLevel === accordionGroupIndex ', curLevel === accordionGroupIndex)
+    console.log('activeMenuIndices[accordionGroupIndex] = ', activeMenuIndices[accordionGroupIndex])
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const { facetName, facetAliases = {} } = config
+      const { facetName } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
+      console.log('isSelected = ', isSelected)
       const style: React.CSSProperties = {}
       let selectedStyling: string = ''
       if (isSelected) {

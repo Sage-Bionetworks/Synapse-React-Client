@@ -4,7 +4,7 @@ import syn16787123Json  from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { TotalQueryResults, TotalQueryResultsProps } from '../../../lib/containers/TotalQueryResults'
 import { cloneDeep } from 'lodash'
-import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult.js'
+import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
 
 const createShallowComponent = (props: TotalQueryResultsProps) => {
   const wrapper = shallow<typeof TotalQueryResults>(
@@ -20,14 +20,15 @@ describe('it works', () => {
   const FUNDING_AGENCY_COUNT = 59
   const FUNDING_AGENCY_FACET_INDEX = 2
   const displayText = 'Displaying'
+  const unitDescription = 'units'
   // cast the data to ignore ts warning
   const data = syn16787123Json as QueryResultBundle
   const props: TotalQueryResultsProps = {
     data,
+    unitDescription,
     isLoading: false,
     filter: 'fundingAgency',
-    doneLoadingTextFunction: (total, loader) => <React.Fragment>{displayText} {total}{loader}</React.Fragment>,
-    isLoadingTextFunction: (total, loader) => <React.Fragment>{displayText} {total}{loader}</React.Fragment>
+    frontText: 'Displaying'
   }
   it('renders without crashing', () => {
     const tree = createShallowComponent(props)
@@ -36,7 +37,7 @@ describe('it works', () => {
 
   it('renders with a faceted view correctly', async () => {
     const { wrapper } = createShallowComponent(props)
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT}`)
+    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `)
   })
 
   it('renders with a loading spinner when loading', async () => {
@@ -52,11 +53,7 @@ describe('it works', () => {
       }
     )
     const { wrapper } = createShallowComponent({ ...props, data: cloneData })
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT}`)
+    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `)
   })
 
-  it('renders without a faceted view correctly', async () => {
-    const { wrapper } = createShallowComponent({ ...props, totalResultsNoFacet: 59, filter: '' })
-    expect(wrapper.find('p.SRC-boldText.SRC-text-title').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT}`)
-  })
 })

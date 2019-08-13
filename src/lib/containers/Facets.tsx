@@ -273,9 +273,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
           &&
           <TotalQueryResults
             data={data}
-            filter={filter}
-            doneLoadingTextFunction={(total, _loader) => <React.Fragment> Displaying {total} {unitDescription} </React.Fragment>}
-            isLoadingTextFunction={(total, loader) => <React.Fragment> Displaying {total} {unitDescription} {loader} </React.Fragment>}
+            filter={filter!}
+            unitDescription={unitDescription!}
+            frontText={'Displaying'}
             isLoading={isLoading!}
           />
         }
