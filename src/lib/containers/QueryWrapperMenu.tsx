@@ -28,11 +28,12 @@ export type MenuConfig = {
   facetName: string
 }
 
-// utility for testing
-export const GROUP_INDEX_CSS = 'SRC-accordion-key'
-export const GROUP_INDEX_SELECTED_CSS = 'SRC-IS-ACTIVE'
-export const MENU_GROUP_CSS = 'SRC-menuLayout'
-export const MENU_ITEM_SELECTED_CSS = 'SRC-pointed-triangle-right'
+// represents the entirety of the menu
+export const MENU_DROPDOWN_CSS = 'SRC-menuLayout'
+// represent an accordiong 'group' within the menu
+export const ACCORDION_GROUP_CSS = 'SRC-accordion-key'
+// represents the single accordiong group which is active within the menu
+export const ACCORDION_GROUP_ACTIVE_CSS = 'SRC-IS-ACTIVE'
 
 interface MenuSearchParams extends KeyValue {
   menuIndex: string
@@ -333,13 +334,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             originalColor: lightColor
           }
           return (
-            <div className={isActive ? GROUP_INDEX_SELECTED_CSS : ''}>
+            <div className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}>
               <div 
                 style={style}
-                role={isActive ? "": "role"}
+                role={isActive ? "": "button"}
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${GROUP_INDEX_CSS} SRC-gap SRC-menu-button-base ${indicatorClasses}`}
+                className={`${ACCORDION_GROUP_CSS} SRC-gap SRC-menu-button-base ${indicatorClasses}`}
                 onClick={!isActive ? this.toggleGroupAccordionIndex(index) : undefined }
               >
                 {el.name}
@@ -360,7 +361,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                     classNames="SRC-accordion-menu"
                     timeout={{ enter: 1000, exit: 500 }}
                   >
-                    <div className={"SRC-accordion-menu "}>
+                    <div className={"SRC-accordion-menu"}>
                       {this.renderFacetMenu(el.menuConfig, index)}
                     </div>
                   </CSSTransition>
