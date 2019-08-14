@@ -66,6 +66,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
      const { searchable } = this.props
      const searchItem = searchable[searchableIndex]
 
+     //  First we cleanup the styling applied last
+     document.querySelectorAll<HTMLTableCellElement>('.SRC-cardMetadata td.SRC-boldText').forEach(
+        (el) => {
+          el.classList.remove('SRC-boldText')
+        }
+      )
      document.querySelectorAll('.highlight').forEach(
         (el) => {
           const castAsSpan = el as HTMLSpanElement
@@ -74,10 +80,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           }
         }
       )
+      // Target elements and apply styles
       document.querySelectorAll('.SRC-cardMetadata tr').forEach(
         el => {
           const labelElement = el.children[0] as HTMLTableDataCellElement
           if (labelElement.innerText.toLowerCase() === searchItem.key) {
+            labelElement.classList.add('SRC-boldText')
             const textElement = el.children[1] as HTMLTableDataCellElement
             if (textElement) {
               const hasSearchText = textElement.innerText.toLowerCase().indexOf(searchText) !== 0

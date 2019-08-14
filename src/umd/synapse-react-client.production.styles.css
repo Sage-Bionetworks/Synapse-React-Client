@@ -1433,3 +1433,10 @@ button {
   border: 1px solid transparent;
   border-radius: 24px;
   background-color: #DFDFDF; }
+
+.highlight {
+  background: lightblue;
+  color: blue;
+  font-weight: bold;
+  border: blue solid 2px;
+  padding: 2px; }
