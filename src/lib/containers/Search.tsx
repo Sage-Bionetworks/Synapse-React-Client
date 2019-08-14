@@ -40,13 +40,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   componentDidUpdate(prevProps: InternalSearchProps) {
-    if (!this.props.data || !prevProps.data) {
-      return
-    }
-    const curRowLength = this.props.data.queryResult.queryResults.rows.length
-    const prevRowLengthChanged = prevProps.data.queryResult.queryResults.rows.length
-    const hasRowLengthChanged = curRowLength !== prevRowLengthChanged
-    if (hasRowLengthChanged) {
+    if (this.props.isLoading !== prevProps.isLoading) {
       setTimeout(this.highlightText, 1000)
     }
   }
