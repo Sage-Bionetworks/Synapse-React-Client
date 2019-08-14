@@ -14,10 +14,11 @@ import { KeyValue } from '../utils/modules/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { SearchProps } from './Search'
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
+import Search, { SearchProps } from './Search'
 
 library.add(faPlus)
+library.add(faSearch)
 
 type MenuState = {
   activeMenuIndices: number []
@@ -45,12 +46,13 @@ type CommonMenuProps = {
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CommonCardProps
   stackedBarChartConfiguration?: StackedBarChartProps
-  searchProps?: SearchProps
+  searchConfiguration?: SearchProps
   showBarChart?: boolean
   unitDescription?: string
 }
 
 type AccordionConfig = {
+  searchConfiguration?: SearchProps
   menuConfig: MenuConfig []
   name: string
 } & CommonMenuProps
@@ -78,7 +80,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     super(props)
     // See note about initializing props from state here
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
-    
     const { searchParams, accordionConfig } = this.props
     let activeMenuIndices = []
     const indexFromURLOrDefaultZero = (searchParams && Number(searchParams.menuIndex)) || 0
@@ -192,7 +193,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     )
   }
 
-  private renderMenuConfig(menuConfig: MenuConfig [], queryConfig: CommonMenuProps, groupIndex: number)  {
+  private renderQueryChild(menuConfig: MenuConfig [], queryConfig: CommonMenuProps, groupIndex: number)  {
     const {
       token,
       rgbIndex = 0,
@@ -206,6 +207,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       tableConfiguration,
       stackedBarChartConfiguration,
       unitDescription = '',
+      searchConfiguration
     } = queryConfig
     const { activeMenuIndices, accordionGroupIndex } = this.state
     let facetValue = ''
@@ -242,6 +244,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         ]
       }
       const loadNow = isSelected
+      const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
       return (
         <span key={facetName} className={className}>
           <QueryWrapper
@@ -269,7 +272,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             facetAliases={facetAliases}
           >
             {stackedBarChartConfiguration ? <StackedBarChart {...stackedBarChartConfiguration} /> : <React.Fragment/>}
-            <Facets />
+            {!showSearch ? <Facets />:  <React.Fragment/>}
+            {showSearch ? <Search searchable={searchConfiguration!.searchable}/> : <React.Fragment/>}
             {/*
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
                 which will happen if either configuration is undefined.
@@ -279,7 +283,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           </QueryWrapper>
         </span>
       )
-    }
+      }
     )
   }
 
@@ -296,18 +300,18 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         (el, index) => {
           return (
             <div className={accordionGroupIndex === index ? '' : 'SRC-hidden'}>
-              {this.renderMenuConfig(el.menuConfig, el, index)}
+              {this.renderQueryChild(el.menuConfig, el, index)}
             </div>
           )
         }
       )
     } else {
-      return this.renderMenuConfig(menuConfig!, this.props, 0)
+      return this.renderQueryChild(menuConfig!, this.props, 0)
     }
   }
 
   private renderMenuDropdown() {
-    const { accordionConfig, menuConfig } = this.props
+    const { accordionConfig, menuConfig, searchConfiguration } = this.props
     const { accordionGroupIndex } = this.state
     const { rgbIndex } = this.props
     const { colorPalette } = getColorPallette(rgbIndex, 5)
@@ -365,7 +369,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                     timeout={{ enter: 1000, exit: 500 }}
                   >
                     <div className={"SRC-accordion-menu"}>
-                      {this.renderFacetMenu(el.menuConfig, index)}
+                      {this.renderFacetMenu(el.menuConfig, index, el.searchConfiguration)}
                     </div>
                   </CSSTransition>
                 }
@@ -375,10 +379,10 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         }
       )
     }
-    return this.renderFacetMenu(menuConfig!, 0)
+    return this.renderFacetMenu(menuConfig!, 0, searchConfiguration)
   }
 
-  private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number) {
+  private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number, searchConfiguration?: SearchProps) {
     const { rgbIndex, accordionConfig, facetAliases = {} } = this.props
     const { activeMenuIndices, accordionGroupIndex } = this.state
     const { colorPalette } = getColorPallette(rgbIndex, 5)
@@ -389,9 +393,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       defaultColor = colorPalette[4]
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
+      let searchIconStyle: React.CSSProperties = {
+        margin: 'auto 0'
+      }
       const { facetName } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
       const style: React.CSSProperties = {}
+      const isSearchConfig = (index === menuConfig.length -1 ) && searchConfiguration
       let selectedStyling: string = ''
       if (isSelected) {
         // we have to programatically set the style since the color is chosen from a color
@@ -401,6 +409,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         // appropriately
         style.borderLeftColor = originalColor
         selectedStyling = 'SRC-pointed-triangle-right SRC-whiteText'
+        searchIconStyle.color = 'white'
       } else {
         // change background to class
         selectedStyling = 'SRC-blackText'
@@ -414,14 +423,24 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-gap': ''}`}
+          className={`SRC-hand-cursor ${selectedStyling} SRC-menu-button-base SRC-gap`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"
           tabIndex={0}
           style={style}
         >
-          {facetDisplayValue}
+          {isSearchConfig ? 
+            'Search'
+            :
+            facetDisplayValue
+          }
+          {
+            isSearchConfig &&
+            <span>
+              <FontAwesomeIcon className={selectedStyling} size={'sm'} style={searchIconStyle} icon="search"/>
+            </span>
+          }
         </div>
       )
     })

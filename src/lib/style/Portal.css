@@ -1104,8 +1104,11 @@ button {
     background-color: #DFDFDF; }
 
 .highlight {
-  background: lightblue;
-  color: blue;
+  background: #f4f8fd;
+  color: #003d81;
   font-weight: bold;
-  border: blue solid 2px;
+  border: #003d81 solid 2px;
   padding: 2px; }
+
+.SRC-fullWidth {
+  width: 100%; }

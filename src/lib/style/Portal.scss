@@ -1356,9 +1356,13 @@ button {
 }
 
 .highlight {
-  background: lightblue;
-  color: blue;
+  background: rgb(244, 248, 253);
+  color: rgb(0, 61, 129);
   font-weight: bold;
-  border: blue solid 2px;
+  border: rgb(0, 61, 129) solid 2px;
   padding: 2px;
+}
+
+.SRC-fullWidth {
+  width: 100%;
 }

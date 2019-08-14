@@ -7,6 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertWhereClauseFromSearchParams } from '../utils/modules/sqlFunctions'
+import { TotalQueryResults } from './TotalQueryResults';
 
 library.add(faCaretDown)
 library.add(faSearch)
@@ -15,10 +16,11 @@ type SearchState = {
   searchableIndex: number
   isSearchableDropdownOpen: boolean
   searchText: string
+  submittedSearchText: string
 }
 export type Searchable = {
   key: string
-  alias: string
+  alias?: string
   hintText: string
 } []
 
@@ -35,7 +37,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.state = {
       searchableIndex: 0,
       isSearchableDropdownOpen: false,
-      searchText: ''
+      searchText: '',
+      submittedSearchText: ''
     }
   }
 
@@ -104,6 +107,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
    const { searchText, searchableIndex } = this.state
    const { searchable } = this.props
    const searchItem = searchable[searchableIndex]
+   // Always grabs initQueryRequest so that it doesn't build a chain of 
+   // clauses
    const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
    let { sql } = lastQueryRequestDeepCopy.query
    const searchParams = {
@@ -113,6 +118,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
    lastQueryRequestDeepCopy.query.sql = newSql
    this.props.executeQueryRequest!(lastQueryRequestDeepCopy).then(
      _ => {
+       this.setState({
+         submittedSearchText: searchText
+       })
       this.highlightText()
      }
    )
@@ -125,8 +133,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   render() {
-    const { searchable } = this.props
-    const { isSearchableDropdownOpen, searchableIndex } = this.state
+    const { searchable, data, isLoading, filter, unitDescription = '' } = this.props
+    const { isSearchableDropdownOpen, searchableIndex, searchText, submittedSearchText } = this.state
     const searchableItem = searchable[searchableIndex]
     const containerStyle: React.CSSProperties = {
       background: '#F9F9F9',
@@ -135,7 +143,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       height: '80px',
       display: 'flex',
       alignItems: 'center',
-      padding: '0px 10px'
+      padding: '0px 10px',
     }
     const dropdownStyle: React.CSSProperties = {
       background: '#FFFFFF',
@@ -161,51 +169,81 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const iconStyle: React.CSSProperties = {
       marginLeft: '10px'
     }
+    const searchIconStyle: React.CSSProperties = {
+      color: '#EEEEEE',
+      margin: 'auto 0'
+    }
+    const inputStyle: React.CSSProperties = {
+      border: 'none',
+      marginRight: 5
+    }
+    const totalQueryResultsStyle: React.CSSProperties = {
+      margin: '20px 0px'
+    }
+    let usedUnitDescription = unitDescription
+    if (submittedSearchText !== '') {
+      usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${searchableItem.alias}`
+    }
     return (
-      <div style={containerStyle}>
-        {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
-        <div>
-          Search in
-          <div style={dropdownStyle} className="SRC-inlineBlock">
-            <button onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
-              { searchableItem.alias ? searchableItem.alias: searchableItem.key }
-              <FontAwesomeIcon style={iconStyle} icon={'caret-down'} />
-            </button>
-            <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
-              <ul style={ulStyle} className="dropdown-menu">
-                {
-                  searchable.map(
-                    (el, index) => {
-                      const displayName = el.alias ? el.alias: el.key
-                      return (
-                        <li 
-                          style={liStyle}
-                          onClick={this.setSearchableIndex(index)}
-                          key={displayName}
-                          className="SRC-hand-cursor SRC-primary-background-color-hover"
-                        >
-                          {displayName }
-                        </li>
-                      )
-                    }
-                  )
-                }
-              </ul>
+      <div>
+        <div style={containerStyle}>
+          {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
+          <div className="SRC-centerContent SRC-fullWidth">
+            Search in
+            <div style={{...dropdownStyle, flex: 1}}  className="SRC-inlineBlock">
+              <button className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
+                <span>
+                  { searchableItem.alias ? searchableItem.alias: searchableItem.key }
+                </span>
+                <span>
+                  <FontAwesomeIcon style={iconStyle} icon={'caret-down'} />
+                </span>
+              </button>
+              <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
+                <ul style={ulStyle} className="dropdown-menu">
+                  {
+                    searchable.map(
+                      (el, index) => {
+                        const displayName = el.alias ? el.alias: el.key
+                        return (
+                          <li 
+                            style={liStyle}
+                            onClick={this.setSearchableIndex(index)}
+                            key={displayName}
+                            className="SRC-hand-cursor SRC-primary-background-color-hover"
+                          >
+                            {displayName }
+                          </li>
+                        )
+                      }
+                    )
+                  }
+                </ul>
+              </div>
             </div>
+            <form style={{...dropdownStyle, flex: 3}}  className="SRC-inlineFlex" onSubmit={this.search}>
+              <div className="SRC-gap" style={{width: '100%'}}>
+                <input 
+                  placeholder={`e.g. "${searchableItem.hintText}"`} 
+                  style={inputStyle}
+                  onChange={this.handleChange}
+                  value={searchText}
+                  type="text"
+                  className="SRC-fullWidth"
+                />
+                <FontAwesomeIcon size={'sm'} style={searchIconStyle} icon={'search'} />
+              </div>
+            </form>
           </div>
-          <form style={dropdownStyle} className="SRC-inlineBlock" onSubmit={this.search}>
-            <div>
-              <input 
-                placeholder={`e.g. "${searchableItem.hintText}"`} 
-                style={{border: 'none'}}
-                onChange={this.handleChange}
-                value={this.state.searchText}
-                type="text"
-              />
-              <FontAwesomeIcon style={{alignSelf: 'end'}} icon={'search'} />
-            </div>
-          </form>
         </div>
+        <TotalQueryResults
+          style={totalQueryResultsStyle}
+          isLoading={isLoading!}
+          data={data}
+          filter={filter!}
+          frontText={'Displaying'}
+          unitDescription={usedUnitDescription}
+        />
       </div>
     )
   }

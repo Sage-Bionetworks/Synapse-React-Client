@@ -52,9 +52,10 @@ export const SearchDemo:React.SFC = () => {
           }
         }}
         facetName={'modelType'}
-      >
+        showBarChart={false}
+        unitDescription={'studies'}
+        >
         <Search
-          key={'search'}
           searchable={searchable}
         />
         <CardContainer

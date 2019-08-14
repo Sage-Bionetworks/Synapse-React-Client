@@ -11,7 +11,7 @@ type DemoState = {
   isLoading: boolean
   showMarkdown: boolean
   version: number
-  tabOne: any
+  tabOne: QueryWrapperMenuProps
   tabTwo: QueryWrapperMenuProps
   showTabOne: boolean
 }
@@ -43,7 +43,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: false,
+      showTabOne: true,
       tabTwo:
       {
         showBarChart: false,
@@ -112,15 +112,23 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           title: 'title',
           synapseId: 'syn11346063'
         },
+        searchConfiguration: {
+          searchable: [
+            {
+              key: 'study',
+              hintText: 'study name'
+            },
+          ]
+        },
         menuConfig: [
-          {
-            facetName: 'study',
-            sql: 'SELECT * FROM syn11346063 limit 1000',
-          },
           {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
-              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
+            ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
+          },
+          {
+            facetName: 'study',
+            sql: 'SELECT * FROM syn11346063 limit 1000',
           },
           // {
           //   facetName: 'dataType',
@@ -208,7 +216,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             isConsistent={true}
             {...props}
             rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
-            loadingScreen={<div>loading... </div>}
           />
         </div>
     )
