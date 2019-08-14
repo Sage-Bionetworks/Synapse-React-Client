@@ -7,17 +7,17 @@ import { CommonCardProps } from 'lib/containers/CardContainerLogic'
 import CardContainer from 'lib/containers/CardContainer';
 
 export const SearchDemo:React.SFC = () => {
-  const sql = "SELECT * FROM syn20337467 WHERE toolType = 'computational'" 
+  const sql = "SELECT * FROM syn20337467" 
   const searchable: Searchable = [
     {
       key: 'contributor', 
       alias: 'Contributor',
-      hintText: ''
+      hintText: 'Jane'
     },
     {
       key: 'diagnosis',
       alias: 'Diagnosis',
-      hintText: ''
+      hintText: 'LOAD'
     },
   ]
   const genericCardSchema: GenericCardSchema = {
@@ -54,6 +54,7 @@ export const SearchDemo:React.SFC = () => {
         facetName={'modelType'}
       >
         <Search
+          key={'search'}
           searchable={searchable}
         />
         <CardContainer

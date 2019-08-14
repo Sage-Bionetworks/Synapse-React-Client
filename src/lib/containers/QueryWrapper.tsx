@@ -8,7 +8,7 @@ import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/Asynchronous
 import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export type QueryWrapperProps = {
-  initQueryRequest?: QueryBundleRequest
+  initQueryRequest: QueryBundleRequest
   rgbIndex?: number
   token?: string
   showMenu?: boolean
@@ -37,6 +37,7 @@ export type QueryWrapperState = {
   asyncJobStatus?: AsynchronousJobStatus
   facetAliases?: {}
   loadNowStarted: boolean
+  initQueryRequest: QueryBundleRequest
 }
 
 export type FacetSelection = {
@@ -51,10 +52,11 @@ export type QueryWrapperChildProps = {
   isLoading?: boolean
   token?: string
   isLoadingNewData?: boolean
-  executeQueryRequest?: (param: QueryBundleRequest) => void
+  executeQueryRequest?: (param: QueryBundleRequest) => Promise<undefined>
   executeInitialQueryRequest?: () => void
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
+  getInitQueryRequest?: () => QueryBundleRequest
   data?: QueryResultBundle
   filter?: string
   updateParentState?: (param: any) => void
@@ -93,9 +95,9 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     },
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
-    loadNowStarted: false
+    loadNowStarted: false,
   } as QueryWrapperState
-
+  
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -103,7 +105,8 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
-    this.state = QueryWrapper.initialState as QueryWrapperState
+    this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
+    this.state = QueryWrapper.initialState
   }
 
   /**
@@ -149,6 +152,17 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
   }
 
   /**
+   * Pass down a deep clone (so no side affects on the child's part) of the
+   * last query request made
+   *
+   * @returns
+   * @memberof QueryWrapper
+   */
+  public getInitQueryRequest(): QueryBundleRequest {
+    return cloneDeep(this.props.initQueryRequest)
+  }
+
+  /**
    * Execute the given query
    *
    * @param {*} queryRequest Query request as specified by
@@ -156,16 +170,18 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
+    console.log('sql being run = ', queryRequest.query.sql)
     this.setState({
       isLoading: true
     })
-    SynapseClient.getQueryTableResults(
+    return SynapseClient.getQueryTableResults(
       queryRequest,
       this.props.token,
       this.updateParentState
     )
     .then(
       (data: QueryResultBundle) => {
+        console.log('recieved more data')
         const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
         const newState: any = {
           hasMoreData,
@@ -175,9 +191,11 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           asyncJobStatus: undefined
         }
         this.setState(newState)
+        return Promise.resolve(() => {})
       }
     ).catch((err: string) => {
       console.log('Failed to get data ', err)
+      return Promise.resolve(() => {})
     })
   }
 
@@ -289,6 +307,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
         chartSelectionIndex: this.state.chartSelectionIndex,
+        getInitQueryRequest: this.getInitQueryRequest,
         asyncJobStatus: this.state.asyncJobStatus,
         showBarChart: this.props.showBarChart
       })
