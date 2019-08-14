@@ -12,7 +12,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-// tslint:disable-next-line
 import ReactTooltip from "react-tooltip"
 import { FacetColumnResult,
          FacetColumnResultValueCount,
@@ -30,6 +29,11 @@ import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
 import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
 import ModalDownload from './ModalDownload'
+import { SynapseClient } from '../utils'
+import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
+import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
+import { EntityLink } from './EntityLink'
+import { TotalQueryResults } from './TotalQueryResults'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -50,11 +54,15 @@ export const SELECT_ALL = 'SELECT_ALL'
 export const DESELECT_ALL = 'DESELECT_ALL'
 // double check these icons!
 export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
-type direction = ''|'ASC'|'DESC'
-export const SORT_STATE: direction [] = ['', 'DESC', 'ASC']
+type Direction = ''|'ASC'|'DESC'
+export const SORT_STATE: Direction [] = ['', 'DESC', 'ASC']
+export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container' 
 type Info = {
   index: number
   name: string
+}
+interface Dictionary<T> {
+  [key: string]: T;
 }
 // look for "group by", multi-line and case insensitive
 const GROUP_BY_REGEX = /group by/mi
@@ -63,16 +71,21 @@ export type SynapseTableState = {
   isDropdownColumnMenuOpen: boolean
   isColumnSelected: boolean[]
   columnIconSortState: number[],
-  isFilterSelected: boolean []
-  filterClassList: string [],
-  menuWallIsActive: boolean,
+  activeFilterIndex: number
+  activeFilterClass: string,
+  isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
+  mapEntityIdToHeader: Dictionary<EntityHeader>
+  isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
   synapseId: string
   title: string
 }
+// This is a convenient way to categorize all the dropdown state variables, although problematic
+// if any state variable mapping to a boolean does NOT represent a dropdown
+type BooleanKeys<T> = { [k in keyof T]: T[k] extends boolean ? k : never }[keyof T];
 
 export default class SynapseTable extends React.Component<QueryWrapperChildProps &
                                                           SynapseTableProps, SynapseTableState> {
@@ -83,17 +96,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
-    this.toggleMenuWall = this.toggleMenuWall.bind(this)
     this.advancedSearch = this.advancedSearch.bind(this)
-    this.download = this.download.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
-    this.closeMenuClickHandler = this.closeMenuClickHandler.bind(this)
+    this.closeAllDropdowns = this.closeAllDropdowns.bind(this)
     this.showPaginationButtons = this.showPaginationButtons.bind(this)
-    this.useFacetAliasIfDefined = this.useFacetAliasIfDefined.bind(this)
     this.applyChanges = this.applyChanges.bind(this)
     this.toggleFilterDropdown = this.toggleFilterDropdown.bind(this)
-    this.toggleModalDownload = this.toggleModalDownload.bind(this)
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -103,23 +112,82 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           2 - show ascending icon selected
       */
       columnIconSortState: [],
-      filterClassList: Array(100).fill(''),
+      activeFilterClass: '',
       isColumnSelected: [],
-      isFilterSelected: Array(100).fill(false),
+      activeFilterIndex: -1,
       isDropdownColumnMenuOpen: false,
-      menuWallIsActive: false,
+      isMenuWallOpen: false,
       isModalDownloadOpen: false,
+      isDropdownDownloadOptionsOpen: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
       sortedColumnSelection: [],
+      mapEntityIdToHeader: {}
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
+    this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
+    this.getEntityColumnIndicies = this.getEntityColumnIndicies.bind(this)
   }
 
-  public useFacetAliasIfDefined(facetName: string) {
-    const { facetAliases = {} } = this.props
-    return facetAliases[facetName] || facetName
+  componentDidMount() {
+    this.getEntityHeadersInData()
+  }
+
+  componentDidUpdate() {
+    this.getEntityHeadersInData()
+  }
+
+  public getEntityHeadersInData() {
+    const { data, token } = this.props
+    if (!data) {
+      return
+    }
+    const { mapEntityIdToHeader } = this.state
+    const entityColumnIndicies = this.getEntityColumnIndicies()
+    const distinctEntities = new Set<string>()
+    data!.queryResult.queryResults.rows.forEach(
+      (row) => {
+        row.values.forEach((el, colIndex) => {
+          // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
+          if (entityColumnIndicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el)) {
+            distinctEntities.add(el)
+          }
+        }
+      )
+    })
+    if (distinctEntities.size === 0) {
+      return
+    }
+    const referenceList: ReferenceList = Array.from(distinctEntities).map(id => { return { targetId: id }})
+    SynapseClient.getEntityHeader(referenceList, token).then(
+      data => {
+        const { results } = data
+        results.forEach(
+          el => {
+            mapEntityIdToHeader[el.id] = el
+          }
+        )
+        this.setState({
+          mapEntityIdToHeader
+        })
+      }
+    ).catch(
+      err => {
+        console.log('Error on retrieving entity header list , ', err)
+      }
+    )
+  }
+
+  public getEntityColumnIndicies() {
+    const { data } = this.props
+    const columnsOfTypeEntity: number [] = []
+    data && data.selectColumns && data.selectColumns.forEach((el, index) => {
+      if (el.columnType === 'ENTITYID') {
+        columnsOfTypeEntity.push(index)
+      } 
+    })
+    return columnsOfTypeEntity
   }
 
   public isGroupByInSql(sql?: string): boolean {
@@ -127,20 +195,23 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return GROUP_BY_REGEX.test(testSql)
   }
 
-  public toggleModalDownload()  {
-    this.setState({
-      isModalDownloadOpen: !this.state.isModalDownloadOpen
-    })
+  public toggleStateVariables = (...values: BooleanKeys<SynapseTableState> []) => (_event: React.SyntheticEvent) => {
+    const updatedState = {} 
+    values.forEach(
+      el => updatedState[el] = !this.state[el]
+    )
+    this.setState(updatedState)
   }
-    /**
-     * Display the view
-     */
+
+  /**
+   * Display the view
+   */
   public render() {
     if (this.props.data === undefined) {
       return (<div/>)
     }
     // unpack all the data
-    const { data, filter, isLoading, unitDescription, token, synapseId } = this.props
+    const { data, isLoading = true, unitDescription, token, synapseId } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
@@ -152,42 +223,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // shouldn't be displayed
     const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
 
-    const xData: any[] = []
-    data.facets.forEach((item: any) => {
-      if (item.facetType === 'enumeration' && item.columnName === filter) {
-        item.facetValues.forEach(
-          (facetValue: any) => {
-            if (item.columnName) {
-              xData.push({ columnName: item.columnName, ...facetValue })
-            }
-          })
-      }
-    })
-    // edge case -- if they are all false then they are considered all true..
-    // sum up the counts of data
-    let anyTrue = false
-    let totalAllFalseCase = 0
-    let totalStandardCase = 0
-    for (const key in xData) {
-      if (xData.hasOwnProperty(key)) {
-        anyTrue = anyTrue || xData[key].isSelected
-        totalAllFalseCase += xData[key].count
-        totalStandardCase += xData[key].isSelected ? xData[key].count : 0
-      }
-    }
-    let total = anyTrue ? totalStandardCase : totalAllFalseCase
-
-    if (rows.length === 0) {
-      total = 0
-    }
-
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
-    const tooltipColumnSelectionId = 'addAndRemoveColumns'
     const tooltipDownloadId = 'download'
-    const { menuWallIsActive, isDropdownColumnMenuOpen, isModalDownloadOpen } = this.state
-    const optionalHiddenClass: string = !menuWallIsActive ? 'hidden' : ''
-    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
-    addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
+    const { isMenuWallOpen, isModalDownloadOpen } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const {
       sql,
@@ -196,27 +234,27 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return (
       <React.Fragment>
         {
+          // modal can render anywhere, this is not a particular location
           isModalDownloadOpen
           &&
           <ModalDownload
-            onClose={this.toggleModalDownload}
+            onClose={this.toggleStateVariables('isModalDownloadOpen', 'isDropdownDownloadOptionsOpen', 'isMenuWallOpen')}
             sql={sql}
             selectedFacets={selectedFacets}
             token={token}
             entityId={synapseId}
           />
         }
-        <button onClick={this.closeMenuClickHandler} className={`SRC-menu-wall ${optionalHiddenClass}`} />
-        <div className="SRC-marginBottomTen">
-          <p style={{ height:'20px' }}>
-            {!isLoading && <strong> Showing {total} {unitDescription} </strong>}
-            {isLoading &&
-              <React.Fragment>
-                <span className={'spinner'}/>
-                <strong> {'    '} Table results updating...</strong>
-              </React.Fragment>
-            }
-          </p>
+        {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
+        <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
+          <TotalQueryResults 
+            filter={this.props.filter!}
+            data={this.props.data}
+            isLoading={isLoading}
+            style={{fontSize: 15}}
+            unitDescription={unitDescription!}
+            frontText={'Showing'}
+          />
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
           <h3 className="SRC-tableHeader"> {this.props.title}</h3>
@@ -238,52 +276,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 effect="solid"
                 id={tooltipDownloadId}
             />
-            <button
-              style={{ marginLeft: '10px' }}
-              data-for={tooltipDownloadId}
-              data-tip="Export Table"
-              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-              onClick={this.toggleModalDownload}
-            >
-              <FontAwesomeIcon size="1x" color="white"  icon="download"/>
-            </button>
-            <ReactTooltip
-                delayShow={1500}
-                place="bottom"
-                type="dark"
-                effect="solid"
-                id={tooltipAdvancedSearchId}
-            />
+            {this.renderDropdownDownloadOptions()}
             {
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
               // allow this option if there isn't a groupBy clause 
-              !this.isGroupByInSql() &&
-              <span className={` dropdown ${this.state.isDropdownColumnMenuOpen ? 'open' : ''}`}>
-                <React.Fragment>
-                  <span
-                      tabIndex={0}
-                      data-for={tooltipColumnSelectionId}
-                      data-tip="Add / Remove Columns"
-                      style={{ marginLeft: '10px' }}
-                      className={addRemoveColClasses}
-                      onKeyPress={this.toggleMenuWall}
-                      onClick={this.toggleMenuWall}
-                      id="dropdownMenu1"
-                  >
-                      <FontAwesomeIcon color="white" icon="columns"/>
-                  </span>
-                  <ReactTooltip
-                      delayShow={1500}
-                      place="bottom"
-                      type="dark"
-                      effect="solid"
-                      id={tooltipColumnSelectionId}
-                  />
-                  <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                      {this.renderDropdownColumnMenu(headers)}
-                  </ul>
-                  </React.Fragment>
-                </span>
+              !this.isGroupByInSql() && this.renderDropdownColumnMenu(headers)
             }
           </span>
         </div>
@@ -295,9 +292,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                         {this.createTableHeader(headers, facets)}
                     </tr>
                 </thead>
-                {<tbody>{this.createTableRows(rows, headers)}</tbody>}
+                <tbody>{this.createTableRows(rows, headers)}</tbody>
             </table>
-            {total > 0 && this.showPaginationButtons(pastZero)}
+            {rows.length > 0 && this.showPaginationButtons(pastZero)}
         </div>
       </React.Fragment>
     )
@@ -322,6 +319,85 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const encodedQuery = btoa(queryJSON)
     // open this in a new window on synapse.org
     window.open(`https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`, '_self')
+  }
+
+  private renderDropdownDownloadOptions = () => {
+    const { isDropdownDownloadOptionsOpen } = this.state
+    const tooltipAdvancedSearchId = 'openAdvancedSearch'
+    const tooltipDownloadId = 'download'
+    return (
+      <span className={`dropdown ${DOWNLOAD_OPTIONS_CONTAINER_CLASS} ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
+        <button 
+          style={{ marginLeft: '10px' }}
+          data-for={tooltipDownloadId} 
+          data-tip="Download Options"
+          className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" 
+          onClick={this.toggleStateVariables('isDropdownDownloadOptionsOpen', 'isMenuWallOpen')}
+        >
+          <FontAwesomeIcon size="1x" color="white" icon="download" />
+        </button>
+        <ReactTooltip 
+          delayShow={1500}
+          place="bottom"
+          type="dark"
+          effect="solid"
+          id={tooltipAdvancedSearchId} 
+        />
+        <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+          <li
+            style={{ listStyle: 'none' }}
+            className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+            onClick={this.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')}
+          >
+            <a className="SRC-no-focus" href="javascript:void">
+              Export Metadata
+            </a>
+          </li>
+          <li
+            style={{ listStyle: 'none' }}
+            className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+            onClick={this.advancedSearch}
+          >
+          <a className="SRC-no-focus" href="javascript:void">
+            Download Files
+          </a>
+        </li>
+      </ul>
+      </span>
+    )
+  }
+
+  private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
+    const { isDropdownColumnMenuOpen } = this.state
+    const tooltipColumnSelectionId = 'addAndRemoveColumns'
+    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
+    addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
+    return (
+      <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
+        <span 
+          tabIndex={0} 
+          data-for={tooltipColumnSelectionId} 
+          data-tip="Add / Remove Columns" 
+          style={{ marginLeft: '10px' }} 
+          className={addRemoveColClasses} 
+          onKeyPress={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
+          onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
+          id="dropdownMenu1"
+        >
+          <FontAwesomeIcon color="white" icon="columns" />
+        </span>
+        <ReactTooltip 
+          delayShow={1500} 
+          place="bottom" 
+          type="dark" 
+          effect="solid" 
+          id={tooltipColumnSelectionId} 
+        />
+        <ul className="dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
+          {this.renderDropdownColumnMenuItems(headers)}
+        </ul>
+      </span>
+    )
   }
 
   /**
@@ -495,7 +571,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @returns {React.ReactNode}
    * @memberof SynapseTable
    */
-  private renderDropdownColumnMenu(headers: SelectColumn[]): React.ReactNode {
+  private renderDropdownColumnMenuItems = (headers: SelectColumn[]) => {
     return headers.map((header: any, index: number) => {
       let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index]
       // if visibleColumnCount is not defined then show all columns
@@ -528,44 +604,50 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       )
     })
   }
-
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
-    const { isColumnSelected } = this.state
+    const { isColumnSelected, mapEntityIdToHeader } = this.state
+    const entityColumnIndicies = this.getEntityColumnIndicies()
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(this.props.getLastQueryRequest!().query.sql)
 
-    rows.forEach((row: any, i: any) => {
+    rows.forEach((row: any, rowIndex) => {
       const rowContent = row.values.map(
-        (columnValue: string, j: number) => {
-          const columnName = headers[j].name
+        (columnValue: string, colIndex: number) => {
+          const columnName = headers[colIndex].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
           const { visibleColumnCount = Infinity } = this.props
           // on iniital load isColumnSelected is null and we by default show all columns that come
           // before visibileColumnCount
-          const isColumnActiveInitLoad: boolean = j < visibleColumnCount && isColumnSelectedLen === 0
+          const isColumnActiveInitLoad: boolean = colIndex < visibleColumnCount && isColumnSelectedLen === 0
           // past the initial load -- when a user has started clicking items, then isColumnSelected is
           // not null and we verify that this column is part of the selection.
-          const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[j]
-          const isCountColumn = countColumnIndexes.includes(j)
+          const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[colIndex]
+          const isCountColumn = countColumnIndexes.includes(colIndex)
+          const isBold = index === -1 ? '' : 'SRC-boldText'
           if (isColumnActiveInitLoad || isColumnActivePastInitLoad) {
             return (
-              <td className="SRC_noBorderTop" key={`(${i}${columnValue}${j})`}>
+              <td className="SRC_noBorderTop" key={`(${rowIndex}${columnValue}${colIndex})`}>
                   {
                     isCountColumn &&
-                    <a href="" onClick={this.showGroupRowData(row)}>
-                      <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                    <a href="javascript:void" onClick={this.showGroupRowData(row)}>
+                      <p className={isBold}>{columnValue}</p>
                     </a>
                   }
                   {
-                    !isCountColumn &&
-                    <p className={`${index === -1 ? '' : 'SRC-boldText'}`}>{columnValue}</p>
+                    !isCountColumn && (
+                      entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)
+                      ?
+                      <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
+                      :
+                      <p className={isBold}> {columnValue} </p>
+                      )
                   }
               </td>
             )
           }
-          return (<td className="SRC-hidden" key={`(${i},${j})`}/>)
+          return (<td className="SRC-hidden" key={`(${rowIndex},${colIndex})`}/>)
         })
       const rowFormatted = (
         <tr key={row.rowId}>{rowContent}</tr>
@@ -576,10 +658,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
-    const columnElements: JSX.Element[] = []
     const { isColumnSelected, sortedColumnSelection, columnIconSortState } = this.state
-    const { visibleColumnCount = Infinity } = this.props
-    headers.map((column: SelectColumn, index: number) => {
+    const { visibleColumnCount = Infinity, facetAliases = {} } = this.props
+    return headers.map((column: SelectColumn, index: number) => {
       // two cases when rendering the column headers on init load
       // of the page we have to show only this.props.visibleColumnCount many
       // columns, afterwards we rely on the isColumnSelected to get choices
@@ -592,14 +673,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const columnIndex: number = columnIconSortState[index] === undefined ? 0 : columnIconSortState[index]
         // we have to figure out if the current column is a facet selection
         const facetIndex: number = facets.findIndex((facetColumnResult: FacetColumnResult) => {
-          return this.useFacetAliasIfDefined(facetColumnResult.columnName) === column.name
+          const facetDisplayValue = facetAliases[facetColumnResult.columnName] || facetColumnResult.columnName
+          return facetDisplayValue === column.name
         })
         // the header must be included in the facets and it has to be enumerable for current rendering capabilities
         const isFacetSelection: boolean = facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
         const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
-        columnElements.push(
+        return (
           <th key={column.name}>
             <div className="SRC-centerContent">
               <span style={{ whiteSpace: 'nowrap' }}>
@@ -621,10 +703,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </th>
         )
       } else {
-        columnElements.push(<th className="SRC-hidden" key={column.name} />)
+        return <th className="SRC-hidden" key={column.name} />
       }
     })
-    return columnElements
   }
 
   /**
@@ -644,46 +725,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return -1
   }
 
-  // TODO: implement this method
-  private download() {
-    return
-  }
-
-  // Direct user to synapse corresponding synapse table
+  // Direct user to corresponding query on synapse
   private advancedSearch(event: React.SyntheticEvent) {
-    event.preventDefault()
+    event && event.preventDefault()
     const lastQueryRequest = this.props.getLastQueryRequest!()
     const { query } = lastQueryRequest
         // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
     const synTable = this.props.synapseId
     window.open(`https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`, '_blank')
-  }
-
-  /**
-   * Handles the opening and closing of the column select menu, this method
-   * is only necessary because react overrides the behavior that bootstrap
-   * embeds in its menus
-   *
-   * @memberof SynapseTable
-   */
-  public toggleMenuWall() {
-    const { isDropdownColumnMenuOpen, isFilterSelected } = this.state
-
-    if (!isDropdownColumnMenuOpen) {
-      // the dropdown was closed coming into this method, so now it will be opened
-      // so we activate the menu wall.
-      for (let i = 0; i < isFilterSelected.length; i += 1) {
-        isFilterSelected[i] = false
-      }
-      this.setState({ menuWallIsActive: true })
-    } else {
-      // dropdown was open coming into this method, so we activate the menu wall
-      // to allow the dropdown to be closed
-      this.setState({ menuWallIsActive: false })
-    }
-
-    this.setState({ isFilterSelected, isDropdownColumnMenuOpen: !isDropdownColumnMenuOpen })
   }
 
   private getLengthOfPropsData() {
@@ -741,13 +791,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const columnName = facetColumnResult.columnName
 
     // this is related to whether we've selected this column or not
-    const isCurFilterSelected = this.state.isFilterSelected[index]
+    const isCurFilterSelected = this.state.activeFilterIndex === index
 
     const ref: React.RefObject<HTMLSpanElement> = React.createRef()
     const refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
 
     const applyPrimary = isCurFilterSelected ? 'SRC-primary-background-color' : 'SRC-primary-text-color'
-    const classList = this.state.filterClassList[index]
+    const classList = isCurFilterSelected ? this.state.activeFilterClass : ''
     const style = { alignItems: 'center', marginLeft: '10px', marginRight: '3px', color: 'black', display: 'flex' }
 
     return (
@@ -796,25 +846,26 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     )
   }
 
-  public closeMenuClickHandler(_: React.SyntheticEvent) {
-    const { menuWallIsActive } = this.state
-    const isFilterSelected = cloneDeep(this.state.isFilterSelected)
-    const filterClassList = cloneDeep(this.state.filterClassList)
-
-    if (menuWallIsActive) {
-      // need to close the menus and column select menu
-      for (let i = 0; i < isFilterSelected.length; i += 1) {
-        isFilterSelected[i] = false
-        filterClassList[i] = ''
-      }
-
-      this.setState({
-        filterClassList,
-        isFilterSelected,
-        isDropdownColumnMenuOpen: false,
-        menuWallIsActive: false
-      })
+  // This closes out all the dropdowns, since the button calling this method is only rendered if the dropdown
+  // is visible then we can safely close out all dropdowns without checking them
+  public closeAllDropdowns(_: React.SyntheticEvent) {
+    // this ensures all dropdown variables are set to false and any additional dropdowns added are added to this list
+    const dropdownKeys: BooleanKeys<SynapseTableState> [] = [
+      'isDropdownColumnMenuOpen',
+      'isDropdownDownloadOptionsOpen',
+      'isModalDownloadOpen',
+      'isMenuWallOpen'
+    ]
+    const updatedState = {
+      activeFilterClass: '',
+      activeFilterIndex: -1,
     }
+    dropdownKeys.forEach(
+      el => {
+        updatedState[el] = false
+      }
+    )
+    this.setState(updatedState)
   }
 
   public renderFacetSelection(
@@ -899,34 +950,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
 
   public toggleFilterDropdown =
-   (index: number, isCurFilterSelected: boolean, refOuterDiv: React.RefObject<HTMLDivElement>) => (_event?: any) => {
-     const isFilterSelected = cloneDeep(this.state.isFilterSelected)
-     const filterClassList = cloneDeep(this.state.filterClassList)
-     isFilterSelected[index] = !isCurFilterSelected
-     // close all the other filters menus
-     for (let i = 0; i < isFilterSelected.length; i += 1) {
-       if (i !== index) {
-         isFilterSelected[i] = false
-       }
-     }
+   (index: number, isCurFilterSelected: boolean, refOuterDiv: React.RefObject<HTMLDivElement>) => (_event: any) => {
      // The dropdown is located inside of a scrollable, to know whether the current filter menu item is near the
      // front of the scrollable we can examine its parent bounding rect -- this gives a relative value
      // (that changes on scroll) of the filter to a fixed left most point.
      const tHeadLeftPosition = refOuterDiv.current!.parentElement!.getBoundingClientRect().left
-     let classNames = '' //  the classes to be applied to the filter dropdown menu
-     if (isFilterSelected[index]) {
-       classNames = tHeadLeftPosition < MIN_SPACE_FACET_MENU ?
-         'SRC-forceLeftDropdown dropdown-menu-left' : 'dropdown-menu-right'
-     } else {
-       classNames = ''
-     }
+     const activeFilterClass = tHeadLeftPosition < MIN_SPACE_FACET_MENU ?
+       'SRC-forceLeftDropdown dropdown-menu-left' : 'dropdown-menu-right'
      // set the class names for this dropdown item
-     filterClassList[index] = classNames
      this.setState({
-       filterClassList,
-       isFilterSelected,
+       activeFilterClass,
+       activeFilterIndex: index,
        isDropdownColumnMenuOpen: false,
-       menuWallIsActive: !isCurFilterSelected
+       isMenuWallOpen: !isCurFilterSelected
      })
    }
 }

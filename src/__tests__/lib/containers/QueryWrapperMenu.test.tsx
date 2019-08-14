@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
 import { mockData }   from '../../../mocks'
-import QueryWrapperMenu, { QueryWrapperMenuProps, GROUP_INDEX_CSS, GROUP_INDEX_SELECTED_CSS } from '../../../lib/containers/QueryWrapperMenu'
+import QueryWrapperMenu, { QueryWrapperMenuProps, ACCORDION_GROUP_CSS, ACCORDION_GROUP_ACTIVE_CSS, MENU_DROPDOWN_CSS } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import StackedBarChart from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
@@ -106,20 +106,18 @@ describe('it renders an accordion config', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
   const sql: string = 'SELECT * FROM syn5604373'
-  const facetName : string = 'name'
-  const name = 'Studies'
   const props: QueryWrapperMenuProps = {
     accordionConfig: [
       {
-        name,
-        menuConfig: [{ sql, facetName }, { sql, facetName: 'b' }, { sql, facetName: 'c' }],
+        name: 'Computational',
+        menuConfig: [{ sql, facetName: 'a' }, { sql, facetName: 'b' }, { sql, facetName: 'c' }],
         stackedBarChartConfiguration: {
           loadingScreen: <div/>
         }
       },
       {
-        name,
-        menuConfig: [{ sql, facetName: 'b' }, { sql, facetName: 'c' }],
+        name: 'Experimental',
+        menuConfig: [{ sql, facetName: 'd' }, { sql, facetName: 'e' }],
         stackedBarChartConfiguration: {
           loadingScreen: <div/>
         }
@@ -133,33 +131,43 @@ describe('it renders an accordion config', () => {
     expect(wrapper).toBeDefined()
   })
 
-  it('renders with all the top level keys closed initially', async () => {
+  // selects the top level menu
+  const MENU_DROPDOWN_CSS_SELECTOR = `.${MENU_DROPDOWN_CSS}`
+  // selects an accordion group within the overall menu
+  const ACCORDION_GROUP_CSS_SELECTOR = `.${ACCORDION_GROUP_CSS}`
+  // selects an accordion group that is currently active
+  const ACCORDION_GROUP_ACTIVE_CSS_SELECTOR = `.${ACCORDION_GROUP_ACTIVE_CSS}`
+  // selects the accordion group's menu
+  const ACCORDION_GROUP_MENU_SELECTOR = `.${ACCORDION_GROUP_ACTIVE_CSS} .SRC-accordion-menu`
+
+  it('renders with the first accordion dropdown already opened', async () => {
     const { wrapper } = await createShallowComponent(props)
-    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(0)
-    expect(wrapper.find(`div.${GROUP_INDEX_CSS}`)).toHaveLength(2)
+    // check there are two accordion groups
+    expect(wrapper.find(ACCORDION_GROUP_CSS_SELECTOR)).toHaveLength(2)
+    // only one accordion should be selected
+    expect(wrapper.find(ACCORDION_GROUP_ACTIVE_CSS_SELECTOR)).toHaveLength(1)
+    // check first option under the first group index is selected
+    expect(wrapper.find(ACCORDION_GROUP_ACTIVE_CSS_SELECTOR).childAt(1).find('.SRC-pointed-triangle-right')).toHaveLength(1)
   })
 
-  it('performs open, open, close', async () => {
+  it('makes selections and maintains state ', async () => {
     const { wrapper } = await createShallowComponent(props)
-    const classIndiciatingAccordionKey = `div.${GROUP_INDEX_CSS}`
     const childOne = 0
     const childTwo = 1
-    expect(wrapper.find(`div.${GROUP_INDEX_SELECTED_CSS}`)).toHaveLength(0)
-    // click the first top level key           
-    await wrapper.find(classIndiciatingAccordionKey).at(childOne).simulate('click')
-    // check the first key is open and second is closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
-    // click the second top level key
-    await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
-    // check the second key is open and first is closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeTruthy()
-    // click the second top level key again
-    await wrapper.find(classIndiciatingAccordionKey).at(childTwo).simulate('click')
-    // check that both keys are now closed
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childOne).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
-    expect(wrapper.find(classIndiciatingAccordionKey).at(childTwo).hasClass(GROUP_INDEX_SELECTED_CSS)).toBeFalsy()
+    // Click the first accordion key's third menu-item
+    await wrapper.find(ACCORDION_GROUP_MENU_SELECTOR).childAt(2).simulate('click')
+    // click the second accordion key open
+    await wrapper.find(ACCORDION_GROUP_CSS_SELECTOR).at(childTwo).simulate('click')
+    // check the first accordion key's menu is closed && second accordion key's menu is active with first child selected
+    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childOne).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeFalsy()
+    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childTwo).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeTruthy()
+    expect(wrapper.find(ACCORDION_GROUP_MENU_SELECTOR).childAt(0).hasClass('SRC-pointed-triangle-right')).toBeTruthy()
+    // click the first top accordion key back open again and see the third item is still clicked
+    await wrapper.find(ACCORDION_GROUP_CSS_SELECTOR).at(childOne).simulate('click')
+    // verify second item is still selected from first click
+    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childOne).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeTruthy()
+    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childTwo).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeFalsy()
+    expect(wrapper.find(ACCORDION_GROUP_MENU_SELECTOR).childAt(2).hasClass('SRC-pointed-triangle-right')).toBeTruthy()
   })
 
 })

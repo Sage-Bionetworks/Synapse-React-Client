@@ -1,14 +1,15 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE } from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
-import { Row } from 'src/lib/utils/jsonResponses/Table/QueryResult'
-import { SelectColumn } from 'src/lib/utils/jsonResponses/Table/SelectColumn'
-import { ColumnModel } from 'src/lib/utils/jsonResponses/Table/ColumnModel'
+import { Row } from '../../../lib/utils/jsonResponses/Table/QueryResult'
+import { SelectColumn } from '../../../lib/utils/jsonResponses/Table/SelectColumn'
+import { ColumnModel } from '../../../lib/utils/jsonResponses/Table/ColumnModel'
+import ModalDownload from '../../../lib/containers/ModalDownload'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow(
@@ -79,6 +80,7 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
+    filter: 'tumorType'
   } as SynapseTableProps & QueryWrapperChildProps
 
   it('renders without crashing', async () => {
@@ -86,12 +88,12 @@ describe('basic functionality', () => {
     expect(wrapper).toBeDefined()
   })
 
-  describe('dropdown column menu works', () => {
+  describe('Dropdown column menu works', () => {
     it('renders dropdown column menu', async () => {
       const { wrapper } = createShallowComponent(props)
-      // there are a total of 13 columns in view, so we expect
-      // 13 list elements
-      expect(wrapper.find('li.SRC-table-dropdown-list')).toHaveLength(totalColumns)
+      // There are multiple dropdowns so we look at the dropdown with class SRC-column-menu
+      // Since there are a total of 13 columns in view, so we expect 13 list elements
+      expect(wrapper.find('.SRC-column-menu .SRC-table-dropdown-list')).toHaveLength(totalColumns)
     })
 
     it('toggle column selection functions correctly', async () => {
@@ -109,6 +111,22 @@ describe('basic functionality', () => {
       expect(wrapper.state('isColumnSelected')).toEqual(
         [true, true, true, false, false, true, false, false, false, false, false, false, false]
       )
+    })
+  })
+  describe('Download options dropdown works', () => {
+    it('renders ModalDownload', async () => {
+      const { wrapper } = await createShallowComponent(props)
+      // Double check its not showing be default
+      expect(wrapper.find(ModalDownload)).toHaveLength(0)
+      
+      // Click the dropdown
+      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
+      // See that modal download is
+      expect(wrapper.find(ModalDownload)).toHaveLength(1)
+
+      // Click elsewhere and see that modal download has closed
+      await wrapper.find('.SRC-menu-wall').simulate('click')
+      expect(wrapper.find(ModalDownload)).toHaveLength(0)
     })
   })
   describe('PORTALS-527: aggregate query support (show underlying data)', () => {

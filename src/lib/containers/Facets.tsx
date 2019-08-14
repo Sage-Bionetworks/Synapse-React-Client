@@ -273,8 +273,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
           &&
           <TotalQueryResults
             data={data}
-            filter={filter}
+            filter={filter!}
             unitDescription={unitDescription!}
+            frontText={'Displaying'}
             isLoading={isLoading!}
           />
         }

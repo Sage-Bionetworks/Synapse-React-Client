@@ -43,7 +43,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      showTabOne: false,
       tabTwo:
       {
         showBarChart: false,
@@ -55,9 +55,12 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           loadingScreen: <div style={{height: 450}}> I'm loading as fast I can! </div>
         },
         rgbIndex: 1,
+        facetAliases: {
+          grant: 'Grant'
+        },
         accordionConfig: [
           {
-            name: 'Clinical',
+            name: 'Compuational',
             cardConfiguration: {
               genericCardSchema,
               type: SynapseConstants.GENERIC_CARD,
@@ -70,11 +73,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'diagnosis',
-                sql: `${computationalSql} LIMIT 1 `,
+                sql: computationalSql,
               },
               {
                 facetName: 'modelType',
-                sql: `${computationalSql} LIMIT 2`,
+                sql: computationalSql,
               },
             ],
           },
@@ -92,11 +95,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               },
               {
                 facetName: 'reagentType',
-                sql: `${experimentalSql} LIMIT 1`,
+                sql: experimentalSql,
               },
               {
                 facetName: 'softwareType',
-                sql: `${experimentalSql} LIMIT 2`,
+                sql: experimentalSql,
               },
             ],
           },
@@ -104,19 +107,20 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       }
     ,
       tabOne: {
+        unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
-          unitDescription: 'datum'
+          synapseId: 'syn11346063'
         },
         menuConfig: [
           {
             facetName: 'study',
-            sql: 'SELECT * FROM syn11346063',
+            sql: 'SELECT * FROM syn11346063 limit 1000',
           },
           {
             facetName: 'diagnosis',
             sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
-              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc',
+              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
           },
           // {
           //   facetName: 'dataType',
@@ -201,7 +205,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         <h2>Demo of table</h2>
           <QueryWrapperMenu
             token={''}
-            name={'Studies'}
             isConsistent={true}
             {...props}
             rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}

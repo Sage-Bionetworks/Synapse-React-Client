@@ -59,19 +59,11 @@ describe('it performs all functionality', () => {
     expect(tree).toBeDefined()
   })
 
-  it('Renders total and RowContainer correctly without a faceted view', async () => {
-    const propsWithTotalQueryCount = {
-      ...props,
-      totalResultsNoFacet: 59,
-    }
-    const { wrapper } = createShallowComponent(propsWithTotalQueryCount)
-    expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
-    expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
-  })
-
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({ ...props, filter: 'projectStatus' })
+    expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
+    expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
   })
 

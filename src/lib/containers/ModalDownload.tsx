@@ -22,7 +22,7 @@ export type ModalDownloadState = {
 export type ModalDownloadProps = {
   entityId: string
   sql: string
-  onClose: () => void
+  onClose: (...args: any []) => void
   token?: string
   includeEntityEtag?: boolean
   selectedFacets?: FacetColumnRequest [] // The selected facet filters.
@@ -122,7 +122,7 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
     }
     return (
       <React.Fragment>
-        <div className="modal fade in SRC-block" role="dialog" tabIndex={-1}>
+        <div className="custom-checkbox-container modal fade in SRC-block" role="dialog" tabIndex={-1}>
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <button style={closeBtn} onClick={this.props.onClose}>

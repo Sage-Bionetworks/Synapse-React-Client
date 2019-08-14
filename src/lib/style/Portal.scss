@@ -867,6 +867,9 @@ checkmark styling end
 .dropdown:focus ul.dropdown-menu {
   display: block;
 }
+.dropdown-menu > li > a:hover {
+  background-color: unset;
+}
 
 .SRC-centerContent {
   display: flex;
