@@ -386,12 +386,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       originalColor = colorPalette[2]
       defaultColor = colorPalette[4]
     }
-    console.log('curLevel === accordionGroupIndex ', curLevel === accordionGroupIndex)
-    console.log('activeMenuIndices[accordionGroupIndex] = ', activeMenuIndices[accordionGroupIndex])
     return menuConfig.map((config: MenuConfig, index: number) => {
       const { facetName } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
-      console.log('isSelected = ', isSelected)
       const style: React.CSSProperties = {}
       let selectedStyling: string = ''
       if (isSelected) {
