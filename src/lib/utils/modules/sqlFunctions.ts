@@ -6,6 +6,12 @@ export type KeyValue = {
 
 export type SQLOperator = 'LIKE' | '='
 
+// look for "group by", multi-line and case insensitive
+const GROUP_BY_REGEX = /group by/mi
+export const isGroupByInSql =(sql: string): boolean => {
+  return GROUP_BY_REGEX.test(sql)
+}
+
 const generateTokenUsingOperator = (literal: string, operator: SQLOperator, match: string) => {
   switch (operator) {
     case 'LIKE':

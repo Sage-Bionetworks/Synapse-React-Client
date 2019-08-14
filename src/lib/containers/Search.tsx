@@ -182,7 +182,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     let usedUnitDescription = unitDescription
     if (submittedSearchText !== '') {
-      usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${searchableItem.alias}`
+      usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${searchableItem.alias ? searchableItem.alias: searchableItem.key}`
     }
     return (
       <div>

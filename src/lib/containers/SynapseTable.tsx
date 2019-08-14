@@ -27,7 +27,7 @@ import { SortItem } from '../utils/jsonResponses/Table/Query'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 import { lexer } from 'sql-parser'
 import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
-import { formatSQLFromParser } from '../utils/modules/sqlFunctions'
+import { formatSQLFromParser, isGroupByInSql } from '../utils/modules/sqlFunctions'
 import ModalDownload from './ModalDownload'
 import { SynapseClient } from '../utils'
 import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
@@ -64,8 +64,6 @@ type Info = {
 interface Dictionary<T> {
   [key: string]: T;
 }
-// look for "group by", multi-line and case insensitive
-const GROUP_BY_REGEX = /group by/mi
 export type SynapseTableState = {
   sortedColumnSelection: SortItem []
   isDropdownColumnMenuOpen: boolean
@@ -190,11 +188,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return columnsOfTypeEntity
   }
 
-  public isGroupByInSql(sql?: string): boolean {
-    const testSql = sql ? sql : this.props.getLastQueryRequest!().query.sql
-    return GROUP_BY_REGEX.test(testSql)
-  }
-
   public toggleStateVariables = (...values: BooleanKeys<SynapseTableState> []) => (_event: React.SyntheticEvent) => {
     const updatedState = {} 
     values.forEach(
@@ -280,7 +273,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             {
               // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
               // allow this option if there isn't a groupBy clause 
-              !this.isGroupByInSql() && this.renderDropdownColumnMenu(headers)
+              !isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && this.renderDropdownColumnMenu(headers)
             }
           </span>
         </div>
@@ -407,7 +400,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    */
   public getCountFunctionColumnIndexes(originalSql: string): number[] {
     const indexes: number[] = []
-    if (this.isGroupByInSql(originalSql)) {
+    if (isGroupByInSql(originalSql)) {
       const tokens: string[][] = lexer.tokenize(originalSql)
       const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
       const fromIndex = tokens.findIndex(el => el[0] === 'FROM')

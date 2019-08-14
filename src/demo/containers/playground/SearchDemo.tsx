@@ -7,7 +7,7 @@ import { CommonCardProps } from 'lib/containers/CardContainerLogic'
 import CardContainer from 'lib/containers/CardContainer';
 
 export const SearchDemo:React.SFC = () => {
-  const sql = "SELECT * FROM syn20337467" 
+  const sql = "SELECT contributor, diagnosis, modelType FROM syn20337467" 
   const searchable: Searchable = [
     {
       key: 'contributor', 
@@ -18,6 +18,10 @@ export const SearchDemo:React.SFC = () => {
       key: 'diagnosis',
       alias: 'Diagnosis',
       hintText: 'LOAD'
+    },
+    {
+      key: 'modelType',
+      hintText: 'hint'
     },
   ]
   const genericCardSchema: GenericCardSchema = {

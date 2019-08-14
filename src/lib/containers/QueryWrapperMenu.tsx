@@ -10,7 +10,7 @@ import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import CardContainer from './CardContainer'
 import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
-import { KeyValue } from '../utils/modules/sqlFunctions'
+import { KeyValue, isGroupByInSql } from '../utils/modules/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -245,6 +245,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const loadNow = isSelected
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
+      let partMask = SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+      if (isGroupByInSql(sql)) {
+        // necessary for creating the where clause in the synapse table link, columnModels distinguishes non aggregate functions
+        // from select columns
+        partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+      }
       return (
         <span key={facetName} className={className}>
           <QueryWrapper
@@ -252,11 +260,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             loadNow={loadNow}
             showMenu={true}
             initQueryRequest={{
+              partMask,
               concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-              partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-                SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-                SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
               query: {
                 sql,
                 selectedFacets,
