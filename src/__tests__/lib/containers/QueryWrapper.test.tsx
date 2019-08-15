@@ -11,7 +11,7 @@ const createShallowComponent = async (mockRequest: QueryBundleRequest, disableLi
   const wrapper = await shallow(
     <QueryWrapper
       initQueryRequest={mockRequest}
-      facetName={'projectStatus'}
+      facet={'projectStatus'}
     />,
     { disableLifecycleMethods }
   )
@@ -25,7 +25,7 @@ describe('basic functionality', () => {
   SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
   SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
 
-  const lastQueryRequest = {
+  const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

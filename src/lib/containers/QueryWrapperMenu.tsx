@@ -27,7 +27,7 @@ type MenuState = {
 
 export type MenuConfig = {
   sql: string
-  facetName: string
+  facet: string
 }
 
 // represents the entirety of the menu
@@ -219,13 +219,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = groupIndex === accordionGroupIndex && activeMenuIndices[accordionGroupIndex] === index
       const {
-        facetName,
+        facet,
         sql,
       } = config
       let usedUnitDescription = unitDescription
       if (accordionConfig.length > 0 && !usedUnitDescription) {
         // This is a hardcoded setting, could change 'Tools' to a prop in the future
-        const facetDisplayName = facetAliases[facetName] || facetName
+        const facetDisplayName = facetAliases[facet] || facet
         const name = accordionConfig[groupIndex].name
         usedUnitDescription = `${name} Tools by ${facetDisplayName}`
       }
@@ -234,12 +234,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         className = 'SRC-hidden'
       }
       let selectedFacets: FacetColumnValuesRequest [] = []
-      if (Number(menuIndexFromProps) === index && facetName && facetValue) {
+      if (Number(menuIndexFromProps) === index && facet && facetValue) {
         selectedFacets = [
           {
             concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
             facetValues: [facetValue],
-            columnName: facetName
+            columnName: facet
           }
         ]
       }
@@ -254,7 +254,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
       }
       return (
-        <span key={facetName} className={className}>
+        <span key={facet} className={className}>
           <QueryWrapper
             showBarChart={showBarChart}
             loadNow={loadNow}
@@ -271,7 +271,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
               }
             }}
             unitDescription={usedUnitDescription}
-            facetName={facetName}
+            facet={facet}
             token={token}
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
@@ -401,7 +401,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       let searchIconStyle: React.CSSProperties = {
         margin: 'auto 0'
       }
-      const { facetName } = config
+      const { facet } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
       const style: React.CSSProperties = {}
       const isSearchConfig = (index === menuConfig.length -1 ) && searchConfiguration
@@ -422,12 +422,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const infoEnter: Info = { isSelected, originalColor }
       const infoLeave: Info = { isSelected, originalColor: defaultColor }
-      const facetDisplayValue: string = facetAliases[facetName] || facetName
+      const facetDisplayValue: string = facetAliases[facet] || facet
       return (
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
-          key={config.facetName}
+          key={config.facet}
           className={`SRC-hand-cursor ${selectedStyling} SRC-menu-button-base SRC-gap`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}

@@ -25,7 +25,7 @@ const createShallowComponent = (props: StackedBarChartProps & QueryWrapperChildP
 
 describe('it performs basic functionality', () => {
 
-  const filter = 'tumorType'
+  const facet = 'tumorType'
   const castData = syn16787123Json as QueryResultBundle
   /*
     Looking at the data the facet values for tumorType and their
@@ -103,7 +103,7 @@ describe('it performs basic functionality', () => {
   const unitDescription = 'types'
   // setup tests stubs
   const props = {
-    filter,
+    facet,
     unitDescription,
     getLastQueryRequest,
     data: castData,
@@ -136,7 +136,7 @@ describe('it performs basic functionality', () => {
     // 1.
     expect(wrapper.render().find('svg.SRC-hoverBox')).toHaveLength(11)
     // 2.
-    expect(wrapper.find('span.SRC-text-title.SRC-filter-display').text()).toEqual(filter)
+    expect(wrapper.find('span.SRC-text-title.SRC-filter-display').text()).toEqual(facet)
     expect(wrapper.find('span.SRC-facet-view').text()).toEqual(` ${facetValueWithMaxCount}`)
     expect(wrapper.find('#fileCount').text()).toEqual(`28 ${unitDescription}`)
     // shouldn't have a link unless link and linkText are specified
@@ -174,7 +174,7 @@ describe('it performs basic functionality', () => {
     const { wrapper } = createShallowComponent(props)
     const filterUpdated = 'projectStatus'
     await wrapper.setProps({
-      filter: filterUpdated
+      facet: filterUpdated
     })
     const facetValueWithMaxCountUpdated = 'Active'
     expect(wrapper.render().find('svg.SRC-hoverBox')).toHaveLength(2)

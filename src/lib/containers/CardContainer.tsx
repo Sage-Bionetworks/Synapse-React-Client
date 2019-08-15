@@ -28,7 +28,7 @@ export type CardContainerProps = {
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   isLoading?: boolean
-  filter?: string
+  facet?: string
   unitDescription?: string
   hasMoreData?: boolean
   loadingScreen?: React.FunctionComponent | JSX.Element
@@ -86,7 +86,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       data,
       limit = Infinity,
       isHeader = false,
-      filter,
+      facet,
       unitDescription,
       type,
       isLoading,
@@ -183,7 +183,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {(!title && unitDescription && showBarChart) &&
           <TotalQueryResults
             data={data}
-            filter={filter!}
+            facet={facet!}
             isLoading={isLoading!}
             unitDescription={unitDescription}
             frontText={'Displaying'}

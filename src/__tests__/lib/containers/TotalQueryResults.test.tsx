@@ -27,7 +27,7 @@ describe('it works', () => {
     data,
     unitDescription,
     isLoading: false,
-    filter: 'fundingAgency',
+    facet: 'fundingAgency',
     frontText: 'Displaying'
   }
   it('renders without crashing', () => {

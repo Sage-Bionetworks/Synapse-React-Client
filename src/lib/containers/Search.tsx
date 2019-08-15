@@ -133,7 +133,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   render() {
-    const { searchable, data, isLoading, filter, unitDescription = '' } = this.props
+    const { searchable, data, isLoading, facet, unitDescription = '' } = this.props
     const { isSearchableDropdownOpen, searchableIndex, searchText, submittedSearchText } = this.state
     const searchableItem = searchable[searchableIndex]
     const containerStyle: React.CSSProperties = {
@@ -240,7 +240,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           style={totalQueryResultsStyle}
           isLoading={isLoading!}
           data={data}
-          filter={filter!}
+          facet={facet!}
           frontText={'Displaying'}
           unitDescription={usedUnitDescription}
         />

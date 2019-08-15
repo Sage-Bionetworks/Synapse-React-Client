@@ -30,7 +30,7 @@ export type CardContainerLogicProps = {
   unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
-  filter?: string
+  facet?: string
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema
   backgroundColor?:string
@@ -157,7 +157,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
-    const initQueryRequest = {
+    const initQueryRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

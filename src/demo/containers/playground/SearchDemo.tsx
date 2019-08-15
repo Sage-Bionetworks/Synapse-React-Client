@@ -55,7 +55,7 @@ export const SearchDemo:React.SFC = () => {
             offset: 0
           }
         }}
-        facetName={'modelType'}
+        facet={'modelType'}
         showBarChart={false}
         unitDescription={'studies'}
         >

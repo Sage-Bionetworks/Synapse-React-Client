@@ -23,14 +23,14 @@ describe('it renders with basic functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
   const sql: string = 'SELECT * FROM syn5604373'
-  const facetName : string = 'name'
+  const facet : string = 'name'
   const synapseId : string = 'syn5604373'
   const token: string = ''
   const name = 'Studies'
   const props: QueryWrapperMenuProps = {
     token,
     name,
-    menuConfig: [{ sql, facetName }],
+    menuConfig: [{ sql, facet }],
     rgbIndex: 3,
     stackedBarChartConfiguration: {
       loadingScreen: <div/>
@@ -54,7 +54,7 @@ describe('it renders with basic functionality', () => {
       stackedBarChartConfiguration: {
         loadingScreen: <div/>
       },
-      menuConfig: [{ sql, facetName }]
+      menuConfig: [{ sql, facet }]
     }
     const { wrapper } = await createShallowComponent(propsWithTitle)
     expect(wrapper).toBeDefined()
@@ -72,7 +72,7 @@ describe('it renders with basic functionality', () => {
       cardConfiguration: {
         type: SynapseConstants.STUDY
       },
-      menuConfig: [{ sql, facetName }]
+      menuConfig: [{ sql, facet }]
     }
     const { wrapper } = await createShallowComponent(propsWithTitle)
     expect(wrapper).toBeDefined()
@@ -110,14 +110,14 @@ describe('it renders an accordion config', () => {
     accordionConfig: [
       {
         name: 'Computational',
-        menuConfig: [{ sql, facetName: 'a' }, { sql, facetName: 'b' }, { sql, facetName: 'c' }],
+        menuConfig: [{ sql, facet: 'a' }, { sql, facet: 'b' }, { sql, facet: 'c' }],
         stackedBarChartConfiguration: {
           loadingScreen: <div/>
         }
       },
       {
         name: 'Experimental',
-        menuConfig: [{ sql, facetName: 'd' }, { sql, facetName: 'e' }],
+        menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
         stackedBarChartConfiguration: {
           loadingScreen: <div/>
         }

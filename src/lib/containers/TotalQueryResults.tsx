@@ -3,7 +3,7 @@ import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundl
 
 export type TotalQueryResultsProps = {
   data?: QueryResultBundle
-  filter: string
+  facet?: string
   isLoading: boolean
   style?: React.CSSProperties
   unitDescription: string
@@ -11,11 +11,11 @@ export type TotalQueryResultsProps = {
 }
 
 export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> =
-  ({ data, filter, isLoading, style, unitDescription, frontText }) => {
+  ({ data, facet, isLoading, style, unitDescription, frontText }) => {
     let total = 0
     if (data) {
       const { facets = [] } = data
-      const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === filter)
+      const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
       // calculate the values chosen
       const curFacets = data.facets[curFacetsIndex]
       // edge case -- if they are all false then they are considered all true..

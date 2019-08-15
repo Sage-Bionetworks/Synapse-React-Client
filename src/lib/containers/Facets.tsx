@@ -145,14 +145,14 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    */
   public showFacetFilter() {
     // Find the facetcolumn result according to the input filter
-    const facetColumnResult = this.props.data!.facets.find(el => el.columnName === this.props.filter && el.facetType === 'enumeration')
+    const facetColumnResult = this.props.data!.facets.find(el => el.columnName === this.props.facet && el.facetType === 'enumeration')
     if (!facetColumnResult) {
       throw Error('Error no matching facet found given specified facet')
     }
 
     return (
       <CheckboxGroup
-        isAllFilterSelected={this.props.isAllFilterSelectedForFacet![this.props.filter!]}
+        isAllFilterSelected={this.props.isAllFilterSelectedForFacet![this.props.facet!]}
         showAllFacets={this.state.showAllFacets}
         rgbIndex={this.props.rgbIndex!}
         key={facetColumnResult.columnName}
@@ -181,14 +181,14 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       })
     }
 
-    const { filter = '', isAllFilterSelectedForFacet = {} } = this.props
+    const { facet = '', isAllFilterSelectedForFacet = {} } = this.props
 
     const lastFacetSelection = {
       facetValue,
       selector,
-      columnName: filter,
+      columnName: facet,
     } as FacetSelection
-    isAllFilterSelectedForFacet[filter] = selector === SELECT_ALL
+    isAllFilterSelectedForFacet[facet] = selector === SELECT_ALL
 
     this.props.updateParentState!({
       lastFacetSelection,
@@ -204,7 +204,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       htmlCheckboxes,
       queryRequest,
       selector,
-      filter,
+      filter: facet,
       value: facetValue,
     })
 
@@ -250,10 +250,10 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       return (<div/>)
     }
     let { showAllFacets } = this.state
-    const { data, filter, unitDescription, isLoading, showBarChart } = this.props
+    const { data, facet, unitDescription, isLoading, showBarChart } = this.props
     const { facets } = data
 
-    const curFacetsIndex = facets.findIndex(facet => facet.columnName === filter && facet.facetType === 'enumeration')
+    const curFacetsIndex = facets.findIndex(curFacet => curFacet.columnName === facet && curFacet.facetType === 'enumeration')
     // cast is necessary because filter returns an array of arrays
     const facetColumnResultValues = facets[curFacetsIndex] as FacetColumnResultValues
 
@@ -273,7 +273,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
           &&
           <TotalQueryResults
             data={data}
-            filter={filter!}
+            facet={facet!}
             unitDescription={unitDescription!}
             frontText={'Displaying'}
             isLoading={isLoading!}

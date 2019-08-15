@@ -80,7 +80,7 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
-    filter: 'tumorType'
+    facet: 'tumorType'
   } as SynapseTableProps & QueryWrapperChildProps
 
   it('renders without crashing', async () => {

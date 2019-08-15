@@ -12,7 +12,7 @@ export type QueryWrapperProps = {
   rgbIndex?: number
   token?: string
   showMenu?: boolean
-  facetName: string
+  facet: string
   loadingScreen?: JSX.Element
   unitDescription?: string
   facetAliases?: {}
@@ -58,7 +58,7 @@ export type QueryWrapperChildProps = {
   getLastQueryRequest?: () => QueryBundleRequest
   getInitQueryRequest?: () => QueryBundleRequest
   data?: QueryResultBundle
-  filter?: string
+  facet?: string
   updateParentState?: (param: any) => void
   rgbIndex?: number
   unitDescription?: string
@@ -245,20 +245,22 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
           const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
           let { chartSelectionIndex } = this.state
-          data.facets.forEach((el: FacetColumnResultValues) => {
-            if (el.facetType === 'enumeration') {
-              // isAll is only true iff there are no facets selected or all elements are selected
-              const { facetValues } = el
-              const isAllFalse = facetValues.every(facet => !facet.isSelected)
-              const isAllTrue =  facetValues.every(facet => facet.isSelected)
-              const isByDefaultSelected = isAllFalse || isAllTrue
-              isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
-              if (el.columnName === this.props.facetName && !isAllFalse) {
-                // Note - this picks the first selected facet
-                chartSelectionIndex = facetValues.sort((a, b) => b.count - a.count).findIndex(facet => facet.isSelected)
+          if (this.props.facet) {
+            data.facets.forEach((el: FacetColumnResultValues) => {
+              if (el.facetType === 'enumeration') {
+                // isAll is only true iff there are no facets selected or all elements are selected
+                const { facetValues } = el
+                const isAllFalse = facetValues.every(facet => !facet.isSelected)
+                const isAllTrue =  facetValues.every(facet => facet.isSelected)
+                const isByDefaultSelected = isAllFalse || isAllTrue
+                isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
+                if (el.columnName === this.props.facet && !isAllFalse) {
+                  // Note - this picks the first selected facet
+                  chartSelectionIndex = facetValues.sort((a, b) => b.count - a.count).findIndex(facet => facet.isSelected)
+                }
               }
-            }
-          })
+            })
+          }
           const newState = {
             isAllFilterSelectedForFacet,
             hasMoreData,
@@ -299,7 +301,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         getNextPageOfData: this.getNextPageOfData,
         isLoading: this.state.isLoading,
         isLoadingNewData: this.state.isLoadingNewData,
-        filter: this.props.facetName,
+        filter: this.props.facet,
         rgbIndex: this.props.rgbIndex,
         unitDescription: this.props.unitDescription,
         updateParentState: this.updateParentState,
