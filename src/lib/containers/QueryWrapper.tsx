@@ -12,7 +12,7 @@ export type QueryWrapperProps = {
   rgbIndex?: number
   token?: string
   showMenu?: boolean
-  facet: string
+  facet?: string
   loadingScreen?: JSX.Element
   unitDescription?: string
   facetAliases?: {}
@@ -170,7 +170,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
-    console.log('sql being run = ', queryRequest.query.sql)
     this.setState({
       isLoading: true
     })
@@ -181,7 +180,6 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     )
     .then(
       (data: QueryResultBundle) => {
-        console.log('recieved more data')
         const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
         const newState: any = {
           hasMoreData,
@@ -301,7 +299,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
         getNextPageOfData: this.getNextPageOfData,
         isLoading: this.state.isLoading,
         isLoadingNewData: this.state.isLoadingNewData,
-        filter: this.props.facet,
+        facet: this.props.facet,
         rgbIndex: this.props.rgbIndex,
         unitDescription: this.props.unitDescription,
         updateParentState: this.updateParentState,

@@ -4,7 +4,8 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import CardContainerLogic, { CardContainerLogicProps } from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
 import CardContainer from '../../../lib/containers/CardContainer'
-import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle.js'
+import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle.js'
+import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest.jsx';
 
 const createShallowComponent = async (props: CardContainerLogicProps, disableLifecycleMethods: boolean = false) => {
   const wrapper = await shallow(
@@ -76,7 +77,7 @@ describe('it performs basic functionality', () => {
   it('grabs the next page of data', async () => {
     const { wrapper, instance } = await createShallowComponent(props)
     // test grabbing next page of data
-    const getNextPageOfDataRequest = {
+    const getNextPageOfDataRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

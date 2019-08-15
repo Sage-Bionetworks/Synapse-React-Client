@@ -7,7 +7,7 @@ import { CommonCardProps } from 'lib/containers/CardContainerLogic'
 import CardContainer from 'lib/containers/CardContainer';
 
 export const SearchDemo:React.SFC = () => {
-  const sql = "SELECT contributor, diagnosis, modelType FROM syn20337467" 
+  const sql = "SELECT * FROM syn20337467" 
   const searchable: Searchable = [
     {
       key: 'contributor', 
@@ -48,6 +48,7 @@ export const SearchDemo:React.SFC = () => {
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
             SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
             SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
             SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
           query: {
             sql,
@@ -55,7 +56,6 @@ export const SearchDemo:React.SFC = () => {
             offset: 0
           }
         }}
-        facet={'modelType'}
         showBarChart={false}
         unitDescription={'studies'}
         >

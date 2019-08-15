@@ -245,13 +245,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const loadNow = isSelected
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
-      let partMask = SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+      let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+      console.log('config = ', config)
+      if (facet) {
+        partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+      }
       if (isGroupByInSql(sql)) {
         // necessary for creating the where clause in the synapse table link, columnModels distinguishes non aggregate functions
         // from select columns
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+      }
+      if (searchConfiguration && !facet && index === menuConfig.length - 1) {
+        // Needed to calculate the total count for TotalQueryResults
+        partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
       }
       return (
         <span key={facet} className={className}>

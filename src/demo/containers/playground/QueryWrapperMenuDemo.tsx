@@ -186,7 +186,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             token={''}
             isConsistent={true}
             {...props}
-            rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
           />
         </div>
     )

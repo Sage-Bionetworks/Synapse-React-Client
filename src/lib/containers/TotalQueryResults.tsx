@@ -14,28 +14,35 @@ export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> 
   ({ data, facet, isLoading, style, unitDescription, frontText }) => {
     let total = 0
     if (data) {
-      const { facets = [] } = data
-      const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
-      // calculate the values chosen
-      const curFacets = data.facets[curFacetsIndex]
-      // edge case -- if they are all false then they are considered all true..
-      // sum up the counts of data
-      let anyTrue = false
-      let totalAllFalseCase = 0
-      let totalStandardCase = 0
-  
-      if (curFacets) {
-        for (const key of curFacets.facetValues) {
-          anyTrue = anyTrue || key.isSelected
-          totalAllFalseCase += key.count
-          totalStandardCase += key.isSelected ? key.count : 0
+      if (facet) {
+        const { facets = [] } = data
+        const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
+        // calculate the values chosen
+        const curFacets = data.facets[curFacetsIndex]
+        // edge case -- if they are all false then they are considered all true..
+        // sum up the counts of data
+        let anyTrue = false
+        let totalAllFalseCase = 0
+        let totalStandardCase = 0
+    
+        if (curFacets) {
+          for (const key of curFacets.facetValues) {
+            anyTrue = anyTrue || key.isSelected
+            totalAllFalseCase += key.count
+            totalStandardCase += key.isSelected ? key.count : 0
+          }
         }
-      }
-      total = anyTrue ? totalStandardCase : totalAllFalseCase
-      if (data.queryResult.queryResults.rows.length === 0) {
-        // we override the statements above if there are zero results because the current UI
-        // would be showing zero results
-        total = 0
+        total = anyTrue ? totalStandardCase : totalAllFalseCase
+        if (data.queryResult.queryResults.rows.length === 0) {
+          // we override the statements above if there are zero results because the current UI
+          // would be showing zero results
+          total = 0
+        }
+      } else {
+        if (!data.queryCount) {
+          throw Error('Failed to specify either a facet or query count in part mask')
+        }
+        total = data.queryCount
       }
     }
     const loader = <span style={{ marginLeft: '2px' }} className={'spinner'}/> 

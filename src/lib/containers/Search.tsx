@@ -103,27 +103,27 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
-   event.preventDefault()
-   const { searchText, searchableIndex } = this.state
-   const { searchable } = this.props
-   const searchItem = searchable[searchableIndex]
-   // Always grabs initQueryRequest so that it doesn't build a chain of 
-   // clauses
-   const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
-   let { sql } = lastQueryRequestDeepCopy.query
-   const searchParams = {
-    [searchItem.key]: searchText
-   }
-   const newSql = insertWhereClauseFromSearchParams(searchParams, sql)
-   lastQueryRequestDeepCopy.query.sql = newSql
-   this.props.executeQueryRequest!(lastQueryRequestDeepCopy).then(
-     _ => {
-       this.setState({
-         submittedSearchText: searchText
-       })
-      this.highlightText()
-     }
-   )
+    event.preventDefault()
+    const { searchText, searchableIndex } = this.state
+    const { searchable } = this.props
+    const searchItem = searchable[searchableIndex]
+    // Always grabs initQueryRequest so that it doesn't build a chain of 
+    // clauses
+    const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
+    let { sql } = lastQueryRequestDeepCopy.query
+    const searchParams = {
+      [searchItem.key]: searchText
+    }
+    const newSql = insertWhereClauseFromSearchParams(searchParams, sql)
+    lastQueryRequestDeepCopy.query.sql = newSql
+    this.props.executeQueryRequest!(lastQueryRequestDeepCopy).then(
+      _ => {
+        this.setState({
+          submittedSearchText: searchText
+        })
+        this.highlightText()
+      }
+    )
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
