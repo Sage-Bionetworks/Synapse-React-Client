@@ -5,27 +5,26 @@ import RssFeed from '../../../lib/containers/RssFeed'
 import TwitterFeed from '../../../lib/containers/TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 
-const createShallowComponent = (props: NewsFeedMenuProps, disableLifecycleMethods: boolean = false) => {
-  const wrapper = shallow(
+const createShallowComponent = (props: NewsFeedMenuProps) => {
+  const wrapper = shallow<NewsFeedMenu>(
     <NewsFeedMenu
       {...props}
-    />,
-    { disableLifecycleMethods }
+    />
   )
-  const instance = wrapper.instance() as NewsFeedMenu
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
 describe('it renders with basic functionality', () => {
   const feedName: string = 'feed1'
   const feedUrl: string = 'https://portalnewsstg.wpengine.com/?feed=rss2&cat=4'
-  const maxItemsToShow: number = 3
+  const defaultItemsToShow: number = 3
   const props: NewsFeedMenuProps = {
-    menuConfig: [{ feedName, feedUrl, maxItemsToShow }],
+    menuConfig: [{ feedName, feedUrl, defaultItemsToShow }],
   }
 
   it('renders without crashing', () => {
-    const wrapper = createShallowComponent(props, true)
+    const wrapper = createShallowComponent(props)
     expect(wrapper).toBeDefined()
   })
 
@@ -37,7 +36,7 @@ describe('it renders with basic functionality', () => {
         {
           feedName,
           feedUrl,
-          maxItemsToShow,
+          defaultItemsToShow,
           mailChimpSignupText,
           mailChimpUrl
         }]
@@ -56,7 +55,7 @@ describe('it renders with basic functionality', () => {
         {
           feedName,
           feedUrl,
-          maxItemsToShow,
+          defaultItemsToShow,
           twitterFeedUrl
         }]
     }
