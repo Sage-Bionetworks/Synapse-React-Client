@@ -3,13 +3,15 @@ import { QueryWrapperChildProps } from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { 
   faCaretDown,
+  faCaretUp,
   faSearch
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertWhereClauseFromSearchParams } from '../utils/modules/sqlFunctions'
-import { TotalQueryResults } from './TotalQueryResults';
+import { TotalQueryResults } from './TotalQueryResults'
 
 library.add(faCaretDown)
+library.add(faCaretUp)
 library.add(faSearch)
 
 type SearchState = {
@@ -154,7 +156,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       height: '51px',
       display: 'inline-flex',
       alignItems: 'center',
-      padding: '10px'
     }
     const ulStyle: React.CSSProperties = {
       width: 'inherit',
@@ -164,16 +165,22 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const liStyle: React.CSSProperties = {
       paddingLeft: '10px'
     }
-    const iconStyle: React.CSSProperties = {
-      marginLeft: '10px'
+    const caretIconStyle: React.CSSProperties = {
+      fontSize: '16px',
     }
     const searchIconStyle: React.CSSProperties = {
       color: '#EEEEEE',
-      margin: 'auto 0'
+      position:'absolute',
+      right: 50,
+      fontSize: 16
     }
     const inputStyle: React.CSSProperties = {
       border: 'none',
-      marginRight: 5
+      paddingLeft: 10,
+      height: 50
+    }
+    const dropdownBtnStyle: React.CSSProperties = { 
+      justifyContent: 'space-between'
     }
     const totalQueryResultsStyle: React.CSSProperties = {
       margin: '20px 0px'
@@ -189,14 +196,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
           <div className="SRC-centerContent SRC-fullWidth">
             Search in
-            <div style={{...dropdownStyle, flex: 1}}  className="SRC-inlineBlock dropdown"  id="search-dropdown">
-              <button className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
-                <span>
-                  { curFacetDisplayText }
-                </span>
-                <span>
-                  <FontAwesomeIcon style={iconStyle} icon={'caret-down'} />
-                </span>
+            <div style={{...dropdownStyle, flex: 1}}  className="SRC-inlineBlock">
+              <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
+                { curFacetDisplayText }
+                <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
               </button>
               <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
                 <ul aria-labelledby="search-dropdown" style={ulStyle} className="SRC-search-dropdown  dropdown-menu">
@@ -220,18 +223,16 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 </ul>
               </div>
             </div>
-            <form style={{...dropdownStyle, flex: 3}}  className="SRC-inlineFlex" onSubmit={this.search}>
-              <div className="SRC-gap" style={{width: '100%'}}>
-                <input 
-                  placeholder={`e.g. "${searchableItem.hintText}"`} 
-                  style={inputStyle}
-                  onChange={this.handleChange}
-                  value={searchText}
-                  type="text"
-                  className="SRC-fullWidth"
-                />
-                <FontAwesomeIcon size={'sm'} style={searchIconStyle} icon={'search'} />
-              </div>
+            <form style={{...dropdownStyle, flex: 3, display: 'inline-flex', alignItems: 'center'}} onSubmit={this.search}>
+              <input
+                placeholder={`e.g. "${searchableItem.hintText}"`} 
+                style={inputStyle}
+                onChange={this.handleChange}
+                value={searchText}
+                type="text"
+                className="SRC-fullWidth"
+              />
+              <FontAwesomeIcon size={'sm'} style={searchIconStyle} icon={'search'} />
             </form>
           </div>
         </div>

@@ -551,7 +551,7 @@ a.SRC-anchor-light {
 }
 
 .SRC-menu-button-base:focus {
-  outline: none;
+  outline: $primaryColor;
 }
 
 .SRC-text-shadow {
@@ -1372,4 +1372,9 @@ button {
     padding: 10px;
     border: 1px solid rgba(196,196,196,0.4);
   }
+}
+
+:focus {
+  outline-color: $primaryColor;
+  // outline-color: rgb(59, 153, 252);
 }
