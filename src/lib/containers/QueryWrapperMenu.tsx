@@ -338,7 +338,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 role={isActive ? "": "button"}
                 onMouseEnter={this.handleHoverLogic(hoverEnter)}
                 onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${ACCORDION_GROUP_CSS} SRC-gap SRC-menu-button-base ${indicatorClasses}`}
+                className={`${ACCORDION_GROUP_CSS} SRC-gap SRC-menu-button-base SRC-background-unset ${indicatorClasses}`}
                 onClick={!isActive ? this.toggleGroupAccordionIndex(index) : undefined }
               >
                 {el.name}
@@ -412,7 +412,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
           key={config.facetName}
-          className={`SRC-hand-cursor SRC-menu-button-base ${selectedStyling} ${accordionConfig ? 'SRC-gap': ''}`}
+          className={`SRC-hand-cursor SRC-menu-button-base SRC-background-unset ${selectedStyling} ${accordionConfig ? 'SRC-gap': ''}`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
           role="button"

@@ -12,6 +12,8 @@ export default class TwitterFeed extends React.Component<TwitterFeedProps> {
   }
 
   render() {
-    return <a id={this.props.href} className="twitter-timeline" data-height="600" data-theme="dark" href={this.props.href}></a>
+    return <div>
+      <a id={this.props.href} className="twitter-timeline" data-height="600" data-theme="light" href={this.props.href}></a>
+    </div>
   }
 }
