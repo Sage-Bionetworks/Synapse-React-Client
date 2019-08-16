@@ -1,26 +1,30 @@
 import * as React from 'react'
-import RssFeed from '../../../lib/containers/RssFeed'
-import TwitterFeed from '../../../lib/containers/TwitterFeed'
-import MailchimpSubscribe from 'react-mailchimp-subscribe'
+import NewsFeedMenu from '../../../lib/containers/NewsFeedMenu'
 
 export const NewsFeedDemo:React.SFC = () => {
   return (
-    <div className="container">
-      <RssFeed
-        url={'https://portalnewsdev.wpengine.com/?feed=rss2&cat=2'}
-        maxItemsToShow={2}
-      />
-      <div className="SRC-mailchimpSubscribeContainer">
-        <p>Sign up to receive the AD Knowledge Portal's quarterly newsletter</p>
-        <label>Email Address</label>
-        <MailchimpSubscribe
-          url={'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a'}
-        />
-      </div>
-      <TwitterFeed
-        href={'https://twitter.com/TwitterDev/lists/national-parks?ref_src=twsrc%5Etfw'}
-      />
-    </div>
+    <NewsFeedMenu
+      menuConfig={[
+        {
+          feedName:'Data Releases',
+          feedUrl:'https://portalnewsstg.wpengine.com/?feed=rss2&cat=4',
+          maxItemsToShow:3,
+        },
+        {
+          feedName:'Updates',
+          feedUrl:'https://portalnewsstg.wpengine.com/?feed=rss2&cat=3',
+          maxItemsToShow:3,
+          twitterFeedUrl:'https://twitter.com/AMPADPortal?ref_src=twsrc%5Etfw'
+        },
+        {
+          feedName:'Newsletter',
+          feedUrl:'https://portalnewsstg.wpengine.com/?feed=rss2&cat=5',
+          maxItemsToShow:3,
+          mailChimpSignupText:'Sign up to receive the AD Knowledge Portal\'s quarterly newsletter',
+          mailChimpUrl:'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a'
+        },
+      ]}
+    />
   )
 }
 

@@ -449,7 +449,11 @@ a.SRC-anchor-light {
    background-color: $primaryColor;
  }
 
- %hoverFade {
+ .SRC-primary-background-color-border-left {
+  border-left-color: $primaryColor;
+}
+
+%hoverFade {
     transition: all 400ms;
   }
 
@@ -547,9 +551,10 @@ a.SRC-anchor-light {
   line-height: 51px;
   text-align: center;
   font-size: 16px;
+}
+.SRC-background-unset {
   background: unset;
 }
-
 .SRC-menu-button-base:focus {
   outline: none;
 }
@@ -1351,6 +1356,7 @@ button {
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 24px;
-    background-color: #DFDFDF;
+    background-color: $primaryColor;
+    color:white;
   }
 }
