@@ -11,10 +11,12 @@ import { CommonCardProps } from 'lib/containers/CardContainerLogic.jsx'
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const mockGetQueryTableResultsFn = jest.fn(() => Promise.resolve(syn16787123Json))
 SynapseClient.getQueryTableResults = mockGetQueryTableResultsFn
+const facetAliases = {
+  dataStatus: 'Data Status'
+}
 const searchable = [
   {
-    key: 'dataStatus',
-    alias: 'Data Status',
+    columnName: 'dataStatus',
     hintText: 'Blocked'
   }
 ]
@@ -38,6 +40,7 @@ const createMountedComponent = () => {
   }
   const wrapper = mount<QueryWrapper>(
     <QueryWrapper
+      facetAliases={facetAliases}
       initQueryRequest={{
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
@@ -67,11 +70,12 @@ const createMountedComponent = () => {
 }
 
 describe('it performs basic functionality', () => {
-  it('renders withour crashing', () => {
+  it('renders without crashing and displays correctly', () => {
     const { wrapper } = createMountedComponent()
     expect(wrapper).toBeDefined()
     const searchWrapper = wrapper.find(Search)
     expect(searchWrapper).toHaveLength(1)
+    expect(wrapper.find('input').props().placeholder).toEqual(`e.g. "${searchable[0].hintText}"`)
     expect(wrapper.find('input').props().placeholder).toEqual(`e.g. "${searchable[0].hintText}"`)
   })
   it.only('queries correctly', async () => {

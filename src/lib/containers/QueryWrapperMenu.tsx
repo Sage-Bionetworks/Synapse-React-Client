@@ -246,7 +246,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       const loadNow = isSelected
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
       let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      console.log('config = ', config)
       if (facet) {
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
       }
@@ -262,7 +261,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       return (
         <span key={facet} className={className}>
           <QueryWrapper
-            showBarChart={showBarChart}
+            showBarChart={showBarChart && !showSearch}
             loadNow={loadNow}
             showMenu={true}
             initQueryRequest={{
@@ -282,7 +281,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            {stackedBarChartConfiguration ? <StackedBarChart {...stackedBarChartConfiguration} /> : <React.Fragment/>}
+            {stackedBarChartConfiguration && !showSearch ? <StackedBarChart {...stackedBarChartConfiguration} /> : <React.Fragment/>}
             {!showSearch ? <Facets />:  <React.Fragment/>}
             {showSearch ? <Search searchable={searchConfiguration!.searchable}/> : <React.Fragment/>}
             {/*

@@ -13,7 +13,7 @@ export type TotalQueryResultsProps = {
 export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> =
   ({ data, facet, isLoading, style, unitDescription, frontText }) => {
     let total = 0
-    if (data) {
+    if (data && !isLoading) {
       if (facet) {
         const { facets = [] } = data
         const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
@@ -39,7 +39,7 @@ export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> 
           total = 0
         }
       } else {
-        if (!data.queryCount) {
+        if (data.queryCount === undefined) {
           throw Error('Failed to specify either a facet or query count in part mask')
         }
         total = data.queryCount

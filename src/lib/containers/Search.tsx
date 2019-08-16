@@ -19,8 +19,7 @@ type SearchState = {
   submittedSearchText: string
 }
 export type Searchable = {
-  key: string
-  alias?: string
+  columnName: string
   hintText: string
 } []
 
@@ -62,6 +61,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   public highlightText = () => {
+    console.log('highlight text getting called')
      const { searchText, searchableIndex } = this.state
      if (searchText === '') {
        return
@@ -87,7 +87,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       document.querySelectorAll('.SRC-cardMetadata tr').forEach(
         el => {
           const labelElement = el.children[0] as HTMLTableDataCellElement
-          if (labelElement.innerText.toLowerCase() === searchItem.key) {
+          if (labelElement.innerText.toLowerCase() === searchItem.columnName) {
             labelElement.classList.add('SRC-boldText')
             const textElement = el.children[1] as HTMLTableDataCellElement
             if (textElement) {
@@ -112,7 +112,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
     let { sql } = lastQueryRequestDeepCopy.query
     const searchParams = {
-      [searchItem.key]: searchText
+      [searchItem.columnName]: searchText
     }
     const newSql = insertWhereClauseFromSearchParams(searchParams, sql)
     lastQueryRequestDeepCopy.query.sql = newSql
@@ -133,7 +133,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   render() {
-    const { searchable, data, isLoading, facet, unitDescription = '' } = this.props
+    const { searchable, data, isLoading, facet, unitDescription = '', facetAliases = {} } = this.props
     const { isSearchableDropdownOpen, searchableIndex, searchText, submittedSearchText } = this.state
     const searchableItem = searchable[searchableIndex]
     const containerStyle: React.CSSProperties = {
@@ -142,12 +142,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       borderRadius: '3px',
       height: '80px',
       display: 'flex',
+      marginTop: 29,
       alignItems: 'center',
       padding: '0px 10px',
     }
     const dropdownStyle: React.CSSProperties = {
       background: '#FFFFFF',
-      border: '1px solid #C4C4C4',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
       borderRadius:' 3px',
       margin: '0px 10px',
@@ -157,8 +157,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       padding: '10px'
     }
     const ulStyle: React.CSSProperties = {
-      left: '-108px',
-      top: '27px',
       width: 'inherit',
       border: '1px solid #C4C4C4',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
@@ -180,9 +178,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const totalQueryResultsStyle: React.CSSProperties = {
       margin: '20px 0px'
     }
+    const curFacetDisplayText = facetAliases[searchableItem.columnName] || searchableItem.columnName
     let usedUnitDescription = unitDescription
     if (submittedSearchText !== '') {
-      usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${searchableItem.alias ? searchableItem.alias: searchableItem.key}`
+      usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${curFacetDisplayText}`
     }
     return (
       <div>
@@ -190,21 +189,21 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
           <div className="SRC-centerContent SRC-fullWidth">
             Search in
-            <div style={{...dropdownStyle, flex: 1}}  className="SRC-inlineBlock">
+            <div style={{...dropdownStyle, flex: 1}}  className="SRC-inlineBlock dropdown"  id="search-dropdown">
               <button className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
                 <span>
-                  { searchableItem.alias ? searchableItem.alias: searchableItem.key }
+                  { curFacetDisplayText }
                 </span>
                 <span>
                   <FontAwesomeIcon style={iconStyle} icon={'caret-down'} />
                 </span>
               </button>
               <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
-                <ul style={ulStyle} className="dropdown-menu">
+                <ul aria-labelledby="search-dropdown" style={ulStyle} className="SRC-search-dropdown  dropdown-menu">
                   {
                     searchable.map(
                       (el, index) => {
-                        const displayName = el.alias ? el.alias: el.key
+                        const displayName = facetAliases[el.columnName] || el.columnName
                         return (
                           <li 
                             style={liStyle}

@@ -114,7 +114,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         searchConfiguration: {
           searchable: [
             {
-              key: 'study',
+              columnName: 'study',
               hintText: 'study name'
             },
           ]

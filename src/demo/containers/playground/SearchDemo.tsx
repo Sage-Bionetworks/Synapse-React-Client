@@ -8,19 +8,21 @@ import CardContainer from 'lib/containers/CardContainer';
 
 export const SearchDemo:React.SFC = () => {
   const sql = "SELECT * FROM syn20337467" 
+  const facetAliases = {
+    contributor: 'Contributor',
+    diagnosis: 'Diagnosis',
+  }
   const searchable: Searchable = [
     {
-      key: 'contributor', 
-      alias: 'Contributor',
+      columnName: 'contributor', 
       hintText: 'Jane'
     },
     {
-      key: 'diagnosis',
-      alias: 'Diagnosis',
+      columnName: 'diagnosis',
       hintText: 'LOAD'
     },
     {
-      key: 'modelType',
+      columnName: 'modelType',
       hintText: 'hint'
     },
   ]
@@ -43,6 +45,7 @@ export const SearchDemo:React.SFC = () => {
   return (
     <div className="col-xs-8 col-xs-offset-2">
       <QueryWrapper
+        facetAliases={facetAliases}
         initQueryRequest={{
           concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
