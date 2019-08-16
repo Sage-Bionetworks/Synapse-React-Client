@@ -695,6 +695,9 @@ table.SRC-paddingRight > tbody > tr > td {
 .SRC-primary-background-color {
   background-color: #D53F77; }
 
+.SRC-primary-background-color-border-left {
+  border-left-color: #D53F77; }
+
 .SRC-chart-link a:hover {
   transition: all 400ms; }
 
@@ -772,7 +775,9 @@ button.SRC-roundBorder {
   height: 51px;
   line-height: 51px;
   text-align: center;
-  font-size: 16px;
+  font-size: 16px; }
+
+.SRC-background-unset {
   background: unset; }
 
 .SRC-menu-button-base:focus {
@@ -1432,4 +1437,5 @@ button {
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 24px;
-  background-color: #DFDFDF; }
+  background-color: #D53F77;
+  color: white; }
