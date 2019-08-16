@@ -9,7 +9,7 @@ type RssState = {
 
 export type RssFeedProps = {
   url: string,
-  maxItemsToShow: number
+  defaultItemsToShow: number
 }
 
 const parser = new DOMParser()
@@ -70,7 +70,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                 }
               }
             }
-            let isItemVisible: boolean = index < this.props.maxItemsToShow || this.state.isShowingMoreItems
+            let isItemVisible: boolean = index < this.props.defaultItemsToShow || this.state.isShowingMoreItems
             return (
               <li key={item.id} className={`srcRssFeedItem ${isItemVisible ? '' : 'hidden'}`}>
                 <div className="srcRssFeedItemContent">
@@ -88,7 +88,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
         }
         {
           this.state.rssFeed.items &&
-          this.state.rssFeed.items.length > this.props.maxItemsToShow &&
+          this.state.rssFeed.items.length > this.props.defaultItemsToShow &&
           !this.state.isShowingMoreItems &&
           <div className="clearfix">
             <button className="btn SRC-grayBackground SRC-roundBorder SRC-floatRight" onClick={this.onClickShowMoreItems()}>View All</button>
