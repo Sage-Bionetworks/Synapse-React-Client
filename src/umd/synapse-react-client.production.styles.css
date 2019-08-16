@@ -776,7 +776,7 @@ button.SRC-roundBorder {
   background: unset; }
 
 .SRC-menu-button-base:focus {
-  outline: none; }
+  outline: #D53F77; }
 
 .SRC-text-shadow {
   text-shadow: #505050 2px 2px 4px; }
@@ -1447,3 +1447,6 @@ button {
 .SRC-search-dropdown li {
   padding: 10px;
   border: 1px solid rgba(196, 196, 196, 0.4); }
+
+:focus {
+  outline-color: #D53F77; }

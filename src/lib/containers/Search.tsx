@@ -151,25 +151,26 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const dropdownStyle: React.CSSProperties = {
       background: '#FFFFFF',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
-      borderRadius:' 3px',
+      borderRadius:'3px',
       margin: '0px 10px',
       height: '51px',
-      display: 'inline-flex',
       alignItems: 'center',
     }
     const ulStyle: React.CSSProperties = {
       width: 'inherit',
       border: '1px solid #C4C4C4',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
+      left: -10
     }
     const liStyle: React.CSSProperties = {
       paddingLeft: '10px'
     }
     const caretIconStyle: React.CSSProperties = {
       fontSize: '16px',
+      marginRight: 8
     }
     const searchIconStyle: React.CSSProperties = {
-      color: '#EEEEEE',
+      color: '#C4C4C4',
       position:'absolute',
       right: 50,
       fontSize: 16
@@ -195,14 +196,16 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         <div style={containerStyle}>
           {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
           <div className="SRC-centerContent SRC-fullWidth">
-            Search in
-            <div style={{...dropdownStyle, flex: 1}}  className="SRC-inlineBlock">
-              <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
-                { curFacetDisplayText }
-                <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
-              </button>
+            <span style={{display: 'inline-block', whiteSpace: 'nowrap'}}> Search in </span>
+            <div id="search-dropdown" style={{...dropdownStyle, paddingLeft: 10}}  className="SRC-inlineBlock">
+              <div className="SRC-centerContent" style={{height: 'inherit'}}>
+                <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
+                  { curFacetDisplayText }
+                  <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
+                </button>
+              </div>
               <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
-                <ul aria-labelledby="search-dropdown" style={ulStyle} className="SRC-search-dropdown  dropdown-menu">
+                <ul aria-labelledby="search-dropdown" style={ulStyle} className="SRC-search-dropdown dropdown-menu SRC-forceLeftDropdown dropdown-menu-left">
                   {
                     searchable.map(
                       (el, index) => {
@@ -223,7 +226,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 </ul>
               </div>
             </div>
-            <form style={{...dropdownStyle, flex: 3, display: 'inline-flex', alignItems: 'center'}} onSubmit={this.search}>
+            <form style={{...dropdownStyle, alignItems: 'center'}} className="col-xs-8" onSubmit={this.search}>
               <input
                 placeholder={`e.g. "${searchableItem.hintText}"`} 
                 style={inputStyle}
