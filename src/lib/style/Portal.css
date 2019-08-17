@@ -1014,7 +1014,8 @@ div.SRC-userImg {
 
 .srcRssFeed {
   list-style: none;
-  padding-left: 0px; }
+  padding-left: 0px;
+  padding-top: 29px; }
 
 .srcRssFeedItem {
   border: 1px solid #dddddf;
@@ -1094,15 +1095,17 @@ button {
   display: block; }
 
 .SRC-mailchimpSubscribeContainer {
-  border: 1px solid #dddddd;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px 10px 0px;
   margin-bottom: 20px; }
   .SRC-mailchimpSubscribeContainer input {
-    width: 400px; }
+    width: 570px;
+    height: 45px;
+    margin-top: 10px;
+    padding-left: 8px; }
   .SRC-mailchimpSubscribeContainer button {
     display: block;
-    margin-top: 5px;
-    padding: 6px 12px;
+    margin-top: 20px;
+    padding: 6px 25px;
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 24px;
