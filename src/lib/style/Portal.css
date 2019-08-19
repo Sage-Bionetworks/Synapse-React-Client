@@ -1104,10 +1104,7 @@ button {
     background-color: #DFDFDF; }
 
 .highlight {
-  background: #f4f8fd;
-  color: #003d81;
   font-weight: bold;
-  border: #003d81 solid 2px;
   padding: 2px; }
 
 .SRC-fullWidth {

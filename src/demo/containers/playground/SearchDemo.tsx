@@ -46,6 +46,7 @@ export const SearchDemo:React.SFC = () => {
     <div className="col-xs-8 col-xs-offset-2">
       <QueryWrapper
         facetAliases={facetAliases}
+        rgbIndex={5}
         initQueryRequest={{
           concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

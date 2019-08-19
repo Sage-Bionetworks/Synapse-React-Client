@@ -9,6 +9,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertWhereClauseFromSearchParams } from '../utils/modules/sqlFunctions'
 import { TotalQueryResults } from './TotalQueryResults'
+import getColorPallette from './ColorGradient';
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -45,7 +46,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   componentDidUpdate(prevProps: InternalSearchProps) {
     if (this.props.isLoading !== prevProps.isLoading) {
-      setTimeout(this.highlightText, 1000)
+      setTimeout(this.highlightText, 2000)
     }
   }
 
@@ -58,26 +59,20 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   public setSearchableIndex = (index: number) => (_: React.SyntheticEvent) => {
     this.setState({
       searchableIndex: index,
-      searchText: ''
+      searchText: '',
+      isSearchableDropdownOpen: false
     })
   }
 
   public highlightText = () => {
-    console.log('highlight text getting called')
-     const { searchText, searchableIndex } = this.state
-     if (searchText === '') {
-       return
-     }
-     const { searchable } = this.props
+     const { submittedSearchText, searchableIndex } = this.state
+     const { searchable, rgbIndex } = this.props
+     const { colorPalette } = getColorPallette(rgbIndex!, 1)
+     const originalColor = colorPalette[0]
      const searchItem = searchable[searchableIndex]
 
-     //  First we cleanup the styling applied last
-     document.querySelectorAll<HTMLTableCellElement>('.SRC-cardMetadata td.SRC-boldText').forEach(
-        (el) => {
-          el.classList.remove('SRC-boldText')
-        }
-      )
-     document.querySelectorAll('.highlight').forEach(
+     const highlightedSpans = document.querySelectorAll('.highlight')
+     highlightedSpans.forEach(
         (el) => {
           const castAsSpan = el as HTMLSpanElement
           if (castAsSpan.innerText) {
@@ -85,23 +80,25 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           }
         }
       )
-      // Target elements and apply styles
-      document.querySelectorAll('.SRC-cardMetadata tr').forEach(
-        el => {
-          const labelElement = el.children[0] as HTMLTableDataCellElement
-          if (labelElement.innerText.toLowerCase() === searchItem.columnName) {
-            labelElement.classList.add('SRC-boldText')
-            const textElement = el.children[1] as HTMLTableDataCellElement
-            if (textElement) {
-              const hasSearchText = textElement.innerText.toLowerCase().indexOf(searchText) !== 0
-              if (hasSearchText) {
-                const regex = new RegExp(searchText, "gi")
-                textElement.innerHTML = textElement.innerHTML.replace(regex, `<span class="highlight">${searchText}</span>`)
+      if (submittedSearchText) {
+        const trs = document.querySelectorAll('.SRC-cardMetadata tr')
+        // Target elements and apply styles
+        trs.forEach(
+          (el) => {
+            const labelElement = el.children[0] as HTMLTableDataCellElement
+            if (labelElement.innerText.toLowerCase() === searchItem.columnName.toLowerCase()) {
+              const textElement = el.children[1] as HTMLTableDataCellElement
+              if (textElement.innerText !== null) {
+                const regex = new RegExp(submittedSearchText, "gi")
+                const match = textElement.innerText.match(regex)
+                if (match) {
+                  textElement.innerHTML = textElement.innerHTML.replace(regex, `<span style="background: ${originalColor}; color: white;" class="highlight">${submittedSearchText}</span>`)
+                }
               }
             }
           }
-        }
-      )
+        )
+      }
   }
 
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -122,8 +119,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       _ => {
         this.setState({
           submittedSearchText: searchText
-        })
-        this.highlightText()
+        },
+          this.highlightText
+        )
       }
     )
   }
@@ -154,6 +152,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       borderRadius:'3px',
       margin: '0px 10px',
       height: '51px',
+      display: 'inline-flex',
       alignItems: 'center',
     }
     const ulStyle: React.CSSProperties = {
@@ -197,36 +196,38 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
           <div className="SRC-centerContent SRC-fullWidth">
             <span style={{display: 'inline-block', whiteSpace: 'nowrap'}}> Search in </span>
-            <div id="search-dropdown" style={{...dropdownStyle, paddingLeft: 10}}  className="SRC-inlineBlock">
-              <div className="SRC-centerContent" style={{height: 'inherit'}}>
-                <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
-                  { curFacetDisplayText }
-                  <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
-                </button>
-              </div>
-              <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
-                <ul aria-labelledby="search-dropdown" style={ulStyle} className="SRC-search-dropdown dropdown-menu SRC-forceLeftDropdown dropdown-menu-left">
-                  {
-                    searchable.map(
-                      (el, index) => {
-                        const displayName = facetAliases[el.columnName] || el.columnName
-                        return (
-                          <li 
-                            style={liStyle}
-                            onClick={this.setSearchableIndex(index)}
-                            key={displayName}
-                            className="SRC-hand-cursor SRC-primary-background-color-hover"
-                          >
-                            {displayName }
-                          </li>
-                        )
-                      }
-                    )
-                  }
-                </ul>
+            <div style={{...dropdownStyle, flex: 1, paddingLeft: 10}}>
+              <div id="search-dropdown" style={{height: 'inherit', width: '100%'}}>
+                <div className="SRC-centerContent" style={{height: 'inherit'}}>
+                  <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
+                    { curFacetDisplayText }
+                    <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
+                  </button>
+                </div>
+                <div className={'dropdown ' + (isSearchableDropdownOpen? 'open' : '')}>
+                  <ul aria-labelledby="search-dropdown" style={ulStyle} className="SRC-search-dropdown dropdown-menu SRC-forceLeftDropdown dropdown-menu-left">
+                    {
+                      searchable.map(
+                        (el, index) => {
+                          const displayName = facetAliases[el.columnName] || el.columnName
+                          return (
+                            <li 
+                              style={liStyle}
+                              onClick={this.setSearchableIndex(index)}
+                              key={displayName}
+                              className="SRC-hand-cursor SRC-primary-background-color-hover"
+                            >
+                              {displayName }
+                            </li>
+                          )
+                        }
+                      )
+                    }
+                  </ul>
+                </div>
               </div>
             </div>
-            <form style={{...dropdownStyle, alignItems: 'center'}} className="col-xs-8" onSubmit={this.search}>
+            <form style={{...dropdownStyle, flex: 3, alignItems: 'center'}} onSubmit={this.search}>
               <input
                 placeholder={`e.g. "${searchableItem.hintText}"`} 
                 style={inputStyle}
