@@ -46,8 +46,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   componentDidUpdate(prevProps: InternalSearchProps) {
-    if (this.props.isLoading !== prevProps.isLoading) {
-      setTimeout(this.highlightText, 2000)
+    if (this.props.isLoading === false && prevProps.isLoading === true) {
+      setTimeout(
+        this.highlightText
+      )
     }
   }
 
@@ -67,7 +69,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   public highlightText = () => {
      const { submittedSearchText, searchableIndex } = this.state
-     const { searchable, rgbIndex } = this.props
+     const { searchable, rgbIndex, facetAliases = {}} = this.props
      const { colorPalette } = getColorPallette(rgbIndex!, 1)
      const originalColor = colorPalette[0]
      const searchItem = searchable[searchableIndex]
@@ -82,7 +84,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         }
       )
       if (submittedSearchText) {
-        const trs = document.querySelectorAll<HTMLElement>(`.${SEARCH_CLASS_CSS} [data-search-handle="${searchItem.columnName.toLowerCase()}"]`)
+        const searchItemView = facetAliases[searchItem.columnName] || searchItem.columnName
+        const trs = document.querySelectorAll<HTMLElement>(`.${SEARCH_CLASS_CSS} [data-search-handle="${searchItemView.toLowerCase()}"]`)
         // Target elements and apply styles
         trs.forEach(
           (textElement) => {
@@ -90,7 +93,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
               const regex = new RegExp(submittedSearchText, "gi")
               const match = textElement.innerText.match(regex)
               if (match) {
-                textElement.innerHTML = textElement.innerHTML.replace(regex, `<span style="background: ${originalColor}; color: white;" class="highlight">${submittedSearchText}</span>`)
+                textElement.innerHTML = textElement.innerHTML.replace(regex, (match) => {
+                  return `<span style="background: ${originalColor}; color: white;" class="highlight">${match}</span>`
+                })
               }
             }
           }
@@ -116,9 +121,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       _ => {
         this.setState({
           submittedSearchText: searchText
-        },
-          this.highlightText
-        )
+        })
       }
     )
   }

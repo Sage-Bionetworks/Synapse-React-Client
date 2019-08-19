@@ -51,16 +51,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
 
   constructor(props: GenericCardProps) {
     super(props)
-    this.state = {
-      showMoreDescription: false,
-    }
   }
 
-  public toggleShowMoreDescription = (_event: React.SyntheticEvent) => {
-    this.setState({
-      showMoreDescription: !this.state.showMoreDescription
-    })
-  }
 
   public getLink (link: string, internalLinkConfiguration?: InternalLinkConfiguration, data?: string [], schema?: any) {
     let linkDisplay = link
@@ -178,7 +170,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           {
             description &&
               <span data-search-handle={(genericCardSchema.description || '').toLowerCase()} className="SRC-font-size-base">
-                <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
+                <ShowMore summary={description} />
               </span>
           }
         </div>

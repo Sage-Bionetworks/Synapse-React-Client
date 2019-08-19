@@ -67,7 +67,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
               </div>
               <div className="SRC-author">{projectLeads}</div>
               <span className="SRC-font-size-base">
-                  <Utils.ShowMore onClick={this.handleClick} summary={summary} />
+                  <Utils.ShowMore summary={summary} />
               </span>
               <div className="SRC-cardAnnotations">
                   <Utils.ChipContainer chips={chips} />

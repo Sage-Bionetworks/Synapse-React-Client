@@ -6,8 +6,19 @@ type ShowMoreState = {
 }
 
 type ShowMoreProps = {
-  onClick?: (val: any) => void
-  summary?: string
+  summary: string
+}
+
+export const getCutoff =(summary: string ) => {
+  let summaryView = ''
+  const summarySplit = summary!.split(' ')
+  // find num words to join such that its >= char_count_cutoff
+  let i = 0
+  while (summaryView.length < CHAR_COUNT_CUTOFF) {
+    summaryView += `${summarySplit[i]} `
+    i += 1
+  }
+  return summaryView
 }
 
 export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreState> {
@@ -24,9 +35,6 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
     event.preventDefault()
     let { showMore } = this.state
     showMore = !showMore
-    this.props.onClick!({
-      showMore
-    })
     this.setState({
       showMore
     })
@@ -38,13 +46,7 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
     let summaryView = ''
     const meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
     if (!this.state.showMore && meetsCharRequirenent) {
-      const summarySplit = summary!.split(' ')
-            // find num words to join such that its >= char_count_cutoff
-      let i = 0
-      while (summaryView.length < CHAR_COUNT_CUTOFF) {
-        summaryView += `${summarySplit[i]} `
-        i += 1
-      }
+      summaryView = getCutoff(summary)
     } else if (!meetsCharRequirenent) {
       summaryView = summary!
     }
@@ -61,6 +63,9 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
     )
     return (
       <React.Fragment>
+        <span className="SRC-hidden SRC-showMore">
+          {summaryView}
+        </span>
         {!this.state.showMore && summaryView}
         {this.state.showMore && summary}
         {!this.state.showMore && showMoreButton}
