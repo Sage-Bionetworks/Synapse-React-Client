@@ -11,7 +11,7 @@ export type MenuConfig = {
   feedName: string
   feedUrl: string
   defaultItemsToShow: number
-  mailChimpSignupText?: string
+  mailChimpListName?: string
   mailChimpUrl?: string
   twitterFeedUrl?: string
 }
@@ -45,7 +45,7 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
   public render() {
     const menuDropdown = this.renderMenu()
     const { menuConfig } = this.props
-    const { feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpSignupText } = menuConfig[this.state.menuIndex]
+    const { feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
     return (
       <React.Fragment>
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">
@@ -62,11 +62,14 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
           {
             mailChimpUrl &&
             <div className="SRC-mailchimpSubscribeContainer">
-              <p>{mailChimpSignupText}</p>
-              <label>Email Address</label>
-              <MailchimpSubscribe
-                url={mailChimpUrl}
-              />
+              <h4 className="SRC-marginBottomTop">Subscribe</h4>
+              <p className="SRC-marginBottomTop">Subscribe to the {mailChimpListName}. Use the unsubscribe link in those e-mails to opt out at any time.</p>
+              <p className="SRC-marginBottomTop">We will not share your email with any third parties or use it for any other purposes.</p>
+              <div className="SRC-marginBottomTop">
+                <MailchimpSubscribe
+                  url={mailChimpUrl}
+                />
+              </div>
             </div>
           }
           {
