@@ -166,18 +166,18 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           <div >
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
               {linkDisplay ?
-                <a className="SRC-primary-text-color" target={target} href={linkDisplay}>
+                <a data-search-handle={genericCardSchema.title.toLowerCase()} className="SRC-primary-text-color" target={target} href={linkDisplay}>
                   {title}
                 </a>
                 :
-                title
+                <span data-search-handle={genericCardSchema.title.toLowerCase()}> {title} </span>
               }
             </h3>
           </div>
-          {subTitle && <div className="SRC-author"> {subTitle} </div>}
+          {subTitle && <div data-search-handle={(genericCardSchema.subTitle || '').toLowerCase()} className="SRC-author"> {subTitle} </div>}
           {
             description &&
-              <span className="SRC-font-size-base">
+              <span data-search-handle={(genericCardSchema.description || '').toLowerCase()} className="SRC-font-size-base">
                 <ShowMore onClick={this.toggleShowMoreDescription} summary={description} />
               </span>
           }

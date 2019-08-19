@@ -9,7 +9,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertWhereClauseFromSearchParams } from '../utils/modules/sqlFunctions'
 import { TotalQueryResults } from './TotalQueryResults'
-import getColorPallette from './ColorGradient';
+import getColorPallette from './ColorGradient'
+import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -81,19 +82,15 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         }
       )
       if (submittedSearchText) {
-        const trs = document.querySelectorAll('.SRC-cardMetadata tr')
+        const trs = document.querySelectorAll<HTMLElement>(`.${SEARCH_CLASS_CSS} [data-search-handle="${searchItem.columnName.toLowerCase()}"]`)
         // Target elements and apply styles
         trs.forEach(
-          (el) => {
-            const labelElement = el.children[0] as HTMLTableDataCellElement
-            if (labelElement.innerText.toLowerCase() === searchItem.columnName.toLowerCase()) {
-              const textElement = el.children[1] as HTMLTableDataCellElement
-              if (textElement.innerText !== null) {
-                const regex = new RegExp(submittedSearchText, "gi")
-                const match = textElement.innerText.match(regex)
-                if (match) {
-                  textElement.innerHTML = textElement.innerHTML.replace(regex, `<span style="background: ${originalColor}; color: white;" class="highlight">${submittedSearchText}</span>`)
-                }
+          (textElement) => {
+            if (textElement.innerText !== null) {
+              const regex = new RegExp(submittedSearchText, "gi")
+              const match = textElement.innerText.match(regex)
+              if (match) {
+                textElement.innerHTML = textElement.innerHTML.replace(regex, `<span style="background: ${originalColor}; color: white;" class="highlight">${submittedSearchText}</span>`)
               }
             }
           }

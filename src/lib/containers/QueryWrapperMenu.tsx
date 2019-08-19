@@ -36,6 +36,8 @@ export const MENU_DROPDOWN_CSS = 'SRC-menuLayout'
 export const ACCORDION_GROUP_CSS = 'SRC-accordion-key'
 // represents the single accordiong group which is active within the menu
 export const ACCORDION_GROUP_ACTIVE_CSS = 'SRC-IS-ACTIVE'
+// for search component querying on cardcontainer
+export const SEARCH_CLASS_CSS = 'SRC-search-component'
 
 interface MenuSearchParams extends KeyValue {
   menuIndex: string
@@ -229,10 +231,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         const name = accordionConfig[groupIndex].name
         usedUnitDescription = `${name} Tools by ${facetDisplayName}`
       }
-      let className = ''
-      if (!isSelected) {
-        className = 'SRC-hidden'
-      }
       let selectedFacets: FacetColumnValuesRequest [] = []
       if (Number(menuIndexFromProps) === index && facet && facetValue) {
         selectedFacets = [
@@ -245,6 +243,10 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const loadNow = isSelected
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
+      let className = showSearch ? SEARCH_CLASS_CSS : ' '
+      if (!isSelected) {
+        className = ' SRC-hidden'
+      }
       let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       if (facet) {
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS

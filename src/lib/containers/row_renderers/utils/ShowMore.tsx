@@ -33,7 +33,7 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
   }
 
   public render() {
-      // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
+    // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
     const { summary } = this.props
     let summaryView = ''
     const meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
@@ -49,16 +49,16 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
       summaryView = summary!
     }
     const showMoreButton =  (
-            meetsCharRequirenent &&
-           (
-            <a
-                style={{ fontSize: '14px', cursor: 'pointer' }}
-                className="SRC-primary-text-color"
-                onClick={this.toggleShowMore}
-            >
-                ...Show More{' '}
-            </a>)
-        )
+        meetsCharRequirenent &&
+        (
+        <a
+            style={{ fontSize: '14px', cursor: 'pointer' }}
+            className="SRC-primary-text-color"
+            onClick={this.toggleShowMore}
+        >
+            ...Show More{' '}
+        </a>)
+    )
     return (
       <React.Fragment>
         {!this.state.showMore && summaryView}

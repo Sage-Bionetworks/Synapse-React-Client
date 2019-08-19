@@ -890,7 +890,7 @@ button.SRC-roundBorder {
   background: white; }
 
 .tableDropdownSelector:focus {
-  outline: none; }
+  outline: #D53F77; }
 
 .SRC-extraPadding {
   padding: 5px; }
@@ -918,7 +918,7 @@ button.SRC-roundBorder {
   margin: 21px; }
 
 .SRC-viewMoreButton:focus {
-  outline: none; }
+  outline: #D53F77; }
 
 /*
   checkmark styling start
