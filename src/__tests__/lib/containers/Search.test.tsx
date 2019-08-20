@@ -76,13 +76,12 @@ describe('it performs basic functionality', () => {
     const searchWrapper = wrapper.find(Search)
     expect(searchWrapper).toHaveLength(1)
     expect(wrapper.find('input').props().placeholder).toEqual(`e.g. "${searchable[0].hintText}"`)
-    expect(wrapper.find('input').props().placeholder).toEqual(`e.g. "${searchable[0].hintText}"`)
   })
-  it.only('queries correctly', async () => {
+  it('queries correctly', async () => {
     const { wrapper, instance } = createMountedComponent()
     const spyOnExecuteQueryRequest = jest.spyOn(instance, 'executeQueryRequest')
     const searchWrapper = wrapper.find(Search)
-    // Set the search text and 
+    // Set the search text 
     const searchText = 'complete'
     const stateUpdate = {
       searchText
@@ -98,5 +97,16 @@ describe('it performs basic functionality', () => {
         })
       })
     )
+  })
+  it('handles special characters correctly', () => {
+    const withQuote = "that's"
+    const withEscapedQuote = "that''s"
+    expect(Search.addEscapeCharacters(withQuote)).toEqual(withEscapedQuote)
+    const withPercent = "100%"
+    const withEscapedPercent = "100\%"
+    expect(Search.addEscapeCharacters(withPercent)).toEqual(withEscapedPercent)
+    const withBackSlash = `he\\o`
+    const withEscapedBackSlash = "he\\\\o"
+    expect(Search.addEscapeCharacters(withBackSlash)).toEqual(withEscapedBackSlash)
   })
 })

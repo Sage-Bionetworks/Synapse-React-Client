@@ -29,6 +29,7 @@ export type Searchable = {
 
 export type SearchProps = {
   searchable: Searchable
+  isQueryWrapperMenuChild?: boolean
 }
 
 type InternalSearchProps = QueryWrapperChildProps & SearchProps
@@ -70,8 +71,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   public highlightText = () => {
      const { submittedSearchText, searchableIndex } = this.state
-     const { searchable, rgbIndex, facetAliases = {}} = this.props
-     const { colorPalette } = getColorPallette(rgbIndex!, 1)
+     const { searchable, rgbIndex, facetAliases = {}, isQueryWrapperMenuChild = true} = this.props
+     const { colorPalette } = getColorPallette(rgbIndex!, 1)
      const originalColor = colorPalette[0]
      const searchItem = searchable[searchableIndex]
 
@@ -86,7 +87,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     )
     if (submittedSearchText) {
       const searchItemView = facetAliases[searchItem.columnName] || searchItem.columnName
-      const trs = document.querySelectorAll<HTMLElement>(`.${SEARCH_CLASS_CSS} [data-search-handle="${searchItemView.toLowerCase()}"]`)
+      const frontText = isQueryWrapperMenuChild ? `.${SEARCH_CLASS_CSS} `: ''
+      const querySelector =  frontText + `[data-search-handle="${searchItemView.toLowerCase()}"]`
+      const trs = document.querySelectorAll<HTMLElement>(querySelector)
       // Target elements and apply styles
       trs.forEach(
         (textElement) => {
@@ -105,7 +108,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
   }
 
-  public addEscapeCharacters = (searchText: string) => {
+  public static addEscapeCharacters = (searchText: string) => {
     // We have to escape the following characters
     // ' % \
     let escapedSearchText = searchText
@@ -115,6 +118,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     escapedSearchText = escapedSearchText.replace("%", "\%")
     // escape \ by adding \
     escapedSearchText = escapedSearchText.replace("\\",  "\\\\")
+    return escapedSearchText
   }
 
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -128,7 +132,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
     let { sql } = lastQueryRequestDeepCopy.query
     const searchParams = {
-      [searchItem.columnName]: searchText
+      [searchItem.columnName]: Search.addEscapeCharacters(searchText)
     }
     const newSql = insertWhereClauseFromSearchParams(searchParams, sql)
     lastQueryRequestDeepCopy.query.sql = newSql
