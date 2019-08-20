@@ -33,7 +33,7 @@ import { SynapseClient } from '../utils'
 import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
 import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { EntityLink } from './EntityLink'
-import { TotalQueryResults } from './TotalQueryResults'
+import TotalQueryResults from './TotalQueryResults'
 
 const MIN_SPACE_FACET_MENU = 700
 

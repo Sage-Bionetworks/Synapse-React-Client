@@ -1,6 +1,6 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
-import { CardFooter, ShowMore, Icon } from './row_renderers/utils'
+import { CardFooter, Icon } from './row_renderers/utils'
 import { InternalLinkConfiguration } from './CardContainerLogic'
 
 export type KeyToAlias = {
@@ -41,6 +41,10 @@ export type GenericCardState = {
   showMoreDescription: boolean
 }
 
+const CHAR_COUNT_CUTOFF = 400
+export const CARD_SHORT_DESCRIPTION_CSS = 'SRC-short-description'
+export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
+
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second slash in the regex above
 export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/
@@ -51,8 +55,10 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
 
   constructor(props: GenericCardProps) {
     super(props)
+    this.state = {
+      showMoreDescription: false
+    }
   }
-
 
   public getLink (link: string, internalLinkConfiguration?: InternalLinkConfiguration, data?: string [], schema?: any) {
     let linkDisplay = link
@@ -85,6 +91,25 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     return { linkDisplay, target }
   }
 
+  getCutoff = (summary: string ) => {
+    let previewText = ''
+    const summarySplit = summary!.split(' ')
+    // find num words to join such that its >= char_count_cutoff
+    let i = 0
+    while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
+      previewText += `${summarySplit[i]} `
+      i += 1
+    }
+    previewText = previewText.trim()
+    return { previewText }
+  }
+
+  toggleShowMore = () => {
+    this.setState({
+      showMoreDescription: true
+    })
+  }
+
   render() {
     const {
       schema,
@@ -96,6 +121,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       isHeader = false,
       internalLinkConfiguration
     } = this.props
+    const { showMoreDescription } = this.state
     const { link = '' } = genericCardSchema
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
@@ -166,12 +192,38 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
               }
             </h3>
           </div>
-          {subTitle && <div data-search-handle={(genericCardSchema.subTitle || '').toLowerCase()} className="SRC-author"> {subTitle} </div>}
+          {subTitle && <div data-search-handle={genericCardSchema.subTitle!.toLowerCase()} className="SRC-author"> {subTitle} </div>}
+          {/* 
+            Below is a hack that allows word highlighting to work, the Search componenet insert's
+            html elements outside of the React DOM which if detected would break the app,
+            but as written below this avoids that reconcilliation process.
+          */}
           {
             description &&
-              <span data-search-handle={(genericCardSchema.description || '').toLowerCase()} className="SRC-font-size-base">
-                <ShowMore summary={description} />
+            <div data-search-handle={genericCardSchema.description!.toLowerCase()} className={showMoreDescription ? 'SRC-hidden' : ''}>
+              <span className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}>
+                {this.getCutoff(description).previewText}
               </span>
+              {
+                description.length >= CHAR_COUNT_CUTOFF
+                &&
+                <a
+                  style={{ fontSize: '14px', cursor: 'pointer' }}
+                  className="SRC-primary-text-color SRC-showMoreBtn"
+                  onClick={this.toggleShowMore}
+                >
+                  ...Show More{' '}
+                </a>
+              }
+            </div>
+          }
+          {
+            description &&
+            <div data-search-handle={genericCardSchema.description!.toLowerCase()} className={showMoreDescription ? '' : 'SRC-hidden'}>
+              <span className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}>
+                {description}
+              </span>
+            </div>
           }
         </div>
         {showFooter && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}

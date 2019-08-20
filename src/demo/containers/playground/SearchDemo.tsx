@@ -14,6 +14,10 @@ export const SearchDemo:React.SFC = () => {
   }
   const searchable: Searchable = [
     {
+      columnName: 'summary', 
+      hintText: 'summary'
+    },
+    {
       columnName: 'contributor', 
       hintText: 'Jane'
     },

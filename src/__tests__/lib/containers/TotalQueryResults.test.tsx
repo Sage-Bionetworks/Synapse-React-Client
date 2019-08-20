@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow } from 'enzyme'
 import syn16787123Json  from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
-import { TotalQueryResults, TotalQueryResultsProps } from '../../../lib/containers/TotalQueryResults'
+import TotalQueryResults, { TotalQueryResultsProps } from '../../../lib/containers/TotalQueryResults'
 import { cloneDeep } from 'lodash'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
 

@@ -10,10 +10,36 @@ export type TotalQueryResultsProps = {
   frontText: string
 }
 
-export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> =
-  ({ data, facet, isLoading, style, unitDescription, frontText }) => {
-    let total = 0
-    if (data && !isLoading) {
+type State = {
+  total: number  
+}
+
+// This is a stateful component so that during load the component can hold onto the previous 
+// total instead of showing 0 results for the intermittent state.
+export default class TotalQueryResults extends React.Component<TotalQueryResultsProps, State> {
+
+  constructor(props: TotalQueryResultsProps) {
+    super(props)
+    this.state = {
+      total: 0
+    }
+  }
+
+  componentDidMount() {
+    this.calculateTotal()
+  }
+
+  componentDidUpdate(prevProps: TotalQueryResultsProps) {
+    // check that its done loading
+    if (!this.props.isLoading && prevProps.isLoading) {
+      this.calculateTotal()
+    }
+  }
+
+  calculateTotal() {
+    const { data, facet } = this.props 
+    let { total } = this.state
+    if (data) {
       if (facet) {
         const { facets = [] } = data
         const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
@@ -44,11 +70,20 @@ export const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> 
         }
         total = data.queryCount
       }
-    }
+     }
+     this.setState({
+       total
+     })
+  }
+
+  render() {
+    const { isLoading, style, unitDescription, frontText } = this.props 
+    const { total } =  this.state
     const loader = <span style={{ marginLeft: '2px' }} className={'spinner'}/> 
     return (
       <p style={style} className="SRC-boldText SRC-text-title SRC-centerContent">
         {frontText} {total} {unitDescription} {isLoading && loader}
       </p>
     )
-  }
+   }
+}

@@ -14,7 +14,7 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
 import { SELECT_ALL } from '../../../lib/containers/SynapseTable'
-import { TotalQueryResults } from '../../../lib/containers/TotalQueryResults'
+import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
   const wrapper = mount(

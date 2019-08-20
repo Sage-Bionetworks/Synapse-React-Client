@@ -15,7 +15,7 @@ import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { Consortium } from './row_renderers/AMPAD'
 import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
-import { TotalQueryResults } from './TotalQueryResults'
+import TotalQueryResults from './TotalQueryResults'
 import { CommonCardProps } from './CardContainerLogic'
 
 const PAGE_SIZE: number = 25

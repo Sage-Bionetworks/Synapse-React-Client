@@ -10,7 +10,7 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 
 import { SELECT_ALL } from './SynapseTable'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
-import { TotalQueryResults } from './TotalQueryResults'
+import TotalQueryResults from './TotalQueryResults'
 
 export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
 // Add all icons to the library so you can use it in your page

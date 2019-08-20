@@ -27,7 +27,7 @@ type MenuState = {
 
 export type MenuConfig = {
   sql: string
-  facet: string
+  facet?: string
 }
 
 // represents the entirety of the menu
@@ -225,11 +225,16 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         sql,
       } = config
       let usedUnitDescription = unitDescription
+      const name = accordionConfig[groupIndex] && accordionConfig[groupIndex].name
       if (accordionConfig.length > 0 && !usedUnitDescription) {
         // This is a hardcoded setting, could change 'Tools' to a prop in the future
-        const facetDisplayName = facetAliases[facet] || facet
-        const name = accordionConfig[groupIndex].name
+        const facetDisplayName = facet && facetAliases[facet] || facet
         usedUnitDescription = `${name} Tools by ${facetDisplayName}`
+      }
+      const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
+      if (showSearch) {
+        // This is also a hardcoded setting to detect if search within a tools accordion is being shown
+        usedUnitDescription = `${name} Tools`
       }
       let selectedFacets: FacetColumnValuesRequest [] = []
       if (Number(menuIndexFromProps) === index && facet && facetValue) {
@@ -242,7 +247,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         ]
       }
       const loadNow = isSelected
-      const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
       let className = showSearch ? SEARCH_CLASS_CSS : ' '
       if (!isSelected) {
         className = ' SRC-hidden'
@@ -429,7 +433,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const infoEnter: Info = { isSelected, originalColor }
       const infoLeave: Info = { isSelected, originalColor: defaultColor }
-      const facetDisplayValue: string = facetAliases[facet] || facet
+      const facetDisplayValue: string = facet && facetAliases[facet] || facet
       return (
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}

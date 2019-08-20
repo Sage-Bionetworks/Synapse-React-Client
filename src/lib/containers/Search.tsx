@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertWhereClauseFromSearchParams } from '../utils/modules/sqlFunctions'
-import { TotalQueryResults } from './TotalQueryResults'
+import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
 
@@ -48,7 +48,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   componentDidUpdate(prevProps: InternalSearchProps) {
     if (this.props.isLoading === false && prevProps.isLoading === true) {
       setTimeout(
-        this.highlightText
+        this.highlightText,
+        250
       )
     }
   }
@@ -76,40 +77,54 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
      const highlightedSpans = document.querySelectorAll('.highlight')
      highlightedSpans.forEach(
-        (el) => {
-          const castAsSpan = el as HTMLSpanElement
-          if (castAsSpan.innerText) {
-            castAsSpan.outerHTML = castAsSpan.innerText
+       (el) => {
+         const castAsSpan = el as HTMLSpanElement
+         if (castAsSpan.innerText) {
+           castAsSpan.outerHTML = castAsSpan.innerText
+          }
+        }
+    )
+    if (submittedSearchText) {
+      const searchItemView = facetAliases[searchItem.columnName] || searchItem.columnName
+      const trs = document.querySelectorAll<HTMLElement>(`.${SEARCH_CLASS_CSS} [data-search-handle="${searchItemView.toLowerCase()}"]`)
+      // Target elements and apply styles
+      trs.forEach(
+        (textElement) => {
+          // handle showMore in cardFooter
+          if (textElement.innerHTML !== null) {
+            const regex = new RegExp(submittedSearchText, "gi")
+            const match = textElement.innerHTML.match(regex)
+            if (match) {
+              textElement.innerHTML = textElement.innerHTML.replace(regex, (match) => {
+                return `<span style="background: ${originalColor}; color: white;" class="highlight">${match}</span>`
+              })
+            }
           }
         }
       )
-      if (submittedSearchText) {
-        const searchItemView = facetAliases[searchItem.columnName] || searchItem.columnName
-        const trs = document.querySelectorAll<HTMLElement>(`.${SEARCH_CLASS_CSS} [data-search-handle="${searchItemView.toLowerCase()}"]`)
-        // Target elements and apply styles
-        trs.forEach(
-          (textElement) => {
-            if (textElement.innerText !== null) {
-              const regex = new RegExp(submittedSearchText, "gi")
-              const match = textElement.innerText.match(regex)
-              if (match) {
-                textElement.innerHTML = textElement.innerHTML.replace(regex, (match) => {
-                  return `<span style="background: ${originalColor}; color: white;" class="highlight">${match}</span>`
-                })
-              }
-            }
-          }
-        )
-      }
+    }
+  }
+
+  public addEscapeCharacters = (searchText: string) => {
+    // We have to escape the following characters
+    // ' % \
+    let escapedSearchText = searchText
+    // escape ' by adding additional '
+    escapedSearchText = escapedSearchText.replace("'", "''")
+    // escape % by adding \
+    escapedSearchText = escapedSearchText.replace("%", "\%")
+    // escape \ by adding \
+    escapedSearchText = escapedSearchText.replace("\\",  "\\\\")
   }
 
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
     const { searchText, searchableIndex } = this.state
+
     const { searchable } = this.props
     const searchItem = searchable[searchableIndex]
     // Always grabs initQueryRequest so that it doesn't build a chain of 
-    // clauses
+    // LIKE clauses
     const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
     let { sql } = lastQueryRequestDeepCopy.query
     const searchParams = {

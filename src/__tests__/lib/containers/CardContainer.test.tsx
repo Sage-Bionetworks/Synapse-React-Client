@@ -6,7 +6,7 @@ import syn16787123Json  from '../../../mocks/syn16787123.json'
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
-import { TotalQueryResults } from '../../../lib/containers/TotalQueryResults'
+import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(
