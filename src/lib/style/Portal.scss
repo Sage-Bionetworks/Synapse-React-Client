@@ -449,7 +449,11 @@ a.SRC-anchor-light {
    background-color: $primaryColor;
  }
 
- %hoverFade {
+ .SRC-primary-background-color-border-left {
+  border-left-color: $primaryColor;
+}
+
+%hoverFade {
     transition: all 400ms;
   }
 
@@ -547,9 +551,10 @@ a.SRC-anchor-light {
   line-height: 51px;
   text-align: center;
   font-size: 16px;
+}
+.SRC-background-unset {
   background: unset;
 }
-
 .SRC-menu-button-base:focus {
   outline: $primaryColor;
 }
@@ -1244,6 +1249,7 @@ div.SRC-userImg {
 .srcRssFeed {
   list-style: none;
   padding-left: 0px;
+  padding-top: 29px;
 }
 .srcRssFeedItem {
   // color: $primaryColor;
@@ -1338,20 +1344,23 @@ button {
 }
 
 .SRC-mailchimpSubscribeContainer {
-	border: 1px solid #dddddd;
-  padding: 10px 20px 10px 20px;
+  padding: 10px 20px 10px 0px;
   margin-bottom: 20px;
   input {
-    width: 400px;
+    width: 570px;
+    height: 45px;
+    margin-top: 10px;
+    padding-left: 8px;
   }
   button {
     display: block;
-    margin-top: 5px;
-    padding: 6px 12px;
+    margin-top: 20px;
+    padding: 6px 25px;
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 24px;
-    background-color: #DFDFDF;
+    background-color: $primaryColor;
+    color:white;
   }
 }
 
