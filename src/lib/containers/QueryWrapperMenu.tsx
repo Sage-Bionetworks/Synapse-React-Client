@@ -103,7 +103,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       Update the row count or the menu index if the props changed by looking at whether the sql or the rgbIndex
       changed
     */
-    let { activeMenuIndices } = this.state
+    let { activeMenuIndices } = this.state
     const { rgbIndex, accordionConfig } = this.props
     if (rgbIndex !== prevProps.rgbIndex) {
       activeMenuIndices = accordionConfig ? new Array(accordionConfig.length).fill(0): [0] 
@@ -232,7 +232,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         usedUnitDescription = `${name} Tools by ${facetDisplayName}`
       }
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
-      if (showSearch) {
+      if (accordionConfig.length > 0 && showSearch) {
         // This is also a hardcoded setting to detect if search within a tools accordion is being shown
         usedUnitDescription = `${name} Tools`
       }
@@ -315,7 +315,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       return accordionConfig.map(
         (el, index) => {
           return (
-            <div className={accordionGroupIndex === index ? '' : 'SRC-hidden'}>
+            <div key={JSON.stringify(el)} className={accordionGroupIndex === index ? '' : 'SRC-hidden'}>
               {this.renderQueryChild(el.menuConfig, el, index)}
             </div>
           )
@@ -330,7 +330,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const { accordionConfig, menuConfig, searchConfiguration } = this.props
     const { accordionGroupIndex } = this.state
     const { rgbIndex } = this.props
-    const { colorPalette } = getColorPallette(rgbIndex, 5)
+    const { colorPalette } = getColorPallette(rgbIndex, 5)
     const lightColor = '#F5F5F5'
     if (accordionConfig) {
       return accordionConfig.map(
@@ -354,7 +354,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             originalColor: lightColor
           }
           return (
-            <div className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}>
+            <div key={JSON.stringify(el)} className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}>
               <div 
                 style={style}
                 role={isActive ? "": "button"}

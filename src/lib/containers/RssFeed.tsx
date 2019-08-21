@@ -1,5 +1,6 @@
 import * as React from 'react'
-import reactNativeRssParser from 'react-native-rss-parser'
+let Parser = require('rss-parser')
+let rssParser = new Parser()
 
 type RssState = {
   rssFeed: any,
@@ -21,12 +22,13 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   }
 
   componentDidMount() {
+
     const {
       url
     } = this.props
     fetch(url)
       .then(response => response.text())
-      .then(responseData => reactNativeRssParser.parse(responseData))
+      .then(responseData => rssParser.parseString(responseData))
       .then(rss => this.setState({ rssFeed: rss }))
       .catch(err => this.setState({ isLoadingError: true }))
   }

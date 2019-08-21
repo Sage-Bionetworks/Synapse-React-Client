@@ -115,6 +115,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     // escape ' by adding additional '
     escapedSearchText = escapedSearchText.replace("'", "''")
     // escape % by adding \
+    // eslint-disable-next-line no-useless-escape
     escapedSearchText = escapedSearchText.replace("%", "\%")
     // escape \ by adding \
     escapedSearchText = escapedSearchText.replace("\\",  "\\\\")
