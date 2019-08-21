@@ -48,10 +48,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   componentDidUpdate(prevProps: InternalSearchProps) {
     if (this.props.isLoading === false && prevProps.isLoading === true) {
-      setTimeout(
-        this.highlightText,
-        250
-      )
+      this.highlightText()
     }
   }
 
@@ -76,13 +73,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
      const originalColor = colorPalette[0]
      const searchItem = searchable[searchableIndex]
 
-     const highlightedSpans = document.querySelectorAll('.highlight')
+     const highlightedSpans = document.querySelectorAll<HTMLSpanElement>('.highlight')
      highlightedSpans.forEach(
-       (el) => {
-         const castAsSpan = el as HTMLSpanElement
-         if (castAsSpan.innerText) {
-           castAsSpan.outerHTML = castAsSpan.innerText
-          }
+       (span) => {
+          span.outerHTML = span.innerText
         }
     )
     if (submittedSearchText) {
@@ -93,8 +87,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       // Target elements and apply styles
       trs.forEach(
         (textElement) => {
-          // handle showMore in cardFooter
           if (textElement.innerHTML !== null) {
+            // test search is inside the html element
             const regex = new RegExp(submittedSearchText, "gi")
             const match = textElement.innerHTML.match(regex)
             if (match) {
@@ -123,6 +117,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
+    // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
     const { searchText, searchableIndex } = this.state
 
@@ -137,13 +132,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const newSql = insertWhereClauseFromSearchParams(searchParams, sql)
     lastQueryRequestDeepCopy.query.sql = newSql
-    this.props.executeQueryRequest!(lastQueryRequestDeepCopy).then(
-      _ => {
-        this.setState({
-          submittedSearchText: searchText
-        })
-      }
-    )
+    this.setState({
+      submittedSearchText: searchText
+    })
+    this.props.executeQueryRequest!(lastQueryRequestDeepCopy)
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -166,7 +158,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       alignItems: 'center',
       padding: '0px 10px',
     }
-    const dropdownStyle: React.CSSProperties = {
+    const fieldStyle: React.CSSProperties = {
       background: '#FFFFFF',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
       borderRadius:'3px',
@@ -187,6 +179,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const caretIconStyle: React.CSSProperties = {
       fontSize: '16px',
       marginRight: 8
+    }
+    const labelStyle: React.CSSProperties = {
+      display: 'inline-block', whiteSpace: 'nowrap'
     }
     const searchIconStyle: React.CSSProperties = {
       color: '#C4C4C4',
@@ -215,10 +210,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         <div style={containerStyle}>
           {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
           <div className="SRC-centerContent SRC-fullWidth">
-            <span style={{display: 'inline-block', whiteSpace: 'nowrap'}}> Search in </span>
-            <div style={{...dropdownStyle, flex: 1, paddingLeft: 10}}>
-              <div id="search-dropdown" style={{height: 'inherit', width: '100%'}}>
-                <div className="SRC-centerContent" style={{height: 'inherit'}}>
+            <span style={labelStyle}> Search in </span>
+            <div style={{...fieldStyle, flex: 1, paddingLeft: 10}}>
+              <div id="search-dropdown" className="SRC-inherit-height SRC-fullWidth">
+                <div className="SRC-centerContent SRC-inherit-height">
                   <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
                     { curFacetDisplayText }
                     <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
@@ -247,7 +242,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 </div>
               </div>
             </div>
-            <form style={{...dropdownStyle, flex: 3, alignItems: 'center'}} onSubmit={this.search}>
+            <form style={{...fieldStyle, flex: 3, alignItems: 'center'}} onSubmit={this.search}>
               <input
                 placeholder={`e.g. "${searchableItem.hintText}"`} 
                 style={inputStyle}

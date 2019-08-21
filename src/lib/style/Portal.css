@@ -1119,6 +1119,9 @@ button {
 .SRC-fullWidth {
   width: 100%; }
 
+.SRC-inherit-height {
+  height: inherit; }
+
 .SRC-search-dropdown li {
   padding: 10px;
   border: 1px solid rgba(196, 196, 196, 0.4); }

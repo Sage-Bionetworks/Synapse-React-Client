@@ -46,7 +46,6 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
     const menuDropdown = this.renderMenu()
     const { menuConfig } = this.props
     const { feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
-    // const { mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
     return (
       <React.Fragment>
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">

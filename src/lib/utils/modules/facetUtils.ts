@@ -55,7 +55,7 @@ export type SyntheticHTMLInputElement = {
  *   htmlCheckboxes: any,
  *   selector : string,
  *   queryRequest: QueryBundleRequest,
- *   filter: string,
+ *   facet: string,
  *   value?: string
  * }
  * @returns
@@ -64,13 +64,13 @@ export const readFacetValues = ({
   htmlCheckboxes,
   selector,
   queryRequest,
-  filter,
+  facet,
   value
 }: {
   htmlCheckboxes: SyntheticHTMLInputElement [],
   selector : string,
   queryRequest: QueryBundleRequest,
-  filter: string,
+  facet: string,
   value?: string
 }) => {
   const facetValues: string[] = []
@@ -91,12 +91,12 @@ export const readFacetValues = ({
   const newQueryRequest: QueryBundleRequest = queryRequest
   const { selectedFacets = [] } = newQueryRequest.query
 
-  const specificFacet = selectedFacets!.find(el => el.columnName === filter)!
+  const specificFacet = selectedFacets!.find(el => el.columnName === facet)!
   if (!specificFacet) {
     const facetColumnValuesRequest: FacetColumnValuesRequest =  {
       facetValues,
       concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-      columnName: filter
+      columnName: facet
     }
     selectedFacets.push(facetColumnValuesRequest)
     // align the reference to selectedFacets

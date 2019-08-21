@@ -152,7 +152,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
 
     let sqlUsed = this.props.sql
     if (this.props.searchParams) {
-      sqlUsed = insertWhereClauseFromSearchParams(this.props.searchParams!, this.props.sql, this.props.sqlOperator)
+      sqlUsed = insertWhereClauseFromSearchParams(this.props.searchParams, this.props.sql, this.props.sqlOperator)
     }
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate

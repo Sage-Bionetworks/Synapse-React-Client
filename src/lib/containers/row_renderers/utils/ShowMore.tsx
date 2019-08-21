@@ -54,7 +54,7 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
         (
         <a
             style={{ fontSize: '14px', cursor: 'pointer' }}
-            className="SRC-primary-text-color SRC-showMoreBtn"
+            className="SRC-primary-text-color"
             onClick={this.toggleShowMore}
         >
             ...Show More{' '}

@@ -1376,6 +1376,10 @@ button {
   width: 100%;
 }
 
+.SRC-inherit-height {
+  height: inherit;
+}
+
 .SRC-search-dropdown {
   li {
     padding: 10px;
@@ -1385,5 +1389,4 @@ button {
 
 :focus {
   outline-color: $primaryColor;
-  // outline-color: rgb(59, 153, 252);
 }

@@ -153,7 +153,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
 
   /**
    * Pass down a deep clone (so no side affects on the child's part) of the
-   * last query request made
+   * first query request made
    *
    * @returns
    * @memberof QueryWrapper

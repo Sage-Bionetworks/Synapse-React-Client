@@ -204,7 +204,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       htmlCheckboxes,
       queryRequest,
       selector,
-      filter: facet,
+      facet,
       value: facetValue,
     })
 

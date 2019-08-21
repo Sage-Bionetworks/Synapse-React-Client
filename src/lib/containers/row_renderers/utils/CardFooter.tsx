@@ -109,12 +109,6 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     let valuesFiltered = values.filter(el => el[1])
     const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
     const limit = !hasMoreValuesThanLimit || isShowMoreOn ? Infinity: secondaryLabelLimit
-    // // don't slice if the number of values < limit or if they've clicked showMore
-    // if (!hasMoreValuesThanLimit || isShowMoreOn) {
-    //   valuesFiltered = valuesFiltered.slice(0, Infinity)
-    // } else {
-    //   valuesFiltered = valuesFiltered.slice(0, secondaryLabelLimit)
-    // }
     return (
       <div className="SRC-cardMetadata">
         <table>
@@ -126,7 +120,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
                   <td>
                   <button
                     style={{ textAlign: 'left', margin: 0, padding: 0 }}
-                    className="SRC-primary-text-color SRC-basicButton SRC-showMoreBtn"
+                    className="SRC-primary-text-color SRC-basicButton"
                     onClick={this.toggleShowMore}
                   >
                     Show {isShowMoreOn ?  'Less' : 'More'}

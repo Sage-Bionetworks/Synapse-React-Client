@@ -209,7 +209,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
                 &&
                 <a
                   style={{ fontSize: '14px', cursor: 'pointer' }}
-                  className="SRC-primary-text-color SRC-showMoreBtn"
+                  className="SRC-primary-text-color"
                   onClick={this.toggleShowMore}
                 >
                   ...Show More{' '}

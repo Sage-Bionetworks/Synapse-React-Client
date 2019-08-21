@@ -925,7 +925,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         htmlCheckboxes,
         queryRequest,
         selector,
-        filter: columnName
+        facet: columnName
       })
 
       const lastFacetSelection = {
