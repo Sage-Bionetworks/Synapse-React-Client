@@ -208,7 +208,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
                 description.length >= CHAR_COUNT_CUTOFF
                 &&
                 <a
-                  style={{ fontSize: '14px', cursor: 'pointer' }}
+                  style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '3px' }}
                   className="SRC-primary-text-color"
                   onClick={this.toggleShowMore}
                 >

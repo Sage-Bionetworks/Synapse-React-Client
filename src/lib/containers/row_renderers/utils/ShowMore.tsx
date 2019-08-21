@@ -53,28 +53,23 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
         meetsCharRequirements &&
         (
         <a
-            style={{ fontSize: '14px', cursor: 'pointer' }}
-            className="SRC-primary-text-color"
-            onClick={this.toggleShowMore}
+          style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
+          className="SRC-primary-text-color"
+          onClick={this.toggleShowMore}
         >
-            ...Show More{' '}
-        </a>)
+           ...Show More
+        </a>
+        )
     )
     return (
       <React.Fragment>
-        {[1,2].map(
-          (_el, index) => {
-            return index === 0?
-            (<span>
-              {previewText}
-              <span className={this.state.showMore ? '': 'SRC-hidden'}>
-                {hiddenText}
-              </span>
-            </span>)
-            :
-            !this.state.showMore && showMoreButton
-          }
-        )}
+        <span>
+          {previewText}
+          <span className={this.state.showMore ? '': 'SRC-hidden'}>
+            {hiddenText}
+          </span>
+        </span>
+        {!this.state.showMore && showMoreButton}
       </React.Fragment>
     )
   }
