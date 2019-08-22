@@ -48,8 +48,8 @@ export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second slash in the regex above
 export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/
-// check for 'syn' followed and ended by a digit of unlimited length
-export const SYNAPSE_REGX = /syn\d+$/
+// check for 'syn' followed and ended by a digit of unlimited length, must also begin the line
+export const SYNAPSE_REGX = /^syn\d+$/
 
 export default class GenericCard extends React.Component<GenericCardProps, GenericCardState> {
 
