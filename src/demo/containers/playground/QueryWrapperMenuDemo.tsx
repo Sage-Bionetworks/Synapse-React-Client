@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { SynapseClient } from '../../../lib'
 import QueryWrapperMenu, { MenuConfig, QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../../lib/utils'
 import '../App.css'
@@ -11,7 +10,7 @@ type DemoState = {
   isLoading: boolean
   showMarkdown: boolean
   version: number
-  tabOne: any
+  tabOne: QueryWrapperMenuProps
   tabTwo: QueryWrapperMenuProps
   showTabOne: boolean
 }
@@ -43,7 +42,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: false,
+      showTabOne: true,
       tabTwo:
       {
         showBarChart: false,
@@ -68,15 +67,15 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             },  
             menuConfig: [
               {
-                facetName: 'grant',
+                facet: 'grant',
                 sql: computationalSql,
               },
               {
-                facetName: 'diagnosis',
+                facet: 'diagnosis',
                 sql: computationalSql,
               },
               {
-                facetName: 'modelType',
+                facet: 'modelType',
                 sql: computationalSql,
               },
             ],
@@ -90,15 +89,15 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             },  
             menuConfig: [
               {
-                facetName: 'program',
+                facet: 'program',
                 sql: experimentalSql,
               },
               {
-                facetName: 'reagentType',
+                facet: 'reagentType',
                 sql: experimentalSql,
               },
               {
-                facetName: 'softwareType',
+                facet: 'softwareType',
                 sql: experimentalSql,
               },
             ],
@@ -112,18 +111,26 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
           title: 'title',
           synapseId: 'syn11346063'
         },
+        searchConfiguration: {
+          searchable: [
+            {
+              columnName: 'study',
+              hintText: 'study name'
+            },
+          ]
+        },
         menuConfig: [
           {
-            facetName: 'study',
-            sql: 'SELECT * FROM syn11346063 limit 1000',
+            facet: 'diagnosis',
+            sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
+            ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
           },
           {
-            facetName: 'diagnosis',
-            sql: 'SELECT study, assay, count(distinct id) AS files, concat(organ) AS organs' +
-              ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
+            facet: 'study',
+            sql: 'SELECT * FROM syn11346063 limit 1000',
           },
           // {
-          //   facetName: 'dataType',
+          //   facet: 'dataType',
           //   sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
           //   synapseId: 'syn16858331',
           //   title: 'title',
@@ -137,7 +144,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       token: '',
       version: 0
     }
-    this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
     this.rgba2rgb = this.rgba2rgb.bind(this)
@@ -152,33 +158,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
     ]
   }
 
-  /**
-   * Make a query on synapse
-   */
-  public makeSampleQueryCall(): void {
-    // Example table (view) query.
-    // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
-    const QUERY = {
-      entityId: 'syn12335586',
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
-      query: {
-        includeEntityEtag: true,
-        isConsistent: false,
-        limit: 100,
-        offset: 0,
-        sql: 'SELECT * FROM syn12335586'
-      }
-    }
-    SynapseClient.getQueryTableResults(QUERY)
-      .then((data: any) => console.log(data))
-      .catch((error: any) => {
-        console.error(error)
-      })
-  }
   /**
    * Update internal state
    * @param {Object} updatedState new state to be updated by the component
@@ -207,8 +186,6 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             token={''}
             isConsistent={true}
             {...props}
-            rgbIndex={this.state.showTabOne ? 1 : this.state.tabTwo.rgbIndex}
-            loadingScreen={<div>loading... </div>}
           />
         </div>
     )

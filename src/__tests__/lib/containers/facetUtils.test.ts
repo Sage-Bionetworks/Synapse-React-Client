@@ -6,8 +6,8 @@ import {
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
 import { SELECT_SINGLE_FACET } from '../../../lib/containers/Facets'
-import { QueryBundleRequest } from 'src/lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { FacetColumnValuesRequest } from 'src/lib/utils/jsonResponses/Table/FacetColumnRequest'
+import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
+import { FacetColumnValuesRequest } from '../../../lib/utils/jsonResponses/Table/FacetColumnRequest'
 
 describe('getIsValueSelected works', () => {
   const columnName = 'projectStatus'
@@ -133,16 +133,16 @@ describe('readFacetValues functions as a checkbox', () => {
       },
     ]
 
-    const filter = 'FILTER_STUB'
+    const facet = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
-      filter,
+      facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: ''
     })
     const expectedRequest = [{
       concreteType: concreteTypeFacetsRequest,
-      columnName: filter,
+      columnName: facet,
       facetValues: []  // should be empty, isSelected is false for all values
     }] as FacetColumnValuesRequest[]
     // sanity check
@@ -170,16 +170,16 @@ describe('readFacetValues functions as a checkbox', () => {
       },
     ]
 
-    const filter = 'FILTER_STUB'
+    const facet = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
-      filter,
+      facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: ''
     })
     const expectedRequest = [{
       concreteType: concreteTypeFacetsRequest,
-      columnName: filter,
+      columnName: facet,
       facetValues: [singleSelection]
     }] as FacetColumnValuesRequest[]
     expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
@@ -204,16 +204,16 @@ describe('readFacetValues functions as a checkbox', () => {
       },
     ]
 
-    const filter = 'FILTER_STUB'
+    const facet = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
-      filter,
+      facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: ''
     })
     const expectedRequest = [{
       concreteType: concreteTypeFacetsRequest,
-      columnName: filter,
+      columnName: facet,
       facetValues: [stub1, stub2, stub3]
     }] as FacetColumnValuesRequest[]
     expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
@@ -261,17 +261,17 @@ describe('readFacetValues functions as a radio checkbox', () => {
       },
     ]
 
-    const filter = 'FILTER_STUB'
+    const facet = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
-      filter,
+      facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: SELECT_SINGLE_FACET,
       value: stub1
     })
     const expectedRequest = [{
       concreteType: concreteTypeFacetsRequest,
-      columnName: filter,
+      columnName: facet,
       facetValues: [stub1]
     }] as FacetColumnValuesRequest[]
     expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
@@ -296,17 +296,17 @@ describe('readFacetValues functions as a radio checkbox', () => {
       },
     ]
 
-    const filter = 'FILTER_STUB'
+    const facet = 'FILTER_STUB'
     const { newQueryRequest } = readFacetValues({
       queryRequest,
-      filter,
+      facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: SELECT_SINGLE_FACET,
       value: stub1
     })
     const expectedRequest = [{
       concreteType: concreteTypeFacetsRequest,
-      columnName: filter,
+      columnName: facet,
       facetValues: [stub1]
     }] as FacetColumnValuesRequest[]
     expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))

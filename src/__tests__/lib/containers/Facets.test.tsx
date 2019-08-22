@@ -14,7 +14,7 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
 import { SELECT_ALL } from '../../../lib/containers/SynapseTable'
-import { TotalQueryResults } from '../../../lib/containers/TotalQueryResults'
+import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
   const wrapper = mount(
@@ -31,7 +31,7 @@ describe('it performs basic functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.executeQueryRequest = jest.fn()
   // column name that will get filtered on
-  const filter = 'tumorType'
+  const facet = 'tumorType'
 
   const lastQueryRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -86,7 +86,7 @@ describe('it performs basic functionality', () => {
   */
   const props = {
     updateParentState,
-    filter,
+    facet,
     executeInitialQueryRequest,
     executeQueryRequest,
     getLastQueryRequest,
@@ -117,7 +117,7 @@ describe('it performs basic functionality', () => {
     const { wrapper } = createMountedComponent(
       {
         ...props,
-        filter: 'projectStatus'
+        facet: 'projectStatus'
       }
     )
     expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
@@ -159,7 +159,7 @@ describe('it performs basic functionality', () => {
     */
     await wrapper.setProps({
       isLoading: true,
-      lastFacetSelection: { columnName: filter, facetValue: 'Cutaneous Neurofibroma', selector: SELECT_SINGLE_FACET }
+      lastFacetSelection: { columnName: facet, facetValue: 'Cutaneous Neurofibroma', selector: SELECT_SINGLE_FACET }
     })
     // end mocking QueryWrapper behvaior
     expect(wrapper.find(`input.${FACET_NOT_SELECTED_CLASS}`)).toHaveLength(10)
@@ -178,7 +178,7 @@ describe('it performs basic functionality', () => {
     */
     await wrapper.setProps({
       isLoading: true,
-      lastFacetSelection: { columnName: filter, facetValue: '', selector: SELECT_ALL }
+      lastFacetSelection: { columnName: facet, facetValue: '', selector: SELECT_ALL }
     })
     // end mocking QueryWrapper behvaior
     // at this point all facets should be considered 'selected'

@@ -2,23 +2,16 @@ import * as React from 'react'
 import { PUBLICATION } from '../../utils/SynapseConstants'
 import * as Utils from './utils'
 
-type PublicationState = {
-  showMore: boolean
-}
-
 type PublicationProps = {
   data?: any
   schema?: any
   secondaryLabelLimit?:number
 }
 
-class Publication extends React.Component<PublicationProps, PublicationState> {
+class Publication extends React.Component<PublicationProps, {}> {
 
   constructor(props: PublicationProps) {
     super(props)
-    this.state = {
-      showMore: false
-    }
   }
 
   public render() {

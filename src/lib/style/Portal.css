@@ -461,7 +461,7 @@ button.SRC-roundBorder {
   background: unset; }
 
 .SRC-menu-button-base:focus {
-  outline: none; }
+  outline: #D53F77; }
 
 .SRC-text-shadow {
   text-shadow: #505050 2px 2px 4px; }
@@ -572,7 +572,7 @@ button.SRC-roundBorder {
   border: none;
   background: white; }
   .tableDropdownSelector:focus {
-    outline: none; }
+    outline: #D53F77; }
 
 .SRC-extraPadding {
   padding: 5px; }
@@ -599,7 +599,7 @@ button.SRC-roundBorder {
   height: 40px;
   margin: 21px; }
   .SRC-viewMoreButton:focus {
-    outline: none; }
+    outline: #D53F77; }
 
 /*
   checkmark styling start
@@ -1111,3 +1111,20 @@ button {
     border-radius: 24px;
     background-color: #D53F77;
     color: white; }
+
+.highlight {
+  font-weight: bold;
+  padding: 2px; }
+
+.SRC-fullWidth {
+  width: 100%; }
+
+.SRC-inherit-height {
+  height: inherit; }
+
+.SRC-search-dropdown li {
+  padding: 10px;
+  border: 1px solid rgba(196, 196, 196, 0.4); }
+
+:focus {
+  outline-color: #D53F77; }

@@ -556,7 +556,7 @@ a.SRC-anchor-light {
   background: unset;
 }
 .SRC-menu-button-base:focus {
-  outline: none;
+  outline: $primaryColor;
 }
 
 .SRC-text-shadow {
@@ -700,7 +700,7 @@ a.SRC-anchor-light {
   border:none;
   background: white;
   &:focus {
-    outline: none;
+    outline: $primaryColor;
   }
 }
 
@@ -735,7 +735,7 @@ a.SRC-anchor-light {
   height: 40px;
   margin: 21px;
   &:focus {
-    outline: none;
+    outline: $primaryColor;
   }
 }
 
@@ -1362,4 +1362,31 @@ button {
     background-color: $primaryColor;
     color:white;
   }
+}
+
+.highlight {
+  // background: rgb(244, 248, 253);
+  // color: rgb(0, 61, 129);
+  font-weight: bold;
+  // border: rgb(0, 61, 129) solid 2px;
+  padding: 2px;
+}
+
+.SRC-fullWidth {
+  width: 100%;
+}
+
+.SRC-inherit-height {
+  height: inherit;
+}
+
+.SRC-search-dropdown {
+  li {
+    padding: 10px;
+    border: 1px solid rgba(196,196,196,0.4);
+  }
+}
+
+:focus {
+  outline-color: $primaryColor;
 }

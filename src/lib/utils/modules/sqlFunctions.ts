@@ -6,6 +6,12 @@ export type KeyValue = {
 
 export type SQLOperator = 'LIKE' | '='
 
+// look for "group by", multi-line and case insensitive
+const GROUP_BY_REGEX = /group by/mi
+export const isGroupByInSql =(sql: string): boolean => {
+  return GROUP_BY_REGEX.test(sql)
+}
+
 const generateTokenUsingOperator = (literal: string, operator: SQLOperator, match: string) => {
   switch (operator) {
     case 'LIKE':
@@ -25,7 +31,7 @@ const generateTokenUsingOperator = (literal: string, operator: SQLOperator, matc
 
 // This will construct a sql query by adding the conditions in searchParams
 // to the WHERE clause, preserving all other clauses
-export const insertWhereClauseFromURL = (searchParams: KeyValue, sql: string, operator: SQLOperator = 'LIKE') => {
+export const insertConditionsFromSearchParams = (searchParams: KeyValue, sql: string, operator: SQLOperator = 'LIKE') => {
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')

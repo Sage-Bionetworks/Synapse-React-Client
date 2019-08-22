@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
-import GenericCard, { GenericCardProps, GenericCardSchema } from '../../../lib/containers/GenericCard'
+import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { InternalLinkConfiguration } from 'src/lib/containers/CardContainerLogic'
+import { InternalLinkConfiguration } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -89,11 +89,11 @@ describe('it renders the UI correctly', () => {
   })
 
   it('renders the correct UI in non header mode', () => {
-    const { wrapper } = createShallowComponent(propsForNonHeaderMode)
+    const { wrapper } = createShallowComponent(propsForNonHeaderMode)
     expect(wrapper.find('img')).toBeDefined()
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
     expect(wrapper.find('a.SRC-primary-text-color').text()).toEqual(data[0])
-    expect(wrapper.find(Utils.ShowMore).props().summary).toEqual(MOCKED_DESCRIPTION)
+    expect(wrapper.find(`.${CARD_SHORT_DESCRIPTION_CSS}`).text()).toEqual(MOCKED_DESCRIPTION)
     expect(wrapper.find(Utils.CardFooter)).toBeDefined()
   })
 
@@ -106,6 +106,11 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find(Utils.ShowMore)).toHaveLength(0)
     expect(wrapper.find('.SRC-font-size-base').text()).toEqual(data[2])
     expect(wrapper.find(Utils.CardFooter)).toHaveLength(1)
+  })
+
+  it.skip('renders the query handles corretly', () => {
+    const { wrapper } = createShallowComponent(propsForHeaderMode)
+    expect(wrapper.find(`[data-search-handle]`).text()).toEqual(commonProps.title)
   })
 
 })

@@ -10,7 +10,7 @@ import minify from 'rollup-plugin-babel-minify'
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
 export default {
-	input: 'src/lib/index.tsx',
+	input: 'src/lib/rollup.index.ts',
 	external: [
 		'react',
 		'prop-types',
@@ -20,6 +20,8 @@ export default {
 		'plotly.js-basic-dist',
 		'react-jsonschema-form',
 		'katex',
+		'rss-parser',
+		'react-mailchimp-subscribe',
 		'react-tooltip',
 		'markdownit',
 		'markdownitSynapse',
@@ -91,6 +93,8 @@ export default {
 			'react-router-dom': 'ReactRouterDom',
 			'react-transition-group': 'ReactTransitionGroup',
 			'react-plotly.js/factory': 'createPlotlyComponent',
+			'rss-parser': 'Parser',
+			'react-mailchimp-subscribe': 'ReactMailchimpSubscribe',
 			'plotly.js-basic-dist': 'Plotly',
 			'react-jsonschema-form': 'JSONSchemaForm',
 			'react-measure': 'ReactMeasure',

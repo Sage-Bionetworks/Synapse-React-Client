@@ -2,7 +2,7 @@ import { QueryBundleRequest } from '../lib/utils/jsonResponses/Table/QueryBundle
 
 let mockRequest: QueryBundleRequest = {
     partMask: 0,
-    concreteType: "a",
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     query: {
         isConsistent: false,
         sql: ``,

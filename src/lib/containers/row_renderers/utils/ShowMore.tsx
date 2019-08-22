@@ -6,8 +6,7 @@ type ShowMoreState = {
 }
 
 type ShowMoreProps = {
-  onClick?: (val: any) => void
-  summary?: string
+  summary: string
 }
 
 export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreState> {
@@ -22,47 +21,54 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
 
   public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
-    let { showMore } = this.state
-    showMore = !showMore
-    this.props.onClick!({
-      showMore
-    })
     this.setState({
-      showMore
+      showMore: true
     })
   }
 
-  public render() {
-      // CHAR_COUNT_CUTOFF if show more is false and if its reasonably long enough
-    const { summary } = this.props
-    let summaryView = ''
-    const meetsCharRequirenent = summary && summary.length >= CHAR_COUNT_CUTOFF
-    if (!this.state.showMore && meetsCharRequirenent) {
-      const summarySplit = summary!.split(' ')
-            // find num words to join such that its >= char_count_cutoff
-      let i = 0
-      while (summaryView.length < CHAR_COUNT_CUTOFF) {
-        summaryView += `${summarySplit[i]} `
-        i += 1
-      }
-    } else if (!meetsCharRequirenent) {
-      summaryView = summary!
+  getCutoff = (summary: string ) => {
+    let previewText = ''
+    if (!summary) { 
+      return { previewText}
     }
+    let hiddenText = ''
+    const summarySplit = summary!.split(' ')
+    // find num words to join such that its >= char_count_cutoff
+    let i = 0
+    while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
+      previewText += `${summarySplit[i]} `
+      i += 1
+    }
+    if (i < summarySplit.length - 1 ) {
+      hiddenText = summarySplit.slice(i).join(' ')
+    }
+    return { previewText, hiddenText}
+  }
+
+  public render() {
+    const { summary } = this.props
+    const meetsCharRequirements = summary && summary.length >= CHAR_COUNT_CUTOFF
+    let { previewText, hiddenText } = this.getCutoff(summary)
     const showMoreButton =  (
-            meetsCharRequirenent &&
-           (
-            <a
-                style={{ fontSize: '14px', cursor: 'pointer' }}
-                className="SRC-primary-text-color"
-                onClick={this.toggleShowMore}
-            >
-                ...Show More{' '}
-            </a>)
+        meetsCharRequirements &&
+        (
+        <a
+          style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
+          className="SRC-primary-text-color"
+          onClick={this.toggleShowMore}
+        >
+           ...Show More
+        </a>
         )
+    )
     return (
       <React.Fragment>
-        {!this.state.showMore && summaryView}
-        {this.state.showMore && summary}
+        <span>
+          {previewText}
+          <span className={this.state.showMore ? '': 'SRC-hidden'}>
+            {hiddenText}
+          </span>
+        </span>
         {!this.state.showMore && showMoreButton}
       </React.Fragment>
     )

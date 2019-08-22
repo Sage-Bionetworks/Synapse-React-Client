@@ -7,6 +7,7 @@ import EntityForm from '../../lib/containers/EntityForm'
 import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
+import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest';
 
 type DemoState = {
   token: string
@@ -55,13 +56,13 @@ class Demo extends React.Component<{}, DemoState> {
           {
             title: 'Data',
             facetDisplayValue: 'Organism',
-            facetName: 'dataStatus',
+            facet: 'dataStatus',
             sql: 'SELECT projectStatus, dataStatus, tumorType, diseaseFocus FROM syn16787123',
           },
           {
             title: 'Data',
             facetDisplayValue: 'Study',
-            facetName: 'projectStatus',
+            facet: 'projectStatus',
             sql: 'SELECT * FROM syn16787123',
           }
         ],
@@ -76,15 +77,15 @@ class Demo extends React.Component<{}, DemoState> {
         },
         menuConfig: [
           {
-            facetName: 'assay',
+            facet: 'assay',
             sql: 'SELECT * FROM syn16858331',
           },
           {
-            facetName: 'dataType',
+            facet: 'dataType',
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
           },
           {
-            facetName: 'diagnosis',
+            facet: 'diagnosis',
             sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
           }
         ] as MenuConfig[]
@@ -129,8 +130,9 @@ class Demo extends React.Component<{}, DemoState> {
   public makeSampleQueryCall(): void {
     // Example table (view) query.
     // See https://docs.synapse.org/rest/POST/entity/id/table/query/async/start.html
-    const QUERY = {
+    const QUERY: QueryBundleRequest = {
       entityId: 'syn12335586',
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

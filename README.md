@@ -224,7 +224,7 @@ An example of a view with facets/stacked bar chart/table
           }}
           rgbIndex={0}
           token={this.state.token}
-          filter={"assay"}
+          facet={"assay"}
           showMenu
           >
           <SynapseComponents.Facets/>
@@ -246,7 +246,7 @@ An example of a view with facets/stacked bar chart/table
 | ------------- | ------------- |
 | initQueryRequest  | This is the default query to be run on the first render of the component  |
 | rgbIndex | Specifies the starting index of the following color wheel: turquoise, blueberry, rose, royal, butterscotch, powder, slate, apricot, fern, lavender, apple |
-| facetName | This is the facet that will be default filtered on if using any of StackedBarChart/Facets/Menu. |
+| facet | This is the facet that will be default filtered on if using any of StackedBarChart/Facets/Menu. |
 | token  | Session token to make authenticated calls  |
 | loadingScreen  | UI to show when a query is being run  |
 | facetAliases: {} | Object with key = columnName and value as alias from query |
@@ -265,11 +265,10 @@ An example of a view with facets/stacked bar chart/table
   menuConfig={
     [ 
       { sql: "SELECT * FROM syn16858331",
-        facetDisplayValue:"Assay",
-        facetName: "assay",
+        facet: "assay",
       },
       { sql: "SELECT * FROM syn16858331",
-        facetName: "Data Type",
+        facet: "Data Type",
         visibleColumnCount: 3
       }
     ]
@@ -288,9 +287,10 @@ An example of a view with facets/stacked bar chart/table
 | tableConfiguration, has keys: synapseId, title, visibleColumnCount | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/>  **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table  |
 | cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, hasInternalLink? | The configuration for cards to be show given the query |
 | stackedBarChartConfiguration, has keys: loadingScreen, link, linkText  | The configuration for the bar chart |
+| searchConfiguration, has key: searchable  | The configuration for the search component. Only views that have cards |
 | accordionConfig: AccordionConfig [] | For using an accordion dropdown. An individual accordion config contains: menuConfig: MenuConfig [], name: string, cardConfiguration, tableConfiguration, stackedBarChartConfiguration. |
 | MenuConfig [] | Specifications for each view under the facet |
-| MenuConfig has keys: sql, facetDisplayValue, facetAliases, facetName  | **sql**: The query driving the specific's facets view <br/> **facetName**: the facet being selected <br/> **facetDisplayValue**: The string to display for the facet's name, will default to the facetName if not specified. <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
+| MenuConfig has keys: sql, facetAliases, facet  | **sql**: The query driving the specific's facets view <br/> **facet**: the facet being selected <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
 
 #### Facets
 
@@ -313,6 +313,11 @@ An example of a view with facets/stacked bar chart/table
 | loadingScreen | This is an optional loading screen to show when the barchart data is being updated |
 | link | If specified this will show a button link at the bottom right of the bar chart that will direct to `link` |
 | linkText | If the `link` prop is specified then the text displayed slink will be `linkText`  |
+
+#### Search
+| Props  | Explanation |
+| ------------- | ------------- |
+| searchable: Searchable [] | Array of objects, where each object has keys `columnName` and `hintText`. |
 
 #### QueryCount
 
@@ -344,7 +349,7 @@ This card can be used in two ways - as a standard row renderer or as a 'Header' 
 | limit?: number | Used to constrain the number of cards shown, defaults to Infinity |
 |  secondaryLabelLimit?: number | Used to constraint the number of secondary labels shown, defaults to three |
 | type: string | Type of card to be rendered.  |
-| filter?: string | If rendering a faceted view this defines the facet that will be used |
+| facet?: string | If rendering a faceted view this defines the facet that will be used |
 | loadingScreen?: JSX.Element | If rendering a faceted view this defines the facet that will be used |
 | genericCardSchema?: GenericCardSchema | Defines schema to be used by cards |
 | isHeader?: boolean | Styles the card to be used as a header -- e.g. doesnt have a 'Show More' for description, no secondaryLabels are shown |

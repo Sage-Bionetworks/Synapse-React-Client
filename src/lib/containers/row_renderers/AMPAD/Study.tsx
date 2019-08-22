@@ -17,18 +17,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
 
   constructor(props: StudyProps) {
     super(props)
-    this.state = {
-      showMore: false,
-    }
-    this.handleClick = this.handleClick.bind(this)
   }
-
-  public handleClick(_event: React.SyntheticEvent) {
-    this.setState({
-      showMore: !this.state.showMore
-    })
-  }
-
   public getIcon(name: string) {
     switch (name) {
       case 'Controlled':
@@ -81,7 +70,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
           </div>
           <div className="SRC-author">{dataContributors}</div>
           <span className="SRC-font-size-base">
-              <Utils.ShowMore onClick={this.handleClick} summary={studyDescription} />
+              <Utils.ShowMore summary={studyDescription} />
           </span>
         </div>
         <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />

@@ -5,6 +5,10 @@ export type TwitterFeedProps = {
 }
 
 export default class TwitterFeed extends React.Component<TwitterFeedProps> {
+  constructor(props: TwitterFeedProps) {
+    super(props)
+  }
+
   componentDidMount() {
     if (typeof (window as any).twttr !== 'undefined') {
 			(window as any).twttr.widgets.load(document.getElementById(this.props.href));

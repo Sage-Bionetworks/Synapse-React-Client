@@ -6,7 +6,7 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { insertWhereClauseFromURL, KeyValue, SQLOperator } from '../utils/modules/sqlFunctions'
+import { insertConditionsFromSearchParams, KeyValue, SQLOperator } from '../utils/modules/sqlFunctions'
 
 export type InternalLinkConfiguration = {
   baseURL: string
@@ -30,7 +30,7 @@ export type CardContainerLogicProps = {
   unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
-  filter?: string
+  facet?: string
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema
   backgroundColor?:string
@@ -152,12 +152,12 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
 
     let sqlUsed = this.props.sql
     if (this.props.searchParams) {
-      sqlUsed = insertWhereClauseFromURL(this.props.searchParams!, this.props.sql, this.props.sqlOperator)
+      sqlUsed = insertConditionsFromSearchParams(this.props.searchParams, this.props.sql, this.props.sqlOperator)
     }
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
-    const initQueryRequest = {
+    const initQueryRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

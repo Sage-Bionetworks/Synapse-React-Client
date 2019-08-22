@@ -124,9 +124,9 @@ export default class StackedBarChart extends
 
   public getTextForChartSelection(xData: any) {
     const { chartSelectionIndex = 0 } = this.props
-    const { facetAliases = {}, filter } = this.props
+    const { facetAliases = {}, facet } = this.props
     const facetValueDisplay = xData[chartSelectionIndex] && xData[chartSelectionIndex].value
-    const filterDisplay = facetAliases[filter!] || filter
+    const filterDisplay = facetAliases[facet!] || facet
     return (
       <span>
         <span className="SRC-text-title SRC-filter-display">
@@ -160,7 +160,7 @@ export default class StackedBarChart extends
       isLoadingNewData,
       loadingScreen,
       rgbIndex,
-      filter = '',
+      facet = '',
       unitDescription,
       isLoading,
       lastFacetSelection,
@@ -233,10 +233,10 @@ export default class StackedBarChart extends
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
-                  const isValueSelected = isAllFilterSelectedForFacet![filter] ? true : getIsValueSelected({
+                  const isValueSelected = isAllFilterSelectedForFacet![facet] ? true : getIsValueSelected({
                     isLoading,
                     lastFacetSelection,
-                    columnName: filter,
+                    columnName: facet,
                     curFacetSelection: obj
                   })
                   if (isValueSelected) {
@@ -254,7 +254,7 @@ export default class StackedBarChart extends
                   if (chartSelectionIndex === index) {
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
                   }
-                  const label: string = `${filter}: ${obj.value}  - ${obj.count} ${unitDescription}`
+                  const label: string = `${facet}: ${obj.value}  - ${obj.count} ${unitDescription}`
                   // there was one bug where a new line character was in the obj.value, making data-for
                   // break because its a special character, below we remove that
                   const tooltipId = obj.value.replace(/(\r\n|\n|\r)/gm, '')
@@ -334,11 +334,11 @@ export default class StackedBarChart extends
   }
   public extractPropsData(data: any) {
     const xData: any[] = []
-    const { filter } = this.props
+    const { facet } = this.props
     // pull out the data corresponding to the filter in question
     data.facets.forEach(
       (item: any) => {
-        if (item.facetType === 'enumeration' && item.columnName === filter) {
+        if (item.facetType === 'enumeration' && item.columnName === facet) {
           item.facetValues.forEach(
             (facetValue: any) => {
               if (item.columnName) {

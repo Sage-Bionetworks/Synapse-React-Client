@@ -6,40 +6,42 @@ import { DOI_REGEX } from '../../GenericCard'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
-const getDesktopFormattedRows = (values: string [][]) => {
+const getDesktopFormattedRows = (values: string [][], limit: number) => {
   return values.map((kv, index) => {
+    const hideClass =  (index >= limit ? 'SRC-hidden' : '')
     if (kv[1].toUpperCase().match(DOI_REGEX)) {
       return (
-        <tr className="SRC-cardRowDesktop" key={index}>
+        <tr className={"SRC-cardRowDesktop " + hideClass} key={index}>
           <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
           <td className="SRC-row-data SRC-limitMaxWidth SRC-cardCell">
-            <a target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
+            <a data-search-handle={kv[0].toLowerCase()} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
               {kv[1]}
             </a>
           </td>
         </tr>
-      )
+      ) 
     }
     return (
-      <tr className="SRC-cardRowDesktop" key={index}>
+      <tr className={"SRC-cardRowDesktop " + hideClass} key={index}>
         <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
-        <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+        <td data-search-handle={kv[0].toLowerCase()} className={"SRC-row-data SRC-limitMaxWidth "}> {kv[1]} </td>
       </tr>
     )
   })
 }
 
-const getMobileFormattedRows = (values: string [][]) => {
+const getMobileFormattedRows = (values: string [][], limit: number) => {
   return values.map((kv, index) => {
+    const hideClass =  (index >= limit ? 'SRC-hidden' : '')
     if (kv[0].toUpperCase() === 'DOI') {
       return (
         <React.Fragment key={index}>
-          <tr className="SRC-cardRowMobile">
+          <tr className={"SRC-cardRowMobile " + hideClass}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
           </tr>
-          <tr className="SRC-cardRowMobile">
+          <tr className={"SRC-cardRowMobile " + hideClass}>
             <td className="SRC-row-data SRC-limitMaxWidth">
-              <a target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
+              <a data-search-handle={kv[0].toLowerCase()} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
                 {kv[1]}
               </a>
             </td>
@@ -49,11 +51,11 @@ const getMobileFormattedRows = (values: string [][]) => {
     }
     return (
       <React.Fragment key={index}>
-        <tr className="SRC-cardRowMobile">
+        <tr className={"SRC-cardRowMobile " + hideClass}>
           <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
         </tr>
-        <tr className="SRC-cardRowMobile">
-          <td className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+        <tr className={"SRC-cardRowMobile " + hideClass}>
+          <td data-search-handle={kv[0].toLowerCase()} className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
         </tr>
       </React.Fragment>
     )
@@ -106,17 +108,12 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     const { isShowMoreOn, isDesktop } = this.state
     let valuesFiltered = values.filter(el => el[1])
     const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
-    // don't slice if the number of values < limit or if they've clicked showMore
-    if (!hasMoreValuesThanLimit || isShowMoreOn) {
-      valuesFiltered = valuesFiltered.slice(0, Infinity)
-    } else {
-      valuesFiltered = valuesFiltered.slice(0, secondaryLabelLimit)
-    }
+    const limit = !hasMoreValuesThanLimit || isShowMoreOn ? Infinity: secondaryLabelLimit
     return (
       <div className="SRC-cardMetadata">
         <table>
           <tbody>
-            {isDesktop ? getDesktopFormattedRows(valuesFiltered) : getMobileFormattedRows(valuesFiltered)}
+            {isDesktop ? getDesktopFormattedRows(valuesFiltered, limit) : getMobileFormattedRows(valuesFiltered, limit)}
             {
               hasMoreValuesThanLimit &&
                 <tr className="SRC-cardRow">

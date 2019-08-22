@@ -6,7 +6,7 @@ import syn16787123Json  from '../../../mocks/syn16787123.json'
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
-import { TotalQueryResults } from '../../../lib/containers/TotalQueryResults'
+import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(
@@ -21,25 +21,24 @@ const createShallowComponent = (props: CardContainerProps) => {
 describe('it performs all functionality', () => {
   // for our purposes its okay to return the same data again
   const getNextPageOfData = jest.fn((_arg: QueryBundleRequest) => {})
-  const getLastQueryRequest = jest.fn(() => {
-    return  {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-        SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-        ,
-      query: {
-        sql,
-        isConsistent: false,
-        limit: 25,
-        offset: 0,
-      }
-    }
-  })
-
   const sql = 'SELECT * FROM syn16787123'
+  const lastQueryRequest: QueryBundleRequest  = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+      ,
+    query: {
+      sql,
+      isConsistent: false,
+      limit: 25,
+      offset: 0,
+  }
+  }
+  const getLastQueryRequest = jest.fn(() => lastQueryRequest)
+
   const unitDescription = 'studies'
   const type = SynapseConstants.STUDY
   // cast the data to ignore ts warning
@@ -61,7 +60,7 @@ describe('it performs all functionality', () => {
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
-    const { wrapper } = createShallowComponent({ ...props, filter: 'projectStatus' })
+    const { wrapper } = createShallowComponent({ ...props, facet: 'projectStatus' })
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')

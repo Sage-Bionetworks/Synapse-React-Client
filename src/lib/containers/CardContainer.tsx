@@ -15,7 +15,7 @@ import { Dataset, Funder, Publication, Study, Tool } from './row_renderers'
 import { Consortium } from './row_renderers/AMPAD'
 import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
-import { TotalQueryResults } from './TotalQueryResults'
+import TotalQueryResults from './TotalQueryResults'
 import { CommonCardProps } from './CardContainerLogic'
 
 const PAGE_SIZE: number = 25
@@ -28,7 +28,7 @@ export type CardContainerProps = {
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   isLoading?: boolean
-  filter?: string
+  facet?: string
   unitDescription?: string
   hasMoreData?: boolean
   loadingScreen?: React.FunctionComponent | JSX.Element
@@ -86,7 +86,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       data,
       limit = Infinity,
       isHeader = false,
-      filter,
+      facet,
       unitDescription,
       type,
       isLoading,
@@ -183,7 +183,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         {(!title && unitDescription && showBarChart) &&
           <TotalQueryResults
             data={data}
-            filter={filter!}
+            facet={facet!}
             isLoading={isLoading!}
             unitDescription={unitDescription}
             frontText={'Displaying'}

@@ -23,6 +23,7 @@ import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTable
 import { ReferenceList } from './jsonResponses/ReferenceList'
 import { EntityHeader } from './jsonResponses/EntityHeader'
 import { PaginatedResults } from './jsonResponses/PaginatedResults'
+import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest';
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -269,7 +270,7 @@ export const getAsyncResultFromJobId = <T>(
  * @param {*} endpoint
  */
 export const getQueryTableResults = (
-  queryBundleRequest: any,
+  queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
   endpoint: string = DEFAULT_ENDPOINT,

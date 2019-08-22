@@ -8,10 +8,6 @@ import ModelADIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/ModelAD
 import resilienceIconHeaderSvg from '../../../assets/icons/AMP_AD/consortia-icons/resilience-icon-header.svg'
 import resilienceIconSvg from '../../../assets/icons/AMP_AD/consortia-icons/resilience-icon.svg'
 
-type ConsortiumState = {
-  showMore: boolean
-}
-
 type ConsortiumProps = {
   isHeader?: boolean
   data?: any
@@ -19,21 +15,11 @@ type ConsortiumProps = {
   secondaryLabelLimit?: number
 }
 
-export default class Consortium extends React.Component<ConsortiumProps, ConsortiumState> {
+export default class Consortium extends React.Component<ConsortiumProps, {}> {
 
   constructor(props: ConsortiumProps) {
     super(props)
-    this.state = {
-      showMore: false
-    }
-    this.handleClick = this.handleClick.bind(this)
     this.getIcon = this.getIcon.bind(this)
-  }
-
-  public handleClick(_event: React.SyntheticEvent) {
-    this.setState({
-      showMore: !this.state.showMore
-    })
   }
 
   public getIcon(org: string, isHeader: boolean) {

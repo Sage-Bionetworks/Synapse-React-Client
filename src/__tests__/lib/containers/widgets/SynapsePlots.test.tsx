@@ -7,9 +7,7 @@ describe('renders without crashing', () => {
   it('renders', async () => {
     const tree = await mount(
       <MarkdownSynapse
-        // tslint:disable-next-line
         markdown={'\${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'}
-        hasSynapseResources={false}
       />
     )
     expect(tree.find(SynapsePlot)).toBeDefined()
