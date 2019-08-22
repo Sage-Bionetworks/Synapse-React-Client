@@ -56,7 +56,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
           this.state.rssFeed.items.map((item: any, index: any) => {
             // There are 2 "more" buttons here.  One is to hide long article content.  See moreElement and onClickReadMore()
             // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-            let parsedHtml = parser.parseFromString(item.content, 'text/html')
+            let parsedHtml = parser.parseFromString(item['content:encoded'], 'text/html')
             let bodyElement = parsedHtml.querySelector('body')
             let moreElement = parsedHtml.querySelector('[id^="more-"]')
             if (moreElement && bodyElement) {
@@ -74,13 +74,13 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
             }
             let isItemVisible: boolean = index < this.props.defaultItemsToShow || this.state.isShowingMoreItems
             return (
-              <li key={item.id} className={`srcRssFeedItem ${isItemVisible ? '' : 'hidden'}`}>
+              <li key={item.guid} className={`srcRssFeedItem ${isItemVisible ? '' : 'hidden'}`}>
                 <div className="srcRssFeedItemContent">
-                  <div id={item.id} dangerouslySetInnerHTML={{ __html: parsedHtml.documentElement.innerHTML }}></div>
+                  <div id={item.guid} dangerouslySetInnerHTML={{ __html: parsedHtml.documentElement.innerHTML }}></div>
                   {
                     moreElement &&
                     <div className="clearfix">
-                      <button className="btn SRC-grayBackground SRC-roundBorder SRC-floatRight" onClick={this.onClickReadMore(item.id)}>View More</button>
+                      <button className="btn SRC-grayBackground SRC-roundBorder SRC-floatRight" onClick={this.onClickReadMore(item.guid)}>View More</button>
                     </div>
                   }
                 </div>

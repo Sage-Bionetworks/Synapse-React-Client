@@ -10,7 +10,7 @@ import minify from 'rollup-plugin-babel-minify'
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
 export default {
-	input: 'src/lib/index.tsx',
+	input: 'src/lib/rollup.index.ts',
 	external: [
 		'react',
 		'prop-types',

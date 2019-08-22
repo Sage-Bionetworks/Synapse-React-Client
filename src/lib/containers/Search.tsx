@@ -7,7 +7,7 @@ import {
   faSearch
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { insertWhereClauseFromSearchParams } from '../utils/modules/sqlFunctions'
+import { insertConditionsFromSearchParams } from '../utils/modules/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
@@ -17,7 +17,7 @@ library.add(faCaretUp)
 library.add(faSearch)
 
 type SearchState = {
-  searchableIndex: number
+  dropdownIndex: number
   isSearchableDropdownOpen: boolean
   searchText: string
   submittedSearchText: string
@@ -39,7 +39,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   constructor(props: InternalSearchProps) {
     super(props)
     this.state = {
-      searchableIndex: 0,
+      dropdownIndex: 0,
       isSearchableDropdownOpen: false,
       searchText: '',
       submittedSearchText: ''
@@ -52,26 +52,26 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
   }
 
-  public setSearchableDropdown = (value: boolean) => (_: React.SyntheticEvent) => {
+  public toggleDropdown = (value: boolean) => (_: React.SyntheticEvent) => {
     this.setState({
       isSearchableDropdownOpen: value
     })
   }
 
-  public setSearchableIndex = (index: number) => (_: React.SyntheticEvent) => {
+  public setDropdownIndex = (index: number) => (_: React.SyntheticEvent) => {
     this.setState({
-      searchableIndex: index,
+      dropdownIndex: index,
       searchText: '',
       isSearchableDropdownOpen: false
     })
   }
 
   public highlightText = () => {
-     const { submittedSearchText, searchableIndex } = this.state
+     const { submittedSearchText, dropdownIndex } = this.state
      const { searchable, rgbIndex, facetAliases = {}, isQueryWrapperMenuChild = true} = this.props
      const { colorPalette } = getColorPallette(rgbIndex!, 1)
      const originalColor = colorPalette[0]
-     const searchItem = searchable[searchableIndex]
+     const searchItem = searchable[dropdownIndex]
 
      const highlightedSpans = document.querySelectorAll<HTMLSpanElement>('.highlight')
      highlightedSpans.forEach(
@@ -91,6 +91,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             // test search is inside the html element
             const regex = new RegExp(submittedSearchText, "gi")
             const match = textElement.innerHTML.match(regex)
+            // special case span?  
             if (match) {
               textElement.innerHTML = textElement.innerHTML.replace(regex, (match) => {
                 return `<span style="background: ${originalColor}; color: white;" class="highlight">${match}</span>`
@@ -119,10 +120,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
-    const { searchText, searchableIndex } = this.state
+    const { searchText, dropdownIndex } = this.state
 
     const { searchable } = this.props
-    const searchItem = searchable[searchableIndex]
+    const searchItem = searchable[dropdownIndex]
     // Always grabs initQueryRequest so that it doesn't build a chain of 
     // LIKE clauses
     const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
@@ -130,7 +131,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const searchParams = {
       [searchItem.columnName]: Search.addEscapeCharacters(searchText)
     }
-    const newSql = insertWhereClauseFromSearchParams(searchParams, sql)
+    const newSql = insertConditionsFromSearchParams(searchParams, sql)
     lastQueryRequestDeepCopy.query.sql = newSql
     this.setState({
       submittedSearchText: searchText
@@ -146,8 +147,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   render() {
     const { searchable, data, isLoading, facet, unitDescription = '', facetAliases = {} } = this.props
-    const { isSearchableDropdownOpen, searchableIndex, searchText, submittedSearchText } = this.state
-    const searchableItem = searchable[searchableIndex]
+    const { isSearchableDropdownOpen, dropdownIndex, searchText, submittedSearchText } = this.state
+    const searchableItem = searchable[dropdownIndex]
     const containerStyle: React.CSSProperties = {
       background: '#F9F9F9',
       border: '1px solid #C4C4C4',
@@ -208,13 +209,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     return (
       <div>
         <div style={containerStyle}>
-          {isSearchableDropdownOpen && <button onClick={this.setSearchableDropdown(false)} className={'SRC-menu-wall'} />}
+          {isSearchableDropdownOpen && <button onClick={this.toggleDropdown(false)} className={'SRC-menu-wall'} />}
           <div className="SRC-centerContent SRC-fullWidth">
             <span style={labelStyle}> Search in </span>
             <div style={{...fieldStyle, flex: 1, paddingLeft: 10}}>
               <div id="search-dropdown" className="SRC-inherit-height SRC-fullWidth">
                 <div className="SRC-centerContent SRC-inherit-height">
-                  <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.setSearchableDropdown(!isSearchableDropdownOpen)}>
+                  <button style={dropdownBtnStyle} className="SRC-inlineFlex SRC-fullWidth" onClick={this.toggleDropdown(!isSearchableDropdownOpen)}>
                     { curFacetDisplayText }
                     <FontAwesomeIcon style={caretIconStyle} icon={isSearchableDropdownOpen ? 'caret-up' : 'caret-down'} />
                   </button>
@@ -228,7 +229,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                           return (
                             <li 
                               style={liStyle}
-                              onClick={this.setSearchableIndex(index)}
+                              onClick={this.setDropdownIndex(index)}
                               key={displayName}
                               className="SRC-hand-cursor SRC-primary-background-color-hover"
                             >
