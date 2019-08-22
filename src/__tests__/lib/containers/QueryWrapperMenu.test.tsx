@@ -134,10 +134,10 @@ describe('it renders an accordion config', () => {
     description: 'description',
     icon: 'icon',
     link: 'link',
-    secondaryLabels: {
-      0: { key: 'labelOne', alias: 'Label One' },
-      1: { key: 'labelTwo' },
-    }
+    secondaryLabels: [
+      'labelOne',
+      'labelTwo'
+    ]
   }
   const props: QueryWrapperMenuProps = {
     accordionConfig: [
@@ -224,10 +224,10 @@ describe('it renders with search correctly configured ', () => {
     description: 'description',
     icon: 'icon',
     link: 'link',
-    secondaryLabels: {
-      0: { key: 'labelOne', alias: 'Label One' },
-      1: { key: 'labelTwo' },
-    }
+    secondaryLabels: [
+      'labelOne',
+      'labelTwo'
+    ]
   }
   const props: QueryWrapperMenuProps = {
     accordionConfig: [

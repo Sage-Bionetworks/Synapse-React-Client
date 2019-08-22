@@ -25,6 +25,7 @@ export type CardContainerProps = {
   limit?: number,
   isHeader?: boolean
   title?: string
+  facetAliases?: {}
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   isLoading?: boolean
@@ -95,6 +96,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       genericCardSchema,
       backgroundColor,
       iconOptions,
+      facetAliases,
       internalLinkConfiguration,
       showBarChart = true,
       title
@@ -161,6 +163,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
             const propsForCard = {
               key,
               type,
+              facetAliases,
               internalLinkConfiguration,
               schema,
               isHeader,

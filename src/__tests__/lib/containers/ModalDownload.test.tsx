@@ -85,7 +85,7 @@ describe('it performs the expected functionality', () => {
     // step 1 - select csv option
     // @ts-ignore
     await instance.handleChange({ formData })
-    await wrapper.find('button[type="submit"]').simulate('submit')
+    await wrapper.find('form').simulate('submit')
     // step 2 - verify UI has download button showing
     expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
     expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(expect.objectContaining({
@@ -106,7 +106,7 @@ describe('it performs the expected functionality', () => {
     // step 1 - select csv option
     // @ts-ignore
     await instance.handleChange({ formData })
-    await wrapper.find('button[type="submit"]').simulate('submit')
+    await wrapper.find('form').simulate('submit')
     // step 2 - verify UI has download button showing
     expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
     expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(expect.objectContaining({

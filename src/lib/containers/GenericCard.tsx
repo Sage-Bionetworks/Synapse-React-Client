@@ -19,7 +19,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   icon?: string
-  secondaryLabels?: KeyToAliasMap
+  secondaryLabels?: any []
   link?: string
 }
 
@@ -27,6 +27,7 @@ export type IconOptions = {
   [index: string]: string
 }
 export type GenericCardProps = {
+  facetAliases?: {}
   iconOptions?: IconOptions
   backgroundColor?: string
   isHeader?: boolean
@@ -119,7 +120,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       backgroundColor,
       iconOptions,
       isHeader = false,
-      internalLinkConfiguration
+      internalLinkConfiguration,
+      facetAliases = {}
     } = this.props
     const { showMoreDescription } = this.state
     const { link = '' } = genericCardSchema
@@ -133,12 +135,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const { linkDisplay, target } = this.getLink(linkValue, internalLinkConfiguration, data, schema)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
-      for (let i = 0; i < Object.keys(genericCardSchema.secondaryLabels).length; i += 1) {
-        if (!genericCardSchema.secondaryLabels[i]) {
-          throw Error(`Keys in genericCardSchema.secondaryLabels must be sequential, missing key: ${i}`)
-        }
-        const { key, alias = '' } =  genericCardSchema.secondaryLabels[i]
-        const displayValue = alias ? alias : key
+      for (let i = 0; i < genericCardSchema.secondaryLabels.length; i += 1) {
+        const key =  genericCardSchema.secondaryLabels[i]
+        const displayValue = facetAliases[key] || key
         const keyValue = [displayValue, data[schema[key]]]
         if (data[schema[key]]) {
           values.push(keyValue)
@@ -171,6 +170,10 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         />
       )
     }
+
+    const titleSearchHandle =facetAliases[genericCardSchema.title] || genericCardSchema.title
+    const stubTitleSearchHandle = facetAliases[genericCardSchema.subTitle || ''] || genericCardSchema.subTitle
+    const descriptionSubTitle = facetAliases[genericCardSchema.description || ''] || genericCardSchema.description
     return (
       <div
         style={style}
@@ -184,15 +187,15 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           <div >
             <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
               {linkDisplay ?
-                <a data-search-handle={genericCardSchema.title.toLowerCase()} className="SRC-primary-text-color" target={target} href={linkDisplay}>
+                <a data-search-handle={titleSearchHandle} className="SRC-primary-text-color" target={target} href={linkDisplay}>
                   {title}
                 </a>
                 :
-                <span data-search-handle={genericCardSchema.title.toLowerCase()}> {title} </span>
+                <span data-search-handle={titleSearchHandle}> {title} </span>
               }
             </h3>
           </div>
-          {subTitle && <div data-search-handle={genericCardSchema.subTitle!.toLowerCase()} className="SRC-author"> {subTitle} </div>}
+          {subTitle && <div data-search-handle={stubTitleSearchHandle} className="SRC-author"> {subTitle} </div>}
           {/* 
             Below is a hack that allows word highlighting to work, the Search componenet insert's
             html elements outside of the React DOM which if detected would break the app,
@@ -200,8 +203,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           */}
           {
             description &&
-            <div data-search-handle={genericCardSchema.description!.toLowerCase()} className={showMoreDescription ? 'SRC-hidden' : ''}>
-              <span className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}>
+            <div className={showMoreDescription ? 'SRC-hidden' : ''}>
+              <span data-search-handle={descriptionSubTitle} className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}>
                 {this.getCutoff(description).previewText}
               </span>
               {
@@ -219,8 +222,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           }
           {
             description &&
-            <div data-search-handle={genericCardSchema.description!.toLowerCase()} className={showMoreDescription ? '' : 'SRC-hidden'}>
-              <span className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}>
+            <div className={showMoreDescription ? '' : 'SRC-hidden'}>
+              <span data-search-handle={descriptionSubTitle} className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}>
                 {description}
               </span>
             </div>

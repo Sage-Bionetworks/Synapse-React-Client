@@ -31,10 +31,10 @@ describe('it renders the UI correctly', () => {
   }
   const genericCardSchema: GenericCardSchema = {
     ...commonProps,
-    secondaryLabels: {
-      0: { key: 'labelOne', alias: 'Label One' },
-      1: { key: 'labelTwo' },
-    }
+    secondaryLabels: [
+      'labelOne',
+      'labelTwo',
+    ]
   }
   const genericCardSchemaHeader: GenericCardSchema = {
     ...commonProps
