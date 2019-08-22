@@ -14,7 +14,7 @@ const getDesktopFormattedRows = (values: string [][], limit: number) => {
         <tr className={"SRC-cardRowDesktop " + hideClass} key={index}>
           <td className={'SRC-verticalAlignTop SRC-row-label SRC-cardCell'}> {kv[0]} </td>
           <td className="SRC-row-data SRC-limitMaxWidth SRC-cardCell">
-            <a data-search-handle={kv[0].toLowerCase()} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
+            <a data-search-handle={kv[0]} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
               {kv[1]}
             </a>
           </td>
@@ -24,7 +24,7 @@ const getDesktopFormattedRows = (values: string [][], limit: number) => {
     return (
       <tr className={"SRC-cardRowDesktop " + hideClass} key={index}>
         <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
-        <td data-search-handle={kv[0].toLowerCase()} className={"SRC-row-data SRC-limitMaxWidth "}> {kv[1]} </td>
+        <td data-search-handle={kv[0]} className={"SRC-row-data SRC-limitMaxWidth "}> {kv[1]} </td>
       </tr>
     )
   })
@@ -41,7 +41,7 @@ const getMobileFormattedRows = (values: string [][], limit: number) => {
           </tr>
           <tr className={"SRC-cardRowMobile " + hideClass}>
             <td className="SRC-row-data SRC-limitMaxWidth">
-              <a data-search-handle={kv[0].toLowerCase()} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
+              <a data-search-handle={kv[0]} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${kv[1]}`}>
                 {kv[1]}
               </a>
             </td>
@@ -55,7 +55,7 @@ const getMobileFormattedRows = (values: string [][], limit: number) => {
           <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
         </tr>
         <tr className={"SRC-cardRowMobile " + hideClass}>
-          <td data-search-handle={kv[0].toLowerCase()} className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
+          <td data-search-handle={kv[0]} className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
         </tr>
       </React.Fragment>
     )

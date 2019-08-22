@@ -28,11 +28,11 @@ const createMountedComponent = () => {
     subTitle: 'softwareType',
     description: 'summary',
     icon: 'icon',
-    secondaryLabels: {
-      0: { key: 'contributor', alias: 'Contributor' },
-      1: { key: 'diagnosis', alias: 'Diagnosis' },
-      2: { key: 'program', alias: 'Program' }
-    }
+    secondaryLabels: [
+      'contributor',
+      'diagnosis',
+      'program'
+    ]
   }
   const commonCardProps: CommonCardProps = {
     type: SynapseConstants.GENERIC_CARD,

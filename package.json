@@ -55,7 +55,7 @@
     "react": "latest",
     "react-app-polyfill": "^1.0.1",
     "react-dom": "latest",
-    "react-jsonschema-form": "^1.6.1",
+    "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
     "react-plotly.js": "^2.3.0",

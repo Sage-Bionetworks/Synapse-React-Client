@@ -48,7 +48,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   componentDidUpdate(prevProps: InternalSearchProps) {
     if (this.props.isLoading === false && prevProps.isLoading === true) {
-      this.highlightText()
+      // highlighting will sometimes outpace the render method for react, adding the slight delay 
+      // mitigates this
+      setTimeout(
+        this.highlightText,
+        100
+      )
     }
   }
 
@@ -82,17 +87,16 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (submittedSearchText) {
       const searchItemView = facetAliases[searchItem.columnName] || searchItem.columnName
       const frontText = isQueryWrapperMenuChild ? `.${SEARCH_CLASS_CSS} `: ''
-      const querySelector =  frontText + `[data-search-handle="${searchItemView.toLowerCase()}"]`
+      const querySelector =  frontText + `[data-search-handle="${searchItemView}"]`
       const trs = document.querySelectorAll<HTMLElement>(querySelector)
       // Target elements and apply styles
       trs.forEach(
         (textElement) => {
           if (textElement.innerHTML !== null) {
-            // test search is inside the html element
             const regex = new RegExp(submittedSearchText, "gi")
-            const match = textElement.innerHTML.match(regex)
-            // special case span?  
+            const match = textElement.innerText.match(regex)
             if (match) {
+              // innerHTML contains only text
               textElement.innerHTML = textElement.innerHTML.replace(regex, (match) => {
                 return `<span style="background: ${originalColor}; color: white;" class="highlight">${match}</span>`
               })
@@ -108,12 +112,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     // ' % \
     let escapedSearchText = searchText
     // escape ' by adding additional '
-    escapedSearchText = escapedSearchText.replace("'", "''")
+    escapedSearchText = escapedSearchText.split("'").join("''")
     // escape % by adding \
     // eslint-disable-next-line no-useless-escape
-    escapedSearchText = escapedSearchText.replace("%", "\%")
+    escapedSearchText = escapedSearchText.split("%").join("\%")
     // escape \ by adding \
-    escapedSearchText = escapedSearchText.replace("\\",  "\\\\")
+    escapedSearchText = escapedSearchText.split("\\").join("\\\\")
     return escapedSearchText
   }
 
