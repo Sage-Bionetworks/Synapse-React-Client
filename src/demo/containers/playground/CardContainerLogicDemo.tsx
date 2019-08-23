@@ -29,14 +29,14 @@ export default class CardContainerLogicDemo extends React.Component {
       description: 'summary',
       icon: 'type',
       link: 'link',
-      secondaryLabels: {
-        0: { key: 'subtype', alias: 'Subtype' },
-        1: { key: 'disease', alias: 'Disease' },
-        2: { key: 'manifestation', alias: 'Manifestation' },
-        3: { key: 'Sample_Type', alias: 'Tissue' },
-        4: { key: 'fundingAgency', alias: 'Funding Agency' },
-        5: { key: 'studyName', alias: 'Study Name' }
-      }
+      secondaryLabels: [
+        'subtype',
+        'disease',
+        'manifestation',
+        'Sample_Type',
+        'fundingAgency',
+        'studyName',
+      ]
     }
     const genericCardSchemaHeader: GenericCardSchema = {
       type: 'PROGRAM',
@@ -44,9 +44,9 @@ export default class CardContainerLogicDemo extends React.Component {
       subTitle: 'Short Description',
       description: 'Long Description',
       icon: 'Program',
-      secondaryLabels: {
-        0: { key: 'Full Name' }
-      }
+      secondaryLabels: [
+        'Full Name'
+      ]
     }
     // @ts-ignore
     const genericCardSchema: GenericCardSchema = {
@@ -55,17 +55,17 @@ export default class CardContainerLogicDemo extends React.Component {
       subTitle: 'Data_Contributor',
       description: 'Study_Description',
       icon: 'Access_Type',
-      secondaryLabels: {
-        0: { key: 'DataType_All', alias: 'Data Types' },
-        1: { key: 'Diagnosis_or_Model_System', alias: 'Diagnosis' },
-        2: { key: 'Number_of_Individuals', alias: 'Individuals' },
-        3: { key: 'Sample_Type', alias: 'Tissue' },
-        4: { key: 'Species ' },
-        5: { key: 'Cohort_Type', alias: 'Cohort Type' },
-        6: { key: 'Study_Status', alias: 'Study Status' },
-        7: { key: 'Consortium', alias: 'Program' },
-        8: { key: 'Grant' },
-      }
+      secondaryLabels: [
+        'DataType_All',
+        'Diagnosis_or_Model_System',
+        'Number_of_Individuals',
+        'Sample_Type',
+        'Species' ,
+        'Cohort_Type',
+        'Study_Status',
+        'Consortium',
+        'Grant',
+      ]
     }
     return (
       <div>
