@@ -388,13 +388,11 @@ table.SRC-paddingRight > tbody > tr > td {
 
 .SRC-primary-background-color-hover:hover {
   background-color: #D53F77; }
-
-.SRC-primary-background-color-hover:hover > svg {
-  color: white; }
-
-.SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
-  background-color: #D53F77;
-  color: white; }
+  .SRC-primary-background-color-hover:hover > svg {
+    color: white; }
+  .SRC-primary-background-color-hover:hover.SRC-nested-color:hover * {
+    background-color: #D53F77;
+    color: white; }
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -535,15 +533,13 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white; }
-
-.SRC-hoverWhiteText:hover svg {
-  color: white; }
+  .SRC-hoverWhiteText:hover svg {
+    color: white; }
 
 .SRC-hoverBlackText:hover {
   color: black !important; }
-
-.SRC-hoverBlackText:hover svg {
-  color: black !important; }
+  .SRC-hoverBlackText:hover svg {
+    color: black !important; }
 
 .SRC-light-background {
   background: #F5F5F5; }
@@ -575,9 +571,8 @@ button.SRC-roundBorder {
   font-weight: 600;
   border: none;
   background: white; }
-
-.tableDropdownSelector:focus {
-  outline: #D53F77; }
+  .tableDropdownSelector:focus {
+    outline: #D53F77; }
 
 .SRC-extraPadding {
   padding: 5px; }
@@ -603,9 +598,8 @@ button.SRC-roundBorder {
   width: 130px;
   height: 40px;
   margin: 21px; }
-
-.SRC-viewMoreButton:focus {
-  outline: #D53F77; }
+  .SRC-viewMoreButton:focus {
+    outline: #D53F77; }
 
 /*
   checkmark styling start
@@ -700,9 +694,8 @@ checkmark styling end
   z-index: 900;
   background: none;
   border: none; }
-
-.SRC-menu-wall:focus {
-  outline: none; }
+  .SRC-menu-wall:focus {
+    outline: none; }
 
 .SRC-table-dropdown-content {
   align-items: center;
@@ -853,10 +846,9 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-
-.SRC-cardContent p {
-  margin: 0px 0px 4px 0px;
-  line-height: 120%; }
+  .SRC-cardContent p {
+    margin: 0px 0px 4px 0px;
+    line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
@@ -996,22 +988,21 @@ div.SRC-userImg {
 
 .SRC-chart-link {
   position: relative; }
-
-.SRC-chart-link a {
-  position: absolute;
-  bottom: 8px;
-  right: 50px;
-  border-radius: 24px;
-  background-color: #D53F77;
-  color: white !important;
-  height: 44px;
-  width: 257px;
-  text-transform: uppercase;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none !important; }
+  .SRC-chart-link a {
+    position: absolute;
+    bottom: 8px;
+    right: 50px;
+    border-radius: 24px;
+    background-color: #D53F77;
+    color: white !important;
+    height: 44px;
+    width: 257px;
+    text-transform: uppercase;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none !important; }
 
 .SRC-loadingContainer {
   min-height: 100px; }
@@ -1058,9 +1049,8 @@ div.SRC-userImg {
   display: flex;
   justify-content: space-between;
   padding-left: 10px; }
-
-.SRC-gap span {
-  padding-right: 10px; }
+  .SRC-gap span {
+    padding-right: 10px; }
 
 .SRC-accordion-menu {
   overflow: hidden; }
@@ -1095,9 +1085,8 @@ button {
 
 .SRC-markdown-bookmark {
   color: #337ab7; }
-
-.SRC-markdown-bookmark:hover {
-  text-decoration: underline; }
+  .SRC-markdown-bookmark:hover {
+    text-decoration: underline; }
 
 .SRC-block {
   display: block; }
@@ -1105,22 +1094,20 @@ button {
 .SRC-mailchimpSubscribeContainer {
   padding: 10px 20px 10px 0px;
   margin-bottom: 20px; }
-
-.SRC-mailchimpSubscribeContainer input {
-  width: 570px;
-  height: 45px;
-  margin-top: 10px;
-  padding-left: 8px; }
-
-.SRC-mailchimpSubscribeContainer button {
-  display: block;
-  margin-top: 20px;
-  padding: 6px 25px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: 24px;
-  background-color: #D53F77;
-  color: white; }
+  .SRC-mailchimpSubscribeContainer input {
+    width: 570px;
+    height: 45px;
+    margin-top: 10px;
+    padding-left: 8px; }
+  .SRC-mailchimpSubscribeContainer button {
+    display: block;
+    margin-top: 20px;
+    padding: 6px 25px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 24px;
+    background-color: #D53F77;
+    color: white; }
 
 .highlight {
   font-weight: bold;

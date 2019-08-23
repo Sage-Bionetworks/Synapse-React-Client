@@ -1,3 +1,5 @@
+import { UserCardSize } from '../containers/UserCard'
+
 /** QueryBundleRequest constants */
 export const BUNDLE_MASK_QUERY_RESULTS: number = 1
 export const BUNDLE_MASK_QUERY_COUNT: number = 2
@@ -37,7 +39,8 @@ export const CLINICAL: string = 'clinical'
 export const PROJECT: string = 'Project'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
-export const SMALL_USER_CARD: string = 'SMALL USER CARD'
-export const MEDIUM_USER_CARD: string = 'MEDIUM USER CARD'
-export const LARGE_USER_CARD: string = 'LARGE USER CARD'
+export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'
+export const MEDIUM_USER_CARD: UserCardSize = 'MEDIUM USER CARD'
+export const LARGE_USER_CARD: UserCardSize = 'LARGE USER CARD'
 export const SEPERATOR = 'SEPERATOR'
+export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS' 

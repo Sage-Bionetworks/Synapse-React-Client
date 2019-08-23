@@ -13,6 +13,8 @@ type UserCardState = {
   isLoading: boolean
 }
 
+export type UserCardSize = 'SMALL USER CARD' |'MEDIUM USER CARD' |'LARGE USER CARD'
+
 export type UserCardProps = {
   // Note - either specify userProfile OR (alias or ownerId)
   userProfile?: UserProfile
@@ -21,7 +23,7 @@ export type UserCardProps = {
   preSignedURL?: string
   alias?: string
   ownerId?: string
-  size: string
+  size: UserCardSize
   hideText?: boolean
   hideTooltip?: boolean
   menuActions? : MenuAction[]

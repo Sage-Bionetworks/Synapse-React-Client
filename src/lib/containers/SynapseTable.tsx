@@ -8,7 +8,9 @@ import {
   faSortAmountDown,
   faSortAmountUp,
   faTimes,
-  faDownload
+  faDownload,
+  faUsers,
+  faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
@@ -19,7 +21,7 @@ import { FacetColumnResult,
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
-import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn'
+import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
@@ -34,6 +36,10 @@ import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
 import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { EntityLink } from './EntityLink'
 import TotalQueryResults from './TotalQueryResults'
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
+import { UserGroupHeader } from '../utils/jsonResponses/UserGroupHeader'
+import UserCard from './UserCard'
+import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -47,6 +53,8 @@ library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
 library.add(faDownload)
+library.add(faUsers)
+library.add(faGlobeAmericas)
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
@@ -74,6 +82,7 @@ export type SynapseTableState = {
   isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
+  mapUserIdToHeader: Dictionary<UserGroupHeader>
   isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
@@ -121,11 +130,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       // selected currently and their sort status as eithet
       // off, desc, or asc.
       sortedColumnSelection: [],
-      mapEntityIdToHeader: {}
+      mapEntityIdToHeader: {},
+      mapUserIdToHeader: {}
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
-    this.getEntityColumnIndicies = this.getEntityColumnIndicies.bind(this)
+    this.getEntityColumnIndiciesWithType = this.getEntityColumnIndiciesWithType.bind(this)
   }
 
   componentDidMount() {
@@ -141,47 +151,64 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     if (!data) {
       return
     }
-    const { mapEntityIdToHeader } = this.state
-    const entityColumnIndicies = this.getEntityColumnIndicies()
-    const distinctEntities = new Set<string>()
-    data!.queryResult.queryResults.rows.forEach(
-      (row) => {
-        row.values.forEach((el, colIndex) => {
-          // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
-          if (entityColumnIndicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el)) {
-            distinctEntities.add(el)
-          }
+    const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
+    const entityIdColumnIndicies = this.getEntityColumnIndiciesWithType('ENTITYID')
+    const userIdColumnIndicies = this.getEntityColumnIndiciesWithType('USERID')
+    const distinctEntities = this.getUniqueEntities(data, mapEntityIdToHeader, entityIdColumnIndicies)
+    const distinctUserEntities = this.getUniqueEntities(data, mapUserIdToHeader, userIdColumnIndicies)
+    const referenceList: ReferenceList = Array.from(distinctEntities).map(id => { return { targetId: id }})
+    if (referenceList.length > 0) {
+      SynapseClient.getEntityHeader(referenceList, token).then(
+        data => {
+          const { results } = data
+          results.forEach(
+            el => {
+              mapEntityIdToHeader[el.id] = el
+            }
+          )
+          this.setState({
+            mapEntityIdToHeader
+          })
+        }
+      ).catch(
+        err => {
+          console.log('Error on retrieving entity header list , ', err)
         }
       )
-    })
-    if (distinctEntities.size === 0) {
-      return
     }
-    const referenceList: ReferenceList = Array.from(distinctEntities).map(id => { return { targetId: id }})
-    SynapseClient.getEntityHeader(referenceList, token).then(
-      data => {
-        const { results } = data
-        results.forEach(
-          el => {
-            mapEntityIdToHeader[el.id] = el
-          }
-        )
-        this.setState({
-          mapEntityIdToHeader
-        })
-      }
-    ).catch(
-      err => {
-        console.log('Error on retrieving entity header list , ', err)
-      }
-    )
+    const ids = Array.from(distinctUserEntities)
+    if (ids.length > 0) {
+      SynapseClient.getGroupHeadersBatch(ids, token).then(
+        data => {
+          const { children } = data
+          children.forEach(
+            child => {
+              mapUserIdToHeader[child.ownerId] = child
+            }
+          )
+        }
+      )
+    }
   }
 
-  public getEntityColumnIndicies() {
+  private getUniqueEntities(data: QueryResultBundle, mapEntityIdToHeader: {}, indicies: number []) {
+    const distinctEntities = new Set<string>()
+    data!.queryResult.queryResults.rows.forEach((row) => {
+      row.values.forEach((el: any, colIndex: number) => {
+        // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
+        if (indicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el)) {
+          distinctEntities.add(el);
+        }
+      })
+    })
+    return distinctEntities
+  }
+
+  public getEntityColumnIndiciesWithType(columnType: EntityColumnType) {
     const { data } = this.props
     const columnsOfTypeEntity: number [] = []
     data && data.selectColumns && data.selectColumns.forEach((el, index) => {
-      if (el.columnType === 'ENTITYID') {
+      if (el.columnType === columnType) {
         columnsOfTypeEntity.push(index)
       } 
     })
@@ -599,8 +626,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
-    const { isColumnSelected, mapEntityIdToHeader } = this.state
-    const entityColumnIndicies = this.getEntityColumnIndicies()
+    const { isColumnSelected } = this.state
+    const entityColumnIndicies = this.getEntityColumnIndiciesWithType('ENTITYID')
+    const userColumnIndicies = this.getEntityColumnIndiciesWithType('USERID')
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(this.props.getLastQueryRequest!().query.sql)
@@ -629,13 +657,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </a>
                   }
                   {
-                    !isCountColumn && (
-                      entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)
-                      ?
-                      <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
-                      :
-                      <p className={isBold}> {columnValue} </p>
-                      )
+                    !isCountColumn &&
+                    this.renderTableCell(entityColumnIndicies, userColumnIndicies, colIndex, columnValue, isBold)
                   }
               </td>
             )
@@ -648,6 +671,26 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       rowsFormatted.push(rowFormatted)
     })
     return rowsFormatted
+  }
+
+  private renderTableCell(entityColumnIndicies: number[], userColumnIndicies: number [], colIndex: number, columnValue: string, isBold: string): React.ReactNode {
+    const {
+      mapEntityIdToHeader,
+      mapUserIdToHeader
+    } = this.state
+    if (entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)) {
+      return <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
+    } else if (userColumnIndicies.includes(colIndex) && mapUserIdToHeader.hasOwnProperty(columnValue)) {
+      const { isIndividual, ownerId, userName } = mapUserIdToHeader[columnValue]
+      if (isIndividual) {
+        return <UserCard ownerId={ownerId} size={'SMALL USER CARD'}/>
+      } else {
+        const icon = userName === AUTHENTICATED_USERS ? 'globe-americas': 'users'
+        return <a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>
+      }
+    } else {
+      return <p className={isBold}> {columnValue} </p>
+    }
   }
 
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
