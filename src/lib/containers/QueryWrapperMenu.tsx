@@ -353,6 +353,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             isSelected: isActive,
             originalColor: lightColor
           }
+          const iconContainerStyle: React.CSSProperties = {
+            marginLeft: 5
+          }
+          const iconStyle: React.CSSProperties = {
+            fontSize: '0.55em'
+          }
           return (
             <div key={JSON.stringify(el)} className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}>
               <div 
@@ -364,11 +370,11 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 onClick={!isActive ? this.toggleGroupAccordionIndex(index) : undefined }
               >
                 {el.name}
-                <span className="menu-icon">
+                <span style={iconContainerStyle}>
                   {
                     !isActive
                     &&
-                    <FontAwesomeIcon size={'xs'} color={'black'} icon={'plus'} />
+                    <FontAwesomeIcon style={iconStyle} color={primaryColor} icon={'plus'} />
                   }
                 </span>
               </div>
