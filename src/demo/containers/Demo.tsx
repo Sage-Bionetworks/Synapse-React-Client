@@ -8,6 +8,9 @@ import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperM
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest';
+import { OIDCAuthorizationRequest } from 'lib/utils/jsonResponses/OIDCAuthorizationRequest';
+import { OIDCAuthorizationRequestDescription } from 'lib/utils/jsonResponses/OIDCAuthorizationRequestDescription';
+import { AccessCodeResponse } from 'lib/utils/jsonResponses/AccessCodeResponse';
 
 type DemoState = {
   token: string
@@ -100,7 +103,10 @@ class Demo extends React.Component<{}, DemoState> {
     this.handleCardSelection = this.handleCardSelection.bind(this)
     this.onSubmitEntityForm = this.onSubmitEntityForm.bind(this)
     this.onEntityFormSubmitted = this.onEntityFormSubmitted.bind(this)
+    this.getOAuth2RequestDescription = this.getOAuth2RequestDescription.bind(this)
+    this.onOAuth2RequestConsent = this.onOAuth2RequestConsent.bind(this)
   }
+
 
   public onSubmitEntityForm() {
     this.entityFormRef.current.submitForm()
@@ -124,6 +130,47 @@ class Demo extends React.Component<{}, DemoState> {
         console.error('Get version failed', error)
       })
   }
+
+  /**
+   * Verify a oauth client request
+   */
+  public getOAuth2RequestDescription(): void {
+    const OAUTH2REQUEST:OIDCAuthorizationRequest = {
+      clientId: '100001',
+      scope: 'openid',
+      claims: '{"id_token":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}},"userinfo":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}}}',
+      responseType: 'code',
+      redirectUri: 'https://data.braincommons.org/user/login/synapse/login',
+      nonce: 'abcdefg'
+    }
+    
+    SynapseClient.getOAuth2RequestDescription(OAUTH2REQUEST, this.state.token)
+      .then((data: OIDCAuthorizationRequestDescription) => console.log(data))
+      .catch((error: any) => {
+        console.error('Get OIDCAuthorizationRequestDescription failed', error)
+      })
+  }
+
+  /**
+   * Verify a oauth client consent
+   */
+  public onOAuth2RequestConsent(): void {
+    const OAUTH2REQUEST:OIDCAuthorizationRequest = {
+      clientId: '100001',
+      scope: 'openid',
+      claims: '{"id_token":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}},"userinfo":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}}}',
+      responseType: 'code',
+      redirectUri: 'https://data.braincommons.org/user/login/synapse/login',
+      nonce: 'abcdefg'
+    }
+    
+    SynapseClient.consentToOAuth2Request(OAUTH2REQUEST, this.state.token)
+      .then((token: AccessCodeResponse) => console.log(`Successful consent.  Would redirect to ${OAUTH2REQUEST.redirectUri} with access_code=${token.access_code}`))
+      .catch((error: any) => {
+        console.error('Get OIDCAuthorizationRequestDescription failed', error)
+      })
+  }
+
   /**
    * Make a query on synapse
    */
@@ -285,6 +332,24 @@ class Demo extends React.Component<{}, DemoState> {
               token={this.state.token!}
               targetEntityId="syn12196718"
             />
+            <hr />
+          </div>
+        }
+        {
+          <div className="container">
+            <button
+              onClick={this.getOAuth2RequestDescription}
+              className="btn btn-info"
+            >
+              Test getOAuth2RequestDescription
+            </button>
+            <br />
+            <button
+              onClick={this.onOAuth2RequestConsent}
+              className="btn btn-info"
+            >
+              Test onOAuth2RequestConsent
+            </button>
             <hr />
           </div>
         }

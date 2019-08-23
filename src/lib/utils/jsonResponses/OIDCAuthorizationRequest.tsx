@@ -6,8 +6,8 @@ export type OIDCAuthorizationRequest = {
   claims: string,
   responseType: 'code',
   redirectUri: string,
-  nonce: string,
-  userId: string,
-  authenticatedAt: string,
-  authorizedAt: string
+  nonce?: string,
+  userId?: string,
+  authenticatedAt?: string,
+  authorizedAt?: string
 }

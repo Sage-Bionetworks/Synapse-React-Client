@@ -25,7 +25,8 @@ import { EntityHeader } from './jsonResponses/EntityHeader'
 import { PaginatedResults } from './jsonResponses/PaginatedResults'
 import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest';
 import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationRequest';
-import {OIDCAuthorizationRequestDescription} from './jsonResponses/OIDCAuthorizationRequestDescription';
+import { OIDCAuthorizationRequestDescription } from './jsonResponses/OIDCAuthorizationRequestDescription';
+import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse';
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -995,6 +996,6 @@ export const getOAuth2RequestDescription = (
 export const consentToOAuth2Request = (
   oidcAuthRequest: OIDCAuthorizationRequest,
   sessionToken: string | undefined,
-  endpoint: string = DEFAULT_ENDPOINT) => {
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<AccessCodeResponse>=> {
   return doPost('/auth/v1/oauth2/consent', oidcAuthRequest, sessionToken, undefined, endpoint)
 }
