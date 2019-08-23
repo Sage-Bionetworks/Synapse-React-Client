@@ -24,6 +24,8 @@ import { ReferenceList } from './jsonResponses/ReferenceList'
 import { EntityHeader } from './jsonResponses/EntityHeader'
 import { PaginatedResults } from './jsonResponses/PaginatedResults'
 import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest';
+import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationRequest';
+import {OIDCAuthorizationRequestDescription} from './jsonResponses/OIDCAuthorizationRequestDescription';
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -972,4 +974,27 @@ export const getEvaluation = (
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) => {
   return doGet(`/repo/v1/evaluation/${evalId}`, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Get user-friendly OAuth2 request information (to present to the user so they can choose if they want to give consent).
+ */
+export const getOAuth2RequestDescription = (
+  oidcAuthRequest: OIDCAuthorizationRequest,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<OIDCAuthorizationRequestDescription> => {
+  return doPost('/auth/v1/oauth2/description', oidcAuthRequest, sessionToken, undefined, endpoint)
+}
+
+/**
+ * User consents to the given OIDCAuthorizationRequest (after being presented with all information returned by getOAuth2RequestDescription())
+ * @param oidcAuthRequest
+ * @param sessionToken 
+ * @param endpoint 
+ */
+export const consentToOAuth2Request = (
+  oidcAuthRequest: OIDCAuthorizationRequest,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  return doPost('/auth/v1/oauth2/consent', oidcAuthRequest, sessionToken, undefined, endpoint)
 }
