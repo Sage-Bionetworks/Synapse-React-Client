@@ -37,9 +37,10 @@ import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { EntityLink } from './EntityLink'
 import TotalQueryResults from './TotalQueryResults'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import { UserGroupHeader } from '../utils/jsonResponses/UserGroupHeader'
 import UserCard from './UserCard'
 import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
+import { UserProfile } from '../utils/jsonResponses/UserProfile';
+import { getUserProfileWithProfilePicAttached } from './getUserData';
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -82,7 +83,7 @@ export type SynapseTableState = {
   isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
-  mapUserIdToHeader: Dictionary<UserGroupHeader>
+  mapUserIdToHeader: Dictionary<any>
   isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
@@ -146,7 +147,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.getEntityHeadersInData()
   }
 
-  public getEntityHeadersInData() {
+  public async getEntityHeadersInData() {
     const { data, token } = this.props
     if (!data) {
       return
@@ -158,7 +159,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const distinctUserEntities = this.getUniqueEntities(data, mapUserIdToHeader, userIdColumnIndicies)
     const referenceList: ReferenceList = Array.from(distinctEntities).map(id => { return { targetId: id }})
     if (referenceList.length > 0) {
-      SynapseClient.getEntityHeader(referenceList, token).then(
+      await SynapseClient.getEntityHeader(referenceList, token).then(
         data => {
           const { results } = data
           results.forEach(
@@ -166,9 +167,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               mapEntityIdToHeader[el.id] = el
             }
           )
-          this.setState({
-            mapEntityIdToHeader
-          })
         }
       ).catch(
         err => {
@@ -178,17 +176,35 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     }
     const ids = Array.from(distinctUserEntities)
     if (ids.length > 0) {
-      SynapseClient.getGroupHeadersBatch(ids, token).then(
+      const idsWithUserProfiles: string [] = []
+      await SynapseClient.getGroupHeadersBatch(ids, token).then(
         data => {
-          const { children } = data
-          children.forEach(
-            child => {
-              mapUserIdToHeader[child.ownerId] = child
+          data.children.forEach(
+            (el) => {
+              if (el.isIndividual) {
+                idsWithUserProfiles.push(el.ownerId)
+              } else {
+                mapUserIdToHeader[el.ownerId] = el
+              }
             }
           )
         }
       )
+      await getUserProfileWithProfilePicAttached(idsWithUserProfiles, token).then(
+        data => {
+          data.list.forEach(
+            (el: UserProfile) => {
+              mapUserIdToHeader[el.ownerId] = el
+            }
+          )
+        }
+      )
+      this.setState({
+        mapEntityIdToHeader,
+        mapUserIdToHeader
+      })
     }
+
   }
 
   private getUniqueEntities(data: QueryResultBundle, mapEntityIdToHeader: {}, indicies: number []) {
@@ -681,15 +697,21 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     if (entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)) {
       return <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
     } else if (userColumnIndicies.includes(colIndex) && mapUserIdToHeader.hasOwnProperty(columnValue)) {
-      const { isIndividual, ownerId, userName } = mapUserIdToHeader[columnValue]
-      if (isIndividual) {
-        return <UserCard ownerId={ownerId} size={'SMALL USER CARD'}/>
-      } else {
+      const { ownerId, userName } = mapUserIdToHeader[columnValue]
+      if (mapUserIdToHeader[columnValue].isIndividual === false) {
         const icon = userName === AUTHENTICATED_USERS ? 'globe-americas': 'users'
-        return <a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>
+        return (<a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>)
+      } else {
+        return  (
+          <UserCard 
+            userProfile={mapUserIdToHeader[columnValue]} 
+            preSignedURL={mapUserIdToHeader[columnValue].clientPreSignedURL}
+            size={'SMALL USER CARD'}
+          />
+        )
       }
     } else {
-      return <p className={isBold}> {columnValue} </p>
+      return (<p className={isBold}> {columnValue} </p>)
     }
   }
 
