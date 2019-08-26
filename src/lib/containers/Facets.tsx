@@ -94,7 +94,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (props: Check
     children.push(
       <label
         style={style}
-        className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
+        className="SRC-facets SRC-primary-background-color-hover "
         key={key}
       >
         <span className="SRC-facets-text">

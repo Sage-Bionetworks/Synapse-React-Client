@@ -28,9 +28,7 @@ const UserCardContextMenu:React.SFC<UserCardContextMenuProps> = (props: UserCard
                 <li
                   key={menuAction.field}
                   style={{ listStyle: 'none' }}
-                  className="
-                    SRC-menu-item SRC-table-dropdown-list SRC-primary-background-color-hover SRC-nested-color
-                  "
+                  className="SRC-menu-item SRC-table-dropdown-list SRC-primary-background-color-hover"
                   onClick={callback}
                   onKeyPress={callback}
                 >

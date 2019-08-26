@@ -388,7 +388,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')}
           >
-            <a className="SRC-no-focus" href="javascript:void">
+            <a href="javascript:void">
               Export Metadata
             </a>
           </li>
@@ -397,7 +397,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.advancedSearch}
           >
-          <a className="SRC-no-focus" href="javascript:void">
+          <a href="javascript:void">
             Download Files
           </a>
         </li>
@@ -409,7 +409,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
     const { isDropdownColumnMenuOpen } = this.state
     const tooltipColumnSelectionId = 'addAndRemoveColumns'
-    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
+    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
     addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     return (
       <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
@@ -574,7 +574,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const previous = (
       <button
         onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-primary-background-color-hover SRC-viewMoreButton pull-right"
+        className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
         type="button"
       >
         Previous
@@ -585,7 +585,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       (
         <button
           onClick={this.handlePaginationClick(NEXT)}
-          className="SRC-primary-background-color-hover SRC-viewMoreButton pull-right"
+          className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
           type="button"
         >
           Next
@@ -627,11 +627,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (
         <li
           style={{ listStyle: 'none' }}
-          className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+          className="SRC-table-dropdown-list SRC-primary-background-color-hover "
           key={header.name}
           onClick={this.toggleColumnSelection(index)}
         >
-          <a className="SRC-no-focus" href="">
+          <a href="javascript:void">
             <FontAwesomeIcon
               style={iconStyle}
               className={maybeShowPrimaryColor}
@@ -742,7 +742,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const isFacetSelection: boolean = facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
-        const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
+        const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
         return (
           <th key={column.name}>
             <div className="SRC-centerContent">

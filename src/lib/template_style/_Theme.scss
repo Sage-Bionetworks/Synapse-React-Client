@@ -7,10 +7,9 @@
   color: $primary-action-color;
 }
 
-// These classes have to get overriden
 .SRC-primary-color-hover:hover * {
-  color: $primary-action-color;
-  fill: $primary-action-color;
+  color: $primary-action-color !important;
+  fill: $primary-action-color !important;
 }
 
 .SRC-primary-background-color {
@@ -30,15 +29,11 @@ border-left-color: $primary-action-color;
 }
 
 .SRC-primary-background-color-hover:hover {
- background-color: $primary-action-color; 
- > svg {
-   color: white;
- }
- &.SRC-nested-color:hover {
-   * {
-     background-color: $primary-action-color;
-     color: white;
-   }
+ background-color: $primary-action-color !important; 
+ color: white !important;
+ * {
+   background-color: $primary-action-color !important;
+   color: white !important;
  }
 }
 

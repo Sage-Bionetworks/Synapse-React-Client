@@ -135,7 +135,7 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
         <div>
           <button
             onClick={this.handleViewMore}
-            className="pull-right SRC-primary-background-color-hover SRC-next-color SRC-viewMoreButton"
+            className="pull-right SRC-primary-background-color-hover SRC-viewMoreButton"
           >
             View More
           </button>
