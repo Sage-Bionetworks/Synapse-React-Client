@@ -1,6 +1,5 @@
 //////////////////////////////////////////////////////////////
-// Synapse React Client (SRC) Custom scss                   //
-// params: $primary-action-color                            //
+// Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 
 svg.SRC-hoverBox {
@@ -202,58 +201,17 @@ a.SRC-anchor-light {
  }
 
  
- .SRC-no-text-decor {
-   text-decoration: none;
-  }
- 
- .SRC-no-underline-on-hover:hover {
-   text-decoration: none;
-  }
- 
- .SRC-underline-on-hover:hover {
-   text-decoration: underline;
-  }
-  
-  .SRC-primary-text-color {
-    color: $primary-action-color;
-  }
-  
-  // These classes have to get overriden
-  .SRC-primary-color-hover:hover * {
-    color: $primary-action-color;
-    fill: $primary-action-color;
-  }
-
- .SRC-primary-background-color {
-   background-color: $primary-action-color;
- }
-
- .SRC-primary-background-color-border-left {
-  border-left-color: $primary-action-color;
+.SRC-no-text-decor {
+  text-decoration: none;
 }
 
-%hoverFade {
-    transition: all 400ms;
-  }
+.SRC-no-underline-on-hover:hover {
+  text-decoration: none;
+}
 
-  %defaultBoxShadow {
-    box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5);
-  }
-
-  .SRC-primary-background-color-hover:hover {
-   background-color: $primary-action-color; 
-   > svg {
-     color: white;
-   }
-   &.SRC-nested-color:hover {
-     * {
-       background-color: $primary-action-color;
-       color: white;
-     }
-   }
- }
-
-// end overrides
+.SRC-underline-on-hover:hover {
+  text-decoration: underline;
+}
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -333,9 +291,6 @@ a.SRC-anchor-light {
 }
 .SRC-background-unset {
   background: unset;
-}
-.SRC-menu-button-base:focus {
-  outline: $primary-action-color;
 }
 
 .SRC-text-shadow {
@@ -471,17 +426,6 @@ a.SRC-anchor-light {
   margin-left: 10px;
 }
 
-.tableDropdownSelector {
-  color: #4E5491;
-  font-size: 13px;
-  font-weight: 600;
-  border:none;
-  background: white;
-  &:focus {
-    outline: $primary-action-color;
-  }
-}
-
 .SRC-extraPadding {
   padding: 5px;
 }
@@ -504,17 +448,6 @@ a.SRC-anchor-light {
 
 .SRC-limitMaxWidth {
   max-width: 70%;
-}
-
-.SRC-viewMoreButton {
-  background: #DFDFDF;
-  border-radius: 24px;
-  width: 130px;
-  height: 40px;
-  margin: 21px;
-  &:focus {
-    outline: $primary-action-color;
-  }
 }
 
 /*
@@ -544,39 +477,6 @@ a.SRC-anchor-light {
   width: 0;
 }
 
-/* Create a custom checkbox */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  border: 1px solid #DDDDDF;
-  width: 20px;
-}
-
-/* On mouse-over, add a grey background color */
-.containerCheckbox:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-/* When the checkbox is checked, add a blue background */
-.containerCheckbox input:checked ~ .checkmark {
-  background-repeat: no-repeat;
-  background-size: 20px;
-}
-
-/* Create the checkmark/indicator (hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the checkmark when checked */
-.containerCheckbox input:checked ~ .checkmark:after {
-  display: block;
-}
-
 .loginContainer {
   max-width: 350px;
   background: white;
@@ -585,12 +485,6 @@ a.SRC-anchor-light {
 .SRC-minDropdownWidth {
   width: 240px;
 }
-
-/*
-
-checkmark styling end
-
-*/
 
 .SRC-facets-divider {
   margin-left: 5px;
@@ -988,38 +882,8 @@ div.SRC-userImg {
   height: 30px;
 }
 
-.SRC-chart-link {
-  position: relative;
-  a {
-    position: absolute;
-    bottom: 8px;
-    right: 50px;
-    border-radius: 24px;
-    background-color: $primary-action-color;
-    color: white !important;
-    height: 44px;
-    width: 257px;
-    text-transform: uppercase;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none !important;
-    &:hover {
-      @extend %hoverFade;
-      @extend %defaultBoxShadow;
-    }
-  }
-}
-
 .SRC-loadingContainer {
   min-height: 100px;
-}
-
-.SRC-basicButton {
-  border: none;
-  background: none;
-  color: $primary-action-color;
 }
 
 // sample style for rss (news) feed
@@ -1029,7 +893,6 @@ div.SRC-userImg {
   padding-top: 29px;
 }
 .srcRssFeedItem {
-  // color: $primary-action-color;
   border:1px solid #dddddf;
   padding: 25px 35px 25px 35px;
   margin-bottom: 30px;
@@ -1116,32 +979,8 @@ button {
   display: block;
 }
 
-.SRC-mailchimpSubscribeContainer {
-  padding: 10px 20px 10px 0px;
-  margin-bottom: 20px;
-  input {
-    width: 570px;
-    height: 45px;
-    margin-top: 10px;
-    padding-left: 8px;
-  }
-  button {
-    display: block;
-    margin-top: 20px;
-    padding: 6px 25px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 24px;
-    background-color: $primary-action-color;
-    color:white;
-  }
-}
-
 .highlight {
-  // background: rgb(244, 248, 253);
-  // color: rgb(0, 61, 129);
   font-weight: bold;
-  // border: rgb(0, 61, 129) solid 2px;
   padding: 2px;
 }
 
@@ -1158,8 +997,4 @@ button {
     padding: 10px;
     border: 1px solid rgba(196,196,196,0.4);
   }
-}
-
-:focus {
-  outline-color: $primary-action-color;
 }

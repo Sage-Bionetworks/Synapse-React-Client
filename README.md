@@ -85,21 +85,18 @@ Note there are a number of CDNs required to finish this functionality-
 ```
 
 ## Theming
-### Overrides
-There are two classes to override - 
-``` css
-    /* Configure css */
-    /* This is the primary color used in the app */
-    .SRC-primary-background-color-hover:hover {
-      background: #D53F77 !important;
-      color: white;
-    }
 
-    /* Some html elements require theming to go down multiple elements */
-    .SRC-primary-background-color-hover.SRC-nested-color:hover > * {
-      background: #D53F77;
-      color: white;
-    }
+## Style
+
+The core css lives in `src/lib/style` and `src/lib/template_style`. 
+* `src/lib/style`contains all scss that doesn't use any external variables.
+* `src/lib/template_style`contains any scss files that require external variables.
+
+## Overrides
+Import the main `src/lib/template_style/Index.scss` file into your application and override the main theme color `$primary-action-color` 
+``` scss
+    $primary-action-color: blue;
+    @import 'node_modules/synapse-react-client/dist/template_style/Index.scss';
 ```
 
 ## Examples

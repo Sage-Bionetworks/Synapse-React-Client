@@ -5,6 +5,7 @@ import 'react-app-polyfill/ie11'
 import 'react-app-polyfill/stable'
 import './lib/style/Cards.scss'
 import './lib/style/SWC.scss'
+import './lib/style/Core.scss'
 import './demo/style/DemoOverrides.scss'
 
 ReactDOM.render(

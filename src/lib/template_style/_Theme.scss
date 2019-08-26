@@ -1,0 +1,125 @@
+//////////////////////////////////////////////////////////////
+// Synapse React Client (SRC) Custom scss                   //
+// params: $primary-action-color                            //
+//////////////////////////////////////////////////////////////
+  
+.SRC-primary-text-color {
+  color: $primary-action-color;
+}
+
+// These classes have to get overriden
+.SRC-primary-color-hover:hover * {
+  color: $primary-action-color;
+  fill: $primary-action-color;
+}
+
+.SRC-primary-background-color {
+ background-color: $primary-action-color;
+}
+
+.SRC-primary-background-color-border-left {
+border-left-color: $primary-action-color;
+}
+
+%hoverFade {
+  transition: all 400ms;
+}
+
+%defaultBoxShadow {
+  box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5);
+}
+
+.SRC-primary-background-color-hover:hover {
+ background-color: $primary-action-color; 
+ > svg {
+   color: white;
+ }
+ &.SRC-nested-color:hover {
+   * {
+     background-color: $primary-action-color;
+     color: white;
+   }
+ }
+}
+
+.SRC-menu-button-base:focus {
+  outline: $primary-action-color;
+}
+
+.tableDropdownSelector {
+  color: #4E5491;
+  font-size: 13px;
+  font-weight: 600;
+  border:none;
+  background: white;
+  &:focus {
+    outline: $primary-action-color;
+  }
+}
+
+
+.SRC-viewMoreButton {
+  background: #DFDFDF;
+  border-radius: 24px;
+  width: 130px;
+  height: 40px;
+  margin: 21px;
+  &:focus {
+    outline: $primary-action-color;
+  }
+}
+
+.SRC-chart-link {
+  position: relative;
+  a {
+    position: absolute;
+    bottom: 8px;
+    right: 50px;
+    border-radius: 24px;
+    background-color: $primary-action-color;
+    color: white !important;
+    height: 44px;
+    width: 257px;
+    text-transform: uppercase;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none !important;
+    &:hover {
+      @extend %hoverFade;
+      @extend %defaultBoxShadow;
+    }
+  }
+}
+
+.SRC-basicButton {
+  border: none;
+  background: none;
+  color: $primary-action-color;
+}
+
+.SRC-mailchimpSubscribeContainer {
+  padding: 10px 20px 10px 0px;
+  margin-bottom: 20px;
+  input {
+    width: 570px;
+    height: 45px;
+    margin-top: 10px;
+    padding-left: 8px;
+  }
+  button {
+    display: block;
+    margin-top: 20px;
+    padding: 6px 25px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 24px;
+    background-color: $primary-action-color;
+    color:white;
+  }
+}
+
+:focus {
+  outline-color: $primary-action-color;
+}

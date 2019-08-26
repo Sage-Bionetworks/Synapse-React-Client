@@ -15,6 +15,7 @@ import ModalDownload from './containers/ModalDownload'
 import NewsFeedMenu from './containers/NewsFeedMenu'
 import './style/SWC.css'
 import './style/Cards.css'
+import './style/Core.css'
 import { SynapseConstants, SynapseClient } from './utils'
 
 const SynapseComponents = {
