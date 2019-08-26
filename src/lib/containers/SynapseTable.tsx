@@ -884,20 +884,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           />
         </span>
 
-        <div className={`dropdown-menu dropdown-menu-override SRC-minDropdownWidth ${classList}`}>
-          <ul style={{ listStyleType: 'none' }} className="scrollable">
+        <div style={{paddingLeft: 20}} className={`dropdown-menu dropdown-menu-override SRC-minDropdownWidth ${classList}`}>
+          <ul style={{ listStyleType: 'none' }} className="scrollable checkbox">
             <label
-              style={{ paddingBottom: '8px' }}
-              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font custom-checkbox-container"
+              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font SRC-fullWidth"
+              style={{paddingBottom: 10}}
             >
-              All
-              <input
-                onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-                checked={isChecked}
-                className="SRC-facet-checkboxes"
-                type="checkbox"
+            <input
+              onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
+              checked={isChecked}
+              className="SRC-facet-checkboxes"
+              type="checkbox"
               />
-              <span />
+              <span> All </span>
             </label>
             <span ref={ref}>
               {this.renderFacetSelection(facetColumnResult, ref, columnName)}
@@ -952,20 +951,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           curFacetSelection: facetColumnResultValueCount,
         })
         return (
-          <li key={key}>
-            <label className="dropdownList SRC-overflowWrap SRC-base-font custom-checkbox-container">
+          <li className="checkbox SRC-table-checkbox" key={key}>
+            <label className="dropdownList SRC-overflowWrap SRC-base-font SRC-fullWidth">
+              <input
+                onChange={this.applyChanges({ ref, columnName, facetValue })}
+                checked={isValueSelected}
+                className="SRC-facet-checkboxes"
+                type="checkbox"
+                value={facetValue}
+                />
               <span>
-                <input
-                  onChange={this.applyChanges({ ref, columnName, facetValue })}
-                  checked={isValueSelected}
-                  className="SRC-facet-checkboxes"
-                  type="checkbox"
-                  value={facetValue}
-                  />
-                <span>
-                  {displayValue}
-                  <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
-                </span>
+                {displayValue}
+                <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
               </span>
             </label>
           </li>

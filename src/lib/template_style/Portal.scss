@@ -124,6 +124,10 @@ span.SRC-facets svg.SRC-facets-icon {
   background: white;
 }
 
+.SRC-table-checkbox {
+  margin: 17px 0px;
+}
+
 .SRC-chart-rect-style {
   margin: 0px;
   stroke-width: 1px;
@@ -406,7 +410,6 @@ a.SRC-anchor-light {
 .scrollable {
   padding-left: 20px;
   padding-right: 20px;
-  padding-top: 15px;
   max-height: 300px;
   overflow: hidden;
   overflow-y: scroll;
