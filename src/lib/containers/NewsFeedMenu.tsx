@@ -9,6 +9,7 @@ type MenuState = {
 
 export type MenuConfig = {
   feedName: string
+  feedDescription: string
   feedUrl: string
   defaultItemsToShow: number
   mailChimpListName?: string
@@ -45,7 +46,8 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
   public render() {
     const menuDropdown = this.renderMenu()
     const { menuConfig } = this.props
-    const { feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
+    const { feedName, feedDescription, feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
+
     return (
       <React.Fragment>
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">
@@ -53,11 +55,15 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
         </div>
         <div className="col-xs-10">
           {
-            <RssFeed
-              key={feedUrl}
-              url={feedUrl}
-              defaultItemsToShow={defaultItemsToShow}
-            />
+            <React.Fragment>
+              <h4 className="srcRssFeed">{feedName}</h4>
+              <p>{feedDescription}</p>
+              <RssFeed
+                key={feedUrl}
+                url={feedUrl}
+                defaultItemsToShow={defaultItemsToShow}
+              />
+            </React.Fragment>
           }
           {
             mailChimpUrl &&
