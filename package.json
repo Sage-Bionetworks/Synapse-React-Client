@@ -117,7 +117,7 @@
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts build",
     "deploy": "gh-pages -d build",
-    "build-css": "node-sass src/ -o src/",
+    "build-css": "node-sass --source-map-embed src/lib/style -o src/",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
@@ -129,7 +129,7 @@
     "type-check:watch": "yarn run type-check --watch",
     "build": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
     "build:js": "tsc --p tsconfig.build.json",
-    "build:copy-assets": "cd src/lib && find . -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
+    "build:copy-assets": "cd src/lib && find . -name '*.*scss' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/"
   },
   "resolutions": {

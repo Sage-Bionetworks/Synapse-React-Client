@@ -391,7 +391,8 @@ UserCard represents a synapse user, it is responsible for three different sized 
    ├── ./lib
    │   ├── ./assets      Contains all the svgs/pngs needed for logos or buttons
    │   ├── ./containers  Contains all the distributed React components
-   │   ├── ./style       Contains all the distributed css
+   │   ├── ./style       Contains all the prepackaged css
+   │   ├── ./template_style       Contains scss to be imported and overriden
    │   ├── ./utils       Contains all utilities
    │       ├── SynapseClient.js       Contains the collection of helper functions to use the Synapse API
    │       ├── SynapseClient.test.js  Integration tests for SynapseClient helper functions.

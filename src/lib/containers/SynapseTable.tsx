@@ -39,8 +39,8 @@ import TotalQueryResults from './TotalQueryResults'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import UserCard from './UserCard'
 import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
-import { UserProfile } from '../utils/jsonResponses/UserProfile';
-import { getUserProfileWithProfilePicAttached } from './getUserData';
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
+import { getUserProfileWithProfilePicAttached } from './getUserData'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -190,15 +190,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           )
         }
       )
-      await getUserProfileWithProfilePicAttached(idsWithUserProfiles, token).then(
-        data => {
-          data.list.forEach(
-            (el: UserProfile) => {
-              mapUserIdToHeader[el.ownerId] = el
-            }
-          )
-        }
-      )
+      if (idsWithUserProfiles.length > 0) {
+        console.log('getting user profile with idsWithUserProfiles = ', idsWithUserProfiles)
+        await getUserProfileWithProfilePicAttached(idsWithUserProfiles, token).then(
+          data => {
+            data.list.forEach(
+              (el: UserProfile) => {
+                mapUserIdToHeader[el.ownerId] = el
+              }
+            )
+          }
+        )
+      }
       this.setState({
         mapEntityIdToHeader,
         mapUserIdToHeader
@@ -212,8 +215,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     data!.queryResult.queryResults.rows.forEach((row) => {
       row.values.forEach((el: any, colIndex: number) => {
         // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
-        if (indicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el)) {
-          distinctEntities.add(el);
+        if (indicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el) && el !== null) {
+          distinctEntities.add(el)
         }
       })
     })
@@ -689,6 +692,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     return rowsFormatted
   }
 
+  // Render table cell, supports Entity's and User Icons
   private renderTableCell(entityColumnIndicies: number[], userColumnIndicies: number [], colIndex: number, columnValue: string, isBold: string): React.ReactNode {
     const {
       mapEntityIdToHeader,
@@ -857,7 +861,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const applyPrimary = isCurFilterSelected ? 'SRC-primary-background-color' : 'SRC-primary-text-color'
     const classList = isCurFilterSelected ? this.state.activeFilterClass : ''
     const style = { alignItems: 'center', marginLeft: '10px', marginRight: '3px', color: 'black', display: 'flex' }
-
+    const isChecked = this.props.isAllFilterSelectedForFacet![columnName]
     return (
       <div
         ref={refOuterDiv}
@@ -884,16 +888,16 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <ul style={{ listStyleType: 'none' }} className="scrollable">
             <label
               style={{ paddingBottom: '8px' }}
-              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font containerCheckbox"
+              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font custom-checkbox-container"
             >
               All
               <input
                 onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-                checked={this.props.isAllFilterSelectedForFacet![columnName]}
+                checked={isChecked}
                 className="SRC-facet-checkboxes"
                 type="checkbox"
               />
-              <span className="checkmark" />
+              <span />
             </label>
             <span ref={ref}>
               {this.renderFacetSelection(facetColumnResult, ref, columnName)}
@@ -940,7 +944,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
           displayValue = 'unannotated'
         }
-        const key = columnName + facetValue + count
+        const key = columnName + facetValue + count 
         const isValueSelected = isAllFilterSelectedForFacet![columnName] ? false :  getIsValueSelected({
           columnName,
           isLoading,
@@ -949,17 +953,20 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         })
         return (
           <li key={key}>
-            <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
-              {displayValue}
-              <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
-              <input
-                onChange={this.applyChanges({ ref, columnName, facetValue })}
-                checked={isValueSelected}
-                className="SRC-facet-checkboxes"
-                type="checkbox"
-                value={facetValue}
-              />
-              <span className="checkmark" />
+            <label className="dropdownList SRC-overflowWrap SRC-base-font custom-checkbox-container">
+              <span>
+                <input
+                  onChange={this.applyChanges({ ref, columnName, facetValue })}
+                  checked={isValueSelected}
+                  className="SRC-facet-checkboxes"
+                  type="checkbox"
+                  value={facetValue}
+                  />
+                <span>
+                  {displayValue}
+                  <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
+                </span>
+              </span>
             </label>
           </li>
         )

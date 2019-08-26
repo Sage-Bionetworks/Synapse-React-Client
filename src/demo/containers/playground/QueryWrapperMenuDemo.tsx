@@ -1,7 +1,6 @@
 import * as React from 'react'
 import QueryWrapperMenu, { MenuConfig, QueryWrapperMenuProps } from '../../../lib/containers/QueryWrapperMenu'
 import { SynapseConstants } from '../../../lib/utils'
-import '../App.css'
 import { GenericCardSchema } from '../../../lib/containers/GenericCard'
 
 type DemoState = {
