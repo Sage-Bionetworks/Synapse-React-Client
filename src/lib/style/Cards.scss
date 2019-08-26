@@ -10,7 +10,6 @@ $color-divider: #DDDDDF;
 $color-gray-background: #F9F9F9;
 $color-chicklet-base: #3C4A63;
 $text-color-base: #1A1C29;
-$text-color-active: #C94281;
 $text-color-lighter: #898989;
 
 .SRC-font-size-base {
@@ -31,7 +30,6 @@ $text-color-lighter: #898989;
   margin-bottom: 30px; // just for test page
 
   .SRC-downloadData {
-    background-color: $text-color-active;
     border-radius: 20px;
     text-align: center;
     height: 40px;
@@ -43,10 +41,6 @@ $text-color-lighter: #898989;
       padding: 5px 20px!important;
       color: white;
     }
-  }
-
-  a {
-    color: $text-color-active;
   }
 
   h3{
@@ -116,7 +110,6 @@ $text-color-lighter: #898989;
   .SRC-cardAction {
     display: inline-block;
     button {
-      background-color: $text-color-active;
       font-size: 16px;
       color: white;
       display: inline-block;
