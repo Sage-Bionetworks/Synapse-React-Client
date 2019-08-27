@@ -474,7 +474,7 @@ describe('basic functionality', () => {
         expect(tableCell.find('span.SRC-boldText').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('globe-americas')
       })
-      it ('renders a link for a standard team', () => {
+      it ('renders a link for a standard column value', () => {
         const tableCell = shallow(
           <div>
             {
