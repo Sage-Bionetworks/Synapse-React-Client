@@ -41,7 +41,7 @@ import UserCard from './UserCard'
 import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { getUserProfileWithProfilePicAttached } from './getUserData'
-import { UserGroupHeader } from 'lib/utils/jsonResponses/UserGroupHeader';
+import { UserGroupHeader } from '../utils/jsonResponses/UserGroupHeader'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -344,9 +344,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
     // unpack all the data
     const { data } = this.props
-    const { queryResult, columnModels = [] } = data!
-    if (columnModels.length === 0) {
-      throw Error('Error on query request, must include columnModels to show aggregate sql')
+    const { queryResult, columnModels } = data!
+    if (!columnModels) {
+      throw Error('Error on query request, must include columnModels in partmask to show aggregate sql')
     }
     const { queryResults } = queryResult
     const { headers } = queryResults

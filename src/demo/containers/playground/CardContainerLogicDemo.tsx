@@ -29,14 +29,7 @@ export default class CardContainerLogicDemo extends React.Component {
       description: 'summary',
       icon: 'type',
       link: 'link',
-      secondaryLabels: [
-        'subtype',
-        'disease',
-        'manifestation',
-        'Sample_Type',
-        'fundingAgency',
-        'studyName',
-      ]
+      secondaryLabels: ['subtype', 'disease', 'manifestation','Sample_Type','fundingAgency','studyName']
     }
     const genericCardSchemaHeader: GenericCardSchema = {
       type: 'PROGRAM',
@@ -44,9 +37,7 @@ export default class CardContainerLogicDemo extends React.Component {
       subTitle: 'Short Description',
       description: 'Long Description',
       icon: 'Program',
-      secondaryLabels: [
-        'Full Name'
-      ]
+      secondaryLabels: ['Full Name']
     }
     // @ts-ignore
     const genericCardSchema: GenericCardSchema = {

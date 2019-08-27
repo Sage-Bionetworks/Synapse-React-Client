@@ -44,7 +44,7 @@ export default class TotalQueryResults extends React.Component<TotalQueryResults
         const { facets = [] } = data
         const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
         // calculate the values chosen
-        const curFacets = data.facets[curFacetsIndex]
+        const curFacets = facets[curFacetsIndex]
         // edge case -- if they are all false then they are considered all true..
         // sum up the counts of data
         let anyTrue = false

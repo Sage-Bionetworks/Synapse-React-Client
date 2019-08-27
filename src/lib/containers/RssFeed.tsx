@@ -1,4 +1,9 @@
 import * as React from 'react'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+library.add(faLongArrowAltUp)
+library.add(faLongArrowAltDown)
 let Parser = require('rss-parser')
 let rssParser = new Parser()
 
@@ -80,7 +85,17 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                   {
                     moreElement &&
                     <div className="clearfix">
-                      <button className="btn SRC-grayBackground SRC-roundBorder SRC-floatRight" onClick={this.onClickReadMore(item.guid)}>View More</button>
+                      <button
+                        style={{ textAlign: 'left', margin: 0, padding: 0 }}
+                        className="SRC-primary-text-color SRC-basicButton"
+                        onClick={this.onClickReadMore(item.guid)}
+                      >
+                        Show More
+                        <FontAwesomeIcon
+                          style={{ marginLeft: '5px' }}
+                          icon={'long-arrow-alt-down'}
+                        />
+                      </button>
                     </div>
                   }
                 </div>

@@ -145,7 +145,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    */
   public showFacetFilter() {
     // Find the facetcolumn result according to the input filter
-    const facetColumnResult = this.props.data!.facets.find(el => el.columnName === this.props.facet && el.facetType === 'enumeration')
+    const facetColumnResult = this.props.data!.facets!.find(el => el.columnName === this.props.facet && el.facetType === 'enumeration')
     if (!facetColumnResult) {
       throw Error('Error no matching facet found given specified facet')
     }
@@ -252,7 +252,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     let { showAllFacets } = this.state
     const { data, facet, unitDescription, isLoading, showBarChart } = this.props
     const { facets } = data
-
+    if (!facets) {
+      throw Error('Error on query request, must include facets in partmask to show facets')
+    }
     const curFacetsIndex = facets.findIndex(curFacet => curFacet.columnName === facet && curFacet.facetType === 'enumeration')
     // cast is necessary because filter returns an array of arrays
     const facetColumnResultValues = facets[curFacetsIndex] as FacetColumnResultValues

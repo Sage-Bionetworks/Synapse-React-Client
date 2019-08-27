@@ -9,6 +9,7 @@ type MenuState = {
 
 export type MenuConfig = {
   feedName: string
+  feedDescription: string
   feedUrl: string
   defaultItemsToShow: number
   mailChimpListName?: string
@@ -45,7 +46,8 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
   public render() {
     const menuDropdown = this.renderMenu()
     const { menuConfig } = this.props
-    const { feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
+    const { feedName, feedDescription, feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
+
     return (
       <React.Fragment>
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">
@@ -53,18 +55,23 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
         </div>
         <div className="col-xs-10">
           {
-            <RssFeed
-              key={feedUrl}
-              url={feedUrl}
-              defaultItemsToShow={defaultItemsToShow}
-            />
+            <React.Fragment>
+              <h4 className="srcRssFeed">{feedName}</h4>
+              <p>{feedDescription}</p>
+              <RssFeed
+                key={feedUrl}
+                url={feedUrl}
+                defaultItemsToShow={defaultItemsToShow}
+              />
+            </React.Fragment>
           }
           {
             mailChimpUrl &&
             <div className="SRC-mailchimpSubscribeContainer">
               <h4 className="SRC-marginBottomTop">Subscribe</h4>
-              <p className="SRC-marginBottomTop">Subscribe to the {mailChimpListName}. Use the unsubscribe link in those e-mails to opt out at any time.</p>
-              <p className="SRC-marginBottomTop">We will not share your email with any third parties or use it for any other purposes.</p>
+              <p className="SRC-marginBottomTop">Subscribe to receive the {mailChimpListName} by e-mail, which provides information and updates related to the Portal. </p>
+              <p className="SRC-marginBottomTop">You can opt out at any time by using the unsubscribe link within the e-mail.</p>
+              <p className="SRC-marginBottomTop">We will not share your information with any third parties or use it for any other purposes.</p>
               <div className="SRC-marginBottomTop">
                 <MailchimpSubscribe
                   url={mailChimpUrl}

@@ -244,7 +244,7 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
           const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
           let { chartSelectionIndex } = this.state
           if (this.props.facet) {
-            data.facets.forEach((el: FacetColumnResultValues) => {
+            data.facets!.forEach((el: FacetColumnResultValues) => {
               if (el.facetType === 'enumeration') {
                 // isAll is only true iff there are no facets selected or all elements are selected
                 const { facetValues } = el
