@@ -8,7 +8,7 @@
         { "columnType": "LARGETEXT", "name": "projectName", "id": "69191" },
         { "columnType": "ENTITYID", "name": "id", "id": "2510" },
         {
-          "columnType": "ENTITYID",
+          "columnType": "USERID",
           "name": "projectFileviewId",
           "id": "69192"
         },

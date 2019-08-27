@@ -41,6 +41,7 @@ import UserCard from './UserCard'
 import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { getUserProfileWithProfilePicAttached } from './getUserData'
+import { UserGroupHeader } from 'lib/utils/jsonResponses/UserGroupHeader';
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -83,7 +84,7 @@ export type SynapseTableState = {
   isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
-  mapUserIdToHeader: Dictionary<any>
+  mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
@@ -191,7 +192,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         }
       )
       if (idsWithUserProfiles.length > 0) {
-        console.log('getting user profile with idsWithUserProfiles = ', idsWithUserProfiles)
         await getUserProfileWithProfilePicAttached(idsWithUserProfiles, token).then(
           data => {
             data.list.forEach(
@@ -210,7 +210,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   }
 
-  private getUniqueEntities(data: QueryResultBundle, mapEntityIdToHeader: {}, indicies: number []) {
+  public getUniqueEntities(data: QueryResultBundle, mapEntityIdToHeader: {}, indicies: number []) {
     const distinctEntities = new Set<string>()
     data!.queryResult.queryResults.rows.forEach((row) => {
       row.values.forEach((el: any, colIndex: number) => {
@@ -255,7 +255,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { queryResults } = queryResult
     const { rows } = queryResults
     const { headers } = queryResults
-    const { facets } = data
+    const { facets = [] } = data
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const backgroundColor = colorPalette[0]
     // handle displaying the previous button -- if offset is zero then it
@@ -344,7 +344,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
     // unpack all the data
     const { data } = this.props
-    const { queryResult, columnModels } = data!
+    const { queryResult, columnModels = [] } = data!
+    if (columnModels.length === 0) {
+      throw Error('Error on query request, must include columnModels to show aggregate sql')
+    }
     const { queryResults } = queryResult
     const { headers } = queryResults
     const parsed = this.getSqlUnderlyingDataForRow(
@@ -645,7 +648,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
-    const { isColumnSelected } = this.state
+    const { isColumnSelected, mapEntityIdToHeader, mapUserIdToHeader } = this.state
     const entityColumnIndicies = this.getEntityColumnIndiciesWithType('ENTITYID')
     const userColumnIndicies = this.getEntityColumnIndiciesWithType('USERID')
     const isColumnSelectedLen = isColumnSelected.length
@@ -677,7 +680,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                   }
                   {
                     !isCountColumn &&
-                    this.renderTableCell(entityColumnIndicies, userColumnIndicies, colIndex, columnValue, isBold)
+                    this.renderTableCell({ entityColumnIndicies, userColumnIndicies, colIndex, columnValue, isBold, mapEntityIdToHeader, mapUserIdToHeader })
                   }
               </td>
             )
@@ -693,19 +696,37 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   // Render table cell, supports Entity's and User Icons
-  private renderTableCell(entityColumnIndicies: number[], userColumnIndicies: number [], colIndex: number, columnValue: string, isBold: string): React.ReactNode {
-    const {
+  public renderTableCell(
+    { 
+      entityColumnIndicies,
+      userColumnIndicies,
+      colIndex,
+      columnValue,
+      isBold,
       mapEntityIdToHeader,
       mapUserIdToHeader
-    } = this.state
+    }:{ 
+      entityColumnIndicies: number[]; 
+      userColumnIndicies: number[];
+      colIndex: number;
+      columnValue: string;
+      isBold: string; 
+      mapEntityIdToHeader: Dictionary<EntityHeader>,
+      mapUserIdToHeader: Dictionary<any>
+    }): React.ReactNode {
     if (entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)) {
       return <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
     } else if (userColumnIndicies.includes(colIndex) && mapUserIdToHeader.hasOwnProperty(columnValue)) {
       const { ownerId, userName } = mapUserIdToHeader[columnValue]
       if (mapUserIdToHeader[columnValue].isIndividual === false) {
+        // isUserGroupHeader
         const icon = userName === AUTHENTICATED_USERS ? 'globe-americas': 'users'
+        if (userName === AUTHENTICATED_USERS) {
+          return <span className="SRC-boldText" ><FontAwesomeIcon icon={icon}/> All registered Synapse users </span>
+        }
         return (<a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>)
       } else {
+        // isUserCard
         return  (
           <UserCard 
             userProfile={mapUserIdToHeader[columnValue]} 
