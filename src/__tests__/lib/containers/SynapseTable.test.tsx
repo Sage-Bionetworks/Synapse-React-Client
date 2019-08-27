@@ -17,6 +17,7 @@ import { UserGroupHeader } from 'lib/utils/jsonResponses/UserGroupHeader';
 import { UserProfile } from 'lib/utils/jsonResponses/UserProfile';
 import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import UserCard from 'lib/containers/UserCard';
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow<SynapseTable>(
@@ -29,7 +30,6 @@ const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProp
 }
 
 describe('basic functionality', () => {
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
   // setup tests
   const title = 'studies'
   const synapseId = 'syn16787123'
@@ -412,7 +412,7 @@ describe('basic functionality', () => {
       expect(uniqueEntities.size).toEqual(1)
     })
     
-    describe.only('renders table cells correctly', () => {
+    describe('renders table cells correctly', () => {
       const entityColumnIndicies: number[] = [ENTITYID_INDEX]
       const userColumnIndicies: number [] = [USERID_INDEX]
       const mockEntityLinkValue: string = 'syn122'
@@ -494,10 +494,40 @@ describe('basic functionality', () => {
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('users')
       })
       it ('renders a user card link', () => {
-
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: USERID_INDEX,
+                  columnValue: mockUserCardValue,
+                  isBold: '',
+                  mapEntityIdToHeader: {},
+                  mapUserIdToHeader
+            })}
+          </div>
+        )
+        expect(tableCell.find(UserCard)).toHaveLength(1)
       })
       it ('renders a standard link', () => {
-
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: USERID_INDEX,
+                  columnValue: mockColumnValue,
+                  isBold: '',
+                  mapEntityIdToHeader: {},
+                  mapUserIdToHeader
+            })}
+          </div>
+        )
+        expect(tableCell.find('p').text().trim()).toEqual(mockColumnValue)
       })
     })
 
