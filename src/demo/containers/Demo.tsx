@@ -11,6 +11,7 @@ import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleReq
 import { OIDCAuthorizationRequest } from 'lib/utils/jsonResponses/OIDCAuthorizationRequest';
 import { OIDCAuthorizationRequestDescription } from 'lib/utils/jsonResponses/OIDCAuthorizationRequestDescription';
 import { AccessCodeResponse } from 'lib/utils/jsonResponses/AccessCodeResponse';
+import { OAuthClientPublic } from 'lib/utils/jsonResponses/OAuthClientPublic';
 
 type DemoState = {
   token: string
@@ -131,12 +132,23 @@ class Demo extends React.Component<{}, DemoState> {
       })
   }
 
+    /**
+   * Verify a oauth client information
+   */
+  public getOAuth2Client(): void {
+    SynapseClient.getOAuth2Client('100002')
+      .then((data: OAuthClientPublic) => console.log(data))
+      .catch((error: any) => {
+        console.error('Get OAuthClientPublic failed', error)
+      })
+  }
+
   /**
    * Verify a oauth client request
    */
   public getOAuth2RequestDescription(): void {
     const OAUTH2REQUEST:OIDCAuthorizationRequest = {
-      clientId: '100001',
+      clientId: '100002',
       scope: 'openid',
       claims: '{"id_token":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}},"userinfo":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}}}',
       responseType: 'code',
@@ -156,7 +168,7 @@ class Demo extends React.Component<{}, DemoState> {
    */
   public onOAuth2RequestConsent(): void {
     const OAUTH2REQUEST:OIDCAuthorizationRequest = {
-      clientId: '100001',
+      clientId: '100002',
       scope: 'openid',
       claims: '{"id_token":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}},"userinfo":{"team":{"values":["101"]},"given_name":{"essential":true},"family_name":{"essential":true},"email":{"essential":true},"company":{"essential":false}}}',
       responseType: 'code',
@@ -349,6 +361,13 @@ class Demo extends React.Component<{}, DemoState> {
               className="btn btn-info"
             >
               Test onOAuth2RequestConsent
+            </button>
+            <br />
+            <button
+              onClick={this.getOAuth2Client}
+              className="btn btn-info"
+            >
+              Test getOAuth2Client
             </button>
             <hr />
           </div>
