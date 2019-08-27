@@ -23,10 +23,11 @@ import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTable
 import { ReferenceList } from './jsonResponses/ReferenceList'
 import { EntityHeader } from './jsonResponses/EntityHeader'
 import { PaginatedResults } from './jsonResponses/PaginatedResults'
-import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest';
-import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationRequest';
-import { OIDCAuthorizationRequestDescription } from './jsonResponses/OIDCAuthorizationRequestDescription';
-import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse';
+import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
+import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationRequest'
+import { OIDCAuthorizationRequestDescription } from './jsonResponses/OIDCAuthorizationRequestDescription'
+import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
+import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -985,6 +986,15 @@ export const getOAuth2RequestDescription = (
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<OIDCAuthorizationRequestDescription> => {
   return doPost('/auth/v1/oauth2/description', oidcAuthRequest, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Get OAuth2 Client information (available to the public)
+ */
+export const getOAuth2Client = (
+  clientId: string,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<OAuthClientPublic> => {
+  return doGet(`/auth/v1/oauth2/client/${clientId}`, undefined, undefined, endpoint)
 }
 
 /**
