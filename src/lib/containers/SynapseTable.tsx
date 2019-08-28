@@ -53,7 +53,7 @@ library.add(faSortAmountDown)
 library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
-// library.add(faDatabase)
+library.add(faDatabase)
 library.add(faDownload)
 library.add(faUsers)
 library.add(faGlobeAmericas)
@@ -314,7 +314,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               onKeyPress={this.advancedSearch}
               onClick={this.advancedSearch}
             >
-              <FontAwesomeIcon size="1x" color="white"  icon={faDatabase}/>
+              <FontAwesomeIcon size="1x" color="white"  icon={'database'}/>
             </span>
             <ReactTooltip
                 delayShow={1500}
