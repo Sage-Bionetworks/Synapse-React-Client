@@ -730,7 +730,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         // isUserGroupHeader
         const icon = userName === AUTHENTICATED_USERS ? 'globe-americas': 'users'
         if (userName === AUTHENTICATED_USERS) {
-          return <span className="SRC-boldText" ><FontAwesomeIcon icon={icon}/> All registered Synapse users </span>
+          return <span ><FontAwesomeIcon icon={icon}/> All registered Synapse users </span>
         }
         return (<a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>)
       } else {

@@ -471,7 +471,7 @@ describe('basic functionality', () => {
             })}
           </div>
         )
-        expect(tableCell.find('span.SRC-boldText').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
+        expect(tableCell.find('span').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('globe-americas')
       })
       it ('renders a link for a team', () => {
