@@ -144,6 +144,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    * @memberof Facets
    */
   public showFacetFilter() {
+    if (!this.props.data!.facets) {
+      throw Error('Error on query request, must include facets in partmask to show facets')
+    }
     // Find the facetcolumn result according to the input filter
     const facetColumnResult = this.props.data!.facets!.find(el => el.columnName === this.props.facet && el.facetType === 'enumeration')
     if (!facetColumnResult) {

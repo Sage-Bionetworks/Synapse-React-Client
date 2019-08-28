@@ -22,7 +22,7 @@ describe('it basic tests', () => {
   SynapseClient.getFileEntityContent = jest.fn(() => Promise.resolve(formschemaJson))
   SynapseClient.getUserProfile = jest.fn(() => Promise.resolve(mockUserProfileData))
   const targetFolderId = 'syn9988882982'
-  SynapseClient.lookupChildEntity = jest.fn(() => Promise.resolve(targetFolderId))
+  SynapseClient.lookupChildEntity = jest.fn(() => Promise.resolve({id: targetFolderId}))
   SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
   const token: string = '123444'
   const parentContainerId: string = 'syn20355732'
