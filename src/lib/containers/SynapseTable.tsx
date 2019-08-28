@@ -153,7 +153,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     if (!data) {
       return
     }
-    const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
+    const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
+    const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
     const userIdColumnIndicies = this.getColumnIndiciesWithType('USERID')
     const distinctEntityIds = this.getUniqueEntities(data, mapEntityIdToHeader, entityIdColumnIndicies)
@@ -174,9 +175,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       }
     }
     if (distinctUserIds.size === 0) {
-      this.setState({
-        mapEntityIdToHeader
-      })
+      if (distinctEntityIds.size > 0) {
+       this.setState({mapEntityIdToHeader}) 
+      }
       return
     }
     // Make call to get group headers and user profiles
@@ -209,10 +210,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         console.error('Error on getUserProfile : ', err)
       }
     }
-    this.setState({
-      mapEntityIdToHeader,
-      mapUserIdToHeader
-    })
+    if (distinctEntityIds.size > 0 || distinctUserIds.size > 0) {
+      this.setState({
+        mapEntityIdToHeader,
+        mapUserIdToHeader
+      })
+    }
   }
 
   public getUniqueEntities(data: QueryResultBundle, mapIdToHeader: {}, indicies: number []) {
@@ -220,7 +223,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     data!.queryResult.queryResults.rows.forEach((row) => {
       row.values.forEach((el: any, colIndex: number) => {
         // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
-        if (indicies.includes(colIndex) && !mapIdToHeader.hasOwnProperty(el) && !el) {
+        if (indicies.includes(colIndex) && !mapIdToHeader.hasOwnProperty(el) && el) {
           distinctEntities.add(el)
         }
       })

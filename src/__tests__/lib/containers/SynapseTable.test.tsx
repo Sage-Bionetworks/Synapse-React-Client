@@ -391,9 +391,9 @@ describe('basic functionality', () => {
     const { wrapper, instance } = createShallowComponent({...props, data: mockData})
     
     it('gets column indicies correctly ', () => {
-      const entities = instance.getEntityColumnIndiciesWithType('ENTITYID')
+      const entities = instance.getColumnIndiciesWithType('ENTITYID')
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = instance.getEntityColumnIndiciesWithType('USERID')
+      const userIds = instance.getColumnIndiciesWithType('USERID')
       expect(userIds).toEqual([USERID_INDEX])
     })
 
