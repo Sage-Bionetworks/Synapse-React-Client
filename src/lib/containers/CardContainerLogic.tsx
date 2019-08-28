@@ -13,6 +13,11 @@ export type InternalLinkConfiguration = {
   columnValues: string []
 }
 
+export type SecondaryLabelLinkConfiguration = {
+  baseURL: string
+  columnValues: string []
+}
+
 export type CommonCardProps = {
   type: string
   genericCardSchema?: GenericCardSchema

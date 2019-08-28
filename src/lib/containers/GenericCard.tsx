@@ -36,6 +36,7 @@ export type GenericCardProps = {
   data: any
   secondaryLabelLimit?: number
   internalLinkConfiguration?: InternalLinkConfiguration
+  secondaryLabelLinkConfiguration?: SecondaryLabelLinkConfiguration
 }
 
 export type GenericCardState = {
@@ -61,7 +62,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     }
   }
 
-  public getLink (link: string, internalLinkConfiguration?: InternalLinkConfiguration, data?: string [], schema?: any) {
+  public getLink = (link: string, internalLinkConfiguration?: InternalLinkConfiguration, data?: string [], schema?: any) => {
     let linkDisplay = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
