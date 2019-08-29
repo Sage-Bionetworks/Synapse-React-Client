@@ -1,229 +1,5 @@
-.markdowntable {
-    border: 1px solid #dddddd;
-    border-collapse: separate;
-    *border-collapse: collapsed;
-    border-left: 0;
-    margin: 10px 0 10px 0;
-}
-.markdowntable td {
-  border-left: 1px solid #dddddd;
-  border-top: 1px solid #dddddd;
-  padding: 2px 4px;
-}
-.markdowntable th {
-  border-left: 1px solid #dddddd;
-  border-top: 1px solid #dddddd;
-  padding: 2px 4px;
-  font-weight: 500;
-  font-size: 1.1em;
-}
-.markdowntable .userBadgeTable {
-  top: 0px;
-}
-.markdowntable caption + thead tr:first-child th,
-.markdowntable caption + tbody tr:first-child th,
-.markdowntable caption + tbody tr:first-child td,
-.markdowntable colgroup + thead tr:first-child th,
-.markdowntable colgroup + tbody tr:first-child th,
-.markdowntable colgroup + tbody tr:first-child td,
-.markdowntable thead:first-child tr:first-child th,
-.markdowntable tbody:first-child tr:first-child th,
-.markdowntable tbody:first-child tr:first-child td {
-  border-top: 0;
-}
-.markdowntable thead:first-child tr:first-child th:first-child,
-.markdowntable tbody:first-child tr:first-child td:first-child {
-  -webkit-border-top-left-radius: 4px;
-  border-top-left-radius: 4px;
-  -moz-border-radius-topleft: 4px;
-}
-.markdowntable thead:first-child tr:first-child th:last-child,
-.markdowntable tbody:first-child tr:first-child td:last-child {
-  -webkit-border-top-right-radius: 4px;
-  border-top-right-radius: 4px;
-  -moz-border-radius-topright: 4px;
-}
-.markdowntable thead:last-child tr:last-child th:first-child,
-.markdowntable tbody:last-child tr:last-child td:first-child {
-  -webkit-border-bottom-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  -moz-border-radius-bottomleft: 4px;
-}
-.markdowntable thead:last-child tr:last-child th:last-child,
-.markdowntable tbody:last-child tr:last-child td:last-child {
-  -webkit-border-bottom-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  -moz-border-radius-bottomright: 4px;
-}
-
-.markdown {
-  word-wrap: break-word;
-  overflow-x: auto;
-  overflow-y: hidden;
-  line-height: 1.8em;
-  color: #000000;
-}
-.markdown ol {
-  list-style-type: decimal;
-  padding-left: 15px;
-}
-.markdown ol li {
-  padding-top: 5px;
-}
-.markdown ul {
-  list-style-type: square;
-  padding-left: 17px;
-}
-.markdown ul li {
-  padding-top: 5px;
-}
-.markdown strong {
-  font-weight: bold;
-}
-.markdown del {
-  text-decoration: line-through;
-}
-.markdown em {
-  font-style: italic;
-}
-.markdown blockquote {
-  margin: 1em 3em;
-  padding: 0.5em 1em;
-  background-color: #fcf8f2;
-  border-left: 3px solid #f0ad4e;
-  font-size: 13px;
-}
-.markdown blockquote h4, .markdown blockquote h3, .markdown blockquote h2, .markdown blockquote h1 {
-  color: #f0ad4e;
-}
-.markdown code {
-  font-family: 'Courier New', Courier, monospace !important;
-  background-clip: padding-box;
-  border-radius: 3px 3px 3px 3px;
-  padding: 0 5px 2px;
-  overflow: auto;
-  white-space: pre;
-  word-wrap: normal;
-}
-.markdown img {
-  max-width: 100%;
-}
-.markdown p {
-  margin: 0px;
-  padding-bottom: 12px;
-}
-.markdown h1 {
-  padding: 35px 0 12px 0;
-}
-.markdown h2 {
-  padding: 29px 0 10px 0;
-}
-.markdown h3 {
-  padding: 23px 0 8px 0;
-}
-.markdown h4 {
-  padding: 17px 0 6px 0;
-}
-.markdown h5 {
-  padding: 11px 0 4px 0;
-}
-.markdown h6 {
-  padding: 5px 0 2px 0;
-}
-
-.inlineWidgetContainer {
-  display: inline-block;
-}
-
 //////////////////////////////////////////////////////////////
-// Google Lato Fon                                          //
-//////////////////////////////////////////////////////////////
-
-/* latin-ext */
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v14/S6uyw4BMUTPHjxAwXiWtFCfQ7A.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v14/S6uyw4BMUTPHjx4wXiWtFCc.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-.link {
-  color: #2B688F;
-}
-
-.markdown {
-  line-height: 1.85em;
-  word-wrap: break-word;
-  overflow-x: auto;
-  overflow-y: hidden;
-  line-height: 1.8em;
-  color: #000000;
-}
-
-.toc-indent1 {
-  margin-left: 35px;
-}
-
-.toc-indent2 {
-  margin-left: 65px;
-}
-
-.toc-indent3 {
-  margin-left: 95px;
-}
-
-.toc-indent4 {
-  margin-left: 125px;
-}
-
-.toc-indent5 {
-  margin-left: 155px;
-}
-
-.toc-indent6 {
-  margin-left: 185px;
-}
-
-.userProfileImage {
-  border-radius: 50%;
-  height: 23px;
-  width: 23px;
-  min-width: 23px;
-}
-
-/*-------------------------------------------------------*/
-/* ### Loading spinner ### */
-/*-------------------------------------------------------*/
-@keyframes spinner {
-  to {transform: rotate(360deg);}
-}
-
-.spinner {
-  box-sizing: border-box;
-  display: inline-block;
-  margin: auto;
-  position: relative;
-  width:20px;
-  height:20px;
-  background-image:url('../assets/logos/logo.svg');
-  animation: spinner 1s linear infinite;
-  background-size:20px 20px;
-  background-repeat: no-repeat;
-}
-
-/* End loading spinner */
-
-//////////////////////////////////////////////////////////////
-// Synapse React Client (SRC) Custom scss not in SWC        //
+// Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 
 svg.SRC-hoverBox {
@@ -347,6 +123,10 @@ span.SRC-facets svg.SRC-facets-icon {
   background: white;
 }
 
+.SRC-table-checkbox {
+  margin: 17px 0px;
+}
+
 .SRC-chart-rect-style {
   margin: 0px;
   stroke-width: 1px;
@@ -421,60 +201,17 @@ a.SRC-anchor-light {
  }
 
  
- .SRC-no-text-decor {
-   text-decoration: none;
-  }
- 
- .SRC-no-underline-on-hover:hover {
-   text-decoration: none;
-  }
- 
- .SRC-underline-on-hover:hover {
-   text-decoration: underline;
-  }
-
-  $primaryColor: #D53F77;
-  
-  .SRC-primary-text-color {
-    color: $primaryColor;
-  }
-  
-  // These classes have to get overriden
-  .SRC-primary-color-hover:hover * {
-    color: $primaryColor;
-    fill: $primaryColor;
-  }
-
- .SRC-primary-background-color {
-   background-color: $primaryColor;
- }
-
- .SRC-primary-background-color-border-left {
-  border-left-color: $primaryColor;
+.SRC-no-text-decor {
+  text-decoration: none;
 }
 
-%hoverFade {
-    transition: all 400ms;
-  }
+.SRC-no-underline-on-hover:hover {
+  text-decoration: none;
+}
 
-  %defaultBoxShadow {
-    box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5);
-  }
-
-  .SRC-primary-background-color-hover:hover {
-   background-color: $primaryColor; 
-   > svg {
-     color: white;
-   }
-   &.SRC-nested-color:hover {
-     * {
-       background-color: $primaryColor;
-       color: white;
-     }
-   }
- }
-
-// end overrides
+.SRC-underline-on-hover:hover {
+  text-decoration: underline;
+}
 
 .SRC-marginFifteen {
   margin-left: 15px;
@@ -555,9 +292,6 @@ a.SRC-anchor-light {
 .SRC-background-unset {
   background: unset;
 }
-.SRC-menu-button-base:focus {
-  outline: $primaryColor;
-}
 
 .SRC-text-shadow {
   text-shadow: #505050 2px 2px 4px;
@@ -631,7 +365,6 @@ a.SRC-anchor-light {
 .scrollable {
   padding-left: 20px;
   padding-right: 20px;
-  padding-top: 15px;
   max-height: 300px;
   overflow: hidden;
   overflow-y: scroll;
@@ -693,17 +426,6 @@ a.SRC-anchor-light {
   margin-left: 10px;
 }
 
-.tableDropdownSelector {
-  color: #4E5491;
-  font-size: 13px;
-  font-weight: 600;
-  border:none;
-  background: white;
-  &:focus {
-    outline: $primaryColor;
-  }
-}
-
 .SRC-extraPadding {
   padding: 5px;
 }
@@ -726,17 +448,6 @@ a.SRC-anchor-light {
 
 .SRC-limitMaxWidth {
   max-width: 70%;
-}
-
-.SRC-viewMoreButton {
-  background: #DFDFDF;
-  border-radius: 24px;
-  width: 130px;
-  height: 40px;
-  margin: 21px;
-  &:focus {
-    outline: $primaryColor;
-  }
 }
 
 /*
@@ -766,40 +477,6 @@ a.SRC-anchor-light {
   width: 0;
 }
 
-/* Create a custom checkbox */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  border: 1px solid #DDDDDF;
-  width: 20px;
-}
-
-/* On mouse-over, add a grey background color */
-.containerCheckbox:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-
-/* When the checkbox is checked, add a blue background */
-.containerCheckbox input:checked ~ .checkmark {
-  background-image: url("../assets/icons/selected.svg");
-  background-repeat: no-repeat;
-  background-size: 20px;
-}
-
-/* Create the checkmark/indicator (hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the checkmark when checked */
-.containerCheckbox input:checked ~ .checkmark:after {
-  display: block;
-}
-
 .loginContainer {
   max-width: 350px;
   background: white;
@@ -808,12 +485,6 @@ a.SRC-anchor-light {
 .SRC-minDropdownWidth {
   width: 240px;
 }
-
-/*
-
-checkmark styling end
-
-*/
 
 .SRC-facets-divider {
   margin-left: 5px;
@@ -1211,38 +882,8 @@ div.SRC-userImg {
   height: 30px;
 }
 
-.SRC-chart-link {
-  position: relative;
-  a {
-    position: absolute;
-    bottom: 8px;
-    right: 50px;
-    border-radius: 24px;
-    background-color: $primaryColor;
-    color: white !important;
-    height: 44px;
-    width: 257px;
-    text-transform: uppercase;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none !important;
-    &:hover {
-      @extend %hoverFade;
-      @extend %defaultBoxShadow;
-    }
-  }
-}
-
 .SRC-loadingContainer {
   min-height: 100px;
-}
-
-.SRC-basicButton {
-  border: none;
-  background: none;
-  color: $primaryColor;
 }
 
 // sample style for rss (news) feed
@@ -1252,7 +893,6 @@ div.SRC-userImg {
   padding-top: 29px;
 }
 .srcRssFeedItem {
-  // color: $primaryColor;
   border:1px solid #dddddf;
   padding: 25px 35px 25px 35px;
   margin-bottom: 30px;
@@ -1287,10 +927,6 @@ div.SRC-userImg {
   span {
     padding-right: 10px;
   }
-}
-
-.SRC-accordion-key {
-  border: 1px solid #DCDCDC;
 }
 
 .SRC-accordion-menu {
@@ -1343,32 +979,8 @@ button {
   display: block;
 }
 
-.SRC-mailchimpSubscribeContainer {
-  padding: 10px 20px 10px 0px;
-  margin-bottom: 20px;
-  input {
-    width: 570px;
-    height: 45px;
-    margin-top: 10px;
-    padding-left: 8px;
-  }
-  button {
-    display: block;
-    margin-top: 20px;
-    padding: 6px 25px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 24px;
-    background-color: $primaryColor;
-    color:white;
-  }
-}
-
 .highlight {
-  // background: rgb(244, 248, 253);
-  // color: rgb(0, 61, 129);
   font-weight: bold;
-  // border: rgb(0, 61, 129) solid 2px;
   padding: 2px;
 }
 
@@ -1385,8 +997,4 @@ button {
     padding: 10px;
     border: 1px solid rgba(196,196,196,0.4);
   }
-}
-
-:focus {
-  outline-color: $primaryColor;
 }

@@ -46,15 +46,17 @@ export default class CardContainerLogicDemo extends React.Component {
       subTitle: 'Data_Contributor',
       description: 'Study_Description',
       icon: 'Access_Type',
-      secondaryLabels: ['DataType_All',
+      secondaryLabels: [
+        'DataType_All',
         'Diagnosis_or_Model_System',
         'Number_of_Individuals',
         'Sample_Type',
-        'Species',
+        'Species' ,
         'Cohort_Type',
         'Study_Status',
         'Consortium',
-        'Grant']
+        'Grant',
+      ]
     }
     return (
       <div>

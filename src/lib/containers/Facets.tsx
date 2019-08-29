@@ -94,7 +94,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (props: Check
     children.push(
       <label
         style={style}
-        className="SRC-facets SRC-primary-background-color-hover SRC-nested-color"
+        className="SRC-facets SRC-primary-background-color-hover "
         key={key}
       >
         <span className="SRC-facets-text">
@@ -144,8 +144,11 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
    * @memberof Facets
    */
   public showFacetFilter() {
+    if (!this.props.data!.facets) {
+      throw Error('Error on query request, must include facets in partmask to show facets')
+    }
     // Find the facetcolumn result according to the input filter
-    const facetColumnResult = this.props.data!.facets.find(el => el.columnName === this.props.facet && el.facetType === 'enumeration')
+    const facetColumnResult = this.props.data!.facets!.find(el => el.columnName === this.props.facet && el.facetType === 'enumeration')
     if (!facetColumnResult) {
       throw Error('Error no matching facet found given specified facet')
     }
@@ -252,7 +255,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     let { showAllFacets } = this.state
     const { data, facet, unitDescription, isLoading, showBarChart } = this.props
     const { facets } = data
-
+    if (!facets) {
+      throw Error('Error on query request, must include facets in partmask to show facets')
+    }
     const curFacetsIndex = facets.findIndex(curFacet => curFacet.columnName === facet && curFacet.facetType === 'enumeration')
     // cast is necessary because filter returns an array of arrays
     const facetColumnResultValues = facets[curFacetsIndex] as FacetColumnResultValues

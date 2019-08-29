@@ -10,14 +10,22 @@ import { Row } from '../../../lib/utils/jsonResponses/Table/QueryResult'
 import { SelectColumn } from '../../../lib/utils/jsonResponses/Table/SelectColumn'
 import { ColumnModel } from '../../../lib/utils/jsonResponses/Table/ColumnModel'
 import ModalDownload from '../../../lib/containers/ModalDownload'
+import { EntityLink } from 'lib/containers/EntityLink'
+import { EntityHeader } from 'lib/utils/jsonResponses/EntityHeader'
+import { Dictionary } from 'lodash'
+import { UserGroupHeader } from 'lib/utils/jsonResponses/UserGroupHeader'
+import { UserProfile } from 'lib/utils/jsonResponses/UserProfile'
+import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import UserCard from 'lib/containers/UserCard'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
-  const wrapper = shallow(
+  const wrapper = shallow<SynapseTable>(
       <SynapseTable
         {...props}
       />
     )
-  const instance = wrapper.instance() as SynapseTable
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
@@ -310,7 +318,218 @@ describe('basic functionality', () => {
         }
       ))
     })
-
   })
 
+  describe('table cells render correctly', () => {
+    const ENTITYID_INDEX = 0
+    const USERID_INDEX = 1
+    const MOCKED_STRING = 'MOCKED_VALUE'
+    const MOCKED_NUM = 1
+    // syn16787123Json has two columns of type entity, the second
+    // is of type ENTITYID, the third is USERID
+    const mockData: QueryResultBundle = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      selectColumns: [
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'ENTITYID'
+        },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'USERID'
+        },
+      ],
+      queryResult: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+        queryResults: {
+          concreteType: "org.sagebionetworks.repo.model.table.RowSet",
+          tableId: MOCKED_STRING,
+          etag: MOCKED_STRING,
+          headers: [
+            {
+              columnType: 'ENTITYID',
+              name: MOCKED_STRING,
+              id: MOCKED_STRING
+            },
+            {
+              columnType: 'USERID',
+              name: MOCKED_STRING,
+              id: MOCKED_STRING
+            },
+          ],
+          rows: [
+            {
+              values: [
+                'syn123',
+                'syn120',
+              ],
+              versionNumber: MOCKED_NUM,
+              rowId: MOCKED_NUM
+            },
+            {
+              values: [
+                'syn124',
+                'syn120',
+              ],
+              versionNumber: MOCKED_NUM,
+              rowId: MOCKED_NUM
+            },
+            {
+              values: [
+                'syn125',
+                'syn121',
+              ],
+              versionNumber: MOCKED_NUM,
+              rowId: MOCKED_NUM
+            },
+          ]
+        }
+      }
+    }
+    const { wrapper, instance } = createShallowComponent({...props, data: mockData})
+    
+    it('gets column indicies correctly ', () => {
+      const entities = instance.getColumnIndiciesWithType('ENTITYID')
+      expect(entities).toEqual([ENTITYID_INDEX])
+      const userIds = instance.getColumnIndiciesWithType('USERID')
+      expect(userIds).toEqual([USERID_INDEX])
+    })
+
+    it('gets unique entities', () => {
+      // test entityId column type
+      let mapEntityIdToHeader = {}
+      let indicies = [ENTITYID_INDEX]
+      let uniqueEntities = instance.getUniqueEntities(mockData, mapEntityIdToHeader, indicies)
+      expect(uniqueEntities.size).toEqual(3)
+      // test userId column
+      mapEntityIdToHeader = {
+        syn120: {}
+      }
+      indicies = [USERID_INDEX]
+      uniqueEntities = instance.getUniqueEntities(mockData, mapEntityIdToHeader, indicies)
+      expect(uniqueEntities.size).toEqual(1)
+    })
+    
+    describe('renders table cells correctly', () => {
+      const entityColumnIndicies: number[] = [ENTITYID_INDEX]
+      const userColumnIndicies: number [] = [USERID_INDEX]
+      const mockEntityLinkValue: string = 'syn122'
+      const mockUserCardValue: string = 'syn123'
+      const mockAllAuthenticatedUsersValue: string = 'syn124'
+      const mockTeamValue: string = 'syn125'
+      const teamName: string = 'team name'
+      const mockColumnValue: string = 'syn126'
+      // We only care about the conditional rendering, not the 
+      // instantiation of the EntityLink, so we cast the value
+      const mapEntityIdToHeader = {
+        [mockEntityLinkValue]: {} as EntityHeader
+      }
+      const mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>> = {
+        [mockAllAuthenticatedUsersValue]: {
+          isIndividual: false,
+          userName: AUTHENTICATED_USERS
+        },
+        [mockTeamValue]: {
+          isIndividual: false,
+          userName: teamName
+        },
+        [mockUserCardValue]: {},
+      }
+      it ('renders an entity link', () => {
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: ENTITYID_INDEX,
+                  columnValue: mockEntityLinkValue,
+                  isBold: '',
+                  mapEntityIdToHeader,
+                  mapUserIdToHeader: {}
+            })}
+          </div>
+        )
+        expect(tableCell.find(EntityLink)).toHaveLength(1)
+      })
+      it ('renders a link for all authenticated users', () => {
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: USERID_INDEX,
+                  columnValue: mockAllAuthenticatedUsersValue,
+                  isBold: '',
+                  mapEntityIdToHeader: {},
+                  mapUserIdToHeader
+            })}
+          </div>
+        )
+        expect(tableCell.find('span').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
+        expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('globe-americas')
+      })
+      it ('renders a link for a team', () => {
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: USERID_INDEX,
+                  columnValue: mockTeamValue,
+                  isBold: '',
+                  mapEntityIdToHeader: {},
+                  mapUserIdToHeader
+            })}
+          </div>
+        )
+        expect(tableCell.find('a').text().trim()).toEqual(`<FontAwesomeIcon /> ${teamName}`)
+        expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('users')
+      })
+      it ('renders a user card link', () => {
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: USERID_INDEX,
+                  columnValue: mockUserCardValue,
+                  isBold: '',
+                  mapEntityIdToHeader: {},
+                  mapUserIdToHeader
+            })}
+          </div>
+        )
+        expect(tableCell.find(UserCard)).toHaveLength(1)
+      })
+      it ('renders a standard value', () => {
+        const tableCell = shallow(
+          <div>
+            {
+              instance.renderTableCell(
+                { 
+                  entityColumnIndicies, 
+                  userColumnIndicies,
+                  colIndex: USERID_INDEX,
+                  columnValue: mockColumnValue,
+                  isBold: '',
+                  mapEntityIdToHeader: {},
+                  mapUserIdToHeader
+            })}
+          </div>
+        )
+        expect(tableCell.find('p').text().trim()).toEqual(mockColumnValue)
+      })
+    })
+
+  })
 })

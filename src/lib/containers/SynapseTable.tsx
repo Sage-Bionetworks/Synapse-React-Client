@@ -8,7 +8,9 @@ import {
   faSortAmountDown,
   faSortAmountUp,
   faTimes,
-  faDownload
+  faDownload,
+  faUsers,
+  faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
@@ -19,7 +21,7 @@ import { FacetColumnResult,
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
-import { SelectColumn } from '../utils/jsonResponses/Table/SelectColumn'
+import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { cloneDeep } from '../utils/modules/'
@@ -34,6 +36,12 @@ import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
 import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { EntityLink } from './EntityLink'
 import TotalQueryResults from './TotalQueryResults'
+import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
+import UserCard from './UserCard'
+import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
+import { UserProfile } from '../utils/jsonResponses/UserProfile'
+import { getUserProfileWithProfilePicAttached } from './getUserData'
+import { UserGroupHeader } from '../utils/jsonResponses/UserGroupHeader'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -47,6 +55,8 @@ library.add(faTimes)
 library.add(faFilter)
 library.add(faDatabase)
 library.add(faDownload)
+library.add(faUsers)
+library.add(faGlobeAmericas)
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
@@ -74,6 +84,7 @@ export type SynapseTableState = {
   isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
+  mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
@@ -121,11 +132,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       // selected currently and their sort status as eithet
       // off, desc, or asc.
       sortedColumnSelection: [],
-      mapEntityIdToHeader: {}
+      mapEntityIdToHeader: {},
+      mapUserIdToHeader: {}
     }
     this.renderFacetSelection = this.renderFacetSelection.bind(this)
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
-    this.getEntityColumnIndicies = this.getEntityColumnIndicies.bind(this)
+    this.getColumnIndiciesWithType = this.getColumnIndiciesWithType.bind(this)
   }
 
   componentDidMount() {
@@ -136,52 +148,94 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.getEntityHeadersInData()
   }
 
-  public getEntityHeadersInData() {
+  public async getEntityHeadersInData() {
     const { data, token } = this.props
     if (!data) {
       return
     }
-    const { mapEntityIdToHeader } = this.state
-    const entityColumnIndicies = this.getEntityColumnIndicies()
-    const distinctEntities = new Set<string>()
-    data!.queryResult.queryResults.rows.forEach(
-      (row) => {
-        row.values.forEach((el, colIndex) => {
-          // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
-          if (entityColumnIndicies.includes(colIndex) && !mapEntityIdToHeader.hasOwnProperty(el)) {
-            distinctEntities.add(el)
-          }
-        }
-      )
-    })
-    if (distinctEntities.size === 0) {
-      return
-    }
-    const referenceList: ReferenceList = Array.from(distinctEntities).map(id => { return { targetId: id }})
-    SynapseClient.getEntityHeader(referenceList, token).then(
-      data => {
+    const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
+    const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
+    const entityIdColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
+    const userIdColumnIndicies = this.getColumnIndiciesWithType('USERID')
+    const distinctEntityIds = this.getUniqueEntities(data, mapEntityIdToHeader, entityIdColumnIndicies)
+    const distinctUserIds = this.getUniqueEntities(data, mapUserIdToHeader, userIdColumnIndicies)
+    // Make call to resolve entity ids
+    if (distinctEntityIds.size > 0) {
+      const referenceList: ReferenceList = Array.from(distinctEntityIds).map(id => { return { targetId: id }})
+      try {
+        const data = await SynapseClient.getEntityHeader(referenceList, token)
         const { results } = data
         results.forEach(
           el => {
             mapEntityIdToHeader[el.id] = el
           }
         )
-        this.setState({
-          mapEntityIdToHeader
-        })
+      } catch (err) {
+        console.error('Error on retrieving entity header list , ', err)
       }
-    ).catch(
-      err => {
-        console.log('Error on retrieving entity header list , ', err)
+    }
+    if (distinctUserIds.size === 0) {
+      if (distinctEntityIds.size > 0) {
+       this.setState({mapEntityIdToHeader}) 
       }
-    )
+      return
+    }
+    // Make call to get group headers and user profiles
+    const ids = Array.from(distinctUserIds)
+    const idsWithUserProfiles: string [] = []
+    // TODO: Grab Team Badge
+    try {
+      const data = await SynapseClient.getGroupHeadersBatch(ids, token)
+      data.children.forEach(
+        (el) => {
+          if (el.isIndividual) {
+            idsWithUserProfiles.push(el.ownerId)
+          } else {
+            mapUserIdToHeader[el.ownerId] = el
+          }
+        }
+      )
+    } catch (err) {
+      console.error('Error on getGroupHeaders batch: ', err)
+    }
+    if (idsWithUserProfiles.length > 0) {
+      try {
+        const data = await getUserProfileWithProfilePicAttached(idsWithUserProfiles, token)
+        data.list.forEach(
+          (el: UserProfile) => {
+            mapUserIdToHeader[el.ownerId] = el
+          }
+        )
+      } catch (err) {
+        console.error('Error on getUserProfile : ', err)
+      }
+    }
+    if (distinctEntityIds.size > 0 || distinctUserIds.size > 0) {
+      this.setState({
+        mapEntityIdToHeader,
+        mapUserIdToHeader
+      })
+    }
   }
 
-  public getEntityColumnIndicies() {
+  public getUniqueEntities(data: QueryResultBundle, mapIdToHeader: {}, indicies: number []) {
+    const distinctEntities = new Set<string>()
+    data!.queryResult.queryResults.rows.forEach((row) => {
+      row.values.forEach((el: any, colIndex: number) => {
+        // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
+        if (indicies.includes(colIndex) && !mapIdToHeader.hasOwnProperty(el) && el) {
+          distinctEntities.add(el)
+        }
+      })
+    })
+    return distinctEntities
+  }
+
+  public getColumnIndiciesWithType(columnType: EntityColumnType) {
     const { data } = this.props
     const columnsOfTypeEntity: number [] = []
     data && data.selectColumns && data.selectColumns.forEach((el, index) => {
-      if (el.columnType === 'ENTITYID') {
+      if (el.columnType === columnType) {
         columnsOfTypeEntity.push(index)
       } 
     })
@@ -209,7 +263,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { queryResults } = queryResult
     const { rows } = queryResults
     const { headers } = queryResults
-    const { facets } = data
+    const { facets = [] } = data
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const backgroundColor = colorPalette[0]
     // handle displaying the previous button -- if offset is zero then it
@@ -260,7 +314,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               onKeyPress={this.advancedSearch}
               onClick={this.advancedSearch}
             >
-              <FontAwesomeIcon size="1x" color="white"  icon="database"/>
+              <FontAwesomeIcon size="1x" color="white"  icon={'database'}/>
             </span>
             <ReactTooltip
                 delayShow={1500}
@@ -299,6 +353,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // unpack all the data
     const { data } = this.props
     const { queryResult, columnModels } = data!
+    if (!columnModels) {
+      throw Error('Error on query request, must include columnModels in partmask to show aggregate sql')
+    }
     const { queryResults } = queryResult
     const { headers } = queryResults
     const parsed = this.getSqlUnderlyingDataForRow(
@@ -342,7 +399,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')}
           >
-            <a className="SRC-no-focus" href="javascript:void">
+            <a href="javascript:void">
               Export Metadata
             </a>
           </li>
@@ -351,7 +408,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.advancedSearch}
           >
-          <a className="SRC-no-focus" href="javascript:void">
+          <a href="javascript:void">
             Download Files
           </a>
         </li>
@@ -363,7 +420,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
     const { isDropdownColumnMenuOpen } = this.state
     const tooltipColumnSelectionId = 'addAndRemoveColumns'
-    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover dropdown-toggle SRC-hand-cursor'
+    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
     addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     return (
       <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
@@ -528,7 +585,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const previous = (
       <button
         onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-primary-background-color-hover SRC-viewMoreButton pull-right"
+        className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
         type="button"
       >
         Previous
@@ -539,7 +596,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       (
         <button
           onClick={this.handlePaginationClick(NEXT)}
-          className="SRC-primary-background-color-hover SRC-viewMoreButton pull-right"
+          className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
           type="button"
         >
           Next
@@ -581,11 +638,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return (
         <li
           style={{ listStyle: 'none' }}
-          className="SRC-table-dropdown-list SRC-primary-background-color-hover"
+          className="SRC-table-dropdown-list SRC-primary-background-color-hover "
           key={header.name}
           onClick={this.toggleColumnSelection(index)}
         >
-          <a className="SRC-no-focus" href="">
+          <a href="javascript:void">
             <FontAwesomeIcon
               style={iconStyle}
               className={maybeShowPrimaryColor}
@@ -599,8 +656,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
-    const { isColumnSelected, mapEntityIdToHeader } = this.state
-    const entityColumnIndicies = this.getEntityColumnIndicies()
+    const { isColumnSelected, mapEntityIdToHeader, mapUserIdToHeader } = this.state
+    const entityColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
+    const userColumnIndicies = this.getColumnIndiciesWithType('USERID')
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(this.props.getLastQueryRequest!().query.sql)
@@ -629,13 +687,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                     </a>
                   }
                   {
-                    !isCountColumn && (
-                      entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)
-                      ?
-                      <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
-                      :
-                      <p className={isBold}> {columnValue} </p>
-                      )
+                    !isCountColumn &&
+                    this.renderTableCell({ entityColumnIndicies, userColumnIndicies, colIndex, columnValue, isBold, mapEntityIdToHeader, mapUserIdToHeader })
                   }
               </td>
             )
@@ -648,6 +701,51 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       rowsFormatted.push(rowFormatted)
     })
     return rowsFormatted
+  }
+
+  // Render table cell, supports Entity's and User Icons
+  public renderTableCell(
+    { 
+      entityColumnIndicies,
+      userColumnIndicies,
+      colIndex,
+      columnValue,
+      isBold,
+      mapEntityIdToHeader,
+      mapUserIdToHeader
+    }:{ 
+      entityColumnIndicies: number[]; 
+      userColumnIndicies: number[];
+      colIndex: number;
+      columnValue: string;
+      isBold: string; 
+      mapEntityIdToHeader: Dictionary<EntityHeader>,
+      mapUserIdToHeader: Dictionary<any>
+    }): React.ReactNode {
+    if (entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)) {
+      return <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
+    } else if (userColumnIndicies.includes(colIndex) && mapUserIdToHeader.hasOwnProperty(columnValue)) {
+      const { ownerId, userName } = mapUserIdToHeader[columnValue]
+      if (mapUserIdToHeader[columnValue].isIndividual === false) {
+        // isUserGroupHeader
+        const icon = userName === AUTHENTICATED_USERS ? 'globe-americas': 'users'
+        if (userName === AUTHENTICATED_USERS) {
+          return <span ><FontAwesomeIcon icon={icon}/> All registered Synapse users </span>
+        }
+        return (<a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>)
+      } else {
+        // isUserCard
+        return  (
+          <UserCard 
+            userProfile={mapUserIdToHeader[columnValue]} 
+            preSignedURL={mapUserIdToHeader[columnValue].clientPreSignedURL}
+            size={'SMALL USER CARD'}
+          />
+        )
+      }
+    } else {
+      return (<p className={isBold}> {columnValue} </p>)
+    }
   }
 
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
@@ -673,7 +771,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const isFacetSelection: boolean = facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
-        const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover ${isSelectedSpanClass}`
+        const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
         return (
           <th key={column.name}>
             <div className="SRC-centerContent">
@@ -792,7 +890,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const applyPrimary = isCurFilterSelected ? 'SRC-primary-background-color' : 'SRC-primary-text-color'
     const classList = isCurFilterSelected ? this.state.activeFilterClass : ''
     const style = { alignItems: 'center', marginLeft: '10px', marginRight: '3px', color: 'black', display: 'flex' }
-
+    const isChecked = this.props.isAllFilterSelectedForFacet![columnName]
     return (
       <div
         ref={refOuterDiv}
@@ -815,20 +913,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           />
         </span>
 
-        <div className={`dropdown-menu dropdown-menu-override SRC-minDropdownWidth ${classList}`}>
-          <ul style={{ listStyleType: 'none' }} className="scrollable">
+        <div style={{paddingLeft: 20}} className={`dropdown-menu dropdown-menu-override SRC-minDropdownWidth ${classList}`}>
+          <ul style={{ listStyleType: 'none' }} className="scrollable checkbox">
             <label
-              style={{ paddingBottom: '8px' }}
-              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font containerCheckbox"
+              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font SRC-fullWidth"
+              style={{paddingBottom: 10}}
             >
-              All
-              <input
-                onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-                checked={this.props.isAllFilterSelectedForFacet![columnName]}
-                className="SRC-facet-checkboxes"
-                type="checkbox"
+            <input
+              onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
+              checked={isChecked}
+              className="SRC-facet-checkboxes"
+              type="checkbox"
               />
-              <span className="checkmark" />
+              <span> All </span>
             </label>
             <span ref={ref}>
               {this.renderFacetSelection(facetColumnResult, ref, columnName)}
@@ -875,7 +972,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         if (displayValue === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
           displayValue = 'unannotated'
         }
-        const key = columnName + facetValue + count
+        const key = columnName + facetValue + count 
         const isValueSelected = isAllFilterSelectedForFacet![columnName] ? false :  getIsValueSelected({
           columnName,
           isLoading,
@@ -883,18 +980,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           curFacetSelection: facetColumnResultValueCount,
         })
         return (
-          <li key={key}>
-            <label className="dropdownList SRC-overflowWrap SRC-base-font containerCheckbox">
-              {displayValue}
-              <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
+          <li className="checkbox SRC-table-checkbox" key={key}>
+            <label className="dropdownList SRC-overflowWrap SRC-base-font SRC-fullWidth">
               <input
                 onChange={this.applyChanges({ ref, columnName, facetValue })}
                 checked={isValueSelected}
                 className="SRC-facet-checkboxes"
                 type="checkbox"
                 value={facetValue}
-              />
-              <span className="checkmark" />
+                />
+              <span>
+                {displayValue}
+                <span style={{ color: '#DDDDDF', marginLeft: '3px' }}> ({count}) </span>
+              </span>
             </label>
           </li>
         )

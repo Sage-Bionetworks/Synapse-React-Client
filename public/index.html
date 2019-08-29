@@ -47,20 +47,6 @@ crossorigin="anonymous"></script>
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Synapse React Client</title>
-    <style>
-      /* In the main css exported with the app the class below isn't doesn't use !important,
-        so that a client developer can override without hindering their css. To make our app
-        look correctly we have to override this class as a result. */
-      .SRC-primary-background-color-hover:hover {
-        background: #D53F77 !important;
-      }
-  
-      .SRC-primary-background-color-hover.SRC-nested-color:hover {
-        background: #D53F77;
-        color: white;
-      }
-  
-    </style>
   </head>
   <body>
     <div id="root"></div>

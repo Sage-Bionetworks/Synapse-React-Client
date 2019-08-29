@@ -1,6 +1,7 @@
 import { BatchFileResult } from './jsonResponses/BatchFileResult'
 import { Entity } from './jsonResponses/Entity'
 import { FileHandleResults } from './jsonResponses/FileHandleResults'
+import { UserGroupHeaderResponsePage } from './jsonResponses/UserGroupHeaderResponsePage'
 import { SynapseVersion } from './jsonResponses/SynapseVersion'
 import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
 import { WikiPage } from './jsonResponses/WikiPage'
@@ -442,6 +443,16 @@ export const getUserBundle = (
   return doGet<UserBundle>(`repo/v1/user/${id}/bundle?mask=${mask}`, sessionToken, undefined, endpoint)
 }
 
+/**
+ * Return batch of user group headers
+ * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserGroupHeaderResponsePage.html
+ */
+export const getGroupHeadersBatch = (
+  ids: string [], sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT
+): Promise<UserGroupHeaderResponsePage> => {
+  return doGet<UserGroupHeaderResponsePage>(`repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`, sessionToken, undefined, endpoint)
+}
+
 export type UserProfileList = { list: UserProfile [] }
 /**
  * Return the User Profiles for the given list of user IDs
@@ -675,25 +686,25 @@ export const detectSSOCode = () => {
   code = searchParams.get('code')
   if (code) {
     oAuthSessionRequest(AUTH_PROVIDER, code, `${redirectURL}?provider=${AUTH_PROVIDER}`)
-              .then((synToken: any) => {
-                setSessionTokenCookie(synToken.sessionToken).then(() => {
-                  // go back to original route after successful SSO login
-                  const originalUrl = localStorage.getItem('after-sso-login-url')
-                  localStorage.removeItem('after-sso-login-url')
-                  if (originalUrl) {
-                    window.location.replace(originalUrl)
-                  }
-                }).catch((errSetSession) => {
-                  console.error('Error on set sesion token cookie ', errSetSession)
-                })
-              })
-              .catch((err: any) => {
-                if (err.statusCode === 404) {
-                  // Synapse account not found, send to registration page
-                  window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
-                }
-                console.error('Error on sso sign in ', err)
-              })
+      .then((synToken: any) => {
+        setSessionTokenCookie(synToken.sessionToken).then(() => {
+          // go back to original route after successful SSO login
+          const originalUrl = localStorage.getItem('after-sso-login-url')
+          localStorage.removeItem('after-sso-login-url')
+          if (originalUrl) {
+            window.location.replace(originalUrl)
+          }
+        }).catch((errSetSession) => {
+          console.error('Error on set sesion token cookie ', errSetSession)
+        })
+      })
+      .catch((err: any) => {
+        if (err.statusCode === 404) {
+          // Synapse account not found, send to registration page
+          window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
+        }
+        console.error('Error on sso sign in ', err)
+      })
   }
 }
 
