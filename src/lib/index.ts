@@ -13,9 +13,7 @@ import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import NewsFeedMenu from './containers/NewsFeedMenu'
-import './style/SWC.css'
-import './style/Cards.css'
-import './style/Core.css'
+import './style/Index.css'
 import { SynapseConstants, SynapseClient } from './utils'
 
 const SynapseComponents = {

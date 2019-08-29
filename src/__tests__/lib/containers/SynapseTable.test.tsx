@@ -10,14 +10,14 @@ import { Row } from '../../../lib/utils/jsonResponses/Table/QueryResult'
 import { SelectColumn } from '../../../lib/utils/jsonResponses/Table/SelectColumn'
 import { ColumnModel } from '../../../lib/utils/jsonResponses/Table/ColumnModel'
 import ModalDownload from '../../../lib/containers/ModalDownload'
-import { EntityLink } from 'lib/containers/EntityLink';
-import { EntityHeader } from 'lib/utils/jsonResponses/EntityHeader';
-import { Dictionary } from 'lodash';
-import { UserGroupHeader } from 'lib/utils/jsonResponses/UserGroupHeader';
-import { UserProfile } from 'lib/utils/jsonResponses/UserProfile';
-import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import UserCard from 'lib/containers/UserCard';
+import { EntityLink } from 'lib/containers/EntityLink'
+import { EntityHeader } from 'lib/utils/jsonResponses/EntityHeader'
+import { Dictionary } from 'lodash'
+import { UserGroupHeader } from 'lib/utils/jsonResponses/UserGroupHeader'
+import { UserProfile } from 'lib/utils/jsonResponses/UserProfile'
+import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import UserCard from 'lib/containers/UserCard'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow<SynapseTable>(
@@ -391,9 +391,9 @@ describe('basic functionality', () => {
     const { wrapper, instance } = createShallowComponent({...props, data: mockData})
     
     it('gets column indicies correctly ', () => {
-      const entities = instance.getEntityColumnIndiciesWithType('ENTITYID')
+      const entities = instance.getColumnIndiciesWithType('ENTITYID')
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = instance.getEntityColumnIndiciesWithType('USERID')
+      const userIds = instance.getColumnIndiciesWithType('USERID')
       expect(userIds).toEqual([USERID_INDEX])
     })
 
@@ -471,10 +471,10 @@ describe('basic functionality', () => {
             })}
           </div>
         )
-        expect(tableCell.find('span.SRC-boldText').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
+        expect(tableCell.find('span').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('globe-americas')
       })
-      it ('renders a link for a standard column value', () => {
+      it ('renders a link for a team', () => {
         const tableCell = shallow(
           <div>
             {
@@ -511,7 +511,7 @@ describe('basic functionality', () => {
         )
         expect(tableCell.find(UserCard)).toHaveLength(1)
       })
-      it ('renders a standard link', () => {
+      it ('renders a standard value', () => {
         const tableCell = shallow(
           <div>
             {

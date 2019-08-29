@@ -3,16 +3,16 @@ import Login from '../../lib/containers/Login'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient, SynapseConstants } from '../../lib/utils/'
 import '../style/App.scss'
-import '../style/DemoOverrides.scss'
+import '../style/DemoStyle.scss'
 import EntityForm from '../../lib/containers/EntityForm'
 import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
-import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest';
-import { OIDCAuthorizationRequest } from 'lib/utils/jsonResponses/OIDCAuthorizationRequest';
-import { OIDCAuthorizationRequestDescription } from 'lib/utils/jsonResponses/OIDCAuthorizationRequestDescription';
-import { AccessCodeResponse } from 'lib/utils/jsonResponses/AccessCodeResponse';
-import { OAuthClientPublic } from 'lib/utils/jsonResponses/OAuthClientPublic';
+import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest'
+import { OIDCAuthorizationRequest } from 'lib/utils/jsonResponses/OIDCAuthorizationRequest'
+import { OIDCAuthorizationRequestDescription } from 'lib/utils/jsonResponses/OIDCAuthorizationRequestDescription'
+import { AccessCodeResponse } from 'lib/utils/jsonResponses/AccessCodeResponse'
+import { OAuthClientPublic } from 'lib/utils/jsonResponses/OAuthClientPublic'
 
 type DemoState = {
   token: string
