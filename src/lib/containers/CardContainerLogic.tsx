@@ -8,14 +8,14 @@ import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { insertConditionsFromSearchParams, KeyValue, SQLOperator } from '../utils/modules/sqlFunctions'
 
-export type InternalLinkConfiguration = {
+export interface TitleLinkConfig {
   baseURL: string
-  columnValues: string []
+  queryColumnNames: string []
 }
 
-export type SecondaryLabelLinkConfiguration = {
-  baseURL: string
-  columnValues: string []
+// Specify the indices in the values [] that should point to links
+export interface LabelInternalLinkConfig extends TitleLinkConfig {
+  matchColumnNames: number []
 }
 
 export type CommonCardProps = {
@@ -24,7 +24,8 @@ export type CommonCardProps = {
   hasInternalLink?: boolean
   iconOptions?: IconOptions
   secondaryLabelLimit?: number
-  internalLinkConfiguration?: InternalLinkConfiguration
+  titleLinkConfig?: TitleLinkConfig
+  labelInternalLinkConfig?: LabelInternalLinkConfig
   loadingScreen?: React.FunctionComponent | JSX.Element
 }
 

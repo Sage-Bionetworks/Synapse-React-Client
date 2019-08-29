@@ -2,8 +2,6 @@ import * as React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faLongArrowAltUp, faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { InternalLinkConfiguration } from '../../CardContainerLogic'
-import { getLink } from '../../GenericCard'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
@@ -15,7 +13,6 @@ type State = {
 type CardFooterProps = {
   values: any [],
   secondaryLabelLimit?: number
-  internalLinkConfiguration?: InternalLinkConfiguration
 }
 
 class CardFooter extends React.Component<CardFooterProps, State> {
@@ -49,25 +46,14 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     this.setState({ isDesktop: window.innerWidth > 600 })
   }
 
-  renderValue = (value: string, internalLinkConfiguration?: InternalLinkConfiguration) => {
-    if (internalLinkConfiguration) {
-      return value.split(',').map(
-        el => {
-          return <a className="SRC-primary-text-color"> {getLink(el, internalLinkConfiguration)} </a>
-        }
-      ).join(',')
-    }
-    return value
-  }
-
-  renderRows = (values: string [][], limit: number, isDesktop: boolean, internalLinkConfiguration?: InternalLinkConfiguration) => {
+  renderRows = (values: string [][], limit: number, isDesktop: boolean) => {
     return values.map((kv, index) => {
       const hideClass =  (index >= limit ? 'SRC-hidden' : '')
       if (isDesktop) {
         return (
           <tr className={"SRC-cardRowDesktop " + hideClass} key={index}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
-            <td data-search-handle={kv[0]} className={"SRC-row-data SRC-limitMaxWidth "}> {this.renderValue(kv[1], internalLinkConfiguration)} </td>
+            <td data-search-handle={kv[0]} className={"SRC-row-data SRC-limitMaxWidth "}> {kv[1]} </td>
           </tr>
         )
       }
@@ -77,7 +63,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
             <td className={'SRC-verticalAlignTop SRC-row-label'}> {kv[0]} </td>
           </tr>
           <tr className={"SRC-cardRowMobile " + hideClass}>
-            <td data-search-handle={kv[0]} className="SRC-row-data SRC-limitMaxWidth"> {this.renderValue(kv[1], internalLinkConfiguration)} </td>
+            <td data-search-handle={kv[0]} className="SRC-row-data SRC-limitMaxWidth"> {kv[1]} </td>
           </tr>
         </React.Fragment>
       )
@@ -85,7 +71,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   }
 
   render() {
-    const { values, secondaryLabelLimit = 3, internalLinkConfiguration } = this.props
+    const { values, secondaryLabelLimit = 3 } = this.props
     const { isShowMoreOn, isDesktop } = this.state
     let valuesFiltered = values.filter(el => el[1])
     const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
@@ -94,7 +80,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       <div className="SRC-cardMetadata">
         <table>
           <tbody>
-            {this.getFormattedRows(valuesFiltered, limit, isDesktop internalLinkConfiguration)}
+            {this.renderRows(valuesFiltered, limit, isDesktop)}
             {
               hasMoreValuesThanLimit &&
                 <tr className="SRC-cardRow">

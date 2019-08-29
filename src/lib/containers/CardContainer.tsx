@@ -93,13 +93,9 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
       isLoading,
       loadingScreen,
       secondaryLabelLimit = 3,
-      genericCardSchema,
-      backgroundColor,
-      iconOptions,
-      facetAliases,
-      internalLinkConfiguration,
       showBarChart = true,
-      title
+      title,
+      ...rest
     } = this.props
     // the cards only show the loading screen on initial load, this occurs when data is undefined
     if (!data) {
@@ -163,15 +159,11 @@ export class CardContainer extends React.Component<CardContainerProps, CardConta
             const propsForCard = {
               key,
               type,
-              facetAliases,
-              internalLinkConfiguration,
               schema,
               isHeader,
-              genericCardSchema,
               secondaryLabelLimit,
-              backgroundColor,
-              iconOptions,
               data: rowData.values,
+              ...rest
             }
             return this.renderCard(propsForCard, type)
           }

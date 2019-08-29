@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
 import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { InternalLinkConfiguration } from '../../../lib/containers/CardContainerLogic'
+import { TitleLinkConfig } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -143,20 +143,20 @@ describe('it grabs the correct URL' , () => {
       grantNumberValue,
       funderValue
     ]
-    const columnValues = ['Grant Number', 'Funder']
+    const queryColumnNames = ['Grant Number', 'Funder']
     const schema = {
-      [columnValues[0]]: 0,
-      [columnValues[1]]: 1
+      [queryColumnNames[0]]: 0,
+      [queryColumnNames[1]]: 1
     }
-    const internalLinkConfiguration: InternalLinkConfiguration = {
+    const titleLinkConfig: TitleLinkConfig = {
       baseURL: 'Explore/Projects',
-      columnValues: [
-        columnValues[0],
-        columnValues[1]
+      queryColumnNames: [
+        queryColumnNames[0],
+        queryColumnNames[1]
       ]
     }
     const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
-    const { linkDisplay, target } = getLink('', internalLinkConfiguration, data, schema)
+    const { linkDisplay, target } = getLink('', titleLinkConfig, data, schema)
     expect(linkDisplay).toEqual(expectedLink)
     expect(target).toEqual(SELF)
   })
