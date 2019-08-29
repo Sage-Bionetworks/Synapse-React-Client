@@ -86,7 +86,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                     moreElement &&
                     <div className="clearfix">
                       <button
-                        style={{ textAlign: 'left', margin: 0, padding: 0 }}
+                        style={{ textAlign: 'left', margin: 0, padding: '0px 0px 25px 35px' }}
                         className="SRC-primary-text-color SRC-basicButton"
                         onClick={this.onClickReadMore(item.guid)}
                       >
