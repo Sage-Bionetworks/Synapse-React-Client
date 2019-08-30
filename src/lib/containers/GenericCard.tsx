@@ -123,6 +123,14 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
 
   renderValue = (value: string, queryMatchPair: QueryMatchPair) => {
     const splitLength = value.split(',').length
+    let className = ''
+    let style: React.CSSProperties = {}
+    if (this.props.isHeader) {
+      className = 'SRC-anchor-light'
+      style.textDecoration = 'underline'
+    } else {
+      className = 'SRC-primary-text-color'
+    }
     return value.split(',').map(
       (el, index) => {
         return (
@@ -130,7 +138,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
             <a 
               href={this.createInternalLabelLink(el, queryMatchPair)}
               key={el}
-              className="SRC-primary-text-color"
+              className={className}
+              style={style}
             >
               {el}
             </a>
