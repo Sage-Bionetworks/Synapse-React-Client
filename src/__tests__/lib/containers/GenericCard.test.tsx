@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
 import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { TitleLinkConfig, LabelInternalLinkConfig, QueryMatchPair } from '../../../lib/containers/CardContainerLogic'
+import { TitleLinkConfig, QueryMatchPair } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -163,7 +163,7 @@ describe('it makes the correct URL for the title' , () => {
 })
 
 describe('it makes the correct URL for the secondary labels' , () => {
-  const renderValue = GenericCard.prototype.renderValue
+  const createInternalLabelLink = GenericCard.prototype.createInternalLabelLink
   const DATASETS = 'datasets'
   const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
@@ -182,7 +182,7 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{renderValue(value, queryMatchPair[0], false)} </div>)
+    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[0], false)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
     // double check the style
@@ -191,14 +191,14 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{renderValue(value, queryMatchPair[1], false)} </div>)
+    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[1], false)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
   })
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{renderValue(value, queryMatchPair[0], true)} </div>)
+    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[0], true)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().className).toEqual(`SRC-anchor-light`)
     expect(links.find('a').props().style).toEqual({textDecoration: 'underline'})
@@ -206,10 +206,13 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a comma seperated value', () => {
     const val1 = 'syn1234567'
-    const val2 = 'syn1234569'
+    const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const links = mount(<div>{renderValue(value, queryMatchPair[0], false)} </div>)
+    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[0], false)} </div>)
     expect(links.find('a')).toHaveLength(3)
+    expect(links.find('a').at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
+    expect(links.find('a').at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)
+    expect(links.find('a').at(2).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val3}`)
   })
 })

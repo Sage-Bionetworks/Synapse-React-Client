@@ -62,7 +62,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       showMoreDescription: false
     }
     this.createInternalTitleLink = this.createInternalTitleLink.bind(this)
-    this.renderValue = this.renderValue.bind(this)
+    this.createInternalLabelLink = this.createInternalLabelLink.bind(this)
   }
 
   public createInternalTitleLink (link: string, titleLinkConfig?: TitleLinkConfig, data?: string [], schema?: any) {
@@ -113,7 +113,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  public renderValue (value: string, queryMatchPair: QueryMatchPair, isHeader: boolean) {
+  public createInternalLabelLink (value: string, queryMatchPair: QueryMatchPair, isHeader: boolean) {
     const splitLength = value.split(',').length
     let className = ''
     let style: React.CSSProperties = {}
@@ -127,8 +127,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       (el, index) => {
         const { baseURL } = queryMatchPair
         const queryParams = queryMatchPair.queryColumnNames.map(
-          el => {
-            return `${el}=${value}`
+          queryColumn => {
+            return `${queryColumn}=${el}`
           }
         ).join('&')
         const href = `#/${baseURL}?${queryParams}`
@@ -181,7 +181,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           const columnDisplayName = facetAliases[columnName] || columnName
           const queryMatchPair = labelInternalLinkConfig && labelInternalLinkConfig.find(el => el.matchColumnName === columnName)
           if (value && queryMatchPair) {
-            value = this.renderValue(value, queryMatchPair, isHeader)
+            value = this.createInternalLabelLink(value, queryMatchPair, isHeader)
           }
           const keyValue = [columnDisplayName, value]
           if (data[schema[columnName]]) {
