@@ -1,7 +1,7 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { TitleLinkConfig, LabelInternalLinkConfig } from './CardContainerLogic'
+import { TitleLinkConfig, LabelInternalLinkConfig, QueryMatchPair } from './CardContainerLogic'
 
 export type KeyToAlias = {
   key: string
@@ -111,9 +111,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  createInternalLabelLink = (value: string, labelInternalLinkConfig: LabelInternalLinkConfig) => {
-    const { baseURL } = labelInternalLinkConfig
-    const queryParams = labelInternalLinkConfig.queryColumnNames.map(
+  createInternalLabelLink = (value: string, queryMatchPair: QueryMatchPair) => {
+    const { baseURL } = queryMatchPair
+    const queryParams = queryMatchPair.queryColumnNames.map(
       el => {
         return `${el}=${value}`
       }
@@ -121,14 +121,14 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     return `#/${baseURL}?${queryParams}`
   }
 
-  renderValue = (value: string, labelInternalLinkConfiguration: LabelInternalLinkConfig) => {
+  renderValue = (value: string, queryMatchPair: QueryMatchPair) => {
     const splitLength = value.split(',').length
     return value.split(',').map(
       (el, index) => {
         return (
           <React.Fragment key={el}>
             <a 
-              href={this.createInternalLabelLink(el, labelInternalLinkConfiguration)}
+              href={this.createInternalLabelLink(el, queryMatchPair)}
               key={el}
               className="SRC-primary-text-color"
             >
@@ -171,8 +171,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         let value = data[schema[columnName]]
         if (value) {
           const columnDisplayName = facetAliases[columnName] || columnName
-          if (value && labelInternalLinkConfig && labelInternalLinkConfig.matchColumnNames.indexOf(columnName) !== -1) {
-            value = this.renderValue(value, labelInternalLinkConfig)
+          const queryMatchPair = labelInternalLinkConfig && labelInternalLinkConfig.find(el => el.matchColumnName === columnName)
+          if (value && queryMatchPair) {
+            value = this.renderValue(value, queryMatchPair)
           }
           const keyValue = [columnDisplayName, value]
           if (data[schema[columnName]]) {

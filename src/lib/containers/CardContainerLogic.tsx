@@ -13,10 +13,14 @@ export interface TitleLinkConfig {
   queryColumnNames: string []
 }
 
-// Specify the indices in the values [] that should point to links
-export interface LabelInternalLinkConfig extends TitleLinkConfig {
-  matchColumnNames: number []
+export type QueryMatchPair = {
+  baseURL: string
+  queryColumnNames: string []
+  matchColumnName: number
 }
+
+// Specify the indices in the values [] that should point to links
+export type LabelInternalLinkConfig = QueryMatchPair []
 
 export type CommonCardProps = {
   type: string
