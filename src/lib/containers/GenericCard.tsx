@@ -61,9 +61,11 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     this.state = {
       showMoreDescription: false
     }
+    this.createInternalTitleLink = this.createInternalTitleLink.bind(this)
+    this.renderValue = this.renderValue.bind(this)
   }
 
-  public createInternalTitleLink = (link: string, titleLinkConfig?: TitleLinkConfig, data?: string [], schema?: any) => {
+  public createInternalTitleLink (link: string, titleLinkConfig?: TitleLinkConfig, data?: string [], schema?: any) {
     let linkDisplay = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
@@ -111,21 +113,11 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  createInternalLabelLink = (value: string, queryMatchPair: QueryMatchPair) => {
-    const { baseURL } = queryMatchPair
-    const queryParams = queryMatchPair.queryColumnNames.map(
-      el => {
-        return `${el}=${value}`
-      }
-    ).join('&')
-    return `#/${baseURL}?${queryParams}`
-  }
-
-  renderValue = (value: string, queryMatchPair: QueryMatchPair) => {
+  public renderValue (value: string, queryMatchPair: QueryMatchPair, isHeader: boolean) {
     const splitLength = value.split(',').length
     let className = ''
     let style: React.CSSProperties = {}
-    if (this.props.isHeader) {
+    if (isHeader) {
       className = 'SRC-anchor-light'
       style.textDecoration = 'underline'
     } else {
@@ -133,10 +125,17 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     }
     return value.split(',').map(
       (el, index) => {
+        const { baseURL } = queryMatchPair
+        const queryParams = queryMatchPair.queryColumnNames.map(
+          el => {
+            return `${el}=${value}`
+          }
+        ).join('&')
+        const href = `#/${baseURL}?${queryParams}`
         return (
           <React.Fragment key={el}>
             <a 
-              href={this.createInternalLabelLink(el, queryMatchPair)}
+              href={href}
               key={el}
               className={className}
               style={style}
@@ -182,7 +181,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           const columnDisplayName = facetAliases[columnName] || columnName
           const queryMatchPair = labelInternalLinkConfig && labelInternalLinkConfig.find(el => el.matchColumnName === columnName)
           if (value && queryMatchPair) {
-            value = this.renderValue(value, queryMatchPair)
+            value = this.renderValue(value, queryMatchPair, isHeader)
           }
           const keyValue = [columnDisplayName, value]
           if (data[schema[columnName]]) {

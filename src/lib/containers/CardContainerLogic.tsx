@@ -16,7 +16,7 @@ export interface TitleLinkConfig {
 export type QueryMatchPair = {
   baseURL: string
   queryColumnNames: string []
-  matchColumnName: number
+  matchColumnName: string
 }
 
 // Specify the indices in the values [] that should point to links

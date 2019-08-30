@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
 import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { TitleLinkConfig } from '../../../lib/containers/CardContainerLogic'
+import { TitleLinkConfig, LabelInternalLinkConfig, QueryMatchPair } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -115,15 +115,15 @@ describe('it renders the UI correctly', () => {
 
 })
 
-describe('it grabs the correct URL' , () => {
-  const getLink = GenericCard.prototype.getLink
+describe('it makes the correct URL for the title' , () => {
+  const createInternalTitleLink = GenericCard.prototype.createInternalTitleLink
   const SELF = '_self'
   const BLANK = '_blank'
 
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { linkDisplay, target } = getLink(synId)
+    const { linkDisplay, target } = createInternalTitleLink(synId)
     expect(linkDisplay).toEqual(synLink)
     expect(target).toEqual(SELF)
   })
@@ -131,7 +131,7 @@ describe('it grabs the correct URL' , () => {
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { linkDisplay, target } = getLink(doi)
+    const { linkDisplay, target } = createInternalTitleLink(doi)
     expect(linkDisplay).toEqual(doiLink)
     expect(target).toEqual(BLANK)
   })
@@ -156,8 +156,60 @@ describe('it grabs the correct URL' , () => {
       ]
     }
     const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
-    const { linkDisplay, target } = getLink('', titleLinkConfig, data, schema)
+    const { linkDisplay, target } = createInternalTitleLink('', titleLinkConfig, data, schema)
     expect(linkDisplay).toEqual(expectedLink)
     expect(target).toEqual(SELF)
+  })
+})
+
+describe('it makes the correct URL for the secondary labels' , () => {
+  const renderValue = GenericCard.prototype.renderValue
+  const DATASETS = 'datasets'
+  const STUDIES = 'studies'
+  const datasetBaseURL = 'Explore/Datasets'
+  const queryMatchPair: QueryMatchPair [] = [
+    {
+      baseURL: datasetBaseURL,
+      queryColumnNames: [DATASETS],
+      matchColumnName: 'dataset'
+    },
+    {
+      baseURL: datasetBaseURL,
+      queryColumnNames: [DATASETS, STUDIES],
+      matchColumnName: 'dataset'
+    },
+  ]
+
+  it('works with a single value and single column', () => {
+    const value = 'syn1234567'
+    const links = mount(<div>{renderValue(value, queryMatchPair[0], false)} </div>)
+    expect(links).toHaveLength(1)
+    expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
+    // double check the style
+    expect(links.find('a').props().className).toEqual(`SRC-primary-text-color`)
+  })
+
+  it('works with a single value and multiple columns', () => {
+    const value = 'syn1234567'
+    const links = mount(<div>{renderValue(value, queryMatchPair[1], false)} </div>)
+    expect(links).toHaveLength(1)
+    expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
+  })
+
+  it('works with a header', () => {
+    const value = 'syn1234567'
+    const links = mount(<div>{renderValue(value, queryMatchPair[0], true)} </div>)
+    expect(links).toHaveLength(1)
+    expect(links.find('a').props().className).toEqual(`SRC-anchor-light`)
+    expect(links.find('a').props().style).toEqual({textDecoration: 'underline'})
+  })
+
+  it('works with a comma seperated value', () => {
+    const val1 = 'syn1234567'
+    const val2 = 'syn1234569'
+    const val3 = 'syn1234569'
+    const value = `${val1},${val2},${val3}`
+    const links = mount(<div>{renderValue(value, queryMatchPair[0], false)} </div>)
+    expect(links.find('a')).toHaveLength(3)
   })
 })
