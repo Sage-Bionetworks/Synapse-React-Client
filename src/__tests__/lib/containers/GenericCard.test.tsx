@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
 import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { TitleLinkConfig, QueryMatchPair } from '../../../lib/containers/CardContainerLogic'
+import { TitleLinkConfig, LabelLinkConfig } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -143,16 +143,16 @@ describe('it makes the correct URL for the title' , () => {
       grantNumberValue,
       funderValue
     ]
-    const queryColumnNames = ['Grant Number', 'Funder']
+    const URLColumnNames = ['Grant Number', 'Funder']
     const schema = {
-      [queryColumnNames[0]]: 0,
-      [queryColumnNames[1]]: 1
+      [URLColumnNames[0]]: 0,
+      [URLColumnNames[1]]: 1
     }
     const titleLinkConfig: TitleLinkConfig = {
       baseURL: 'Explore/Projects',
-      queryColumnNames: [
-        queryColumnNames[0],
-        queryColumnNames[1]
+      URLColumnNames: [
+        URLColumnNames[0],
+        URLColumnNames[1]
       ]
     }
     const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
@@ -167,22 +167,22 @@ describe('it makes the correct URL for the secondary labels' , () => {
   const DATASETS = 'datasets'
   const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
-  const queryMatchPair: QueryMatchPair [] = [
+  const labelLinkConfig: LabelLinkConfig = [
     {
       baseURL: datasetBaseURL,
-      queryColumnNames: [DATASETS],
+      URLColumnNames: [DATASETS],
       matchColumnName: 'dataset'
     },
     {
       baseURL: datasetBaseURL,
-      queryColumnNames: [DATASETS, STUDIES],
+      URLColumnNames: [DATASETS, STUDIES],
       matchColumnName: 'dataset'
     },
   ]
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createLabelLink(value, queryMatchPair[0], false)} </div>)
+    const links = mount(<div>{createLabelLink(value, labelLinkConfig[0], false)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
     // double check the style
@@ -191,14 +191,14 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createLabelLink(value, queryMatchPair[1], false)} </div>)
+    const links = mount(<div>{createLabelLink(value, labelLinkConfig[1], false)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
   })
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createLabelLink(value, queryMatchPair[0], true)} </div>)
+    const links = mount(<div>{createLabelLink(value, labelLinkConfig[0], true)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().className).toEqual(`SRC-anchor-light`)
     expect(links.find('a').props().style).toEqual({textDecoration: 'underline'})
@@ -209,7 +209,7 @@ describe('it makes the correct URL for the secondary labels' , () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const links = mount(<div>{createLabelLink(value, queryMatchPair[0], false)} </div>)
+    const links = mount(<div>{createLabelLink(value, labelLinkConfig[0], false)} </div>)
     expect(links.find('a')).toHaveLength(3)
     expect(links.find('a').at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
     expect(links.find('a').at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)

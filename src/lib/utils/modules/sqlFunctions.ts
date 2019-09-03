@@ -12,6 +12,7 @@ const GROUP_BY_REGEX = /group by/mi
 export const isGroupByInSql =(sql: string): boolean => {
   return GROUP_BY_REGEX.test(sql)
 }
+const WITHOUT_SYN_PREFIX = 3
 
 const generateTokenUsingOperator = (literal: string, operator: SQLOperator, match: string) => {
   let usedMatchForLike = match
@@ -20,7 +21,7 @@ const generateTokenUsingOperator = (literal: string, operator: SQLOperator, matc
     // characters being 'syn', however, it stores synIds without 'syn', so the query will fail
     // The backend usually parses 'syn' out, but not with the LIKE clause since its expecting a regex, so we
     // parse this out. This will cause a bug if something matches the synId regex but is in free text. 
-    usedMatchForLike = match.substring(3)
+    usedMatchForLike = match.substring(WITHOUT_SYN_PREFIX)
   }
   switch (operator) {
     case 'LIKE':

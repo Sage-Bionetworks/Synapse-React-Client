@@ -10,17 +10,19 @@ import { insertConditionsFromSearchParams, KeyValue, SQLOperator } from '../util
 
 export interface TitleLinkConfig {
   baseURL: string
-  queryColumnNames: string []
+  URLColumnNames: string []
 }
 
-export type QueryMatchPair = {
+export type LabelLink = {
   baseURL: string
-  queryColumnNames: string []
+  // the keys that will go into the url
+  URLColumnNames: string []
+  // the columns whos value will be paired with the columns URLColumnNames
   matchColumnName: string
 }
 
 // Specify the indices in the values [] that should point to links
-export type LabelLinkConfig = QueryMatchPair []
+export type LabelLinkConfig = LabelLink []
 
 export type CommonCardProps = {
   type: string

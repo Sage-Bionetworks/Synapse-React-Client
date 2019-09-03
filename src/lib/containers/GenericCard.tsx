@@ -1,7 +1,7 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { TitleLinkConfig, LabelLinkConfig, QueryMatchPair } from './CardContainerLogic'
+import { TitleLinkConfig, LabelLinkConfig, LabelLink } from './CardContainerLogic'
 
 export type KeyToAlias = {
   key: string
@@ -80,7 +80,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       if (!data || !schema) {
         throw Error('Must specify titleLinkConfig and data for linking to work')
       }
-      const urlParams = titleLinkConfig.queryColumnNames.map(
+      const urlParams = titleLinkConfig.URLColumnNames.map(
         (el) => {
           if (!schema.hasOwnProperty(el)) {
             console.error(`Could not find match for data: ${data} with columnName ${el}`)
@@ -113,7 +113,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  public createLabelLink (value: string, queryMatchPair: QueryMatchPair, isHeader: boolean) {
+  public createLabelLink (value: string, labelLink: LabelLink, isHeader: boolean) {
     const splitLength = value.split(',').length
     let className = ''
     let style: React.CSSProperties = {}
@@ -125,8 +125,8 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     }
     return value.split(',').map(
       (el, index) => {
-        const { baseURL } = queryMatchPair
-        const queryParams = queryMatchPair.queryColumnNames.map(
+        const { baseURL } = labelLink
+        const queryParams = labelLink.URLColumnNames.map(
           queryColumn => {
             return `${queryColumn}=${el}`
           }
@@ -179,9 +179,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         let value = data[schema[columnName]]
         if (value) {
           const columnDisplayName = facetAliases[columnName] || columnName
-          const queryMatchPair = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
-          if (value && queryMatchPair) {
-            value = this.createLabelLink(value, queryMatchPair, isHeader)
+          const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
+          if (value && labelLink) {
+            value = this.createLabelLink(value, labelLink, isHeader)
           }
           const keyValue = [columnDisplayName, value]
           if (data[schema[columnName]]) {
