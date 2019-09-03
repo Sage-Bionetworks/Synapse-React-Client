@@ -148,6 +148,18 @@ it('get root page url', () => {
   expect(SynapseClient.getRootURL()).toBeDefined()
 })
 
+it('delete entity', () => {
+  return SynapseClient.deleteEntity('', '123')
+    .then((data) => {
+      expect(data).toBeDefined()
+      expect(data['status']).toBe(204);
+    })
+    .catch((err) => {
+      fail(err.reason)
+    })
+})
+
+
 // })
 // ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
 // Tried increasing timeout to 30s, but still occurs.  Not sure why the signal is not being sent back

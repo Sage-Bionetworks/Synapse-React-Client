@@ -3,6 +3,8 @@ import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
 import logoSvg from '../../images/logo.svg'
 import Demo from './Demo'
 import Playground from './playground/Playground'
+import FileGrid from '../../lib/containers/drug_upload_tool/UserFileGrid'
+
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -25,10 +27,16 @@ const App: React.SFC<{}> = () => {
             <li>
               <Link to="/Playground">Playground</Link>
             </li>
+            <li>
+              <Link to="/drugUploadTool">DrugUploadTool</Link>
+            </li>
         </ul>
 
         <Route exact={true} path="/" component={Demo}/>
         <Route path="/Playground" component={Playground}/>
+        <Route  exact={true}  path="/drugUploadTool" 
+             render={(props) => <FileGrid pathpart="drugUploadTool" parentContainerId="syn20673186"
+         />} />
       </div>
     </Router>
   )
