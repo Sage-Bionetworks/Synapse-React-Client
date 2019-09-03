@@ -18,6 +18,7 @@ import WarningModal from './WarningModal'
 import Login from '../Login'
 
 import _ from 'lodash';
+import moment from 'moment';
 
 type UserData = {
   fileList: Entity[];
@@ -253,7 +254,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
         {fileList.map((entity, i: number) => {
           return (<tr className='test' key={i}>
             <td><Link className='nav-green' to={`/${pathpart}/${dataFolderId}/${entity.id}/`}>{entity.name}</Link></td>
-            <td>{entity.modifiedOn}</td>
+            <td>{moment(entity.modifiedOn).calendar()}</td>
             <td>?</td>
             <td><button className='btn' aria-label="delete" onClick={() => this.setState({ modalContext: { action: this.deleteFile, arguments: [this.state.token!, entity.id!] } })}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
           </tr>)
