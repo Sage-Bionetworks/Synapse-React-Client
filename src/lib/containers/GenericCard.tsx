@@ -126,12 +126,12 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     return value.split(',').map(
       (el, index) => {
         const { baseURL } = labelLink
-        const queryParams = labelLink.URLColumnNames.map(
-          queryColumn => {
-            return `${queryColumn}=${el}`
+        const urlParams = labelLink.URLColumnNames.map(
+          urlColumn => {
+            return `${urlColumn}=${el}`
           }
         ).join('&')
-        const href = `#/${baseURL}?${queryParams}`
+        const href = `#/${baseURL}?${urlParams}`
         return (
           <React.Fragment key={el}>
             <a 
@@ -173,25 +173,23 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const linkValue: string = data[schema[link]] || ''
     const { linkDisplay, target } = this.createTitleLink(linkValue, titleLinkConfig, data, schema)
     const values: string [][] = []
-    if (genericCardSchema.secondaryLabels) {
-      for (let i = 0; i < genericCardSchema.secondaryLabels.length; i += 1) {
-        const columnName =  genericCardSchema.secondaryLabels[i]
-        let value = data[schema[columnName]]
-        if (value) {
-          const columnDisplayName = facetAliases[columnName] || columnName
-          const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
-          if (value && labelLink) {
-            value = this.createLabelLink(value, labelLink, isHeader)
-          }
-          const keyValue = [columnDisplayName, value]
-          if (data[schema[columnName]]) {
-            values.push(keyValue)
-          }
+    const { secondaryLabels = [] } = genericCardSchema
+    for (let i = 0; i < secondaryLabels.length; i += 1) {
+      const columnName =  secondaryLabels[i]
+      let value = data[schema[columnName]]
+      if (value) {
+        const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
+        if (labelLink) {
+          // create link for this column
+          value = this.createLabelLink(value, labelLink, isHeader)
         }
+        const columnDisplayName = facetAliases[columnName] || columnName
+        const keyValue = [columnDisplayName, value]
+        values.push(keyValue)
       }
     }
 
-    const showFooter = genericCardSchema.secondaryLabels && values.length > 0
+    const showFooter = values.length > 0
 
     const style: React.CSSProperties = {
       background: backgroundColor,
