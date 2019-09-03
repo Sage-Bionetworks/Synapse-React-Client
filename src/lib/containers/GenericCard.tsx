@@ -1,7 +1,7 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { TitleLinkConfig, LabelLinkConfig, LabelLink } from './CardContainerLogic'
+import { CardLink, LabelLinkConfig, LabelLink } from './CardContainerLogic'
 
 export type KeyToAlias = {
   key: string
@@ -36,7 +36,7 @@ export type GenericCardProps = {
   schema: any,
   data: any
   secondaryLabelLimit?: number
-  titleLinkConfig?: TitleLinkConfig
+  cardLink?: CardLink
   labelLinkConfig?: LabelLinkConfig
 }
 
@@ -65,7 +65,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     this.createLabelLink = this.createLabelLink.bind(this)
   }
 
-  public createTitleLink (link: string, titleLinkConfig?: TitleLinkConfig, data?: string [], schema?: any) {
+  public createTitleLink (link: string, titleLink?: CardLink, data?: string [], schema?: any) {
     let linkDisplay = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
@@ -74,13 +74,13 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     } else if (link.match(DOI_REGEX)) {
       target = '_blank'
       linkDisplay = `https://dx.doi.org/${link}`
-    } else if (!titleLinkConfig) {
+    } else if (!titleLink) {
       target = '_blank'
-    } else if (titleLinkConfig) {
+    } else if (titleLink) {
       if (!data || !schema) {
-        throw Error('Must specify titleLinkConfig and data for linking to work')
+        throw Error('Must specify CardLink and data for linking to work')
       }
-      const urlParams = titleLinkConfig.URLColumnNames.map(
+      const urlParams = titleLink.URLColumnNames.map(
         (el) => {
           if (!schema.hasOwnProperty(el)) {
             console.error(`Could not find match for data: ${data} with columnName ${el}`)
@@ -89,7 +89,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         }
       ).join('&')
       // tested this link on the browser, there's no need to encode the URL, the browser picks up on that automatically
-      linkDisplay = `#/${titleLinkConfig.baseURL}?${urlParams}`
+      linkDisplay = `#/${titleLink.baseURL}?${urlParams}`
     }
     return { linkDisplay, target }
   }
@@ -114,7 +114,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
   }
 
   public createLabelLink (value: string, labelLink: LabelLink, isHeader: boolean) {
-    const splitLength = value.split(',').length
+    const split = value.split(',')
     let className = ''
     let style: React.CSSProperties = {}
     if (isHeader) {
@@ -123,7 +123,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     } else {
       className = 'SRC-primary-text-color'
     }
-    return value.split(',').map(
+    return split.map(
       (el, index) => {
         const { baseURL } = labelLink
         const urlParams = labelLink.URLColumnNames.map(
@@ -142,7 +142,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
             >
               {el}
             </a>
-            {index < splitLength - 1 && <span style={{marginRight: 4}}> , </span>}
+            {index < split.length - 1 && <span style={{marginRight: 4}}> , </span>}
           </React.Fragment>
         )
       }
@@ -158,7 +158,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       backgroundColor,
       iconOptions,
       isHeader = false,
-      titleLinkConfig,
+      cardLink,
       labelLinkConfig,
       facetAliases = {}
     } = this.props
@@ -171,7 +171,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.createTitleLink(linkValue, titleLinkConfig, data, schema)
+    const { linkDisplay, target } = this.createTitleLink(linkValue, cardLink, data, schema)
     const values: string [][] = []
     const { secondaryLabels = [] } = genericCardSchema
     for (let i = 0; i < secondaryLabels.length; i += 1) {
@@ -180,6 +180,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       if (value) {
         const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
+          console.log('labelLink = ', labelLink)
           // create link for this column
           value = this.createLabelLink(value, labelLink, isHeader)
         }

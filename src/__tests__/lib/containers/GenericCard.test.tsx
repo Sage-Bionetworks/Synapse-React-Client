@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
 import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { TitleLinkConfig, LabelLinkConfig } from '../../../lib/containers/CardContainerLogic'
+import { CardLink, LabelLinkConfig } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -148,7 +148,7 @@ describe('it makes the correct URL for the title' , () => {
       [URLColumnNames[0]]: 0,
       [URLColumnNames[1]]: 1
     }
-    const titleLinkConfig: TitleLinkConfig = {
+    const titleLinkConfig: CardLink = {
       baseURL: 'Explore/Projects',
       URLColumnNames: [
         URLColumnNames[0],
@@ -182,26 +182,29 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createLabelLink(value, labelLinkConfig[0], false)} </div>)
-    expect(links).toHaveLength(1)
-    expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], false)} </>)
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
     // double check the style
-    expect(links.find('a').props().className).toEqual(`SRC-primary-text-color`)
+    expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
   })
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createLabelLink(value, labelLinkConfig[1], false)} </div>)
-    expect(links).toHaveLength(1)
-    expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[1], false)} </>)
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
   })
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createLabelLink(value, labelLinkConfig[0], true)} </div>)
-    expect(links).toHaveLength(1)
-    expect(links.find('a').props().className).toEqual(`SRC-anchor-light`)
-    expect(links.find('a').props().style).toEqual({textDecoration: 'underline'})
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], true)} </>)
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.hasClass(`SRC-anchor-light`)).toBeTruthy()
+    expect(link.props().style).toEqual({textDecoration: 'underline'})
   })
 
   it('works with a comma seperated value', () => {
@@ -209,10 +212,11 @@ describe('it makes the correct URL for the secondary labels' , () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const links = mount(<div>{createLabelLink(value, labelLinkConfig[0], false)} </div>)
-    expect(links.find('a')).toHaveLength(3)
-    expect(links.find('a').at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
-    expect(links.find('a').at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)
-    expect(links.find('a').at(2).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val3}`)
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], false)} </>)
+    const links = wrapper.find('a')
+    expect(links).toHaveLength(3)
+    expect(links.at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
+    expect(links.at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)
+    expect(links.at(2).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val3}`)
   })
 })
