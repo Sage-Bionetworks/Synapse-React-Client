@@ -20,7 +20,7 @@ export type QueryMatchPair = {
 }
 
 // Specify the indices in the values [] that should point to links
-export type LabelInternalLinkConfig = QueryMatchPair []
+export type LabelLinkConfig = QueryMatchPair []
 
 export type CommonCardProps = {
   type: string
@@ -29,7 +29,7 @@ export type CommonCardProps = {
   iconOptions?: IconOptions
   secondaryLabelLimit?: number
   titleLinkConfig?: TitleLinkConfig
-  labelInternalLinkConfig?: LabelInternalLinkConfig
+  labelLinkConfig?: LabelLinkConfig
   loadingScreen?: React.FunctionComponent | JSX.Element
 }
 

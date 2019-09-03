@@ -116,14 +116,14 @@ describe('it renders the UI correctly', () => {
 })
 
 describe('it makes the correct URL for the title' , () => {
-  const createInternalTitleLink = GenericCard.prototype.createInternalTitleLink
+  const createTitleLink = GenericCard.prototype.createTitleLink
   const SELF = '_self'
   const BLANK = '_blank'
 
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { linkDisplay, target } = createInternalTitleLink(synId)
+    const { linkDisplay, target } = createTitleLink(synId)
     expect(linkDisplay).toEqual(synLink)
     expect(target).toEqual(SELF)
   })
@@ -131,7 +131,7 @@ describe('it makes the correct URL for the title' , () => {
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { linkDisplay, target } = createInternalTitleLink(doi)
+    const { linkDisplay, target } = createTitleLink(doi)
     expect(linkDisplay).toEqual(doiLink)
     expect(target).toEqual(BLANK)
   })
@@ -156,14 +156,14 @@ describe('it makes the correct URL for the title' , () => {
       ]
     }
     const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
-    const { linkDisplay, target } = createInternalTitleLink('', titleLinkConfig, data, schema)
+    const { linkDisplay, target } = createTitleLink('', titleLinkConfig, data, schema)
     expect(linkDisplay).toEqual(expectedLink)
     expect(target).toEqual(SELF)
   })
 })
 
 describe('it makes the correct URL for the secondary labels' , () => {
-  const createInternalLabelLink = GenericCard.prototype.createInternalLabelLink
+  const createLabelLink = GenericCard.prototype.createLabelLink
   const DATASETS = 'datasets'
   const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
@@ -182,7 +182,7 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[0], false)} </div>)
+    const links = mount(<div>{createLabelLink(value, queryMatchPair[0], false)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
     // double check the style
@@ -191,14 +191,14 @@ describe('it makes the correct URL for the secondary labels' , () => {
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[1], false)} </div>)
+    const links = mount(<div>{createLabelLink(value, queryMatchPair[1], false)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
   })
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[0], true)} </div>)
+    const links = mount(<div>{createLabelLink(value, queryMatchPair[0], true)} </div>)
     expect(links).toHaveLength(1)
     expect(links.find('a').props().className).toEqual(`SRC-anchor-light`)
     expect(links.find('a').props().style).toEqual({textDecoration: 'underline'})
@@ -209,7 +209,7 @@ describe('it makes the correct URL for the secondary labels' , () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const links = mount(<div>{createInternalLabelLink(value, queryMatchPair[0], false)} </div>)
+    const links = mount(<div>{createLabelLink(value, queryMatchPair[0], false)} </div>)
     expect(links.find('a')).toHaveLength(3)
     expect(links.find('a').at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
     expect(links.find('a').at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { TitleLinkConfig, LabelInternalLinkConfig, QueryMatchPair } from './CardContainerLogic'
+import { TitleLinkConfig, LabelLinkConfig, QueryMatchPair } from './CardContainerLogic'
 
 export type KeyToAlias = {
   key: string
@@ -37,7 +37,7 @@ export type GenericCardProps = {
   data: any
   secondaryLabelLimit?: number
   titleLinkConfig?: TitleLinkConfig
-  labelInternalLinkConfig?: LabelInternalLinkConfig
+  labelLinkConfig?: LabelLinkConfig
 }
 
 export type GenericCardState = {
@@ -61,11 +61,11 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     this.state = {
       showMoreDescription: false
     }
-    this.createInternalTitleLink = this.createInternalTitleLink.bind(this)
-    this.createInternalLabelLink = this.createInternalLabelLink.bind(this)
+    this.createTitleLink = this.createTitleLink.bind(this)
+    this.createLabelLink = this.createLabelLink.bind(this)
   }
 
-  public createInternalTitleLink (link: string, titleLinkConfig?: TitleLinkConfig, data?: string [], schema?: any) {
+  public createTitleLink (link: string, titleLinkConfig?: TitleLinkConfig, data?: string [], schema?: any) {
     let linkDisplay = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
@@ -113,7 +113,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     })
   }
 
-  public createInternalLabelLink (value: string, queryMatchPair: QueryMatchPair, isHeader: boolean) {
+  public createLabelLink (value: string, queryMatchPair: QueryMatchPair, isHeader: boolean) {
     const splitLength = value.split(',').length
     let className = ''
     let style: React.CSSProperties = {}
@@ -159,7 +159,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       iconOptions,
       isHeader = false,
       titleLinkConfig,
-      labelInternalLinkConfig,
+      labelLinkConfig,
       facetAliases = {}
     } = this.props
     const { showMoreDescription } = this.state
@@ -171,7 +171,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.createInternalTitleLink(linkValue, titleLinkConfig, data, schema)
+    const { linkDisplay, target } = this.createTitleLink(linkValue, titleLinkConfig, data, schema)
     const values: string [][] = []
     if (genericCardSchema.secondaryLabels) {
       for (let i = 0; i < genericCardSchema.secondaryLabels.length; i += 1) {
@@ -179,9 +179,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
         let value = data[schema[columnName]]
         if (value) {
           const columnDisplayName = facetAliases[columnName] || columnName
-          const queryMatchPair = labelInternalLinkConfig && labelInternalLinkConfig.find(el => el.matchColumnName === columnName)
+          const queryMatchPair = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
           if (value && queryMatchPair) {
-            value = this.createInternalLabelLink(value, queryMatchPair, isHeader)
+            value = this.createLabelLink(value, queryMatchPair, isHeader)
           }
           const keyValue = [columnDisplayName, value]
           if (data[schema[columnName]]) {
