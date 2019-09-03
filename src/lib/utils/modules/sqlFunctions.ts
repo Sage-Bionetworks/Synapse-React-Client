@@ -1,4 +1,5 @@
 import { lexer, parser } from 'sql-parser'
+import { SYNAPSE_REGX } from '../../containers/GenericCard'
 
 export type KeyValue = {
   [index: string]: string
@@ -13,12 +14,20 @@ export const isGroupByInSql =(sql: string): boolean => {
 }
 
 const generateTokenUsingOperator = (literal: string, operator: SQLOperator, match: string) => {
+  let usedMatchForLike = match
+  if (match.match(SYNAPSE_REGX)) {
+    // If we use a LIKE statement with a synId the backend will look for a string with the first three
+    // characters being 'syn', however, it stores synIds without 'syn', so the query will fail
+    // The backend usually parses 'syn' out, but not with the LIKE clause since its expecting a regex, so we
+    // parse this out. This will cause a bug if something matches the synId regex but is in free text. 
+    usedMatchForLike = match.substring(3)
+  }
   switch (operator) {
     case 'LIKE':
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
-        ['STRING', `%${match}%`, '1'], 
+        ['STRING', `%${usedMatchForLike}%`, '1'], 
       ]
     case '=':
       return [
