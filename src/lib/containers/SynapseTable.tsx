@@ -62,6 +62,7 @@ const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
 export const SELECT_ALL = 'SELECT_ALL'
 export const DESELECT_ALL = 'DESELECT_ALL'
+export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 // double check these icons!
 export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 'sort-amount-up']
 type Direction = ''|'ASC'|'DESC'
@@ -409,7 +410,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             onClick={this.advancedSearch}
           >
           <a href="javascript:void">
-            Download Files
+            { DOWNLOAD_FILES_MENU_TEXT }
           </a>
         </li>
       </ul>
