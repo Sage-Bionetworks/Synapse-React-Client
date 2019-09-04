@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
@@ -13,11 +13,9 @@ export type WarningModalProps = {
 }
 
 export default function WarningModal(props: WarningModalProps) {
-  const [show] = useState(props.show);
-  console.log(`callback: ${props.callbackArgs}`)
-
+ 
   return (
-    <Modal show={show} animation={false}>
+    <Modal show={true} animation={false}>
       <Modal.Header closeButton={false} onHide={() => props.onCancel()}>
         <Modal.Title>{props.title}</Modal.Title>
       </Modal.Header>

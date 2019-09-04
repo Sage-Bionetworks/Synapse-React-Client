@@ -5,7 +5,6 @@
 import './DrugUploadTool.scss'
 
 import * as React from 'react'
-
 import { Link } from 'react-router-dom'
 
 import { Entity, } from '../../utils/jsonResponses/Entity'
@@ -15,9 +14,7 @@ import { SynapseClient } from '../../utils'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from './WarningModal'
-import Login from '../Login'
 
-import _ from 'lodash';
 import moment from 'moment';
 
 type UserData = {
@@ -34,7 +31,7 @@ export type UserFileGridProps = {
 
 type UserFileGridState = {
   token?: string;
-  userprofile?: any;
+  userProfile?: any;
   dataFolderId?: string,
   fileList: Entity[]
   isLoading: boolean;
@@ -43,11 +40,10 @@ type UserFileGridState = {
 
 
 export default class UserFileGrid extends React.Component<UserFileGridProps, UserFileGridState> {
-  modalTitle='Trash Submission?' 
-  modalCopy=<><p>This submission is currently incomplete and has not been submitted. If you trash this submission, you won't be able to recover the data.</p>
-  <p>Are you sure you want to trash this submission?' </p></>
-  
-  
+  modalTitle = 'Trash Submission?'
+  modalCopy = <><p>This submission is currently incomplete and has not been submitted. If you trash this submission, you won't be able to recover the data.</p>
+    <p>Are you sure you want to trash this submission?' </p></>
+
   constructor(props: UserFileGridProps) {
     super(props)
     this.state = {
@@ -57,59 +53,55 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
     }
   }
 
-  componentDidMount(): Promise<any> {
-    // Note:  All portals should do this once on the initial app load.
-    // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
-    SynapseClient.detectSSOCode()
-    return SynapseClient.getSessionTokenFromCookie()
-      .then((sessionToken: any) => { return this.refresh(sessionToken) })
-      .catch((error: any) => {
-        console.error(error)
-      })
+  async componentDidMount(){
+    await this.refresh(this.state.token)
   }
 
+  async componentDidUpdate(prevProps: any) {
+    const shouldUpdate = this.props.token !== prevProps.token
+    if (shouldUpdate) {
+      await this.refresh(this.props.token)
+    }
+  }
 
-  refresh = (token?: string): Promise<any> => {
+  async refresh (token?: string) {
     this.setState({ token })
     if (token) {
-      return this.getUserFileListing(token!, this.props.parentContainerId).catch((error) => {
+      await this.getUserFileListing(token, this.props.parentContainerId).catch((error) => {
         this.onError(error)
       })
-
-    } else {
-      return Promise.reject()
     }
   }
 
 
 
   private getUserFileListing = async (token: string, parentContainerId: string): Promise<UserData> => {
-    this.setState({ isLoading: true });
+    this.setState({ 
+      token: token,
+      isLoading: true });
     const result: UserData = {
       fileList: [],
       existingData: {},
       dataFolderId: ''
     }
-
-    // get user profile
-    const userprofile = await SynapseClient.getUserProfile(token)
-
-    //find directory named with profileId
-    const entityLookupRequest: EntityLookupRequest = {
-      entityName: userprofile.ownerId,
-      parentId: parentContainerId
-    }
+    let userProfile
     try {
+      // get user profile
+      userProfile = await SynapseClient.getUserProfile(token)
+      //find directory named with profileId
+      const entityLookupRequest: EntityLookupRequest = {
+        entityName: userProfile.ownerId,
+        parentId: parentContainerId
+      }
       const entity = await SynapseClient.lookupChildEntity(entityLookupRequest, token)
-
       //if found - that's the folder id
       result.dataFolderId = entity.id
     }
 
     catch (error) {
-      if (error.statusCode === 404) {
+      if (error.statusCode === 404 && userProfile) {
         // if doesn't exist - create
-        const entityId = await this.createDataFolder(userprofile, token)
+        const entityId = await this.createDataFolder(userProfile, token)
         if (!entityId) {
           throw ('no folder')
         }
@@ -123,7 +115,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
       // get the file listing
       result.fileList = await this.getFileListingInFolder(token, result.dataFolderId)
       this.setState({
-        userprofile,
+        userProfile,
         dataFolderId: result.dataFolderId,
         fileList: result.fileList || [],
         isLoading: false
@@ -137,11 +129,10 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
 
 
   // creates data folder for user
-  createDataFolder = async (userprofile: UserProfile, token: string): Promise<string | undefined> => {
-
+  createDataFolder = async (userProfile: UserProfile, token: string): Promise<string | undefined> => {
     const newFolder: Entity = {
       parentId: this.props.parentContainerId,
-      name: userprofile.ownerId,
+      name: userProfile.ownerId,
       concreteType: 'org.sagebionetworks.repo.model.Folder',
     }
     try {
@@ -154,8 +145,6 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
     }
   }
 
-
-
   getFileListingInFolder = async (token: string, targetFolderId: string): Promise<Entity[]> => {
     const request = {
       includeTypes: ['file'],
@@ -163,7 +152,6 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
       sortBy: 'NAME',
       sortDirection: 'ASC'
     }
-
     try {
       const data = await SynapseClient.getEntityChildren(request, token);
       return data.page;
@@ -175,11 +163,9 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
   }
 
   deleteFile = async (token: string, entityId: string): Promise<any> => {
-
     this.setState({
       isLoading: true, modalContext: undefined
     })
-
     try {
       await SynapseClient.deleteEntity(token, entityId);
       const fileList = await this.getFileListingInFolder(token, this.state.dataFolderId!)
@@ -198,26 +184,16 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
     }
   }
 
-  /* ------------------------------------------   rendering fns  ------------------------------------------------*/
-  /*  login control if user is not logged in */
-  renderLogin = (stateToken: string = ''): JSX.Element => {
-    let token: string | undefined = ''
-    const loggedInState: JSX.Element = <div className='bg-success text-center' role='alert'>
-      You are logged in.&nbsp;
-        <button onClick={SynapseClient.signOut}><span aria-hidden='true'>Sign out</span></button>
-    </div>
-
-    if (!_.isEmpty(stateToken)) {
-      return loggedInState;
-    } else {
-      return (
-        <Login
-          token={SynapseClient.IS_DEV_ENV ? token : stateToken}
-          theme={'light'}
-          icon={true}
-        />)
-    }
+  setModalConfirmationState = (token: string,  entityId: string) => {
+    this.setState({
+      modalContext: 
+      { 
+        action: this.deleteFile,
+        arguments: [token, entityId] 
+      } 
+    })
   }
+  /* ------------------------------------------   rendering fns  ------------------------------------------------*/
 
   renderLoading = (token: string | undefined, isLoading: boolean): JSX.Element => {
     if (
@@ -237,7 +213,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
       this.onError('Data Folder ID is undefined')
       return <></>
     }
-    if (_.isEmpty(fileList)) {
+    if (fileList.length === 0) {
       return <h5 className='text-center no-submissions padding-full'>You don't have submissions in progress [COPY!]</h5>
     }
     return (<table className='table file-table' >
@@ -247,16 +223,15 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
           <th>Edited On</th>
           <th>Submitted On</th>
           <th>Action</th>
-
         </tr>
       </thead>
       <tbody>
-        {fileList.map((entity, i: number) => {
-          return (<tr className='test' key={i}>
+        {fileList.map((entity, key) => {
+          return (<tr key={entity.id!+key}>
             <td><Link className='nav-green' to={`/${pathpart}/${dataFolderId}/${entity.id}/`}>{entity.name}</Link></td>
             <td>{moment(entity.modifiedOn).calendar()}</td>
             <td>?</td>
-            <td><button className='btn' aria-label="delete" onClick={() => this.setState({ modalContext: { action: this.deleteFile, arguments: [this.state.token!, entity.id!] } })}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
+            <td><button className='btn' aria-label="delete" onClick={() => this.setModalConfirmationState(this.state.token!, entity.id!)}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
           </tr>)
         })}
       </tbody>
@@ -268,7 +243,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
 
     return (<div className='container'>
       {this.renderLoading(this.state.token, this.state.isLoading)}
-      {this.renderLogin(this.state.token)}
+
       {!(this.state.isLoading) &&
         <div>
           <h3>Your Submissions</h3>
@@ -278,8 +253,14 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
               <a className='btn btn-success' href={`/${this.props.pathpart}/${this.state.dataFolderId}`}>Add new Compound</a></div>
           </div></div>}
       {this.state.modalContext &&
-        <WarningModal show={true} title={this.modalTitle} copy={this.modalCopy} callbackArgs={this.state.modalContext.arguments} onCancel={() => this.setState({ modalContext: undefined })} onOK={(x: string, y: string) => this.deleteFile(x, y)}></WarningModal>}
-
+        <WarningModal
+          show={true}
+          title={this.modalTitle}
+          copy={this.modalCopy}
+          callbackArgs={this.state.modalContext.arguments}
+          onCancel={() => this.setState({ modalContext: undefined })}
+          onOK={(x: string, y: string) => this.deleteFile(x, y)}/>
+      }
     </div>)
 
   }

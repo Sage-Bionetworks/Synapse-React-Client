@@ -14,7 +14,7 @@ const parentContainerId: string = 'syn20355732'
 
 
 const createShallowComponent = async (props: UserFileGridProps, disableLifecycleMethods: boolean = false) => {
-  const wrapper = await shallow(
+  const wrapper = await shallow<UserFileGrid>(
     <UserFileGrid
       {...props}
     />,
@@ -24,7 +24,7 @@ const createShallowComponent = async (props: UserFileGridProps, disableLifecycle
   )
 
 
-  const instance = wrapper.instance() as UserFileGrid
+  const instance = wrapper.instance();
   return { wrapper, instance }
 }
 
