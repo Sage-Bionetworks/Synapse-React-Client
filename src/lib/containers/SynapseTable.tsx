@@ -2,7 +2,6 @@ import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import { 
   faCheck,
   faColumns,
-  faDatabase,
   faFilter,
   faSort,
   faSortAmountDown,
@@ -19,6 +18,7 @@ import { FacetColumnResult,
          FacetColumnResultValueCount,
          FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
+import columnsSvg from '../assets/icons/columns.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -53,7 +53,6 @@ library.add(faSortAmountDown)
 library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
-library.add(faDatabase)
 library.add(faDownload)
 library.add(faUsers)
 library.add(faGlobeAmericas)
@@ -315,7 +314,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               onKeyPress={this.advancedSearch}
               onClick={this.advancedSearch}
             >
-              <FontAwesomeIcon size="1x" color="white"  icon={'database'}/>
+              <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
             </span>
             <ReactTooltip
                 delayShow={1500}
@@ -435,7 +434,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           id="dropdownMenu1"
         >
-          <FontAwesomeIcon color="white" icon="columns" />
+          <img className="iconImg" src={columnsSvg} alt="Select available columns" />
         </span>
         <ReactTooltip 
           delayShow={1500} 
