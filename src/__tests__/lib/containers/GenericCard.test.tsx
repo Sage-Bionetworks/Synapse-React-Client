@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
 import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { InternalLinkConfiguration } from '../../../lib/containers/CardContainerLogic'
+import { CardLink, LabelLinkConfig } from '../../../lib/containers/CardContainerLogic'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(
@@ -115,15 +115,15 @@ describe('it renders the UI correctly', () => {
 
 })
 
-describe('it grabs the correct URL' , () => {
-  const getLink = GenericCard.prototype.getLink
+describe('it makes the correct URL for the title' , () => {
+  const createTitleLink = GenericCard.prototype.createTitleLink
   const SELF = '_self'
   const BLANK = '_blank'
 
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { linkDisplay, target } = getLink(synId)
+    const { linkDisplay, target } = createTitleLink(synId)
     expect(linkDisplay).toEqual(synLink)
     expect(target).toEqual(SELF)
   })
@@ -131,7 +131,7 @@ describe('it grabs the correct URL' , () => {
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { linkDisplay, target } = getLink(doi)
+    const { linkDisplay, target } = createTitleLink(doi)
     expect(linkDisplay).toEqual(doiLink)
     expect(target).toEqual(BLANK)
   })
@@ -143,21 +143,80 @@ describe('it grabs the correct URL' , () => {
       grantNumberValue,
       funderValue
     ]
-    const columnValues = ['Grant Number', 'Funder']
+    const URLColumnNames = ['Grant Number', 'Funder']
     const schema = {
-      [columnValues[0]]: 0,
-      [columnValues[1]]: 1
+      [URLColumnNames[0]]: 0,
+      [URLColumnNames[1]]: 1
     }
-    const internalLinkConfiguration: InternalLinkConfiguration = {
+    const titleLinkConfig: CardLink = {
       baseURL: 'Explore/Projects',
-      columnValues: [
-        columnValues[0],
-        columnValues[1]
+      URLColumnNames: [
+        URLColumnNames[0],
+        URLColumnNames[1]
       ]
     }
     const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
-    const { linkDisplay, target } = getLink('', internalLinkConfiguration, data, schema)
+    const { linkDisplay, target } = createTitleLink('', titleLinkConfig, data, schema)
     expect(linkDisplay).toEqual(expectedLink)
     expect(target).toEqual(SELF)
+  })
+})
+
+describe('it makes the correct URL for the secondary labels' , () => {
+  const createLabelLink = GenericCard.prototype.createLabelLink
+  const DATASETS = 'datasets'
+  const STUDIES = 'studies'
+  const datasetBaseURL = 'Explore/Datasets'
+  const labelLinkConfig: LabelLinkConfig = [
+    {
+      baseURL: datasetBaseURL,
+      URLColumnNames: [DATASETS],
+      matchColumnName: 'dataset'
+    },
+    {
+      baseURL: datasetBaseURL,
+      URLColumnNames: [DATASETS, STUDIES],
+      matchColumnName: 'dataset'
+    },
+  ]
+
+  it('works with a single value and single column', () => {
+    const value = 'syn1234567'
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], false)} </>)
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
+    // double check the style
+    expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
+  })
+
+  it('works with a single value and multiple columns', () => {
+    const value = 'syn1234567'
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[1], false)} </>)
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
+  })
+
+  it('works with a header', () => {
+    const value = 'syn1234567'
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], true)} </>)
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.hasClass(`SRC-anchor-light`)).toBeTruthy()
+    expect(link.props().style).toEqual({textDecoration: 'underline'})
+  })
+
+  it('works with a comma seperated value', () => {
+    const val1 = 'syn1234567'
+    const val2 = 'syn1234568'
+    const val3 = 'syn1234569'
+    const value = `${val1},${val2},${val3}`
+    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], false)} </>)
+    const links = wrapper.find('a')
+    expect(links).toHaveLength(3)
+    expect(links.at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
+    expect(links.at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)
+    expect(links.at(2).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val3}`)
   })
 })

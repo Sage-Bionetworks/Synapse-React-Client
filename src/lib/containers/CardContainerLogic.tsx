@@ -8,10 +8,20 @@ import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { insertConditionsFromSearchParams, KeyValue, SQLOperator } from '../utils/modules/sqlFunctions'
 
-export type InternalLinkConfiguration = {
+export interface CardLink {
   baseURL: string
-  columnValues: string []
+  // the keys that will go into the url
+  URLColumnNames: string []
 }
+
+
+export interface LabelLink extends CardLink {
+  // the columns whos value will be paired with the columns URLColumnNames
+  matchColumnName: string
+}
+
+// Specify the indices in the values [] that should point to links
+export type LabelLinkConfig = LabelLink []
 
 export type CommonCardProps = {
   type: string
@@ -19,7 +29,8 @@ export type CommonCardProps = {
   hasInternalLink?: boolean
   iconOptions?: IconOptions
   secondaryLabelLimit?: number
-  internalLinkConfiguration?: InternalLinkConfiguration
+  titleLinkConfig?: CardLink
+  labelLinkConfig?: LabelLinkConfig
   loadingScreen?: React.FunctionComponent | JSX.Element
 }
 

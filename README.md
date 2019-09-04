@@ -282,7 +282,7 @@ An example of a view with facets/stacked bar chart/table
 | rgbIndex | The index into the color pallette starting the color gradient for the view |
 | unitDescription | The units of data for the query  |
 | tableConfiguration, has keys: synapseId, title, visibleColumnCount | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/>  **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table  |
-| cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, hasInternalLink? | The configuration for cards to be show given the query |
+| cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, titleLinkConfig, labelLinkConfig | The configuration for cards to be show given the query |
 | stackedBarChartConfiguration, has keys: loadingScreen, link, linkText  | The configuration for the bar chart |
 | searchConfiguration, has key: searchable  | The configuration for the search component. Only views that have cards |
 | accordionConfig: AccordionConfig [] | For using an accordion dropdown. An individual accordion config contains: menuConfig: MenuConfig [], name: string, cardConfiguration, tableConfiguration, stackedBarChartConfiguration. |

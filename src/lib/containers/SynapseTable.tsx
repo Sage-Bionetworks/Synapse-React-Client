@@ -92,6 +92,7 @@ export type SynapseTableProps = {
   visibleColumnCount?: number
   synapseId: string
   title: string
+  loadingScreen?: JSX.Element
 }
 // This is a convenient way to categorize all the dropdown state variables, although problematic
 // if any state variable mapping to a boolean does NOT represent a dropdown
@@ -256,7 +257,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    */
   public render() {
     if (this.props.data === undefined) {
-      return (<div/>)
+      return this.props.loadingScreen || <div/>
     }
     // unpack all the data
     const { data, isLoading = true, unitDescription, token, synapseId } = this.props
