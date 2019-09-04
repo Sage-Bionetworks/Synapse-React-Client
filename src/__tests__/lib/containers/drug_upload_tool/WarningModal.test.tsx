@@ -33,9 +33,6 @@ describe('basic tests', () => {
     callbackArgs: ['one', 'two']
   }
 
-  beforeEach(() => {
- });
-
 
   it('should display the modal with correct text', async () => {
     const { wrapper, } = createMountedComponent(props)

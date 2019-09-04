@@ -30,7 +30,6 @@ export type UserFileGridProps = {
 }
 
 type UserFileGridState = {
-  token?: string;
   userProfile?: any;
   dataFolderId?: string,
   fileList: Entity[]
@@ -48,16 +47,15 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
     super(props)
     this.state = {
       isLoading: true,
-      token: this.props.token,
       fileList: []
     }
   }
 
   async componentDidMount(){
-    await this.refresh(this.state.token)
+    await this.refresh(this.props.token)
   }
 
-  async componentDidUpdate(prevProps: any) {
+  async componentDidUpdate(prevProps: UserFileGridProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
       await this.refresh(this.props.token)
@@ -65,7 +63,6 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
   }
 
   async refresh (token?: string) {
-    this.setState({ token })
     if (token) {
       await this.getUserFileListing(token, this.props.parentContainerId).catch((error) => {
         this.onError(error)
@@ -77,7 +74,6 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
 
   private getUserFileListing = async (token: string, parentContainerId: string): Promise<UserData> => {
     this.setState({ 
-      token: token,
       isLoading: true });
     const result: UserData = {
       fileList: [],
@@ -231,7 +227,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
             <td><Link className='nav-green' to={`/${pathpart}/${dataFolderId}/${entity.id}/`}>{entity.name}</Link></td>
             <td>{moment(entity.modifiedOn).calendar()}</td>
             <td>?</td>
-            <td><button className='btn' aria-label="delete" onClick={() => this.setModalConfirmationState(this.state.token!, entity.id!)}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
+            <td><button className='btn' aria-label="delete" onClick={() => this.setModalConfirmationState(this.props.token!, entity.id!)}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
           </tr>)
         })}
       </tbody>
@@ -242,7 +238,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
   render() {
 
     return (<div className='container'>
-      {this.renderLoading(this.state.token, this.state.isLoading)}
+      {this.renderLoading(this.props.token, this.state.isLoading)}
 
       {!(this.state.isLoading) &&
         <div>
