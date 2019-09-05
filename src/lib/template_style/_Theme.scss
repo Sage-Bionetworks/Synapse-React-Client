@@ -95,10 +95,11 @@ border-left-color: $primary-action-color;
 }
 
 .SRC-mailchimpSubscribeContainer {
-  padding: 10px 20px 10px 0px;
-  margin-bottom: 20px;
+  padding: 29px 30px 20px 0px;
+  border-bottom: 1px solid #dddddf;
   input {
-    width: 570px;
+    width: 100%;
+    max-width: 570px;
     height: 45px;
     margin-top: 10px;
     padding-left: 8px;
