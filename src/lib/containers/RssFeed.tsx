@@ -41,13 +41,12 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
 
   public onToggleReadMore = (itemId: string) => (event: React.SyntheticEvent<HTMLButtonElement>) => {
     let feedItemContentDiv = document.getElementById(itemId)
-    let button:HTMLButtonElement = event.currentTarget
-    let isShow:boolean = button.innerText.includes('More')
+    let isShow:boolean = this.state.itemId2MoreItem[itemId].text.includes('More')
     if (feedItemContentDiv) {
       let foundMoreItem:boolean = false
+      // hide or show the elements after the More element
       for (let i = 0; i < feedItemContentDiv.children.length; i++) {
-          // TODO: skip over children until we find the id that starts with 'more-'
-          // TODO: add icon!
+          // skip over children until we find the id that starts with 'more-'
           let child = feedItemContentDiv.children[i]
           if (foundMoreItem) {
             if (isShow) {
@@ -60,7 +59,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
           }
         }
     }
-    
+    // toggle, by updating text and icon
     if (isShow) {
       this.state.itemId2MoreItem[itemId] = {
         icon: 'long-arrow-alt-up',
