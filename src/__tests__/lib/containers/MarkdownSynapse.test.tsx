@@ -4,15 +4,16 @@ import MarkdownSynapse, { MarkdownSynapseProps } from '../../../lib/containers/M
 import Bookmarks from '../../../lib/containers/widgets/Bookmarks'
 import SynapseImage from '../../../lib/containers/widgets/SynapseImage'
 import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
+import { WikiPage } from 'lib/utils/jsonResponses/WikiPage';
 
 const createShallowComponent = async (props: MarkdownSynapseProps, disableLifecycleMethods: boolean = false) => {
-  const wrapper = await shallow(
+  const wrapper = await shallow<MarkdownSynapse>(
     <MarkdownSynapse
       {...props}
     />,
     { disableLifecycleMethods }
   )
-  const instance = wrapper.instance() as MarkdownSynapse
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
@@ -31,22 +32,40 @@ describe('it performs all functionality', () => {
     })
 
     it('renders without crashing', async () => {
-      const props = { hasSynapseResources: false }
+      const markdownPlaceholder = 'loremipsum....'
+      const props = { markdown: markdownPlaceholder,hasSynapseResources: false }
       const { wrapper } = await createShallowComponent(props, true)
       expect(wrapper).toBeDefined()
     })
 
+    it('renders with a title', async () => {
+      const title = 'title'
+      const mockWikiPage: WikiPage = {
+        title,
+        markdown: '',
+        attachmentFileHandleIds: [],
+        createdBy: '',
+        createdOn: '',
+        etag: '',
+        id: '',
+        modifiedBy: '',
+        modifiedOn: ''
+      }
+      const props: MarkdownSynapseProps = { wikiId: '', ownerId: '', renderTitle: true }
+      SynapseClient.getEntityWiki = jest.fn(() => { return Promise.resolve(mockWikiPage) })
+      const { wrapper } = await createShallowComponent(props, false)
+      expect(wrapper).toBeDefined()
+      expect(wrapper.find('h2').text().trim()).toEqual(title)
+    })
+
     it('mounts correctly with markdown already loaded', async () => {
       const markdownPlaceholder = 'loremipsum....'
-      const props = {
-        markdown: markdownPlaceholder,
-        hasSynapseResources: false
+      const props: MarkdownSynapseProps = {
+        markdown: markdownPlaceholder
       }
       const { wrapper } = await createShallowComponent(props)
-
-      expect(wrapper.state('text')).toEqual(markdownPlaceholder)
+      expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
       expect(spyOnMath).toHaveBeenCalled()
-
     })
 
     it('mounts correctly with markdown NOT already loaded', async () => {
@@ -68,7 +87,7 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent(props)
 
       // verify functions were called
-      expect(wrapper.state('text')).toEqual(markdownPlaceholder)
+      expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
       expect(spyOnWikiAttachmentsFromEntity).toHaveBeenCalledTimes(1)
       expect(spyOnEntityWiki).toHaveBeenCalledTimes(1)
     })

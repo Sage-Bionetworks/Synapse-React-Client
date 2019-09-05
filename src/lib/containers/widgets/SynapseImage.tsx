@@ -16,7 +16,6 @@ type SynapseImageProps = {
 }
 
 type SynapseImageState = {
-  isLoaded: boolean
   preSignedURL: string
 }
 
@@ -27,7 +26,6 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     this.getEntity = this.getEntity.bind(this)
     this.getSynapseFiles = this.getSynapseFiles.bind(this)
     this.state = {
-      isLoaded: false,
       preSignedURL: ''
     }
   }
@@ -67,6 +65,10 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
           preSignedURL: preSignedURL
         })
       }
+    ).catch(
+      err => {
+        console.error('Error on getting image ', err)
+      }
     )
   }
   public componentDidMount() {
@@ -94,7 +96,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     if (params && params.align) {
       imgStyle.float = params.align.toLowerCase()
     }
-    if (this.state.isLoaded || !this.state.preSignedURL) {
+    if (!this.state.preSignedURL) {
       return null
     }
     return (
