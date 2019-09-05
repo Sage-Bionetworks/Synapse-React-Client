@@ -18,7 +18,7 @@ import { FacetColumnResult,
          FacetColumnResultValueCount,
          FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
-import columnsSvg from '../assets/icons/columns.svg'
+import { ReactComponent as ColumnsSvg} from '../assets/icons/columns.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -435,7 +435,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           id="dropdownMenu1"
         >
-          <img className="iconImg" src={columnsSvg} alt="Select available columns" />
+          {/* <img src={ColumnsSvg} alt="Select available columns" /> */}
+          <ColumnsSvg/>
         </span>
         <ReactTooltip 
           delayShow={1500} 

@@ -3,6 +3,8 @@ import { BatchFileResult } from '../../utils/jsonResponses/BatchFileResult'
 import { FileEntity } from '../../utils/jsonResponses/FileEntity'
 import { FileHandle } from '../../utils/jsonResponses/FileHandle'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
+import { BatchFileRequest } from '../../utils/jsonResponses/BatchFileRequest'
+import { FileHandleAssociation, FileHandleAssociateType } from '../../utils/jsonResponses/FileHandleAssociation'
 
 type SynapseImageProps = {
   wikiId?: string
@@ -24,50 +26,35 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     super(props)
     this.getEntity = this.getEntity.bind(this)
     this.getSynapseFiles = this.getSynapseFiles.bind(this)
-    this.compareById = this.compareById.bind(this)
     this.state = {
       isLoaded: false,
       preSignedURL: ''
     }
   }
 
-  public compareById(fileName: string, key: string) {
-    return (element: any) => element[key] === fileName
-  }
-
-    /**
-     * Attach markdown to wiki attachments
-     */
-  public matchToHandle(comparator: any , objectList: any) {
-    if (objectList) {
-            // make sure the files have loaded
-      const filtered = objectList.filter(comparator)
-      return filtered
-    }
-    return []
-  }
-
   public getEntity() {
     const { token, synapseId } = this.props
-    getEntity<FileEntity>(token, synapseId!).then(
-      // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
-      (data: FileEntity) => {
-        const fileHandleAssociationList = [
-          {
-            associateObjectId: synapseId,
-            associateObjectType: 'FileEntity',
-            fileHandleId: data.dataFileHandleId
-          }
-        ]
-        this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
-      }
-    )
+    if (synapseId) {
+      getEntity<FileEntity>(token, synapseId).then(
+        // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
+        (data: FileEntity) => {
+          const fileHandleAssociationList = [
+            {
+              associateObjectId: synapseId,
+              associateObjectType: FileHandleAssociateType.FileEntity,
+              fileHandleId: data.dataFileHandleId
+            }
+          ]
+          this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+        }
+      )
+    }
   }
-  public getSynapseFiles(fileHandleAssociationList: any, id: string) {
+  public getSynapseFiles(fileHandleAssociationList: FileHandleAssociation [], id: string) {
     // overload the method for two different use cases, one where
     // the image is attached to an entity and creates a list on the spot,
     // the other where list is passed in from componentDidMount in MarkdownSynapse
-    const request: any = {
+    const request: BatchFileRequest = {
       includeFileHandles: false,
       includePreSignedURLs: true,
       includePreviewPreSignedURLs: false,
@@ -75,34 +62,34 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
     }
     getFiles(request, this.props.token).then(
       (data: BatchFileResult) => {
-        const match = this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
+        const { preSignedURL } = data.requestedFiles.filter(el => el.fileHandleId === id)[0] // this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
         this.setState({
-          preSignedURL: match[0].preSignedURL
+          preSignedURL: preSignedURL
         })
       }
     )
   }
   public componentDidMount() {
-    if (!this.props.hasOwnProperty('wikiId')) {
-      // Can get presigned url right away
+    if (!this.props.wikiId) {
+      // Get file handle as external attachment
       this.getEntity()
     } else {
-      // Can get presigned url right away, otherwise make extra API call to get this image's
-      // fileHandle ID.
-      const { fileName, fileResults } = this.props
-      const match = this.matchToHandle(this.compareById(fileName!, 'fileName'), fileResults!)
-      const fileHandleAssociationList = [
+      // Can get presigned url right away from wiki association
+      const { fileName, fileResults = [] } = this.props
+      const { id } = fileResults.filter(el => el.fileName === fileName)[0]
+      const fileHandleAssociationList: FileHandleAssociation [] = [
         {
           associateObjectId: this.props.wikiId,
-          associateObjectType: 'WikiAttachment',
-          fileHandleId: match[0].id
+          associateObjectType: FileHandleAssociateType.WikiAttachment,
+          fileHandleId: id
         }
       ]
-      this.getSynapseFiles(fileHandleAssociationList, match[0].id)
+      this.getSynapseFiles(fileHandleAssociationList, id)
     }
   }
+
   public render() {
-    const imgStyle: any = {}
+    const imgStyle: React.CSSProperties = {}
     const { params } = this.props
     if (params && params.align) {
       imgStyle.float = params.align.toLowerCase()

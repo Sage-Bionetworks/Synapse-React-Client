@@ -8,6 +8,7 @@ export const MarkdownSynapseDemo:React.SFC = () => {
       <MarkdownSynapse
         ownerId={'syn12666371'}
         wikiId={'585317'}
+        renderTitle={true}
       />
       {/*  with references */}
       <MarkdownSynapse

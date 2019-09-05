@@ -5,6 +5,7 @@ import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import UserCard from './UserCard'
+import { WikiPage } from '../utils/jsonResponses/WikiPage'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -38,12 +39,13 @@ export type MarkdownSynapseProps = {
   ownerId?: string;
   wikiId?: string;
   markdown?: string;
+  renderTitle?: boolean
 }
 const md = markdownit({ html: true })
 
 type MarkdownSynapseState = {
   md: any;
-  text: string;
+  data: Partial<WikiPage>
   fileHandles?: FileHandleResults;
   errorMessage: string;
 }
@@ -83,7 +85,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       md,
       errorMessage: '',
       fileHandles: undefined,
-      text: '',
+      data: {},
     }
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -154,11 +156,14 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
 
   /**
    * Given input text, generate markdown object to be passed onto inner html of some container.
-   * @param {String} text The text being written in plain markdown
+   * @param {String} markdown The text being written in plain markdown
    * @returns {Object} Dictionary to be passed into dangerouslySetInnerHTML with markdown text
    */
-  public createMarkup(text: string) {
-    const initText = this.state.md.render(text)
+  public createMarkup(markdown?: string) {
+    if (!markdown) {
+      return { __html: '' }
+    }
+    const initText = this.state.md.render(markdown)
     const cleanText = sanitizeHtml(initText, {
       allowedAttributes: {
         a: ['href', 'target'],
@@ -260,7 +265,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public addBookmarks() {
     markdownitSynapse.resetFootnotes()
-    this.createMarkup(this.state.text)
+    this.createMarkup(this.state.data.markdown)
     const footnotesHtml = this.createMarkup(markdownitSynapse.footnotes()).__html
     if (footnotesHtml.length > 0) {
       return (<Bookmarks footnotes={footnotesHtml} />)
@@ -273,16 +278,15 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
    */
   public getWikiPageMarkdown(override: boolean = false) {
-    if (this.state.text.length === 0 || override) {
+    if (!this.state.data.markdown || override) {
       SynapseClient.getEntityWiki(
         this.props.token,
         this.props.ownerId,
         this.props.wikiId
-        )
-        .then((data) => {
+        ).then((data) => {
           // on success grab text and append to the default text
           this.setState({
-            text: data.markdown
+            data
           })
         })
         .catch((err) => {
@@ -366,7 +370,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public processWidgets() {
     // create initial markup
-    let markup = this.createMarkup(this.state.text).__html
+    let markup = this.createMarkup(this.state.data.markdown).__html
     // process reference widgets
     markup = this.addIdsToReferenceWidgets(markup)
     // process table of contents widgets
@@ -599,7 +603,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public componentDidMount() {
     if (this.props.markdown) {
       this.setState({
-        text: this.props.markdown
+        data: { markdown: this.props.markdown }
       })
       return
     }
@@ -631,6 +635,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     return (
       <div className="markdown" ref={this.markupRef}>
         {this.getErrorView()}
+        {this.props.renderTitle &&  <h2> {this.state.data.title} </h2> }
         <span>{this.processWidgets()}</span>
         <div>{this.addBookmarks()}</div>
       </div>
