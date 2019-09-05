@@ -176,6 +176,29 @@ export const doGet = <T>(
   return fetchWithExponentialTimeout<T>(endpoint + url, options, 1000, 5)
 }
 
+export const doDelete = (
+  url: string,
+  sessionToken: string | undefined,
+  initCredentials: string | undefined,
+  endpoint: string) => {
+  const options: any = {
+    headers: {
+      Accept: '*/*',
+      'Access-Control-Request-Headers': 'sessiontoken'
+    },
+    method: 'DELETE',
+    mode: 'cors',
+    credentials: initCredentials
+  }
+  if (initCredentials) {
+    options.credentials = initCredentials
+  }
+  if (sessionToken) {
+    options.headers.sessionToken = sessionToken
+  }
+  return fetchWithExponentialTimeout(endpoint + url, options, 1000, 5)
+}
+
 export const doPut = (
   url: string,
   requestJsonObject: any,
@@ -529,6 +552,13 @@ export const updateEntity = (
   endpoint = DEFAULT_ENDPOINT): Promise<Entity> => {
   const url = `/repo/v1/entity/${entity.id}`
   return doPut(url, entity, sessionToken, undefined, endpoint)
+}
+
+export const deleteEntity: GetEntity = <T>(sessionToken: string | undefined = undefined,
+  entityId: string | number,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+  const url = `/repo/v1/entity/${entityId}`
+  return doDelete(url, sessionToken, undefined, endpoint) as Promise<T>
 }
 
 /**
