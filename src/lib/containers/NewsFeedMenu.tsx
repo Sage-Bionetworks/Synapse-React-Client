@@ -56,11 +56,10 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
         <div className="col-xs-10">
           {
             <>
-              <h4 className="srcRssFeed">{feedName}</h4>
-              <p>{feedDescription}</p>
               {
                 mailChimpUrl &&
                 <div className="SRC-mailchimpSubscribeContainer">
+                  <h4>Subscribe</h4>
                   <p className="SRC-marginBottomTop">Subscribe to receive the {mailChimpListName} by e-mail, which provides information and updates related to the Portal.
                   You can opt out at any time by using the unsubscribe link within the e-mail.
                   We will not share your information with any third parties or use it for any other purposes.</p>
@@ -71,6 +70,8 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
                   </div>
                 </div>
               }
+              <h4 className="srcRssFeed">{feedName}</h4>
+              <p>{feedDescription}</p>
               <RssFeed
                 key={feedUrl}
                 url={feedUrl}
