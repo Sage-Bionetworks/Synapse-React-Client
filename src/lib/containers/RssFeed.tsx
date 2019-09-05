@@ -10,7 +10,8 @@ let rssParser = new Parser()
 type RssState = {
   rssFeed: any,
   isLoadingError: boolean,
-  isShowingMoreItems: boolean
+  isShowingMoreItems: boolean,
+  itemId2Icon:{}
 }
 
 export type RssFeedProps = {
@@ -23,7 +24,7 @@ const parser = new DOMParser()
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   constructor(props: RssFeedProps) {
     super(props)
-    this.state = { rssFeed: {}, isLoadingError: false, isShowingMoreItems: false }
+    this.state = { rssFeed: {}, isLoadingError: false, isShowingMoreItems: false, itemId2Icon: {} }
   }
 
   componentDidMount() {
@@ -38,15 +39,36 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
       .catch(err => this.setState({ isLoadingError: true }))
   }
 
-  public onClickReadMore = (itemId: string) => (event: React.SyntheticEvent<HTMLButtonElement>) => {
+  public onToggleReadMore = (itemId: string) => (event: React.SyntheticEvent<HTMLButtonElement>) => {
     let feedItemContentDiv = document.getElementById(itemId)
+    let button:HTMLButtonElement = event.currentTarget
+    let isShow:boolean = button.innerText.includes('More')
     if (feedItemContentDiv) {
+      let foundMoreItem:boolean = false
       for (let i = 0; i < feedItemContentDiv.children.length; i++) {
+          // TODO: skip over children until we find the id that starts with 'more-'
+          // TODO: add icon!
           let child = feedItemContentDiv.children[i]
-          child.classList.remove('hidden')
+          if (foundMoreItem) {
+            if (isShow) {
+              child.classList.remove('hidden')
+            } else {
+              child.classList.add('hidden')
+            }
+          } else {
+            foundMoreItem = child.id.includes('more-')
+          }
         }
     }
-    event.currentTarget.classList.add('hidden')
+    
+    if (isShow) {
+      button.firstChild!.textContent = 'Show Less'
+      this.state.itemId2Icon[itemId] = 'long-arrow-alt-up'
+    } else  {
+      button.firstChild!.textContent = 'Show More'
+      this.state.itemId2Icon[itemId] = 'long-arrow-alt-down'
+    }
+    this.setState({ itemId2Icon: this.state.itemId2Icon })
   }
 
   public onClickShowMoreItems = () => (event: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -78,6 +100,10 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
               }
             }
             let isItemVisible: boolean = index < this.props.defaultItemsToShow || this.state.isShowingMoreItems
+            
+            if (!this.state.itemId2Icon[item.guid]) {
+              this.state.itemId2Icon[item.guid] = 'long-arrow-alt-down'
+            }
             return (
               <li key={item.guid} className={`srcRssFeedItem ${isItemVisible ? '' : 'hidden'}`}>
                 <div className="srcRssFeedItemContent">
@@ -88,12 +114,12 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                       <button
                         style={{ textAlign: 'left', margin: 0, padding: '0px 0px 25px 35px' }}
                         className="SRC-primary-text-color SRC-basicButton"
-                        onClick={this.onClickReadMore(item.guid)}
+                        onClick={this.onToggleReadMore(item.guid)}
                       >
                         Show More
-                        <FontAwesomeIcon
+                        <FontAwesomeIcon key={`${item.guid}${index}`}
                           style={{ marginLeft: '5px' }}
-                          icon={'long-arrow-alt-down'}
+                          icon={this.state.itemId2Icon[item.guid]}
                         />
                       </button>
                     </div>
