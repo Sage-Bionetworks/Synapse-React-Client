@@ -250,7 +250,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
           </div></div>}
       {this.state.modalContext &&
         <WarningModal
-          show={true}
+          show={typeof this.state.modalContext !== 'undefined' }
           title={this.modalTitle}
           copy={this.modalCopy}
           callbackArgs={this.state.modalContext.arguments}

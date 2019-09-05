@@ -15,7 +15,7 @@ export type WarningModalProps = {
 export default function WarningModal(props: WarningModalProps) {
  
   return (
-    <Modal show={true} animation={false}>
+    <Modal show={props.show} animation={false}>
       <Modal.Header closeButton={false} onHide={() => props.onCancel()}>
         <Modal.Title>{props.title}</Modal.Title>
       </Modal.Header>
