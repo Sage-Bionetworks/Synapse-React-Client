@@ -11,7 +11,7 @@ type RssState = {
   rssFeed: any,
   isLoadingError: boolean,
   isShowingMoreItems: boolean,
-  itemId2Icon:{}
+  itemId2MoreItem:{}
 }
 
 export type RssFeedProps = {
@@ -24,7 +24,7 @@ const parser = new DOMParser()
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   constructor(props: RssFeedProps) {
     super(props)
-    this.state = { rssFeed: {}, isLoadingError: false, isShowingMoreItems: false, itemId2Icon: {} }
+    this.state = { rssFeed: {}, isLoadingError: false, isShowingMoreItems: false, itemId2MoreItem: {} }
   }
 
   componentDidMount() {
@@ -62,13 +62,17 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
     }
     
     if (isShow) {
-      button.firstChild!.textContent = 'Show Less'
-      this.state.itemId2Icon[itemId] = 'long-arrow-alt-up'
+      this.state.itemId2MoreItem[itemId] = {
+        icon: 'long-arrow-alt-up',
+        text: 'Show Less'
+      }
     } else  {
-      button.firstChild!.textContent = 'Show More'
-      this.state.itemId2Icon[itemId] = 'long-arrow-alt-down'
+      this.state.itemId2MoreItem[itemId] = {
+        icon: 'long-arrow-alt-down',
+        text: 'Show More'
+      }
     }
-    this.setState({ itemId2Icon: this.state.itemId2Icon })
+    this.setState({ itemId2MoreItem: this.state.itemId2MoreItem })
   }
 
   public onClickShowMoreItems = () => (event: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -101,8 +105,11 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
             }
             let isItemVisible: boolean = index < this.props.defaultItemsToShow || this.state.isShowingMoreItems
             
-            if (!this.state.itemId2Icon[item.guid]) {
-              this.state.itemId2Icon[item.guid] = 'long-arrow-alt-down'
+            if (!this.state.itemId2MoreItem[item.guid]) {
+              this.state.itemId2MoreItem[item.guid] = {
+                icon: 'long-arrow-alt-down',
+                text: 'Show More'
+              }
             }
             return (
               <li key={item.guid} className={`srcRssFeedItem ${isItemVisible ? '' : 'hidden'}`}>
@@ -116,10 +123,10 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                         className="SRC-primary-text-color SRC-basicButton"
                         onClick={this.onToggleReadMore(item.guid)}
                       >
-                        Show More
+                        {this.state.itemId2MoreItem[item.guid].text}
                         <FontAwesomeIcon key={`${item.guid}${index}`}
                           style={{ marginLeft: '5px' }}
-                          icon={this.state.itemId2Icon[item.guid]}
+                          icon={this.state.itemId2MoreItem[item.guid].icon}
                         />
                       </button>
                     </div>

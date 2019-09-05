@@ -79,6 +79,7 @@
 
 .SRC-mailchimpSubscribeContainer input {
   width: 100%;
+  max-width: 570px;
   height: 45px;
   margin-top: 10px;
   padding-left: 8px; }
