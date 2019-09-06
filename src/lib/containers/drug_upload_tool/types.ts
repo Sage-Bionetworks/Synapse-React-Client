@@ -21,7 +21,7 @@ export type Step = {
     copy? : string,
     static?: boolean,
     child?: boolean,
-    children: string[]
+    children?: string[]
   }
 
   export enum NavActionEnum {
