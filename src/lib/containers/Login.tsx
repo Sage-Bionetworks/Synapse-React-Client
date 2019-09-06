@@ -2,6 +2,7 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
+import sageLogo from '../assets/logos/sage-bionetworks-logo.svg'
 
 type State = {
   username: string
@@ -171,7 +172,12 @@ class Login extends React.Component<Props, State> {
           </button>
         </form>
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
-        <div className="SRC-center-text SRC-marginBottomTen">Sign in with your Synapse account</div>
+
+        <div className="SRC-center-text SRC-marginBottomTen">
+          <img height="20px" style={{marginRight: '10px'}} src={sageLogo} />
+          Sign in with your Sage Bionetworks account
+        </div>
+        
         <form onSubmit={this.handleLogin}>
           <div className="form-group">
             <input
