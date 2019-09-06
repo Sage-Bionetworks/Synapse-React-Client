@@ -306,7 +306,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
           <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-          <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
+          <span className="SRC-inlineFlex" style={{ marginLeft: 'auto', marginRight: '10px' }}>
             <span
               tabIndex={0}
               data-for={tooltipAdvancedSearchId}
@@ -421,21 +421,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
     const { isDropdownColumnMenuOpen } = this.state
     const tooltipColumnSelectionId = 'addAndRemoveColumns'
-    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
+    let addRemoveColClasses  = 'SRC-inlineFlex SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
     addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     return (
-      <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
+      <span style={{marginLeft: 10, height: 30, width: 34, padding: 1}} className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
         <span 
           tabIndex={0} 
           data-for={tooltipColumnSelectionId} 
           data-tip="Add / Remove Columns" 
-          style={{ marginLeft: '10px' }} 
           className={addRemoveColClasses} 
           onKeyPress={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           id="dropdownMenu1"
         >
-          {/* <img src={ColumnsSvg} alt="Select available columns" /> */}
           <ColumnsSvg/>
         </span>
         <ReactTooltip 
