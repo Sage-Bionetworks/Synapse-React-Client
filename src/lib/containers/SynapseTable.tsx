@@ -19,6 +19,8 @@ import { FacetColumnResult,
          FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { ReactComponent as ColumnsSvg} from '../assets/icons/columns.svg'
+import { ReactComponent as ExpandSvg} from '../assets/icons/expand.svg'
+import { ReactComponent as ShrinkSvg} from '../assets/icons/shrink.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -83,6 +85,7 @@ export type SynapseTableState = {
   activeFilterClass: string,
   isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
+  isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   isDropdownDownloadOptionsOpen: boolean
@@ -129,6 +132,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       isMenuWallOpen: false,
       isModalDownloadOpen: false,
       isDropdownDownloadOptionsOpen: false,
+      isExpanded: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -224,7 +228,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     data!.queryResult.queryResults.rows.forEach((row) => {
       row.values.forEach((el: any, colIndex: number) => {
         // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
-        if (indicies.includes(colIndex) && !mapIdToHeader.hasOwnProperty(el) && el) {
+        if (indicies.includes(colIndex) && !Object.prototype.hasOwnProperty.call(mapIdToHeader,el) && el) {
           distinctEntities.add(el)
         }
       })
@@ -273,14 +277,21 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
-    const { isMenuWallOpen, isModalDownloadOpen } = this.state
+    const tooltipExpandId = 'expand'
+    const { isMenuWallOpen, isModalDownloadOpen, isExpanded } = this.state
+    const tableStyle: React.CSSProperties = {}
+    if (isExpanded) {
+      tableStyle.position = 'absolute'
+      tableStyle.height = '90%'
+      tableStyle.width = '80%'
+    }
     const queryRequest = this.props.getLastQueryRequest!()
     const {
       sql,
       selectedFacets
     } = queryRequest.query
     return (
-      <React.Fragment>
+      <div style={tableStyle}>
         {
           // modal can render anywhere, this is not a particular location
           isModalDownloadOpen
@@ -318,11 +329,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
             </span>
             <ReactTooltip
-                delayShow={1500}
-                place="bottom"
-                type="dark"
-                effect="solid"
-                id={tooltipDownloadId}
+              delayShow={1500}
+              place="bottom"
+              type="dark"
+              effect="solid"
+              id={tooltipDownloadId}
             />
             {this.renderDropdownDownloadOptions()}
             {
@@ -330,6 +341,23 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               // allow this option if there isn't a groupBy clause 
               !isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && this.renderDropdownColumnMenu(headers)
             }
+            <span
+              tabIndex={0}
+              data-for={tooltipExpandId}
+              data-tip="Expand table in full screen"
+              className="SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor"
+              onKeyPress={this.toggleStateVariables('isExpanded')}
+              onClick={this.toggleStateVariables('isExpanded')}
+            >
+              { isExpanded ? <ShrinkSvg/> : <ExpandSvg/>  }
+            </span>
+            <ReactTooltip
+              delayShow={1500}
+              place="bottom"
+              type="dark"
+              effect="solid"
+              id={tooltipExpandId}
+            />
           </span>
         </div>
         {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
@@ -344,7 +372,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </table>
             {rows.length > 0 && this.showPaginationButtons(pastZero)}
         </div>
-      </React.Fragment>
+      </div>
     )
   }
 
@@ -722,9 +750,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       mapEntityIdToHeader: Dictionary<EntityHeader>,
       mapUserIdToHeader: Dictionary<any>
     }): React.ReactNode {
-    if (entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)) {
+    if (entityColumnIndicies.includes(colIndex) &&  Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, columnValue)) {
       return <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
-    } else if (userColumnIndicies.includes(colIndex) && mapUserIdToHeader.hasOwnProperty(columnValue)) {
+    } else if (userColumnIndicies.includes(colIndex) && Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)) {
       const { ownerId, userName } = mapUserIdToHeader[columnValue]
       if (mapUserIdToHeader[columnValue].isIndividual === false) {
         // isUserGroupHeader
