@@ -13,6 +13,7 @@ import { OIDCAuthorizationRequest } from 'lib/utils/jsonResponses/OIDCAuthorizat
 import { OIDCAuthorizationRequestDescription } from 'lib/utils/jsonResponses/OIDCAuthorizationRequestDescription'
 import { AccessCodeResponse } from 'lib/utils/jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from 'lib/utils/jsonResponses/OAuthClientPublic'
+import { QueryTableResults } from 'lib/utils/jsonResponses/EvaluationQueryTable/QueryTableResults'
 
 type DemoState = {
   token: string
@@ -25,7 +26,9 @@ type DemoState = {
   tabOne: any
   tabTwo: any
   showTabOne: boolean
-  userFormDataSynId?: string
+  userFormDataSynId?: string,
+  evaluationQueryString?: string,
+  evaluationQueryResults?: QueryTableResults
 }
 
 /**
@@ -96,7 +99,8 @@ class Demo extends React.Component<{}, DemoState> {
         ] as MenuConfig[]
         ,
         rgbIndex: 5
-      }
+      },
+      evaluationQueryString: 'select objectId,createdOn,entityId,team,SpecAtSens,auc,pAuc,AUC_rank,AUC_bayes,randBayes,writeUp,archivedWriteUp,archivedImage,archivedModelState from evaluation_8533484 where status == "SCORED" and createdOn > 1490639746000 order by "auc" DESC limit 100 offset 0'
     }
     this.makeSampleQueryCall = this.makeSampleQueryCall.bind(this)
     this.getVersion = this.getVersion.bind(this)
@@ -107,6 +111,8 @@ class Demo extends React.Component<{}, DemoState> {
     this.onEntityFormSubmitted = this.onEntityFormSubmitted.bind(this)
     this.getOAuth2RequestDescription = this.getOAuth2RequestDescription.bind(this)
     this.onOAuth2RequestConsent = this.onOAuth2RequestConsent.bind(this)
+    this.onGetEvaluationSubmissions = this.onGetEvaluationSubmissions.bind(this)
+    this.handleEvaluationQueryChange = this.handleEvaluationQueryChange.bind(this)
   }
 
 
@@ -183,7 +189,22 @@ class Demo extends React.Component<{}, DemoState> {
         console.error('Get OIDCAuthorizationRequestDescription failed', error)
       })
   }
+    /**
+   * Verify evaluation query
+   */
+  public onGetEvaluationSubmissions(): void {
+    SynapseClient.getEvaluationSubmissions(this.state.evaluationQueryString!, this.state.token)
+    .then((results: QueryTableResults) => this.setState({evaluationQueryResults: results}))
+    .catch((error: any) => {
+      console.error('Get Evaluation QueryTableResults failed', error)
+    })
+  }
 
+  public handleEvaluationQueryChange(event: React.FormEvent<HTMLInputElement>): void {
+    const target = event.currentTarget
+    const value = target.value
+    this.setState({evaluationQueryString: value})
+  }
   /**
    * Make a query on synapse
    */
@@ -372,6 +393,37 @@ class Demo extends React.Component<{}, DemoState> {
             </button>
             <hr />
           </div>
+        }
+        { 
+          (this.state.token && this.state.token !== '') &&
+          <div className="container">
+            <input
+              placeholder="Evaluation Query"
+              className="form-control"
+              type="text"
+              value={this.state.evaluationQueryString}
+              onChange={this.handleEvaluationQueryChange}
+            />
+            <button
+              onClick={this.onGetEvaluationSubmissions}
+              className="btn btn-info"
+            >
+              Execute evaluation query
+            </button>
+          </div>
+        }
+        {
+          (this.state.evaluationQueryResults) &&
+          <table>
+            <tr> {this.state.evaluationQueryResults.headers.map((value) => {
+              return <th>{value}</th>
+            })} </tr>
+            {
+              this.state.evaluationQueryResults.rows.map((row) => {
+                return <tr> {row.values.map((value) => { return <td>{value}</td> })} </tr>
+              })
+            }
+          </table>
         }
         {this.state.isLoading ? <div className="container"> Loading markdown.. </div> : ''}
         <div className="container">

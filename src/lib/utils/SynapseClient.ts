@@ -29,6 +29,7 @@ import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationReque
 import { OIDCAuthorizationRequestDescription } from './jsonResponses/OIDCAuthorizationRequestDescription'
 import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
+import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -1017,6 +1018,17 @@ export const getEvaluation = (
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) => {
   return doGet(`/repo/v1/evaluation/${evalId}`, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Executes a user-defined query over the Submissions of a specific Evaluation.
+ * https://docs.synapse.org/rest/GET/evaluation/submission/query.html
+ */
+export const getEvaluationSubmissions = (
+  query: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<QueryTableResults>=> {
+  return doGet(`/repo/v1/evaluation/submission/query?query=${encodeURI(query)}`, sessionToken, undefined, endpoint)
 }
 
 /**
