@@ -82,7 +82,7 @@ describe('NavButtons tests', () => {
       expect(wrapper.find('button.prev')).toHaveLength(0);
     });
 
-    it('if not wizard, only display of not the first step', () => {
+    it('if not wizard, only display if not the first step', () => {
       let { wrapper } = createShallowNavButtonsComponent(props);
       expect(wrapper.find('button.prev')).toHaveLength(1);
       const _props = { ...props, ...{ currentStep: stepsArray[0] } };

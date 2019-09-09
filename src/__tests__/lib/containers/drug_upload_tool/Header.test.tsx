@@ -12,19 +12,19 @@ const createMountedComponent = (props: HeaderProps) => {
 describe('basic tests', () => {
   const props: HeaderProps = {
     title: 'Some Header',
-    copy: 'Some Copy<span class="testme"> html test </span>'
+    bodyText: 'Some bodyText<span class="testme"> html test </span>'
   };
 
-  it('should display the correct title copy as html', () => {
+  it('should display the correct bodyText as html', () => {
     const { wrapper } = createMountedComponent(props);
     const bodyDiv = wrapper.find('div');
     expect(bodyDiv.get(0).props.dangerouslySetInnerHTML.__html).toBe(
-      props.copy
+      props.bodyText
     );
   });
 
-  it('should not crash without copy param', () => {
-    props.copy = undefined;
+  it('should not crash without bodyText param', () => {
+    props.bodyText = undefined;
     const { wrapper } = createMountedComponent(props);
     const bodyDiv = wrapper.find('div');
     expect(bodyDiv).toHaveLength(0);
