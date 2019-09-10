@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 export type HeaderProps = {
-  bodyText?: string;
+  bodyText?: string; //should never take user input only use cardcoded text from a parent component. Uses dangerouslySetInnerHTML
   title: string;
 };
 

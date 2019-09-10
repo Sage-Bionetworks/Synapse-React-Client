@@ -86,7 +86,7 @@ export function NextStepLink(props: NextStepLinkProps): JSX.Element {
   }
   return (
     <span className="nav-link">
-      <a onClick={e => props.onNavAction(nextStep)}>{nextStep.title}&nbsp;</a>{' '}
+      <a onClick={e => props.onNavAction(nextStep)}>{nextStep.title}</a>
       <FontAwesomeIcon icon={faChevronRight}></FontAwesomeIcon>
     </span>
   );
