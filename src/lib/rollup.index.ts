@@ -12,7 +12,6 @@ import EntityForm from './containers/EntityForm'
 import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
-import NewsFeedMenu from './containers/NewsFeedMenu'
 import './style/Index.css'
 import { SynapseConstants, SynapseClient } from './utils/'
 
@@ -29,8 +28,7 @@ const SynapseComponents = {
   UserCard,
   QueryCount,
   Markdown: MarkdownSynapse,
-  ModalDownload,
-  NewsFeedMenu
+  ModalDownload
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents}
