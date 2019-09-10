@@ -36,7 +36,6 @@ export enum StatusEnum {
   PROGRESS,
   ERROR,
   SUCCESS,
-  PROGRESS2,
   ERROR_CRITICAL
 }
 
