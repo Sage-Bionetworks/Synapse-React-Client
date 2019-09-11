@@ -17,6 +17,8 @@ type Props = {
   token: string | undefined
   theme: string
   icon: boolean
+  endpoint?: string
+  googleRedirectUrl?: string  
 }
 
 /**
@@ -72,7 +74,8 @@ class Login extends React.Component<Props, State> {
      */
   public handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
     clickEvent.preventDefault() // avoid page refresh
-    SynapseClient.login(this.state.username, this.state.password)
+    let endpoint = this.props.endpoint ? this.props.endpoint : SynapseClient.DEFAULT_ENDPOINT
+    SynapseClient.login(this.state.username, this.state.password, endpoint)
             .then((data: any) => {
               SynapseClient.setSessionTokenCookie(data.sessionToken).then(() => {
                 // on session change, reload the page so that all components get the new token from the cookie
@@ -149,7 +152,8 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`)
+    let redirectUrl = this.props.googleRedirectUrl ? this.props.googleRedirectUrl : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
+    SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, redirectUrl)
             .then((data: any) => {
               const authUrl = data.authorizationUrl
               window.location = authUrl // ping the url

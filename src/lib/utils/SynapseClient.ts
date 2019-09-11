@@ -34,7 +34,7 @@ import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTab
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
 export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
-const DEFAULT_ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
+export const DEFAULT_ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
 const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
