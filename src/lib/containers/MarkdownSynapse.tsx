@@ -302,22 +302,29 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     // as a prop
   }
   public getWikiAttachments() {
-    // bang operator on ownerId and wikiId b/c this will only get called if we had found out above
-    // that this was specified
-    SynapseClient.getWikiAttachmentsFromEntity(
-      this.props.token,
-      this.props.ownerId!,
-      this.props.wikiId!
-    )
-      .then((data) => {
-        this.setState({ fileHandles: data, errorMessage: '' })
-      })
-      .catch((err) => {
-        this.setState({
-          errorMessage: err.reason
+    const {
+      token,
+      ownerId,
+      wikiId
+    } = this.props
+    if (ownerId && wikiId) {
+      // bang operator on ownerId and wikiId b/c this will only get called if we had found out above
+      // that this was specified
+      SynapseClient.getWikiAttachmentsFromEntity(
+        token,
+        ownerId,
+        wikiId
+      )
+        .then((data) => {
+          this.setState({ fileHandles: data, errorMessage: '' })
         })
-        console.log('Error on wiki attachment load ', err)
-      })
+        .catch((err) => {
+          this.setState({
+            errorMessage: err.reason
+          })
+          console.log('Error on wiki attachment load ', err)
+        })
+    }
   }
   /**
    * If theres an error loading the wiki page show an informative message
@@ -637,7 +644,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     return (
       <div className="markdown" ref={this.markupRef}>
         {this.getErrorView()}
-        {this.props.renderTitle &&  <h2> {this.state.data.title} </h2> }
+        {this.props.renderTitle && this.state.data.title && <h2> {this.state.data.title} </h2> }
         <span>{this.processWidgets()}</span>
         <div>{this.addBookmarks()}</div>
       </div>
