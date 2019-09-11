@@ -152,7 +152,7 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    let redirectUrl = this.props.googleRedirectUrl ? this.props.googleRedirectUrl : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
+    const redirectUrl = this.props.googleRedirectUrl ? this.props.googleRedirectUrl : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
     SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, redirectUrl)
             .then((data: any) => {
               const authUrl = data.authorizationUrl
