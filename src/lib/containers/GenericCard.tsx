@@ -36,7 +36,7 @@ export type GenericCardProps = {
   schema: any,
   data: any
   secondaryLabelLimit?: number
-  cardLink?: CardLink
+  titleLinkConfig?: CardLink
   labelLinkConfig?: LabelLinkConfig
 }
 
@@ -158,7 +158,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       backgroundColor,
       iconOptions,
       isHeader = false,
-      cardLink,
+      titleLinkConfig,
       labelLinkConfig,
       facetAliases = {}
     } = this.props
@@ -171,7 +171,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.createTitleLink(linkValue, cardLink, data, schema)
+    const { linkDisplay, target } = this.createTitleLink(linkValue, titleLinkConfig, data, schema)
     const values: string [][] = []
     const { secondaryLabels = [] } = genericCardSchema
     for (let i = 0; i < secondaryLabels.length; i += 1) {

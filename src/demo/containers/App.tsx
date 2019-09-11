@@ -74,11 +74,11 @@ export default class App extends React.Component<{}, AppState>  {
         basename={process.env.PUBLIC_URL}
       >
         <div>
-          {this.renderLoginAndSignout(this.state.token)}
           <div className="App-header text-center">
             <img src={logoSvg} className="App-logo" alt="logo" />
             <h4 className="white-text">Synapse React Client Demo</h4>
           </div>
+          {this.renderLoginAndSignout(this.state.token)}
           <ul>
             <li>
               <Link to="/">Demo</Link>
@@ -90,8 +90,7 @@ export default class App extends React.Component<{}, AppState>  {
               <Link to="/drugUploadTool">DrugUploadTool</Link>
             </li>
           </ul>
-          {this.state.token}token
-        <Route exact={true} path="/" component={Demo} />
+          <Route exact={true} path="/" component={Demo} />
           <Route path="/Playground" component={Playground} />
           <Route exact={true} path="/drugUploadTool"
             render={(props) => <FileGrid pathpart="drugUploadTool" token={this.state.token}

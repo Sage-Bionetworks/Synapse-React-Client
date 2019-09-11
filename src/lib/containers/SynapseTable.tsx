@@ -18,9 +18,9 @@ import { FacetColumnResult,
          FacetColumnResultValueCount,
          FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
-import { ReactComponent as ColumnsSvg} from '../assets/icons/columns.svg'
-import { ReactComponent as ExpandSvg} from '../assets/icons/expand.svg'
-import { ReactComponent as ShrinkSvg} from '../assets/icons/shrink.svg'
+import ColumnsSvg from '../assets/icons/columns.svg'
+import ExpandSvg from '../assets/icons/expand.svg'
+import ShrinkSvg from '../assets/icons/shrink.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -291,7 +291,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       selectedFacets
     } = queryRequest.query
     return (
-      <div style={tableStyle}>
+      <React.Fragment>
         {
           // modal can render anywhere, this is not a particular location
           isModalDownloadOpen
@@ -349,7 +349,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               onKeyPress={this.toggleStateVariables('isExpanded')}
               onClick={this.toggleStateVariables('isExpanded')}
             >
-              { isExpanded ? <ShrinkSvg/> : <ExpandSvg/>  }
+              { isExpanded ? <img src={ShrinkSvg} alt="shrink table"/> : <img src={ExpandSvg} alt="expand table"/>  }
             </span>
             <ReactTooltip
               delayShow={1500}
@@ -372,7 +372,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </table>
             {rows.length > 0 && this.showPaginationButtons(pastZero)}
         </div>
-      </div>
+    </React.Fragment>
     )
   }
 
@@ -462,7 +462,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           id="dropdownMenu1"
         >
-          <ColumnsSvg/>
+          <img alt="columns selection" src={ColumnsSvg}/>
         </span>
         <ReactTooltip 
           delayShow={1500} 

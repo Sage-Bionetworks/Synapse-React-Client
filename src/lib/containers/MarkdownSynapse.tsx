@@ -81,11 +81,15 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const mathSuffix = ''
     // Update the internal markdownit object with the wrapped synapse object
     md.use(markdownitSynapse, mathSuffix).use(markdownitMath, mathSuffix)
+    const data: any = {}
+    if (this.props.markdown) {
+      data.markdown = this.props.markdown
+    }
     this.state = {
       md,
       errorMessage: '',
       fileHandles: undefined,
-      data: {},
+      data,
     }
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -279,10 +283,11 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public getWikiPageMarkdown(override: boolean = false) {
     if (!this.state.data.markdown || override) {
+      const { ownerId, wikiId = '', token } = this.props
       SynapseClient.getEntityWiki(
-        this.props.token,
-        this.props.ownerId,
-        this.props.wikiId
+        token,
+        ownerId,
+        wikiId
         ).then((data) => {
           // on success grab text and append to the default text
           this.setState({
@@ -381,7 +386,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const widgetRegex = /(<span data-widgetparams.*?span>)/
     // widgets is an array of either plain text/html or specific synapse markdown
     const widgets = markup.split(widgetRegex)
-    if (markup.length > 0 && widgets.length > 0) {
+    if (markup.length > 0) {
       return this.processWidgetOrDomElement(widgets, markup)
     }
     return
@@ -601,10 +606,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   }
 
   public componentDidMount() {
-    if (this.props.markdown) {
-      this.setState({
-        data: { markdown: this.props.markdown }
-      })
+    if (this.state.data.markdown) {
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined

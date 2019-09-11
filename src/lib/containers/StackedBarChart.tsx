@@ -8,7 +8,6 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
-import { Link } from 'react-router-dom'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -45,6 +44,7 @@ type Info = {
   index: number
 }
 
+type InternalProps = StackedBarChartProps & QueryWrapperChildProps
 /**
  * Make a simple stacked bar chart
  *
@@ -52,9 +52,9 @@ type Info = {
  * @extends {React.Component}
  */
 export default class StackedBarChart extends
-    React.Component<StackedBarChartProps & QueryWrapperChildProps, StackedBarChartState> {
+    React.Component<InternalProps, StackedBarChartState> {
 
-  constructor(props: StackedBarChartProps & QueryWrapperChildProps) {
+  constructor(props: InternalProps) {
     super(props)
     this.handleHover = this.handleHover.bind(this)
     this.handleExit = this.handleExit.bind(this)
@@ -325,7 +325,7 @@ export default class StackedBarChart extends
           {
             this.props.link &&
               <div className="SRC-chart-link">
-                <Link to={this.props.link}> { this.props.linkText } </Link>
+                <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
               </div>
           }
         </div>
