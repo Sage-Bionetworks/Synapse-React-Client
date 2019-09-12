@@ -178,7 +178,7 @@ class Login extends React.Component<Props, State> {
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
 
         <div className="SRC-center-text SRC-marginBottomTen">
-          <img height="20px" style={{marginRight: '10px'}} src={sageLogo} />
+          <img height="20px" style={{marginRight: '10px'}} alt={'sage bionetworks logo'} src={sageLogo} />
           Sign in with your Sage Bionetworks account
         </div>
         

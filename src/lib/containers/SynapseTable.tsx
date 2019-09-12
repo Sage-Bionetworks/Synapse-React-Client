@@ -318,31 +318,31 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
           <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-          <span className="SRC-inlineFlex" style={{ marginLeft: 'auto', marginRight: '10px' }}>
-            <span
-              tabIndex={0}
-              data-for={tooltipAdvancedSearchId}
-              data-tip="Open Advanced Search in Synapse"
-              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-              onKeyPress={this.advancedSearch}
-              onClick={this.advancedSearch}
-            >
-              <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
+          {
+          !isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
+            &&   
+            <span className="SRC-inlineFlex" style={{ marginLeft: 'auto', marginRight: '10px' }}>
+              <span
+                tabIndex={0}
+                data-for={tooltipAdvancedSearchId}
+                data-tip="Open Advanced Search in Synapse"
+                className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                onKeyPress={this.advancedSearch}
+                onClick={this.advancedSearch}
+              >
+                <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
+              </span>
+              <ReactTooltip
+                delayShow={1500}
+                place="bottom"
+                type="dark"
+                effect="solid"
+                id={tooltipDownloadId}
+              />
+              {this.renderDropdownDownloadOptions()}
+              {this.renderDropdownColumnMenu(headers)}
             </span>
-            <ReactTooltip
-              delayShow={1500}
-              place="bottom"
-              type="dark"
-              effect="solid"
-              id={tooltipDownloadId}
-            />
-            {this.renderDropdownDownloadOptions()}
-            {
-              // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
-              // allow this option if there isn't a groupBy clause 
-              !isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && this.renderDropdownColumnMenu(headers)
-            }
-          </span>
+          }
         </div>
         {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
         <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
