@@ -64,7 +64,8 @@ export default class App extends React.Component<{}, AppState>  {
         theme={'dark'}
         icon={true}
         googleRedirectUrl={'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'}
-        endpoint={'https://repo-staging.prod.sagebase.org/'}
+        repoEndpoint={'https://repo-staging.prod.sagebase.org/'}
+        swcEndpoint={'https://staging.sagebase.org/'}
       />
       <hr />
     </div>
