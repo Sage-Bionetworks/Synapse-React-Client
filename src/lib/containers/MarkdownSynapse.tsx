@@ -314,16 +314,16 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         token,
         ownerId,
         wikiId
-      )
-        .then((data) => {
-          this.setState({ fileHandles: data, errorMessage: '' })
+        )
+      .then((data) => {
+        this.setState({ fileHandles: data, errorMessage: '' })
+      })
+      .catch((err) => {
+        this.setState({
+          errorMessage: err.reason
         })
-        .catch((err) => {
-          this.setState({
-            errorMessage: err.reason
-          })
-          console.log('Error on wiki attachment load ', err)
-        })
+        console.log('Error on wiki attachment load ', err)
+      })
     }
   }
   /**

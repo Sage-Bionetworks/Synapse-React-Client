@@ -65,7 +65,6 @@ describe('it performs all functionality', () => {
       }
       const { wrapper } = await createShallowComponent(props)
       expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
-      expect(spyOnMath).toHaveBeenCalled()
     })
 
     it('mounts correctly with markdown NOT already loaded', async () => {
@@ -126,7 +125,11 @@ describe('it performs all functionality', () => {
         })
       )
       const spyOnRenderImage = jest.spyOn(MarkdownSynapse.prototype, 'renderSynapseImage')
-      const { wrapper } = await createShallowComponent({})
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        wikiId: '_'
+      }
+      const { wrapper } = await createShallowComponent(props)
       expect(wrapper.find(SynapseImage)).toHaveLength(1)
       expect(spyOnRenderImage).toHaveBeenCalled()
     })
@@ -138,7 +141,11 @@ describe('it performs all functionality', () => {
         })
       )
       const spyOnRenderImage = jest.spyOn(MarkdownSynapse.prototype, 'renderSynapseImage')
-      const { wrapper } = await createShallowComponent({})
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        wikiId: '_'
+      }
+      const { wrapper } = await createShallowComponent(props)
       expect(wrapper.find(SynapseImage)).toHaveLength(1)
       expect(spyOnRenderImage).toHaveBeenCalled()
     })
