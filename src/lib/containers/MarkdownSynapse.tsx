@@ -308,13 +308,11 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       wikiId
     } = this.props
     if (ownerId && wikiId) {
-      // bang operator on ownerId and wikiId b/c this will only get called if we had found out above
-      // that this was specified
       SynapseClient.getWikiAttachmentsFromEntity(
         token,
         ownerId,
         wikiId
-        )
+      )
       .then((data) => {
         this.setState({ fileHandles: data, errorMessage: '' })
       })

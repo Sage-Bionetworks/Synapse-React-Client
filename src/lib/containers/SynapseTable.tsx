@@ -275,13 +275,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
-    const { isMenuWallOpen, isModalDownloadOpen, isExpanded } = this.state
-    const tableStyle: React.CSSProperties = {}
-    if (isExpanded) {
-      tableStyle.position = 'absolute'
-      tableStyle.height = '90%'
-      tableStyle.width = '80%'
-    }
+    const { isMenuWallOpen, isModalDownloadOpen } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const {
       sql,
