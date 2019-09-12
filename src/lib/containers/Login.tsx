@@ -183,42 +183,38 @@ class Login extends React.Component<Props, State> {
           <img height="20px" style={{marginRight: '10px'}} src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg" />
           Sign in with your Sage Bionetworks account
         </div>
-        <form onSubmit={this.handleLogin}>
-          <div className="form-group">
-            <input
-              autoComplete="email"
-              placeholder="username or email"
-              className="form-control"
-              id="exampleEmail"
-              name="username"
-              type="text"
-              value={this.state.username}
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <input
-              autoComplete="password"
-              placeholder="password"
-              className="form-control"
-              id="examplePassword"
-              name="password"
-              type="password"
-              value={this.state.password}
-              onChange={this.handleChange}
-            />
-          </div>
-            {this.getLoginFailureView()}
-            <button
-              onSubmit={this.handleLogin}
-              type="submit"
-              className="btn SRC-primary-background-color SRC-hoverWhiteText
-                SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
-            >
-              <ButtonContent icon={icon}>
-                Sign in
-              </ButtonContent>
-            </button>
+        <form onSubmit={this.handleLogin} className="form-group">
+          <input
+            autoComplete="username"
+            placeholder="username or email"
+            className="form-control SRC-marginBottomTop"
+            id="exampleEmail"
+            name="username"
+            type="text"
+            value={this.state.username}
+            onChange={this.handleChange}
+          />
+          <input
+            autoComplete="password"
+            placeholder="password"
+            className="form-control SRC-marginBottomTop"
+            id="examplePassword"
+            name="password"
+            type="password"
+            value={this.state.password}
+            onChange={this.handleChange}
+          />
+          {this.getLoginFailureView()}
+          <button
+            onSubmit={this.handleLogin}
+            type="submit"
+            className="btn SRC-primary-background-color SRC-hoverWhiteText
+              SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
+          >
+            <ButtonContent icon={icon}>
+              Sign in
+            </ButtonContent>
+          </button>
         </form>
         <div>
           <a
