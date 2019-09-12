@@ -35,7 +35,7 @@ import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTab
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
 export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
 export const DEFAULT_ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
-const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
+export const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 
@@ -665,9 +665,9 @@ export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefine
  *
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
-export const setSessionTokenCookie = (token: string | undefined) => {
+export const setSessionTokenCookie = (token: string | undefined, swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
   if (!IS_DEV_ENV) {
-    return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', DEFAULT_SWC_ENDPOINT)
+    return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', swcEndpoint)
   }
   // else (is in dev env)
   if (token) {
@@ -681,9 +681,9 @@ export const setSessionTokenCookie = (token: string | undefined) => {
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getSessionTokenFromCookie = () => {
+export const getSessionTokenFromCookie = (swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
   if (!IS_DEV_ENV) {
-    return doGet<string>('Portal/sessioncookie', undefined, 'include', DEFAULT_SWC_ENDPOINT)
+    return doGet<string>('Portal/sessioncookie', undefined, 'include', swcEndpoint)
   }
   // else (is in dev env)
   const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
