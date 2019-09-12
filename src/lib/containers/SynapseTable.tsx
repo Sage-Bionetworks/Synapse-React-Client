@@ -19,8 +19,6 @@ import { FacetColumnResult,
          FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import ColumnsSvg from '../assets/icons/columns.svg'
-import ExpandSvg from '../assets/icons/expand.svg'
-import ShrinkSvg from '../assets/icons/shrink.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -277,7 +275,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
-    const tooltipExpandId = 'expand'
     const { isMenuWallOpen, isModalDownloadOpen, isExpanded } = this.state
     const tableStyle: React.CSSProperties = {}
     if (isExpanded) {
@@ -345,23 +342,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               // allow this option if there isn't a groupBy clause 
               !isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && this.renderDropdownColumnMenu(headers)
             }
-            <span
-              tabIndex={0}
-              data-for={tooltipExpandId}
-              data-tip="Expand table in full screen"
-              className="SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor"
-              onKeyPress={this.toggleStateVariables('isExpanded')}
-              onClick={this.toggleStateVariables('isExpanded')}
-            >
-              { isExpanded ? <img src={ShrinkSvg} alt="shrink table"/> : <img src={ExpandSvg} alt="expand table"/>  }
-            </span>
-            <ReactTooltip
-              delayShow={1500}
-              place="bottom"
-              type="dark"
-              effect="solid"
-              id={tooltipExpandId}
-            />
           </span>
         </div>
         {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
