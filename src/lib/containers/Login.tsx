@@ -2,7 +2,6 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
-import sageLogo from '../assets/logos/sage-bionetworks-logo.svg'
 
 type State = {
   username: string
@@ -17,7 +16,8 @@ type Props = {
   token: string | undefined
   theme: string
   icon: boolean
-  endpoint?: string
+  repoEndpoint?: string
+  swcEndpoint?: string
   googleRedirectUrl?: string  
 }
 
@@ -74,10 +74,11 @@ class Login extends React.Component<Props, State> {
      */
   public handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
     clickEvent.preventDefault() // avoid page refresh
-    let endpoint = this.props.endpoint ? this.props.endpoint : SynapseClient.DEFAULT_ENDPOINT
-    SynapseClient.login(this.state.username, this.state.password, endpoint)
+    const repoEndpoint = this.props.repoEndpoint ? this.props.repoEndpoint : SynapseClient.DEFAULT_ENDPOINT
+    const swcEndpoint = this.props.swcEndpoint ? this.props.swcEndpoint : SynapseClient.DEFAULT_SWC_ENDPOINT
+    SynapseClient.login(this.state.username, this.state.password, repoEndpoint)
             .then((data: any) => {
-              SynapseClient.setSessionTokenCookie(data.sessionToken).then(() => {
+              SynapseClient.setSessionTokenCookie(data.sessionToken, swcEndpoint).then(() => {
                 // on session change, reload the page so that all components get the new token from the cookie
                 window.location.reload()
               }).catch((errSetSession) => {
@@ -164,6 +165,7 @@ class Login extends React.Component<Props, State> {
   }
   public render() {
     const { theme, icon } = this.props
+    const swcEndpoint = this.props.swcEndpoint ? this.props.swcEndpoint : SynapseClient.DEFAULT_SWC_ENDPOINT
     const googleTheme = theme === 'dark' ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color'
     return (
       <div id="loginPage" className="container loginContainer SRC-syn-border-spacing">
@@ -177,11 +179,10 @@ class Login extends React.Component<Props, State> {
         </form>
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
 
-        <div className="SRC-center-text SRC-marginBottomTen">
-          <img height="20px" style={{marginRight: '10px'}} src={sageLogo} />
+        <div className="SRC-centerAndJustifyContent SRC-marginBottomTen">
+          <img height="20px" style={{marginRight: '10px'}} src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg" />
           Sign in with your Sage Bionetworks account
         </div>
-        
         <form onSubmit={this.handleLogin}>
           <div className="form-group">
             <input
@@ -193,7 +194,6 @@ class Login extends React.Component<Props, State> {
               type="text"
               value={this.state.username}
               onChange={this.handleChange}
-              data-lpignore="true"
             />
           </div>
           <div className="form-group">
@@ -206,7 +206,6 @@ class Login extends React.Component<Props, State> {
               type="password"
               value={this.state.password}
               onChange={this.handleChange}
-              data-lpignore="true"
             />
           </div>
             {this.getLoginFailureView()}
@@ -223,14 +222,14 @@ class Login extends React.Component<Props, State> {
         </form>
         <div>
           <a
-            href="https://www.synapse.org/#!PasswordReset:0"
+            href={`${swcEndpoint}#!PasswordReset:0`}
             className="SRC-floatLeft SRC-primary-text-color"
           >
             Forgot password?
           </a>
           <span className="SRC-deemphasized-text SRC-floatRight">&nbsp;It's free!</span>
           <a
-            href="https://www.synapse.org/#!RegisterAccount:0"
+            href={`${swcEndpoint}#!RegisterAccount:0`}
             className="SRC-floatRight SRC-primary-text-color"
           >
             Register
