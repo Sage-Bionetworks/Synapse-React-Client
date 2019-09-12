@@ -50,11 +50,21 @@ export default class App extends React.Component<{}, AppState>  {
       </button>
     </div>
 
-    const notSignedInState = <div>
+    const notSignedInState = <div className="text-center">
+      <h4>Synapse Production (Google SSO redirects here)</h4>
       <Login
         token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
         theme={'light'}
         icon={true}
+      />
+      <hr />
+      <h4>Synapse Staging (Google SSO redirects to staging site)</h4>
+      <Login
+        token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
+        theme={'dark'}
+        icon={true}
+        googleRedirectUrl={'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'}
+        endpoint={'https://repo-staging.prod.sagebase.org/'}
       />
       <hr />
     </div>
