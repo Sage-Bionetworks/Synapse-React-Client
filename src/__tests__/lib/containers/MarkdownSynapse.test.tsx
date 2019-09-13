@@ -6,7 +6,7 @@ import SynapseImage from '../../../lib/containers/widgets/SynapseImage'
 import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
 import { delay } from '../../../lib/utils/SynapseClient'
 
-// shallow doesn't await all nested promises inside component
+// shallow doesn't await all nested promises resolve inside component...
 const DELAY = 75
 
 const createShallowComponent = async (props: MarkdownSynapseProps) => {
@@ -23,7 +23,6 @@ const createShallowComponent = async (props: MarkdownSynapseProps) => {
 describe('it performs all functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   const mockGetWikiAttachments = jest.fn().mockResolvedValue([''])
-  // @ts-ignore
   SynapseClient.getWikiAttachmentsFromEntity = jest.fn(mockGetWikiAttachments)
   beforeEach(() => {
     mockGetWikiAttachments.mockClear()
@@ -90,6 +89,7 @@ describe('it performs all functionality', () => {
       await wrapper.setProps({
         token: '123'
       })
+      // await again for componentDidUpdate to run
       await delay(DELAY)
       // Note- verifying these API calls were made ensures that
       // getWikiAttachments and getWikiPageMarkdown were called
