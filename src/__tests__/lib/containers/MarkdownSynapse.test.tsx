@@ -5,9 +5,9 @@ import Bookmarks from '../../../lib/containers/widgets/Bookmarks'
 import SynapseImage from '../../../lib/containers/widgets/SynapseImage'
 import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
 import { delay } from '../../../lib/utils/SynapseClient'
+import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
 
 // shallow doesn't await all nested promises resolve inside component...
-const DELAY = 75
 
 const createShallowComponent = async (props: MarkdownSynapseProps) => {
   const wrapper = await shallow<MarkdownSynapse>(
@@ -15,7 +15,7 @@ const createShallowComponent = async (props: MarkdownSynapseProps) => {
     {...props}
     />
   )
-  await delay(DELAY)
+  await delay(_TIME_DELAY)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -90,7 +90,7 @@ describe('it performs all functionality', () => {
         token: '123'
       })
       // await again for componentDidUpdate to run
-      await delay(DELAY)
+      await delay(_TIME_DELAY)
       // Note- verifying these API calls were made ensures that
       // getWikiAttachments and getWikiPageMarkdown were called
       expect(mockGetEntityWiki).toHaveBeenCalledTimes(2)
