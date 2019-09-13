@@ -29,6 +29,7 @@ import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationReque
 import { OIDCAuthorizationRequestDescription } from './jsonResponses/OIDCAuthorizationRequestDescription'
 import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
+import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
 import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
 
 // TODO: Create JSON response types for all return types
@@ -47,7 +48,7 @@ export const getRootURL = () => {
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
-function delay(t: any) {
+export function delay(t: any) {
   return new Promise((resolve) => {
     setTimeout(resolve.bind(null, {}), t)
   })
@@ -515,7 +516,7 @@ export const lookupChildEntity = (
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * http://docs.synapse.org/rest/POST/fileHandle/batch.html
  */
-export const getFiles = (request: any,
+export const getFiles = (request: BatchFileRequest,
                          sessionToken: string | undefined = undefined,
                          endpoint: string = DEFAULT_ENDPOINT): Promise<BatchFileResult> => {
   return doPost('/file/v1/fileHandle/batch', request, sessionToken, undefined, endpoint)

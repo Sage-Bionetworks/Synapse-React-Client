@@ -44,3 +44,5 @@ export const MEDIUM_USER_CARD: UserCardSize = 'MEDIUM USER CARD'
 export const LARGE_USER_CARD: UserCardSize = 'LARGE USER CARD'
 export const SEPERATOR = 'SEPERATOR'
 export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS' 
+// For internal testing only
+export const _TIME_DELAY = 75

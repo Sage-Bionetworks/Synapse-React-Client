@@ -5,6 +5,7 @@ import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import UserCard from './UserCard'
+import { WikiPage } from '../utils/jsonResponses/WikiPage'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -43,7 +44,7 @@ const md = markdownit({ html: true })
 
 type MarkdownSynapseState = {
   md: any;
-  text: string;
+  data: Partial<WikiPage>
   fileHandles?: FileHandleResults;
   errorMessage: string;
 }
@@ -79,11 +80,15 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const mathSuffix = ''
     // Update the internal markdownit object with the wrapped synapse object
     md.use(markdownitSynapse, mathSuffix).use(markdownitMath, mathSuffix)
+    const data: any = {}
+    if (this.props.markdown) {
+      data.markdown = this.props.markdown
+    }
     this.state = {
       md,
       errorMessage: '',
       fileHandles: undefined,
-      text: '',
+      data,
     }
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -101,7 +106,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
     this.renderSynapseTOC = this.renderSynapseTOC.bind(this)
     this.getErrorView = this.getErrorView.bind(this)
-    this.createMarkup = this.createMarkup.bind(this)
+    this.createHTML = this.createHTML.bind(this)
     this.addBookmarks = this.addBookmarks.bind(this)
     this.addIdsToReferenceWidgets = this.addIdsToReferenceWidgets.bind(this)
     this.addIdsToTocWidgets = this.addIdsToTocWidgets.bind(this)
@@ -154,11 +159,14 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
 
   /**
    * Given input text, generate markdown object to be passed onto inner html of some container.
-   * @param {String} text The text being written in plain markdown
+   * @param {String} markdown The text being written in plain markdown
    * @returns {Object} Dictionary to be passed into dangerouslySetInnerHTML with markdown text
    */
-  public createMarkup(text: string) {
-    const initText = this.state.md.render(text)
+  public createHTML(markdown?: string) {
+    if (!markdown) {
+      return { __html: '' }
+    }
+    const initText = this.state.md.render(markdown)
     const cleanText = sanitizeHtml(initText, {
       allowedAttributes: {
         a: ['href', 'target'],
@@ -260,8 +268,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public addBookmarks() {
     markdownitSynapse.resetFootnotes()
-    this.createMarkup(this.state.text)
-    const footnotesHtml = this.createMarkup(markdownitSynapse.footnotes()).__html
+    this.createHTML(this.state.data.markdown)
+    const footnotesHtml = this.createHTML(markdownitSynapse.footnotes()).__html
     if (footnotesHtml.length > 0) {
       return (<Bookmarks footnotes={footnotesHtml} />)
     }
@@ -270,45 +278,48 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   }
 
   /**
-   * Call Synapse REST API to get AMP-AD wiki portal markdown as demo of API call
+   * Get wiki page markdown and file attachment handles
    */
-  public getWikiPageMarkdown(override: boolean = false) {
-    if (this.state.text.length === 0 || override) {
-      SynapseClient.getEntityWiki(
-        this.props.token,
-        this.props.ownerId,
-        this.props.wikiId
-        )
-        .then((data) => {
-          // on success grab text and append to the default text
-          this.setState({
-            text: data.markdown
-          })
-        })
-        .catch((err) => {
-          console.log('Error on wiki markdown load\n', err)
-        })
-    }
-    // else the wiki page was retrieved accordingly or it was passed down
-    // as a prop
-  }
-  public getWikiAttachments() {
-    // bang operator on ownerId and wikiId b/c this will only get called if we had found out above
-    // that this was specified
-    SynapseClient.getWikiAttachmentsFromEntity(
-      this.props.token,
-      this.props.ownerId!,
-      this.props.wikiId!
-    )
-      .then((data) => {
-        this.setState({ fileHandles: data, errorMessage: '' })
-      })
-      .catch((err) => {
+  public async getWikiPageMarkdown() {
+    const { ownerId, wikiId = '', token } = this.props
+    try {
+      const wikiPage = await SynapseClient.getEntityWiki(token,ownerId,wikiId)
+      try {
+        const fileHandles = await this.getWikiAttachments(wikiId ? wikiId: wikiPage.id)
         this.setState({
-          errorMessage: err.reason
+          data: wikiPage,
+          fileHandles
         })
-        console.log('Error on wiki attachment load ', err)
+      } catch(fileHandlesErr) {
+        console.error('fileHandlesErr = ', fileHandlesErr)
+      }
+    } catch (err) {
+      console.error('Error on wiki markdown load\n', err)
+    }
+}
+  public async getWikiAttachments(wikiId: string) {
+    const {
+      token,
+      ownerId,
+    } = this.props
+    if (!ownerId) {
+      console.error('Cannot get wiki attachments without ownerId on Markdown Component')
+      return undefined
+    }
+    return await SynapseClient.getWikiAttachmentsFromEntity(
+      token,
+      ownerId,
+      wikiId
+    ).then((data) => {
+      return data
+    })
+    .catch((err) => {
+      this.setState({
+        errorMessage: err.reason
       })
+      console.error('Error on wiki attachment load ', err)
+      return undefined
+    })
   }
   /**
    * If theres an error loading the wiki page show an informative message
@@ -366,7 +377,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    */
   public processWidgets() {
     // create initial markup
-    let markup = this.createMarkup(this.state.text).__html
+    let markup = this.createHTML(this.state.data.markdown).__html
     // process reference widgets
     markup = this.addIdsToReferenceWidgets(markup)
     // process table of contents widgets
@@ -377,7 +388,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const widgetRegex = /(<span data-widgetparams.*?span>)/
     // widgets is an array of either plain text/html or specific synapse markdown
     const widgets = markup.split(widgetRegex)
-    if (markup.length > 0 && widgets.length > 0) {
+    if (markup.length > 0) {
       return this.processWidgetOrDomElement(widgets, markup)
     }
     return
@@ -528,19 +539,19 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         key={widgetparamsMapped.reactKey}
         token={this.props.token}
         ownerId={this.props.ownerId}
-        wikiId={this.props.wikiId}
+        wikiId={this.props.wikiId || this.state.data.id}
         widgetparamsMapped={widgetparamsMapped}
       />
     )
   }
 
   public renderSynapseImage(widgetparamsMapped: any) {
-    if (!this.state.fileHandles) {
-      // ensure files are loaded
-      return
-    }
     const { reactKey } = widgetparamsMapped
     if (widgetparamsMapped.fileName) {
+      if (!this.state.fileHandles) {
+        // ensure files are loaded
+        return
+      }
       // if file name is attached then the fileHandle ID is located
       // in this wiki's file attachment list
       return (
@@ -549,7 +560,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
           key={reactKey}
           token={this.props.token}
           fileName={widgetparamsMapped.fileName}
-          wikiId={this.props.wikiId}
+          wikiId={this.props.wikiId || this.state.data.id}
           fileResults={this.state.fileHandles.list}
         />
       )
@@ -596,11 +607,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     )
   }
 
-  public componentDidMount() {
-    if (this.props.markdown) {
-      this.setState({
-        text: this.props.markdown
-      })
+  public async componentDidMount() {
+    if (this.state.data.markdown) {
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
@@ -608,21 +616,19 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     this.markupRef.current && this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
     // unpack and set default value if not specified
     // get wiki attachments
-    this.getWikiAttachments()
-    this.getWikiPageMarkdown()
+    await this.getWikiPageMarkdown()
     this.processMath()
   }
 
   // on component update find and re-render the math/widget items accordingly
-  public componentDidUpdate(prevProps: MarkdownSynapseProps) {
+  public async componentDidUpdate(prevProps: MarkdownSynapseProps) {
     let shouldUpdate = this.props.token !== prevProps.token
     shouldUpdate = shouldUpdate || (this.props.ownerId !== prevProps.ownerId)
     shouldUpdate = shouldUpdate || (this.props.wikiId !== prevProps.wikiId)
 
     // we have to carefully update the component so it doesn't encounter an infinite loop
     if (shouldUpdate) {
-      this.getWikiAttachments()
-      this.getWikiPageMarkdown(true)
+      await this.getWikiPageMarkdown()
     }
     this.processMath()
   }

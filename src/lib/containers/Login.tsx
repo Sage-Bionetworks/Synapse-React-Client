@@ -180,7 +180,12 @@ class Login extends React.Component<Props, State> {
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
 
         <div className="SRC-centerAndJustifyContent SRC-marginBottomTen">
-          <img height="20px" style={{marginRight: '10px'}} src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg" />
+          <img 
+            height="20px"
+            style={{marginRight: '10px'}}
+            alt={'sage bionetworks logo'}
+            src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg" 
+          />
           Sign in with your Sage Bionetworks account
         </div>
         <form onSubmit={this.handleLogin} className="form-group">

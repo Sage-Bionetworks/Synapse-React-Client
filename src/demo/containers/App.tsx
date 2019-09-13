@@ -101,8 +101,7 @@ export default class App extends React.Component<{}, AppState>  {
               <Link to="/drugUploadTool">DrugUploadTool</Link>
             </li>
           </ul>
-          {this.state.token}token
-        <Route exact={true} path="/" component={Demo} />
+          <Route exact={true} path="/" component={Demo} />
           <Route path="/Playground" component={Playground} />
           <Route exact={true} path="/drugUploadTool"
             render={(props) => <FileGrid pathpart="drugUploadTool" token={this.state.token}

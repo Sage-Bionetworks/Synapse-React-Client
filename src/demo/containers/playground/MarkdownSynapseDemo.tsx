@@ -19,6 +19,10 @@ export const MarkdownSynapseDemo:React.SFC = () => {
         ownerId={'syn18380882'}
         wikiId={'588827'}
       />
+      {/* with both image types */}
+      <MarkdownSynapse
+        ownerId={'syn18142975'}
+      />
     </div>
   )
 }

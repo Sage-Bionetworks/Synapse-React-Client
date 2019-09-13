@@ -2,7 +2,6 @@ import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import { 
   faCheck,
   faColumns,
-  faDatabase,
   faFilter,
   faSort,
   faSortAmountDown,
@@ -19,6 +18,7 @@ import { FacetColumnResult,
          FacetColumnResultValueCount,
          FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
+import ColumnsSvg from '../assets/icons/columns.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -53,7 +53,6 @@ library.add(faSortAmountDown)
 library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
-library.add(faDatabase)
 library.add(faDownload)
 library.add(faUsers)
 library.add(faGlobeAmericas)
@@ -84,6 +83,7 @@ export type SynapseTableState = {
   activeFilterClass: string,
   isMenuWallOpen: boolean,
   isModalDownloadOpen: boolean
+  isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   isDropdownDownloadOptionsOpen: boolean
@@ -130,6 +130,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       isMenuWallOpen: false,
       isModalDownloadOpen: false,
       isDropdownDownloadOptionsOpen: false,
+      isExpanded: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -225,7 +226,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     data!.queryResult.queryResults.rows.forEach((row) => {
       row.values.forEach((el: any, colIndex: number) => {
         // make sure this is a column of type entity and that we haven't retrieved this entity's information prior
-        if (indicies.includes(colIndex) && !mapIdToHeader.hasOwnProperty(el) && el) {
+        if (indicies.includes(colIndex) && !Object.prototype.hasOwnProperty.call(mapIdToHeader,el) && el) {
           distinctEntities.add(el)
         }
       })
@@ -296,42 +297,46 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         }
         {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
         <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
-          <TotalQueryResults 
-            facet={this.props.facet!}
-            data={this.props.data}
-            isLoading={isLoading}
-            style={{fontSize: 15}}
-            unitDescription={unitDescription!}
-            frontText={'Showing'}
-          />
+          {
+            unitDescription
+            &&
+            <TotalQueryResults 
+              facet={this.props.facet!}
+              data={this.props.data}
+              isLoading={isLoading}
+              style={{fontSize: 15}}
+              unitDescription={unitDescription}
+              frontText={'Showing'}
+            />
+          }
         </div>
         <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
           <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-          <span style={{ marginLeft: 'auto', marginRight: '10px' }}>
-            <span
-              tabIndex={0}
-              data-for={tooltipAdvancedSearchId}
-              data-tip="Open Advanced Search in Synapse"
-              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-              onKeyPress={this.advancedSearch}
-              onClick={this.advancedSearch}
-            >
-              <FontAwesomeIcon size="1x" color="white"  icon={'database'}/>
-            </span>
-            <ReactTooltip
+          {
+          !isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
+            &&   
+            <span className="SRC-inlineFlex" style={{ marginLeft: 'auto', marginRight: '10px' }}>
+              <span
+                tabIndex={0}
+                data-for={tooltipAdvancedSearchId}
+                data-tip="Open Advanced Search in Synapse"
+                className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                onKeyPress={this.advancedSearch}
+                onClick={this.advancedSearch}
+              >
+                <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
+              </span>
+              <ReactTooltip
                 delayShow={1500}
                 place="bottom"
                 type="dark"
                 effect="solid"
                 id={tooltipDownloadId}
-            />
-            {this.renderDropdownDownloadOptions()}
-            {
-              // if there's a groupBy in the sql then we can't generate a page for them to go to, so we only
-              // allow this option if there isn't a groupBy clause 
-              !isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && this.renderDropdownColumnMenu(headers)
-            }
-          </span>
+              />
+              {this.renderDropdownDownloadOptions()}
+              {this.renderDropdownColumnMenu(headers)}
+            </span>
+          }
         </div>
         {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
         <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
@@ -345,7 +350,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             </table>
             {rows.length > 0 && this.showPaginationButtons(pastZero)}
         </div>
-      </React.Fragment>
+    </React.Fragment>
     )
   }
 
@@ -422,21 +427,20 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
     const { isDropdownColumnMenuOpen } = this.state
     const tooltipColumnSelectionId = 'addAndRemoveColumns'
-    let addRemoveColClasses  = 'SRC-extraPadding SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
+    let addRemoveColClasses  = 'SRC-inlineFlex SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
     addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     return (
-      <span className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
+      <span style={{marginLeft: 10, height: 30, width: 34, padding: 1}} className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
         <span 
           tabIndex={0} 
           data-for={tooltipColumnSelectionId} 
           data-tip="Add / Remove Columns" 
-          style={{ marginLeft: '10px' }} 
           className={addRemoveColClasses} 
           onKeyPress={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
           id="dropdownMenu1"
         >
-          <FontAwesomeIcon color="white" icon="columns" />
+          <img alt="columns selection" src={ColumnsSvg}/>
         </span>
         <ReactTooltip 
           delayShow={1500} 
@@ -724,9 +728,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       mapEntityIdToHeader: Dictionary<EntityHeader>,
       mapUserIdToHeader: Dictionary<any>
     }): React.ReactNode {
-    if (entityColumnIndicies.includes(colIndex) && mapEntityIdToHeader.hasOwnProperty(columnValue)) {
+    if (entityColumnIndicies.includes(colIndex) &&  Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, columnValue)) {
       return <EntityLink entityHeader={mapEntityIdToHeader[columnValue]} className={isBold} />
-    } else if (userColumnIndicies.includes(colIndex) && mapUserIdToHeader.hasOwnProperty(columnValue)) {
+    } else if (userColumnIndicies.includes(colIndex) && Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)) {
       const { ownerId, userName } = mapUserIdToHeader[columnValue]
       if (mapUserIdToHeader[columnValue].isIndividual === false) {
         // isUserGroupHeader
