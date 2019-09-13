@@ -48,7 +48,7 @@ export const getRootURL = () => {
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
-function delay(t: any) {
+export function delay(t: any) {
   return new Promise((resolve) => {
     setTimeout(resolve.bind(null, {}), t)
   })

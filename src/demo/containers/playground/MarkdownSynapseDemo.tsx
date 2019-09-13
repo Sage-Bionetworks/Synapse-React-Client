@@ -8,7 +8,6 @@ export const MarkdownSynapseDemo:React.SFC = () => {
       <MarkdownSynapse
         ownerId={'syn12666371'}
         wikiId={'585317'}
-        renderTitle={true}
       />
       {/*  with references */}
       <MarkdownSynapse
@@ -23,7 +22,6 @@ export const MarkdownSynapseDemo:React.SFC = () => {
       {/* with both image types */}
       <MarkdownSynapse
         ownerId={'syn18142975'}
-        wikiId={'588475'}
       />
     </div>
   )
