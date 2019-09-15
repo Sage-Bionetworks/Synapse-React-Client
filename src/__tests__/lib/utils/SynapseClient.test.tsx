@@ -23,6 +23,18 @@ it('version call', () => {
     })
 })
 
+
+it('delete entity', () => {
+  return SynapseClient.deleteEntity('', '123')
+    .then((data) => {
+      expect(data).toBeDefined()
+      expect(data['status']).toBe(204);
+    })
+    .catch((err) => {
+      fail(err.reason)
+    })
+})
+
 it('get user profiles', () => {
   return SynapseClient.getUserProfiles(['345424', '273978', '273991'])
     .then((data) => {
