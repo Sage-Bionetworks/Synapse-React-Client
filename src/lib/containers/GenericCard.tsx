@@ -180,7 +180,6 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       if (value) {
         const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
-          console.log('labelLink = ', labelLink)
           // create link for this column
           value = this.createLabelLink(value, labelLink, isHeader)
         }
