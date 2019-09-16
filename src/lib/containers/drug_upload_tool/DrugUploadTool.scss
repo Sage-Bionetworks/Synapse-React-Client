@@ -1,128 +1,195 @@
 @import './vars.scss';
 
-/* MODAL OVERWRITE! */
-.modal-backdrop {
-  opacity: 0.7;
-}
-
-.modal-title {
-  float: left;
-}
-
-/* colors */
-.nav-link,
-a.nav-link,
-.nav-link > a {
-  color: $action-color;
-  font-weight: bold;
-  cursor: pointer;
-}
-.nav-link svg {
-  margin-left: 3px;
-}
-
-.btn-action {
-  background-color: $action-color;
-  color: #fff;
-}
-.btn-action:hover,
-.btn-action:focus {
-  background-color: $action-color-dark;
-  color: #fff;
-}
-
-/* padding */
-.padding-full {
-  padding: 2rem;
-}
-
-/*--- File Grid ----*/
-table.file-table {
-  margin-bottom: 3rem !important;
-  border-bottom: 1px solid #ddd;
-}
-
-ul.error-detail {
-  padding-left: 0;
-}
-
-ul.error-detail li {
-  list-style: none;
-  font-style: italic;
-}
-
-.submissionInputForm {
-  .array-item-move-down,
-  .array-item-move-down {
-    display: none;
-  }
-  legend {
-    border: none;
-  }
-  fieldset fieldset legend {
-    font-size: 2.25rem;
-  }
-  fieldset fieldset fieldset legend {
-    font-size: 2rem;
+.SRC-ReactJsonForm {
+  .fade {
+    opacity: inherit;
   }
 
-  fieldset fieldset fieldset fieldset legend {
-    font-size: 1.75rem;
+  /* MODAL OVERWRITE! */
+  .modal-backdrop {
+    opacity: 0.7;
   }
-}
 
-.array-item-toolbox {
-  button {
-    background-color: transparent;
+  .modal-title {
+    float: left;
+  }
+
+  /* colors */
+  .nav-link,
+  a.nav-link,
+  .nav-link > a {
     color: $action-color;
-    border: none;
-    box-shadow: none;
-    cursor: pointer;
-    font-weight: normal !important;
-  }
-
-  i.glyphicon {
-    background-color: $action-color;
-    color: white;
-    font-weight: 100;
-    margin-right: 1rem;
-    padding: 2px;
-  }
-  .array-item-remove::after {
-    content: 'Remove';
-  }
-  button.array-item-move-up,
-  button.array-item-move-down {
-    display: none;
-  }
-}
-.array-item-add {
-  button.btn-info.btn-add {
-    background-color: transparent;
-    color: $action-color;
-    border: none;
-    box-shadow: none;
+    font-weight: bold;
     cursor: pointer;
   }
-  .btn-add::after {
-    content: 'Add Data';
+  .nav-link svg {
+    margin-left: 3px;
   }
 
-  i.glyphicon {
+  .btn-action {
     background-color: $action-color;
-    color: white;
-    font-weight: 100;
-    margin-right: 1rem;
-    padding: 2px;
+    color: #fff;
   }
-}
+  .btn-action:hover,
+  .btn-action:focus {
+    background-color: $action-color;
+    @include box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
+    color: #fff;
+  }
 
-.hidden1 .form-group {
-  display: none;
-}
+  .btn-action + .btn-action {
+    margin-right: 1rem;
+  }
 
-/*---- form classes -----*/
-.experiments-list legend ~ .field-description {
-  font-size: 1.6rem;
-  font-style: italic;
+  /* padding */
+  .padding-full {
+    padding: 2rem;
+  }
+
+  /* ---------- layout ---------------*/
+  $a: 100vh;
+  $b: 285px;
+
+  .wrap {
+    @include calc(height, #{$a} - #{$b});
+    overflow: hidden;
+    width: 100%;
+    clear: both;
+  }
+
+  .inner-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .form-wrap {
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex-basis: 100%;
+    flex: 3;
+  }
+  .scroll-area {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /*--- File Grid ----*/
+  table.file-table {
+    margin-bottom: 3rem !important;
+    border-bottom: 1px solid #ddd;
+  }
+
+  ul.error-detail {
+    padding-left: 0;
+  }
+
+  ul.error-detail li {
+    list-style: none;
+    font-style: italic;
+    color: $red-error2;
+  }
+
+  .submissionInputForm {
+    margin-right: 10rem;
+    .array-item {
+      border: 1px solid $gray-dark;
+      padding: 2rem 1rem;
+      overflow: auto;
+      margin: 0 1.6rem 2rem 1.6rem;
+    }
+
+    .array-item-move-down,
+    .array-item-move-down {
+      display: none;
+    }
+    legend {
+      border: none;
+    }
+    fieldset fieldset legend {
+      font-size: 2.25rem;
+    }
+    fieldset fieldset fieldset legend {
+      font-size: 2rem;
+    }
+
+    fieldset fieldset fieldset fieldset legend {
+      font-size: 1.75rem;
+    }
+  }
+
+  .array-item-toolbox {
+    button,
+    button:hover {
+      background-color: transparent;
+      color: $action-color;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      font-weight: normal !important;
+      text-align: right;
+    }
+
+    i.glyphicon {
+      background-color: $action-color;
+      color: white;
+      font-weight: 100;
+      margin-right: 1rem;
+      padding: 2px;
+    }
+    .array-item-remove::after {
+      content: 'Remove';
+    }
+    button.array-item-move-up,
+    button.array-item-move-down {
+      display: none;
+    }
+  }
+  .array-item-add {
+    button.btn-info.btn-add {
+      background-color: transparent;
+      color: $action-color;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+    }
+    .btn-add::after {
+      content: 'Add Data';
+    }
+
+    i.glyphicon {
+      background-color: $action-color;
+      color: white;
+      font-weight: 100;
+      margin-right: 1rem;
+      padding: 2px;
+    }
+  }
+
+  .hide-form-only .form-group {
+    display: none;
+  }
+
+  /*------- summary -------*/
+  .summary {
+    .summary-table {
+      th:first-child(2) {
+        width: 30%;
+      }
+      th:nth-child(2) {
+        width: 40%;
+      }
+      th:nth-child(3) {
+        width: 30%;
+      }
+    }
+  }
+
+  /*---- form classes -----*/
+  .experiments-list legend ~ .field-description {
+    font-size: 1.6rem;
+    font-style: italic;
+  }
 }
