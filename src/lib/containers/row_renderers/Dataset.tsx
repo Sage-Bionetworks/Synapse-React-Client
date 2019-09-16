@@ -61,7 +61,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
             <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
           </div>
         </div>
-        <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
+        <Utils.CardFooter isHeader={false} secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

@@ -52,7 +52,7 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
               {description}
             </span>
             <div style={{ borderTop: '1px solid rgba(26, 28, 41, 0.2)', marginTop: '15px', paddingTop: '5px' }}>
-              {values && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
+              {values && <CardFooter isHeader={true} secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
             </div>
           </div>
         </div>

@@ -13,6 +13,7 @@ type State = {
 
 type CardFooterProps = {
   values: any [],
+  isHeader: boolean
   secondaryLabelLimit?: number
 }
 
@@ -51,20 +52,21 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   }
 
   renderRowValue = (columnName: string, value: string) => {
+    let textColorClass = this.props.isHeader ? 'SRC-lightLink' : ''
     if (!value.match) {
-      // unusual bug where csbc Explore/Publications page has a string value that doesn't have 
-      // .match function and breaks the application
+      // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't 
+      // see typeof return 'object' for that case which would be a better check.
       return value
     }
     if (value.match(DOI_REGEX)) {
       return  (
-        <a data-search-handle={columnName} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${value}`}>
+        <a className={textColorClass} data-search-handle={columnName} target="_blank" rel="noopener noreferrer"  href={`https://dx.doi.org/${value}`}>
           {value}
         </a>
       )
     } else if (value.match(URL_REGEX)) {
       return  (
-        <a data-search-handle={columnName} target="_blank" rel="noopener noreferrer"  href={value}>
+        <a className={textColorClass} data-search-handle={columnName} target="_blank" rel="noopener noreferrer"  href={value}>
           {value}
         </a>
       ) 

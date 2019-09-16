@@ -73,7 +73,7 @@ export default class Study extends React.Component<StudyProps, StudyState> {
                   <Utils.ChipContainer chips={chips} />
               </div>
           </div>
-          <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
+          <Utils.CardFooter isHeader={false} secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }

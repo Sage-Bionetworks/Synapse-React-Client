@@ -41,7 +41,7 @@ class Publication extends React.Component<PublicationProps, {}> {
                   <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
               </div>
           </div>
-          <Utils.CardFooter secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
+          <Utils.CardFooter isHeader={false} secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
       </div>
     )
   }
