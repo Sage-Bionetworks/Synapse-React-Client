@@ -29,6 +29,7 @@ export enum NavActionEnum {
   NAV,
   SAVE,
   SUBMIT,
+  VALIDATE,
   NONE
 }
 
