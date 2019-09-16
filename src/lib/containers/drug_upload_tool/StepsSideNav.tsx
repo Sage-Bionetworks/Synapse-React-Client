@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 export type StepsSideNavProps = {
   stepList: Step[];
   onStepChange: Function;
+  isWizardMode?: boolean;
 };
 
 export default function StepsSideNav(props: StepsSideNavProps) {
@@ -59,22 +60,36 @@ export default function StepsSideNav(props: StepsSideNavProps) {
     return liClassName;
   };
 
-  const getListItem = (step: Step, isRenderChild = false): JSX.Element => {
+  const getListItem = (
+    step: Step,
+    isWizard: boolean,
+    isRenderChild = false
+  ): JSX.Element => {
     if (!step || (step.child && !isRenderChild)) {
       return <></>;
     }
+    const renderStepName = (
+      step: Step,
+      isWizard: boolean,
+      callback: Function
+    ): JSX.Element => {
+      if (!step.inProgress && (!isWizard || !!step.final)) {
+        return (
+          <button className="btn btn-link" onClick={() => callback(step)}>
+            {step.title}
+          </button>
+        );
+      } else {
+        return <span>{step.title}</span>;
+      }
+    };
     const icon = getIcon(step.state, step.excluded, step.static);
     const itemClass = getItemClass(step.inProgress, step.static);
 
     return (
       <div className={itemClass}>
         <FontAwesomeIcon icon={icon.iconDef} flip={icon.flip} />
-        {!step.inProgress && (
-          <a href="#" onClick={() => props.onStepChange(step)}>
-            {step.title}
-          </a>
-        )}
-        {step.inProgress && <span>{step.title}</span>}
+        {renderStepName(step, isWizard, props.onStepChange)}
       </div>
     );
   };
@@ -88,7 +103,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
         {nonChildSteps.map((step: Step, i: number) => {
           return (
             <li className="item-wrap" key={i + step.id}>
-              {getListItem(step)}
+              {getListItem(step, !!props.isWizardMode)}
               {step.children && step.children.length > 0 && (
                 <div className="subMenu">
                   <ul>
@@ -101,7 +116,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
                           <></>
                         ) : (
                           <li className="item-wrap" key={j + stepChildId}>
-                            {getListItem(childStep, true)}
+                            {getListItem(childStep, !!props.isWizardMode, true)}
                           </li>
                         );
                       })}
