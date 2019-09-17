@@ -26,9 +26,10 @@ export type Step = {
 export enum NavActionEnum {
   PREVIOUS,
   NEXT,
-  NAV,
+  GO_TO_STEP,
   SAVE,
   SUBMIT,
+  VALIDATE,
   NONE
 }
 
