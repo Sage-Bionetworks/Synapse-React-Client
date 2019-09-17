@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import {
   Step,
-  StepStateEnum,
   NavActionEnum
 } from '../../../../lib/containers/drug_upload_tool/types';
 import {
@@ -12,44 +11,10 @@ import {
   NextStepLink,
   NextStepLinkProps
 } from '../../../../lib/containers/drug_upload_tool/NavButtons';
+import {steps } from '../../../../mocks/mock_drug_tool_data';
 
-const stepsArray: Step[] = [
-  {
-    id: 'toxicology _data',
-    order: 60,
-    title: 'Toxicology Data',
-    default: 'ld50',
-    static: true,
-    inProgress: true,
-    state: StepStateEnum.TODO,
-    rules: []
-  },
-  {
-    id: 'ld50',
-    order: 61,
-    title: 'LD50',
-    inProgress: false,
-    default: 'acute_dosing',
-    state: StepStateEnum.ERROR,
-    child: false,
-    excluded: false,
-    rules: []
-  },
-  {
-    id: 'acute_dosing',
-    order: 62,
-    title: 'Acute Dosing',
-    default: 'chronic_dosing',
-    child: false,
-    excluded: false,
-    static: false,
-    inProgress: false,
-    final: true,
-    state: StepStateEnum.COMPLETED,
-    rules: []
-  }
-];
-
+const stepsArray: Step[] = _.cloneDeep(steps);
+  
 const createShallowNavButtonsComponent = (props: NavButtonsProps) => {
   const wrapper = shallow(<NavButtons {...props} />);
   return { wrapper };
@@ -99,7 +64,7 @@ describe('NavButtons tests', () => {
   });
 
   describe('next and save buttons', () => {
-    it('only display if step is not final', () => {
+    it('only display next if step is not final and display save on all steps', () => {
       let { wrapper } = createShallowNavButtonsComponent(props);
       expect(wrapper.find('button.next')).toHaveLength(1);
       expect(wrapper.find('button.save')).toHaveLength(1);
@@ -107,7 +72,7 @@ describe('NavButtons tests', () => {
       expect(_props.currentStep.final).toBe(true);
       wrapper = createShallowNavButtonsComponent(_props).wrapper;
       expect(wrapper.find('button.next')).toHaveLength(0);
-      expect(wrapper.find('button.save')).toHaveLength(0);
+      expect(wrapper.find('button.save')).toHaveLength(1);
     });
 
     it('should callback with correct params', () => {

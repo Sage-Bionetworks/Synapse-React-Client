@@ -57,7 +57,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
     <></>
   );
 
-  const saveButton = !props.currentStep.final ? (
+  const saveButton = (
     <button
       type="button"
       className="btn btn-action save"
@@ -65,9 +65,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
     >
       SAVE
     </button>
-  ) : (
-    <></>
-  );
+  ) ;
 
   return (
     <div>
