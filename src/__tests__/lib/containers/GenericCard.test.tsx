@@ -203,8 +203,7 @@ describe('it makes the correct URL for the secondary labels' , () => {
     const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], true)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
-    expect(link.hasClass(`SRC-anchor-light`)).toBeTruthy()
-    expect(link.props().style).toEqual({textDecoration: 'underline'})
+    expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
   })
 
   it('works with a comma seperated value', () => {
