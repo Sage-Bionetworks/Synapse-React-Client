@@ -706,7 +706,7 @@ which can be exchanged for a Synapse user session.
 This function should be called whenever the root App is initialized
 (to look for this code parameter and complete the round-trip).
 */
-export const detectSSOCode = () => {
+export const detectSSOCode = (endpoint: string = DEFAULT_ENDPOINT, swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
   let code: URL | null | string = new URL(window.location.href)
@@ -717,9 +717,9 @@ export const detectSSOCode = () => {
   }
   code = searchParams.get('code')
   if (code) {
-    oAuthSessionRequest(AUTH_PROVIDER, code, `${redirectURL}?provider=${AUTH_PROVIDER}`)
+    oAuthSessionRequest(AUTH_PROVIDER, code, `${redirectURL}?provider=${AUTH_PROVIDER}`, endpoint)
       .then((synToken: any) => {
-        setSessionTokenCookie(synToken.sessionToken).then(() => {
+        setSessionTokenCookie(synToken.sessionToken, swcEndpoint).then(() => {
           // go back to original route after successful SSO login
           const originalUrl = localStorage.getItem('after-sso-login-url')
           localStorage.removeItem('after-sso-login-url')
@@ -740,8 +740,8 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = () => {
-  setSessionTokenCookie(undefined).then(() => {
+export const signOut = (swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
+  setSessionTokenCookie(undefined, swcEndpoint).then(() => {
     window.location.reload()
   }).catch((err) => {
     console.error('err when clearing the session cookie ', err)
