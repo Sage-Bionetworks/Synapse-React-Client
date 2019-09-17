@@ -204,11 +204,11 @@ export default class App extends React.Component<{}, AppState> {
                 formSchemaEntityId="syn20692910"
                 formUiSchemaEntityId="syn20692911"
                 formNavSchemaEntityId="syn20692912"
-                fileNamePath="welcome.submission_name"
                 isWizardMode={true}
                 token={this.state.token}
                 formTitle="Your Submission"
                 formClass="contribution-request"
+                fileNamePath="study.submission_name"
                 currentFileParentEntityId={props.match.params['parentId']}
                 currentFileEntityId={props.match.params['id']}
               />

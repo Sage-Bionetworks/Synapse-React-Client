@@ -164,7 +164,6 @@ it('delete entity', () => {
   return SynapseClient.deleteEntity('', '123')
     .then((data) => {
       expect(data).toBeDefined()
-      expect(data['status']).toBe(204);
     })
     .catch((err) => {
       fail(err.reason)

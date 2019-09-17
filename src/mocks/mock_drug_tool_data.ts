@@ -629,7 +629,7 @@ export const formNavSchema = {
     },
     {
       id: 'prelim_data',
-      order: 0,
+      order: 2,
       title: 'Preliminary Data',
       default: 'restrictions',
       static: true,
@@ -651,7 +651,7 @@ export const formNavSchema = {
     },
     {
       id: 'submit',
-      order: 5,
+      order: 6,
       title: 'Naming',
       isFinal: true,
       default: 'measurements',

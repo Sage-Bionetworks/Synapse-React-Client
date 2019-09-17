@@ -4,6 +4,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SummaryFormat, Step } from './types';
 import _ from 'lodash';
+import { useEffect } from 'react';
 
 export interface SummaryTableProps {
   isWizard?: boolean;
@@ -14,10 +15,15 @@ export interface SummaryTableProps {
 
 export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
   //takes nested json and converts it into flattened item list
-  function flatten(object: any, addToList: any, prefix: string): string[] {
-    _.keys(object).map(key => {
+  function flatten(
+    object: any,
+    flattenedObject: any,
+    prefix: string
+  ): string[] {
+    const separator = '.';
+    Object.keys(object).forEach(key => {
       if (object[key] === null) {
-        addToList[prefix + key] = '';
+        flattenedObject[prefix + key] = '';
       } else if (
         //if the value is a proper array
         _.isArray(object[key]) &&
@@ -29,18 +35,22 @@ export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
             _.isArray(object[key][i]) ||
             (_.isObject(object[key]) && !_.isString(object[key][i]))
           ) {
-            flatten(object[key][i], addToList, prefix + key + '.' + i);
+            flatten(
+              object[key][i],
+              flattenedObject,
+              `${prefix}${key}${separator}${i}${separator}`
+            );
           } else {
-            addToList[prefix + key + '.' + i] = object[key][i];
+            flattenedObject[`${prefix}${key}${separator}${i}`] = object[key][i];
           }
         }
       } else if (_.isObject(object[key]) && !_.isDate(object[key])) {
-        flatten(object[key], addToList, prefix + key + '.');
+        flatten(object[key], flattenedObject, `${prefix}${key}${separator}`);
       } else {
-        addToList[prefix + key] = object[key];
+        flattenedObject[prefix + key] = object[key];
       }
     });
-    return addToList;
+    return flattenedObject;
   }
 
   const flatData = flatten(_.cloneDeep(formData), [], '');
@@ -75,7 +85,12 @@ export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
 }
 
 export default function SummaryTable(props: SummaryTableProps): JSX.Element {
-  const flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
+  let flatFormData: SummaryFormat[] = [];
+  useEffect(() => {
+    flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
+  });
+
+  flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
   const deleteButton = (screenId: string, isShow?: boolean): JSX.Element => {
     if (!isShow) {
       return <></>;
@@ -111,11 +126,7 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
                   )}
               </td>
               <td>{line.label}</td>
-              <td>
-                {typeof line.value == 'object'
-                  ? JSON.stringify(line.value)
-                  : line.value}
-              </td>
+              <td>{line.value}</td>
             </tr>
           );
         })}

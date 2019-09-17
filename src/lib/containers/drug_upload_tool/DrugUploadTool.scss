@@ -1,9 +1,6 @@
 @import './vars.scss';
 
-.SRC-ReactJsonForm {
-  .fade {
-    opacity: inherit;
-  }
+
 
   /* MODAL OVERWRITE! */
   .modal-backdrop {
@@ -13,7 +10,10 @@
   .modal-title {
     float: left;
   }
-
+  .SRC-ReactJsonForm {
+    .fade {
+      opacity: inherit;
+    }
   /* colors */
   .nav-link,
   a.nav-link,
@@ -175,6 +175,7 @@
   /*------- summary -------*/
   .summary {
     .summary-table {
+    
       th:first-child(2) {
         width: 30%;
       }

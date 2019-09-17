@@ -3,6 +3,7 @@ import * as React from 'react';
 import { SynapseClient } from '../../utils';
 import { FileEntity } from '../../utils/jsonResponses/FileEntity';
 import { Entity } from '../../utils/jsonResponses/Entity';
+import { UiSchema } from 'react-jsonschema-form';
 import { StatusEnum } from './types';
 import Alert from 'react-bootstrap/Alert';
 import DrugUploadForm from './DrugUploadForm';
@@ -21,19 +22,18 @@ export type DrugUploadToolProps = {
   isWizardMode?: boolean; // if we are displaying the form in wizard mode
   fileNamePath: string; // path in data to specify the name of saved file
   formTitle: string; //for UI customization
-  formClass?: string; // to support porential theaming
+  formClass?: string; // to support potential theaming
 };
 
 type DrugUploadToolState = {
   notification?: Notification;
   isLoading?: boolean;
-  containerId?: string;
   currentFileEntity?: FileEntity; // file holding user form data
   formData?: any; // form data that prepopulates the form
   formSchema?: any; // schema that drives the form
-  formUiSchema?: any; // ui schema that directs how to render the form elements
+  formUiSchema?: UiSchema; // ui schema that directs how to render the form elements
   formNavSchema?: any; // drives the steps left panel
-  token?: string; // user's session token
+
   status?: StatusEnum;
 };
 
@@ -56,8 +56,7 @@ class DrugUploadTool extends React.Component<
   constructor(props: DrugUploadToolProps) {
     super(props);
     this.state = {
-      isLoading: true,
-      token: this.props.token
+      isLoading: true
     };
   }
 
@@ -124,7 +123,6 @@ class DrugUploadTool extends React.Component<
           this.setState({
             formData,
             currentFileEntity,
-            token,
             formSchema,
             formUiSchema,
             formNavSchema,
@@ -180,7 +178,7 @@ class DrugUploadTool extends React.Component<
     let fileEntity: Entity;
     fileName = `${fileName}.json`;
     const fileUploadComplete = await SynapseClient.uploadFile(
-      this.state.token,
+      this.props.token,
       fileName,
       fileContentsBlob
     );
@@ -193,7 +191,7 @@ class DrugUploadTool extends React.Component<
 
         fileEntity = await SynapseClient.updateEntity(
           this.state.currentFileEntity,
-          this.state.token
+          this.props.token
         );
         return fileEntity;
       }
@@ -207,7 +205,7 @@ class DrugUploadTool extends React.Component<
 
       fileEntity = await SynapseClient.createEntity(
         newFileEntity,
-        this.state.token
+        this.props.token
       );
       return fileEntity;
     } catch (error) {
@@ -263,7 +261,8 @@ class DrugUploadTool extends React.Component<
       this.state.status !== StatusEnum.ERROR_CRITICAL &&
       state.formSchema &&
       state.formUiSchema &&
-      state.formNavSchema
+      state.formNavSchema &&
+      state.formData
     );
   };
 
@@ -276,7 +275,7 @@ class DrugUploadTool extends React.Component<
         [StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL],
         state.status
       ) &&
-      state.token &&
+      props.token &&
       state.isLoading
     ) {
       return (
@@ -334,11 +333,11 @@ class DrugUploadTool extends React.Component<
         {this.state.status && this.renderNotification(this.state.notification)}
         {this.renderLoader(this.state, this.props)}
 
-        {this.isReadyToDisplayForm(this.state) && this.state.formData && (
+        {this.isReadyToDisplayForm(this.state) && (
           <div>
             <DrugUploadForm
               schema={this.state.formSchema}
-              uiSchema={this.state.formUiSchema}
+              uiSchema={this.state.formUiSchema!}
               formData={this.state.formData}
               navSchema={this.state.formNavSchema}
               isWizardMode={this.props.isWizardMode}
