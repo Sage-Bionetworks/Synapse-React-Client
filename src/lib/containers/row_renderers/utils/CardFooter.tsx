@@ -13,7 +13,7 @@ type State = {
 
 type CardFooterProps = {
   values: any [],
-  isHeader: boolean
+  isHeader?: boolean
   secondaryLabelLimit?: number
 }
 

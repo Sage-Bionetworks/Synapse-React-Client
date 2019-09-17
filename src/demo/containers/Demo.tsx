@@ -297,7 +297,7 @@ class Demo extends React.Component<{}, DemoState> {
             <div className="bg-success text-center" role="alert">
               You are logged in.&nbsp;
               <button
-                onClick={SynapseClient.signOut}
+                onClick={() => {SynapseClient.signOut()}}
               >
                   <span aria-hidden="true">Sign out</span>
               </button>

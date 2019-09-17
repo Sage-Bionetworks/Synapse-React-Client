@@ -45,7 +45,7 @@ export default class App extends React.Component<{}, AppState> {
     const signedInState = (
       <div className="bg-success text-center" role="alert">
         You are logged in.&nbsp;
-        <button onClick={SynapseClient.signOut}>
+        <button onClick={() => {SynapseClient.signOut()}}>
           <span aria-hidden="true">Sign out</span>
         </button>
       </div>
