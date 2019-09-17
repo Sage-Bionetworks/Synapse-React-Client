@@ -1,19 +1,17 @@
 @import './vars.scss';
 
+/* MODAL OVERWRITE! */
+.modal-backdrop {
+  opacity: 0.7;
+}
 
-
-  /* MODAL OVERWRITE! */
-  .modal-backdrop {
-    opacity: 0.7;
+.modal-title {
+  float: left;
+}
+.SRC-ReactJsonForm {
+  .fade {
+    opacity: inherit;
   }
-
-  .modal-title {
-    float: left;
-  }
-  .SRC-ReactJsonForm {
-    .fade {
-      opacity: inherit;
-    }
   /* colors */
   .nav-link,
   a.nav-link,
@@ -174,15 +172,32 @@
 
   /*------- summary -------*/
   .summary {
-    .summary-table {
-    
-      th:first-child(2) {
+    $c: 100%;
+    $d: 30px;
+    .scroll-area {
+      height: 100%;
+      &.table-body {
+        @include calc(height, #{$c} - #{$d});
+      }
+    }
+    .summary-table-header {
+      margin-bottom: 0
+    }
+
+    .summary-table,
+    .summary-table-header {
+      width: 100%;
+
+      th:first-child(),
+      td:first-child() {
         width: 30%;
       }
-      th:nth-child(2) {
+      th:nth-child(2),
+      td:nth-child(2) {
         width: 40%;
       }
-      th:nth-child(3) {
+      th:nth-child(3),
+      td:nth-child(3) {
         width: 30%;
       }
     }
