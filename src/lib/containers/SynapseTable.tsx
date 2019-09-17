@@ -94,6 +94,9 @@ export type SynapseTableProps = {
   title: string
   loadingScreen?: JSX.Element
 }
+
+const TOOLTIP_DELAY_SHOW = 1500
+
 // This is a convenient way to categorize all the dropdown state variables, although problematic
 // if any state variable mapping to a boolean does NOT represent a dropdown
 type BooleanKeys<T> = { [k in keyof T]: T[k] extends boolean ? k : never }[keyof T];
@@ -327,7 +330,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
               </span>
               <ReactTooltip
-                delayShow={1500}
+                delayShow={TOOLTIP_DELAY_SHOW}
                 place="bottom"
                 type="dark"
                 effect="solid"
@@ -394,7 +397,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <FontAwesomeIcon size="1x" color="white" icon="download" />
         </button>
         <ReactTooltip 
-          delayShow={1500}
+          delayShow={TOOLTIP_DELAY_SHOW}
           place="bottom"
           type="dark"
           effect="solid"
@@ -443,7 +446,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <img alt="columns selection" src={ColumnsSvg}/>
         </span>
         <ReactTooltip 
-          delayShow={1500} 
+          delayShow={TOOLTIP_DELAY_SHOW} 
           place="bottom" 
           type="dark" 
           effect="solid" 
