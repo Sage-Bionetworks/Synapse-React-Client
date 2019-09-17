@@ -15,10 +15,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactTooltip from "react-tooltip"
 import { FacetColumnResult,
-         FacetColumnResultValueCount,
-         FacetColumnResultValues
+  FacetColumnResultValueCount,
+  FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import ColumnsSvg from '../assets/icons/columns.svg'
+import ExpandSvg from '../assets/icons/expand.svg'
+import ShrinkSvg from '../assets/icons/shrink.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -95,7 +97,7 @@ export type SynapseTableProps = {
   loadingScreen?: JSX.Element
 }
 
-const TOOLTIP_DELAY_SHOW = 1500
+const TOOLTIP_DELAY_SHOW = 500
 
 // This is a convenient way to categorize all the dropdown state variables, although problematic
 // if any state variable mapping to a boolean does NOT represent a dropdown
@@ -275,10 +277,17 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
+    const tooltipExpandId = 'expand'
 
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
-    const { isMenuWallOpen, isModalDownloadOpen } = this.state
+    const { isMenuWallOpen, isModalDownloadOpen, isExpanded } = this.state
+    const tableStyle: React.CSSProperties = {}
+    if (isExpanded) {
+      tableStyle.position = 'absolute'
+      tableStyle.height = '90%'
+      tableStyle.width = '80%'
+    }
     const queryRequest = this.props.getLastQueryRequest!()
     const {
       sql,
@@ -338,6 +347,23 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               />
               {this.renderDropdownDownloadOptions()}
               {this.renderDropdownColumnMenu(headers)}
+              <span
+                tabIndex={0}
+                data-for={tooltipExpandId}
+                data-tip="Expand table in full screen"
+                className="SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor"
+                onKeyPress={this.toggleStateVariables('isExpanded')}
+                onClick={this.toggleStateVariables('isExpanded')}
+              >
+                { isExpanded ? <img src={ShrinkSvg} alt="shrink table"/> : <img src={ExpandSvg} alt="expand table"/>  }
+              </span>
+              <ReactTooltip
+                delayShow={TOOLTIP_DELAY_SHOW}
+                place="bottom"
+                type="dark"
+                effect="solid"
+                id={tooltipExpandId}
+              />
             </span>
           }
         </div>
