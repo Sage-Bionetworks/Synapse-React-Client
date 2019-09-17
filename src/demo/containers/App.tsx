@@ -16,6 +16,8 @@ import { SynapseClient } from '../../lib/utils/'
 type AppState = {
   token: string
 }
+export const TokenContext = React.createContext('')
+
 export default class App extends React.Component<{}, AppState>  {
   constructor(props: any) {
     super(props)
@@ -81,34 +83,36 @@ export default class App extends React.Component<{}, AppState>  {
   public render(): JSX.Element {
   
     return (
-      <Router
-        basename={process.env.PUBLIC_URL}
-      >
-        <div>
-          <div className="App-header text-center">
-            <img src={logoSvg} className="App-logo" alt="logo" />
-            <h4 className="white-text">Synapse React Client Demo</h4>
+      <TokenContext.Provider value={this.state.token}>
+        <Router
+          basename={process.env.PUBLIC_URL}
+        >
+          <div>
+            <div className="App-header text-center">
+              <img src={logoSvg} className="App-logo" alt="logo" />
+              <h4 className="white-text">Synapse React Client Demo</h4>
+            </div>
+            {this.renderLoginAndSignout(this.state.token)}
+            <ul>
+              <li>
+                <Link to="/">Demo</Link>
+              </li>
+              <li>
+                <Link to="/Playground">Playground</Link>
+              </li>
+              <li>
+                <Link to="/drugUploadTool">DrugUploadTool</Link>
+              </li>
+            </ul>
+            <Route exact={true} path="/" component={Demo} />
+            <Route path="/Playground" component={Playground} />
+            <Route exact={true} path="/drugUploadTool"
+              render={(props) => <FileGrid pathpart="drugUploadTool" token={this.state.token}
+                parentContainerId="syn20673186"
+              />} />
           </div>
-          {this.renderLoginAndSignout(this.state.token)}
-          <ul>
-            <li>
-              <Link to="/">Demo</Link>
-            </li>
-            <li>
-              <Link to="/Playground">Playground</Link>
-            </li>
-            <li>
-              <Link to="/drugUploadTool">DrugUploadTool</Link>
-            </li>
-          </ul>
-          <Route exact={true} path="/" component={Demo} />
-          <Route path="/Playground" component={Playground} />
-          <Route exact={true} path="/drugUploadTool"
-            render={(props) => <FileGrid pathpart="drugUploadTool" token={this.state.token}
-              parentContainerId="syn20673186"
-            />} />
-        </div>
-      </Router>
+        </Router>
+      </TokenContext.Provider>
     )
   }
 }
