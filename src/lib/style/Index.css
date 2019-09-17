@@ -994,6 +994,10 @@ button {
   padding: 10px;
   border: 1px solid rgba(196, 196, 196, 0.4); }
 
+a.SRC-lightLink {
+  color: white;
+  text-decoration: underline; }
+
 .markdowntable {
   border: 1px solid #dddddd;
   border-collapse: separate;

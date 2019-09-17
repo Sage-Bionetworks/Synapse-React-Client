@@ -118,8 +118,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     let className = ''
     let style: React.CSSProperties = {}
     if (isHeader) {
-      className = 'SRC-anchor-light'
-      style.textDecoration = 'underline'
+      className = 'SRC-lightLink'
     } else {
       className = 'SRC-primary-text-color'
     }
@@ -180,7 +179,6 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       if (value) {
         const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
-          console.log('labelLink = ', labelLink)
           // create link for this column
           value = this.createLabelLink(value, labelLink, isHeader)
         }
@@ -274,7 +272,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
             </div>
           }
         </div>
-        {showFooter && <CardFooter secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
+        {showFooter && <CardFooter isHeader={false} secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
       </div>
     )
   }
