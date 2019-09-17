@@ -27,6 +27,7 @@ export type UserFileGridProps = {
   token?: string;
   parentContainerId: string; //projectId
   pathpart: string;
+  formClass?:string;
 }
 
 type UserFileGridState = {
@@ -237,7 +238,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
 
   render() {
 
-    return (<div className='container'>
+    return (<div className={`container SRC-ReactJsonForm ${this.props.formClass}`}>
       {this.renderLoading(this.props.token, this.state.isLoading)}
 
       {!(this.state.isLoading) &&

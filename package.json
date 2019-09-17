@@ -35,6 +35,7 @@
     "browser-md5-file": "^1.1.1",
     "gh-pages": "^2.0.0",
     "i": "^0.3.6",
+    "json-rules-engine": "^4.0.0",
     "katex": "^0.10.0-rc.1",
     "lodash.clonedeep": "^4.5.0",
     "markdown-it": "^8.4.2",

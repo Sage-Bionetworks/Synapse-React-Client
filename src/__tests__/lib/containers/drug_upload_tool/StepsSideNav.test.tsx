@@ -2,61 +2,16 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import {
-  Step,
-  StepStateEnum
+  Step
 } from '../../../../lib/containers/drug_upload_tool/types';
 import StepsSideNav, {
   StepsSideNavProps
 } from '../../../../lib/containers/drug_upload_tool/StepsSideNav';
 
-const stepsArray: Step[] = [
-  {
-    id: 'toxicology _data',
-    order: 60,
-    title: 'Toxicology Data',
-    default: 'ld50',
-    static: true,
-    inProgress: true,
-    state: StepStateEnum.TODO,
-    rules: [],
-    children: ['ld50', 'acute_dosing']
-  },
-  {
-    id: 'ld50',
-    order: 61,
-    title: 'LD50',
-    inProgress: false,
-    default: 'acute_dosing',
-    state: StepStateEnum.ERROR,
-    child: true,
-    excluded: false,
-    rules: []
-  },
-  {
-    id: 'acute_dosing',
-    order: 62,
-    title: 'Acute Dosing',
-    default: 'chronic_dosing',
-    child: true,
-    excluded: false,
-    static: false,
-    inProgress: false,
-    state: StepStateEnum.COMPLETED,
-    rules: []
-  },
-  {
-    id: 'acute_dosing_not_child',
-    order: 63,
-    title: 'Acute Dosing Not Child',
-    default: 'chronic_dosing',
-    child: false,
-    excluded: true,
-    static: false,
-    inProgress: false,
-    state: StepStateEnum.COMPLETED,
-    rules: []
-  }
-];
+import {stepsWithChildren } from '../../../../mocks/mock_drug_tool_data';
+
+const stepsArray: Step[] = _.cloneDeep(stepsWithChildren);
+
 
 const createShallowComponent = (props: StepsSideNavProps) => {
   const wrapper = shallow(<StepsSideNav {...props} />);
@@ -97,20 +52,30 @@ describe('basic tests', () => {
     expect(icons[3].attribs.class).toContain('fa-ban');
   });
 
+ 
   it('should call calback function with appropriate params', () => {
     const spy = jest.spyOn(mock, 'onStepChangeFn');
     const { wrapper } = createShallowComponent(props);
-    //static steps will not have links so link#2 corresponds to step#3
+    //steps in progress will not have links so link#2 corresponds to step#3
     expect(
       wrapper
-        .find('a')
+        .find('button')
         .at(2)
         .text()
     ).toEqual(stepsArray[3].title);
     wrapper
-      .find('a')
+      .find('button')
       .at(2)
       .simulate('click');
     expect(spy).toHaveBeenCalledWith(stepsArray[3]);
   });
+
+   
+  it('should have unclickable steps if in a wizard mode', () => {
+    const _props = { ...props, ...{ isWizardMode: true } };
+    const { wrapper } = createShallowComponent(_props);
+    expect(
+      wrapper
+        .find('button')).toHaveLength(0)
+    })
 });
