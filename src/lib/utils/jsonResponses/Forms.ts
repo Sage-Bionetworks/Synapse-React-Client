@@ -27,6 +27,11 @@ export type FormDataStatus = {
   rejectionMessage: string
 }
 
+// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/StatusResult.html
+export type StatusResult = {
+  data: FormData,
+  status: FormDataStatus
+}
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/StatusEnum.html
 export enum StatusEnum {
   WAITING_FOR_SUBMISSION = 'WAITING_FOR_SUBMISSION',
@@ -35,12 +40,15 @@ export enum StatusEnum {
   REJECTED = 'REJECTED'
 }
 
+// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListRequest.html
 export type ListRequest = {
   filterByStatus?: StatusEnum[],
   groupId: string,
   nextPageToken?: string
 }
 
+// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListResponse.html
 export type ListResponse = {
-
+  page: StatusResult[],
+  nextPageToken: string
 }

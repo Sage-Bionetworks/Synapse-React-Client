@@ -1166,8 +1166,43 @@ export const submitFormData = (
  * https://docs.synapse.org/rest/POST/form/data/list.html
  */
 export const listFormData = (
-  request: ListRequest
+  request: ListRequest,
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<ListResponse>=> {
-    return doPost(`/repo/v1/form/data/list`, undefined, sessionToken, undefined, endpoint)
+    return doPost(`/repo/v1/form/data/list`, request, sessionToken, undefined, endpoint)
+}
+
+/**
+ * List FormData objects and their associated status that match the filters of the provided request for the entire 
+ * group. This is used by service accounts to process submissions. 
+ * https://docs.synapse.org/rest/POST/form/data/list/admin.html
+ */
+export const listFormDataAsFormAdmin = (
+  request: ListRequest,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<ListResponse>=> {
+    return doPost(`/repo/v1/form/data/list/admin`, request, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Called by the form processing service to accept a submitted data.
+ * https://docs.synapse.org/rest/PUT/form/data/id/accept.html
+ */
+export const acceptFormData = (
+  formDataId: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormDataStatus>=> {
+    return doPut(`/repo/v1/form/data/${formDataId}/accept`, undefined, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Called by the form processing service to reject a submitted data.
+ * https://docs.synapse.org/rest/PUT/form/data/id/reject.html
+ */
+export const rejectFormData = (
+  formDataId: string,
+  reason: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormDataStatus>=> {
+    return doPut(`/repo/v1/form/data/${formDataId}/reject?reason=${encodeURI(reason)}`, undefined, sessionToken, undefined, endpoint)
 }
