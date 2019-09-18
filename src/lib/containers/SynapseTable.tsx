@@ -70,6 +70,7 @@ export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 's
 type Direction = ''|'ASC'|'DESC'
 export const SORT_STATE: Direction [] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container' 
+export const EXPAND_CLASS = 'SRC-expand-class'
 type Info = {
   index: number
   name: string
@@ -136,7 +137,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       isMenuWallOpen: false,
       isModalDownloadOpen: false,
       isDropdownDownloadOptionsOpen: false,
-      isExpanded: true,
+      isExpanded: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -252,7 +253,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   public toggleStateVariables = (...values: BooleanKeys<SynapseTableState> []) => (_event: React.SyntheticEvent) => {
-    console.log('called 255')
     const updatedState = {} 
     values.forEach(
       el => updatedState[el] = !this.state[el]
@@ -268,7 +268,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return this.props.loadingScreen || <div/>
     }
     // unpack all the data
-    const { data, isLoading = true, unitDescription, token, synapseId } = this.props
+    const { data, isLoading = true, unitDescription, token, synapseId, facet } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
@@ -283,6 +283,16 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       sql,
       selectedFacets
     } = queryRequest.query
+    const header = unitDescription
+     &&
+      <TotalQueryResults 
+        facet={facet}
+        data={data}
+        isLoading={isLoading}
+        style={{fontSize: 15}}
+        unitDescription={unitDescription}
+        frontText={'Showing'}
+      />
     const content = (
         <>
          <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
@@ -301,6 +311,10 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         </div>
         {this.renderTableTop(headers)}
         {this.renderTable(headers, facets, rows, pastZero)}
+        {/* 
+          its intentional that the menu-wall is placed here because of the way that z-index works
+          */
+         }
         {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
       </>
     )
@@ -329,8 +343,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             onHide={this.toggleStateVariables('isExpanded')}
             dialogClassName={'modal-90w'}
           >
-            <Modal.Header onClick={this.toggleStateVariables('isExpanded')} closeButton={true}>
-              <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Header 
+              onClick={this.toggleStateVariables('isExpanded')} 
+              // @ts-ignore
+              closeButton={<button> close button </button>}
+            >
+              <Modal.Title>{header}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               {content}
@@ -374,7 +392,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { isDropdownDownloadOptionsOpen, isExpanded } = this.state
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
-    const toggleStateArgs: BooleanKeys<SynapseTableState> [] = ['isModalDownloadOpen', 'isMenuWallOpen']
+    const toggleStateArgs: BooleanKeys<SynapseTableState> [] = ['isModalDownloadOpen']
+    // we don't want two modals to show at once, so we close out the expanded view if its already showing
     if (isExpanded) {
       toggleStateArgs.push('isExpanded')
     }
@@ -518,7 +537,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               tabIndex={0}
               data-for={tooltipExpandId} 
               data-tip="Expand table in full screen"
-              className="SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor"
+              className={`SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor ${EXPAND_CLASS}`}
               onKeyPress={this.toggleStateVariables('isExpanded')} 
               onClick={this.toggleStateVariables('isExpanded')}
             >
