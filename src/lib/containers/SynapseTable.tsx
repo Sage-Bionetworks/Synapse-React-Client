@@ -326,11 +326,13 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             animation={false}
             centered={true}
             show={true}
-            onHide={() => this.toggleStateVariables('isExpanded')}
+            // @ts-ignore
+            onHide={this.toggleStateVariables('isExpanded')}
             dialogClassName={'modal-90w'}
           >
             <Modal.Header 
-              onClick={() => this.toggleStateVariables('isExpanded')} 
+              // @ts-ignore
+              onHide={this.toggleStateVariables('isExpanded')} 
               closeButton={true}
             >
             </Modal.Header>
