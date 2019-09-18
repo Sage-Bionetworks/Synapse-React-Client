@@ -33,7 +33,7 @@
       background-color: $gray-dark;
       border-left-color: $gray-dark;
 
-      a {
+      .btn-link {
         color: white
       }
     }
@@ -58,14 +58,15 @@
       padding-left: 1.6rem;
     }
 
-    a {
+    .btn-link {
       color: $action-color;
       font-weight: bold;
-    }
-
-    a:hover {
+      padding: 0;
+      margin: 0;
+    &:hover {
       text-decoration: underline;
     }
+  }
 
     svg {
       margin: 0 1.6rem 0 0;
