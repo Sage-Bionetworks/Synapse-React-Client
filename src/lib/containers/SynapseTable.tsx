@@ -290,7 +290,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             unitDescription
             &&
             <TotalQueryResults 
-              facet={facet!}
+              facet={facet}
               data={data}
               isLoading={isLoading}
               style={{fontSize: 15}}
@@ -301,17 +301,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         </div>
         {this.renderTableTop(headers)}
         {this.renderTable(headers, facets, rows, pastZero)}
-        {/* 
-          its intentional that the menu-wall is placed here because of the way that z-index works
-          */
-         }
+        {/* its intentional that the menu-wall is placed here because of the way that z-index works*/}
         {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
       </>
     )
     return (
       <React.Fragment>
         {
-          // // modal can render anywhere, this is not a particular location
+          // modal can render anywhere, this is not a particular location
           isModalDownloadOpen
           &&
           <ModalDownload
@@ -329,14 +326,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             animation={false}
             centered={true}
             show={true}
-            // @ts-ignore
-            onHide={this.toggleStateVariables('isExpanded')}
+            onHide={() => this.toggleStateVariables('isExpanded')}
             dialogClassName={'modal-90w'}
           >
             <Modal.Header 
-              onClick={this.toggleStateVariables('isExpanded')} 
-              // @ts-ignore
-              closeButton={<button> close button </button>}
+              onClick={() => this.toggleStateVariables('isExpanded')} 
+              closeButton={true}
             >
             </Modal.Header>
             <Modal.Body>
@@ -345,7 +340,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </Modal>
         }
         {
-          !isExpanded          
+          !isExpanded
           &&
           content
         }
