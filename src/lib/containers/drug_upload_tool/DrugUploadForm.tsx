@@ -288,9 +288,13 @@ export default class DrugUploadForm extends React.Component<
   };
 
   //we are constantly saving form data. Needed to overwrite on-error behavior
-  handleOnChange({ formData }: any) {
-    this.setState({ formData });
+  handleOnChange({formData}: any) {
+    //this is just for form updates. submit screen goes different route
+    if(!this.isSubmitScreen()) {
+      this.setState({ formData });
+    }
   }
+  
 
   /*doSave = (formData: any): object => {
     const updatedFormData = {
@@ -374,15 +378,17 @@ export default class DrugUploadForm extends React.Component<
   };
 
   toggleExcludeStep = (stepId: string, isExclude: boolean): void => {
-    const steps = this.state.steps.map(stp => {
+    this.setState((prevState, props) => {
+      
+    const steps = prevState.steps.map(stp => {
       if (stp.id === stepId) {
         return { ...stp, ...{ excluded: isExclude } };
       }
       return stp;
     });
 
-    const formData = _.cloneDeep(this.state.formData);
-    const currentStep = _.cloneDeep(this.state.currentStep);
+    const formDataUpdated = _.cloneDeep(prevState.formData);
+    const currentStep = _.cloneDeep(prevState.currentStep);
     //we need this because you can exclude on the ifnal screen so the currentStep.id
     //is not always the one we need to exclude
     if (currentStep.id === stepId) {
@@ -390,14 +396,18 @@ export default class DrugUploadForm extends React.Component<
     }
     //if exluding - blow away the data for the step
     if (isExclude) {
-      formData[stepId] = {};
+      formDataUpdated[stepId] = {};
+      _.set(formDataUpdated, `${stepId}.included`, false);
+    } else {
+      _.set(formDataUpdated, `${stepId}.included`, true);
     }
-    this.setState({
+    return {
       steps,
-      formData,
+      formData: formDataUpdated,
       modalContext: undefined,
       currentStep
-    });
+    };
+    })
   };
 
   // displays the text for screens that don't have any form data
@@ -588,7 +598,7 @@ export default class DrugUploadForm extends React.Component<
                 </div>
               </div>
 
-              <div className={!this.isSubmitScreen() ? 'hidden' : ''}>
+              {this.isSubmitScreen()  && 
                 <SummaryTable
                   formData={this.state.formData}
                   isWizard={this.props.isWizardMode}
@@ -596,8 +606,9 @@ export default class DrugUploadForm extends React.Component<
                   callbackFn={(screenId: string) =>
                     this.showExcludeStateWarningModal(screenId, true)
                   }
+                
                 ></SummaryTable>
-              </div>
+                }
 
               <NavButtons
                 currentStep={this.state.currentStep}
