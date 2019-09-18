@@ -514,7 +514,7 @@ a.SRC-anchor-light {
   left: 0;
   top: 0;
   overflow: hidden;
-  position: fixed;
+  position: absolute;
   z-index: 900;
   background: none;
   border: none; 
@@ -1002,3 +1002,4 @@ a.SRC-lightLink {
   color: white;
   text-decoration: underline;
 }
+
