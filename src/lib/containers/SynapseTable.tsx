@@ -283,16 +283,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       sql,
       selectedFacets
     } = queryRequest.query
-    const header = unitDescription
-     &&
-      <TotalQueryResults 
-        facet={facet}
-        data={data}
-        isLoading={isLoading}
-        style={{fontSize: 15}}
-        unitDescription={unitDescription}
-        frontText={'Showing'}
-      />
     const content = (
         <>
          <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
@@ -300,8 +290,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             unitDescription
             &&
             <TotalQueryResults 
-              facet={this.props.facet!}
-              data={this.props.data}
+              facet={facet!}
+              data={data}
               isLoading={isLoading}
               style={{fontSize: 15}}
               unitDescription={unitDescription}
@@ -348,7 +338,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               // @ts-ignore
               closeButton={<button> close button </button>}
             >
-              <Modal.Title>{header}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               {content}

@@ -56,9 +56,9 @@
     "plotly.js-basic-dist": "^1.47.3",
     "raf": "^3.4.1",
     "react": "16.9.0",
+    "react-dom": "16.9.0",
     "react-app-polyfill": "^1.0.1",
     "react-bootstrap": "^1.0.0-beta.12",
-    "react-dom": "16.9.0",
     "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
@@ -142,7 +142,9 @@
     "minimatch": "3.0.4",
     "webpack-dev-server": "3.2.1",
     "lodash": "^4.17.11",
-    "mem": "^4.0.0"
+    "mem": "^4.0.0",
+    "react": "16.9.0",
+    "react-dom": "16.9.0"
   },
   "browserslist": {
     "production": [

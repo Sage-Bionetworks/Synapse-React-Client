@@ -106,6 +106,17 @@
 .SRC-portalCard .SRC-downloadData {
   background-color: #c94281; }
 
+.modal-90w {
+  width: 90%; }
+
+.modal-90w .modal-header {
+  border: none; }
+
+.modal-90w .modal-header button.close {
+  font-size: 25px;
+  color: #c94281;
+  opacity: 1; }
+
 .checkbox, .radio {
   padding-left: 0px;
   min-width: 27px; }

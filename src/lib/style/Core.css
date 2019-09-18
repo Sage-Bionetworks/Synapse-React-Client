@@ -300,13 +300,15 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white; }
-  .SRC-hoverWhiteText:hover svg {
-    color: white; }
+
+.SRC-hoverWhiteText:hover svg {
+  color: white; }
 
 .SRC-hoverBlackText:hover {
   color: black !important; }
-  .SRC-hoverBlackText:hover svg {
-    color: black !important; }
+
+.SRC-hoverBlackText:hover svg {
+  color: black !important; }
 
 .SRC-light-background {
   background: #F5F5F5; }
@@ -409,8 +411,9 @@ button.SRC-roundBorder {
   z-index: 900;
   background: none;
   border: none; }
-  .SRC-menu-wall:focus {
-    outline: none; }
+
+.SRC-menu-wall:focus {
+  outline: none; }
 
 .SRC-table-dropdown-content {
   align-items: center;
@@ -561,9 +564,10 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-  .SRC-cardContent p {
-    margin: 0px 0px 4px 0px;
-    line-height: 120%; }
+
+.SRC-cardContent p {
+  margin: 0px 0px 4px 0px;
+  line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
@@ -740,8 +744,9 @@ div.SRC-userImg {
   display: flex;
   justify-content: space-between;
   padding-left: 10px; }
-  .SRC-gap span {
-    padding-right: 10px; }
+
+.SRC-gap span {
+  padding-right: 10px; }
 
 .SRC-accordion-menu {
   overflow: hidden; }
@@ -776,8 +781,9 @@ button {
 
 .SRC-markdown-bookmark {
   color: #337ab7; }
-  .SRC-markdown-bookmark:hover {
-    text-decoration: underline; }
+
+.SRC-markdown-bookmark:hover {
+  text-decoration: underline; }
 
 .SRC-block {
   display: block; }
@@ -799,6 +805,3 @@ button {
 a.SRC-lightLink {
   color: white;
   text-decoration: underline; }
-
-.modal-90w {
-  width: 90%; }
