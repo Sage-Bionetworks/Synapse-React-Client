@@ -9,7 +9,7 @@ import Alert from 'react-bootstrap/Alert';
 import DrugUploadForm from './DrugUploadForm';
 import _ from 'lodash';
 
-type SynapseEntityContainer = {
+type UploadToolSearchParams = {
   currentFileEntityId?: string; //entityId fo the file that contains form data
   currentFileParentEntityId: string;
 }
@@ -21,7 +21,7 @@ export type DrugUploadToolProps = {
   formUiSchemaEntityId: string; // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string; //Synapse file that consists screen nav schema
   token?: string; // user's session token
-  searchParams?: SynapseEntityContainer
+  searchParams?: UploadToolSearchParams
   isWizardMode?: boolean; // if we are displaying the form in wizard mode
   fileNamePath: string; // path in data to specify the name of saved file
   formTitle: string; //for UI customization
@@ -64,7 +64,6 @@ class DrugUploadTool extends React.Component<
   }
 
   async componentDidMount() {
-    console.log('this.props = ', this.props)
     await this.getData(this.props.token);
   }
 
