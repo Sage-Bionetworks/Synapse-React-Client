@@ -1,0 +1,224 @@
+{
+    "steps": [
+        {
+            "id": "welcome",
+            "order": 0,
+            "title": "Welcome",
+            "default": "prelim_data",
+            "description": "<p> This is some description for an individual step.  It can have <strong>html</strong>",
+            "rules": [
+               
+            ]
+        },
+        {
+            "id": "prelim_data",
+            "order": 0,
+            "title": "Preliminary Data",
+            "default": "restrictions",
+            "static": true,
+            "copy": "<h4>Hello world!</h4><p>I am a static screen. I will display some stuff</p><ul><li>thing one</li><li> thing two</li></ul>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Suspendisse lorem nunc, tincidunt id ullamcorper ut, commodo in risus. Donec sit amet aliquam purus. Aliquam erat volutpat. Sed iaculis imperdiet faucibus. Nam aliquam, velit eu gravida iaculis, purus urna aliquam odio, a mollis eros lacus at leo. Nam et malesuada dui, in vehicula dui. Ut velit ex, sodales et risus non, commodo feugiat tortor. Proin molestie vehicula lorem eget aliquet. </p> <p><a href=\"http://wwww.google.com\" target=\"_blank\">Learn more </a></p>",
+            "children": [
+                "restrictions",
+                "naming",
+                "measurements",
+                "basic"
+            ]
+        },
+        {
+            "id": "restrictions",
+            "order": 3,
+            "title": "Restrictions",
+            "default": "naming",
+            "child": true
+        },
+        {
+            "id": "naming",
+            "order": 5,
+            "title": "Naming",
+            "default": "measurements",
+            "child": true
+        },
+        {
+            "id": "measurements",
+            "order": 6,
+            "title": "Measurements",
+            "default": "basic",
+            "child": true
+        },
+        {
+            "id": "basic",
+            "order": 7,
+            "title": "Basic",
+            "default": "data_requirements",
+            "child": true
+        },
+        {
+            "id": "data_requirements",
+            "order": 9,
+            "title": "Data Requirements",
+            "default": "in_vitro_data",
+            "static": "true"
+        },
+        {
+            "id": "in_vitro_data",
+            "order": 20,
+            "title": "In Vitro Data",
+            "default": "binding",
+            "static": "true",
+            "copy": "<h4>Hello world!</h4><p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Suspendisse lorem nunc, tincidunt id ullamcorper ut, commodo in risus. Donec sit amet aliquam purus. Aliquam erat volutpat. Sed iaculis imperdiet faucibus. Nam aliquam, velit eu gravida iaculis, purus urna aliquam odio, a mollis eros lacus at leo. Nam et malesuada dui, in vehicula dui. Ut velit ex, sodales et risus non, commodo feugiat tortor. Proin molestie vehicula lorem eget aliquet. </p> <p><a href=\"#\">Learn mored </a></p>",
+            "children": [
+                "binding",
+                "efficacy"
+            ]
+        },
+        {
+            "id": "binding",
+            "order": 21,
+            "title": "Binding",
+            "child": true,
+            "default": "efficacy",
+            "rules": []
+        },
+        {
+            "id": "efficacy",
+            "order": 22,
+            "title": "Efficacy",
+            "child": true,
+            "default": "pre_clinical_in_vivo_data",
+            "rules": []
+        },
+        {
+            "id": "pre_clinical_in_vivo_data",
+            "order": 30,
+            "title": "Pre-clinical In Vivo Data",
+            "default": "pre_clinical_in_vivo",
+            "static": true,
+            "rules": [],
+            "children": [
+                "pre_clinical_in_vivo"
+            ]
+        },
+        {
+            "id": "pre_clinical_in_vivo",
+            "order": 40,
+            "title": "Pre-clinical In Vivo",
+            "default": "pharmacokinetic_data",
+            "child": true,
+            "rules": []
+        },
+        {
+            "id": "pharmacokinetic_data",
+            "order": 50,
+            "title": "Pharmacokinetic Data",
+            "static": true,
+            "default": "pk_in_silico",
+            "rules": [],
+            "children": [
+                "pk_in_silico",
+                "pk_in_vitro",
+                "pk_in_vivo"
+            ]
+        },
+        {
+            "id": "pk_in_silico",
+            "order": 52,
+            "title": "PK In Silico",
+            "default": "pk_in_vitro",
+            "child": true,
+            "rules": []
+        },
+        {
+            "id": "pk_in_vitro",
+            "order": 54,
+            "title": "PK In Vitro",
+            "default": "pk_in_vitro",
+            "child": true,
+            "rules": []
+        },
+        {
+            "id": "pk_in_vivo",
+            "order": 56,
+            "title": "PK In Vivo",
+            "default": "toxicology _data",
+            "child": true,
+            "rules": []
+        },
+        {
+            "id": "toxicology _data",
+            "order": 60,
+            "title": "Toxicology Data",
+            "default": "ld50",
+            "static": "true",
+            "rules": [],
+            "children": [
+                "ld50",
+                "acute_dosing",
+                "chronic_dosing",
+                "teratogenicity"
+            ]
+        },
+        {
+            "id": "ld50",
+            "order": 61,
+            "title": "LD50",
+            "default": "acute_dosing",
+            "child": true,
+            "excluded": false,
+            "rules": []
+        },
+        {
+            "id": "acute_dosing",
+            "order": 62,
+            "title": "Acute Dosing",
+            "default": "chronic_dosing",
+            "child": true,
+            "excluded": false,
+            "rules": []
+        },
+        {
+            "id": "chronic_dosing",
+            "order": 63,
+            "title": "Chronic Dosing",
+            "default": "teratogenicity",
+            "child": true,
+            "excluded": false,
+            "rules": []
+        },
+        {
+            "id": "teratogenicity",
+            "order": 64,
+            "title": "Teratogenicity",
+            "default": "clinical_data",
+            "child": true,
+            "excluded": false,
+            "rules": []
+        },
+        {
+            "id": "clinical_data",
+            "order": 70,
+            "title": "Clinical Data",
+            "default": "clinical",
+            "children": [
+                "clinical"],
+            "static": true,
+            "rules": []
+        },
+        {
+            "id": "clinical",
+            "order": 75,
+            "title": "Clinical",
+            "default": "submission",
+            "child": true,
+            "rules": []
+        },
+        {
+            "id": "submission",
+            "order": 80,
+            "title": "Submission",
+            "description": " You are about to submit the form.....Co-create, policymaker social capital global thought leader innovate. Uplift design thinking inspiring radical challenges and opportunities movements. Communities change-makers grit invest; disrupt, humanitarian, energize. The resistance communities. Co-create, policymaker social capital global thought leader innovate. Uplift design thinking inspiring radical challenges and opportunities movements.",
+            "default": null,
+            "final": true,
+            "rules": []
+        }
+    ]
+}
