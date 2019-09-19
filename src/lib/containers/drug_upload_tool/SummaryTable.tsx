@@ -99,34 +99,41 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
 
   let prevScreenId = '';
   const table = (
-    <table className="table summary-table">
-      <thead>
-        <tr>
-          <th>Screen</th>
-          <th>Question</th>
-          <th>Answer</th>
-        </tr>
-      </thead>
-      <tbody>
-        {flatFormData.map((line: SummaryFormat, i: number) => {
-          return (
-            <tr key={i + line.screen.id + line.label}>
-              <td>
-                {prevScreenId !== line.screen.id &&
-                  (prevScreenId = line.screen.id) && (
-                    <span>
-                      {line.screen.title}
-                      {deleteButton(line.screen.id, props.isWizard)}
-                    </span>
-                  )}
-              </td>
-              <td>{line.label}</td>
-              <td>{line.value}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <>
+      <table className="table summary-table-header">
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Data Name</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+      </table>
+
+      <div className="scroll-area table-body">
+        <table className="table summary-table">
+          <tbody>
+            {flatFormData.map((line: SummaryFormat, i: number) => {
+              return (
+                <tr key={i + line.screen.id + line.label}>
+                  <td>
+                    {prevScreenId !== line.screen.id &&
+                      (prevScreenId = line.screen.id) && (
+                        <span>
+                          {line.screen.title}
+                          {deleteButton(line.screen.id, props.isWizard)}
+                        </span>
+                      )}
+                  </td>
+                  <td>{line.label}</td>
+                  <td>{line.value}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 
   return (

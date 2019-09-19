@@ -18,7 +18,7 @@ import { NavButtons, NextStepLink } from './NavButtons';
 import DataDebug from './DataDebug';
 import SummaryTable from './SummaryTable';
 import WarningModal from './WarningModal';
-
+import Switch from 'react-switch';
 export type FormSchema = {
   properties?: any;
   definitions?: any;
@@ -46,6 +46,7 @@ type DrugUploadFormState = {
   previousStepIds: string[];
   hasValidated?: boolean; //validation has been called and it passed
   doShowErrors: boolean; //if we should show error summary at the top of the page
+  doShowHelp: boolean;
   modalContext?: { action: Function; arguments: any[] };
 };
 
@@ -101,10 +102,23 @@ export default class DrugUploadForm extends React.Component<
       steps: steps,
       previousStepIds: [],
       formData: props.formData,
-      doShowErrors: false
+      doShowErrors: false,
+      doShowHelp: true
     };
   }
 
+  componentDidMount() {
+    if(_.isEmpty(this.state.formData)) {
+      const result = {};
+      const defs = this.props.schema.definitions;
+      Object.keys(defs).forEach((key: string) => {
+        if (defs[key].properties && Object.keys(defs[key].properties).indexOf('included') > -1) {
+          _.set(result, `${key}.included`, true);
+        }})
+        this.setState({formData: result})
+
+    }
+  }
 
   // get the schema slice for the current screen/step
   getSchema = ({ id, final }: Step): FormSchema => {
@@ -164,8 +178,8 @@ export default class DrugUploadForm extends React.Component<
 
     //previousStack is used for 'back' navigation is wizard mode.
     //only need to do it if moving forward i.e. nextStepId is undefined
-   if (!nextStepId) {
-    previousStack.push(currentStep.id);
+    if (!nextStepId) {
+      previousStack.push(currentStep.id);
     }
 
     if (!isError) {
@@ -289,7 +303,10 @@ export default class DrugUploadForm extends React.Component<
 
   //we are constantly saving form data. Needed to overwrite on-error behavior
   handleOnChange({ formData }: any) {
-    this.setState({ formData });
+    //this is just for form updates. submit screen goes different route
+    if (!this.isSubmitScreen()) {
+      this.setState({ formData });
+    }
   }
 
   /*doSave = (formData: any): object => {
@@ -374,29 +391,34 @@ export default class DrugUploadForm extends React.Component<
   };
 
   toggleExcludeStep = (stepId: string, isExclude: boolean): void => {
-    const steps = this.state.steps.map(stp => {
-      if (stp.id === stepId) {
-        return { ...stp, ...{ excluded: isExclude } };
-      }
-      return stp;
-    });
+    this.setState((prevState, props) => {
+      const steps = prevState.steps.map(stp => {
+        if (stp.id === stepId) {
+          return { ...stp, ...{ excluded: isExclude } };
+        }
+        return stp;
+      });
 
-    const formData = _.cloneDeep(this.state.formData);
-    const currentStep = _.cloneDeep(this.state.currentStep);
-    //we need this because you can exclude on the ifnal screen so the currentStep.id
-    //is not always the one we need to exclude
-    if (currentStep.id === stepId) {
-      currentStep.excluded = isExclude;
-    }
-    //if exluding - blow away the data for the step
-    if (isExclude) {
-      formData[stepId] = {};
-    }
-    this.setState({
-      steps,
-      formData,
-      modalContext: undefined,
-      currentStep
+      const formDataUpdated = _.cloneDeep(prevState.formData);
+      const currentStep = _.cloneDeep(prevState.currentStep);
+      //we need this because you can exclude on the ifnal screen so the currentStep.id
+      //is not always the one we need to exclude
+      if (currentStep.id === stepId) {
+        currentStep.excluded = isExclude;
+      }
+      //if exluding - blow away the data for the step
+      if (isExclude) {
+        formDataUpdated[stepId] = {};
+        //_.set(formDataUpdated, `${stepId}.included`, false);
+      } else {
+        _.set(formDataUpdated, `${stepId}.included`, true);
+      }
+      return {
+        steps,
+        formData: formDataUpdated,
+        modalContext: undefined,
+        currentStep
+      };
     });
   };
 
@@ -446,11 +468,38 @@ export default class DrugUploadForm extends React.Component<
     return <></>;
   };
 
+
+  renderHelpToggle =(currentStep: Step, showHelp: boolean, callbackFn: Function): JSX.Element => {
+    if (currentStep.static  || currentStep.final) {
+     return <></>
+    }
+     return (
+        <>
+          <label className="pull-right toggle-help-label">
+            <span>Hide help</span>
+            <Switch
+              checkedIcon={false}
+              uncheckedIcon={false}
+              height={20}
+              width={45}
+              className="toggle-help"
+              offColor="#ccc"
+              onColor="#5960a5"
+              onChange={() => callbackFn()
+              }
+              checked={showHelp}
+            />
+            <span>Show help</span>
+          </label>
+        </>
+      )
+  }
+
   transformErrors = (errors: AjvError[]): AjvError[] => {
     // if we are not in wizard mode and not trying to submit or validate we just want to skip
     // over the errors and just set the step status
     // https://github.com/rjsf-team/react-jsonschema-form/issues/1263
- 
+
     if (
       this.navAction !== NavActionEnum.SUBMIT &&
       this.navAction !== NavActionEnum.VALIDATE &&
@@ -517,10 +566,9 @@ export default class DrugUploadForm extends React.Component<
           bodyText={this.state.currentStep.description}
           title={this.props.formTitle}
         ></Header>
-      
+
         {/* alina TODO: potentially not needed. Check after submit and save are implemented */}
-        <div
-        >
+        <div>
           <div className="inner-wrap">
             <StepsSideNav
               stepList={this.state.steps}
@@ -538,7 +586,7 @@ export default class DrugUploadForm extends React.Component<
                   VALIDATE
                 </button>
               )}
-
+              {this.renderHelpToggle(this.state.currentStep, this.state.doShowHelp, () =>this.setState({ doShowHelp: !this.state.doShowHelp }))}
               {this.isSubmitScreen() && (
                 <button
                   type="button"
@@ -555,7 +603,11 @@ export default class DrugUploadForm extends React.Component<
                 {this.state.hasValidated && <span>ALL GOOD!</span>}
                 <div className="scroll-area">
                   <Form
-                    className="submissionInputForm"
+                    className={
+                      this.state.doShowHelp
+                        ? 'submissionInputForm'
+                        : 'submissionInputForm no-help'
+                    }
                     liveValidate={false}
                     formData={this.state.formData}
                     schema={this.getSchema(this.state.currentStep)}
@@ -588,7 +640,7 @@ export default class DrugUploadForm extends React.Component<
                 </div>
               </div>
 
-              <div className={!this.isSubmitScreen() ? 'hidden' : ''}>
+              {this.isSubmitScreen() && (
                 <SummaryTable
                   formData={this.state.formData}
                   isWizard={this.props.isWizardMode}
@@ -596,8 +648,9 @@ export default class DrugUploadForm extends React.Component<
                   callbackFn={(screenId: string) =>
                     this.showExcludeStateWarningModal(screenId, true)
                   }
+                
                 ></SummaryTable>
-              </div>
+              )}
 
               <NavButtons
                 currentStep={this.state.currentStep}

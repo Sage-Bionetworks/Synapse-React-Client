@@ -110,22 +110,21 @@ export default class App extends React.Component<{}, AppState> {
             exact={true}
             path="/drugUploadTool"
             render={props => {
-              let searchParamsProps: any = {}
+              const searchParamsProps: any = {}
               // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-              const searchParams: any = new URLSearchParams(props.location.search)
-              const iter = searchParams.entries()
-              let result = iter.next()
-              while (!result.done) {
-                const [key, value] = result.value
-                searchParamsProps[key] = value
-                result = iter.next()
-              }
+              const searchParams = new URLSearchParams(props.location.search)
+              searchParams.forEach(
+                (value, key) => {
+                  searchParamsProps[key] = value  
+                }
+              )
               return !props.location.search ?
               <FileGrid
                 pathpart="drugUploadTool"
                 token={this.state.token}
                 formClass="drug-upload-tool"
                 parentContainerId="syn20673186"
+                itemNoun="Compound"
               />
               :
               <DrugUploadTool
@@ -165,6 +164,7 @@ export default class App extends React.Component<{}, AppState> {
                   token={this.state.token}
                   parentContainerId="syn20692909"
                   formClass="contribution-request"
+                  itemNoun={'Nomination'}
                 />
                 :
                 <DrugUploadTool

@@ -1,19 +1,17 @@
 @import './vars.scss';
 
+/* MODAL OVERWRITE! */
+.modal-backdrop {
+  opacity: 0.7;
+}
 
-
-  /* MODAL OVERWRITE! */
-  .modal-backdrop {
-    opacity: 0.7;
+.modal-title {
+  float: left;
+}
+.SRC-ReactJsonForm {
+  .fade {
+    opacity: inherit;
   }
-
-  .modal-title {
-    float: left;
-  }
-  .SRC-ReactJsonForm {
-    .fade {
-      opacity: inherit;
-    }
   /* colors */
   .nav-link,
   a.nav-link,
@@ -46,6 +44,33 @@
     padding: 2rem;
   }
 
+
+    /*--- File Grid ----*/
+
+    table.file-table {
+      margin-bottom: 3rem !important;
+      border-bottom: 1px solid #ddd;
+      td {
+        vertical-align: middle;
+      }
+      a, button.btn {
+        color: $action-color
+      }
+    }
+
+    .btn-large {
+      color: #fff;
+      background-color: $action-color;
+   
+      font-size: 1.25rem;
+
+      text-transform: uppercase;
+      border-radius: 15px;
+      padding: .75rem 1.5rem;
+
+    }
+  
+
   /* ---------- layout ---------------*/
   $a: 100vh;
   $b: 285px;
@@ -76,11 +101,6 @@
     overflow-x: hidden;
   }
 
-  /*--- File Grid ----*/
-  table.file-table {
-    margin-bottom: 3rem !important;
-    border-bottom: 1px solid #ddd;
-  }
 
   ul.error-detail {
     padding-left: 0;
@@ -91,9 +111,23 @@
     font-style: italic;
     color: $red-error2;
   }
+  .has-error .checkbox, .has-error .checkbox-inline, .has-error .control-label, .has-error .help-block, .has-error .radio, .has-error .radio-inline, .has-error.checkbox label, .has-error.checkbox-inline label, .has-error.radio label, .has-error.radio-inline label {
+    color: $red-error2;
+  }
 
+  has-error .form-control {
+    border-color: $red-error2;
+  }
+
+/*--- form ---*/
   .submissionInputForm {
     margin-right: 10rem;
+
+
+    &.no-help .help-block {
+      display: none;
+    }
+   
     .array-item {
       border: 1px solid $gray-dark;
       padding: 2rem 1rem;
@@ -171,18 +205,48 @@
   .hide-form-only .form-group {
     display: none;
   }
+.toggle-help-label {
+  line-height: 3em;
+    border: 1px solid $gray-light;
+
+    padding: 0 1em;
+    margin: 0 1em;
+    font-size: .85em;
+}
+
+  .toggle-help {
+  vertical-align: middle;
+  margin: 0 5px;
+  }
 
   /*------- summary -------*/
   .summary {
-    .summary-table {
-    
-      th:first-child(2) {
+    $c: 100%;
+    $d: 30px;
+    .scroll-area {
+      height: 100%;
+      &.table-body {
+        @include calc(height, #{$c} - #{$d});
+      }
+    }
+    .summary-table-header {
+      margin-bottom: 0
+    }
+
+    .summary-table,
+    .summary-table-header {
+      width: 100%;
+
+      th:first-child(),
+      td:first-child() {
         width: 30%;
       }
-      th:nth-child(2) {
+      th:nth-child(2),
+      td:nth-child(2) {
         width: 40%;
       }
-      th:nth-child(3) {
+      th:nth-child(3),
+      td:nth-child(3) {
         width: 30%;
       }
     }
