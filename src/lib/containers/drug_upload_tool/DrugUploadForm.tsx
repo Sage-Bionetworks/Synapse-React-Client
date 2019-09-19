@@ -468,6 +468,33 @@ export default class DrugUploadForm extends React.Component<
     return <></>;
   };
 
+
+  renderHelpToggle =(currentStep: Step, showHelp: boolean, callbackFn: Function): JSX.Element => {
+    if (currentStep.static  || currentStep.final) {
+     return <></>
+    }
+     return (
+        <>
+          <label className="pull-right toggle-help-label">
+            <span>Hide help</span>
+            <Switch
+              checkedIcon={false}
+              uncheckedIcon={false}
+              height={20}
+              width={45}
+              className="toggle-help"
+              offColor="#ccc"
+              onColor="#5960a5"
+              onChange={() => callbackFn()
+              }
+              checked={showHelp}
+            />
+            <span>Show help</span>
+          </label>
+        </>
+      )
+  }
+
   transformErrors = (errors: AjvError[]): AjvError[] => {
     // if we are not in wizard mode and not trying to submit or validate we just want to skip
     // over the errors and just set the step status
@@ -559,29 +586,7 @@ export default class DrugUploadForm extends React.Component<
                   VALIDATE
                 </button>
               )}
-              {!this.state.currentStep.static &&
-                !this.state.currentStep.static && (
-                  <>
-                    <label className="pull-right toggle-help-label">
-                      <span>Hide help</span>
-                      <Switch
-                        checkedIcon={false}
-                        uncheckedIcon={false}
-                        height={20}
-                        width={45}
-                        className="toggle-help"
-                        offColor="#ccc"
-                        onColor="#5960a5"
-                        onChange={() =>
-                          this.setState({ doShowHelp: !this.state.doShowHelp })
-                        }
-                        checked={this.state.doShowHelp}
-                      />
-                      <span>Show help</span>
-                    </label>
-                  </>
-                )}
-
+              {this.renderHelpToggle(this.state.currentStep, this.state.doShowHelp, () =>this.setState({ doShowHelp: !this.state.doShowHelp }))}
               {this.isSubmitScreen() && (
                 <button
                   type="button"
