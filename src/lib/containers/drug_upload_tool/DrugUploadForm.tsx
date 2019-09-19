@@ -1,69 +1,69 @@
-import './DrugUploadTool.scss';
+import './DrugUploadTool.scss'
 
-import * as React from 'react';
-import _ from 'lodash';
-import { Engine } from 'json-rules-engine';
+import * as React from 'react'
+import _ from 'lodash'
+import { Engine } from 'json-rules-engine'
 import {
   default as Form,
   UiSchema,
   AjvError,
-  ErrorListProps
-} from 'react-jsonschema-form';
+  ErrorListProps,
+} from 'react-jsonschema-form'
 
-import { Step, StepStateEnum, NavActionEnum, SummaryFormat } from './types';
-import Header from './Header';
-import StepsSideNav from './StepsSideNav';
-import { NavButtons, NextStepLink } from './NavButtons';
+import { Step, StepStateEnum, NavActionEnum, SummaryFormat } from './types'
+import Header from './Header'
+import StepsSideNav from './StepsSideNav'
+import { NavButtons, NextStepLink } from './NavButtons'
 
-import DataDebug from './DataDebug';
-import SummaryTable from './SummaryTable';
-import WarningModal from './WarningModal';
-import Switch from 'react-switch';
+import DataDebug from './DataDebug'
+import SummaryTable from './SummaryTable'
+import WarningModal from './WarningModal'
+import Switch from 'react-switch'
 export type FormSchema = {
-  properties?: any;
-  definitions?: any;
-};
+  properties?: any
+  definitions?: any
+}
 
 export type DrugUploadFormProps = {
-  schema: FormSchema;
-  uiSchema: UiSchema;
+  schema: FormSchema
+  uiSchema: UiSchema
   navSchema: {
-    steps: any[];
-  };
-  formData: {};
-  onSubmit: Function;
-  onSave: Function;
-  formTitle: string;
-  isWizardMode?: boolean;
-};
+    steps: any[]
+  }
+  formData: {}
+  onSubmit: Function
+  onSave: Function
+  formTitle: string
+  isWizardMode?: boolean
+}
 
 type DrugUploadFormState = {
-  formData: any; // form data that prepopulates the form
+  formData: any // form data that prepopulates the form
   //formSchema: any; // schema that drives the form
-  currentStep: Step;
-  nextStep?: Step;
-  steps: Step[];
-  previousStepIds: string[];
-  hasValidated?: boolean; //validation has been called and it passed
-  doShowErrors: boolean; //if we should show error summary at the top of the page
-  doShowHelp: boolean;
-  modalContext?: { action: Function; arguments: any[] };
-};
+  currentStep: Step
+  nextStep?: Step
+  steps: Step[]
+  previousStepIds: string[]
+  hasValidated?: boolean //validation has been called and it passed
+  doShowErrors: boolean //if we should show error summary at the top of the page
+  doShowHelp: boolean
+  modalContext?: { action: Function; arguments: any[] }
+}
 
 type RulesEvent = {
-  type: string;
+  type: string
   params: {
-    next: string;
-  };
-};
+    next: string
+  }
+}
 
 type RulesResult = {
-  events: RulesEvent[];
-};
+  events: RulesEvent[]
+}
 
 export interface SummaryFormat {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 export default class DrugUploadForm extends React.Component<
@@ -71,59 +71,62 @@ export default class DrugUploadForm extends React.Component<
   DrugUploadFormState
 > {
   excludeWarningText = `This action will clear the entire contents of this page. Only this page will be effected.
-  Are you sure you want to clear the data enterred on this page?`;
-  excludeWarningHeader = `Clear Entered Data`;
-  formRef: any; //ref to form for submission
-  navAction: NavActionEnum = NavActionEnum.NONE;
-  uiSchema: {};
-  nextStep: Step | undefined;
+  Are you sure you want to clear the data enterred on this page?`
+  excludeWarningHeader = `Clear Entered Data`
+  formRef: any //ref to form for submission
+  navAction: NavActionEnum = NavActionEnum.NONE
+  uiSchema: {}
+  nextStep: Step | undefined
 
   constructor(props: DrugUploadFormProps) {
-    super(props);
+    super(props)
 
     //will modify the ui:help to render html vs text
     this.uiSchema = stringToElementForProp(
       _.cloneDeep(props.uiSchema),
-      'ui:help'
-    );
+      'ui:help',
+    )
     //create steps array from the navSchema
     const steps = props.navSchema.steps
       .map((step, i) => {
         return {
           ...step,
-          inProgress: i === 0 ? true : false
-        };
+          inProgress: i === 0 ? true : false,
+        }
       })
-      .sort((a, b) => a.order - b.order);
+      .sort((a, b) => a.order - b.order)
 
-    this.formRef = React.createRef();
+    this.formRef = React.createRef()
     this.state = {
       currentStep: steps[0],
       steps: steps,
       previousStepIds: [],
       formData: props.formData,
       doShowErrors: false,
-      doShowHelp: true
-    };
+      doShowHelp: true,
+    }
   }
 
   componentDidMount() {
-    if(_.isEmpty(this.state.formData)) {
-      const result = {};
-      const defs = this.props.schema.definitions;
+    if (_.isEmpty(this.state.formData)) {
+      const result = {}
+      const defs = this.props.schema.definitions
       Object.keys(defs).forEach((key: string) => {
-        if (defs[key].properties && Object.keys(defs[key].properties).indexOf('included') > -1) {
-          _.set(result, `${key}.included`, true);
-        }})
-        this.setState({formData: result})
-
+        if (
+          defs[key].properties &&
+          Object.keys(defs[key].properties).indexOf('included') > -1
+        ) {
+          _.set(result, `${key}.included`, true)
+        }
+      })
+      this.setState({ formData: result })
     }
   }
 
   // get the schema slice for the current screen/step
   getSchema = ({ id, final }: Step): FormSchema => {
     if (final) {
-      return this.props.schema;
+      return this.props.schema
     }
     //only get schema for current step. Only the portion of entire form is shown
     // we need all the definitions bacuse we can have fieldset references there
@@ -131,181 +134,184 @@ export default class DrugUploadForm extends React.Component<
       'definitions',
       'title',
       'type',
-      `properties.${id}`
-    ]);
-    return currentStepSlice;
-  };
+      `properties.${id}`,
+    ])
+    return currentStepSlice
+  }
 
   // find the next step
   getNextStepId = async (
     currentStep: Step,
     formData: any,
-    nextStepId?: string
+    nextStepId?: string,
   ): Promise<string> => {
     if (nextStepId) {
-      return nextStepId;
+      return nextStepId
     }
     if (!currentStep.rules || currentStep.rules.length === 0) {
-      return currentStep.default;
+      return currentStep.default
     }
 
     // if there are rules - run the engine and go to the first next step
-    let engine = new Engine(currentStep.rules);
+    let engine = new Engine(currentStep.rules)
 
     try {
-      const result: RulesResult = await engine.run(formData);
+      const result: RulesResult = await engine.run(formData)
       if (result.events.length > 0) {
-        return result.events[0].params.next;
+        return result.events[0].params.next
       } else {
-        return currentStep.default;
+        return currentStep.default
       }
     } catch (error) {
-      return currentStep.default;
+      return currentStep.default
     }
-  };
+  }
 
   // called when going next, previous or a given step
   moveStep = async (
     formData: any,
     nextStepId: string | undefined,
     isError: boolean,
-    previousStack = [...this.state.previousStepIds]
+    previousStack = [...this.state.previousStepIds],
   ) => {
-    const currentStep = this.state.currentStep;
-    let currentStepState: StepStateEnum;
+    const currentStep = this.state.currentStep
+    let currentStepState: StepStateEnum
     //we don't wnat to display errors on the page - this will be done explicitly in validation
-    this.formRef.current.setState({ errorSchema: {} });
+    this.formRef.current.setState({ errorSchema: {} })
 
     //previousStack is used for 'back' navigation is wizard mode.
     //only need to do it if moving forward i.e. nextStepId is undefined
     if (!nextStepId) {
-      previousStack.push(currentStep.id);
+      previousStack.push(currentStep.id)
     }
 
     if (!isError) {
-      currentStepState = StepStateEnum.COMPLETED;
+      currentStepState = StepStateEnum.COMPLETED
     } else {
-      currentStepState = StepStateEnum.ERROR;
+      currentStepState = StepStateEnum.ERROR
     }
     // determine next step
-    nextStepId = await this.getNextStepId(currentStep, formData, nextStepId);
+    nextStepId = await this.getNextStepId(currentStep, formData, nextStepId)
 
     const steps = this.state.steps.map(step => {
       if (step.id === currentStep.id) {
-        return { ...step, ...{ state: currentStepState, inProgress: false } };
+        return {
+          ...step,
+          ...{ state: currentStepState, inProgress: false },
+        }
       } else if (step.id === nextStepId) {
-        return { ...step, ...{ inProgress: true } };
+        return { ...step, ...{ inProgress: true } }
       }
-      return step;
-    });
+      return step
+    })
 
     //at this point the form is valid and submitted and the data reflects the latest
-    const nextStep = this.state.steps.find(step => step.id === nextStepId)!;
+    const nextStep = this.state.steps.find(step => step.id === nextStepId)!
 
-    this.saveStepState(previousStack, steps, nextStep!);
-  };
+    this.saveStepState(previousStack, steps, nextStep!)
+  }
 
   //save the state of the current screen
   saveStepState = (
     previousStepIds: string[],
     steps: Step[],
-    currentStep: Step
+    currentStep: Step,
   ) => {
     this.setState({
       previousStepIds,
       steps,
       currentStep,
       hasValidated: false,
-      doShowErrors: false
-    });
-  };
+      doShowErrors: false,
+    })
+  }
 
   //--------- fns to support navigation --------------------//
   goPrevious = async (formData: any, isError: boolean) => {
-    let previousStepId: string | undefined;
-    const previousStack: string[] = [...this.state.previousStepIds];
+    let previousStepId: string | undefined
+    const previousStack: string[] = [...this.state.previousStepIds]
     // in wizard mode we go to the previously visited screen. In regular mode go to the screen with previous index
     if (this.props.isWizardMode) {
-      previousStepId = previousStack.pop();
+      previousStepId = previousStack.pop()
     } else {
       const currentIndex = _.findIndex(this.state.steps, {
-        id: this.state.currentStep.id
-      });
+        id: this.state.currentStep.id,
+      })
       if (currentIndex > 0) {
-        previousStepId = this.state.steps[currentIndex - 1].id;
+        previousStepId = this.state.steps[currentIndex - 1].id
       }
     }
     if (!_.isUndefined(previousStepId)) {
-      return this.moveStep(formData, previousStepId, isError, previousStack);
+      return this.moveStep(formData, previousStepId, isError, previousStack)
     }
-  };
+  }
 
   triggerAction = (navAction: NavActionEnum) => {
     // we don't need to validate on save so bypassing submit
     if (navAction === NavActionEnum.SAVE) {
       //const data = this.doSave(this.state.formData);
-      return this.props.onSave(this.state.formData);
+      return this.props.onSave(this.state.formData)
     } else {
-      this.navAction = navAction;
-      this.formRef.current.submit();
+      this.navAction = navAction
+      this.formRef.current.submit()
     }
-  };
+  }
 
   // triggered when we click on the step name in left nav (doesn't happen in wizard mode)
   triggerStepChange = (step: Step) => {
-    this.nextStep = step;
-    this.triggerAction(NavActionEnum.GO_TO_STEP);
-  };
+    this.nextStep = step
+    this.triggerAction(NavActionEnum.GO_TO_STEP)
+  }
 
   onError = (args: any) => {
     this.setState({
-      doShowErrors: true
-    });
+      doShowErrors: true,
+    })
     if (this.navAction === NavActionEnum.VALIDATE) {
       const modifiedSteps = this.setStepStatusForFailedValidation(
         args.props,
         this.state.steps,
-        this.getSchema(this.state.currentStep)
-      );
-      this.setState({ steps: modifiedSteps });
+        this.getSchema(this.state.currentStep),
+      )
+      this.setState({ steps: modifiedSteps })
     }
-  };
+  }
 
   setStepStatusForFailedValidation = (
     errors: AjvError[],
     steps: Step[],
-    currentSchemaProperties: any
+    currentSchemaProperties: any,
   ): Step[] => {
     //error property is in the format: step.somevalue.etc  .welcome.submission_name example
     //find all the steps where there is an error
     const stepsWithError = errors.map(
-      error => _.trimStart(error.property, '.').split('.')[0]
-    );
+      error => _.trimStart(error.property, '.').split('.')[0],
+    )
     //find all steps in current schema
-    const stepsInCurrentSchema = Object.keys(currentSchemaProperties);
+    const stepsInCurrentSchema = Object.keys(currentSchemaProperties)
     const updatedSteps: Step[] = steps.map(step => {
       if (stepsWithError.indexOf(step.id) > -1) {
         return {
           ...step,
-          state: StepStateEnum.ERROR
-        };
+          state: StepStateEnum.ERROR,
+        }
       } else if (stepsInCurrentSchema.indexOf(step.id) > -1) {
         return {
           ...step,
-          state: StepStateEnum.COMPLETED
-        };
+          state: StepStateEnum.COMPLETED,
+        }
       } else {
-        return step;
+        return step
       }
-    });
-    return updatedSteps;
-  };
+    })
+    return updatedSteps
+  }
 
   //we are constantly saving form data. Needed to overwrite on-error behavior
   handleOnChange({ formData }: any) {
     //this is just for form updates. submit screen goes different route
     if (!this.isSubmitScreen()) {
-      this.setState({ formData });
+      this.setState({ formData })
     }
   }
 
@@ -321,47 +327,47 @@ export default class DrugUploadForm extends React.Component<
   };*/
 
   performAction(navAction: NavActionEnum, hasError: boolean) {
-    const formData = this.state.formData;
+    const formData = this.state.formData
 
     switch (navAction) {
       case NavActionEnum.NEXT: {
-        return this.moveStep(formData, undefined, hasError);
+        return this.moveStep(formData, undefined, hasError)
       }
       case NavActionEnum.PREVIOUS: {
-        return this.goPrevious(formData, hasError);
+        return this.goPrevious(formData, hasError)
       }
       case NavActionEnum.GO_TO_STEP: {
         //nextStep is returned when clicked on the Steps left nav
         if (!this.nextStep) {
-          return;
+          return
         }
-        return this.moveStep(formData, this.nextStep.id, hasError);
+        return this.moveStep(formData, this.nextStep.id, hasError)
       }
 
       case NavActionEnum.SUBMIT: {
         //const data = this.doSave(formData);
-        alert('Do some kind of submission thing');
-        this.props.onSubmit(formData);
+        alert('Do some kind of submission thing')
+        this.props.onSubmit(formData)
       }
       case NavActionEnum.VALIDATE: {
         //we get here is we clicked validate and the data is valid.
         // if it's not valid we handle it in onError fn
         const currentStep = {
           ...this.state.currentStep,
-          state: StepStateEnum.COMPLETED
-        };
+          state: StepStateEnum.COMPLETED,
+        }
         const steps = this.state.steps.map(step => {
           return {
             ...step,
             state:
-              step.id === currentStep.id ? StepStateEnum.COMPLETED : step.state
-          };
-        });
+              step.id === currentStep.id ? StepStateEnum.COMPLETED : step.state,
+          }
+        })
 
-        this.setState({ hasValidated: true, currentStep, steps });
+        this.setState({ hasValidated: true, currentStep, steps })
       }
       default:
-        return;
+        return
     }
   }
 
@@ -370,73 +376,73 @@ export default class DrugUploadForm extends React.Component<
   onSubmit = (): any => {
     this.performAction(
       this.navAction,
-      this.state.currentStep.state === StepStateEnum.ERROR
-    );
-  };
+      this.state.currentStep.state === StepStateEnum.ERROR,
+    )
+  }
 
   isSubmitScreen = (): boolean => {
-    return this.state.currentStep.final === true;
-  };
+    return this.state.currentStep.final === true
+  }
 
   showExcludeStateWarningModal = (
     stepId: string,
-    isUpdateFlattenedData: boolean = false
+    isUpdateFlattenedData: boolean = false,
   ): void => {
     this.setState({
       modalContext: {
         action: this.toggleExcludeStep,
-        arguments: [stepId, true, isUpdateFlattenedData]
-      }
-    });
-  };
+        arguments: [stepId, true, isUpdateFlattenedData],
+      },
+    })
+  }
 
   toggleExcludeStep = (stepId: string, isExclude: boolean): void => {
     this.setState((prevState, props) => {
       const steps = prevState.steps.map(stp => {
         if (stp.id === stepId) {
-          return { ...stp, ...{ excluded: isExclude } };
+          return { ...stp, ...{ excluded: isExclude } }
         }
-        return stp;
-      });
+        return stp
+      })
 
-      const formDataUpdated = _.cloneDeep(prevState.formData);
-      const currentStep = _.cloneDeep(prevState.currentStep);
+      const formDataUpdated = _.cloneDeep(prevState.formData)
+      const currentStep = _.cloneDeep(prevState.currentStep)
       //we need this because you can exclude on the ifnal screen so the currentStep.id
       //is not always the one we need to exclude
       if (currentStep.id === stepId) {
-        currentStep.excluded = isExclude;
+        currentStep.excluded = isExclude
       }
       //if exluding - blow away the data for the step
       if (isExclude) {
-        formDataUpdated[stepId] = {};
+        formDataUpdated[stepId] = {}
         //_.set(formDataUpdated, `${stepId}.included`, false);
       } else {
-        _.set(formDataUpdated, `${stepId}.included`, true);
+        _.set(formDataUpdated, `${stepId}.included`, true)
       }
       return {
         steps,
         formData: formDataUpdated,
         modalContext: undefined,
-        currentStep
-      };
-    });
-  };
+        currentStep,
+      }
+    })
+  }
 
   // displays the text for screens that don't have any form data
   private renderTextForStaticScreen = (): JSX.Element => {
     if (!this.state.currentStep.copy) {
-      return <></>;
+      return <></>
     }
-    const copy = this.state.currentStep.copy;
-    return <div dangerouslySetInnerHTML={{ __html: copy! }} />;
-  };
+    const copy = this.state.currentStep.copy
+    return <div dangerouslySetInnerHTML={{ __html: copy! }} />
+  }
 
   //displays subheader for forms that can be excluded
   renderOptionalFormSubheader = (isWizard: boolean = false): JSX.Element => {
     if (isWizard) {
-      return <></>;
+      return <></>
     }
-    const currentStep = this.state.currentStep;
+    const currentStep = this.state.currentStep
 
     if (currentStep.excluded === true) {
       return (
@@ -449,7 +455,7 @@ export default class DrugUploadForm extends React.Component<
             INCLUDE
           </button>
         </div>
-      );
+      )
     } else if (currentStep.excluded === false) {
       return (
         <div>
@@ -463,36 +469,38 @@ export default class DrugUploadForm extends React.Component<
             EXCLUDE
           </button>
         </div>
-      );
-    }
-    return <></>;
-  };
-
-
-  renderHelpToggle =(currentStep: Step, showHelp: boolean, callbackFn: Function): JSX.Element => {
-    if (currentStep.static  || currentStep.final) {
-     return <></>
-    }
-     return (
-        <>
-          <label className="pull-right toggle-help-label">
-            <span>Hide help</span>
-            <Switch
-              checkedIcon={false}
-              uncheckedIcon={false}
-              height={20}
-              width={45}
-              className="toggle-help"
-              offColor="#ccc"
-              onColor="#5960a5"
-              onChange={() => callbackFn()
-              }
-              checked={showHelp}
-            />
-            <span>Show help</span>
-          </label>
-        </>
       )
+    }
+    return <></>
+  }
+
+  renderHelpToggle = (
+    currentStep: Step,
+    showHelp: boolean,
+    callbackFn: Function,
+  ): JSX.Element => {
+    if (currentStep.static || currentStep.final) {
+      return <></>
+    }
+    return (
+      <>
+        <label className="pull-right toggle-help-label">
+          <span>Hide help</span>
+          <Switch
+            checkedIcon={false}
+            uncheckedIcon={false}
+            height={20}
+            width={45}
+            className="toggle-help"
+            offColor="#ccc"
+            onColor="#5960a5"
+            onChange={() => callbackFn()}
+            checked={showHelp}
+          />
+          <span>Show help</span>
+        </label>
+      </>
+    )
   }
 
   transformErrors = (errors: AjvError[]): AjvError[] => {
@@ -506,17 +514,17 @@ export default class DrugUploadForm extends React.Component<
       (!this.props.isWizardMode || this.state.currentStep.final)
     ) {
       const currentStep = {
-        ...this.state.currentStep
-      };
+        ...this.state.currentStep,
+      }
       if (errors.length > 0) {
-        currentStep.state = StepStateEnum.ERROR;
+        currentStep.state = StepStateEnum.ERROR
       } else {
-        currentStep.state = StepStateEnum.COMPLETED;
+        currentStep.state = StepStateEnum.COMPLETED
       }
 
-      this.setState({ currentStep });
+      this.setState({ currentStep })
 
-      return [];
+      return []
     }
 
     // there is an odd behavior in the lib that in cases when we have additional fields depending on enum
@@ -524,40 +532,40 @@ export default class DrugUploadForm extends React.Component<
     // so if there is an error Oneof on a parent - ignore it and enum on a child. and just output 'required'
     // if there is an enum error and there is required with the same prefix remove it
 
-    const reqErrors = errors.filter(error => error.name === 'required');
+    const reqErrors = errors.filter(error => error.name === 'required')
     reqErrors.forEach(error => {
       const parentPath = error.property.substring(
         0,
-        error.property.lastIndexOf('.')
-      );
+        error.property.lastIndexOf('.'),
+      )
       _.remove(errors, (error: AjvError) => {
         return (
           error.property.indexOf(parentPath) > -1 &&
           (error.name === 'enum' || error.name === 'oneOf')
-        );
-      });
-    });
-    return errors;
-  };
+        )
+      })
+    })
+    return errors
+  }
 
   renderErrorListTemplate = (props: ErrorListProps) => {
-    let { errors } = props;
+    let { errors } = props
     const currentLis = errors.map((error, i) => {
       return renderTransformedErrorObject(
         this.state.steps,
         error,
         this.uiSchema,
         i,
-        this.props.schema
-      );
-    });
+        this.props.schema,
+      )
+    })
 
     return (
       <div className="form-error-summary">
         <ul className="error-detail">{currentLis}</ul>
       </div>
-    );
-  };
+    )
+  }
 
   render() {
     return (
@@ -576,27 +584,37 @@ export default class DrugUploadForm extends React.Component<
               onStepChange={this.triggerStepChange}
             ></StepsSideNav>
             <div className="form-wrap">
-              {this.renderOptionalFormSubheader(this.props.isWizardMode)}
-              {!this.state.currentStep.static && (
-                <button
-                  type="button"
-                  className="btn btn-action save pull-right"
-                  onClick={() => this.triggerAction(NavActionEnum.VALIDATE)}
-                >
-                  VALIDATE
-                </button>
-              )}
-              {this.renderHelpToggle(this.state.currentStep, this.state.doShowHelp, () =>this.setState({ doShowHelp: !this.state.doShowHelp }))}
-              {this.isSubmitScreen() && (
-                <button
-                  type="button"
-                  className="btn btn-action save pull-right"
-                  onClick={() => this.triggerAction(NavActionEnum.SUBMIT)}
-                >
-                  SUBMIT
-                </button>
-              )}
+              <div className="form-title">{this.state.currentStep.title}</div>
 
+              <div className="right-top-actions">
+                {!this.state.currentStep.static && (
+                  <button
+                    type="button"
+                    className="btn btn-action save pull-right"
+                    onClick={() => this.triggerAction(NavActionEnum.VALIDATE)}
+                  >
+                    VALIDATE
+                  </button>
+                )}
+                {this.renderHelpToggle(
+                  this.state.currentStep,
+                  this.state.doShowHelp,
+                  () =>
+                    this.setState({
+                      doShowHelp: !this.state.doShowHelp,
+                    }),
+                )}
+                {this.isSubmitScreen() && (
+                  <button
+                    type="button"
+                    className="btn btn-action save pull-right"
+                    onClick={() => this.triggerAction(NavActionEnum.SUBMIT)}
+                  >
+                    SUBMIT
+                  </button>
+                )}
+              </div>
+              {this.renderOptionalFormSubheader(this.props.isWizardMode)}
               <div
                 className={this.isSubmitScreen() ? 'hide-form-only' : 'wrap'}
               >
@@ -615,7 +633,10 @@ export default class DrugUploadForm extends React.Component<
                     onSubmit={this.onSubmit}
                     onChange={args => this.handleOnChange(args)}
                     onError={args =>
-                      this.onError({ props: args, form: this.formRef })
+                      this.onError({
+                        props: args,
+                        form: this.formRef,
+                      })
                     }
                     showErrorList={
                       !!this.state.doShowErrors || !!this.props.isWizardMode
@@ -648,7 +669,6 @@ export default class DrugUploadForm extends React.Component<
                   callbackFn={(screenId: string) =>
                     this.showExcludeStateWarningModal(screenId, true)
                   }
-                
                 ></SummaryTable>
               )}
 
@@ -681,7 +701,7 @@ export default class DrugUploadForm extends React.Component<
           hidden={false}
         ></DataDebug>
       </div>
-    );
+    )
   }
 }
 
@@ -693,26 +713,28 @@ function renderTransformedErrorObject(
   uiSchema: UiSchema,
 
   i: number,
-  schema: any
+  schema: any,
 ): JSX.Element {
-  const propPath = _.trimStart(error.property, '.');
-  const propArr = propPath.split('.');
+  const propPath = _.trimStart(error.property, '.')
+  const propArr = propPath.split('.')
 
   // some things require labels in schema (e.g. checkboxes) so this is preferred
-  const labelFromSchema = `${propArr.join('.properties.')}.title`;
+  const labelFromSchema = `${propArr.join('.properties.')}.title`
   //can be overriden by label in UI
-  const regLabelFromUi = `${propPath}.ui:title`;
+  const regLabelFromUi = `${propPath}.ui:title`
   //for array fields we need to change the property e.g.
   //  ld50.experiments[0].species_other should look like 'ld50.experiments.items.species_other'
-  const arrayLabelFromUi = regLabelFromUi.replace(/\[.*?\]/, '.items');
+  const arrayLabelFromUi = regLabelFromUi.replace(/\[.*?\]/, '.items')
 
   let label =
     _.get(schema.definitions, labelFromSchema) ||
     _.get(uiSchema, regLabelFromUi) ||
     _.get(uiSchema, arrayLabelFromUi) ||
-    error.property;
+    error.property
 
-  const screen = _.find(steps, { id: propArr[0] }) || { title: propArr[0] };
+  const screen = _.find(steps, { id: propArr[0] }) || {
+    title: propArr[0],
+  }
   const element = (
     <li key={i} className="">
       <span>
@@ -720,22 +742,22 @@ function renderTransformedErrorObject(
         {label}&nbsp; {error.message}
       </span>
     </li>
-  );
-  return element;
+  )
+  return element
 }
 
 //recursively sets property value to dangerouslySetInnerHTML of that value
 function stringToElementForProp(srcObject: any, key: string): object {
   _.keys(srcObject).some(k => {
     if (k === key) {
-      const value = srcObject[k];
-      srcObject[k] = <span dangerouslySetInnerHTML={{ __html: value }}></span>;
+      const value = srcObject[k]
+      srcObject[k] = <span dangerouslySetInnerHTML={{ __html: value }}></span>
 
-      return srcObject;
+      return srcObject
     }
     if (srcObject[k] && typeof srcObject[k] === 'object') {
-      stringToElementForProp(srcObject[k], key);
+      stringToElementForProp(srcObject[k], key)
     }
-  });
-  return srcObject;
+  })
+  return srcObject
 }

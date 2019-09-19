@@ -1,0 +1,384 @@
+{
+  "welcome": {
+    "submission_name": {
+      "ui:title": "Submission Name",
+      "ui:placeholder": "Enter a unique name for this compound submission",
+      "ui:help": "This is some text that is helpful and has html <a href=\"http://www.google.com\" target=\"_blank\"> Learn more </a>"
+    }
+  },
+  "restrictions": {
+    "off_label": {
+      "ui:title": "Is this component available for off label use?",
+      "ui:widget": "radio",
+      "ui:help": ""
+    },
+    "ip_restrictions": {
+      "ui:title": "Are there any existing IP restrictions for this compound",
+      "ui:widget": "radio",
+      "ui:help": "",
+      "ui:enumDisabled": [true]
+    }
+  },
+  "naming": {
+    "chemical_name": {
+      "ui:title": "Chemical Name",
+      "ui:placeholder": "What is the chemical name?"
+    },
+    "common_name": {
+      "ui:title": "Common Name",
+      "ui:placeholder": "What is the common name?"
+    },
+    "iupac_name": {
+      "ui:title": "IUPAC Name",
+      "ui:placeholder": "Enter the IUPAC name (if available)"
+    },
+    "cas_number": {
+      "ui:title": "CAS Number",
+      "ui:placeholder": "Enter the CAS number (if available), including hyphens"
+    }
+  },
+  "measurements": {
+    "compound_amount": {
+      "ui:title": "Compound Amount",
+      "ui:placeholder": "How much is available for testing?"
+    },
+    "molecular_weight": {
+      "ui:title": "Molecular Weight",
+      "ui:placeholder": "What is the molecular weight?"
+    },
+    "is_solution": {
+      "ui:title": "Is the Compound a Solution",
+      "ui:widget": "radio",
+      "ui:help": ""
+    },
+    "compound_concentration": {
+      "ui:title": "Concentration",
+      "ui:placeholder": "What is the concentration of the solution?"
+    },
+    "compound_purity": {
+      "ui:widget": "textarea",
+      "ui:title": "Compound Purity",
+      "ui:placeholder": "In a few sentences, describe the purity of the compound"
+    }
+  },
+  "basic": {},
+  "binding": {},
+  "efficacy": {},
+  "pre_clinical_in_vivo": {},
+  "pk_in_silico": {},
+  "pk_in_vitro": {},
+  "pk_in_vivo": {},
+  "ld50": {
+    "classNames": "experiments-list",
+    "ui:title": "LD50",
+    "ui:description": "Add experiments here. You can click the buttons to add or remove your experiments blah blah blah",
+    "experiments": {
+      "items": {
+        "name": {
+          "ui:title": "Experiment Name",
+          "ui:description": "Test description"
+        },
+        "species": {
+          "ui:title": "What species is the the model?"
+        },
+        "species_other": {
+          "ui:title": " If other, indicate species"
+        },
+        "strain": {
+          "ui:title": "Model Strain"
+        },
+        "age": {
+          "ui:title": "Test Subject Age"
+        },
+        "sex": {
+          "ui:title": "Test Subject Sex",
+          "ui:widget": "radio"
+        },
+        "duration": {
+          "ui:title": "Study Duration",
+          "ui:placeholder": "What was the duration of the study?"
+        },
+        "dose_range": {
+          "ui:title": "What was the dose range tested?",
+          "dose_range_min": {
+            "ui:title": "Min"
+          },
+          "dose_range_max": {
+            "ui:title": "Max"
+          }
+        },
+        "ld50": {
+          "ui:title": "LD50"
+        },
+        "route": {
+          "ui: title": "What is the route of administration?"
+        },
+        "vehicle_formulation": {
+          "ui:title": "Vehicle Formulation",
+          "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 10
+          }
+        },
+        "ui:order": ["name", "species", "species_other", "*"],
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:title": "Assay and Methods"
+        }
+      }
+    }
+  },
+  "acute_dosing": {
+    "experiments": {
+      "items": {
+        "classNames": "task-title foo-bar",
+        "name": {
+          "ui:title": "Experiment Name"
+        },
+        "species": {
+          "ui:title": "What species is the the model?"
+        },
+        "species_other": {
+          "ui:title": " If other, indicate species"
+        },
+        "strain": {
+          "ui:title": "Model Strain"
+        },
+        "age": {
+          "ui:title": "Test Subject Age"
+        },
+        "sex": {
+          "ui:title": "Test Subject Sex",
+          "ui:widget": "radio"
+        },
+        "duration": {
+          "ui:title": "Study Duration",
+          "ui:placeholder": "What was the duration of the study?"
+        },
+        "dose_range": {
+          "ui:title": "What was the dose range tested?",
+          "dose_range_min": {
+            "ui:title": "Min"
+          },
+          "dose_range_max": {
+            "ui:title": "Max"
+          }
+        },
+        "ld50": {
+          "ui:title": "LD50"
+        },
+        "route": {
+          "ui: title": "What is the route of administration?"
+        },
+        "vehicle_formulation": {
+          "ui:title": "Vehicle Formulation",
+          "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 10
+          }
+        },
+        "ui:order": ["name", "species", "species_other", "*"],
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:title": "Assay and Methods"
+        }
+      }
+    }
+  },
+  "chronic_dosing": {
+    "experiments": {
+      "items": {
+        "classNames": "task-title foo-bar",
+        "name": {
+          "ui:title": "Experiment Name"
+        },
+        "species": {
+          "ui:title": "What species is the the model?"
+        },
+        "species_other": {
+          "ui:title": " If other, indicate species"
+        },
+        "strain": {
+          "ui:title": "Model Strain"
+        },
+        "age": {
+          "ui:title": "Test Subject Age"
+        },
+        "sex": {
+          "ui:title": "Test Subject Sex",
+          "ui:widget": "radio"
+        },
+        "duration": {
+          "ui:title": "Study Duration",
+          "ui:placeholder": "What was the duration of the study?"
+        },
+        "dose_range": {
+          "ui:title": "What was the dose range tested?",
+          "dose_range_min": {
+            "ui:title": "Min"
+          },
+          "dose_range_max": {
+            "ui:title": "Max"
+          }
+        },
+        "ld50": {
+          "ui:title": "LD50"
+        },
+        "route": {
+          "ui: title": "What is the route of administration?"
+        },
+        "vehicle_formulation": {
+          "ui:title": "Vehicle Formulation",
+          "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 10
+          }
+        },
+        "ui:order": ["name", "species", "species_other", "*"],
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:title": "Assay and Methods"
+        }
+      }
+    }
+  },
+  "teratogenicity": {
+    "experiments": {
+      "items": {
+        "classNames": "task-title foo-bar",
+        "name": {
+          "ui:title": "Experiment Name"
+        },
+        "species": {
+          "ui:title": "What species is the the model?"
+        },
+        "species_other": {
+          "ui:title": " If other, indicate species"
+        },
+        "strain": {
+          "ui:title": "Model Strain"
+        },
+        "age": {
+          "ui:title": "Test Subject Age"
+        },
+        "sex": {
+          "ui:title": "Test Subject Sex",
+          "ui:widget": "radio"
+        },
+        "duration": {
+          "ui:title": "Study Duration",
+          "ui:placeholder": "What was the duration of the study?"
+        },
+        "dose_range": {
+          "ui:title": "What was the dose range tested?",
+          "dose_range_min": {
+            "ui:title": "Min"
+          },
+          "dose_range_max": {
+            "ui:title": "Max"
+          }
+        },
+        "ld50": {
+          "ui:title": "LD50"
+        },
+        "route": {
+          "ui: title": "What is the route of administration?"
+        },
+        "vehicle_formulation": {
+          "ui:title": "Vehicle Formulation",
+          "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 10
+          }
+        },
+        "ui:order": ["name", "species", "species_other", "*"],
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:title": "Assay and Methods"
+        }
+      }
+    }
+  },
+
+  "clinical": {
+    "ui:order": [
+      "clinical_data_description",
+      "clinical_data_involvement",
+      "cinical_publication_status",
+      "clinical_trials_reference",
+      "diagnosis",
+      "diagnosis_other",
+      "*"
+    ],
+
+    "clinical_data_description": {
+      "ui:widget": "radio",
+      "ui:help": "",
+      "ui:description": "",
+      "ui:placeholder": ""
+    },
+    "clinical_data_involvement": {
+      "ui:help": "",
+      "ui:widget": "radio",
+      "ui:description": "",
+      "ui:placeholder": ""
+    },
+    "cinical_publication_status": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:placeholder": ""
+    },
+    "clinical_trials_reference": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:placeholder": "Enter the reference # from clinilcaltrials.gov, if available"
+    },
+    "sex": {
+      "ui:widget": "radio",
+      "ui:help": "Please indicate the sex of the subjects used in this study",
+      "ui:description": "",
+      "ui:placeholder": ""
+    },
+    "diagnosis": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:placeholder": "Select from list"
+    },
+    "diagnosis_other": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:placeholder": "If other, state the clinical indication"
+    },
+    "age_range": {
+      "classNames": "data-range",
+
+      "age_range_min": {
+        "ui:widget": "range",
+        "ui:help": "",
+        "ui:placeholder": ""
+      },
+      "age_range_max": {
+        "ui:help": "",
+        "ui:widget": "updown",
+        "ui:placeholder": ""
+      }
+    },
+    "clinical_measures": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:widget": "textarea",
+      "ui:placeholder": "Describe any clinical measures on the patient population"
+    },
+    "pharmacokinetics": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:widget": "textarea",
+      "ui:placeholder": "Describe any pharmacokinetic data on the patient population"
+    },
+    "safety": {
+      "ui:help": "",
+      "ui:description": "",
+      "ui:placeholder": "Describe any safety data on the patient population"
+    }
+  }
+}

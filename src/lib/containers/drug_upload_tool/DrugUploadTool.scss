@@ -44,36 +44,34 @@
     padding: 2rem;
   }
 
+  /*--- File Grid ----*/
 
-    /*--- File Grid ----*/
-
-    table.file-table {
-      margin-bottom: 3rem !important;
-      border-bottom: 1px solid #ddd;
-      td {
-        vertical-align: middle;
-      }
-      a, button.btn {
-        color: $action-color
-      }
+  table.file-table {
+    margin-bottom: 3rem !important;
+    border-bottom: 1px solid #ddd;
+    td {
+      vertical-align: middle;
     }
-
-    .btn-large {
-      color: #fff;
-      background-color: $action-color;
-   
-      font-size: 1.25rem;
-
-      text-transform: uppercase;
-      border-radius: 15px;
-      padding: .75rem 1.5rem;
-
+    a,
+    button.btn {
+      color: $action-color;
     }
-  
+  }
+
+  .btn-large {
+    color: #fff;
+    background-color: $action-color;
+
+    font-size: 1.25rem;
+
+    text-transform: uppercase;
+    border-radius: 15px;
+    padding: 0.75rem 1.5rem;
+  }
 
   /* ---------- layout ---------------*/
   $a: 100vh;
-  $b: 285px;
+  $b: 13rem;
 
   .wrap {
     @include calc(height, #{$a} - #{$b});
@@ -82,11 +80,25 @@
     clear: both;
   }
 
+  .right-top-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
   .inner-wrap {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
+    position: relative;
+
+    .form-title {
+      display: block;
+      font-size: 2.2rem;
+
+      margin-bottom: 1rem;
+    }
   }
 
   .form-wrap {
@@ -101,7 +113,6 @@
     overflow-x: hidden;
   }
 
-
   ul.error-detail {
     padding-left: 0;
   }
@@ -111,7 +122,16 @@
     font-style: italic;
     color: $red-error2;
   }
-  .has-error .checkbox, .has-error .checkbox-inline, .has-error .control-label, .has-error .help-block, .has-error .radio, .has-error .radio-inline, .has-error.checkbox label, .has-error.checkbox-inline label, .has-error.radio label, .has-error.radio-inline label {
+  .has-error .checkbox,
+  .has-error .checkbox-inline,
+  .has-error .control-label,
+  .has-error .help-block,
+  .has-error .radio,
+  .has-error .radio-inline,
+  .has-error.checkbox label,
+  .has-error.checkbox-inline label,
+  .has-error.radio label,
+  .has-error.radio-inline label {
     color: $red-error2;
   }
 
@@ -119,15 +139,34 @@
     border-color: $red-error2;
   }
 
-/*--- form ---*/
+  /*--- form ---*/
   .submissionInputForm {
     margin-right: 10rem;
-
 
     &.no-help .help-block {
       display: none;
     }
-   
+
+    .checkbox > label::before,
+    .radio::before,
+    .radio-inline::before {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .radio input[type='radio']:checked + label::before,
+    .radio input[type='radio']:checked + span::before,
+    .radio-inline input[type='radio']:checked + label::before,
+    .radio-inline input[type='radio']:checked + span::before {
+      background: $action-color;
+      vertical-align: middle;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+
+      margin-left: -1.6rem;
+      margin-right: 1rem;
+    }
     .array-item {
       border: 1px solid $gray-dark;
       padding: 2rem 1rem;
@@ -143,14 +182,39 @@
       border: none;
     }
     fieldset fieldset legend {
-      font-size: 2.25rem;
-    }
-    fieldset fieldset fieldset legend {
-      font-size: 2rem;
+      /* font-size: 2.25rem;*/
+      /* hiding default title for better scroll experience */
+      display: none;
     }
 
-    fieldset fieldset fieldset fieldset legend {
+    /* second level title */
+    fieldset fieldset fieldset legend {
       font-size: 1.75rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    /* third level title */
+    fieldset fieldset fieldset fieldset legend {
+      font-size: 1.5rem;
+    }
+
+    // for min/max type of filed
+    .data-range {
+      legend {
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+      .form-group {
+        float: left;
+
+        label {
+          font-size: 1em;
+          font-weight: normal;
+        }
+      }
+      .form-group + .form-group {
+        margin-left: 1em;
+      }
     }
   }
 
@@ -205,18 +269,18 @@
   .hide-form-only .form-group {
     display: none;
   }
-.toggle-help-label {
-  line-height: 3em;
+  .toggle-help-label {
+    line-height: 3em;
     border: 1px solid $gray-light;
 
     padding: 0 1em;
     margin: 0 1em;
-    font-size: .85em;
-}
+    font-size: 0.85em;
+  }
 
   .toggle-help {
-  vertical-align: middle;
-  margin: 0 5px;
+    vertical-align: middle;
+    margin: 0 5px;
   }
 
   /*------- summary -------*/
@@ -230,7 +294,7 @@
       }
     }
     .summary-table-header {
-      margin-bottom: 0
+      margin-bottom: 0;
     }
 
     .summary-table,
