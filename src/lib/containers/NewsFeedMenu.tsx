@@ -104,7 +104,7 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
       return (
         <div
           key={config.feedName}
-          className={`SRC-hand-cursor SRC-menu-button-base SRC-hoverWhiteText SRC-primary-background-color-hover ${selectedStyling}`}
+          className={`SRC-hand-cursor SRC-menu-button-base SRC-gap SRC-hoverWhiteText SRC-primary-background-color-hover ${selectedStyling}`}
           onClick={this.switchFeed(index)}
           role="button"
           tabIndex={0}
