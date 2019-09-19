@@ -28,6 +28,7 @@ export type UserFileGridProps = {
   parentContainerId: string; //projectId
   pathpart: string;
   formClass?:string;
+  itemNoun: string;
 }
 
 type UserFileGridState = {
@@ -218,16 +219,16 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
         <tr>
           <th>Submission Name</th>
           <th>Edited On</th>
-          <th>Submitted On</th>
+      
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         {fileList.map((entity, key) => {
           return (<tr key={entity.id!+key}>
-            <td><Link className='nav-green' to={`/${pathpart}/${dataFolderId}/${entity.id}/`}>{entity.name}</Link></td>
+            <td><Link to={`/${pathpart}/${dataFolderId}/${entity.id}/`}>{entity.name}</Link></td>
             <td>{moment(entity.modifiedOn).calendar()}</td>
-            <td>?</td>
+           
             <td><button className='btn' aria-label="delete" onClick={() => this.setModalConfirmationState(this.props.token!, entity.id!)}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
           </tr>)
         })}
@@ -247,7 +248,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
           <div className='panel panel-default padding-full'>
             {this.renderFileTable(this.state.fileList, this.props.pathpart, this.state.dataFolderId)}
             <div className='text-center'>
-              <a className='btn btn-success' href={`/${this.props.pathpart}/${this.state.dataFolderId}`}>Add new Compound</a></div>
+              <a className='btn btn-large' href={`/${this.props.pathpart}/${this.state.dataFolderId}`}>Add new {this.props.itemNoun}</a></div>
           </div></div>}
       {this.state.modalContext &&
         <WarningModal
