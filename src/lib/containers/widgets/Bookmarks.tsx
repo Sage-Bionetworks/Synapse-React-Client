@@ -36,7 +36,7 @@ class Bookmarks extends React.Component<BookmarksProps, {}> {
         return (
           <React.Fragment key={index}>
             <button className="SRC-markdown-bookmark" id={`bookmark${index}`}>[{index + 1}]</button>
-            {el}
+            <span dangerouslySetInnerHTML={{ __html: el }} />
             {isBeforeLastElement && <br/>}
           </React.Fragment>
         )

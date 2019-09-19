@@ -4,6 +4,10 @@ import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 export const MarkdownSynapseDemo:React.SFC = () => {
   return (
     <div className="container">
+      {/* footnotes with html */}
+      <MarkdownSynapse
+        ownerId={'syn3157182'}
+      />      
       {/* with details tag */}
       <MarkdownSynapse
         ownerId={'syn12666371'}
