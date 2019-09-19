@@ -602,12 +602,22 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
       if (matchingColumnModel) {
         const rowValue = selectedRow.values[index]
-        tokens.push(
-          ['LITERAL', matchingColumnModel.name, '1'],
-          ['OPERATOR', '=', '1'],
-          ['STRING', rowValue, '1'],
-          ['CONDITIONAL', 'AND', '1'],
-        )
+        // PORTALS-712: support null values
+        if (rowValue) {
+          tokens.push(
+            ['LITERAL', matchingColumnModel.name, '1'],
+            ['OPERATOR', '=', '1'],
+            ['STRING', rowValue, '1'],
+            ['CONDITIONAL', 'AND', '1'],
+          )
+        } else {
+          tokens.push(
+            ['LITERAL', matchingColumnModel.name, '1'],
+            ['OPERATOR', 'IS', '1'],
+            ['BOOLEAN', 'null', '1'],
+            ['CONDITIONAL', 'AND', '1'],
+          )
+        }
       }
     })
     // remove the last AND

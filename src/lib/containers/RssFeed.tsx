@@ -43,11 +43,11 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
     let feedItemContentDiv = document.getElementById(itemId)
     if (!this.state.itemId2MoreItem[itemId]) {
       this.state.itemId2MoreItem[itemId] = {
-          text:'Show More',
+          text:'View full post',
           icon: 'long-arrow-alt-down'
       }
     }
-    const isShow:boolean = this.state.itemId2MoreItem[itemId].text.includes('More')
+    const isShow:boolean = this.state.itemId2MoreItem[itemId].text.includes('View full post')
     if (feedItemContentDiv) {
       let foundMoreItem:boolean = false
       // hide or show the elements after the More element
@@ -66,7 +66,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
         }
     }
     // toggle, by updating text and icon
-    const newText:string = isShow ? 'Show Less' : 'Show More'
+    const newText:string = isShow ? 'Hide' : 'View full post'
     const newIcon:IconProp = isShow ? 'long-arrow-alt-up' : 'long-arrow-alt-down'
     this.state.itemId2MoreItem[itemId] = {
       text: newText,
@@ -105,7 +105,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
             }
             let isItemVisible: boolean = index < this.props.defaultItemsToShow || this.state.isShowingMoreItems
             
-            let showMoreText: string = 'Show More'
+            let showMoreText: string = 'View full post'
             let showMoreIcon: IconProp = 'long-arrow-alt-down'
             if (this.state.itemId2MoreItem[item.guid]) {
               showMoreText = this.state.itemId2MoreItem[item.guid].text
@@ -119,8 +119,8 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                     moreElement &&
                     <div className="clearfix">
                       <button
-                        style={{ textAlign: 'left', margin: 0, padding: '0px 0px 25px 35px' }}
-                        className="SRC-primary-text-color SRC-basicButton"
+                        style={{ textAlign: 'left', margin: 0, padding: '0px 50px 25px 35px' }}
+                        className="SRC-primary-text-color SRC-basicButton SRC-floatRight"
                         onClick={this.onToggleReadMore(item.guid)}
                       >
                         {showMoreText}

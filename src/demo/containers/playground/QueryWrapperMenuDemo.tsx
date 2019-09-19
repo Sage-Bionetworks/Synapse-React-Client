@@ -158,6 +158,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
           },
           {
+            facet: 'PORTALS-712',
+            sql: 'SELECT dataType, assay, fileFormat, COUNT(distinct id) AS Files ' +
+              'FROM syn11346063 WHERE (study LIKE \'%MODEL-AD_5XFAD%\') GROUP BY 1, 2, 3 ORDER BY 4 DESC',
+          },
+          {
             facet: 'study',
             sql: 'SELECT * FROM syn11346063 limit 1000',
           },

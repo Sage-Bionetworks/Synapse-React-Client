@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.12.50",
+  "version": "1.12.52",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -56,9 +56,9 @@
     "plotly.js-basic-dist": "^1.47.3",
     "raf": "^3.4.1",
     "react": "16.9.0",
-    "react-dom": "16.9.0",
     "react-app-polyfill": "^1.0.1",
     "react-bootstrap": "^1.0.0-beta.12",
+    "react-dom": "16.9.0",
     "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
