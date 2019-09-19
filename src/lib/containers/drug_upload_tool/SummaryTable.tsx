@@ -4,7 +4,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SummaryFormat, Step } from './types';
 import _ from 'lodash';
-import { useEffect } from 'react';
 
 export interface SummaryTableProps {
   isWizard?: boolean;
@@ -86,10 +85,6 @@ export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
 
 export default function SummaryTable(props: SummaryTableProps): JSX.Element {
   let flatFormData: SummaryFormat[] = [];
-  useEffect(() => {
-    flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
-  });
-
   flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
   const deleteButton = (screenId: string, isShow?: boolean): JSX.Element => {
     if (!isShow) {

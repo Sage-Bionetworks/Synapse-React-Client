@@ -109,7 +109,16 @@ export default class App extends React.Component<{}, AppState> {
           <Route
             exact={true}
             path="/drugUploadTool"
-            render={props => (
+            render={props => {
+              const searchParamsProps: any = {}
+              // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+              const searchParams = new URLSearchParams(props.location.search)
+              searchParams.forEach(
+                (value, key) => {
+                  searchParamsProps[key] = value  
+                }
+              )
+              return !props.location.search ?
               <FileGrid
                 pathpart="drugUploadTool"
                 token={this.state.token}
@@ -117,13 +126,7 @@ export default class App extends React.Component<{}, AppState> {
                 parentContainerId="syn20673186"
                 itemNoun="Compound"
               />
-            )}
-          />
-
-          <Route
-            exact={true}
-            path="/drugUploadTool/:parentId"
-            render={props => (
+              :
               <DrugUploadTool
                 {...props}
                 parentContainerId="syn20673186"
@@ -131,76 +134,40 @@ export default class App extends React.Component<{}, AppState> {
                 fileNamePath="welcome.submission_name"
                 formUiSchemaEntityId="syn20693568"
                 formNavSchemaEntityId="syn20680027"
-                currentFileEntityId={undefined}
                 token={this.state.token}
                 formTitle="Your Submission"
                 formClass="drug-upload-tool"
-                currentFileParentEntityId={props.match.params['parentId']}
+                searchParams={searchParamsProps}
               />
-            )}
-          />
-          <Route
-            exact={true}
-            path="/drugUploadTool/:parentId/:id"
-            render={props => (
-              <DrugUploadTool
-                {...props}
-                parentContainerId="syn20673186"
-                fileNamePath="welcome.submission_name"
-                formSchemaEntityId="syn20680102"
-                formUiSchemaEntityId="syn20693568"
-                formNavSchemaEntityId="syn20680027"
-                token={this.state.token}
-                formTitle="Your Submission"
-                formClass="drug-upload-tool"
-                currentFileParentEntityId={props.match.params['parentId']}
-                currentFileEntityId={props.match.params['id']}
-              />
-            )}
+            }}
           />
 
           {/*------------------- contributions request form ---------------------------------*/}
           <Route
             exact={true}
             path="/contribReqForm"
-            render={props => (
-              <FileGrid
-                pathpart="contribReqForm"
-                token={this.state.token}
-                parentContainerId="syn20692909"
-                formClass="contribution-request"
-                itemNoun="Nomination"
-              />
-            )}
-          />
-
-          {/*TODO add class*/}
-
-          <Route
-            exact={true}
-            path="/contribReqForm/:parentId"
-            render={props => (
-              <DrugUploadTool
-                {...props}
-                parentContainerId="syn20692909"
-                formSchemaEntityId="syn20692910"
-                formUiSchemaEntityId="syn20692911"
-                formNavSchemaEntityId="syn20692912"
-                fileNamePath="study.submission_name"
-                isWizardMode={true}
-                token={this.state.token}
-                formTitle="Your Submission"
-                currentFileEntityId={undefined}
-                formClass="contribution-request"
-                currentFileParentEntityId={props.match.params['parentId']}
-              />
-            )}
-          />
-          <Route
-            exact={true}
-            path="/contribReqForm/:parentId/:id"
-            render={props => (
-              <DrugUploadTool
+            render={props => {
+              let searchParamsProps: any = {}
+              // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+              const searchParams: any = new URLSearchParams(props.location.search)
+              const iter = searchParams.entries()
+              let result = iter.next()
+              while (!result.done) {
+                const [key, value] = result.value
+                searchParamsProps[key] = value
+                result = iter.next()
+              }
+              console.log('rendering line 162')
+              return !props.location.search ?
+                <FileGrid
+                  pathpart="contribReqForm"
+                  token={this.state.token}
+                  parentContainerId="syn20692909"
+                  formClass="contribution-request"
+                  itemNoun={'Nomination'}
+                />
+                :
+                <DrugUploadTool
                 {...props}
                 parentContainerId="syn20692909"
                 formSchemaEntityId="syn20692910"
@@ -211,10 +178,9 @@ export default class App extends React.Component<{}, AppState> {
                 formTitle="Your Submission"
                 formClass="contribution-request"
                 fileNamePath="study.submission_name"
-                currentFileParentEntityId={props.match.params['parentId']}
-                currentFileEntityId={props.match.params['id']}
               />
-            )}
+            }
+            }
           />
         </div>
       </Router>
