@@ -9,7 +9,7 @@ import Alert from 'react-bootstrap/Alert';
 import DrugUploadForm from './DrugUploadForm';
 import _ from 'lodash';
 
-type UploadToolSearchParams = {
+export type UploadToolSearchParams = {
   currentFileEntityId?: string; //entityId fo the file that contains form data
   currentFileParentEntityId: string;
 }

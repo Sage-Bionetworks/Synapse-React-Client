@@ -224,7 +224,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
       <tbody>
         {fileList.map((entity, key) => {
           return (<tr key={entity.id!+key}>
-            <td><a className='nav-green' href={`#/${pathpart}?currentFileParentEntityId=${dataFolderId}&currentFileEntityId=${entity.id}`}>{entity.name}</a></td>
+            <td><a className='nav-green' href={`${pathpart}?currentFileParentEntityId=${dataFolderId}&currentFileEntityId=${entity.id}`}>{entity.name}</a></td>
             <td>{moment(entity.modifiedOn).calendar()}</td>
             <td>?</td>
             <td><button className='btn' aria-label="delete" onClick={() => this.setModalConfirmationState(this.props.token!, entity.id!)}><FontAwesomeIcon icon={faTrash} aria-hidden="true" ></FontAwesomeIcon></button></td>
@@ -245,7 +245,7 @@ export default class UserFileGrid extends React.Component<UserFileGridProps, Use
           <div className='panel panel-default padding-full'>
             {this.renderFileTable(this.state.fileList, this.props.pathpart, this.state.dataFolderId)}
             <div className='text-center'>
-              <a className='btn btn-success' href={`#/${this.props.pathpart}?currentFileParentEntityId=${this.state.dataFolderId}`}>Add new Compound</a></div>
+              <a className='btn btn-success' href={`${this.props.pathpart}?currentFileParentEntityId=${this.state.dataFolderId}`}>Add new Compound</a></div>
           </div></div>}
       {this.state.modalContext &&
         <WarningModal
