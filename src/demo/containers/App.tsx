@@ -115,6 +115,7 @@ export default class App extends React.Component<{}, AppState> {
                 token={this.state.token}
                 formClass="drug-upload-tool"
                 parentContainerId="syn20673186"
+                itemNoun="Compound"
               />
             )}
           />
@@ -168,6 +169,7 @@ export default class App extends React.Component<{}, AppState> {
                 token={this.state.token}
                 parentContainerId="syn20692909"
                 formClass="contribution-request"
+                itemNoun="Nomination"
               />
             )}
           />
