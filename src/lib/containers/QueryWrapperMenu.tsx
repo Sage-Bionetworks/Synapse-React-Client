@@ -185,11 +185,13 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         <div className="break">
           <hr/>
         </div>
-        <div className={`col-xs-12 col-sm-3 col-lg-2 SRC-menuLayout ${showBarChart ? 'SRC-menuPadding' : 'SRC-menuPaddingLess'}`}>
-          {menuDropdown}
-        </div>
-        <div className="col-xs-12 col-sm-9 col-lg-10">
-          {queryWrapper}
+        <div className="row">
+          <div className={`col-xs-12 col-sm-3 col-lg-2 SRC-menuLayout ${showBarChart ? 'SRC-menuPadding' : 'SRC-menuPaddingLess'}`}>
+            {menuDropdown}
+          </div>
+          <div className="col-xs-12 col-sm-9 col-lg-10">
+            {queryWrapper}
+          </div>
         </div>
       </React.Fragment>
     )
@@ -416,7 +418,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
       let searchIconStyle: React.CSSProperties = {
-        margin: 'auto 0'
+        margin: 'auto 0',
+        opacity: 0.4
       }
       const { facet } = config
       const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
