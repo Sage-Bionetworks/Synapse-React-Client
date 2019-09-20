@@ -49,7 +49,7 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
     const { feedName, feedDescription, feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
 
     return (
-      <>
+      <div className="row">
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">
           {menuDropdown}
         </div>
@@ -86,7 +86,7 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
             />
           }
         </div>
-      </>
+      </div>
     )
   }
 

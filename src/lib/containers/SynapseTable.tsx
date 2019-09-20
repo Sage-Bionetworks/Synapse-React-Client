@@ -274,9 +274,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { rows } = queryResults
     const { headers } = queryResults
     const { facets = [] } = data
-    // handle displaying the previous button -- if offset is zero then it
-    // shouldn't be displayed
-    const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
     const { isMenuWallOpen, isModalDownloadOpen, isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const {
@@ -300,7 +297,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           }
         </div>
         {this.renderTableTop(headers)}
-        {this.renderTable(headers, facets, rows, pastZero)}
+        {this.renderTable(headers, facets, rows)}
         {/* its intentional that the menu-wall is placed here because of the way that z-index works*/}
         {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
       </>
@@ -457,7 +454,33 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     )
   }
 
-  private renderTable = (headers: SelectColumn[], facets: FacetColumnResult[], rows: Row[], pastZero: boolean) => {
+  private renderTable = (headers: SelectColumn[], facets: FacetColumnResult[], rows: Row[]) => {
+    // handle displaying the previous button -- if offset is zero then it
+    // shouldn't be displayed
+    const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
+    const previous = (
+      <button
+        onClick={this.handlePaginationClick(PREVIOUS)}
+        className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
+        type="button"
+      >
+        Previous
+      </button>
+    )
+
+    const hasMoreData = this.props.hasMoreData
+    const next = (
+      (
+        <button
+          onClick={this.handlePaginationClick(NEXT)}
+          className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
+          type="button"
+        >
+          Next
+        </button>
+      )
+    )
+
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
@@ -469,7 +492,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           </thead>
           <tbody>{this.createTableRows(rows, headers)}</tbody>
         </table>
-        {rows.length > 0 && this.showPaginationButtons(pastZero)}
+        {hasMoreData && next}
+        {pastZero && previous}
       </div>
     )
   }
@@ -486,15 +510,15 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const backgroundColor = colorPalette[0]
     return (
       <div 
-        className="SRC-padding SRC-centerContent" 
-        style={{ background: backgroundColor }}
+        className="SRC-centerContent" 
+        style={{ background: backgroundColor, padding: 8 }}
       >
         <h3 className="SRC-tableHeader"> {title}</h3>
         {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
           &&
           <span 
             className="SRC-inlineFlex"
-            style={{ marginLeft: 'auto', marginRight: '10px' }}
+            style={{ marginLeft: 'auto' }}
           >
             <span 
               tabIndex={0}
