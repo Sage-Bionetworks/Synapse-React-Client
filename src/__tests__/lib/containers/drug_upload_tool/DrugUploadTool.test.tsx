@@ -15,10 +15,10 @@ const parentContainerId: string = 'syn20355732';
 const formSchemaEntityId = 'syn9988882982';
 const formUiSchemaEntityId = 'syn9988882983';
 const formNavSchemaEntityId = 'syn9988882984';
-const currentFileEntityId = 'syn9988882985'
-const currentFileParentEntityId = 'syn9988882986'
+const formDataId = 'syn9988882985'
+const formGroupId = 'syn9988882986'
 const searchParams: UploadToolSearchParams = {
-  currentFileParentEntityId
+  formGroupId
 }
 const fileNamePath = 'somescreen.somefield';
 const formTitle = 'my submission';
@@ -79,7 +79,7 @@ describe('basic tests', () => {
     expect(result.data).toEqual(formschemaJson);
   });
 
-  it('should make 3 calls to getFileEntityWithData if there is no datafile (no currentFileEntityId)', async () => {
+  it('should make 3 calls to getFileEntityWithData if there is no datafile (no formDataId)', async () => {
     const { wrapper, instance } = await createShallowComponent(props);
     const getFileEntityWithData = jest.spyOn(instance, 'getFileEntityWithData');
     await instance.componentDidMount();
@@ -88,7 +88,7 @@ describe('basic tests', () => {
   });
 
   it('should make 4 calls to getFileEntityWithData if there is  datafile ', async () => {
-    const _props = { ...props, ...{ searchParams: { currentFileParentEntityId, currentFileEntityId } } };
+    const _props = { ...props, ...{ searchParams: { formGroupId, formDataId } } };
     const { wrapper, instance } = await createShallowComponent(_props);
     const getFileEntityWithData = jest.spyOn(instance, 'getFileEntityWithData');
     await instance.componentDidMount();
@@ -100,7 +100,7 @@ describe('basic tests', () => {
 
 describe( 'pass params', () => {
   it('should pass parameters correctly', async () => {
-    const _props = { ...props, ...{ searchParams: { currentFileParentEntityId, currentFileEntityId }, isWizardMode: true } }
+    const _props = { ...props, ...{ searchParams: { formGroupId, formDataId }, isWizardMode: true } }
     const { wrapper, instance } = await createShallowComponent(_props);
     await instance.componentDidMount();
     expect(wrapper).toBeDefined();

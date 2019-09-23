@@ -10,8 +10,8 @@ import DrugUploadForm from './DrugUploadForm';
 import _ from 'lodash';
 
 export type UploadToolSearchParams = {
-  currentFileEntityId?: string; //entityId fo the file that contains form data
-  currentFileParentEntityId: string;
+  formDataId?: string; //entityId fo the file that contains form data
+  formGroupId: string;
 }
 
 export type DrugUploadToolProps = {
@@ -104,11 +104,11 @@ class DrugUploadTool extends React.Component<
         this.getFileEntityWithData(token, this.props.formNavSchemaEntityId)
       ];
       const { searchParams } = this.props
-      const currentFileEntityId = searchParams && searchParams.currentFileEntityId
+      const formDataId = searchParams && searchParams.formDataId
       // if there is saved data
-      if (currentFileEntityId) {
+      if (formDataId) {
         promises.push(
-          this.getFileEntityWithData(token, currentFileEntityId)
+          this.getFileEntityWithData(token, formDataId)
         );
       }
       return Promise.all(promises)
@@ -116,7 +116,7 @@ class DrugUploadTool extends React.Component<
           formSchema = values[0].data;
           formUiSchema = values[1].data;
           formNavSchema = values[2].data;
-          if (currentFileEntityId) {
+          if (formDataId) {
             formData = values[3].data;
             currentFileEntity = values[3].fileEntity;
           }
@@ -188,9 +188,9 @@ class DrugUploadTool extends React.Component<
       fileContentsBlob
     );
     const { searchParams } = this.props
-    const currentFileParentEntityId = searchParams && searchParams.currentFileParentEntityId
-    if (!currentFileParentEntityId) {
-      console.error('currentFileParentEntityId must be defined')
+    const formGroupId = searchParams && searchParams.formGroupId
+    if (!formGroupId) {
+      console.error('formGroupId must be defined')
     }
 
     try {
@@ -207,7 +207,7 @@ class DrugUploadTool extends React.Component<
       }
       // else, it's a new file entity
       const newFileEntity: FileEntity = {
-        parentId: currentFileParentEntityId!,
+        parentId: formGroupId!,
         name: fileName,
         concreteType: 'org.sagebionetworks.repo.model.FileEntity',
         dataFileHandleId: newFileHandleId
