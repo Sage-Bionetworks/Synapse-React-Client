@@ -155,8 +155,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const searchableItem = searchable[dropdownIndex]
     const containerStyle: React.CSSProperties = {
       background: '#F9F9F9',
-      border: '1px solid #C4C4C4',
-      borderRadius: '3px',
       height: '80px',
       display: 'flex',
       marginTop: 29,
@@ -165,8 +163,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const fieldStyle: React.CSSProperties = {
       background: '#FFFFFF',
-      boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
-      borderRadius:'3px',
+      border: '1px solid #DCDCDC',
       margin: '0px 10px',
       height: '51px',
       display: 'inline-flex',
@@ -174,9 +171,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const ulStyle: React.CSSProperties = {
       width: 'inherit',
-      border: '1px solid #C4C4C4',
-      boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
-      left: -10
+      left: -10,
+      paddingBottom: 0,
+      paddingTop: 0
     }
     const liStyle: React.CSSProperties = {
       paddingLeft: '10px'
@@ -195,9 +192,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       fontSize: 16
     }
     const inputStyle: React.CSSProperties = {
-      border: 'none',
+      border: 1,
+      margin: 1,
       paddingLeft: 10,
-      height: 50
+      height: 49
     }
     const dropdownBtnStyle: React.CSSProperties = { 
       justifyContent: 'space-between'

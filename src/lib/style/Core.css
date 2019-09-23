@@ -299,8 +299,9 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white; }
-  .SRC-hoverWhiteText:hover svg {
-    color: white; }
+
+.SRC-hoverWhiteText:hover svg {
+  color: white; }
 
 .SRC-light-background {
   background: #F5F5F5; }
@@ -403,8 +404,9 @@ button.SRC-roundBorder {
   z-index: 900;
   background: none;
   border: none; }
-  .SRC-menu-wall:focus {
-    outline: none; }
+
+.SRC-menu-wall:focus {
+  outline: none; }
 
 .SRC-table-dropdown-content {
   align-items: center;
@@ -557,9 +559,10 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-  .SRC-cardContent p {
-    margin: 0px 0px 4px 0px;
-    line-height: 120%; }
+
+.SRC-cardContent p {
+  margin: 0px 0px 4px 0px;
+  line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
@@ -736,8 +739,9 @@ div.SRC-userImg {
   display: flex;
   justify-content: space-between;
   padding-left: 10px; }
-  .SRC-gap span {
-    padding-right: 20px; }
+
+.SRC-gap span {
+  padding-right: 20px; }
 
 .SRC-accordion-menu {
   overflow: hidden; }
@@ -772,8 +776,9 @@ button {
 
 .SRC-markdown-bookmark {
   color: #337ab7; }
-  .SRC-markdown-bookmark:hover {
-    text-decoration: underline; }
+
+.SRC-markdown-bookmark:hover {
+  text-decoration: underline; }
 
 .SRC-block {
   display: block; }
@@ -789,8 +794,7 @@ button {
   height: inherit; }
 
 .SRC-search-dropdown li {
-  padding: 10px;
-  border: 1px solid rgba(196, 196, 196, 0.4); }
+  padding: 10px; }
 
 a.SRC-lightLink {
   color: white;
