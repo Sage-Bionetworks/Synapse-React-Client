@@ -598,7 +598,7 @@ button.SRC-roundBorder {
   left: 0;
   top: 0;
   overflow: hidden;
-  position: absolute;
+  position: fixed;
   z-index: 900;
   background: none;
   border: none; }
@@ -988,8 +988,7 @@ button {
   height: inherit; }
 
 .SRC-search-dropdown li {
-  padding: 10px;
-  border: 1px solid rgba(196, 196, 196, 0.4); }
+  padding: 10px; }
 
 a.SRC-lightLink {
   color: white;

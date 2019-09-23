@@ -514,35 +514,38 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         style={{ background: backgroundColor, padding: 8 }}
       >
         <h3 className="SRC-tableHeader"> {title}</h3>
-        {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
-          &&
-          <span 
-            className="SRC-inlineFlex"
-            style={{ marginLeft: 'auto' }}
+        <span 
+          className="SRC-inlineFlex"
+          style={{ marginLeft: 'auto' }}
           >
-            <span 
-              tabIndex={0}
-              data-for={tooltipAdvancedSearchId}
-              data-tip="Open Advanced Search in Synapse" 
-              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-              onKeyPress={this.advancedSearch}
-              onClick={this.advancedSearch}
-            >
-              <FontAwesomeIcon 
-                size="1x"
-                color="white"
-                icon={'filter'}
-              />
-            </span>
-            <ReactTooltip 
-              delayShow={TOOLTIP_DELAY_SHOW} 
-              place="top"
-              type="dark"
-              effect="solid"
-              id={tooltipDownloadId} 
-            />
-            {this.renderDropdownDownloadOptions()}
-            {this.renderDropdownColumnMenu(headers)}
+            {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
+                &&
+                <>
+                  <span 
+                    tabIndex={0}
+                    data-for={tooltipAdvancedSearchId}
+                    data-tip="Open Advanced Search in Synapse" 
+                    className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                    onKeyPress={this.advancedSearch}
+                    onClick={this.advancedSearch}
+                  >
+                    <FontAwesomeIcon 
+                      size="1x"
+                      color="white"
+                      icon={'filter'}
+                    />
+                  </span>
+                <ReactTooltip 
+                  delayShow={TOOLTIP_DELAY_SHOW} 
+                  place="top"
+                  type="dark"
+                  effect="solid"
+                  id={tooltipDownloadId} 
+                />
+                {this.renderDropdownDownloadOptions()}
+                {this.renderDropdownColumnMenu(headers)}
+              </>
+            }
             <span
               tabIndex={0}
               data-for={tooltipExpandId} 
@@ -560,7 +563,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
               effect="solid"
               id={tooltipExpandId} 
             />
-          </span>}
+          </span>
       </div>
     )
   }
