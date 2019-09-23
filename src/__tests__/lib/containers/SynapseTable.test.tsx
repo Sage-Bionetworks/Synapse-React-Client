@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS } from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS, EXPAND_CLASS } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
@@ -18,6 +18,7 @@ import { UserProfile } from 'lib/utils/jsonResponses/UserProfile'
 import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UserCard from 'lib/containers/UserCard'
+import { Modal } from 'react-bootstrap'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow<SynapseTable>(
@@ -129,12 +130,28 @@ describe('basic functionality', () => {
       
       // Click the dropdown
       await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
-      // See that modal download is
+      // See that modal download is present
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
 
       // Click elsewhere and see that modal download has closed
       await wrapper.find('.SRC-menu-wall').simulate('click')
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
+    })
+  })
+  describe.only('expand mode works' , () => {
+    it ('works', async () => {
+      const { wrapper } = await createShallowComponent(props)
+      // No modal to start
+      expect(wrapper.find(Modal)).toHaveLength(0)
+      await wrapper.find(`.${EXPAND_CLASS}`).simulate('click')
+      // Modal is open now
+      expect(wrapper.find(Modal)).toHaveLength(1)
+  
+      // Click the download options dropdown
+      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
+      // See that modal download is present and bootstrap modal is gone
+      expect(wrapper.find(ModalDownload)).toHaveLength(1)
+      expect(wrapper.find(Modal)).toHaveLength(0)
     })
   })
   describe('PORTALS-527: aggregate query support (show underlying data)', () => {

@@ -11,7 +11,8 @@ type DemoState = {
   version: number
   tabOne: QueryWrapperMenuProps
   tabTwo: QueryWrapperMenuProps
-  showTabOne: boolean
+  tabThree: QueryWrapperMenuProps
+  activeTab: number
 }
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -23,8 +24,8 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
    */
   constructor(props: any) {
     super(props)
-    const experimentalSql = "SELECT * FROM syn20337467 WHERE toolType = 'experimental'" 
-    const computationalSql = "SELECT * FROM syn20337467 WHERE toolType = 'computational'" 
+    const experimentalSql = "SELECT * FROM syn20337467 WHERE toolType = 'experimental' LIMIT 100" 
+    const computationalSql = "SELECT * FROM syn20337467 WHERE toolType = 'computational' LIMIT 100" 
     const genericCardSchema: GenericCardSchema = {
       title: 'Title',
       type: 'Generic Tool',
@@ -41,10 +42,42 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showTabOne: true,
+      activeTab: 2,
+      tabThree: {
+        stackedBarChartConfiguration: {
+          loadingScreen: <div> Im loading as fast I can! </div>
+        },
+        unitDescription: 'datum',
+        tableConfiguration: {
+          title: 'title',
+          synapseId: 'syn11346063'
+        },
+        searchConfiguration: {
+          searchable: [
+            {
+              columnName: 'study',
+              hintText: 'study name'
+            },
+          ]
+        },
+        menuConfig: [
+          {
+            facet: 'species',
+            sql: 'SELECT * FROM syn11346063 LIMIT 1000',
+          },
+          {
+            facet: 'study',
+            sql: 'SELECT * FROM syn11346063 limit 1000',
+          },
+          {
+            sql: 'SELECT * FROM syn11346063 limit 1000',
+          },
+        ] as MenuConfig[]
+        ,
+        rgbIndex: 5
+      },
       tabTwo:
       {
-        showBarChart: false,
         name: 'Demo',
         unitDescription: 'persons',
         cardConfiguration: {
@@ -125,6 +158,11 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
             ' FROM syn17024112 WHERE species=\'Human\' AND assay=\'rnaSeq\' group by 1,2 order by 3 desc limit 1000',
           },
           {
+            facet: 'PORTALS-712',
+            sql: 'SELECT dataType, assay, fileFormat, COUNT(distinct id) AS Files ' +
+              'FROM syn11346063 WHERE (study LIKE \'%MODEL-AD_5XFAD%\') GROUP BY 1, 2, 3 ORDER BY 4 DESC',
+          },
+          {
             facet: 'study',
             sql: 'SELECT * FROM syn11346063 limit 1000',
           },
@@ -170,15 +208,36 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
   }
 
   public render(): JSX.Element {
-
-    const props = this.state.showTabOne ? this.state.tabOne : this.state.tabTwo
+    const { 
+      activeTab
+    } = this.state
+    let props: QueryWrapperMenuProps = {} as QueryWrapperMenuProps
+    if (activeTab === 0) {
+      props = this.state.tabOne
+    } else if (activeTab === 1) {
+      props = this.state.tabTwo 
+    } else {
+      props = this.state.tabThree
+    }
     return (
       <div className="container">
         <button
           className="btn btn-default"
-          onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
+          onClick={() => {this.setState({activeTab: 0})}}
         >
-          toggle tabs
+          With Group By
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({activeTab: 1})}}
+        >
+          With Tools
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({activeTab: 2})}}
+        >
+          Standard
         </button>
         <h2>Demo of table</h2>
           <QueryWrapperMenu

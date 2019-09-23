@@ -286,7 +286,7 @@ a.SRC-anchor-light {
   min-height: 51px;
   height: 51px;
   line-height: 51px;
-  text-align: center;
+  text-align: left;
   font-size: 16px;
 }
 .SRC-background-unset {
@@ -514,7 +514,7 @@ a.SRC-anchor-light {
   left: 0;
   top: 0;
   overflow: hidden;
-  position: fixed;
+  position: absolute;
   z-index: 900;
   background: none;
   border: none; 
@@ -1002,3 +1002,4 @@ a.SRC-lightLink {
   color: white;
   text-decoration: underline;
 }
+

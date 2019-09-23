@@ -133,3 +133,17 @@ border-left-color: $primary-action-color;
     background-color: $primary-action-color;
   }
 }
+
+// Table Modal View
+.modal-90w {
+  width: 95%;
+  // hide modal border
+  .modal-header {
+    border: none;
+    button.close {
+      font-size: 25px;
+      color: $primary-action-color;
+      opacity: 1;
+    }
+  }
+}

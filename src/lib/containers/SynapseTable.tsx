@@ -15,10 +15,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactTooltip from "react-tooltip"
 import { FacetColumnResult,
-         FacetColumnResultValueCount,
-         FacetColumnResultValues
+  FacetColumnResultValueCount,
+  FacetColumnResultValues
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import ColumnsSvg from '../assets/icons/columns.svg'
+import ExpandSvg from '../assets/icons/expand.svg'
+import ShrinkSvg from '../assets/icons/shrink.svg'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../utils/jsonResponses/Table/QueryResult'
 import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
@@ -42,6 +44,7 @@ import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { getUserProfileWithProfilePicAttached } from './getUserData'
 import { UserGroupHeader } from '../utils/jsonResponses/UserGroupHeader'
+import { Modal } from 'react-bootstrap'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -67,6 +70,7 @@ export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 's
 type Direction = ''|'ASC'|'DESC'
 export const SORT_STATE: Direction [] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container' 
+export const EXPAND_CLASS = 'SRC-expand-class'
 type Info = {
   index: number
   name: string
@@ -94,6 +98,9 @@ export type SynapseTableProps = {
   title: string
   loadingScreen?: JSX.Element
 }
+
+const TOOLTIP_DELAY_SHOW = 500
+
 // This is a convenient way to categorize all the dropdown state variables, although problematic
 // if any state variable mapping to a boolean does NOT represent a dropdown
 type BooleanKeys<T> = { [k in keyof T]: T[k] extends boolean ? k : never }[keyof T];
@@ -261,26 +268,43 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return this.props.loadingScreen || <div/>
     }
     // unpack all the data
-    const { data, isLoading = true, unitDescription, token, synapseId } = this.props
+    const { data, isLoading = true, unitDescription, token, synapseId, facet } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
     const { headers } = queryResults
     const { facets = [] } = data
-    const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
-    const backgroundColor = colorPalette[0]
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = this.props.getLastQueryRequest!().query.offset! > 0
-
-    const tooltipAdvancedSearchId = 'openAdvancedSearch'
-    const tooltipDownloadId = 'download'
-    const { isMenuWallOpen, isModalDownloadOpen } = this.state
+    const { isMenuWallOpen, isModalDownloadOpen, isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const {
       sql,
       selectedFacets
     } = queryRequest.query
+    const content = (
+        <>
+         <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
+          {
+            unitDescription
+            &&
+            <TotalQueryResults 
+              facet={facet}
+              data={data}
+              isLoading={isLoading}
+              style={{fontSize: 15}}
+              unitDescription={unitDescription}
+              frontText={'Showing'}
+            />
+          }
+        </div>
+        {this.renderTableTop(headers)}
+        {this.renderTable(headers, facets, rows, pastZero)}
+        {/* its intentional that the menu-wall is placed here because of the way that z-index works*/}
+        {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
+      </>
+    )
     return (
       <React.Fragment>
         {
@@ -295,61 +319,33 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             entityId={synapseId}
           />
         }
-        {isMenuWallOpen && <button onClick={this.closeAllDropdowns} className='SRC-menu-wall' />}
-        <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
-          {
-            unitDescription
-            &&
-            <TotalQueryResults 
-              facet={this.props.facet!}
-              data={this.props.data}
-              isLoading={isLoading}
-              style={{fontSize: 15}}
-              unitDescription={unitDescription}
-              frontText={'Showing'}
-            />
-          }
-        </div>
-        <div className="SRC-padding SRC-centerContent" style={{ background: backgroundColor }}>
-          <h3 className="SRC-tableHeader"> {this.props.title}</h3>
-          {
-          !isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
-            &&   
-            <span className="SRC-inlineFlex" style={{ marginLeft: 'auto', marginRight: '10px' }}>
-              <span
-                tabIndex={0}
-                data-for={tooltipAdvancedSearchId}
-                data-tip="Open Advanced Search in Synapse"
-                className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                onKeyPress={this.advancedSearch}
-                onClick={this.advancedSearch}
-              >
-                <FontAwesomeIcon size="1x" color="white"  icon={'filter'}/>
-              </span>
-              <ReactTooltip
-                delayShow={1500}
-                place="bottom"
-                type="dark"
-                effect="solid"
-                id={tooltipDownloadId}
-              />
-              {this.renderDropdownDownloadOptions()}
-              {this.renderDropdownColumnMenu(headers)}
-            </span>
-          }
-        </div>
-        {/* min height ensure if no rows are selected that a dropdown menu is still accessible */}
-        <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
-            <table className="table table-striped table-condensed">
-                <thead className="SRC_borderTop">
-                    <tr>
-                        {this.createTableHeader(headers, facets)}
-                    </tr>
-                </thead>
-                <tbody>{this.createTableRows(rows, headers)}</tbody>
-            </table>
-            {rows.length > 0 && this.showPaginationButtons(pastZero)}
-        </div>
+        {
+          isExpanded
+          &&
+          <Modal         
+            animation={false}
+            centered={true}
+            show={true}
+            // @ts-ignore
+            onHide={this.toggleStateVariables('isExpanded')}
+            dialogClassName={'modal-90w'}
+          >
+            <Modal.Header 
+              // @ts-ignore
+              onHide={this.toggleStateVariables('isExpanded')} 
+              closeButton={true}
+            >
+            </Modal.Header>
+            <Modal.Body>
+              {content}
+            </Modal.Body>
+          </Modal>
+        }
+        {
+          !isExpanded
+          &&
+          content
+        }
     </React.Fragment>
     )
   }
@@ -379,9 +375,14 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private renderDropdownDownloadOptions = () => {
-    const { isDropdownDownloadOptionsOpen } = this.state
+    const { isDropdownDownloadOptionsOpen, isExpanded } = this.state
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
+    const toggleStateArgs: BooleanKeys<SynapseTableState> [] = ['isModalDownloadOpen']
+    // we don't want two modals to show at once, so we close out the expanded view if its already showing
+    if (isExpanded) {
+      toggleStateArgs.push('isExpanded')
+    }
     return (
       <span className={`dropdown ${DOWNLOAD_OPTIONS_CONTAINER_CLASS} ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
         <button 
@@ -394,17 +395,17 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <FontAwesomeIcon size="1x" color="white" icon="download" />
         </button>
         <ReactTooltip 
-          delayShow={1500}
-          place="bottom"
+          delayShow={TOOLTIP_DELAY_SHOW}
+          place="top"
           type="dark"
           effect="solid"
           id={tooltipAdvancedSearchId} 
         />
-        <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+        <ul className="SRC-table-dropdown-zindex dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
           <li
             style={{ listStyle: 'none' }}
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
-            onClick={this.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')}
+            onClick={this.toggleStateVariables(...toggleStateArgs)}
           >
             <a href="javascript:void">
               Export Metadata
@@ -415,11 +416,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             className="SRC-table-dropdown-list SRC-primary-background-color-hover"
             onClick={this.advancedSearch}
           >
-          <a href="javascript:void">
-            { DOWNLOAD_FILES_MENU_TEXT }
-          </a>
-        </li>
-      </ul>
+            <a href="javascript:void">
+              { DOWNLOAD_FILES_MENU_TEXT }
+            </a>
+          </li>
+        </ul>
       </span>
     )
   }
@@ -443,16 +444,100 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           <img alt="columns selection" src={ColumnsSvg}/>
         </span>
         <ReactTooltip 
-          delayShow={1500} 
-          place="bottom" 
+          delayShow={TOOLTIP_DELAY_SHOW} 
+          place="top" 
           type="dark" 
           effect="solid" 
           id={tooltipColumnSelectionId} 
         />
-        <ul className="dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
+        <ul className="SRC-table-dropdown-zindex dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
           {this.renderDropdownColumnMenuItems(headers)}
         </ul>
       </span>
+    )
+  }
+
+  private renderTable = (headers: SelectColumn[], facets: FacetColumnResult[], rows: Row[], pastZero: boolean) => {
+    /* min height ensure if no rows are selected that a dropdown menu is still accessible */
+    return (
+      <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
+        <table className="table table-striped table-condensed">
+          <thead className="SRC_borderTop">
+            <tr>
+              {this.createTableHeader(headers, facets)}
+            </tr>
+          </thead>
+          <tbody>{this.createTableRows(rows, headers)}</tbody>
+        </table>
+        {rows.length > 0 && this.showPaginationButtons(pastZero)}
+      </div>
+    )
+  }
+
+  private renderTableTop = (headers: SelectColumn[] ) => {
+    const {
+      title,
+    } = this.props
+    const { isExpanded } = this.state
+    const tooltipExpandId = 'expand'
+    const tooltipAdvancedSearchId = 'openAdvancedSearch'
+    const tooltipDownloadId = 'download'
+    const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
+    const backgroundColor = colorPalette[0]
+    return (
+      <div 
+        className="SRC-padding SRC-centerContent" 
+        style={{ background: backgroundColor }}
+      >
+        <h3 className="SRC-tableHeader"> {title}</h3>
+        {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
+          &&
+          <span 
+            className="SRC-inlineFlex"
+            style={{ marginLeft: 'auto', marginRight: '10px' }}
+          >
+            <span 
+              tabIndex={0}
+              data-for={tooltipAdvancedSearchId}
+              data-tip="Open Advanced Search in Synapse" 
+              className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+              onKeyPress={this.advancedSearch}
+              onClick={this.advancedSearch}
+            >
+              <FontAwesomeIcon 
+                size="1x"
+                color="white"
+                icon={'filter'}
+              />
+            </span>
+            <ReactTooltip 
+              delayShow={TOOLTIP_DELAY_SHOW} 
+              place="top"
+              type="dark"
+              effect="solid"
+              id={tooltipDownloadId} 
+            />
+            {this.renderDropdownDownloadOptions()}
+            {this.renderDropdownColumnMenu(headers)}
+            <span
+              tabIndex={0}
+              data-for={tooltipExpandId} 
+              data-tip="Expand table in full screen"
+              className={`SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor ${EXPAND_CLASS}`}
+              onKeyPress={this.toggleStateVariables('isExpanded')} 
+              onClick={this.toggleStateVariables('isExpanded')}
+            >
+              {isExpanded ? <img src={ShrinkSvg} alt="shrink table" /> : <img src={ExpandSvg} alt="expand table" />}
+            </span>
+            <ReactTooltip
+              delayShow={TOOLTIP_DELAY_SHOW}
+              place="top"
+              type="dark"
+              effect="solid"
+              id={tooltipExpandId} 
+            />
+          </span>}
+      </div>
     )
   }
 
@@ -517,12 +602,22 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
       if (matchingColumnModel) {
         const rowValue = selectedRow.values[index]
-        tokens.push(
-          ['LITERAL', matchingColumnModel.name, '1'],
-          ['OPERATOR', '=', '1'],
-          ['STRING', rowValue, '1'],
-          ['CONDITIONAL', 'AND', '1'],
-        )
+        // PORTALS-712: support null values
+        if (rowValue) {
+          tokens.push(
+            ['LITERAL', matchingColumnModel.name, '1'],
+            ['OPERATOR', '=', '1'],
+            ['STRING', rowValue, '1'],
+            ['CONDITIONAL', 'AND', '1'],
+          )
+        } else {
+          tokens.push(
+            ['LITERAL', matchingColumnModel.name, '1'],
+            ['OPERATOR', 'IS', '1'],
+            ['BOOLEAN', 'null', '1'],
+            ['CONDITIONAL', 'AND', '1'],
+          )
+        }
       }
     })
     // remove the last AND
@@ -901,7 +996,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       <div
         ref={refOuterDiv}
         style={style}
-        className={`SRC-table-facet-dropdown btn-group SRC-tableHead ${isCurFilterSelected ? 'open SRC-anchor-light' : ''}`}
+        className={`SRC-table-dropdown-zindex SRC-table-facet-dropdown btn-group SRC-tableHead ${isCurFilterSelected ? 'open SRC-anchor-light' : ''}`}
       >
         <span
           tabIndex={0}
