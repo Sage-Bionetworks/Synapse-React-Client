@@ -186,7 +186,7 @@ class Login extends React.Component<Props, State> {
             alt={'sage bionetworks logo'}
             src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg" 
           />
-          Sign in with your Sage Bionetworks account
+          Sign in with your Sage Bionetworks Synapse account
         </div>
         <form onSubmit={this.handleLogin} className="form-group">
           <input
