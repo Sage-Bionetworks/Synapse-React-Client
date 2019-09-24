@@ -14,8 +14,10 @@ import { SynapseClient } from '../../lib/utils/';
  */
 
 type AppState = {
-  token: string;
-};
+  token: string
+}
+export const TokenContext = React.createContext('')
+
 export default class App extends React.Component<{}, AppState> {
   constructor(props: any) {
     super(props);
@@ -43,7 +45,7 @@ export default class App extends React.Component<{}, AppState> {
     const signedInState = (
       <div className="bg-success text-center" role="alert">
         You are logged in.&nbsp;
-        <button onClick={() => {SynapseClient.signOut()}}>
+        <button onClick={() => { SynapseClient.signOut() }}>
           <span aria-hidden="true">Sign out</span>
         </button>
       </div>
@@ -82,108 +84,110 @@ export default class App extends React.Component<{}, AppState> {
 
   public render(): JSX.Element {
     return (
-      <Router basename={process.env.PUBLIC_URL}>
-        <div>
-          <div className="App-header text-center">
-            <img src={logoSvg} className="App-logo" alt="logo" />
-            <h4 className="white-text">Synapse React Client Demo</h4>
-          </div>
-          {this.renderLoginAndSignout(this.state.token)}
-          <ul>
-            <li>
-              <Link to="/">Demo</Link>
-            </li>
-            <li>
-              <Link to="/Playground">Playground</Link>
-            </li>
-            <li>
-              <Link to="/drugUploadTool">DrugUploadTool</Link>
-            </li>
-            <li>
-              <Link to="/contribReqForm">ContribReq</Link>
-            </li>
-          </ul>
+      <TokenContext.Provider value={this.state.token}>
+        <Router basename={process.env.PUBLIC_URL}>
+          <div>
+            <div className="App-header text-center">
+              <img src={logoSvg} className="App-logo" alt="logo" />
+              <h4 className="white-text">Synapse React Client Demo</h4>
+            </div>
+            {this.renderLoginAndSignout(this.state.token)}
+            <ul>
+              <li>
+                <Link to="/">Demo</Link>
+              </li>
+              <li>
+                <Link to="/Playground">Playground</Link>
+              </li>
+              <li>
+                <Link to="/drugUploadTool">DrugUploadTool</Link>
+              </li>
+              <li>
+                <Link to="/contribReqForm">ContribReq</Link>
+              </li>
+            </ul>
 
-          <Route exact={true} path="/" component={Demo} />
-          <Route path="/Playground" component={Playground} />
-          <Route
-            exact={true}
-            path="/drugUploadTool"
-            render={props => {
-              const searchParamsProps: any = {}
-              // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-              const searchParams = new URLSearchParams(props.location.search)
-              searchParams.forEach(
-                (value, key) => {
-                  searchParamsProps[key] = value  
+            <Route exact={true} path="/" component={Demo} />
+            <Route path="/Playground" component={Playground} />
+            <Route
+              exact={true}
+              path="/drugUploadTool"
+              render={props => {
+                const searchParamsProps: any = {}
+                // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+                const searchParams = new URLSearchParams(props.location.search)
+                searchParams.forEach(
+                  (value, key) => {
+                    searchParamsProps[key] = value
+                  }
+                )
+                return !props.location.search ?
+                  <FileGrid
+                    pathpart="drugUploadTool"
+                    token={this.state.token}
+                    formClass="drug-upload-tool"
+                    parentContainerId="syn20673186"
+                    itemNoun="Compound"
+                  />
+                  :
+                  <DrugUploadTool
+                    {...props}
+                    parentContainerId="syn20673186"
+                    formSchemaEntityId="syn20680102"
+                    fileNamePath="welcome.submission_name"
+                    formUiSchemaEntityId="syn20693568"
+                    formNavSchemaEntityId="syn20680027"
+                    token={this.state.token}
+                    formTitle="Your Submission"
+                    formClass="drug-upload-tool"
+                    searchParams={searchParamsProps}
+                  />
+              }}
+            />
+
+            {/*------------------- contributions request form ---------------------------------*/}
+            <Route
+              exact={true}
+              path="/contribReqForm"
+              render={props => {
+                let searchParamsProps: any = {}
+                // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+                const searchParams: any = new URLSearchParams(props.location.search)
+                const iter = searchParams.entries()
+                let result = iter.next()
+                while (!result.done) {
+                  const [key, value] = result.value
+                  searchParamsProps[key] = value
+                  result = iter.next()
                 }
-              )
-              return !props.location.search ?
-              <FileGrid
-                pathpart="drugUploadTool"
-                token={this.state.token}
-                formClass="drug-upload-tool"
-                parentContainerId="syn20673186"
-                itemNoun="Compound"
-              />
-              :
-              <DrugUploadTool
-                {...props}
-                parentContainerId="syn20673186"
-                formSchemaEntityId="syn20680102"
-                fileNamePath="welcome.submission_name"
-                formUiSchemaEntityId="syn20693568"
-                formNavSchemaEntityId="syn20680027"
-                token={this.state.token}
-                formTitle="Your Submission"
-                formClass="drug-upload-tool"
-                searchParams={searchParamsProps}
-              />
-            }}
-          />
-
-          {/*------------------- contributions request form ---------------------------------*/}
-          <Route
-            exact={true}
-            path="/contribReqForm"
-            render={props => {
-              let searchParamsProps: any = {}
-              // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-              const searchParams: any = new URLSearchParams(props.location.search)
-              const iter = searchParams.entries()
-              let result = iter.next()
-              while (!result.done) {
-                const [key, value] = result.value
-                searchParamsProps[key] = value
-                result = iter.next()
+                console.log('rendering line 162')
+                return !props.location.search ?
+                  <FileGrid
+                    pathpart="contribReqForm"
+                    token={this.state.token}
+                    parentContainerId="syn20692909"
+                    formClass="contribution-request"
+                    itemNoun={'Nomination'}
+                  />
+                  :
+                  <DrugUploadTool
+                    {...props}
+                    parentContainerId="syn20692909"
+                    formSchemaEntityId="syn20692910"
+                    formUiSchemaEntityId="syn20692911"
+                    formNavSchemaEntityId="syn20692912"
+                    isWizardMode={true}
+                    token={this.state.token}
+                    formTitle="Your Submission"
+                    formClass="contribution-request"
+                    fileNamePath="study.submission_name"
+                  />
               }
-              console.log('rendering line 162')
-              return !props.location.search ?
-                <FileGrid
-                  pathpart="contribReqForm"
-                  token={this.state.token}
-                  parentContainerId="syn20692909"
-                  formClass="contribution-request"
-                  itemNoun={'Nomination'}
-                />
-                :
-                <DrugUploadTool
-                {...props}
-                parentContainerId="syn20692909"
-                formSchemaEntityId="syn20692910"
-                formUiSchemaEntityId="syn20692911"
-                formNavSchemaEntityId="syn20692912"
-                isWizardMode={true}
-                token={this.state.token}
-                formTitle="Your Submission"
-                formClass="contribution-request"
-                fileNamePath="study.submission_name"
-              />
-            }
-            }
-          />
-        </div>
-      </Router>
+              }
+            />
+          </div>
+        </Router>
+      </TokenContext.Provider>
     );
   }
 }

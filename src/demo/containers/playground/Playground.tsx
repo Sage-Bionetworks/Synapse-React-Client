@@ -7,6 +7,7 @@ import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
+import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -35,6 +36,10 @@ const App = ({ match }: { match: match }) => {
           <li>
             <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
           </li>
+          <li>
+            <Link to={`${match.url}/FormServicesIntegrationDemo`}>FormServicesIntegrationDemo</Link>
+          </li>
+
           <li>
             <Link to={`${match.url}/ModalDownloadDemo`}>ModalDownload</Link>
           </li>
@@ -74,7 +79,11 @@ const App = ({ match }: { match: match }) => {
           path={`${match.url}/NewsFeedDemo`}
           component={() => <NewsFeedDemo/>}
         />
-
+        <Route
+          exact={true}
+          path={`${match.url}/FormServicesIntegrationDemo`}
+          component={() => <FormServicesIntegrationDemo/>}
+        />
         <Route
           exact={true}
           path={`${match.url}/ModalDownloadDemo`}
