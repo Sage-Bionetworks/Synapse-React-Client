@@ -5,7 +5,7 @@ import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
-import { MarkdownSynapseDemo } from './MarkdownSynapseDemo'
+import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 

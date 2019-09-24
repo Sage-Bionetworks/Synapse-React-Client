@@ -118,7 +118,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.closeAllDropdowns = this.closeAllDropdowns.bind(this)
-    this.showPaginationButtons = this.showPaginationButtons.bind(this)
     this.applyChanges = this.applyChanges.bind(this)
     this.toggleFilterDropdown = this.toggleFilterDropdown.bind(this)
     // store the offset and sorted selection that is currently held
@@ -461,7 +460,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const previous = (
       <button
         onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
+        className="SRC-light-button SRC-standard-button-shape pull-right"
         type="button"
       >
         Previous
@@ -473,7 +472,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       (
         <button
           onClick={this.handlePaginationClick(NEXT)}
-          className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
+          className="SRC-light-button SRC-standard-button-shape pull-right"
           type="button"
         >
           Next
@@ -706,38 +705,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       columnIconSortState,
       sortedColumnSelection
     })
-  }
-
-  private showPaginationButtons(pastZero: boolean): any {
-
-    const previous = (
-      <button
-        onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
-        type="button"
-      >
-        Previous
-      </button>
-    )
-
-    const next = (
-      (
-        <button
-          onClick={this.handlePaginationClick(NEXT)}
-          className="SRC-primary-background-color-hover  SRC-viewMoreButton pull-right"
-          type="button"
-        >
-          Next
-        </button>
-      )
-    )
-
-    return (
-      <React.Fragment>
-        {next}
-        {pastZero && previous}
-      </React.Fragment>
-    )
   }
 
   /**
