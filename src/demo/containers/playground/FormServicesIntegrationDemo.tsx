@@ -96,12 +96,6 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
     this.listMyFormData()
     this.listFormAdminFormData()
   }
-  public componentDidMount() {
-  }
-
-  public onTestFormServices(): void {
-    // list as admin
-  }
 
   render() {
     return (
@@ -116,7 +110,7 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
             if (token) {
               return <>
                 <div>
-                  <button
+                  <button className=''
                     onClick={this.onCreateFormGroup}
                   >
                     Create Form Group
