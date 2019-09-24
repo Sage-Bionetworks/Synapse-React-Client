@@ -193,6 +193,16 @@ margin-left: 155px;
 margin-left: 185px;
 }
 
+.align-center {display: block; margin-left: auto; margin-right: auto;}
+
+.floatleft {
+	float: left;
+}
+
+.floatright {
+	float: right;
+}
+
 .userProfileImage {
 border-radius: 50%;
 height: 23px;

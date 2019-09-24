@@ -92,9 +92,18 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
 
   public render() {
     const imgStyle: React.CSSProperties = {}
-    const { params } = this.props
-    if (params && params.align) {
-      imgStyle.float = params.align.toLowerCase()
+    const { params = {}} = this.props
+    const { align = '' } = params
+    const alignLowerCase = align.toLowerCase()
+    let className = ''
+    if (alignLowerCase === 'left') {
+      className = 'floatLeft'
+    }
+    if (alignLowerCase === 'right') {
+      className = 'floatright'
+    }
+    if (alignLowerCase === 'center') {
+      className = 'align-center'
     }
     if (!this.state.preSignedURL) {
       return null
@@ -103,7 +112,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
       <React.Fragment>
         <img
           alt="synapse"
-          className="img-fluid"
+          className={"img-fluid  "  + className}
           src={this.state.preSignedURL}
           style={imgStyle}
         />

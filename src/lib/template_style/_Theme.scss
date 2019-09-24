@@ -21,11 +21,11 @@ border-left-color: $primary-action-color;
 }
 
 %hoverFade {
-  transition: all 400ms;
+  transition: all 400ms !important;
 }
 
 %defaultBoxShadow {
-  box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5);
+  box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5) !important;
 }
 
 .SRC-primary-background-color-hover:hover {
@@ -52,15 +52,32 @@ border-left-color: $primary-action-color;
   }
 }
 
-
-.SRC-viewMoreButton {
-  background: #DFDFDF;
-  border-radius: 24px;
-  width: 130px;
-  height: 40px;
-  margin: 21px;
+.SRC-button-focus-primary-color {
   &:focus {
     outline: $primary-action-color;
+  }
+}
+
+.SRC-primary-button {
+  background: $primary-action-color;
+  color: white;
+  &:hover {
+    @extend %hoverFade;
+    @extend %defaultBoxShadow;
+    text-decoration: none;
+    color: white;
+  }
+}
+
+.SRC-light-button {
+  background: #DFDFDF;
+  color: #1A1C29;
+  &:hover {
+    @extend %hoverFade;
+    @extend %defaultBoxShadow;
+    text-decoration: none;
+    background: $primary-action-color;
+    color: white;
   }
 }
 

@@ -1,32 +1,90 @@
 import * as React from 'react'
-import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
+import MarkdownSynapse, { MarkdownSynapseProps } from '../../../lib/containers/MarkdownSynapse'
 
-export const MarkdownSynapseDemo:React.SFC = () => {
-  return (
-    <div className="container">
-      {/* footnotes with html */}
-      <MarkdownSynapse
-        ownerId={'syn3157182'}
-      />      
-      {/* with details tag */}
-      <MarkdownSynapse
-        ownerId={'syn12666371'}
-        wikiId={'585317'}
-      />
-      {/*  with references */}
-      <MarkdownSynapse
-        ownerId={'syn17100797'}
-        wikiId={'587923'}
-      />
-      {/* with  toc */}
-      <MarkdownSynapse
-        ownerId={'syn18380882'}
-        wikiId={'588827'}
-      />
-      {/* with both image types */}
-      <MarkdownSynapse
-        ownerId={'syn18142975'}
-      />
-    </div>
-  )
+type State = {
+  index: number,
+  markdownPropsArray: MarkdownSynapseProps []
+}
+
+export default class MarkdownSynapseDemo extends React.Component<{}, State> {
+  constructor(props: any) {
+    super(props)
+    this.state = {
+      index: 5,
+      markdownPropsArray: [
+        {
+          // footnotes with html
+          ownerId: 'syn3157182'
+        },
+        {
+          // with details tag 
+          ownerId: 'syn12666371',
+          wikiId: '585317'
+        },
+        {
+          //  with references 
+          ownerId:'syn17100797',
+          wikiId: '587923'
+        },
+        {
+          // with  toc 
+          ownerId:'syn17100797',
+          wikiId: '587923'
+        },
+        {
+          ownerId: 'syn18142975'
+        },
+        {
+          // nested link
+          ownerId: 'syn20816755',
+          wikiId: '596042'
+        },
+      ]
+    }
+  }
+  render() {
+    const {
+      index,
+      markdownPropsArray
+    } = this.state
+    const props = markdownPropsArray[index]
+    return (
+      <div className="container">
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({index: 0})}}
+        >
+          Footnotes with html
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({index: 1})}}
+        >
+          Details tag 
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({index: 2})}}
+        >
+           References 
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({index: 2})}}
+          >
+          Table of Contents
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {this.setState({index: 4})}}
+          >
+          Show nested anchor
+        </button>
+        {/* footnotes with html */}
+        <MarkdownSynapse
+          {...props}
+        />      
+      </div>
+    )
+  }
 }

@@ -66,7 +66,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   public setDropdownIndex = (index: number) => (_: React.SyntheticEvent) => {
     this.setState({
       dropdownIndex: index,
-      searchText: '',
       isSearchableDropdownOpen: false
     })
   }

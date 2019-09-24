@@ -61,9 +61,9 @@ describe('it performs all functionality', () => {
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({ ...props, facet: 'projectStatus' })
-    expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
+    expect(wrapper.find('button.SRC-light-button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
-    expect(wrapper.find('button.SRC-viewMoreButton').text()).toEqual('View More')
+    expect(wrapper.find('button.SRC-light-button').text()).toEqual('View More')
   })
 
   it('Renders with a title', () => {
@@ -88,7 +88,7 @@ describe('it performs all functionality', () => {
       data: dataCopy
     }
     const { wrapper } = createShallowComponent(propsWithDataCopy)
-    expect(wrapper.find('button.SRC-viewMoreButton')).toHaveLength(0)
+    expect(wrapper.find('button.SRC-light-button')).toHaveLength(0)
   })
 
   it('show ViewMore does not render when hasMoreData is false', () => {
@@ -97,6 +97,6 @@ describe('it performs all functionality', () => {
       hasMoreData: false
     }
     const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
-    expect(wrapper.find('button.SRC-viewMoreButton')).toHaveLength(0)
+    expect(wrapper.find('button.SRC-light-button')).toHaveLength(0)
   })
 })
