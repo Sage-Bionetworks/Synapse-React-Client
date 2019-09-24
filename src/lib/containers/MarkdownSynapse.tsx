@@ -522,11 +522,31 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   }
 
   public renderSynapseButton(widgetparamsMapped: any) {
+    let buttonClasses = ''
+    const {
+      align = '',
+      highlight = '',
+    } = widgetparamsMapped
+    const alignLowerCase = align.toLowerCase()
+    if (alignLowerCase === 'left') {
+      buttonClasses = 'floatLeft'
+    }
+    if (alignLowerCase === 'right') {
+      buttonClasses = 'floatright'
+    }
+    if (alignLowerCase === 'center') {
+      buttonClasses = 'align-center'
+    }
+    if (highlight === 'true') {
+      buttonClasses += ' SRC-primary-button '
+    } else {
+      buttonClasses += 'SRC-light-button'
+    }
     return (
       <a
         key={widgetparamsMapped.reactKey}
         href={widgetparamsMapped.url}
-        className="btn btn-lg btn-info"
+        className={"SRC-standard-button-shape " +  buttonClasses}
         role="button"
       >
         {widgetparamsMapped.text}
