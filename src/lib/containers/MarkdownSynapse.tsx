@@ -475,12 +475,24 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         widgets.push(this.processWidgetMappings(text, originalMarkup))
       } else {
         // Else its plain html/text.
-        // Note-- this line below introduces an issue which is that there can be no inline synapse
-        // widgets as react only allows you to set 'innerHTML' (as opposed to outerHTML), this creates a span
-        // between two inline widgets
+        
+        /* 
+           Note-- variable `element` introduces a major bug which is that there can be no synapse widgets
+           contained inside html directly.
+            
+           .e.g
+                input:           <a> <span widget-params="...."> </a>
+                expected output: <a> <SynapseWidget/> </a>
+                current output:  <a></a> <SynapseWidget> <a></a>
+           
+           There needs to be a complete rework of the rendering to recursively process the markdown.
+           Along the lines of -
+            - Tokenize the html, recurse on it until theres a leaf, render that as an html element or widget
+        */ 
         const key = index.toString() + text
+        const element = <span key={key} dangerouslySetInnerHTML={{ __html: text }} />
         widgets.push(
-          <span key={key} dangerouslySetInnerHTML={{ __html: text }} />
+          element
         )
         index += 1
       }
@@ -529,18 +541,18 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     } = widgetparamsMapped
     const alignLowerCase = align.toLowerCase()
     if (alignLowerCase === 'left') {
-      buttonClasses = 'floatLeft'
+      buttonClasses += 'floatLeft '
     }
     if (alignLowerCase === 'right') {
-      buttonClasses = 'floatright'
+      buttonClasses += 'floatright '
     }
     if (alignLowerCase === 'center') {
-      buttonClasses = 'align-center'
+      buttonClasses += 'align-center '
     }
     if (highlight === 'true') {
       buttonClasses += ' SRC-primary-button '
     } else {
-      buttonClasses += 'SRC-light-button'
+      buttonClasses += 'SRC-light-button '
     }
     return (
       <a

@@ -60,7 +60,7 @@ border-left-color: $primary-action-color;
 
 .SRC-primary-button {
   background: $primary-action-color;
-  color: white !important; // override markdown setting
+  color: white;
   &:hover {
     @extend %hoverFade;
     @extend %defaultBoxShadow;
