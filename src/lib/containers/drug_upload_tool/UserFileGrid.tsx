@@ -228,7 +228,7 @@ export default class UserFileGrid extends React.Component<
     }
   }
 
-  renderNonLoggedInView = (token: string | undefined) => {
+  renderUnauthenticatedView = (token: string | undefined) => {
     if (token) {
       return <></>
     } else {
@@ -308,7 +308,7 @@ export default class UserFileGrid extends React.Component<
     return (
       <div className={`container SRC-ReactJsonForm ${this.props.formClass}`}>
         {this.renderLoading(this.props.token, this.state.isLoading)}
-        {this.renderNonLoggedInView(this.props.token)}
+        {this.renderUnauthenticatedView(this.props.token)}
 
         {!this.state.isLoading && (
           <div>
