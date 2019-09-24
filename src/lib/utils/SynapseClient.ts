@@ -31,7 +31,7 @@ import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
 import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
 import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
-import { FormGroup, FormData, FormDataStatus, ListRequest, ListResponse } from './jsonResponses/Forms'
+import { FormGroup, FormData, ListRequest, ListResponse } from './jsonResponses/Forms'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -1130,8 +1130,8 @@ export const createFormData = (
  */
 export const updateFormData = (
   formDataId: string,
-  dataFileHandleId: string,
   name: string | undefined,
+  dataFileHandleId: string,  
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData> => {
     let nameParam:string = name ? `&name=${name}` : ''
@@ -1156,7 +1156,7 @@ export const deleteFormData = (
 export const submitFormData = (
   formDataId: string,
   sessionToken: string | undefined,
-  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormDataStatus>=> {
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
     return doPost(`/repo/v1/form/data/${formDataId}/submit`, undefined, sessionToken, undefined, endpoint)
 }
 
@@ -1175,13 +1175,13 @@ export const listFormData = (
 /**
  * List FormData objects and their associated status that match the filters of the provided request for the entire 
  * group. This is used by service accounts to process submissions. 
- * https://docs.synapse.org/rest/POST/form/data/list/admin.html
+ * https://docs.synapse.org/rest/POST/form/data/list/reviewer.html
  */
 export const listFormDataAsFormAdmin = (
   request: ListRequest,
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<ListResponse>=> {
-    return doPost(`/repo/v1/form/data/list/admin`, request, sessionToken, undefined, endpoint)
+    return doPost(`/repo/v1/form/data/list/reviewer`, request, sessionToken, undefined, endpoint)
 }
 
 /**
@@ -1191,7 +1191,7 @@ export const listFormDataAsFormAdmin = (
 export const acceptFormData = (
   formDataId: string,
   sessionToken: string | undefined,
-  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormDataStatus>=> {
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
     return doPut(`/repo/v1/form/data/${formDataId}/accept`, undefined, sessionToken, undefined, endpoint)
 }
 
@@ -1203,6 +1203,6 @@ export const rejectFormData = (
   formDataId: string,
   reason: string,
   sessionToken: string | undefined,
-  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormDataStatus>=> {
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
     return doPut(`/repo/v1/form/data/${formDataId}/reject?reason=${encodeURI(reason)}`, undefined, sessionToken, undefined, endpoint)
 }
