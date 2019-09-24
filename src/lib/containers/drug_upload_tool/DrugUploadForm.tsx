@@ -14,14 +14,21 @@ import { Step, StepStateEnum, NavActionEnum, SummaryFormat } from './types'
 import Header from './Header'
 import StepsSideNav from './StepsSideNav'
 import { NavButtons, NextStepLink } from './NavButtons'
-
 import DataDebug from './DataDebug'
 import SummaryTable from './SummaryTable'
 import WarningModal from './WarningModal'
 import Switch from 'react-switch'
+
 export type FormSchema = {
   properties?: any
   definitions?: any
+}
+
+
+export interface  IFormData {
+  [screen_name: string]: {
+    included?:  boolean
+  }
 }
 
 export type DrugUploadFormProps = {
@@ -30,7 +37,7 @@ export type DrugUploadFormProps = {
   navSchema: {
     steps: any[]
   }
-  formData: {}
+  formData: IFormData
   onSubmit: Function
   onSave: Function
   formTitle: string
@@ -38,8 +45,7 @@ export type DrugUploadFormProps = {
 }
 
 type DrugUploadFormState = {
-  formData: any // form data that prepopulates the form
-  //formSchema: any; // schema that drives the form
+  formData: IFormData// form data that prepopulates the form
   currentStep: Step
   nextStep?: Step
   steps: Step[]
@@ -65,6 +71,7 @@ export interface SummaryFormat {
   label: string
   value: string
 }
+
 
 export default class DrugUploadForm extends React.Component<
   DrugUploadFormProps,
@@ -107,8 +114,17 @@ export default class DrugUploadForm extends React.Component<
     }
   }
 
+     // Setup the `beforeunload` event listener
+     setupBeforeUnloadListener = () => {
+      window.addEventListener("beforeunload", (ev) => {
+          ev.preventDefault();
+          return ev.returnValue = 'Please make sure your data is saved before leaving';
+      });
+  };
+
   componentDidMount() {
-    if (_.isEmpty(this.state.formData)) {
+    this.setupBeforeUnloadListener();
+    if (_.isEmpty(this.state.formData) && !this.props.isWizardMode) {
       const result = {}
       const defs = this.props.schema.definitions
       Object.keys(defs).forEach((key: string) => {
@@ -178,15 +194,23 @@ export default class DrugUploadForm extends React.Component<
     let currentStepState: StepStateEnum
     //we don't wnat to display errors on the page - this will be done explicitly in validation
     this.formRef.current.setState({ errorSchema: {} })
+    //in wizard mode we can only move forwards (don't know next step yet) or backwards (do know next step)
+    const isMoveForwardInWizardMode = this.props.isWizardMode && !nextStepId;
+
 
     //previousStack is used for 'back' navigation is wizard mode.
     //only need to do it if moving forward i.e. nextStepId is undefined
-    if (!nextStepId) {
+    if (isMoveForwardInWizardMode) {
       previousStack.push(currentStep.id)
     }
 
     if (!isError) {
-      currentStepState = StepStateEnum.COMPLETED
+      currentStepState = StepStateEnum.COMPLETED;
+
+      if (!isMoveForwardInWizardMode && this.props.isWizardMode ) {
+        currentStepState = StepStateEnum.TODO
+      }
+
     } else {
       currentStepState = StepStateEnum.ERROR
     }
@@ -204,11 +228,24 @@ export default class DrugUploadForm extends React.Component<
       }
       return step
     })
+    //if we are in wizard mode we want to make sure that we include the step we are about to go to
+    if (isMoveForwardInWizardMode) {
+    _.set(formData, `${nextStepId}.included`, true)
+    }
+   
 
     //at this point the form is valid and submitted and the data reflects the latest
     const nextStep = this.state.steps.find(step => step.id === nextStepId)!
-
-    this.saveStepState(previousStack, steps, nextStep!)
+    // clean up unused screens in wizard before getting to submit
+    if (this.props.isWizardMode &&  nextStep.final) {
+      Object.keys(formData).forEach(key=> {
+        if (formData[key].included === undefined) {
+          formData[key] = {}
+        }
+      })
+    }
+   
+    this.saveStepState(previousStack, steps, nextStep!, formData)
   }
 
   //save the state of the current screen
@@ -216,13 +253,16 @@ export default class DrugUploadForm extends React.Component<
     previousStepIds: string[],
     steps: Step[],
     currentStep: Step,
+    formData: any,
   ) => {
     this.setState({
       previousStepIds,
       steps,
       currentStep,
+      formData,
       hasValidated: false,
       doShowErrors: false,
+
     })
   }
 
@@ -230,9 +270,16 @@ export default class DrugUploadForm extends React.Component<
   goPrevious = async (formData: any, isError: boolean) => {
     let previousStepId: string | undefined
     const previousStack: string[] = [...this.state.previousStepIds]
-    // in wizard mode we go to the previously visited screen. In regular mode go to the screen with previous index
+    // in wizard mode we go to the previously visited screen. 
+    // In regular mode go to the screen with previous index
     if (this.props.isWizardMode) {
       previousStepId = previousStack.pop()
+      if(! this.isSubmitScreen()) {
+        //since we don't know if we'll get back to that step again - exclude it. We will include it again if we 
+        // get to it.
+        _.set(formData, `${this.state.currentStep.id}.included`, undefined)
+
+      }
     } else {
       const currentIndex = _.findIndex(this.state.steps, {
         id: this.state.currentStep.id,
@@ -346,7 +393,7 @@ export default class DrugUploadForm extends React.Component<
 
       case NavActionEnum.SUBMIT: {
         //const data = this.doSave(formData);
-        alert('Do some kind of submission thing')
+        alert('Do some kind of submission thing')      
         this.props.onSubmit(formData)
       }
       case NavActionEnum.VALIDATE: {
