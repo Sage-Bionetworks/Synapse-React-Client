@@ -1,20 +1,20 @@
 //https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormGroup.html
 export type FormGroup = {
-  groupId?: string
+  groupId: string
   name: string
-  createdBy?: string
-  createdOn?: string
+  createdBy: string
+  createdOn: string
 }
 
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormData.html
 export type FormData = {
-  formDataId?: string
-  etag?: string
+  formDataId: string
+  etag: string
   groupId: string
   name: string
-  createdBy?: string
-  createdOn?: string
-  modifiedOn?: string
+  createdBy: string
+  createdOn: string
+  modifiedOn: string
   dataFileHandleId:string
   submissionStatus: SubmissionStatus
 }
@@ -46,5 +46,5 @@ export type ListRequest = {
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListResponse.html
 export type ListResponse = {
   page: FormData[],
-  nextPageToken: string
+  nextPageToken?: string
 }
