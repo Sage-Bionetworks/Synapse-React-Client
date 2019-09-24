@@ -337,11 +337,24 @@ class DrugUploadTool extends React.Component<
     }
   };
 
+  renderUnauthenticatedView = (token: string | undefined) => {
+    if (token) {
+      return <></>
+    } else {
+      return (
+        <div className="panel padding-full unauthenticated text-center">
+          Please sign in to initiate or continue your submission{' '}
+        </div>
+      )
+    }
+  }
+
   render() {
     return (
       <div className={`SRC-ReactJsonForm container ${this.props.formClass}`}>
         {this.state.status && this.renderNotification(this.state.notification)}
         {this.renderLoader(this.state, this.props)}
+        {this.renderUnauthenticatedView(this.props.token)}
 
         {this.isReadyToDisplayForm(this.state) && (
           <div>
