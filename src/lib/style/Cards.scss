@@ -9,7 +9,7 @@ $text-size-title: 18px;
 $color-divider: #DDDDDF;
 $color-gray-background: #F9F9F9;
 $color-chicklet-base: #3C4A63;
-$text-color-base: #1A1C29;
+$text-color-base: #515359;
 $text-color-lighter: #898989;
 
 .SRC-font-size-base {
@@ -47,6 +47,7 @@ $text-color-lighter: #898989;
     margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
     padding: 0;
     font-size: $text-size-title !important;
+    line-height: 125%;
     a {
         margin: 0;
         font-weight: 700;

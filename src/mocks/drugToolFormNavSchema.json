@@ -1,0 +1,188 @@
+{
+  "steps": [
+    {
+      "id": "required_data",
+      "order": 0,
+      "title": "Required Data",
+      "default": "naming",
+      "description": "<p> This is some description for an individual step.  It can have <strong>html</strong>",
+
+      "static": true,
+      "copy": "<h4>Hello world!</h4><p>I am a static screen. I will display some stuff</p><ul><li>thing one</li><li> thing two</li></ul>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Suspendisse lorem nunc, tincidunt id ullamcorper ut, commodo in risus. Donec sit amet aliquam purus. Aliquam erat volutpat. Sed iaculis imperdiet faucibus. Nam aliquam, velit eu gravida iaculis, purus urna aliquam odio, a mollis eros lacus at leo. Nam et malesuada dui, in vehicula dui. Ut velit ex, sodales et risus non, commodo feugiat tortor. Proin molestie vehicula lorem eget aliquet. </p> <p><a href=\"http://wwww.google.com\" target=\"_blank\">Learn more </a></p>",
+      "children": ["naming", "measurements", "basic"]
+    },
+
+    {
+      "id": "naming",
+      "order": 5,
+      "title": "Naming",
+      "default": "measurements",
+      "child": true
+    },
+    {
+      "id": "measurements",
+      "order": 6,
+      "title": "Measurements",
+      "default": "basic",
+      "child": true
+    },
+    {
+      "id": "basic",
+      "order": 7,
+      "title": "Basic Data",
+      "default": "in_vitro",
+      "child": true
+    },
+
+    {
+      "id": "in_vitro",
+      "order": 20,
+      "title": "In Vitro",
+      "default": "binding",
+      "static": "true",
+      "copy": "<h4>Hello world!</h4><p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Suspendisse lorem nunc, tincidunt id ullamcorper ut, commodo in risus. Donec sit amet aliquam purus. Aliquam erat volutpat. Sed iaculis imperdiet faucibus. Nam aliquam, velit eu gravida iaculis, purus urna aliquam odio, a mollis eros lacus at leo. Nam et malesuada dui, in vehicula dui. Ut velit ex, sodales et risus non, commodo feugiat tortor. Proin molestie vehicula lorem eget aliquet. </p> <p><a href=\"#\">Learn mored </a></p>",
+      "children": ["binding", "efficacy"]
+    },
+    {
+      "id": "binding",
+      "order": 21,
+      "title": "Binding",
+      "child": true,
+      "default": "efficacy",
+      "rules": []
+    },
+    {
+      "id": "efficacy",
+      "order": 22,
+      "title": "Efficacy",
+      "child": true,
+      "default": "in_vivo",
+      "rules": []
+    },
+    {
+      "id": "in_vivo",
+      "order": 30,
+      "title": "In Vivo",
+      "default": "in_vivo_data",
+      "copy": "<h4>in_vivo text</h4>",
+      "static": true,
+      "rules": [],
+      "children": ["in_vivo_data"]
+    },
+    {
+      "id": "in_vivo_data",
+      "order": 40,
+      "title": "In Vivo Data",
+      "default": "pharmacokinetics",
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "pharmacokinetics",
+      "order": 50,
+      "title": "Pharmacokinetics",
+      "static": true,
+      "copy": "<h4>pharmacokinetics text</h4>",
+      "default": "pk_in_silico",
+      "rules": [],
+      "children": ["pk_in_silico", "pk_in_vitro", "pk_in_vivo"]
+    },
+    {
+      "id": "pk_in_silico",
+      "order": 52,
+      "title": "PK In Silico",
+      "default": "pk_in_vitro",
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "pk_in_vitro",
+      "order": 54,
+      "title": "PK In Vitro",
+      "default": "pk_in_vivo",
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "pk_in_vivo",
+      "order": 56,
+      "title": "PK In Vivo",
+      "default": "toxicology",
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "toxicology",
+      "order": 60,
+      "title": "Toxicology",
+      "default": "ld50",
+      "static": "true",
+      "copy": "<h4>toxicology text</h4>",
+      "rules": [],
+      "children": ["ld50", "acute_dosing", "chronic_dosing", "teratogenicity"]
+    },
+    {
+      "id": "ld50",
+      "order": 61,
+      "title": "LD50",
+      "default": "acute_dosing",
+      "child": true,
+      "excluded": false,
+      "rules": []
+    },
+    {
+      "id": "acute_dosing",
+      "order": 62,
+      "title": "Acute Dosing",
+      "default": "chronic_dosing",
+      "child": true,
+      "excluded": false,
+      "rules": []
+    },
+    {
+      "id": "chronic_dosing",
+      "order": 63,
+      "title": "Chronic Dosing",
+      "default": "teratogenicity",
+      "child": true,
+      "excluded": false,
+      "rules": []
+    },
+    {
+      "id": "teratogenicity",
+      "order": 64,
+      "title": "Teratogenicity",
+      "default": "clinical",
+      "child": true,
+      "excluded": false,
+      "rules": []
+    },
+    {
+      "id": "clinical",
+      "order": 70,
+      "title": "Clinical",
+      "default": "clinical",
+      "children": ["clinical_data"],
+      "static": true,
+      "copy": "<h4>clinical text</h4>",
+      "rules": []
+    },
+    {
+      "id": "clinical_data",
+      "order": 75,
+      "title": "Clinical Data",
+      "default": "submission",
+      "child": true,
+      "rules": []
+    },
+    {
+      "id": "submission",
+      "order": 80,
+      "title": "Submit",
+      "description": " You are about to submit the form.....Co-create, policymaker social capital global thought leader innovate. Uplift design thinking inspiring radical challenges and opportunities movements. Communities change-makers grit invest; disrupt, humanitarian, energize. The resistance communities. Co-create, policymaker social capital global thought leader innovate. Uplift design thinking inspiring radical challenges and opportunities movements.",
+      "default": null,
+      "final": true,
+      "rules": []
+    }
+  ]
+}

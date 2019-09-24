@@ -197,28 +197,6 @@ export default class StackedBarChart extends
 
     return (
       <React.Fragment>
-        <div className="SRC-chart SRC-chart-nav SRC-center-text">
-          <button
-            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
-            onClick={this.handleArrowClick(NEXT_CLICK)}
-          >
-            <FontAwesomeIcon
-              style={{ fontSize: '11px' }}
-              className="SRC-primary-text-color"
-              icon="angle-right"
-            />
-          </button>
-          <button
-            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
-            onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}
-          >
-            <FontAwesomeIcon
-              style={{ fontSize: '11px' }}
-              className="SRC-primary-text-color"
-              icon="angle-left"
-            />
-          </button>
-        </div>
         {/* TODO: Refactor the chart into its own component */}
         <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
           <ReactMeasure
@@ -328,6 +306,28 @@ export default class StackedBarChart extends
                 <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
               </div>
           }
+        </div>
+        <div className="SRC-chart SRC-chart-nav SRC-center-text">
+          <button
+            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
+            onClick={this.handleArrowClick(NEXT_CLICK)}
+          >
+            <FontAwesomeIcon
+              style={{ fontSize: '11px' }}
+              className="SRC-primary-text-color"
+              icon="angle-right"
+            />
+          </button>
+          <button
+            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
+            onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}
+          >
+            <FontAwesomeIcon
+              style={{ fontSize: '11px' }}
+              className="SRC-primary-text-color"
+              icon="angle-left"
+            />
+          </button>
         </div>
       </React.Fragment>
     )

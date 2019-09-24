@@ -24,11 +24,12 @@ export default function StepsSideNav(props: StepsSideNavProps) {
   const getIcon = (
     state: StepStateEnum,
     isExcluded: boolean | undefined,
-    isStatic: boolean | undefined
+    isStatic: boolean | undefined,
+    isSubmit: boolean | undefined
   ): { iconDef: IconDefinition; flip: FlipProp | undefined } => {
     let iconDef: IconDefinition = faCircle;
     let flip: FlipProp | undefined = undefined;
-    if (isStatic) {
+    if (isStatic || isSubmit) {
       return {
         iconDef,
         flip
@@ -83,7 +84,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
         return <span>{step.title}</span>;
       }
     };
-    const icon = getIcon(step.state, step.excluded, step.static);
+    const icon = getIcon(step.state, step.excluded, step.static, step.final);
     const itemClass = getItemClass(step.inProgress, step.static);
 
     return (

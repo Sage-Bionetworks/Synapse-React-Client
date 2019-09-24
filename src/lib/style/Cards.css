@@ -4,7 +4,7 @@
 
 .SRC-portalCard {
   display: block;
-  color: #1A1C29;
+  color: #515359;
   font-family: 'Lato', sans-serif;
   font-size: 14px;
   line-height: 21px;
@@ -25,7 +25,8 @@
   .SRC-portalCard h3 {
     margin: 21px, 0, 10.5px, 0 !important;
     padding: 0;
-    font-size: 18px !important; }
+    font-size: 18px !important;
+    line-height: 125%; }
     .SRC-portalCard h3 a {
       margin: 0;
       font-weight: 700; }

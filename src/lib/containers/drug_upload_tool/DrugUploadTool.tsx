@@ -9,6 +9,11 @@ import Alert from 'react-bootstrap/Alert';
 import DrugUploadForm from './DrugUploadForm';
 import _ from 'lodash';
 
+export type UploadToolSearchParams = {
+  formDataId?: string; //entityId fo the file that contains form data
+  formGroupId: string;
+}
+
 export type DrugUploadToolProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
   parentContainerId: string; // ProjectId
@@ -16,9 +21,7 @@ export type DrugUploadToolProps = {
   formUiSchemaEntityId: string; // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string; //Synapse file that consists screen nav schema
   token?: string; // user's session token
-  currentFileEntityId?: string; //entityId fo the file that contains form data
-  currentFileParentEntityId: string;
-
+  searchParams?: UploadToolSearchParams
   isWizardMode?: boolean; // if we are displaying the form in wizard mode
   fileNamePath: string; // path in data to specify the name of saved file
   formTitle: string; //for UI customization
@@ -100,10 +103,12 @@ class DrugUploadTool extends React.Component<
         this.getFileEntityWithData(token, this.props.formUiSchemaEntityId),
         this.getFileEntityWithData(token, this.props.formNavSchemaEntityId)
       ];
-      //if there is saved data
-      if (this.props.currentFileEntityId) {
+      const { searchParams } = this.props
+      const formDataId = searchParams && searchParams.formDataId
+      // if there is saved data
+      if (formDataId) {
         promises.push(
-          this.getFileEntityWithData(token, this.props.currentFileEntityId)
+          this.getFileEntityWithData(token, formDataId)
         );
       }
       return Promise.all(promises)
@@ -111,7 +116,7 @@ class DrugUploadTool extends React.Component<
           formSchema = values[0].data;
           formUiSchema = values[1].data;
           formNavSchema = values[2].data;
-          if (this.props.currentFileEntityId) {
+          if (formDataId) {
             formData = values[3].data;
             currentFileEntity = values[3].fileEntity;
           }
@@ -182,6 +187,11 @@ class DrugUploadTool extends React.Component<
       fileName,
       fileContentsBlob
     );
+    const { searchParams } = this.props
+    const formGroupId = searchParams && searchParams.formGroupId
+    if (!formGroupId) {
+      console.error('formGroupId must be defined')
+    }
 
     try {
       // do we need to create a new file entity, or update an existing file entity?
@@ -197,7 +207,7 @@ class DrugUploadTool extends React.Component<
       }
       // else, it's a new file entity
       const newFileEntity: FileEntity = {
-        parentId: this.props.currentFileParentEntityId,
+        parentId: formGroupId!,
         name: fileName,
         concreteType: 'org.sagebionetworks.repo.model.FileEntity',
         dataFileHandleId: newFileHandleId
@@ -327,11 +337,24 @@ class DrugUploadTool extends React.Component<
     }
   };
 
+  renderUnauthenticatedView = (token: string | undefined) => {
+    if (token) {
+      return <></>
+    } else {
+      return (
+        <div className="panel padding-full unauthenticated text-center">
+          Please sign in to initiate or continue your submission{' '}
+        </div>
+      )
+    }
+  }
+
   render() {
     return (
       <div className={`SRC-ReactJsonForm container ${this.props.formClass}`}>
         {this.state.status && this.renderNotification(this.state.notification)}
         {this.renderLoader(this.state, this.props)}
+        {this.renderUnauthenticatedView(this.props.token)}
 
         {this.isReadyToDisplayForm(this.state) && (
           <div>

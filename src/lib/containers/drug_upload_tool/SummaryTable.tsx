@@ -4,7 +4,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SummaryFormat, Step } from './types';
 import _ from 'lodash';
-import { useEffect } from 'react';
 
 export interface SummaryTableProps {
   isWizard?: boolean;
@@ -86,10 +85,6 @@ export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
 
 export default function SummaryTable(props: SummaryTableProps): JSX.Element {
   let flatFormData: SummaryFormat[] = [];
-  useEffect(() => {
-    flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
-  });
-
   flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
   const deleteButton = (screenId: string, isShow?: boolean): JSX.Element => {
     if (!isShow) {
@@ -104,34 +99,41 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
 
   let prevScreenId = '';
   const table = (
-    <table className="table summary-table">
-      <thead>
-        <tr>
-          <th>Screen</th>
-          <th>Question</th>
-          <th>Answer</th>
-        </tr>
-      </thead>
-      <tbody>
-        {flatFormData.map((line: SummaryFormat, i: number) => {
-          return (
-            <tr key={i + line.screen.id + line.label}>
-              <td>
-                {prevScreenId !== line.screen.id &&
-                  (prevScreenId = line.screen.id) && (
-                    <span>
-                      {line.screen.title}
-                      {deleteButton(line.screen.id, props.isWizard)}
-                    </span>
-                  )}
-              </td>
-              <td>{line.label}</td>
-              <td>{line.value}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <>
+      <table className="table summary-table-header">
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Data Name</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+      </table>
+
+      <div className="scroll-area table-body">
+        <table className="table summary-table">
+          <tbody>
+            {flatFormData.map((line: SummaryFormat, i: number) => {
+              return (
+                <tr key={i + line.screen.id + line.label}>
+                  <td>
+                    {prevScreenId !== line.screen.id &&
+                      (prevScreenId = line.screen.id) && (
+                        <span>
+                          {line.screen.title}
+                          {deleteButton(line.screen.id, props.isWizard)}
+                        </span>
+                      )}
+                  </td>
+                  <td>{line.label}</td>
+                  <td>{line.value}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 
   return (

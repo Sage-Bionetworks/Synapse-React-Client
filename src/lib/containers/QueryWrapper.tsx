@@ -67,6 +67,7 @@ export type QueryWrapperChildProps = {
   chartSelectionIndex?: number
   asyncJobStatus?: AsynchronousJobStatus
   showBarChart?: boolean
+  hasMoreData?: boolean
 }
 
 /**

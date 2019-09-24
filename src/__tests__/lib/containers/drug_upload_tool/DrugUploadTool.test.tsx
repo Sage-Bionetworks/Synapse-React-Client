@@ -2,15 +2,10 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import formschemaJson from '../../../../mocks/formschema.json';
 import DrugUploadTool, {
-  DrugUploadToolProps
+  DrugUploadToolProps, UploadToolSearchParams
 } from '../../../../lib/containers/drug_upload_tool/DrugUploadTool';
 import { DrugUploadFormProps } from '../../../../lib/containers/drug_upload_tool/DrugUploadForm';
 import { mockFileEntity } from '../../../../mocks/mock_file_entity';
-import {
-  formUiSchema,
-  formSchema,
-  formNavSchema
-} from '../../../../mocks/mock_drug_tool_data';
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient');
 const targetFolderId = 'syn9988882982';
@@ -20,8 +15,11 @@ const parentContainerId: string = 'syn20355732';
 const formSchemaEntityId = 'syn9988882982';
 const formUiSchemaEntityId = 'syn9988882983';
 const formNavSchemaEntityId = 'syn9988882984';
-const currentFileEntityId = 'syn9988882985';
-const currentFileParentEntityId = 'syn9988882986';
+const formDataId = 'syn9988882985'
+const formGroupId = 'syn9988882986'
+const searchParams: UploadToolSearchParams = {
+  formGroupId
+}
 const fileNamePath = 'somescreen.somefield';
 const formTitle = 'my submission';
 const formClass = 'someFormClass';
@@ -37,16 +35,13 @@ const createShallowComponent = async (
   const instance = wrapper.instance();
   return { wrapper, instance };
 };
-
 const props: DrugUploadToolProps = {
   parentContainerId,
   token,
   formSchemaEntityId,
   formUiSchemaEntityId,
   formNavSchemaEntityId,
-  //currentFileEntityId?: string; //entityId fo the file that contains form data
-  currentFileParentEntityId,
-  //isWizardMode?: boolean; // if we are displaying the form in wizard mode
+  searchParams,
   fileNamePath,
   formTitle,
   formClass
@@ -84,7 +79,7 @@ describe('basic tests', () => {
     expect(result.data).toEqual(formschemaJson);
   });
 
-  it('should make 3 calls to getFileEntityWithData if there is no datafile (no currentFileEntityId)', async () => {
+  it('should make 3 calls to getFileEntityWithData if there is no datafile (no formDataId)', async () => {
     const { wrapper, instance } = await createShallowComponent(props);
     const getFileEntityWithData = jest.spyOn(instance, 'getFileEntityWithData');
     await instance.componentDidMount();
@@ -92,8 +87,8 @@ describe('basic tests', () => {
     expect(getFileEntityWithData).toHaveBeenCalledTimes(3);
   });
 
-  it('should make 4calls to getFileEntityWithData if there is  datafile ', async () => {
-    const _props = { ...props, ...{ currentFileEntityId } };
+  it('should make 4 calls to getFileEntityWithData if there is  datafile ', async () => {
+    const _props = { ...props, ...{ searchParams: { formGroupId, formDataId } } };
     const { wrapper, instance } = await createShallowComponent(_props);
     const getFileEntityWithData = jest.spyOn(instance, 'getFileEntityWithData');
     await instance.componentDidMount();
@@ -105,7 +100,7 @@ describe('basic tests', () => {
 
 describe( 'pass params', () => {
   it('should pass parameters correctly', async () => {
-    const _props = { ...props, ...{ currentFileEntityId, isWizardMode: true } };
+    const _props = { ...props, ...{ searchParams: { formGroupId, formDataId }, isWizardMode: true } }
     const { wrapper, instance } = await createShallowComponent(_props);
     await instance.componentDidMount();
     expect(wrapper).toBeDefined();
