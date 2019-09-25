@@ -33,7 +33,7 @@ export type StackedBarChartState = {
 }
 
 export type StackedBarChartProps = {
-  loadingScreen: React.FunctionComponent | JSX.Element
+  loadingScreen: JSX.Element
   link?: string
   linkText?: string
 }
