@@ -122,8 +122,8 @@ describe('basic functionality', () => {
       )
     })
   })
-  describe.only('Download options dropdown works', () => {
-    it.only('renders ModalDownload', async () => {
+  describe('Download options dropdown works', () => {
+    it('renders ModalDownload', async () => {
       const { wrapper } = await createShallowComponent(props)
       // Double check its not showing be default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
