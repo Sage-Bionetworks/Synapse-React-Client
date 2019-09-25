@@ -31,6 +31,7 @@ import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
 import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
 import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
+import { FormGroup, FormData, ListRequest, ListResponse } from './jsonResponses/Forms'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -1062,4 +1063,146 @@ export const consentToOAuth2Request = (
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<AccessCodeResponse>=> {
   return doPost('/auth/v1/oauth2/consent', oidcAuthRequest, sessionToken, undefined, endpoint)
+}
+
+
+/***********************
+ * FORM SERVICES
+ * https://docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.FormController
+ *************************/
+/**
+ * Create a FormGroup
+ * https://docs.synapse.org/rest/POST/form/group.html
+ * @param name
+ * @param sessionToken
+ * @param endpoint
+ */
+export const createFormGroup = (
+  name: string,
+  sessionToken: string,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormGroup> => {
+  return doPost(`/repo/v1/form/group?name=${encodeURI(name)}`, undefined, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Get FormGroup ACL
+ * https://docs.synapse.org/rest/GET/form/group/id/acl.html
+ */
+export const getFormACL = (
+  formGroupId: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<AccessControlList> => {
+  return doGet(`/repo/v1/form/group/${formGroupId}/acl`, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Update FormGroup ACL
+ * https://docs.synapse.org/rest/PUT/form/group/id/acl.html
+ */
+export const updateFormACL = (
+  formGroupId: string,
+  newAcl: AccessControlList,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<AccessControlList> => {
+  return doPut(`/repo/v1/form/group/${formGroupId}/acl`, newAcl, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Create a new FormData object
+ * https://docs.synapse.org/rest/POST/form/data.html
+ * @param formGroupId
+ * @param name
+ * @param sessionToken
+ * @param endpoint
+ */
+export const createFormData = (
+  formGroupId: string,
+  name: string,
+  dataFileHandleId: string,
+  sessionToken: string,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData> => {
+  return doPost(`/repo/v1/form/data?groupId=${formGroupId}&name=${encodeURI(name)}&dataFileHandleId=${dataFileHandleId}`, undefined, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Update FormData object
+ * https://docs.synapse.org/rest/PUT/form/data.html
+ */
+export const updateFormData = (
+  formDataId: string,
+  name: string | undefined,
+  dataFileHandleId: string,  
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData> => {
+    let nameParam:string = name ? `&name=${name}` : ''
+    return doPut(`/repo/v1/form/data/${formDataId}?dataFileHandleId=${dataFileHandleId}${nameParam}`, undefined, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Delete FormData object
+ * https://docs.synapse.org/rest/DELETE/form/data.html
+ */
+export const deleteFormData = (
+  formDataId: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) => {
+    return doDelete(`/repo/v1/form/data/${formDataId}`, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Submit the identified FormData for review.
+ * https://docs.synapse.org/rest/POST/form/data/id/submit.html
+ */
+export const submitFormData = (
+  formDataId: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
+    return doPost(`/repo/v1/form/data/${formDataId}/submit`, undefined, sessionToken, undefined, endpoint)
+}
+
+/**
+ * List FormData objects and their associated status that match the filters of the provided request that are 
+ * owned by the caller. Note: Only objects owned by the caller will be returned.
+ * https://docs.synapse.org/rest/POST/form/data/list.html
+ */
+export const listFormData = (
+  request: ListRequest,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<ListResponse>=> {
+    return doPost(`/repo/v1/form/data/list`, request, sessionToken, undefined, endpoint)
+}
+
+/**
+ * List FormData objects and their associated status that match the filters of the provided request for the entire 
+ * group. This is used by service accounts to process submissions. 
+ * https://docs.synapse.org/rest/POST/form/data/list/reviewer.html
+ */
+export const listFormDataAsFormAdmin = (
+  request: ListRequest,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<ListResponse>=> {
+    return doPost(`/repo/v1/form/data/list/reviewer`, request, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Called by the form processing service to accept a submitted data.
+ * https://docs.synapse.org/rest/PUT/form/data/id/accept.html
+ */
+export const acceptFormData = (
+  formDataId: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
+    return doPut(`/repo/v1/form/data/${formDataId}/accept`, undefined, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Called by the form processing service to reject a submitted data.
+ * https://docs.synapse.org/rest/PUT/form/data/id/reject.html
+ */
+export const rejectFormData = (
+  formDataId: string,
+  reason: string,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
+    return doPut(`/repo/v1/form/data/${formDataId}/reject?reason=${encodeURI(reason)}`, undefined, sessionToken, undefined, endpoint)
 }
