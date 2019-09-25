@@ -168,7 +168,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   public render() {
-    const { stackedBarChartConfiguration, name, menuConfig, token } = this.props
+    const { stackedBarChartConfiguration, name, menuConfig, token, accordionConfig } = this.props
     const { activeMenuIndices } = this.state
     let sql = ''
     if (menuConfig) {
@@ -188,7 +188,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           </h3>
         }
         {
-          hasGroupByInSql
+          (hasGroupByInSql || accordionConfig)
           &&
           <h3 id="exploreCount" className="SRC-boldText">
             {name}

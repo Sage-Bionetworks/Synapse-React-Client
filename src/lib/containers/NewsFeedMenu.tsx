@@ -70,7 +70,7 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
                   </div>
                 </div>
               }
-              <h4 className="srcRssFeed">{feedName}</h4>
+              <h3 className="srcRssFeed">{feedName}</h3>
               <p>{feedDescription}</p>
               <RssFeed
                 key={feedUrl}
