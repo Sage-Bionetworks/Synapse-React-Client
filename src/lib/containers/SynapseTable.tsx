@@ -256,6 +256,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     values.forEach(
       el => updatedState[el] = !this.state[el]
     )
+    console.log('updatedState = ', updatedState)
     this.setState(updatedState)
   }
 

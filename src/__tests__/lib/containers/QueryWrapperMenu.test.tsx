@@ -3,13 +3,13 @@ import { mount } from 'enzyme'
 import { mockData }   from '../../../mocks'
 import QueryWrapperMenu, { QueryWrapperMenuProps, ACCORDION_GROUP_CSS, ACCORDION_GROUP_ACTIVE_CSS, MENU_DROPDOWN_CSS } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
-import StackedBarChart from '../../../lib/containers/StackedBarChart'
+import StackedBarChart, { StackedBarChartProps } from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
 import CardContainer from '../../../lib/containers/CardContainer'
-import SynapseTable from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps } from '../../../lib/containers/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
-import { GenericCardSchema } from 'lib/containers/GenericCard';
-import Search from 'lib/containers/Search';
+import { GenericCardSchema } from 'lib/containers/GenericCard'
+import Search from 'lib/containers/Search'
 
 const createMountedComponent = (props: QueryWrapperMenuProps) => {
   const wrapper = mount<QueryWrapperMenu>(
@@ -279,3 +279,79 @@ describe('it renders with search correctly configured ', () => {
   })
 })
 
+describe('Passing down props works correctly ', () => {
+  describe('unit description is calculated correctly', () => {
+    const getUnitDescription = QueryWrapperMenu.prototype.getUnitDescription
+    it('works with accordiong that is not on a search tab ', () => {
+      const aliasedFacet = 'MOCK_VALUE'
+      const name = 'Computational'
+      const unitDescription = getUnitDescription('',  aliasedFacet, false, true, name)
+      expect(unitDescription).toEqual(`${name} Tools by ${aliasedFacet}`)
+    })
+    it('works with accordiong that is on a search tab', () => {
+      const aliasedFacet = 'MOCK_VALUE'
+      const name = 'Computational'
+      const unitDescription = getUnitDescription('',  aliasedFacet, true, true, name)
+      expect(unitDescription).toEqual(`${name} Tools`)
+    })
+    it('works with only unit description', () => {
+      const unitDescriptionValue = 'MOCKED_VALUE'
+      const unitDescription = getUnitDescription(unitDescriptionValue,  '', false, false, '')
+      expect(unitDescription).toEqual(unitDescriptionValue)
+    })
+  })
+
+  describe('part mask is calculated correctly', () => {
+    const getPartMask = QueryWrapperMenu.prototype.getPartMask
+    const partMaskBase = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+    it('works with facet passed in', () => {
+      const facet = 'MOCK_VALUE'
+      const partMask = getPartMask(facet, false)
+      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+      expect(partMask).toEqual(expectedPartMask)
+    })
+    it('works without facet passed in', () => {
+      const partMask = getPartMask('', false)
+      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+      expect(partMask).toEqual(expectedPartMask)
+    })
+    it('works with groupBy passedIn', () => {
+      const partMask = getPartMask('', true)
+      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+      expect(partMask).toEqual(expectedPartMask)
+    })
+  })
+  describe('selected facets is calculated correctly', () => {
+    const getSelectedFacets = QueryWrapperMenu.prototype.getSelectedFacets
+    it('it returns selected facets when passed a facet and facet value', () => {
+      const facetValue = 'MOCK_FACET_VALUE'
+      const facet = 'MOCK_FACET'
+      const selectedFacets = getSelectedFacets(true, facet, facetValue)
+      expect(selectedFacets).toHaveLength(1)
+      expect(selectedFacets[0].facetValues[0]).toEqual(facetValue)
+      expect(selectedFacets[0].columnName).toEqual(facet)
+    })
+    it('it returns an empty array without a facet value', () => {
+      const facet = 'MOCK_FACET'
+      const selectedFacets = getSelectedFacets(true, facet, undefined)
+      expect(selectedFacets).toHaveLength(0)
+    })
+  })
+  describe('table loading screen is calculated correctly', () => {
+    const getTableLoadingScreen = QueryWrapperMenu.prototype.getTableLoadingScreen
+    it('returns a loading screen ', () => {
+      const hasGroupByInSql = true
+      const loadingScreen = <div></div>
+      const stackedBarChartConfiguration = {
+        loadingScreen
+      } as StackedBarChartProps
+      const tableConfiguration = {} as SynapseTableProps
+      const tableLoadingScreen = getTableLoadingScreen(hasGroupByInSql, stackedBarChartConfiguration, tableConfiguration)
+      expect(tableLoadingScreen).toEqual(loadingScreen)
+    })
+    it('returns empty ', () => {
+      const tableLoadingScreen = getTableLoadingScreen(false, undefined, undefined)
+      expect(tableLoadingScreen).toEqual(<></>)
+    })
+  })
+})

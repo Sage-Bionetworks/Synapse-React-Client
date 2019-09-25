@@ -122,23 +122,23 @@ describe('basic functionality', () => {
       )
     })
   })
-  describe('Download options dropdown works', () => {
-    it('renders ModalDownload', async () => {
+  describe.only('Download options dropdown works', () => {
+    it.only('renders ModalDownload', async () => {
       const { wrapper } = await createShallowComponent(props)
       // Double check its not showing be default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      
+      // Click dropdown open
+      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} button`).at(0).simulate('click')
       // Click the dropdown
       await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
       // See that modal download is present
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
-
       // Click elsewhere and see that modal download has closed
       await wrapper.find('.SRC-menu-wall').simulate('click')
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
     })
   })
-  describe.only('expand mode works' , () => {
+  describe('expand mode works' , () => {
     it ('works', async () => {
       const { wrapper } = await createShallowComponent(props)
       // No modal to start

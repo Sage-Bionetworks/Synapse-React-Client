@@ -96,6 +96,10 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
+    this.getUnitDescription = this.getUnitDescription.bind(this)
+    this.getPartMask = this.getPartMask.bind(this)
+    this.getSelectedFacets = this.getSelectedFacets.bind(this)
+    this.getTableLoadingScreen = this.getTableLoadingScreen.bind(this)
   }
 
   componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
@@ -233,60 +237,30 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         facet,
         sql,
       } = config
-      let usedUnitDescription = unitDescription
       const name = accordionConfig[groupIndex] && accordionConfig[groupIndex].name
-      if (accordionConfig.length > 0 && !usedUnitDescription) {
-        // This is a hardcoded setting, could change 'Tools' to a prop in the future
-        const facetDisplayName = facet && (facetAliases[facet] || facet)
-        usedUnitDescription = `${name} Tools by ${facetDisplayName}`
-      }
       const hasGroupByInSql = isGroupByInSql(sql)
+      // only show search component if its the last item in the menu config
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
       const showBarChart = stackedBarChartConfiguration && !showSearch && !hasGroupByInSql
-      if (accordionConfig.length > 0 && showSearch) {
-        // This is also a hardcoded setting to detect if search within a tools accordion is being shown
-        usedUnitDescription = `${name} Tools`
-      }
-      let selectedFacets: FacetColumnValuesRequest [] = []
-      if (Number(menuIndexFromProps) === index && facet && facetValue) {
-        selectedFacets = [
-          {
-            concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            facetValues: [facetValue],
-            columnName: facet
-          }
-        ]
-      }
-      const loadNow = isSelected
-      let className = showSearch ? SEARCH_CLASS_CSS : ' '
+      const aliasedFacet: string = facet && (facetAliases[facet] || facet)
+
+      // search class is only used for testing, no css is actually applied
+      let searchClass = showSearch ? SEARCH_CLASS_CSS : ''
       if (!isSelected) {
-        className = ' SRC-hidden'
+        searchClass = 'SRC-hidden'
       }
-      // Decide which parts to get from the query
-      let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      if (facet) {
-        partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
-      }
-      if (hasGroupByInSql) {
-        // necessary for creating the where clause in the synapse table link, columnModels distinguishes non aggregate functions
-        // from select columns
-        partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
-      }
-      if (searchConfiguration && !facet && index === menuConfig.length - 1) {
-        // Needed to calculate the total count for TotalQueryResults
-        partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-      }
-      let showLoadingScreenInTable = <></> 
-      if (hasGroupByInSql && stackedBarChartConfiguration && tableConfiguration) {
-        // Since the bar chart doesnt show when theres a a groupy statement we use the 
-        // loadingScreen from the chart configuration
-        showLoadingScreenInTable = stackedBarChartConfiguration.loadingScreen
-      }
+
+      // Get props for query wrapper
+      const usedUnitDescription = this.getUnitDescription(unitDescription, aliasedFacet, showSearch, accordionConfig.length > 0, name)
+      const selectedFacets = this.getSelectedFacets(Number(menuIndexFromProps) === index, facet, facetValue)
+      const partMask = this.getPartMask(facet, hasGroupByInSql)
+      const tableLoadingScreen = this.getTableLoadingScreen(hasGroupByInSql, stackedBarChartConfiguration, tableConfiguration)
+
       return (
-        <span key={facet} className={className}>
+        <span key={facet} className={searchClass}>
           <QueryWrapper
             showBarChart={showBarChart}
-            loadNow={loadNow}
+            loadNow={isSelected}
             showMenu={true}
             initQueryRequest={{
               partMask,
@@ -312,13 +286,62 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
                 which will happen if either configuration is undefined.
             */}
-            {tableConfiguration ? <SynapseTable {...{...tableConfiguration, loadingScreen: showLoadingScreenInTable }}/> : <React.Fragment/>}
+            {tableConfiguration ? <SynapseTable {...{...tableConfiguration, loadingScreen: tableLoadingScreen }}/> : <React.Fragment/>}
             {cardConfiguration ? <CardContainer {...cardConfiguration}/> : <React.Fragment/>}
           </QueryWrapper>
         </span>
       )
       }
     )
+  }
+
+  public getUnitDescription (unitDescription: string, aliasedFacet: string, showSearch: boolean, isAccordionConfigDefined: boolean, name: string ) {
+    if (isAccordionConfigDefined && !showSearch) {
+      return `${name} Tools by ${aliasedFacet}`
+    }
+    if (isAccordionConfigDefined && showSearch) {
+      // This is also a hardcoded setting to detect if search within a tools accordion is being shown
+      return `${name} Tools`
+    }
+    return unitDescription
+  }
+
+  public getPartMask (facet: string | undefined, hasGroupByInSql: boolean) {
+    let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS;
+    if (facet) {
+      partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+    } else {
+      // Needed to calculate the total count for TotalQueryResults
+      partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+    }
+    if (hasGroupByInSql) {
+      // necessary for creating the where clause in the synapse table link, columnModels distinguishes non aggregate functions
+      // from select columns
+      partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+    }
+    return partMask
+  }
+
+  public getSelectedFacets (isSelected: boolean, facet: string | undefined, facetValue: string | undefined): FacetColumnValuesRequest [] {
+    if (isSelected && facet && facetValue) {
+      return [
+        {
+          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          facetValues: [facetValue],
+          columnName: facet
+        }
+      ]
+    }
+    return []
+  }
+  
+  public getTableLoadingScreen (hasGroupByInSql: boolean, stackedBarChartConfiguration: StackedBarChartProps | undefined, tableConfiguration: SynapseTableProps | undefined): JSX.Element {
+    if (hasGroupByInSql && stackedBarChartConfiguration && tableConfiguration) {
+      // Since the bar chart doesnt show when theres a a groupy statement we use the 
+      // loadingScreen from the chart configuration
+      return stackedBarChartConfiguration.loadingScreen
+    }
+    return <></>
   }
 
   private renderQueryChildren() {
