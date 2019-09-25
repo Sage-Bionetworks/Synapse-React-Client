@@ -32,6 +32,7 @@ import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
 import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
 import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
 import { FormGroup, FormData, ListRequest, ListResponse, FormChangeRequest, FormRejection } from './jsonResponses/Forms'
+import { FileHandle } from './jsonResponses/FileHandle'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -256,6 +257,20 @@ export const getDownloadFromTableRequest = (
 }
 
 /**
+* https://docs.synapse.org/rest/GET/fileHandle/handleId.html
+* Get a FileHandle using its ID.
+* Note: Only the user that created the FileHandle can access it directly.
+* @return FileHandle
+**/
+export const getFileHandleById = (
+  handleId: string,
+  sessionToken: string | undefined = undefined,
+  endpoint: string = DEFAULT_ENDPOINT,
+): Promise<FileHandle> => {
+  return doGet<FileHandle>(`file/v1/fileHandle/${handleId}`, sessionToken, undefined, endpoint)
+}
+
+/**
 * https://docs.synapse.org/rest/GET/fileHandle/handleId/url.html
 * @return a short lived presignedURL to be redirected with
 **/
@@ -264,7 +279,7 @@ export const getFileHandleByIdURL = (
   sessionToken: string | undefined = undefined,
   endpoint: string = DEFAULT_ENDPOINT,
 ) => {
-  // downloads a CSV, there is no return
+  // get the presigned URL for this file handle
   return doGet<string>(`file/v1/fileHandle/${handleId}/url?redirect=false`, sessionToken, undefined, endpoint)
 }
 
@@ -961,29 +976,63 @@ export const getFileEntityContent = (
     }
     getFiles(request, sessionToken, endpoint).then(
       (data: BatchFileResult) => {
-        const presignedUrl = data.requestedFiles[0].preSignedURL
-        const fileHandle = data.requestedFiles[0].fileHandle
-        // sanity check!  must be less than 5MB
-        if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
-          fetch(presignedUrl, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'no-cache',
-            headers: {
-              'Content-Type': fileHandle.contentType,
-            }
-          }).then((response) => {
-            response.text().then((text) => {
-              resolve(text)
-            })
-          })
-        } else {
-          reject('File size exceeds max (5MB)')
-        }
+        const presignedUrl: string = data.requestedFiles[0].preSignedURL
+        const fileHandle: FileHandle = data.requestedFiles[0].fileHandle
+        return getFileHandleContent(fileHandle, presignedUrl).then((content: string) => {
+          resolve(content)
+        })
       }
     ).catch((err) => {
       reject(err)
     })
+  })
+}
+
+export const getFileHandleContentFromID = (
+  fileHandleId: string,
+  sessionToken: string,
+  endpoint: string = DEFAULT_ENDPOINT
+): Promise<string> => {
+  // get the presigned URL, download the data, and send that back (via resolve())
+  return new Promise((resolve, reject) => {
+    // get the file handle and url
+    const getFileHandleByIdPromise = getFileHandleById(fileHandleId, sessionToken, endpoint)
+    const getFileHandlePresignedUrlPromis = getFileHandleByIdURL(fileHandleId, sessionToken, endpoint)
+    Promise.all([getFileHandleByIdPromise, getFileHandlePresignedUrlPromis]).then((values) => {
+      const fileHandle: FileHandle = values[0]
+      const presignedUrl: string = values[1]
+      return getFileHandleContent(fileHandle, presignedUrl).then((content: string) => {
+        resolve(content)
+      })
+    }).catch((err) => {
+      reject(err)
+    })
+  })
+}
+
+export const getFileHandleContent = (
+  fileHandle: FileHandle,
+  presignedUrl: string
+): Promise<string> => {
+  // get the presigned URL, download the data, and send that back (via resolve())
+  return new Promise((resolve, reject) => {
+      // sanity check!  must be less than 5MB
+      if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
+        fetch(presignedUrl, {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'no-cache',
+          headers: {
+            'Content-Type': fileHandle.contentType,
+          }
+        }).then((response) => {
+          response.text().then((text) => {
+            resolve(text)
+          })
+        })
+      } else {
+        reject('File size exceeds max (5MB)')
+      }
   })
 }
 

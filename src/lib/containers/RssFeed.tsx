@@ -28,7 +28,6 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   }
 
   componentDidMount() {
-
     const {
       url
     } = this.props
