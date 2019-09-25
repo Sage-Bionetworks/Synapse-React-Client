@@ -60,7 +60,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   line-height: 1.8em;
-  color: #000000; }
+  color: #515359; }
 
 .markdown ol {
   list-style-type: decimal;
@@ -150,14 +150,6 @@
 
 .link {
   color: #2B688F; }
-
-.markdown {
-  line-height: 1.85em;
-  word-wrap: break-word;
-  overflow-x: auto;
-  overflow-y: hidden;
-  line-height: 1.8em;
-  color: #000000; }
 
 .toc-indent1 {
   margin-left: 35px; }

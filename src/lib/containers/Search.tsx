@@ -156,7 +156,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       background: '#F9F9F9',
       height: '80px',
       display: 'flex',
-      marginTop: 29,
+      marginTop: 10,
       alignItems: 'center',
       padding: '0px 10px',
     }

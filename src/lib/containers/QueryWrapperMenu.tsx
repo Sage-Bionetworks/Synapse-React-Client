@@ -164,22 +164,30 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   public render() {
-    const { stackedBarChartConfiguration, name, menuConfig } = this.props
+    const { stackedBarChartConfiguration, name, menuConfig, token } = this.props
     const { activeMenuIndices } = this.state
     let sql = ''
     if (menuConfig) {
       sql = menuConfig[activeMenuIndices[0]].sql
     }
+    const hasGroupByInSql = isGroupByInSql(sql)
     const menuDropdown = this.renderMenuDropdown()
     const queryWrapper = this.renderQueryChildren()
     const showBarChart = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
         {
-          name && sql
+          name && sql && !hasGroupByInSql
           &&
           <h3 id="exploreCount" className="SRC-boldText">
-            <QueryCount token={this.props.token} name={name} sql={sql} />
+            <QueryCount token={token} name={name} sql={sql} />
+          </h3>
+        }
+        {
+          hasGroupByInSql
+          &&
+          <h3 id="exploreCount" className="SRC-boldText">
+            {name}
           </h3>
         }
         <div className="break">
@@ -219,7 +227,6 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     if (searchParams) {
       ({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
     }
-    const showBarChart = stackedBarChartConfiguration !== undefined
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean = groupIndex === accordionGroupIndex && activeMenuIndices[accordionGroupIndex] === index
       const {
@@ -230,10 +237,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       const name = accordionConfig[groupIndex] && accordionConfig[groupIndex].name
       if (accordionConfig.length > 0 && !usedUnitDescription) {
         // This is a hardcoded setting, could change 'Tools' to a prop in the future
-        const facetDisplayName = facet && facetAliases[facet] || facet
+        const facetDisplayName = facet && (facetAliases[facet] || facet)
         usedUnitDescription = `${name} Tools by ${facetDisplayName}`
       }
+      const hasGroupByInSql = isGroupByInSql(sql)
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
+      const showBarChart = stackedBarChartConfiguration && !showSearch && !hasGroupByInSql
       if (accordionConfig.length > 0 && showSearch) {
         // This is also a hardcoded setting to detect if search within a tools accordion is being shown
         usedUnitDescription = `${name} Tools`
@@ -253,11 +262,12 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       if (!isSelected) {
         className = ' SRC-hidden'
       }
+      // Decide which parts to get from the query
       let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       if (facet) {
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
       }
-      if (isGroupByInSql(sql)) {
+      if (hasGroupByInSql) {
         // necessary for creating the where clause in the synapse table link, columnModels distinguishes non aggregate functions
         // from select columns
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
@@ -266,10 +276,16 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
         // Needed to calculate the total count for TotalQueryResults
         partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
       }
+      let showLoadingScreenInTable = <></> 
+      if (hasGroupByInSql && stackedBarChartConfiguration && tableConfiguration) {
+        // Since the bar chart doesnt show when theres a a groupy statement we use the 
+        // loadingScreen from the chart configuration
+        showLoadingScreenInTable = stackedBarChartConfiguration.loadingScreen
+      }
       return (
         <span key={facet} className={className}>
           <QueryWrapper
-            showBarChart={showBarChart && !showSearch}
+            showBarChart={showBarChart}
             loadNow={loadNow}
             showMenu={true}
             initQueryRequest={{
@@ -289,14 +305,14 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            {stackedBarChartConfiguration && !showSearch ? <StackedBarChart {...stackedBarChartConfiguration} /> : <React.Fragment/>}
+            {showBarChart ? <StackedBarChart {...stackedBarChartConfiguration!} /> : <React.Fragment/>}
             {!showSearch ? <Facets />:  <React.Fragment/>}
             {showSearch ? <Search searchable={searchConfiguration!.searchable}/> : <React.Fragment/>}
             {/*
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
                 which will happen if either configuration is undefined.
             */}
-            {tableConfiguration ? <SynapseTable {...tableConfiguration}/> : <React.Fragment/>}
+            {tableConfiguration ? <SynapseTable {...{...tableConfiguration, loadingScreen: showLoadingScreenInTable }}/> : <React.Fragment/>}
             {cardConfiguration ? <CardContainer {...cardConfiguration}/> : <React.Fragment/>}
           </QueryWrapper>
         </span>

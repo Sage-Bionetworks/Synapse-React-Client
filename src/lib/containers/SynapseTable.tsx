@@ -267,7 +267,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       return this.props.loadingScreen || <div/>
     }
     // unpack all the data
-    const { data, isLoading = true, unitDescription, token, synapseId, facet } = this.props
+    const { data, isLoading = true, unitDescription, token, synapseId, facet, showBarChart } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
@@ -279,11 +279,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       sql,
       selectedFacets
     } = queryRequest.query
+    const style: React.CSSProperties = {}
+    if (showBarChart) {
+      style.marginTop = 15
+      style.marginBottom = 15
+    } else {
+      style.marginTop = -10
+    }
     const content = (
         <>
-         <div className="SRC-centerContent SRC-marginBottomTen" style={{ height:'20px', textAlign: 'left' }}>
+         <div className="SRC-centerContent" style={{ height:'20px', textAlign: 'left', ...style}}>
           {
-            unitDescription
+            unitDescription && !isGroupByInSql(queryRequest.query.sql)
             &&
             <TotalQueryResults 
               facet={facet}
@@ -757,16 +764,22 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(this.props.getLastQueryRequest!().query.sql)
-
+    const {
+      visibleColumnCount = Infinity
+    } = this.props
     rows.forEach((row: any, rowIndex) => {
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
-          const { visibleColumnCount = Infinity } = this.props
+          let usedVisibleColumnCount = visibleColumnCount
+          if (isGroupByInSql(this.props.getLastQueryRequest!().query.sql)) {
+            // Override because there is no column headers
+            usedVisibleColumnCount = Infinity
+          }
           // on iniital load isColumnSelected is null and we by default show all columns that come
           // before visibileColumnCount
-          const isColumnActiveInitLoad: boolean = colIndex < visibleColumnCount && isColumnSelectedLen === 0
+          const isColumnActiveInitLoad: boolean = colIndex < usedVisibleColumnCount && isColumnSelectedLen === 0
           // past the initial load -- when a user has started clicking items, then isColumnSelected is
           // not null and we verify that this column is part of the selection.
           const isColumnActivePastInitLoad = isColumnSelectedLen !== 0 && this.state.isColumnSelected[colIndex]
