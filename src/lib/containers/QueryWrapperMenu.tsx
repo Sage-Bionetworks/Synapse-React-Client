@@ -241,7 +241,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       const hasGroupByInSql = isGroupByInSql(sql)
       // only show search component if its the last item in the menu config
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
-      const showBarChart = stackedBarChartConfiguration && !showSearch && !hasGroupByInSql
+      const showBarChart = stackedBarChartConfiguration !== undefined && !showSearch && !hasGroupByInSql
       const aliasedFacet: string = facet && (facetAliases[facet] || facet)
 
       // search class is only used for testing, no css is actually applied
