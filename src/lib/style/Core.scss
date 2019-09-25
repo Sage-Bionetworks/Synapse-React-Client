@@ -999,7 +999,8 @@ a.SRC-lightLink {
   justify-content: center;
   align-items: center;
   border-radius: 24px;
-  width: 130px;
+  min-width: 130px;
+  padding: 10px;
   height: 40px;
   margin: 21px;
 }

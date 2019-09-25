@@ -36,8 +36,8 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
         },
         {
           // nested link
-          ownerId: 'syn20816755',
-          wikiId: '596042'
+          ownerId: 'syn12666371',
+          wikiId: '595383',
         },
       ]
     }

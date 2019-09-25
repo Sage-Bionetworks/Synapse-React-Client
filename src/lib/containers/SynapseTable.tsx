@@ -772,11 +772,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
           const index = this.findSelectionIndex(this.state.sortedColumnSelection, columnName)
-          let usedVisibleColumnCount = visibleColumnCount
-          if (isGroupByInSql(this.props.getLastQueryRequest!().query.sql)) {
-            // Override because there is no column headers
-            usedVisibleColumnCount = Infinity
-          }
+          const usedVisibleColumnCount = isGroupByInSql(this.props.getLastQueryRequest!().query.sql) ?  Infinity: visibleColumnCount
           // on iniital load isColumnSelected is null and we by default show all columns that come
           // before visibileColumnCount
           const isColumnActiveInitLoad: boolean = colIndex < usedVisibleColumnCount && isColumnSelectedLen === 0
@@ -859,11 +855,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private createTableHeader(headers: SelectColumn[], facets: FacetColumnResult[]) {
     const { isColumnSelected, sortedColumnSelection, columnIconSortState } = this.state
     const { visibleColumnCount = Infinity, facetAliases = {} } = this.props
+    const usedVisibleColumnCount = isGroupByInSql(this.props.getLastQueryRequest!().query.sql) ? Infinity: visibleColumnCount
     return headers.map((column: SelectColumn, index: number) => {
       // two cases when rendering the column headers on init load
       // of the page we have to show only this.props.visibleColumnCount many
       // columns, afterwards we rely on the isColumnSelected to get choices
-      const initRender: boolean = index < visibleColumnCount && isColumnSelected.length === 0
+      const initRender: boolean = index < usedVisibleColumnCount && isColumnSelected.length === 0
       const subsequentRender = isColumnSelected[index] && isColumnSelected.length !== 0
       if (initRender || subsequentRender) {
         // for background color

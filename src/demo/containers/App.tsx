@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Link, BrowserRouter as Router, Route } from 'react-router-dom';
-import Login from '../../lib/containers/Login';
-import logoSvg from '../../images/logo.svg';
-import Demo from './Demo';
-import Playground from './playground/Playground';
-import DrugUploadTool from '../../lib/containers/drug_upload_tool/DrugUploadTool';
-import FileGrid from '../../lib/containers/drug_upload_tool/UserFileGrid';
-import { SynapseClient } from '../../lib/utils/';
+import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
+import Login from '../../lib/containers/Login'
+import logoSvg from '../../images/logo.svg'
+import '../style/App.scss'
+import '../style/DemoStyle.scss'
+import Demo from './Demo'
+import Playground from './playground/Playground'
+import DrugUploadTool from '../../lib/containers/drug_upload_tool/DrugUploadTool'
+import FileGrid from '../../lib/containers/drug_upload_tool/UserFileGrid'
+import { SynapseClient } from '../../lib/utils/'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
