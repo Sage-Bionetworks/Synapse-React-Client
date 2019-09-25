@@ -31,7 +31,7 @@ import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
 import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
 import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
-import { FormGroup, FormData, ListRequest, ListResponse } from './jsonResponses/Forms'
+import { FormGroup, FormData, ListRequest, ListResponse, FormChangeRequest, FormRejection } from './jsonResponses/Forms'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -1121,7 +1121,11 @@ export const createFormData = (
   dataFileHandleId: string,
   sessionToken: string,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData> => {
-  return doPost(`/repo/v1/form/data?groupId=${formGroupId}&name=${encodeURI(name)}&dataFileHandleId=${dataFileHandleId}`, undefined, sessionToken, undefined, endpoint)
+    const newFormData: FormChangeRequest = {
+      name,
+      fileHandleId: dataFileHandleId
+    }
+  return doPost(`/repo/v1/form/data?groupId=${formGroupId}`, newFormData, sessionToken, undefined, endpoint)
 }
 
 /**
@@ -1130,12 +1134,15 @@ export const createFormData = (
  */
 export const updateFormData = (
   formDataId: string,
-  name: string | undefined,
+  name: string,
   dataFileHandleId: string,  
-  sessionToken: string | undefined,
+  sessionToken: string,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData> => {
-    let nameParam:string = name ? `&name=${name}` : ''
-    return doPut(`/repo/v1/form/data/${formDataId}?dataFileHandleId=${dataFileHandleId}${nameParam}`, undefined, sessionToken, undefined, endpoint)
+    const updatedFormData: FormChangeRequest = {
+      name,
+      fileHandleId: dataFileHandleId
+    }
+    return doPut(`/repo/v1/form/data/${formDataId}`, updatedFormData, sessionToken, undefined, endpoint)
 }
 
 /**
@@ -1204,5 +1211,8 @@ export const rejectFormData = (
   reason: string,
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<FormData>=> {
-    return doPut(`/repo/v1/form/data/${formDataId}/reject?reason=${encodeURI(reason)}`, undefined, sessionToken, undefined, endpoint)
+    const formRejection: FormRejection = {
+      reason
+    }
+    return doPut(`/repo/v1/form/data/${formDataId}/reject`, formRejection, sessionToken, undefined, endpoint)
 }

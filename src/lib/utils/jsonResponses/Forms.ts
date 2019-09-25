@@ -19,6 +19,17 @@ export type FormData = {
   submissionStatus: SubmissionStatus
 }
 
+// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormChangeRequest.html
+export type FormChangeRequest = {
+  name: string
+  fileHandleId: string
+}
+
+// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormRejection.html
+export type FormRejection = {
+  reason: string
+}
+
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/SubmissionStatus.html
 export type SubmissionStatus = {
   submittedOn: string,
