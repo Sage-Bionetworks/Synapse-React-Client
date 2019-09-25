@@ -98,7 +98,7 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
     .then((data: string) => {
       console.log('Successfully fetched file handle contents: ', data)
     })
-    .catch((error: any) => console.error('Failed to submit form data', error))
+    .catch((error: any) => console.error('Failed to read form data file handle contents', error))
 
   }
 
