@@ -402,8 +402,6 @@ export default class DrugUploadForm extends React.Component<
       }
 
       case NavActionEnum.SUBMIT: {
-        //const data = this.doSave(formData);
-        alert('Do some kind of submission thing')
         this.props.onSubmit(formData)
       }
       case NavActionEnum.VALIDATE: {

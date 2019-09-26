@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import formschemaJson from '../../../../mocks/formschema.json'
-import UserFileGrid, { UserFileGridProps } from '../../../../lib/containers/drug_upload_tool/UserFileGrid'
+import UserFileGrid, {
+  UserFileGridProps,
+} from '../../../../lib/containers/drug_upload_tool/UserFileGrid'
 import { mockUserProfileData } from '../../../../mocks/mock_user_profile'
 import { mockFileEntity } from '../../../../mocks/mock_file_entity'
-
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const targetFolderId = 'syn9988882982'
@@ -14,24 +15,19 @@ const formGroupId = '5'
 const itemNoun = 'submission'
 const parentContainerId: string = 'syn20355732'
 
+const createShallowComponent = async (
+  props: UserFileGridProps,
+  disableLifecycleMethods: boolean = false,
+) => {
+  const wrapper = await shallow<UserFileGrid>(<UserFileGrid {...props} />, {
+    disableLifecycleMethods,
+  })
 
-const createShallowComponent = async (props: UserFileGridProps, disableLifecycleMethods: boolean = false) => {
-  const wrapper = await shallow<UserFileGrid>(
-    <UserFileGrid
-      {...props}
-    />,
-    {
-      disableLifecycleMethods
-    }
-  )
-
-
-  const instance = wrapper.instance();
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
 describe('basic tests', () => {
- 
   const props: UserFileGridProps = {
     parentContainerId,
     token,
@@ -41,16 +37,10 @@ describe('basic tests', () => {
   }
 
   beforeEach(() => {
-    SynapseClient.listFormData = jest.fn(() => Promise.resolve({ 'page': [mockFileEntity, mockFileEntity] }))
-    //SynapseClient.getUserProfile = jest.fn(() => Promise.resolve(mockUserProfileData))
-   // SynapseClient.getEntityChildren = jest.fn(() => Promise.resolve({ 'page': [mockFileEntity, mockFileEntity] }))
-    //SynapseClient.lookupChildEntity = jest.fn(() => Promise.resolve({ id: targetFolderId }))
-    //SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    //SynapseClient.createEntity = jest.fn(() => Promise.resolve({ mockFileEntity }))
-    //SynapseClient.getSessionTokenFromCookie = jest.fn(() => Promise.resolve('123444'))
-    //SynapseClient.createEntity = jest.fn(() => Promise.resolve('123444'))
-  });
-
+    SynapseClient.listFormData = jest.fn(() =>
+      Promise.resolve({ page: [mockFileEntity, mockFileEntity] }),
+    )
+  })
 
   it('displays table with file list when files are present', async () => {
     const { wrapper, instance } = await createShallowComponent(props)
@@ -61,7 +51,7 @@ describe('basic tests', () => {
   })
 
   it('not display the table when there are no files', async () => {
-    SynapseClient.listFormData = jest.fn(() => Promise.resolve({ 'page': [] }))
+    SynapseClient.listFormData = jest.fn(() => Promise.resolve({ page: [] }))
     const { wrapper, instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
@@ -69,18 +59,15 @@ describe('basic tests', () => {
     expect(wrapper.find('.no-submissions').length).toBe(1)
   })
 
-
-
   it('should modify the modal state when clicking "delete"', async () => {
-
     const spy = jest.spyOn(SynapseClient, 'deleteEntity')
     const { wrapper, instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     const button = wrapper.find('td button').first()
-    expect(instance.state.modalContext).not.toBeDefined;
-    button.simulate('click');
-    expect(instance.state.modalContext).toBeDefined;
-    expect(spy).not.toHaveBeenCalled();
+    expect(instance.state.modalContext).not.toBeDefined
+    button.simulate('click')
+    expect(instance.state.modalContext).toBeDefined
+    expect(spy).not.toHaveBeenCalled()
   })
 
   it('should call deleteEntity with correct params', async () => {
@@ -89,7 +76,5 @@ describe('basic tests', () => {
     await instance.componentDidMount()
     await instance.deleteFile('123', '456')
     expect(spy).toHaveBeenCalledWith('456', '123')
-
   })
-
 })
