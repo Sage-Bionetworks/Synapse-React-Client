@@ -546,13 +546,24 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     if (alignLowerCase === 'right') {
       buttonClasses += 'floatright '
     }
-    if (alignLowerCase === 'center') {
-      buttonClasses += 'align-center '
-    }
     if (highlight === 'true') {
       buttonClasses += ' SRC-primary-button '
     } else {
       buttonClasses += 'SRC-light-button '
+    }
+    if (alignLowerCase === 'center') {
+      return (
+        <div style={{textAlign: 'center'}}>
+          <a
+            key={widgetparamsMapped.reactKey}
+            href={widgetparamsMapped.url}
+            className={"SRC-standard-button-shape " +  buttonClasses}
+            role="button"
+          >
+            {widgetparamsMapped.text}
+          </a>
+        </div>
+      )
     }
     return (
       <a

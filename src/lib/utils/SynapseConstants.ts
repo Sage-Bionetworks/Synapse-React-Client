@@ -46,3 +46,4 @@ export const SEPERATOR = 'SEPERATOR'
 export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS' 
 // For internal testing only
 export const _TIME_DELAY = 75
+export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'
