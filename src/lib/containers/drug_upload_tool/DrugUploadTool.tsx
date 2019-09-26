@@ -33,7 +33,7 @@ export type DrugUploadToolProps = {
 type DrugUploadToolState = {
   notification?: Notification
   isLoading?: boolean
-  //currentFileEntity?: FileEntity; // file holding user form data
+  formDataId?: string; // file holding user form data
   formData?: any // form data that prepopulates the form
   formSchema?: any // schema that drives the form
   formUiSchema?: UiSchema // ui schema that directs how to render the form elements
@@ -49,11 +49,6 @@ type Notification = {
   type: StatusEnum
 }
 
-/*type FileEntityWithData = {
-  fileEntity: FileEntity;
-  data: JSON;
-};*/
-
 class DrugUploadTool extends React.Component<
   DrugUploadToolProps,
   DrugUploadToolState
@@ -62,6 +57,7 @@ class DrugUploadTool extends React.Component<
     super(props)
     this.state = {
       isLoading: true,
+      formDataId: _.get(this.props, 'searchParams.formDataId')
     }
   }
 
@@ -161,8 +157,8 @@ class DrugUploadTool extends React.Component<
     this.setState({
       isLoading: true,
     })
-    const formDataId = _.get(this.props, 'searchParams.formDataId')
-    await SynapseClient.submitFormData(formDataId, this.props.token)
+
+    await SynapseClient.submitFormData(this.state.formDataId!, this.props.token)
     this.finishedProcessing(StatusEnum.SUBMIT_SUCCESS, 'File Submitted')
   }
 
@@ -177,7 +173,6 @@ class DrugUploadTool extends React.Component<
       fileContentsBlob,
     )
     const { searchParams } = this.props
-    const formDataId = searchParams && searchParams.formDataId
     const formGroupId = searchParams && searchParams.formGroupId
     if (!formGroupId) {
       console.error('formGroupId must be defined')
@@ -188,9 +183,9 @@ class DrugUploadTool extends React.Component<
       const newFileHandleId = fileUploadComplete.fileHandleId
 
       let formData
-      if (formDataId) {
+      if (this.state.formDataId) {
         formData = await SynapseClient.updateFormData(
-          formDataId,
+          this.state.formDataId,
           fileName,
           newFileHandleId,
           this.props.token!,
@@ -234,7 +229,7 @@ class DrugUploadTool extends React.Component<
         fileContent,
       )
       this.setState({
-        formData,
+        formDataId: formData.formDataId,
       })
 
       this.finishedProcessing(StatusEnum.SAVE_SUCCESS, 'File Saved')
