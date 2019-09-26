@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from './WarningModal'
 
 import moment from 'moment'
+import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 
 type UserData = {
   fileList: Entity[]
@@ -234,7 +235,7 @@ export default class UserFileGrid extends React.Component<
     } else {
       return (
         <div className="panel padding-full unauthenticated text-center">
-          Please sign in to initiate or continue your submission{' '}
+          Please <button className={`SRC-standard-button-shape SRC-light-button ${SRC_SIGN_IN_CLASS} SRC-sign-in-button`}> sign in </button> to initiate or continue your submission{' '}
         </div>
       )
     }

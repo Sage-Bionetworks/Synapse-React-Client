@@ -8,6 +8,7 @@ import { StatusEnum } from './types';
 import Alert from 'react-bootstrap/Alert';
 import DrugUploadForm from './DrugUploadForm';
 import _ from 'lodash';
+import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants';
 
 export type UploadToolSearchParams = {
   formDataId?: string; //entityId fo the file that contains form data
@@ -343,7 +344,7 @@ class DrugUploadTool extends React.Component<
     } else {
       return (
         <div className="panel padding-full unauthenticated text-center">
-          Please sign in to initiate or continue your submission{' '}
+          Please <button className={`SRC-standard-button-shape SRC-light-button SRC-sign-in-button ${SRC_SIGN_IN_CLASS}`}> sign in </button> to initiate or continue your submission{' '}
         </div>
       )
     }
