@@ -24,6 +24,7 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
     this.onSubmitFormData = this.onSubmitFormData.bind(this)
     this.listMyFormData = this.listMyFormData.bind(this)
     this.listFormAdminFormData = this.listFormAdminFormData.bind(this)
+    this.onReadFormDataFileHandleContents = this.onReadFormDataFileHandleContents.bind(this)
   }
 
   public onCreateFormGroup(): void {
@@ -92,6 +93,15 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
     }
   }
 
+  private onReadFormDataFileHandleContents = () => {
+    SynapseClient.getFileHandleContentFromID(this.state.formData!.dataFileHandleId, this.state.token!)
+    .then((data: string) => {
+      console.log('Successfully fetched file handle contents: ', data)
+    })
+    .catch((error: any) => console.error('Failed to read form data file handle contents', error))
+
+  }
+
   public componentDidUpdate() {
     this.listMyFormData()
     this.listFormAdminFormData()
@@ -110,31 +120,44 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
             if (token) {
               return <>
                 <div>
-                  <button className=''
+                  <a
                     onClick={this.onCreateFormGroup}
                   >
                     Create Form Group
-                </button>
+                    <br />
+                  </a>
                   {
-                    !this.state.formData && <button
+                    !this.state.formData && <a
                       onClick={this.onCreateFormData}
                     >
                       Create Form Data
-                  </button>
+                      <br />
+                  </a>
                   }
                   {
-                    this.state.formData && <button
+                    this.state.formData && <a
+                      onClick={this.onReadFormDataFileHandleContents}
+                    >
+                      Get Form Data FileHandle contents
+                      <br />
+                  </a>
+                  }
+
+                  {
+                    this.state.formData && <a
                       onClick={this.onUpdateFormData}
                     >
                       Update Form Data
-                  </button>
+                      <br />
+                  </a>
                   }
                   {
-                    this.state.formData && <button
+                    this.state.formData && <a
                       onClick={this.onSubmitFormData}
                     >
                       Submit Form Data
-                  </button>
+                      <br />
+                  </a>
                   }
                 </div>
                 {
