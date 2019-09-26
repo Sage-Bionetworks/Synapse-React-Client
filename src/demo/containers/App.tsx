@@ -22,36 +22,40 @@ export const TokenContext = React.createContext('')
 
 export default class App extends React.Component<{}, AppState> {
   constructor(props: any) {
-    super(props);
+    super(props)
     this.state = {
-      token: ''
-    };
+      token: '',
+    }
   }
 
   handleChange = (updatedState: {}): void => {
-    this.setState(updatedState);
-  };
+    this.setState(updatedState)
+  }
 
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
-    SynapseClient.detectSSOCode();
+    SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
       .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
       .catch((error: any) => {
-        console.error(error);
-      });
+        console.error(error)
+      })
   }
 
   renderLoginAndSignout(token: string): JSX.Element {
     const signedInState = (
       <div className="bg-success text-center" role="alert">
         You are logged in.&nbsp;
-        <button onClick={() => { SynapseClient.signOut() }}>
+        <button
+          onClick={() => {
+            SynapseClient.signOut()
+          }}
+        >
           <span aria-hidden="true">Sign out</span>
         </button>
       </div>
-    );
+    )
 
     const notSignedInState = (
       <div className="text-center">
@@ -75,12 +79,12 @@ export default class App extends React.Component<{}, AppState> {
         />
         <hr />
       </div>
-    );
+    )
 
     if (token && token !== '') {
-      return signedInState;
+      return signedInState
     } else {
-      return notSignedInState;
+      return notSignedInState
     }
   }
 
@@ -118,25 +122,24 @@ export default class App extends React.Component<{}, AppState> {
                 const searchParamsProps: any = {}
                 // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
                 const searchParams = new URLSearchParams(props.location.search)
-                searchParams.forEach(
-                  (value, key) => {
-                    searchParamsProps[key] = value
-                  }
-                )
-                return !props.location.search ?
+                searchParams.forEach((value, key) => {
+                  searchParamsProps[key] = value
+                })
+                return !props.location.search ? (
                   <FileGrid
                     pathpart="drugUploadTool"
                     token={this.state.token}
                     formClass="drug-upload-tool"
                     parentContainerId="syn20673186"
+                    formGroupId="8"
                     itemNoun="Compound"
                   />
-                  :
+                ) : (
                   <DrugUploadTool
                     {...props}
                     parentContainerId="syn20673186"
                     formSchemaEntityId="syn20680102"
-                    fileNamePath="welcome.submission_name"
+                    fileNamePath="naming.compound_name"
                     formUiSchemaEntityId="syn20693568"
                     formNavSchemaEntityId="syn20680027"
                     token={this.state.token}
@@ -144,6 +147,7 @@ export default class App extends React.Component<{}, AppState> {
                     formClass="drug-upload-tool"
                     searchParams={searchParamsProps}
                   />
+                )
               }}
             />
 
@@ -154,7 +158,9 @@ export default class App extends React.Component<{}, AppState> {
               render={props => {
                 let searchParamsProps: any = {}
                 // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-                const searchParams: any = new URLSearchParams(props.location.search)
+                const searchParams: any = new URLSearchParams(
+                  props.location.search,
+                )
                 const iter = searchParams.entries()
                 let result = iter.next()
                 while (!result.done) {
@@ -163,15 +169,16 @@ export default class App extends React.Component<{}, AppState> {
                   result = iter.next()
                 }
                 console.log('rendering line 162')
-                return !props.location.search ?
+                return !props.location.search ? (
                   <FileGrid
                     pathpart="contribReqForm"
+                    formGroupId="5"
                     token={this.state.token}
                     parentContainerId="syn20692909"
                     formClass="contribution-request"
                     itemNoun={'Nomination'}
                   />
-                  :
+                ) : (
                   <DrugUploadTool
                     {...props}
                     parentContainerId="syn20692909"
@@ -184,12 +191,12 @@ export default class App extends React.Component<{}, AppState> {
                     formClass="contribution-request"
                     fileNamePath="study.submission_name"
                   />
-              }
-              }
+                )
+              }}
             />
           </div>
         </Router>
       </TokenContext.Provider>
-    );
+    )
   }
 }
