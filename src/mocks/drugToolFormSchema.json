@@ -179,6 +179,355 @@
         }
       }
     },
+    "in_vivo_data_item": {
+      "type": "object",
+      "required": [
+        "species",
+        "strain",
+        "outcome_measures",
+        "assay_description",
+        "age_range_min",
+        "age_range_max",
+        "sex",
+        "dose_range_min",
+        "dose_range_max",
+        "dose_regimen",
+        "route",
+        "drug_formulation"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "species": {
+          "type": "string",
+          "title": "What species was used?",
+          "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
+            "Mouse",
+            "Rat",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "strain": {
+          "type": "string",
+          "title": "Model strain"
+        },
+        "outcome_measures": {
+          "type": "string",
+          "title": "Primary outcome measure"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Assay Description"
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Subject age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            }
+          }
+        },
+        "sex": {
+          "type": "string",
+          "title": "Subject sex",
+          "enum": [
+            "male",
+            "female",
+            "both"
+          ],
+          "enumNames": [
+            "Male",
+            "Female",
+            "Both"
+          ]
+        },
+        "ed50": {
+          "type": "string",
+          "title": "Was an ED50 established? (mg/kg)",
+          "enum": [
+            "<31",
+            "31-100",
+            "101-300",
+            ">300"
+          ]
+        },
+        "dose_range": {
+          "type": "object",
+          "title": "What was the dose range tested (mg/kg)",
+          "properties": {
+            "dose_range_min": {
+              "title": "Minimum",
+              "type": "number"
+            },
+            "dose_range_max": {
+              "title": "Maximum",
+              "type": "number"
+            }
+          }
+        },
+        "dose_regimen": {
+          "type": "string",
+          "title": "What was the dosing regimen",
+          "enum": [
+            "acute",
+            "chronic",
+            "sub_chronic"
+          ],
+          "enumNames": [
+            "Acute",
+            "Chronic",
+            "Sub Chronic"
+          ]
+        },
+        "pretreatment_time": {
+          "type": "string",
+          "title": "Pre-treatrment time "
+        },
+        "route": {
+          "type": "array",
+          "title": "What was the route of administration?",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          }
+        },
+        "drug_formulation": {
+          "type": "string",
+          "title": "Drug Formulation"
+        },
+        "adverse_events_description": {
+          "type": "string",
+          "title": "Adverse events"
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "other"
+                  ]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "species_other"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "pk_in_vivo_data_item": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "species": {
+          "type": "string",
+          "title": "What species was used?",
+          "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
+            "Mouse",
+            "Rat",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "strain": {
+          "type": "string",
+          "title": "Model strain"
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Subject age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            }
+          }
+        },
+        "sex": {
+          "type": "string",
+          "title": "Subject sex",
+          "enum": [
+            "male",
+            "female",
+            "both"
+          ],
+          "enumNames": [
+            "Male",
+            "Female",
+            "Both"
+          ]
+        },
+        "clearance_rate": {
+          "type": "number",
+          "title": "Clearance rate (Clp)"
+        },
+        "half_life": {
+          "type": "number",
+          "title": "Half life (T 1/2)"
+        },
+        "tissue_concentration": {
+          "type": "number",
+          "title": "Tissue concentration (nmol/g)"
+        },
+        "plasma_protein_binding": {
+          "type": "number",
+          "title": "Plasma protein binding"
+        },
+        "liver_metabolism": {
+          "type": "number",
+          "title": "Liver metabolism"
+        },
+        "fractional_bioavailability": {
+          "type": "number",
+          "title": "Fractional bioavailability"
+        },
+        "plasma_max_concentration": {
+          "type": "number",
+          "title": "Plasma maximum concentration (Cmax)"
+        },
+        "volume": {
+          "type": "number",
+          "title": "Volume of distribution (Vd)"
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "other"
+                  ]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": []
+            }
+          ]
+        }
+      }
+    },
     "chronic_dosing_experiment": {
       "type": "object",
       "required": [],
@@ -217,7 +566,7 @@
         "duration": {
           "type": "string"
         },
-        "dose-range": {
+        "dose_range": {
           "type": "object",
           "properties": {
             "dose_range_min": {
@@ -276,49 +625,8 @@
         }
       }
     },
-    "welcome": {
-      "type": "object",
-      "required": [
-        "submission_name"
-      ],
-      "properties": {
-        "submission_name": {
-          "type": "string",
-          "title": "Submission NameQ"
-        }
-      }
-    },
-    "restrictions": {
-      "type": "object",
-      "required": [],
-      "properties": {
-        "ip_restrictions": {
-          "type": "boolean",
-          "default": false,
-          "enum": [
-            true,
-            false
-          ],
-          "enumNames": [
-            "Yes",
-            "No"
-          ],
-          "uniqueItems": true
-        },
-        "off_label": {
-          "type": "boolean",
-          "default": true,
-          "enum": [
-            true,
-            false
-          ],
-          "enumNames": [
-            "Yes",
-            "No"
-          ]
-        }
-      }
-    },
+  
+
     "naming": {
       "type": "object",
       "required": [
@@ -480,7 +788,6 @@
         "therapeutic_approach",
         "therapeutic_indication_description",
         "water_soluble",
-
         "route",
         "orally_active"
       ],
@@ -528,7 +835,6 @@
         },
         "water_soluble": {
           "type": "string",
-
           "enum": [
             "yes",
             "no",
@@ -547,28 +853,28 @@
           "title": "What is the intended route of administration?",
           "items": {
             "type": "string",
-          "enum": [
-            "oral",
-            "sublingual",
-            "nasal",
-            "injection",
-            "transdermal",
-            "intrathecal",
-            "formulated_in_food",
-            "formulated_in_drinking_water"
-          ],
-          "enumNames": [
-            "Oral",
-            "Sublingual",
-            "Nasal",
-            "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-            "Transdermal,",
-            "Intrathecal",
-            "Formulated in Food",
-            "Formulated in Drinking Water"
-          ]
-        },
-        "uniqueItems": true
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal,",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          },
+          "uniqueItems": true
         },
         "orally_active": {
           "type": "string",
@@ -619,296 +925,318 @@
           ]
         }
       }
-      },
-      "binding": {
-        "type": "object",
-        "properties": {
-          "cell_line_binding": {
-            "type": "array",
-            "title": "Cell Line-Binding",
-            "items": {
-              "$ref": "#/definitions/binding_item"
-            }
-          }
-        }
-      },
-      "efficacy": {
-        "type": "object",
-        "properties": {
-          "cell_line_efficacy": {
-            "type": "array",
-            "title": "Cell Line-Efficacy",
-            "items": {
-              "$ref": "#/definitions/efficacy_item"
-            }
-          }
-        }
-      },
-      "in_vivo_data": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "submissionName": {
-            "type": "string",
-            "title": "vvSubmission Name"
-          }
-        }
-      },
-      "pk_in_silico": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "submissionName": {
-            "type": "string",
-            "title": "Submission Name"
-          }
-        }
-      },
-      "pk_in_vitro": {
-        "type": "object",
-        "required": [],
-        "properties": {}
-      },
-      "pk_in_vivo": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "submissionName": {
-            "type": "string",
-            "title": "Submission Name"
-          }
-        }
-      },
-      "ld50": {
-        "type": "object",
-        "properties": {
-          "experiments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/ld50_item"
-            }
-          }
-        }
-      },
-      "acute_dosing": {
-        "type": "object",
-        "properties": {
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "cell_line_binding": {
+          "type": "array",
+          "title": "Cell Line-Binding",
           "items": {
-            "type": "array",
-            "item": {
-              "$ref": "#/definitions/ld50_item"
-            }
-          }
-        }
-      },
-      "chronic_dosing": {
-        "properties": {
-          "items": {
-            "type": "array",
-            "item": {
-              "$ref": "#/definitions/ld50_item"
-            }
-          }
-        }
-      },
-      "teratogenicity": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "title": "Experiments",
-            "item": {
-              "$ref": "#/definitions/ld50_item"
-            }
-          }
-        }
-      },
-      "clinical_data": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "clinical_data_description": {
-            "title": "What type of clinical data exists for this compound?",
-            "type": "string",
-            "enum": [
-              "Off Label Use",
-              "Phase 1-4"
-            ],
-            "uniqueItems": true
-          },
-          "clinical_data_involvement": {
-            "title": "Were you involved in this clinical study?",
-            "type": "boolean",
-            "default": false,
-            "enum": [
-              true,
-              false
-            ],
-            "enumNames": [
-              "Yes",
-              "No"
-            ],
-            "uniqueItems": true
-          },
-          "cinical_publication_status": {
-            "title": "If this study has been published, please provide a reference.",
-            "type": "string"
-          },
-          "clinical_trials_reference": {
-            "title": "Clinical Trials Reference",
-            "type": "string"
-          },
-          "sex": {
-            "title": "What sex is the clinical data subject population?",
-            "type": "string",
-            "enum": [
-              "Male",
-              "Female",
-              "Both"
-            ],
-            "default": "Male"
-          },
-          "diagnosis": {
-            "title": "What is the clinical indication of the patient population?",
-            "type": "string",
-            "enum": [
-              "Alzheimer's",
-              "Parkinson's",
-              "Depression",
-              "Epilepsy",
-              "Healthy Subjects",
-              "Other"
-            ],
-            "uniqueItems": true
-          },
-          "age_range": {
-            "type": "object",
-            "title": "Age range (years)",
-            "properties": {
-              "age_range_min": {
-                "title": "Minimum",
-                "type": "number",
-                "minimum": 0,
-                "maximum": 130
-              },
-              "age_range_max": {
-                "title": "Maximum",
-                "type": "number",
-                "minimum": 0,
-                "maximum": 130
-              }
-            }
-          },
-          "clinical_measures": {
-            "title": "Clinical Measures",
-            "type": "string"
-          },
-          "pharmacokinetics": {
-            "title": "Pharmacokinetic Data",
-            "type": "string"
-          },
-          "safety": {
-            "title": "Safety Data",
-            "type": "string"
-          }
-        },
-        "dependencies": {
-          "diagnosis": {
-            "oneOf": [
-              {
-                "properties": {
-                  "diagnosis": {
-                    "enum": [
-                      "Alzheimer's",
-                      "Parkinson's",
-                      "Depression",
-                      "Epilepsy",
-                      "Healthy Subjects"
-                    ]
-                  }
-                }
-              },
-              {
-                "properties": {
-                  "diagnosis": {
-                    "enum": [
-                      "Other"
-                    ]
-                  },
-                  "diagnosis_other": {
-                    "title": "Other clinical Indication",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "diagnosis_other"
-                ]
-              }
-            ]
+            "$ref": "#/definitions/binding_item"
           }
         }
       }
     },
-    "type": "object",
-    "properties": {
-      "welcome": {
-        "title": "Welcome",
-        "$ref": "#/definitions/welcome"
+    "efficacy": {
+      "type": "object",
+      "properties": {
+        "cell_line_efficacy": {
+          "type": "array",
+          "title": "Cell Line-Efficacy",
+          "items": {
+            "$ref": "#/definitions/efficacy_item"
+          }
+        }
+      }
+    },
+    "in_vivo_data": {
+      "type": "object",
+      "properties": {
+        "experiments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/in_vivo_data_item"
+          }
+        }
+      }
+    },
+    "pk_in_silico": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "partition_coefficient": {
+          "title": "Drug Partition Coefficient (LogP)",
+          "type": "number"
+        },
+        "dissociation_constant": {
+          "title": "Acid dissociation constant(s) (pKA)",
+          "type": "number"
+        },
+        "molecular_weight": {
+          "title": "Molecular Weight (g/mol)",
+          "type": "number"
+        }
+      }
+    },
+    "pk_in_vitro": {
+      "type": "object",
+      "required": [
+        "permeability"
+      ],
+      "properties": {
+        "assay_description": {
+          "type": "string",
+          "title": "Cell Permeablity Assay"
+        },
+        "permeability": {
+          "type": "string",
+          "title": "Permeability"
+        },
+        "lipophilicity": {
+          "type": "string",
+          "title": "Drug Lipophilicity Coefficient (LogD)"
+        }
+      }
+    },
+    "pk_in_vivo": {
+      "type": "object",
+      "properties": {
+        "experiments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pk_in_vivo_data_item"
+          }
+        }
+      }
+    },
+    "ld50": {
+      "type": "object",
+      "properties": {
+        "experiments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ld50_item"
+          }
+        }
+      }
+    },
+    "acute_dosing": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "item": {
+            "$ref": "#/definitions/ld50_item"
+          }
+        }
+      }
+    },
+    "chronic_dosing": {
+      "properties": {
+        "items": {
+          "type": "array",
+          "item": {
+            "$ref": "#/definitions/ld50_item"
+          }
+        }
+      }
+    },
+    "teratogenicity": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "title": "Experiments",
+          "item": {
+            "$ref": "#/definitions/ld50_item"
+          }
+        }
+      }
+    },
+    "clinical_data": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "clinical_data_description": {
+          "title": "What type of clinical data exists for this compound?",
+          "type": "string",
+          "enum": [
+            "Off Label Use",
+            "Phase 1-4"
+          ],
+          "uniqueItems": true
+        },
+        "clinical_data_involvement": {
+          "title": "Were you involved in this clinical study?",
+          "type": "boolean",
+          "default": false,
+          "enum": [
+            true,
+            false
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "uniqueItems": true
+        },
+        "cinical_publication_status": {
+          "title": "If this study has been published, please provide a reference.",
+          "type": "string"
+        },
+        "clinical_trials_reference": {
+          "title": "Clinical Trials Reference",
+          "type": "string"
+        },
+        "sex": {
+          "title": "What sex is the clinical data subject population?",
+          "type": "string",
+          "enum": [
+            "Male",
+            "Female",
+            "Both"
+          ],
+          "default": "Male"
+        },
+        "diagnosis": {
+          "title": "What is the clinical indication of the patient population?",
+          "type": "string",
+          "enum": [
+            "Alzheimer's",
+            "Parkinson's",
+            "Depression",
+            "Epilepsy",
+            "Healthy Subjects",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Age range (years)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 130
+            }
+          }
+        },
+        "clinical_measures": {
+          "title": "Clinical Measures",
+          "type": "string"
+        },
+        "pharmacokinetics": {
+          "title": "Pharmacokinetic Data",
+          "type": "string"
+        },
+        "safety": {
+          "title": "Safety Data",
+          "type": "string"
+        }
       },
-      "restrictions": {
-        "title": "Restrictions",
-        "$ref": "#/definitions/restrictions"
-      },
-      "naming": {
-        "title": "Naming",
-        "$ref": "#/definitions/naming"
-      },
-      "measurements": {
-        "title": "Measurements",
-        "$ref": "#/definitions/measurements"
-      },
-      "basic": {
-        "title": "Basic",
-        "$ref": "#/definitions/basic"
-      },
-      "binding": {
-        "title": "Binding",
-        "$ref": "#/definitions/binding"
-      },
-      "efficacy": {
-        "title": "Efficacy",
-        "$ref": "#/definitions/efficacy"
-      },
-      "in_vivo_data": {
-        "title": "In Vivo Data",
-        "$ref": "#/definitions/in_vivo_data"
-      },
-      "pk_in_silico": {
-        "title": "PK In Silico",
-        "$ref": "#/definitions/pk_in_silico"
-      },
-      "pk_in_vitro": {
-        "title": "PK In Vitro",
-        "$ref": "#/definitions/pk_in_vitro"
-      },
-      "ld50": {
-        "title": "LD50",
-        "$ref": "#/definitions/ld50"
-      },
-      "acute_dosing": {
-        "title": "Acute Dosing",
-        "$ref": "#/definitions/acute_dosing"
-      },
-      "chronic_dosing": {
-        "title": "Chronic Dosing",
-        "$ref": "#/definitions/chronic_dosing"
-      },
-      "teratogenicity": {
-        "title": "Teratogenicity",
-        "$ref": "#/definitions/teratogenicity"
-      },
-      "clinical_data": {
-        "$ref": "#/definitions/clinical_data"
+      "dependencies": {
+        "diagnosis": {
+          "oneOf": [
+            {
+              "properties": {
+                "diagnosis": {
+                  "enum": [
+                    "Alzheimer's",
+                    "Parkinson's",
+                    "Depression",
+                    "Epilepsy",
+                    "Healthy Subjects"
+                  ]
+                }
+              }
+            },
+            {
+              "properties": {
+                "diagnosis": {
+                  "enum": [
+                    "Other"
+                  ]
+                },
+                "diagnosis_other": {
+                  "title": "Other clinical Indication",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "diagnosis_other"
+              ]
+            }
+          ]
+        }
       }
     }
+  },
+  "type": "object",
+  "properties": {
+
+    "naming": {
+      "title": "Naming",
+      "$ref": "#/definitions/naming"
+    },
+    "measurements": {
+      "title": "Measurements",
+      "$ref": "#/definitions/measurements"
+    },
+    "basic": {
+      "title": "Basic",
+      "$ref": "#/definitions/basic"
+    },
+    "binding": {
+      "title": "Binding",
+      "$ref": "#/definitions/binding"
+    },
+    "efficacy": {
+      "title": "Efficacy",
+      "$ref": "#/definitions/efficacy"
+    },
+    "in_vivo_data": {
+      "title": "In Vivo Data",
+      "$ref": "#/definitions/in_vivo_data"
+    },
+    "pk_in_silico": {
+      "title": "PK In Silico",
+      "$ref": "#/definitions/pk_in_silico"
+    },
+    "pk_in_vitro": {
+      "title": "PK In Vitro",
+      "$ref": "#/definitions/pk_in_vitro"
+    },
+    "pk_in_vivo": {
+      "title": "PK In Vitro",
+      "$ref": "#/definitions/pk_in_vivo"
+    },
+    "ld50": {
+      "title": "LD50",
+      "$ref": "#/definitions/ld50"
+    },
+    "acute_dosing": {
+      "title": "Acute Dosing",
+      "$ref": "#/definitions/acute_dosing"
+    },
+    "chronic_dosing": {
+      "title": "Chronic Dosing",
+      "$ref": "#/definitions/chronic_dosing"
+    },
+    "teratogenicity": {
+      "title": "Teratogenicity",
+      "$ref": "#/definitions/teratogenicity"
+    },
+    "clinical_data": {
+      "$ref": "#/definitions/clinical_data"
+    }
   }
+}

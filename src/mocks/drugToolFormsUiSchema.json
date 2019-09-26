@@ -142,7 +142,6 @@
     },
     "water_soluble": {
       "ui:help": "Please indicate if the compund is soluble in aqueous solutions.",
-
       "ui:description": "",
       "ui:placeholder": "",
       "ui:widget": "radio"
@@ -251,10 +250,230 @@
       }
     }
   },
-  "in_vivo_data": {},
-  "pk_in_silico": {},
-  "pk_in_vitro": {},
-  "pk_in_vivo": {},
+  "in_vivo_data": {
+    "classNames": "experiments-list",
+    "ui:title": "In Vivo Data",
+    "ui:description": "Add  In Vivo experiments here. You can click the buttons to add or remove your experiments blah blah blah",
+    "experiments": {
+      "items": {
+        "ui:order": [
+          "name",
+          "reference",
+          "species",
+          "species_other",
+          "*"
+        ],
+        "name": {
+          "ui:placeholder": "Choose a unique name for this experiment",
+          "ui:description": ""
+        },
+        "reference": {
+          "ui:placeholder": "Enter reference",
+          "ui:description": ""
+        },
+        "species": {
+          "ui:placeholder": "Select from list",
+          "ui:help": "What species was used for this study?"
+        },
+        "species_other": {
+          "ui:placeholder": "If other, enter model species"
+        },
+        "strain": {
+          "ui:placeholder": "What strain of model was used?"
+        },
+        "outcome_measures": {
+          "ui:placeholder": "In a few sentences, describe the primary outcome measure",
+          "ui:help": "",
+          "ui:widget": "textarea"
+        },
+        "assay_description": {
+          "ui:placeholder": "In a few sentences, describe the assay and methods",
+          "ui:widget": "textarea",
+          "ui:help": ""
+        },
+        "age_range": {
+          "ui:help": "Please provide the age of the test subject at the time of testing.",
+          "classNames": "data-range",
+          "age_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "age_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
+        },
+        "sex": {
+          "ui:widget": "radio"
+        },
+        "ed50": {
+          "ui:placeholder": "",
+          "ui:help": "Please indicate the dose at which yeild 50 percent effectiveness in this study.",
+          "ui:widget": "radio"
+        },
+        "dose_range": {
+          "ui:help": "Please indicate the dose range over which you tested the compound",
+          "classNames": "data-range",
+          "dose_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "dose_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
+        },
+        "dose_regimen": {
+          "ui:help": "Please provide the dose regiment used in this study.",
+          "ui:widget": "radio"
+        },
+        "ui:placeholder": "Select acute for single dose; subchronic for dosing beyond acute treatment but < 1 month)"
+      },
+      "pretreatment_time": {
+        "ui:help": "Provide information on pretreatment time used for this experiment",
+        "ui:placeholder": "Provide information on pretreatment time used for this experiment"
+      },
+      "route": {
+        "ui:help": "",
+        "ui:placeholder": "Select from list"
+      },
+      "drug_formulation": {
+        "ui:placeholder": "In a few sentences, describe the compound formulation",
+        "ui:help": "Please provide the drug formulation for the compound of interest.",
+        "ui:widget": "textarea",
+        "ui:options": {
+          "rows": 10
+        }
+      },
+      "adverse_events_description": {
+        "ui:widget": "textarea",
+        "ui:placeholder": "Describe any unexpected or adverse events",
+        "ui:help": "Please indicate any adverse events that were observed during the study of this compound."
+      }
+    }
+  },
+  "pk_in_silico": {
+    "ui:title": "PK in Silico",
+    "ui:order": [
+      "partition_coefficient",
+      "*"
+    ],
+    "partition_coefficient": {
+      "ui:help": "Please provide the partition coefficient which is the ratio of concentrations of a compound in a mixture of two immiscible phases at equilibrium",
+      "ui:placeholder": "What is the partition coefficient between aqueous and lipophilic phases"
+    },
+    "dissociation_constant": {
+      "ui:help": "  Please provide the pKa value, which is one method used to indicate the strength of an acid. ",
+      "ui:placeholder": "Please provide the pKA value"
+    },
+    "molecular_weight": {
+      "ui:help": "Please provide the molecular weight of the compound in grams per mole (g/mol).",
+      "ui:placeholder": "What is the in silico molecular weight of the compound?"
+    }
+  },
+  "pk_in_vitro": {
+    "ui:title": "In Vitro Data",
+    "assay_description": {
+      "ui:help": "",
+      "ui:placeholder": "What is the in vitro cell permeability assay to estimate BBB penetration?"
+    },
+    "permeability": {
+      "ui:help": "Please provide the permeability of this compound to the blood brain barrier (BBB).",
+      "ui:widget": "textarea",
+      "ui:placeholder": "In a few sentences, describe the blood brian barrier permeability of this compound."
+    },
+    "lipophilicity": {
+      "ui:help": "Please provide the LogD, which is a log of partition of a chemical compound between the lipid and aqueous phases. The most popular lipid phase is octanol.",
+      "ui:placeholder": "What is the in vitro Drug lipophilicity coefficient?"
+    }
+  },
+  "pk_in_vivo": {
+    "classNames": "experiments-list",
+    "ui:title": "PK In Vivo",
+    "experiments": {
+      "items": {
+        "ui:order": [
+          "name",
+          "reference",
+          "species",
+          "species_other",
+          "*"
+        ],
+        "name": {
+          "ui:placeholder": "Choose a unique name for this experiment!",
+          "ui:description": ""
+        },
+        "reference": {
+          "ui:placeholder": "Enter reference",
+          "ui:description": ""
+        },
+        "species": {
+          "ui:placeholder": "Select from list",
+          "ui:help": "What species was used for this study?"
+        },
+        "species_other": {
+          "ui:placeholder": "If other, enter model species"
+        },
+        "strain": {
+          "ui:placeholder": "What strain of model was used?"
+        },
+        "age_range": {
+          "ui:help": "Please provide the age of the test subject at the time of testing.",
+          "classNames": "data-range",
+          "age_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "age_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
+        },
+        "sex": {
+          "ui:widget": "radio",
+          "ui:help": "Please indicate the sex of the subjects used in this study"
+        },
+        "clearance_rate": {
+          "ui:help": "Please provide the drug plasma clerance rate for the compound of interest",
+          "ui:placeholder": "What is the clearance rate?"
+        },
+        "half_life": {
+          "ui:help": "Please provide the drug half-life for the compound of interest",
+          "ui:placeholder": "What is the half-life?"
+        },
+        "tissue_concentration": {
+          "ui:help": "Please provide the tissue concentration for the compound of interest",
+          "ui:placeholder": "What is the tissue concentration?"
+        },
+        "plasma_protein_binding": {
+          "ui:help": "Please provide the plasma protein binding for the compound of interest",
+          "ui:placeholder": "What is the plasma protein binding?"
+        },
+        "liver_metabolism": {
+          "ui:help": "Please provide the liver metabolism for the compound of interest",
+          "ui:placeholder": "Describe the liver metabolism"
+        },
+        "fractional_bioavailability": {
+          "ui:help": "Please provide the bioavailability for the compound of interest",
+          "ui:placeholder": "What is the fractional bioavaliablity?"
+        },
+        "plasma_max_concentration": {
+          "ui:help": "Please provide the maximum tissue concentration for the compound of interest",
+          "ui:placeholder": "What is the plasma maximum concentration?"
+        },
+        "volume": {
+          "ui:help": "Please provide the tissue volume of distribution for the compound of interest",
+          "ui:placeholder": "What is the volume of distribution?"
+        }
+      }
+    }
+  },
   "ld50": {
     "classNames": "experiments-list",
     "ui:title": "LD50",
