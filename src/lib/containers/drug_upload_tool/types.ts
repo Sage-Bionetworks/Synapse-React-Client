@@ -36,7 +36,8 @@ export enum NavActionEnum {
 export enum StatusEnum {
   PROGRESS,
   ERROR,
-  SUCCESS,
+  SAVE_SUCCESS,
+  SUBMIT_SUCCESS,
   ERROR_CRITICAL
 }
 

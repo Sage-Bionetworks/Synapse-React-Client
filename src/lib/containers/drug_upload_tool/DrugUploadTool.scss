@@ -77,7 +77,7 @@
 
   /* ---------- layout ---------------*/
   $a: 100vh;
-  $b: 13rem;
+  $b: 30rem;
 
   .wrap {
     @include calc(height, #{$a} - #{$b});
@@ -90,6 +90,11 @@
     position: absolute;
     right: 0;
     top: 0;
+  }
+
+  .notification-area {
+    color: $action-color;
+    font-style: italic;
   }
 
   .inner-wrap {
