@@ -28,7 +28,7 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
   }
 
   public onCreateFormGroup(): void {
-    SynapseClient.createFormGroup('test form group 3', this.state.token!)
+    SynapseClient.createFormGroup('DrugUploadToolAlina', this.state.token!)
       .then((data: FormGroup) => {
         console.log('Successfully created FormGroup', data)
         this.setState({ formGroup: data })
@@ -166,10 +166,14 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
                 {
                   (this.state.myFormDataList) &&
                   <table>
-                    <tr>Form Data name<th>Data File Handle ID</th><th>Status</th><th>Rejection Reason</th></tr>
+                   <thead>
+                    <tr><th>Form Data name</th><th>Data File Handle ID</th><th>Status</th><th>Rejection Reason</th></tr>
+                    </thead>
+                    <tbody>
                     {this.state.myFormDataList.page.map((value) => {
                       return <tr><td>{value.name}</td><td>{value.dataFileHandleId}</td><td>{value.submissionStatus.state}</td><td>{value.submissionStatus.rejectionMessage}</td></tr>
                     })}
+                    </tbody>
                   </table>
                 }
                 {
@@ -178,10 +182,14 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
                 {
                   (this.state.formAdminFormDataList) &&
                   <table>
-                    <tr>Form Data name<th>Data File Handle ID</th><th>Status</th><th>Rejection Reason</th></tr>
+                    <thead>
+                    <tr><th>Form Data name</th><th>Data File Handle ID</th><th>Status</th><th>Rejection Reason</th></tr>
+                    </thead>
+                    <tbody>
                     {this.state.formAdminFormDataList.page.map((value) => {
                       return <tr><td>{value.name}</td><td>{value.dataFileHandleId}</td><td>{value.submissionStatus.state}</td><td>{value.submissionStatus.rejectionMessage}</td></tr>
                     })}
+                    </tbody>
                   </table>
                 }
               </>
