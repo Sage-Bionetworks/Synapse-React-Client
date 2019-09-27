@@ -159,7 +159,7 @@ describe('basic tests', () => {
 })
 
 describe('saving data file', () => {
-  it('should create formDtaa if there is not and ID', async () => {
+  it('should CREATE formData if there is not a formDataId', async () => {
     const { instance } = await createShallowComponent(props)
     SynapseClient.uploadFile = jest.fn(() =>
       Promise.resolve({ fileHandleId: '123' }),
@@ -177,7 +177,7 @@ describe('saving data file', () => {
     expect(update).not.toHaveBeenCalled()
   })
 
-  it('should create formDtaa if there is not and ID', async () => {
+  it('should UPDATE formData if there is formDataId', async () => {
     const _props = {
       ...props,
       ...{ searchParams: { formGroupId, formDataId } },
@@ -201,7 +201,7 @@ describe('saving data file', () => {
 })
 
 describe('submitting data file', () => {
-  it('should create formDtaa if there is not and ID', async () => {
+  it('should create formData if there is not and ID', async () => {
     const { instance } = await createShallowComponent(props)
     SynapseClient.uploadFile = jest.fn(() =>
       Promise.resolve({ fileHandleId: '123' }),
@@ -216,27 +216,5 @@ describe('submitting data file', () => {
     await instance.submitForm(formData)
     expect(save).toHaveBeenCalled()
     expect(submit).toHaveBeenCalled()
-  })
-
-  it('should create formDtaa if there is not and ID', async () => {
-    const _props = {
-      ...props,
-      ...{ searchParams: { formGroupId, formDataId } },
-    }
-    const { instance } = await createShallowComponent(_props)
-    SynapseClient.uploadFile = jest.fn(() =>
-      Promise.resolve({ fileHandleId: '123' }),
-    )
-    const create = (SynapseClient.createFormData = jest.fn(() =>
-      Promise.resolve(JSON.stringify(formschemaJson)),
-    ))
-    const update = (SynapseClient.updateFormData = jest.fn(() =>
-      Promise.resolve(JSON.stringify(formschemaJson)),
-    ))
-    const formData = _.cloneDeep(formschemaJson)
-    _.set(formData, props.fileNamePath, 'someName')
-    await instance.saveToFile(formData)
-    expect(create).not.toHaveBeenCalled()
-    expect(update).toHaveBeenCalled()
   })
 })

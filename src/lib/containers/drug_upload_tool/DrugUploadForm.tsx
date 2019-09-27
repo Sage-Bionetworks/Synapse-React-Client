@@ -143,7 +143,8 @@ export default class DrugUploadForm extends React.Component<
 
   componentDidUpdate(prevProps: DrugUploadFormProps) {
     const shouldUpdate = this.props.callbackStatus !== prevProps.callbackStatus
-    if (shouldUpdate) {
+    const isSuccess = this.props.callbackStatus === StatusEnum.SAVE_SUCCESS  || this.props.callbackStatus === StatusEnum.SUBMIT_SUCCESS
+    if (shouldUpdate && isSuccess) {
       this.setState({ hasUnsavedChanges: false })
     }
   }

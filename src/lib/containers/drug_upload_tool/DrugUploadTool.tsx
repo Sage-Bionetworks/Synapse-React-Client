@@ -133,9 +133,10 @@ class DrugUploadTool extends React.Component<
       notification: { type: status, message: message },
       status: status,
     })
+    //this will show the update message for 7 seconds
     setTimeout(() => {
       this.setState({ status: undefined })
-    }, 18000)
+    }, 7000)
   }
 
   onError = (error: any) => {
@@ -150,7 +151,6 @@ class DrugUploadTool extends React.Component<
     })
   }
 
-  /* alina TODO! This will change*/
   submitForm = async ({ formData }: any) => {
     await this.saveToFile(formData)
 
