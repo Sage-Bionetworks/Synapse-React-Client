@@ -77,19 +77,27 @@
 
   /* ---------- layout ---------------*/
   $a: 100vh;
-  $b: 13rem;
+  $b: 30rem;
 
   .wrap {
     @include calc(height, #{$a} - #{$b});
     overflow: hidden;
     width: 100%;
     clear: both;
+    padding: 1rem 0 1rem 2rem;
+
+    background-color: $gray-light;
   }
 
   .right-top-actions {
     position: absolute;
     right: 0;
     top: 0;
+  }
+
+  .notification-area {
+    color: $action-color;
+    font-style: italic;
   }
 
   .inner-wrap {
@@ -105,6 +113,10 @@
 
       margin-bottom: 1rem;
     }
+    .json-forms-menu {
+      padding-right: 3rem;
+
+    }
   }
 
   .form-wrap {
@@ -112,6 +124,7 @@
     flex-wrap: wrap;
     flex-basis: 100%;
     flex: 3;
+  
   }
   .scroll-area {
     height: 100%;
@@ -140,7 +153,7 @@
   .has-error.checkbox-inline label,
   .has-error.radio label,
   .has-error.radio-inline label {
-    color: $action-color;
+    color: $red-error2
   }
 
   input[type='checkbox']:checked + label::before,
@@ -148,16 +161,34 @@
     color: $action-color;
   }
 
-  has-error .form-control {
+  .has-error .form-control {
     border-color: $red-error2;
   }
+  
 
   /*--- form ---*/
   .submissionInputForm {
     margin-right: 10rem;
+  
+    .help-block {
+font-style: italic;
+font-weight: lighter;
+font-size: 1.25rem;
+
+
+  }
 
     &.no-help .help-block {
       display: none;
+    }
+
+    label.control-label {
+      font-weight: normal;
+      color: $gray-formtext;
+    }
+
+    .form-group {
+      margin-bottom: 2rem
     }
 
     .checkbox > label::before,

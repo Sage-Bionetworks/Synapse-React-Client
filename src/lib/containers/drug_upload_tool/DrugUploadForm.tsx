@@ -10,7 +10,13 @@ import {
   ErrorListProps,
 } from 'react-jsonschema-form'
 
-import { Step, StepStateEnum, NavActionEnum, SummaryFormat } from './types'
+import {
+  Step,
+  StepStateEnum,
+  NavActionEnum,
+  SummaryFormat,
+  StatusEnum,
+} from './types'
 import Header from './Header'
 import StepsSideNav from './StepsSideNav'
 import { NavButtons, NextStepLink } from './NavButtons'
@@ -18,16 +24,16 @@ import DataDebug from './DataDebug'
 import SummaryTable from './SummaryTable'
 import WarningModal from './WarningModal'
 import Switch from 'react-switch'
+import { Prompt } from 'react-router-dom'
 
 export type FormSchema = {
   properties?: any
   definitions?: any
 }
 
-
-export interface  IFormData {
+export interface IFormData {
   [screen_name: string]: {
-    included?:  boolean
+    included?: boolean
   }
 }
 
@@ -42,10 +48,11 @@ export type DrugUploadFormProps = {
   onSave: Function
   formTitle: string
   isWizardMode?: boolean
+  callbackStatus?: StatusEnum
 }
 
 type DrugUploadFormState = {
-  formData: IFormData// form data that prepopulates the form
+  formData: IFormData // form data that prepopulates the form
   currentStep: Step
   nextStep?: Step
   steps: Step[]
@@ -54,6 +61,7 @@ type DrugUploadFormState = {
   doShowErrors: boolean //if we should show error summary at the top of the page
   doShowHelp: boolean
   modalContext?: { action: Function; arguments: any[] }
+  hasUnsavedChanges: boolean
 }
 
 type RulesEvent = {
@@ -72,7 +80,6 @@ export interface SummaryFormat {
   value: string
 }
 
-
 export default class DrugUploadForm extends React.Component<
   DrugUploadFormProps,
   DrugUploadFormState
@@ -80,6 +87,7 @@ export default class DrugUploadForm extends React.Component<
   excludeWarningText = `This action will clear the entire contents of this page. Only this page will be effected.
   Are you sure you want to clear the data enterred on this page?`
   excludeWarningHeader = `Clear Entered Data`
+  unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
   formRef: any //ref to form for submission
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: {}
@@ -111,19 +119,38 @@ export default class DrugUploadForm extends React.Component<
       formData: props.formData,
       doShowErrors: false,
       doShowHelp: true,
+      hasUnsavedChanges: false,
     }
   }
 
-     // Setup the `beforeunload` event listener
-     setupBeforeUnloadListener = () => {
-      window.addEventListener("beforeunload", (ev) => {
-          ev.preventDefault();
-          return ev.returnValue = 'Please make sure your data is saved before leaving';
-      });
-  };
+  onUnload = (ev: any) => {
+    {
+      if (this.state.hasUnsavedChanges) {
+        ev.preventDefault()
+        return (ev.returnValue = this.unsavedDataWarning)
+      }
+      return
+    }
+  }
+  // Setup the `beforeunload` event listener
+  setupBeforeUnloadListener = () => {
+    window.addEventListener('beforeunload', this.onUnload)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.onUnload)
+  }
+
+  componentDidUpdate(prevProps: DrugUploadFormProps) {
+    const shouldUpdate = this.props.callbackStatus !== prevProps.callbackStatus
+    const isSuccess = this.props.callbackStatus === StatusEnum.SAVE_SUCCESS  || this.props.callbackStatus === StatusEnum.SUBMIT_SUCCESS
+    if (shouldUpdate && isSuccess) {
+      this.setState({ hasUnsavedChanges: false })
+    }
+  }
 
   componentDidMount() {
-    this.setupBeforeUnloadListener();
+    this.setupBeforeUnloadListener()
     if (_.isEmpty(this.state.formData) && !this.props.isWizardMode) {
       const result = {}
       const defs = this.props.schema.definitions
@@ -195,8 +222,7 @@ export default class DrugUploadForm extends React.Component<
     //we don't wnat to display errors on the page - this will be done explicitly in validation
     this.formRef.current.setState({ errorSchema: {} })
     //in wizard mode we can only move forwards (don't know next step yet) or backwards (do know next step)
-    const isMoveForwardInWizardMode = this.props.isWizardMode && !nextStepId;
-
+    const isMoveForwardInWizardMode = this.props.isWizardMode && !nextStepId
 
     //previousStack is used for 'back' navigation is wizard mode.
     //only need to do it if moving forward i.e. nextStepId is undefined
@@ -205,12 +231,11 @@ export default class DrugUploadForm extends React.Component<
     }
 
     if (!isError) {
-      currentStepState = StepStateEnum.COMPLETED;
+      currentStepState = StepStateEnum.COMPLETED
 
-      if (!isMoveForwardInWizardMode && this.props.isWizardMode ) {
+      if (!isMoveForwardInWizardMode && this.props.isWizardMode) {
         currentStepState = StepStateEnum.TODO
       }
-
     } else {
       currentStepState = StepStateEnum.ERROR
     }
@@ -230,21 +255,20 @@ export default class DrugUploadForm extends React.Component<
     })
     //if we are in wizard mode we want to make sure that we include the step we are about to go to
     if (isMoveForwardInWizardMode) {
-    _.set(formData, `${nextStepId}.included`, true)
+      _.set(formData, `${nextStepId}.included`, true)
     }
-   
 
     //at this point the form is valid and submitted and the data reflects the latest
     const nextStep = this.state.steps.find(step => step.id === nextStepId)!
     // clean up unused screens in wizard before getting to submit
-    if (this.props.isWizardMode &&  nextStep.final) {
-      Object.keys(formData).forEach(key=> {
+    if (this.props.isWizardMode && nextStep.final) {
+      Object.keys(formData).forEach(key => {
         if (formData[key].included === undefined) {
           formData[key] = {}
         }
       })
     }
-   
+
     this.saveStepState(previousStack, steps, nextStep!, formData)
   }
 
@@ -262,7 +286,6 @@ export default class DrugUploadForm extends React.Component<
       formData,
       hasValidated: false,
       doShowErrors: false,
-
     })
   }
 
@@ -270,15 +293,14 @@ export default class DrugUploadForm extends React.Component<
   goPrevious = async (formData: any, isError: boolean) => {
     let previousStepId: string | undefined
     const previousStack: string[] = [...this.state.previousStepIds]
-    // in wizard mode we go to the previously visited screen. 
+    // in wizard mode we go to the previously visited screen.
     // In regular mode go to the screen with previous index
     if (this.props.isWizardMode) {
       previousStepId = previousStack.pop()
-      if(! this.isSubmitScreen()) {
-        //since we don't know if we'll get back to that step again - exclude it. We will include it again if we 
+      if (!this.isSubmitScreen()) {
+        //since we don't know if we'll get back to that step again - exclude it. We will include it again if we
         // get to it.
         _.set(formData, `${this.state.currentStep.id}.included`, undefined)
-
       }
     } else {
       const currentIndex = _.findIndex(this.state.steps, {
@@ -296,7 +318,6 @@ export default class DrugUploadForm extends React.Component<
   triggerAction = (navAction: NavActionEnum) => {
     // we don't need to validate on save so bypassing submit
     if (navAction === NavActionEnum.SAVE) {
-      //const data = this.doSave(this.state.formData);
       return this.props.onSave(this.state.formData)
     } else {
       this.navAction = navAction
@@ -358,20 +379,10 @@ export default class DrugUploadForm extends React.Component<
   handleOnChange({ formData }: any) {
     //this is just for form updates. submit screen goes different route
     if (!this.isSubmitScreen()) {
-      this.setState({ formData })
+      const hasUnsavedChanges = !_.isEqual(this.state.formData, formData)
+      this.setState({ formData, hasUnsavedChanges })
     }
   }
-
-  /*doSave = (formData: any): object => {
-    const updatedFormData = {
-      ...this.state.formData,
-      ...formData
-    };
-    this.setState({
-      formData: { ...{}, ...updatedFormData }
-    });
-    return updatedFormData;
-  };*/
 
   performAction(navAction: NavActionEnum, hasError: boolean) {
     const formData = this.state.formData
@@ -392,8 +403,6 @@ export default class DrugUploadForm extends React.Component<
       }
 
       case NavActionEnum.SUBMIT: {
-        //const data = this.doSave(formData);
-        alert('Do some kind of submission thing')      
         this.props.onSubmit(formData)
       }
       case NavActionEnum.VALIDATE: {
@@ -473,6 +482,19 @@ export default class DrugUploadForm extends React.Component<
         currentStep,
       }
     })
+  }
+
+  private renderNotification = (status?: StatusEnum): JSX.Element => {
+    if (status === StatusEnum.SAVE_SUCCESS) {
+      return <div className="notification-area"> Successfully saved </div>
+    }
+    if (status === StatusEnum.SUBMIT_SUCCESS) {
+      return <div className="notification-area"> Successfully submitted </div>
+    }
+    if (status === StatusEnum.PROGRESS) {
+      return <div className="notification-area"> working on it ....</div>
+    }
+    return <></>
   }
 
   // displays the text for screens that don't have any form data
@@ -617,12 +639,14 @@ export default class DrugUploadForm extends React.Component<
   render() {
     return (
       <div className="outter-wrap">
+        <Prompt
+          when={this.state.hasUnsavedChanges}
+          message={this.unsavedDataWarning}
+        />
         <Header
           bodyText={this.state.currentStep.description}
           title={this.props.formTitle}
         ></Header>
-
-        {/* alina TODO: potentially not needed. Check after submit and save are implemented */}
         <div>
           <div className="inner-wrap">
             <StepsSideNav
@@ -632,7 +656,7 @@ export default class DrugUploadForm extends React.Component<
             ></StepsSideNav>
             <div className="form-wrap">
               <div className="form-title">{this.state.currentStep.title}</div>
-
+              {this.renderNotification(this.props.callbackStatus)}
               <div className="right-top-actions">
                 {!this.state.currentStep.static && (
                   <button
@@ -728,7 +752,6 @@ export default class DrugUploadForm extends React.Component<
             </div>
           </div>
         </div>
-
         {this.state.modalContext && (
           <WarningModal
             show={true}
@@ -741,7 +764,6 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-
         <DataDebug
           formSchema={this.getSchema(this.state.currentStep)}
           formData={this.state.formData}
