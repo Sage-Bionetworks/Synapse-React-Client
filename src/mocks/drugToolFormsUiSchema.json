@@ -329,8 +329,8 @@
         },
         "dose_regimen": {
           "ui:help": "Please provide the dose regiment used in this study.",
-          "ui:widget": "radio"
-        },
+          "ui:widget": "radio",
+      
         "ui:placeholder": "Select acute for single dose; subchronic for dosing beyond acute treatment but < 1 month)"
       },
       "pretreatment_time": {
@@ -355,7 +355,8 @@
         "ui:help": "Please indicate any adverse events that were observed during the study of this compound."
       }
     }
-  },
+  }
+},
   "pk_in_silico": {
     "ui:title": "PK in Silico",
     "ui:order": [
@@ -404,7 +405,7 @@
           "*"
         ],
         "name": {
-          "ui:placeholder": "Choose a unique name for this experiment!",
+          "ui:placeholder": "Choose a unique name for this experiment",
           "ui:description": ""
         },
         "reference": {
@@ -479,249 +480,386 @@
     "ui:title": "LD50",
     "ui:description": "Add experiments here. You can click the buttons to add or remove your experiments blah blah blah",
     "experiments": {
+
       "items": {
+
+        "ui:order": [
+          "name",
+          "reference",
+          "species",
+          "species_other",
+          "*"
+        ],
         "name": {
-          "ui:title": "Experiment Name",
-          "ui:description": "Test description"
+          "ui:placeholder": "Choose a unique name for this experiment",
+          "ui:description": ""
+        },
+        "reference": {
+          "ui:placeholder": "Enter reference",
+          "ui:description": ""
         },
         "species": {
-          "ui:title": "What species is the the model?"
+          "ui:placeholder": "Select from list",
+          "ui:help": "What species was used for this study?"
         },
         "species_other": {
-          "ui:title": " If other, indicate species"
+          "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:title": "Model Strain"
+          "ui:placeholder": "What strain of model was used?"
         },
-        "age": {
-          "ui:title": "Test Subject Age (in years)"
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:placeholder": "In a few sentences, describe the assay and methods"
+        },
+        
+        "age_range": {
+          "ui:help": "What was the age of the test subjects.",
+          "classNames": "data-range",
+          "age_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "age_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
         },
         "sex": {
-          "ui:title": "Test Subject Sex",
-          "ui:widget": "radio"
+          "ui:widget": "radio",
+          "ui:help": "Please indicate the sex of the subjects used in this study"
         },
+
+
+
+
+
+
+
+
         "duration": {
           "ui:title": "Study Duration",
           "ui:placeholder": "What was the duration of the study?"
         },
         "dose_range": {
-          "ui:title": "What was the dose range tested?",
+          "ui:help": "Please indicate the dose range over which you tested the compound",
+          "classNames": "data-range",
           "dose_range_min": {
-            "ui:title": "Min"
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
           },
           "dose_range_max": {
-            "ui:title": "Max"
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
           }
         },
+     
         "ld50": {
-          "ui:title": "LD50"
+          "ui:help": "",
+          "ui:placeholder": "What is the LD50?"
         },
         "route": {
-          "ui: title": "What is the route of administration?"
+          "ui:help": "",
+          "ui:placeholder": "Select from list"
         },
-        "vehicle_formulation": {
-          "ui:title": "Vehicle Formulation",
+        "drug_formulation": {
+          "ui:placeholder": "In a few sentences, describe the compound formulation",
           "ui:widget": "textarea",
           "ui:options": {
             "rows": 10
           }
-        },
-        "ui:order": [
-          "name",
-          "species",
-          "species_other",
-          "*"
-        ],
-        "assay_description": {
-          "ui:widget": "textarea",
-          "ui:title": "Assay and Methods"
         }
+       
+       
       }
     }
   },
   "acute_dosing": {
+    "classNames": "experiments-list",
+    "ui:title": "Acute Dosing",
+    "ui:description": "Add experiments here. You can click the buttons to add or remove your experiments blah blah blah",
     "experiments": {
+
       "items": {
-        "classNames": "task-title foo-bar",
+
+        "ui:order": [
+          "name",
+          "reference",
+          "species",
+          "species_other",
+          "*"
+        ],
         "name": {
-          "ui:title": "Experiment Name"
+          "ui:placeholder": "Choose a unique name for this experiment",
+          "ui:description": ""
+        },
+        "reference": {
+          "ui:placeholder": "Enter reference",
+          "ui:description": ""
         },
         "species": {
-          "ui:title": "What species is the the model?"
+          "ui:placeholder": "Select from list",
+          "ui:help": "What species was used for this study?"
         },
         "species_other": {
-          "ui:title": " If other, indicate species"
+          "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:title": "Model Strain"
+          "ui:placeholder": "What strain of model was used?"
         },
-        "age": {
-          "ui:title": "Test Subject Age (in years)"
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:placeholder": "In a few sentences, describe the assay and methods"
+        },
+        
+        "age_range": {
+          "ui:help": "What was the age of the test subjects.",
+          "classNames": "data-range",
+          "age_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "age_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
         },
         "sex": {
-          "ui:title": "Test Subject Sex",
-          "ui:widget": "radio"
+          "ui:widget": "radio",
+          "ui:help": "Please indicate the sex of the subjects used in this study"
         },
         "duration": {
           "ui:title": "Study Duration",
           "ui:placeholder": "What was the duration of the study?"
         },
         "dose_range": {
-          "ui:title": "What was the dose range tested?",
+          "ui:help": "Please indicate the dose range over which you tested the compound",
+          "classNames": "data-range",
           "dose_range_min": {
-            "ui:title": "Min"
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
           },
           "dose_range_max": {
-            "ui:title": "Max"
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
           }
         },
-        "ld50": {
-          "ui:title": "LD50"
-        },
+
         "route": {
-          "ui: title": "What is the route of administration?"
+          "ui:help": "",
+          "ui:placeholder": "Select from list"
         },
-        "vehicle_formulation": {
-          "ui:title": "Vehicle Formulation",
+        "drug_formulation": {
+          "ui:placeholder": "In a few sentences, describe the compound formulation",
           "ui:widget": "textarea",
           "ui:options": {
             "rows": 10
           }
         },
-        "ui:order": [
-          "name",
-          "species",
-          "species_other",
-          "*"
-        ],
-        "assay_description": {
+        "adverse_events_description": {
           "ui:widget": "textarea",
-          "ui:title": "Assay and Methods"
+          "ui:placeholder": "Describe any unexpected or adverse events",
+          "ui:help": "Please indicate any adverse events that were observed during the study of this compound."
         }
+       
+       
       }
     }
   },
   "chronic_dosing": {
+    "classNames": "experiments-list",
+    "ui:title": "Chronic Dosing",
+    "ui:description": "Add experiments here. You can click the buttons to add or remove your experiments blah blah blah",
     "experiments": {
+
       "items": {
-        "classNames": "task-title foo-bar",
+
+        "ui:order": [
+          "name",
+          "reference",
+          "species",
+          "species_other",
+          "*"
+        ],
         "name": {
-          "ui:title": "Experiment Name"
+          "ui:placeholder": "Choose a unique name for this experiment",
+          "ui:description": ""
+        },
+        "reference": {
+          "ui:placeholder": "Enter reference",
+          "ui:description": ""
         },
         "species": {
-          "ui:title": "What species is the the model?"
+          "ui:placeholder": "Select from list",
+          "ui:help": "What species was used for this study?"
         },
         "species_other": {
-          "ui:title": " If other, indicate species"
+          "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:title": "Model Strain"
+          "ui:placeholder": "What strain of model was used?"
         },
-        "age": {
-          "ui:title": "Test Subject Age"
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:placeholder": "In a few sentences, describe the assay and methods"
+        },
+        
+        "age_range": {
+          "ui:help": "What was the age of the test subjects.",
+          "classNames": "data-range",
+          "age_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "age_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
         },
         "sex": {
-          "ui:title": "Test Subject Sex",
-          "ui:widget": "radio"
+          "ui:widget": "radio",
+          "ui:help": "Please indicate the sex of the subjects used in this study"
         },
         "duration": {
           "ui:title": "Study Duration",
           "ui:placeholder": "What was the duration of the study?"
         },
         "dose_range": {
-          "ui:title": "What was the dose range tested?",
+          "ui:help": "Please indicate the dose range over which you tested the compound",
+          "classNames": "data-range",
           "dose_range_min": {
-            "ui:title": "Min"
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
           },
           "dose_range_max": {
-            "ui:title": "Max"
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
           }
         },
-        "ld50": {
-          "ui:title": "LD50"
-        },
+
         "route": {
-          "ui: title": "What is the route of administration?"
+          "ui:help": "",
+          "ui:placeholder": "Select from list"
         },
-        "vehicle_formulation": {
-          "ui:title": "Vehicle Formulation",
+        "drug_formulation": {
+          "ui:placeholder": "In a few sentences, describe the compound formulation",
           "ui:widget": "textarea",
           "ui:options": {
             "rows": 10
           }
         },
-        "ui:order": [
-          "name",
-          "species",
-          "species_other",
-          "*"
-        ],
-        "assay_description": {
+        "adverse_events_description": {
           "ui:widget": "textarea",
-          "ui:title": "Assay and Methods"
+          "ui:placeholder": "Describe any unexpected or adverse events",
+          "ui:help": "Please indicate any adverse events that were observed during the study of this compound."
         }
+       
+       
       }
     }
   },
   "teratogenicity": {
     "experiments": {
+
       "items": {
-        "classNames": "task-title foo-bar",
+
+        "ui:order": [
+          "name",
+          "reference",
+          "species",
+          "species_other",
+          "*"
+        ],
         "name": {
-          "ui:title": "Experiment Name"
+          "ui:placeholder": "Choose a unique name for this experiment",
+          "ui:description": ""
+        },
+        "reference": {
+          "ui:placeholder": "Enter reference",
+          "ui:description": ""
         },
         "species": {
-          "ui:title": "What species is the the model?"
+          "ui:placeholder": "Select from list",
+          "ui:help": "What species was used for this study?"
         },
         "species_other": {
-          "ui:title": " If other, indicate species"
+          "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:title": "Model Strain"
+          "ui:placeholder": "What strain of model was used?"
         },
-        "age": {
-          "ui:title": "Test Subject Age"
+        "assay_description": {
+          "ui:widget": "textarea",
+          "ui:placeholder": "In a few sentences, describe the assay and methods"
+        },
+        
+        "age_range": {
+          "ui:help": "What was the age of the test subjects.",
+          "classNames": "data-range",
+          "age_range_min": {
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
+          },
+          "age_range_max": {
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
+          }
         },
         "sex": {
-          "ui:title": "Test Subject Sex",
-          "ui:widget": "radio"
+          "ui:widget": "radio",
+          "ui:help": "Please indicate the sex of the subjects used in this study"
         },
         "duration": {
           "ui:title": "Study Duration",
           "ui:placeholder": "What was the duration of the study?"
         },
         "dose_range": {
-          "ui:title": "What was the dose range tested?",
+          "ui:help": "Please indicate the dose range over which you tested the compound",
+          "classNames": "data-range",
           "dose_range_min": {
-            "ui:title": "Min"
+            "ui:widget": "updown",
+            "ui:help": "",
+            "ui:placeholder": ""
           },
           "dose_range_max": {
-            "ui:title": "Max"
+            "ui:help": "",
+            "ui:widget": "updown",
+            "ui:placeholder": ""
           }
         },
-        "ld50": {
-          "ui:title": "LD50"
-        },
+
         "route": {
-          "ui: title": "What is the route of administration?"
+          "ui:help": "",
+          "ui:placeholder": "Select from list"
         },
-        "vehicle_formulation": {
-          "ui:title": "Vehicle Formulation",
+        "drug_formulation": {
+          "ui:placeholder": "In a few sentences, describe the compound formulation",
           "ui:widget": "textarea",
           "ui:options": {
             "rows": 10
           }
         },
-        "ui:order": [
-          "name",
-          "species",
-          "species_other",
-          "*"
-        ],
-        "assay_description": {
+        "adverse_events_description": {
           "ui:widget": "textarea",
-          "ui:title": "Assay and Methods"
+          "ui:placeholder": "Describe any unexpected or adverse events",
+          "ui:help": "Please indicate any adverse events that were observed during the study of this compound."
         }
+       
+       
       }
     }
   },

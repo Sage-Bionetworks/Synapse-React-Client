@@ -81,67 +81,135 @@
     },
     "ld50_item": {
       "type": "object",
-      "required": [],
+      "required": [
+        "species",
+        "strain",
+        "sex",
+        "route"
+      ],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
         },
         "species": {
           "type": "string",
+          "title": "What species was used?",
           "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
             "Mouse",
             "Rat",
-            "Monkey",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
             "Other"
           ],
-          "uniqueItems": true,
-          "default": "Mouse"
+          "uniqueItems": true
         },
         "strain": {
-          "type": "string"
+          "type": "string",
+          "title": "Model strain"
         },
         "assay_description": {
-          "type": "string"
+          "type": "string",
+          "title": "Assay Description"
         },
-        "age": {
-          "type": "string"
+        "age_range": {
+          "type": "object",
+          "title": "Subject age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0
+            }
+          }
         },
         "sex": {
           "type": "string",
+          "title": "Subject sex",
           "enum": [
+            "male",
+            "female",
+            "both"
+          ],
+          "enumNames": [
             "Male",
             "Female",
             "Both"
-          ],
-          "default": "Male"
+          ]
         },
         "duration": {
-          "type": "string"
+          "type": "string",
+          "title": "Study duration"
         },
-        "dose-range": {
+        "dose_range": {
           "type": "object",
+          "title": "What was the dose range tested (mg/kg)",
           "properties": {
             "dose_range_min": {
+              "title": "Minimum",
               "type": "number"
             },
             "dose_range_max": {
+              "title": "Maximum",
               "type": "number"
             }
           }
         },
         "ld50": {
-          "type": "string"
+          "type": "string",
+          "title": "LD50"
         },
         "route": {
-          "type": "string",
-          "enum": [
-            "TO-DO-1",
-            "TO-DO-2"
-          ],
-          "default": "TO-DO-1"
+          "type": "array",
+          "title": "What was the route of administration?",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          }
         },
-        "vehicle_formulation": {
-          "type": "string"
+        "drug_formulation": {
+          "type": "string",
+          "title": "Drug Formulation"
         }
       },
       "dependencies": {
@@ -151,9 +219,12 @@
               "properties": {
                 "species": {
                   "enum": [
-                    "Mouse",
-                    "Rat",
-                    "Monkey"
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
                   ]
                 }
               },
@@ -163,7 +234,520 @@
               "properties": {
                 "species": {
                   "enum": [
-                    "Other"
+                    "other"
+                  ]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "species_other"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "acute_dosing_item": {
+      "type": "object",
+      "required": [
+        "species",
+        "strain",
+        "sex",
+        "route"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "species": {
+          "type": "string",
+          "title": "What species was used?",
+          "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
+            "Mouse",
+            "Rat",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "strain": {
+          "type": "string",
+          "title": "Model strain"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Assay Description"
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Subject age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "sex": {
+          "type": "string",
+          "title": "Subject sex",
+          "enum": [
+            "male",
+            "female",
+            "both"
+          ],
+          "enumNames": [
+            "Male",
+            "Female",
+            "Both"
+          ]
+        },
+        "duration": {
+          "type": "string",
+          "title": "Study duration"
+        },
+        "dose_range": {
+          "type": "object",
+          "title": "What was the dose range tested (mg/kg)",
+          "properties": {
+            "dose_range_min": {
+              "title": "Minimum",
+              "type": "number"
+            },
+            "dose_range_max": {
+              "title": "Maximum",
+              "type": "number"
+            }
+          }
+        },
+        "route": {
+          "type": "array",
+          "title": "What was the route of administration?",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          }
+        },
+        "drug_formulation": {
+          "type": "string",
+          "title": "Drug Formulation"
+        },
+        "adverse_events_description": {
+          "type": "string",
+          "title": "Adverse events"
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "other"
+                  ]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "species_other"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "chronic_dosing_item": {
+      "type": "object",
+      "required": [
+        "species",
+        "strain",
+        "sex",
+        "route"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "species": {
+          "type": "string",
+          "title": "What species was used?",
+          "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
+            "Mouse",
+            "Rat",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "strain": {
+          "type": "string",
+          "title": "Model strain"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Assay Description"
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Subject age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "sex": {
+          "type": "string",
+          "title": "Subject sex",
+          "enum": [
+            "male",
+            "female",
+            "both"
+          ],
+          "enumNames": [
+            "Male",
+            "Female",
+            "Both"
+          ]
+        },
+        "duration": {
+          "type": "string",
+          "title": "Study duration"
+        },
+        "dose_range": {
+          "type": "object",
+          "title": "What was the dose range tested (mg/kg)",
+          "properties": {
+            "dose_range_min": {
+              "title": "Minimum",
+              "type": "number"
+            },
+            "dose_range_max": {
+              "title": "Maximum",
+              "type": "number"
+            }
+          }
+        },
+        "route": {
+          "type": "array",
+          "title": "What was the route of administration?",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          }
+        },
+        "drug_formulation": {
+          "type": "string",
+          "title": "Drug Formulation"
+        },
+        "adverse_events_description": {
+          "type": "string",
+          "title": "Adverse events"
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "other"
+                  ]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "species_other"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "teratogenicity_item": {
+      "type": "object",
+      "required": [
+        "species",
+        "strain",
+        "sex",
+        "route"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Experiment Name"
+        },
+        "reference": {
+          "type": "string",
+          "title": "If this study has been published, please provide a reference."
+        },
+        "species": {
+          "type": "string",
+          "title": "What species was used?",
+          "enum": [
+            "mouse",
+            "rat",
+            "non_human_primate",
+            "dog",
+            "ferret",
+            "rabbit",
+            "other"
+          ],
+          "enumNames": [
+            "Mouse",
+            "Rat",
+            "Non Human Primate",
+            "Dog",
+            "Ferret",
+            "Rabbit",
+            "Other"
+          ],
+          "uniqueItems": true
+        },
+        "strain": {
+          "type": "string",
+          "title": "Model strain"
+        },
+        "assay_description": {
+          "type": "string",
+          "title": "Assay Description"
+        },
+        "age_range": {
+          "type": "object",
+          "title": "Subject age (months)",
+          "properties": {
+            "age_range_min": {
+              "title": "Minimum",
+              "type": "number",
+              "minimum": 0
+            },
+            "age_range_max": {
+              "title": "Maximum",
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "sex": {
+          "type": "string",
+          "title": "Subject sex",
+          "enum": [
+            "male",
+            "female",
+            "both"
+          ],
+          "enumNames": [
+            "Male",
+            "Female",
+            "Both"
+          ]
+        },
+        "duration": {
+          "type": "string",
+          "title": "Study duration"
+        },
+        "dose_range": {
+          "type": "object",
+          "title": "What was the dose range tested (mg/kg)",
+          "properties": {
+            "dose_range_min": {
+              "title": "Minimum",
+              "type": "number"
+            },
+            "dose_range_max": {
+              "title": "Maximum",
+              "type": "number"
+            }
+          }
+        },
+        "route": {
+          "type": "array",
+          "title": "What was the route of administration?",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "oral",
+              "sublingual",
+              "nasal",
+              "injection",
+              "transdermal",
+              "intrathecal",
+              "formulated_in_food",
+              "formulated_in_drinking_water"
+            ],
+            "enumNames": [
+              "Oral",
+              "Sublingual",
+              "Nasal",
+              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
+              "Transdermal",
+              "Intrathecal",
+              "Formulated in Food",
+              "Formulated in Drinking Water"
+            ]
+          }
+        },
+        "drug_formulation": {
+          "type": "string",
+          "title": "Drug Formulation"
+        },
+        "adverse_events_description": {
+          "type": "string",
+          "title": "Adverse events"
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "other"
                   ]
                 },
                 "species_other": {
@@ -625,8 +1209,6 @@
         }
       }
     },
-  
-
     "naming": {
       "type": "object",
       "required": [
@@ -1024,20 +1606,20 @@
     "acute_dosing": {
       "type": "object",
       "properties": {
-        "items": {
+        "experiments": {
           "type": "array",
-          "item": {
-            "$ref": "#/definitions/ld50_item"
+          "items": {
+            "$ref": "#/definitions/acute_dosing_item"
           }
         }
       }
     },
     "chronic_dosing": {
       "properties": {
-        "items": {
+        "experiments": {
           "type": "array",
-          "item": {
-            "$ref": "#/definitions/ld50_item"
+          "items": {
+            "$ref": "#/definitions/chronic_dosing_item"
           }
         }
       }
@@ -1045,11 +1627,11 @@
     "teratogenicity": {
       "type": "object",
       "properties": {
-        "items": {
+        "experiments": {
           "type": "array",
           "title": "Experiments",
-          "item": {
-            "$ref": "#/definitions/ld50_item"
+          "items": {
+            "$ref": "#/definitions/teratogenicity_item"
           }
         }
       }
@@ -1182,7 +1764,6 @@
   },
   "type": "object",
   "properties": {
-
     "naming": {
       "title": "Naming",
       "$ref": "#/definitions/naming"
