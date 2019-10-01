@@ -4,7 +4,7 @@ import UserFileGrid, {
   UserFileGridProps,
 } from '../../../../lib/containers/drug_upload_tool/UserFileGrid'
 
-import {formListData } from '../../../../mocks/mock_drug_tool_data';
+import { formListData } from '../../../../mocks/mock_drug_tool_data'
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
 const token: string = '123444'
@@ -33,9 +33,7 @@ describe('basic tests', () => {
   }
 
   beforeEach(() => {
-    SynapseClient.listFormData = jest.fn(() =>
-      Promise.resolve(formListData),
-    )
+    SynapseClient.listFormData = jest.fn(() => Promise.resolve(formListData))
   })
 
   it('displays table with file list when files are present', async () => {
@@ -43,8 +41,18 @@ describe('basic tests', () => {
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
     expect(wrapper.find('table')).toHaveLength(2)
-    expect(wrapper.find('table').first().find('tbody > tr')).toHaveLength(1)
-    expect(wrapper.find('table').at(1).find('tbody > tr')).toHaveLength(4)
+    expect(
+      wrapper
+        .find('table')
+        .first()
+        .find('tbody > tr'),
+    ).toHaveLength(1)
+    expect(
+      wrapper
+        .find('table')
+        .at(1)
+        .find('tbody > tr'),
+    ).toHaveLength(4)
   })
 
   it('not display the table when there are no files', async () => {
@@ -60,7 +68,6 @@ describe('basic tests', () => {
     const spy = jest.spyOn(SynapseClient, 'deleteEntity')
     const { wrapper, instance } = await createShallowComponent(props)
     await instance.componentDidMount()
-
     const button = wrapper.find('[aria-label="delete"]').first()
     expect(instance.state.modalContext).not.toBeDefined
     button.simulate('click')

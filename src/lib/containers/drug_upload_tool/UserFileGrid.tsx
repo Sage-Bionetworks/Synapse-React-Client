@@ -215,7 +215,6 @@ export default class UserFileGrid extends React.Component<
             <tr>
               <th>Submission Name</th>
               <th>Edited On</th>
-
               <th></th>
               <th></th>
             </tr>
@@ -291,7 +290,6 @@ export default class UserFileGrid extends React.Component<
             <tr>
               <th>Submission Name</th>
               <th>Submitted On</th>
-
               <th>Status</th>
               <th></th>
             </tr>
