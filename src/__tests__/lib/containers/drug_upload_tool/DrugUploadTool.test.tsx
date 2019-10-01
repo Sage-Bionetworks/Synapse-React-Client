@@ -5,6 +5,7 @@ import DrugUploadTool, {
   DrugUploadToolProps,
   UploadToolSearchParams,
 } from '../../../../lib/containers/drug_upload_tool/DrugUploadTool'
+
 import { DrugUploadFormProps } from '../../../../lib/containers/drug_upload_tool/DrugUploadForm'
 import { mockFileEntity } from '../../../../mocks/mock_file_entity'
 import _ from 'lodash'
@@ -13,7 +14,6 @@ const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const targetFolderId = 'syn9988882982'
 const token: string = '123444'
 
-const parentContainerId: string = 'syn20355732'
 const formSchemaEntityId = 'syn9988882982'
 const formUiSchemaEntityId = 'syn9988882983'
 const formNavSchemaEntityId = 'syn9988882984'
@@ -39,7 +39,6 @@ const createShallowComponent = async (
   return { wrapper, instance }
 }
 const props: DrugUploadToolProps = {
-  parentContainerId,
   token,
   formSchemaEntityId,
   formUiSchemaEntityId,

@@ -1,19 +1,16 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import formschemaJson from '../../../../mocks/formschema.json'
 import UserFileGrid, {
   UserFileGridProps,
 } from '../../../../lib/containers/drug_upload_tool/UserFileGrid'
-import { mockUserProfileData } from '../../../../mocks/mock_user_profile'
-import { mockFileEntity } from '../../../../mocks/mock_file_entity'
 
+import {formListData } from '../../../../mocks/mock_drug_tool_data';
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
-const targetFolderId = 'syn9988882982'
+
 const token: string = '123444'
 const pathpart = 'someTool'
 const formGroupId = '5'
 const itemNoun = 'submission'
-const parentContainerId: string = 'syn20355732'
 
 const createShallowComponent = async (
   props: UserFileGridProps,
@@ -29,7 +26,6 @@ const createShallowComponent = async (
 
 describe('basic tests', () => {
   const props: UserFileGridProps = {
-    parentContainerId,
     token,
     pathpart,
     formGroupId,
@@ -38,7 +34,7 @@ describe('basic tests', () => {
 
   beforeEach(() => {
     SynapseClient.listFormData = jest.fn(() =>
-      Promise.resolve({ page: [mockFileEntity, mockFileEntity] }),
+      Promise.resolve(formListData),
     )
   })
 
@@ -46,8 +42,9 @@ describe('basic tests', () => {
     const { wrapper, instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
-    expect(wrapper.find('table')).toHaveLength(1)
-    expect(wrapper.find('tbody > tr')).toHaveLength(2)
+    expect(wrapper.find('table')).toHaveLength(2)
+    expect(wrapper.find('table').first().find('tbody > tr')).toHaveLength(1)
+    expect(wrapper.find('table').at(1).find('tbody > tr')).toHaveLength(4)
   })
 
   it('not display the table when there are no files', async () => {
@@ -56,14 +53,15 @@ describe('basic tests', () => {
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
     expect(wrapper.find('table')).toHaveLength(0)
-    expect(wrapper.find('.no-submissions').length).toBe(1)
+    expect(wrapper.find('.no-submissions').length).toBe(2)
   })
 
   it('should modify the modal state when clicking "delete"', async () => {
     const spy = jest.spyOn(SynapseClient, 'deleteEntity')
     const { wrapper, instance } = await createShallowComponent(props)
     await instance.componentDidMount()
-    const button = wrapper.find('td button').first()
+
+    const button = wrapper.find('[aria-label="delete"]').first()
     expect(instance.state.modalContext).not.toBeDefined
     button.simulate('click')
     expect(instance.state.modalContext).toBeDefined

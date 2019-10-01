@@ -18,7 +18,6 @@ export type UploadToolSearchParams = {
 
 export type DrugUploadToolProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
-  parentContainerId: string // ProjectId
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string //Synapse file that consists screen nav schema
@@ -151,7 +150,7 @@ class DrugUploadTool extends React.Component<
     })
   }
 
-  submitForm = async ({ formData }: any) => {
+  submitForm = async (formData: any) => {
     await this.saveToFile(formData)
 
     this.setState({

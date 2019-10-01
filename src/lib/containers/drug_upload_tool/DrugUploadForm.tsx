@@ -14,7 +14,6 @@ import {
   Step,
   StepStateEnum,
   NavActionEnum,
-  SummaryFormat,
   StatusEnum,
 } from './types'
 import Header from './Header'
