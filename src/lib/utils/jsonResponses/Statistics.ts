@@ -2,7 +2,6 @@
 
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/statistics/ProjectFilesStatisticsRequest.html
 export type ProjectFilesStatisticsRequest = {
-  concreteType: string
   objectId: string
   fileDownloads: boolean
   fileUploads: boolean

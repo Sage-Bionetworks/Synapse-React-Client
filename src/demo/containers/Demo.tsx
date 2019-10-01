@@ -12,6 +12,7 @@ import { OIDCAuthorizationRequestDescription } from 'lib/utils/jsonResponses/OID
 import { AccessCodeResponse } from 'lib/utils/jsonResponses/AccessCodeResponse'
 import { OAuthClientPublic } from 'lib/utils/jsonResponses/OAuthClientPublic'
 import { QueryTableResults } from 'lib/utils/jsonResponses/EvaluationQueryTable/QueryTableResults'
+import StatisticsPlot from 'lib/containers/StatisticsPlot'
 
 type DemoState = {
   token: string
@@ -363,6 +364,21 @@ class Demo extends React.Component<{}, DemoState> {
             <FileContentDownloadUploadDemo
               token={this.state.token!}
               targetEntityId="syn12196718"
+            />
+            <hr />
+          </div>
+        }
+        {
+          (this.state.token && this.state.token !== '') &&
+          <div className="container">
+            <h5>Project Statistics Demo</h5>
+            <StatisticsPlot
+              token={this.state.token!}
+              request={ {
+                objectId: '',
+                fileDownloads: true,
+                fileUploads: true
+              }}
             />
             <hr />
           </div>

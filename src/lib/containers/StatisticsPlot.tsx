@@ -3,14 +3,20 @@ import * as React from 'react'
 import Plotly from 'plotly.js-basic-dist'
 // tslint:disable-next-line:import-name
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { SynapseClient, SynapseConstants } from '../utils'
-import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse } from '../utils/jsonResponses/Statistics'
+import { SynapseClient } from '../utils'
+import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse, FilesCountStatistics } from '../utils/jsonResponses/Statistics'
 const Plot = createPlotlyComponent(Plotly)
 
 type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
   token?: string
   endpoint?: string
+  title?: string
+  xtitle?: string
+  ytitle?: string
+  isHorizontal?: boolean
+  xaxistype?: string
+  showlegend?: boolean
 }
 
 type StatisticsPlotState = {
@@ -39,39 +45,59 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
    * @returns data corresponding to plotly widget
    */
   public fetchPlotlyData() {
-    const { token, request } = this.props
-
-    getFullQueryTableResults(queryRequest, token).then(
-      (data: QueryResultBundle) => {
+    const { token, request, endpoint } = this.props
+    SynapseClient.getProjectStatistics(request, token, endpoint).then(
+      (data: ProjectFilesStatisticsResponse) => {
         this.setState({
           isLoaded: true,
-          queryData: data
+          plotData: data
         })
       }
     ).catch(
       (err: any) => {
-        console.log('Error on full table query ', err)
+        console.log('Error on call to get statistics ', err)
       }
     )
   }
 
+  private getTrace(traceName:string, stats: FilesCountStatistics[], orientation: string) {
+    if (stats) {
+      let x: string[] = [];
+      let y: number[] = [];
+      const trace = {
+        orientation,
+        x,
+        y,
+        name: traceName,
+        type: 'bar'
+      }
+      for (const statPoint of stats){
+        const month = new Date(statPoint.rangeStart).toLocaleString('default', { month: 'long' })
+        trace.x.push(month)
+        trace.y.push(statPoint.filesCount)
+      }
+      return trace
+    }
+    return undefined
+  }
+
   public showPlot() {
-    if (!this.state.isLoaded) {
+    if (!this.state.isLoaded || !this.state.plotData) {
       return
     }
     const {
             title,
             xtitle,
             ytitle,
-            type,
+            isHorizontal,
             xaxistype,
             showlegend
-        } = this.props.widgetparamsMapped
-    const queryData = this.state
-    const isHorizontal = this.props.widgetparamsMapped.horizontal.toLowerCase()
+        } = this.props
+    const plotData = this.state.plotData
     const layout: any = {
       showlegend,
-      title
+      title,
+      barmode: 'stack'
     }
     if (xtitle) {
       layout.xaxis = {
@@ -90,29 +116,17 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
       }
     }
     // init plot_data
-    const plotData: any = []
-    const orientation = isHorizontal ? 'v' : 'h'
-    const headers = queryData.queryData.queryResult.queryResults.headers
-    for (let i = 0; i < headers.length - 1; i += 1) {
-      // make an entry for each set of data points
-      plotData[i] = {
-        orientation,
-        name: headers[i + 1].name,
-        type: type.toLowerCase(),
-        x: [],
-        y: []
-      }
+    const orientation: string = isHorizontal ? 'v' : 'h'
+    const traces: any = []
+    if (plotData.fileDownloads) {
+      // add file downloads trace
+      traces.push(this.getTrace('File Downloads', plotData.fileDownloads.months, orientation))
     }
-    // grab all the data
-    for (const row of queryData.queryData.queryResult.queryResults.rows) {
-      for (let j = 1; j < row.values.length; j += 1) {
-        // create pairs of data
-        const rowValues: any = row.values
-        plotData[j - 1].x.push(rowValues[0])
-        plotData[j - 1].y.push(rowValues[j])
-      }
+    if (plotData.fileUploads) {
+      // add file uploads trace
+      traces.push(this.getTrace('File Uploads', plotData.fileUploads.months, orientation))
     }
-    return <Plot layout={layout} data={plotData} />
+    return <Plot layout={layout} data={traces} />
   }
 
   public render() {
