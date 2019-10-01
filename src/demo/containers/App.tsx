@@ -130,14 +130,14 @@ export default class App extends React.Component<{}, AppState> {
                     pathpart="drugUploadTool"
                     token={this.state.token}
                     formClass="drug-upload-tool"
-                    parentContainerId="syn20673186"
+          
                     formGroupId="9"
                     itemNoun="Compound"
                   />
                 ) : (
                   <DrugUploadTool
                     {...props}
-                    parentContainerId="syn20673186"
+           
                     formSchemaEntityId="syn20680102"
                     fileNamePath="naming.compound_name"
                     formUiSchemaEntityId="syn20693568"
@@ -174,14 +174,12 @@ export default class App extends React.Component<{}, AppState> {
                     pathpart="contribReqForm"
                     formGroupId="5"
                     token={this.state.token}
-                    parentContainerId="syn20692909"
                     formClass="contribution-request"
                     itemNoun={'Nomination'}
                   />
                 ) : (
                   <DrugUploadTool
                     {...props}
-                    parentContainerId="syn20692909"
                     formSchemaEntityId="syn20692910"
                     formUiSchemaEntityId="syn20692911"
                     formNavSchemaEntityId="syn20692912"
