@@ -45,10 +45,42 @@
   }
 
   /*--- File Grid ----*/
+  .file-grid {
 
+    h3 {
+      text-transform: uppercase;
+      font-size: 1.8rem;
+      font-weight:bold;
+      margin-bottom: 1.5rem;
+    }
+
+    h4 {
+      text-transform: uppercase;
+      font-size: 1.6rem;
+      font-weight:bold;
+      margin-bottom: 1.5rem;
+      padding-left: .8rem
+    }
   table.file-table {
     margin-bottom: 3rem !important;
     border-bottom: 1px solid #ddd;
+
+    th {
+      font-size: 1.4rem;
+line-height: 1.6rem;
+    }
+    td:first-child {
+      width: 40%
+    }
+
+    td:nth-child(2) {
+      width: 30%
+    }
+
+    td:nth-child(2) {
+      width: 20%
+    }
+
     td {
       vertical-align: middle;
     }
@@ -68,6 +100,7 @@
     border-radius: 15px;
     padding: 0.75rem 1.5rem;
   }
+}
 
   .panel.unauthenticated {
     border: 1px solid $red-error2;
@@ -182,7 +215,8 @@ font-size: 1.25rem;
       display: none;
     }
 
-    label.control-label {
+    label.control-label,  .data-range legend {
+      font-size: 1.4rem;
       font-weight: normal;
       color: $gray-formtext;
     }
@@ -244,10 +278,7 @@ font-size: 1.25rem;
 
     // for min/max type of filed
     .data-range {
-      legend {
-        font-size: 1.4rem;
-        font-weight: 700;
-      }
+    
       .form-group {
         float: left;
 
