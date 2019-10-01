@@ -375,7 +375,8 @@ class Demo extends React.Component<{}, DemoState> {
             <StatisticsPlot
               token={this.state.token!}
               request={ {
-                objectId: '',
+                concreteType: 'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+                objectId: 'syn5585645',
                 fileDownloads: true,
                 fileUploads: true
               }}

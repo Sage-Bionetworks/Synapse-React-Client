@@ -116,7 +116,7 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
       }
     }
     // init plot_data
-    const orientation: string = isHorizontal ? 'v' : 'h'
+    const orientation: string = isHorizontal ? 'h' : 'v'
     const traces: any = []
     if (plotData.fileDownloads) {
       // add file downloads trace
