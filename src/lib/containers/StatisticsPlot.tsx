@@ -7,7 +7,7 @@ import { SynapseClient } from '../utils'
 import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse, FilesCountStatistics } from '../utils/jsonResponses/Statistics'
 const Plot = createPlotlyComponent(Plotly)
 
-type StatisticsPlotProps = {
+export type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
   token?: string
   endpoint?: string
@@ -34,6 +34,7 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
     }
     this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
     this.showPlot = this.showPlot.bind(this)
+    this.getTrace = this.getTrace.bind(this)
   }
 
   public componentDidMount() {
@@ -61,24 +62,21 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
   }
 
   private getTrace(traceName:string, stats: FilesCountStatistics[], orientation: string) {
-    if (stats) {
-      let x: string[] = [];
-      let y: number[] = [];
-      const trace = {
-        orientation,
-        x,
-        y,
-        name: traceName,
-        type: 'bar'
-      }
-      for (const statPoint of stats){
-        const month = new Date(statPoint.rangeStart).toLocaleString('default', { month: 'long' })
-        trace.x.push(month)
-        trace.y.push(statPoint.filesCount)
-      }
-      return trace
+    let x: string[] = [];
+    let y: number[] = [];
+    const trace = {
+      orientation,
+      x,
+      y,
+      name: traceName,
+      type: 'bar'
     }
-    return undefined
+    for (const statPoint of stats){
+      const month = new Date(statPoint.rangeStart).toLocaleString('default', { month: 'long' })
+      trace.x.push(month)
+      trace.y.push(statPoint.filesCount)
+    }
+    return trace
   }
 
   public showPlot() {
@@ -118,15 +116,18 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
     // init plot_data
     const orientation: string = isHorizontal ? 'h' : 'v'
     const traces: any = []
-    if (plotData.fileDownloads) {
+    if (plotData.fileDownloads && plotData.fileDownloads.months && plotData.fileDownloads.months.length > 0) {
       // add file downloads trace
       traces.push(this.getTrace('File Downloads', plotData.fileDownloads.months, orientation))
     }
-    if (plotData.fileUploads) {
+    if (plotData.fileUploads && plotData.fileUploads.months && plotData.fileUploads.months.length > 0) {
       // add file uploads trace
       traces.push(this.getTrace('File Uploads', plotData.fileUploads.months, orientation))
     }
-    return <Plot layout={layout} data={traces} />
+    if (traces.length > 0)
+      return <Plot layout={layout} data={traces} />
+    else
+      return <></>
   }
 
   public render() {
