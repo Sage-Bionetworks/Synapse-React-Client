@@ -18,10 +18,10 @@
     <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
 
     <!-- bootstrap components -->
-    <script
+    <!-- <script
       src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"
       crossorigin
-    ></script>
+    ></script> -->
 
     <!-- katex -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
@@ -173,7 +173,8 @@
           objectId: 'syn5585645',
           fileDownloads: true,
           fileUploads: true
-        }
+        },
+        endpoint:'https://repo-staging.prod.sagebase.org/'
     }
     ReactDOM.render(e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null), formContainer)
   </script>
