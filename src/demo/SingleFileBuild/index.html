@@ -166,6 +166,15 @@
 				initFormData:false
     }
     ReactDOM.render(e(SRC.SynapseComponents.EntityForm, entityFormProps, null), formContainer)
-    
+    const statsPlotProps = {
+        token:'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+        request: {
+          concreteType: 'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+          objectId: 'syn5585645',
+          fileDownloads: true,
+          fileUploads: true
+        }
+    }
+    ReactDOM.render(e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null), formContainer)
   </script>
 </html>
