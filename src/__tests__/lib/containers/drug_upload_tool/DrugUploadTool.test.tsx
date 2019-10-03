@@ -8,6 +8,7 @@ import DrugUploadTool, {
 
 import { DrugUploadFormProps } from '../../../../lib/containers/drug_upload_tool/DrugUploadForm'
 import { mockFileEntity } from '../../../../mocks/mock_file_entity'
+import { mockFileEntityWithVersion } from '../../../../mocks/mock_drug_tool_data'
 import _ from 'lodash'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
@@ -79,20 +80,35 @@ describe('basic tests', () => {
       mockFileEntity,
     )
 
-    expect(result).toEqual(formschemaJson)
+    expect(result).toEqual({ content: formschemaJson, version: undefined })
   })
 
-  it('should make 3 calls to getFileEntityData if there is no datafile (no formDataId)', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
-    const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
-    const getFileHandleContentFromID = jest.spyOn(
-      SynapseClient,
-      'getFileHandleContentFromID',
-    )
-    await instance.componentDidMount()
-    expect(wrapper).toBeDefined()
-    expect(getFileEntityData).toHaveBeenCalledTimes(3)
-    expect(getFileHandleContentFromID).not.toHaveBeenCalled()
+  describe('if there is no datafile (no formDataId)', () => {
+    it('should make 3 calls to getFileEntityData ', async () => {
+      const { wrapper, instance } = await createShallowComponent(props)
+      const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
+      const getFileHandleContentFromID = jest.spyOn(
+        SynapseClient,
+        'getFileHandleContentFromID',
+      )
+      await instance.componentDidMount()
+      expect(wrapper).toBeDefined()
+      expect(getFileEntityData).toHaveBeenCalledTimes(3)
+      expect(getFileHandleContentFromID).not.toHaveBeenCalled()
+    })
+
+    it('should populate formData with metadata', async () => {
+      SynapseClient.getEntity = jest.fn(() =>
+        Promise.resolve(mockFileEntityWithVersion),
+      )
+      const { wrapper, instance } = await createShallowComponent(props)
+
+      await instance.componentDidMount()
+      expect(wrapper).toBeDefined()
+      expect(instance.state.formData.metadata.formSchemaVersion).toBe(
+        mockFileEntityWithVersion.versionNumber,
+      )
+    })
   })
 
   it('should make 4 calls to getFileEntityData if there is  datafile ', async () => {
@@ -151,7 +167,7 @@ describe('basic tests', () => {
         .find('DrugUploadForm')
         .props() as any) as DrugUploadFormProps
       expect(formProps.formTitle).toBe('Another Title')
-      expect(formProps.formData).toEqual({})
+      expect(Object.keys(formProps.formData)).toEqual(['metadata'])
       expect(formProps.isWizardMode).toBeFalsy()
     })
   })

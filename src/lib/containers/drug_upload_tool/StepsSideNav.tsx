@@ -97,7 +97,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
 
   return (
     <div
-      className="container SRC-menuLayout json-forms-menu"
+      className="SRC-menuLayout json-forms-menu"
       style={{ flex: '1' }}
     >
       <ul>

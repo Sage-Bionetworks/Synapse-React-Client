@@ -6,6 +6,7 @@ export type WarningModalProps = {
   title: string
   copy: string | JSX.Element
   confirmCopy?: string
+  className?: string
   show: boolean
   onOK: Function
   onCancel: Function
@@ -15,7 +16,7 @@ export type WarningModalProps = {
 export default function WarningModal(props: WarningModalProps) {
  
   return (
-    <Modal show={props.show} animation={false}>
+    <Modal show={props.show} animation={false} className={props.className}>
       <Modal.Header closeButton={false} onHide={() => props.onCancel()}>
         <Modal.Title>{props.title}</Modal.Title>
       </Modal.Header>

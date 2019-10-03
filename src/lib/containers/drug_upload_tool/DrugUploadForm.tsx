@@ -10,12 +10,7 @@ import {
   ErrorListProps,
 } from 'react-jsonschema-form'
 
-import {
-  Step,
-  StepStateEnum,
-  NavActionEnum,
-  StatusEnum,
-} from './types'
+import { Step, StepStateEnum, NavActionEnum, StatusEnum } from './types'
 import Header from './Header'
 import StepsSideNav from './StepsSideNav'
 import { NavButtons, NextStepLink } from './NavButtons'
@@ -46,6 +41,7 @@ export type DrugUploadFormProps = {
   onSubmit: Function
   onSave: Function
   formTitle: string
+  formClass?: string
   isWizardMode?: boolean
   callbackStatus?: StatusEnum
 }
@@ -61,6 +57,7 @@ type DrugUploadFormState = {
   doShowHelp: boolean
   modalContext?: { action: Function; arguments: any[] }
   hasUnsavedChanges: boolean
+  isSubmitted?: boolean
 }
 
 type RulesEvent = {
@@ -142,9 +139,15 @@ export default class DrugUploadForm extends React.Component<
 
   componentDidUpdate(prevProps: DrugUploadFormProps) {
     const shouldUpdate = this.props.callbackStatus !== prevProps.callbackStatus
-    const isSuccess = this.props.callbackStatus === StatusEnum.SAVE_SUCCESS  || this.props.callbackStatus === StatusEnum.SUBMIT_SUCCESS
+    const isSuccess =
+      this.props.callbackStatus === StatusEnum.SAVE_SUCCESS ||
+      this.props.callbackStatus === StatusEnum.SUBMIT_SUCCESS
     if (shouldUpdate && isSuccess) {
       this.setState({ hasUnsavedChanges: false })
+      if (this.props.callbackStatus === StatusEnum.SUBMIT_SUCCESS) {
+        this.setState({ isSubmitted: true })
+        window.history.back()
+      }
     }
   }
 
@@ -333,6 +336,7 @@ export default class DrugUploadForm extends React.Component<
   onError = (args: any) => {
     this.setState({
       doShowErrors: true,
+      hasValidated: false,
     })
     if (this.navAction === NavActionEnum.VALIDATE) {
       const modifiedSteps = this.setStepStatusForFailedValidation(
@@ -502,7 +506,12 @@ export default class DrugUploadForm extends React.Component<
       return <></>
     }
     const copy = this.state.currentStep.copy
-    return <div dangerouslySetInnerHTML={{ __html: copy! }} />
+    return (
+      <div
+        className="static-screen"
+        dangerouslySetInnerHTML={{ __html: copy! }}
+      />
+    )
   }
 
   //displays subheader for forms that can be excluded
@@ -514,7 +523,7 @@ export default class DrugUploadForm extends React.Component<
 
     if (currentStep.excluded === true) {
       return (
-        <div>
+        <div className="step-exclude-directions">
           This sub-form is currently not included in the submission.
           <button
             className="btn btn-link"
@@ -526,7 +535,7 @@ export default class DrugUploadForm extends React.Component<
       )
     } else if (currentStep.excluded === false) {
       return (
-        <div>
+        <div className="step-exclude-directions">
           This sub-form is currently included in the submission.{' '}
           <button
             className="btn btn-link"
@@ -678,6 +687,7 @@ export default class DrugUploadForm extends React.Component<
                   <button
                     type="button"
                     className="btn btn-action save pull-right"
+                    disabled={this.state.isSubmitted}
                     onClick={() => this.triggerAction(NavActionEnum.SUBMIT)}
                   >
                     SUBMIT
@@ -688,8 +698,16 @@ export default class DrugUploadForm extends React.Component<
               <div
                 className={this.isSubmitScreen() ? 'hide-form-only' : 'wrap'}
               >
-                {this.state.hasValidated && <span>ALL GOOD!</span>}
-                <div className="scroll-area">
+                {this.state.hasValidated && (
+                  <div className="notification-area">
+                    Great! Your data is valid!
+                  </div>
+                )}
+                <div
+                  className={`scroll-area ${
+                    this.state.currentStep.excluded ? 'disabled' : ' '
+                  } `}
+                >
                   <Form
                     className={
                       this.state.doShowHelp
@@ -714,7 +732,9 @@ export default class DrugUploadForm extends React.Component<
                     ErrorList={this.renderErrorListTemplate}
                     transformErrors={this.transformErrors}
                     ref={this.formRef}
-                    disabled={this.state.currentStep.excluded}
+                    disabled={
+                      this.state.currentStep.excluded || this.state.isSubmitted
+                    }
                   >
                     <div style={{ display: 'none' }}>
                       <button type="submit"></button>
@@ -746,6 +766,7 @@ export default class DrugUploadForm extends React.Component<
                 currentStep={this.state.currentStep}
                 steps={this.state.steps}
                 previousStepIds={this.state.previousStepIds}
+                isFormSubmitted={this.state.isSubmitted}
                 onNavAction={(e: NavActionEnum) => this.triggerAction(e)}
               ></NavButtons>
             </div>
@@ -756,6 +777,7 @@ export default class DrugUploadForm extends React.Component<
             show={true}
             title={this.excludeWarningHeader}
             copy={this.excludeWarningText}
+            className={this.props.formClass}
             callbackArgs={this.state.modalContext.arguments}
             onCancel={() => this.setState({ modalContext: undefined })}
             onOK={(stepId: string, isExclude: boolean) =>

@@ -75,13 +75,13 @@ class DrugUploadTool extends React.Component<
   getFileEntityData = async (
     token: string,
     entityId: string,
-  ): Promise<JSON> => {
+  ): Promise<{version?: number, content: JSON}> => {
     const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
     const entityContent = await SynapseClient.getFileEntityContent(
       token,
       entity,
     )
-    return JSON.parse(entityContent)
+    return { version: entity.versionNumber, content: JSON.parse(entityContent)}
   }
 
   getData = async (token?: string): Promise<void> => {
@@ -108,13 +108,22 @@ class DrugUploadTool extends React.Component<
           token,
         )
         formData = JSON.parse(fileData)
+      } else {
+        //if we are creating a new file - store the versions
+        formData = {
+          metadata: {
+            formSchemaVersion: configData[0].version,
+            uiSchemaVersion: configData[1].version,
+            navSchemaVersion: configData[2].version,
+          }
+        }
       }
       this.setState({
         // currentFileEntity,
         formData: formData,
-        formSchema: configData[0],
-        formUiSchema: configData[1],
-        formNavSchema: configData[2],
+        formSchema: configData[0].content,
+        formUiSchema: configData[1].content,
+        formNavSchema: configData[2].content,
         isLoading: false,
       })
     } catch (error) {
@@ -305,8 +314,8 @@ class DrugUploadTool extends React.Component<
 
   render() {
     return (
-      <div className={`SRC-ReactJsonForm container ${this.props.formClass}`}>
-        {this.state.status && this.renderNotification(this.state.notification)}
+      <div className={`SRC-ReactJsonForm ${this.props.formClass}`}>
+        {this.renderNotification(this.state.notification)}
         {this.renderLoader(this.state, this.props)}
         {this.renderUnauthenticatedView(this.props.token)}
 
@@ -319,6 +328,7 @@ class DrugUploadTool extends React.Component<
               navSchema={this.state.formNavSchema}
               isWizardMode={this.props.isWizardMode}
               formTitle={this.props.formTitle}
+              formClass={this.props.formClass}
               callbackStatus={this.state.status}
               onSave={(data: any) => this.saveToFile(data)}
               onSubmit={(data: any) => this.submitForm(data)}

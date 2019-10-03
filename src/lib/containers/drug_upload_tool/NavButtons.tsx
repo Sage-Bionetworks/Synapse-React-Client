@@ -1,23 +1,24 @@
-import * as React from 'react';
-import { Step, NavActionEnum } from './types';
+import * as React from 'react'
+import { Step, NavActionEnum } from './types'
 import {
   faChevronLeft,
-  faChevronRight
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export interface NavButtonsProps {
-  isWizardMode?: boolean;
-  previousStepIds: string[];
-  onNavAction: Function;
-  steps: Step[];
-  currentStep: Step;
+  isWizardMode?: boolean
+  previousStepIds: string[]
+  onNavAction: Function
+  steps: Step[]
+  currentStep: Step
+  isFormSubmitted?: boolean
 }
 
 export interface NextStepLinkProps {
-  onNavAction: Function;
-  steps: Step[];
-  nextStepId: string | undefined;
+  onNavAction: Function
+  steps: Step[]
+  nextStepId: string | undefined
 }
 
 export function NavButtons(props: NavButtonsProps): JSX.Element {
@@ -25,13 +26,11 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
   // a previous order step
   const canGoBack = (props: NavButtonsProps): boolean => {
     if (props.isWizardMode) {
-      return props.previousStepIds && props.previousStepIds.length > 0;
+      return props.previousStepIds && props.previousStepIds.length > 0
     } else {
-      return (
-        props.steps.findIndex(step => step.id === props.currentStep.id) > 0
-      );
+      return props.steps.findIndex(step => step.id === props.currentStep.id) > 0
     }
-  };
+  }
 
   const previousButton = canGoBack(props) ? (
     <button
@@ -43,7 +42,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
     </button>
   ) : (
     <></>
-  );
+  )
 
   const nextButton = !props.currentStep.final ? (
     <button
@@ -55,17 +54,18 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
     </button>
   ) : (
     <></>
-  );
+  )
 
   const saveButton = (
     <button
       type="button"
       className="btn btn-action save"
+      disabled={props.isFormSubmitted}
       onClick={e => props.onNavAction(NavActionEnum.SAVE)}
     >
       SAVE
     </button>
-  ) ;
+  )
 
   return (
     <div>
@@ -74,18 +74,18 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
         {previousButton} {nextButton} {saveButton}
       </div>
     </div>
-  );
+  )
 }
 
 export function NextStepLink(props: NextStepLinkProps): JSX.Element {
-  const nextStep = props.steps.find(step => step.id === props.nextStepId);
+  const nextStep = props.steps.find(step => step.id === props.nextStepId)
   if (typeof nextStep === 'undefined') {
-    return <></>;
+    return <></>
   }
   return (
     <span className="nav-link">
       <a onClick={e => props.onNavAction(nextStep)}>{nextStep.title}</a>
       <FontAwesomeIcon icon={faChevronRight}></FontAwesomeIcon>
     </span>
-  );
+  )
 }

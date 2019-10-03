@@ -6,6 +6,8 @@ $gray-formtext: #515359;
 $red-error: #B2242A;
 $red-error2: #C94281;
 
+$space-unit: 2.1rem;
+
 @mixin box-shadow($top, $left, $blur, $color, $inset: false) {
     @if $inset {
       -webkit-box-shadow:inset $top $left $blur $color;

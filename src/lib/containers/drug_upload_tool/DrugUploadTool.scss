@@ -9,6 +9,14 @@
   float: left;
 }
 .SRC-ReactJsonForm {
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $gray-formtext;
+  }
+  hr {
+    margin: $space-unit 0 $space-unit 0;
+  }
   .fade {
     opacity: inherit;
   }
@@ -46,61 +54,64 @@
 
   /*--- File Grid ----*/
   .file-grid {
-
     h3 {
       text-transform: uppercase;
       font-size: 1.8rem;
-      font-weight:bold;
+      font-weight: bold;
       margin-bottom: 1.5rem;
     }
 
     h4 {
       text-transform: uppercase;
       font-size: 1.6rem;
-      font-weight:bold;
+      font-weight: bold;
       margin-bottom: 1.5rem;
-      padding-left: .8rem
+      padding-left: 0.8rem;
     }
-  table.file-table {
-    margin-bottom: 3rem !important;
-    border-bottom: 1px solid #ddd;
-
-    th {
-      font-size: 1.4rem;
-line-height: 1.6rem;
-    }
-    td:first-child {
-      width: 40%
+    .panel {
+      background-color: $gray-light;
     }
 
-    td:nth-child(2) {
-      width: 30%
+    table.file-table {
+      @include calc(margin-bottom, #{$space-unit} * #{3});
+      border-bottom: 1px solid #ddd;
+
+      th {
+        font-size: 1.4rem;
+        line-height: 1.6rem;
+      }
+      td:first-child {
+        width: 40%;
+      }
+
+      td:nth-child(2) {
+        width: 30%;
+      }
+
+      td:nth-child(2) {
+        width: 20%;
+      }
+
+      td {
+        vertical-align: middle;
+      }
+      a,
+      button.btn {
+        color: $action-color;
+      }
     }
 
-    td:nth-child(2) {
-      width: 20%
-    }
+    .btn-large {
+      color: #fff;
+      background-color: $action-color;
 
-    td {
-      vertical-align: middle;
-    }
-    a,
-    button.btn {
-      color: $action-color;
+      font-size: 1.25rem;
+
+      text-transform: uppercase;
+      border-radius: 15px;
+      padding: 0.75rem 1.5rem;
     }
   }
-
-  .btn-large {
-    color: #fff;
-    background-color: $action-color;
-
-    font-size: 1.25rem;
-
-    text-transform: uppercase;
-    border-radius: 15px;
-    padding: 0.75rem 1.5rem;
-  }
-}
 
   .panel.unauthenticated {
     border: 1px solid $red-error2;
@@ -117,9 +128,13 @@ line-height: 1.6rem;
     overflow: hidden;
     width: 100%;
     clear: both;
-    padding: 1rem 0 1rem 2rem;
+    padding: $space-unit 0 1rem $space-unit;
 
     background-color: $gray-light;
+
+    h4 {
+      margin-top: 0;
+    }
   }
 
   .right-top-actions {
@@ -131,6 +146,7 @@ line-height: 1.6rem;
   .notification-area {
     color: $action-color;
     font-style: italic;
+    margin-bottom: $space-unit;
   }
 
   .inner-wrap {
@@ -148,7 +164,6 @@ line-height: 1.6rem;
     }
     .json-forms-menu {
       padding-right: 3rem;
-
     }
   }
 
@@ -157,12 +172,14 @@ line-height: 1.6rem;
     flex-wrap: wrap;
     flex-basis: 100%;
     flex: 3;
-  
   }
   .scroll-area {
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    &.disabled {
+      opacity: 0.6;
+    }
   }
 
   ul.error-detail {
@@ -173,6 +190,21 @@ line-height: 1.6rem;
     list-style: none;
     font-style: italic;
     color: $red-error2;
+  }
+
+  .step-exclude-directions {
+    font-style: italic;
+
+    vertical-align: middle;
+    @include calc(line-height, #{$space-unit} * 2);
+    @include calc(height, #{$space-unit} * 2);
+
+    button.btn-link {
+      color: $action-color;
+      font-weight: 700;
+      font-style: normal;
+      text-transform: uppercase;
+    }
   }
 
   /* radio button style override */
@@ -186,7 +218,7 @@ line-height: 1.6rem;
   .has-error.checkbox-inline label,
   .has-error.radio label,
   .has-error.radio-inline label {
-    color: $red-error2
+    color: $red-error2;
   }
 
   input[type='checkbox']:checked + label::before,
@@ -197,32 +229,34 @@ line-height: 1.6rem;
   .has-error .form-control {
     border-color: $red-error2;
   }
-  
 
   /*--- form ---*/
+
+  .static-screen {
+    margin-right: 10rem;
+  }
   .submissionInputForm {
     margin-right: 10rem;
-  
+
     .help-block {
-font-style: italic;
-font-weight: lighter;
-font-size: 1.25rem;
-
-
-  }
+      font-style: italic;
+      font-weight: lighter;
+      font-size: 1.25rem;
+    }
 
     &.no-help .help-block {
       display: none;
     }
 
-    label.control-label,  .data-range legend {
+    label.control-label,
+    .data-range legend {
       font-size: 1.4rem;
       font-weight: normal;
       color: $gray-formtext;
     }
 
     .form-group {
-      margin-bottom: 2rem
+      margin-bottom: 2rem;
     }
 
     .checkbox > label::before,
@@ -267,9 +301,10 @@ font-size: 1.25rem;
 
     /* second level title */
     fieldset fieldset fieldset legend {
-      font-size: 1.75rem;
+      /*font-size: 1.75rem;
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.5rem;*/
+      display: none;
     }
     /* third level title */
     fieldset fieldset fieldset fieldset legend {
@@ -278,7 +313,6 @@ font-size: 1.25rem;
 
     // for min/max type of filed
     .data-range {
-    
       .form-group {
         float: left;
 
@@ -321,11 +355,16 @@ font-size: 1.25rem;
     }
   }
   .array-item-add {
+    margin: 0 1.6rem 2rem 1.6rem;
+    padding: 0 3.2rem 0 0;
+    width: 100%;
     button.btn-info.btn-add {
       background-color: transparent;
       color: $action-color;
-      border: none;
-      box-shadow: none;
+      border: 1px solid $gray-dark;
+      padding: 2rem 3.3rem;
+      text-align: right;
+      /*box-shadow: none;*/
       cursor: pointer;
     }
     .btn-add::after {
@@ -393,7 +432,16 @@ font-size: 1.25rem;
 
   /*---- form classes -----*/
   .experiments-list legend ~ .field-description {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-style: italic;
+  }
+}
+
+.drug-upload-tool {
+  &.modal {
+    .btn-success {
+      background-color: $action-color;
+      border-color: $action-color;
+    }
   }
 }

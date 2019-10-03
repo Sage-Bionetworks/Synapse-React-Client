@@ -31,10 +31,10 @@ describe('basic tests', () => {
     const { wrapper } = createShallowComponent(props);
     expect(wrapper.find('ul')).toHaveLength(2);
     expect(wrapper.find('div.subMenu ul li')).toHaveLength(2);
-    expect(wrapper.find('.container > ul > li')).toHaveLength(2);
+    expect(wrapper.find('.json-forms-menu > ul > li')).toHaveLength(2);
     expect(props.stepList[0].inProgress).toBe(true);
     const firstLi = wrapper
-      .find('.container > ul')
+      .find('.json-forms-menu > ul')
       .first()
       .find('li>div')
       .first();

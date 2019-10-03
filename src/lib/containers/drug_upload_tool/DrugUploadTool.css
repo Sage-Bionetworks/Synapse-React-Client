@@ -8,8 +8,10 @@
 .SRC-ReactJsonForm {
   /* colors */
   /* padding */
-  /* ---------- layout ---------------*/
   /*--- File Grid ----*/
+  /* ---------- layout ---------------*/
+  /* radio button style override */
+  /*--- form ---*/
   /*------- summary -------*/
   /*---- form classes -----*/ }
 
@@ -44,19 +46,89 @@
 .SRC-ReactJsonForm .padding-full {
   padding: 2rem; }
 
+.SRC-ReactJsonForm .file-grid h3 {
+  text-transform: uppercase;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem; }
+
+.SRC-ReactJsonForm .file-grid h4 {
+  text-transform: uppercase;
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  padding-left: .8rem; }
+
+.SRC-ReactJsonForm .file-grid table.file-table {
+  margin-bottom: 3rem !important;
+  border-bottom: 1px solid #ddd; }
+
+.SRC-ReactJsonForm .file-grid table.file-table th {
+  font-size: 1.4rem;
+  line-height: 1.6rem; }
+
+.SRC-ReactJsonForm .file-grid table.file-table td:first-child {
+  width: 40%; }
+
+.SRC-ReactJsonForm .file-grid table.file-table td:nth-child(2) {
+  width: 30%; }
+
+.SRC-ReactJsonForm .file-grid table.file-table td:nth-child(2) {
+  width: 20%; }
+
+.SRC-ReactJsonForm .file-grid table.file-table td {
+  vertical-align: middle; }
+
+.SRC-ReactJsonForm .file-grid table.file-table a,
+.SRC-ReactJsonForm .file-grid table.file-table button.btn {
+  color: #5960a5; }
+
+.SRC-ReactJsonForm .file-grid .btn-large {
+  color: #fff;
+  background-color: #5960a5;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  border-radius: 15px;
+  padding: 0.75rem 1.5rem; }
+
+.SRC-ReactJsonForm .panel.unauthenticated {
+  border: 1px solid #C94281;
+  font-weight: 700;
+  font-size: 1.4rem; }
+
 .SRC-ReactJsonForm .wrap {
-  height: -moz-calc(100vh - 285px);
-  height: -webkit-calc(100vh - 285px);
-  height: calc(100vh - 285px);
+  height: -moz-calc(100vh - 30rem);
+  height: -webkit-calc(100vh - 30rem);
+  height: calc(100vh - 30rem);
   overflow: hidden;
   width: 100%;
-  clear: both; }
+  clear: both;
+  padding: 1rem 0 1rem 2rem;
+  background-color: #f9f9f9; }
+
+.SRC-ReactJsonForm .right-top-actions {
+  position: absolute;
+  right: 0;
+  top: 0; }
+
+.SRC-ReactJsonForm .notification-area {
+  color: #5960a5;
+  font-style: italic; }
 
 .SRC-ReactJsonForm .inner-wrap {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 100%; }
+  width: 100%;
+  position: relative; }
+
+.SRC-ReactJsonForm .inner-wrap .form-title {
+  display: block;
+  font-size: 2.2rem;
+  margin-bottom: 1rem; }
+
+.SRC-ReactJsonForm .inner-wrap .json-forms-menu {
+  padding-right: 3rem; }
 
 .SRC-ReactJsonForm .form-wrap {
   flex-direction: column;
@@ -69,10 +141,6 @@
   overflow-y: auto;
   overflow-x: hidden; }
 
-.SRC-ReactJsonForm table.file-table {
-  margin-bottom: 3rem !important;
-  border-bottom: 1px solid #ddd; }
-
 .SRC-ReactJsonForm ul.error-detail {
   padding-left: 0; }
 
@@ -81,8 +149,63 @@
   font-style: italic;
   color: #C94281; }
 
+.SRC-ReactJsonForm .has-error .checkbox,
+.SRC-ReactJsonForm .has-error .checkbox-inline,
+.SRC-ReactJsonForm .has-error .control-label,
+.SRC-ReactJsonForm .has-error .help-block,
+.SRC-ReactJsonForm .has-error .radio,
+.SRC-ReactJsonForm .has-error .radio-inline,
+.SRC-ReactJsonForm .has-error.checkbox label,
+.SRC-ReactJsonForm .has-error.checkbox-inline label,
+.SRC-ReactJsonForm .has-error.radio label,
+.SRC-ReactJsonForm .has-error.radio-inline label {
+  color: #C94281; }
+
+.SRC-ReactJsonForm input[type='checkbox']:checked + label::before,
+.SRC-ReactJsonForm input[type='checkbox']:checked + span::before {
+  color: #5960a5; }
+
+.SRC-ReactJsonForm .has-error .form-control {
+  border-color: #C94281; }
+
 .SRC-ReactJsonForm .submissionInputForm {
-  margin-right: 10rem; }
+  margin-right: 10rem;
+  /* second level title */
+  /* third level title */ }
+
+.SRC-ReactJsonForm .submissionInputForm .help-block {
+  font-style: italic;
+  font-weight: lighter;
+  font-size: 1.25rem; }
+
+.SRC-ReactJsonForm .submissionInputForm.no-help .help-block {
+  display: none; }
+
+.SRC-ReactJsonForm .submissionInputForm label.control-label, .SRC-ReactJsonForm .submissionInputForm .data-range legend {
+  font-size: 1.4rem;
+  font-weight: normal;
+  color: #515359; }
+
+.SRC-ReactJsonForm .submissionInputForm .form-group {
+  margin-bottom: 2rem; }
+
+.SRC-ReactJsonForm .submissionInputForm .checkbox > label::before,
+.SRC-ReactJsonForm .submissionInputForm .radio::before,
+.SRC-ReactJsonForm .submissionInputForm .radio-inline::before {
+  width: 1.5rem;
+  height: 1.5rem; }
+
+.SRC-ReactJsonForm .submissionInputForm .radio input[type='radio']:checked + label::before,
+.SRC-ReactJsonForm .submissionInputForm .radio input[type='radio']:checked + span::before,
+.SRC-ReactJsonForm .submissionInputForm .radio-inline input[type='radio']:checked + label::before,
+.SRC-ReactJsonForm .submissionInputForm .radio-inline input[type='radio']:checked + span::before {
+  background: #5960a5;
+  vertical-align: middle;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-left: -1.6rem;
+  margin-right: 1rem; }
 
 .SRC-ReactJsonForm .submissionInputForm .array-item {
   border: 1px solid #dcdcdc;
@@ -98,13 +221,27 @@
   border: none; }
 
 .SRC-ReactJsonForm .submissionInputForm fieldset fieldset legend {
-  font-size: 2.25rem; }
+  /* font-size: 2.25rem;*/
+  /* hiding default title for better scroll experience */
+  display: none; }
 
 .SRC-ReactJsonForm .submissionInputForm fieldset fieldset fieldset legend {
-  font-size: 2rem; }
+  font-size: 1.75rem;
+  display: block;
+  margin-bottom: 0.5rem; }
 
 .SRC-ReactJsonForm .submissionInputForm fieldset fieldset fieldset fieldset legend {
-  font-size: 1.75rem; }
+  font-size: 1.5rem; }
+
+.SRC-ReactJsonForm .submissionInputForm .data-range .form-group {
+  float: left; }
+
+.SRC-ReactJsonForm .submissionInputForm .data-range .form-group label {
+  font-size: 1em;
+  font-weight: normal; }
+
+.SRC-ReactJsonForm .submissionInputForm .data-range .form-group + .form-group {
+  margin-left: 1em; }
 
 .SRC-ReactJsonForm .array-item-toolbox button,
 .SRC-ReactJsonForm .array-item-toolbox button:hover {
@@ -150,13 +287,48 @@
 .SRC-ReactJsonForm .hide-form-only .form-group {
   display: none; }
 
-.SRC-ReactJsonForm .summary .summary-table th:first-child(2) {
+.SRC-ReactJsonForm .toggle-help-label {
+  line-height: 3em;
+  border: 1px solid #f9f9f9;
+  padding: 0 1em;
+  margin: 0 1em;
+  font-size: 0.85em; }
+
+.SRC-ReactJsonForm .toggle-help {
+  vertical-align: middle;
+  margin: 0 5px; }
+
+.SRC-ReactJsonForm .summary .scroll-area {
+  height: 100%; }
+
+.SRC-ReactJsonForm .summary .scroll-area.table-body {
+  height: -moz-calc(100% - 30px);
+  height: -webkit-calc(100% - 30px);
+  height: calc(100% - 30px); }
+
+.SRC-ReactJsonForm .summary .summary-table-header {
+  margin-bottom: 0; }
+
+.SRC-ReactJsonForm .summary .summary-table,
+.SRC-ReactJsonForm .summary .summary-table-header {
+  width: 100%; }
+
+.SRC-ReactJsonForm .summary .summary-table th:first-child(),
+.SRC-ReactJsonForm .summary .summary-table td:first-child(),
+.SRC-ReactJsonForm .summary .summary-table-header th:first-child(),
+.SRC-ReactJsonForm .summary .summary-table-header td:first-child() {
   width: 30%; }
 
-.SRC-ReactJsonForm .summary .summary-table th:nth-child(2) {
+.SRC-ReactJsonForm .summary .summary-table th:nth-child(2),
+.SRC-ReactJsonForm .summary .summary-table td:nth-child(2),
+.SRC-ReactJsonForm .summary .summary-table-header th:nth-child(2),
+.SRC-ReactJsonForm .summary .summary-table-header td:nth-child(2) {
   width: 40%; }
 
-.SRC-ReactJsonForm .summary .summary-table th:nth-child(3) {
+.SRC-ReactJsonForm .summary .summary-table th:nth-child(3),
+.SRC-ReactJsonForm .summary .summary-table td:nth-child(3),
+.SRC-ReactJsonForm .summary .summary-table-header th:nth-child(3),
+.SRC-ReactJsonForm .summary .summary-table-header td:nth-child(3) {
   width: 30%; }
 
 .SRC-ReactJsonForm .experiments-list legend ~ .field-description {
