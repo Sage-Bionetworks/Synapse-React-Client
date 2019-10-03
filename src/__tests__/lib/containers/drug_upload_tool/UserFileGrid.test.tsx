@@ -4,13 +4,17 @@ import UserFileGrid, {
   UserFileGridProps,
 } from '../../../../lib/containers/drug_upload_tool/UserFileGrid'
 
-import { formListData } from '../../../../mocks/mock_drug_tool_data'
+import {
+  formListDataSubmitted,
+  formListDataInProgress,
+} from '../../../../mocks/mock_drug_tool_data'
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
 const token: string = '123444'
 const pathpart = 'someTool'
 const formGroupId = '5'
 const itemNoun = 'submission'
+let synapseCall: Function
 
 const createShallowComponent = async (
   props: UserFileGridProps,
@@ -33,7 +37,11 @@ describe('basic tests', () => {
   }
 
   beforeEach(() => {
-    SynapseClient.listFormData = jest.fn(() => Promise.resolve(formListData))
+    synapseCall = SynapseClient.listFormData = jest
+      .fn()
+      .mockResolvedValue(formListDataSubmitted)
+      .mockResolvedValueOnce(formListDataSubmitted)
+      .mockResolvedValueOnce(formListDataInProgress)
   })
 
   it('displays table with file list when files are present', async () => {
@@ -56,12 +64,30 @@ describe('basic tests', () => {
   })
 
   it('not display the table when there are no files', async () => {
+    const { instance } = await createShallowComponent(props)
+    const spy = jest.spyOn(instance, 'getUserFileListing')
+    await instance.componentDidMount()
+    expect(spy).toHaveBeenCalledTimes(1)
+
+    expect(synapseCall).toHaveBeenCalledWith(
+      expect.objectContaining({ filterByState: ['WAITING_FOR_SUBMISSION'] }),
+      expect.anything(),
+    )
+    expect(synapseCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filterByState: ['SUBMITTED_WAITING_FOR_REVIEW', 'ACCEPTED', 'REJECTED'],
+      }),
+      expect.anything(),
+    )
+  })
+
+  it('not display an icon instead of the tables when there are no files', async () => {
     SynapseClient.listFormData = jest.fn(() => Promise.resolve({ page: [] }))
     const { wrapper, instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
     expect(wrapper.find('table')).toHaveLength(0)
-    expect(wrapper.find('.no-submissions').length).toBe(2)
+    expect(wrapper.find('img').length).toBe(1)
   })
 
   it('should modify the modal state when clicking "delete"', async () => {

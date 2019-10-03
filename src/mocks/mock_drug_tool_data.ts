@@ -1,4 +1,4 @@
-//import { FileEntity } from '../lib/utils/jsonResponses/FileEntity'
+import { FileEntity } from '../lib/utils/jsonResponses/FileEntity'
 import { Step, StepStateEnum } from '../lib/containers/drug_upload_tool/types'
 
 export const steps: Step[] = [
@@ -780,7 +780,24 @@ export const submissionData = {
   },
 }
 
-export const formListData = {
+export const formListDataInProgress = {
+  page: [
+   
+    {
+      formDataId: '25',
+      etag: '10977a7f-e3a4-11e9-94e2-02c936c5ff9c',
+      groupId: '9',
+      name: 'AlinaNewAPIProdTest.json',
+      createdBy: '3391841',
+      createdOn: '2019-09-30T17:01:51.622Z',
+      modifiedOn: '2019-09-30T17:02:20.399Z',
+      dataFileHandleId: '43485087',
+      submissionStatus: { state: 'WAITING_FOR_SUBMISSION' },
+    },
+  ],
+}
+
+export const formListDataSubmitted = {
   page: [
     {
       formDataId: '33',
@@ -837,17 +854,15 @@ export const formListData = {
         submittedOn: '2019-10-01T04:01:51.672Z',
         state: 'SUBMITTED_WAITING_FOR_REVIEW',
       },
-    },
-    {
-      formDataId: '25',
-      etag: '10977a7f-e3a4-11e9-94e2-02c936c5ff9c',
-      groupId: '9',
-      name: 'AlinaNewAPIProdTest.json',
-      createdBy: '3391841',
-      createdOn: '2019-09-30T17:01:51.622Z',
-      modifiedOn: '2019-09-30T17:02:20.399Z',
-      dataFileHandleId: '43485087',
-      submissionStatus: { state: 'WAITING_FOR_SUBMISSION' },
-    },
+    }
   ],
+}
+
+export const mockFileEntityWithVersion: FileEntity = {
+  id: "syn123",
+  parentId: "syn12034",
+  dataFileHandleId : "123332",
+  name: "my file name",
+  concreteType: "org.sagebionetworks.repo.model.FileEntity",
+  versionNumber: 3,
 }

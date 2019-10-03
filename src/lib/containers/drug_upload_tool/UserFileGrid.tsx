@@ -16,9 +16,12 @@ import {
 import { faTrash, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from './WarningModal'
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
 
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
 
 export type UserFileGridProps = {
   token?: string
@@ -29,9 +32,16 @@ export type UserFileGridProps = {
 }
 
 type UserFileGridState = {
-  userProfile?: any
-  fileList: any
+  inProgress: {
+    fileList: FormData[]
+    nextPageToken?: string
+  }
+  submitted: {
+    fileList: FormData[]
+    nextPageToken?: string
+  }
   isLoading: boolean
+  isShowInfoModal: boolean
   modalContext?: { action: Function; arguments: any[] }
 }
 
@@ -40,6 +50,16 @@ export default class UserFileGrid extends React.Component<
   UserFileGridState
 > {
   modalTitle = 'Trash Submission?'
+  listingText = {
+    inProgress: {
+      subhead: 'In Progress',
+      noRecords: `You don't have submissions in progress`,
+    },
+    submitted: {
+      subhead: 'Submitted',
+      noRecords: `You don't have anything submitted`,
+    },
+  }
   modalCopy = (
     <>
       <p>
@@ -54,7 +74,13 @@ export default class UserFileGrid extends React.Component<
     super(props)
     this.state = {
       isLoading: true,
-      fileList: [],
+      isShowInfoModal: false,
+      inProgress: {
+        fileList: [],
+      },
+      submitted: {
+        fileList: [],
+      },
     }
   }
 
@@ -79,37 +105,54 @@ export default class UserFileGrid extends React.Component<
     }
   }
 
-  private getUserFileListing = async (
+  getUserFileListing = async (
     token: string,
     groupId: string,
-  ): Promise<FormData[]> => {
+  ): Promise<{ inProgress: FormData[]; submitted: FormData[] }> => {
     this.setState({
       isLoading: true,
     })
     try {
-      const request: ListRequest = {
+      const requestInProgress: ListRequest = {
+        filterByState: [StatusEnum.WAITING_FOR_SUBMISSION],
+        groupId,
+        nextPageToken: this.state.inProgress.nextPageToken,
+      }
+      const requestSubmitted: ListRequest = {
         filterByState: [
-          StatusEnum.WAITING_FOR_SUBMISSION,
           StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
           StatusEnum.ACCEPTED,
           StatusEnum.REJECTED,
         ],
         groupId,
-        // nextPageToken?: string
+        nextPageToken: this.state.submitted.nextPageToken,
       }
 
-      const list: ListResponse = await SynapseClient.listFormData(
-        request,
+      const listInProgress: ListResponse = await SynapseClient.listFormData(
+        requestInProgress,
+        token,
+      )
+      const listSubmitted: ListResponse = await SynapseClient.listFormData(
+        requestSubmitted,
         token,
       )
       this.setState({
-        fileList: list.page || [],
+        inProgress: {
+          fileList: listInProgress.page,
+          nextPageToken: listInProgress.nextPageToken,
+        },
+        submitted: {
+          fileList: listSubmitted.page,
+          nextPageToken: listSubmitted.nextPageToken,
+        },
       })
-      return list ? list.page : []
+      return {
+        inProgress: listInProgress.page || [],
+        submitted: listSubmitted.page || [],
+      }
     } catch (error) {
       this.onError(error)
       return Promise.reject(error)
-      // }
     } finally {
       this.setState({
         isLoading: false,
@@ -127,13 +170,15 @@ export default class UserFileGrid extends React.Component<
     })
     try {
       await SynapseClient.deleteFormData(formDataId, token)
-      const fileList = await this.getUserFileListing(
-        token,
-        this.props.formGroupId,
-      )
-      this.setState({
-        fileList,
-      })
+      //await this.getUserFileListing(token, this.props.formGroupId)
+      this.setState((prevState, props) => ({
+        inProgress: {
+          fileList: prevState.inProgress.fileList.filter(
+            item => item.formDataId !== formDataId,
+          ),
+          nextPageToken: prevState.inProgress.nextPageToken,
+        },
+      }))
     } catch (error) {
       this.onError(error)
       return []
@@ -189,74 +234,105 @@ export default class UserFileGrid extends React.Component<
     }
   }
 
-  renderSubmissionsTableInProgress = (
+  renderSubmissionsTable = (
     fileList: FormData[],
     pathpart: string,
     formGroupId: string,
+    isInProgress: boolean,
   ): JSX.Element => {
     if (!formGroupId) {
       this.onError('Form Group ID is undefined')
       return <></>
     }
+    const textSource = isInProgress
+      ? this.listingText.inProgress
+      : this.listingText.submitted
 
-    const subhead = <h4>In Progress</h4>
-    const submissionsInProgress = fileList.filter(
-      item => item.submissionStatus.state === StatusEnum.WAITING_FOR_SUBMISSION,
+    const subhead = <h4>{textSource.subhead}</h4>
+    const tableTitleRow = isInProgress ? (
+      <tr>
+        <th>Submission Name</th>
+        <th>Edited On</th>
+        <th></th>
+        <th></th>
+      </tr>
+    ) : (
+      <tr>
+        <th>Submission Name</th>
+        <th>Submitted On</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
     )
+
     let content = (
       <h5 className="text-center no-submissions padding-full">
-        You don't have submissions in progress [COPY!]
+        {textSource.noRecords}
       </h5>
     )
-    if (submissionsInProgress.length > 0) {
+    if (fileList.length > 0) {
       content = (
         <table className="table file-table">
-          <thead>
-            <tr>
-              <th>Submission Name</th>
-              <th>Edited On</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
+          <thead>{tableTitleRow}</thead>
           <tbody>
-            {submissionsInProgress.map((dataFileRecord, key) => {
-              return (
-                <tr key={dataFileRecord.formDataId! + key}>
-                  <td>
-                    <a
-                      href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
-                    >
-                      {dataFileRecord.name}
-                    </a>
-                  </td>
-                  <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
-                  <td>&nbsp;</td>
-                  <td className="text-right">
-                    <button
-                      className="btn"
-                      aria-label="delete"
-                      onClick={() =>
-                        this.setModalConfirmationState(
-                          this.props.token!,
-                          dataFileRecord.formDataId!,
-                        )
-                      }
-                    >
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        aria-hidden="true"
-                      ></FontAwesomeIcon>
-                    </button>
-                  </td>
-                </tr>
-              )
+            {fileList.map((dataFileRecord, key) => {
+              if (isInProgress) {
+                return (
+                  <tr key={dataFileRecord.formDataId! + key}>
+                    <td>
+                      <a
+                        href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
+                      >
+                        {dataFileRecord.name}
+                      </a>
+                    </td>
+                    <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
+                    <td>&nbsp;</td>
+                    <td className="text-right">
+                      <button
+                        className="btn"
+                        aria-label="delete"
+                        onClick={() =>
+                          this.setModalConfirmationState(
+                            this.props.token!,
+                            dataFileRecord.formDataId!,
+                          )
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={faTrash}
+                          aria-hidden="true"
+                        ></FontAwesomeIcon>
+                      </button>
+                    </td>
+                  </tr>
+                )
+              } else {
+                return (
+                  <tr key={dataFileRecord.formDataId! + key}>
+                    <td>{dataFileRecord.name}</td>
+                    <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
+                    <td>{dataFileRecord.submissionStatus.state}</td>
+                    <td className="text-right">
+                      <button
+                        className="btn"
+                        aria-label="information"
+                        onClick={() => this.setState({ isShowInfoModal: true })}
+                      >
+                        <FontAwesomeIcon
+                          icon={faPhone}
+                          aria-hidden="true"
+                        ></FontAwesomeIcon>
+                      </button>
+                    </td>
+                  </tr>
+                )
+              }
             })}
           </tbody>
         </table>
       )
     }
-
     return (
       <>
         {subhead} {content}
@@ -264,84 +340,41 @@ export default class UserFileGrid extends React.Component<
     )
   }
 
-  renderSubmissionsTableSubmitted = (
-    fileList: FormData[],
+  renderSubmissionsTables = (
+    filesInProgress: FormData[],
+    filesSubmitted: FormData[],
     pathpart: string,
     formGroupId: string,
-  ): JSX.Element => {
-    if (!formGroupId) {
-      this.onError('Form Group ID is undefined')
-      return <></>
-    }
-    const subhead = <h4>Submitted</h4>
-    const submissionsNotInProgress = fileList.filter(
-      item => item.submissionStatus.state !== StatusEnum.WAITING_FOR_SUBMISSION,
-    )
-
-    let content = (
-      <h5 className="text-center no-submissions padding-full">
-        You don't have anything submitted
-      </h5>
-    )
-    if (submissionsNotInProgress.length > 0) {
-      content = (
-        <table className="table file-table">
-          <thead>
-            <tr>
-              <th>Submission Name</th>
-              <th>Submitted On</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {submissionsNotInProgress.map((dataFileRecord, key) => {
-              return (
-                <tr key={dataFileRecord.formDataId! + key}>
-                  <td>
-                    <a
-                      href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
-                    >
-                      {dataFileRecord.name}
-                    </a>
-                  </td>
-                  <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
-                  <td>{dataFileRecord.submissionStatus.state}</td>
-                  <td className="text-right">
-                    <button
-                      className="btn"
-                      aria-label="information"
-                      onClick={
-                        () => alert('What needs to happen here??')
-                        /*this.setModalConfirmationState(
-                        this.props.token!,
-                        dataFileRecord.formDataId!,
-                      )*/
-                      }
-                    >
-                      <FontAwesomeIcon
-                        icon={faPhone}
-                        aria-hidden="true"
-                      ></FontAwesomeIcon>
-                    </button>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+  ): JSX.Element[] | JSX.Element => {
+    if (filesInProgress.length === 0 && filesSubmitted.length === 0) {
+      return (
+        <div className="text-center">
+          <img src={NoSubmissionsIcon} alt="no submissions"></img>
+          <p className="padding-full">You have no submissions</p>
+        </div>
       )
+    } else {
+      return [
+        this.renderSubmissionsTable(
+          filesInProgress,
+          pathpart,
+          formGroupId,
+          true,
+        ),
+
+        this.renderSubmissionsTable(
+          filesSubmitted,
+          pathpart,
+          formGroupId,
+          false,
+        ),
+      ]
     }
-    return (
-      <>
-        {subhead} {content}
-      </>
-    )
   }
 
   render() {
     return (
-      <div className={`container SRC-ReactJsonForm ${this.props.formClass}`}>
+      <div className={`SRC-ReactJsonForm ${this.props.formClass}`}>
         {this.renderLoading(this.props.token, this.state.isLoading)}
         {this.renderUnauthenticatedView(this.props.token)}
 
@@ -349,14 +382,9 @@ export default class UserFileGrid extends React.Component<
           <div className="file-grid ">
             <h3>Your Submissions</h3>
             <div className="panel panel-default padding-full">
-              {this.renderSubmissionsTableInProgress(
-                this.state.fileList,
-                this.props.pathpart,
-                this.props.formGroupId,
-              )}
-
-              {this.renderSubmissionsTableSubmitted(
-                this.state.fileList,
+              {this.renderSubmissionsTables(
+                this.state.inProgress.fileList,
+                this.state.submitted.fileList,
                 this.props.pathpart,
                 this.props.formGroupId,
               )}
@@ -374,6 +402,7 @@ export default class UserFileGrid extends React.Component<
         )}
         {this.state.modalContext && (
           <WarningModal
+            className={this.props.formClass}
             show={typeof this.state.modalContext !== 'undefined'}
             title={this.modalTitle}
             copy={this.modalCopy}
@@ -384,6 +413,32 @@ export default class UserFileGrid extends React.Component<
             }
           />
         )}
+
+        <Modal
+          show={this.state.isShowInfoModal}
+          animation={false}
+          className={this.props.formClass}
+        >
+          <Modal.Header
+            closeButton={false}
+            onHide={() => this.setState({ isShowInfoModal: false })}
+          >
+            <Modal.Title>More Information</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Please{' '}
+            <a href="mailto:synapseInfo@sagebionetworks.org">contact us</a> for
+            more information about your submission
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={() => this.setState({ isShowInfoModal: false })}
+            >
+              OK
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     )
   }
