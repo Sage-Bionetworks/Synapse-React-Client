@@ -33,6 +33,7 @@ import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
 import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
 import { FormGroup, FormData, ListRequest, ListResponse, FormChangeRequest, FormRejection } from './jsonResponses/Forms'
 import { FileHandle } from './jsonResponses/FileHandle'
+import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse } from './jsonResponses/Statistics'
 
 // TODO: Create JSON response types for all return types
 export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
@@ -1264,4 +1265,16 @@ export const rejectFormData = (
       reason
     }
     return doPut(`/repo/v1/form/data/${formDataId}/reject`, formRejection, sessionToken, undefined, endpoint)
+}
+
+/**
+ * Get Statistics
+ * https://docs.synapse.org/rest/POST/statistics.html
+ * Generic endpoint to retrieve statistics about objects. The user should have VIEW_STATISTICS access on the object referenced by the objectId in the request.
+ */
+export const getProjectStatistics = (
+  request: ProjectFilesStatisticsRequest,
+  sessionToken: string | undefined,
+  endpoint: string = DEFAULT_ENDPOINT) : Promise<ProjectFilesStatisticsResponse>=> {
+    return doPost(`/repo/v1/statistics`, request, sessionToken, undefined, endpoint)
 }
