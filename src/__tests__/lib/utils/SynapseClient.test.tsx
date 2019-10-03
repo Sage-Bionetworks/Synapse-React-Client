@@ -1,5 +1,7 @@
 import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
+import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
+import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
 
 it('invalid call', () => {
   return SynapseClient.doGet(
@@ -63,19 +65,20 @@ it('list entity children', () => {
 })
 
 it('get files', () => {
-  const request = {
+  const request:BatchFileRequest = {
     includeFileHandles: true, // set to true to get file metadata
     includePreSignedURLs: true, // set to true to get presigned url to s3 resource (authorization required, include a session token in this case!)
+    includePreviewPreSignedURLs: false,
     requestedFiles: [
       {
         fileHandleId: '1234',
         associateObjectId: '1725696',
-        associateObjectType: 'FileEntity'
+        associateObjectType: FileHandleAssociateType.FileEntity
       },
       {
         fileHandleId: '5678',
         associateObjectId: '1725697',
-        associateObjectType: 'FileEntity'
+        associateObjectType: FileHandleAssociateType.FileEntity
       }
     ]
   }
