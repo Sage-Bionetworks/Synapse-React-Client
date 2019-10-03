@@ -599,7 +599,7 @@ export const getEntityBundleForVersion = (
     url += `/version/ + ${version}`
   }
   url += `/bundle?mask= ${partsMask}`
-  return doGet(url, sessionToken, undefined, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint) as Promise<any>
 }
 /**
  * Get Wiki page contents, call is of the form:
@@ -619,7 +619,7 @@ export const getEntityWiki = (sessionToken: string | undefined,
  */
 export const getUserFavorites = (sessionToken: string | undefined, endpoint = DEFAULT_ENDPOINT) => {
   const url = 'repo/v1/favorite?offset=0&limit=200'
-  return doGet(url, sessionToken, undefined, endpoint)
+  return doGet(url, sessionToken, undefined, endpoint) as Promise<any>
 }
 /**
  *  http://docs.synapse.org/rest/GET/projects/type.html

@@ -24,6 +24,8 @@ global.sanitizeHtml = require('sanitize-html')
 global.markdownitMath = require('markdown-it-synapse-math')
 
 configure({ adapter: new Adapter() });
+// Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
+jest.setTimeout(30000);
 
 // Line below is used because plotly has a dependency on mapbox-gl
 // which requires a browser env and doesn't provide support for headless
