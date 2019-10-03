@@ -49,18 +49,6 @@ describe('basic tests', () => {
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
     expect(wrapper.find('table')).toHaveLength(2)
-    expect(
-      wrapper
-        .find('table')
-        .first()
-        .find('tbody > tr'),
-    ).toHaveLength(1)
-    expect(
-      wrapper
-        .find('table')
-        .at(1)
-        .find('tbody > tr'),
-    ).toHaveLength(4)
   })
 
   it('not display the table when there are no files', async () => {
