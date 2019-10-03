@@ -32,9 +32,6 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
       isLoaded: false,
       plotData: {} as ProjectFilesStatisticsResponse
     }
-    this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
-    this.showPlot = this.showPlot.bind(this)
-    this.getTrace = this.getTrace.bind(this)
   }
 
   public componentDidMount() {
@@ -45,9 +42,9 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
    *
    * @returns data corresponding to plotly widget
    */
-  public fetchPlotlyData() {
+  fetchPlotlyData = async () => {
     const { token, request, endpoint } = this.props
-    SynapseClient.getProjectStatistics(request, token, endpoint).then(
+    return SynapseClient.getProjectStatistics(request, token, endpoint).then(
       (data: ProjectFilesStatisticsResponse) => {
         this.setState({
           isLoaded: true,
@@ -61,7 +58,7 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
     )
   }
 
-  private getTrace(traceName:string, stats: FilesCountStatistics[], orientation: string) {
+  getTrace = (traceName:string, stats: FilesCountStatistics[], orientation: string) => {
     let x: string[] = [];
     let y: number[] = [];
     const trace = {
@@ -79,7 +76,7 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
     return trace
   }
 
-  public showPlot() {
+  showPlot = () => {
     if (!this.state.isLoaded || !this.state.plotData) {
       return
     }
