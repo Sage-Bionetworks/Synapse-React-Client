@@ -61,14 +61,14 @@ export default class App extends React.Component<{}, AppState> {
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
         <Login
-          token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
+          token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token}
           theme={'light'}
           icon={true}
         />
         <hr />
         <h4>Synapse Staging (Google SSO redirects to staging site)</h4>
         <Login
-          token={SynapseClient.IS_DEV_ENV ? token : this.state.token}
+          token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token}
           theme={'dark'}
           icon={true}
           googleRedirectUrl={

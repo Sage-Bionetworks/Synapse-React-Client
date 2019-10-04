@@ -36,13 +36,12 @@ import { FileHandle } from './jsonResponses/FileHandle'
 import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse } from './jsonResponses/Statistics'
 
 // TODO: Create JSON response types for all return types
-export const IS_DEV_ENV = (process.env.NODE_ENV === 'development') ? true : false
-export const DEV_ENV_SESSION_LOCAL_STORAGE_KEY = 'session-token-dev-mode-only'
+export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname.toLowerCase().includes('.synapse.org') ? false : true
+export const SESSION_TOKEN_COOKIE_KEY = 'org.sagebionetworks.security.user.login.token'
 export const DEFAULT_ENDPOINT: string = 'https://repo-prod.prod.sagebase.org/'
 export const DEFAULT_SWC_ENDPOINT = 'https://www.synapse.org/'
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
-
 export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
@@ -684,15 +683,11 @@ export const getWikiAttachmentsFromEvaluation = (sessionToken: string | undefine
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
 export const setSessionTokenCookie = (token: string | undefined, swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
-  if (!IS_DEV_ENV) {
+  if (!IS_OUTSIDE_SYNAPSE_ORG) {
     return doPost('Portal/sessioncookie', { sessionToken: token }, undefined, 'include', swcEndpoint)
   }
-  // else (is in dev env)
-  if (token) {
-    localStorage.setItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY, token)
-  } else {
-    localStorage.removeItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
-  }
+  // else not on a synapse.org subdomain, no Synapse SSO
+  setCookie(SESSION_TOKEN_COOKIE_KEY, token, 1)
   return Promise.resolve()
 }
 /**
@@ -700,12 +695,11 @@ export const setSessionTokenCookie = (token: string | undefined, swcEndpoint: st
  * a .synapse.org subdomain.
  */
 export const getSessionTokenFromCookie = (swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
-  if (!IS_DEV_ENV) {
+  if (!IS_OUTSIDE_SYNAPSE_ORG) {
     return doGet<string>('Portal/sessioncookie', undefined, 'include', swcEndpoint)
   }
-  // else (is in dev env)
-  const sessionToken = localStorage.getItem(DEV_ENV_SESSION_LOCAL_STORAGE_KEY)
-  return Promise.resolve(sessionToken)
+  // else (is not on a synapse.org subdomain)
+  return Promise.resolve(getCookie(SESSION_TOKEN_COOKIE_KEY))
 }
 
 export const getPrincipalAliasRequest = (sessionToken: string | undefined,
@@ -758,11 +752,17 @@ export const detectSSOCode = (endpoint: string = DEFAULT_ENDPOINT, swcEndpoint: 
 }
 
 export const signOut = (swcEndpoint: string = DEFAULT_SWC_ENDPOINT) => {
-  setSessionTokenCookie(undefined, swcEndpoint).then(() => {
+  if (!IS_OUTSIDE_SYNAPSE_ORG) {
+    setSessionTokenCookie(undefined, swcEndpoint).then(() => {
+      window.location.reload()
+    }).catch((err) => {
+      console.error('err when clearing the session cookie ', err)
+    })
+  } else {
+    // is not on a synapse.org subdomain
+    removeCookie(SESSION_TOKEN_COOKIE_KEY)
     window.location.reload()
-  }).catch((err) => {
-    console.error('err when clearing the session cookie ', err)
-  })
+  }
 }
 
 /**
@@ -1277,4 +1277,29 @@ export const getProjectStatistics = (
   sessionToken: string | undefined,
   endpoint: string = DEFAULT_ENDPOINT) : Promise<ProjectFilesStatisticsResponse>=> {
     return doPost(`/repo/v1/statistics`, request, sessionToken, undefined, endpoint)
+}
+
+const setCookie = (name: string, value: string | undefined, days: number) => {
+  if (value) {
+    let expires = ''
+    if (days) {
+      const date = new Date()
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
+      expires = `; expires=${date.toUTCString()}`
+    }
+    document.cookie = `${name}=${value || ''}${expires}; path=/`
+  }
+}
+const getCookie = (name: string) => {
+  let nameEQ = `${name}=`
+  const ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+const removeCookie = (name: string) => {
+  document.cookie = `${name}=; Max-Age=-99999999;`;
 }
