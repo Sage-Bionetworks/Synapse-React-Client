@@ -12,7 +12,6 @@ import { BatchPresignedUploadUrlRequest } from './jsonResponses/BatchPresignedUp
 import { BatchPresignedUploadUrlResponse } from './jsonResponses/BatchPresignedUploadUrlResponse'
 import { MultipartUploadStatus } from './jsonResponses/MultipartUploadStatus'
 import { FileUploadComplete } from './jsonResponses/FileUploadComplete'
-import browserMd5File from 'browser-md5-file'
 import { AddPartResponse } from './jsonResponses/AddPartResponse'
 import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
 import { FileEntity } from './jsonResponses/FileEntity'
@@ -34,6 +33,7 @@ import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTab
 import { FormGroup, FormData, ListRequest, ListResponse, FormChangeRequest, FormRejection } from './jsonResponses/Forms'
 import { FileHandle } from './jsonResponses/FileHandle'
 import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse } from './jsonResponses/Statistics'
+import SparkMD5 from 'spark-md5'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname.toLowerCase().includes('.synapse.org') ? false : true
@@ -796,21 +796,44 @@ export const uploadFile = (
 const calculateMd5 = (
   fileBlob: File | Blob
 ): Promise<string> => {
-  const bmf = new browserMd5File()
+
+  // code taken from md5 example from library
   return new Promise((resolve, reject) => {
-    bmf.md5(
-      fileBlob,
-      (error: any, md5: string) => {
-        if (md5) {
-          resolve(md5)
-        } else if (error) {
-          reject(error)
+    let blobSlice = File.prototype.slice,
+        file = fileBlob,
+        chunkSize = 2097152, // Read in chunks of 2MB
+        chunks = Math.ceil(file.size / chunkSize),
+        currentChunk = 0,
+        spark = new SparkMD5.ArrayBuffer(),
+        fileReader = new FileReader()
+
+    fileReader.onload = function (e) {
+        console.log('read chunk nr', currentChunk + 1, 'of', chunks)
+        spark.append(fileReader.result as ArrayBuffer) // Append array buffer
+        currentChunk++
+
+        if (currentChunk < chunks) {
+            loadNext();
+        } else {
+            console.log('finished loading');
+            let md5:string = spark.end()
+            console.info('computed hash', md5);  // Compute hash
+            resolve(md5)
         }
-      },
-      (progress: number) => {
-        // console.log('progress: ', progress)
-      }
-    )
+    };
+
+    fileReader.onerror = function () {
+        console.warn('oops, something went wrong.');
+        reject(fileReader.error)
+    };
+
+    let loadNext = () => {
+        let start = currentChunk * chunkSize,
+            end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+
+        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+    }
+    loadNext();
   })
 }
 
