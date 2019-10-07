@@ -9,10 +9,22 @@
   float: left;
 }
 .SRC-ReactJsonForm {
-  h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: $gray-formtext;
+  .submission-header {
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: $gray-formtext;
+    }
+    &.submitted {
+      div {
+        color: $action-color;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      h2 {
+        opacity: 0.6;
+      }
+    }
   }
   hr {
     margin: $space-unit 0 $space-unit 0;

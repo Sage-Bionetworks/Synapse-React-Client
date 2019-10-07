@@ -1,7 +1,3 @@
-// Alina TODO:
-//  - pagination and scroll
-// - submission
-
 import './DrugUploadTool.scss'
 
 import * as React from 'react'
@@ -113,6 +109,10 @@ export default class UserFileGrid extends React.Component<
       isLoading: true,
     })
     try {
+      const cleanUpName= (item: FormData): FormData => {
+        item = {...item, ...{name: item.name.replace('.json', '')}}
+        return item;
+      }
       const requestInProgress: ListRequest = {
         filterByState: [StatusEnum.WAITING_FOR_SUBMISSION],
         groupId,
@@ -136,13 +136,15 @@ export default class UserFileGrid extends React.Component<
         requestSubmitted,
         token,
       )
+      
+    
       this.setState({
         inProgress: {
-          fileList: listInProgress.page,
+          fileList: listInProgress.page.map(item=> cleanUpName(item)),
           nextPageToken: listInProgress.nextPageToken,
         },
         submitted: {
-          fileList: listSubmitted.page,
+          fileList: listSubmitted.page.map(item=> cleanUpName(item)),
           nextPageToken: listSubmitted.nextPageToken,
         },
       })
@@ -310,7 +312,12 @@ export default class UserFileGrid extends React.Component<
               } else {
                 return (
                   <tr key={dataFileRecord.formDataId! + key}>
-                    <td>{dataFileRecord.name}</td>
+                    <td>
+                    <a
+                        href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}&submitted=1`}
+                      >
+                    {dataFileRecord.name}</a>
+                    </td>
                     <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
                     <td>{dataFileRecord.submissionStatus.state}</td>
                     <td className="text-right">

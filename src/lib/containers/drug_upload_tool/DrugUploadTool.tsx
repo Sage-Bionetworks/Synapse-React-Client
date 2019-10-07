@@ -7,12 +7,13 @@ import { StatusEnum } from './types'
 import Alert from 'react-bootstrap/Alert'
 import DrugUploadForm from './DrugUploadForm'
 import { FormData } from '../../utils/jsonResponses/Forms'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants';
+import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import _ from 'lodash'
 
 export type UploadToolSearchParams = {
   formDataId?: string //formDataId for user data form data
   dataFileHandleId?: string //fileHandle to get userData
+  submitted?: boolean // if the file has been submitted
   formGroupId: string
 }
 
@@ -32,7 +33,7 @@ export type DrugUploadToolProps = {
 type DrugUploadToolState = {
   notification?: Notification
   isLoading?: boolean
-  formDataId?: string; // file holding user form data
+  formDataId?: string // file holding user form data
   formData?: any // form data that prepopulates the form
   formSchema?: any // schema that drives the form
   formUiSchema?: UiSchema // ui schema that directs how to render the form elements
@@ -41,10 +42,12 @@ type DrugUploadToolState = {
   status?: StatusEnum
 }
 
-type Notification = {
+type Error = {
   name?: string
   message?: string
-  reason?: string
+}
+
+interface Notification extends Error {
   type: StatusEnum
 }
 
@@ -56,7 +59,7 @@ class DrugUploadTool extends React.Component<
     super(props)
     this.state = {
       isLoading: true,
-      formDataId: _.get(this.props, 'searchParams.formDataId')
+      formDataId: _.get(this.props, 'searchParams.formDataId'),
     }
   }
 
@@ -75,13 +78,24 @@ class DrugUploadTool extends React.Component<
   getFileEntityData = async (
     token: string,
     entityId: string,
-  ): Promise<{version?: number, content: JSON}> => {
-    const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
-    const entityContent = await SynapseClient.getFileEntityContent(
-      token,
-      entity,
-    )
-    return { version: entity.versionNumber, content: JSON.parse(entityContent)}
+  ): Promise<{ version?: number; content: JSON }> => {
+    try {
+      const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
+      const entityContent = await SynapseClient.getFileEntityContent(
+        token,
+        entity,
+      )
+      return {
+        version: entity.versionNumber,
+        content: JSON.parse(entityContent),
+      }
+    } catch (error) {
+      const newError = {
+        message: `${error.message}:  configuration data for ${entityId} failed to load`,
+      }
+      this.onError(newError)
+      return Promise.reject(newError)
+    }
   }
 
   getData = async (token?: string): Promise<void> => {
@@ -90,7 +104,6 @@ class DrugUploadTool extends React.Component<
     }
     try {
       let formData = {}
-      //let currentFileEntity: FileEntity;
 
       const promises = [
         this.getFileEntityData(token, this.props.formSchemaEntityId),
@@ -115,7 +128,7 @@ class DrugUploadTool extends React.Component<
             formSchemaVersion: configData[0].version,
             uiSchemaVersion: configData[1].version,
             navSchemaVersion: configData[2].version,
-          }
+          },
         }
       }
       this.setState({
@@ -147,11 +160,11 @@ class DrugUploadTool extends React.Component<
     }, 7000)
   }
 
-  onError = (error: any) => {
+  onError = (error: Error) => {
     this.setState({
       notification: {
         type: StatusEnum.ERROR,
-        message: error.reason,
+        message: error.message,
         name: error.name,
       },
       status: StatusEnum.ERROR,
@@ -223,7 +236,7 @@ class DrugUploadTool extends React.Component<
     })
 
     if (!fileName) {
-      this.onError({ reason: 'Please Provide the File Name' })
+      this.onError({ message: 'Please Provide the File Name' })
       return
     }
 
@@ -245,7 +258,6 @@ class DrugUploadTool extends React.Component<
       this.onError(error)
     }
   }
-
 
   isReadyToDisplayForm = (state: DrugUploadToolState): boolean => {
     return (
@@ -292,7 +304,9 @@ class DrugUploadTool extends React.Component<
         >
           <Alert.Heading>Error</Alert.Heading>
 
-          <p>{notification.message}</p>
+          <p>
+            {notification.name} {notification.message}
+          </p>
         </Alert>
       )
     }
@@ -306,7 +320,14 @@ class DrugUploadTool extends React.Component<
     } else {
       return (
         <div className="panel padding-full unauthenticated text-center">
-          Please <button className={`SRC-standard-button-shape SRC-light-button SRC-sign-in-button ${SRC_SIGN_IN_CLASS}`}> sign in </button> to initiate or continue your submission{' '}
+          Please{' '}
+          <button
+            className={`SRC-standard-button-shape SRC-light-button SRC-sign-in-button ${SRC_SIGN_IN_CLASS}`}
+          >
+            {' '}
+            sign in{' '}
+          </button>{' '}
+          to initiate or continue your submission{' '}
         </div>
       )
     }
@@ -332,6 +353,9 @@ class DrugUploadTool extends React.Component<
               callbackStatus={this.state.status}
               onSave={(data: any) => this.saveToFile(data)}
               onSubmit={(data: any) => this.submitForm(data)}
+              isSubmitted={
+                this.props.searchParams && !!this.props.searchParams.submitted
+              }
             ></DrugUploadForm>
           </div>
         )}
