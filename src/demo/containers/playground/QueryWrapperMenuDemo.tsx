@@ -163,6 +163,10 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
               'FROM syn11346063 WHERE (study LIKE \'%MODEL-AD_5XFAD%\') GROUP BY 1, 2, 3 ORDER BY 4 DESC',
           },
           {
+            facet: 'PORTALS-803',
+            sql: 'SELECT diagnosis AS "Diagnosis", sex as "Sex", dataType as "Data Type", assay as "Assay", count(distinct(id)) as "Files", count(distinct(specimenID)) as "Specimens", count(distinct(individualID)) as "Individuals" FROM syn11346063 GROUP BY 1,2,3,4 ORDER BY 1 DESC',
+          },
+          {
             facet: 'study',
             sql: 'SELECT * FROM syn11346063 limit 1000',
           },

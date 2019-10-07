@@ -162,24 +162,12 @@ describe('basic functionality', () => {
         'AS biz FROM syn987654321 ' +
         'WHERE species=\'Human\' ' +
         'AND assay=\'rnaSeq\' group by 1,2 order by 3 asc'
-      const headers: SelectColumn[] = [
-        { columnType: 'STRING', name: 'bar', id: '1' },
-        { columnType: 'STRING', name: 'baz', id: '2' },
-        { columnType: 'INTEGER', name: 'biz', id: '3' },
-      ]
-      const columnModels: ColumnModel[] = [
-        { columnType: 'ENTITYID', name: 'id', id: '1111' },
-        { columnType: 'STRING', facetType: 'enumeration', name: 'bar', id: '2222' },
-        { columnType: 'STRING', facetType: 'enumeration', name: 'baz', id: '333' },
-        { columnType: 'STRING', name: 'species', id: '444' },
-        { columnType: 'STRING', name: 'assay', id: '555' },
-      ]
       const testRow: Row = {
         rowId: 123,
         values: ['bar1', 'baz1', '10'],
         versionNumber: 8
       }
-      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql, headers, columnModels)
+      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql)
       expect(sql.synId).toEqual('syn987654321')
       expect(sql.newSql).toEqual('SELECT *\n  FROM syn987654321\n  WHERE ((((`species` = \'Human\') AND (`assay` = \'rnaSeq\')) AND (`bar` = \'bar1\')) AND (`baz` = \'baz1\'))')
     })
@@ -189,22 +177,12 @@ describe('basic functionality', () => {
         'SELECT bar, baz, count(distinct file_id)' +
         'AS biz FROM syn987654321 ' +
         'Group By 1,2 order by 3 asc'
-      const headers: SelectColumn[] = [
-        { columnType: 'STRING', name: 'bar', id: '1' },
-        { columnType: 'STRING', name: 'baz', id: '2' },
-        { columnType: 'INTEGER', name: 'biz', id: '3' },
-      ]
-      const columnModels: ColumnModel[] = [
-        { columnType: 'ENTITYID', name: 'id', id: '1111' },
-        { columnType: 'STRING', facetType: 'enumeration', name: 'bar', id: '2222' },
-        { columnType: 'STRING', facetType: 'enumeration', name: 'baz', id: '333' },
-      ]
       const testRow: Row = {
         rowId: 123,
         values: ['bar1', 'baz1', '10'],
         versionNumber: 8
       }
-      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql, headers, columnModels)
+      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql)
       expect(sql.synId).toEqual('syn987654321')
       expect(sql.newSql).toEqual('SELECT *\n  FROM syn987654321\n  WHERE ((`bar` = \'bar1\') AND (`baz` = \'baz1\'))')
     })

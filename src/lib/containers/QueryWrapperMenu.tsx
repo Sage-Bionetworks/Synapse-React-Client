@@ -314,11 +314,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       // Needed to calculate the total count for TotalQueryResults
       partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
     }
-    if (hasGroupByInSql) {
-      // necessary for creating the where clause in the synapse table link, columnModels distinguishes non aggregate functions
-      // from select columns
-      partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
-    }
+    // note: COLUMN_MODELS unnecessary for Synapse Table link for aggregate functions since we now rely on the sql parser to distinguish.
     return partMask
   }
 

@@ -317,7 +317,7 @@ describe('Passing down props works correctly ', () => {
     })
     it('works with groupBy passedIn', () => {
       const partMask = getPartMask('', true)
-      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
       expect(partMask).toEqual(expectedPartMask)
     })
   })

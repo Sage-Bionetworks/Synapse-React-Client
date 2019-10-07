@@ -30,7 +30,6 @@ import { cloneDeep } from '../utils/modules/'
 import { SortItem } from '../utils/jsonResponses/Table/Query'
 import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
 import { lexer } from 'sql-parser'
-import { ColumnModel } from '../utils/jsonResponses/Table/ColumnModel'
 import { formatSQLFromParser, isGroupByInSql } from '../utils/modules/sqlFunctions'
 import ModalDownload from './ModalDownload'
 import { SynapseClient } from '../utils'
@@ -356,19 +355,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   private showGroupRowData = (selectedRow: Row) => (_event: React.MouseEvent<HTMLAnchorElement>) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
-    // unpack all the data
-    const { data } = this.props
-    const { queryResult, columnModels } = data!
-    if (!columnModels) {
-      throw Error('Error on query request, must include columnModels in partmask to show aggregate sql')
-    }
-    const { queryResults } = queryResult
-    const { headers } = queryResults
     const parsed = this.getSqlUnderlyingDataForRow(
       selectedRow,
-      queryCopy.sql,
-      headers,
-      columnModels)
+      queryCopy.sql)
     queryCopy.sql = parsed.newSql
     const queryJSON = JSON.stringify(queryCopy)
     // encode this copy of the query (json)
@@ -602,16 +591,35 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
 
   public getSqlUnderlyingDataForRow(
     selectedRow: Row,
-    originalSql: string,
-    headers: SelectColumn[],
-    columnModels: ColumnModel[]
+    originalSql: string
   ): { synId: string, newSql: string } {
     let tokens: string[][] = lexer.tokenize(originalSql)
+    const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
+    const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
+
+    // gather all of the column names literals between select and from (and their indices)
+    const columnReferences: ColumnReference[] = []
+    let columnIndex = 0
+    let foundFunctionForColumn = false
+    for (let index = selectIndex + 1; index < fromIndex - selectIndex - 1; index += 1) {
+      const token = tokens[index]
+      // parsing error.  concat function is reported as a LITERAL instead of a function
+      if (token[0] === 'FUNCTION' || token[1].toLocaleLowerCase() === 'concat') {
+        foundFunctionForColumn = true
+      } else if (token[0] === 'LITERAL' && !foundFunctionForColumn) {
+        // found a column
+        columnReferences.push({index: columnIndex, name: token[1]})
+      } else if (token[0] === 'SEPARATOR') {
+        // next column
+        columnIndex += 1
+        // reset "found function"
+        foundFunctionForColumn = false
+      }
+    }
+
     // remove all tokens after (and including) group
     tokens = tokens.slice(0, tokens.findIndex(el => el[0] === 'GROUP'))
     // replace all columns with *
-    const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
-    const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
     tokens.splice(selectIndex + 1, fromIndex - selectIndex - 1, ['STAR', '*', '1'])
     // add new items to where clause, but only if the column name corresponds to a real column in the table/view!
     // use row.values
@@ -630,27 +638,25 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         ['CONDITIONAL', 'AND', '1'],
       )
     }
+    
     // look for headers in column models, if they match then add a where clause
-    headers.forEach((header: any, index: number) => {
-      const matchingColumnModel = columnModels!.find(columnModel => columnModel.name === header.name)
-      if (matchingColumnModel) {
-        const rowValue = selectedRow.values[index]
-        // PORTALS-712: support null values
-        if (rowValue) {
-          tokens.push(
-            ['LITERAL', matchingColumnModel.name, '1'],
-            ['OPERATOR', '=', '1'],
-            ['STRING', rowValue, '1'],
-            ['CONDITIONAL', 'AND', '1'],
-          )
-        } else {
-          tokens.push(
-            ['LITERAL', matchingColumnModel.name, '1'],
-            ['OPERATOR', 'IS', '1'],
-            ['BOOLEAN', 'null', '1'],
-            ['CONDITIONAL', 'AND', '1'],
-          )
-        }
+    columnReferences.forEach((value: ColumnReference, index: number) => {
+      const rowValue = selectedRow.values[value.index]
+      // PORTALS-712: support null values
+      if (rowValue) {
+        tokens.push(
+          ['LITERAL', value.name, '1'],
+          ['OPERATOR', '=', '1'],
+          ['STRING', rowValue, '1'],
+          ['CONDITIONAL', 'AND', '1'],
+        )
+      } else {
+        tokens.push(
+          ['LITERAL', value.name, '1'],
+          ['OPERATOR', 'IS', '1'],
+          ['BOOLEAN', 'null', '1'],
+          ['CONDITIONAL', 'AND', '1'],
+        )
       }
     })
     // remove the last AND
@@ -1161,4 +1167,9 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
        isMenuWallOpen: !isCurFilterSelected
      })
    }
+}
+
+type ColumnReference = {
+  index: number,
+  name: string
 }
