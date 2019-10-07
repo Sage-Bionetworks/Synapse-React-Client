@@ -2,7 +2,6 @@
 // https://stackoverflow.com/questions/39084438/how-to-import-plotly-js-into-typescript
 declare module 'plotly.js-basic-dist'
 declare module 'react-plotly.js/factory'
-declare module 'browser-md5-file'
 declare module 'sql-parser'
 declare module 'react-native-rss-parser'
 declare module 'lodash.clonedeep'
