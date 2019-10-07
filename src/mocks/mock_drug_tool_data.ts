@@ -1,6 +1,6 @@
 import { FileEntity } from '../lib/utils/jsonResponses/FileEntity'
 import { Step, StepStateEnum } from '../lib/containers/drug_upload_tool/types'
-
+import {  ListResponse } from '../lib/utils/jsonResponses/Forms'
 export const steps: Step[] = [
   {
     id: 'toxicology _data',
@@ -780,7 +780,8 @@ export const submissionData = {
   },
 }
 
-export const formListDataInProgress = {
+export const formListDataInProgress : ListResponse= {
+  nextPageToken: '123',
   page: [
    
     {

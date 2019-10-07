@@ -27,6 +27,8 @@ export type UserFileGridProps = {
   itemNoun: string
 }
 
+type FileListType = 'IN_PROGRESS' | 'SUBMITTED'
+
 type UserFileGridState = {
   inProgress: {
     fileList: FormData[]
@@ -65,6 +67,14 @@ export default class UserFileGrid extends React.Component<
       <p>Are you sure you want to trash this submission?' </p>
     </>
   )
+  static requestFilter = {
+    IN_PROGRESS: [StatusEnum.WAITING_FOR_SUBMISSION],
+    SUBMITTED: [
+      StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
+      StatusEnum.ACCEPTED,
+      StatusEnum.REJECTED,
+    ],
+  }
 
   constructor(props: UserFileGridProps) {
     super(props)
@@ -93,64 +103,43 @@ export default class UserFileGrid extends React.Component<
 
   async refresh(token?: string) {
     if (token) {
-      await this.getUserFileListing(token, this.props.formGroupId).catch(
-        error => {
-          this.onError(error)
-        },
-      )
+      await this.getUserFileListing().catch(error => {
+        this.onError(error)
+      })
     }
   }
 
-  getUserFileListing = async (
-    token: string,
-    groupId: string,
-  ): Promise<{ inProgress: FormData[]; submitted: FormData[] }> => {
+  getTypeFileListing = async (
+    filter: StatusEnum[],
+    nextPageToken?: string,
+  ): Promise<{ fileList: FormData[]; nextPageToken?: string }> => {
     this.setState({
       isLoading: true,
     })
+    const token = this.props.token
+    const groupId = this.props.formGroupId
     try {
-      const cleanUpName= (item: FormData): FormData => {
-        item = {...item, ...{name: item.name.replace('.json', '')}}
-        return item;
+      const cleanUpName = (item: FormData): FormData => {
+        item = { ...item, ...{ name: item.name.replace('.json', '') } }
+        return item
       }
-      const requestInProgress: ListRequest = {
-        filterByState: [StatusEnum.WAITING_FOR_SUBMISSION],
+      const request: ListRequest = {
+        filterByState: filter,
         groupId,
-        nextPageToken: this.state.inProgress.nextPageToken,
-      }
-      const requestSubmitted: ListRequest = {
-        filterByState: [
-          StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
-          StatusEnum.ACCEPTED,
-          StatusEnum.REJECTED,
-        ],
-        groupId,
-        nextPageToken: this.state.submitted.nextPageToken,
+        nextPageToken: nextPageToken,
       }
 
-      const listInProgress: ListResponse = await SynapseClient.listFormData(
-        requestInProgress,
+      const response: ListResponse = await SynapseClient.listFormData(
+        request,
         token,
       )
-      const listSubmitted: ListResponse = await SynapseClient.listFormData(
-        requestSubmitted,
-        token,
-      )
-      
-    
-      this.setState({
-        inProgress: {
-          fileList: listInProgress.page.map(item=> cleanUpName(item)),
-          nextPageToken: listInProgress.nextPageToken,
-        },
-        submitted: {
-          fileList: listSubmitted.page.map(item=> cleanUpName(item)),
-          nextPageToken: listSubmitted.nextPageToken,
-        },
-      })
+      const fileList = response.page
+        ? response.page.map(item => cleanUpName(item))
+        : []
+
       return {
-        inProgress: listInProgress.page || [],
-        submitted: listSubmitted.page || [],
+        fileList,
+        nextPageToken: response.nextPageToken,
       }
     } catch (error) {
       this.onError(error)
@@ -160,6 +149,47 @@ export default class UserFileGrid extends React.Component<
         isLoading: false,
       })
     }
+  }
+
+  getMore = async (fileListType: FileListType, nextPageToken: string) => {
+    const statusList =
+      fileListType === 'SUBMITTED'
+        ? UserFileGrid.requestFilter.SUBMITTED
+        : UserFileGrid.requestFilter.IN_PROGRESS
+    const result = await this.getTypeFileListing(statusList, nextPageToken)
+    if (fileListType === 'SUBMITTED') {
+      this.setState(prevState => ({
+        submitted: {
+          fileList: [...prevState.submitted.fileList, ...result.fileList],
+          nextPageToken: result.nextPageToken,
+        },
+      }))
+    } else {
+      this.setState(prevState => ({
+        inProgress: {
+          fileList: [...prevState.inProgress.fileList, ...result.fileList],
+          nextPageToken: result.nextPageToken,
+        },
+      }))
+    }
+  }
+
+  getUserFileListing = async (): Promise<void> => {
+    const inProgress = await this.getTypeFileListing(
+      UserFileGrid.requestFilter.IN_PROGRESS,
+      this.state.inProgress.nextPageToken,
+    )
+    const submitted = await this.getTypeFileListing(
+      UserFileGrid.requestFilter.SUBMITTED,
+      this.state.submitted.nextPageToken,
+    )
+
+    this.setState({
+      inProgress: inProgress,
+      submitted: submitted,
+    })
+
+    return
   }
   onError = (args: any) => {
     console.log(args)
@@ -240,12 +270,14 @@ export default class UserFileGrid extends React.Component<
     fileList: FormData[],
     pathpart: string,
     formGroupId: string,
-    isInProgress: boolean,
+    fileListType: FileListType,
+    nextPageToken?: string,
   ): JSX.Element => {
     if (!formGroupId) {
       this.onError('Form Group ID is undefined')
       return <></>
     }
+    const isInProgress = fileListType === 'IN_PROGRESS'
     const textSource = isInProgress
       ? this.listingText.inProgress
       : this.listingText.submitted
@@ -272,72 +304,90 @@ export default class UserFileGrid extends React.Component<
         {textSource.noRecords}
       </h5>
     )
+    const viewMore = nextPageToken ? (
+      <div className="view-more">
+        <button
+          className="btn btn-link"
+          onClick={() => this.getMore(fileListType, nextPageToken)}
+        >
+          more ...
+        </button>
+      </div>
+    ) : (
+      <></>
+    )
     if (fileList.length > 0) {
       content = (
-        <table className="table file-table">
-          <thead>{tableTitleRow}</thead>
-          <tbody>
-            {fileList.map((dataFileRecord, key) => {
-              if (isInProgress) {
-                return (
-                  <tr key={dataFileRecord.formDataId! + key}>
-                    <td>
-                      <a
-                        href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
-                      >
-                        {dataFileRecord.name}
-                      </a>
-                    </td>
-                    <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
-                    <td>&nbsp;</td>
-                    <td className="text-right">
-                      <button
-                        className="btn"
-                        aria-label="delete"
-                        onClick={() =>
-                          this.setModalConfirmationState(
-                            this.props.token!,
-                            dataFileRecord.formDataId!,
-                          )
-                        }
-                      >
-                        <FontAwesomeIcon
-                          icon={faTrash}
-                          aria-hidden="true"
-                        ></FontAwesomeIcon>
-                      </button>
-                    </td>
-                  </tr>
-                )
-              } else {
-                return (
-                  <tr key={dataFileRecord.formDataId! + key}>
-                    <td>
-                    <a
-                        href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}&submitted=1`}
-                      >
-                    {dataFileRecord.name}</a>
-                    </td>
-                    <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
-                    <td>{dataFileRecord.submissionStatus.state}</td>
-                    <td className="text-right">
-                      <button
-                        className="btn"
-                        aria-label="information"
-                        onClick={() => this.setState({ isShowInfoModal: true })}
-                      >
-                        <FontAwesomeIcon
-                          icon={faPhone}
-                          aria-hidden="true"
-                        ></FontAwesomeIcon>
-                      </button>
-                    </td>
-                  </tr>
-                )
-              }
-            })}
-          </tbody>
-        </table>
+        <div className="file-table">
+          <table className="table">
+            <thead>{tableTitleRow}</thead>
+            <tbody>
+              {fileList.map((dataFileRecord, key) => {
+                if (isInProgress) {
+                  return (
+                    <tr key={dataFileRecord.formDataId! + key}>
+                      <td>
+                        <a
+                          href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
+                        >
+                          {dataFileRecord.name}
+                        </a>
+                      </td>
+                      <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
+                      <td>&nbsp;</td>
+                      <td className="text-right">
+                        <button
+                          className="btn"
+                          aria-label="delete"
+                          onClick={() =>
+                            this.setModalConfirmationState(
+                              this.props.token!,
+                              dataFileRecord.formDataId!,
+                            )
+                          }
+                        >
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            aria-hidden="true"
+                          ></FontAwesomeIcon>
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                } else {
+                  return (
+                    <tr key={dataFileRecord.formDataId! + key}>
+                      <td>
+                        <a
+                          href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}&submitted=1`}
+                        >
+                          {dataFileRecord.name}
+                        </a>
+                      </td>
+                      <td>{moment(dataFileRecord.modifiedOn).calendar()}</td>
+                      <td>{dataFileRecord.submissionStatus.state}</td>
+                      <td className="text-right">
+                        <button
+                          className="btn"
+                          aria-label="information"
+                          onClick={() =>
+                            this.setState({ isShowInfoModal: true })
+                          }
+                        >
+                          <FontAwesomeIcon
+                            icon={faPhone}
+                            aria-hidden="true"
+                          ></FontAwesomeIcon>
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                }
+              })}
+            </tbody>
+          </table>
+          {viewMore}{' '}
+        </div>
       )
     }
     return (
@@ -348,12 +398,12 @@ export default class UserFileGrid extends React.Component<
   }
 
   renderSubmissionsTables = (
-    filesInProgress: FormData[],
-    filesSubmitted: FormData[],
+    inProgress: { fileList: FormData[]; nextPageToken?: string },
+    submitted: { fileList: FormData[]; nextPageToken?: string },
     pathpart: string,
     formGroupId: string,
   ): JSX.Element[] | JSX.Element => {
-    if (filesInProgress.length === 0 && filesSubmitted.length === 0) {
+    if (inProgress.fileList.length === 0 && submitted.fileList.length === 0) {
       return (
         <div className="text-center">
           <img src={NoSubmissionsIcon} alt="no submissions"></img>
@@ -363,17 +413,19 @@ export default class UserFileGrid extends React.Component<
     } else {
       return [
         this.renderSubmissionsTable(
-          filesInProgress,
+          inProgress.fileList,
           pathpart,
           formGroupId,
-          true,
+          'IN_PROGRESS',
+          inProgress.nextPageToken,
         ),
 
         this.renderSubmissionsTable(
-          filesSubmitted,
+          submitted.fileList,
           pathpart,
           formGroupId,
-          false,
+          'SUBMITTED',
+          submitted.nextPageToken,
         ),
       ]
     }
@@ -390,8 +442,8 @@ export default class UserFileGrid extends React.Component<
             <h3>Your Submissions</h3>
             <div className="panel panel-default padding-full">
               {this.renderSubmissionsTables(
-                this.state.inProgress.fileList,
-                this.state.submitted.fileList,
+                this.state.inProgress,
+                this.state.submitted,
                 this.props.pathpart,
                 this.props.formGroupId,
               )}
