@@ -44,6 +44,7 @@ export type DrugUploadFormProps = {
   formClass?: string
   isWizardMode?: boolean
   callbackStatus?: StatusEnum
+  isSubmitted?: boolean
 }
 
 type DrugUploadFormState = {
@@ -116,6 +117,7 @@ export default class DrugUploadForm extends React.Component<
       doShowErrors: false,
       doShowHelp: true,
       hasUnsavedChanges: false,
+      isSubmitted: props.isSubmitted,
     }
   }
 
@@ -652,6 +654,7 @@ export default class DrugUploadForm extends React.Component<
           message={this.unsavedDataWarning}
         />
         <Header
+          isSubmitted={this.state.isSubmitted}
           bodyText={this.state.currentStep.description}
           title={this.props.formTitle}
         ></Header>
@@ -665,7 +668,11 @@ export default class DrugUploadForm extends React.Component<
             <div className="form-wrap">
               <div className="form-title">{this.state.currentStep.title}</div>
               {this.renderNotification(this.props.callbackStatus)}
-              <div className="right-top-actions">
+              <div
+                className={`right-top-actions ${
+                  this.state.isSubmitted ? 'hide' : ''
+                }`}
+              >
                 {!this.state.currentStep.static && (
                   <button
                     type="button"

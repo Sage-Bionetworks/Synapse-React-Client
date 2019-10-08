@@ -32,11 +32,11 @@ export type FormRejection = {
 
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/SubmissionStatus.html
 export type SubmissionStatus = {
-  submittedOn: string,
-  reviewedOn: string,
-  reviewedBy: string,
+  submittedOn?: string,
+  reviewedOn?: string,
+  reviewedBy?: string,
   state: StatusEnum,
-  rejectionMessage: string
+  rejectionMessage?: string
 }
 
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/StatusEnum.html

@@ -56,7 +56,6 @@ describe('basic tests', () => {
     const spy = jest.spyOn(instance, 'getUserFileListing')
     await instance.componentDidMount()
     expect(spy).toHaveBeenCalledTimes(1)
-
     expect(synapseCall).toHaveBeenCalledWith(
       expect.objectContaining({ filterByState: ['WAITING_FOR_SUBMISSION'] }),
       expect.anything(),
@@ -95,5 +94,22 @@ describe('basic tests', () => {
     await instance.componentDidMount()
     await instance.deleteFile('123', '456')
     expect(spy).toHaveBeenCalledWith('456', '123')
+  })
+
+  it('should have view more link if there is a token for next page and call the back end fn to get the additional items', async () => {
+    const { instance, wrapper } = await createShallowComponent(props)
+    const spy = jest.spyOn(SynapseClient, 'listFormData')
+    await instance.componentDidMount()
+    const viewMoreButton = wrapper.find('.view-more button')
+    expect(viewMoreButton).toHaveLength(1)
+    viewMoreButton.simulate('click')
+    expect(spy).lastCalledWith(
+      {
+        filterByState: ['WAITING_FOR_SUBMISSION'],
+        groupId: formGroupId,
+        nextPageToken: formListDataInProgress.nextPageToken,
+      },
+      token,
+    )
   })
 })

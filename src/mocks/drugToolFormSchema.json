@@ -26,7 +26,7 @@
         },
         "binding_affinity_constant": {
           "type": "string",
-          "title": "What type of binding affinity constant is being reported?",
+          "title": "Binding Affinity Constant",
           "enum": [
             "Ki",
             "Kd",
@@ -62,11 +62,11 @@
         },
         "efficacy_measure": {
           "type": "string",
-          "title": "Efficacy Assay (nmol/L)"
+          "title": "Efficacy (nmol/L)"
         },
         "efficacy_measure_type": {
           "type": "string",
-          "title": "What type of binding affinity constant is being reported?",
+          "title": "Efficacy Measure",
           "enum": [
             "EC50",
             "IC50"
@@ -98,7 +98,7 @@
         },
         "species": {
           "type": "string",
-          "title": "What species was used?",
+          "title": "Species",
           "enum": [
             "mouse",
             "rat",
@@ -121,7 +121,7 @@
         },
         "strain": {
           "type": "string",
-          "title": "Model strain"
+          "title": "Model Strain"
         },
         "assay_description": {
           "type": "string",
@@ -129,7 +129,7 @@
         },
         "age_range": {
           "type": "object",
-          "title": "Subject age (months)",
+          "title": "Subject Age (months)",
           "properties": {
             "age_range_min": {
               "title": "Minimum",
@@ -163,7 +163,7 @@
         },
         "dose_range": {
           "type": "object",
-          "title": "What was the dose range tested (mg/kg)",
+          "title": "Dose Range (mg/kg)",
           "properties": {
             "dose_range_min": {
               "title": "Minimum",
@@ -269,7 +269,7 @@
         },
         "species": {
           "type": "string",
-          "title": "What species was used?",
+          "title": "Species",
           "enum": [
             "mouse",
             "rat",
@@ -292,7 +292,7 @@
         },
         "strain": {
           "type": "string",
-          "title": "Model strain"
+          "title": "Model Strain"
         },
         "assay_description": {
           "type": "string",
@@ -300,7 +300,7 @@
         },
         "age_range": {
           "type": "object",
-          "title": "Subject age (months)",
+          "title": "Subject Age (months)",
           "properties": {
             "age_range_min": {
               "title": "Minimum",
@@ -334,7 +334,7 @@
         },
         "dose_range": {
           "type": "object",
-          "title": "What was the dose range tested (mg/kg)",
+          "title": "Dose Range (mg/kg)",
           "properties": {
             "dose_range_min": {
               "title": "Minimum",
@@ -440,7 +440,7 @@
         },
         "species": {
           "type": "string",
-          "title": "What species was used?",
+          "title": "Species",
           "enum": [
             "mouse",
             "rat",
@@ -463,7 +463,7 @@
         },
         "strain": {
           "type": "string",
-          "title": "Model strain"
+          "title": "Model Strain"
         },
         "assay_description": {
           "type": "string",
@@ -471,7 +471,7 @@
         },
         "age_range": {
           "type": "object",
-          "title": "Subject age (months)",
+          "title": "Subject Age (months)",
           "properties": {
             "age_range_min": {
               "title": "Minimum",
@@ -505,7 +505,7 @@
         },
         "dose_range": {
           "type": "object",
-          "title": "What was the dose range tested (mg/kg)",
+          "title": "Dose Range (mg/kg)",
           "properties": {
             "dose_range_min": {
               "title": "Minimum",
@@ -611,7 +611,7 @@
         },
         "species": {
           "type": "string",
-          "title": "What species was used?",
+          "title": "Species",
           "enum": [
             "mouse",
             "rat",
@@ -634,7 +634,7 @@
         },
         "strain": {
           "type": "string",
-          "title": "Model strain"
+          "title": "Model Strain"
         },
         "assay_description": {
           "type": "string",
@@ -642,7 +642,7 @@
         },
         "age_range": {
           "type": "object",
-          "title": "Subject age (months)",
+          "title": "Subject Age (months)",
           "properties": {
             "age_range_min": {
               "title": "Minimum",
@@ -658,7 +658,7 @@
         },
         "sex": {
           "type": "string",
-          "title": "Subject sex",
+          "title": "Subject Sex",
           "enum": [
             "male",
             "female",
@@ -672,11 +672,11 @@
         },
         "duration": {
           "type": "string",
-          "title": "Study duration"
+          "title": "Study Duration"
         },
         "dose_range": {
           "type": "object",
-          "title": "What was the dose range tested (mg/kg)",
+          "title": "Dose Range (mg/kg)",
           "properties": {
             "dose_range_min": {
               "title": "Minimum",
@@ -690,7 +690,7 @@
         },
         "route": {
           "type": "array",
-          "title": "What was the route of administration?",
+          "title": "Route of Administration",
           "uniqueItems": true,
           "items": {
             "type": "string",
@@ -790,7 +790,7 @@
         },
         "species": {
           "type": "string",
-          "title": "What species was used?",
+          "title": "Species",
           "enum": [
             "mouse",
             "rat",
@@ -813,11 +813,11 @@
         },
         "strain": {
           "type": "string",
-          "title": "Model strain"
+          "title": "Model Strain"
         },
         "outcome_measures": {
           "type": "string",
-          "title": "Primary outcome measure"
+          "title": "Outcome Measure"
         },
         "assay_description": {
           "type": "string",
@@ -825,7 +825,7 @@
         },
         "age_range": {
           "type": "object",
-          "title": "Subject age (months)",
+          "title": "Subject Age (months)",
           "properties": {
             "age_range_min": {
               "title": "Minimum",
@@ -843,7 +843,7 @@
         },
         "sex": {
           "type": "string",
-          "title": "Subject sex",
+          "title": "Subject Sex",
           "enum": [
             "male",
             "female",
@@ -857,7 +857,7 @@
         },
         "ed50": {
           "type": "string",
-          "title": "Was an ED50 established? (mg/kg)",
+          "title": "ED50 (mg/kg)",
           "enum": [
             "<31",
             "31-100",
@@ -867,7 +867,7 @@
         },
         "dose_range": {
           "type": "object",
-          "title": "What was the dose range tested (mg/kg)",
+          "title": "Dose Range (mg/kg)",
           "properties": {
             "dose_range_min": {
               "title": "Minimum",
@@ -881,7 +881,7 @@
         },
         "dose_regimen": {
           "type": "string",
-          "title": "What was the dosing regimen",
+          "title": "Dosing Regimen",
           "enum": [
             "acute",
             "chronic",
@@ -895,11 +895,11 @@
         },
         "pretreatment_time": {
           "type": "string",
-          "title": "Pre-treatrment time "
+          "title": "Pre-treatment Time "
         },
         "route": {
           "type": "array",
-          "title": "What was the route of administration?",
+          "title": "Route of Administration",
           "uniqueItems": true,
           "items": {
             "type": "string",
@@ -986,7 +986,7 @@
         },
         "species": {
           "type": "string",
-          "title": "What species was used?",
+          "title": "Species",
           "enum": [
             "mouse",
             "rat",
@@ -1009,11 +1009,11 @@
         },
         "strain": {
           "type": "string",
-          "title": "Model strain"
+          "title": "Model Strain"
         },
         "age_range": {
           "type": "object",
-          "title": "Subject age (months)",
+          "title": "Subject Age (months)",
           "properties": {
             "age_range_min": {
               "title": "Minimum",
@@ -1031,7 +1031,7 @@
         },
         "sex": {
           "type": "string",
-          "title": "Subject sex",
+          "title": "Subject Sex",
           "enum": [
             "male",
             "female",
@@ -1045,23 +1045,23 @@
         },
         "clearance_rate": {
           "type": "number",
-          "title": "Clearance rate (Clp)"
+          "title": "Clearance Rate (Clp)"
         },
         "half_life": {
           "type": "number",
-          "title": "Half life (T 1/2)"
+          "title": "Half-life (T 1/2)"
         },
         "tissue_concentration": {
           "type": "number",
-          "title": "Tissue concentration (nmol/g)"
+          "title": "Tissue Concentration (nmol/g)"
         },
         "plasma_protein_binding": {
           "type": "number",
-          "title": "Plasma protein binding"
+          "title": "Plasma Protein Binding"
         },
         "liver_metabolism": {
           "type": "number",
-          "title": "Liver metabolism"
+          "title": "Liver Metabolism"
         },
         "fractional_bioavailability": {
           "type": "number",
@@ -1107,103 +1107,6 @@
                 }
               },
               "required": []
-            }
-          ]
-        }
-      }
-    },
-    "chronic_dosing_experiment": {
-      "type": "object",
-      "required": [],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "species": {
-          "type": "string",
-          "enum": [
-            "Mouse",
-            "Rat",
-            "Monkey",
-            "Other"
-          ],
-          "default": "Mouse"
-        },
-        "strain": {
-          "type": "string"
-        },
-        "assay_description": {
-          "type": "string"
-        },
-        "age": {
-          "type": "string"
-        },
-        "sex": {
-          "type": "string",
-          "enum": [
-            "Male",
-            "Female",
-            "Both"
-          ],
-          "default": "Male"
-        },
-        "duration": {
-          "type": "string"
-        },
-        "dose_range": {
-          "type": "object",
-          "properties": {
-            "dose_range_min": {
-              "type": "number"
-            },
-            "dose_range_max": {
-              "type": "number"
-            }
-          }
-        },
-        "ld50": {
-          "type": "string"
-        },
-        "route": {
-          "type": "string",
-          "enum": [
-            "TO-DO-1",
-            "TO-DO-2"
-          ],
-          "default": "TO-DO-1"
-        },
-        "vehicle_formulation": {
-          "type": "string"
-        }
-      },
-      "dependencies": {
-        "species": {
-          "oneOf": [
-            {
-              "properties": {
-                "species": {
-                  "enum": [
-                    "Mouse",
-                    "Rat",
-                    "Monkey"
-                  ]
-                }
-              }
-            },
-            {
-              "properties": {
-                "species": {
-                  "enum": [
-                    "Other"
-                  ]
-                },
-                "species_other": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "species_other"
-              ]
             }
           ]
         }
@@ -1256,8 +1159,8 @@
             false
           ],
           "enumNames": [
-            "Yes",
-            "No"
+            "I agree to data sharing",
+            "I want to discuss further"
           ],
           "uniqueItems": true,
           "title": "Data Sharing"
@@ -1307,7 +1210,7 @@
       ],
       "properties": {
         "compound_availability": {
-          "title": "Available compound amount (g)",
+          "title": "Available compound amount (mg)",
           "type": "number"
         },
         "molecular_weight": {
@@ -1385,19 +1288,19 @@
         "therapeutic_approach": {
           "type": "string",
           "enum": [
-            "prophylatic",
+            "prophylactic",
             "symptomatic",
             "both",
             "unknown"
           ],
           "enumNames": [
-            "Prophylatic",
+            "Prophylactic",
             "Symptomatic",
             "Both",
             "Unknown"
           ],
           "uniqueItems": true,
-          "title": "What is the theraupeutic approach?"
+          "title": "What is the therapeutic approach?"
         },
         "therapeutic_indication_description": {
           "type": "string",
@@ -1552,7 +1455,7 @@
           "type": "number"
         },
         "dissociation_constant": {
-          "title": "Acid dissociation constant(s) (pKA)",
+          "title": "Acid Dissociation Constant (pKA)",
           "type": "number"
         },
         "molecular_weight": {
@@ -1615,6 +1518,7 @@
       }
     },
     "chronic_dosing": {
+      "type": "object",
       "properties": {
         "experiments": {
           "type": "array",
@@ -1663,7 +1567,7 @@
           ],
           "uniqueItems": true
         },
-        "cinical_publication_status": {
+        "clinical_publication_status": {
           "title": "If this study has been published, please provide a reference.",
           "type": "string"
         },
