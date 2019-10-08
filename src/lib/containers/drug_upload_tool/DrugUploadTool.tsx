@@ -140,7 +140,7 @@ class DrugUploadTool extends React.Component<
         isLoading: false,
       })
     } catch (error) {
-      this.onError(error)
+      this.onError({message: error})
     } finally {
       this.setState({
         isLoading: false,
@@ -255,7 +255,7 @@ class DrugUploadTool extends React.Component<
 
       this.finishedProcessing(StatusEnum.SAVE_SUCCESS, 'File Saved')
     } catch (error) {
-      this.onError(error)
+      this.onError({message: error})
     }
   }
 

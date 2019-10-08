@@ -28,7 +28,7 @@ class FormServicesIntegrationDemo extends React.Component<{}, FormServicesIntegr
   }
 
   public onCreateFormGroup(): void {
-    SynapseClient.createFormGroup('DrugUploadTool(production)', this.state.token!)
+    SynapseClient.createFormGroup('AAMP-ADExternalContribution(production)', this.state.token!)
       .then((data: FormGroup) => {
         console.log('Successfully created FormGroup', data)
         this.setState({ formGroup: data })

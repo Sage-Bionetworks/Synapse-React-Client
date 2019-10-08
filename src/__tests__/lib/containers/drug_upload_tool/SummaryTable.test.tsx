@@ -102,16 +102,9 @@ describe('basic tests', () => {
     expect(cell).toHaveLength(1);
   });
 
-  it('should only display the "delete" icon in wizard mode and call the callbackFn', () => {
-    const spy = jest.spyOn(mock, 'callbackFn');
+  it('should not display delete button', () => {
     let { wrapper } = createShallowComponent(props);
-    expect(wrapper.find('button')).not.toHaveLength(0);
-    wrapper
-      .find('button')
-      .first()
-      .simulate('click');
-    expect(spy).toHaveBeenCalledWith(props.steps[0].id);
-
+    expect(wrapper.find('button')).toHaveLength(0)
     const _props = { ...props, ...{ isWizard: false } };
     wrapper = createShallowComponent(_props).wrapper;
     expect(wrapper.find('button')).toHaveLength(0);
