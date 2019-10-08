@@ -7,13 +7,18 @@ export type HeaderProps = {
 }
 
 export default function Header(props: HeaderProps) {
-  const bodyText = props.isSubmitted ? (
-    <div>Your information has been submitted</div>
-  ) : props.bodyText ? (
-    <div dangerouslySetInnerHTML={{ __html: props.bodyText }}></div>
-  ) : (
-    <></>
-  )
+  let bodyText = <></>
+
+  if (props.isSubmitted) {
+    bodyText = <div>Your information has been submitted</div>
+  } else {
+    if (props.bodyText) {
+      bodyText = (
+        <div dangerouslySetInnerHTML={{ __html: props.bodyText }}></div>
+      )
+    }
+  }
+
   return (
     <div
       className={`submission-header${props.isSubmitted ? ' submitted' : ''}`}

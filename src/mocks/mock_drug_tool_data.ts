@@ -1,6 +1,6 @@
 import { FileEntity } from '../lib/utils/jsonResponses/FileEntity'
 import { Step, StepStateEnum } from '../lib/containers/drug_upload_tool/types'
-import {  ListResponse } from '../lib/utils/jsonResponses/Forms'
+import { ListResponse, StatusEnum } from '../lib/utils/jsonResponses/Forms'
 export const steps: Step[] = [
   {
     id: 'toxicology _data',
@@ -793,7 +793,7 @@ export const formListDataInProgress : ListResponse= {
       createdOn: '2019-09-30T17:01:51.622Z',
       modifiedOn: '2019-09-30T17:02:20.399Z',
       dataFileHandleId: '43485087',
-      submissionStatus: { state: 'WAITING_FOR_SUBMISSION' },
+      submissionStatus: { state: StatusEnum.WAITING_FOR_SUBMISSION },
     },
   ],
 }
@@ -811,7 +811,7 @@ export const formListDataSubmitted = {
       dataFileHandleId: '43505207',
       submissionStatus: {
         submittedOn: '2019-10-01T04:22:23.511Z',
-        state: 'SUBMITTED_WAITING_FOR_REVIEW',
+        state: StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
       },
     },
     {
@@ -825,7 +825,7 @@ export const formListDataSubmitted = {
       dataFileHandleId: '43504979',
       submissionStatus: {
         submittedOn: '2019-10-01T04:21:00.269Z',
-        state: 'SUBMITTED_WAITING_FOR_REVIEW',
+        state: StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
       },
     },
     {
@@ -839,7 +839,7 @@ export const formListDataSubmitted = {
       dataFileHandleId: '43504590',
       submissionStatus: {
         submittedOn: '2019-10-01T04:12:04.769Z',
-        state: 'SUBMITTED_WAITING_FOR_REVIEW',
+        state: StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
       },
     },
     {
@@ -853,7 +853,7 @@ export const formListDataSubmitted = {
       dataFileHandleId: '43503572',
       submissionStatus: {
         submittedOn: '2019-10-01T04:01:51.672Z',
-        state: 'SUBMITTED_WAITING_FOR_REVIEW',
+        state: StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
       },
     }
   ],
