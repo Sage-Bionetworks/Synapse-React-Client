@@ -719,7 +719,7 @@ export default class DrugUploadForm extends React.Component<
               </div>
               {this.renderOptionalFormSubheader(this.props.isWizardMode)}
               <div
-                className={this.isSubmitScreen() ? 'hide-form-only' : 'wrap'}
+                className={this.isSubmitScreen()|| this.state.currentStep.static ? 'hide-form-only' : 'wrap'}
               >
                 {this.state.hasValidated && (
                   <div className="notification-area">
