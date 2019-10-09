@@ -808,7 +808,6 @@ export default class DrugUploadForm extends React.Component<
           ></WarningModal>
         )}
         <DataDebug
-          formSchema={this.getSchema(this.state.currentStep)}
           formData={this.state.formData}
           hidden={false}
         ></DataDebug>
