@@ -106,10 +106,10 @@ export default class App extends React.Component<{}, AppState> {
                 <Link to="/Playground">Playground</Link>
               </li>
               <li>
-                <Link to="/drugUploadTool">DrugUploadTool</Link>
+                <Link to="/drugUploadTool">Drug Upload Tool</Link>
               </li>
               <li>
-                <Link to="/contribReqForm">ContribReq</Link>
+                <Link to="/contribReqForm">AMP-AD external data contribution </Link>
               </li>
             </ul>
 
@@ -158,36 +158,32 @@ export default class App extends React.Component<{}, AppState> {
               render={props => {
                 let searchParamsProps: any = {}
                 // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-                const searchParams: any = new URLSearchParams(
-                  props.location.search,
-                )
-                const iter = searchParams.entries()
-                let result = iter.next()
-                while (!result.done) {
-                  const [key, value] = result.value
+                const searchParams = new URLSearchParams(props.location.search)
+                searchParams.forEach((value, key) => {
                   searchParamsProps[key] = value
-                  result = iter.next()
-                }
-                console.log('rendering line 162')
+                })
                 return !props.location.search ? (
                   <FileGrid
                     pathpart="contribReqForm"
-                    formGroupId="5"
+                    formGroupId="11"
                     token={this.state.token}
                     formClass="contribution-request"
-                    itemNoun={'Nomination'}
+                    itemNoun={'Contribution Request'}
+
                   />
                 ) : (
                   <DrugUploadTool
                     {...props}
                     formSchemaEntityId="syn20692910"
+                    fileNamePath="study.submission_name"
+                  
                     formUiSchemaEntityId="syn20692911"
                     formNavSchemaEntityId="syn20692912"
                     isWizardMode={true}
                     token={this.state.token}
-                    formTitle="Your Submission"
+                    formTitle="Your Contribution Request"
                     formClass="contribution-request"
-                    fileNamePath="study.submission_name"
+                    searchParams={searchParamsProps}
                   />
                 )
               }}

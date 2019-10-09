@@ -1,14 +1,13 @@
 import * as React from 'react';
 
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { SummaryFormat, Step } from './types';
 import _ from 'lodash';
 
 export interface SummaryTableProps {
   isWizard?: boolean;
   formData: any;
-  callbackFn: Function;
+  callbackFn?: Function;
   steps: Step[];
 }
 
@@ -67,7 +66,7 @@ export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
       label: key.substring(boundary + 1),
       value: val
     };
-  });
+  }).filter(item => item.label !== 'included'); //included is the property we generate to help with validation of optional forms
 
   const result = flatFormData
     .filter(item => item.screen && typeof item.value !== 'undefined')
@@ -86,17 +85,7 @@ export function getFlatData(formData: any, steps: Step[]): SummaryFormat[] {
 export default function SummaryTable(props: SummaryTableProps): JSX.Element {
   let flatFormData: SummaryFormat[] = [];
   flatFormData = getFlatData(_.cloneDeep(props.formData), props.steps);
-  const deleteButton = (screenId: string, isShow?: boolean): JSX.Element => {
-    if (!isShow) {
-      return <></>;
-    }
-    return (
-      <button className="btn" onClick={() => props.callbackFn(screenId)}>
-        <FontAwesomeIcon icon={faTrash} color="red"></FontAwesomeIcon>
-      </button>
-    );
-  };
-
+  
   let prevScreenId = '';
   const table = (
     <>
@@ -121,7 +110,6 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
                       (prevScreenId = line.screen.id) && (
                         <span>
                           {line.screen.title}
-                          {deleteButton(line.screen.id, props.isWizard)}
                         </span>
                       )}
                   </td>

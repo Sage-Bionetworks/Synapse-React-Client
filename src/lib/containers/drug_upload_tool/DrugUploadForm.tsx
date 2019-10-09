@@ -155,7 +155,15 @@ export default class DrugUploadForm extends React.Component<
 
   componentDidMount() {
     this.setupBeforeUnloadListener()
-    if (_.isEmpty(this.state.formData) && !this.props.isWizardMode) {
+    const formData = this.state.formData
+    const isNewForm =
+      Object.keys(formData).length == 1 &&
+      Object.keys(formData)[0] === 'metadata'
+    if (!isNewForm) {
+      return
+    }
+    // for validation of optional forms. Validation is enforced only if included property is set.
+    if (!this.props.isWizardMode) {
       const result = {}
       const defs = this.props.schema.definitions
       Object.keys(defs).forEach((key: string) => {
@@ -166,7 +174,15 @@ export default class DrugUploadForm extends React.Component<
           _.set(result, `${key}.included`, true)
         }
       })
-      this.setState({ formData: result })
+      this.setState(prevState => ({ formData: prevState.formData, ...result }))
+    } else {
+      // when in wizard mode we automatically set 'included' after we visit the step so only need to do this for the first step
+      this.setState(prevState => {
+        const formData = prevState.formData
+        const firstStepId = prevState.currentStep.id
+        _.set(formData, `${firstStepId}.included`, true)
+        return { formData }
+      })
     }
   }
 
@@ -703,7 +719,7 @@ export default class DrugUploadForm extends React.Component<
               </div>
               {this.renderOptionalFormSubheader(this.props.isWizardMode)}
               <div
-                className={this.isSubmitScreen() ? 'hide-form-only' : 'wrap'}
+                className={this.isSubmitScreen()|| this.state.currentStep.static ? 'hide-form-only' : 'wrap'}
               >
                 {this.state.hasValidated && (
                   <div className="notification-area">
@@ -761,7 +777,6 @@ export default class DrugUploadForm extends React.Component<
               {this.isSubmitScreen() && (
                 <SummaryTable
                   formData={this.state.formData}
-                  isWizard={this.props.isWizardMode}
                   steps={this.state.steps}
                   callbackFn={(screenId: string) =>
                     this.showExcludeStateWarningModal(screenId, true)
@@ -793,7 +808,6 @@ export default class DrugUploadForm extends React.Component<
           ></WarningModal>
         )}
         <DataDebug
-          formSchema={this.getSchema(this.state.currentStep)}
           formData={this.state.formData}
           hidden={false}
         ></DataDebug>
