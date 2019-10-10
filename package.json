@@ -122,7 +122,7 @@
     "prepublishOnly": "yarn run build && yarn run test:coverage",
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d build && gh-pages -d build -o upstream",
     "build-css": "node-sass src/lib/style -o src/lib/style",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",
