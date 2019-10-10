@@ -65,18 +65,18 @@ export default class App extends React.Component<{}, AppState> {
           theme={'light'}
           icon={true}
         />
-        <hr />
-        <h4>Synapse Staging (Google SSO redirects to staging site)</h4>
-        <Login
-          token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token}
-          theme={'dark'}
-          icon={true}
-          googleRedirectUrl={
-            'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'
-          }
-          repoEndpoint={'https://repo-staging.prod.sagebase.org/'}
-          swcEndpoint={'https://staging.sagebase.org/'}
-        />
+        <details><summary>Synapse Staging (Google SSO redirects to staging site)</summary>
+          <Login
+            token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token}
+            theme={'dark'}
+            icon={true}
+            googleRedirectUrl={
+              'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'
+            }
+            repoEndpoint={'https://repo-staging.prod.sagebase.org/'}
+            swcEndpoint={'https://staging.sagebase.org/'}
+          />
+        </details>
         <hr />
       </div>
     )
