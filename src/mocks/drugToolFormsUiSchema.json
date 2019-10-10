@@ -49,15 +49,15 @@
     },
     "chemical_name": {
       "ui:placeholder": "What is the chemical name?",
-      "ui:help": "Please provide the chemical name of the compound to be tested (e.g. alpha-ethyl-2-oxo-1-pyrrolidineacetamide)"
+      "ui:help": "Please provide the chemical name of the compound to be tested (e.g. alpha-ethyl-2-oxo-1-pyrrolidineacetamide)."
     },
     "common_name": {
       "ui:placeholder": "What is the common name?",
-      "ui:help": "Please provide the common name of the compound to be tested (e.g. Levetiracetam)"
+      "ui:help": "Please provide the common name of the compound to be tested (e.g. Levetiracetam)."
     },
     "iupac_name": {
       "ui:placeholder": "Enter the IUPAC name (if available).",
-      "ui:help": "Please provide the IUPAC name of this compound (e.g. (S)-2-(2-oxopyrrolidin-1-yl)butanamide)"
+      "ui:help": "Please provide the IUPAC name of this compound (e.g. (S)-2-(2-oxopyrrolidin-1-yl)butanamide)."
     },
     "CAS_number": {
       "ui:placeholder": "Enter the CAS number (if available), including hyphens.",
@@ -282,7 +282,8 @@
           "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:placeholder": "What strain of model was used?"
+          "ui:placeholder": "What strain of model was used?",
+          "ui:help": "What strain was the model (e.g. C57BL/6J substrain, APP/PS1 mice, LPS stimulated)?"
         },
         "outcome_measures": {
           "ui:placeholder": "In a few sentences, describe the primary outcome measure",
@@ -313,8 +314,7 @@
         },
         "ed50": {
           "ui:placeholder": "",
-          "ui:help": "Please select the dose range that yielded 50 percent effectiveness in this study.",
-          "ui:widget": "radio"
+          "ui:help": "Please enter the dose that yielded 50 percent effectiveness in this study."
         },
         "dose_range": {
           "ui:help": "",
@@ -375,24 +375,24 @@
       "ui:placeholder": "Enter the pKA value"
     },
     "molecular_weight": {
-      "ui:help": "Please provide the in silicons molecular weight of the compound in grams per mole (g/mol).",
+      "ui:help": "Please provide the in silico molecular weight of the compound in grams per mole (g/mol).",
       "ui:placeholder": "Enter the in silico molecular weight"
     }
   },
   "pk_in_vitro": {
     "ui:title": "In Vitro Data",
     "assay_description": {
-      "ui:help": "Please describe the in vitro assay that was used to estimate BBB penetration?",
-      "ui:placeholder": "Enter vitro assay details."
+      "ui:help": "Please describe the in vitro assay that was used to estimate blood brain barrier penetration?",
+      "ui:placeholder": "Enter assay details"
     },
     "permeability": {
-      "ui:help": "Please detail the permeability of this compound to the blood brain barrier (BBB).",
+      "ui:help": "Please detail the permeability of this compound to the blood brain barrier.",
       "ui:widget": "textarea",
-      "ui:placeholder": "Describe the blood brain barrier permeability."
+      "ui:placeholder": "Describe the blood brain barrier permeability"
     },
     "lipophilicity": {
       "ui:help": "Please provide the LogD, which is a log of partition of a chemical compound between the lipid and aqueous phases. The most popular lipid phase is octanol.",
-      "ui:placeholder": "Enter the lipophilicity coefficient (LogD)."
+      "ui:placeholder": "Enter the lipophilicity coefficient (LogD)"
     }
   },
   "pk_in_vivo": {
@@ -424,7 +424,8 @@
           "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:placeholder": "What strain of model was used?"
+          "ui:placeholder": "What strain of model was used?",
+          "ui:help": "What strain was the model (e.g. C57BL/6J substrain, APP/PS1 mice, LPS stimulated)?"
         },
         "age_range": {
           "ui:help": "Please provide the age of the test subjects at the time of testing.",
@@ -445,35 +446,35 @@
           "ui:help": "Please indicate the sex of the subjects used in this study"
         },
         "clearance_rate": {
-          "ui:help": "Please provide the drug plasma clearance rate for the compound of interest",
+          "ui:help": "Please provide the drug plasma clearance rate for the compound of interest.",
           "ui:placeholder": "Enter the clearance rate."
         },
         "half_life": {
-          "ui:help": "Please provide the drug half-life for the compound of interest",
+          "ui:help": "Please provide the drug half-life for the compound of interest.",
           "ui:placeholder": "Enter the half-life."
         },
         "tissue_concentration": {
-          "ui:help": "Please provide the tissue concentration for the compound of interest",
+          "ui:help": "Please provide the tissue concentration for the compound of interest.",
           "ui:placeholder": "Enter the tissue concentration."
         },
         "plasma_protein_binding": {
-          "ui:help": "Please provide the plasma protein binding for the compound of interest",
+          "ui:help": "Please provide the plasma protein binding for the compound of interest.",
           "ui:placeholder": "Enter the plasma protein binding."
         },
         "liver_metabolism": {
-          "ui:help": "Please describe the liver metabolism for the compound of interest",
+          "ui:help": "Please describe the liver metabolism for the compound of interest.",
           "ui:placeholder": "Describe the liver metabolism"
         },
         "fractional_bioavailability": {
-          "ui:help": "Please provide the bioavailability for the compound of interest",
+          "ui:help": "Please provide the bioavailability for the compound of interest.",
           "ui:placeholder": "Enter the fractional bioavaliablity."
         },
         "plasma_max_concentration": {
-          "ui:help": "Please provide the maximum tissue concentration for the compound of interest",
+          "ui:help": "Please provide the maximum tissue concentration for the compound of interest.",
           "ui:placeholder": "Enter the plasma maximum concentration."
         },
         "volume": {
-          "ui:help": "Please provide the tissue volume of distribution for the compound of interest",
+          "ui:help": "Please provide the tissue volume of distribution for the compound of interest.",
           "ui:placeholder": "Enter the volume of distribution."
         }
       }
@@ -510,7 +511,8 @@
           "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:placeholder": "What strain of model was used?"
+          "ui:placeholder": "What strain of model was used?",
+          "ui:help": "What strain was the model (e.g. C57BL/6J substrain, APP/PS1 mice, LPS stimulated)?"
         },
         "assay_description": {
           "ui:widget": "textarea",
@@ -614,11 +616,12 @@
           "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:placeholder": "What strain of model was used?"
+          "ui:placeholder": "What strain of model was used?",
+          "ui:help": "What strain was the model (e.g. C57BL/6J substrain, APP/PS1 mice, LPS stimulated)?"
         },
         "assay_description": {
           "ui:widget": "textarea",
-          "ui:placeholder": "Enter the assay details"
+          "ui:placeholder": "Enter assay details"
         },
         
         "age_range": {
@@ -695,7 +698,7 @@
           "*"
         ],
         "name": {
-          "ui:placeholder": "Choose a unique name for this experiment",
+          "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
         },
         "reference": {
@@ -710,7 +713,8 @@
           "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:placeholder": "What strain of model was used?"
+          "ui:placeholder": "What strain of model was used?",
+          "ui:help": "What strain was the model (e.g. C57BL/6J substrain, APP/PS1 mice, LPS stimulated)?"
         },
         "assay_description": {
           "ui:widget": "textarea",
@@ -806,11 +810,12 @@
           "ui:placeholder": "If other, enter model species"
         },
         "strain": {
-          "ui:placeholder": "What strain of model was used?"
+          "ui:placeholder": "What strain of model was used?",
+          "ui:help": "What strain was the model (e.g. C57BL/6J substrain, APP/PS1 mice, LPS stimulated)?"
         },
         "assay_description": {
           "ui:widget": "textarea",
-          "ui:placeholder": "In a few sentences, describe the assay and methods"
+          "ui:placeholder": "Enter assay details"
         },
         
         "age_range": {
@@ -896,7 +901,7 @@
     "clinical_publication_status": {
       "ui:help": "",
       "ui:description": "",
-      "ui:placeholder": ""
+      "ui:placeholder": "Enter reference"
     },
     "clinical_trials_reference": {
       "ui:help": "",

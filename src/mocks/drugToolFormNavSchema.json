@@ -5,7 +5,7 @@
       "order": 0,
       "title": "Required Data",
       "default": "naming",
-      "description": "<p> This is some description for an individual step.  It can have <strong>html</strong>",
+      "description": "",
 
       "static": true,
       "copy": "<p>Use this section to enter basic information about this compound, including mechanism of action, proposed treatment strategy, and how much compound can be provided for testing.</p>",
@@ -48,6 +48,7 @@
       "order": 21,
       "title": "Binding",
       "child": true,
+      "excluded": false,
       "default": "efficacy",
       "rules": []
     },
@@ -56,6 +57,7 @@
       "order": 22,
       "title": "Efficacy",
       "child": true,
+      "excluded": false,
       "default": "in_vivo",
       "rules": []
     },
@@ -74,6 +76,7 @@
       "order": 40,
       "title": "In Vivo Data",
       "default": "pharmacokinetics",
+      "excluded": false,
       "child": true,
       "rules": []
     },
@@ -92,6 +95,7 @@
       "order": 52,
       "title": "PK In Silico",
       "default": "pk_in_vitro",
+      "excluded": false,
       "child": true,
       "rules": []
     },
@@ -100,6 +104,7 @@
       "order": 54,
       "title": "PK In Vitro",
       "default": "pk_in_vivo",
+      "excluded": false,
       "child": true,
       "rules": []
     },
@@ -108,6 +113,7 @@
       "order": 56,
       "title": "PK In Vivo",
       "default": "toxicology",
+      "excluded": false,
       "child": true,
       "rules": []
     },
@@ -172,6 +178,7 @@
       "order": 75,
       "title": "Clinical Data",
       "default": "submission",
+      "excluded": false,
       "child": true,
       "rules": []
     },
