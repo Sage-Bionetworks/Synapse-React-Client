@@ -17,7 +17,9 @@
     }
     &.submitted {
       div {
-        color: $action-color;
+        @include themify($themes) {
+          color: themed('action-color');
+        }
         font-weight: bold;
         text-transform: uppercase;
       }
@@ -36,7 +38,9 @@
   .nav-link,
   a.nav-link,
   .nav-link > a {
-    color: $action-color;
+    @include themify($themes) {
+      color: themed('action-color');
+    }
     font-weight: bold;
     cursor: pointer;
   }
@@ -45,12 +49,16 @@
   }
 
   .btn-action {
-    background-color: $action-color;
+    @include themify($themes) {
+      background-color: themed('action-color');
+    }
     color: #fff;
   }
   .btn-action:hover,
   .btn-action:focus {
-    background-color: $action-color;
+    @include themify($themes) {
+      background-color: themed('action-color');
+    }
     @include box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
     color: #fff;
   }
@@ -86,7 +94,9 @@
     .file-table {
       @include calc(margin-bottom, #{$space-unit} * #{3});
       button.btn {
-        color: $action-color;
+        @include themify($themes) {
+          color: themed('action-color');
+        }
       }
       .view-more {
         text-align: right;
@@ -116,17 +126,20 @@
           vertical-align: middle;
         }
         a {
-          color: $action-color;
+          @include themify($themes) {
+            color: themed('action-color');
+          }
         }
       }
     }
 
     .btn-large {
       color: #fff;
-      background-color: $action-color;
+      @include themify($themes) {
+        background-color: themed('action-color');
+      }
 
       font-size: 1.25rem;
-
       text-transform: uppercase;
       border-radius: 15px;
       padding: 0.75rem 1.5rem;
@@ -268,90 +281,102 @@
       display: none;
     }
 
-    label.control-label,
-    .data-range legend {
-      font-size: 1.4rem;
-      font-weight: normal;
-      color: $gray-formtext;
-    }
-
-    .form-group {
-      margin-bottom: 2rem;
-    }
-
-    .checkbox > label::before,
-    .radio::before,
-    .radio-inline::before {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-
-    .radio input[type='radio']:checked + label::before,
-    .radio input[type='radio']:checked + span::before,
-    .radio-inline input[type='radio']:checked + label::before,
-    .radio-inline input[type='radio']:checked + span::before {
-      background: $action-color;
-      vertical-align: middle;
-      width: 0.7rem;
-      height: 0.7rem;
-      border-radius: 50%;
-
-      margin-left: -1.6rem;
-      margin-right: 1rem;
-    }
-    .array-item {
-      border: 1px solid $gray-dark;
-      padding: 2rem 1rem;
-      overflow: auto;
-      margin: 0 1.6rem 2rem 1.6rem;
-    }
-
-    .array-item-move-down,
-    .array-item-move-down {
-      display: none;
-    }
-    legend {
-      border: none;
-    }
-    fieldset fieldset legend {
-      /* font-size: 2.25rem;*/
-      /* hiding default title for better scroll experience */
-      display: none;
-    }
-
-    /* second level title */
-    fieldset fieldset fieldset legend {
-      /*font-size: 1.75rem;
-      display: block;
-      margin-bottom: 0.5rem;*/
-      display: none;
-    }
-    /* third level title */
-    fieldset fieldset fieldset fieldset legend {
-      font-size: 1.5rem;
-    }
-
-    // for min/max type of filed
+    // for min/max type of field
     .data-range {
+      legend {
+        font-size: 1.4rem;
+        font-weight: normal;
+        color: $gray-formtext;
+        display: block;
+        margin-bottom: 0;
+      }
       .form-group {
         float: left;
+        margin-bottom: 0;
 
         label {
-          font-size: 1em;
+          font-size: 1.3rem;
           font-weight: normal;
         }
       }
       .form-group + .form-group {
-        margin-left: 1em;
+        margin-left: 1.5rem;
       }
     }
+  }
+
+  label.control-label,
+  .data-range legend {
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: $gray-formtext;
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .checkbox > label::before,
+  .radio::before,
+  .radio-inline::before {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .radio input[type='radio']:checked + label::before,
+  .radio input[type='radio']:checked + span::before,
+  .radio-inline input[type='radio']:checked + label::before,
+  .radio-inline input[type='radio']:checked + span::before {
+    @include themify($themes) {
+      background: themed('action-color');
+    }
+    vertical-align: middle;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+
+    margin-left: -1.6rem;
+    margin-right: 1rem;
+  }
+  .array-item {
+    border: 1px solid $gray-dark;
+    padding: 2rem 1rem;
+    overflow: auto;
+    margin: 0 1.6rem 2rem 1.6rem;
+  }
+
+  .array-item-move-down,
+  .array-item-move-down {
+    display: none;
+  }
+  legend {
+    border: none;
+  }
+  fieldset fieldset legend {
+    /* font-size: 2.25rem;*/
+    /* hiding default title for better scroll experience */
+    display: none;
+  }
+
+  /* second level title */
+  fieldset fieldset fieldset legend {
+    /*font-size: 1.75rem;
+      display: block;
+      margin-bottom: 0.5rem;*/
+    display: none;
+  }
+  /* third level title */
+  fieldset fieldset fieldset fieldset legend {
+    font-size: 1.5rem;
   }
 
   .array-item-toolbox {
     button,
     button:hover {
       background-color: transparent;
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+      }
       border: none;
       box-shadow: none;
       cursor: pointer;
@@ -360,7 +385,9 @@
     }
 
     i.glyphicon {
-      background-color: $action-color;
+      @include themify($themes) {
+        background: themed('action-color');
+      }
       color: white;
       font-weight: 100;
       margin-right: 1rem;
@@ -380,7 +407,9 @@
     width: 100%;
     button.btn-info.btn-add {
       background-color: transparent;
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+      }
       border: 1px solid $gray-dark;
       padding: 2rem 3.3rem;
       text-align: right;
@@ -392,7 +421,9 @@
     }
 
     i.glyphicon {
-      background-color: $action-color;
+      @include themify($themes) {
+        background-color: themed('action-color');
+      }
       color: white;
       font-weight: 100;
       margin-right: 1rem;
@@ -415,6 +446,11 @@
   .toggle-help {
     vertical-align: middle;
     margin: 0 5px;
+    .react-switch-bg {
+      @include themify($themes) {
+        background-color: themed('action-color') !important;
+      }
+    }
   }
 
   /*------- summary -------*/
@@ -457,11 +493,11 @@
   }
 }
 
-.drug-upload-tool {
-  &.modal {
-    .btn-success {
-      background-color: $action-color;
-      border-color: $action-color;
+.modal {
+  .btn-success {
+    @include themify($themes) {
+      background-color: themed('action-color');
+      border-color: themed('action-color');
     }
   }
 }
