@@ -588,7 +588,7 @@ export default class DrugUploadForm extends React.Component<
             width={45}
             className="toggle-help"
             offColor="#ccc"
-            onColor="#5960a5"
+         
             onChange={() => callbackFn()}
             checked={showHelp}
           />
@@ -799,7 +799,7 @@ export default class DrugUploadForm extends React.Component<
             show={true}
             title={this.excludeWarningHeader}
             copy={this.excludeWarningText}
-            className={this.props.formClass}
+            className={`theme-${this.props.formClass}`}
             callbackArgs={this.state.modalContext.arguments}
             onCancel={() => this.setState({ modalContext: undefined })}
             onOK={(stepId: string, isExclude: boolean) =>

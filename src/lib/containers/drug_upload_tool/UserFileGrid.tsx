@@ -433,7 +433,8 @@ export default class UserFileGrid extends React.Component<
 
   render() {
     return (
-      <div className={`SRC-ReactJsonForm ${this.props.formClass}`}>
+      <div className={`theme-${this.props.formClass}`}>
+        <div className="SRC-ReactJsonForm">
         {this.renderLoading(this.props.token, this.state.isLoading)}
         {this.renderUnauthenticatedView(this.props.token)}
 
@@ -461,7 +462,7 @@ export default class UserFileGrid extends React.Component<
         )}
         {this.state.modalContext && (
           <WarningModal
-            className={this.props.formClass}
+            className={`theme-${this.props.formClass}`}
             show={typeof this.state.modalContext !== 'undefined'}
             title={this.modalTitle}
             copy={this.modalCopy}
@@ -476,7 +477,7 @@ export default class UserFileGrid extends React.Component<
         <Modal
           show={this.state.isShowInfoModal}
           animation={false}
-          className={this.props.formClass}
+          className={`theme-${this.props.formClass}`}
         >
           <Modal.Header
             closeButton={false}
@@ -498,6 +499,7 @@ export default class UserFileGrid extends React.Component<
             </Button>
           </Modal.Footer>
         </Modal>
+      </div>
       </div>
     )
   }

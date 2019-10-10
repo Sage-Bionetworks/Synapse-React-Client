@@ -30,7 +30,10 @@
       height: $item-height;
       line-height: $item-height;
       text-align: left;
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+        }
+     
       background-color: $gray-dark;
       border-left-color: $gray-dark;
 
@@ -60,7 +63,9 @@
     }
 
     .btn-link {
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+        }
       font-weight: bold;
       padding: 0;
       margin: 0;
@@ -74,7 +79,9 @@
     }
 
     .fa-check-circle {
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+        }
     }
 
     .fa-circle {
@@ -85,7 +92,9 @@
 
     .static .fa-circle {
       border: 1px solid $action-color;
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+        }
     }
 
     .fa-exclamation-circle {

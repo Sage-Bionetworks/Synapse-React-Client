@@ -3,25 +3,70 @@ $action-color-dark: #5660e5;
 $gray-dark: #dcdcdc;
 $gray-light: #f9f9f9;
 $gray-formtext: #515359;
-$red-error: #B2242A;
-$red-error2: #C94281;
+$red-error: #b2242a;
+$red-error2: #c94281;
+
+$themes: (
+  drug-upload-tool: (
+    action-color: #5960a5,
+    $action-color-dark: #5660e5,
+    $gray-dark: #dcdcdc,
+    $gray-light: #f9f9f9,
+    $gray-formtext: #515359,
+    $red-error: #b2242a,
+    $red-error2: #c94281,
+  ),
+  contribution-request: (
+    action-color: rgb(12, 141, 22),
+    $action-color-dark: #1a4402,
+    $gray-dark: #dcdcdc,
+    $gray-light: #f9f9f9,
+    $gray-formtext: #515359,
+    $red-error: #b2242a,
+    $red-error2: #c94281,
+  ),
+);
 
 $space-unit: 2.1rem;
 
 @mixin box-shadow($top, $left, $blur, $color, $inset: false) {
-    @if $inset {
-      -webkit-box-shadow:inset $top $left $blur $color;
-      -moz-box-shadow:inset $top $left $blur $color;
-      box-shadow:inset $top $left $blur $color;
-    } @else {
-      -webkit-box-shadow: $top $left $blur $color;
-      -moz-box-shadow: $top $left $blur $color;
-      box-shadow: $top $left $blur $color;
+  @if $inset {
+    -webkit-box-shadow: inset $top $left $blur $color;
+    -moz-box-shadow: inset $top $left $blur $color;
+    box-shadow: inset $top $left $blur $color;
+  } @else {
+    -webkit-box-shadow: $top $left $blur $color;
+    -moz-box-shadow: $top $left $blur $color;
+    box-shadow: $top $left $blur $color;
+  }
+}
+
+@mixin calc($property, $expression) {
+  #{$property}: -moz-calc(#{$expression});
+  #{$property}: -webkit-calc(#{$expression});
+  #{$property}: calc(#{$expression});
+}
+/* create classes prefixed with the theme for properties for classes using themify */
+@mixin themify($themes: $themes) {
+  @each $theme, $map in $themes {
+    .theme-#{$theme} & {
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), '#{$key}');
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+
+      @content;
+      $theme-map: null !global;
     }
   }
+}
 
-  @mixin calc($property, $expression) {
-    #{$property}: -moz-calc(#{$expression});
-    #{$property}: -webkit-calc(#{$expression});
-    #{$property}: calc(#{$expression});
-  }
+@function themed($key) {
+  @return map-get($theme-map, $key);
+}

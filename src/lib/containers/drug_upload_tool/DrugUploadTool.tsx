@@ -140,7 +140,7 @@ class DrugUploadTool extends React.Component<
         isLoading: false,
       })
     } catch (error) {
-      this.onError({message: error})
+      this.onError({ message: error })
     } finally {
       this.setState({
         isLoading: false,
@@ -255,7 +255,7 @@ class DrugUploadTool extends React.Component<
 
       this.finishedProcessing(StatusEnum.SAVE_SUCCESS, 'File Saved')
     } catch (error) {
-      this.onError({message: error})
+      this.onError({ message: error })
     }
   }
 
@@ -335,30 +335,32 @@ class DrugUploadTool extends React.Component<
 
   render() {
     return (
-      <div className={`SRC-ReactJsonForm ${this.props.formClass}`}>
-        {this.renderNotification(this.state.notification)}
-        {this.renderLoader(this.state, this.props)}
-        {this.renderUnauthenticatedView(this.props.token)}
+      <div className={`theme-${this.props.formClass}`}>
+        <div className="SRC-ReactJsonForm">
+          {this.renderNotification(this.state.notification)}
+          {this.renderLoader(this.state, this.props)}
+          {this.renderUnauthenticatedView(this.props.token)}
 
-        {this.isReadyToDisplayForm(this.state) && (
-          <div>
-            <DrugUploadForm
-              schema={this.state.formSchema}
-              uiSchema={this.state.formUiSchema!}
-              formData={this.state.formData}
-              navSchema={this.state.formNavSchema}
-              isWizardMode={this.props.isWizardMode}
-              formTitle={this.props.formTitle}
-              formClass={this.props.formClass}
-              callbackStatus={this.state.status}
-              onSave={(data: any) => this.saveToFile(data)}
-              onSubmit={(data: any) => this.submitForm(data)}
-              isSubmitted={
-                this.props.searchParams && !!this.props.searchParams.submitted
-              }
-            ></DrugUploadForm>
-          </div>
-        )}
+          {this.isReadyToDisplayForm(this.state) && (
+            <div>
+              <DrugUploadForm
+                schema={this.state.formSchema}
+                uiSchema={this.state.formUiSchema!}
+                formData={this.state.formData}
+                navSchema={this.state.formNavSchema}
+                isWizardMode={this.props.isWizardMode}
+                formTitle={this.props.formTitle}
+                formClass={this.props.formClass}
+                callbackStatus={this.state.status}
+                onSave={(data: any) => this.saveToFile(data)}
+                onSubmit={(data: any) => this.submitForm(data)}
+                isSubmitted={
+                  this.props.searchParams && !!this.props.searchParams.submitted
+                }
+              ></DrugUploadForm>
+            </div>
+          )}
+        </div>
       </div>
     )
   }
