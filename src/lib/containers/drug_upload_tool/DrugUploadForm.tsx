@@ -542,7 +542,7 @@ export default class DrugUploadForm extends React.Component<
     if (currentStep.excluded === true) {
       return (
         <div className="step-exclude-directions">
-          This sub-form is currently not included in the submission.
+          This form is currently not included in the submission.
           <button
             className="btn btn-link"
             onClick={() => this.toggleExcludeStep(currentStep.id, false)}
@@ -554,7 +554,7 @@ export default class DrugUploadForm extends React.Component<
     } else if (currentStep.excluded === false) {
       return (
         <div className="step-exclude-directions">
-          This sub-form is currently included in the submission.{' '}
+          This form is currently included in the submission. Enter some data if you have it, or click "Skip".{' '}
           <button
             className="btn btn-link"
             onClick={() =>
