@@ -81,8 +81,8 @@ export default class DrugUploadForm extends React.Component<
   DrugUploadFormProps,
   DrugUploadFormState
 > {
-  excludeWarningText = `This action will clear the entire contents of this page. Only this page will be effected.
-  Are you sure you want to clear the data enterred on this page?`
+  excludeWarningText = `This action will clear the entire contents of this page. Only this page will be affected.
+  Are you sure you want to clear the data entered on this page?`
   excludeWarningHeader = `Clear Entered Data`
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
   formRef: any //ref to form for submission
