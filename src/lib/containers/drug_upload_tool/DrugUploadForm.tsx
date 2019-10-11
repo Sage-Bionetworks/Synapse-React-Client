@@ -588,7 +588,6 @@ export default class DrugUploadForm extends React.Component<
             width={45}
             className="toggle-help"
             offColor="#ccc"
-         
             onChange={() => callbackFn()}
             checked={showHelp}
           />
@@ -639,6 +638,11 @@ export default class DrugUploadForm extends React.Component<
           (error.name === 'enum' || error.name === 'oneOf')
         )
       })
+    })
+    return errors.map(error => {
+      error.message = error.message.replace('property', 'field')
+
+      return error
     })
     return errors
   }
@@ -719,7 +723,11 @@ export default class DrugUploadForm extends React.Component<
               </div>
               {this.renderOptionalFormSubheader(this.props.isWizardMode)}
               <div
-                className={this.isSubmitScreen()|| this.state.currentStep.static ? 'hide-form-only' : 'wrap'}
+                className={
+                  this.isSubmitScreen() || this.state.currentStep.static
+                    ? 'hide-form-only'
+                    : 'wrap'
+                }
               >
                 {this.state.hasValidated && (
                   <div className="notification-area">
@@ -807,10 +815,7 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-        <DataDebug
-          formData={this.state.formData}
-          hidden={false}
-        ></DataDebug>
+        <DataDebug formData={this.state.formData} hidden={false}></DataDebug>
       </div>
     )
   }
