@@ -561,7 +561,7 @@ export default class DrugUploadForm extends React.Component<
               this.showExcludeStateWarningModal(this.state.currentStep.id)
             }
           >
-            EXCLUDE
+            SKIP
           </button>
         </div>
       )
