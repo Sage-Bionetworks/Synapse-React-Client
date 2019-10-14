@@ -62,7 +62,7 @@
         },
         "efficacy_measure": {
           "type": "string",
-          "title": "Efficacy (nmol/L)"
+          "title": "Efficacy"
         },
         "efficacy_measure_type": {
           "type": "string",
@@ -72,8 +72,8 @@
             "IC50"
           ],
           "enumNames": [
-            "EC50(mg/kg)",
-            "IC50(nmol/L)"
+            "EC50 (mg/kg)",
+            "IC50 (nmol/L)"
           ],
           "uniqueItems": true
         }
@@ -770,11 +770,9 @@
         "strain",
         "outcome_measures",
         "assay_description",
-        "age_range_min",
-        "age_range_max",
+        "age_range",
         "sex",
-        "dose_range_min",
-        "dose_range_max",
+        "dose_range",
         "dose_regimen",
         "route",
         "drug_formulation"
@@ -857,13 +855,7 @@
         },
         "ed50": {
           "type": "string",
-          "title": "ED50 (mg/kg)",
-          "enum": [
-            "<31",
-            "31-100",
-            "101-300",
-            ">300"
-          ]
+          "title": "ED50 (mg/kg)"
         },
         "dose_range": {
           "type": "object",
@@ -1056,15 +1048,15 @@
           "title": "Tissue Concentration (nmol/g)"
         },
         "plasma_protein_binding": {
-          "type": "number",
+          "type": "string",
           "title": "Plasma Protein Binding"
         },
         "liver_metabolism": {
-          "type": "number",
+          "type": "string",
           "title": "Liver Metabolism"
         },
         "fractional_bioavailability": {
-          "type": "number",
+          "type": "string",
           "title": "Fractional bioavailability"
         },
         "plasma_max_concentration": {
@@ -1211,7 +1203,8 @@
       "properties": {
         "compound_availability": {
           "title": "Available compound amount (mg)",
-          "type": "number"
+          "type": "number",
+          "minimum": 0
         },
         "molecular_weight": {
           "title": "Molecular weight (g/mol)",
@@ -1308,15 +1301,15 @@
         },
         "melting_point": {
           "type": "number",
-          "title": "Melting Point"
+          "title": "Melting Point (C)"
         },
         "freezing_point": {
           "type": "number",
-          "title": "Freezing Point"
+          "title": "Freezing Point (C)"
         },
         "storage_temperature": {
-          "type": "number",
-          "title": "Storage Temperature (i.e 3C)"
+          "type": "string",
+          "title": "Storage Conditions"
         },
         "water_soluble": {
           "type": "string",
@@ -1353,7 +1346,7 @@
               "Sublingual",
               "Nasal",
               "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal,",
+              "Transdermal",
               "Intrathecal",
               "Formulated in Food",
               "Formulated in Drinking Water"

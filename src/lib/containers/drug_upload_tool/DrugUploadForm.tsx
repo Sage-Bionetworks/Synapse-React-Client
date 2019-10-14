@@ -81,8 +81,8 @@ export default class DrugUploadForm extends React.Component<
   DrugUploadFormProps,
   DrugUploadFormState
 > {
-  excludeWarningText = `This action will clear the entire contents of this page. Only this page will be effected.
-  Are you sure you want to clear the data enterred on this page?`
+  excludeWarningText = `This action will clear the entire contents of this page. Only this page will be affected.
+  Are you sure you want to clear the data entered on this page?`
   excludeWarningHeader = `Clear Entered Data`
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
   formRef: any //ref to form for submission
@@ -542,7 +542,7 @@ export default class DrugUploadForm extends React.Component<
     if (currentStep.excluded === true) {
       return (
         <div className="step-exclude-directions">
-          This sub-form is currently not included in the submission.
+          This form is currently not included in the submission.
           <button
             className="btn btn-link"
             onClick={() => this.toggleExcludeStep(currentStep.id, false)}
@@ -554,14 +554,14 @@ export default class DrugUploadForm extends React.Component<
     } else if (currentStep.excluded === false) {
       return (
         <div className="step-exclude-directions">
-          This sub-form is currently included in the submission.{' '}
+          This form is currently included in the submission. Enter some data if you have it, or click "Skip".{' '}
           <button
             className="btn btn-link"
             onClick={() =>
               this.showExcludeStateWarningModal(this.state.currentStep.id)
             }
           >
-            EXCLUDE
+            SKIP
           </button>
         </div>
       )
@@ -588,7 +588,6 @@ export default class DrugUploadForm extends React.Component<
             width={45}
             className="toggle-help"
             offColor="#ccc"
-         
             onChange={() => callbackFn()}
             checked={showHelp}
           />
@@ -639,6 +638,11 @@ export default class DrugUploadForm extends React.Component<
           (error.name === 'enum' || error.name === 'oneOf')
         )
       })
+    })
+    return errors.map(error => {
+      error.message = error.message.replace('property', 'field')
+
+      return error
     })
     return errors
   }
@@ -719,7 +723,11 @@ export default class DrugUploadForm extends React.Component<
               </div>
               {this.renderOptionalFormSubheader(this.props.isWizardMode)}
               <div
-                className={this.isSubmitScreen()|| this.state.currentStep.static ? 'hide-form-only' : 'wrap'}
+                className={
+                  this.isSubmitScreen() || this.state.currentStep.static
+                    ? 'hide-form-only'
+                    : 'wrap'
+                }
               >
                 {this.state.hasValidated && (
                   <div className="notification-area">
@@ -807,10 +815,7 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-        <DataDebug
-          formData={this.state.formData}
-          hidden={false}
-        ></DataDebug>
+        <DataDebug formData={this.state.formData} hidden={false}></DataDebug>
       </div>
     )
   }

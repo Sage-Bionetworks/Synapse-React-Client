@@ -20,7 +20,6 @@
       "ui:title": "Institution"
     }
   },
-
   "funding": {
     "nih_grant_number": {},
     "nia_program": {},
@@ -50,11 +49,22 @@
       "ui:help": "Find more info here TODO!<a href=\"#\" target=\"_blank\">Learn more </a>",
       "ui:widget": "radio"
     },
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
     "release_not_allowed_explanation": {},
     "study_type": {},
     "study_type_other": {},
     "specimen_repository": {},
-
     "disease_focus": {
       "ui:widget": "radio"
     },
@@ -73,6 +83,18 @@
     "model_systems_other": {}
   },
   "mouse": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
     "description": {
       "ui:description": "Include genotype and genotype background",
       "ui:widget": "textarea"
@@ -81,6 +103,18 @@
     "total_number_animals": {}
   },
   "rat": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
     "description": {
       "ui:description": "Include genotype and genotype background",
       "ui:widget": "textarea"
@@ -89,6 +123,18 @@
     "total_number_animals": {}
   },
   "drosophila": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
     "description": {
       "ui:description": "Include genotype and genotype background",
       "ui:widget": "textarea"
@@ -97,20 +143,20 @@
     "total_number_animals_pools": {}
   },
   "cell_culture": {
+    "assays": {
+      "classNames": "show-subfield-title",
+      "assays_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
+    "assesments": {
+      "classNames": "show-subfield-title",
+      "assesments_list": {
+        "ui:widget": "checkboxes"
+      }
+    },
     "description": {},
     "treatments_list": {}
-  },
-  "assays": {
-    "assays_list": {
-      "ui:widget": "radio"
-    },
-    "assays_list_other": {}
-  },
-  "assesments": {
-    "assays_list": {
-      "ui:widget": "radio"
-    },
-    "assays_list_other": {}
   },
   "analysis": {
     "analytical_output_description": {},
@@ -121,12 +167,18 @@
   },
   "tools": {
     "ui:title": "What type of tools are being contributed",
-
+    "ui:order": [
+      "experimental_tools",
+      "experimental_tools_description",
+      "computational_tools",
+      "computational_tools_description",
+      "other_tools",
+      "other_tools_description"
+    ],
     "experimental_tools": {
       "ui:description": "Experimental"
     },
     "experimental_tools_description": {},
-
     "computational_tools": {},
     "computational_tools_description": {},
     "other_tools": {},
