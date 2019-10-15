@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS, EXPAND_CLASS } from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS, EXPAND_CLASS, unCamelCase } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
@@ -95,6 +95,15 @@ describe('basic functionality', () => {
   it('renders without crashing', async () => {
     const { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
+  })
+
+  describe('unCamelCase', () => {
+    it('works as expected', async () => {
+      expect(unCamelCase('basicCase')).toEqual('Basic Case')
+      expect(unCamelCase('DNA')).toEqual('DNA')
+      expect(unCamelCase('AnotherCase')).toEqual('Another Case')
+      expect(unCamelCase('silly ColumnName Test (ms)')).toEqual('Silly Column Name Test (ms)')
+    })
   })
 
   describe('Dropdown column menu works', () => {
