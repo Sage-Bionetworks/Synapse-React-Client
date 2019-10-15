@@ -11,6 +11,7 @@ import { insertConditionsFromSearchParams } from '../utils/modules/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
+import { unCamelCase } from './SynapseTable'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -84,7 +85,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         }
     )
     if (submittedSearchText) {
-      const searchItemView = facetAliases[searchItem.columnName] || searchItem.columnName
+      const searchItemView = facetAliases[searchItem.columnName] || unCamelCase(searchItem.columnName)
       const frontText = isQueryWrapperMenuChild ? `.${SEARCH_CLASS_CSS} `: ''
       const querySelector =  frontText + `[data-search-handle="${searchItemView}"]`
       const trs = document.querySelectorAll<HTMLElement>(querySelector)
@@ -202,7 +203,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const totalQueryResultsStyle: React.CSSProperties = {
       margin: '20px 0px'
     }
-    const curFacetDisplayText = facetAliases[searchableItem.columnName] || searchableItem.columnName
+    const curFacetDisplayText = facetAliases[searchableItem.columnName] || unCamelCase(searchableItem.columnName)
     let usedUnitDescription = unitDescription
     if (submittedSearchText !== '') {
       usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${curFacetDisplayText}`
@@ -226,7 +227,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                     {
                       searchable.map(
                         (el, index) => {
-                          const displayName = facetAliases[el.columnName] || el.columnName
+                          const displayName = facetAliases[el.columnName] || unCamelCase(el.columnName)
                           return (
                             <li 
                               style={liStyle}
