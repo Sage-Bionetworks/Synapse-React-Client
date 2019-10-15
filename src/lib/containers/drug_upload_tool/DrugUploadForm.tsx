@@ -59,6 +59,7 @@ type DrugUploadFormState = {
   modalContext?: { action: Function; arguments: any[] }
   hasUnsavedChanges: boolean
   isSubmitted?: boolean
+  isLoadingSaved: boolean
 }
 
 type RulesEvent = {
@@ -90,6 +91,20 @@ export default class DrugUploadForm extends React.Component<
   uiSchema: {}
   nextStep: Step | undefined
 
+  isNewForm = (formData: IFormData): boolean => {
+    return   Object.keys(formData).length == 1 &&
+    Object.keys(formData)[0] === 'metadata'
+  }
+
+  getFirstStep=(steps: Step[], formData: IFormData): Step => {
+    if (!this.isNewForm(formData)) {
+      return steps.find(step => step.final===true) || steps[0]
+    } else {
+      return steps[0]
+    }
+  }
+
+
   constructor(props: DrugUploadFormProps) {
     super(props)
 
@@ -109,15 +124,17 @@ export default class DrugUploadForm extends React.Component<
       .sort((a, b) => a.order - b.order)
 
     this.formRef = React.createRef()
+    const currentStep = this.getFirstStep(steps, props.formData)
     this.state = {
-      currentStep: steps[0],
-      steps: steps,
+      currentStep: currentStep,
+      steps,
       previousStepIds: [],
       formData: props.formData,
       doShowErrors: false,
       doShowHelp: true,
       hasUnsavedChanges: false,
       isSubmitted: props.isSubmitted,
+      isLoadingSaved: !this.isNewForm(this.props.formData)
     }
   }
 
@@ -155,13 +172,11 @@ export default class DrugUploadForm extends React.Component<
 
   componentDidMount() {
     this.setupBeforeUnloadListener()
-    const formData = this.state.formData
-    const isNewForm =
-      Object.keys(formData).length == 1 &&
-      Object.keys(formData)[0] === 'metadata'
+    const isNewForm = this.isNewForm(this.state.formData)
     if (!isNewForm) {
-      return
-    }
+    //when loading saved form - validate to see the steps status
+    this.triggerAction(NavActionEnum.VALIDATE)
+    } else {
     // for validation of optional forms. Validation is enforced only if included property is set.
     if (!this.props.isWizardMode) {
       const result = {}
@@ -185,6 +200,7 @@ export default class DrugUploadForm extends React.Component<
       })
     }
   }
+}
 
   // get the schema slice for the current screen/step
   getSchema = ({ id, final }: Step): FormSchema => {
@@ -360,15 +376,23 @@ export default class DrugUploadForm extends React.Component<
       const modifiedSteps = this.setStepStatusForFailedValidation(
         args.props,
         this.state.steps,
-        this.getSchema(this.state.currentStep),
+        !!this.props.isWizardMode,
+        this.state.formData,
+        this.getSchema(this.state.currentStep).properties || this.getSchema(this.state.currentStep)
       )
-      this.setState({ steps: modifiedSteps })
+      this.setState({ steps: modifiedSteps})
+      if (this.state.isLoadingSaved) {
+        this.moveStep(this.state.formData, modifiedSteps[0].id, true)
+        this.setState({ isLoadingSaved: false})
+      }
     }
   }
 
   setStepStatusForFailedValidation = (
     errors: AjvError[],
     steps: Step[],
+    isWizard: boolean,
+    formData: IFormData,
     currentSchemaProperties: any,
   ): Step[] => {
     //error property is in the format: step.somevalue.etc  .welcome.submission_name example
@@ -379,15 +403,23 @@ export default class DrugUploadForm extends React.Component<
     //find all steps in current schema
     const stepsInCurrentSchema = Object.keys(currentSchemaProperties)
     const updatedSteps: Step[] = steps.map(step => {
+      //if there is an error in this step
       if (stepsWithError.indexOf(step.id) > -1) {
         return {
           ...step,
           state: StepStateEnum.ERROR,
         }
+        //if no error and included in schema
       } else if (stepsInCurrentSchema.indexOf(step.id) > -1) {
+        let state = StepStateEnum.COMPLETED;
+        //if we are in wizard and possibly have not visited this step
+        if (isWizard && !_.get(formData[step.id], 'included')) {
+          state = step.state
+        }
+
         return {
           ...step,
-          state: StepStateEnum.COMPLETED,
+          state: state,
         }
       } else {
         return step
@@ -429,19 +461,23 @@ export default class DrugUploadForm extends React.Component<
       case NavActionEnum.VALIDATE: {
         //we get here is we clicked validate and the data is valid.
         // if it's not valid we handle it in onError fn
+        const steps = this.setStepStatusForFailedValidation(
+          [],
+          this.state.steps,
+          !!this.props.isWizardMode,
+          this.state.formData,
+          this.getSchema(this.state.currentStep).properties || this.getSchema(this.state.currentStep)
+        )
         const currentStep = {
           ...this.state.currentStep,
           state: StepStateEnum.COMPLETED,
         }
-        const steps = this.state.steps.map(step => {
-          return {
-            ...step,
-            state:
-              step.id === currentStep.id ? StepStateEnum.COMPLETED : step.state,
-          }
-        })
-
-        this.setState({ hasValidated: true, currentStep, steps })
+       
+        this.setState({ hasValidated: true, currentStep, steps})
+        if (this.state.isLoadingSaved) {
+          this.moveStep(this.state.formData, steps[0].id, false)
+          this.setState({ isLoadingSaved: false})
+        }
       }
       default:
         return
