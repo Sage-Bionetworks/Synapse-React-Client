@@ -842,7 +842,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         if (userName === AUTHENTICATED_USERS) {
           return <span ><FontAwesomeIcon icon={icon}/> All registered Synapse users </span>
         }
-        return (<a target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>)
+        return (<a rel="noopener noreferrer" href={`https://www.synapse.org/#!Team:${ownerId}`}> <FontAwesomeIcon icon={icon}/> {userName} </a>)
       } else {
         // isUserCard
         return  (
@@ -935,7 +935,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
     const synTable = this.props.synapseId
-    window.open(`https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`, '_blank')
+    window.open(`https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`, '_self')
   }
 
   private getLengthOfPropsData() {

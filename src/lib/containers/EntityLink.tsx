@@ -66,7 +66,7 @@ type EntityLinkProps = {
 export const EntityLink: React.SFC<EntityLinkProps> = ({ entityHeader, className }) => {
   const { id, name, type } = entityHeader
   return (
-    <a className={className} target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Synapse:${id}`}>
+    <a className={className} rel="noopener noreferrer" href={`https://www.synapse.org/#!Synapse:${id}`}>
       <p className={className}>
         <EntityTypeIcon type={type} />
         {name}
