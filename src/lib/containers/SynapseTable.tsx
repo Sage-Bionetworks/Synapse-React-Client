@@ -883,11 +883,12 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
         const isSelectedSpanClass = (isSelected ? 'SRC-primary-background-color SRC-anchor-light' : '')
         const isSelectedIconClass = isSelected ? 'SRC-selected-table-icon' : 'SRC-primary-text-color'
         const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
+        const displayColumnName: string | undefined = unCamelCase(column.name)
         return (
           <th key={column.name}>
             <div className="SRC-centerContent">
               <span style={{ whiteSpace: 'nowrap' }}>
-              {column.name}
+              {displayColumnName}
               </span>
               {isFacetSelection && this.configureFacetDropdown(index, facets, facetIndex)}
               <span
@@ -1169,6 +1170,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    }
 }
 
+export const unCamelCase = (
+  str: string | undefined
+  ): string | undefined => {
+    // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
+    if (!str) { return str }
+    return str
+        // insert a space between lower & upper
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        // space before last upper in a sequence followed by lower
+        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+        // uppercase the first character
+        .replace(/^./, (str:string) => { return str.toUpperCase()})
+}
 type ColumnReference = {
   index: number,
   name: string

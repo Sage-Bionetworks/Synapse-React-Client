@@ -208,7 +208,7 @@ describe('it renders an accordion config', () => {
   it('passes down the correct unitDescription correctly' , async () => {
     const { wrapper } = await createMountedComponent(props)
     const queryWrapper = wrapper.find(QueryWrapper).at(0)
-    expect(queryWrapper.props().unitDescription).toEqual('Computational Tools by a')
+    expect(queryWrapper.props().unitDescription).toEqual('Computational Tools by A')
   })
 
 })
