@@ -299,11 +299,13 @@
           "ui:help": "Please provide the age of the test subject at the time of testing.",
           "classNames": "data-range",
           "age_range_min": {
+            "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "age_range_max": {
+            "ui:title": "Maximum Subject Age",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -320,11 +322,13 @@
           "ui:help": "",
           "classNames": "data-range",
           "dose_range_min": {
+            "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "dose_range_max": {
+            "ui:title": "Maximum Dose Range",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -431,11 +435,13 @@
           "ui:help": "Please provide the age of the test subjects at the time of testing.",
           "classNames": "data-range",
           "age_range_min": {
+            "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "age_range_max": {
+            "ui:title": "Maximum Subject Age",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -524,11 +530,13 @@
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
           "age_range_min": {
+            "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "age_range_max": {
+            "ui:title": "Maximum Subject Age",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -554,11 +562,13 @@
           "ui:help": "Please indicate the dose range over which you tested the compound",
           "classNames": "data-range",
           "dose_range_min": {
+            "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "dose_range_max": {
+            "ui:title": "Maximum Dose Range",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -628,11 +638,13 @@
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
           "age_range_min": {
+            "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "age_range_max": {
+            "ui:title": "Maximum Subject Age",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -650,11 +662,13 @@
           "ui:help": "Please indicate the dose range over which you tested the compound",
           "classNames": "data-range",
           "dose_range_min": {
+            "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "dose_range_max": {
+            "ui:title": "Maximum Dose Range",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -725,11 +739,13 @@
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
           "age_range_min": {
+            "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "age_range_max": {
+            "ui:title": "Maximum Subject Age",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -747,11 +763,13 @@
           "ui:help": "Please indicate the dose range over which you tested the compound",
           "classNames": "data-range",
           "dose_range_min": {
+            "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "dose_range_max": {
+            "ui:title": "Maximum Dose Range",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -822,11 +840,13 @@
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
           "age_range_min": {
+            "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "age_range_max": {
+            "ui:title": "Maximum Subject Age",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -844,11 +864,13 @@
           "ui:help": "Please indicate the dose range over which you tested the compound",
           "classNames": "data-range",
           "dose_range_min": {
+            "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
             "ui:help": "",
             "ui:placeholder": ""
           },
           "dose_range_max": {
+            "ui:title": "Maximum Dose Range",
             "ui:help": "",
             "ui:widget": "updown",
             "ui:placeholder": ""
@@ -927,11 +949,13 @@
     "age_range": {
       "classNames": "data-range",
       "age_range_min": {
+        "ui:title": "Minimum Subject Age",
         "ui:widget": "updown",
         "ui:help": "",
         "ui:placeholder": ""
       },
       "age_range_max": {
+        "ui:title": "Maximum Subject Age",
         "ui:help": "",
         "ui:widget": "updown",
         "ui:placeholder": ""

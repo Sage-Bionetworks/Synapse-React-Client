@@ -8,7 +8,9 @@ import SummaryTable, {
 
 import {
   submissionData,
-  stepsWithUserData
+  stepsWithUserData,
+  formUiSchema,
+  formSchema,
 } from '../../../../mocks/mock_drug_tool_data';
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithUserData);
@@ -27,6 +29,8 @@ describe('basic tests', () => {
 
   const props: SummaryTableProps = {
     isWizard: true,
+    schema: formSchema,
+    uiSchema: formUiSchema,
     formData: {
       ld50,
       basic,
@@ -75,7 +79,7 @@ describe('basic tests', () => {
       Object.keys(props.formData.naming).indexOf('chemical_name')
     ).not.toBe(-1);
     expect(props.formData.naming.chemical_name).not.toBeUndefined;
-    expect(wrapper.text().indexOf('chemical_name')).not.toBe(-1);
+    expect(wrapper.text().indexOf('Chemical Name')).not.toBe(-1);
 
     const firstColumns = wrapper.find('td:first-child');
     let result = 0;
@@ -96,7 +100,7 @@ describe('basic tests', () => {
     );
 
     const cell = wrapper.findWhere(
-      n => n.html() == '<td>experiments.0.strain</td>'
+      n => n.html() == '<td>[1] ld50.properties.experiments.items.properties.strain.title</td>'
     );
 
     expect(cell).toHaveLength(1);

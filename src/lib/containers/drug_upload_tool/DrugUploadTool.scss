@@ -205,6 +205,7 @@
     flex-wrap: wrap;
     flex-basis: 100%;
     flex: 3;
+    margin-top: 1rem;
   }
   .scroll-area {
     height: 100%;
@@ -497,11 +498,10 @@
   }
 }
 
-.modal {
-  .btn-success {
+  .btn-success, .btn-success:active, .btn-success:focus  {
     @include themify($themes) {
       background-color: themed('action-color');
       border-color: themed('action-color');
     }
   }
-}
+

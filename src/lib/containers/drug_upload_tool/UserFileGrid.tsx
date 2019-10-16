@@ -325,7 +325,7 @@ export default class UserFileGrid extends React.Component<
               {fileList.map((dataFileRecord, key) => {
                 if (isInProgress) {
                   return (
-                    <tr key={dataFileRecord.formDataId! + key}>
+                    <tr key={dataFileRecord.formDataId! + key+ fileListType}>
                       <td>
                         <a
                           href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
@@ -487,7 +487,7 @@ export default class UserFileGrid extends React.Component<
           </Modal.Header>
           <Modal.Body>
             Please{' '}
-            <a href="mailto:synapseInfo@sagebionetworks.org">contact us</a> for
+            <a href="mailto:ModelAD@iupui.edu">contact us</a> for
             more information about your submission
           </Modal.Body>
           <Modal.Footer>

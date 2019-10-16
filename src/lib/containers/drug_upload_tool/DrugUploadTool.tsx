@@ -8,6 +8,7 @@ import Alert from 'react-bootstrap/Alert'
 import DrugUploadForm from './DrugUploadForm'
 import { FormData } from '../../utils/jsonResponses/Forms'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import $RefParser from "json-schema-ref-parser";
 import _ from 'lodash'
 
 export type UploadToolSearchParams = {
@@ -78,6 +79,7 @@ class DrugUploadTool extends React.Component<
   getFileEntityData = async (
     token: string,
     entityId: string,
+    {doDereference = false} = {}
   ): Promise<{ version?: number; content: JSON }> => {
     try {
       const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
@@ -85,9 +87,12 @@ class DrugUploadTool extends React.Component<
         token,
         entity,
       )
+      let content =  JSON.parse(entityContent);
+      if (doDereference)
+      content =  await $RefParser.dereference(content) 
       return {
         version: entity.versionNumber,
-        content: JSON.parse(entityContent),
+        content: content,
       }
     } catch (error) {
       const newError = {
@@ -106,7 +111,7 @@ class DrugUploadTool extends React.Component<
       let formData = {}
 
       const promises = [
-        this.getFileEntityData(token, this.props.formSchemaEntityId),
+        this.getFileEntityData(token, this.props.formSchemaEntityId, {doDereference: true}),
         this.getFileEntityData(token, this.props.formUiSchemaEntityId),
         this.getFileEntityData(token, this.props.formNavSchemaEntityId),
       ]
@@ -300,7 +305,6 @@ class DrugUploadTool extends React.Component<
         <Alert
           variant="danger"
           onClose={() => this.setState({ status: undefined })}
-          dismissible
         >
           <Alert.Heading>Error</Alert.Heading>
 
