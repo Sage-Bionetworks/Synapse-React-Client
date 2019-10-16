@@ -83,9 +83,16 @@ export default class DrugUploadForm extends React.Component<
   DrugUploadFormProps,
   DrugUploadFormState
 > {
-  excludeWarningText = <div>This action will clear any entered data on this page and remove this form from your submission.<br/>
-  You can include it again at anytime. Only this page will be affected.  <br/>
-  Are you sure you want to skip this step and clear any entered data?</div>
+  excludeWarningText = (
+    <div>
+      This action will clear any entered data on this page and remove this form
+      from your submission.
+      <br />
+      You can include it again at anytime. Only this page will be affected.{' '}
+      <br />
+      Are you sure you want to skip this step and clear any entered data?
+    </div>
+  )
   excludeWarningHeader = 'Skip This Step?'
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
   formRef: any //ref to form for submission
@@ -129,7 +136,7 @@ export default class DrugUploadForm extends React.Component<
     this.formRef = React.createRef()
     const currentStep = this.getFirstStep(steps, props.formData)
     this.state = {
-      currentStep: currentStep,
+      currentStep,
       steps,
       previousStepIds: [],
       formData: props.formData,
@@ -137,7 +144,7 @@ export default class DrugUploadForm extends React.Component<
       doShowHelp: true,
       hasUnsavedChanges: false,
       isSubmitted: props.isSubmitted,
-      isLoadingSaved: !this.isNewForm(this.props.formData)
+      isLoadingSaved: !this.isNewForm(this.props.formData),
     }
   }
 
@@ -503,7 +510,7 @@ export default class DrugUploadForm extends React.Component<
   }
 
   isSubmitScreen = (): boolean => {
-    return this.state.currentStep.final === true
+    return this.state.currentStep.final === true && !this.state.isLoadingSaved
   }
 
   showExcludeStateWarningModal = (
@@ -731,6 +738,11 @@ export default class DrugUploadForm extends React.Component<
               isWizardMode={this.props.isWizardMode}
               onStepChange={this.triggerStepChange}
             ></StepsSideNav>
+            {this.state.isLoadingSaved && (
+              <div className="text-center">
+                <span className={'spinner'} />
+              </div>
+            )}
             <div className="form-wrap">
               <div className="form-title">{this.state.currentStep.title}</div>
               {this.renderNotification(this.props.callbackStatus)}
@@ -863,7 +875,7 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-        <DataDebug formData={this.state.formData} hidden={false}></DataDebug>
+          <DataDebug formData={this.state.formData} hidden={true}></DataDebug>
       </div>
     )
   }
@@ -895,7 +907,7 @@ function renderTransformedErrorObject(
 
   if (index) {
     index = index.substring(1, index.length - 1)
-    index = !isNaN(parseInt(index))? ` [${parseInt(index) + 1}]` : ''
+    index = !isNaN(parseInt(index)) ? ` [${parseInt(index) + 1}]` : ''
   }
 
   let label =
