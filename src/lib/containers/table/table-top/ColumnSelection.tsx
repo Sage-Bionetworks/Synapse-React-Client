@@ -21,10 +21,10 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (p
   return (
     <Dropdown.Menu alignRight={true}>
       {
-        headers.slice(0,17).map(
+        headers.map(
           (header, index) => {
             let isCurrentColumnSelected: boolean | undefined = isColumnSelected[index]
-            if (isColumnSelected === undefined) {
+            if (isCurrentColumnSelected === undefined) {
               isCurrentColumnSelected = (index < visibleColumnCount)
             }
             const iconStyle: any = { width: '11px', marginRight: '10px' }

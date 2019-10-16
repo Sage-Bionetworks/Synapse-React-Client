@@ -77,7 +77,6 @@ interface Dictionary<T> {
 }
 export type SynapseTableState = {
   sortedColumnSelection: SortItem []
-  isDropdownColumnMenuOpen: boolean
   isColumnSelected: boolean[]
   columnIconSortState: number[],
   activeFilterIndex: number
@@ -87,7 +86,6 @@ export type SynapseTableState = {
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
-  isDropdownDownloadOptionsOpen: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -129,10 +127,8 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       activeFilterClass: '',
       isColumnSelected: [],
       activeFilterIndex: -1,
-      isDropdownColumnMenuOpen: false,
       isMenuWallOpen: false,
       isModalDownloadOpen: false,
-      isDropdownDownloadOptionsOpen: false,
       isExpanded: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -312,7 +308,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
           isModalDownloadOpen
           &&
           <ModalDownload
-            onClose={this.toggleStateVariables('isModalDownloadOpen', 'isDropdownDownloadOptionsOpen', 'isMenuWallOpen')}
+            onClose={this.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')}
             sql={sql}
             selectedFacets={selectedFacets}
             token={token}
@@ -396,6 +392,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
             headers={headers}
             isColumnSelected={this.state.isColumnSelected}
             toggleColumnSelection={this.toggleColumnSelection}
+            visibleColumnCount={this.props.visibleColumnCount}
           />
         </Dropdown>
         <ReactTooltip 
@@ -460,17 +457,17 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     const { isExpanded } = this.state
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
-    const backgroundColor = colorPalette[0]
+    const background = colorPalette[0]
     return (
       <div 
         className="SRC-centerContent" 
-        style={{ background: backgroundColor, padding: 8 }}
+        style={{ background, padding: 8 }}
       >
         <h3 className="SRC-tableHeader"> {title}</h3>
         <span 
           className="SRC-inlineFlex"
           style={{ marginLeft: 'auto' }}
-          >
+        >
             {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql)
                 &&
                 <>
@@ -499,19 +496,18 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 {this.renderDropdownColumnMenu(headers)}
               </>
             }
-            <ExpandTable
-              isExpanded={isExpanded}
-              onExpand={this.toggleStateVariables('isExpanded')}
-            />
-          </span>
-          {
-            <EllipsisDropdown
-              onDownloadFiles={this.advancedSearch}
-              onDownloadTableOnly={this.toggleStateVariables('isModalDownloadOpen')}
-              onShowColumns={() => {}}
-              onFullScreen={this.toggleStateVariables('isExpanded')}
-            />
-          }
+          <ExpandTable
+            isExpanded={isExpanded}
+            onExpand={this.toggleStateVariables('isExpanded')}
+          />
+        </span>
+        <EllipsisDropdown
+          onDownloadFiles={this.advancedSearch}
+          onDownloadTableOnly={this.toggleStateVariables('isModalDownloadOpen')}
+          onShowColumns={() => {}}
+          onFullScreen={this.toggleStateVariables('isExpanded')}
+          isExpanded={isExpanded}
+        />
       </div>
     )
   }
@@ -963,8 +959,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   public closeAllDropdowns(_: React.SyntheticEvent) {
     // this ensures all dropdown variables are set to false and any additional dropdowns added are added to this list
     const dropdownKeys: BooleanKeys<SynapseTableState> [] = [
-      'isDropdownColumnMenuOpen',
-      'isDropdownDownloadOptionsOpen',
       'isModalDownloadOpen',
       'isMenuWallOpen'
     ]
@@ -1074,7 +1068,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
      this.setState({
        activeFilterClass,
        activeFilterIndex: index,
-       isDropdownColumnMenuOpen: false,
        isMenuWallOpen: !isCurFilterSelected
      })
    }

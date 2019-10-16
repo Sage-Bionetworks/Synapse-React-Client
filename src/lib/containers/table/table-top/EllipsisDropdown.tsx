@@ -13,6 +13,7 @@ type EllipsisDropdownProps = {
   onDownloadTableOnly: Function
   onShowColumns: Function
   onFullScreen: Function
+  isExpanded: boolean
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
@@ -20,21 +21,36 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
   const {
     onDownloadFiles,
     onDownloadTableOnly,
-    onShowColumns,
-    onFullScreen
+    // onShowColumns,
+    onFullScreen,
+    isExpanded
   } = props
   return (
     <>
-      <Dropdown drop="down">
-        <Dropdown.Toggle data-for={tooltipEllipsis} data-tip="Table Options" id={tooltipEllipsis} variant={'light'}>
-          <FontAwesomeIcon color='white' icon={'ellipsis-v'}/>
+      <Dropdown>
+        <Dropdown.Toggle
+          data-for={tooltipEllipsis}
+          data-tip="Table Options"
+          id={tooltipEllipsis}
+          variant={'light'}
+        >
+          <FontAwesomeIcon color="white" icon={'ellipsis-v'} />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
-          <Dropdown.Item onClick={() => onDownloadFiles()}> Download Files </Dropdown.Item>
-          <Dropdown.Item onClick={() => onDownloadTableOnly()} >Download Table Only</Dropdown.Item>
-          <Dropdown.Divider/>
-          <Dropdown.Item onClick={() => onShowColumns()} > Show Columns </Dropdown.Item>
-          <Dropdown.Item onClick={() => onFullScreen()} > Full Screen </Dropdown.Item>
+          <Dropdown.Item onClick={() => onDownloadFiles()}>
+            Download Files
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => onDownloadTableOnly()}>
+            Download Table Only
+          </Dropdown.Item>
+          <Dropdown.Divider />
+          {/* <Dropdown.Item onClick={() => onShowColumns()}>
+            {' '}
+            Show Columns
+          </Dropdown.Item> */}
+          <Dropdown.Item onClick={() => onFullScreen()}>
+            {isExpanded ? 'Shrink' : 'Full Screen' }
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       <ReactTooltip
@@ -42,7 +58,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
         place="top"
         type="dark"
         effect="solid"
-        id={tooltipEllipsis} 
+        id={tooltipEllipsis}
       />
     </>
   )

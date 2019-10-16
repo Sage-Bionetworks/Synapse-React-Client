@@ -63,7 +63,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             facet: 'species',
-            sql: 'SELECT * FROM syn11346063 LIMIT 1000',
+            sql: 'SELECT id, name FROM syn11346063 LIMIT 1000',
           },
           {
             facet: 'study',
