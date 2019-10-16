@@ -41,8 +41,8 @@ import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { UserProfile } from '../../utils/jsonResponses/UserProfile'
 import { getUserProfileWithProfilePicAttached } from '../getUserData'
 import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
-import { Modal } from 'react-bootstrap'
-import { EllipsisDropdown, ExpandTable, DownloadOptions } from './table-top/'
+import { Modal, Dropdown } from 'react-bootstrap'
+import { EllipsisDropdown, ExpandTable, DownloadOptions, ColumnSelection } from './table-top/'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -380,34 +380,32 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
-    const { isDropdownColumnMenuOpen } = this.state
     const tooltipColumnSelectionId = 'addAndRemoveColumns'
-    let addRemoveColClasses  = 'SRC-inlineFlex SRC-primary-background-color-hover  dropdown-toggle SRC-hand-cursor'
-    addRemoveColClasses += (isDropdownColumnMenuOpen ? 'SRC-primary-background-color' : '')
     return (
-      <span style={{marginLeft: 10, height: 30, width: 34, padding: 1}} className={`dropdown ${isDropdownColumnMenuOpen ? 'open' : ''}`}>  
-        <span 
-          tabIndex={0} 
-          data-for={tooltipColumnSelectionId} 
-          data-tip="Add / Remove Columns" 
-          className={addRemoveColClasses} 
-          onKeyPress={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
-          onClick={this.toggleStateVariables('isDropdownColumnMenuOpen', 'isMenuWallOpen')} 
-          id="dropdownMenu1"
-        >
-          <img alt="columns selection" src={ColumnsSvg}/>
-        </span>
+      <>
+        <Dropdown>
+          <Dropdown.Toggle 
+            data-for={tooltipColumnSelectionId} 
+            id={tooltipColumnSelectionId}
+            data-tip="Add / Remove Columns" 
+            variant="light"
+          >
+            <img alt="columns selection" src={ColumnsSvg}/>
+          </Dropdown.Toggle>
+          <ColumnSelection
+            headers={headers}
+            isColumnSelected={this.state.isColumnSelected}
+            toggleColumnSelection={this.toggleColumnSelection}
+          />
+        </Dropdown>
         <ReactTooltip 
           delayShow={TOOLTIP_DELAY_SHOW} 
           place="top" 
           type="dark" 
           effect="solid" 
-          id={tooltipColumnSelectionId} 
+          id={tooltipColumnSelectionId}
         />
-        <ul className="SRC-table-dropdown-zindex dropdown-menu dropdown-menu-right SRC-column-menu" aria-labelledby="dropdownMenu1">
-          {this.renderDropdownColumnMenuItems(headers)}
-        </ul>
-      </span>
+      </>
     )
   }
 
@@ -461,7 +459,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     } = this.props
     const { isExpanded } = this.state
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
-    const tooltipDownloadId = 'download'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const backgroundColor = colorPalette[0]
     return (
@@ -496,7 +493,7 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                   place="top"
                   type="dark"
                   effect="solid"
-                  id={tooltipDownloadId} 
+                  id={tooltipAdvancedSearchId} 
                 />
                 {this.renderDropdownDownloadOptions()}
                 {this.renderDropdownColumnMenu(headers)}
@@ -676,48 +673,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
     })
   }
 
-  /**
-   * Renders the dropdown menu to the top right of table that allows users
-   * to toggle a columnn from the view of the table
-   *
-   * @private
-   * @param {SelectColumn[]} headers
-   * @returns {React.ReactNode}
-   * @memberof SynapseTable
-   */
-  private renderDropdownColumnMenuItems = (headers: SelectColumn[]) => {
-    return headers.map((header: any, index: number) => {
-      let isColumnSelected: boolean | undefined = this.state.isColumnSelected[index]
-      // if visibleColumnCount is not defined then show all columns
-      const { visibleColumnCount = Infinity } = this.props
-      if (isColumnSelected === undefined) {
-        isColumnSelected = (index < visibleColumnCount)
-      }
-      const iconStyle: any = { width: '11px', marginRight: '10px' }
-      if (!isColumnSelected) {
-        iconStyle.visibility = 'hidden'
-      }
-      const maybeShowPrimaryColor = isColumnSelected ? 'SRC-primary-text-color' : ''
-
-      return (
-        <li
-          style={{ listStyle: 'none' }}
-          className="SRC-table-dropdown-list SRC-primary-background-color-hover "
-          key={header.name}
-          onClick={this.toggleColumnSelection(index)}
-        >
-          <a href="javascript:void">
-            <FontAwesomeIcon
-              style={iconStyle}
-              className={maybeShowPrimaryColor}
-              icon="check"
-            />
-            {header.name}
-          </a>
-        </li>
-      )
-    })
-  }
   private createTableRows(rows: Row [], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
     const { isColumnSelected, mapEntityIdToHeader, mapUserIdToHeader } = this.state
