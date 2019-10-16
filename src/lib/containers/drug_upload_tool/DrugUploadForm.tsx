@@ -96,6 +96,7 @@ export default class DrugUploadForm extends React.Component<
   excludeWarningHeader = 'Skip This Step?'
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
   formRef: any //ref to form for submission
+  formDivRef: any // ref to the div containing form (for scrolling on validation failure)
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: {}
   nextStep: Step | undefined
@@ -134,6 +135,7 @@ export default class DrugUploadForm extends React.Component<
       .sort((a, b) => a.order - b.order)
 
     this.formRef = React.createRef()
+    this.formDivRef = React.createRef()
     const currentStep = this.getFirstStep(steps, props.formData)
     this.state = {
       currentStep,
@@ -396,6 +398,7 @@ export default class DrugUploadForm extends React.Component<
           this.getSchema(this.state.currentStep),
       )
       this.setState({ steps: modifiedSteps })
+      this.formDivRef.current.scrollTo(0, 0)
       if (this.state.isLoadingSaved) {
         this.moveStep(this.state.formData, modifiedSteps[0].id, true)
         this.setState({ isLoadingSaved: false })
@@ -780,7 +783,7 @@ export default class DrugUploadForm extends React.Component<
                 )}
               </div>
               {this.renderOptionalFormSubheader(this.props.isWizardMode)}
-              <div
+              <div 
                 className={
                   this.isSubmitScreen() || this.state.currentStep.static
                     ? 'hide-form-only'
@@ -792,7 +795,7 @@ export default class DrugUploadForm extends React.Component<
                     Great! Your data is valid!
                   </div>
                 )}
-                <div
+                <div ref={this.formDivRef}
                   className={`scroll-area ${
                     this.state.currentStep.excluded ? 'disabled' : ' '
                   } `}
