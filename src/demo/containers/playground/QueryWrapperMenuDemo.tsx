@@ -42,7 +42,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      activeTab: 1,
+      activeTab: 2,
       tabThree: {
         stackedBarChartConfiguration: {
           loadingScreen: <div> Im loading as fast I can! </div>

@@ -164,3 +164,23 @@ border-left-color: $primary-action-color;
     }
   }
 }
+
+%dropdown-active-state {
+  background: $primary-action-color;
+  border-radius: 0;
+}
+
+.show button.dropdown-toggle {
+  @extend %dropdown-active-state;
+}
+button.dropdown-toggle:hover {
+  @extend %dropdown-active-state;
+}
+
+a.dropdown-item {
+  &:hover {
+    background: $primary-action-color;
+    color: white;
+    text-decoration: none;
+  }
+}

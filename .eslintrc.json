@@ -11,5 +11,8 @@
     "ecmaFeatures": {
       "jsx": true
     }
+  },
+  "rules": {
+    "prop-types": 0
   }
 }

@@ -17,33 +17,32 @@ import ReactTooltip from "react-tooltip"
 import { FacetColumnResult,
   FacetColumnResultValueCount,
   FacetColumnResultValues
-} from '../utils/jsonResponses/Table/FacetColumnResult'
-import ColumnsSvg from '../assets/icons/columns.svg'
-import ExpandSvg from '../assets/icons/expand.svg'
-import ShrinkSvg from '../assets/icons/shrink.svg'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
-import { Row } from '../utils/jsonResponses/Table/QueryResult'
-import { SelectColumn, EntityColumnType } from '../utils/jsonResponses/Table/SelectColumn'
-import { getColorPallette } from './ColorGradient'
-import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
-import { cloneDeep } from '../utils/modules/'
-import { SortItem } from '../utils/jsonResponses/Table/Query'
-import { getIsValueSelected, readFacetValues } from '../utils/modules/facetUtils'
+} from '../../utils/jsonResponses/Table/FacetColumnResult'
+import ColumnsSvg from '../../assets/icons/columns.svg'
+import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
+import { Row } from '../../utils/jsonResponses/Table/QueryResult'
+import { SelectColumn, EntityColumnType } from '../../utils/jsonResponses/Table/SelectColumn'
+import { getColorPallette } from '../ColorGradient'
+import { QueryWrapperChildProps, FacetSelection } from '../QueryWrapper'
+import { cloneDeep } from '../../utils/modules/'
+import { SortItem } from '../../utils/jsonResponses/Table/Query'
+import { getIsValueSelected, readFacetValues } from '../../utils/modules/facetUtils'
 import { lexer } from 'sql-parser'
-import { formatSQLFromParser, isGroupByInSql } from '../utils/modules/sqlFunctions'
-import ModalDownload from './ModalDownload'
-import { SynapseClient } from '../utils'
-import { ReferenceList } from '../utils/jsonResponses/ReferenceList'
-import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
-import { EntityLink } from './EntityLink'
-import TotalQueryResults from './TotalQueryResults'
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import UserCard from './UserCard'
-import { AUTHENTICATED_USERS } from '../utils/SynapseConstants'
-import { UserProfile } from '../utils/jsonResponses/UserProfile'
-import { getUserProfileWithProfilePicAttached } from './getUserData'
-import { UserGroupHeader } from '../utils/jsonResponses/UserGroupHeader'
+import { formatSQLFromParser, isGroupByInSql } from '../../utils/modules/sqlFunctions'
+import ModalDownload from '../ModalDownload'
+import { SynapseClient } from '../../utils'
+import { ReferenceList } from '../../utils/jsonResponses/ReferenceList'
+import { EntityHeader } from '../../utils/jsonResponses/EntityHeader'
+import { EntityLink } from '../EntityLink'
+import TotalQueryResults from '../TotalQueryResults'
+import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
+import UserCard from '../UserCard'
+import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
+import { UserProfile } from '../../utils/jsonResponses/UserProfile'
+import { getUserProfileWithProfilePicAttached } from '../getUserData'
+import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
 import { Modal } from 'react-bootstrap'
+import { EllipsisDropdown, ExpandTable, DownloadOptions } from './table-top/'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -69,7 +68,6 @@ export const ICON_STATE: string [] = ['sort-amount-down', 'sort-amount-down', 's
 type Direction = ''|'ASC'|'DESC'
 export const SORT_STATE: Direction [] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container' 
-export const EXPAND_CLASS = 'SRC-expand-class'
 type Info = {
   index: number
   name: string
@@ -98,7 +96,7 @@ export type SynapseTableProps = {
   loadingScreen?: JSX.Element
 }
 
-const TOOLTIP_DELAY_SHOW = 500
+export const TOOLTIP_DELAY_SHOW = 500
 
 // This is a convenient way to categorize all the dropdown state variables, although problematic
 // if any state variable mapping to a boolean does NOT represent a dropdown
@@ -367,53 +365,17 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
   }
 
   private renderDropdownDownloadOptions = () => {
-    const { isDropdownDownloadOptionsOpen, isExpanded } = this.state
-    const tooltipAdvancedSearchId = 'openAdvancedSearch'
-    const tooltipDownloadId = 'download'
+    const { isExpanded } = this.state
     const toggleStateArgs: BooleanKeys<SynapseTableState> [] = ['isModalDownloadOpen']
     // we don't want two modals to show at once, so we close out the expanded view if its already showing
     if (isExpanded) {
       toggleStateArgs.push('isExpanded')
     }
     return (
-      <span className={`dropdown ${DOWNLOAD_OPTIONS_CONTAINER_CLASS} ${isDropdownDownloadOptionsOpen ? 'open' : ''}`}>
-        <button 
-          style={{ marginLeft: '10px' }}
-          data-for={tooltipDownloadId} 
-          data-tip="Download Options"
-          className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor" 
-          onClick={this.toggleStateVariables('isDropdownDownloadOptionsOpen', 'isMenuWallOpen')}
-        >
-          <FontAwesomeIcon size="1x" color="white" icon="download" />
-        </button>
-        <ReactTooltip 
-          delayShow={TOOLTIP_DELAY_SHOW}
-          place="top"
-          type="dark"
-          effect="solid"
-          id={tooltipAdvancedSearchId} 
-        />
-        <ul className="SRC-table-dropdown-zindex dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-          <li
-            style={{ listStyle: 'none' }}
-            className="SRC-table-dropdown-list SRC-primary-background-color-hover"
-            onClick={this.toggleStateVariables(...toggleStateArgs)}
-          >
-            <a href="javascript:void">
-              Export Metadata
-            </a>
-          </li>
-          <li
-            style={{ listStyle: 'none' }}
-            className="SRC-table-dropdown-list SRC-primary-background-color-hover"
-            onClick={this.advancedSearch}
-          >
-            <a href="javascript:void">
-              { DOWNLOAD_FILES_MENU_TEXT }
-            </a>
-          </li>
-        </ul>
-      </span>
+      <DownloadOptions
+        onDownloadFiles={this.advancedSearch}
+        onExportMetadata={this.toggleStateVariables(...toggleStateArgs)}
+      />
     )
   }
 
@@ -498,7 +460,6 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
       title,
     } = this.props
     const { isExpanded } = this.state
-    const tooltipExpandId = 'expand'
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const tooltipDownloadId = 'download'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
@@ -541,24 +502,19 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
                 {this.renderDropdownColumnMenu(headers)}
               </>
             }
-            <span
-              tabIndex={0}
-              data-for={tooltipExpandId} 
-              data-tip="Expand table in full screen"
-              className={`SRC-primary-background-color-hover SRC-inlineFlex SRC-extraPadding SRC-hand-cursor ${EXPAND_CLASS}`}
-              onKeyPress={this.toggleStateVariables('isExpanded')} 
-              onClick={this.toggleStateVariables('isExpanded')}
-            >
-              {isExpanded ? <img src={ShrinkSvg} alt="shrink table" /> : <img src={ExpandSvg} alt="expand table" />}
-            </span>
-            <ReactTooltip
-              delayShow={TOOLTIP_DELAY_SHOW}
-              place="top"
-              type="dark"
-              effect="solid"
-              id={tooltipExpandId} 
+            <ExpandTable
+              isExpanded={isExpanded}
+              onExpand={this.toggleStateVariables('isExpanded')}
             />
           </span>
+          {
+            <EllipsisDropdown
+              onDownloadFiles={this.advancedSearch}
+              onDownloadTableOnly={this.toggleStateVariables('isModalDownloadOpen')}
+              onShowColumns={() => {}}
+              onFullScreen={this.toggleStateVariables('isExpanded')}
+            />
+          }
       </div>
     )
   }

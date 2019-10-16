@@ -127,6 +127,15 @@
   color: #c94281;
   opacity: 1; }
 
+.show button.dropdown-toggle, button.dropdown-toggle:hover {
+  background: #c94281;
+  border-radius: 0; }
+
+a.dropdown-item:hover {
+  background: #c94281;
+  color: white;
+  text-decoration: none; }
+
 .checkbox, .radio {
   padding-left: 0px;
   min-width: 27px; }

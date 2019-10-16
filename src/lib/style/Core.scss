@@ -1,5 +1,5 @@
-//////////////////////////////////////////////////////////////
 // Synapse React Client (SRC) Core scss                     //
+//////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 
 svg.SRC-hoverBox {
@@ -1009,4 +1009,24 @@ a.SRC-lightLink {
 .SRC-sign-in-button {
   min-width: 80px;
   margin: 10px;  
+}
+
+a.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: .25rem 1.5rem;
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: .5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #e9ecef;  
 }
