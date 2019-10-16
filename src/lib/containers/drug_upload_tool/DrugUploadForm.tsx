@@ -10,7 +10,13 @@ import {
   ErrorListProps,
 } from 'react-jsonschema-form'
 
-import { Step, StepStateEnum, NavActionEnum, StatusEnum } from './types'
+import {
+  Step,
+  StepStateEnum,
+  NavActionEnum,
+  StatusEnum,
+  FormSchema,
+} from './types'
 import Header from './Header'
 import StepsSideNav from './StepsSideNav'
 import { NavButtons, NextStepLink } from './NavButtons'
@@ -19,11 +25,6 @@ import SummaryTable from './SummaryTable'
 import WarningModal from './WarningModal'
 import Switch from 'react-switch'
 import { Prompt } from 'react-router-dom'
-
-export type FormSchema = {
-  properties?: any
-  definitions?: any
-}
 
 export interface IFormData {
   [screen_name: string]: {
@@ -92,18 +93,19 @@ export default class DrugUploadForm extends React.Component<
   nextStep: Step | undefined
 
   isNewForm = (formData: IFormData): boolean => {
-    return   Object.keys(formData).length == 1 &&
-    Object.keys(formData)[0] === 'metadata'
+    return (
+      Object.keys(formData).length == 1 &&
+      Object.keys(formData)[0] === 'metadata'
+    )
   }
 
-  getFirstStep=(steps: Step[], formData: IFormData): Step => {
+  getFirstStep = (steps: Step[], formData: IFormData): Step => {
     if (!this.isNewForm(formData)) {
-      return steps.find(step => step.final===true) || steps[0]
+      return steps.find(step => step.final === true) || steps[0]
     } else {
       return steps[0]
     }
   }
-
 
   constructor(props: DrugUploadFormProps) {
     super(props)
@@ -174,33 +176,36 @@ export default class DrugUploadForm extends React.Component<
     this.setupBeforeUnloadListener()
     const isNewForm = this.isNewForm(this.state.formData)
     if (!isNewForm) {
-    //when loading saved form - validate to see the steps status
-    this.triggerAction(NavActionEnum.VALIDATE)
+      //when loading saved form - validate to see the steps status
+      this.triggerAction(NavActionEnum.VALIDATE)
     } else {
-    // for validation of optional forms. Validation is enforced only if included property is set.
-    if (!this.props.isWizardMode) {
-      const result = {}
-      const defs = this.props.schema.definitions
-      Object.keys(defs).forEach((key: string) => {
-        if (
-          defs[key].properties &&
-          Object.keys(defs[key].properties).indexOf('included') > -1
-        ) {
-          _.set(result, `${key}.included`, true)
-        }
-      })
-      this.setState(prevState => ({ formData: prevState.formData, ...result }))
-    } else {
-      // when in wizard mode we automatically set 'included' after we visit the step so only need to do this for the first step
-      this.setState(prevState => {
-        const formData = prevState.formData
-        const firstStepId = prevState.currentStep.id
-        _.set(formData, `${firstStepId}.included`, true)
-        return { formData }
-      })
+      // for validation of optional forms. Validation is enforced only if included property is set.
+      if (!this.props.isWizardMode) {
+        const result = {}
+        const props = this.props.schema.properties
+        Object.keys(props).forEach((key: string) => {
+          if (
+            props[key].properties &&
+            Object.keys(props[key].properties).indexOf('included') > -1
+          ) {
+            _.set(result, `${key}.included`, true)
+          }
+        })
+        this.setState(prevState => ({
+          formData: prevState.formData,
+          ...result,
+        }))
+      } else {
+        // when in wizard mode we automatically set 'included' after we visit the step so only need to do this for the first step
+        this.setState(prevState => {
+          const formData = prevState.formData
+          const firstStepId = prevState.currentStep.id
+          _.set(formData, `${firstStepId}.included`, true)
+          return { formData }
+        })
+      }
     }
   }
-}
 
   // get the schema slice for the current screen/step
   getSchema = ({ id, final }: Step): FormSchema => {
@@ -208,9 +213,8 @@ export default class DrugUploadForm extends React.Component<
       return this.props.schema
     }
     //only get schema for current step. Only the portion of entire form is shown
-    // we need all the definitions bacuse we can have fieldset references there
+
     const currentStepSlice = _.pick(this.props.schema, [
-      'definitions',
       'title',
       'type',
       `properties.${id}`,
@@ -357,7 +361,9 @@ export default class DrugUploadForm extends React.Component<
       return this.props.onSave(this.state.formData)
     } else {
       this.navAction = navAction
-      this.formRef.current.submit()
+      if (this.formRef.current) {
+        this.formRef.current.submit()
+      }
     }
   }
 
@@ -378,12 +384,13 @@ export default class DrugUploadForm extends React.Component<
         this.state.steps,
         !!this.props.isWizardMode,
         this.state.formData,
-        this.getSchema(this.state.currentStep).properties || this.getSchema(this.state.currentStep)
+        this.getSchema(this.state.currentStep).properties ||
+          this.getSchema(this.state.currentStep),
       )
-      this.setState({ steps: modifiedSteps})
+      this.setState({ steps: modifiedSteps })
       if (this.state.isLoadingSaved) {
         this.moveStep(this.state.formData, modifiedSteps[0].id, true)
-        this.setState({ isLoadingSaved: false})
+        this.setState({ isLoadingSaved: false })
       }
     }
   }
@@ -411,7 +418,7 @@ export default class DrugUploadForm extends React.Component<
         }
         //if no error and included in schema
       } else if (stepsInCurrentSchema.indexOf(step.id) > -1) {
-        let state = StepStateEnum.COMPLETED;
+        let state = StepStateEnum.COMPLETED
         //if we are in wizard and possibly have not visited this step
         if (isWizard && !_.get(formData[step.id], 'included')) {
           state = step.state
@@ -466,17 +473,18 @@ export default class DrugUploadForm extends React.Component<
           this.state.steps,
           !!this.props.isWizardMode,
           this.state.formData,
-          this.getSchema(this.state.currentStep).properties || this.getSchema(this.state.currentStep)
+          this.getSchema(this.state.currentStep).properties ||
+            this.getSchema(this.state.currentStep),
         )
         const currentStep = {
           ...this.state.currentStep,
           state: StepStateEnum.COMPLETED,
         }
-       
-        this.setState({ hasValidated: true, currentStep, steps})
+
+        this.setState({ hasValidated: true, currentStep, steps })
         if (this.state.isLoadingSaved) {
           this.moveStep(this.state.formData, steps[0].id, false)
-          this.setState({ isLoadingSaved: false})
+          this.setState({ isLoadingSaved: false })
         }
       }
       default:
@@ -590,7 +598,8 @@ export default class DrugUploadForm extends React.Component<
     } else if (currentStep.excluded === false) {
       return (
         <div className="step-exclude-directions">
-          This form is currently included in the submission. Enter some data if you have it, or click "Skip".{' '}
+          This form is currently included in the submission. Enter some data if
+          you have it, or click "Skip".{' '}
           <button
             className="btn btn-link"
             onClick={() =>
@@ -825,6 +834,8 @@ export default class DrugUploadForm extends React.Component<
                   callbackFn={(screenId: string) =>
                     this.showExcludeStateWarningModal(screenId, true)
                   }
+                  uiSchema={this.props.uiSchema}
+                  schema={this.props.schema}
                 ></SummaryTable>
               )}
 
@@ -863,7 +874,6 @@ function renderTransformedErrorObject(
   steps: Step[],
   error: AjvError,
   uiSchema: UiSchema,
-
   i: number,
   schema: any,
 ): JSX.Element {
@@ -873,15 +883,25 @@ function renderTransformedErrorObject(
   // some things require labels in schema (e.g. checkboxes) so this is preferred
   const labelFromSchema = `${propArr.join('.properties.')}.title`
   //can be overriden by label in UI
-  const regLabelFromUi = `${propPath}.ui:title`
+  const labelFromUi = `${propPath}.ui:title`
   //for array fields we need to change the property e.g.
   //  ld50.experiments[0].species_other should look like 'ld50.experiments.items.species_other'
-  const arrayLabelFromUi = regLabelFromUi.replace(/\[.*?\]/, '.items')
+  const arrayLabelFromSchema = labelFromSchema.replace(/\[.*?\]/, '.items')
+  const arrayLabelFromUI = labelFromUi.replace(/\[.*?\]/, '.items')
+  const indexMatch = labelFromSchema.match(/\[.*?\]/)
+
+  let index = _.first(indexMatch)
+
+  if (index) {
+    index = index.substring(1, index.length - 1)
+    index = !isNaN(parseInt(index))? ` [${parseInt(index) + 1}]` : ''
+  }
 
   let label =
-    _.get(schema.definitions, labelFromSchema) ||
-    _.get(uiSchema, regLabelFromUi) ||
-    _.get(uiSchema, arrayLabelFromUi) ||
+    _.get(uiSchema, labelFromUi) ||
+    _.get(schema.properties, labelFromSchema) ||
+    _.get(uiSchema, arrayLabelFromUI) ||
+    _.get(schema.properties, arrayLabelFromSchema) ||
     error.property
 
   const screen = _.find(steps, { id: propArr[0] }) || {
@@ -890,7 +910,10 @@ function renderTransformedErrorObject(
   const element = (
     <li key={i} className="">
       <span>
-        <strong>{screen.title}: </strong>
+        <strong>
+          {screen.title}
+          {index}:{' '}
+        </strong>
         {label}&nbsp; {error.message}
       </span>
     </li>
