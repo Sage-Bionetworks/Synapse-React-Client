@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert'
 import DrugUploadForm from './DrugUploadForm'
 import { FormData } from '../../utils/jsonResponses/Forms'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import $RefParser from "json-schema-ref-parser";
+import $RefParser from 'json-schema-ref-parser'
 import _ from 'lodash'
 
 export type UploadToolSearchParams = {
@@ -78,8 +78,7 @@ class DrugUploadTool extends React.Component<
   //gets a file entity with content
   getFileEntityData = async (
     token: string,
-    entityId: string,
-    {doDereference = false} = {}
+    entityId: string
   ): Promise<{ version?: number; content: JSON }> => {
     try {
       const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
@@ -87,9 +86,7 @@ class DrugUploadTool extends React.Component<
         token,
         entity,
       )
-      let content =  JSON.parse(entityContent);
-      if (doDereference)
-      content =  await $RefParser.dereference(content) 
+      const content = JSON.parse(entityContent)
       return {
         version: entity.versionNumber,
         content: content,
@@ -103,6 +100,19 @@ class DrugUploadTool extends React.Component<
     }
   }
 
+  //same as above but also uses $RefParser to convert json $refs to regular json
+  getFileEntityDataDereferenced = async (
+    token: string,
+    entityId: string,
+  ): Promise<{ version?: number; content: JSON }> => {
+    let { version, content } = await this.getFileEntityData(token, entityId)
+    let derefContent = await $RefParser.dereference(content) as JSON
+    return {
+      version: version,
+      content: derefContent,
+    }
+  }
+
   getData = async (token?: string): Promise<void> => {
     if (!token) {
       return
@@ -111,7 +121,7 @@ class DrugUploadTool extends React.Component<
       let formData = {}
 
       const promises = [
-        this.getFileEntityData(token, this.props.formSchemaEntityId, {doDereference: true}),
+        this.getFileEntityDataDereferenced(token, this.props.formSchemaEntityId),
         this.getFileEntityData(token, this.props.formUiSchemaEntityId),
         this.getFileEntityData(token, this.props.formNavSchemaEntityId),
       ]
