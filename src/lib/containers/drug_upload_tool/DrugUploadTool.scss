@@ -497,11 +497,10 @@
   }
 }
 
-.modal {
-  .btn-success {
+  .btn-success, .btn-success:active, .btn-success:focus  {
     @include themify($themes) {
       background-color: themed('action-color');
       border-color: themed('action-color');
     }
   }
-}
+
