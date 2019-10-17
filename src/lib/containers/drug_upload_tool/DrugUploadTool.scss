@@ -154,7 +154,7 @@
 
   /* ---------- layout ---------------*/
   $a: 100vh;
-  $b: 30rem;
+  $b: 35rem;
 
   .wrap {
     @include calc(height, #{$a} - #{$b});
