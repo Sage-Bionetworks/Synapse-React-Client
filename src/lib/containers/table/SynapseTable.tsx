@@ -42,6 +42,7 @@ import { getUserProfileWithProfilePicAttached } from '../getUserData'
 import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
 import { Modal } from 'react-bootstrap'
 import { EllipsisDropdown, ExpandTable, DownloadOptions, ColumnSelection } from './table-top/'
+import FacetFilter from './table-top/FacetFilter'
 
 const MIN_SPACE_FACET_MENU = 700
 
@@ -867,63 +868,11 @@ export default class SynapseTable extends React.Component<QueryWrapperChildProps
    * @memberof SynapseTable
    */
   public configureFacetDropdown(index: number, facetColumnResults: FacetColumnResult[], facetIndex: number) {
-
     // this grabs the specific facet selection
     const facetColumnResult = facetColumnResults[facetIndex] as FacetColumnResultValues
-    const columnName = facetColumnResult.columnName
-
-    // this is related to whether we've selected this column or not
-    const isCurFilterSelected = this.state.activeFilterIndex === index
-
-    const ref: React.RefObject<HTMLSpanElement> = React.createRef()
-    const refOuterDiv: React.RefObject<HTMLDivElement> = React.createRef()
-
-    const applyPrimary = isCurFilterSelected ? 'SRC-primary-background-color' : 'SRC-primary-text-color'
-    const classList = isCurFilterSelected ? this.state.activeFilterClass : ''
-    const style = { alignItems: 'center', marginLeft: '10px', marginRight: '3px', color: 'black', display: 'flex' }
-    const isChecked = this.props.isAllFilterSelectedForFacet![columnName]
+    const isChecked = this.props.isAllFilterSelectedForFacet![facetColumnResult.columnName]
     return (
-      <div
-        ref={refOuterDiv}
-        style={style}
-        className={`SRC-table-dropdown-zindex SRC-table-facet-dropdown btn-group SRC-tableHead ${isCurFilterSelected ? 'open SRC-anchor-light' : ''}`}
-      >
-        <span
-          tabIndex={0}
-          className={`SRC-padding SRC-hand-cursor SRC-primary-background-color-hover ${applyPrimary}`}
-          onKeyPress={this.toggleFilterDropdown(index, isCurFilterSelected, refOuterDiv)}
-          onClick={this.toggleFilterDropdown(index, isCurFilterSelected, refOuterDiv)}
-          style={{ outline: 'none' }}
-        >
-          <FontAwesomeIcon
-            style={{ margin: 'auto' }}
-            size={'1x'}
-            className={applyPrimary}
-            color={isCurFilterSelected ? 'white' : ''}
-            icon="filter"
-          />
-        </span>
-
-        <div style={{paddingLeft: 20}} className={`dropdown-menu dropdown-menu-override SRC-minDropdownWidth ${classList}`}>
-          <ul style={{ listStyleType: 'none' }} className="scrollable checkbox">
-            <label
-              className="dropdownList SRC-border-bottom-only SRC-overflowWrap SRC-base-font SRC-fullWidth"
-              style={{paddingBottom: 10}}
-            >
-            <input
-              onClick={this.applyChanges({ ref, columnName, selector: SELECT_ALL })}
-              checked={isChecked}
-              className="SRC-facet-checkboxes"
-              type="checkbox"
-              />
-              <span> All </span>
-            </label>
-            <span ref={ref}>
-              {this.renderFacetSelection(facetColumnResult, ref, columnName)}
-            </span>
-          </ul>
-        </div>
-      </div>
+      <FacetFilter isAllFilterSelectedForFacet={isChecked} facetColumnResult={facetColumnResult} />
     )
   }
 

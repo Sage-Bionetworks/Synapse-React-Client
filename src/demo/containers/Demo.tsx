@@ -50,7 +50,7 @@ class Demo extends React.Component<{}, DemoState> {
             title: 'Data',
             facetDisplayValue: 'Organism',
             facet: 'dataStatus',
-            sql: 'SELECT projectStatus, dataStatus, tumorType, diseaseFocus FROM syn16787123',
+            sql: 'SELECT * FROM syn16787123',
           },
           {
             title: 'Data',

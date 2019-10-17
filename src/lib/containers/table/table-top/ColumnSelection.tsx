@@ -8,7 +8,7 @@ import { TOOLTIP_DELAY_SHOW } from '../SynapseTable'
 
 type ColumnSelectionProps = {
   headers: SelectColumn[]
-  isColumnSelected: boolean []
+  isColumnSelected: boolean[]
   visibleColumnCount?: number
   toggleColumnSelection: Function
 }
@@ -19,12 +19,14 @@ type ColumnSelectionState = {
   show: boolean
 }
 
-export class ColumnSelection extends React.Component<ColumnSelectionProps, ColumnSelectionState> {
-
+export class ColumnSelection extends React.Component<
+  ColumnSelectionProps,
+  ColumnSelectionState
+> {
   constructor(props: ColumnSelectionProps) {
     super(props)
     this.state = {
-      show: false
+      show: false,
     }
   }
 
@@ -32,74 +34,77 @@ export class ColumnSelection extends React.Component<ColumnSelectionProps, Colum
   // to handle the onToggle event and manually manage the dropdown open state. If metadata
   // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
   // we close it.
-  onToggle = (_show: boolean, _event: React.SyntheticEvent<Dropdown<"div">, Event>, metadata: any) => {
+  onToggle = (
+    _show: boolean,
+    _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
+    metadata: any,
+  ) => {
     if (!this.state.show && metadata.source) {
       this.setState({
-        show: true
+        show: true,
       })
     } else if (this.state.show && !metadata.source) {
       this.setState({
-        show: false
+        show: false,
       })
     }
   }
 
-  render () {
+  render() {
     const {
       headers,
       isColumnSelected,
       visibleColumnCount = Infinity,
-      toggleColumnSelection
+      toggleColumnSelection,
     } = this.props
-    const {
-      show
-    } = this.state
+    const { show } = this.state
     return (
       <Dropdown onToggle={this.onToggle} show={show}>
-        <Dropdown.Toggle 
-          data-for={tooltipColumnSelectionId} 
+        <Dropdown.Toggle
+          data-for={tooltipColumnSelectionId}
           id={tooltipColumnSelectionId}
-          data-tip="Add / Remove Columns" 
+          data-tip="Add / Remove Columns"
           variant="light"
         >
-          <img alt="columns selection" src={ColumnsSvg}/>
+          <img alt="columns selection" src={ColumnsSvg} />
         </Dropdown.Toggle>
-        <Dropdown.Menu alignRight={true}>
-          {
-            headers.map(
-              (header, index) => {
-                let isCurrentColumnSelected: boolean | undefined = isColumnSelected[index]
-                if (isCurrentColumnSelected === undefined) {
-                  isCurrentColumnSelected = (index < visibleColumnCount)
-                }
-                const iconStyle: any = { width: '11px', marginRight: '10px' }
-                if (!isCurrentColumnSelected) {
-                  iconStyle.visibility = 'hidden'
-                }
-                const maybeShowPrimaryColor = isCurrentColumnSelected ? 'SRC-primary-text-color' : ''
-                return (
-                  <Dropdown.Item 
-                    onClick={() => toggleColumnSelection(index)()} 
-                    key={header.name}
-                    className="SRC-primary-background-color-hover"
-                  >
-                    <FontAwesomeIcon
-                      style={iconStyle}
-                      className={maybeShowPrimaryColor}
-                      icon="check"
-                    />
-                    {header.name}
-                  </Dropdown.Item>
-                )     
-              } 
+        <Dropdown.Menu
+          className="SRC-primary-color-hover-dropdown"
+          alignRight={true}
+        >
+          {headers.map((header, index) => {
+            let isCurrentColumnSelected: boolean | undefined =
+              isColumnSelected[index]
+            if (isCurrentColumnSelected === undefined) {
+              isCurrentColumnSelected = index < visibleColumnCount
+            }
+            const iconStyle: any = { width: '11px', marginRight: '10px' }
+            if (!isCurrentColumnSelected) {
+              iconStyle.visibility = 'hidden'
+            }
+            const maybeShowPrimaryColor = isCurrentColumnSelected
+              ? 'SRC-primary-text-color'
+              : ''
+            return (
+              <Dropdown.Item
+                onClick={() => toggleColumnSelection(index)()}
+                key={header.name}
+              >
+                <FontAwesomeIcon
+                  style={iconStyle}
+                  className={maybeShowPrimaryColor}
+                  icon="check"
+                />
+                {header.name}
+              </Dropdown.Item>
             )
-          }
+          })}
         </Dropdown.Menu>
-        <ReactTooltip 
-          delayShow={TOOLTIP_DELAY_SHOW} 
-          place="top" 
-          type="dark" 
-          effect="solid" 
+        <ReactTooltip
+          delayShow={TOOLTIP_DELAY_SHOW}
+          place="top"
+          type="dark"
+          effect="solid"
           id={tooltipColumnSelectionId}
         />
       </Dropdown>

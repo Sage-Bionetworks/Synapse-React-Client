@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable'
-import ReactTooltip from "react-tooltip"
+import ReactTooltip from 'react-tooltip'
 
 library.add(faEllipsisV)
 
@@ -17,13 +17,15 @@ type EllipsisDropdownProps = {
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
-export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = (props) => {
+export const EllipsisDropdown: React.FunctionComponent<
+  EllipsisDropdownProps
+> = props => {
   const {
     onDownloadFiles,
     onDownloadTableOnly,
     // onShowColumns,
     onFullScreen,
-    isExpanded
+    isExpanded,
   } = props
   return (
     <>
@@ -36,7 +38,10 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
         >
           <FontAwesomeIcon color="white" icon={'ellipsis-v'} />
         </Dropdown.Toggle>
-        <Dropdown.Menu alignRight={true}>
+        <Dropdown.Menu
+          className="SRC-primary-color-hover-dropdown"
+          alignRight={true}
+        >
           <Dropdown.Item onClick={() => onDownloadFiles()}>
             Download Files
           </Dropdown.Item>
@@ -49,7 +54,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
             Show Columns
           </Dropdown.Item> */}
           <Dropdown.Item onClick={() => onFullScreen()}>
-            {isExpanded ? 'Shrink' : 'Full Screen' }
+            {isExpanded ? 'Shrink' : 'Full Screen'}
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>

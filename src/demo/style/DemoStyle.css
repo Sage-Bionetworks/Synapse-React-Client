@@ -30,7 +30,7 @@
   outline: #c94281; }
 
 .tableDropdownSelector {
-  color: #4E5491;
+  color: #4e5491;
   font-size: 13px;
   font-weight: 600;
   border: none;
@@ -51,8 +51,8 @@
   color: white; }
 
 .SRC-light-button {
-  background: #DFDFDF;
-  color: #1A1C29; }
+  background: #dfdfdf;
+  color: #1a1c29; }
 
 .SRC-light-button:hover {
   text-decoration: none;
@@ -131,9 +131,14 @@
   background: #c94281;
   border-radius: 0; }
 
-a.dropdown-item:hover {
+.dropdown-menu.SRC-primary-color-hover-dropdown a.dropdown-item:hover {
   background: #c94281;
-  color: white;
+  color: white !important;
+  text-decoration: none; }
+
+.dropdown-menu.SRC-primary-color-hover-dropdown a.dropdown-item:hover * {
+  background: #c94281;
+  color: white !important;
   text-decoration: none; }
 
 .checkbox, .radio {

@@ -2,7 +2,7 @@
 // Synapse React Client (SRC) Custom scss                   //
 // params: $primary-action-color                            //
 //////////////////////////////////////////////////////////////
-  
+
 .SRC-primary-text-color {
   color: $primary-action-color !important;
 }
@@ -13,11 +13,11 @@
 }
 
 .SRC-primary-background-color {
- background-color: $primary-action-color;
+  background-color: $primary-action-color;
 }
 
 .SRC-primary-background-color-border-left {
-border-left-color: $primary-action-color;
+  border-left-color: $primary-action-color;
 }
 
 %hoverFade {
@@ -25,16 +25,16 @@ border-left-color: $primary-action-color;
 }
 
 %defaultBoxShadow {
-  box-shadow: 3px 3px 5px 0 rgba(0,0,0,.5) !important;
+  box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.5) !important;
 }
 
 .SRC-primary-background-color-hover:hover {
- background-color: $primary-action-color !important; 
- color: white !important;
- * {
-   background-color: $primary-action-color !important;
-   color: white !important;
- }
+  background-color: $primary-action-color !important;
+  color: white !important;
+  * {
+    background-color: $primary-action-color !important;
+    color: white !important;
+  }
 }
 
 .SRC-menu-button-base:focus {
@@ -42,10 +42,10 @@ border-left-color: $primary-action-color;
 }
 
 .tableDropdownSelector {
-  color: #4E5491;
+  color: #4e5491;
   font-size: 13px;
   font-weight: 600;
-  border:none;
+  border: none;
   background: white;
   &:focus {
     outline: $primary-action-color;
@@ -70,8 +70,8 @@ border-left-color: $primary-action-color;
 }
 
 .SRC-light-button {
-  background: #DFDFDF;
-  color: #1A1C29;
+  background: #dfdfdf;
+  color: #1a1c29;
   &:hover {
     @extend %hoverFade;
     @extend %defaultBoxShadow;
@@ -129,7 +129,7 @@ border-left-color: $primary-action-color;
     border: 1px solid transparent;
     border-radius: 24px;
     background-color: $primary-action-color;
-    color:white;
+    color: white;
   }
 }
 
@@ -177,10 +177,15 @@ button.dropdown-toggle:hover {
   @extend %dropdown-active-state;
 }
 
-a.dropdown-item {
-  &:hover {
+.dropdown-menu.SRC-primary-color-hover-dropdown {
+  a.dropdown-item:hover {
     background: $primary-action-color;
-    color: white;
+    color: white !important;
+    text-decoration: none;
+  }
+  a.dropdown-item:hover * {
+    background: $primary-action-color;
+    color: white !important;
     text-decoration: none;
   }
 }
