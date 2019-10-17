@@ -7,6 +7,20 @@ import { SynapseClient } from '../utils'
 import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse, FilesCountStatistics } from '../utils/jsonResponses/Statistics'
 const Plot = createPlotlyComponent(Plotly)
 
+const months = new Array(12);
+months[0] = "January";
+months[1] = "February";
+months[2] = "March";
+months[3] = "April";
+months[4] = "May";
+months[5] = "June";
+months[6] = "July";
+months[7] = "August";
+months[8] = "September";
+months[9] = "October";
+months[10] = "November";
+months[11] = "December";
+
 export type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
   token?: string
@@ -69,7 +83,7 @@ class StatisticsPlot extends React.Component<StatisticsPlotProps, StatisticsPlot
       type: 'bar'
     }
     for (const statPoint of stats){
-      const month = new Date(statPoint.rangeStart).toLocaleString('default', { month: 'long' })
+      const month = months[new Date(statPoint.rangeStart).getUTCMonth()]
       trace.x.push(month)
       trace.y.push(statPoint.filesCount)
     }
