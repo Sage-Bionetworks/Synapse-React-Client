@@ -110,7 +110,7 @@ export function getFlatData(
         value: val,
       }
     })
-    .filter(item => item.label !== 'included') //included is the property we generate to help with validation of optional forms
+    .filter(item => item.label.indexOf('.properties.included.title') === -1) //included is the property we generate to help with validation of optional forms
 
   const result = flatFormData
     .filter(item => item.screen && typeof item.value !== 'undefined')

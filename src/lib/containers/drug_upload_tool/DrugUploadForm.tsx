@@ -449,7 +449,7 @@ export default class DrugUploadForm extends React.Component<
   //we are constantly saving form data. Needed to overwrite on-error behavior
   handleOnChange({ formData }: any) {
     //this is just for form updates. submit screen goes different route
-    if (!this.isSubmitScreen()) {
+    if (!this.isSubmitScreen() && ! this.state.currentStep.excluded) {
       const hasUnsavedChanges = !_.isEqual(this.state.formData, formData)
       this.setState({ formData, hasUnsavedChanges })
     }
