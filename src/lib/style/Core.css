@@ -256,9 +256,8 @@ button.SRC-roundBorder {
 
 .SRC-hoverWhiteText:hover {
   color: white; }
-
-.SRC-hoverWhiteText:hover svg {
-  color: white; }
+  .SRC-hoverWhiteText:hover svg {
+    color: white; }
 
 .SRC-light-background {
   background: #f5f5f5; }
@@ -331,9 +330,8 @@ button.SRC-roundBorder {
   z-index: 900;
   background: none;
   border: none; }
-
-.SRC-menu-wall:focus {
-  outline: none; }
+  .SRC-menu-wall:focus {
+    outline: none; }
 
 .dropdown:focus ul.dropdown-menu {
   display: block; }
@@ -466,10 +464,9 @@ div.SRC-userImg {
   display: inline-flex;
   flex-direction: column;
   padding-left: 17px; }
-
-.SRC-cardContent p {
-  margin: 0px 0px 4px 0px;
-  line-height: 120%; }
+  .SRC-cardContent p {
+    margin: 0px 0px 4px 0px;
+    line-height: 120%; }
 
 .SRC-textareaCopy {
   border: none;
@@ -647,9 +644,8 @@ div.SRC-userImg {
   display: flex;
   justify-content: space-between;
   padding-left: 10px; }
-
-.SRC-gap span {
-  padding-right: 20px; }
+  .SRC-gap span {
+    padding-right: 20px; }
 
 .SRC-accordion-menu {
   overflow: hidden; }
@@ -684,9 +680,8 @@ button {
 
 .SRC-markdown-bookmark {
   color: #337ab7; }
-
-.SRC-markdown-bookmark:hover {
-  text-decoration: underline; }
+  .SRC-markdown-bookmark:hover {
+    text-decoration: underline; }
 
 .SRC-block {
   display: block; }
@@ -739,3 +734,7 @@ a.dropdown-item {
   margin: 0.5rem 0;
   overflow: hidden;
   border-top: 1px solid #e9ecef; }
+
+.dropdown button.btn {
+  padding: 3px;
+  margin: 0px 3px; }
