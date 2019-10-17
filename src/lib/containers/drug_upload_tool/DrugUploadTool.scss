@@ -154,7 +154,7 @@
 
   /* ---------- layout ---------------*/
   $a: 100vh;
-  $b: 35rem;
+  $b: 15rem;
 
   .wrap {
     @include calc(height, #{$a} - #{$b});
@@ -242,6 +242,10 @@
   }
 
   /* radio button style override */
+  .field-radio-group .radio:first-child {
+    margin-top: 0
+  }
+
   .has-error .checkbox,
   .has-error .checkbox-inline,
   .has-error .control-label,
@@ -315,6 +319,11 @@
 
   .form-group {
     margin-bottom: 2rem;
+  }
+
+
+  .checkboxes .checkbox:first-child {
+    margin-top: 0
   }
 
   .checkbox > label::before,
