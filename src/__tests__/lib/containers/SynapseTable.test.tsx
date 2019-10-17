@@ -1,14 +1,12 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS, EXPAND_CLASS } from '../../../lib/containers/table/SynapseTable'
+import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS } from '../../../lib/containers/table/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
 import { Row } from '../../../lib/utils/jsonResponses/Table/QueryResult'
-import { SelectColumn } from '../../../lib/utils/jsonResponses/Table/SelectColumn'
-import { ColumnModel } from '../../../lib/utils/jsonResponses/Table/ColumnModel'
 import ModalDownload from '../../../lib/containers/ModalDownload'
 import { EntityLink } from 'lib/containers/EntityLink'
 import { EntityHeader } from 'lib/utils/jsonResponses/EntityHeader'
@@ -19,6 +17,8 @@ import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UserCard from 'lib/containers/UserCard'
 import { Modal } from 'react-bootstrap'
+import { EXPAND_CLASS } from 'lib/containers/table/table-top/ExpandTable'
+import { ColumnSelection } from 'lib/containers/table/table-top'
 
 const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
   const wrapper = shallow<SynapseTable>(
@@ -92,17 +92,19 @@ describe('basic functionality', () => {
     facet: 'tumorType'
   } as SynapseTableProps & QueryWrapperChildProps
 
+  const stubbedEvent: any = {}
+
   it('renders without crashing', async () => {
     const { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
   })
 
   describe('Dropdown column menu works', () => {
-    it('renders dropdown column menu', async () => {
+    it('renders dropdown column menu with the right headers', async () => {
       const { wrapper } = createShallowComponent(props)
       // There are multiple dropdowns so we look at the dropdown with class SRC-column-menu
       // Since there are a total of 13 columns in view, so we expect 13 list elements
-      expect(wrapper.find('.SRC-column-menu .SRC-table-dropdown-list')).toHaveLength(totalColumns)
+      expect(wrapper.find(ColumnSelection).props().headers).toEqual(syn16787123Json.queryResult.queryResults.headers)
     })
 
     it('toggle column selection functions correctly', async () => {
@@ -124,34 +126,22 @@ describe('basic functionality', () => {
   })
   describe('Download options dropdown works', () => {
     it('renders ModalDownload', async () => {
-      const { wrapper } = await createShallowComponent(props)
+      const { wrapper, instance } = await createShallowComponent(props)
       // Double check its not showing be default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      // Click dropdown open
-      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} button`).at(0).simulate('click')
-      // Click the dropdown
-      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
+      await instance.toggleStateVariables('isModalDownloadOpen', 'isMenuWallOpen')(stubbedEvent)
       // See that modal download is present
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
-      // Click elsewhere and see that modal download has closed
-      await wrapper.find('.SRC-menu-wall').simulate('click')
-      expect(wrapper.find(ModalDownload)).toHaveLength(0)
     })
   })
-  describe('expand mode works' , () => {
+  describe('expand modal opens when isExpanded is set to true' , () => {
     it ('works', async () => {
-      const { wrapper } = await createShallowComponent(props)
+      const { wrapper, instance } = await createShallowComponent(props)
       // No modal to start
       expect(wrapper.find(Modal)).toHaveLength(0)
-      await wrapper.find(`.${EXPAND_CLASS}`).simulate('click')
+      await instance.toggleStateVariables('isExpanded')(stubbedEvent)
       // Modal is open now
       expect(wrapper.find(Modal)).toHaveLength(1)
-  
-      // Click the download options dropdown
-      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
-      // See that modal download is present and bootstrap modal is gone
-      expect(wrapper.find(ModalDownload)).toHaveLength(1)
-      expect(wrapper.find(Modal)).toHaveLength(0)
     })
   })
   describe('PORTALS-527: aggregate query support (show underlying data)', () => {

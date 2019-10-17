@@ -21,7 +21,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = (p
   } = props
   return (
     <React.Fragment>
-      <Dropdown>
+      <Dropdown style={{padding: 5}}>
         <Dropdown.Toggle data-for={tooltipDownloadId} data-tip="Download Options" variant={'light'} id="dropdown-download-options-button">
           <FontAwesomeIcon size="1x" color="white" icon="download"/>
         </Dropdown.Toggle>

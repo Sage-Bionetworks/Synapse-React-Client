@@ -36,6 +36,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (p
               <Dropdown.Item 
                 onClick={() => toggleColumnSelection(index)} 
                 key={header.name}
+                className="SRC-primary-background-color-hover"
               >
                 <FontAwesomeIcon
                   style={iconStyle}

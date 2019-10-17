@@ -113,7 +113,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (props: Check
   })
   // By default only show 5 facets unless the user has clicked a facet, in which case
   // showAllFacets will be true.
-  const childrenView = children.map((child: any, index: number) => !showAllFacets && index > 4 ? false : child)
+  const childrenView = showAllFacets ? children: children.slice(0,5) // children.map((child: any, index: number) => !showAllFacets && index > 4 ? false : child)
   return (
     // need a span so that we can have a ref attachable
     <span ref={ref}>
@@ -222,8 +222,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     })
   }
 
-  public showButtons(showAllFacets: boolean, curFacetsLength: number, ref: React.RefObject<HTMLDivElement>) {
-    if (showAllFacets) {
+  public showButtons(curFacetsLength: number, ref: React.RefObject<HTMLDivElement>) {
+    if (this.state.showAllFacets || curFacetsLength <= 5) {
       // this is hidden if there are > 5 facets, wait for user to make
       // an action for this to appear
       return (
@@ -235,7 +235,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         </button>
       )
     }
-
     return (
       <button
         id="showAllFacetsButton"
@@ -252,7 +251,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     if (!this.props.data) {
       return (<div/>)
     }
-    let { showAllFacets } = this.state
     const { data, facet, unitDescription, isLoading, showBarChart } = this.props
     const { facets } = data
     if (!facets) {
@@ -264,11 +262,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
 
     if (!facetColumnResultValues) {
       return (<div/>)
-    }
-
-    if (facetColumnResultValues.facetValues.length < 5) {
-      // override
-      showAllFacets = true
     }
     const ref: React.RefObject<HTMLDivElement> = React.createRef()
     return (
@@ -287,7 +280,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         <form>
           <div ref={ref} className="SRC-marginFive form-group">
             {this.showFacetFilter()}
-            {this.showButtons(showAllFacets, facetColumnResultValues.facetValues.length, ref)}
+            {this.showButtons(facetColumnResultValues.facetValues.length, ref)}
           </div>
         </form>
       </div>
