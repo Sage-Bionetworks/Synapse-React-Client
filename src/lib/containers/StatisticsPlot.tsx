@@ -7,19 +7,7 @@ import { SynapseClient } from '../utils'
 import { ProjectFilesStatisticsRequest, ProjectFilesStatisticsResponse, FilesCountStatistics } from '../utils/jsonResponses/Statistics'
 const Plot = createPlotlyComponent(Plotly)
 
-const months = new Array(12);
-months[0] = "January";
-months[1] = "February";
-months[2] = "March";
-months[3] = "April";
-months[4] = "May";
-months[5] = "June";
-months[6] = "July";
-months[7] = "August";
-months[8] = "September";
-months[9] = "October";
-months[10] = "November";
-months[11] = "December";
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
 export type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
