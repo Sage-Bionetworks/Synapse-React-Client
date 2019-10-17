@@ -139,6 +139,7 @@
     "build:rollup": "rollup -c && cp -r src/umd dist/"
   },
   "resolutions": {
+    "@types/react": "16.9.2",
     "fstream": "1.0.12",
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",

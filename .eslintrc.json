@@ -1,18 +1,12 @@
 {
-  "extends": [
-    "react-app", 
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
-  "plugins": [
-    "react"
-  ],
+  "extends": ["react-app", "eslint:recommended", "plugin:react/recommended"],
+  "plugins": ["react"],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     }
   },
   "rules": {
-    "prop-types": 0
+    "react/prop-types": [0]
   }
 }
