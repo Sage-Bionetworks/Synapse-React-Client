@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
 import { SynapseClient } from '../../lib/utils/'
-import QueryWrapperMenu, { MenuConfig } from '../../lib/containers/QueryWrapperMenu'
+import QueryWrapperMenu, {
+  MenuConfig,
+} from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
@@ -15,7 +17,7 @@ type DemoState = {
   tabOne: any
   tabTwo: any
   showTabOne: boolean
-  userFormDataSynId?: string,
+  userFormDataSynId?: string
 }
 
 /**
@@ -38,8 +40,7 @@ class Demo extends React.Component<{}, DemoState> {
       token: '',
       version: 0,
       showTabOne: true,
-      tabOne:
-      {
+      tabOne: {
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
@@ -50,18 +51,17 @@ class Demo extends React.Component<{}, DemoState> {
             title: 'Data',
             facetDisplayValue: 'Organism',
             facet: 'dataStatus',
-            sql: 'SELECT * FROM syn16787123',
+            sql: 'SELECT studyStatus, dataStatus FROM syn16787123',
           },
           {
             title: 'Data',
             facetDisplayValue: 'Study',
             facet: 'projectStatus',
             sql: 'SELECT createdBy FROM syn16787123',
-          }
+          },
         ],
-        rgbIndex: 2
-      }
-    ,
+        rgbIndex: 2,
+      },
       tabTwo: {
         unitDescription: 'datum',
         tableConfiguration: {
@@ -75,22 +75,22 @@ class Demo extends React.Component<{}, DemoState> {
           },
           {
             facet: 'dataType',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            sql:
+              'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
           },
           {
             facet: 'diagnosis',
-            sql: 'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-          }
-        ] as MenuConfig[]
-        ,
-        rgbIndex: 5
-      }
+            sql:
+              'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+          },
+        ] as MenuConfig[],
+        rgbIndex: 5,
+      },
     }
     this.getVersion = this.getVersion.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
   }
-
 
   public onSubmitEntityForm() {
     this.entityFormRef.current.submitForm()
@@ -114,7 +114,7 @@ class Demo extends React.Component<{}, DemoState> {
         console.error('Get version failed', error)
       })
   }
-  
+
   /**
    * Update internal state
    * @param {Object} updatedState new state to be updated by the component
@@ -126,16 +126,16 @@ class Demo extends React.Component<{}, DemoState> {
   public removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown })
   }
-  
+
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-    .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
-    .catch((error: any) => {
-      console.error(error)
-    })
+      .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
+      .catch((error: any) => {
+        console.error(error)
+      })
     this.getVersion()
   }
   public render(): JSX.Element {
@@ -143,9 +143,10 @@ class Demo extends React.Component<{}, DemoState> {
     token = ''
     return (
       <div>
-        <p className="App-intro text-center">Synapse production version: {this.state.version}</p>
-        {
-          (this.state.token && this.state.token !== '') &&
+        <p className="App-intro text-center">
+          Synapse production version: {this.state.version}
+        </p>
+        {this.state.token && this.state.token !== '' && (
           <div className="container">
             <h5>Upload File(s) Demo</h5>
             <Uploader
@@ -154,9 +155,8 @@ class Demo extends React.Component<{}, DemoState> {
             />
             <hr />
           </div>
-        }
-        {
-          (this.state.token && this.state.token !== '') &&
+        )}
+        {this.state.token && this.state.token !== '' && (
           <div className="container">
             <h5>Download File Content Demo (syn12196718)</h5>
             <FileContentDownloadUploadDemo
@@ -165,43 +165,61 @@ class Demo extends React.Component<{}, DemoState> {
             />
             <hr />
           </div>
-        }
-        {
-          (this.state.token && this.state.token !== '') &&
+        )}
+        {this.state.token && this.state.token !== '' && (
           <div className="container">
             <h5>Project Statistics Demo</h5>
             <StatisticsPlot
               token={this.state.token!}
-              request={ {
-                concreteType: 'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+              request={{
+                concreteType:
+                  'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
                 objectId: 'syn5585645',
                 fileDownloads: true,
-                fileUploads: true
+                fileUploads: true,
               }}
             />
             <hr />
           </div>
-        }
+        )}
         <div className="container">
           <button
             className="btn btn-default"
-            onClick={() => {this.setState({showTabOne: !this.state.showTabOne})}}
+            onClick={() => {
+              this.setState({ showTabOne: !this.state.showTabOne })
+            }}
           >
             toggle config for query wrapper menu
           </button>
           <QueryWrapperMenu
             isConsistent={true}
             name={'Demo'}
-            token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!}
-            unitDescription={this.state.showTabOne ? this.state.tabOne.unitDescription : this.state.tabTwo.unitDescription}
-            tableConfiguration={this.state.showTabOne ? this.state.tabOne.tableConfiguration : this.state.tabTwo.tableConfiguration}
-            menuConfig={this.state.showTabOne ? this.state.tabOne.menuConfig : this.state.tabTwo.menuConfig}
-            rgbIndex={this.state.showTabOne ? this.state.tabOne.rgbIndex : this.state.tabTwo.rgbIndex}
-            stackedBarChartConfiguration={
-              {
-                loadingScreen: <div/>
-              }
+            token={
+              SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
             }
+            unitDescription={
+              this.state.showTabOne
+                ? this.state.tabOne.unitDescription
+                : this.state.tabTwo.unitDescription
+            }
+            tableConfiguration={
+              this.state.showTabOne
+                ? this.state.tabOne.tableConfiguration
+                : this.state.tabTwo.tableConfiguration
+            }
+            menuConfig={
+              this.state.showTabOne
+                ? this.state.tabOne.menuConfig
+                : this.state.tabTwo.menuConfig
+            }
+            rgbIndex={
+              this.state.showTabOne
+                ? this.state.tabOne.rgbIndex
+                : this.state.tabTwo.rgbIndex
+            }
+            stackedBarChartConfiguration={{
+              loadingScreen: <div />,
+            }}
           />
         </div>
       </div>
