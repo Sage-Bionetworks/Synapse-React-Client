@@ -251,7 +251,18 @@ class DrugUploadTool extends React.Component<
     })
 
     if (!fileName) {
-      this.onError({ message: 'Please Provide the File Name' })
+      // try to find corresponding property. By convention it should be first level property
+      // and follow pattern screen.prop
+      let errorTitle = 'File Name'
+      try {
+        // get it to the schema format
+        const searchString = `${this.props.fileNamePath.replace('.', '.properties.')}.title`
+        errorTitle = _.get(this.state.formSchema.properties, searchString, errorTitle)
+      } 
+      finally {
+        const error = `Please Provide the ${errorTitle} before saving`
+        this.onError({ message: error})
+      }
       return
     }
 
