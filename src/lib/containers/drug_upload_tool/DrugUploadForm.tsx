@@ -792,7 +792,7 @@ export default class DrugUploadForm extends React.Component<
               >
                 {this.state.hasValidated && (
                   <div className="notification-area">
-                    Great! Your data is valid!
+                    Great! All required data on this form has been entered.
                   </div>
                 )}
                 <div ref={this.formDivRef}
@@ -878,7 +878,7 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-          <DataDebug formData={this.state.formData} hidden={true}></DataDebug>
+          <DataDebug formData={this.state.formData} hidden={false}></DataDebug>
       </div>
     )
   }
