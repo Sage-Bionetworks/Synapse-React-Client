@@ -878,7 +878,7 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-          <DataDebug formData={this.state.formData} hidden={false}></DataDebug>
+          <DataDebug formData={this.state.formData} hidden={true}></DataDebug>
       </div>
     )
   }
