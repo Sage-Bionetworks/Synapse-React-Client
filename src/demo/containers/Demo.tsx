@@ -37,7 +37,7 @@ class Demo extends React.Component<{}, DemoState> {
       showMarkdown: true,
       token: '',
       version: 0,
-      showTabOne: false,
+      showTabOne: true,
       tabOne:
       {
         unitDescription: 'datum',
