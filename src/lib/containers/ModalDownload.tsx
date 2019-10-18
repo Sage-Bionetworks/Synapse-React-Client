@@ -1,6 +1,12 @@
 import * as React from 'react'
 import Form, { IChangeEvent } from 'react-jsonschema-form'
-import { formSchemaArray, formSchemaUIArray, writeHeaderOption, includeRowIdAndRowVersionOption, csvOption } from './ModalDownload.FormSchema'
+import {
+  formSchemaArray,
+  formSchemaUIArray,
+  writeHeaderOption,
+  includeRowIdAndRowVersionOption,
+  csvOption,
+} from './ModalDownload.FormSchema'
 import { DownloadFromTableRequest } from '../utils/jsonResponses/Table/DownloadFromTableRequest'
 import { SynapseClient } from '../utils'
 import { DownloadFromTableResult } from '../utils/jsonResponses/Table/DownloadFromTableResult'
@@ -9,12 +15,13 @@ import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequ
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import { Modal } from 'react-bootstrap'
 
 library.add(faTimes)
 
 export type ModalDownloadState = {
   isLoading: boolean
-  step: number,
+  step: number
   data?: DownloadFromTableResult
   formData: {}
 }
@@ -22,18 +29,20 @@ export type ModalDownloadState = {
 export type ModalDownloadProps = {
   entityId: string
   sql: string
-  onClose: (...args: any []) => void
+  onClose: (...args: any[]) => void
   token?: string
   includeEntityEtag?: boolean
-  selectedFacets?: FacetColumnRequest [] // The selected facet filters.
+  selectedFacets?: FacetColumnRequest[] // The selected facet filters.
   isConsistent?: boolean
   offset?: number
   limit?: number
-  sort?: SortItem []
+  sort?: SortItem[]
 }
 
-export default class ModalDownload extends React.Component<ModalDownloadProps, ModalDownloadState> {
-
+export default class ModalDownload extends React.Component<
+  ModalDownloadProps,
+  ModalDownloadState
+> {
   constructor(props: ModalDownloadProps) {
     super(props)
     this.state = {
@@ -41,12 +50,12 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
       step: 0,
       formData: {
         'File Type': csvOption,
-        Contents: [writeHeaderOption, includeRowIdAndRowVersionOption]
-      }
+        Contents: [writeHeaderOption, includeRowIdAndRowVersionOption],
+      },
     }
   }
 
-  handleSubmit = (event: IChangeEvent ) => {
+  handleSubmit = (event: IChangeEvent) => {
     if (this.state.step === 0) {
       this.handleDownloadSetup(event)
     } else {
@@ -56,33 +65,36 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
 
   handleDownloadSetup = (event: IChangeEvent) => {
     this.setState({
-      isLoading: true
+      isLoading: true,
     })
     const { formData } = event
     const fileType = formData['File Type']
-    const contents = formData.Contents as string []
+    const contents = formData.Contents as string[]
     const { token, onClose, ...rest } = this.props
-    const separator = fileType === csvOption ? ',': '\t'
+    const separator = fileType === csvOption ? ',' : '\t'
     const writeHeader = contents.includes(writeHeaderOption)
-    const includeRowIdAndRowVersion = contents.includes(includeRowIdAndRowVersionOption)
+    const includeRowIdAndRowVersion = contents.includes(
+      includeRowIdAndRowVersionOption,
+    )
     const downloadFromTableRequest: DownloadFromTableRequest = {
       ...rest,
-      concreteType: 'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
+      concreteType:
+        'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
       writeHeader,
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
     }
-    SynapseClient.getDownloadFromTableRequest(downloadFromTableRequest, token).then(
-      data => {
+    SynapseClient.getDownloadFromTableRequest(downloadFromTableRequest, token)
+      .then(data => {
         this.setState({
           isLoading: false,
           step: 1,
-          data
+          data,
         })
-      }
-    ).catch(err => {
-      console.log('Error getDownloadFromTableRequest: ', err)
-    })
+      })
+      .catch(err => {
+        console.log('Error getDownloadFromTableRequest: ', err)
+      })
   }
 
   onDownload = () => {
@@ -93,14 +105,14 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
       url => {
         window.location.href = url
         this.props.onClose()
-      }
+      },
     )
   }
 
   handleChange = (event: IChangeEvent) => {
     const { formData } = event
     this.setState({
-      formData
+      formData,
     })
   }
 
@@ -109,56 +121,67 @@ export default class ModalDownload extends React.Component<ModalDownloadProps, M
       position: 'absolute',
       top: 10,
       right: 10,
-      zIndex: 10
+      zIndex: 10,
     }
     const submitBtn: React.CSSProperties = {
       padding: '6px 10px',
-      borderRadius: 6
+      borderRadius: 6,
     }
     const spinnerStyle: React.CSSProperties = {
       height: 50,
       width: 50,
-      backgroundSize: 50
+      backgroundSize: 50,
     }
     return (
-      <React.Fragment>
-        <div className="custom-checkbox-container modal fade in SRC-block" role="dialog" tabIndex={-1}>
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <button style={closeBtn} onClick={this.props.onClose}>
-                <FontAwesomeIcon style={{fontSize: '21px'}} icon="times" />
-              </button>
-              <div className="modal-body">
-              <Form
-                schema={formSchemaArray[this.state.step]}
-                uiSchema={formSchemaUIArray[this.state.step]}
-                onChange={this.handleChange}
-                formData={this.state.formData}
-                onSubmit={this.handleSubmit}
-              >
-              {
-                this.state.isLoading
-                &&
-                <div className="SRC-centerAndJustifyContent">
-                  <div className="SRC-center-text">
-                    <p> Creating the File </p>
-                    <div style={spinnerStyle} className="spinner" />
-                    <p> Loading... </p>
-                  </div>
+      <Modal
+        animation={false}
+        centered={true}
+        show={true}
+        // @ts-ignore
+        onHide={this.props.onClose}
+      >
+        <Modal.Header>
+          <button style={closeBtn} onClick={this.props.onClose}>
+            <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />
+          </button>
+          <Form
+            schema={formSchemaArray[this.state.step]}
+            uiSchema={formSchemaUIArray[this.state.step]}
+            onChange={this.handleChange}
+            formData={this.state.formData}
+            onSubmit={this.handleSubmit}
+          >
+            {this.state.isLoading && (
+              <div className="SRC-centerAndJustifyContent">
+                <div className="SRC-center-text">
+                  <p> Creating the File </p>
+                  <div style={spinnerStyle} className="spinner" />
+                  <p> Loading... </p>
                 </div>
-                }
-                <hr/>
-                <div style={{textAlign: 'right'}}>
-                  <button id="cancelBtn" onClick={this.props.onClose} className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover " type="button"> Cancel </button>
-                  <button id="submitBtn" style={submitBtn} className="SRC-primary-background-color SRC-roundBorder SRC-whiteText" type="submit">{this.state.step === 0 ? 'Next': 'Download' }</button>
-                </div>
-              </Form>
               </div>
+            )}
+            <hr />
+            <div style={{ textAlign: 'right' }}>
+              <button
+                id="cancelBtn"
+                onClick={this.props.onClose}
+                className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover "
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                id="submitBtn"
+                style={submitBtn}
+                className="SRC-primary-background-color SRC-roundBorder SRC-whiteText"
+                type="submit"
+              >
+                {this.state.step === 0 ? 'Next' : 'Download'}
+              </button>
             </div>
-          </div>
-      </div>
-      <div className="modal-backdrop in"/>
-      </React.Fragment>
-   )
+          </Form>
+        </Modal.Header>
+      </Modal>
+    )
   }
 }

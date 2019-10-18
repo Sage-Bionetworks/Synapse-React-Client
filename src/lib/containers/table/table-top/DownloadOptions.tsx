@@ -33,13 +33,17 @@ export const DownloadOptions: React.FunctionComponent<
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
-          <Dropdown.Item onClick={() => onExportMetadata()}>
-            {' '}
-            Export Metadata{' '}
+          <Dropdown.Item
+            // @ts-ignore
+            onClick={onExportMetadata}
+          >
+            Export Metadata
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => onDownloadFiles()}>
-            {' '}
-            {DOWNLOAD_FILES_MENU_TEXT}{' '}
+          <Dropdown.Item
+            // @ts-ignore
+            onClick={onDownloadFiles}
+          >
+            {DOWNLOAD_FILES_MENU_TEXT}
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>

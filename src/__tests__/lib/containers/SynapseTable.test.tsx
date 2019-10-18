@@ -99,16 +99,14 @@ describe('basic functionality', () => {
   })
 
   describe('Dropdown column menu works', () => {
-    it('renders dropdown column menu with the right headers', async () => {
+    it('renders with the correct props', async () => {
       const { wrapper } = createShallowComponent(props)
-      // There are multiple dropdowns so we look at the dropdown with class SRC-column-menu
-      // Since there are a total of 13 columns in view, so we expect 13 list elements
       expect(wrapper.find(ColumnSelection).props().headers).toEqual(
         syn16787123Json.queryResult.queryResults.headers,
       )
     })
 
-    it('toggle column selection functions correctly', async () => {
+    it('toggle column selection works correctly', async () => {
       const visibleColumnCount = 3
       const propsWithVisibleColumnCountSet = {
         ...props,
@@ -140,16 +138,16 @@ describe('basic functionality', () => {
     })
   })
   describe('Download options dropdown works', () => {
-    it('renders ModalDownload', async () => {
+    it('isModalDownloadOpen opens the ModalDownload', async () => {
       const { wrapper, instance } = await createShallowComponent(props)
-      // Double check its not showing be default
+      // Verify its not showing by default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
       await instance.toggleStateVariables('isModalDownloadOpen')(stubbedEvent)
       // See that modal download is present
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
     })
   })
-  describe('expand modal opens when isExpanded is set to true', () => {
+  describe('Expand modal opens when isExpanded is set to true', () => {
     it('works', async () => {
       const { wrapper, instance } = await createShallowComponent(props)
       // No modal to start
@@ -393,7 +391,7 @@ describe('basic functionality', () => {
         },
       },
     }
-    const { _wrapper, instance } = createShallowComponent({
+    const { instance } = createShallowComponent({
       ...props,
       data: mockData,
     })

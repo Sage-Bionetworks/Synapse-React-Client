@@ -461,6 +461,11 @@ export default class SynapseTable extends React.Component<
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
+    const onDownloadTableOnlyArguments: BooleanKeys<
+      SynapseTableState
+    >[] = isExpanded
+      ? ['isModalDownloadOpen', 'isExpanded']
+      : ['isModalDownloadOpen']
     return (
       <div className="SRC-centerContent" style={{ background, padding: 8 }}>
         <h3 className="SRC-tableHeader"> {title}</h3>
@@ -495,7 +500,9 @@ export default class SynapseTable extends React.Component<
         </span>
         <EllipsisDropdown
           onDownloadFiles={this.advancedSearch}
-          onDownloadTableOnly={this.toggleStateVariables('isModalDownloadOpen')}
+          onDownloadTableOnly={this.toggleStateVariables(
+            ...onDownloadTableOnlyArguments,
+          )}
           onShowColumns={() => {}}
           onFullScreen={this.toggleStateVariables('isExpanded')}
           isExpanded={isExpanded}

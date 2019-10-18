@@ -155,8 +155,7 @@ export default class FacetFilter extends React.Component<
                         <span>
                           {displayValue}
                           <span style={{ color: '#DDDDDF', marginLeft: '3px' }}>
-                            {' '}
-                            ({count}){' '}
+                            ({count})
                           </span>
                         </span>
                       </label>
