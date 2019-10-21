@@ -68,6 +68,9 @@ export class ColumnSelection extends React.Component<
         >
           <img alt="columns selection" src={ColumnsSvg} />
         </Dropdown.Toggle>
+        {/* There's a known issue if the number of dropdown items is very large, ~30+, the dropdown
+          will unexpectedly render with the list going upwards instead of downwards.
+        */}
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
