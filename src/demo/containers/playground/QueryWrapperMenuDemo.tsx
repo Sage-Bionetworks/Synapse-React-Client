@@ -42,7 +42,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      activeTab: 1,
+      activeTab: 2,
       tabThree: {
         stackedBarChartConfiguration: {
           loadingScreen: <div> Im loading as fast I can! </div>
@@ -63,7 +63,7 @@ class QueryWrapperMenuDemo extends React.Component<{rgbIndex: number}, DemoState
         menuConfig: [
           {
             facet: 'species',
-            sql: 'SELECT * FROM syn11346063 LIMIT 1000',
+            sql: 'SELECT id, name FROM syn11346063 LIMIT 1000',
           },
           {
             facet: 'study',
