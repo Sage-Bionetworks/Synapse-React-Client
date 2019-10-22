@@ -37,7 +37,6 @@
         }
       ]
     },
-
     "model_system_field": {
       "title": "",
       "type": "string",
@@ -69,35 +68,67 @@
         }
       ]
     },
-
+    "assays_field": {
+      "type": "object",
+      "title": "Assays",
+      "properties": {
+        "assays_list": {
+          "title": "List all assays specimens have been used for",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["RNAseq", "ChIPseq", "Other"]
+          }
+        },
+        "assays_list_other": {
+          "type": "string",
+          "title": "If other - describe"
+        }
+      }
+    },
+    "assesments_field": {
+      "type": "object",
+      "title": "Assessments",
+      "properties": {
+        "assesments_list": {
+          "type": "array",
+          "title": "List all assessments",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["Cognition", "Behavioral", "Other"]
+          }
+        },
+        "assesments_list_other": {
+          "type": "string",
+          "title": "If other - describe"
+        }
+      }
+    },
     "study": {
       "type": "object",
       "required": ["submission_name", "content_summary"],
       "properties": {
         "submission_name": {
           "title": "Submission Name",
-
           "type": "string"
         },
         "content_summary": {
           "title": "Summarize the content that will be contributed",
-
           "type": "string"
         }
       }
     },
     "contact": {
       "type": "object",
-
       "properties": {
         "name": {
           "title": "What is your name",
-
           "type": "string"
         },
         "email": {
           "title": "What is your email",
-
           "type": "string",
           "format": "email"
         },
@@ -111,7 +142,6 @@
       "properties": {
         "nih_grant_number": {
           "title": "NIH grant number if applicable",
-
           "type": "string"
         },
         "nia_program": {
@@ -137,7 +167,6 @@
                 },
                 "nia_program_other": {
                   "title": "If other - describe",
-
                   "type": "string"
                 }
               }
@@ -149,7 +178,6 @@
     "contributions": {
       "type": "object",
       "required": ["contribution_type"],
-
       "properties": {
         "contribution_type": {
           "title": "What type of content are you contributing?",
@@ -162,7 +190,6 @@
         "contribution_size": {
           "type": "string",
           "title": " Estimated contribution size in GB",
-
           "enum": ["<1 GB", "1-100 GB", "100-1000 GB", ">1000 GB"]
         }
       }
@@ -172,7 +199,6 @@
       "properties": {
         "data_origin": {
           "title": "What is the data origin?",
-
           "type": "array",
           "uniqueItems": true,
           "items": {
@@ -181,55 +207,49 @@
         }
       }
     },
-
     "human": {
       "type": "object",
-
       "properties": {
         "release_allowed_under_AMP-AD_KP": {
           "type": "boolean",
           "title": "Can data be released under the AMP-AD KP terms of use?",
-
           "default": false,
           "enum": [true, false],
           "enumNames": ["Yes", "No"],
           "uniqueItems": true
         },
-
         "study_type": {
           "type": "string",
           "title": "Study type",
           "enum": ["Prospective Cohort", "Case-control", "Post Mortem", "Other"]
         },
-
         "specimen_repository": {
           "title": "If post mortem - list brain bank or other specimen repository",
-
           "type": "string"
         },
         "disease_focus": {
           "type": "string",
           "title": "Disease focus",
-
           "enum": ["AD", "MCI", "Other"]
         },
-
         "specimen_source": {
           "type": "string",
           "title": "Specimen source",
-
           "enum": ["Serum", "Brain", "Other"]
         },
-
         "total_number_individuals": {
           "title": "Total number of individuals",
-
           "type": "number"
         },
         "total_number_specimens": {
           "title": "Total number of specimens",
-
           "type": "number"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
         }
       },
       "dependencies": {
@@ -248,6 +268,7 @@
                   "enum": [false]
                 },
                 "release_not_allowed_explanation": {
+                  "type": "string",
                   "title": "If no - describe"
                 }
               }
@@ -270,7 +291,6 @@
                 },
                 "study_type_other": {
                   "title": "If other - describe",
-
                   "type": "string"
                 }
               }
@@ -293,7 +313,6 @@
                 },
                 "disease_focus_other": {
                   "title": "If other - describe",
-
                   "type": "string"
                 }
               }
@@ -325,12 +344,10 @@
     },
     "model_system": {
       "type": "object",
-
       "properties": {
         "model_system_type": {
           "type": "array",
           "title": "List the model systems used",
-
           "uniqueItems": true,
           "items": {
             "type": "string",
@@ -346,7 +363,6 @@
         },
         "model_system_type_other": {
           "title": " If other - describe",
-
           "type": "string"
         }
       },
@@ -356,7 +372,6 @@
     },
     "mouse": {
       "type": "object",
-
       "properties": {
         "description": {
           "title": "Describe how the model was generated",
@@ -369,12 +384,17 @@
         "total_number_animals": {
           "type": "number",
           "title": "Total number of animals"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
         }
       }
     },
     "rat": {
       "type": "object",
-
       "properties": {
         "description": {
           "type": "string",
@@ -387,16 +407,20 @@
         "total_number_animals": {
           "type": "number",
           "title": "Total number of animals"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
         }
       }
     },
     "drosophila": {
       "type": "object",
-
       "properties": {
         "description": {
           "title": "Describe how the model was generated",
-
           "type": "string"
         },
         "treatments_list": {
@@ -406,6 +430,12 @@
         "total_number_animals_pools": {
           "type": "number",
           "title": "Total number of animals, or pools"
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
         }
       }
     },
@@ -419,84 +449,17 @@
         "treatments_list": {
           "type": "string",
           "title": "List treatments if applicable"
-        }
-      }
-    },
-    "assays": {
-      "type": "object",
-
-      "properties": {
-        "assays_list": {
-          "type": "string",
-          "title": "List all assays specimens have been used for",
-
-          "enum": ["RNAseq", "ChIPseq", "Other"]
-        }
-      },
-      "dependencies": {
-        "assays_list": {
-          "oneOf": [
-            {
-              "properties": {
-                "assays_list": {
-                  "enum": ["RNAseq", "ChIPseq"]
-                }
-              }
-            },
-            {
-              "properties": {
-                "assays_list": {
-                  "enum": ["Other"]
-                },
-                "assays_list_other": {
-                  "type": "string",
-                  "title": "If other - describe"
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "assesments": {
-      "type": "object",
-      "properties": {
-        "assays_list": {
-          "type": "string",
-
-          "enum": ["Cognition", "Behavioral", "Other"]
-        }
-      },
-      "dependencies": {
-        "assesments_list": {
-          "oneOf": [
-            {
-              "properties": {
-                "assesments_list": {
-                  "title": "List all assesments specimens have been used for",
-
-                  "enum": ["Cognition", "Behavioral"]
-                }
-              }
-            },
-            {
-              "properties": {
-                "assesments_list": {
-                  "enum": ["Other"]
-                },
-                "assesments_list_other": {
-                  "type": "string",
-                  "title": "If other - describe"
-                }
-              }
-            }
-          ]
+        },
+        "assays": {
+          "$ref": "#/definitions/assays_field"
+        },
+        "assesments": {
+          "$ref": "#/definitions/assesments_field"
         }
       }
     },
     "analysis": {
       "type": "object",
-
       "properties": {
         "analytical_output_description": {
           "type": "string",
@@ -505,13 +468,11 @@
         "is_data_contributed": {
           "type": "boolean",
           "title": "Is the data used for the analysis contributed?",
-
           "enum": [true, false],
           "enumNames": ["Yes", "No"],
           "uniqueItems": true
         }
       },
-
       "dependencies": {
         "is_data_contributed": {
           "oneOf": [
@@ -677,14 +638,6 @@
     "cell_culture": {
       "title": "Cell Culture",
       "$ref": "#/definitions/cell_culture"
-    },
-    "assays": {
-      "title": "Assays",
-      "$ref": "#/definitions/assays"
-    },
-    "assesments": {
-      "title": "Assesments",
-      "$ref": "#/definitions/assesments"
     },
     "analysis": {
       "title": "Analysis",

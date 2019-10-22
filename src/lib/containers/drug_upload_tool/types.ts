@@ -46,3 +46,8 @@ export interface SummaryFormat {
   label: string;
   value: string;
 }
+
+export type FormSchema = {
+  properties?: any
+  definitions?: any
+}

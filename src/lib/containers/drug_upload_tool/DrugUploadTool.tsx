@@ -8,6 +8,7 @@ import Alert from 'react-bootstrap/Alert'
 import DrugUploadForm from './DrugUploadForm'
 import { FormData } from '../../utils/jsonResponses/Forms'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import $RefParser from 'json-schema-ref-parser'
 import _ from 'lodash'
 
 export type UploadToolSearchParams = {
@@ -77,7 +78,7 @@ class DrugUploadTool extends React.Component<
   //gets a file entity with content
   getFileEntityData = async (
     token: string,
-    entityId: string,
+    entityId: string
   ): Promise<{ version?: number; content: JSON }> => {
     try {
       const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
@@ -85,9 +86,10 @@ class DrugUploadTool extends React.Component<
         token,
         entity,
       )
+      const content = JSON.parse(entityContent)
       return {
         version: entity.versionNumber,
-        content: JSON.parse(entityContent),
+        content: content,
       }
     } catch (error) {
       const newError = {
@@ -95,6 +97,19 @@ class DrugUploadTool extends React.Component<
       }
       this.onError(newError)
       return Promise.reject(newError)
+    }
+  }
+
+  //same as above but also uses $RefParser to convert json $refs to regular json
+  getFileEntityDataDereferenced = async (
+    token: string,
+    entityId: string,
+  ): Promise<{ version?: number; content: JSON }> => {
+    let { version, content } = await this.getFileEntityData(token, entityId)
+    let derefContent = await $RefParser.dereference(content) as JSON
+    return {
+      version: version,
+      content: derefContent,
     }
   }
 
@@ -106,7 +121,7 @@ class DrugUploadTool extends React.Component<
       let formData = {}
 
       const promises = [
-        this.getFileEntityData(token, this.props.formSchemaEntityId),
+        this.getFileEntityDataDereferenced(token, this.props.formSchemaEntityId),
         this.getFileEntityData(token, this.props.formUiSchemaEntityId),
         this.getFileEntityData(token, this.props.formNavSchemaEntityId),
       ]
@@ -236,7 +251,18 @@ class DrugUploadTool extends React.Component<
     })
 
     if (!fileName) {
-      this.onError({ message: 'Please Provide the File Name' })
+      // try to find corresponding property. By convention it should be first level property
+      // and follow pattern screen.prop
+      let errorTitle = 'File Name'
+      try {
+        // get it to the schema format
+        const searchString = `${this.props.fileNamePath.replace('.', '.properties.')}.title`
+        errorTitle = _.get(this.state.formSchema.properties, searchString, errorTitle)
+      } 
+      finally {
+        const error = `Please Provide the ${errorTitle} before saving`
+        this.onError({ message: error})
+      }
       return
     }
 
@@ -300,7 +326,6 @@ class DrugUploadTool extends React.Component<
         <Alert
           variant="danger"
           onClose={() => this.setState({ status: undefined })}
-          dismissible
         >
           <Alert.Heading>Error</Alert.Heading>
 

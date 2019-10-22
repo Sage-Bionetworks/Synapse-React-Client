@@ -430,8 +430,8 @@ Caveats of these dependencies-
 4. Team member should merge branch into develop
 5. On a regular basis develop will be merged into master and a new package will be published
 
-### Hotfix
-Hotfixes or changes needed immediately should go through the same process outlined above, avoiding any direct pushing to the master branch.
+### Hotfix branch
+Hotfixes or changes needed immediately should be branched off of master, reviewed, and merged. Master should then be merged into develop.
 
 ## Updating this Project to New Releases
 
