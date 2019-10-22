@@ -91,8 +91,6 @@ describe('basic functionality', () => {
     facet: 'tumorType',
   } as SynapseTableProps & QueryWrapperChildProps
 
-  const stubbedEvent: any = {}
-
   it('renders without crashing', async () => {
     const { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
@@ -139,20 +137,20 @@ describe('basic functionality', () => {
   })
   describe('Download options dropdown works', () => {
     it('isModalDownloadOpen opens the ModalDownload', async () => {
-      const { wrapper, instance } = await createShallowComponent(props)
+      const { wrapper } = await createShallowComponent(props)
       // Verify its not showing by default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      await instance.toggleStateVariables('isModalDownloadOpen')(stubbedEvent)
+      await wrapper.setState({ isModalDownloadOpen: true })
       // See that modal download is present
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
     })
   })
   describe('Expand modal opens when isExpanded is set to true', () => {
     it('works', async () => {
-      const { wrapper, instance } = await createShallowComponent(props)
+      const { wrapper } = await createShallowComponent(props)
       // No modal to start
       expect(wrapper.find(Modal)).toHaveLength(0)
-      await instance.toggleStateVariables('isExpanded')(stubbedEvent)
+      await wrapper.setState({ isExpanded: true })
       // Modal is open now
       expect(wrapper.find(Modal)).toHaveLength(1)
     })

@@ -106,12 +106,6 @@ export type SynapseTableProps = {
 
 export const TOOLTIP_DELAY_SHOW = 500
 
-// This is a convenient way to categorize all the dropdown state variables, although problematic
-// if any state variable mapping to a boolean does NOT represent a dropdown
-type BooleanKeys<T> = {
-  [k in keyof T]: T[k] extends boolean ? k : never
-}[keyof T]
-
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
   SynapseTableState
@@ -270,14 +264,6 @@ export default class SynapseTable extends React.Component<
     return columnsOfTypeEntity
   }
 
-  public toggleStateVariables = (
-    ...values: BooleanKeys<SynapseTableState>[]
-  ) => (_event: React.SyntheticEvent) => {
-    const updatedState = {}
-    values.forEach(el => (updatedState[el] = !this.state[el]))
-    this.setState(updatedState)
-  }
-
   /**
    * Display the view
    */
@@ -336,7 +322,7 @@ export default class SynapseTable extends React.Component<
         {// modal can render anywhere, this is not a particular location
         isModalDownloadOpen && (
           <ModalDownload
-            onClose={this.toggleStateVariables('isModalDownloadOpen')}
+            onClose={() => this.setState({ isModalDownloadOpen: false })}
             sql={sql}
             selectedFacets={selectedFacets}
             token={token}
@@ -349,12 +335,12 @@ export default class SynapseTable extends React.Component<
             centered={true}
             show={true}
             // @ts-ignore
-            onHide={this.toggleStateVariables('isExpanded')}
+            onHide={() => this.setState({ isExpanded: false })}
             dialogClassName={'modal-90w'}
           >
             <Modal.Header
               // @ts-ignore
-              onHide={this.toggleStateVariables('isExpanded')}
+              onHide={() => this.setState({ isExpanded: false })}
               closeButton={true}
             ></Modal.Header>
             <Modal.Body>{content}</Modal.Body>
@@ -383,18 +369,14 @@ export default class SynapseTable extends React.Component<
   }
 
   private renderDropdownDownloadOptions = () => {
-    const { isExpanded } = this.state
-    const toggleStateArgs: BooleanKeys<SynapseTableState>[] = [
-      'isModalDownloadOpen',
-    ]
-    // we don't want two modals to show at once, so we close out the expanded view if its already showing
-    if (isExpanded) {
-      toggleStateArgs.push('isExpanded')
+    const partialState = {
+      isModalDownloadOpen: true,
+      isExpanded: false,
     }
     return (
       <DownloadOptions
         onDownloadFiles={this.advancedSearch}
-        onExportMetadata={this.toggleStateVariables(...toggleStateArgs)}
+        onExportMetadata={() => this.setState(partialState)}
       />
     )
   }
@@ -461,11 +443,13 @@ export default class SynapseTable extends React.Component<
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
-    const onDownloadTableOnlyArguments: BooleanKeys<
-      SynapseTableState
-    >[] = isExpanded
-      ? ['isModalDownloadOpen', 'isExpanded']
-      : ['isModalDownloadOpen']
+    const onDownloadTableOnlyArguments = {
+      isExpanded: false,
+      isModalDownloadOpen: true,
+    }
+    const onExpandArguments = {
+      isExpanded: !isExpanded,
+    }
     return (
       <div className="SRC-centerContent" style={{ background, padding: 8 }}>
         <h3 className="SRC-tableHeader"> {title}</h3>
@@ -495,16 +479,16 @@ export default class SynapseTable extends React.Component<
           )}
           <ExpandTable
             isExpanded={isExpanded}
-            onExpand={this.toggleStateVariables('isExpanded')}
+            onExpand={() => this.setState(onExpandArguments)}
           />
         </span>
         <EllipsisDropdown
           onDownloadFiles={this.advancedSearch}
-          onDownloadTableOnly={this.toggleStateVariables(
-            ...onDownloadTableOnlyArguments,
-          )}
+          onDownloadTableOnly={() =>
+            this.setState(onDownloadTableOnlyArguments)
+          }
           onShowColumns={() => {}}
-          onFullScreen={this.toggleStateVariables('isExpanded')}
+          onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
         />
       </div>
