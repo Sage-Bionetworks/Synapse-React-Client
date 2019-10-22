@@ -39,11 +39,11 @@ export class ColumnSelection extends React.Component<
     _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
     metadata: any,
   ) => {
-    if (!this.state.show && metadata.source) {
+    if (metadata.source) {
       this.setState({
         show: true,
       })
-    } else if (this.state.show && !metadata.source) {
+    } else {
       this.setState({
         show: false,
       })

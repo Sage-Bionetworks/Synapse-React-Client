@@ -9,7 +9,7 @@ import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownl
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
 
 type DemoState = {
-  token: string
+  token: string | null
   ownerId: string
   isLoading: boolean
   showMarkdown: boolean
@@ -88,7 +88,6 @@ class Demo extends React.Component<{}, DemoState> {
       },
     }
     this.getVersion = this.getVersion.bind(this)
-    this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
   }
 
@@ -115,14 +114,6 @@ class Demo extends React.Component<{}, DemoState> {
       })
   }
 
-  /**
-   * Update internal state
-   * @param {Object} updatedState new state to be updated by the component
-   */
-  public handleChange(updatedState: {}): void {
-    this.setState(updatedState)
-  }
-
   public removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown })
   }
@@ -132,45 +123,45 @@ class Demo extends React.Component<{}, DemoState> {
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-      .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
+      .then(sessionToken => {
+        this.setState({
+          token: sessionToken,
+        })
+      })
       .catch((error: any) => {
         console.error(error)
       })
     this.getVersion()
   }
   public render(): JSX.Element {
-    let token: string | undefined = ''
-    token = ''
+    const { token } = this.state
     return (
       <div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        {this.state.token && this.state.token !== '' && (
+        {token && (
           <div className="container">
             <h5>Upload File(s) Demo</h5>
-            <Uploader
-              token={this.state.token!}
-              parentContainerId="syn18987891"
-            />
+            <Uploader token={token} parentContainerId="syn18987891" />
             <hr />
           </div>
         )}
-        {this.state.token && this.state.token !== '' && (
+        {token && (
           <div className="container">
             <h5>Download File Content Demo (syn12196718)</h5>
             <FileContentDownloadUploadDemo
-              token={this.state.token!}
+              token={token}
               targetEntityId="syn12196718"
             />
             <hr />
           </div>
         )}
-        {this.state.token && this.state.token !== '' && (
+        {token && (
           <div className="container">
             <h5>Project Statistics Demo</h5>
             <StatisticsPlot
-              token={this.state.token!}
+              token={token}
               request={{
                 concreteType:
                   'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
