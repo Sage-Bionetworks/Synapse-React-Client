@@ -13,7 +13,7 @@ import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import StatisticsPlot from './containers/StatisticsPlot'
-import './style/Index.css'
+import './style/Index.scss'
 import { SynapseConstants, SynapseClient } from './utils/'
 
 const SynapseComponents = {
