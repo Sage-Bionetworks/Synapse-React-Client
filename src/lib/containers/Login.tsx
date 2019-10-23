@@ -2,7 +2,7 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/getEndpoints'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/getEndpoint'
 
 type State = {
   username: string

@@ -49,7 +49,7 @@ import {
   SWC_ENDPOINT,
   getEndpoint,
   BackendDestination,
-} from './getEndpoints'
+} from './getEndpoint'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
