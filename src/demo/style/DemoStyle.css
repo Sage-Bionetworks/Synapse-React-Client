@@ -129,7 +129,8 @@
 
 .show button.dropdown-toggle, button.dropdown-toggle:hover {
   background: #c94281;
-  border-radius: 0; }
+  border-radius: 0;
+  color: white; }
 
 .dropdown-menu.SRC-primary-color-hover-dropdown a.dropdown-item:hover {
   background: #c94281;

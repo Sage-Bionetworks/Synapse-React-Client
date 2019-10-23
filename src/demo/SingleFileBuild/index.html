@@ -1,18 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
     <!-- production version of react-- errors obfuscated -->
     <!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script> -->
     <!-- <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script> -->
-    <script crossorigin src="https://unpkg.com/prop-types@15.6/prop-types.min.js"></script>
-    
+    <script
+      crossorigin
+      src="https://unpkg.com/prop-types@15.6/prop-types.min.js"
+    ></script>
+
     <!-- development version of react -->
-    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-      
+    <script
+      crossorigin
+      src="https://unpkg.com/react@16/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+    ></script>
+
     <!-- react-router-dom -->
     <script src="https://unpkg.com/react-router/umd/react-router.min.js"></script>
     <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
@@ -24,25 +38,44 @@
     ></script> -->
 
     <!-- katex -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css"
+      integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js"
+      integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- react-measure -->
     <script src="https://unpkg.com/react-measure@2.2.2/dist/index.umd.js"></script>
 
     <!-- react-tooltip -->
-    <script crossorigin src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"> </script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-tooltip@3.9.2/standalone/react-tooltip.min.js"
+    ></script>
 
     <!-- plotly -->
-    <script crossorigin src="https://cdn.plot.ly/plotly-basic-1.47.3.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"></script>
+    <script
+      crossorigin
+      src="https://cdn.plot.ly/plotly-basic-1.47.3.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"
+    ></script>
 
     <!-- rss-parser -->
     <script src="https://unpkg.com/browse/rss-parser@3.7.2/dist/rss-parser.min.js"></script>
 
     <!-- react-native-parser -->
     <script src="https://unpkg.com/browse/react-mailchimp-subscribe@2.1.0/umd/react-mailchimp-subscribe.min.js"></script>
-    
+
     <!-- markdown imports  -->
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
     <script src="https://unpkg.com/markdown-it-synapse@1.1.1/dist/markdown-it-synapse.min.js"></script>
@@ -67,9 +100,12 @@
     <script src="https://unpkg.com/react-jsonschema-form/dist/react-jsonschema-form.js"></script>
 
     <!-- local imports-- change in prod -->
-    <link rel="stylesheet" href="../../umd/synapse-react-client.production.styles.css"/>
-    <script src="../../umd/synapse-react-client.production.min.js"> </script>
-    
+    <link
+      rel="stylesheet"
+      href="../../umd/synapse-react-client.production.styles.css"
+    />
+    <script src="../../umd/synapse-react-client.production.min.js"></script>
+
     <!--
       Notice the use of %PUBLIC_URL% in the tag above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -84,12 +120,12 @@
   <style>
     /* Configure css */
     .SRC-primary-background-color-hover:hover {
-      background: #D53F77 !important;
+      background: #d53f77 !important;
       color: white;
     }
 
     .SRC-primary-background-color-hover:hover > * {
-      background: #D53F77;
+      background: #d53f77;
       color: white;
     }
   </style>
@@ -107,75 +143,97 @@
     -->
   </body>
   <script type="text/javascript">
-    const e = React.createElement;  // utility for creating elements
-    const queryWrapperMenuContainer = document.querySelector('#panel1');
+    // set portal endpoints
+    SRC.OVERIDE_CONFIG = {
+      REPO: 'https://repo-staging.prod.sagebase.org/',
+      PORTAL: 'https://staging.synapse.org/',
+    }
+    const e = React.createElement // utility for creating elements
+    const queryWrapperMenuContainer = document.querySelector('#panel1')
     const queryWrapperProps = {
-      token: "",
+      token: '',
       menuConfig: [
         {
-          facetDisplayValue: 'Organism',
           facetName: 'Organism',
           sql: 'SELECT * FROM syn9886254',
           synapseId: 'syn9886254',
           unitDescription: 'data files',
           visibleColumnCount: 3,
-          title: 'my title'
+          title: 'my title',
         },
         {
-          facetDisplayValue: 'Study',
           facetName: 'Study',
           sql: 'SELECT * FROM syn9886254',
           synapseId: 'syn9886254',
           unitDescription: 'data files',
           visibleColumnCount: 5,
-        }
+        },
       ],
       rgbIndex: 2,
-      loadingScreen: e('div', null, null)
+      loadingScreen: e('div', null, null),
     }
-    const markdownContainer = document.querySelector('#panel2');
+    const markdownContainer = document.querySelector('#panel2')
     const markdownProps = {
       token: '',
       wikiId: '582150',
       ownerId: 'syn14306197',
     }
 
-    const userCardSmallContainer = document.querySelector('#panel3');
+    const userCardSmallContainer = document.querySelector('#panel3')
     const userCardPropsSmall = {
       ownerId: '3374422',
-      size: SRC.SynapseConstants.SMALL_USER_CARD
+      size: SRC.SynapseConstants.SMALL_USER_CARD,
     }
 
-    const UserCardMediumAndLargeContainer = document.querySelector('#panel4');
+    const UserCardMediumAndLargeContainer = document.querySelector('#panel4')
     const userCardPropsMedium = {
       ownerId: '3374422',
-      size: SRC.SynapseConstants.MEDIUM_USER_CARD
+      size: SRC.SynapseConstants.MEDIUM_USER_CARD,
     }
 
-    ReactDOM.render(e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null), queryWrapperMenuContainer)
-    ReactDOM.render(e(SRC.SynapseComponents.Markdown, markdownProps, null), markdownContainer)
-    ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null), userCardSmallContainer)
-    ReactDOM.render(e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null), UserCardMediumAndLargeContainer)
+    ReactDOM.render(
+      e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null),
+      queryWrapperMenuContainer,
+    )
+    ReactDOM.render(
+      e(SRC.SynapseComponents.Markdown, markdownProps, null),
+      markdownContainer,
+    )
+    ReactDOM.render(
+      e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null),
+      userCardSmallContainer,
+    )
+    ReactDOM.render(
+      e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null),
+      UserCardMediumAndLargeContainer,
+    )
 
-    const formContainer = document.querySelector('#panel5');
+    const formContainer = document.querySelector('#panel5')
     const entityFormProps = {
       parentContainerId: 'syn20355732',
-				token:'DO_NOT_CHECKIN_CHANGES_TO_THIS',
-				formSchemaEntityId:'syn20184776',
-				formUiSchemaEntityId:'syn20184771',
-				initFormData:false
+      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+      formSchemaEntityId: 'syn20184776',
+      formUiSchemaEntityId: 'syn20184771',
+      initFormData: false,
     }
-    ReactDOM.render(e(SRC.SynapseComponents.EntityForm, entityFormProps, null), formContainer)
+    ReactDOM.render(
+      e(SRC.SynapseComponents.EntityForm, entityFormProps, null),
+      formContainer,
+    )
     const statsPlotProps = {
-        token:'DO_NOT_CHECKIN_CHANGES_TO_THIS',
-        request: {
-          concreteType: 'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
-          objectId: 'syn5585645',
-          fileDownloads: true,
-          fileUploads: true
-        },
-        endpoint:'https://repo-staging.prod.sagebase.org/'
+      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+      request: {
+        concreteType:
+          'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+        objectId: 'syn5585645',
+        fileDownloads: true,
+        fileUploads: true,
+      },
+      endpoint: 'https://repo-staging.prod.sagebase.org/',
     }
-    ReactDOM.render(e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null), formContainer)
+    ReactDOM.render(
+      e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null),
+      formContainer,
+    )
   </script>
 </html>

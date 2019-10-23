@@ -602,7 +602,9 @@ div.SRC-userImg {
   border: none; }
 
 .SRC-chart-nav {
-  height: 30px; }
+  height: 30px;
+  position: absolute;
+  right: 15px; }
 
 .SRC-loadingContainer {
   min-height: 100px; }
@@ -695,9 +697,6 @@ button {
 
 .SRC-inherit-height {
   height: inherit; }
-
-.SRC-search-dropdown li {
-  padding: 10px; }
 
 a.SRC-lightLink {
   color: white;

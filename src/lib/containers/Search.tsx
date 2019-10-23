@@ -12,6 +12,7 @@ import { insertConditionsFromSearchParams } from '../utils/modules/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
+import { Dropdown } from 'react-bootstrap'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -20,7 +21,7 @@ library.add(faTimes)
 
 type SearchState = {
   dropdownIndex: number
-  isSearchableDropdownOpen: boolean
+  show: boolean
   searchText: string
   submittedSearchText: string
 }
@@ -41,7 +42,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     super(props)
     this.state = {
       dropdownIndex: 0,
-      isSearchableDropdownOpen: false,
+      show: false,
       searchText: '',
       submittedSearchText: '',
     }
@@ -57,14 +58,14 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   public toggleDropdown = (value: boolean) => (_: React.SyntheticEvent) => {
     this.setState({
-      isSearchableDropdownOpen: value,
+      show: value,
     })
   }
 
   public setDropdownIndex = (index: number) => (_: React.SyntheticEvent) => {
     this.setState({
       dropdownIndex: index,
-      isSearchableDropdownOpen: false,
+      show: false,
     })
   }
 
@@ -169,12 +170,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       unitDescription = '',
       facetAliases = {},
     } = this.props
-    const {
-      isSearchableDropdownOpen,
-      dropdownIndex,
-      searchText,
-      submittedSearchText,
-    } = this.state
+    const { show, dropdownIndex, searchText, submittedSearchText } = this.state
     const searchableItem = searchable[dropdownIndex]
     const containerStyle: React.CSSProperties = {
       border: '1px solid #DCDCDC',
@@ -187,15 +183,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       height: '51px',
       display: 'inline-flex',
       alignItems: 'center',
-    }
-    const ulStyle: React.CSSProperties = {
-      width: 'inherit',
-      left: -10,
-      paddingBottom: 0,
-      paddingTop: 0,
-    }
-    const liStyle: React.CSSProperties = {
-      paddingLeft: '10px',
     }
     const caretIconStyle: React.CSSProperties = {
       fontSize: '16px',
@@ -220,6 +207,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const dropdownBtnStyle: React.CSSProperties = {
       justifyContent: 'space-between',
+      margin: 0,
+      paddingLeft: 10,
     }
     const totalQueryResultsStyle: React.CSSProperties = {
       margin: '20px 0px',
@@ -236,67 +225,49 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           Search within <strong> {curFacetDisplayText} </strong> using keywords
         </p>
         <div style={containerStyle}>
-          {isSearchableDropdownOpen && (
-            <button
-              onClick={this.toggleDropdown(false)}
-              className={'SRC-menu-wall'}
-            />
-          )}
           <div className="SRC-centerContent SRC-fullWidth">
             <div
               style={{
                 ...fieldStyle,
                 flex: 1,
-                paddingLeft: 10,
                 borderRight: '1px solid #DCDCDC',
               }}
             >
-              <div
-                id="search-dropdown"
+              <Dropdown
+                show={show}
+                onToggle={() => this.setState({ show: !show })}
                 className="SRC-inherit-height SRC-fullWidth"
               >
-                <div className="SRC-centerContent SRC-inherit-height">
-                  <button
-                    style={dropdownBtnStyle}
-                    className="SRC-inlineFlex SRC-fullWidth"
-                    onClick={this.toggleDropdown(!isSearchableDropdownOpen)}
-                  >
-                    {curFacetDisplayText}
-                    <FontAwesomeIcon
-                      style={caretIconStyle}
-                      icon={
-                        isSearchableDropdownOpen ? 'caret-up' : 'caret-down'
-                      }
-                    />
-                  </button>
-                </div>
-                <div
-                  className={
-                    'dropdown ' + (isSearchableDropdownOpen ? 'open' : '')
-                  }
+                <Dropdown.Toggle
+                  style={dropdownBtnStyle}
+                  className="SRC-primary-color-hover-dropdown SRC-inlineFlex SRC-inherit-height SRC-fullWidth"
+                  variant="light"
+                  id="search-toggle"
                 >
-                  <ul
-                    aria-labelledby="search-dropdown"
-                    style={ulStyle}
-                    className="SRC-search-dropdown dropdown-menu SRC-forceLeftDropdown dropdown-menu-left"
-                  >
-                    {searchable.map((el, index) => {
-                      const displayName =
-                        facetAliases[el.columnName] || el.columnName
-                      return (
-                        <li
-                          style={liStyle}
-                          onClick={this.setDropdownIndex(index)}
-                          key={displayName}
-                          className="SRC-hand-cursor SRC-primary-background-color-hover"
-                        >
-                          {displayName}
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </div>
-              </div>
+                  {curFacetDisplayText}
+                  <FontAwesomeIcon
+                    style={caretIconStyle}
+                    icon={show ? 'caret-up' : 'caret-down'}
+                    color={show ? 'white' : undefined}
+                  />
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {searchable.map((el, index) => {
+                    const displayName =
+                      facetAliases[el.columnName] || el.columnName
+                    return (
+                      <Dropdown.Item
+                        // @ts-ignore
+                        onSelect={this.setDropdownIndex(index)}
+                        key={displayName}
+                        className="SRC-hand-cursor SRC-primary-background-color-hover"
+                      >
+                        {displayName}
+                      </Dropdown.Item>
+                    )
+                  })}
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
             <form
               style={{
