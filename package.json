@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.12.68",
+  "version": "1.12.72",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -36,6 +36,7 @@
     "gh-pages": "^2.0.0",
     "i": "^0.3.6",
     "json-rules-engine": "^4.0.0",
+    "json-schema-ref-parser": "^7.1.1",
     "katex": "^0.10.0-rc.1",
     "lodash.clonedeep": "^4.5.0",
     "markdown-it": "^8.4.2",
@@ -139,6 +140,7 @@
     "build:rollup": "rollup -c && cp -r src/umd dist/"
   },
   "resolutions": {
+    "@types/react": "16.9.2",
     "fstream": "1.0.12",
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",

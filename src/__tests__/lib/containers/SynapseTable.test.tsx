@@ -1,6 +1,10 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import SynapseTable, { SynapseTableProps, SORT_STATE, DOWNLOAD_OPTIONS_CONTAINER_CLASS, EXPAND_CLASS, unCamelCase } from '../../../lib/containers/SynapseTable'
+import SynapseTable, {
+  SynapseTableProps,
+  SORT_STATE,
+  unCamelCase
+} from '../../../lib/containers/table/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
@@ -17,13 +21,13 @@ import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UserCard from 'lib/containers/UserCard'
 import { Modal } from 'react-bootstrap'
+import { ColumnSelection } from 'lib/containers/table/table-top'
+import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
 
-const createShallowComponent = (props: SynapseTableProps & QueryWrapperChildProps) => {
-  const wrapper = shallow<SynapseTable>(
-      <SynapseTable
-        {...props}
-      />
-    )
+const createShallowComponent = (
+  props: SynapseTableProps & QueryWrapperChildProps,
+) => {
+  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -39,8 +43,7 @@ describe('basic functionality', () => {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-    ,
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
       sql: 'SELECT * FROM syn16787123',
       isConsistent: false,
@@ -49,15 +52,14 @@ describe('basic functionality', () => {
       selectedFacets: [
         {
           columnName: 'projectStatus',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: [
-            'Active',
-            'Completed',
-          ],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          facetValues: ['Active', 'Completed'],
         },
         {
           columnName: 'tumorType',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           facetValues: [
             'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
             'Cutaneous Neurofibroma',
@@ -69,11 +71,11 @@ describe('basic functionality', () => {
             'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
             'Schwannoma',
             'Schwannoma | Meningioma',
-            'SMN'
+            'SMN',
           ],
-        }
-      ]
-    }
+        },
+      ],
+    },
   }
   const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
   const executeQueryRequest = jest.fn()
@@ -87,7 +89,7 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
-    facet: 'tumorType'
+    facet: 'tumorType',
   } as SynapseTableProps & QueryWrapperChildProps
 
   it('renders without crashing', async () => {
@@ -109,60 +111,62 @@ describe('basic functionality', () => {
   })
 
   describe('Dropdown column menu works', () => {
-    it('renders dropdown column menu', async () => {
+    it('renders with the correct props', async () => {
       const { wrapper } = createShallowComponent(props)
-      // There are multiple dropdowns so we look at the dropdown with class SRC-column-menu
-      // Since there are a total of 13 columns in view, so we expect 13 list elements
-      expect(wrapper.find('.SRC-column-menu .SRC-table-dropdown-list')).toHaveLength(totalColumns)
+      expect(wrapper.find(ColumnSelection).props().headers).toEqual(
+        syn16787123Json.queryResult.queryResults.headers,
+      )
     })
 
-    it('toggle column selection functions correctly', async () => {
+    it('toggle column selection works correctly', async () => {
       const visibleColumnCount = 3
       const propsWithVisibleColumnCountSet = {
         ...props,
-        visibleColumnCount
+        visibleColumnCount,
       }
-      const { wrapper, instance } = createShallowComponent(propsWithVisibleColumnCountSet)
+      const { wrapper, instance } = createShallowComponent(
+        propsWithVisibleColumnCountSet,
+      )
       const eventStub = {
-        preventDefault: jest.fn()
+        preventDefault: jest.fn(),
       } as any
       // arbitrary value chosen for column selected
       await instance.toggleColumnSelection(5)(eventStub)
-      expect(wrapper.state('isColumnSelected')).toEqual(
-        [true, true, true, false, false, true, false, false, false, false, false, false, false]
-      )
+      expect(wrapper.state('isColumnSelected')).toEqual([
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+      ])
     })
   })
   describe('Download options dropdown works', () => {
-    it('renders ModalDownload', async () => {
+    it('isModalDownloadOpen opens the ModalDownload', async () => {
       const { wrapper } = await createShallowComponent(props)
-      // Double check its not showing be default
+      // Verify its not showing by default
       expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      // Click dropdown open
-      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} button`).at(0).simulate('click')
-      // Click the dropdown
-      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
+      await wrapper.setState({ isModalDownloadOpen: true })
       // See that modal download is present
       expect(wrapper.find(ModalDownload)).toHaveLength(1)
-      // Click elsewhere and see that modal download has closed
-      await wrapper.find('.SRC-menu-wall').simulate('click')
-      expect(wrapper.find(ModalDownload)).toHaveLength(0)
     })
   })
-  describe('expand mode works' , () => {
-    it ('works', async () => {
+  describe('Expand modal opens when isExpanded is set to true', () => {
+    it('works', async () => {
       const { wrapper } = await createShallowComponent(props)
       // No modal to start
       expect(wrapper.find(Modal)).toHaveLength(0)
-      await wrapper.find(`.${EXPAND_CLASS}`).simulate('click')
+      await wrapper.setState({ isExpanded: true })
       // Modal is open now
       expect(wrapper.find(Modal)).toHaveLength(1)
-  
-      // Click the download options dropdown
-      await wrapper.find(`.${DOWNLOAD_OPTIONS_CONTAINER_CLASS} li`).at(0).simulate('click')
-      // See that modal download is present and bootstrap modal is gone
-      expect(wrapper.find(ModalDownload)).toHaveLength(1)
-      expect(wrapper.find(Modal)).toHaveLength(0)
     })
   })
   describe('PORTALS-527: aggregate query support (show underlying data)', () => {
@@ -171,16 +175,18 @@ describe('basic functionality', () => {
       const originalSql: string =
         'SELECT bar, baz, count(distinct file_id)' +
         'AS biz FROM syn987654321 ' +
-        'WHERE species=\'Human\' ' +
-        'AND assay=\'rnaSeq\' group by 1,2 order by 3 asc'
+        "WHERE species='Human' " +
+        "AND assay='rnaSeq' group by 1,2 order by 3 asc"
       const testRow: Row = {
         rowId: 123,
         values: ['bar1', 'baz1', '10'],
-        versionNumber: 8
+        versionNumber: 8,
       }
       const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql)
       expect(sql.synId).toEqual('syn987654321')
-      expect(sql.newSql).toEqual('SELECT *\n  FROM syn987654321\n  WHERE ((((`species` = \'Human\') AND (`assay` = \'rnaSeq\')) AND (`bar` = \'bar1\')) AND (`baz` = \'baz1\'))')
+      expect(sql.newSql).toEqual(
+        "SELECT *\n  FROM syn987654321\n  WHERE ((((`species` = 'Human') AND (`assay` = 'rnaSeq')) AND (`bar` = 'bar1')) AND (`baz` = 'baz1'))",
+      )
     })
     it('sql parsing test without WHERE clause', async () => {
       const { instance } = createShallowComponent(props)
@@ -191,11 +197,13 @@ describe('basic functionality', () => {
       const testRow: Row = {
         rowId: 123,
         values: ['bar1', 'baz1', '10'],
-        versionNumber: 8
+        versionNumber: 8,
       }
       const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql)
       expect(sql.synId).toEqual('syn987654321')
-      expect(sql.newSql).toEqual('SELECT *\n  FROM syn987654321\n  WHERE ((`bar` = \'bar1\') AND (`baz` = \'baz1\'))')
+      expect(sql.newSql).toEqual(
+        "SELECT *\n  FROM syn987654321\n  WHERE ((`bar` = 'bar1') AND (`baz` = 'baz1'))",
+      )
     })
   })
   describe('PORTALS-527: get count function column indexes', () => {
@@ -204,9 +212,11 @@ describe('basic functionality', () => {
       const originalSql: string =
         'SELECT bar, baz' +
         'FROM syn987654321 ' +
-        'WHERE species=\'Human\' ' +
-        'AND assay=\'rnaSeq\''
-      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(originalSql)
+        "WHERE species='Human' " +
+        "AND assay='rnaSeq'"
+      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(
+        originalSql,
+      )
       expect(columnIndexes).toHaveLength(0)
     })
     it('group by with count function', async () => {
@@ -214,9 +224,11 @@ describe('basic functionality', () => {
       const originalSql: string =
         'SELECT bar, baz, count(distinct id) as files, concat(biz)' +
         'FROM syn987654321 ' +
-        'WHERE species=\'Human\' ' +
-        'AND assay=\'rnaSeq\' group by 1, 2'
-      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(originalSql)
+        "WHERE species='Human' " +
+        "AND assay='rnaSeq' group by 1, 2"
+      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(
+        originalSql,
+      )
       expect(columnIndexes).toEqual([2])
     })
     it('group by without count function', async () => {
@@ -224,9 +236,11 @@ describe('basic functionality', () => {
       const originalSql: string =
         'SELECT bar, baz, concat(distinct id) as files, concat(biz)' +
         'FROM syn987654321 ' +
-        'WHERE species=\'Human\' ' +
-        'AND assay=\'rnaSeq\' group by 1, 2'
-      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(originalSql)
+        "WHERE species='Human' " +
+        "AND assay='rnaSeq' group by 1, 2"
+      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(
+        originalSql,
+      )
       expect(columnIndexes).toHaveLength(0)
     })
   })
@@ -239,7 +253,7 @@ describe('basic functionality', () => {
       expect(wrapper.find('th')).toHaveLength(totalColumns)
       // there are five facets for the dataset so there should be 5
       // faceted columns
-      expect(wrapper.find('div.SRC-table-facet-dropdown')).toHaveLength(5)
+      expect(wrapper.find(FacetFilter)).toHaveLength(5)
       // if visible column count isn't set then nothing should be hidden
       expect(wrapper.find('th.SRC-hidden')).toHaveLength(0)
     })
@@ -259,28 +273,30 @@ describe('basic functionality', () => {
       const sortedColumn = 'projectName'
       const columnClickInformation = {
         index: 0,
-        name: 'projectName'
+        name: 'projectName',
       }
       const eventStub = {} as any
       await instance.handleColumnSortPress(columnClickInformation)(eventStub)
       const projectNameIconDescending = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       const descendingColumnObject = {
         column: sortedColumn,
-        direction: SORT_STATE[1]
+        direction: SORT_STATE[1],
       }
       const projectNameColumnDescending = [descendingColumnObject]
-      expect(wrapper.state('columnIconSortState')).toEqual(projectNameIconDescending)
-      expect(wrapper.state('sortedColumnSelection')).toEqual(projectNameColumnDescending)
+      expect(wrapper.state('columnIconSortState')).toEqual(
+        projectNameIconDescending,
+      )
+      expect(wrapper.state('sortedColumnSelection')).toEqual(
+        projectNameColumnDescending,
+      )
       // below we match only the part of the object that we expect to have changed
-      expect(executeQueryRequest).toHaveBeenCalledWith(expect.objectContaining(
-        {
-          query: expect.objectContaining(
-            {
-              sort: [descendingColumnObject]
-            }
-          )
-        }
-      ))
+      expect(executeQueryRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          query: expect.objectContaining({
+            sort: [descendingColumnObject],
+          }),
+        }),
+      )
 
       // simulate second button click
       // simulate having clicked the sort button on the first column
@@ -289,21 +305,23 @@ describe('basic functionality', () => {
       const projectNameIconAscending = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       const ascendingColumnObject = {
         column: sortedColumn,
-        direction: SORT_STATE[2]
+        direction: SORT_STATE[2],
       }
       const projectNameColumnAscending = [ascendingColumnObject]
-      expect(wrapper.state('columnIconSortState')).toEqual(projectNameIconAscending)
-      expect(wrapper.state('sortedColumnSelection')).toEqual(projectNameColumnAscending)
+      expect(wrapper.state('columnIconSortState')).toEqual(
+        projectNameIconAscending,
+      )
+      expect(wrapper.state('sortedColumnSelection')).toEqual(
+        projectNameColumnAscending,
+      )
       // below we match only the part of the object that we expect to have changed
-      expect(executeQueryRequest).toHaveBeenCalledWith(expect.objectContaining(
-        {
-          query: expect.objectContaining(
-            {
-              sort: [ascendingColumnObject]
-            }
-          )
-        }
-      ))
+      expect(executeQueryRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          query: expect.objectContaining({
+            sort: [ascendingColumnObject],
+          }),
+        }),
+      )
       // simulate second button click
       // simulate having clicked the sort button on the first column
       // projectName -- this should set it to descend
@@ -312,17 +330,17 @@ describe('basic functionality', () => {
       // it shouldn't be in the api call at all
       const projectNameColumnOff: any = []
       expect(wrapper.state('columnIconSortState')).toEqual(projectNameIconOff)
-      expect(wrapper.state('sortedColumnSelection')).toEqual(projectNameColumnOff)
+      expect(wrapper.state('sortedColumnSelection')).toEqual(
+        projectNameColumnOff,
+      )
       // below we match only the part of the object that we expect to have changed
-      expect(executeQueryRequest).toHaveBeenCalledWith(expect.objectContaining(
-        {
-          query: expect.objectContaining(
-            {
-              sort: []
-            }
-          )
-        }
-      ))
+      expect(executeQueryRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          query: expect.objectContaining({
+            sort: [],
+          }),
+        }),
+      )
     })
   })
 
@@ -339,63 +357,57 @@ describe('basic functionality', () => {
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'ENTITYID'
+          columnType: 'ENTITYID',
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'USERID'
+          columnType: 'USERID',
         },
       ],
       queryResult: {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
         queryResults: {
-          concreteType: "org.sagebionetworks.repo.model.table.RowSet",
+          concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
           tableId: MOCKED_STRING,
           etag: MOCKED_STRING,
           headers: [
             {
               columnType: 'ENTITYID',
               name: MOCKED_STRING,
-              id: MOCKED_STRING
+              id: MOCKED_STRING,
             },
             {
               columnType: 'USERID',
               name: MOCKED_STRING,
-              id: MOCKED_STRING
+              id: MOCKED_STRING,
             },
           ],
           rows: [
             {
-              values: [
-                'syn123',
-                'syn120',
-              ],
+              values: ['syn123', 'syn120'],
               versionNumber: MOCKED_NUM,
-              rowId: MOCKED_NUM
+              rowId: MOCKED_NUM,
             },
             {
-              values: [
-                'syn124',
-                'syn120',
-              ],
+              values: ['syn124', 'syn120'],
               versionNumber: MOCKED_NUM,
-              rowId: MOCKED_NUM
+              rowId: MOCKED_NUM,
             },
             {
-              values: [
-                'syn125',
-                'syn121',
-              ],
+              values: ['syn125', 'syn121'],
               versionNumber: MOCKED_NUM,
-              rowId: MOCKED_NUM
+              rowId: MOCKED_NUM,
             },
-          ]
-        }
-      }
+          ],
+        },
+      },
     }
-    const { wrapper, instance } = createShallowComponent({...props, data: mockData})
-    
+    const { instance } = createShallowComponent({
+      ...props,
+      data: mockData,
+    })
+
     it('gets column indicies correctly ', () => {
       const entities = instance.getColumnIndiciesWithType('ENTITYID')
       expect(entities).toEqual([ENTITYID_INDEX])
@@ -407,135 +419,151 @@ describe('basic functionality', () => {
       // test entityId column type
       let mapEntityIdToHeader = {}
       let indicies = [ENTITYID_INDEX]
-      let uniqueEntities = instance.getUniqueEntities(mockData, mapEntityIdToHeader, indicies)
+      let uniqueEntities = instance.getUniqueEntities(
+        mockData,
+        mapEntityIdToHeader,
+        indicies,
+      )
       expect(uniqueEntities.size).toEqual(3)
       // test userId column
       mapEntityIdToHeader = {
-        syn120: {}
+        syn120: {},
       }
       indicies = [USERID_INDEX]
-      uniqueEntities = instance.getUniqueEntities(mockData, mapEntityIdToHeader, indicies)
+      uniqueEntities = instance.getUniqueEntities(
+        mockData,
+        mapEntityIdToHeader,
+        indicies,
+      )
       expect(uniqueEntities.size).toEqual(1)
     })
-    
+
     describe('renders table cells correctly', () => {
       const entityColumnIndicies: number[] = [ENTITYID_INDEX]
-      const userColumnIndicies: number [] = [USERID_INDEX]
+      const userColumnIndicies: number[] = [USERID_INDEX]
       const mockEntityLinkValue: string = 'syn122'
       const mockUserCardValue: string = 'syn123'
       const mockAllAuthenticatedUsersValue: string = 'syn124'
       const mockTeamValue: string = 'syn125'
       const teamName: string = 'team name'
       const mockColumnValue: string = 'syn126'
-      // We only care about the conditional rendering, not the 
+      // We only care about the conditional rendering, not the
       // instantiation of the EntityLink, so we cast the value
       const mapEntityIdToHeader = {
-        [mockEntityLinkValue]: {} as EntityHeader
+        [mockEntityLinkValue]: {} as EntityHeader,
       }
-      const mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>> = {
+      const mapUserIdToHeader: Dictionary<
+        Partial<UserGroupHeader & UserProfile>
+      > = {
         [mockAllAuthenticatedUsersValue]: {
           isIndividual: false,
-          userName: AUTHENTICATED_USERS
+          userName: AUTHENTICATED_USERS,
         },
         [mockTeamValue]: {
           isIndividual: false,
-          userName: teamName
+          userName: teamName,
         },
         [mockUserCardValue]: {},
       }
-      it ('renders an entity link', () => {
+      it('renders an entity link', () => {
         const tableCell = shallow(
           <div>
-            {
-              instance.renderTableCell(
-                { 
-                  entityColumnIndicies, 
-                  userColumnIndicies,
-                  colIndex: ENTITYID_INDEX,
-                  columnValue: mockEntityLinkValue,
-                  isBold: '',
-                  mapEntityIdToHeader,
-                  mapUserIdToHeader: {}
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              colIndex: ENTITYID_INDEX,
+              columnValue: mockEntityLinkValue,
+              isBold: '',
+              mapEntityIdToHeader,
+              mapUserIdToHeader: {},
             })}
-          </div>
+          </div>,
         )
         expect(tableCell.find(EntityLink)).toHaveLength(1)
       })
-      it ('renders a link for all authenticated users', () => {
+      it('renders a link for all authenticated users', () => {
         const tableCell = shallow(
           <div>
-            {
-              instance.renderTableCell(
-                { 
-                  entityColumnIndicies, 
-                  userColumnIndicies,
-                  colIndex: USERID_INDEX,
-                  columnValue: mockAllAuthenticatedUsersValue,
-                  isBold: '',
-                  mapEntityIdToHeader: {},
-                  mapUserIdToHeader
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              colIndex: USERID_INDEX,
+              columnValue: mockAllAuthenticatedUsersValue,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
             })}
-          </div>
+          </div>,
         )
-        expect(tableCell.find('span').text().trim()).toEqual('<FontAwesomeIcon /> All registered Synapse users')
-        expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('globe-americas')
+        expect(
+          tableCell
+            .find('span')
+            .text()
+            .trim(),
+        ).toEqual('<FontAwesomeIcon /> All registered Synapse users')
+        expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual(
+          'globe-americas',
+        )
       })
-      it ('renders a link for a team', () => {
+      it('renders a link for a team', () => {
         const tableCell = shallow(
           <div>
-            {
-              instance.renderTableCell(
-                { 
-                  entityColumnIndicies, 
-                  userColumnIndicies,
-                  colIndex: USERID_INDEX,
-                  columnValue: mockTeamValue,
-                  isBold: '',
-                  mapEntityIdToHeader: {},
-                  mapUserIdToHeader
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              colIndex: USERID_INDEX,
+              columnValue: mockTeamValue,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
             })}
-          </div>
+          </div>,
         )
-        expect(tableCell.find('a').text().trim()).toEqual(`<FontAwesomeIcon /> ${teamName}`)
+        expect(
+          tableCell
+            .find('a')
+            .text()
+            .trim(),
+        ).toEqual(`<FontAwesomeIcon /> ${teamName}`)
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('users')
       })
-      it ('renders a user card link', () => {
+      it('renders a user card link', () => {
         const tableCell = shallow(
           <div>
-            {
-              instance.renderTableCell(
-                { 
-                  entityColumnIndicies, 
-                  userColumnIndicies,
-                  colIndex: USERID_INDEX,
-                  columnValue: mockUserCardValue,
-                  isBold: '',
-                  mapEntityIdToHeader: {},
-                  mapUserIdToHeader
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              colIndex: USERID_INDEX,
+              columnValue: mockUserCardValue,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
             })}
-          </div>
+          </div>,
         )
         expect(tableCell.find(UserCard)).toHaveLength(1)
       })
-      it ('renders a standard value', () => {
+      it('renders a standard value', () => {
         const tableCell = shallow(
           <div>
-            {
-              instance.renderTableCell(
-                { 
-                  entityColumnIndicies, 
-                  userColumnIndicies,
-                  colIndex: USERID_INDEX,
-                  columnValue: mockColumnValue,
-                  isBold: '',
-                  mapEntityIdToHeader: {},
-                  mapUserIdToHeader
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              colIndex: USERID_INDEX,
+              columnValue: mockColumnValue,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
             })}
-          </div>
+          </div>,
         )
-        expect(tableCell.find('p').text().trim()).toEqual(mockColumnValue)
+        expect(
+          tableCell
+            .find('p')
+            .text()
+            .trim(),
+        ).toEqual(mockColumnValue)
       })
     })
-
   })
 })

@@ -221,12 +221,13 @@ svg.SRC-hoverBox:hover:after {
   background: #f9f9f9; }
 
 body * {
-  font-family: "Lato"; }
+  font-family: 'Lato'; }
 
 .SRC-noMargin {
   margin: 0px; }
 
-.SRC-floatLeft, .wp-block-image .alignleft {
+.SRC-floatLeft,
+.wp-block-image .alignleft {
   float: left; }
 
 .SRC-floatRight {
@@ -251,7 +252,7 @@ body * {
   cursor: pointer; }
 
 span.SRC-facets svg.SRC-facets-icon {
-  vertical-align: -.175em;
+  vertical-align: -0.175em;
   width: 0.5em;
   opacity: 0.5; }
 
@@ -266,7 +267,7 @@ span.SRC-facets svg.SRC-facets-icon {
   cursor: pointer; }
 
 .SRC-deemphasized-text {
-  color: #B7B7B7; }
+  color: #b7b7b7; }
 
 .SRC-google-button {
   display: inline-flex;
@@ -296,9 +297,6 @@ span.SRC-facets svg.SRC-facets-icon {
   color: #1e7098;
   background: white; }
 
-.SRC-table-checkbox {
-  margin: 17px 0px; }
-
 .SRC-chart-rect-style {
   margin: 0px;
   stroke-width: 1px;
@@ -310,7 +308,7 @@ span.SRC-facets svg.SRC-facets-icon {
   margin-bottom: 15px; }
 
 .SRC-salmon-background {
-  background: #F27277; }
+  background: #f27277; }
 
 .SRC-boldText {
   font-weight: bold; }
@@ -325,35 +323,14 @@ a.SRC-anchor-light {
 .SRC-roundBorder {
   border-radius: 15px; }
 
-.SRC-blueBorder {
-  background: blue; }
-
-.SRC-grayBorder {
-  background: gray; }
-
 .SRC-whiteText {
   color: white; }
-
-.SRC-paddingChips {
-  padding: 5px; }
 
 .SRC-marginFive {
   margin: 5px; }
 
-.SRC-noPadding {
-  padding: 0px; }
-
-.SRC-paddingRight {
-  padding-right: 15px; }
-
-table.SRC-paddingRight > tbody > tr > td {
-  padding-right: 15px; }
-
 .SRC-grayBackground {
   background: #f9f9f9; }
-
-.SRC-noPaddingBottom {
-  padding-bottom: 0px; }
 
 .SRC-no-text-decor {
   text-decoration: none; }
@@ -374,25 +351,14 @@ button.SRC-roundBorder {
 .SRC-marginBottomTen {
   margin-bottom: 10px; }
 
-.table > tbody.SRC-borderTopNone > tr > td {
-  border-top: None; }
-
 .SRC-flex {
   display: flex; }
-
-.SRC-width-50-percent {
-  width: 50%; }
-
-.SRC-table-row {
-  display: table-row; }
-
-.SRC-table-row div {
-  display: table-cell; }
 
 .SRC-pointed-triangle-right {
   position: relative; }
 
-.SRC-pointed-triangle-right:after, .SRC-pointed-triangle-right::after {
+.SRC-pointed-triangle-right:after,
+.SRC-pointed-triangle-right::after {
   position: absolute;
   right: -10px;
   top: 15px;
@@ -407,7 +373,8 @@ button.SRC-roundBorder {
 .SRC-pointed-triangle-down {
   position: relative; }
 
-.SRC-pointed-triangle-down:after, .SRC-pointed-triangle-down::after {
+.SRC-pointed-triangle-down:after,
+.SRC-pointed-triangle-down::after {
   position: absolute;
   left: 10px;
   bottom: -10px;
@@ -452,7 +419,7 @@ button.SRC-roundBorder {
   font-size: 16px; }
 
 .SRC-bar-border {
-  background: #F9F9F9; }
+  background: #f9f9f9; }
 
 .SRC-border-bottom-only {
   border-bottom: 1px solid #dddddf; }
@@ -469,9 +436,6 @@ button.SRC-roundBorder {
   border-left: 1px solid #dddddf;
   border-right: 1px solid #dddddf; }
 
-.SRC-text-cap {
-  text-transform: capitalize; }
-
 #root .SRC-bar-border-top.SRC-bar-border.SRC-bar-marginTop {
   margin-top: 10px; }
 
@@ -483,18 +447,11 @@ button.SRC-roundBorder {
   margin-top: 10px;
   margin-bottom: 10px; }
 
-.scrollable {
-  padding-left: 20px;
-  padding-right: 20px;
-  max-height: 300px;
-  overflow: hidden;
-  overflow-y: scroll; }
-
 .SRC-padding {
   padding: 3px; }
 
 .SRC-blackText {
-  color: #1A1C29; }
+  color: #1a1c29; }
 
 .SRC-hoverWhiteText:hover {
   color: white; }
@@ -502,37 +459,14 @@ button.SRC-roundBorder {
     color: white; }
 
 .SRC-light-background {
-  background: #F5F5F5; }
+  background: #f5f5f5; }
 
 .dropdownList {
   font-weight: 100;
   padding-left: 7px; }
 
-.borderTopTable {
-  border-top: 1px solid #dddddf;
-  padding-top: 5px;
-  padding-right: 20px; }
-
-.tableApply {
-  outline: none;
-  border-radius: 17px;
-  padding: 6px 25px;
-  background: #4E5491;
-  color: white;
-  margin-left: auto; }
-
-.tableTextColor {
-  margin: auto;
-  margin-left: 10px; }
-
 .SRC-extraPadding {
   padding: 5px; }
-
-.tableAll {
-  margin-right: 10px; }
-
-.tableClear {
-  margin-left: 10px; }
 
 .SRC-base-font {
   font-size: 14px; }
@@ -571,13 +505,6 @@ button.SRC-roundBorder {
   max-width: 350px;
   background: white; }
 
-.SRC-minDropdownWidth {
-  width: 240px; }
-
-.SRC-facets-divider {
-  margin-left: 5px;
-  margin-right: 5px; }
-
 .SRC-tableHead {
   font-size: 14px;
   text-transform: capitalize;
@@ -604,20 +531,6 @@ button.SRC-roundBorder {
   border: none; }
   .SRC-menu-wall:focus {
     outline: none; }
-
-.SRC-table-dropdown-content {
-  align-items: center;
-  border-bottom: 1px solid #DDDDDF; }
-
-.SRC-table-dropdown-text {
-  margin-bottom: 0px;
-  font-size: 15px;
-  display: inline-block;
-  font-weight: bold; }
-
-.SRC-table-dropdown-close {
-  margin-left: auto;
-  background: white; }
 
 .dropdown:focus ul.dropdown-menu {
   display: block; }
@@ -668,12 +581,6 @@ button.SRC-roundBorder {
   position: absolute;
   left: 0px;
   margin-left: 10px;
-  margin-top: 5px; }
-
-.SRC-arrowRight {
-  position: absolute;
-  left: 150px;
-  margin-right: 10px;
   margin-top: 5px; }
 
 .SRC-overflowWrap {
@@ -727,7 +634,7 @@ div.SRC-userImg {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 1px solid #DCDCDC;
+  border: 1px solid #dcdcdc;
   text-transform: capitalize;
   color: white; }
 
@@ -847,7 +754,7 @@ div.SRC-userImg {
   display: flex;
   align-items: center;
   justify-content: left;
-  background: #1A1C29;
+  background: #1a1c29;
   color: white;
   width: 344px;
   height: 48px;
@@ -855,18 +762,18 @@ div.SRC-userImg {
 
 .SRC-break {
   margin: 0px;
-  border: 1px solid #DCDCDC; }
+  border: 1px solid #dcdcdc; }
 
 .SRC-menu-item {
   padding: 10px 10px 5px 10px;
   color: #515359; }
 
 .SRC-contextMenuDropdown {
-  border: 1px solid #DCDCDC;
+  border: 1px solid #dcdcdc;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
 
 .SRC-card-metadata-title {
-  color: #ABABAC;
+  color: #ababac;
   margin-top: 16px;
   margin-bottom: 0px; }
 
@@ -923,10 +830,11 @@ div.SRC-userImg {
   display: grid;
   grid-template-rows: auto;
   align-items: center;
-  grid-template-areas: "media-text-media media-text-content";
+  grid-template-areas: 'media-text-media media-text-content';
   grid-template-columns: 50% auto; }
 
-.wp-block-media-text > figure > img, .wp-block-media-text > figure > video {
+.wp-block-media-text > figure > img,
+.wp-block-media-text > figure > video {
   max-width: unset;
   width: 100%;
   vertical-align: middle; }
@@ -1007,6 +915,28 @@ a.SRC-lightLink {
 .SRC-sign-in-button {
   min-width: 80px;
   margin: 10px; }
+
+a.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 1.5rem;
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0; }
+
+.dropdown-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #e9ecef; }
+
+.dropdown button.btn {
+  padding: 3px;
+  margin: 0px 3px; }
 
 .markdowntable {
   border: 1px solid #dddddd;

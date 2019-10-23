@@ -409,7 +409,7 @@ UserCard represents a synapse user, it is responsible for three different sized 
 ```
 
 ## Project Development
-This project's core dependencies are [Typescript](https://www.typescriptlang.org/docs/home.html), [tslint](https://github.com/progre/tslint-config-airbnb/#readme), and [rollup](https://rollupjs.org/guide/en).
+This project's core dependencies are [Typescript](https://www.typescriptlang.org/docs/home.html), and [rollup](https://rollupjs.org/guide/en).
 
 Motivation for dependencies-
   
@@ -421,6 +421,17 @@ Caveats of these dependencies-
   When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](https://github.com/Sage-Bionetworks/Synapse-React-Client/rollup.config.js),
   specify this in the `external` and `output.globals` fields.
 
+## Release Cycle
+
+### Standard Feature Branch
+1. Fork the repo
+2. Make a branch off develop
+3. When ready make a pull request against upstream develop and have another team member review 
+4. Team member should merge branch into develop
+5. On a regular basis develop will be merged into master and a new package will be published
+
+### Hotfix branch
+Hotfixes or changes needed immediately should be branched off of master, reviewed, and merged. Master should then be merged into develop.
 
 ## Updating this Project to New Releases
 
