@@ -8,6 +8,7 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
+import { unCamelCase } from './table/SynapseTable'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -126,7 +127,7 @@ export default class StackedBarChart extends
     const { chartSelectionIndex = 0 } = this.props
     const { facetAliases = {}, facet } = this.props
     const facetValueDisplay = xData[chartSelectionIndex] && xData[chartSelectionIndex].value
-    const filterDisplay = facetAliases[facet!] || facet
+    const filterDisplay = facetAliases[facet!] || unCamelCase(facet)
     return (
       <span>
         <span className="SRC-text-title SRC-filter-display">

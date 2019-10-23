@@ -3,6 +3,7 @@ import { shallow } from 'enzyme'
 import SynapseTable, {
   SynapseTableProps,
   SORT_STATE,
+  unCamelCase
 } from '../../../lib/containers/table/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
@@ -94,6 +95,19 @@ describe('basic functionality', () => {
   it('renders without crashing', async () => {
     const { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
+  })
+
+  describe('unCamelCase', () => {
+    it('works as expected', async () => {
+      expect(unCamelCase('basicCase')).toEqual('Basic Case')
+      expect(unCamelCase('DNA')).toEqual('DNA')
+      expect(unCamelCase('AnotherCase')).toEqual('Another Case')
+      expect(unCamelCase('silly ColumnName Test (ms)')).toEqual('Silly Column Name Test (ms)')
+      // these cases do not work as expected, and still need facet aliases
+      // expect(unCamelCase('pH')).toEqual('pH') // actual 'P H'
+      // expect(unCamelCase('nf1Genotype/nf2Genotype')).toEqual('NF1 Genotype/NF2 Genotype') // actual 'Nf1Genotype/nf2Genotype'
+      // expect(unCamelCase('cBioFileFormat')).toEqual('cBio File Format') // actual 'C Bio File Format'
+    })
   })
 
   describe('Dropdown column menu works', () => {
