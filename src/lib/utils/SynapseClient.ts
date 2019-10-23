@@ -1694,5 +1694,5 @@ const getCookie = (name: string) => {
   return null
 }
 const removeCookie = (name: string) => {
-  document.cookie = `${name}=; Max-Age=-99999999;`
+  document.cookie = `${name}= ; expires= Thu, 21 Aug 2014 20:00:00 UTC; path=/`
 }
