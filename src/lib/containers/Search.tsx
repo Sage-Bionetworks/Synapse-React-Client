@@ -292,7 +292,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 className="SRC-fullWidth"
               />
               {searchText.length > 0 && (
-                <button style={cancelIconStyle} onClick={this.clearSearchText}>
+                <button
+                  type="reset"
+                  className="SRC-button-focus-primary-color SRC-centerContentInline"
+                  style={cancelIconStyle}
+                  onClick={this.clearSearchText}
+                  tabIndex={0}
+                >
                   <FontAwesomeIcon
                     size={'sm'}
                     color={'#C4C4C4'}

@@ -27,7 +27,9 @@
   color: white !important; }
 
 .SRC-menu-button-base:focus {
-  outline: #c94281; }
+  outline-color: #c94281;
+  outline-style: auto;
+  outline-width: 5px; }
 
 .tableDropdownSelector {
   color: #4e5491;
@@ -40,7 +42,9 @@
   outline: #c94281; }
 
 .SRC-button-focus-primary-color:focus {
-  outline: #c94281; }
+  outline-color: #c94281;
+  outline-style: auto;
+  outline-width: 5px; }
 
 .SRC-primary-button {
   background: #c94281;

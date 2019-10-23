@@ -15,7 +15,6 @@ import ModalDownload from './containers/ModalDownload'
 import StatisticsPlot from './containers/StatisticsPlot'
 import './style/Index.css'
 import { SynapseConstants, SynapseClient } from './utils/'
-import { OVERIDE_CONFIG } from './utils/getEndpoints'
 
 const SynapseComponents = {
   Facets,
@@ -34,4 +33,4 @@ const SynapseComponents = {
   StatisticsPlot,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents, OVERIDE_CONFIG }
+export { SynapseClient, SynapseConstants, SynapseComponents }
