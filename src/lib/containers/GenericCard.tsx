@@ -2,6 +2,7 @@ import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
 import { CardLink, LabelLinkConfig, LabelLink } from './CardContainerLogic'
+import { unCamelCase } from './table/SynapseTable'
 
 export type KeyToAlias = {
   key: string
@@ -182,7 +183,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
           // create link for this column
           value = this.createLabelLink(value, labelLink, isHeader)
         }
-        const columnDisplayName = facetAliases[columnName] || columnName
+        const columnDisplayName = facetAliases[columnName] || unCamelCase(columnName)
         const keyValue = [columnDisplayName, value]
         values.push(keyValue)
       }
@@ -214,9 +215,9 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       )
     }
 
-    const titleSearchHandle =facetAliases[genericCardSchema.title] || genericCardSchema.title
-    const stubTitleSearchHandle = facetAliases[genericCardSchema.subTitle || ''] || genericCardSchema.subTitle
-    const descriptionSubTitle = facetAliases[genericCardSchema.description || ''] || genericCardSchema.description
+    const titleSearchHandle =facetAliases[genericCardSchema.title] || unCamelCase(genericCardSchema.title)
+    const stubTitleSearchHandle = facetAliases[genericCardSchema.subTitle || ''] || unCamelCase(genericCardSchema.subTitle)
+    const descriptionSubTitle = facetAliases[genericCardSchema.description || ''] || unCamelCase(genericCardSchema.description)
     return (
       <div
         style={style}

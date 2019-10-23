@@ -9,17 +9,16 @@ type EndpointObject = {
   PORTAL: string
 }
 
-export const PRODUCTION_ENDPOINT_OBJECT: EndpointObject = {
+export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
   REPO: 'https://repo-prod.prod.sagebase.org/',
   PORTAL: 'https://www.synapse.org/',
 }
 
 // Given an endpoint will return the specific stack object
 export const getEndpoint = (endpoint: BackendDestination) => {
-  let endpoint_config = PRODUCTION_ENDPOINT_OBJECT
-  if (process.env.NODE_ENV === 'development') {
-    // If its in the development environment and theres an OVERIDE_ENDPOINT_CONFIG attached to the SRC object
-    // then read the object
+  let endpoint_config = PRODUCTION_ENDPOINT_CONFIG
+  // @ts-ignore if they're overriding endpoint config
+  if (window.SRC && window.SRC.OVERIDE_ENDPOINT_CONFIG) {
     // @ts-ignore
     endpoint_config = window.SRC && window.SRC.OVERIDE_ENDPOINT_CONFIG
   }

@@ -13,6 +13,7 @@ import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
 import { Dropdown } from 'react-bootstrap'
+import { unCamelCase } from './table/SynapseTable'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -89,7 +90,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     })
     if (submittedSearchText) {
       const searchItemView =
-        facetAliases[searchItem.columnName] || searchItem.columnName
+        facetAliases[searchItem.columnName] ||
+        unCamelCase(searchItem.columnName)
       const frontText = isQueryWrapperMenuChild ? `.${SEARCH_CLASS_CSS} ` : ''
       const querySelector =
         frontText + `[data-search-handle="${searchItemView}"]`
@@ -214,7 +216,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       margin: '20px 0px',
     }
     const curFacetDisplayText =
-      facetAliases[searchableItem.columnName] || searchableItem.columnName
+      facetAliases[searchableItem.columnName] ||
+      unCamelCase(searchableItem.columnName)
     let usedUnitDescription = unitDescription
     if (submittedSearchText !== '') {
       usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${curFacetDisplayText}`

@@ -84,6 +84,19 @@ Note there are a number of CDNs required to finish this functionality-
   <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
 ```
 
+## Setting Endpoints
+
+### Configuring endpoint destinations for repo and portal
+Specifying the following in the window object will override request endpoints:
+
+```js
+window.SRC.OVERIDE_ENDPOINT_CONFIG = {
+  PORTAL: '<endpoint>',
+  REPO: '<endpoint>'
+}
+```
+Note - this will apply to all calls being made.
+
 ## Theming
 
 ## Style

@@ -6,7 +6,7 @@ import { Facets } from './Facets'
 import QueryCount from './QueryCount'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
-import SynapseTable, { SynapseTableProps } from './table/SynapseTable'
+import SynapseTable, { SynapseTableProps, unCamelCase } from './table/SynapseTable'
 import CardContainer from './CardContainer'
 import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
@@ -242,7 +242,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       // only show search component if its the last item in the menu config
       const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
       const showBarChart = stackedBarChartConfiguration !== undefined && !showSearch && !hasGroupByInSql
-      const aliasedFacet: string = facet && (facetAliases[facet] || facet)
+      const aliasedFacet: string = facet && (facetAliases[facet] || unCamelCase(facet))
 
       // search class is only used for testing, no css is actually applied
       let searchClass = showSearch ? SEARCH_CLASS_CSS : ''
@@ -477,7 +477,8 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const infoEnter: Info = { isSelected, originalColor }
       const infoLeave: Info = { isSelected, originalColor: defaultColor }
-      const facetDisplayValue: string = facet && facetAliases[facet] || facet
+      const facetDisplayValue: string = facet && facetAliases[facet] || unCamelCase(facet)
+      
       return (
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
