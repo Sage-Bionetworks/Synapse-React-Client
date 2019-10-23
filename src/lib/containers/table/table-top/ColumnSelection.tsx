@@ -90,7 +90,7 @@ export class ColumnSelection extends React.Component<
               : ''
             return (
               <Dropdown.Item
-                onSelect={() => toggleColumnSelection(index)()}
+                onClick={() => toggleColumnSelection(index)()}
                 key={header.name}
               >
                 <FontAwesomeIcon

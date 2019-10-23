@@ -90,7 +90,7 @@ Note there are a number of CDNs required to finish this functionality-
 Specifying the following in the window object will override request endpoints:
 
 ```js
-window.SRC.OVERIDE_ENDPOINT_CONFIG = {
+window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
   PORTAL: '<endpoint>',
   REPO: '<endpoint>'
 }
