@@ -11,7 +11,7 @@ import { insertConditionsFromSearchParams } from '../utils/modules/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
-import { unCamelCase } from './SynapseTable'
+import { unCamelCase } from './table/SynapseTable'
 
 library.add(faCaretDown)
 library.add(faCaretUp)

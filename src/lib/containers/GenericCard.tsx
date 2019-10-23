@@ -2,7 +2,7 @@ import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
 import { CardLink, LabelLinkConfig, LabelLink } from './CardContainerLogic'
-import { unCamelCase } from './SynapseTable'
+import { unCamelCase } from './table/SynapseTable'
 
 export type KeyToAlias = {
   key: string
