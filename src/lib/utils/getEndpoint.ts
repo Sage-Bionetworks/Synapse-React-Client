@@ -1,7 +1,7 @@
-export type BackendDestination = 'PORTAL_ENDPOINT' | 'SWC_ENDPOINT'
-// These variables indicate which endpoint should be called
-export const REPO_ENDPOINT: BackendDestination = 'PORTAL_ENDPOINT'
-export const PORTAL_ENDPOINT: BackendDestination = 'SWC_ENDPOINT'
+export enum BackendDestinationEnum {
+  REPO_ENDPOINT,
+  PORTAL_ENDPOINT,
+}
 
 // Encodes the portal and repo service destinations
 type EndpointObject = {
@@ -15,7 +15,7 @@ export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
 }
 
 // Given an endpoint will return the specific stack object
-export const getEndpoint = (endpoint: BackendDestination) => {
+export const getEndpoint = (endpoint: BackendDestinationEnum): string => {
   let endpoint_config = PRODUCTION_ENDPOINT_CONFIG
   // @ts-ignore if overriding endpoint config
   if (window.SRC && window.SRC.OVERRIDE_ENDPOINT_CONFIG) {
@@ -26,7 +26,7 @@ export const getEndpoint = (endpoint: BackendDestination) => {
   if (!PORTAL || !REPO) {
     throw Error('Error failed to specify endpoints, cannot make call')
   }
-  if (endpoint === PORTAL_ENDPOINT) {
+  if (endpoint === BackendDestinationEnum.PORTAL_ENDPOINT) {
     return PORTAL
   }
   return REPO

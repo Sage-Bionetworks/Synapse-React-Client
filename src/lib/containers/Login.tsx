@@ -70,32 +70,24 @@ class Login extends React.Component<Props, State> {
    *
    * @param {*} clickEvent Userclick event
    */
-  public handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
+  public async handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
     clickEvent.preventDefault() // avoid page refresh
-    SynapseClient.login(this.state.username, this.state.password)
-      .then((data: any) => {
-        SynapseClient.setSessionTokenCookie(data.sessionToken)
-          .then(() => {
-            // on session change, reload the page so that all components get the new token from the cookie
-            window.location.reload()
-          })
-          .catch(errSetSession => {
-            console.log('Could not set session token cookie!', errSetSession)
-            this.setState({
-              errorMessage: errSetSession.reason,
-              hasLoginInFailed: true,
-              isSignedIn: false,
-            })
-          })
+    try {
+      const data = await SynapseClient.login(
+        this.state.username,
+        this.state.password,
+      )
+      await SynapseClient.setSessionTokenCookie(data.sessionToken)
+      // on session change, reload the page so that all components get the new token from the cookie
+      window.location.reload()
+    } catch (err) {
+      console.log('Error on login: ', err.reason)
+      this.setState({
+        errorMessage: err.reason,
+        hasLoginInFailed: true,
+        isSignedIn: false,
       })
-      .catch((err: any) => {
-        console.log('Handle login failed with err = ', err)
-        this.setState({
-          errorMessage: err.reason,
-          hasLoginInFailed: true,
-          isSignedIn: false,
-        })
-      })
+    }
   }
 
   /**

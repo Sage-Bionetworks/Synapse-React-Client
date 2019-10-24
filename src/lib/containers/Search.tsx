@@ -93,8 +93,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         facetAliases[searchItem.columnName] ||
         unCamelCase(searchItem.columnName)
       const frontText = isQueryWrapperMenuChild ? `.${SEARCH_CLASS_CSS} ` : ''
-      const querySelector =
-        frontText + `[data-search-handle="${searchItemView}"]`
+      const querySelector = `${frontText}[data-search-handle="${searchItemView}"]`
       const trs = document.querySelectorAll<HTMLElement>(querySelector)
       // Target elements and apply styles
       trs.forEach(textElement => {
