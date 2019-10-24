@@ -1,7 +1,7 @@
 export type BackendDestination = 'PORTAL_ENDPOINT' | 'SWC_ENDPOINT'
 // These variables indicate which endpoint should be called
-export const PORTAL_ENDPOINT: BackendDestination = 'PORTAL_ENDPOINT'
-export const SWC_ENDPOINT: BackendDestination = 'SWC_ENDPOINT'
+export const REPO_ENDPOINT: BackendDestination = 'PORTAL_ENDPOINT'
+export const PORTAL_ENDPOINT: BackendDestination = 'SWC_ENDPOINT'
 
 // Encodes the portal and repo service destinations
 type EndpointObject = {
@@ -26,7 +26,7 @@ export const getEndpoint = (endpoint: BackendDestination) => {
   if (!PORTAL || !REPO) {
     throw Error('Error failed to specify endpoints, cannot make call')
   }
-  if (endpoint === SWC_ENDPOINT) {
+  if (endpoint === PORTAL_ENDPOINT) {
     return PORTAL
   }
   return REPO
