@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Engine } from 'json-rules-engine';
+import $RefParser from 'json-schema-ref-parser'
 
 import DrugUploadForm, {
   DrugUploadFormProps,
@@ -8,17 +9,29 @@ import DrugUploadForm, {
 } from '../../../../lib/containers/drug_upload_tool/DrugUploadForm';
 
 import {
-  formUiSchema,
-  formSchema,
-  formNavSchema,
-  submissionData
+   mockFormSchema as formSchema,
+  mockNavSchema as  formNavSchema,
+  mockFormData as submissionData,
+  mockUiSchema as formUiSchema,
 } from '../../../../mocks/mock_drug_tool_data';
-import { NavActionEnum } from 'lib/containers/drug_upload_tool/types';
+import { NavActionEnum, Step } from 'lib/containers/drug_upload_tool/types';
 
 const formTitle = 'my submission';
 
-const createShallowComponent = (props: DrugUploadFormProps) => {
-  const wrapper = shallow<DrugUploadForm>(<DrugUploadForm {...props} />, {});
+
+const newFormData = {
+  metadata: {
+ formSchemaVersion: '01',
+ uiSchemaVersion: '01',
+ navSchemaVersion: '01',
+}
+}
+
+const createShallowComponent = async (props: DrugUploadFormProps) => {
+
+  const schema = await $RefParser.dereference(props.schema) 
+  const _props = { ...props, ...{ schema} }
+  const wrapper = shallow<DrugUploadForm>(<DrugUploadForm {..._props} />, {});
 
   const instance = wrapper.instance();
   return { wrapper, instance };
@@ -41,7 +54,7 @@ const props: DrugUploadFormProps = {
   navSchema: formNavSchema,
   uiSchema: formUiSchema,
 
-  formData: {},
+  formData: newFormData,
   onSubmit: mock.submitFn,
   onSave: mock.saveFn,
   formTitle: formTitle,
@@ -52,11 +65,11 @@ Engine.run = jest.fn(() => Promise.resolve('restrictions'));
 
 describe('initialization tests', () => {
   it('intialize for new submission', async () => {
-    const { instance, wrapper } = createShallowComponent(props);
+    const { instance, wrapper } = await createShallowComponent(props);
 
     expect(wrapper).toBeDefined();
     expect(instance.state.steps.length).toBe(props.navSchema.steps.length);
-    expect(instance.state.formData).toEqual({});
+    expect(instance.state.formData).toEqual(newFormData);
     expect(instance.state.currentStep.id).toBe(props.navSchema.steps[0].id);
     expect(Object.keys(props.schema.properties!).length).toBeGreaterThan(1);
     const schema = instance.getSchema(instance.state.currentStep);
@@ -68,19 +81,20 @@ describe('initialization tests', () => {
 
   it('intialize for existing submission', async () => {
     const _props = { ...props, ...{ formData: submissionData } };
-    const { instance, wrapper } = createShallowComponent(_props);
+    const { instance, wrapper } = await createShallowComponent(_props);
    
     expect(wrapper).toBeDefined();
-    expect(instance.state.formData['welcome']['submission_name']).toBe(
-      'test123Alina3'
+    expect(instance.state.formData['naming']['first_name']).toBe(
+      submissionData.naming.first_name
     );
   });
 });
 
 describe('action tests', () => {
-  let { instance, wrapper } = createShallowComponent(props);
-  beforeEach(() => {
-    ({ instance, wrapper } = createShallowComponent(props));
+  let instance : any
+  let  wrapper : any 
+  beforeEach(async () => {
+    ({ instance, wrapper } = await createShallowComponent(props));
     instance.formRef = mock.formRef;
   });
 
@@ -89,7 +103,7 @@ describe('action tests', () => {
     const saveState = jest.spyOn(instance, 'saveStepState');
     const getNextStepFn = jest
       .spyOn(instance, 'getNextStepId')
-      .mockReturnValue(Promise.resolve('restrictions'));
+      .mockReturnValue(Promise.resolve('measurements'));
     expect(wrapper).toBeDefined();
     expect(instance.state.currentStep).toEqual(instance.state.steps[0]);
     instance.triggerAction(NavActionEnum.NEXT);
@@ -103,7 +117,7 @@ describe('action tests', () => {
       undefined
     );
     const nextStep = instance.state.steps.find(
-      step => step.id === 'restrictions'
+      (step: Step) => (step.id === 'measurements')
     );
     expect(saveState).toBeCalledTimes(1);
     expect(instance.state.currentStep.id).toEqual(nextStep!.id);
@@ -142,7 +156,7 @@ describe('action tests', () => {
 
   it('go to previous visited step if  wizard', async () => {
     const _props = { ...props, ...{ isWizard: true } };
-    let { instance } = createShallowComponent(_props);
+    let { instance } = await createShallowComponent(_props);
     instance.formRef = mock.formRef;
     instance.nextStep = instance.state.steps[3];
     await instance.performAction(NavActionEnum.GO_TO_STEP, false);
