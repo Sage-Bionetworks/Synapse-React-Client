@@ -30,7 +30,7 @@ export interface IFormData {
   [key: string]: {
     included?: boolean
     [key: string]: any
-  } 
+  }
 }
 
 export type DrugUploadFormProps = {
@@ -39,7 +39,7 @@ export type DrugUploadFormProps = {
   navSchema: {
     steps: any[]
   }
-  formData: IFormData 
+  formData: IFormData
   onSubmit: Function
   onSave: Function
   formTitle: string
@@ -87,11 +87,11 @@ export default class DrugUploadForm extends React.Component<
   excludeWarningText = (
     <div>
       <p>
-      This action will clear any entered data on this page and remove this form
-      from your submission.
-      You can include it again at anytime. Only this page will be affected.
-      </p><p>
-      Are you sure you want to skip this step and clear any entered data?</p>
+        This action will clear any entered data on this page and remove this
+        form from your submission. You can include it again at anytime. Only
+        this page will be affected.
+      </p>
+      <p>Are you sure you want to skip this step and clear any entered data?</p>
     </div>
   )
   excludeWarningHeader = 'Skip This Step?'
@@ -104,9 +104,10 @@ export default class DrugUploadForm extends React.Component<
 
   isNewForm = (formData: IFormData): boolean => {
     return (
-      Object.keys(formData).length == 1 &&
-      Object.keys(formData)[0] === 'metadata'
-    ) || Object.keys(formData).length == 0
+      (Object.keys(formData).length == 1 &&
+        Object.keys(formData)[0] === 'metadata') ||
+      Object.keys(formData).length == 0
+    )
   }
 
   getFirstStep = (steps: Step[], formData: IFormData): Step => {
@@ -712,7 +713,6 @@ export default class DrugUploadForm extends React.Component<
 
       return error
     })
-    return errors
   }
 
   renderErrorListTemplate = (props: ErrorListProps) => {
@@ -891,7 +891,7 @@ export default class DrugUploadForm extends React.Component<
             }
           ></WarningModal>
         )}
-          <DataDebug formData={this.state.formData} hidden={true}></DataDebug>
+        <DataDebug formData={this.state.formData} hidden={true}></DataDebug>
       </div>
     )
   }

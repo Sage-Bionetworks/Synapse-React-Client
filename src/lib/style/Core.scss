@@ -749,6 +749,8 @@ div.SRC-userImg {
 
 .SRC-chart-nav {
   height: 30px;
+  position: absolute;
+  right: 15px;
 }
 
 .SRC-loadingContainer {
@@ -859,12 +861,6 @@ button {
 
 .SRC-inherit-height {
   height: inherit;
-}
-
-.SRC-search-dropdown {
-  li {
-    padding: 10px;
-  }
 }
 
 a.SRC-lightLink {

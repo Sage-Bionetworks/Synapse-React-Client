@@ -85,7 +85,6 @@ class DrugUploadTool extends React.Component<
       const entity: FileEntity = await SynapseClient.getEntity(
         token,
         entityId,
-        undefined,
         versionNumber,
       )
       const entityContent = await SynapseClient.getFileEntityContent(

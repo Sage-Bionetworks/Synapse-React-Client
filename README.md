@@ -84,6 +84,19 @@ Note there are a number of CDNs required to finish this functionality-
   <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
 ```
 
+## Setting Endpoints
+
+### Configuring endpoint destinations for repo and portal
+Specifying the following in the window object will override request endpoints:
+
+```js
+window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
+  PORTAL: '<endpoint>',
+  REPO: '<endpoint>'
+}
+```
+Note - this will apply to all calls being made.
+
 ## Theming
 
 ## Style
@@ -423,15 +436,14 @@ Caveats of these dependencies-
 
 ## Release Cycle
 
-### Standard Feature Branch
-1. Fork the repo
-2. Make a branch off develop
-3. When ready make a pull request against upstream develop and have another team member review 
-4. Team member should merge branch into develop
-5. On a regular basis develop will be merged into master and a new package will be published
-
-### Hotfix branch
-Hotfixes or changes needed immediately should be branched off of master, reviewed, and merged. Master should then be merged into develop.
+The develop branch was created from master
+Feature branches are created from develop
+When a feature is complete it is merged into the develop branch
+If an issue in master is detected a hotfix branch is created from master
+Once the hotfix is complete it is merged to both develop and master
+Notes:
+On a regular basis develop will be merged into master and a new release will be published from master
+All proposed changes (to be merged into develop or master) must be via a Pull Request with a code review
 
 ## Updating this Project to New Releases
 

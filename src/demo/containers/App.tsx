@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
 import Login from '../../lib/containers/Login'
 import logoSvg from '../../images/logo.svg'
@@ -61,20 +61,25 @@ export default class App extends React.Component<{}, AppState> {
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
         <Login
-          token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token}
+          token={
+            SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
+          }
           theme={'light'}
           icon={true}
         />
-        <details><summary>Synapse Staging (Google SSO redirects to staging site)</summary>
+        <details>
+          <summary>
+            Synapse Staging (Google SSO redirects to staging site)
+          </summary>
           <Login
-            token={SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token}
+            token={
+              SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
+            }
             theme={'dark'}
             icon={true}
             googleRedirectUrl={
               'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'
             }
-            repoEndpoint={'https://repo-staging.prod.sagebase.org/'}
-            swcEndpoint={'https://staging.sagebase.org/'}
           />
         </details>
         <hr />
@@ -109,7 +114,9 @@ export default class App extends React.Component<{}, AppState> {
                 <Link to="/drugUploadTool">Drug Upload Tool</Link>
               </li>
               <li>
-                <Link to="/contribReqForm">AMP-AD external data contribution </Link>
+                <Link to="/contribReqForm">
+                  AMP-AD external data contribution{' '}
+                </Link>
               </li>
             </ul>
 
@@ -130,14 +137,12 @@ export default class App extends React.Component<{}, AppState> {
                     pathpart="drugUploadTool"
                     token={this.state.token}
                     formClass="drug-upload-tool"
-          
                     formGroupId="9"
                     itemNoun="Compound"
                   />
                 ) : (
                   <DrugUploadTool
                     {...props}
-           
                     formSchemaEntityId="syn20680102"
                     fileNamePath="naming.compound_name"
                     formUiSchemaEntityId="syn20693568"
@@ -169,7 +174,6 @@ export default class App extends React.Component<{}, AppState> {
                     token={this.state.token}
                     formClass="contribution-request"
                     itemNoun={'Contribution Request'}
-
                   />
                 ) : (
                   <DrugUploadTool

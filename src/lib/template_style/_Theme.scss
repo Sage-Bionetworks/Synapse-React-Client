@@ -38,7 +38,9 @@
 }
 
 .SRC-menu-button-base:focus {
-  outline: $primary-action-color;
+  outline-color: $primary-action-color;
+  outline-style: auto;
+  outline-width: 5px;
 }
 
 .tableDropdownSelector {
@@ -54,7 +56,9 @@
 
 .SRC-button-focus-primary-color {
   &:focus {
-    outline: $primary-action-color;
+    outline-color: $primary-action-color;
+    outline-style: auto;
+    outline-width: 5px;
   }
 }
 
@@ -168,6 +172,7 @@
 %dropdown-active-state {
   background: $primary-action-color;
   border-radius: 0;
+  color: white;
 }
 
 .show button.dropdown-toggle {

@@ -17,7 +17,7 @@ import UserFileGrid from './containers/drug_upload_tool/UserFileGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import NewsFeedMenu from './containers/NewsFeedMenu'
-import './style/Index.css'
+import './style/Index.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 
 const SynapseComponents = {
@@ -36,7 +36,7 @@ const SynapseComponents = {
   ModalDownload,
   NewsFeedMenu,
   DrugUploadTool,
-  UserFileGrid
+  UserFileGrid,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents}
+export { SynapseClient, SynapseConstants, SynapseComponents }

@@ -2,6 +2,7 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/getEndpoint'
 
 type State = {
   username: string
@@ -16,9 +17,7 @@ type Props = {
   token: string | undefined
   theme: string
   icon: boolean
-  repoEndpoint?: string
-  swcEndpoint?: string
-  googleRedirectUrl?: string  
+  googleRedirectUrl?: string
 }
 
 /**
@@ -33,12 +32,11 @@ type Props = {
  * @extends {React.Component}
  */
 class Login extends React.Component<Props, State> {
-
-    /**
-     * Creates a user session, maintaining credentials
-     * @param {*} props
-     * @memberof Login
-     */
+  /**
+   * Creates a user session, maintaining credentials
+   * @param {*} props
+   * @memberof Login
+   */
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -47,7 +45,7 @@ class Login extends React.Component<Props, State> {
       hasLoginInFailed: false,
       isSignedIn: false,
       password: '',
-      username: ''
+      username: '',
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
@@ -55,96 +53,95 @@ class Login extends React.Component<Props, State> {
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
     this.onSignIn = this.onSignIn.bind(this)
   }
-    /**
-     * Updates internal state with the event that was triggered
-     *
-     * @param {*} event Form update
-     */
+  /**
+   * Updates internal state with the event that was triggered
+   *
+   * @param {*} event Form update
+   */
   public handleChange(event: React.FormEvent<HTMLInputElement>): void {
     const target = event.currentTarget
     const name = target.name
     const value = target.value
-    const newState: (Pick<any, any>) = { [name]: value }
+    const newState: Pick<any, any> = { [name]: value }
     this.setState(newState)
   }
-    /**
-     * Handle user login on click
-     *
-     * @param {*} clickEvent Userclick event
-     */
-  public handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
+  /**
+   * Handle user login on click
+   *
+   * @param {*} clickEvent Userclick event
+   */
+  public async handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
     clickEvent.preventDefault() // avoid page refresh
-    const repoEndpoint = this.props.repoEndpoint ? this.props.repoEndpoint : SynapseClient.DEFAULT_ENDPOINT
-    const swcEndpoint = this.props.swcEndpoint ? this.props.swcEndpoint : SynapseClient.DEFAULT_SWC_ENDPOINT
-    SynapseClient.login(this.state.username, this.state.password, repoEndpoint)
-            .then((data: any) => {
-              SynapseClient.setSessionTokenCookie(data.sessionToken, swcEndpoint).then(() => {
-                // on session change, reload the page so that all components get the new token from the cookie
-                window.location.reload()
-              }).catch((errSetSession) => {
-                console.log('Could not set session token cookie!', errSetSession)
-                this.setState({
-                  errorMessage: errSetSession.reason,
-                  hasLoginInFailed: true,
-                  isSignedIn: false
-                })
-              })
-            })
-            .catch((err: any) => {
-              console.log('Handle login failed with err = ', err)
-              this.setState({
-                errorMessage: err.reason,
-                hasLoginInFailed: true,
-                isSignedIn: false
-              })
-            })
+    try {
+      const data = await SynapseClient.login(
+        this.state.username,
+        this.state.password,
+      )
+      await SynapseClient.setSessionTokenCookie(data.sessionToken)
+      // on session change, reload the page so that all components get the new token from the cookie
+      window.location.reload()
+    } catch (err) {
+      console.log('Error on login: ', err.reason)
+      this.setState({
+        errorMessage: err.reason,
+        hasLoginInFailed: true,
+        isSignedIn: false,
+      })
+    }
   }
 
-    /**
-     * Shows user session token if they've signed in
-     *
-     * @returns View displaying user session on login, otherwise null.
-     */
-  public getTokenView(): (JSX.Element | boolean) {
-    if (this.state.isSignedIn && this.props.token !== '' && !this.state.hasLoginInFailed) {
+  /**
+   * Shows user session token if they've signed in
+   *
+   * @returns View displaying user session on login, otherwise null.
+   */
+  public getTokenView(): JSX.Element | boolean {
+    if (
+      this.state.isSignedIn &&
+      this.props.token !== '' &&
+      !this.state.hasLoginInFailed
+    ) {
       return <p> Your session token is {this.props.token} </p>
     }
     return false
   }
-    /**
-     * Shows user login failure view on login failure
-     *
-     * @returns view to be displayed on user sign in error.
-     */
-  public getLoginFailureView(): (JSX.Element | boolean) {
+  /**
+   * Shows user login failure view on login failure
+   *
+   * @returns view to be displayed on user sign in error.
+   */
+  public getLoginFailureView(): JSX.Element | boolean {
     if (this.state.hasLoginInFailed) {
       return (
-                <div>
-                    <small className="form-text text-danger"> {this.state.errorMessage} </small>
-                    <div className="invalid-feedback" />
-                </div>
+        <div>
+          <small className="form-text text-danger">
+            {' '}
+            {this.state.errorMessage}{' '}
+          </small>
+          <div className="invalid-feedback" />
+        </div>
       )
     }
     return false
   }
-    /**
-     * Show whether user is signed in or not, display banner on login success
-     *
-     * @returns View corresponding to whether the user is signed in, whether they've dismissed
-     * sign in banner
-     */
-  public getSignInStateView(): (JSX.Element | boolean) {
+  /**
+   * Show whether user is signed in or not, display banner on login success
+   *
+   * @returns View corresponding to whether the user is signed in, whether they've dismissed
+   * sign in banner
+   */
+  public getSignInStateView(): JSX.Element | boolean {
     if (!this.state.isSignedIn) {
       return (
-                <p>
-                    {' '}
-                    You are currently{' '}
-                    <strong>
-                        {' '}
-                        <i> not </i>{' '}
-                    </strong>{' '}
-                    signed in to Synpase{' '}
-                </p>
+        <p>
+          {' '}
+          You are currently{' '}
+          <strong>
+            {' '}
+            <i> not </i>{' '}
+          </strong>{' '}
+          signed in to Synpase{' '}
+        </p>
       )
     }
     return false
@@ -153,38 +150,50 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    const redirectUrl = this.props.googleRedirectUrl ? this.props.googleRedirectUrl : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
+    const redirectUrl = this.props.googleRedirectUrl
+      ? this.props.googleRedirectUrl
+      : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
     SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, redirectUrl)
-            .then((data: any) => {
-              const authUrl = data.authorizationUrl
-              window.location = authUrl // ping the url
-            })
-            .catch((err: any) => {
-              console.log('Error on oAuth url ', err)
-            })
+      .then((data: any) => {
+        const authUrl = data.authorizationUrl
+        window.location = authUrl // ping the url
+      })
+      .catch((err: any) => {
+        console.log('Error on oAuth url ', err)
+      })
   }
   public render() {
     const { theme, icon } = this.props
-    const swcEndpoint = this.props.swcEndpoint ? this.props.swcEndpoint : SynapseClient.DEFAULT_SWC_ENDPOINT
-    const googleTheme = theme === 'dark' ? 'SRC-google-button-dark-color' : 'SRC-google-button-light-color'
+    const googleTheme =
+      theme === 'dark'
+        ? 'SRC-google-button-dark-color'
+        : 'SRC-google-button-light-color'
     return (
-      <div id="loginPage" className="container loginContainer SRC-syn-border-spacing">
+      <div
+        id="loginPage"
+        className="container loginContainer SRC-syn-border-spacing"
+      >
         <form>
-          <button onClick={this.onSignIn} className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}>
-          <GoogleIcon key={1} active={true} />
-          <ButtonContent icon={icon} key={2}>
+          <button
+            onClick={this.onSignIn}
+            className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}
+          >
+            <GoogleIcon key={1} active={true} />
+            <ButtonContent icon={icon} key={2}>
               Sign in with Google
-          </ButtonContent>
+            </ButtonContent>
           </button>
         </form>
-        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">or</div>
+        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">
+          or
+        </div>
 
         <div className="SRC-centerAndJustifyContent SRC-marginBottomTen">
-          <img 
+          <img
             height="20px"
-            style={{marginRight: '10px'}}
+            style={{ marginRight: '10px' }}
             alt={'sage bionetworks logo'}
-            src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg" 
+            src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg"
           />
           Sign in with your Sage Bionetworks Synapse account
         </div>
@@ -216,21 +225,21 @@ class Login extends React.Component<Props, State> {
             className="btn SRC-primary-background-color SRC-hoverWhiteText
               SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
           >
-            <ButtonContent icon={icon}>
-              Sign in
-            </ButtonContent>
+            <ButtonContent icon={icon}>Sign in</ButtonContent>
           </button>
         </form>
         <div>
           <a
-            href={`${swcEndpoint}#!PasswordReset:0`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!PasswordReset:0`}
             className="SRC-floatLeft SRC-primary-text-color"
           >
             Forgot password?
           </a>
-          <span className="SRC-deemphasized-text SRC-floatRight">&nbsp;It's free!</span>
+          <span className="SRC-deemphasized-text SRC-floatRight">
+            &nbsp;It's free!
+          </span>
           <a
-            href={`${swcEndpoint}#!RegisterAccount:0`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`}
             className="SRC-floatRight SRC-primary-text-color"
           >
             Register
