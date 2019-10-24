@@ -544,12 +544,13 @@ export const getFiles = (request: BatchFileRequest,
  * See SynapseClient.test.js for an example partsMask.
  * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
  */
-type GetEntity = <T extends Entity>(sessionToken: string | undefined, entityId: string | number, endpoint?: string) => Promise<T>
+type GetEntity = <T extends Entity>(sessionToken: string | undefined, entityId: string | number, endpoint?: string, versionNumber?: string) => Promise<T>
 
 export const getEntity: GetEntity = <T>(sessionToken: string | undefined = undefined,
                           entityId: string | number,
-                          endpoint: string = DEFAULT_ENDPOINT) => {
-  const url = `/repo/v1/entity/${entityId}`
+                          endpoint: string = DEFAULT_ENDPOINT,
+                          versionNumber?: string) => {
+  const url = versionNumber? `/repo/v1/entity/${entityId}/version/${versionNumber}` :`/repo/v1/entity/${entityId}`
   return doGet(url, sessionToken, undefined, endpoint) as Promise<T>
 }
 
