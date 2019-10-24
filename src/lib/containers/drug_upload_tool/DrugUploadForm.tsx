@@ -86,12 +86,12 @@ export default class DrugUploadForm extends React.Component<
 > {
   excludeWarningText = (
     <div>
+      <p>
       This action will clear any entered data on this page and remove this form
       from your submission.
-      <br />
-      You can include it again at anytime. Only this page will be affected.{' '}
-      <br />
-      Are you sure you want to skip this step and clear any entered data?
+      You can include it again at anytime. Only this page will be affected.
+      </p><p>
+      Are you sure you want to skip this step and clear any entered data?</p>
     </div>
   )
   excludeWarningHeader = 'Skip This Step?'
