@@ -78,10 +78,15 @@ class DrugUploadTool extends React.Component<
   //gets a file entity with content
   getFileEntityData = async (
     token: string,
-    entityId: string
+    entityId: string,
+    versionNumber?: string,
   ): Promise<{ version?: number; content: JSON }> => {
     try {
-      const entity: FileEntity = await SynapseClient.getEntity(token, entityId)
+      const entity: FileEntity = await SynapseClient.getEntity(
+        token,
+        entityId,
+        versionNumber,
+      )
       const entityContent = await SynapseClient.getFileEntityContent(
         token,
         entity,
@@ -104,9 +109,14 @@ class DrugUploadTool extends React.Component<
   getFileEntityDataDereferenced = async (
     token: string,
     entityId: string,
+    versionNumber?: string,
   ): Promise<{ version?: number; content: JSON }> => {
-    let { version, content } = await this.getFileEntityData(token, entityId)
-    let derefContent = await $RefParser.dereference(content) as JSON
+    let { version, content } = await this.getFileEntityData(
+      token,
+      entityId,
+      versionNumber,
+    )
+    let derefContent = (await $RefParser.dereference(content)) as JSON
     return {
       version: version,
       content: derefContent,
@@ -119,24 +129,53 @@ class DrugUploadTool extends React.Component<
     }
     try {
       let formData = {}
-
-      const promises = [
-        this.getFileEntityDataDereferenced(token, this.props.formSchemaEntityId),
-        this.getFileEntityData(token, this.props.formUiSchemaEntityId),
-        this.getFileEntityData(token, this.props.formNavSchemaEntityId),
-      ]
+      let dataFileHandleId: string | undefined
+      let submitted: boolean | undefined
+      let formSchemaVersion = undefined
+      let uiSchemaVersion = undefined
+      let navSchemaVersion = undefined
       const { searchParams } = this.props
+      if (searchParams) {
+        ;({ dataFileHandleId, submitted } = searchParams)
+      }
 
-      const configData = await Promise.all(promises)
+      //for not new form we need to get the data
+      //and if it is submitted form we need to pull appropriave schema versions
+      //for new form (no dataFileHandleId) we need to populate schema versions
 
-      const dataFileHandleId = searchParams && searchParams.dataFileHandleId
       if (dataFileHandleId) {
         const fileData = await SynapseClient.getFileHandleContentFromID(
           dataFileHandleId,
           token,
         )
         formData = JSON.parse(fileData)
-      } else {
+        if (submitted && formData && formData['metadata']) {
+          ;({ formSchemaVersion, uiSchemaVersion, navSchemaVersion } = formData[
+            'metadata'
+          ])
+        }
+      }
+
+      const promises = [
+        this.getFileEntityDataDereferenced(
+          token,
+          this.props.formSchemaEntityId,
+          formSchemaVersion,
+        ),
+        this.getFileEntityData(
+          token,
+          this.props.formUiSchemaEntityId,
+          uiSchemaVersion,
+        ),
+        this.getFileEntityData(
+          token,
+          this.props.formNavSchemaEntityId,
+          navSchemaVersion,
+        ),
+      ]
+      const configData = await Promise.all(promises)
+
+      if (!dataFileHandleId) {
         //if we are creating a new file - store the versions
         formData = {
           metadata: {
@@ -147,7 +186,6 @@ class DrugUploadTool extends React.Component<
         }
       }
       this.setState({
-        // currentFileEntity,
         formData: formData,
         formSchema: configData[0].content,
         formUiSchema: configData[1].content,
@@ -256,12 +294,18 @@ class DrugUploadTool extends React.Component<
       let errorTitle = 'File Name'
       try {
         // get it to the schema format
-        const searchString = `${this.props.fileNamePath.replace('.', '.properties.')}.title`
-        errorTitle = _.get(this.state.formSchema.properties, searchString, errorTitle)
-      } 
-      finally {
+        const searchString = `${this.props.fileNamePath.replace(
+          '.',
+          '.properties.',
+        )}.title`
+        errorTitle = _.get(
+          this.state.formSchema.properties,
+          searchString,
+          errorTitle,
+        )
+      } finally {
         const error = `Please Provide the ${errorTitle} before saving`
-        this.onError({ message: error})
+        this.onError({ message: error })
       }
       return
     }

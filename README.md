@@ -84,6 +84,19 @@ Note there are a number of CDNs required to finish this functionality-
   <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
 ```
 
+## Setting Endpoints
+
+### Configuring endpoint destinations for repo and portal
+Specifying the following in the window object will override request endpoints:
+
+```js
+window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
+  PORTAL: '<endpoint>',
+  REPO: '<endpoint>'
+}
+```
+Note - this will apply to all calls being made.
+
 ## Theming
 
 ## Style
@@ -409,7 +422,7 @@ UserCard represents a synapse user, it is responsible for three different sized 
 ```
 
 ## Project Development
-This project's core dependencies are [Typescript](https://www.typescriptlang.org/docs/home.html), [tslint](https://github.com/progre/tslint-config-airbnb/#readme), and [rollup](https://rollupjs.org/guide/en).
+This project's core dependencies are [Typescript](https://www.typescriptlang.org/docs/home.html), and [rollup](https://rollupjs.org/guide/en).
 
 Motivation for dependencies-
   
@@ -421,6 +434,16 @@ Caveats of these dependencies-
   When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](https://github.com/Sage-Bionetworks/Synapse-React-Client/rollup.config.js),
   specify this in the `external` and `output.globals` fields.
 
+## Release Cycle
+
+The develop branch was created from master
+Feature branches are created from develop
+When a feature is complete it is merged into the develop branch
+If an issue in master is detected a hotfix branch is created from master
+Once the hotfix is complete it is merged to both develop and master
+Notes:
+On a regular basis develop will be merged into master and a new release will be published from master
+All proposed changes (to be merged into develop or master) must be via a Pull Request with a code review
 
 ## Updating this Project to New Releases
 

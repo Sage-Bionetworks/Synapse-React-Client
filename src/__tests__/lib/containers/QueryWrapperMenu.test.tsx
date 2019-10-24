@@ -6,7 +6,7 @@ import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import StackedBarChart, { StackedBarChartProps } from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
 import CardContainer from '../../../lib/containers/CardContainer'
-import SynapseTable, { SynapseTableProps } from '../../../lib/containers/SynapseTable'
+import SynapseTable, { SynapseTableProps } from '../../../lib/containers/table/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import Search from 'lib/containers/Search'
@@ -208,7 +208,7 @@ describe('it renders an accordion config', () => {
   it('passes down the correct unitDescription correctly' , async () => {
     const { wrapper } = await createMountedComponent(props)
     const queryWrapper = wrapper.find(QueryWrapper).at(0)
-    expect(queryWrapper.props().unitDescription).toEqual('Computational Tools by a')
+    expect(queryWrapper.props().unitDescription).toEqual('Computational Tools by A')
   })
 
 })

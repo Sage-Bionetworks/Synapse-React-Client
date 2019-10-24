@@ -4,7 +4,7 @@ import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import StackedBarChart from './containers/StackedBarChart'
-import SynapseTable from './containers/SynapseTable'
+import SynapseTable from './containers/table/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import QueryCount from './containers/QueryCount'
@@ -13,7 +13,7 @@ import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import StatisticsPlot from './containers/StatisticsPlot'
-import './style/Index.css'
+import './style/Index.scss'
 import { SynapseConstants, SynapseClient } from './utils/'
 
 const SynapseComponents = {
@@ -30,7 +30,7 @@ const SynapseComponents = {
   QueryCount,
   Markdown: MarkdownSynapse,
   ModalDownload,
-  StatisticsPlot
+  StatisticsPlot,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents}
+export { SynapseClient, SynapseConstants, SynapseComponents }

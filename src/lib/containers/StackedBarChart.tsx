@@ -2,12 +2,13 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-import ReactMeasure from "react-measure"
-import ReactTooltip from "react-tooltip"
+import ReactMeasure from 'react-measure'
+import ReactTooltip from 'react-tooltip'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/modules/facetUtils'
+import { unCamelCase } from './table/SynapseTable'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -51,9 +52,10 @@ type InternalProps = StackedBarChartProps & QueryWrapperChildProps
  * @class StackedBarChart
  * @extends {React.Component}
  */
-export default class StackedBarChart extends
-    React.Component<InternalProps, StackedBarChartState> {
-
+export default class StackedBarChart extends React.Component<
+  InternalProps,
+  StackedBarChartState
+> {
   constructor(props: InternalProps) {
     super(props)
     this.handleHover = this.handleHover.bind(this)
@@ -66,10 +68,12 @@ export default class StackedBarChart extends
     // the text currently under the cursor
     this.state = {
       // the dimensions of the bar chart itself
-      dimensions: { bounds: { height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0 } },
+      dimensions: {
+        bounds: { height: 1, width: 1, top: 0, left: 0, right: 0, bottom: 0 },
+      },
       // the text of the current slice
       // the count of this facet value occurence
-      selectedFacets: {}
+      selectedFacets: {},
     }
     this.extractPropsData = this.extractPropsData.bind(this)
   }
@@ -98,19 +102,24 @@ export default class StackedBarChart extends
   /**
    * Handle column click event
    */
-  public handleClick = (dict: Info) => (_event: React.MouseEvent<SVGElement>) => {
+  public handleClick = (dict: Info) => (
+    _event: React.MouseEvent<SVGElement>,
+  ) => {
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
     this.props.updateParentState!({ chartSelectionIndex: dict.index })
   }
 
-  public handleArrowClick = (direction: string) => (_event: React.MouseEvent) => {
+  public handleArrowClick = (direction: string) => (
+    _event: React.MouseEvent,
+  ) => {
     let { chartSelectionIndex = 0 } = this.props
     let dict: any = this.extractPropsData(this.props.data)
     const length = Object.keys(dict).length
     if (direction === PREVIOUS_ITEM_CLICK) {
       chartSelectionIndex -= 1
       // if its at zero then we want to wrap around to the end
-      chartSelectionIndex = chartSelectionIndex < 0 ? length - 1 : chartSelectionIndex
+      chartSelectionIndex =
+        chartSelectionIndex < 0 ? length - 1 : chartSelectionIndex
     } else {
       chartSelectionIndex += 1
     }
@@ -125,16 +134,20 @@ export default class StackedBarChart extends
   public getTextForChartSelection(xData: any) {
     const { chartSelectionIndex = 0 } = this.props
     const { facetAliases = {}, facet } = this.props
-    const facetValueDisplay = xData[chartSelectionIndex] && xData[chartSelectionIndex].value
-    const filterDisplay = facetAliases[facet!] || facet
+    const facetValueDisplay =
+      xData[chartSelectionIndex] && xData[chartSelectionIndex].value
+    const filterDisplay = facetAliases[facet!] || unCamelCase(facet)
     return (
       <span>
         <span className="SRC-text-title SRC-filter-display">
           {filterDisplay}
-        </span> :
+        </span>{' '}
+        :
         <span className="SRC-facet-view SRC-text-title">
           {' '}
-          {facetValueDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET' ? 'unannotated' : facetValueDisplay}
+          {facetValueDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
+            ? 'unannotated'
+            : facetValueDisplay}
         </span>
       </span>
     )
@@ -150,7 +163,7 @@ export default class StackedBarChart extends
     return [
       Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
       Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
-      Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5)
+      Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5),
     ]
   }
 
@@ -166,7 +179,7 @@ export default class StackedBarChart extends
       lastFacetSelection,
       isAllFilterSelectedForFacet,
       chartSelectionIndex,
-      asyncJobStatus
+      asyncJobStatus,
     } = this.props
     // while loading
     if (isLoadingNewData) {
@@ -177,9 +190,7 @@ export default class StackedBarChart extends
             it if so
           */}
           {!!loadingScreen && loadingScreen}
-          <div>
-            {asyncJobStatus && asyncJobStatus.progressMessage}
-          </div>
+          <div>{asyncJobStatus && asyncJobStatus.progressMessage}</div>
         </div>
       )
     }
@@ -192,7 +203,10 @@ export default class StackedBarChart extends
         total += xData[key].count
       }
     }
-    const { colorPalette, textColors } = getColorPallette(rgbIndex!, xData.length)
+    const { colorPalette, textColors } = getColorPallette(
+      rgbIndex!,
+      xData.length,
+    )
     const originalColor = colorPalette[0]
 
     return (
@@ -211,23 +225,25 @@ export default class StackedBarChart extends
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
-                  const isValueSelected = isAllFilterSelectedForFacet![facet] ? true : getIsValueSelected({
-                    isLoading,
-                    lastFacetSelection,
-                    columnName: facet,
-                    curFacetSelection: obj
-                  })
+                  const isValueSelected = isAllFilterSelectedForFacet![facet]
+                    ? true
+                    : getIsValueSelected({
+                        isLoading,
+                        lastFacetSelection,
+                        columnName: facet,
+                        curFacetSelection: obj,
+                      })
                   if (isValueSelected) {
                     rectStyle = {
-                      fill: rgbColor
+                      fill: rgbColor,
                     }
                   } else {
                     rectStyle = {
-                      fill: '#C4C4C4'
+                      fill: '#C4C4C4',
                     }
                   }
                   const svgHeight = 80
-                  const svgWidth = obj.count / total * width
+                  const svgWidth = (obj.count / total) * width
                   const style: any = {}
                   if (chartSelectionIndex === index) {
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
@@ -261,7 +277,7 @@ export default class StackedBarChart extends
                             // can't remove inline style due to dynamic fill
                             style={rectStyle}
                           />
-                          {index < 3 && svgWidth > numCharsInValue &&
+                          {index < 3 && svgWidth > numCharsInValue && (
                             <text
                               textAnchor="middle"
                               className="SRC-text-title"
@@ -271,43 +287,45 @@ export default class StackedBarChart extends
                               y={'50%'}
                             >
                               {obj.count}
-                            </text>}
-                          {
-                            (chartSelectionIndex === index) &&
-                              (
-                                <text
-                                  fill={originalColor}
-                                  x={0}
-                                  y={svgHeight + 15}
-                                  className="SRC-text-shadow SRC-text-large"
-                                >
-                                  {'\u25CF'}
-                                </text>
-                              )
-                          }
+                            </text>
+                          )}
+                          {chartSelectionIndex === index && (
+                            <text
+                              fill={originalColor}
+                              x={0}
+                              y={svgHeight + 15}
+                              className="SRC-text-shadow SRC-text-large"
+                            >
+                              {'\u25CF'}
+                            </text>
+                          )}
                         </svg>
                       </span>
                       <ReactTooltip delayShow={1000} id={tooltipId} />
-                    </React.Fragment>)
+                    </React.Fragment>
+                  )
                 })}
-              </div>)}
+              </div>
+            )}
           </ReactMeasure>
         </div>
         <div className="SRC-bar-border SRC-bar-border-bottom">
           <p className="SRC-noMargin SRC-padding-chart SRC-text-title">
             <strong>{this.getTextForChartSelection(xData)}</strong>
           </p>
-          <p id="fileCount" className="SRC-noMargin SRC-padding-chart SRC-text-chart">
+          <p
+            id="fileCount"
+            className="SRC-noMargin SRC-padding-chart SRC-text-chart"
+          >
             {this.getFileCount(xData)} {unitDescription}
           </p>
-          {
-            this.props.link &&
-              <div className="SRC-chart-link">
-                <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
-              </div>
-          }
+          {this.props.link && (
+            <div className="SRC-chart-link">
+              <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
+            </div>
+          )}
         </div>
-        <div className="SRC-chart SRC-chart-nav SRC-center-text">
+        <div className="SRC-chart-nav SRC-center-text">
           <button
             className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
             onClick={this.handleArrowClick(NEXT_CLICK)}
@@ -336,19 +354,15 @@ export default class StackedBarChart extends
     const xData: any[] = []
     const { facet } = this.props
     // pull out the data corresponding to the filter in question
-    data.facets.forEach(
-      (item: any) => {
-        if (item.facetType === 'enumeration' && item.columnName === facet) {
-          item.facetValues.forEach(
-            (facetValue: any) => {
-              if (item.columnName) {
-                xData.push({ columnName: item.columnName, ...facetValue })
-              }
-            }
-          )
-        }
+    data.facets.forEach((item: any) => {
+      if (item.facetType === 'enumeration' && item.columnName === facet) {
+        item.facetValues.forEach((facetValue: any) => {
+          if (item.columnName) {
+            xData.push({ columnName: item.columnName, ...facetValue })
+          }
+        })
       }
-    )
+    })
     // sort the data so that the largest bars are at the front
     xData.sort((a, b) => {
       return b.count - a.count

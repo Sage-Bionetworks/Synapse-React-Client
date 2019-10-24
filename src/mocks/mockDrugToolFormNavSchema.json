@@ -1,0 +1,65 @@
+{
+    "steps": [
+    {
+      "id": "naming",
+      "order": 5,
+      "title": "Naming",
+      "default": "measurements",
+      "child": true
+    },
+    {
+      "id": "measurements",
+      "order": 6,
+      "title": "Measurements",
+      "default": "basic",
+      "child": true
+    },
+    {
+      "id": "basic",
+      "order": 7,
+      "title": "Basic Data",
+      "default": "in_vitro",
+      "child": true
+    },
+    
+  
+      {
+        "id": "in_vitro",
+        "order": 20,
+        "title": "In Vitro",
+        "default": "binding",
+        "static": "true",
+        "copy": "<p>Use this section to enter results from any in vitro binding and efficacy studies that have been performed on this compound, including which cell lines were used, the binding affinity, and the IC50 or EC50. If this data is not yet available for this compound,  you can select “Exclude” from the Binding and Efficacy sub menus.</p>",
+        "children": ["binding", "efficacy"]
+      },
+      {
+        "id": "binding",
+        "order": 21,
+        "title": "Binding",
+        "child": true,
+        "excluded": false,
+        "default": "efficacy",
+        "rules": []
+      },
+      {
+        "id": "efficacy",
+        "order": 22,
+        "title": "Efficacy",
+        "child": true,
+        "excluded": false,
+        "default": "submission",
+        "rules": []
+      },
+     
+      {
+        "id": "submission",
+        "order": 80,
+        "title": "Submit",
+        "description": "<p>You are about to submit the form. Once you submit, you will no longer be able to edit the submission. If you are not ready to submit, you can save and revisit the form at a later time.</p>",
+        "default": null,
+        "final": true,
+        "rules": []
+      }
+    ]
+  }
+  

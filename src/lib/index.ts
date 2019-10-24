@@ -6,7 +6,7 @@ import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import StackedBarChart from './containers/StackedBarChart'
-import SynapseTable from './containers/SynapseTable'
+import SynapseTable from './containers/table/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import QueryCount from './containers/QueryCount'
@@ -17,7 +17,7 @@ import UserFileGrid from './containers/drug_upload_tool/UserFileGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import NewsFeedMenu from './containers/NewsFeedMenu'
-import './style/Index.css'
+import './style/Index.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 
 const SynapseComponents = {
@@ -36,7 +36,7 @@ const SynapseComponents = {
   ModalDownload,
   NewsFeedMenu,
   DrugUploadTool,
-  UserFileGrid
+  UserFileGrid,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents}
+export { SynapseClient, SynapseConstants, SynapseComponents }
