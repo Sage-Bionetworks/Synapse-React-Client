@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import formschemaJson from '../../../../mocks/formschema.json'
 import DrugUploadTool, {
   DrugUploadToolProps,
   UploadToolSearchParams,
@@ -8,13 +7,11 @@ import DrugUploadTool, {
 
 import { DrugUploadFormProps } from '../../../../lib/containers/drug_upload_tool/DrugUploadForm'
 import { mockFileEntity } from '../../../../mocks/mock_file_entity'
-import { mockFileEntityWithVersion } from '../../../../mocks/mock_drug_tool_data'
+import { mockFileEntityWithVersion, mockFormData,  mockFormSchema as formschemaJson} from '../../../../mocks/mock_drug_tool_data'
 import _ from 'lodash'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
-const targetFolderId = 'syn9988882982'
 const token: string = '123444'
-
 const formSchemaEntityId = 'syn9988882982'
 const formUiSchemaEntityId = 'syn9988882983'
 const formNavSchemaEntityId = 'syn9988882984'
@@ -56,17 +53,10 @@ describe('basic tests', () => {
       Promise.resolve(JSON.stringify(formschemaJson)),
     )
     SynapseClient.uploadFile = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.updateEntity = jest.fn(() =>
-      Promise.resolve({ page: [mockFileEntity, mockFileEntity] }),
-    )
-    SynapseClient.createEntity = jest.fn(() =>
-      Promise.resolve({ id: targetFolderId }),
-    )
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-
     SynapseClient.createEntity = jest.fn(() => Promise.resolve('123444'))
     SynapseClient.getFileHandleContentFromID = jest.fn(() =>
-      Promise.resolve(formschemaJson),
+      Promise.resolve(mockFormData),
     )
   })
 
@@ -74,12 +64,11 @@ describe('basic tests', () => {
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     const result = await instance.getFileEntityData(token, '123444')
-    expect(SynapseClient.getEntity).toHaveBeenCalledWith(token, '123444')
+    expect(SynapseClient.getEntity).toHaveBeenCalledWith(token, '123444', undefined, undefined)
     expect(SynapseClient.getFileEntityContent).toHaveBeenCalledWith(
       token,
       mockFileEntity,
     )
-
     expect(result).toEqual({ content: formschemaJson, version: undefined })
   })
 
@@ -111,27 +100,52 @@ describe('basic tests', () => {
     })
   })
 
-  it('should make 4 calls to getFileEntityData if there is  datafile ', async () => {
-    const _props = {
-      ...props,
-      ...{ searchParams: { formGroupId, formDataId, dataFileHandleId } },
-    }
-    const { wrapper, instance } = await createShallowComponent(_props)
-    const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
-    SynapseClient.getFileHandleContentFromID = jest.fn(() =>
-      Promise.resolve(JSON.stringify(formschemaJson)),
-    )
-    const getFileHandleContentFromID = jest.spyOn(
-      SynapseClient,
-      'getFileHandleContentFromID',
-    )
-    await instance.componentDidMount()
+  describe('if there is  datafile (formDataId)', () => {
+ 
+    it('should make 4 calls to getFileEntityData ', async () => {
+      const _props = {
+        ...props,
+        ...{ searchParams: { formGroupId, formDataId, dataFileHandleId } },
+      }
+      const { wrapper, instance } = await createShallowComponent(_props)
+      const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
+      SynapseClient.getFileHandleContentFromID = jest.fn(() =>
+        Promise.resolve(JSON.stringify(mockFormData)),
+      )
+      const getFileHandleContentFromID = jest.spyOn(
+        SynapseClient,
+        'getFileHandleContentFromID',
+      )
+      await instance.componentDidMount()
 
-    expect(wrapper).toBeDefined()
-    expect(getFileEntityData).toHaveBeenCalledTimes(3)
-    expect(instance.state.formData).toEqual(formschemaJson)
-    expect(getFileHandleContentFromID).toHaveBeenCalled()
-  })
+      expect(wrapper).toBeDefined()
+      expect(getFileEntityData).toHaveBeenCalledTimes(3)
+      expect(instance.state.formData).toEqual(mockFormData)
+      expect(getFileHandleContentFromID).toHaveBeenCalled()
+      expect(getFileEntityData).not.toHaveBeenCalledWith(token, formSchemaEntityId,  mockFormData.metadata.formSchemaVersion)
+      expect(getFileEntityData).toHaveBeenCalledWith(token, formSchemaEntityId,  undefined)
+    })
+
+    it('if the form is submitted it should pull the schemas with apropriate versions', async () => {
+      const _props = {
+        ...props,
+        ...{ searchParams: { formGroupId, formDataId, dataFileHandleId, submitted: true } },
+      }
+      const { wrapper, instance } = await createShallowComponent(_props)
+      const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
+      SynapseClient.getFileHandleContentFromID = jest.fn(() =>
+        Promise.resolve(JSON.stringify(mockFormData)),
+      )
+
+      await instance.componentDidMount()
+
+      expect(wrapper).toBeDefined()
+      expect(getFileEntityData).toHaveBeenCalledTimes(3)
+      expect(instance.state.formData).toEqual(mockFormData)
+      expect(getFileEntityData).toHaveBeenCalledWith(token, formSchemaEntityId,  mockFormData.metadata.formSchemaVersion)
+      expect(getFileEntityData).not.toHaveBeenCalledWith(token, formSchemaEntityId,  undefined)
+    });
+})
 
   describe('pass params', () => {
     it('should pass parameters correctly', async () => {

@@ -710,14 +710,17 @@ export const getFiles = (
 type GetEntity = <T extends Entity>(
   sessionToken: string | undefined,
   entityId: string | number,
-  endpoint?: string,
+  versionNumber?: string,
 ) => Promise<T>
 
 export const getEntity: GetEntity = <T>(
   sessionToken: string | undefined = undefined,
   entityId: string | number,
+  versionNumber?: string,
 ) => {
-  const url = `/repo/v1/entity/${entityId}`
+  const url = versionNumber
+    ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
+    : `/repo/v1/entity/${entityId}`
   return doGet(
     url,
     sessionToken,
