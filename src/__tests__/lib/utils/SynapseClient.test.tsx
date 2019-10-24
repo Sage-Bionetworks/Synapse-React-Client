@@ -37,6 +37,18 @@ it('delete entity', () => {
     })
 })
 
+it('get entity with version', async () => {
+  return SynapseClient.getEntity('', 'syn20692910', undefined, '53')
+    .then((data) => {
+      expect(data).toBeDefined()
+      expect(data['versionNumber']).toBe(53)
+    })
+    .catch((err) => {
+      fail(err.reason)
+    })
+})
+
+
 it('get user profiles', () => {
   return SynapseClient.getUserProfiles(['345424', '273978', '273991'])
     .then((data) => {

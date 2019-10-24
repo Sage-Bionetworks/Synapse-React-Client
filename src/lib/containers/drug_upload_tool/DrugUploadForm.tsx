@@ -27,9 +27,10 @@ import Switch from 'react-switch'
 import { Prompt } from 'react-router-dom'
 
 export interface IFormData {
-  [screen_name: string]: {
+  [key: string]: {
     included?: boolean
-  }
+    [key: string]: any
+  } 
 }
 
 export type DrugUploadFormProps = {
@@ -38,7 +39,7 @@ export type DrugUploadFormProps = {
   navSchema: {
     steps: any[]
   }
-  formData: IFormData
+  formData: IFormData 
   onSubmit: Function
   onSave: Function
   formTitle: string
@@ -85,12 +86,12 @@ export default class DrugUploadForm extends React.Component<
 > {
   excludeWarningText = (
     <div>
+      <p>
       This action will clear any entered data on this page and remove this form
       from your submission.
-      <br />
-      You can include it again at anytime. Only this page will be affected.{' '}
-      <br />
-      Are you sure you want to skip this step and clear any entered data?
+      You can include it again at anytime. Only this page will be affected.
+      </p><p>
+      Are you sure you want to skip this step and clear any entered data?</p>
     </div>
   )
   excludeWarningHeader = 'Skip This Step?'
@@ -105,7 +106,7 @@ export default class DrugUploadForm extends React.Component<
     return (
       Object.keys(formData).length == 1 &&
       Object.keys(formData)[0] === 'metadata'
-    )
+    ) || Object.keys(formData).length == 0
   }
 
   getFirstStep = (steps: Step[], formData: IFormData): Step => {
@@ -182,6 +183,30 @@ export default class DrugUploadForm extends React.Component<
     }
   }
 
+  _setIncludedPropInFormDataNonWizard = (
+    currentState: DrugUploadFormState,
+    schemaScreens: any,
+  ): IFormData => {
+    const result = {}
+    const currentStateFormData = currentState.formData
+    //if there is a top level 'included' property in schema - update the form.
+    Object.keys(schemaScreens).forEach((key: string) => {
+      if (_.get(schemaScreens[key], `properties.included`)) {
+        _.set(result, `${key}.included`, true)
+      }
+    })
+    return { ...currentStateFormData, ...result }
+  }
+
+  _setIncludedPropInFormDataWizard = (
+    currentState: DrugUploadFormState,
+  ): IFormData => {
+    const firstStepId = currentState.currentStep.id
+    const newStateData = _.cloneDeep(currentState.formData)
+    _.set(newStateData, `${firstStepId}.included`, true)
+    return newStateData
+  }
+
   componentDidMount() {
     this.setupBeforeUnloadListener()
     const isNewForm = this.isNewForm(this.state.formData)
@@ -190,30 +215,17 @@ export default class DrugUploadForm extends React.Component<
       this.triggerAction(NavActionEnum.VALIDATE)
     } else {
       // for validation of optional forms. Validation is enforced only if included property is set.
-      if (!this.props.isWizardMode) {
-        const result = {}
-        const props = this.props.schema.properties
-        Object.keys(props).forEach((key: string) => {
-          if (
-            props[key].properties &&
-            Object.keys(props[key].properties).indexOf('included') > -1
-          ) {
-            _.set(result, `${key}.included`, true)
-          }
-        })
-        this.setState(prevState => ({
-          formData: prevState.formData,
-          ...result,
-        }))
-      } else {
-        // when in wizard mode we automatically set 'included' after we visit the step so only need to do this for the first step
-        this.setState(prevState => {
-          const formData = prevState.formData
-          const firstStepId = prevState.currentStep.id
-          _.set(formData, `${firstStepId}.included`, true)
-          return { formData }
-        })
-      }
+      this.setState(prevState => {
+        const newFormData = this.props.isWizardMode
+          ? this._setIncludedPropInFormDataWizard(prevState)
+          : this._setIncludedPropInFormDataNonWizard(
+              prevState,
+              this.props.schema,
+            )
+        return {
+          formData: newFormData,
+        }
+      })
     }
   }
 
@@ -449,7 +461,7 @@ export default class DrugUploadForm extends React.Component<
   //we are constantly saving form data. Needed to overwrite on-error behavior
   handleOnChange({ formData }: any) {
     //this is just for form updates. submit screen goes different route
-    if (!this.isSubmitScreen() && ! this.state.currentStep.excluded) {
+    if (!this.isSubmitScreen() && !this.state.currentStep.excluded) {
       const hasUnsavedChanges = !_.isEqual(this.state.formData, formData)
       this.setState({ formData, hasUnsavedChanges })
     }
@@ -783,7 +795,7 @@ export default class DrugUploadForm extends React.Component<
                 )}
               </div>
               {this.renderOptionalFormSubheader(this.props.isWizardMode)}
-              <div 
+              <div
                 className={
                   this.isSubmitScreen() || this.state.currentStep.static
                     ? 'hide-form-only'
@@ -795,7 +807,8 @@ export default class DrugUploadForm extends React.Component<
                     Great! All required data on this form has been entered.
                   </div>
                 )}
-                <div ref={this.formDivRef}
+                <div
+                  ref={this.formDivRef}
                   className={`scroll-area ${
                     this.state.currentStep.excluded ? 'disabled' : ' '
                   } `}
