@@ -1,14 +1,12 @@
-
-
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700,900');
 
 //Variables
 $baseline-grid: 21px;
 $text-size-base: 14px;
 $text-size-title: 18px;
-$color-divider: #DDDDDF;
-$color-gray-background: #F9F9F9;
-$color-chicklet-base: #3C4A63;
+$color-divider: #dddddf;
+$color-gray-background: #f9f9f9;
+$color-chicklet-base: #3c4a63;
 $text-color-base: #515359;
 $text-color-lighter: #898989;
 
@@ -38,23 +36,24 @@ $text-color-lighter: #898989;
     align-items: center;
     a {
       font-size: 16px;
-      padding: 5px 20px!important;
+      padding: 5px 20px !important;
       color: white;
     }
   }
 
-  h3{
+  h3 {
     margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
     padding: 0;
     font-size: $text-size-title !important;
     line-height: 125%;
     a {
-        margin: 0;
-        font-weight: 700;
-      }
+      margin: 0;
+      font-weight: 700;
     }
+  }
 
-  .SRC-type, .SRC-cardThumbnail {
+  .SRC-type,
+  .SRC-cardThumbnail {
     text-transform: uppercase;
     color: $text-color-lighter;
   }
@@ -64,7 +63,7 @@ $text-color-lighter: #898989;
     width: 15%;
     vertical-align: top;
     padding-top: $baseline-grid;
-
+    svg,
     img {
       vertical-align: top;
       width: 50%;
@@ -74,7 +73,8 @@ $text-color-lighter: #898989;
         max-width: 75px;
       }
     }
-    > div { // icon label
+    > div {
+      // icon label
       margin-top: $baseline-grid/2;
       text-align: center;
     }
@@ -93,20 +93,19 @@ $text-color-lighter: #898989;
       font-style: italic;
       padding-bottom: $baseline-grid / 2;
     }
-  
+
     .SRC-cardAnnotations {
       margin: ($baseline-grid / 2) 0;
-      span{
+      span {
         background: $color-chicklet-base;
         color: white;
         display: inline-block;
         padding: 2px 15px 4px 15px;
-        margin:0 10px 5px 0;
+        margin: 0 10px 5px 0;
         border-radius: 15px;
-        }
+      }
     }
-
-    }
+  }
 
   .SRC-cardAction {
     display: inline-block;
@@ -115,8 +114,8 @@ $text-color-lighter: #898989;
       color: white;
       display: inline-block;
       height: 40px;
-      margin-right:10px;
-      border-radius: 20px; 
+      margin-right: 10px;
+      border-radius: 20px;
       padding: 5px 20px !important;
     }
   }
@@ -126,7 +125,7 @@ $text-color-lighter: #898989;
     background-color: $color-gray-background;
     margin-top: $baseline-grid;
     padding: $baseline-grid $baseline-grid $baseline-grid 15%;
-    .row{
+    .row {
       margin: 5px !important;
       > * {
         min-width: 100px;
@@ -148,9 +147,9 @@ $text-color-lighter: #898989;
       }
     }
   }
-  
+
   .SRC-cardMetadataColumn {
-    display: flex;  
+    display: flex;
     @media (max-width: 568px) {
       flex-direction: column !important;
     }
@@ -160,7 +159,7 @@ $text-color-lighter: #898989;
     .SRC-halfWidth {
       flex-grow: 1;
     }
-    .row{
+    .row {
       margin: 5px !important;
       > * {
         min-width: 200px;
@@ -183,11 +182,12 @@ $text-color-lighter: #898989;
     }
   }
 
-  &.SRC-typeDataset {  // single row metadata for dataset type
-    .row{
+  &.SRC-typeDataset {
+    // single row metadata for dataset type
+    .row {
       display: inline-block;
     }
-    .row> * {
+    .row > * {
       min-width: 0;
     }
     .SRC-row-data {
@@ -269,18 +269,19 @@ img.iconImg.SRC-datasetIcon {
   border: 1px solid $color-divider;
   padding-bottom: 30px;
   padding-top: 25px;
-  h3{
+  h3 {
     margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
     color: white;
     padding: 0;
     font-size: $text-size-title !important;
     a {
-        margin: 0;
-        font-weight: 700;
-      }
+      margin: 0;
+      font-weight: 700;
     }
+  }
 
-  .SRC-type, .SRC-cardThumbnail {
+  .SRC-type,
+  .SRC-cardThumbnail {
     text-transform: uppercase;
   }
 
