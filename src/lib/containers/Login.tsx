@@ -32,6 +32,8 @@ type Props = {
  * @extends {React.Component}
  */
 class Login extends React.Component<Props, State> {
+  authenticationReceiptKey = 'last_user_authentication_receipt'
+
   /**
    * Creates a user session, maintaining credentials
    * @param {*} props
@@ -49,7 +51,6 @@ class Login extends React.Component<Props, State> {
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
-    this.getTokenView = this.getTokenView.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
     this.onSignIn = this.onSignIn.bind(this)
   }
@@ -73,11 +74,21 @@ class Login extends React.Component<Props, State> {
   public async handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
     clickEvent.preventDefault() // avoid page refresh
     try {
+      // get last valid receipt
+      const authenticationReceipt = localStorage.getItem(
+        this.authenticationReceiptKey,
+      )
       const data = await SynapseClient.login(
         this.state.username,
         this.state.password,
+        authenticationReceipt,
       )
       await SynapseClient.setSessionTokenCookie(data.sessionToken)
+      // Set the new receipt
+      localStorage.setItem(
+        this.authenticationReceiptKey,
+        data.authenticationReceipt,
+      )
       // on session change, reload the page so that all components get the new token from the cookie
       window.location.reload()
     } catch (err) {
@@ -90,21 +101,6 @@ class Login extends React.Component<Props, State> {
     }
   }
 
-  /**
-   * Shows user session token if they've signed in
-   *
-   * @returns View displaying user session on login, otherwise null.
-   */
-  public getTokenView(): JSX.Element | boolean {
-    if (
-      this.state.isSignedIn &&
-      this.props.token !== '' &&
-      !this.state.hasLoginInFailed
-    ) {
-      return <p> Your session token is {this.props.token} </p>
-    }
-    return false
-  }
   /**
    * Shows user login failure view on login failure
    *

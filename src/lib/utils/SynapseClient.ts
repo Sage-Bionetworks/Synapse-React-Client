@@ -489,11 +489,12 @@ export const getFullQueryTableResults = async (
 export const login = (
   username: string,
   password: string,
+  authenticationReceipt: string | null,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/login',
-    { username, password },
+    { username, password, authenticationReceipt },
     undefined,
     undefined,
     endpoint,
