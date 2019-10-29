@@ -25,7 +25,7 @@ import {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
-} from '../../../assets/new_icons'
+} from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../../lib/utils/modules/sqlFunctions'
 
@@ -33,6 +33,7 @@ type IconProps = {
   type: string
   iconOptions?: KeyValue
   value?: string
+  isHeader?: boolean
 }
 
 const defaultIcons = {

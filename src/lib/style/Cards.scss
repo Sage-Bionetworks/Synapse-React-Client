@@ -63,15 +63,18 @@ $text-color-lighter: #898989;
     width: 15%;
     vertical-align: top;
     padding-top: $baseline-grid;
-    svg,
     img {
-      vertical-align: top;
       width: 50%;
       margin: auto;
       display: block;
       &.iconImg {
         max-width: 75px;
       }
+    }
+    svg {
+      width: auto;
+      margin: auto;
+      display: block;
     }
     > div {
       // icon label
@@ -289,8 +292,10 @@ img.iconImg.SRC-datasetIcon {
     @media (min-width: 992px) {
       text-align: center;
     }
-    img.iconImg {
+    img.iconImg,
+    svg {
       padding-top: $baseline-grid;
+      overflow: visible;
     }
   }
 
