@@ -13,10 +13,10 @@ export type HeaderCardProps = {
   description: string
   iconValue: string
   secondaryLabelLimit?: number
-  values?: string [][]
+  values?: string[][]
 }
 
-const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
+const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   type,
   title,
   subTitle,
@@ -25,16 +25,13 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
   iconValue,
   backgroundColor,
   values,
-  secondaryLabelLimit
+  secondaryLabelLimit,
 }) => {
   const style: React.CSSProperties = {
     background: backgroundColor,
   }
   return (
-    <div
-      style={style}
-      className={'SRC-portalCardHeader'}
-    >
+    <div style={style} className="SRC-portalCardHeader">
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-1 iconContainer">
@@ -42,17 +39,30 @@ const HeaderCard:React.FunctionComponent<HeaderCardProps> = ({
           </div>
           <div className="SRC-cardContent col-md-10">
             <div className="SRC-type">{type}</div>
-            <div >
-              <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
+            <div>
+              <h3
+                className="SRC-boldText SRC-blackText"
+                style={{ margin: 'none' }}
+              >
                 {title}
               </h3>
             </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
-            <span className="SRC-font-size-base">
-              {description}
-            </span>
-            <div style={{ borderTop: '1px solid rgba(26, 28, 41, 0.2)', marginTop: '15px', paddingTop: '5px' }}>
-              {values && <CardFooter isHeader={true} secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
+            <span className="SRC-font-size-base">{description}</span>
+            <div
+              style={{
+                borderTop: '1px solid rgba(26, 28, 41, 0.2)',
+                marginTop: '15px',
+                paddingTop: '5px',
+              }}
+            >
+              {values && (
+                <CardFooter
+                  isHeader={true}
+                  secondaryLabelLimit={secondaryLabelLimit}
+                  values={values}
+                />
+              )}
             </div>
           </div>
         </div>

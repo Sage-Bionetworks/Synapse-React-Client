@@ -37,10 +37,9 @@
   }
 }
 
+// TODO: Need design for focus states
 .SRC-menu-button-base:focus {
-  outline-color: $primary-action-color;
-  outline-style: auto;
-  outline-width: 5px;
+  outline: none;
 }
 
 .tableDropdownSelector {
@@ -192,5 +191,18 @@ button.dropdown-toggle:hover {
     background: $primary-action-color;
     color: white !important;
     text-decoration: none;
+  }
+}
+
+.SRC-icon-fill {
+  fill: $primary-action-color;
+}
+
+.SRC-portalCardHeader {
+  .SRC-header-only-fill {
+    fill: white;
+  }
+  .SRC-icon-fill {
+    fill: white;
   }
 }
