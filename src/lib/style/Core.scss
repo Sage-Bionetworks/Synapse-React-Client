@@ -745,6 +745,18 @@ div.SRC-userImg {
 
 .SRC-chart-btn {
   border: none;
+  height: 30px;
+  width: 30px;
+  border-radius: 4px;
+  &:hover {
+    background-color: #e6e6e6;
+  }
+  &:active:focus {
+    outline: none;
+  }
+  &:focus {
+    outline: none;
+  }
 }
 
 .SRC-chart-nav {

@@ -327,7 +327,8 @@ export default class StackedBarChart extends React.Component<
         </div>
         <div className="SRC-chart-nav SRC-center-text">
           <button
-            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
+            className="SRC-chart-btn SRC-floatRight"
+            type="button"
             onClick={this.handleArrowClick(NEXT_CLICK)}
           >
             <FontAwesomeIcon
@@ -337,7 +338,8 @@ export default class StackedBarChart extends React.Component<
             />
           </button>
           <button
-            className="SRC-chart-btn btn btn-default btn-sm SRC-floatRight"
+            className="SRC-chart-btn SRC-floatRight"
+            type="button"
             onClick={this.handleArrowClick(PREVIOUS_ITEM_CLICK)}
           >
             <FontAwesomeIcon
