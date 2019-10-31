@@ -98,15 +98,15 @@ describe('action tests', () => {
   })
 
   it('go to next step', async () => {
-    const submitSpy = jest.spyOn(instance, 'onSubmit')
+    const submitSpy = jest.spyOn(instance.formRef.current, 'submit')
     const saveState = jest.spyOn(instance, 'saveStepState')
     const getNextStepFn = jest
       .spyOn(instance, 'getNextStepId')
       .mockReturnValue(Promise.resolve('measurements'))
     expect(wrapper).toBeDefined()
     expect(instance.state.currentStep).toEqual(instance.state.steps[0])
-    instance.triggerAction(NavActionEnum.NEXT)
-    expect(submitSpy).toHaveBeenCalled
+    await instance.triggerAction(NavActionEnum.NEXT)
+    expect(submitSpy).toHaveBeenCalled()
     const oldStepId = instance.state.currentStep.id
     await instance.performAction(NavActionEnum.NEXT, false)
 
@@ -123,15 +123,15 @@ describe('action tests', () => {
   })
 
   it('go to predetermined step', async () => {
-    const submitSpy = jest.spyOn(instance, 'onSubmit')
+    const submitSpy = jest.spyOn(instance.formRef.current, 'submit')
     const saveState = jest.spyOn(instance, 'saveStepState')
     const getNextStepFn = jest.spyOn(instance, 'getNextStepId')
 
     expect(instance.state.currentStep).toEqual(instance.state.steps[0])
     instance.nextStep = instance.state.steps[3]
 
-    instance.triggerAction(NavActionEnum.GO_TO_STEP)
-    expect(submitSpy).toHaveBeenCalled
+    await instance.triggerAction(NavActionEnum.GO_TO_STEP)
+    expect(submitSpy).toHaveBeenCalled()
     const oldStepId = instance.state.currentStep.id
     await instance.performAction(NavActionEnum.GO_TO_STEP, false)
 
@@ -188,13 +188,13 @@ describe('custom validation tests', () => {
   })
 
   it('check custom validation before submitting the form', async () => {
-    const submitSpy = jest.spyOn(instance, 'onSubmit')
+    const submitSpy = jest.spyOn(instance.formRef.current, 'submit')
     const customValidation = jest.spyOn(instance, 'runCustomValidation')
     instance.nextStep = instance.state.steps[3]
-    instance.triggerAction(NavActionEnum.GO_TO_STEP)
+    await instance.triggerAction(NavActionEnum.GO_TO_STEP)
     await instance.performAction(NavActionEnum.GO_TO_STEP, false)
-    expect(submitSpy).toHaveBeenCalled
-    expect(customValidation).toHaveBeenCalled
+    expect(submitSpy).toHaveBeenCalled()
+    expect(customValidation).toHaveBeenCalled()
   })
 
   it('only run custom validation on all sections if the state is final', async () => {
