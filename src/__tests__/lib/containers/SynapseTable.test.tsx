@@ -553,7 +553,7 @@ describe('basic functionality', () => {
       it('renders a markdown value', () => {
         const mockMarkdownColumnValue = '# column markdown'
         const tableCell = shallow(
-          <>
+          <div>
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
@@ -564,7 +564,7 @@ describe('basic functionality', () => {
               mapUserIdToHeader,
               isMarkdownColumn: true,
             })}
-          </>,
+          </div>,
         )
         expect(tableCell.find(MarkdownSynapse).props().markdown).toEqual(
           mockMarkdownColumnValue,
