@@ -5,10 +5,12 @@ import _mockFormData from './mockDrugToolFormData.json'
 import _mockNavSchema from './mockDrugToolFormNavSchema.json'
 import _mockFormSchema from './mockDrugToolFormSchema.json'
 import _mockUiSchema from './mockDrugToolFormUiSchema.json'
+import _mockFormDataComplexInvalid from './mockDrugToolFormDataComplexInvalid.json'
 export const mockFormData = _mockFormData
 export const mockFormSchema = _mockFormSchema
 export const mockNavSchema = _mockNavSchema
 export const mockUiSchema = _mockUiSchema
+export const mockInvalidScreenData = _mockFormDataComplexInvalid 
 export const steps: Step[] = [
   {
     id: 'toxicology _data',
@@ -132,6 +134,66 @@ export const stepsWithUserData: Step[] = [
     rules: [],
   },
 ]
+export const stepWithCustomValidationRules: Step = {
+  id: 'in_vivo_data',
+  order: 40,
+  title: 'In Vivo Data!',
+  default: 'pharmacokinetics',
+  excluded: false,
+  inProgress: true,
+  child: true,
+  state: StepStateEnum.PROGRESS,
+  validationRules: [
+    {
+      conditions: {
+        all: [
+          {
+            fact: 'in_vivo_data',
+            operator: 'greaterThan',
+            path: '.experiments[*].age_range.age_range_min',
+            value: {
+              fact: 'in_vivo_data',
+              path: '.experiments[*].age_range.age_range_max',
+            },
+          },
+        ],
+      },
+      event: {
+        type: 'validation',
+        params: {
+          message: 'minimum age should be less than maximum age',
+          name: 'range',
+          property: '.in_vivo_data.experiments[*].age_range',
+        },
+      },
+      'priority:': 1,
+    },
+    {
+      conditions: {
+        all: [
+          {
+            fact: 'in_vivo_data',
+            operator: 'greaterThan',
+            path: '.experiments[*].dose_range.dose_range_min',
+            value: {
+              fact: 'in_vivo_data',
+              path: '.experiments[*].dose_range.dose_range_max',
+            },
+          },
+        ],
+      },
+      event: {
+        type: 'validation',
+        params: {
+          message: 'minimum dose should be less than maximum dose ',
+          name: 'range',
+          property: '.in_vivo_data.experiments[*].dose_range',
+        },
+      },
+      'priority:': 1,
+    },
+  ],
+}
 
 export const formListDataInProgress: ListResponse = {
   nextPageToken: '123',

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { shallow } from 'enzyme'
 import { Engine } from 'json-rules-engine'
 import $RefParser from 'json-schema-ref-parser'
+import _ from 'lodash'
 
 import DrugUploadForm, {
   DrugUploadFormProps,
@@ -104,7 +105,7 @@ describe('action tests', () => {
     expect(wrapper).toBeDefined()
     expect(instance.state.currentStep).toEqual(instance.state.steps[0])
     instance.triggerAction(NavActionEnum.NEXT)
-    expect(submitSpy).toHaveBeenCalled
+    expect(submitSpy).toHaveBeenCalled()
     const oldStepId = instance.state.currentStep.id
     await instance.performAction(NavActionEnum.NEXT, false)
 
@@ -129,7 +130,7 @@ describe('action tests', () => {
     instance.nextStep = instance.state.steps[3]
 
     instance.triggerAction(NavActionEnum.GO_TO_STEP)
-    expect(submitSpy).toHaveBeenCalled
+    expect(submitSpy).toHaveBeenCalled()
     const oldStepId = instance.state.currentStep.id
     await instance.performAction(NavActionEnum.GO_TO_STEP, false)
 
@@ -162,11 +163,115 @@ describe('action tests', () => {
     expect(instance.state.currentStep.id).toEqual(instance.state.steps[2].id)
   })
 
-  it('trigger validation', async () => {
-    //TODO
+  it('show warning when excluding a screen', async () => {
+    instance.nextStep = instance.state.steps[4]
+    const excludeSpy = jest.spyOn(instance, 'showExcludeStateWarningModal')
+    await instance.performAction(NavActionEnum.GO_TO_STEP, false)
+    expect(instance.state.currentStep.id).toEqual(instance.state.steps[4].id)
+    wrapper.find('.step-exclude-directions button').simulate('click')
+    expect(excludeSpy).toHaveBeenCalled()
+  })
+})
+
+describe('custom validation tests', () => {
+  let instance: any
+  const updatedData = _.cloneDeep(submissionData)
+  updatedData['in_vivo_data'] = inVivoData.in_vivo_data
+  beforeEach(async () => {
+    ;({ instance } = await createShallowComponent({
+      ...props,
+      ...{ formData: updatedData },
+    }))
+    instance.formRef = mock.formRef
   })
 
-  it('show warning when excluding a screen', async () => {
-    //TODO
+  it('check custom validation before submitting the form', async () => {
+    const submitSpy = jest.spyOn(instance, 'onSubmit')
+    const customValidation = jest.spyOn(instance, 'runCustomValidation')
+    instance.nextStep = instance.state.steps[3]
+    instance.triggerAction(NavActionEnum.GO_TO_STEP)
+    await instance.performAction(NavActionEnum.GO_TO_STEP, false)
+    expect(submitSpy).toHaveBeenCalled()
+    expect(customValidation).toHaveBeenCalled()
+  })
+
+  it('only run custom validation on all sections if the state is final', async () => {
+    const currentStep = instance.state.steps[instance.state.steps.length - 1]
+    expect(currentStep.final).toBe(true)
+    expect(currentStep.validationRules).toBeUndefined()
+    const errors = await instance.runCustomValidation(
+      updatedData,
+      currentStep,
+      instance.state.steps,
+    )
+    expect(errors).toHaveLength(5)
+  })
+
+  it('run custom validation on a single  section if the step is not final', async () => {
+    const currentStep = instance.state.steps[0]
+    expect(currentStep.final).toBeFalsy()
+    expect(currentStep.validationRules.length).toBe(2)
+    const errors = await instance.runCustomValidation(
+      updatedData,
+      currentStep,
+      instance.state.steps,
+    )
+    expect(errors).toHaveLength(1)
+  })
+
+  it('should generate additional rules if the the rule is specified with [*]', async () => {
+    const currentStep = instance.state.steps[6]
+    expect(currentStep.final).toBeFalsy()
+    expect(currentStep.validationRules.length).toBe(2)
+    expect(
+      currentStep.validationRules[0].event.params.property.indexOf('[*]'),
+    ).not.toBe(-1)
+    expect(
+      currentStep.validationRules[1].event.params.property.indexOf('[*]'),
+    ).not.toBe(-1)
+    expect(
+      updatedData.in_vivo_data.experiments[0].age_range.age_range_min,
+    ).toBeGreaterThan(
+      updatedData.in_vivo_data.experiments[0].age_range.age_range_max,
+    )
+    expect(
+      updatedData.in_vivo_data.experiments[1].age_range.age_range_min,
+    ).toBeGreaterThan(
+      updatedData.in_vivo_data.experiments[1].age_range.age_range_max,
+    )
+    expect(
+      updatedData.in_vivo_data.experiments[0].dose_range.dose_range_min,
+    ).toBeGreaterThan(
+      updatedData.in_vivo_data.experiments[0].dose_range.dose_range_max,
+    )
+    expect(
+      updatedData.in_vivo_data.experiments[1].dose_range.dose_range_min,
+    ).toBeGreaterThan(
+      updatedData.in_vivo_data.experiments[1].dose_range.dose_range_max,
+    )
+
+    expect(updatedData['in_vivo_data']['experiments']).toHaveLength(2)
+    let errors = await instance.runCustomValidation(
+      updatedData,
+      currentStep,
+      instance.state.steps,
+    )
+    expect(errors).toHaveLength(4)
+    updatedData.in_vivo_data.experiments[0].age_range.age_range_min = 2
+    updatedData.in_vivo_data.experiments[0].dose_range.dose_range_min = 1
+    errors = await instance.runCustomValidation(
+      updatedData,
+      currentStep,
+      instance.state.steps,
+    )
+    expect(errors).toHaveLength(2)
+    updatedData.in_vivo_data.experiments[1].age_range.age_range_min = 2
+    updatedData.in_vivo_data.experiments[1].dose_range.dose_range_min = 1
+    errors = await instance.runCustomValidation(
+      updatedData,
+      currentStep,
+      instance.state.steps,
+    )
+    expect(errors).toHaveLength(0)
   })
 })
