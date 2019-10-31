@@ -1,21 +1,21 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import CardContainerLogic, { CardContainerLogicProps } from '../../../lib/containers/CardContainerLogic'
+import CardContainerLogic, {
+  CardContainerLogicProps,
+} from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
 import CardContainer from '../../../lib/containers/CardContainer'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle.js'
-import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest.jsx';
+import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest.jsx'
 
-const createShallowComponent = async (props: CardContainerLogicProps, disableLifecycleMethods: boolean = false) => {
-  const wrapper = await shallow(
-    <CardContainerLogic
-      {...props}
-    />,
-    {
-      disableLifecycleMethods
-    }
-  )
+const createShallowComponent = async (
+  props: CardContainerLogicProps,
+  disableLifecycleMethods: boolean = false,
+) => {
+  const wrapper = await shallow(<CardContainerLogic {...props} />, {
+    disableLifecycleMethods,
+  })
   const instance = wrapper.instance() as CardContainerLogic
   return { wrapper, instance }
 }
@@ -23,12 +23,16 @@ const createShallowComponent = async (props: CardContainerLogicProps, disableLif
 describe('it performs basic functionality', () => {
   const sql = 'SELECT * FROM syn16787123'
   const SynapseClient = require('../../../lib/utils/SynapseClient')
-  SynapseClient.getIntuitiveQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
-  SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(syn16787123Json))
+  SynapseClient.getIntuitiveQueryTableResults = jest.fn(() =>
+    Promise.resolve(syn16787123Json),
+  )
+  SynapseClient.getQueryTableResults = jest.fn(() =>
+    Promise.resolve(syn16787123Json),
+  )
   const props = {
     sql,
     unitDescription: 'files',
-    type: SynapseConstants.STUDY
+    type: SynapseConstants.STUDY,
   }
 
   it('renders without crashing', async () => {
@@ -49,29 +53,26 @@ describe('it performs basic functionality', () => {
     expect(spy).toHaveBeenCalled()
 
     // verify state was updated correctly, this also tests that executeInitialQueryRequest functions correctly
-    expect(wrapper.state()).toEqual(
-      {
-        data: syn16787123Json,
-        queryRequest: {
-          concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-            // NOTE: queryCount has been removed from the partMask here
-          ,
-          query: {
-            sql,
-            isConsistent: false,
-            limit: 25,
-            offset: 0
-          }
+    expect(wrapper.state()).toEqual({
+      data: syn16787123Json,
+      queryRequest: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        partMask:
+          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+        // NOTE: queryCount has been removed from the partMask here
+        query: {
+          sql,
+          isConsistent: false,
+          limit: 25,
+          offset: 0,
         },
-        isLoading: false,
-        totalResultsNoFacet: syn16787123Json.queryCount,
-        hasMoreData: true
-      }
-    )
+      },
+      isLoading: false,
+      totalResultsNoFacet: syn16787123Json.queryCount,
+      hasMoreData: true,
+    })
   })
 
   it('grabs the next page of data', async () => {
@@ -82,14 +83,13 @@ describe('it performs basic functionality', () => {
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      ,
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
       query: {
         sql,
         isConsistent: false,
         limit: 25,
-        offset: 25
-      }
+        offset: 25,
+      },
     }
 
     // await because there's async operations
@@ -112,14 +112,13 @@ describe('it performs basic functionality', () => {
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      ,
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
       query: {
         sql,
         isConsistent: false,
         limit: 25,
-        offset: 0
-      }
+        offset: 0,
+      },
     })
   })
 
@@ -133,18 +132,17 @@ describe('it performs basic functionality', () => {
     // since there's an entirely new sql statement
     await wrapper.setProps({
       sql: newSql,
-      token: ''
+      token: '',
     })
 
     spy.mockReset()
     // if token changes in props then we expect the component to have called executeInitialQueryRequest
-    await wrapper.setProps({ sql: newSql, token: newToken, })
+    await wrapper.setProps({ sql: newSql, token: newToken })
     expect(spy).toHaveBeenCalled()
 
     spy.mockReset()
     // if token changes in props then we expect the component to have called executeInitialQueryRequest
-    await wrapper.setProps({ sql: newSql, token: newToken, })
+    await wrapper.setProps({ sql: newSql, token: newToken })
     expect(spy).toHaveBeenCalledTimes(0)
   })
-
 })

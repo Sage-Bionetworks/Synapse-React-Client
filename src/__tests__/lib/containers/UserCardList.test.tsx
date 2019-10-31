@@ -1,14 +1,12 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import UserCardList, { UserCardListProps } from '../../../lib/containers/UserCardList'
+import UserCardList, {
+  UserCardListProps,
+} from '../../../lib/containers/UserCardList'
 import { SynapseConstants } from '../../../lib/utils'
 
 const createShallowComponent = async (props: UserCardListProps) => {
-  const wrapper = await shallow<UserCardList>(
-    <UserCardList
-      {...props}
-    />
-  )
+  const wrapper = await shallow<UserCardList>(<UserCardList {...props} />)
   const instance = wrapper.instance() as UserCardList
   return { wrapper, instance }
 }
@@ -21,36 +19,36 @@ describe('UserCardList functions correctly ', () => {
 
   const propsInitial: UserCardListProps = {
     list: [userOneId, userTwoId],
-    size: SynapseConstants.MEDIUM_USER_CARD
+    size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
   const propsSecond: UserCardListProps = {
     list: [userOneId, userThreeId],
-    size: SynapseConstants.MEDIUM_USER_CARD
+    size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
   const propsLast: UserCardListProps = {
     list: [userThreeId],
-    size: SynapseConstants.MEDIUM_USER_CARD
+    size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
   const mockedDataFirstCall = {
     list: [
       {
-        ownerId: userOneId
+        ownerId: userOneId,
       },
       {
-        ownerId: userTwoId
-      }
-    ]
+        ownerId: userTwoId,
+      },
+    ],
   }
 
   const mockedDataSecondCall = {
     list: [
       {
-        ownerId: userThreeId
-      }
-    ]
+        ownerId: userThreeId,
+      },
+    ],
   }
 
   let mockImplementation = jest.fn(() => Promise.resolve(mockedDataFirstCall))
@@ -80,5 +78,4 @@ describe('UserCardList functions correctly ', () => {
     expect(spyOnUpdate).not.toHaveBeenCalled()
     spyOnUpdate.mockClear()
   })
-
 })

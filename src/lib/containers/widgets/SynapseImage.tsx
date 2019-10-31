@@ -4,14 +4,17 @@ import { FileEntity } from '../../utils/jsonResponses/FileEntity'
 import { FileHandle } from '../../utils/jsonResponses/FileHandle'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
 import { BatchFileRequest } from '../../utils/jsonResponses/BatchFileRequest'
-import { FileHandleAssociation, FileHandleAssociateType } from '../../utils/jsonResponses/FileHandleAssociation'
+import {
+  FileHandleAssociation,
+  FileHandleAssociateType,
+} from '../../utils/jsonResponses/FileHandleAssociation'
 
 type SynapseImageProps = {
   wikiId?: string
   synapseId?: string
   token?: string
   fileName?: string
-  fileResults?: FileHandle []
+  fileResults?: FileHandle[]
   params: any
 }
 
@@ -19,14 +22,16 @@ type SynapseImageState = {
   preSignedURL: string
 }
 
-class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState> {
-
+class SynapseImage extends React.Component<
+  SynapseImageProps,
+  SynapseImageState
+> {
   constructor(props: SynapseImageProps) {
     super(props)
     this.getEntity = this.getEntity.bind(this)
     this.getSynapseFiles = this.getSynapseFiles.bind(this)
     this.state = {
-      preSignedURL: ''
+      preSignedURL: '',
     }
   }
 
@@ -40,15 +45,18 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
             {
               associateObjectId: synapseId,
               associateObjectType: FileHandleAssociateType.FileEntity,
-              fileHandleId: data.dataFileHandleId
-            }
+              fileHandleId: data.dataFileHandleId,
+            },
           ]
           this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
-        }
+        },
       )
     }
   }
-  public getSynapseFiles(fileHandleAssociationList: FileHandleAssociation [], id: string) {
+  public getSynapseFiles(
+    fileHandleAssociationList: FileHandleAssociation[],
+    id: string,
+  ) {
     // overload the method for two different use cases, one where
     // the image is attached to an entity and creates a list on the spot,
     // the other where list is passed in from componentDidMount in MarkdownSynapse
@@ -56,20 +64,20 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
       includeFileHandles: false,
       includePreSignedURLs: true,
       includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList
+      requestedFiles: fileHandleAssociationList,
     }
-    getFiles(request, this.props.token).then(
-      (data: BatchFileResult) => {
-        const { preSignedURL } = data.requestedFiles.filter(el => el.fileHandleId === id)[0] // this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
+    getFiles(request, this.props.token)
+      .then((data: BatchFileResult) => {
+        const { preSignedURL } = data.requestedFiles.filter(
+          el => el.fileHandleId === id,
+        )[0] // this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
         this.setState({
-          preSignedURL: preSignedURL
+          preSignedURL: preSignedURL,
         })
-      }
-    ).catch(
-      err => {
+      })
+      .catch(err => {
         console.error('Error on getting image ', err)
-      }
-    )
+      })
   }
   public componentDidMount() {
     if (!this.props.wikiId) {
@@ -79,12 +87,12 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
       // Can get presigned url right away from wiki association
       const { fileName, fileResults = [] } = this.props
       const { id } = fileResults.filter(el => el.fileName === fileName)[0]
-      const fileHandleAssociationList: FileHandleAssociation [] = [
+      const fileHandleAssociationList: FileHandleAssociation[] = [
         {
           associateObjectId: this.props.wikiId,
           associateObjectType: FileHandleAssociateType.WikiAttachment,
-          fileHandleId: id
-        }
+          fileHandleId: id,
+        },
       ]
       this.getSynapseFiles(fileHandleAssociationList, id)
     }
@@ -92,7 +100,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
 
   public render() {
     const imgStyle: React.CSSProperties = {}
-    const { params = {}} = this.props
+    const { params = {} } = this.props
     const { align = '' } = params
     const alignLowerCase = align.toLowerCase()
     let className = ''
@@ -112,7 +120,7 @@ class SynapseImage extends React.Component<SynapseImageProps, SynapseImageState>
       <React.Fragment>
         <img
           alt="synapse"
-          className={"img-fluid  "  + className}
+          className={'img-fluid  ' + className}
           src={this.state.preSignedURL}
           style={imgStyle}
         />

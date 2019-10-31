@@ -1,5 +1,4 @@
-
-const COLOR_PALETTE_EVEN: string [] = [
+const COLOR_PALETTE_EVEN: string[] = [
   'rgb(91,176,181)',
   'rgb(124,192,196)',
   'rgb(157,208,211)',
@@ -109,10 +108,10 @@ const COLOR_PALETTE_EVEN: string [] = [
   'rgb(224,167,170)',
   'rgb(209,124,127)',
   'rgb(193,80,85)',
-  'rgb(178,36,42)'
+  'rgb(178,36,42)',
 ]
 
-const COLOR_PALETTE_ODD: string [] = [
+const COLOR_PALETTE_ODD: string[] = [
   'rgb(64,123,160)',
   'rgb(102,149,179)',
   'rgb(140,176,198)',
@@ -222,7 +221,7 @@ const COLOR_PALETTE_ODD: string [] = [
   'rgb(189,223,225)',
   'rgb(157,208,211)',
   'rgb(124,192,196)',
-  'rgb(91,176,181)'
+  'rgb(91,176,181)',
 ]
 
 export { COLOR_PALETTE_EVEN, COLOR_PALETTE_ODD }

@@ -3,25 +3,25 @@ export enum StepStateEnum {
   PROGRESS,
   COMPLETED,
   EXCLUDED,
-  ERROR
+  ERROR,
 }
 
 export type Step = {
-  id: string;
-  title: string;
-  order: number;
-  state: StepStateEnum;
-  inProgress: boolean;
-  rules: any[];
-  default: string;
-  excluded?: boolean;
-  final?: boolean;
-  description?: string;
-  copy?: string;
-  static?: boolean;
-  child?: boolean;
-  children?: string[];
-};
+  id: string
+  title: string
+  order: number
+  state: StepStateEnum
+  inProgress: boolean
+  rules: any[]
+  default: string
+  excluded?: boolean
+  final?: boolean
+  description?: string
+  copy?: string
+  static?: boolean
+  child?: boolean
+  children?: string[]
+}
 
 export enum NavActionEnum {
   PREVIOUS,
@@ -30,7 +30,7 @@ export enum NavActionEnum {
   SAVE,
   SUBMIT,
   VALIDATE,
-  NONE
+  NONE,
 }
 
 export enum StatusEnum {
@@ -38,13 +38,13 @@ export enum StatusEnum {
   ERROR,
   SAVE_SUCCESS,
   SUBMIT_SUCCESS,
-  ERROR_CRITICAL
+  ERROR_CRITICAL,
 }
 
 export interface SummaryFormat {
-  screen: Step;
-  label: string;
-  value: string;
+  screen: Step
+  label: string
+  value: string
 }
 
 export type FormSchema = {

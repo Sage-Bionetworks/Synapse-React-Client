@@ -1,24 +1,31 @@
 import * as React from 'react'
 import { FileEntity } from '../utils/jsonResponses/FileEntity'
-import { getEntity, getFileEntityContent, uploadFile, updateEntity } from '../utils/SynapseClient'
+import {
+  getEntity,
+  getFileEntityContent,
+  uploadFile,
+  updateEntity,
+} from '../utils/SynapseClient'
 import { Entity } from '../utils/jsonResponses/Entity'
 import { FileUploadComplete } from '../utils/jsonResponses/FileUploadComplete'
 
 type FileContentDownloadUploadDemoState = {
-  token?: string,
-  error?: any,
-  isLoading?: boolean,
-  fileContent?: string,
+  token?: string
+  error?: any
+  isLoading?: boolean
+  fileContent?: string
   targetEntity?: FileEntity
 }
 
 export type FileContentDownloadUploadDemoProps = {
-  token?: string,
+  token?: string
   targetEntityId: string
 }
 
-export default class FileContentDownloadUploadDemo
-  extends React.Component<FileContentDownloadUploadDemoProps, FileContentDownloadUploadDemoState> {
+export default class FileContentDownloadUploadDemo extends React.Component<
+  FileContentDownloadUploadDemoProps,
+  FileContentDownloadUploadDemoState
+> {
   constructor(props: FileContentDownloadUploadDemoProps) {
     super(props)
     this.state = {
@@ -32,19 +39,27 @@ export default class FileContentDownloadUploadDemo
     // must be logged in to download content
     if (token) {
       this.setState({ isLoading: true })
-      getEntity(token, targetEntityId).then((entity: Entity) => {
-        // if file entity
-        if (entity.concreteType === 'org.sagebionetworks.repo.model.FileEntity') {
-          const fileEntity: FileEntity = entity as FileEntity
-          getFileEntityContent(token, fileEntity).then((content) => {
-            this.setState({ fileContent: content, targetEntity: fileEntity, isLoading: false })
-          })
-        } else {
-          this.setState({ error: 'invalid type', isLoading: false })
-        }
-      }).catch((err) => {
-        this.setState({ error: err, isLoading: false })
-      })
+      getEntity(token, targetEntityId)
+        .then((entity: Entity) => {
+          // if file entity
+          if (
+            entity.concreteType === 'org.sagebionetworks.repo.model.FileEntity'
+          ) {
+            const fileEntity: FileEntity = entity as FileEntity
+            getFileEntityContent(token, fileEntity).then(content => {
+              this.setState({
+                fileContent: content,
+                targetEntity: fileEntity,
+                isLoading: false,
+              })
+            })
+          } else {
+            this.setState({ error: 'invalid type', isLoading: false })
+          }
+        })
+        .catch(err => {
+          this.setState({ error: err, isLoading: false })
+        })
     }
   }
 
@@ -53,22 +68,26 @@ export default class FileContentDownloadUploadDemo
     if (this.props.token && this.state.targetEntity && this.state.fileContent) {
       this.setState({ isLoading: true })
       const newFileContent = new Blob([this.state.fileContent], {
-        type: 'text/plain'
+        type: 'text/plain',
       })
       uploadFile(this.props.token, this.state.targetEntity.name, newFileContent)
         .then((fileUploadComplete: FileUploadComplete) => {
           // now update the entity!
           if (this.state.targetEntity) {
-            this.state.targetEntity.dataFileHandleId = fileUploadComplete.fileHandleId
-            updateEntity(this.state.targetEntity, this.props.token).then((entity: Entity) => {
-              const fileEntity = entity as FileEntity
-              // updated the target entity, force it to get the updated entity
-              this.setState({ targetEntity: fileEntity, isLoading: false })
-            }).catch((err: string) => {
-              this.setState({ error: err, isLoading: false })
-            })
+            this.state.targetEntity.dataFileHandleId =
+              fileUploadComplete.fileHandleId
+            updateEntity(this.state.targetEntity, this.props.token)
+              .then((entity: Entity) => {
+                const fileEntity = entity as FileEntity
+                // updated the target entity, force it to get the updated entity
+                this.setState({ targetEntity: fileEntity, isLoading: false })
+              })
+              .catch((err: string) => {
+                this.setState({ error: err, isLoading: false })
+              })
           }
-        }).catch((err: string) => {
+        })
+        .catch((err: string) => {
           this.setState({ error: err, isLoading: false })
         })
     }
@@ -80,8 +99,7 @@ export default class FileContentDownloadUploadDemo
   render() {
     return (
       <div>
-        {
-          this.state.fileContent &&
+        {this.state.fileContent && (
           <React.Fragment>
             <div>
               <textarea
@@ -90,20 +108,16 @@ export default class FileContentDownloadUploadDemo
                 onChange={this.handleContentChange}
               />
             </div>
-            <button onClick={this.updateFileContent}>Update File Content...</button>
+            <button onClick={this.updateFileContent}>
+              Update File Content...
+            </button>
           </React.Fragment>
-        }
-        {
-          this.state.isLoading &&
+        )}
+        {this.state.isLoading && (
           <span style={{ marginLeft: '2px' }} className={'spinner'} />
-        }
+        )}
 
-        {
-          this.state.error &&
-          <p>
-            Download error!
-          </p>
-        }
+        {this.state.error && <p>Download error!</p>}
       </div>
     )
   }

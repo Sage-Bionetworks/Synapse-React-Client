@@ -6,40 +6,40 @@ type State = {
 }
 
 class ModalDownloadDemo extends React.Component<{}, State> {
-
   constructor(props: any) {
     super(props)
     this.state = {
-      showModal: false
+      showModal: false,
     }
   }
 
   onClose = () => {
     this.setState({
-      showModal: false
+      showModal: false,
     })
   }
 
   onOpen = () => {
     console.log('opening')
     this.setState({
-      showModal: true
+      showModal: true,
     })
   }
 
-  render () {
+  render() {
     return (
       <div className="container">
-        <button onClick={this.onOpen} className="btn btn-primary" > Show ModalDownload </button>
-        {
-          this.state.showModal
-          &&
+        <button onClick={this.onOpen} className="btn btn-primary">
+          {' '}
+          Show ModalDownload{' '}
+        </button>
+        {this.state.showModal && (
           <ModalDownload
             sql={'SELECT * from syn17328596'}
             entityId={'syn17328596'}
             onClose={this.onClose}
           />
-        }
+        )}
       </div>
     )
   }

@@ -1,30 +1,24 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import
-  StackedBarChart,
-  {
-    StackedBarChartProps,
-    NEXT_CLICK,
-    PREVIOUS_ITEM_CLICK,
-  }
-from '../../../lib/containers/StackedBarChart'
+import StackedBarChart, {
+  StackedBarChartProps,
+  NEXT_CLICK,
+  PREVIOUS_ITEM_CLICK,
+} from '../../../lib/containers/StackedBarChart'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseConstants } from '../../../lib'
 
-const createShallowComponent = (props: StackedBarChartProps & QueryWrapperChildProps) => {
-  const wrapper = shallow(
-      <StackedBarChart
-        {...props}
-      />
-    )
+const createShallowComponent = (
+  props: StackedBarChartProps & QueryWrapperChildProps,
+) => {
+  const wrapper = shallow(<StackedBarChart {...props} />)
   const instance = wrapper.instance() as StackedBarChart
   return { wrapper, instance }
 }
 
 describe('it performs basic functionality', () => {
-
   const facet = 'tumorType'
   const castData = syn16787123Json as QueryResultBundle
   /*
@@ -62,8 +56,7 @@ describe('it performs basic functionality', () => {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-    ,
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
       sql: 'SELECT * FROM syn16787123',
       isConsistent: false,
@@ -72,15 +65,14 @@ describe('it performs basic functionality', () => {
       selectedFacets: [
         {
           columnName: 'projectStatus',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: [
-            'Active',
-            'Completed',
-          ],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          facetValues: ['Active', 'Completed'],
         },
         {
           columnName: 'tumorType',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           facetValues: [
             'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
             'Cutaneous Neurofibroma',
@@ -92,11 +84,11 @@ describe('it performs basic functionality', () => {
             'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
             'Schwannoma',
             'Schwannoma | Meningioma',
-            'SMN'
+            'SMN',
           ],
-        }
-      ]
-    }
+        },
+      ],
+    },
   }
 
   const getLastQueryRequest = jest.fn(() => lastQueryRequest)
@@ -109,10 +101,10 @@ describe('it performs basic functionality', () => {
     data: castData,
     isAllFilterSelectedForFacet: {},
     synapseId: 'syn16787123',
-    loadingScreen: <div/>,
+    loadingScreen: <div />,
     isChecked: [],
     chartSelectionIndex: 0,
-    updateParentState: jest.fn(() => {})
+    updateParentState: jest.fn(() => {}),
   } as StackedBarChartProps & QueryWrapperChildProps
 
   it('renders without crashing', () => {
@@ -136,12 +128,20 @@ describe('it performs basic functionality', () => {
     // 1.
     expect(wrapper.render().find('svg.SRC-hoverBox')).toHaveLength(11)
     // 2.
-    expect(wrapper.find('span.SRC-text-title.SRC-filter-display').text()).toEqual('Tumor Type')
-    expect(wrapper.find('span.SRC-facet-view').text()).toEqual(` ${facetValueWithMaxCount}`)
+    expect(
+      wrapper.find('span.SRC-text-title.SRC-filter-display').text(),
+    ).toEqual('Tumor Type')
+    expect(wrapper.find('span.SRC-facet-view').text()).toEqual(
+      ` ${facetValueWithMaxCount}`,
+    )
     expect(wrapper.find('#fileCount').text()).toEqual(`28 ${unitDescription}`)
     // shouldn't have a link unless link and linkText are specified
-    expect(wrapper.find('.SRC-chart-link')).toHaveLength(0);
-    ({ wrapper } = createShallowComponent({ ...props, link: 'mywebsite.com', linkText: 'Explore Data' }))
+    expect(wrapper.find('.SRC-chart-link')).toHaveLength(0)
+    ;({ wrapper } = createShallowComponent({
+      ...props,
+      link: 'mywebsite.com',
+      linkText: 'Explore Data',
+    }))
     expect(wrapper.find('.SRC-chart-link')).toHaveLength(1)
   })
 
@@ -153,7 +153,9 @@ describe('it performs basic functionality', () => {
     // cast and ignore, event doesn't get used in the method
     const mockedEvent = {} as React.MouseEvent
     // it wraps backwards
-    expect(instance.handleArrowClick(PREVIOUS_ITEM_CLICK)(mockedEvent)).toEqual(10)
+    expect(instance.handleArrowClick(PREVIOUS_ITEM_CLICK)(mockedEvent)).toEqual(
+      10,
+    )
     // goes forward
     expect(instance.handleArrowClick(NEXT_CLICK)(mockedEvent)).toEqual(1)
   })
@@ -174,13 +176,16 @@ describe('it performs basic functionality', () => {
     const { wrapper } = createShallowComponent(props)
     const filterUpdated = 'projectStatus'
     await wrapper.setProps({
-      facet: filterUpdated
+      facet: filterUpdated,
     })
     const facetValueWithMaxCountUpdated = 'Active'
     expect(wrapper.render().find('svg.SRC-hoverBox')).toHaveLength(2)
-    expect(wrapper.find('span.SRC-text-title.SRC-filter-display').text()).toEqual('Project Status')
-    expect(wrapper.find('span.SRC-facet-view').text()).toEqual(` ${facetValueWithMaxCountUpdated}`)
+    expect(
+      wrapper.find('span.SRC-text-title.SRC-filter-display').text(),
+    ).toEqual('Project Status')
+    expect(wrapper.find('span.SRC-facet-view').text()).toEqual(
+      ` ${facetValueWithMaxCountUpdated}`,
+    )
     expect(wrapper.find('#fileCount').text()).toEqual(`35 ${unitDescription}`)
   })
-
 })

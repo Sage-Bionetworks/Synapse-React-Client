@@ -11,17 +11,19 @@ export type TotalQueryResultsProps = {
 }
 
 type State = {
-  total: number  
+  total: number
 }
 
-// This is a stateful component so that during load the component can hold onto the previous 
+// This is a stateful component so that during load the component can hold onto the previous
 // total instead of showing 0 results for the intermittent loading state.
-export default class TotalQueryResults extends React.Component<TotalQueryResultsProps, State> {
-
+export default class TotalQueryResults extends React.Component<
+  TotalQueryResultsProps,
+  State
+> {
   constructor(props: TotalQueryResultsProps) {
     super(props)
     this.state = {
-      total: 0
+      total: 0,
     }
   }
 
@@ -37,12 +39,14 @@ export default class TotalQueryResults extends React.Component<TotalQueryResults
   }
 
   calculateTotal() {
-    const { data, facet } = this.props 
+    const { data, facet } = this.props
     let { total } = this.state
     if (data) {
       if (facet) {
         const { facets = [] } = data
-        const curFacetsIndex = facets.findIndex(el => el.facetType === 'enumeration' && el.columnName === facet)
+        const curFacetsIndex = facets.findIndex(
+          el => el.facetType === 'enumeration' && el.columnName === facet,
+        )
         // calculate the values chosen
         const curFacets = facets[curFacetsIndex]
         // edge case -- if they are all false then they are considered all true..
@@ -50,7 +54,7 @@ export default class TotalQueryResults extends React.Component<TotalQueryResults
         let anyTrue = false
         let totalAllFalseCase = 0
         let totalStandardCase = 0
-    
+
         if (curFacets) {
           for (const key of curFacets.facetValues) {
             anyTrue = anyTrue || key.isSelected
@@ -66,24 +70,29 @@ export default class TotalQueryResults extends React.Component<TotalQueryResults
         }
       } else {
         if (data.queryCount === undefined) {
-          throw Error('Failed to specify either a facet or query count in part mask')
+          throw Error(
+            'Failed to specify either a facet or query count in part mask',
+          )
         }
         total = data.queryCount
       }
-     }
-     this.setState({
-       total
-     })
+    }
+    this.setState({
+      total,
+    })
   }
 
   render() {
-    const { isLoading, style, unitDescription, frontText } = this.props 
-    const { total } =  this.state
-    const loader = <span style={{ marginLeft: '2px' }} className={'spinner'}/> 
+    const { isLoading, style, unitDescription, frontText } = this.props
+    const { total } = this.state
+    const loader = <span style={{ marginLeft: '2px' }} className={'spinner'} />
     return (
-      <p style={style} className="SRC-boldText SRC-text-title SRC-centerContent">
+      <p
+        style={style}
+        className="SRC-boldText SRC-text-title SRC-centerContent"
+      >
         {frontText} {total} {unitDescription} {isLoading && loader}
       </p>
     )
-   }
+  }
 }
