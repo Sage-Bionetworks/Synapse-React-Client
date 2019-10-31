@@ -12,7 +12,6 @@ type QueryCountState = {
   [index: string]: number
 }
 
-
 /**
  * QueryCount shows a query count
  *
@@ -20,8 +19,10 @@ type QueryCountState = {
  * @class QueryCount
  * @extends {React.Component<QueryCountProps, QueryCountState>}
  */
-export default class QueryCount extends React.Component<QueryCountProps, QueryCountState> {
-
+export default class QueryCount extends React.Component<
+  QueryCountProps,
+  QueryCountState
+> {
   constructor(props: QueryCountProps) {
     super(props)
     this.state = {}
@@ -31,11 +32,11 @@ export default class QueryCount extends React.Component<QueryCountProps, QueryCo
   componentDidMount() {
     this.calculateRowCount()
   }
-  
+
   componentDidUpdate() {
     this.calculateRowCount()
   }
-  
+
   calculateRowCount() {
     const { sql, token } = this.props
     if (this.state[sql]) {
@@ -46,19 +47,22 @@ export default class QueryCount extends React.Component<QueryCountProps, QueryCo
       query: {
         sql,
       },
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
     }
-    SynapseClient.getQueryTableResults(request, token).then(
-      (data) => {
-        this.setState({ [sql]: data.queryCount! })
-      }
-    )
+    SynapseClient.getQueryTableResults(request, token).then(data => {
+      this.setState({ [sql]: data.queryCount! })
+    })
   }
 
-  render () {
+  render() {
     const { sql, name } = this.props
     const count = this.state[sql]
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
-    return <React.Fragment> {name} ({count && count.toLocaleString()}) </React.Fragment>
+    return (
+      <React.Fragment>
+        {' '}
+        {name} ({count && count.toLocaleString()}){' '}
+      </React.Fragment>
+    )
   }
 }

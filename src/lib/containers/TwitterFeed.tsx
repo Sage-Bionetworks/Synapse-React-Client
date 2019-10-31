@@ -11,13 +11,23 @@ export default class TwitterFeed extends React.Component<TwitterFeedProps> {
 
   componentDidMount() {
     if (typeof (window as any).twttr !== 'undefined') {
-			(window as any).twttr.widgets.load(document.getElementById(this.props.href));
-		}
+      ;(window as any).twttr.widgets.load(
+        document.getElementById(this.props.href),
+      )
+    }
   }
 
   render() {
-    return <div>
-      <a id={this.props.href} className="twitter-timeline" data-height="600" data-theme="light" href={this.props.href}></a>
-    </div>
+    return (
+      <div>
+        <a
+          id={this.props.href}
+          className="twitter-timeline"
+          data-height="600"
+          data-theme="light"
+          href={this.props.href}
+        ></a>
+      </div>
+    )
   }
 }

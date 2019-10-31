@@ -1,4 +1,4 @@
 export type ResourceAccess = {
-  principalId: number,
-  accessType: string []
+  principalId: number
+  accessType: string[]
 }

@@ -1,5 +1,5 @@
 export type AsynchronousJobStatus = {
-  jobState:	any // The job's state can be one of the following enumerations
+  jobState: any // The job's state can be one of the following enumerations
   jobCanceling: boolean // Was the job being asked to cancel.
   requestBody: any // The body of an Asynchronous job request.
   responseBody: any // The body of an Asynchronous job response.

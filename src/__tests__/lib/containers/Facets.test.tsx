@@ -5,7 +5,7 @@ import {
   CheckboxGroup,
   FACET_SELECTED_CLASS,
   SELECT_SINGLE_FACET,
-  FACET_NOT_SELECTED_CLASS
+  FACET_NOT_SELECTED_CLASS,
 } from '../../../lib/containers/Facets'
 // import { SELECT_ALL, DESELECT_ALL  } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
@@ -17,11 +17,7 @@ import { SELECT_ALL } from '../../../lib/containers/table/SynapseTable'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
-  const wrapper = mount(
-      <Facets
-        {...props}
-      />
-    )
+  const wrapper = mount(<Facets {...props} />)
   const instance = wrapper.instance() as Facets
   return { wrapper, instance }
 }
@@ -38,8 +34,7 @@ describe('it performs basic functionality', () => {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-    ,
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
       sql: 'SELECT * FROM syn16787123',
       isConsistent: false,
@@ -48,15 +43,14 @@ describe('it performs basic functionality', () => {
       selectedFacets: [
         {
           columnName: 'projectStatus',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: [
-            'Active',
-            'Completed',
-          ],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          facetValues: ['Active', 'Completed'],
         },
         {
           columnName: 'tumorType',
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           facetValues: [
             'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
             'Cutaneous Neurofibroma',
@@ -68,11 +62,11 @@ describe('it performs basic functionality', () => {
             'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
             'Schwannoma',
             'Schwannoma | Meningioma',
-            'SMN'
+            'SMN',
           ],
-        }
-      ]
-    }
+        },
+      ],
+    },
   }
   const castData = syn16787123Json as QueryResultBundle
   const updateParentState = jest.fn()
@@ -92,13 +86,13 @@ describe('it performs basic functionality', () => {
     getLastQueryRequest,
     isAllFilterSelectedForFacet: {
       tumorType: true,
-      projectStatus: true
+      projectStatus: true,
     },
     isLoading: false,
     lastFacetSelection: {
       columnName: '',
       facetValue: '',
-      selector: ''
+      selector: '',
     },
     chartSelectionIndex: 0,
     data: castData,
@@ -114,12 +108,10 @@ describe('it performs basic functionality', () => {
 
   it('Show All is not present when < 5 facets ', () => {
     // override default
-    const { wrapper } = createMountedComponent(
-      {
-        ...props,
-        facet: 'projectStatus'
-      }
-    )
+    const { wrapper } = createMountedComponent({
+      ...props,
+      facet: 'projectStatus',
+    })
     expect(wrapper.find('#showAllFacetsButton')).toHaveLength(0)
   })
 
@@ -134,7 +126,10 @@ describe('it performs basic functionality', () => {
     const labels = checkbox.find('label')
     // only 5 shown by default
     expect(wrapper.find('input')).toHaveLength(5)
-    await labels.at(0).find('input').simulate('change')
+    await labels
+      .at(0)
+      .find('input')
+      .simulate('change')
     // after click event it expands to show all 11 per the mocked data above
     expect(wrapper.find('input')).toHaveLength(11)
   })
@@ -142,7 +137,9 @@ describe('it performs basic functionality', () => {
   it('Onload all inputs are considered selected', async () => {
     const { wrapper } = await createMountedComponent(cloneDeep(props))
     const checkbox = wrapper.find(CheckboxGroup)
-    const inputs = checkbox.find(`input.SRC-hidden.SRC-facet-checkboxes.${FACET_SELECTED_CLASS}`)
+    const inputs = checkbox.find(
+      `input.SRC-hidden.SRC-facet-checkboxes.${FACET_SELECTED_CLASS}`,
+    )
     expect(inputs).toHaveLength(5)
   })
 
@@ -159,7 +156,11 @@ describe('it performs basic functionality', () => {
     */
     await wrapper.setProps({
       isLoading: true,
-      lastFacetSelection: { columnName: facet, facetValue: 'Cutaneous Neurofibroma', selector: SELECT_SINGLE_FACET }
+      lastFacetSelection: {
+        columnName: facet,
+        facetValue: 'Cutaneous Neurofibroma',
+        selector: SELECT_SINGLE_FACET,
+      },
     })
     // end mocking QueryWrapper behvaior
     expect(wrapper.find(`input.${FACET_NOT_SELECTED_CLASS}`)).toHaveLength(10)
@@ -178,7 +179,11 @@ describe('it performs basic functionality', () => {
     */
     await wrapper.setProps({
       isLoading: true,
-      lastFacetSelection: { columnName: facet, facetValue: '', selector: SELECT_ALL }
+      lastFacetSelection: {
+        columnName: facet,
+        facetValue: '',
+        selector: SELECT_ALL,
+      },
     })
     // end mocking QueryWrapper behvaior
     // at this point all facets should be considered 'selected'
@@ -186,8 +191,9 @@ describe('it performs basic functionality', () => {
   })
 
   it('renders the total count when showBarChart is false', async () => {
-    const { wrapper } = await createMountedComponent(cloneDeep({ ...props, showBarChart: false }))
+    const { wrapper } = await createMountedComponent(
+      cloneDeep({ ...props, showBarChart: false }),
+    )
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
   })
-
 })

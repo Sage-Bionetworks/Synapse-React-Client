@@ -9,12 +9,14 @@ type ShowMoreProps = {
   summary: string
 }
 
-export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreState> {
-
+export default class ShowMore extends React.Component<
+  ShowMoreProps,
+  ShowMoreState
+> {
   constructor(props: ShowMoreProps) {
     super(props)
     this.state = {
-      showMore: false
+      showMore: false,
     }
     this.toggleShowMore = this.toggleShowMore.bind(this)
   }
@@ -22,14 +24,14 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
   public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
     this.setState({
-      showMore: true
+      showMore: true,
     })
   }
 
-  getCutoff = (summary: string ) => {
+  getCutoff = (summary: string) => {
     let previewText = ''
-    if (!summary) { 
-      return { previewText}
+    if (!summary) {
+      return { previewText }
     }
     let hiddenText = ''
     const summarySplit = summary!.split(' ')
@@ -39,33 +41,30 @@ export default class ShowMore extends React.Component<ShowMoreProps, ShowMoreSta
       previewText += `${summarySplit[i]} `
       i += 1
     }
-    if (i < summarySplit.length - 1 ) {
+    if (i < summarySplit.length - 1) {
       hiddenText = summarySplit.slice(i).join(' ')
     }
-    return { previewText, hiddenText}
+    return { previewText, hiddenText }
   }
 
   public render() {
     const { summary } = this.props
     const meetsCharRequirements = summary && summary.length >= CHAR_COUNT_CUTOFF
     let { previewText, hiddenText } = this.getCutoff(summary)
-    const showMoreButton =  (
-        meetsCharRequirements &&
-        (
-        <a
-          style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
-          className="SRC-primary-text-color"
-          onClick={this.toggleShowMore}
-        >
-           ...Show More
-        </a>
-        )
+    const showMoreButton = meetsCharRequirements && (
+      <a
+        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
+        className="SRC-primary-text-color"
+        onClick={this.toggleShowMore}
+      >
+        ...Show More
+      </a>
     )
     return (
       <React.Fragment>
         <span>
           {previewText}
-          <span className={this.state.showMore ? '': 'SRC-hidden'}>
+          <span className={this.state.showMore ? '' : 'SRC-hidden'}>
             {hiddenText}
           </span>
         </span>

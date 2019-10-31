@@ -21,12 +21,11 @@ type SynapsePlotState = {
 }
 
 class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
-
   constructor(props: SynapsePlotProps) {
     super(props)
     this.state = {
       isLoaded: false,
-      queryData: {} as QueryResultBundle
+      queryData: {} as QueryResultBundle,
     }
     this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
     this.showPlot = this.showPlot.bind(this)
@@ -47,21 +46,19 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
       query: {
-        sql: query
-      }
+        sql: query,
+      },
     }
-    getFullQueryTableResults(queryRequest, token).then(
-      (data: QueryResultBundle) => {
+    getFullQueryTableResults(queryRequest, token)
+      .then((data: QueryResultBundle) => {
         this.setState({
           isLoaded: true,
-          queryData: data
+          queryData: data,
         })
-      }
-    ).catch(
-      (err: any) => {
+      })
+      .catch((err: any) => {
         console.log('Error on full table query ', err)
-      }
-    )
+      })
   }
 
   public showPlot() {
@@ -69,33 +66,33 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
       return
     }
     const {
-            title,
-            xtitle,
-            ytitle,
-            type,
-            xaxistype,
-            showlegend
-        } = this.props.widgetparamsMapped
+      title,
+      xtitle,
+      ytitle,
+      type,
+      xaxistype,
+      showlegend,
+    } = this.props.widgetparamsMapped
     const queryData = this.state
     const isHorizontal = this.props.widgetparamsMapped.horizontal.toLowerCase()
     const layout: any = {
       showlegend,
-      title
+      title,
     }
     if (xtitle) {
       layout.xaxis = {
-        title: xtitle
+        title: xtitle,
       }
     }
     if (xaxistype) {
       layout.xaxis = {
         ...layout.xaxis,
-        xaxistype: xaxistype.toLowerCase()
+        xaxistype: xaxistype.toLowerCase(),
       }
     }
     if (ytitle) {
       layout.yaxis = {
-        title: ytitle
+        title: ytitle,
       }
     }
     // init plot_data
@@ -109,7 +106,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
         name: headers[i + 1].name,
         type: type.toLowerCase(),
         x: [],
-        y: []
+        y: [],
       }
     }
     // grab all the data
@@ -128,7 +125,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
     if (!this.state.isLoaded) {
       return null
     }
-    return (this.showPlot())
+    return this.showPlot()
   }
 }
 export default SynapsePlot

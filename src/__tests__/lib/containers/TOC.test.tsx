@@ -7,12 +7,18 @@ describe('renders without crashing', () => {
   let SynapseClient: any
   beforeAll(() => {
     SynapseClient = require('../../../lib/utils/SynapseClient')
-    SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() => Promise.resolve(['']))
+    SynapseClient.getWikiAttachmentsFromEntity = jest.fn(() =>
+      Promise.resolve(['']),
+    )
   })
 
   it('renders a table of contents without crashing', async () => {
-    SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: '${toc}\n#Heading1' }))
-    const tree = await mount(<MarkdownSynapse token="" ownerId={''} wikiId={''} />)
+    SynapseClient.getEntityWiki = jest.fn(() =>
+      Promise.resolve({ markdown: '${toc}\n#Heading1' }),
+    )
+    const tree = await mount(
+      <MarkdownSynapse token="" ownerId={''} wikiId={''} />,
+    )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)
     // peculiar behavior below where only usng .render() works
@@ -21,13 +27,11 @@ describe('renders without crashing', () => {
   })
 
   it('renders a table of contents with a non-toc-header header', async () => {
-    SynapseClient.getEntityWiki = jest.fn(() => Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }))
+    SynapseClient.getEntityWiki = jest.fn(() =>
+      Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }),
+    )
     const tree = await mount(
-      <MarkdownSynapse
-        token=""
-        ownerId={''}
-        wikiId={''}
-      />
+      <MarkdownSynapse token="" ownerId={''} wikiId={''} />,
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)

@@ -43,7 +43,7 @@ export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'
 export const MEDIUM_USER_CARD: UserCardSize = 'MEDIUM USER CARD'
 export const LARGE_USER_CARD: UserCardSize = 'LARGE USER CARD'
 export const SEPERATOR = 'SEPERATOR'
-export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS' 
+export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
 // For internal testing only
 export const _TIME_DELAY = 75
 export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'

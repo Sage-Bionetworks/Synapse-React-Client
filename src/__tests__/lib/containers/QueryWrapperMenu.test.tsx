@@ -1,22 +1,27 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import { mockData }   from '../../../mocks'
-import QueryWrapperMenu, { QueryWrapperMenuProps, ACCORDION_GROUP_CSS, ACCORDION_GROUP_ACTIVE_CSS, MENU_DROPDOWN_CSS } from '../../../lib/containers/QueryWrapperMenu'
+import { mockData } from '../../../mocks'
+import QueryWrapperMenu, {
+  QueryWrapperMenuProps,
+  ACCORDION_GROUP_CSS,
+  ACCORDION_GROUP_ACTIVE_CSS,
+  MENU_DROPDOWN_CSS,
+} from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
-import StackedBarChart, { StackedBarChartProps } from '../../../lib/containers/StackedBarChart'
+import StackedBarChart, {
+  StackedBarChartProps,
+} from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
 import CardContainer from '../../../lib/containers/CardContainer'
-import SynapseTable, { SynapseTableProps } from '../../../lib/containers/table/SynapseTable'
+import SynapseTable, {
+  SynapseTableProps,
+} from '../../../lib/containers/table/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import Search from 'lib/containers/Search'
 
 const createMountedComponent = (props: QueryWrapperMenuProps) => {
-  const wrapper = mount<QueryWrapperMenu>(
-    <QueryWrapperMenu
-      {...props}
-    />
-  )
+  const wrapper = mount<QueryWrapperMenu>(<QueryWrapperMenu {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -25,8 +30,8 @@ describe('it renders with basic functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
   const sql: string = 'SELECT * FROM syn5604373'
-  const facet : string = 'name'
-  const synapseId : string = 'syn5604373'
+  const facet: string = 'name'
+  const synapseId: string = 'syn5604373'
   const token: string = ''
   const name = 'Studies'
   const props: QueryWrapperMenuProps = {
@@ -35,8 +40,8 @@ describe('it renders with basic functionality', () => {
     menuConfig: [{ sql, facet }],
     rgbIndex: 3,
     stackedBarChartConfiguration: {
-      loadingScreen: <div/>
-    }
+      loadingScreen: <div />,
+    },
   }
 
   it('renders without crashing', () => {
@@ -51,12 +56,12 @@ describe('it renders with basic functionality', () => {
       rgbIndex: 3,
       tableConfiguration: {
         synapseId,
-        title: 'title'
+        title: 'title',
       },
       stackedBarChartConfiguration: {
-        loadingScreen: <div/>
+        loadingScreen: <div />,
       },
-      menuConfig: [{ sql, facet }]
+      menuConfig: [{ sql, facet }],
     }
     const { wrapper } = await createMountedComponent(propsWithTitle)
     expect(wrapper).toBeDefined()
@@ -72,9 +77,9 @@ describe('it renders with basic functionality', () => {
       name,
       rgbIndex: 3,
       cardConfiguration: {
-        type: SynapseConstants.STUDY
+        type: SynapseConstants.STUDY,
       },
-      menuConfig: [{ sql, facet }]
+      menuConfig: [{ sql, facet }],
     }
     const { wrapper } = await createMountedComponent(propsWithTitle)
     expect(wrapper).toBeDefined()
@@ -88,10 +93,10 @@ describe('it renders with basic functionality', () => {
     const propsWithType: QueryWrapperMenuProps = {
       ...props,
       cardConfiguration: {
-        type: SynapseConstants.STUDY
+        type: SynapseConstants.STUDY,
       },
       stackedBarChartConfiguration: {
-        loadingScreen: <div/>
+        loadingScreen: <div />,
       },
     }
     const { wrapper } = await createMountedComponent(propsWithType)
@@ -107,10 +112,10 @@ describe('it renders with basic functionality', () => {
     const propsWithType: QueryWrapperMenuProps = {
       ...props,
       cardConfiguration: {
-        type: SynapseConstants.STUDY
+        type: SynapseConstants.STUDY,
       },
       stackedBarChartConfiguration: {
-        loadingScreen: <div/>
+        loadingScreen: <div />,
       },
     }
     const { wrapper } = await createMountedComponent(propsWithType)
@@ -134,29 +139,30 @@ describe('it renders an accordion config', () => {
     description: 'description',
     icon: 'icon',
     link: 'link',
-    secondaryLabels: [
-      'labelOne',
-      'labelTwo'
-    ]
+    secondaryLabels: ['labelOne', 'labelTwo'],
   }
   const props: QueryWrapperMenuProps = {
     accordionConfig: [
       {
         name: 'Computational',
-        menuConfig: [{ sql, facet: 'a' }, { sql, facet: 'b' }, { sql, facet: 'c' }],
+        menuConfig: [
+          { sql, facet: 'a' },
+          { sql, facet: 'b' },
+          { sql, facet: 'c' },
+        ],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema
-        }
+          genericCardSchema,
+        },
       },
       {
         name: 'Experimental',
         menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema
-        }
-      } 
+          genericCardSchema,
+        },
+      },
     ],
     rgbIndex: 3,
   }
@@ -182,7 +188,12 @@ describe('it renders an accordion config', () => {
     // only one accordion should be selected
     expect(wrapper.find(ACCORDION_GROUP_ACTIVE_CSS_SELECTOR)).toHaveLength(1)
     // check first option under the first group index is selected
-    expect(wrapper.find(ACCORDION_GROUP_ACTIVE_CSS_SELECTOR).childAt(1).find('.SRC-pointed-triangle-right')).toHaveLength(1)
+    expect(
+      wrapper
+        .find(ACCORDION_GROUP_ACTIVE_CSS_SELECTOR)
+        .childAt(1)
+        .find('.SRC-pointed-triangle-right'),
+    ).toHaveLength(1)
   })
 
   it('makes selections and maintains state ', async () => {
@@ -190,27 +201,67 @@ describe('it renders an accordion config', () => {
     const childOne = 0
     const childTwo = 1
     // Click the first accordion key's third menu-item
-    await wrapper.find(ACCORDION_GROUP_MENU_SELECTOR).childAt(2).simulate('click')
+    await wrapper
+      .find(ACCORDION_GROUP_MENU_SELECTOR)
+      .childAt(2)
+      .simulate('click')
     // click the second accordion key open
-    await wrapper.find(ACCORDION_GROUP_CSS_SELECTOR).at(childTwo).simulate('click')
+    await wrapper
+      .find(ACCORDION_GROUP_CSS_SELECTOR)
+      .at(childTwo)
+      .simulate('click')
     // check the first accordion key's menu is closed && second accordion key's menu is active with first child selected
-    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childOne).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeFalsy()
-    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childTwo).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeTruthy()
-    expect(wrapper.find(ACCORDION_GROUP_MENU_SELECTOR).childAt(0).hasClass('SRC-pointed-triangle-right')).toBeTruthy()
+    expect(
+      wrapper
+        .find(MENU_DROPDOWN_CSS_SELECTOR)
+        .childAt(childOne)
+        .hasClass(ACCORDION_GROUP_ACTIVE_CSS),
+    ).toBeFalsy()
+    expect(
+      wrapper
+        .find(MENU_DROPDOWN_CSS_SELECTOR)
+        .childAt(childTwo)
+        .hasClass(ACCORDION_GROUP_ACTIVE_CSS),
+    ).toBeTruthy()
+    expect(
+      wrapper
+        .find(ACCORDION_GROUP_MENU_SELECTOR)
+        .childAt(0)
+        .hasClass('SRC-pointed-triangle-right'),
+    ).toBeTruthy()
     // click the first top accordion key back open again and see the third item is still clicked
-    await wrapper.find(ACCORDION_GROUP_CSS_SELECTOR).at(childOne).simulate('click')
+    await wrapper
+      .find(ACCORDION_GROUP_CSS_SELECTOR)
+      .at(childOne)
+      .simulate('click')
     // verify second item is still selected from first click
-    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childOne).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeTruthy()
-    expect(wrapper.find(MENU_DROPDOWN_CSS_SELECTOR).childAt(childTwo).hasClass(ACCORDION_GROUP_ACTIVE_CSS)).toBeFalsy()
-    expect(wrapper.find(ACCORDION_GROUP_MENU_SELECTOR).childAt(2).hasClass('SRC-pointed-triangle-right')).toBeTruthy()
+    expect(
+      wrapper
+        .find(MENU_DROPDOWN_CSS_SELECTOR)
+        .childAt(childOne)
+        .hasClass(ACCORDION_GROUP_ACTIVE_CSS),
+    ).toBeTruthy()
+    expect(
+      wrapper
+        .find(MENU_DROPDOWN_CSS_SELECTOR)
+        .childAt(childTwo)
+        .hasClass(ACCORDION_GROUP_ACTIVE_CSS),
+    ).toBeFalsy()
+    expect(
+      wrapper
+        .find(ACCORDION_GROUP_MENU_SELECTOR)
+        .childAt(2)
+        .hasClass('SRC-pointed-triangle-right'),
+    ).toBeTruthy()
   })
 
-  it('passes down the correct unitDescription correctly' , async () => {
+  it('passes down the correct unitDescription correctly', async () => {
     const { wrapper } = await createMountedComponent(props)
     const queryWrapper = wrapper.find(QueryWrapper).at(0)
-    expect(queryWrapper.props().unitDescription).toEqual('Computational Tools by A')
+    expect(queryWrapper.props().unitDescription).toEqual(
+      'Computational Tools by A',
+    )
   })
-
 })
 
 describe('it renders with search correctly configured ', () => {
@@ -224,45 +275,46 @@ describe('it renders with search correctly configured ', () => {
     description: 'description',
     icon: 'icon',
     link: 'link',
-    secondaryLabels: [
-      'labelOne',
-      'labelTwo'
-    ]
+    secondaryLabels: ['labelOne', 'labelTwo'],
   }
   const props: QueryWrapperMenuProps = {
     accordionConfig: [
       {
         name: 'Computational',
-        menuConfig: [{ sql, facet: 'a' }, { sql, facet: 'b' }, { sql, facet: 'c' }],
+        menuConfig: [
+          { sql, facet: 'a' },
+          { sql, facet: 'b' },
+          { sql, facet: 'c' },
+        ],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema
+          genericCardSchema,
         },
         searchConfiguration: {
           searchable: [
             {
               columnName: 'a',
-              hintText: 'hint'
-            }
-          ]
-        }
+              hintText: 'hint',
+            },
+          ],
+        },
       },
       {
         name: 'Experimental',
         menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema
+          genericCardSchema,
         },
         searchConfiguration: {
           searchable: [
             {
               columnName: 'd',
-              hintText: 'hint'
-            }
-          ]
-        }
-      } 
+              hintText: 'hint',
+            },
+          ],
+        },
+      },
     ],
     rgbIndex: 3,
   }
@@ -270,7 +322,9 @@ describe('it renders with search correctly configured ', () => {
   it('renders correctly and passes down the right unitDescription', async () => {
     const { wrapper } = await createMountedComponent(props)
     const queryWrapperWithSearch = wrapper.find(QueryWrapper).at(2)
-    expect(queryWrapperWithSearch.props().unitDescription).toEqual('Computational Tools')
+    expect(queryWrapperWithSearch.props().unitDescription).toEqual(
+      'Computational Tools',
+    )
     // Search only makes sense with an unfaceted view, so there's additional logic to make sure only
     // in the case of search that facets are excluded in QueryWrapperMenu
     expect(queryWrapperWithSearch.find(Facets)).toHaveLength(0)
@@ -285,39 +339,62 @@ describe('Passing down props works correctly ', () => {
     it('works with accordiong that is not on a search tab ', () => {
       const aliasedFacet = 'MOCK_VALUE'
       const name = 'Computational'
-      const unitDescription = getUnitDescription('',  aliasedFacet, false, true, name)
+      const unitDescription = getUnitDescription(
+        '',
+        aliasedFacet,
+        false,
+        true,
+        name,
+      )
       expect(unitDescription).toEqual(`${name} Tools by ${aliasedFacet}`)
     })
     it('works with accordiong that is on a search tab', () => {
       const aliasedFacet = 'MOCK_VALUE'
       const name = 'Computational'
-      const unitDescription = getUnitDescription('',  aliasedFacet, true, true, name)
+      const unitDescription = getUnitDescription(
+        '',
+        aliasedFacet,
+        true,
+        true,
+        name,
+      )
       expect(unitDescription).toEqual(`${name} Tools`)
     })
     it('works with only unit description', () => {
       const unitDescriptionValue = 'MOCKED_VALUE'
-      const unitDescription = getUnitDescription(unitDescriptionValue,  '', false, false, '')
+      const unitDescription = getUnitDescription(
+        unitDescriptionValue,
+        '',
+        false,
+        false,
+        '',
+      )
       expect(unitDescription).toEqual(unitDescriptionValue)
     })
   })
 
   describe('part mask is calculated correctly', () => {
     const getPartMask = QueryWrapperMenu.prototype.getPartMask
-    const partMaskBase = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+    const partMaskBase =
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
     it('works with facet passed in', () => {
       const facet = 'MOCK_VALUE'
       const partMask = getPartMask(facet, false)
-      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+      const expectedPartMask =
+        partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
       expect(partMask).toEqual(expectedPartMask)
     })
     it('works without facet passed in', () => {
       const partMask = getPartMask('', false)
-      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+      const expectedPartMask =
+        partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
       expect(partMask).toEqual(expectedPartMask)
     })
     it('works with groupBy passedIn', () => {
       const partMask = getPartMask('', true)
-      const expectedPartMask = partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+      const expectedPartMask =
+        partMaskBase | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
       expect(partMask).toEqual(expectedPartMask)
     })
   })
@@ -338,19 +415,28 @@ describe('Passing down props works correctly ', () => {
     })
   })
   describe('table loading screen is calculated correctly', () => {
-    const getTableLoadingScreen = QueryWrapperMenu.prototype.getTableLoadingScreen
+    const getTableLoadingScreen =
+      QueryWrapperMenu.prototype.getTableLoadingScreen
     it('returns a loading screen ', () => {
       const hasGroupByInSql = true
       const loadingScreen = <div></div>
       const stackedBarChartConfiguration = {
-        loadingScreen
+        loadingScreen,
       } as StackedBarChartProps
       const tableConfiguration = {} as SynapseTableProps
-      const tableLoadingScreen = getTableLoadingScreen(hasGroupByInSql, stackedBarChartConfiguration, tableConfiguration)
+      const tableLoadingScreen = getTableLoadingScreen(
+        hasGroupByInSql,
+        stackedBarChartConfiguration,
+        tableConfiguration,
+      )
       expect(tableLoadingScreen).toEqual(loadingScreen)
     })
     it('returns empty ', () => {
-      const tableLoadingScreen = getTableLoadingScreen(false, undefined, undefined)
+      const tableLoadingScreen = getTableLoadingScreen(
+        false,
+        undefined,
+        undefined,
+      )
       expect(tableLoadingScreen).toEqual(<></>)
     })
   })
