@@ -6,14 +6,24 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/modules'
 import { getNextPageOfData } from '../utils/modules/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import { insertConditionsFromSearchParams, KeyValue, SQLOperator } from '../utils/modules/sqlFunctions'
+import {
+  insertConditionsFromSearchParams,
+  KeyValue,
+  SQLOperator,
+} from '../utils/modules/sqlFunctions'
 
 export interface CardLink {
   baseURL: string
   // the keys that will go into the url
-  URLColumnNames: string []
+  URLColumnNames: string[]
+  isMarkdown: false
 }
 
+export interface MarkdownLink {
+  isMarkdown: true
+  // the columns whos value will be paired with the columns URLColumnNames
+  matchColumnName: string
+}
 
 export interface LabelLink extends CardLink {
   // the columns whos value will be paired with the columns URLColumnNames
@@ -21,7 +31,7 @@ export interface LabelLink extends CardLink {
 }
 
 // Specify the indices in the values [] that should point to links
-export type LabelLinkConfig = LabelLink []
+export type LabelLinkConfig = (LabelLink | MarkdownLink)[]
 
 export type CommonCardProps = {
   type: string
@@ -44,8 +54,8 @@ export type CardContainerLogicProps = {
   facet?: string
   loadingScreen?: JSX.Element
   genericCardSchema?: GenericCardSchema
-  backgroundColor?:string
-  isHeader?:boolean
+  backgroundColor?: string
+  isHeader?: boolean
   sql: string
 } & CommonCardProps
 
@@ -53,7 +63,7 @@ type State = {
   data: QueryResultBundle | undefined
   isLoading: boolean
   queryRequest: QueryBundleRequest
-  totalResultsNoFacet: number,
+  totalResultsNoFacet: number
   hasMoreData: boolean
 }
 
@@ -65,10 +75,12 @@ type State = {
  * @class CardContainerLogic
  * @extends {React.Component}
  */
-export default class CardContainerLogic extends React.Component<CardContainerLogicProps, State> {
-
+export default class CardContainerLogic extends React.Component<
+  CardContainerLogicProps,
+  State
+> {
   public static defaultProps = {
-    token: ''
+    token: '',
   }
 
   public static defaultState = {
@@ -76,7 +88,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
     isLoading: true,
     queryRequest: {} as QueryBundleRequest,
     totalResultsNoFacet: 0,
-    hasMoreData: true
+    hasMoreData: true,
   }
 
   constructor(props: CardContainerLogicProps) {
@@ -134,19 +146,20 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    */
   public async getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
-      isLoading: true
+      isLoading: true,
     })
 
-    await getNextPageOfData(queryRequest, this.state.data!, this.props.token)
-    .then(
-      (newState) => {
-        this.setState({
-          ...newState,
-          isLoading: false,
-          queryRequest: cloneDeep(queryRequest)
-        })
-      }
-    )
+    await getNextPageOfData(
+      queryRequest,
+      this.state.data!,
+      this.props.token,
+    ).then(newState => {
+      this.setState({
+        ...newState,
+        isLoading: false,
+        queryRequest: cloneDeep(queryRequest),
+      })
+    })
   }
 
   /**
@@ -163,7 +176,11 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
 
     let sqlUsed = this.props.sql
     if (this.props.searchParams) {
-      sqlUsed = insertConditionsFromSearchParams(this.props.searchParams, this.props.sql, this.props.sqlOperator)
+      sqlUsed = insertConditionsFromSearchParams(
+        this.props.searchParams,
+        this.props.sql,
+        this.props.sqlOperator,
+      )
     }
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
@@ -174,38 +191,36 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-        SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-        ,
+        SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
       query: {
         sql: sqlUsed,
         isConsistent: false,
         limit: 25,
         offset: 0,
-      }
+      },
     }
 
-    SynapseClient
-      .getQueryTableResults(initQueryRequest, this.props.token)
-      .then(
-        (data: QueryResultBundle) => {
-          const queryRequestWithoutCount = cloneDeep(initQueryRequest)
-          queryRequestWithoutCount.partMask = (
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-          )
+    SynapseClient.getQueryTableResults(initQueryRequest, this.props.token)
+      .then((data: QueryResultBundle) => {
+        const queryRequestWithoutCount = cloneDeep(initQueryRequest)
+        queryRequestWithoutCount.partMask =
+          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
 
-          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          const newState = {
-            hasMoreData,
-            data,
-            queryRequest: queryRequestWithoutCount,
-            isLoading: false,
-            totalResultsNoFacet: data.queryCount!
-          }
-          this.setState(newState)
+        const hasMoreData =
+          data.queryResult.queryResults.rows.length ===
+          SynapseConstants.PAGE_SIZE
+        const newState = {
+          hasMoreData,
+          data,
+          queryRequest: queryRequestWithoutCount,
+          isLoading: false,
+          totalResultsNoFacet: data.queryCount!,
         }
-      ).catch((err) => {
+        this.setState(newState)
+      })
+      .catch(err => {
         console.log('Failed to get data ', err)
       })
   }
@@ -215,12 +230,7 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
    */
   public render() {
     // only forward the necessary props
-    const {
-      sql,
-      searchParams,
-      token,
-      ...rest
-    } = this.props
+    const { sql, searchParams, token, ...rest } = this.props
     return (
       <CardContainer
         {...rest}
@@ -232,5 +242,4 @@ export default class CardContainerLogic extends React.Component<CardContainerLog
       />
     )
   }
-
 }

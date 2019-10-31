@@ -1,8 +1,14 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { CardLink, LabelLinkConfig, LabelLink } from './CardContainerLogic'
+import {
+  CardLink,
+  LabelLinkConfig,
+  LabelLink,
+  MarkdownLink,
+} from './CardContainerLogic'
 import { unCamelCase } from './table/SynapseTable'
+import MarkdownSynapse from './MarkdownSynapse'
 
 export type KeyToAlias = {
   key: string
@@ -20,7 +26,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   icon?: string
-  secondaryLabels?: any []
+  secondaryLabels?: any[]
   link?: string
 }
 
@@ -33,8 +39,8 @@ export type GenericCardProps = {
   iconOptions?: IconOptions
   backgroundColor?: string
   isHeader?: boolean
-  genericCardSchema: GenericCardSchema,
-  schema: any,
+  genericCardSchema: GenericCardSchema
+  schema: any
   data: any
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
@@ -55,18 +61,25 @@ export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/
 // check for 'syn' followed and ended by a digit of unlimited length, must also begin the line
 export const SYNAPSE_REGX = /^syn\d+$/
 
-export default class GenericCard extends React.Component<GenericCardProps, GenericCardState> {
-
+export default class GenericCard extends React.Component<
+  GenericCardProps,
+  GenericCardState
+> {
   constructor(props: GenericCardProps) {
     super(props)
     this.state = {
-      showMoreDescription: false
+      showMoreDescription: false,
     }
     this.createTitleLink = this.createTitleLink.bind(this)
     this.createLabelLink = this.createLabelLink.bind(this)
   }
 
-  public createTitleLink (link: string, titleLink?: CardLink, data?: string [], schema?: any) {
+  public createTitleLink(
+    link: string,
+    titleLink?: CardLink,
+    data?: string[],
+    schema?: any,
+  ) {
     let linkDisplay = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
@@ -81,21 +94,21 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const urlParams = titleLink.URLColumnNames.map(
-        (el) => {
-          if (!schema.hasOwnProperty(el)) {
-            console.error(`Could not find match for data: ${data} with columnName ${el}`)
-          }
-          return `${el}=${data[schema[el]]}`
+      const urlParams = titleLink.URLColumnNames.map(el => {
+        if (!schema.hasOwnProperty(el)) {
+          console.error(
+            `Could not find match for data: ${data} with columnName ${el}`,
+          )
         }
-      ).join('&')
+        return `${el}=${data[schema[el]]}`
+      }).join('&')
       // tested this link on the browser, there's no need to encode the URL, the browser picks up on that automatically
       linkDisplay = `#/${titleLink.baseURL}?${urlParams}`
     }
     return { linkDisplay, target }
   }
 
-  getCutoff = (summary: string ) => {
+  getCutoff = (summary: string) => {
     let previewText = ''
     const summarySplit = summary!.split(' ')
     // find num words to join such that its >= char_count_cutoff
@@ -110,11 +123,18 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
 
   toggleShowMore = () => {
     this.setState({
-      showMoreDescription: true
+      showMoreDescription: true,
     })
   }
 
-  public createLabelLink (value: string, labelLink: LabelLink, isHeader: boolean) {
+  public createLabelLink(
+    value: string,
+    labelLink: LabelLink | MarkdownLink,
+    isHeader: boolean,
+  ) {
+    if (labelLink.isMarkdown) {
+      return <MarkdownSynapse markdown={value} />
+    }
     const split = value.split(',')
     let className = ''
     let style: React.CSSProperties = {}
@@ -123,30 +143,23 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
     } else {
       className = 'SRC-primary-text-color'
     }
-    return split.map(
-      (el, index) => {
-        const { baseURL } = labelLink
-        const urlParams = labelLink.URLColumnNames.map(
-          urlColumn => {
-            return `${urlColumn}=${el}`
-          }
-        ).join('&')
-        const href = `#/${baseURL}?${urlParams}`
-        return (
-          <React.Fragment key={el}>
-            <a 
-              href={href}
-              key={el}
-              className={className}
-              style={style}
-            >
-              {el}
-            </a>
-            {index < split.length - 1 && <span style={{marginRight: 4}}> , </span>}
-          </React.Fragment>
-        )
-      }
-    )
+    return split.map((el, index) => {
+      const { baseURL } = labelLink
+      const urlParams = labelLink.URLColumnNames.map(urlColumn => {
+        return `${urlColumn}=${el}`
+      }).join('&')
+      const href = `#/${baseURL}?${urlParams}`
+      return (
+        <React.Fragment key={el}>
+          <a href={href} key={el} className={className} style={style}>
+            {el}
+          </a>
+          {index < split.length - 1 && (
+            <span style={{ marginRight: 4 }}> , </span>
+          )}
+        </React.Fragment>
+      )
+    })
   }
 
   render() {
@@ -160,30 +173,39 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       isHeader = false,
       titleLinkConfig,
       labelLinkConfig,
-      facetAliases = {}
+      facetAliases = {},
     } = this.props
     const { showMoreDescription } = this.state
     const { link = '' } = genericCardSchema
     const type = genericCardSchema.type
     const title = data[schema[genericCardSchema.title]]
-    const subTitle = genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
+    const subTitle =
+      genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
     const description = data[schema[genericCardSchema.description || '']]
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.createTitleLink(linkValue, titleLinkConfig, data, schema)
-    const values: string [][] = []
+    const { linkDisplay, target } = this.createTitleLink(
+      linkValue,
+      titleLinkConfig,
+      data,
+      schema,
+    )
+    const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchema
     for (let i = 0; i < secondaryLabels.length; i += 1) {
-      const columnName =  secondaryLabels[i]
+      const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
       if (value) {
-        const labelLink = labelLinkConfig && labelLinkConfig.find(el => el.matchColumnName === columnName)
+        const labelLink =
+          labelLinkConfig &&
+          labelLinkConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
           // create link for this column
           value = this.createLabelLink(value, labelLink, isHeader)
         }
-        const columnDisplayName = facetAliases[columnName] || unCamelCase(columnName)
+        const columnDisplayName =
+          facetAliases[columnName] || unCamelCase(columnName)
         const keyValue = [columnDisplayName, value]
         values.push(keyValue)
       }
@@ -196,7 +218,7 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
-      paddingBottom: showFooter ? undefined : '15px'
+      paddingBottom: showFooter ? undefined : '15px',
     }
 
     if (isHeader) {
@@ -215,65 +237,96 @@ export default class GenericCard extends React.Component<GenericCardProps, Gener
       )
     }
 
-    const titleSearchHandle =facetAliases[genericCardSchema.title] || unCamelCase(genericCardSchema.title)
-    const stubTitleSearchHandle = facetAliases[genericCardSchema.subTitle || ''] || unCamelCase(genericCardSchema.subTitle)
-    const descriptionSubTitle = facetAliases[genericCardSchema.description || ''] || unCamelCase(genericCardSchema.description)
+    const titleSearchHandle =
+      facetAliases[genericCardSchema.title] ||
+      unCamelCase(genericCardSchema.title)
+    const stubTitleSearchHandle =
+      facetAliases[genericCardSchema.subTitle || ''] ||
+      unCamelCase(genericCardSchema.subTitle)
+    const descriptionSubTitle =
+      facetAliases[genericCardSchema.description || ''] ||
+      unCamelCase(genericCardSchema.description)
     return (
-      <div
-        style={style}
-        className={'SRC-portalCard'}
-      >
+      <div style={style} className={'SRC-portalCard'}>
         <div className="SRC-cardThumbnail">
           <Icon iconOptions={iconOptions} value={iconValue} type={type} />
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>
-          <div >
-            <h3 className="SRC-boldText SRC-blackText" style={{ margin: 'none' }}>
-              {linkDisplay ?
-                <a data-search-handle={titleSearchHandle} className="SRC-primary-text-color" target={target} href={linkDisplay}>
+          <div>
+            <h3
+              className="SRC-boldText SRC-blackText"
+              style={{ margin: 'none' }}
+            >
+              {linkDisplay ? (
+                <a
+                  data-search-handle={titleSearchHandle}
+                  className="SRC-primary-text-color"
+                  target={target}
+                  href={linkDisplay}
+                >
                   {title}
                 </a>
-                :
+              ) : (
                 <span data-search-handle={titleSearchHandle}> {title} </span>
-              }
+              )}
             </h3>
           </div>
-          {subTitle && <div data-search-handle={stubTitleSearchHandle} className="SRC-author"> {subTitle} </div>}
+          {subTitle && (
+            <div
+              data-search-handle={stubTitleSearchHandle}
+              className="SRC-author"
+            >
+              {' '}
+              {subTitle}{' '}
+            </div>
+          )}
           {/* 
             Below is a hack that allows word highlighting to work, the Search componenet insert's
             html elements outside of the React DOM which if detected would break the app,
             but as written below this avoids that reconcilliation process.
           */}
-          {
-            description &&
+          {description && (
             <div className={showMoreDescription ? 'SRC-hidden' : ''}>
-              <span data-search-handle={descriptionSubTitle} className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}>
+              <span
+                data-search-handle={descriptionSubTitle}
+                className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
+              >
                 {this.getCutoff(description).previewText}
               </span>
-              {
-                description.length >= CHAR_COUNT_CUTOFF
-                &&
+              {description.length >= CHAR_COUNT_CUTOFF && (
                 <a
-                  style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '3px' }}
+                  style={{
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    marginLeft: '3px',
+                  }}
                   className="SRC-primary-text-color"
                   onClick={this.toggleShowMore}
                 >
                   ...Show More{' '}
                 </a>
-              }
+              )}
             </div>
-          }
-          {
-            description &&
+          )}
+          {description && (
             <div className={showMoreDescription ? '' : 'SRC-hidden'}>
-              <span data-search-handle={descriptionSubTitle} className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}>
+              <span
+                data-search-handle={descriptionSubTitle}
+                className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
+              >
                 {description}
               </span>
             </div>
-          }
+          )}
         </div>
-        {showFooter && <CardFooter isHeader={false} secondaryLabelLimit={secondaryLabelLimit} values={values}/>}
+        {showFooter && (
+          <CardFooter
+            isHeader={false}
+            secondaryLabelLimit={secondaryLabelLimit}
+            values={values}
+          />
+        )}
       </div>
     )
   }

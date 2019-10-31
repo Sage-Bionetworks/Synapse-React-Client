@@ -12,7 +12,7 @@ const TOC_CLASS = {
   3: 'toc-indent3',
   4: 'toc-indent4',
   5: 'toc-indent5',
-  6: 'toc-indent6'
+  6: 'toc-indent6',
 }
 
 declare var katex: any
@@ -34,19 +34,19 @@ declare var sanitizeHtml: any
 declare var markdownitMath: any
 
 export type MarkdownSynapseProps = {
-  errorMessageView?: React.FunctionComponent;
-  token?: string;
-  ownerId?: string;
-  wikiId?: string;
-  markdown?: string;
+  errorMessageView?: React.FunctionComponent
+  token?: string
+  ownerId?: string
+  wikiId?: string
+  markdown?: string
 }
 const md = markdownit({ html: true })
 
 type MarkdownSynapseState = {
-  md: any;
+  md: any
   data: Partial<WikiPage>
-  fileHandles?: FileHandleResults;
-  errorMessage: string;
+  fileHandles?: FileHandleResults
+  errorMessage: string
 }
 /**
  * Basic Markdown functionality for Synapse, supporting Images/Plots/References/Bookmarks/buttonlinks
@@ -54,7 +54,10 @@ type MarkdownSynapseState = {
  * @class Markdown
  * @extends {React.Component}
  */
-export default class MarkdownSynapse extends React.Component<MarkdownSynapseProps, MarkdownSynapseState> {
+export default class MarkdownSynapse extends React.Component<
+  MarkdownSynapseProps,
+  MarkdownSynapseState
+> {
   public markupRef: React.RefObject<HTMLInputElement>
 
   /**
@@ -64,17 +67,18 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   constructor(props: MarkdownSynapseProps) {
     super(props)
     // markdownitSynapse wraps around markdownit object and uses its own dependencies
-    markdownitSynapse.init_markdown_it(md,
-                                       markdownitSub,
-                                       markdownitSup,
-                                       markdownitCentertext,
-                                       markdownitSynapseHeading,
-                                       markdownitSynapseTable,
-                                       markdownitStrikethroughAlt,
-                                       markdownitContainer,
-                                       markdownitEmphasisAlt,
-                                       markdownitInlineComments,
-                                       markdownitBr
+    markdownitSynapse.init_markdown_it(
+      md,
+      markdownitSub,
+      markdownitSup,
+      markdownitCentertext,
+      markdownitSynapseHeading,
+      markdownitSynapseTable,
+      markdownitStrikethroughAlt,
+      markdownitContainer,
+      markdownitEmphasisAlt,
+      markdownitInlineComments,
+      markdownitBr,
     )
 
     const mathSuffix = ''
@@ -119,7 +123,6 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
 
   // Manually handle clicks to anchor tags where the scrollto isn't handled by page hash
   public handleLinkClicks(event: React.MouseEvent<HTMLElement>) {
-
     const genericElement = event.target as HTMLElement
     if (genericElement.tagName === 'A' || genericElement.tagName === 'BUTTON') {
       const anchor = event.target as HTMLAnchorElement
@@ -128,18 +131,21 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         // its a reference, so we scroll to the appropriate bookmark
         const referenceNumber = Number(event.currentTarget.id.substring(3)) // e.g. ref2 => '2'
         const goTo = this.markupRef.current!.querySelector(
-          `#bookmark${referenceNumber}`
+          `#bookmark${referenceNumber}`,
         )
         try {
           goTo!.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
-            inline: 'center'
+            inline: 'center',
           })
         } catch (e) {
           console.log('error on scroll', e)
         }
-      } else if (event.currentTarget.id !== null && anchor.getAttribute('data-anchor')) {
+      } else if (
+        event.currentTarget.id !== null &&
+        anchor.getAttribute('data-anchor')
+      ) {
         event.preventDefault()
         // handle table of contents widget
         const idOfContent = anchor.getAttribute('data-anchor')
@@ -148,7 +154,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
           goTo!.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
-            inline: 'center'
+            inline: 'center',
           })
         } catch (e) {
           console.log('error on scroll', e)
@@ -184,7 +190,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         table: ['class'],
         th: ['class'],
         thead: ['class'],
-        ul: ['class']
+        ul: ['class'],
       },
       allowedTags: [
         'span',
@@ -218,8 +224,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         'br',
         'hr',
         'summary',
-        'details'
-      ]
+        'details',
+      ],
     })
     return { __html: cleanText }
   }
@@ -235,7 +241,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     }
     // use regex to grab all elements
     const mathExpressions = this.markupRef.current.querySelectorAll(
-      '[id^="mathjax-"]'
+      '[id^="mathjax-"]',
     )
     // go through all obtained elements and transform them with katex
     mathExpressions.forEach((element: any) => {
@@ -244,20 +250,20 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
           {
             display: true,
             left: '$$',
-            right: '$$'
+            right: '$$',
           },
           {
             display: false,
             left: '\\(',
-            right: '\\)'
+            right: '\\)',
           },
           {
             display: true,
             left: '\\[',
-            right: '\\]'
-          }
+            right: '\\]',
+          },
         ],
-        throwOnError: false
+        throwOnError: false,
       })
     })
   }
@@ -271,7 +277,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     this.createHTML(this.state.data.markdown)
     const footnotesHtml = this.createHTML(markdownitSynapse.footnotes()).__html
     if (footnotesHtml.length > 0) {
-      return (<Bookmarks footnotes={footnotesHtml} />)
+      return <Bookmarks footnotes={footnotesHtml} />
     }
     // ts doesn't like functions without explicit return statements
     return
@@ -283,43 +289,45 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public async getWikiPageMarkdown() {
     const { ownerId, wikiId = '', token } = this.props
     try {
-      const wikiPage = await SynapseClient.getEntityWiki(token,ownerId,wikiId)
+      const wikiPage = await SynapseClient.getEntityWiki(token, ownerId, wikiId)
       try {
-        const fileHandles = await this.getWikiAttachments(wikiId ? wikiId: wikiPage.id)
+        const fileHandles = await this.getWikiAttachments(
+          wikiId ? wikiId : wikiPage.id,
+        )
         this.setState({
           data: wikiPage,
-          fileHandles
+          fileHandles,
         })
-      } catch(fileHandlesErr) {
+      } catch (fileHandlesErr) {
         console.error('fileHandlesErr = ', fileHandlesErr)
       }
     } catch (err) {
       console.error('Error on wiki markdown load\n', err)
     }
-}
+  }
   public async getWikiAttachments(wikiId: string) {
-    const {
-      token,
-      ownerId,
-    } = this.props
+    const { token, ownerId } = this.props
     if (!ownerId) {
-      console.error('Cannot get wiki attachments without ownerId on Markdown Component')
+      console.error(
+        'Cannot get wiki attachments without ownerId on Markdown Component',
+      )
       return undefined
     }
     return await SynapseClient.getWikiAttachmentsFromEntity(
       token,
       ownerId,
-      wikiId
-    ).then((data) => {
-      return data
-    })
-    .catch((err) => {
-      this.setState({
-        errorMessage: err.reason
+      wikiId,
+    )
+      .then(data => {
+        return data
       })
-      console.error('Error on wiki attachment load ', err)
-      return undefined
-    })
+      .catch(err => {
+        this.setState({
+          errorMessage: err.reason,
+        })
+        console.error('Error on wiki attachment load ', err)
+        return undefined
+      })
   }
   /**
    * If theres an error loading the wiki page show an informative message
@@ -330,11 +338,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public getErrorView() {
     if (this.state.errorMessage && this.props.errorMessageView) {
       const ErrorView = this.props.errorMessageView as React.FC
-      return (
-        <ErrorView>
-          {this.state.errorMessage}
-        </ErrorView>
-      )
+      return <ErrorView>{this.state.errorMessage}</ErrorView>
     }
     return
   }
@@ -343,15 +347,12 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     const referenceRegex = /<span id="wikiReference.*?<span data-widgetparams.*?span>/g
     let referenceCount = 1
 
-    return text.replace(
-      referenceRegex,
-      () => {
-        // replace all reference tags with id's of the form id="ref<number>"" that we can read onClick
-        const current = referenceCount
-        referenceCount += 1
-        return `<a href="" id="ref${current}">[${current}]</a>`
-      }
-    )
+    return text.replace(referenceRegex, () => {
+      // replace all reference tags with id's of the form id="ref<number>"" that we can read onClick
+      const current = referenceCount
+      referenceCount += 1
+      return `<a href="" id="ref${current}">[${current}]</a>`
+    })
   }
 
   public addIdsToTocWidgets(text: string) {
@@ -363,7 +364,10 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       // replace with id of the form id="toc" so we can read them with onclick events
       const curTocId = tocIdCount
       tocIdCount += 1
-      const matchWithId = `${match.substring(0, 3)} id="${tocId}${curTocId}"${match.substring(3)}`
+      const matchWithId = `${match.substring(
+        0,
+        3,
+      )} id="${tocId}${curTocId}"${match.substring(3)}`
       return matchWithId
     })
   }
@@ -407,7 +411,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       '&amp;': '&',
       '&gt;': '>',
       '&lt;': '<',
-      '&quot;': '"'
+      '&quot;': '"',
     }
     return xml.replace(/(&quot;|&lt;|&gt;|&amp;)/g, (str, item) => {
       return escapedOneToXmlSpecialMap[item]
@@ -447,7 +451,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     widgetParamsString
       .substring(questionIndex + 1)
       .split('&')
-      .forEach((keyPair) => {
+      .forEach(keyPair => {
         let [key, value] = keyPair.split('=')
         value = decodeURIComponent(value)
         widgetparamsMapped[key] = value
@@ -465,7 +469,10 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
    * @returns
    * @memberof MarkdownSynapse
    */
-  public processWidgetOrDomElement(widgetsToBe: string[], originalMarkup: string) {
+  public processWidgetOrDomElement(
+    widgetsToBe: string[],
+    originalMarkup: string,
+  ) {
     const widgets = []
     let index = 0
     for (const text of widgetsToBe) {
@@ -475,7 +482,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
         widgets.push(this.processWidgetMappings(text, originalMarkup))
       } else {
         // Else its plain html/text.
-        
+
         /* 
            Note-- variable `element` introduces a major bug which is that there can be no synapse widgets
            contained inside html directly.
@@ -488,12 +495,13 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
            There needs to be a complete rework of the rendering to recursively process the markdown.
            Along the lines of -
             - Tokenize the html, recurse on it until theres a leaf, render that as an html element or widget
-        */ 
+        */
+
         const key = index.toString() + text
-        const element = <span key={key} dangerouslySetInnerHTML={{ __html: text }} />
-        widgets.push(
-          element
+        const element = (
+          <span key={key} dangerouslySetInnerHTML={{ __html: text }} />
         )
+        widgets.push(element)
         index += 1
       }
     }
@@ -512,7 +520,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   public renderWidget(
     widgetType: string,
     widgetparamsMapped: any,
-    originalMarkup: string
+    originalMarkup: string,
   ) {
     // we make keys out of the widget params
     const key = JSON.stringify(widgetparamsMapped)
@@ -535,10 +543,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
 
   public renderSynapseButton(widgetparamsMapped: any) {
     let buttonClasses = ''
-    const {
-      align = '',
-      highlight = '',
-    } = widgetparamsMapped
+    const { align = '', highlight = '' } = widgetparamsMapped
     const alignLowerCase = align.toLowerCase()
     if (alignLowerCase === 'left') {
       buttonClasses += 'floatLeft '
@@ -553,11 +558,11 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     }
     if (alignLowerCase === 'center') {
       return (
-        <div style={{textAlign: 'center'}}>
+        <div style={{ textAlign: 'center' }}>
           <a
             key={widgetparamsMapped.reactKey}
             href={widgetparamsMapped.url}
-            className={"SRC-standard-button-shape " +  buttonClasses}
+            className={'SRC-standard-button-shape ' + buttonClasses}
             role="button"
           >
             {widgetparamsMapped.text}
@@ -569,7 +574,7 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       <a
         key={widgetparamsMapped.reactKey}
         href={widgetparamsMapped.url}
-        className={"SRC-standard-button-shape " +  buttonClasses}
+        className={'SRC-standard-button-shape ' + buttonClasses}
         role="button"
       >
         {widgetparamsMapped.text}
@@ -631,13 +636,14 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
       elements.push(
         <div key={p4}>
           <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
-            {' '}{p4}{' '}
+            {' '}
+            {p4}{' '}
           </a>
-        </div>
+        </div>,
       )
       return ''
     })
-    return (<div key={text}>{elements}</div>)
+    return <div key={text}>{elements}</div>
   }
 
   public renderUserBadge(widgetparamsMapped: any) {
@@ -656,7 +662,9 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
     // @ts-ignore
-    this.markupRef.current && this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
+    this.markupRef.current &&
+      // @ts-ignore
+      this.markupRef.current!.addEventListener('click', this.handleLinkClicks)
     // unpack and set default value if not specified
     // get wiki attachments
     await this.getWikiPageMarkdown()
@@ -666,8 +674,8 @@ export default class MarkdownSynapse extends React.Component<MarkdownSynapseProp
   // on component update find and re-render the math/widget items accordingly
   public async componentDidUpdate(prevProps: MarkdownSynapseProps) {
     let shouldUpdate = this.props.token !== prevProps.token
-    shouldUpdate = shouldUpdate || (this.props.ownerId !== prevProps.ownerId)
-    shouldUpdate = shouldUpdate || (this.props.wikiId !== prevProps.wikiId)
+    shouldUpdate = shouldUpdate || this.props.ownerId !== prevProps.ownerId
+    shouldUpdate = shouldUpdate || this.props.wikiId !== prevProps.wikiId
 
     // we have to carefully update the component so it doesn't encounter an infinite loop
     if (shouldUpdate) {

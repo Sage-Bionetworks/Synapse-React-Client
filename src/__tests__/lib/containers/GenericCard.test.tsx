@@ -1,22 +1,25 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
-import GenericCard, { GenericCardProps, GenericCardSchema, CARD_SHORT_DESCRIPTION_CSS } from '../../../lib/containers/GenericCard'
+import GenericCard, {
+  GenericCardProps,
+  GenericCardSchema,
+  CARD_SHORT_DESCRIPTION_CSS,
+} from '../../../lib/containers/GenericCard'
 import * as Utils from '../../../lib/containers/row_renderers/utils'
-import { CardLink, LabelLinkConfig } from '../../../lib/containers/CardContainerLogic'
+import {
+  CardLink,
+  LabelLinkConfig,
+} from '../../../lib/containers/CardContainerLogic'
+import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 
 const createShallowComponent = (props: GenericCardProps) => {
-  const wrapper = mount(
-    <GenericCard
-      {...props}
-    />
-  )
+  const wrapper = mount(<GenericCard {...props} />)
   const instance = wrapper.instance() as CardContainer
   return { wrapper, instance }
 }
 
 describe('it renders the UI correctly', () => {
-
   const iconOptions = {
     'AMP-AD': 'MOCKED_IMG_SVG_STRING',
   }
@@ -31,13 +34,10 @@ describe('it renders the UI correctly', () => {
   }
   const genericCardSchema: GenericCardSchema = {
     ...commonProps,
-    secondaryLabels: [
-      'labelOne',
-      'labelTwo',
-    ]
+    secondaryLabels: ['labelOne', 'labelTwo', 'labelThree'],
   }
   const genericCardSchemaHeader: GenericCardSchema = {
-    ...commonProps
+    ...commonProps,
   }
   const schema = {
     title: 0,
@@ -46,7 +46,8 @@ describe('it renders the UI correctly', () => {
     icon: 3,
     labelOne: 4,
     labelTwo: 5,
-    link: 6
+    link: 6,
+    labelThree: 7,
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -64,14 +65,14 @@ describe('it renders the UI correctly', () => {
     MOCKED_ICON,
     MOCKED_LABELONE,
     MOCKED_LABELTWO,
-    MOCKED_LINK
+    MOCKED_LINK,
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
     data,
     genericCardSchema,
     schema,
-    secondaryLabelLimit: 3
+    secondaryLabelLimit: 3,
   }
 
   const propsForHeaderMode: GenericCardProps = {
@@ -80,7 +81,7 @@ describe('it renders the UI correctly', () => {
     schema,
     genericCardSchema: genericCardSchemaHeader,
     backgroundColor: 'purple',
-    isHeader: true
+    isHeader: true,
   }
 
   it('renders without crashing in non header mode', () => {
@@ -93,7 +94,9 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find('img')).toBeDefined()
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
     expect(wrapper.find('a.SRC-primary-text-color').text()).toEqual(data[0])
-    expect(wrapper.find(`.${CARD_SHORT_DESCRIPTION_CSS}`).text()).toEqual(MOCKED_DESCRIPTION)
+    expect(wrapper.find(`.${CARD_SHORT_DESCRIPTION_CSS}`).text()).toEqual(
+      MOCKED_DESCRIPTION,
+    )
     expect(wrapper.find(Utils.CardFooter)).toBeDefined()
   })
 
@@ -110,12 +113,13 @@ describe('it renders the UI correctly', () => {
 
   it.skip('renders the query handles corretly', () => {
     const { wrapper } = createShallowComponent(propsForHeaderMode)
-    expect(wrapper.find(`[data-search-handle]`).text()).toEqual(commonProps.title)
+    expect(wrapper.find(`[data-search-handle]`).text()).toEqual(
+      commonProps.title,
+    )
   })
-
 })
 
-describe('it makes the correct URL for the title' , () => {
+describe('it makes the correct URL for the title', () => {
   const createTitleLink = GenericCard.prototype.createTitleLink
   const SELF = '_self'
   const BLANK = '_blank'
@@ -139,68 +143,84 @@ describe('it makes the correct URL for the title' , () => {
   it('creates an internal parameterized link', () => {
     const grantNumberValue = '1234'
     const funderValue = 'funder'
-    const data = [
-      grantNumberValue,
-      funderValue
-    ]
+    const data = [grantNumberValue, funderValue]
     const URLColumnNames = ['Grant Number', 'Funder']
     const schema = {
       [URLColumnNames[0]]: 0,
-      [URLColumnNames[1]]: 1
+      [URLColumnNames[1]]: 1,
     }
     const titleLinkConfig: CardLink = {
+      isMarkdown: false,
       baseURL: 'Explore/Projects',
-      URLColumnNames: [
-        URLColumnNames[0],
-        URLColumnNames[1]
-      ]
+      URLColumnNames: [URLColumnNames[0], URLColumnNames[1]],
     }
     const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
-    const { linkDisplay, target } = createTitleLink('', titleLinkConfig, data, schema)
+    const { linkDisplay, target } = createTitleLink(
+      '',
+      titleLinkConfig,
+      data,
+      schema,
+    )
     expect(linkDisplay).toEqual(expectedLink)
     expect(target).toEqual(SELF)
   })
 })
 
-describe('it makes the correct URL for the secondary labels' , () => {
+describe('it makes the correct URL for the secondary labels', () => {
   const createLabelLink = GenericCard.prototype.createLabelLink
   const DATASETS = 'datasets'
   const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
   const labelLinkConfig: LabelLinkConfig = [
     {
+      isMarkdown: false,
       baseURL: datasetBaseURL,
       URLColumnNames: [DATASETS],
-      matchColumnName: 'dataset'
+      matchColumnName: 'dataset',
     },
     {
+      isMarkdown: false,
       baseURL: datasetBaseURL,
       URLColumnNames: [DATASETS, STUDIES],
-      matchColumnName: 'dataset'
+      matchColumnName: 'dataset',
+    },
+    {
+      isMarkdown: true,
+      matchColumnName: 'dataset',
     },
   ]
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], false)} </>)
+    const wrapper = mount(
+      <>{createLabelLink(value, labelLinkConfig[0], false)} </>,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}`)
+    expect(link.props().href).toEqual(
+      `#/${datasetBaseURL}?${DATASETS}=${value}`,
+    )
     // double check the style
     expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
   })
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[1], false)} </>)
+    const wrapper = mount(
+      <>{createLabelLink(value, labelLinkConfig[1], false)} </>,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`)
+    expect(link.props().href).toEqual(
+      `#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`,
+    )
   })
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], true)} </>)
+    const wrapper = mount(
+      <>{createLabelLink(value, labelLinkConfig[0], true)} </>,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
@@ -211,11 +231,31 @@ describe('it makes the correct URL for the secondary labels' , () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const wrapper = mount(<>{createLabelLink(value, labelLinkConfig[0], false)} </>)
+    const wrapper = mount(
+      <>{createLabelLink(value, labelLinkConfig[0], false)} </>,
+    )
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
-    expect(links.at(0).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val1}`)
-    expect(links.at(1).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val2}`)
-    expect(links.at(2).props().href).toEqual(`#/${datasetBaseURL}?${DATASETS}=${val3}`)
+    expect(links.at(0).props().href).toEqual(
+      `#/${datasetBaseURL}?${DATASETS}=${val1}`,
+    )
+    expect(links.at(1).props().href).toEqual(
+      `#/${datasetBaseURL}?${DATASETS}=${val2}`,
+    )
+    expect(links.at(2).props().href).toEqual(
+      `#/${datasetBaseURL}?${DATASETS}=${val3}`,
+    )
+  })
+
+  it('works with a markdown link ', async () => {
+    const value = '# markdown [link](synapse.org) '
+    const wrapper = await mount(
+      <>{createLabelLink(value, labelLinkConfig[2], false)} </>,
+    )
+    const markdown = wrapper.find(MarkdownSynapse)
+    expect(markdown).toHaveLength(1)
+    // double check the html elements show up correctly from the markdown component
+    expect(markdown.render().find('h1')).toHaveLength(1)
+    expect(markdown.render().find('a')).toHaveLength(1)
   })
 })
