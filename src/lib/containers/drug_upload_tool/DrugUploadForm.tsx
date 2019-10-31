@@ -16,6 +16,9 @@ import {
   NavActionEnum,
   StatusEnum,
   FormSchema,
+  RulesResult,
+  IRulesValidationEvent,
+  IRulesNavigationEvent,
 } from './types'
 import Header from './Header'
 import StepsSideNav from './StepsSideNav'
@@ -64,17 +67,6 @@ type DrugUploadFormState = {
   isLoadingSaved: boolean
 }
 
-type RulesEvent = {
-  type: string
-  params: {
-    next: string
-  }
-}
-
-type RulesResult = {
-  events: RulesEvent[]
-}
-
 export interface SummaryFormat {
   label: string
   value: string
@@ -101,6 +93,7 @@ export default class DrugUploadForm extends React.Component<
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: {}
   nextStep: Step | undefined
+  extraErrors: AjvError[] = []
 
   isNewForm = (formData: IFormData): boolean => {
     return (
@@ -264,7 +257,7 @@ export default class DrugUploadForm extends React.Component<
     try {
       const result: RulesResult = await engine.run(formData)
       if (result.events.length > 0) {
-        return result.events[0].params.next
+        return (result.events[0] as IRulesNavigationEvent).params.next
       } else {
         return currentStep.default
       }
@@ -378,12 +371,18 @@ export default class DrugUploadForm extends React.Component<
     }
   }
 
-  triggerAction = (navAction: NavActionEnum) => {
+  triggerAction = async (navAction: NavActionEnum) => {
     // we don't need to validate on save so bypassing submit
     if (navAction === NavActionEnum.SAVE) {
       return this.props.onSave(this.state.formData)
     } else {
       this.navAction = navAction
+      // first run whatever custom validaton we have
+      this.extraErrors = await this.runCustomValidation(
+        this.state.formData,
+        this.state.currentStep,
+        this.state.steps,
+      )
       if (this.formRef.current) {
         this.formRef.current.submit()
       }
@@ -666,10 +665,92 @@ export default class DrugUploadForm extends React.Component<
     )
   }
 
+  runCustomValidation = async (
+    formData: IFormData,
+    currentStep: Step,
+    allSteps: Step[],
+  ): Promise<AjvError[]> => {
+    let errors: AjvError[] = []
+
+    //default - running on current step
+    let rules = currentStep.validationRules || []
+    let data = {
+      [currentStep.id]: formData[currentStep.id],
+    }
+
+    // for final step -- concatenate all rules and run on all data
+    if (currentStep.final) {
+      rules = allSteps.reduce((acc: any, value: Step) => {
+        return value.validationRules && value.validationRules.length > 0
+          ? acc.concat(value.validationRules)
+          : acc
+      }, [])
+      data = _.cloneDeep(formData)
+    }
+
+    if (rules.length === 0) {
+      return []
+    }
+
+    //this is a workaround for inability to define a rule to run on all members of the data array
+    // we define the generic rule with path e.g."path": ".experiments[*].dose_range.dose_range_min",
+    let allRules: any[] = []
+    rules.forEach(rule => {
+      //take a rule
+      const paramProp = rule.event.params.property
+      // if it's just a normal rule - add it
+      if (paramProp.indexOf('[*]') === -1) {
+        allRules.push(rule)
+      } else {
+        const path = paramProp.split('[*]')[0].substring(1)
+        const data = _.get(formData, path)
+        // generate a rule for each item in the data array by substituting [*] w/ appropriate index
+        if (Array.isArray(data) && typeof data !== 'string') {
+          for (let i = 0; i < data.length; i++) {
+            const newRule = JSON.parse(
+              JSON.stringify(rule).replace(/\[\*\]/g, `[${i}]`),
+            )
+            allRules.push(newRule)
+          }
+        } else {
+          allRules.push(rule)
+        }
+      }
+    })
+    // no we run  all the rules through the engine
+    let engine = new Engine(allRules, {
+      allowUndefinedFacts: true,
+    })
+
+    try {
+      const result: RulesResult = await engine.run(data)
+      const validationEvents = result.events as IRulesValidationEvent[]
+      validationEvents.forEach(event => {
+        const err: AjvError = {
+          ...event.params,
+          ...{
+            params: {},
+            stack: `${event.params.property} ${event.params.message}`,
+          },
+        }
+        errors.push(err)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
+    return errors
+  }
+
   transformErrors = (errors: AjvError[]): AjvError[] => {
     // if we are not in wizard mode and not trying to submit or validate we just want to skip
     // over the errors and just set the step status
     // https://github.com/rjsf-team/react-jsonschema-form/issues/1263
+    this.extraErrors.forEach(extraError => {
+      if (!errors.find(error => error.stack === extraError.stack)) {
+        errors.push(extraError)
+      }
+    })
 
     if (
       this.navAction !== NavActionEnum.SUBMIT &&
@@ -708,6 +789,7 @@ export default class DrugUploadForm extends React.Component<
         )
       })
     })
+
     return errors.map(error => {
       error.message = error.message.replace('property', 'field')
 
@@ -717,15 +799,18 @@ export default class DrugUploadForm extends React.Component<
 
   renderErrorListTemplate = (props: ErrorListProps) => {
     let { errors } = props
-    const currentLis = errors.map((error, i) => {
-      return renderTransformedErrorObject(
-        this.state.steps,
-        error,
-        this.uiSchema,
-        i,
-        this.props.schema,
-      )
-    })
+    const currentLis = errors
+      .map((error, i) => {
+        return renderTransformedErrorObject(
+          this.state.steps,
+          error,
+          this.uiSchema,
+          i,
+          this.props.schema,
+        )
+      })
+      .sort((a, b) => a.order - b.order)
+      .map(li => li.element)
 
     return (
       <div className="form-error-summary">
@@ -905,7 +990,7 @@ function renderTransformedErrorObject(
   uiSchema: UiSchema,
   i: number,
   schema: any,
-): JSX.Element {
+): { order: number; element: JSX.Element } {
   const propPath = _.trimStart(error.property, '.')
   const propArr = propPath.split('.')
 
@@ -935,6 +1020,7 @@ function renderTransformedErrorObject(
 
   const screen = _.find(steps, { id: propArr[0] }) || {
     title: propArr[0],
+    order: 0,
   }
   const element = (
     <li key={i} className="">
@@ -947,7 +1033,7 @@ function renderTransformedErrorObject(
       </span>
     </li>
   )
-  return element
+  return { order: screen.order, element }
 }
 
 //recursively sets property value to dangerouslySetInnerHTML of that value
