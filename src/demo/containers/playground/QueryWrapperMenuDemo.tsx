@@ -283,11 +283,7 @@ class QueryWrapperMenuDemo extends React.Component<
           Table with markdown
         </button>
         <h2>Demo of table</h2>
-        <QueryWrapperMenu
-          token={'b05973c4-32ae-4cba-a668-559fdf6fdde5'}
-          isConsistent={true}
-          {...props}
-        />
+        <QueryWrapperMenu isConsistent={true} {...props} />
       </div>
     )
   }
