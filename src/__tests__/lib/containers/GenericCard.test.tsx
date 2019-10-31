@@ -9,7 +9,7 @@ import GenericCard, {
 import * as Utils from '../../../lib/containers/row_renderers/utils'
 import {
   CardLink,
-  LabelLinkConfig,
+  LabelConfig,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 
@@ -120,7 +120,7 @@ describe('it renders the UI correctly', () => {
 })
 
 describe('it makes the correct URL for the title', () => {
-  const createTitleLink = GenericCard.prototype.createTitleLink
+  const createTitleLink = GenericCard.prototype.renderTitleLink
   const SELF = '_self'
   const BLANK = '_blank'
 
@@ -167,11 +167,11 @@ describe('it makes the correct URL for the title', () => {
 })
 
 describe('it makes the correct URL for the secondary labels', () => {
-  const createLabelLink = GenericCard.prototype.createLabelLink
+  const renderLabel = GenericCard.prototype.renderLabel
   const DATASETS = 'datasets'
   const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
-  const labelLinkConfig: LabelLinkConfig = [
+  const LabelConfig: LabelConfig = [
     {
       isMarkdown: false,
       baseURL: datasetBaseURL,
@@ -192,9 +192,7 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const wrapper = mount(
-      <>{createLabelLink(value, labelLinkConfig[0], false)} </>,
-    )
+    const wrapper = mount(<>{renderLabel(value, LabelConfig[0], false)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
@@ -206,9 +204,7 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const wrapper = mount(
-      <>{createLabelLink(value, labelLinkConfig[1], false)} </>,
-    )
+    const wrapper = mount(<>{renderLabel(value, LabelConfig[1], false)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
@@ -218,9 +214,7 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const wrapper = mount(
-      <>{createLabelLink(value, labelLinkConfig[0], true)} </>,
-    )
+    const wrapper = mount(<>{renderLabel(value, LabelConfig[0], true)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
@@ -231,9 +225,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const wrapper = mount(
-      <>{createLabelLink(value, labelLinkConfig[0], false)} </>,
-    )
+    const wrapper = mount(<>{renderLabel(value, LabelConfig[0], false)} </>)
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
     expect(links.at(0).props().href).toEqual(
@@ -250,7 +242,7 @@ describe('it makes the correct URL for the secondary labels', () => {
   it('works with a markdown link ', async () => {
     const value = '# markdown [link](synapse.org) '
     const wrapper = await mount(
-      <>{createLabelLink(value, labelLinkConfig[2], false)} </>,
+      <>{renderLabel(value, LabelConfig[2], false)} </>,
     )
     const markdown = wrapper.find(MarkdownSynapse)
     expect(markdown).toHaveLength(1)

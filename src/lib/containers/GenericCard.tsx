@@ -3,9 +3,9 @@ import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
 import {
   CardLink,
-  LabelLinkConfig,
+  LabelConfig,
   LabelLink,
-  MarkdownLink,
+  LabelMarkdown,
 } from './CardContainerLogic'
 import { unCamelCase } from './table/SynapseTable'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -44,7 +44,7 @@ export type GenericCardProps = {
   data: any
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
-  labelLinkConfig?: LabelLinkConfig
+  labelLinkConfig?: LabelConfig
 }
 
 export type GenericCardState = {
@@ -70,11 +70,11 @@ export default class GenericCard extends React.Component<
     this.state = {
       showMoreDescription: false,
     }
-    this.createTitleLink = this.createTitleLink.bind(this)
-    this.createLabelLink = this.createLabelLink.bind(this)
+    this.renderTitleLink = this.renderTitleLink.bind(this)
+    this.renderLabel = this.renderLabel.bind(this)
   }
 
-  public createTitleLink(
+  public renderTitleLink(
     link: string,
     titleLink?: CardLink,
     data?: string[],
@@ -127,9 +127,9 @@ export default class GenericCard extends React.Component<
     })
   }
 
-  public createLabelLink(
+  public renderLabel(
     value: string,
-    labelLink: LabelLink | MarkdownLink,
+    labelLink: LabelLink | LabelMarkdown,
     isHeader: boolean,
   ) {
     if (labelLink.isMarkdown) {
@@ -185,7 +185,7 @@ export default class GenericCard extends React.Component<
     const iconValue = data[schema[genericCardSchema.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.createTitleLink(
+    const { linkDisplay, target } = this.renderTitleLink(
       linkValue,
       titleLinkConfig,
       data,
@@ -202,7 +202,7 @@ export default class GenericCard extends React.Component<
           labelLinkConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
           // create link for this column
-          value = this.createLabelLink(value, labelLink, isHeader)
+          value = this.renderLabel(value, labelLink, isHeader)
         }
         const columnDisplayName =
           facetAliases[columnName] || unCamelCase(columnName)

@@ -19,19 +19,18 @@ export interface CardLink {
   isMarkdown: false
 }
 
-export interface MarkdownLink {
-  isMarkdown: true
-  // the columns whos value will be paired with the columns URLColumnNames
-  matchColumnName: string
-}
-
 export interface LabelLink extends CardLink {
   // the columns whos value will be paired with the columns URLColumnNames
   matchColumnName: string
 }
 
-// Specify the indices in the values [] that should point to links
-export type LabelLinkConfig = (LabelLink | MarkdownLink)[]
+export interface LabelMarkdown {
+  isMarkdown: true
+  // the columns whos value will be paired with the columns URLColumnNames
+  matchColumnName: string
+}
+// Specify the indices in the values [] that should be rendered specially
+export type LabelConfig = (LabelLink | LabelMarkdown)[]
 
 export type CommonCardProps = {
   type: string
@@ -40,7 +39,7 @@ export type CommonCardProps = {
   iconOptions?: IconOptions
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
-  labelLinkConfig?: LabelLinkConfig
+  LabelConfig?: LabelConfig
   loadingScreen?: React.FunctionComponent | JSX.Element
 }
 
