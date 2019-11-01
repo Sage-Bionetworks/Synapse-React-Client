@@ -178,7 +178,9 @@
   }
 
   .notification-area {
-    color: $action-color;
+    @include themify($themes) {
+      color: themed('action-color');
+    }
     font-style: italic;
     margin-bottom: $space-unit;
   }
@@ -234,7 +236,9 @@
     @include calc(height, #{$space-unit} * 2);
 
     button.btn-link {
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+      }
       font-weight: 700;
       font-style: normal;
       text-transform: uppercase;
@@ -261,7 +265,9 @@
 
   input[type='checkbox']:checked + label::before,
   input[type='checkbox']:checked + span::before {
-    color: $action-color;
+    @include themify($themes) {
+      color: themed('action-color');
+    }
   }
 
   .has-error .form-control {
