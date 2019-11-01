@@ -1,7 +1,7 @@
 import {
   getIsValueSelected,
   readFacetValues,
-  SyntheticHTMLInputElement
+  SyntheticHTMLInputElement,
 } from '../../../lib/utils/modules/facetUtils'
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
@@ -15,7 +15,7 @@ describe('getIsValueSelected works', () => {
   const lastFacetSelectionNoSelector: FacetSelection = {
     columnName,
     facetValue,
-    selector: ''
+    selector: '',
   }
 
   /*
@@ -33,70 +33,80 @@ describe('getIsValueSelected works', () => {
     const curFacetSelection: FacetColumnResultValueCount = {
       value: 'Active',
       count: 20,
-      isSelected: false
+      isSelected: false,
     }
-    expect(getIsValueSelected({
-      curFacetSelection,
-      columnName,
-      isLoading: false,
-      lastFacetSelection: lastFacetSelectionNoSelector
-    })).toEqual(curFacetSelection.isSelected)
+    expect(
+      getIsValueSelected({
+        curFacetSelection,
+        columnName,
+        isLoading: false,
+        lastFacetSelection: lastFacetSelectionNoSelector,
+      }),
+    ).toEqual(curFacetSelection.isSelected)
   })
   it('returns true when its not loading and true was passed in', () => {
     const curFacetSelection: FacetColumnResultValueCount = {
       value: 'Active',
       count: 20,
-      isSelected: true
+      isSelected: true,
     }
-    expect(getIsValueSelected({
-      curFacetSelection,
-      columnName,
-      isLoading: false,
-      lastFacetSelection: lastFacetSelectionNoSelector
-    })).toEqual(curFacetSelection.isSelected)
+    expect(
+      getIsValueSelected({
+        curFacetSelection,
+        columnName,
+        isLoading: false,
+        lastFacetSelection: lastFacetSelectionNoSelector,
+      }),
+    ).toEqual(curFacetSelection.isSelected)
   })
   it('returns false when its loading and the value passed in was true', () => {
     const curFacetSelection: FacetColumnResultValueCount = {
       value: facetValue,
       count: 20,
-      isSelected: true
+      isSelected: true,
     }
-    expect(getIsValueSelected({
-      columnName,
-      curFacetSelection,
-      isLoading: true,
-      lastFacetSelection: lastFacetSelectionNoSelector
-    })).toEqual(!curFacetSelection.isSelected)
+    expect(
+      getIsValueSelected({
+        columnName,
+        curFacetSelection,
+        isLoading: true,
+        lastFacetSelection: lastFacetSelectionNoSelector,
+      }),
+    ).toEqual(!curFacetSelection.isSelected)
   })
   it('returns true when its loading and the value passed in was false', () => {
     const curFacetSelection: FacetColumnResultValueCount = {
       value: facetValue,
       count: 20,
-      isSelected: false
+      isSelected: false,
     }
-    expect(getIsValueSelected({
-      columnName,
-      curFacetSelection,
-      isLoading: true,
-      lastFacetSelection: lastFacetSelectionNoSelector
-    })).toEqual(!curFacetSelection.isSelected)
+    expect(
+      getIsValueSelected({
+        columnName,
+        curFacetSelection,
+        isLoading: true,
+        lastFacetSelection: lastFacetSelectionNoSelector,
+      }),
+    ).toEqual(!curFacetSelection.isSelected)
   })
   it("returns false when its loading and the value passed in wasn't the last selection", () => {
     // this checks that it behaves like a radiobox essentially
     const curFacetSelection: FacetColumnResultValueCount = {
       value: 'Completed',
       count: 20,
-      isSelected: true
+      isSelected: true,
     }
-    expect(getIsValueSelected({
-      columnName,
-      curFacetSelection,
-      isLoading: true,
-      lastFacetSelection: {
-        ...lastFacetSelectionNoSelector,
-        selector: SELECT_SINGLE_FACET
-      }
-    })).toEqual(false)
+    expect(
+      getIsValueSelected({
+        columnName,
+        curFacetSelection,
+        isLoading: true,
+        lastFacetSelection: {
+          ...lastFacetSelectionNoSelector,
+          selector: SELECT_SINGLE_FACET,
+        },
+      }),
+    ).toEqual(false)
   })
 })
 
@@ -105,31 +115,32 @@ describe('readFacetValues functions as a checkbox', () => {
     When we test this method we don't have to worry about stubbing actual
     data, its sufficient to stub only the parts we need.
   */
-  const concreteTypeFacetsRequest = 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+  const concreteTypeFacetsRequest =
+    'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
 
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: 0x2,
     query: {
-      sql: 'SELECT * FROM syn123456789'
-    }
+      sql: 'SELECT * FROM syn123456789',
+    },
   }
 
   it('selects nothing without a selection made', () => {
     // Note - this also tests the ALL button on the SynapseTable dropdown in addition
     // to the checkbox state without any selections made
-    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement[] = [
       {
         checked: false,
-        value: 'stub1'
+        value: 'stub1',
       },
       {
         checked: false,
-        value: 'stub2'
+        value: 'stub2',
       },
       {
         checked: false,
-        value: 'stub2'
+        value: 'stub2',
       },
     ]
 
@@ -138,35 +149,35 @@ describe('readFacetValues functions as a checkbox', () => {
       queryRequest,
       facet,
       htmlCheckboxes: syntheticHTMLInputElement,
-      selector: ''
+      selector: '',
     })
-    const expectedRequest = [{
-      concreteType: concreteTypeFacetsRequest,
-      columnName: facet,
-      facetValues: []  // should be empty, isSelected is false for all values
-    }] as FacetColumnValuesRequest[]
+    const expectedRequest = [
+      {
+        concreteType: concreteTypeFacetsRequest,
+        columnName: facet,
+        facetValues: [], // should be empty, isSelected is false for all values
+      },
+    ] as FacetColumnValuesRequest[]
     // sanity check
     expect(newQueryRequest.query.selectedFacets).toEqual(
-      expect.arrayContaining(
-        expectedRequest
-      )
+      expect.arrayContaining(expectedRequest),
     )
   })
 
   it('contains a single facet with a single checkbox clicked', () => {
     const singleSelection = 'stub1'
-    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement[] = [
       {
         checked: true,
-        value: singleSelection
+        value: singleSelection,
       },
       {
         checked: false,
-        value: 'stub2'
+        value: 'stub2',
       },
       {
         checked: false,
-        value: 'stub2'
+        value: 'stub2',
       },
     ]
 
@@ -175,32 +186,36 @@ describe('readFacetValues functions as a checkbox', () => {
       queryRequest,
       facet,
       htmlCheckboxes: syntheticHTMLInputElement,
-      selector: ''
+      selector: '',
     })
-    const expectedRequest = [{
-      concreteType: concreteTypeFacetsRequest,
-      columnName: facet,
-      facetValues: [singleSelection]
-    }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
+    const expectedRequest = [
+      {
+        concreteType: concreteTypeFacetsRequest,
+        columnName: facet,
+        facetValues: [singleSelection],
+      },
+    ] as FacetColumnValuesRequest[]
+    expect(newQueryRequest.query.selectedFacets).toEqual(
+      expect.arrayContaining(expectedRequest),
+    )
   })
 
   it('contains multiple facet values with multiple checkboxes selected', () => {
     const stub1 = 'stub1'
     const stub2 = 'stub2'
     const stub3 = 'stub3'
-    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement[] = [
       {
         checked: true,
-        value: stub1
+        value: stub1,
       },
       {
         checked: true,
-        value: stub2
+        value: stub2,
       },
       {
         checked: true,
-        value: stub3
+        value: stub3,
       },
     ]
 
@@ -209,14 +224,18 @@ describe('readFacetValues functions as a checkbox', () => {
       queryRequest,
       facet,
       htmlCheckboxes: syntheticHTMLInputElement,
-      selector: ''
+      selector: '',
     })
-    const expectedRequest = [{
-      concreteType: concreteTypeFacetsRequest,
-      columnName: facet,
-      facetValues: [stub1, stub2, stub3]
-    }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
+    const expectedRequest = [
+      {
+        concreteType: concreteTypeFacetsRequest,
+        columnName: facet,
+        facetValues: [stub1, stub2, stub3],
+      },
+    ] as FacetColumnValuesRequest[]
+    expect(newQueryRequest.query.selectedFacets).toEqual(
+      expect.arrayContaining(expectedRequest),
+    )
   })
 })
 
@@ -229,35 +248,36 @@ describe('readFacetValues functions as a radio checkbox', () => {
     as a radio
 
   */
-  const concreteTypeFacetsRequest = 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+  const concreteTypeFacetsRequest =
+    'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
 
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: 0x2,
     query: {
-      sql: 'SELECT * FROM syn123456789'
-    }
+      sql: 'SELECT * FROM syn123456789',
+    },
   }
   it('contains a single facet value when SELECT_SINGLE_FACET and isChecked is true', () => {
     const stub1 = 'stub1'
     const stub2 = 'stub2'
     const stub3 = 'stub3'
-    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement[] = [
       {
         /*
            radios always have a default selection, so when this first value is clicked
            we check that it doesn't get clicked 'off'
         */
         checked: true,
-        value: stub1
+        value: stub1,
       },
       {
         checked: false,
-        value: stub2
+        value: stub2,
       },
       {
         checked: false,
-        value: stub3
+        value: stub3,
       },
     ]
 
@@ -267,32 +287,36 @@ describe('readFacetValues functions as a radio checkbox', () => {
       facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: SELECT_SINGLE_FACET,
-      value: stub1
+      value: stub1,
     })
-    const expectedRequest = [{
-      concreteType: concreteTypeFacetsRequest,
-      columnName: facet,
-      facetValues: [stub1]
-    }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
+    const expectedRequest = [
+      {
+        concreteType: concreteTypeFacetsRequest,
+        columnName: facet,
+        facetValues: [stub1],
+      },
+    ] as FacetColumnValuesRequest[]
+    expect(newQueryRequest.query.selectedFacets).toEqual(
+      expect.arrayContaining(expectedRequest),
+    )
   })
 
   it('contains a single facet value when SELECT_SINGLE_FACET is passed and isChecked is false', () => {
     const stub1 = 'stub1'
     const stub2 = 'stub2'
     const stub3 = 'stub3'
-    const syntheticHTMLInputElement: SyntheticHTMLInputElement [] = [
+    const syntheticHTMLInputElement: SyntheticHTMLInputElement[] = [
       {
         checked: false,
-        value: stub1
+        value: stub1,
       },
       {
         checked: false,
-        value: stub2
+        value: stub2,
       },
       {
         checked: false,
-        value: stub3
+        value: stub3,
       },
     ]
 
@@ -302,13 +326,17 @@ describe('readFacetValues functions as a radio checkbox', () => {
       facet,
       htmlCheckboxes: syntheticHTMLInputElement,
       selector: SELECT_SINGLE_FACET,
-      value: stub1
+      value: stub1,
     })
-    const expectedRequest = [{
-      concreteType: concreteTypeFacetsRequest,
-      columnName: facet,
-      facetValues: [stub1]
-    }] as FacetColumnValuesRequest[]
-    expect(newQueryRequest.query.selectedFacets).toEqual(expect.arrayContaining(expectedRequest))
+    const expectedRequest = [
+      {
+        concreteType: concreteTypeFacetsRequest,
+        columnName: facet,
+        facetValues: [stub1],
+      },
+    ] as FacetColumnValuesRequest[]
+    expect(newQueryRequest.query.selectedFacets).toEqual(
+      expect.arrayContaining(expectedRequest),
+    )
   })
 })

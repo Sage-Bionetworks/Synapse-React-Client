@@ -10,8 +10,8 @@ export type ProjectFilesStatisticsRequest = {
 
 // see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/statistics/ProjectFilesStatisticsResponse.html
 export type ProjectFilesStatisticsResponse = {
-  objectId: string,
-  concreteType: 'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsResponse',
+  objectId: string
+  concreteType: 'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsResponse'
   fileDownloads: MonthlyFilesStatistics
   fileUploads: MonthlyFilesStatistics
 }

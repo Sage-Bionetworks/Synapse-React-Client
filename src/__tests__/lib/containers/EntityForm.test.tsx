@@ -7,11 +7,7 @@ import { mockFileEntity } from '../../../mocks/mock_file_entity'
 import reactJsonschemaForm from 'react-jsonschema-form'
 
 const createShallowComponent = (props: EntityFormProps) => {
-  const wrapper = mount(
-    <EntityForm
-      {...props}
-    />
-  )
+  const wrapper = mount(<EntityForm {...props} />)
   const instance = wrapper.instance() as EntityForm
   return { wrapper, instance }
 }
@@ -19,10 +15,16 @@ const createShallowComponent = (props: EntityFormProps) => {
 describe('it basic tests', () => {
   // Test setup
   const SynapseClient = require('../../../lib/utils/SynapseClient')
-  SynapseClient.getFileEntityContent = jest.fn(() => Promise.resolve(formschemaJson))
-  SynapseClient.getUserProfile = jest.fn(() => Promise.resolve(mockUserProfileData))
+  SynapseClient.getFileEntityContent = jest.fn(() =>
+    Promise.resolve(formschemaJson),
+  )
+  SynapseClient.getUserProfile = jest.fn(() =>
+    Promise.resolve(mockUserProfileData),
+  )
   const targetFolderId = 'syn9988882982'
-  SynapseClient.lookupChildEntity = jest.fn(() => Promise.resolve({id: targetFolderId}))
+  SynapseClient.lookupChildEntity = jest.fn(() =>
+    Promise.resolve({ id: targetFolderId }),
+  )
   SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
   const token: string = '123444'
   const parentContainerId: string = 'syn20355732'
@@ -36,7 +38,7 @@ describe('it basic tests', () => {
     formSchemaEntityId,
     formUiSchemaEntityId,
     initFormData,
-    synIdCallback
+    synIdCallback,
   }
   it('renders without crashing', () => {
     const { wrapper } = createShallowComponent(props)
@@ -44,7 +46,7 @@ describe('it basic tests', () => {
   })
 
   it('renders Form', () => {
-    const { wrapper } = createShallowComponent(props)
+    const { wrapper } = createShallowComponent(props)
     expect(wrapper.find(reactJsonschemaForm)).toBeDefined()
   })
 })

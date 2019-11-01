@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 type ChipContainerProps = {
-  chips: any []
+  chips: any[]
 }
 
 const ChipContainer: React.SFC<ChipContainerProps> = ({ chips }) => {
@@ -11,10 +11,6 @@ const ChipContainer: React.SFC<ChipContainerProps> = ({ chips }) => {
     }
     return <span key={index}> {el}</span>
   })
-  return (
-        <React.Fragment>
-            {chipsFormatted}
-        </React.Fragment>
-  )
+  return <React.Fragment>{chipsFormatted}</React.Fragment>
 }
 export default ChipContainer

@@ -1,7 +1,7 @@
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/wiki/WikiPage.html
 
 export type WikiPage = {
-  attachmentFileHandleIds: string []
+  attachmentFileHandleIds: string[]
   createdBy: string
   createdOn: string
   etag: string
@@ -10,6 +10,6 @@ export type WikiPage = {
   modifiedBy: string
   modifiedOn: string
   title: string
-    // get out jail free card
-  [x: string]: string | string []
+  // get out jail free card
+  [x: string]: string | string[]
 }

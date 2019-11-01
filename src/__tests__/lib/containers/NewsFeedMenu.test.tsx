@@ -1,16 +1,14 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import NewsFeedMenu, { NewsFeedMenuProps } from '../../../lib/containers/NewsFeedMenu'
+import NewsFeedMenu, {
+  NewsFeedMenuProps,
+} from '../../../lib/containers/NewsFeedMenu'
 import RssFeed from '../../../lib/containers/RssFeed'
 import TwitterFeed from '../../../lib/containers/TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 
 const createShallowComponent = (props: NewsFeedMenuProps) => {
-  const wrapper = shallow<NewsFeedMenu>(
-    <NewsFeedMenu
-      {...props}
-    />
-  )
+  const wrapper = shallow<NewsFeedMenu>(<NewsFeedMenu {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -30,7 +28,8 @@ describe('it renders with basic functionality', () => {
 
   it('renders with a MailChimp signup', async () => {
     const mailChimpSignupText: string = 'Sign up now!'
-    const mailChimpUrl: string = 'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a'
+    const mailChimpUrl: string =
+      'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a'
     const propsWithMailChimpSignup: NewsFeedMenuProps = {
       menuConfig: [
         {
@@ -38,8 +37,9 @@ describe('it renders with basic functionality', () => {
           feedUrl,
           defaultItemsToShow,
           mailChimpSignupText,
-          mailChimpUrl
-        }]
+          mailChimpUrl,
+        },
+      ],
     }
     const { wrapper } = await createShallowComponent(propsWithMailChimpSignup)
     expect(wrapper).toBeDefined()
@@ -49,15 +49,17 @@ describe('it renders with basic functionality', () => {
   })
 
   it('renders with a Twitter feed', async () => {
-    const twitterFeedUrl: string = 'https://twitter.com/AMPADPortal?ref_src=twsrc%5Etfw'
+    const twitterFeedUrl: string =
+      'https://twitter.com/AMPADPortal?ref_src=twsrc%5Etfw'
     const propsWithMailChimpSignup: NewsFeedMenuProps = {
       menuConfig: [
         {
           feedName,
           feedUrl,
           defaultItemsToShow,
-          twitterFeedUrl
-        }]
+          twitterFeedUrl,
+        },
+      ],
     }
     const { wrapper } = await createShallowComponent(propsWithMailChimpSignup)
     expect(wrapper).toBeDefined()

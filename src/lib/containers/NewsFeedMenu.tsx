@@ -17,15 +17,18 @@ export type MenuConfig = {
   twitterFeedUrl?: string
 }
 export type NewsFeedMenuProps = {
-  menuConfig: MenuConfig []
+  menuConfig: MenuConfig[]
 }
 
-export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, MenuState> {
+export default class NewsFeedMenu extends React.Component<
+  NewsFeedMenuProps,
+  MenuState
+> {
   constructor(props: NewsFeedMenuProps) {
     super(props)
     // See here - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
     this.state = {
-      menuIndex: 0
+      menuIndex: 0,
     }
     this.switchFeed = this.switchFeed.bind(this)
   }
@@ -35,7 +38,9 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
    *
    * @memberof Menu
    */
-  public switchFeed = (menuIndex: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
+  public switchFeed = (menuIndex: number) => (
+    _: React.SyntheticEvent<HTMLDivElement>,
+  ) => {
     // there's an odd bug where clicking a menu item twice will select the first tab,
     // this is a fix for that, but this shouldn't be necessary
     if (this.state.menuIndex !== menuIndex) {
@@ -46,7 +51,15 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
   public render() {
     const menuDropdown = this.renderMenu()
     const { menuConfig } = this.props
-    const { feedName, feedDescription, feedUrl, defaultItemsToShow, mailChimpUrl, twitterFeedUrl, mailChimpListName } = menuConfig[this.state.menuIndex]
+    const {
+      feedName,
+      feedDescription,
+      feedUrl,
+      defaultItemsToShow,
+      mailChimpUrl,
+      twitterFeedUrl,
+      mailChimpListName,
+    } = menuConfig[this.state.menuIndex]
 
     return (
       <div className="row">
@@ -56,20 +69,21 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
         <div className="col-xs-10">
           {
             <>
-              {
-                mailChimpUrl &&
+              {mailChimpUrl && (
                 <div className="SRC-mailchimpSubscribeContainer">
                   <h4>Subscribe</h4>
-                  <p className="SRC-marginBottomTop">Subscribe to receive the {mailChimpListName} by e-mail, which provides information and updates related to the Portal.
-                  You can opt out at any time by using the unsubscribe link within the e-mail.
-                  We will not share your information with any third parties or use it for any other purposes.</p>
+                  <p className="SRC-marginBottomTop">
+                    Subscribe to receive the {mailChimpListName} by e-mail,
+                    which provides information and updates related to the
+                    Portal. You can opt out at any time by using the unsubscribe
+                    link within the e-mail. We will not share your information
+                    with any third parties or use it for any other purposes.
+                  </p>
                   <div className="SRC-marginBottomTop">
-                    <MailchimpSubscribe
-                      url={mailChimpUrl}
-                    />
+                    <MailchimpSubscribe url={mailChimpUrl} />
                   </div>
                 </div>
-              }
+              )}
               <h3 className="srcRssFeed">{feedName}</h3>
               <p>{feedDescription}</p>
               <RssFeed
@@ -79,12 +93,7 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
               />
             </>
           }
-          {
-            twitterFeedUrl &&
-            <TwitterFeed
-              href={twitterFeedUrl}
-            />
-          }
+          {twitterFeedUrl && <TwitterFeed href={twitterFeedUrl} />}
         </div>
       </div>
     )
@@ -93,11 +102,12 @@ export default class NewsFeedMenu extends React.Component<NewsFeedMenuProps, Men
   private renderMenu() {
     const { menuConfig } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const isSelected: boolean = (index === this.state.menuIndex)
+      const isSelected: boolean = index === this.state.menuIndex
       const style: any = {}
       let selectedStyling: string = ''
       if (isSelected) {
-        selectedStyling = 'SRC-pointed SRC-whiteText SRC-primary-background-color SRC-pointed-triangle-right SRC-primary-background-color-border-left'
+        selectedStyling =
+          'SRC-pointed SRC-whiteText SRC-primary-background-color SRC-pointed-triangle-right SRC-primary-background-color-border-left'
       } else {
         selectedStyling = 'SRC-blackText SRC-light-background'
       }

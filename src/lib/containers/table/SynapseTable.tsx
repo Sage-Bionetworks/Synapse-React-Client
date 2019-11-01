@@ -54,6 +54,7 @@ import {
   ColumnSelection,
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
+import MarkdownSynapse from '../MarkdownSynapse'
 
 // Add all icons to the library so you can use it in your page
 library.add(faColumns)
@@ -102,6 +103,7 @@ export type SynapseTableProps = {
   synapseId: string
   title: string
   loadingScreen?: JSX.Element
+  markdownColumns?: string[] // array of column names which should render as markdown
 }
 
 export const TOOLTIP_DELAY_SHOW = 500
@@ -680,11 +682,12 @@ export default class SynapseTable extends React.Component<
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
       this.props.getLastQueryRequest!().query.sql,
     )
-    const { visibleColumnCount = Infinity } = this.props
+    const { visibleColumnCount = Infinity, markdownColumns = [] } = this.props
     rows.forEach((row: any, rowIndex) => {
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
+          const isMarkdownColumn = markdownColumns.includes(columnName)
           const index = this.findSelectionIndex(
             this.state.sortedColumnSelection,
             columnName,
@@ -727,6 +730,7 @@ export default class SynapseTable extends React.Component<
                     isBold,
                     mapEntityIdToHeader,
                     mapUserIdToHeader,
+                    isMarkdownColumn,
                   })}
               </td>
             )
@@ -749,6 +753,7 @@ export default class SynapseTable extends React.Component<
     isBold,
     mapEntityIdToHeader,
     mapUserIdToHeader,
+    isMarkdownColumn,
   }: {
     entityColumnIndicies: number[]
     userColumnIndicies: number[]
@@ -757,7 +762,11 @@ export default class SynapseTable extends React.Component<
     isBold: string
     mapEntityIdToHeader: Dictionary<EntityHeader>
     mapUserIdToHeader: Dictionary<any>
+    isMarkdownColumn: boolean
   }): React.ReactNode {
+    if (isMarkdownColumn) {
+      return <MarkdownSynapse markdown={columnValue} />
+    }
     if (
       entityColumnIndicies.includes(colIndex) &&
       Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, columnValue)
@@ -1040,18 +1049,22 @@ export default class SynapseTable extends React.Component<
     this.props.executeQueryRequest!(newQueryRequest)
   }
 }
-export const unCamelCase = (
-  str: string | undefined
-  ): string | undefined => {
-    // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
-    if (!str) { return str }
+export const unCamelCase = (str: string | undefined): string | undefined => {
+  // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
+  if (!str) {
     return str
-        // insert a space between lower & upper
-        .replace(/([a-z])([A-Z])/g, '$1 $2')
-        // space before last upper in a sequence followed by lower
-        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-        // uppercase the first character
-        .replace(/^./, (str:string) => { return str.toUpperCase()})
+  }
+  return (
+    str
+      // insert a space between lower & upper
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // space before last upper in a sequence followed by lower
+      .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+      // uppercase the first character
+      .replace(/^./, (str: string) => {
+        return str.toUpperCase()
+      })
+  )
 }
 type ColumnReference = {
   index: number

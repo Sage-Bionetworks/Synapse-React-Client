@@ -6,7 +6,10 @@ import { Facets } from './Facets'
 import QueryCount from './QueryCount'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
-import SynapseTable, { SynapseTableProps, unCamelCase } from './table/SynapseTable'
+import SynapseTable, {
+  SynapseTableProps,
+  unCamelCase,
+} from './table/SynapseTable'
 import CardContainer from './CardContainer'
 import { CommonCardProps } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
@@ -21,8 +24,8 @@ library.add(faPlus)
 library.add(faSearch)
 
 type MenuState = {
-  activeMenuIndices: number []
-  accordionGroupIndex: number,
+  activeMenuIndices: number[]
+  accordionGroupIndex: number
 }
 
 export type MenuConfig = {
@@ -55,14 +58,14 @@ type CommonMenuProps = {
 
 type AccordionConfig = {
   searchConfiguration?: SearchProps
-  menuConfig: MenuConfig []
+  menuConfig: MenuConfig[]
   name: string
 } & CommonMenuProps
 
 export type QueryWrapperMenuProps = {
   facetAliases?: {}
-  menuConfig?: MenuConfig []
-  accordionConfig?: AccordionConfig []
+  menuConfig?: MenuConfig[]
+  accordionConfig?: AccordionConfig[]
   isConsistent?: boolean
   token?: string
   rgbIndex: number
@@ -76,15 +79,18 @@ type Info = {
   hoverWhiteTextClass?: string
 }
 
-export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuProps, MenuState> {
-
+export default class QueryWrapperMenu extends React.Component<
+  QueryWrapperMenuProps,
+  MenuState
+> {
   constructor(props: QueryWrapperMenuProps) {
     super(props)
     // See note about initializing props from state here
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
     const { searchParams, accordionConfig } = this.props
     let activeMenuIndices = []
-    const indexFromURLOrDefaultZero = (searchParams && Number(searchParams.menuIndex)) || 0
+    const indexFromURLOrDefaultZero =
+      (searchParams && Number(searchParams.menuIndex)) || 0
     if (accordionConfig) {
       activeMenuIndices = new Array(accordionConfig.length).fill(0)
     } else {
@@ -92,7 +98,7 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     }
     this.state = {
       activeMenuIndices,
-      accordionGroupIndex: 0
+      accordionGroupIndex: 0,
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -110,7 +116,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     let { activeMenuIndices } = this.state
     const { rgbIndex, accordionConfig } = this.props
     if (rgbIndex !== prevProps.rgbIndex) {
-      activeMenuIndices = accordionConfig ? new Array(accordionConfig.length).fill(0): [0] 
+      activeMenuIndices = accordionConfig
+        ? new Array(accordionConfig.length).fill(0)
+        : [0]
       this.setState({
         activeMenuIndices,
         accordionGroupIndex: 0,
@@ -124,7 +132,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    *
    * @memberof Menu
    */
-  public handleHoverLogic = (info: Info) => (event: React.MouseEvent<HTMLDivElement>) => {
+  public handleHoverLogic = (info: Info) => (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
     // This prevents a bug where there is both light text and a light background,
     // otherwise SRC-hoverWhiteText would be placed on the group and item keys statically
     if (!event.currentTarget.classList.contains('SRC-hoverWhiteText')) {
@@ -140,14 +150,21 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    *
    * @memberof Menu
    */
-  public switchFacet = (menuIndexIn: number, accordionIndexIn: number) => (_: React.SyntheticEvent<HTMLDivElement>) => {
+  public switchFacet = (menuIndexIn: number, accordionIndexIn: number) => (
+    _: React.SyntheticEvent<HTMLDivElement>,
+  ) => {
     const { activeMenuIndices, accordionGroupIndex } = this.state
     // there's an odd bug where clicking a menu item twice will select the first tab,
     // this is a fix for that, but this shouldn't be necessary
-    const isClickingCurrentSelection = accordionGroupIndex === accordionIndexIn && activeMenuIndices[accordionIndexIn] === menuIndexIn
+    const isClickingCurrentSelection =
+      accordionGroupIndex === accordionIndexIn &&
+      activeMenuIndices[accordionIndexIn] === menuIndexIn
     activeMenuIndices[accordionIndexIn] = menuIndexIn
     if (!isClickingCurrentSelection) {
-      this.setState({ activeMenuIndices, accordionGroupIndex: accordionIndexIn })
+      this.setState({
+        activeMenuIndices,
+        accordionGroupIndex: accordionIndexIn,
+      })
     }
   }
 
@@ -156,19 +173,27 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
    *
    * @memberof Menu
    */
-  public toggleGroupAccordionIndex = (accordionGroupIndexIn: number) => (_event: React.SyntheticEvent<HTMLDivElement>) => {
+  public toggleGroupAccordionIndex = (accordionGroupIndexIn: number) => (
+    _event: React.SyntheticEvent<HTMLDivElement>,
+  ) => {
     const { accordionGroupIndex } = this.state
     if (accordionGroupIndex === accordionGroupIndexIn) {
       return
     } else {
       this.setState({
-        accordionGroupIndex: accordionGroupIndexIn
+        accordionGroupIndex: accordionGroupIndexIn,
       })
     }
   }
 
   public render() {
-    const { stackedBarChartConfiguration, name, menuConfig, token, accordionConfig } = this.props
+    const {
+      stackedBarChartConfiguration,
+      name,
+      menuConfig,
+      token,
+      accordionConfig,
+    } = this.props
     const { activeMenuIndices } = this.state
     let sql = ''
     if (menuConfig) {
@@ -180,69 +205,76 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const showBarChart = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
-        {
-          name && sql && !hasGroupByInSql
-          &&
+        {name && sql && !hasGroupByInSql && (
           <h3 id="exploreCount" className="SRC-boldText">
             <QueryCount token={token} name={name} sql={sql} />
           </h3>
-        }
-        {
-          (hasGroupByInSql || accordionConfig)
-          &&
+        )}
+        {(hasGroupByInSql || accordionConfig) && (
           <h3 id="exploreCount" className="SRC-boldText">
             {name}
           </h3>
-        }
+        )}
         <div className="break">
-          <hr/>
+          <hr />
         </div>
         <div className="row">
-          <div className={`col-xs-12 col-sm-3 col-lg-2 SRC-menuLayout ${showBarChart ? 'SRC-menuPadding' : 'SRC-menuPaddingLess'}`}>
+          <div
+            className={`col-xs-12 col-sm-3 col-lg-2 SRC-menuLayout ${
+              showBarChart ? 'SRC-menuPadding' : 'SRC-menuPaddingLess'
+            }`}
+          >
             {menuDropdown}
           </div>
-          <div className="col-xs-12 col-sm-9 col-lg-10">
-            {queryWrapper}
-          </div>
+          <div className="col-xs-12 col-sm-9 col-lg-10">{queryWrapper}</div>
         </div>
       </React.Fragment>
     )
   }
 
-  private renderQueryChild(menuConfig: MenuConfig [], queryConfig: CommonMenuProps, groupIndex: number)  {
+  private renderQueryChild(
+    menuConfig: MenuConfig[],
+    queryConfig: CommonMenuProps,
+    groupIndex: number,
+  ) {
     const {
       token,
       rgbIndex = 0,
       isConsistent = false,
       searchParams,
       accordionConfig = [],
-      facetAliases = {}
+      facetAliases = {},
     } = this.props
     const {
       cardConfiguration,
       tableConfiguration,
       stackedBarChartConfiguration,
       unitDescription = '',
-      searchConfiguration
+      searchConfiguration,
     } = queryConfig
     const { activeMenuIndices, accordionGroupIndex } = this.state
     let facetValue = ''
     let menuIndexFromProps = ''
     if (searchParams) {
-      ({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
+      ;({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const isSelected: boolean = groupIndex === accordionGroupIndex && activeMenuIndices[accordionGroupIndex] === index
-      const {
-        facet,
-        sql,
-      } = config
-      const name = accordionConfig[groupIndex] && accordionConfig[groupIndex].name
+      const isSelected: boolean =
+        groupIndex === accordionGroupIndex &&
+        activeMenuIndices[accordionGroupIndex] === index
+      const { facet, sql } = config
+      const name =
+        accordionConfig[groupIndex] && accordionConfig[groupIndex].name
       const hasGroupByInSql = isGroupByInSql(sql)
       // only show search component if its the last item in the menu config
-      const showSearch = index === menuConfig.length - 1 && searchConfiguration !== undefined
-      const showBarChart = stackedBarChartConfiguration !== undefined && !showSearch && !hasGroupByInSql
-      const aliasedFacet: string = facet && (facetAliases[facet] || unCamelCase(facet))
+      const showSearch =
+        index === menuConfig.length - 1 && searchConfiguration !== undefined
+      const showBarChart =
+        stackedBarChartConfiguration !== undefined &&
+        !showSearch &&
+        !hasGroupByInSql
+      const aliasedFacet: string =
+        facet && (facetAliases[facet] || unCamelCase(facet))
 
       // search class is only used for testing, no css is actually applied
       let searchClass = showSearch ? SEARCH_CLASS_CSS : ''
@@ -251,10 +283,24 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
 
       // Get props for query wrapper
-      const usedUnitDescription = this.getUnitDescription(unitDescription, aliasedFacet, showSearch, accordionConfig.length > 0, name)
-      const selectedFacets = this.getSelectedFacets(Number(menuIndexFromProps) === index, facet, facetValue)
+      const usedUnitDescription = this.getUnitDescription(
+        unitDescription,
+        aliasedFacet,
+        showSearch,
+        accordionConfig.length > 0,
+        name,
+      )
+      const selectedFacets = this.getSelectedFacets(
+        Number(menuIndexFromProps) === index,
+        facet,
+        facetValue,
+      )
       const partMask = this.getPartMask(facet, hasGroupByInSql)
-      const tableLoadingScreen = this.getTableLoadingScreen(hasGroupByInSql, stackedBarChartConfiguration, tableConfiguration)
+      const tableLoadingScreen = this.getTableLoadingScreen(
+        hasGroupByInSql,
+        stackedBarChartConfiguration,
+        tableConfiguration,
+      )
 
       return (
         <span key={facet} className={searchClass}>
@@ -264,14 +310,15 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             showMenu={true}
             initQueryRequest={{
               partMask,
-              concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+              concreteType:
+                'org.sagebionetworks.repo.model.table.QueryBundleRequest',
               query: {
                 sql,
                 selectedFacets,
                 isConsistent,
                 limit: 25,
-                offset: 0
-              }
+                offset: 0,
+              },
             }}
             unitDescription={usedUnitDescription}
             facet={facet}
@@ -279,23 +326,49 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            {showBarChart ? <StackedBarChart {...stackedBarChartConfiguration!} /> : <React.Fragment/>}
-            {!showSearch ? <Facets />:  <React.Fragment/>}
-            {showSearch ? <Search searchable={searchConfiguration!.searchable}/> : <React.Fragment/>}
+            {showBarChart ? (
+              <StackedBarChart {...stackedBarChartConfiguration!} />
+            ) : (
+              <React.Fragment />
+            )}
+            {!showSearch ? <Facets /> : <React.Fragment />}
+            {showSearch ? (
+              <Search searchable={searchConfiguration!.searchable} />
+            ) : (
+              <React.Fragment />
+            )}
             {/*
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
                 which will happen if either configuration is undefined.
             */}
-            {tableConfiguration ? <SynapseTable {...{...tableConfiguration, loadingScreen: tableLoadingScreen }}/> : <React.Fragment/>}
-            {cardConfiguration ? <CardContainer {...cardConfiguration}/> : <React.Fragment/>}
+            {tableConfiguration ? (
+              <SynapseTable
+                {...{
+                  ...tableConfiguration,
+                  loadingScreen: tableLoadingScreen,
+                }}
+              />
+            ) : (
+              <React.Fragment />
+            )}
+            {cardConfiguration ? (
+              <CardContainer {...cardConfiguration} />
+            ) : (
+              <React.Fragment />
+            )}
           </QueryWrapper>
         </span>
       )
-      }
-    )
+    })
   }
 
-  public getUnitDescription (unitDescription: string, aliasedFacet: string, showSearch: boolean, isAccordionConfigDefined: boolean, name: string ) {
+  public getUnitDescription(
+    unitDescription: string,
+    aliasedFacet: string,
+    showSearch: boolean,
+    isAccordionConfigDefined: boolean,
+    name: string,
+  ) {
     if (isAccordionConfigDefined && !showSearch) {
       return `${name} Tools by ${aliasedFacet}`
     }
@@ -306,8 +379,10 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return unitDescription
   }
 
-  public getPartMask (facet: string | undefined, hasGroupByInSql: boolean) {
-    let partMask = SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS | SynapseConstants.BUNDLE_MASK_QUERY_RESULTS;
+  public getPartMask(facet: string | undefined, hasGroupByInSql: boolean) {
+    let partMask =
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
     if (facet) {
       partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
     } else {
@@ -318,22 +393,31 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return partMask
   }
 
-  public getSelectedFacets (isSelected: boolean, facet: string | undefined, facetValue: string | undefined): FacetColumnValuesRequest [] {
+  public getSelectedFacets(
+    isSelected: boolean,
+    facet: string | undefined,
+    facetValue: string | undefined,
+  ): FacetColumnValuesRequest[] {
     if (isSelected && facet && facetValue) {
       return [
         {
-          concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           facetValues: [facetValue],
-          columnName: facet
-        }
+          columnName: facet,
+        },
       ]
     }
     return []
   }
-  
-  public getTableLoadingScreen (hasGroupByInSql: boolean, stackedBarChartConfiguration: StackedBarChartProps | undefined, tableConfiguration: SynapseTableProps | undefined): JSX.Element {
+
+  public getTableLoadingScreen(
+    hasGroupByInSql: boolean,
+    stackedBarChartConfiguration: StackedBarChartProps | undefined,
+    tableConfiguration: SynapseTableProps | undefined,
+  ): JSX.Element {
     if (hasGroupByInSql && stackedBarChartConfiguration && tableConfiguration) {
-      // Since the bar chart doesnt show when theres a a groupy statement we use the 
+      // Since the bar chart doesnt show when theres a a groupy statement we use the
       // loadingScreen from the chart configuration
       return stackedBarChartConfiguration.loadingScreen
     }
@@ -341,23 +425,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
   }
 
   private renderQueryChildren() {
-    const {
-      accordionConfig,
-      menuConfig,
-    } = this.props
-    const {
-      accordionGroupIndex,
-    } = this.state
+    const { accordionConfig, menuConfig } = this.props
+    const { accordionGroupIndex } = this.state
     if (accordionConfig) {
-      return accordionConfig.map(
-        (el, index) => {
-          return (
-            <div key={JSON.stringify(el)} className={accordionGroupIndex === index ? '' : 'SRC-hidden'}>
-              {this.renderQueryChild(el.menuConfig, el, index)}
-            </div>
-          )
-        }
-      )
+      return accordionConfig.map((el, index) => {
+        return (
+          <div
+            key={JSON.stringify(el)}
+            className={accordionGroupIndex === index ? '' : 'SRC-hidden'}
+          >
+            {this.renderQueryChild(el.menuConfig, el, index)}
+          </div>
+        )
+      })
     } else {
       return this.renderQueryChild(menuConfig!, this.props, 0)
     }
@@ -370,78 +450,91 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     const { colorPalette } = getColorPallette(rgbIndex, 5)
     const lightColor = '#F5F5F5'
     if (accordionConfig) {
-      return accordionConfig.map(
-        (el, index) => {
-          const isActive = accordionGroupIndex === index
-          const primaryColor = colorPalette[0]
-          let style: React.CSSProperties = {
-            background: isActive ? primaryColor : lightColor,
-            color: isActive ? 'white' : '',
-          }
-          let indicatorClasses = isActive ? 'SRC-whiteText SRC-pointed-triangle-down' : ' SRC-hand-cursor '
-          if (isActive) {
-            style.borderTopColor = primaryColor
-          }
-          const hoverEnter: Info = {
-            isSelected: isActive,
-            originalColor: primaryColor,
-          }
-          const hoverLeave: Info = {
-            isSelected: isActive,
-            originalColor: lightColor
-          }
-          const iconContainerStyle: React.CSSProperties = {
-            marginLeft: 5
-          }
-          const iconStyle: React.CSSProperties = {
-            fontSize: '0.55em'
-          }
-          return (
-            <div key={JSON.stringify(el)} className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}>
-              <div 
-                style={style}
-                role={isActive ? "": "button"}
-                onMouseEnter={this.handleHoverLogic(hoverEnter)}
-                onMouseLeave={this.handleHoverLogic(hoverLeave)}
-                className={`${ACCORDION_GROUP_CSS} SRC-gap SRC-menu-button-base SRC-background-unset ${indicatorClasses}`}
-                onClick={!isActive ? this.toggleGroupAccordionIndex(index) : undefined }
-              >
-                {el.name}
-                <span style={iconContainerStyle}>
-                  {
-                    !isActive
-                    &&
-                    <FontAwesomeIcon style={iconStyle} color={primaryColor} icon={'plus'} />
-                  }
-                </span>
-              </div>
-              <TransitionGroup component={null}>
-                {
-                  isActive
-                  &&
-                  <CSSTransition
-                    // The component doesn't run a transition on mount, we override this
-                    // by setting appear to true because otherwise the triangle indicator wouldn't show
-                    appear={true}
-                    key={JSON.stringify(el)}
-                    classNames="SRC-accordion-menu"
-                    timeout={{ enter: 1000, exit: 500 }}
-                  >
-                    <div className={"SRC-accordion-menu"}>
-                      {this.renderFacetMenu(el.menuConfig, index, el.searchConfiguration)}
-                    </div>
-                  </CSSTransition>
-                }
-              </TransitionGroup>
-            </div>
-          )
+      return accordionConfig.map((el, index) => {
+        const isActive = accordionGroupIndex === index
+        const primaryColor = colorPalette[0]
+        let style: React.CSSProperties = {
+          background: isActive ? primaryColor : lightColor,
+          color: isActive ? 'white' : '',
         }
-      )
+        let indicatorClasses = isActive
+          ? 'SRC-whiteText SRC-pointed-triangle-down'
+          : ' SRC-hand-cursor '
+        if (isActive) {
+          style.borderTopColor = primaryColor
+        }
+        const hoverEnter: Info = {
+          isSelected: isActive,
+          originalColor: primaryColor,
+        }
+        const hoverLeave: Info = {
+          isSelected: isActive,
+          originalColor: lightColor,
+        }
+        const iconContainerStyle: React.CSSProperties = {
+          marginLeft: 5,
+        }
+        const iconStyle: React.CSSProperties = {
+          fontSize: '0.55em',
+        }
+        return (
+          <div
+            key={JSON.stringify(el)}
+            className={isActive ? ACCORDION_GROUP_ACTIVE_CSS : ''}
+          >
+            <div
+              style={style}
+              role={isActive ? '' : 'button'}
+              onMouseEnter={this.handleHoverLogic(hoverEnter)}
+              onMouseLeave={this.handleHoverLogic(hoverLeave)}
+              className={`${ACCORDION_GROUP_CSS} SRC-gap SRC-menu-button-base SRC-background-unset ${indicatorClasses}`}
+              onClick={
+                !isActive ? this.toggleGroupAccordionIndex(index) : undefined
+              }
+            >
+              {el.name}
+              <span style={iconContainerStyle}>
+                {!isActive && (
+                  <FontAwesomeIcon
+                    style={iconStyle}
+                    color={primaryColor}
+                    icon={'plus'}
+                  />
+                )}
+              </span>
+            </div>
+            <TransitionGroup component={null}>
+              {isActive && (
+                <CSSTransition
+                  // The component doesn't run a transition on mount, we override this
+                  // by setting appear to true because otherwise the triangle indicator wouldn't show
+                  appear={true}
+                  key={JSON.stringify(el)}
+                  classNames="SRC-accordion-menu"
+                  timeout={{ enter: 1000, exit: 500 }}
+                >
+                  <div className={'SRC-accordion-menu'}>
+                    {this.renderFacetMenu(
+                      el.menuConfig,
+                      index,
+                      el.searchConfiguration,
+                    )}
+                  </div>
+                </CSSTransition>
+              )}
+            </TransitionGroup>
+          </div>
+        )
+      })
     }
     return this.renderFacetMenu(menuConfig!, 0, searchConfiguration)
   }
 
-  private renderFacetMenu(menuConfig: MenuConfig [], curLevel: number, searchConfiguration?: SearchProps) {
+  private renderFacetMenu(
+    menuConfig: MenuConfig[],
+    curLevel: number,
+    searchConfiguration?: SearchProps,
+  ) {
     const { rgbIndex, accordionConfig, facetAliases = {} } = this.props
     const { activeMenuIndices, accordionGroupIndex } = this.state
     const { colorPalette } = getColorPallette(rgbIndex, 5)
@@ -454,12 +547,15 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
     return menuConfig.map((config: MenuConfig, index: number) => {
       let searchIconStyle: React.CSSProperties = {
         margin: 'auto 0',
-        opacity: 0.4
+        opacity: 0.4,
       }
       const { facet } = config
-      const isSelected: boolean = activeMenuIndices[accordionGroupIndex] === index && curLevel === accordionGroupIndex
+      const isSelected: boolean =
+        activeMenuIndices[accordionGroupIndex] === index &&
+        curLevel === accordionGroupIndex
       const style: React.CSSProperties = {}
-      const isSearchConfig = (index === menuConfig.length -1 ) && searchConfiguration
+      const isSearchConfig =
+        index === menuConfig.length - 1 && searchConfiguration
       let selectedStyling: string = ''
       if (isSelected) {
         // we have to programatically set the style since the color is chosen from a color
@@ -477,8 +573,9 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
       }
       const infoEnter: Info = { isSelected, originalColor }
       const infoLeave: Info = { isSelected, originalColor: defaultColor }
-      const facetDisplayValue: string = facet && facetAliases[facet] || unCamelCase(facet)
-      
+      const facetDisplayValue: string =
+        (facet && facetAliases[facet]) || unCamelCase(facet)
+
       return (
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
@@ -491,20 +588,19 @@ export default class QueryWrapperMenu extends React.Component<QueryWrapperMenuPr
           tabIndex={0}
           style={style}
         >
-          {isSearchConfig ? 
-            'Search'
-            :
-            facetDisplayValue
-          }
-          {
-            isSearchConfig &&
+          {isSearchConfig ? 'Search' : facetDisplayValue}
+          {isSearchConfig && (
             <span>
-              <FontAwesomeIcon className={selectedStyling} size={'sm'} style={searchIconStyle} icon="search"/>
+              <FontAwesomeIcon
+                className={selectedStyling}
+                size={'sm'}
+                style={searchIconStyle}
+                icon="search"
+              />
             </span>
-          }
+          )}
         </div>
       )
     })
   }
-
 }

@@ -1,10 +1,10 @@
 export type UserPreferenceInterface = {
-  name:	string // The name of the user preference.
-  concreteType:	string
+  name: string // The name of the user preference.
+  concreteType: string
 }
 
 export type UserPreferenceBoolean = {
-  name:	string // The name of the user preference.
+  name: string // The name of the user preference.
   concreteType: string
   value: boolean // the value of the user preference
 }

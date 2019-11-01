@@ -20,11 +20,11 @@ export const getIsValueSelected = ({
   isLoading,
   lastFacetSelection,
   curFacetSelection,
-  columnName
-} : {
-  isLoading: boolean | undefined,
-  lastFacetSelection: FacetSelection | undefined,
-  curFacetSelection: FacetColumnResultValueCount,
+  columnName,
+}: {
+  isLoading: boolean | undefined
+  lastFacetSelection: FacetSelection | undefined
+  curFacetSelection: FacetColumnResultValueCount
   columnName: string
 }) => {
   if (isLoading && columnName === lastFacetSelection!.columnName) {
@@ -41,7 +41,6 @@ export const getIsValueSelected = ({
     rely on that
   */
   return curFacetSelection.isSelected
-
 }
 
 export type SyntheticHTMLInputElement = {
@@ -65,12 +64,12 @@ export const readFacetValues = ({
   selector,
   queryRequest,
   facet,
-  value
+  value,
 }: {
-  htmlCheckboxes: SyntheticHTMLInputElement [],
-  selector : string,
-  queryRequest: QueryBundleRequest,
-  facet: string,
+  htmlCheckboxes: SyntheticHTMLInputElement[]
+  selector: string
+  queryRequest: QueryBundleRequest
+  facet: string
   value?: string
 }) => {
   const facetValues: string[] = []
@@ -93,10 +92,11 @@ export const readFacetValues = ({
 
   const specificFacet = selectedFacets!.find(el => el.columnName === facet)!
   if (!specificFacet) {
-    const facetColumnValuesRequest: FacetColumnValuesRequest =  {
+    const facetColumnValuesRequest: FacetColumnValuesRequest = {
       facetValues,
-      concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-      columnName: facet
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+      columnName: facet,
     }
     selectedFacets.push(facetColumnValuesRequest)
     // align the reference to selectedFacets

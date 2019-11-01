@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import SynapseTable, {
   SynapseTableProps,
   SORT_STATE,
-  unCamelCase
+  unCamelCase,
 } from '../../../lib/containers/table/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
@@ -23,6 +23,7 @@ import UserCard from 'lib/containers/UserCard'
 import { Modal } from 'react-bootstrap'
 import { ColumnSelection } from 'lib/containers/table/table-top'
 import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
+import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -102,7 +103,9 @@ describe('basic functionality', () => {
       expect(unCamelCase('basicCase')).toEqual('Basic Case')
       expect(unCamelCase('DNA')).toEqual('DNA')
       expect(unCamelCase('AnotherCase')).toEqual('Another Case')
-      expect(unCamelCase('silly ColumnName Test (ms)')).toEqual('Silly Column Name Test (ms)')
+      expect(unCamelCase('silly ColumnName Test (ms)')).toEqual(
+        'Silly Column Name Test (ms)',
+      )
       // these cases do not work as expected, and still need facet aliases
       // expect(unCamelCase('pH')).toEqual('pH') // actual 'P H'
       // expect(unCamelCase('nf1Genotype/nf2Genotype')).toEqual('NF1 Genotype/NF2 Genotype') // actual 'Nf1Genotype/nf2Genotype'
@@ -476,6 +479,7 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader,
               mapUserIdToHeader: {},
+              isMarkdownColumn: false,
             })}
           </div>,
         )
@@ -492,6 +496,7 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
+              isMarkdownColumn: false,
             })}
           </div>,
         )
@@ -516,6 +521,7 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
+              isMarkdownColumn: false,
             })}
           </div>,
         )
@@ -538,10 +544,31 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
+              isMarkdownColumn: false,
             })}
           </div>,
         )
         expect(tableCell.find(UserCard)).toHaveLength(1)
+      })
+      it('renders a markdown value', () => {
+        const mockMarkdownColumnValue = '# column markdown'
+        const tableCell = shallow(
+          <div>
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              colIndex: USERID_INDEX,
+              columnValue: mockMarkdownColumnValue,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
+              isMarkdownColumn: true,
+            })}
+          </div>,
+        )
+        expect(tableCell.find(MarkdownSynapse).props().markdown).toEqual(
+          mockMarkdownColumnValue,
+        )
       })
       it('renders a standard value', () => {
         const tableCell = shallow(
@@ -554,6 +581,7 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
+              isMarkdownColumn: false,
             })}
           </div>,
         )

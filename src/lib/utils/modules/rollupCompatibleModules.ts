@@ -4,7 +4,7 @@
 import * as cloneDeepProxy from 'lodash.clonedeep'
 
 // wonky syntax explained here - https://github.com/rollup/rollup/issues/670#issuecomment-281139978
-export function cloneDeep <T>(x : T): T {
-  const fn = ((cloneDeepProxy as any).default) || cloneDeepProxy
+export function cloneDeep<T>(x: T): T {
+  const fn = (cloneDeepProxy as any).default || cloneDeepProxy
   return fn(x)
 }

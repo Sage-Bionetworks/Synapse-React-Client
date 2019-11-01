@@ -13,7 +13,10 @@ type UserCardState = {
   isLoading: boolean
 }
 
-export type UserCardSize = 'SMALL USER CARD' |'MEDIUM USER CARD' |'LARGE USER CARD'
+export type UserCardSize =
+  | 'SMALL USER CARD'
+  | 'MEDIUM USER CARD'
+  | 'LARGE USER CARD'
 
 export type UserCardProps = {
   // Note - either specify userProfile OR (alias or ownerId)
@@ -26,12 +29,15 @@ export type UserCardProps = {
   size: UserCardSize
   hideText?: boolean
   hideTooltip?: boolean
-  menuActions? : MenuAction[]
+  menuActions?: MenuAction[]
   link?: string
   disableLink?: boolean
 }
 
-export default class UserCard extends React.Component<UserCardProps, UserCardState> {
+export default class UserCard extends React.Component<
+  UserCardProps,
+  UserCardState
+> {
   constructor(props: any) {
     super(props)
     this.state = { userProfile: undefined, isLoading: true, preSignedURL: '' }
@@ -44,11 +50,10 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
       return
     }
     if (alias) {
-      getPrincipalAliasRequest('', alias, 'USER_NAME')
-      .then(
+      getPrincipalAliasRequest('', alias, 'USER_NAME').then(
         (aliasData: any) => {
           this.getUserProfile(aliasData.principalId!)
-        }
+        },
       )
     } else {
       // check for ownerId!
@@ -58,20 +63,23 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
 
   public getUserProfile(ownerId: string) {
     getUserProfileWithProfilePic(ownerId!, '')
-    .then(
-      (data) => {
+      .then(data => {
         const { userProfile, preSignedURL } = data
         this.setState({ userProfile, preSignedURL, isLoading: false })
-      }
-    ).catch(
-      (err) => {
+      })
+      .catch(err => {
         console.log('failed to get user bundle ', err)
-      }
-    )
+      })
   }
 
   public render() {
-    const { userProfile, loadingScreen = <span/>, preSignedURL, size, ...rest } = this.props
+    const {
+      userProfile,
+      loadingScreen = <span />,
+      preSignedURL,
+      size,
+      ...rest
+    } = this.props
     let userProfileAtRender
     let preSignedURLAtRender
     if (!userProfile) {
@@ -90,17 +98,17 @@ export default class UserCard extends React.Component<UserCardProps, UserCardSta
     const propsForChild = {
       userProfile: userProfileAtRender!,
       preSignedURL: preSignedURLAtRender,
-      ...rest
+      ...rest,
     }
     switch (size) {
       case SynapseConstants.SMALL_USER_CARD:
-        return <UserCardSmall {...propsForChild}/>
+        return <UserCardSmall {...propsForChild} />
       case SynapseConstants.MEDIUM_USER_CARD:
-        return <UserCardMedium {...propsForChild}/>
+        return <UserCardMedium {...propsForChild} />
       case SynapseConstants.LARGE_USER_CARD:
         return <UserCardMedium isLarge={true} {...propsForChild} />
       default:
-        return <span/>
+        return <span />
     }
   }
 }

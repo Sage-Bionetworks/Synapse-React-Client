@@ -7,7 +7,7 @@ import { UserProfileList } from '../utils/SynapseClient'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 
 export type UserCardListProps = {
-  list: string []
+  list: string[]
   size?: UserCardSize
   // Data should not be needed, however, it gives the option to fill in a user profile with other column
   // fields. This is required specifically by AMP-AD Explore/People page
@@ -20,12 +20,14 @@ type MapOwnerIdToUserProfile = {
 export type UserCardListState = {
   userProfileMap: MapOwnerIdToUserProfile
 }
-export default class UserCardList extends React.Component<UserCardListProps, UserCardListState> {
-
+export default class UserCardList extends React.Component<
+  UserCardListProps,
+  UserCardListState
+> {
   constructor(props: UserCardListProps) {
     super(props)
     this.state = {
-      userProfileMap: {}
+      userProfileMap: {},
     }
     this.update = this.update.bind(this)
   }
@@ -55,32 +57,30 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
       const internalData = new Set(Object.keys(this.state.userProfileMap))
       // get the set difference between the current list and whats stored in state, describes what
       // needs to get looked up.
-      const difference = Array.from(this.difference(curListOfIds, internalData)) as string []
+      const difference = Array.from(
+        this.difference(curListOfIds, internalData),
+      ) as string[]
       if (difference.length > 0) {
         this.update(difference)
       }
     }
   }
 
-  update (list: string []) {
-    getUserProfileWithProfilePicAttached(list.filter(el => el)).then(
-      (data: UserProfileList) => {
+  update(list: string[]) {
+    getUserProfileWithProfilePicAttached(list.filter(el => el))
+      .then((data: UserProfileList) => {
         const newEntries = {}
-        data.list.forEach(
-          (el) => {
-            const { ownerId } = el
-            newEntries[ownerId] = el
-          }
-        )
-        this.setState({
-          userProfileMap: { ...this.state.userProfileMap, ...newEntries }
+        data.list.forEach(el => {
+          const { ownerId } = el
+          newEntries[ownerId] = el
         })
-      }
-    ).catch(
-      (err: string) => {
+        this.setState({
+          userProfileMap: { ...this.state.userProfileMap, ...newEntries },
+        })
+      })
+      .catch((err: string) => {
         console.log('Error on batch call =', err)
-      }
-    )
+      })
   }
 
   /**
@@ -91,23 +91,31 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
    * @memberof UserCardList
    */
   manuallyExtractData(data: QueryResultBundle) {
-    const firstNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'firstName')
-    const lastNameIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'lastName')
-    const institutionIndex = data.queryResult.queryResults.headers.findIndex(el => el.name === 'institution')
-    const ownerId = data.queryResult.queryResults.headers.findIndex(el => el.columnType === 'USERID')
-    const nullOwnerIdsRows = data.queryResult.queryResults.rows.filter(el => !el.values[ownerId])
-    return nullOwnerIdsRows.map<UserProfile>(
-      (el) => {
-        const values = el.values
-        return {
-          firstName: values[firstNameIndex],
-          lastName: values[lastNameIndex],
-          company: values[institutionIndex],
-          ownerId: '',
-          userName: values[firstNameIndex][0]
-        }
-      }
+    const firstNameIndex = data.queryResult.queryResults.headers.findIndex(
+      el => el.name === 'firstName',
     )
+    const lastNameIndex = data.queryResult.queryResults.headers.findIndex(
+      el => el.name === 'lastName',
+    )
+    const institutionIndex = data.queryResult.queryResults.headers.findIndex(
+      el => el.name === 'institution',
+    )
+    const ownerId = data.queryResult.queryResults.headers.findIndex(
+      el => el.columnType === 'USERID',
+    )
+    const nullOwnerIdsRows = data.queryResult.queryResults.rows.filter(
+      el => !el.values[ownerId],
+    )
+    return nullOwnerIdsRows.map<UserProfile>(el => {
+      const values = el.values
+      return {
+        firstName: values[firstNameIndex],
+        lastName: values[lastNameIndex],
+        company: values[institutionIndex],
+        ownerId: '',
+        userName: values[firstNameIndex][0],
+      }
+    })
   }
 
   render() {
@@ -117,39 +125,46 @@ export default class UserCardList extends React.Component<UserCardListProps, Use
     let fauxUserProfileIndex = 0
     return (
       <div className="SRC-card-grid-row SRC-adjust-for-bootstrap-margin">
-        {
-          // we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
-          list.map(
-            (ownerId) => {
-              const userProfile = userProfileMap[ownerId]
-              if (userProfile) {
-                return (
-                  <div key={JSON.stringify(userProfile)} className="SRC-grid-item SRC-narrow-grid-item">
-                    <UserCard size={size} preSignedURL={userProfile.clientPreSignedURL} userProfile={userProfile}/>
-                  </div>
-                )
-              }
-              const fauxUserProfile = fauxUserProfilesList && fauxUserProfilesList[fauxUserProfileIndex]
-              if (!fauxUserProfile) {
-                // This could happen in one of two cases:
-                // - The props just updated with a new userlist where the data is being gathered for this particular user
-                //   OR there is no mapping for this user
-                return false
-              }
-              fauxUserProfileIndex += 1
-              return (
-                <div key={JSON.stringify(fauxUserProfile)} className="SRC-grid-item SRC-narrow-grid-item">
-                  <UserCard
-                    disableLink={true}
-                    hideEmail={true}
-                    size={size}
-                    userProfile={fauxUserProfile}
-                  />
-                </div>
-              )
-            }
+        {// we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
+        list.map(ownerId => {
+          const userProfile = userProfileMap[ownerId]
+          if (userProfile) {
+            return (
+              <div
+                key={JSON.stringify(userProfile)}
+                className="SRC-grid-item SRC-narrow-grid-item"
+              >
+                <UserCard
+                  size={size}
+                  preSignedURL={userProfile.clientPreSignedURL}
+                  userProfile={userProfile}
+                />
+              </div>
+            )
+          }
+          const fauxUserProfile =
+            fauxUserProfilesList && fauxUserProfilesList[fauxUserProfileIndex]
+          if (!fauxUserProfile) {
+            // This could happen in one of two cases:
+            // - The props just updated with a new userlist where the data is being gathered for this particular user
+            //   OR there is no mapping for this user
+            return false
+          }
+          fauxUserProfileIndex += 1
+          return (
+            <div
+              key={JSON.stringify(fauxUserProfile)}
+              className="SRC-grid-item SRC-narrow-grid-item"
+            >
+              <UserCard
+                disableLink={true}
+                hideEmail={true}
+                size={size}
+                userProfile={fauxUserProfile}
+              />
+            </div>
           )
-        }
+        })}
       </div>
     )
   }
