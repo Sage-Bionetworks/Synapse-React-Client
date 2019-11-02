@@ -12,11 +12,11 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
   constructor(props: any) {
     super(props)
     this.state = {
-      index: 5,
+      index: 0,
       markdownPropsArray: [
         {
           // footnotes with html
-          ownerId: 'syn3157182',
+          ownerId: 'syn21097753',
         },
         {
           // with details tag
