@@ -46,6 +46,10 @@ import {
 import SparkMD5 from 'spark-md5'
 import { getEndpoint, BackendDestinationEnum } from './getEndpoint'
 import { LoginResponse } from './jsonResponses/LoginResponse'
+import {
+  ProjectHeaderList,
+  ProjectHeaderEnum,
+} from './jsonResponses/ProjectHeaderList'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -832,14 +836,14 @@ export const getUserFavorites = (sessionToken: string | undefined) => {
   ) as Promise<any>
 }
 /**
- *  http://docs.synapse.org/rest/GET/projects/type.html
- *  @param {String} projectDetails Can be "MY_PROJECTS", "MY_CREATED_PROJECTS" or "MY_PARTICIPATED_PROJECTS"
+ *  https://docs.synapse.org/rest/GET/projects.html
+ *  @param {String} projectDetails Can be "CREATED", "PARTICIPATED" or "TEAM"
  */
 export const getUserProjectList = (
   sessionToken: string | undefined,
-  projectDetails: string,
-) => {
-  const url = `repo/v1/projects/${projectDetails}?offset=0&limit=200`
+  projectDetails: ProjectHeaderEnum,
+): Promise<ProjectHeaderList> => {
+  const url = `repo/v1/projects?filter=${projectDetails}&offset=0&limit=200`
   return doGet(
     url,
     sessionToken,

@@ -2,6 +2,7 @@ import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
 import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
 import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
+import { ProjectHeaderEnum } from 'lib/utils/jsonResponses/ProjectHeaderList'
 
 it('invalid call', () => {
   return SynapseClient.doGet(
@@ -145,8 +146,8 @@ it('get user favorites', () => {
     })
 })
 
-it('get single user profile', () => {
-  return SynapseClient.getUserProjectList('', 'MY_PROJECTS')
+it('get single user project list', () => {
+  return SynapseClient.getUserProjectList('', ProjectHeaderEnum.CREATED)
     .then(data => {
       expect(data).toBeDefined()
     })
