@@ -146,16 +146,6 @@ it('get user favorites', () => {
     })
 })
 
-it('get single user project list', () => {
-  return SynapseClient.getUserProjectList('', ProjectHeaderEnum.CREATED)
-    .then(data => {
-      expect(data).toBeDefined()
-    })
-    .catch(err => {
-      fail(err)
-    })
-})
-
 it('get user teams', () => {
   return SynapseClient.getUserProfile('')
     .then(data => {
@@ -185,16 +175,3 @@ it('delete entity', () => {
       fail(err.reason)
     })
 })
-
-// })
-// ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
-// Tried increasing timeout to 30s, but still occurs.  Not sure why the signal is not being sent back
-// it('create project', done => {
-//   //create a project (with a random name)
-//   return SynapseClient.createProject('synapse react test ' +
-//     Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), global.sessionToken)
-//     .then(newProject => {
-//       expect(newProject.id).toBeDefined();
-//       done();
-//     })
-// });
