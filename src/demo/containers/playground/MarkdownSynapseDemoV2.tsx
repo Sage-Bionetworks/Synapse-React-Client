@@ -12,7 +12,7 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
   constructor(props: any) {
     super(props)
     this.state = {
-      index: 0,
+      index: 2,
       markdownPropsArray: [
         {
           // footnotes with html
@@ -76,15 +76,23 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
         <button
           className="btn btn-default"
           onClick={() => {
-            this.setState({ index: 2 })
+            this.setState({ index: 3 })
           }}
         >
-          Table of Contents
+          bookmarks
         </button>
         <button
           className="btn btn-default"
           onClick={() => {
             this.setState({ index: 4 })
+          }}
+        >
+          lego man
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {
+            this.setState({ index: 5 })
           }}
         >
           Show nested anchor

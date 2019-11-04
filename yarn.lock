@@ -1285,9 +1285,9 @@
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.3.tgz#bdfd69d61e464dcc81b25159c270d75a73c1a636"
 
-"@types/katex@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@types/katex/-/katex-0.5.0.tgz#a7dbb981f1bc89c8b1b5e7fa8a1ce2617ab2f358"
+"@types/katex@^0.10.2":
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/@types/katex/-/katex-0.10.2.tgz#322afa83aba5cca4edcea014ebf0be997135dbd9"
 
 "@types/lodash@^4.14.119":
   version "4.14.144"
@@ -6451,9 +6451,9 @@ just-extend@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-4.0.2.tgz#f3f47f7dfca0f989c55410a7ebc8854b07108afc"
 
-katex@^0.10.0-rc.1:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/katex/-/katex-0.10.2.tgz#39973edbb65eda5b6f9e7f41648781e557dd4932"
+katex@0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.11.1.tgz#df30ca40c565c9df01a466a00d53e079e84ffaa2"
   dependencies:
     commander "^2.19.0"
 

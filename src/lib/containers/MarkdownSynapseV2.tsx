@@ -5,6 +5,7 @@ import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import UserCard from './UserCard'
+import katex from 'katex'
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -14,8 +15,6 @@ const TOC_CLASS = {
   5: 'toc-indent5',
   6: 'toc-indent6',
 }
-
-declare var katex: any
 
 declare var markdownitSynapse: any
 declare var markdownit: any
@@ -235,35 +234,24 @@ export default class MarkdownSynapse extends React.Component<
    * and transform them to their math markedown equivalents
    */
   public processMath() {
+    console.log('prcess math called')
     if (!this.markupRef.current) {
+      console.log('returning on line 240')
       return
     }
     // use regex to grab all elements
-    const mathExpressions = this.markupRef.current.querySelectorAll(
-      '[id^="mathjax-"]',
-    )
+    const mathExpressions = this.markupRef.current.querySelectorAll<
+      HTMLElement
+    >('[id^="mathjax-"]')
+    console.log('mathExpressions = ', mathExpressions)
     // go through all obtained elements and transform them with katex
-    mathExpressions.forEach((element: any) => {
-      katex.render(element.textContent, element, {
-        delimiters: [
-          {
-            display: true,
-            left: '$$',
-            right: '$$',
-          },
-          {
-            display: false,
-            left: '\\(',
-            right: '\\)',
-          },
-          {
-            display: true,
-            left: '\\[',
-            right: '\\]',
-          },
-        ],
-        throwOnError: false,
-      })
+    mathExpressions.forEach(element => {
+      element.textContent &&
+        katex.render(element.textContent, element, {
+          // @ts-ignore
+          output: 'html',
+          throwOnError: false,
+        })
     })
   }
   /**
@@ -278,7 +266,6 @@ export default class MarkdownSynapse extends React.Component<
     if (footnotesHtml.length > 0) {
       return <Bookmarks footnotes={footnotesHtml} />
     }
-    // ts doesn't like functions without explicit return statements
     return
   }
 
@@ -394,51 +381,49 @@ export default class MarkdownSynapse extends React.Component<
   public recursiveRender = (markdown: string) => {
     const domParser = new DOMParser()
     const document = domParser.parseFromString(markdown, 'text/html')
-    console.log('rendering with ', document.body)
-    // @ts-ignore
-    const reactDocument = <div>{this.createReactMarkup(document.body)}</div>
-    console.log('reactDocument = ', reactDocument)
+    const reactDocument = <>{this.createReactMarkup(document.body, markdown)}</>
     return reactDocument
   }
 
-  createReactMarkup(element: Node, markdown: string): any {
-    console.log('element = ', element)
-    if (element instanceof HTMLElement) {
-      if (element.childElementCount === 0) {
-        // spans are where the inserted widgets are located
-        if (element.getAttribute('data-widgetparams')) {
-          console.log(
-            'returning widget: ',
-            element.getAttribute('data-widgetparams'),
-          )
-          // process widget
-          return this.processHTMLWidgetMapping(element, markdown)
-        } else {
-          console.log('returning element.innerHtml = ', element.innerHTML)
-          return (
-            <span
-              dangerouslySetInnerHTML={{ __html: element.innerHTML }}
-            ></span>
-          )
-        }
+  createReactMarkup = (element: Node, markdown: string): any => {
+    if (element.nodeType === Node.TEXT_NODE) {
+      return <> {element.textContent} </>
+    } else if (
+      element.nodeType === Node.ELEMENT_NODE &&
+      element instanceof HTMLElement
+    ) {
+      const tagName =
+        element.tagName.toLowerCase() === 'body'
+          ? 'span'
+          : element.tagName.toLowerCase()
+      const widgetParams = element.getAttribute('data-widgetparams')
+      if (widgetParams) {
+        console.log('process widgetParams = ', widgetParams)
+        // process widget
+        return this.processHTMLWidgetMapping(widgetParams, markdown)
       }
-      return Array.from(element.childNodes).map(el => {
-        // check if grand parent then render this tag as it is...
-        if (el instanceof HTMLElement) {
-          return React.createElement(
-            el.tagName.toLowerCase(),
-            {},
-            <>{this.createReactMarkup(el, markdown)}</>,
-          )
-        }
+      if (element.childNodes.length === 0) {
+        // e.g. self closing tag like <br/>
+        return React.createElement(tagName)
+      }
+      const children = Array.from(element.childNodes).map(el => {
         return <>{this.createReactMarkup(el, markdown)}</>
       })
-    } else if (element.nodeType === Node.TEXT_NODE) {
-      console.log('returning text = ', element)
-      // plain text
-      return <span></span>
-    } else {
-      console.error('Unaccounted for edge case with element = ', element)
+      const attributes = element.attributes
+      const props = {}
+      for (let i = 0; i < attributes.length; i++) {
+        let name = ''
+        let value = ''
+        const attribute = attributes.item(i)
+        if (attribute) {
+          name = attribute.name
+          value = attribute.value
+        }
+        if (name && value) {
+          props[name] = value
+        }
+      }
+      return React.createElement(tagName, props, <>{children}</>)
     }
   }
 
@@ -472,7 +457,7 @@ export default class MarkdownSynapse extends React.Component<
    * @memberof MarkdownSynapse
    */
   public processHTMLWidgetMapping(
-    widgetMatch: HTMLElement,
+    widgetParams: string,
     originalMarkup: string,
   ) {
     // General workflow -
@@ -482,21 +467,18 @@ export default class MarkdownSynapse extends React.Component<
     //   4. Render that widget based on its parameters
 
     // steps 1,2
-    const widgetParamsMatchWithXML = widgetMatch.getAttribute(
-      'data-widgetparams',
-    )
-    const widgetParamsString = this.decodeXml(widgetParamsMatchWithXML![2])
+    const decodedWidgetParams = this.decodeXml(widgetParams)
 
-    // widgetParamsString look like {<widget>?param1=xxx&param2=yyy}
-    const questionIndex = widgetParamsString.indexOf('?')
+    // decodedWidgetParams look like {<widget>?param1=xxx&param2=yyy}
+    const questionIndex = decodedWidgetParams.indexOf('?')
     if (questionIndex === -1) {
       // e.g. toc is passed, there are no params
-      return this.renderWidget(widgetParamsString, {}, originalMarkup)
+      return this.renderWidget(decodedWidgetParams, {}, originalMarkup)
     }
-    const widgetType = widgetParamsString.substring(0, questionIndex)
+    const widgetType = decodedWidgetParams.substring(0, questionIndex)
     const widgetparamsMapped = {}
     // map out params and their values
-    widgetParamsString
+    decodedWidgetParams
       .substring(questionIndex + 1)
       .split('&')
       .forEach(keyPair => {
@@ -584,7 +566,7 @@ export default class MarkdownSynapse extends React.Component<
     return (
       <SynapsePlot
         key={widgetparamsMapped.reactKey}
-        token={this.props.token}
+        token={'cf54c003-421c-4f3a-b083-4e420010636d'}
         ownerId={this.props.ownerId}
         wikiId={this.props.wikiId || this.state.data.id}
         widgetparamsMapped={widgetparamsMapped}
@@ -605,7 +587,7 @@ export default class MarkdownSynapse extends React.Component<
         <SynapseImage
           params={widgetparamsMapped}
           key={reactKey}
-          token={this.props.token}
+          token={'cf54c003-421c-4f3a-b083-4e420010636d'}
           fileName={widgetparamsMapped.fileName}
           wikiId={this.props.wikiId || this.state.data.id}
           fileResults={this.state.fileHandles.list}
@@ -619,7 +601,7 @@ export default class MarkdownSynapse extends React.Component<
         <SynapseImage
           params={widgetparamsMapped}
           key={reactKey}
-          token={this.props.token}
+          token={'cf54c003-421c-4f3a-b083-4e420010636d'}
           synapseId={widgetparamsMapped.synapseId}
         />
       )
@@ -667,7 +649,8 @@ export default class MarkdownSynapse extends React.Component<
     // unpack and set default value if not specified
     // get wiki attachments
     await this.getWikiPageMarkdown()
-    this.processMath()
+    setTimeout(this.processMath, 4000)
+    // this.processMath()
   }
 
   // on component update find and re-render the math/widget items accordingly
@@ -680,14 +663,16 @@ export default class MarkdownSynapse extends React.Component<
     if (shouldUpdate) {
       await this.getWikiPageMarkdown()
     }
-    this.processMath()
+    setTimeout(this.processMath, 4000)
+    // this.processMath()
   }
 
   public render() {
+    const bookmarks = this.addBookmarks()
     return (
       <div className="markdown" ref={this.markupRef}>
-        <span>{this.processWidgets()}</span>
-        {/* <div>{this.addBookmarks()}</div> */}
+        {this.processWidgets()}
+        {bookmarks && <div>{this.addBookmarks()}</div>}
       </div>
     )
   }
