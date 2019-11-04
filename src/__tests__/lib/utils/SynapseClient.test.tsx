@@ -2,14 +2,14 @@ import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
 import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
 import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
-import { ProjectHeaderEnum } from 'lib/utils/jsonResponses/ProjectHeaderList'
+import { BackendDestinationEnum } from 'lib/utils/getEndpoint'
 
 it('invalid call', () => {
   return SynapseClient.doGet(
     '/repo/v1/invalid',
     undefined,
     undefined,
-    'https://repo-prod.prod.sagebase.org',
+    BackendDestinationEnum.REPO_ENDPOINT,
   ).catch(error => {
     expect(error.statusCode).toEqual(404)
     expect(error.reason).toEqual(
