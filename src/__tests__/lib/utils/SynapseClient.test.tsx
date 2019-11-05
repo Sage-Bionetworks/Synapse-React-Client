@@ -2,13 +2,14 @@ import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
 import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
 import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
+import { BackendDestinationEnum } from 'lib/utils/getEndpoint'
 
 it('invalid call', () => {
   return SynapseClient.doGet(
     '/repo/v1/invalid',
     undefined,
     undefined,
-    'https://repo-prod.prod.sagebase.org',
+    BackendDestinationEnum.REPO_ENDPOINT,
   ).catch(error => {
     expect(error.statusCode).toEqual(404)
     expect(error.reason).toEqual(
@@ -145,16 +146,6 @@ it('get user favorites', () => {
     })
 })
 
-it('get single user profile', () => {
-  return SynapseClient.getUserProjectList('', 'MY_PROJECTS')
-    .then(data => {
-      expect(data).toBeDefined()
-    })
-    .catch(err => {
-      fail(err)
-    })
-})
-
 it('get user teams', () => {
   return SynapseClient.getUserProfile('')
     .then(data => {
@@ -184,16 +175,3 @@ it('delete entity', () => {
       fail(err.reason)
     })
 })
-
-// })
-// ERROR: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL
-// Tried increasing timeout to 30s, but still occurs.  Not sure why the signal is not being sent back
-// it('create project', done => {
-//   //create a project (with a random name)
-//   return SynapseClient.createProject('synapse react test ' +
-//     Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), global.sessionToken)
-//     .then(newProject => {
-//       expect(newProject.id).toBeDefined();
-//       done();
-//     })
-// });

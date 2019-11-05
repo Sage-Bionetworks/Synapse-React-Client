@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { EntityHeader } from '../utils/jsonResponses/EntityHeader'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { 
+import {
   faLink,
   faFolder,
   faFile,
   faListAlt,
   faTable,
   faThList,
-  faArchive 
+  faArchive,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -20,10 +20,16 @@ library.add(faTable)
 library.add(faThList)
 library.add(faArchive)
 
-type IconType = 'FileEntity' | 'Folder' | 'Link' | 'Project' | 'TableEntity' | 'EntityView'
+type IconType =
+  | 'FileEntity'
+  | 'Folder'
+  | 'Link'
+  | 'Project'
+  | 'TableEntity'
+  | 'EntityView'
 
 const getIconTypeForEntity = (name: IconType) => {
-  switch(name) {
+  switch (name) {
     case 'Link':
       return 'link'
     case 'Folder':
@@ -49,13 +55,13 @@ const EntityTypeIcon: React.SFC<EntityTypeIconProps> = ({ type }) => {
   const name = splitType[splitType.length - 1] as IconType
   const iconType = getIconTypeForEntity(name)
   const iconStyle: React.CSSProperties = {
-    marginRight: 5
+    marginRight: 5,
   }
   if (iconType === '') {
     console.log('Entity Type not mapped = ', type)
     return <React.Fragment />
   }
-  return <FontAwesomeIcon style={iconStyle} icon={iconType}/>
+  return <FontAwesomeIcon style={iconStyle} icon={iconType} />
 }
 
 type EntityLinkProps = {
@@ -63,14 +69,22 @@ type EntityLinkProps = {
   className?: string
 }
 
-export const EntityLink: React.SFC<EntityLinkProps> = ({ entityHeader, className }) => {
+export const EntityLink: React.SFC<EntityLinkProps> = ({
+  entityHeader,
+  className,
+}) => {
   const { id, name, type } = entityHeader
   return (
-    <a className={className} target="_blank" rel="noopener noreferrer" href={`https://www.synapse.org/#!Synapse:${id}`}>
+    <a
+      className={className}
+      target="_blank"
+      rel="noopener noreferrer"
+      href={`https://www.synapse.org/#!Synapse:${id}`}
+    >
       <p className={className}>
         <EntityTypeIcon type={type} />
         {name}
       </p>
     </a>
   )
-} 
+}

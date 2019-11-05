@@ -1,16 +1,16 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import syn16787123Json  from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
-import TotalQueryResults, { TotalQueryResultsProps } from '../../../lib/containers/TotalQueryResults'
+import TotalQueryResults, {
+  TotalQueryResultsProps,
+} from '../../../lib/containers/TotalQueryResults'
 import { cloneDeep } from 'lodash'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
 
 const createShallowComponent = (props: TotalQueryResultsProps) => {
   const wrapper = shallow<typeof TotalQueryResults>(
-    <TotalQueryResults
-      {...props}
-    />
+    <TotalQueryResults {...props} />,
   )
   const instance = wrapper.instance()
   return { wrapper, instance }
@@ -28,7 +28,7 @@ describe('it works', () => {
     unitDescription,
     isLoading: false,
     facet: 'fundingAgency',
-    frontText: 'Displaying'
+    frontText: 'Displaying',
   }
   it('renders without crashing', () => {
     const tree = createShallowComponent(props)
@@ -37,7 +37,9 @@ describe('it works', () => {
 
   it('renders with a faceted view correctly', async () => {
     const { wrapper } = createShallowComponent(props)
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `)
+    expect(wrapper.find('.SRC-boldText').text()).toEqual(
+      `${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `,
+    )
   })
 
   it('renders with a loading spinner when loading', async () => {
@@ -50,10 +52,11 @@ describe('it works', () => {
     cloneData.facets[FUNDING_AGENCY_FACET_INDEX].facetValues.forEach(
       (element: FacetColumnResultValueCount) => {
         element.isSelected = false
-      }
+      },
     )
     const { wrapper } = createShallowComponent({ ...props, data: cloneData })
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(`${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `)
+    expect(wrapper.find('.SRC-boldText').text()).toEqual(
+      `${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `,
+    )
   })
-
 })

@@ -1,19 +1,17 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import CardContainer, { CardContainerProps } from '../../../lib/containers/CardContainer'
+import CardContainer, {
+  CardContainerProps,
+} from '../../../lib/containers/CardContainer'
 import { SynapseConstants } from '../../../lib'
-import syn16787123Json  from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createShallowComponent = (props: CardContainerProps) => {
-  const wrapper = shallow(
-    <CardContainer
-      {...props}
-    />
-  )
+  const wrapper = shallow(<CardContainer {...props} />)
   const instance = wrapper.instance() as CardContainer
   return { wrapper, instance }
 }
@@ -22,20 +20,19 @@ describe('it performs all functionality', () => {
   // for our purposes its okay to return the same data again
   const getNextPageOfData = jest.fn((_arg: QueryBundleRequest) => {})
   const sql = 'SELECT * FROM syn16787123'
-  const lastQueryRequest: QueryBundleRequest  = {
+  const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-      SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-      ,
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
     query: {
       sql,
       isConsistent: false,
       limit: 25,
       offset: 0,
-  }
+    },
   }
   const getLastQueryRequest = jest.fn(() => lastQueryRequest)
 
@@ -50,7 +47,7 @@ describe('it performs all functionality', () => {
     unitDescription,
     type,
     data,
-    hasMoreData: true
+    hasMoreData: true,
   }
 
   it('renders without crashing', () => {
@@ -60,7 +57,10 @@ describe('it performs all functionality', () => {
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
-    const { wrapper } = createShallowComponent({ ...props, facet: 'projectStatus' })
+    const { wrapper } = createShallowComponent({
+      ...props,
+      facet: 'projectStatus',
+    })
     expect(wrapper.find('button.SRC-light-button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('button.SRC-light-button').text()).toEqual('View More')
@@ -85,7 +85,7 @@ describe('it performs all functionality', () => {
     dataCopy.queryResult.queryResults.rows.splice(0, 10)
     const propsWithDataCopy = {
       ...props,
-      data: dataCopy
+      data: dataCopy,
     }
     const { wrapper } = createShallowComponent(propsWithDataCopy)
     expect(wrapper.find('button.SRC-light-button')).toHaveLength(0)
@@ -94,7 +94,7 @@ describe('it performs all functionality', () => {
   it('show ViewMore does not render when hasMoreData is false', () => {
     const propsWithHasMoreDataFalse = {
       ...props,
-      hasMoreData: false
+      hasMoreData: false,
     }
     const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
     expect(wrapper.find('button.SRC-light-button')).toHaveLength(0)

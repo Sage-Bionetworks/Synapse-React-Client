@@ -64,7 +64,7 @@ export default class UserFileGrid extends React.Component<
         This submission is currently incomplete and has not been submitted. If
         you trash this submission, you won't be able to recover the data.
       </p>
-      <p>Are you sure you want to trash this submission?' </p>
+      <p>Are you sure you want to trash this submission?</p>
     </>
   )
   static requestFilter = {
@@ -325,7 +325,7 @@ export default class UserFileGrid extends React.Component<
               {fileList.map((dataFileRecord, key) => {
                 if (isInProgress) {
                   return (
-                    <tr key={dataFileRecord.formDataId! + key+ fileListType}>
+                    <tr key={dataFileRecord.formDataId! + key + fileListType}>
                       <td>
                         <a
                           href={`${pathpart}?formGroupId=${formGroupId}&formDataId=${dataFileRecord.formDataId}&dataFileHandleId=${dataFileRecord.dataFileHandleId}`}
@@ -435,71 +435,70 @@ export default class UserFileGrid extends React.Component<
     return (
       <div className={`theme-${this.props.formClass}`}>
         <div className="SRC-ReactJsonForm">
-        {this.renderLoading(this.props.token, this.state.isLoading)}
-        {this.renderUnauthenticatedView(this.props.token)}
+          {this.renderLoading(this.props.token, this.state.isLoading)}
+          {this.renderUnauthenticatedView(this.props.token)}
 
-        {!this.state.isLoading && (
-          <div className="file-grid ">
-            <h3>Your Submissions</h3>
-            <div className="panel panel-default padding-full">
-              {this.renderSubmissionsTables(
-                this.state.inProgress,
-                this.state.submitted,
-                this.props.pathpart,
-                this.props.formGroupId,
-              )}
+          {!this.state.isLoading && (
+            <div className="file-grid ">
+              <h3>Your Submissions</h3>
+              <div className="panel panel-default padding-full">
+                {this.renderSubmissionsTables(
+                  this.state.inProgress,
+                  this.state.submitted,
+                  this.props.pathpart,
+                  this.props.formGroupId,
+                )}
 
-              <div className="text-center">
-                <a
-                  className="btn btn-large"
-                  href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
-                >
-                  Add new {this.props.itemNoun}
-                </a>
+                <div className="text-center">
+                  <a
+                    className="btn btn-large"
+                    href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
+                  >
+                    Add new {this.props.itemNoun}
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        {this.state.modalContext && (
-          <WarningModal
-            className={`theme-${this.props.formClass}`}
-            show={typeof this.state.modalContext !== 'undefined'}
-            title={this.modalTitle}
-            copy={this.modalCopy}
-            callbackArgs={this.state.modalContext.arguments}
-            onCancel={() => this.setState({ modalContext: undefined })}
-            onOK={(token: string, formDataId: string) =>
-              this.deleteFile(token, formDataId)
-            }
-          />
-        )}
+          )}
+          {this.state.modalContext && (
+            <WarningModal
+              className={`theme-${this.props.formClass}`}
+              show={typeof this.state.modalContext !== 'undefined'}
+              title={this.modalTitle}
+              copy={this.modalCopy}
+              callbackArgs={this.state.modalContext.arguments}
+              onCancel={() => this.setState({ modalContext: undefined })}
+              onOK={(token: string, formDataId: string) =>
+                this.deleteFile(token, formDataId)
+              }
+            />
+          )}
 
-        <Modal
-          show={this.state.isShowInfoModal}
-          animation={false}
-          className={`theme-${this.props.formClass}`}
-        >
-          <Modal.Header
-            closeButton={false}
-            onHide={() => this.setState({ isShowInfoModal: false })}
+          <Modal
+            show={this.state.isShowInfoModal}
+            animation={false}
+            className={`theme-${this.props.formClass}`}
           >
-            <Modal.Title>More Information</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Please{' '}
-            <a href="mailto:ModelAD@iupui.edu">contact us</a> for
-            more information about your submission
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="success"
-              onClick={() => this.setState({ isShowInfoModal: false })}
+            <Modal.Header
+              closeButton={false}
+              onHide={() => this.setState({ isShowInfoModal: false })}
             >
-              OK
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+              <Modal.Title>More Information</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Please <a href="mailto:ModelAD@iupui.edu">contact us</a> for more
+              information about your submission
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="success"
+                onClick={() => this.setState({ isShowInfoModal: false })}
+              >
+                OK
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
       </div>
     )
   }

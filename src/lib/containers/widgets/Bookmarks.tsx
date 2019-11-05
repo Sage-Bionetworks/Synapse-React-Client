@@ -5,7 +5,6 @@ type BookmarksProps = {
 }
 
 class Bookmarks extends React.Component<BookmarksProps, {}> {
-
   constructor(props: BookmarksProps) {
     super(props)
     this.renderBookmarks = this.renderBookmarks.bind(this)
@@ -30,18 +29,18 @@ class Bookmarks extends React.Component<BookmarksProps, {}> {
     }
 
     // return all the links formatted accordingly
-    return output.map(
-      (el, index) => {
-        const isBeforeLastElement = index < output.length - 1
-        return (
-          <React.Fragment key={index}>
-            <button className="SRC-markdown-bookmark" id={`bookmark${index}`}>[{index + 1}]</button>
-            <span dangerouslySetInnerHTML={{ __html: el }} />
-            {isBeforeLastElement && <br/>}
-          </React.Fragment>
-        )
-      }
-    )
+    return output.map((el, index) => {
+      const isBeforeLastElement = index < output.length - 1
+      return (
+        <React.Fragment key={index}>
+          <button className="SRC-markdown-bookmark" id={`bookmark${index}`}>
+            [{index + 1}]
+          </button>
+          <span dangerouslySetInnerHTML={{ __html: el }} />
+          {isBeforeLastElement && <br />}
+        </React.Fragment>
+      )
+    })
   }
 
   public render() {

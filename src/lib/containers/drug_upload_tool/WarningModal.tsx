@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 
@@ -14,7 +14,6 @@ export type WarningModalProps = {
 }
 
 export default function WarningModal(props: WarningModalProps) {
- 
   return (
     <Modal show={props.show} animation={false} className={props.className}>
       <Modal.Header closeButton={false} onHide={() => props.onCancel()}>
@@ -25,11 +24,13 @@ export default function WarningModal(props: WarningModalProps) {
         <Button variant="secondary" onClick={() => props.onCancel()}>
           Cancel
         </Button>
-        <Button variant="success" onClick={() => props.onOK(...props.callbackArgs)}>
+        <Button
+          variant="success"
+          onClick={() => props.onOK(...props.callbackArgs)}
+        >
           <span>{props.confirmCopy || 'OK'}</span>
         </Button>
       </Modal.Footer>
     </Modal>
-  );
+  )
 }
-

@@ -6,17 +6,18 @@ import * as Utils from './utils'
 type DatasetProps = {
   data?: any
   schema?: any
-  secondaryLabelLimit?:number
+  secondaryLabelLimit?: number
 }
 
 class Dataset extends React.Component<DatasetProps, {}> {
-
   constructor(props: DatasetProps) {
     super(props)
     this.handleLinkClick = this.handleLinkClick.bind(this)
   }
 
-  public handleLinkClick = (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+  public handleLinkClick = (link: string) => (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     event.preventDefault()
     window.open(`https://www.synapse.org/#!Synapse:${link}`, '_blank')
   }
@@ -31,7 +32,11 @@ class Dataset extends React.Component<DatasetProps, {}> {
     const fundingAgency = data[schema.fundingAgency]
     const fileCount = data[schema.fileCount]
     const fileSize = calculateFriendlyFileSize(data[schema.fileSize])
-    const values = [['FUNDER', fundingAgency], ['SIZE', fileSize], ['FILES', fileCount]]
+    const values = [
+      ['FUNDER', fundingAgency],
+      ['SIZE', fileSize],
+      ['FILES', fileCount],
+    ]
     return (
       <div className="SRC-portalCard SRC-typeDataset  ">
         <div className="SRC-cardThumbnail">
@@ -42,17 +47,22 @@ class Dataset extends React.Component<DatasetProps, {}> {
           <div className="SRC-type">Dataset </div>
           <div>
             <h3>
-              <a target="_self" href={`https://www.synapse.org/#!Synapse:${id}`}>
+              <a
+                target="_self"
+                href={`https://www.synapse.org/#!Synapse:${id}`}
+              >
                 {datasetName}
               </a>
             </h3>
           </div>
           <div className="SRC-description-dataset">
-            <p className="SRC-description-text">
-              {summary}
-            </p>
+            <p className="SRC-description-text">{summary}</p>
             <div className="SRC-cardAction">
-              <button className="SRC-datasetButton" onClick={this.handleLinkClick(id)} type="button">
+              <button
+                className="SRC-datasetButton"
+                onClick={this.handleLinkClick(id)}
+                type="button"
+              >
                 Download Dataset
               </button>
             </div>
@@ -61,7 +71,11 @@ class Dataset extends React.Component<DatasetProps, {}> {
             <Utils.ChipContainer chips={[tumorType, diseaseFocus]} />
           </div>
         </div>
-        <Utils.CardFooter isHeader={false} secondaryLabelLimit={this.props.secondaryLabelLimit} values={values} />
+        <Utils.CardFooter
+          isHeader={false}
+          secondaryLabelLimit={this.props.secondaryLabelLimit}
+          values={values}
+        />
       </div>
     )
   }

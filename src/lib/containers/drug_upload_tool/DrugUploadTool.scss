@@ -1,4 +1,5 @@
 @import './Vars.scss';
+@import './print.scss';
 
 /* MODAL OVERWRITE! */
 .modal-backdrop {
@@ -11,10 +12,9 @@
 .SRC-ReactJsonForm {
   .submission-header {
     h2 {
-      font-size: 1.8rem;
+      font-size: 2.1rem;
       font-weight: 700;
       color: $gray-formtext;
-      text-transform: uppercase;
     }
     &.submitted {
       div {
@@ -178,7 +178,9 @@
   }
 
   .notification-area {
-    color: $action-color;
+    @include themify($themes) {
+      color: themed('action-color');
+    }
     font-style: italic;
     margin-bottom: $space-unit;
   }
@@ -234,7 +236,9 @@
     @include calc(height, #{$space-unit} * 2);
 
     button.btn-link {
-      color: $action-color;
+      @include themify($themes) {
+        color: themed('action-color');
+      }
       font-weight: 700;
       font-style: normal;
       text-transform: uppercase;
@@ -243,7 +247,7 @@
 
   /* radio button style override */
   .field-radio-group .radio:first-child {
-    margin-top: 0
+    margin-top: 0;
   }
 
   .has-error .checkbox,
@@ -261,7 +265,9 @@
 
   input[type='checkbox']:checked + label::before,
   input[type='checkbox']:checked + span::before {
-    color: $action-color;
+    @include themify($themes) {
+      color: themed('action-color');
+    }
   }
 
   .has-error .form-control {
@@ -321,9 +327,8 @@
     margin-bottom: 2rem;
   }
 
-
   .checkboxes .checkbox:first-child {
-    margin-top: 0
+    margin-top: 0;
   }
 
   .checkbox > label::before,
@@ -371,13 +376,12 @@
   /* second level title */
   fieldset fieldset fieldset legend {
     font-size: 1.75rem;
-     /* display: block;*/
-      margin-bottom: 0.5rem;
+    /* display: block;*/
+    margin-bottom: 0.5rem;
     display: none;
   }
-.show-subfield-title fieldset legend {
-   display:block !important;
-    
+  .show-subfield-title fieldset legend {
+    display: block !important;
   }
   /* third level title */
   fieldset fieldset fieldset fieldset legend {
@@ -507,10 +511,11 @@
   }
 }
 
-  .btn-success, .btn-success:active, .btn-success:focus  {
-    @include themify($themes) {
-      background-color: themed('action-color');
-      border-color: themed('action-color');
-    }
+.btn-success,
+.btn-success:active,
+.btn-success:focus {
+  @include themify($themes) {
+    background-color: themed('action-color');
+    border-color: themed('action-color');
   }
-
+}

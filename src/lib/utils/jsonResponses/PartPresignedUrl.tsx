@@ -1,4 +1,4 @@
 export type PartPresignedUrl = {
-  partNumber: number,
+  partNumber: number
   uploadPresignedUrl: string
 }

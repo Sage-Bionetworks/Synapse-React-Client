@@ -4,8 +4,8 @@ import { QueryResultBundle } from '../jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from './rollupCompatibleModules'
 
 type PartialStateObject = {
-  hasMoreData: boolean,
-  data: QueryResultBundle,
+  hasMoreData: boolean
+  data: QueryResultBundle
 }
 
 /**
@@ -14,25 +14,28 @@ type PartialStateObject = {
  * @param {*} queryRequest Query request as specified by
  *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
  */
-export const getNextPageOfData = async (queryRequest: QueryBundleRequest, data: QueryResultBundle, token?: string) => {
+export const getNextPageOfData = async (
+  queryRequest: QueryBundleRequest,
+  data: QueryResultBundle,
+  token?: string,
+) => {
   return await SynapseClient.getQueryTableResults(queryRequest, token)
-    .then(
-    (newData: QueryResultBundle) => {
+    .then((newData: QueryResultBundle) => {
       const oldData: QueryResultBundle = cloneDeep(data)!
       // push on the new data retrieved from the API call
-      const hasMoreData = newData
-                          .queryResult
-                          .queryResults
-                          .rows
-                          .length === SynapseConstants.PAGE_SIZE
-      oldData.queryResult.queryResults.rows.push(...newData.queryResult.queryResults.rows)
+      const hasMoreData =
+        newData.queryResult.queryResults.rows.length ===
+        SynapseConstants.PAGE_SIZE
+      oldData.queryResult.queryResults.rows.push(
+        ...newData.queryResult.queryResults.rows,
+      )
       const newState: PartialStateObject = {
         hasMoreData,
         data: oldData,
       }
       return newState
-    }
-    ).catch((err) => {
+    })
+    .catch(err => {
       console.log('Failed to get data ', err)
       return {} as PartialStateObject
     })

@@ -13,7 +13,6 @@ export interface SummaryTableProps {
   uiSchema: UiSchema
 }
 
-
 function findLabel(key: string, schema: any, uiSchema: UiSchema): string {
   const regex1 = /\[\d+\]\./g
   const regex3 = /\.(\d)+/g
@@ -42,7 +41,7 @@ function findLabel(key: string, schema: any, uiSchema: UiSchema): string {
     _.get(schema.properties, labelFromSchema) ||
     _.get(uiSchema, arrayLabelFromUiSchema) ||
     _.get(schema.properties, arrayLabelFromSchema) ||
-    `${ arrayLabelFromSchema}`
+    `${arrayLabelFromSchema}`
   return `${index ? '[' + index + '] ' : ''}${label}`
 }
 
@@ -66,7 +65,7 @@ export function getFlatData(
       } else if (
         //if the value is a proper array
         _.isArray(object[key]) &&
-        !_.isString(object[key]) 
+        !_.isString(object[key])
       ) {
         for (let i in object[key]) {
           if (
@@ -162,7 +161,7 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
                       )}
                   </td>
                   <td>{line.label}</td>
-                  
+
                   <td>{line.value}</td>
                 </tr>
               )
@@ -175,7 +174,13 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
 
   return (
     <>
-      <p className="step-exclude-directions">Below is all of the data you have entered. Before submitting, click 'Validate' to ensure that all of the required data has been entered.</p>
+      <p className="step-exclude-directions">
+        Below is all of the data you have entered. Before submitting, click
+        'Validate' to ensure that all of the required data has been entered.
+      </p>
+      <button className="nav-link pull-right" onClick={() => window.print()}>
+        Print this data
+      </button>
       <div className="panel panel-default padding-full wrap">
         <div className="summary scroll-area">{table}</div>
       </div>

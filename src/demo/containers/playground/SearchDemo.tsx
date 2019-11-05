@@ -4,30 +4,30 @@ import Search, { Searchable } from 'lib/containers/Search'
 import { SynapseConstants } from 'lib'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import { CommonCardProps } from 'lib/containers/CardContainerLogic'
-import CardContainer from 'lib/containers/CardContainer';
+import CardContainer from 'lib/containers/CardContainer'
 
-export const SearchDemo:React.SFC = () => {
-  const sql = "SELECT * FROM syn20337467" 
+export const SearchDemo: React.SFC = () => {
+  const sql = 'SELECT * FROM syn20337467'
   const facetAliases = {
     contributor: 'Contributor',
     diagnosis: 'Diagnosis',
   }
   const searchable: Searchable = [
     {
-      columnName: 'summary', 
-      hintText: 'summary'
+      columnName: 'summary',
+      hintText: 'summary',
     },
     {
-      columnName: 'contributor', 
-      hintText: 'Jane'
+      columnName: 'contributor',
+      hintText: 'Jane',
     },
     {
       columnName: 'diagnosis',
-      hintText: 'LOAD'
+      hintText: 'LOAD',
     },
     {
       columnName: 'modelType',
-      hintText: 'hint'
+      hintText: 'hint',
     },
   ]
   const genericCardSchema: GenericCardSchema = {
@@ -36,11 +36,7 @@ export const SearchDemo:React.SFC = () => {
     subTitle: 'softwareType',
     description: 'summary',
     icon: 'icon',
-    secondaryLabels: [
-      'contributor',
-      'diagnosis',
-      'program'
-    ]
+    secondaryLabels: ['contributor', 'diagnosis', 'program'],
   }
   const commonCardProps: CommonCardProps = {
     type: SynapseConstants.GENERIC_CARD,
@@ -52,8 +48,10 @@ export const SearchDemo:React.SFC = () => {
         facetAliases={facetAliases}
         rgbIndex={5}
         initQueryRequest={{
-          concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          partMask: SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          partMask:
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
             SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
             SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
             SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -61,19 +59,14 @@ export const SearchDemo:React.SFC = () => {
           query: {
             sql,
             limit: 25,
-            offset: 0
-          }
+            offset: 0,
+          },
         }}
         showBarChart={false}
         unitDescription={'studies'}
-        >
-        <Search
-          searchable={searchable}
-          isQueryWrapperMenuChild={false}
-        />
-        <CardContainer
-          {...commonCardProps}
-        />
+      >
+        <Search searchable={searchable} isQueryWrapperMenuChild={false} />
+        <CardContainer {...commonCardProps} />
       </QueryWrapper>
     </div>
   )

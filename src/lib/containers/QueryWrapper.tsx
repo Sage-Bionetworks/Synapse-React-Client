@@ -28,8 +28,8 @@ export type QueryWrapperState = {
   */
   isAllFilterSelectedForFacet: {}
   data: QueryResultBundle | undefined
-  isLoadingNewData: boolean  // occurs when props change
-  isLoading: boolean         // occurs when state changes
+  isLoadingNewData: boolean // occurs when props change
+  isLoading: boolean // occurs when state changes
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
   lastFacetSelection: FacetSelection
@@ -77,10 +77,12 @@ export type QueryWrapperChildProps = {
  * @class QueryWrapper
  * @extends {React.Component}
  */
-export default class QueryWrapper extends React.Component<QueryWrapperProps, QueryWrapperState> {
-
+export default class QueryWrapper extends React.Component<
+  QueryWrapperProps,
+  QueryWrapperState
+> {
   public static defaultProps = {
-    token: ''
+    token: '',
   }
 
   public static initialState = {
@@ -92,13 +94,13 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     lastFacetSelection: {
       columnName: '',
       facetValue: '',
-      selector: ''
+      selector: '',
     },
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     loadNowStarted: false,
   } as QueryWrapperState
-  
+
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -136,7 +138,10 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       this.executeInitialQueryRequest()
     } else if (this.props.token !== '' && prevProps.token === '') {
       this.executeInitialQueryRequest()
-    } else if (prevProps.initQueryRequest.query.sql !== this.props.initQueryRequest!.query.sql) {
+    } else if (
+      prevProps.initQueryRequest.query.sql !==
+      this.props.initQueryRequest!.query.sql
+    ) {
       this.executeInitialQueryRequest()
     }
   }
@@ -172,30 +177,31 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
     this.setState({
-      isLoading: true
+      isLoading: true,
     })
     return SynapseClient.getQueryTableResults(
       queryRequest,
       this.props.token,
-      this.updateParentState
+      this.updateParentState,
     )
-    .then(
-      (data: QueryResultBundle) => {
-        const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
+      .then((data: QueryResultBundle) => {
+        const hasMoreData =
+          data.queryResult.queryResults.rows.length ===
+          SynapseConstants.PAGE_SIZE
         const newState: any = {
           hasMoreData,
           data,
           isLoading: false,
           lastQueryRequest: cloneDeep(queryRequest),
-          asyncJobStatus: undefined
+          asyncJobStatus: undefined,
         }
         this.setState(newState)
         return Promise.resolve(() => {})
-      }
-    ).catch((err: string) => {
-      console.log('Failed to get data ', err)
-      return Promise.resolve(() => {})
-    })
+      })
+      .catch((err: string) => {
+        console.log('Failed to get data ', err)
+        return Promise.resolve(() => {})
+      })
   }
 
   /**
@@ -207,19 +213,20 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
    */
   public async getNextPageOfData(queryRequest: QueryBundleRequest) {
     this.setState({
-      isLoading: true
+      isLoading: true,
     })
 
-    await getNextPageOfData(queryRequest, this.state.data!, this.props.token)
-    .then(
-      (newState) => {
-        this.setState({
-          ...newState,
-          isLoading: false,
-          lastQueryRequest: cloneDeep(queryRequest)
-        })
-      }
-    )
+    await getNextPageOfData(
+      queryRequest,
+      this.state.data!,
+      this.props.token,
+    ).then(newState => {
+      this.setState({
+        ...newState,
+        isLoading: false,
+        lastQueryRequest: cloneDeep(queryRequest),
+      })
+    })
   }
 
   /**
@@ -234,53 +241,65 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
       isLoading: true,
       isLoadingNewData: true,
       chartSelectionIndex: 0,
-      loadNowStarted: true
+      loadNowStarted: true,
     })
-    SynapseClient
-      .getQueryTableResults(this.props.initQueryRequest, this.props.token, this.updateParentState)
-      .then(
-        (data: QueryResultBundle) => {
-          const lastQueryRequest: QueryBundleRequest = cloneDeep(this.props.initQueryRequest!)
-          const hasMoreData = data.queryResult.queryResults.rows.length === SynapseConstants.PAGE_SIZE
-          const isAllFilterSelectedForFacet = cloneDeep(this.state.isAllFilterSelectedForFacet)
-          let { chartSelectionIndex } = this.state
-          if (this.props.facet) {
-            if (!data.facets) {
-              throw Error('Error on query request, must include facets in partmask to show facets')
-            }
-            data.facets.forEach((el: FacetColumnResultValues) => {
-              if (el.facetType === 'enumeration') {
-                // isAll is only true iff there are no facets selected or all elements are selected
-                const { facetValues } = el
-                const isAllFalse = facetValues.every(facet => !facet.isSelected)
-                const isAllTrue =  facetValues.every(facet => facet.isSelected)
-                const isByDefaultSelected = isAllFalse || isAllTrue
-                isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
-                if (el.columnName === this.props.facet && !isAllFalse) {
-                  // Note - this picks the first selected facet
-                  chartSelectionIndex = facetValues.sort((a, b) => b.count - a.count).findIndex(facet => facet.isSelected)
-                }
+    SynapseClient.getQueryTableResults(
+      this.props.initQueryRequest,
+      this.props.token,
+      this.updateParentState,
+    )
+      .then((data: QueryResultBundle) => {
+        const lastQueryRequest: QueryBundleRequest = cloneDeep(
+          this.props.initQueryRequest!,
+        )
+        const hasMoreData =
+          data.queryResult.queryResults.rows.length ===
+          SynapseConstants.PAGE_SIZE
+        const isAllFilterSelectedForFacet = cloneDeep(
+          this.state.isAllFilterSelectedForFacet,
+        )
+        let { chartSelectionIndex } = this.state
+        if (this.props.facet) {
+          if (!data.facets) {
+            throw Error(
+              'Error on query request, must include facets in partmask to show facets',
+            )
+          }
+          data.facets.forEach((el: FacetColumnResultValues) => {
+            if (el.facetType === 'enumeration') {
+              // isAll is only true iff there are no facets selected or all elements are selected
+              const { facetValues } = el
+              const isAllFalse = facetValues.every(facet => !facet.isSelected)
+              const isAllTrue = facetValues.every(facet => facet.isSelected)
+              const isByDefaultSelected = isAllFalse || isAllTrue
+              isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
+              if (el.columnName === this.props.facet && !isAllFalse) {
+                // Note - this picks the first selected facet
+                chartSelectionIndex = facetValues
+                  .sort((a, b) => b.count - a.count)
+                  .findIndex(facet => facet.isSelected)
               }
-            })
-          }
-          const newState = {
-            isAllFilterSelectedForFacet,
-            hasMoreData,
-            data,
-            chartSelectionIndex,
-            lastQueryRequest,
-            isLoading: false,
-            isLoadingNewData: false,
-            asyncJobStatus: undefined
-          }
-          this.setState(newState)
+            }
+          })
         }
-      ).catch((err) => {
+        const newState = {
+          isAllFilterSelectedForFacet,
+          hasMoreData,
+          data,
+          chartSelectionIndex,
+          lastQueryRequest,
+          isLoading: false,
+          isLoadingNewData: false,
+          asyncJobStatus: undefined,
+        }
+        this.setState(newState)
+      })
+      .catch(err => {
         console.log('Failed to get data ', err)
       })
   }
 
-  public updateParentState (update: QueryWrapperState) {
+  public updateParentState(update: QueryWrapperState) {
     this.setState(update)
   }
 
@@ -291,46 +310,41 @@ export default class QueryWrapper extends React.Component<QueryWrapperProps, Que
     const { isLoading } = this.state
     const { facetAliases = {} } = this.props
     // inject props in children of this component
-    const childrenWithProps = (React.Children.map(this.props.children, (child: any) => {
-      return React.cloneElement(child, {
-        facetAliases,
-        isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
-        data: this.state.data,
-        token: this.props.token,
-        executeInitialQueryRequest: this.executeInitialQueryRequest,
-        executeQueryRequest: this.executeQueryRequest,
-        getLastQueryRequest: this.getLastQueryRequest,
-        getNextPageOfData: this.getNextPageOfData,
-        isLoading: this.state.isLoading,
-        isLoadingNewData: this.state.isLoadingNewData,
-        facet: this.props.facet,
-        rgbIndex: this.props.rgbIndex,
-        unitDescription: this.props.unitDescription,
-        updateParentState: this.updateParentState,
-        isQueryWrapperChild: true,
-        hasMoreData: this.state.hasMoreData,
-        lastFacetSelection: this.state.lastFacetSelection,
-        chartSelectionIndex: this.state.chartSelectionIndex,
-        getInitQueryRequest: this.getInitQueryRequest,
-        asyncJobStatus: this.state.asyncJobStatus,
-        showBarChart: this.props.showBarChart
-      })
-    }))
+    const childrenWithProps = React.Children.map(
+      this.props.children,
+      (child: any) => {
+        return React.cloneElement(child, {
+          facetAliases,
+          isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
+          data: this.state.data,
+          token: this.props.token,
+          executeInitialQueryRequest: this.executeInitialQueryRequest,
+          executeQueryRequest: this.executeQueryRequest,
+          getLastQueryRequest: this.getLastQueryRequest,
+          getNextPageOfData: this.getNextPageOfData,
+          isLoading: this.state.isLoading,
+          isLoadingNewData: this.state.isLoadingNewData,
+          facet: this.props.facet,
+          rgbIndex: this.props.rgbIndex,
+          unitDescription: this.props.unitDescription,
+          updateParentState: this.updateParentState,
+          isQueryWrapperChild: true,
+          hasMoreData: this.state.hasMoreData,
+          lastFacetSelection: this.state.lastFacetSelection,
+          chartSelectionIndex: this.state.chartSelectionIndex,
+          getInitQueryRequest: this.getInitQueryRequest,
+          asyncJobStatus: this.state.asyncJobStatus,
+          showBarChart: this.props.showBarChart,
+        })
+      },
+    )
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     if (this.props.showMenu) {
       // menu is to the left of the child components so we let that add its
       // own html
-      return (
-        <div className={`${loadingCusrorClass}`}>
-          {childrenWithProps}
-        </div>
-      )
+      return <div className={`${loadingCusrorClass}`}>{childrenWithProps}</div>
     }
-    return (
-      <div className={`${loadingCusrorClass}`}>
-        {childrenWithProps}
-      </div>
-    )
+    return <div className={`${loadingCusrorClass}`}>{childrenWithProps}</div>
   }
 }

@@ -1,14 +1,17 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import ModalDownload, { ModalDownloadProps } from '../../../lib/containers/ModalDownload'
-import { csvOption, tsvOption, writeHeaderOption, includeRowIdAndRowVersionOption } from '../../../lib/containers/ModalDownload.FormSchema'
+import ModalDownload, {
+  ModalDownloadProps,
+} from '../../../lib/containers/ModalDownload'
+import {
+  csvOption,
+  tsvOption,
+  writeHeaderOption,
+  includeRowIdAndRowVersionOption,
+} from '../../../lib/containers/ModalDownload.FormSchema'
 
 const createShallowComponent = (props: ModalDownloadProps) => {
-  const wrapper = mount<ModalDownload>(
-      <ModalDownload
-        {...props}
-      />
-    )
+  const wrapper = mount<ModalDownload>(<ModalDownload {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -16,15 +19,17 @@ const createShallowComponent = (props: ModalDownloadProps) => {
 describe('it performs the expected functionality', () => {
   const mockClose = jest.fn()
   const SynapseClient = require('../../../lib/utils/SynapseClient')
-  const mockGetDownloadFromTableRequest = jest.fn(() => Promise.resolve({
-    resultFileHandleId: 'hello'
-  }))
+  const mockGetDownloadFromTableRequest = jest.fn(() =>
+    Promise.resolve({
+      resultFileHandleId: 'hello',
+    }),
+  )
   SynapseClient.getDownloadFromTableRequest = mockGetDownloadFromTableRequest
   SynapseClient.getFileHandleByIdURL = jest.fn(() => 'testurl')
   const props: ModalDownloadProps = {
     sql: 'SELECT * FROM SYN123',
     entityId: 'SYN123',
-    onClose: mockClose
+    onClose: mockClose,
   }
 
   it('renders without crashing', () => {
@@ -45,11 +50,14 @@ describe('it performs the expected functionality', () => {
     await wrapper.find('button[type="submit"]').simulate('submit')
     // step 2 - verify UI has download button showing
     expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
-    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(expect.objectContaining({
-      csvTableDescriptor: { separator: ',' },
-      writeHeader: true,
-      includeRowIdAndRowVersion: true
-    }), undefined)
+    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        csvTableDescriptor: { separator: ',' },
+        writeHeader: true,
+        includeRowIdAndRowVersion: true,
+      }),
+      undefined,
+    )
   })
 
   it.skip('generates a tsv file without header', async () => {
@@ -62,16 +70,22 @@ describe('it performs the expected functionality', () => {
     // // step 2 - de-select write header option
     const writerHeaderInputElement = wrapper.find(`input[type="checkbox"]`)
     expect(writerHeaderInputElement.at(0).prop('checked')).toBe(true)
-    wrapper.find(`input[type="checkbox"]`).at(0).props().checked = false
+    wrapper
+      .find(`input[type="checkbox"]`)
+      .at(0)
+      .props().checked = false
     expect(writerHeaderInputElement.at(0).prop('checked')).toBe(false)
     await wrapper.find('button[type="submit"]').simulate('submit')
     // step 2 - verify UI has download button showing
     expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
-    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(expect.objectContaining({
-      csvTableDescriptor: { separator: '\t' },
-      writeHeader: false,
-      includeRowIdAndRowVersion: true
-    }), undefined)
+    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        csvTableDescriptor: { separator: '\t' },
+        writeHeader: false,
+        includeRowIdAndRowVersion: true,
+      }),
+      undefined,
+    )
   })
 
   it('generates a csv file using direct method testing', async () => {
@@ -79,8 +93,8 @@ describe('it performs the expected functionality', () => {
     expect(wrapper).toBeDefined()
     // simulates having clicked csvOption on radio box
     const formData = {
-     'File Type': csvOption,
-     Contents: [writeHeaderOption, includeRowIdAndRowVersionOption] 
+      'File Type': csvOption,
+      Contents: [writeHeaderOption, includeRowIdAndRowVersionOption],
     }
     // step 1 - select csv option
     // @ts-ignore
@@ -88,11 +102,14 @@ describe('it performs the expected functionality', () => {
     await wrapper.find('form').simulate('submit')
     // step 2 - verify UI has download button showing
     expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
-    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(expect.objectContaining({
-      csvTableDescriptor: { separator: ',' },
-      writeHeader: true,
-      includeRowIdAndRowVersion: true
-    }), undefined)
+    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        csvTableDescriptor: { separator: ',' },
+        writeHeader: true,
+        includeRowIdAndRowVersion: true,
+      }),
+      undefined,
+    )
   })
 
   it('generates a tsv file without header using direct method testing', async () => {
@@ -101,18 +118,21 @@ describe('it performs the expected functionality', () => {
     // this simulates having clicked one checkbox option off and selecting tsv
     const formData = {
       'File Type': tsvOption,
-      Contents: [ includeRowIdAndRowVersionOption] 
-     }
+      Contents: [includeRowIdAndRowVersionOption],
+    }
     // step 1 - select csv option
     // @ts-ignore
     await instance.handleChange({ formData })
     await wrapper.find('form').simulate('submit')
     // step 2 - verify UI has download button showing
     expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
-    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(expect.objectContaining({
-      csvTableDescriptor: { separator: '\t' },
-      writeHeader: false,
-      includeRowIdAndRowVersion: true
-    }), undefined)
+    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        csvTableDescriptor: { separator: '\t' },
+        writeHeader: false,
+        includeRowIdAndRowVersion: true,
+      }),
+      undefined,
+    )
   })
 })
