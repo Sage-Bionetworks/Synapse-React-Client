@@ -831,22 +831,7 @@ export const getUserFavorites = (sessionToken: string | undefined) => {
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<any>
 }
-/**
- *  http://docs.synapse.org/rest/GET/projects/type.html
- *  @param {String} projectDetails Can be "MY_PROJECTS", "MY_CREATED_PROJECTS" or "MY_PARTICIPATED_PROJECTS"
- */
-export const getUserProjectList = (
-  sessionToken: string | undefined,
-  projectDetails: string,
-) => {
-  const url = `repo/v1/projects/${projectDetails}?offset=0&limit=200`
-  return doGet(
-    url,
-    sessionToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
+
 /**
  * Get the user's list of teams they are on
  *
