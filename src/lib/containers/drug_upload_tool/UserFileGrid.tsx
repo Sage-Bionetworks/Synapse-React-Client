@@ -64,7 +64,7 @@ export default class UserFileGrid extends React.Component<
         This submission is currently incomplete and has not been submitted. If
         you trash this submission, you won't be able to recover the data.
       </p>
-      <p>Are you sure you want to trash this submission?' </p>
+      <p>Are you sure you want to trash this submission?</p>
     </>
   )
   static requestFilter = {
