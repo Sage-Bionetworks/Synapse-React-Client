@@ -125,9 +125,11 @@ describe('basic tests', () => {
 
   it('should not display delete button', async () => {
     let { wrapper } = await createShallowComponent(props)
-    expect(wrapper.find('button')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(1)
+    expect(wrapper.find('button').text()).toContain('Print')
     const _props = { ...props, ...{ isWizard: false } }
     ;({ wrapper } = await createShallowComponent(_props))
-    expect(wrapper.find('button')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(1)
+    expect(wrapper.find('button').text()).toContain('Print')
   })
 })
