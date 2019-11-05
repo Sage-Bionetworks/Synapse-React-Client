@@ -3,9 +3,9 @@ import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
 import {
   CardLink,
-  LabelConfig,
   LabelLink,
   LabelMarkdown,
+  CommonCardProps,
 } from './CardContainerLogic'
 import { unCamelCase } from './table/SynapseTable'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -39,13 +39,9 @@ export type GenericCardProps = {
   iconOptions?: IconOptions
   backgroundColor?: string
   isHeader?: boolean
-  genericCardSchema: GenericCardSchema
   schema: any
   data: any
-  secondaryLabelLimit?: number
-  titleLinkConfig?: CardLink
-  labelLinkConfig?: LabelConfig
-}
+} & Required<CommonCardProps>
 
 export type GenericCardState = {
   showMoreDescription: boolean
@@ -172,12 +168,11 @@ export default class GenericCard extends React.Component<
       iconOptions,
       isHeader = false,
       titleLinkConfig,
-      labelLinkConfig,
+      labelConfig,
       facetAliases = {},
     } = this.props
     const { showMoreDescription } = this.state
-    const { link = '' } = genericCardSchema
-    const type = genericCardSchema.type
+    const { link = '', type } = genericCardSchema
     const title = data[schema[genericCardSchema.title]]
     const subTitle =
       genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
@@ -198,8 +193,8 @@ export default class GenericCard extends React.Component<
       let value = data[schema[columnName]]
       if (value) {
         const labelLink =
-          labelLinkConfig &&
-          labelLinkConfig.find(el => el.matchColumnName === columnName)
+          labelConfig &&
+          labelConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
           // create link for this column
           value = this.renderLabel(value, labelLink, isHeader)

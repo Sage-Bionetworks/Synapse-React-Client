@@ -33,15 +33,18 @@ export interface LabelMarkdown {
 export type LabelConfig = (LabelLink | LabelMarkdown)[]
 
 export type CommonCardProps = {
-  type: string
   genericCardSchema?: GenericCardSchema
-  hasInternalLink?: boolean
-  iconOptions?: IconOptions
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
-  LabelConfig?: LabelConfig
-  loadingScreen?: React.FunctionComponent | JSX.Element
+  labelConfig?: LabelConfig
 }
+
+export type CardConfiguration = {
+  type: string
+  hasInternalLink?: boolean
+  iconOptions?: IconOptions
+  loadingScreen?: React.FunctionComponent | JSX.Element
+} & CommonCardProps
 
 export type CardContainerLogicProps = {
   token?: string
@@ -51,12 +54,10 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  loadingScreen?: JSX.Element
-  genericCardSchema?: GenericCardSchema
   backgroundColor?: string
   isHeader?: boolean
   sql: string
-} & CommonCardProps
+} & CardConfiguration
 
 type State = {
   data: QueryResultBundle | undefined

@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
-import { SynapseClient, SynapseConstants } from '../utils/'
+import { SynapseClient, SynapseConstants } from '../utils'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import UserCard from './UserCard'
+import katex from 'katex'
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -14,8 +15,6 @@ const TOC_CLASS = {
   5: 'toc-indent5',
   6: 'toc-indent6',
 }
-
-declare var katex: any
 
 declare var markdownitSynapse: any
 declare var markdownit: any
@@ -97,8 +96,8 @@ export default class MarkdownSynapse extends React.Component<
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
     // handle widgets and math markdown
-    this.processWidgets = this.processWidgets.bind(this)
-    this.processWidgetOrDomElement = this.processWidgetOrDomElement.bind(this)
+    this.renderMarkdown = this.renderMarkdown.bind(this)
+    this.recursiveRender = this.recursiveRender.bind(this)
     this.processMath = this.processMath.bind(this)
     // handle init calls to get wiki related items
     this.getWikiAttachments = this.getWikiAttachments.bind(this)
@@ -240,31 +239,18 @@ export default class MarkdownSynapse extends React.Component<
       return
     }
     // use regex to grab all elements
-    const mathExpressions = this.markupRef.current.querySelectorAll(
-      '[id^="mathjax-"]',
-    )
+    const mathExpressions = this.markupRef.current.querySelectorAll<
+      HTMLElement
+    >('[id^="mathjax-"]')
+    console.log('mathExpressions = ', mathExpressions)
     // go through all obtained elements and transform them with katex
-    mathExpressions.forEach((element: any) => {
-      katex.render(element.textContent, element, {
-        delimiters: [
-          {
-            display: true,
-            left: '$$',
-            right: '$$',
-          },
-          {
-            display: false,
-            left: '\\(',
-            right: '\\)',
-          },
-          {
-            display: true,
-            left: '\\[',
-            right: '\\]',
-          },
-        ],
-        throwOnError: false,
-      })
+    mathExpressions.forEach(element => {
+      element.textContent &&
+        katex.render(element.textContent, element, {
+          // @ts-ignore
+          output: 'html',
+          throwOnError: false,
+        })
     })
   }
   /**
@@ -279,7 +265,6 @@ export default class MarkdownSynapse extends React.Component<
     if (footnotesHtml.length > 0) {
       return <Bookmarks footnotes={footnotesHtml} />
     }
-    // ts doesn't like functions without explicit return statements
     return
   }
 
@@ -379,23 +364,85 @@ export default class MarkdownSynapse extends React.Component<
    * @returns JSX of the markdown into widgets
    * @memberof MarkdownSynapse
    */
-  public processWidgets() {
+  public renderMarkdown() {
     // create initial markup
     let markup = this.createHTML(this.state.data.markdown).__html
     // process reference widgets
     markup = this.addIdsToReferenceWidgets(markup)
     // process table of contents widgets
     markup = this.addIdsToTocWidgets(markup)
-
-    // capture and process all other widgets
-    // (<span data-widgetparams.*?span>) captures widgets
-    const widgetRegex = /(<span data-widgetparams.*?span>)/
-    // widgets is an array of either plain text/html or specific synapse markdown
-    const widgets = markup.split(widgetRegex)
     if (markup.length > 0) {
-      return this.processWidgetOrDomElement(widgets, markup)
+      const domParser = new DOMParser()
+      const document = domParser.parseFromString(markup, 'text/html')
+      return <>{this.recursiveRender(document.body, markup)}</>
     }
     return
+  }
+
+  /**
+   * RecursiveRender will render react tree from HTML tree
+   *
+   * @param {Node} element This will be either a text Node or an HTMLElement
+   * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
+   * @returns {*}
+   * @memberof MarkdownSynapse
+   */
+  public recursiveRender(element: Node, markdown: string): any {
+    /*
+      Recursively render the html tree created from the markdown, there are a few cases:
+      1. element is Node and is text in which case it is simply rendered
+      2. element is an HTMLElement and is: a self closing tag, has no children (e.g. <br>), or its a synapse widget and is 
+      rendered accordingly
+      3. element is an HTMLElement and has children so we loop through its childNodes, recurively render those, and then render its own tag
+      as the parent of those child nodes. Note - childNodes was specifically chosen over .children because text Nodes
+      would not come through .children
+    */
+    if (element.nodeType === Node.TEXT_NODE) {
+      // case 1.
+      return <> {element.textContent} </>
+    } else if (
+      element.nodeType === Node.ELEMENT_NODE &&
+      element instanceof HTMLElement
+    ) {
+      const tagName =
+        element.tagName.toLowerCase() === 'body'
+          ? 'span'
+          : element.tagName.toLowerCase()
+      const widgetParams = element.getAttribute('data-widgetparams')
+      if (widgetParams) {
+        // case 2
+        // process widget
+        return this.processHTMLWidgetMapping(widgetParams, markdown)
+      }
+      if (element.childNodes.length === 0) {
+        // case 2
+        // e.g. self closing tag like <br/>
+        return React.createElement(tagName)
+      }
+      // case 3
+      // recursively render children
+      const children = Array.from(element.childNodes).map(el => {
+        return <>{this.recursiveRender(el, markdown)}</>
+      })
+      // manually add on props, depending on what comes through the markdown their could
+      // be unforseen issues with attrib  utes being misnamed according to what react will respect
+      // e.g. class instead of className
+      const attributes = element.attributes
+      const props = {}
+      for (let i = 0; i < attributes.length; i++) {
+        let name = ''
+        let value = ''
+        const attribute = attributes.item(i)
+        if (attribute) {
+          name = attribute.name
+          value = attribute.value
+        }
+        if (name && value) {
+          props[name] = value
+        }
+      }
+      return React.createElement(tagName, props, <>{children}</>)
+    }
   }
 
   /**
@@ -427,7 +474,10 @@ export default class MarkdownSynapse extends React.Component<
    * @returns JSX of the widget to render
    * @memberof MarkdownSynapse
    */
-  public processWidgetMappings(widgetMatch: string, originalMarkup: string) {
+  public processHTMLWidgetMapping(
+    widgetParams: string,
+    originalMarkup: string,
+  ) {
     // General workflow -
     //   1. Capture widget parameters
     //   2. Transform any widget xml parameters to standard text
@@ -435,20 +485,18 @@ export default class MarkdownSynapse extends React.Component<
     //   4. Render that widget based on its parameters
 
     // steps 1,2
-    const widgetParamsRegex = /data-widgetparams=("(.*?)")/
-    const widgetParamsMatchWithXML = widgetMatch.match(widgetParamsRegex)
-    const widgetParamsString = this.decodeXml(widgetParamsMatchWithXML![2])
+    const decodedWidgetParams = this.decodeXml(widgetParams)
 
-    // widgetParamsString look like {<widget>?param1=xxx&param2=yyy}
-    const questionIndex = widgetParamsString.indexOf('?')
+    // decodedWidgetParams look like {<widget>?param1=xxx&param2=yyy}
+    const questionIndex = decodedWidgetParams.indexOf('?')
     if (questionIndex === -1) {
       // e.g. toc is passed, there are no params
-      return this.renderWidget(widgetParamsString, {}, originalMarkup)
+      return this.renderWidget(decodedWidgetParams, {}, originalMarkup)
     }
-    const widgetType = widgetParamsString.substring(0, questionIndex)
+    const widgetType = decodedWidgetParams.substring(0, questionIndex)
     const widgetparamsMapped = {}
     // map out params and their values
-    widgetParamsString
+    decodedWidgetParams
       .substring(questionIndex + 1)
       .split('&')
       .forEach(keyPair => {
@@ -457,55 +505,6 @@ export default class MarkdownSynapse extends React.Component<
         widgetparamsMapped[key] = value
       })
     return this.renderWidget(widgetType, widgetparamsMapped, originalMarkup)
-  }
-
-  /**
-   * Takes in widgetsToBe and parse it out to its respective html element
-   *
-   * @param {string[]} widgetsToBe This is an array of either synapse widgets, e.g. {plot?=...} or plain html
-   * that is not going to be process further.
-   * @param {string} originalMarkup This is the original markup that's maintained only because the table of contents
-   * widget renderer relies on it.
-   * @returns
-   * @memberof MarkdownSynapse
-   */
-  public processWidgetOrDomElement(
-    widgetsToBe: string[],
-    originalMarkup: string,
-  ) {
-    const widgets = []
-    let index = 0
-    for (const text of widgetsToBe) {
-      // test if widget is present
-      if (text.indexOf('<span data-widgetparams') !== -1) {
-        // process widget
-        widgets.push(this.processWidgetMappings(text, originalMarkup))
-      } else {
-        // Else its plain html/text.
-
-        /* 
-           Note-- variable `element` introduces a major bug which is that there can be no synapse widgets
-           contained inside html directly.
-            
-           .e.g
-                input:           <a> <span widget-params="...."> </a>
-                expected output: <a> <SynapseWidget/> </a>
-                current output:  <a></a> <SynapseWidget> <a></a>
-           
-           There needs to be a complete rework of the rendering to recursively process the markdown.
-           Along the lines of -
-            - Tokenize the html, recurse on it until theres a leaf, render that as an html element or widget
-        */
-
-        const key = index.toString() + text
-        const element = (
-          <span key={key} dangerouslySetInnerHTML={{ __html: text }} />
-        )
-        widgets.push(element)
-        index += 1
-      }
-    }
-    return widgets
   }
 
   /**
@@ -685,11 +684,11 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public render() {
+    const bookmarks = this.addBookmarks()
     return (
       <div className="markdown" ref={this.markupRef}>
-        {this.getErrorView()}
-        <span>{this.processWidgets()}</span>
-        <div>{this.addBookmarks()}</div>
+        {this.renderMarkdown()}
+        {bookmarks && <div>{this.addBookmarks()}</div>}
       </div>
     )
   }
