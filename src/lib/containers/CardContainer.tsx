@@ -11,7 +11,7 @@ import { Dataset, Funder } from './row_renderers'
 import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
 import TotalQueryResults from './TotalQueryResults'
-import { CommonCardProps } from './CardContainerLogic'
+import { CardConfiguration } from './CardContainerLogic'
 
 const PAGE_SIZE: number = 25
 
@@ -27,10 +27,8 @@ export type CardContainerProps = {
   facet?: string
   unitDescription?: string
   hasMoreData?: boolean
-  loadingScreen?: React.FunctionComponent | JSX.Element
-  backgroundColor?: string
   showBarChart?: boolean
-} & CommonCardProps
+} & CardConfiguration
 
 type CardContainerState = {
   cardLimit: number

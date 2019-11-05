@@ -78,7 +78,18 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "enum": ["RNAseq", "ChIPseq", "Other"]
+            "enum": [
+              "SNP genotypes",
+              "WES or WGS",
+              "RNAseq",
+              "RNAseq single cell",
+              "ChIPseq",
+              "ATACseq",
+              "ATACseq single cell",
+              "Proteomics",
+              "Metabolomics",
+              "Other"
+            ]
           }
         },
         "assays_list_other": {
@@ -97,7 +108,7 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "enum": ["Cognition", "Behavioral", "Other"]
+            "enum": ["Cognition", "Behavioral", "Imaging", "Other"]
           }
         },
         "assesments_list_other": {
@@ -115,7 +126,7 @@
           "type": "string"
         },
         "content_summary": {
-          "title": "Summarize the content that will be contributed",
+          "title": "Summarize the study and the content you wish to contribute",
           "type": "string"
         }
       }
@@ -124,11 +135,11 @@
       "type": "object",
       "properties": {
         "name": {
-          "title": "What is your name",
+          "title": "Name",
           "type": "string"
         },
         "email": {
-          "title": "What is your email",
+          "title": "E-mail",
           "type": "string",
           "format": "email"
         },
@@ -141,37 +152,8 @@
       "type": "object",
       "properties": {
         "nih_grant_number": {
-          "title": "NIH grant number if applicable",
+          "title": "Provide NIH grant number if applicable",
           "type": "string"
-        },
-        "nia_program": {
-          "type": "string",
-          "enum": ["AMP-AD", "M2OVE-AD", "MODEL-AD", "Resillience-AD", "Other"],
-          "title": "NIA program if applicable"
-        }
-      },
-      "dependencies": {
-        "nia_program": {
-          "oneOf": [
-            {
-              "properties": {
-                "nia_program": {
-                  "enum": ["AMP-AD", "M2OVE-AD", "MODEL-AD", "Resillience-AD"]
-                }
-              }
-            },
-            {
-              "properties": {
-                "nia_program": {
-                  "enum": ["Other"]
-                },
-                "nia_program_other": {
-                  "title": "If other - describe",
-                  "type": "string"
-                }
-              }
-            }
-          ]
         }
       }
     },
@@ -189,8 +171,8 @@
         },
         "contribution_size": {
           "type": "string",
-          "title": " Estimated contribution size in GB",
-          "enum": ["<1 GB", "1-100 GB", "100-1000 GB", ">1000 GB"]
+          "title": " Estimated contribution size",
+          "enum": ["<1 GB", "<1 TB", "1-100 TB", ">100 TB"]
         }
       }
     },
@@ -212,7 +194,7 @@
       "properties": {
         "release_allowed_under_AMP-AD_KP": {
           "type": "boolean",
-          "title": "Can data be released under the AMP-AD KP terms of use?",
+          "title": "Can data be released under the AMP-AD Knowledge Portal terms of use?",
           "default": false,
           "enum": [true, false],
           "enumNames": ["Yes", "No"],
@@ -228,14 +210,30 @@
           "type": "string"
         },
         "disease_focus": {
-          "type": "string",
+          "type": "array",
+          "uniqueItems": true,
           "title": "Disease focus",
-          "enum": ["AD", "MCI", "Other"]
+          "items": {
+            "type": "string",
+            "enum": ["AD", "MCI", "Other"]
+          }
+        },
+        "disease_focus_other": {
+          "title": "If other - describe",
+          "type": "string"
         },
         "specimen_source": {
-          "type": "string",
+          "type": "array",
+          "uniqueItems": true,
           "title": "Specimen source",
-          "enum": ["Serum", "Brain", "Other"]
+          "items": {
+            "type": "string",
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
         },
         "total_number_individuals": {
           "title": "Total number of individuals",
@@ -296,49 +294,6 @@
               }
             }
           ]
-        },
-        "disease_focus": {
-          "oneOf": [
-            {
-              "properties": {
-                "disease_focus": {
-                  "enum": ["AD", "MCI"]
-                }
-              }
-            },
-            {
-              "properties": {
-                "disease_focus": {
-                  "enum": ["Other"]
-                },
-                "disease_focus_other": {
-                  "title": "If other - describe",
-                  "type": "string"
-                }
-              }
-            }
-          ]
-        },
-        "specimen_source": {
-          "oneOf": [
-            {
-              "properties": {
-                "specimen_source": {
-                  "enum": ["Serum", "Brain"]
-                }
-              }
-            },
-            {
-              "properties": {
-                "specimen_source": {
-                  "enum": ["Other"]
-                },
-                "specimen_source_other": {
-                  "type": "string"
-                }
-              }
-            }
-          ]
         }
       }
     },
@@ -385,6 +340,24 @@
           "type": "number",
           "title": "Total number of animals"
         },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
         "assays": {
           "$ref": "#/definitions/assays_field"
         },
@@ -407,6 +380,24 @@
         "total_number_animals": {
           "type": "number",
           "title": "Total number of animals"
+        },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
         },
         "assays": {
           "$ref": "#/definitions/assays_field"
@@ -431,6 +422,24 @@
           "type": "number",
           "title": "Total number of animals, or pools"
         },
+        "total_number_specimens": {
+          "title": "Total number of specimens",
+          "type": "number"
+        },
+        "specimen_source": {
+          "type": "array",
+          "uniqueItems": true,
+          "title": "Specimen source",
+          "items": {
+            "type": "string",
+
+            "enum": ["Serum", "Brain", "Other"]
+          }
+        },
+        "specimen_source_other": {
+          "title": "If other - describe",
+          "type": "string"
+        },
         "assays": {
           "$ref": "#/definitions/assays_field"
         },
@@ -452,9 +461,6 @@
         },
         "assays": {
           "$ref": "#/definitions/assays_field"
-        },
-        "assesments": {
-          "$ref": "#/definitions/assesments_field"
         }
       }
     },
@@ -467,7 +473,7 @@
         },
         "is_data_contributed": {
           "type": "boolean",
-          "title": "Is the data used for the analysis contributed?",
+          "title": "Is the data used in the analysis provided in this contribution?",
           "enum": [true, false],
           "enumNames": ["Yes", "No"],
           "uniqueItems": true
@@ -490,7 +496,7 @@
                 },
                 "source_of_data": {
                   "type": "string",
-                  "title": "If no - describe source of data"
+                  "title": "If no - link to, or describe the source of the data"
                 }
               }
             }
@@ -502,12 +508,12 @@
       "type": "object",
       "properties": {
         "experimental_tools": {
-          "title": "Experimental",
+          "title": "Experimental (e.g. reagents, animal models)",
           "type": "boolean",
           "default": false
         },
         "computational_tools": {
-          "title": "Computational",
+          "title": "Computational (e.g. algorithms, R packages, R shiny app)",
           "type": "boolean",
           "default": false,
           "enum": [true, false],
