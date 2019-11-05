@@ -3,9 +3,9 @@ import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
 import {
   CardLink,
-  LabelConfig,
   LabelLink,
   LabelMarkdown,
+  CommonCardProps,
 } from './CardContainerLogic'
 import { unCamelCase } from './table/SynapseTable'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -39,13 +39,9 @@ export type GenericCardProps = {
   iconOptions?: IconOptions
   backgroundColor?: string
   isHeader?: boolean
-  genericCardSchema: GenericCardSchema
   schema: any
   data: any
-  secondaryLabelLimit?: number
-  titleLinkConfig?: CardLink
-  labelLinkConfig?: LabelConfig
-}
+} & CommonCardProps
 
 export type GenericCardState = {
   showMoreDescription: boolean
@@ -172,17 +168,21 @@ export default class GenericCard extends React.Component<
       iconOptions,
       isHeader = false,
       titleLinkConfig,
-      labelLinkConfig,
+      labelConfig,
       facetAliases = {},
     } = this.props
+    // GenericCard inherits properties from CommonCardProps so that the properties have the same name
+    // and type, but theres one nuance which is that we can't override if one specific property will be
+    // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
+    const genericCardSchemaDefined = genericCardSchema!
     const { showMoreDescription } = this.state
-    const { link = '' } = genericCardSchema
-    const type = genericCardSchema.type
-    const title = data[schema[genericCardSchema.title]]
+    const { link = '', type } = genericCardSchemaDefined
+    const title = data[schema[genericCardSchemaDefined.title]]
     const subTitle =
-      genericCardSchema.subTitle && data[schema[genericCardSchema.subTitle]]
-    const description = data[schema[genericCardSchema.description || '']]
-    const iconValue = data[schema[genericCardSchema.icon || '']]
+      genericCardSchemaDefined.subTitle &&
+      data[schema[genericCardSchemaDefined.subTitle]]
+    const description = data[schema[genericCardSchemaDefined.description || '']]
+    const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
     const { linkDisplay, target } = this.renderTitleLink(
@@ -192,14 +192,14 @@ export default class GenericCard extends React.Component<
       schema,
     )
     const values: string[][] = []
-    const { secondaryLabels = [] } = genericCardSchema
+    const { secondaryLabels = [] } = genericCardSchemaDefined
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
       if (value) {
         const labelLink =
-          labelLinkConfig &&
-          labelLinkConfig.find(el => el.matchColumnName === columnName)
+          labelConfig &&
+          labelConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
           // create link for this column
           value = this.renderLabel(value, labelLink, isHeader)
@@ -238,14 +238,14 @@ export default class GenericCard extends React.Component<
     }
 
     const titleSearchHandle =
-      facetAliases[genericCardSchema.title] ||
-      unCamelCase(genericCardSchema.title)
+      facetAliases[genericCardSchemaDefined.title] ||
+      unCamelCase(genericCardSchemaDefined.title)
     const stubTitleSearchHandle =
-      facetAliases[genericCardSchema.subTitle || ''] ||
-      unCamelCase(genericCardSchema.subTitle)
+      facetAliases[genericCardSchemaDefined.subTitle || ''] ||
+      unCamelCase(genericCardSchemaDefined.subTitle)
     const descriptionSubTitle =
-      facetAliases[genericCardSchema.description || ''] ||
-      unCamelCase(genericCardSchema.description)
+      facetAliases[genericCardSchemaDefined.description || ''] ||
+      unCamelCase(genericCardSchemaDefined.description)
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className="SRC-cardThumbnail">

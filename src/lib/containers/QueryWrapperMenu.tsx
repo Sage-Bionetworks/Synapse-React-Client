@@ -11,7 +11,7 @@ import SynapseTable, {
   unCamelCase,
 } from './table/SynapseTable'
 import CardContainer from './CardContainer'
-import { CommonCardProps } from './CardContainerLogic'
+import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue, isGroupByInSql } from '../utils/modules/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
@@ -49,7 +49,7 @@ interface MenuSearchParams extends KeyValue {
 
 type CommonMenuProps = {
   tableConfiguration?: SynapseTableProps
-  cardConfiguration?: CommonCardProps
+  cardConfiguration?: CardConfiguration
   stackedBarChartConfiguration?: StackedBarChartProps
   searchConfiguration?: SearchProps
   showBarChart?: boolean
