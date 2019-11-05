@@ -6,7 +6,6 @@ import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
-import MarkdownSynapseDemoV2 from './MarkdownSynapseDemoV2'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 
@@ -89,11 +88,6 @@ const App = ({ match }: { match: match }) => {
         component={() => <MarkdownSynapseDemo />}
       />
 
-      <Route
-        exact={true}
-        path={`${match.url}/MarkdownSynapseDemoV2`}
-        component={() => <MarkdownSynapseDemoV2 />}
-      />
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
