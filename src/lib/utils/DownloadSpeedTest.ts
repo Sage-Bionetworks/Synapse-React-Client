@@ -4,6 +4,7 @@ import { Entity } from './jsonResponses/Entity'
 import { BatchFileResult } from './jsonResponses/BatchFileResult'
 import { FileHandle } from './jsonResponses/FileHandle'
 
+export const ESTIMATED_CORS_TIME_MS: number = 200
 /**
  * Return the estimated download speed (bytes/second).  Result is cached.
  * @param sessionToken 
@@ -55,10 +56,11 @@ export const testDownloadSpeed = (
           return getFileHandleContent(fileHandle, presignedUrl).then(
             () => {
               // bytes/second
-              let result = (fileHandle.contentSize / ((new Date().getTime() - startMs)/1000))
-              // save result in cache
+              console.log(`Transferred ${fileHandle.contentSize/1000000} MB in ${((new Date().getTime() - startMs - ESTIMATED_CORS_TIME_MS)/1000)} seconds`)
+              let result = (fileHandle.contentSize / ((new Date().getTime() - startMs - ESTIMATED_CORS_TIME_MS)/1000))
+              // save result in cache (for 5 minutes)
               const now:number = new Date().getTime()
-              localStorage.setItem('ESTIMATED_DOWNLOAD_SPEED_EXPIRE_TIME', (now + (1000*60*10)).toString())
+              localStorage.setItem('ESTIMATED_DOWNLOAD_SPEED_EXPIRE_TIME', (now + (1000*60*5)).toString())
               localStorage.setItem('ESTIMATED_DOWNLOAD_SPEED', (result).toString())
               resolve(result)
             },
