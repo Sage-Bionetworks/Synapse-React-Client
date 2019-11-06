@@ -1,7 +1,5 @@
 import * as React from 'react'
-// tslint:disable-next-line:import-name
 import Plotly from 'plotly.js-basic-dist'
-// tslint:disable-next-line:import-name
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'

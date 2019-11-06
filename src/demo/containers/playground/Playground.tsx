@@ -82,6 +82,7 @@ const App = ({ match }: { match: match }) => {
         path={`${match.url}/MarkdownSynapseDemo`}
         component={() => <MarkdownSynapseDemo />}
       />
+
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}

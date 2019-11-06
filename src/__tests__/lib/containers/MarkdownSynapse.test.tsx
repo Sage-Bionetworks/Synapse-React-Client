@@ -107,11 +107,9 @@ describe('it performs all functionality', () => {
     SynapseClient.getFiles = mockGetFiles
 
     it('renders an image from a synapseId ', async () => {
-      const mockGetEntityWiki = jest
-        .fn()
-        .mockResolvedValue({
-          markdown: '${image?synapseId=syn7809125&align=None&responsive=true}',
-        })
+      const mockGetEntityWiki = jest.fn().mockResolvedValue({
+        markdown: '${image?synapseId=syn7809125&align=None&responsive=true}',
+      })
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
@@ -122,12 +120,10 @@ describe('it performs all functionality', () => {
     })
 
     it('renders an image from a file handleId ', async () => {
-      const mockGetEntityWiki = jest
-        .fn()
-        .mockResolvedValue({
-          markdown:
-            '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
-        })
+      const mockGetEntityWiki = jest.fn().mockResolvedValue({
+        markdown:
+          '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
+      })
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const spyOnRenderImage = jest.spyOn(
         MarkdownSynapse.prototype,
@@ -186,6 +182,33 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent({})
       expect(wrapper.find(Bookmarks)).toHaveLength(1)
       expect(wrapper.render().find('button#bookmark0')).toHaveLength(1)
+    })
+  })
+
+  describe('it renders markdown correctly ', () => {
+    it('works with header and a link ', async () => {
+      const { wrapper } = await createShallowComponent({
+        markdown: '# header [text](https://synapse.org)',
+      })
+      const expectedValue = `<div class="markdown"><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1> 
+ </span></div>`
+      expect(wrapper.html()).toEqual(expectedValue)
+    })
+    it('works with a br statement and loose text', async () => {
+      const { wrapper } = await createShallowComponent({
+        markdown: 'some more free \n# header\nloose text',
+      })
+      const expectedValue = `<div class="markdown"><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
+      expect(wrapper.html()).toEqual(expectedValue)
+    })
+    it('works with two inline widgets', async () => {
+      const { wrapper } = await createShallowComponent({
+        markdown:
+          '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
+      })
+      const expectedValue = `<div class="markdown"><span><p><a href="#/Help/How It Works" class="SRC-standard-button-shape  SRC-primary-button " role="button">sometext</a><a href="#/Apply" class="SRC-standard-button-shape  SRC-primary-button " role="button">APPLY</a></p> 
+ </span></div>`
+      expect(wrapper.html()).toEqual(expectedValue)
     })
   })
 })
