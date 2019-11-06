@@ -63,7 +63,7 @@
 
 .SRC-primary-button {
   background: $primary-action-color;
-  color: white;
+  color: white !important;
   &:hover {
     @extend %hoverFade;
     @extend %defaultBoxShadow;
