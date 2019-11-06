@@ -136,6 +136,7 @@
     <div id="panel3"></div>
     <div id="panel4"></div>
     <div id="panel5"></div>
+    <div id="panel6"></div>
     <div style="height: 300px"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -234,6 +235,14 @@
     ReactDOM.render(
       e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null),
       formContainer,
+    )
+
+    // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
+    const loginContainer = document.querySelector('#panel6')
+    const loginProps = {}
+    ReactDOM.render(
+      e(SRC.SynapseComponents.Login, loginProps, null),
+      loginContainer,
     )
   </script>
 </html>
