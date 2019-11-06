@@ -1,10 +1,10 @@
 import { getEntity, getFileEntityContent, getFileHandleById } from './SynapseClient'
 import { FileEntity } from './jsonResponses/FileEntity'
 import { FileHandle } from './jsonResponses/FileHandle'
-import { resolve } from 'path'
+import { Entity } from './jsonResponses/Entity'
 
 export const testSpeed = (
-  sessionToken: string | undefined
+  sessionToken: string
 ): Promise<number> => {
   
   const entityId = 'syn12600511'
@@ -21,7 +21,8 @@ export const testSpeed = (
       }
     }
 
-    getEntity(sessionToken, entityId).then((fileEntity: FileEntity) => {
+    getEntity(sessionToken, entityId).then((entity: Entity) => {
+      const fileEntity:FileEntity = entity as FileEntity
       getFileHandleById(fileEntity.dataFileHandleId, sessionToken).then((fileHandle: FileHandle) => {
         // start time
         const startMs = new Date().getTime()
