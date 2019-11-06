@@ -922,10 +922,11 @@ a.SRC-lightLink {
   justify-content: center;
   align-items: center;
   border-radius: 24px;
-  min-width: 130px;
+  min-width: 168px;
   padding: 10px;
   height: 40px;
-  margin: 21px; }
+  margin: 21px;
+  margin-left: 0px; }
 
 .SRC-sign-in-button {
   min-width: 80px;

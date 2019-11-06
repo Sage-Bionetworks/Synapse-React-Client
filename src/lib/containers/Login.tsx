@@ -2,7 +2,7 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/getEndpoint'
+import { getEndpoint, BackendDestinationEnum } from '../utils/getEndpoint'
 
 type State = {
   username: string
@@ -226,7 +226,7 @@ class Login extends React.Component<Props, State> {
         </form>
         <div>
           <a
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!PasswordReset:0`}
+            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`}
             className="SRC-floatLeft SRC-primary-text-color"
           >
             Forgot password?
@@ -235,7 +235,7 @@ class Login extends React.Component<Props, State> {
             &nbsp;It's free!
           </span>
           <a
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`}
+            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!RegisterAccount:0`}
             className="SRC-floatRight SRC-primary-text-color"
           >
             Register
