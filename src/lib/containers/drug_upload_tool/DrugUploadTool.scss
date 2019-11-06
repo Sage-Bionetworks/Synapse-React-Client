@@ -337,6 +337,14 @@
     height: 1.5rem;
   }
 
+  .radio input[type='radio'] + label, .radio input[type='radio'] + span {
+    padding-left: 24px;
+  }
+
+  .radio input[type='radio']:checked + label, .radio input[type='radio']:checked + span {
+    padding-left: 23px;
+  }
+
   .radio input[type='radio']:checked + label::before,
   .radio input[type='radio']:checked + span::before,
   .radio-inline input[type='radio']:checked + label::before,
