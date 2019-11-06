@@ -167,7 +167,7 @@ class Demo extends React.Component<{}, DemoState> {
         )}
         {estimatedDownloadBytesPerSecond && (
             <div className="container">
-              <h5>Estimated Download Speed: {estimatedDownloadBytesPerSecond} bytes/second</h5>
+              <h5>Estimated Download Speed: {(estimatedDownloadBytesPerSecond/1000000).toFixed(2)} MBps</h5>
               <hr />
             </div>
           )
