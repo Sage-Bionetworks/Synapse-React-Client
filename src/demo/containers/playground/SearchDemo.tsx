@@ -3,7 +3,7 @@ import QueryWrapper from 'lib/containers/QueryWrapper'
 import Search, { Searchable } from 'lib/containers/Search'
 import { SynapseConstants } from 'lib'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
-import { CommonCardProps } from 'lib/containers/CardContainerLogic'
+import { CardConfiguration } from 'lib/containers/CardContainerLogic'
 import CardContainer from 'lib/containers/CardContainer'
 
 export const SearchDemo: React.SFC = () => {
@@ -38,7 +38,7 @@ export const SearchDemo: React.SFC = () => {
     icon: 'icon',
     secondaryLabels: ['contributor', 'diagnosis', 'program'],
   }
-  const commonCardProps: CommonCardProps = {
+  const cardConfiguration: CardConfiguration = {
     type: SynapseConstants.GENERIC_CARD,
     genericCardSchema,
   }
@@ -66,7 +66,7 @@ export const SearchDemo: React.SFC = () => {
         unitDescription={'studies'}
       >
         <Search searchable={searchable} isQueryWrapperMenuChild={false} />
-        <CardContainer {...commonCardProps} />
+        <CardContainer {...cardConfiguration} />
       </QueryWrapper>
     </div>
   )

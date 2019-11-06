@@ -12,11 +12,12 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
   constructor(props: any) {
     super(props)
     this.state = {
-      index: 0,
+      index: 3,
       markdownPropsArray: [
         {
           // footnotes with html
-          ownerId: 'syn21097753',
+          ownerId: 'syn18380882',
+          wikiId: '588827',
         },
         {
           // with details tag
@@ -30,8 +31,8 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
         },
         {
           // with bookmark
-          ownerId: 'syn17100797',
-          wikiId: '587923',
+          ownerId: 'syn21097753',
+          wikiId: '597236',
         },
         {
           // lego man

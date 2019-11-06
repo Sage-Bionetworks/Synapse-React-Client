@@ -40,11 +40,6 @@ const App = ({ match }: { match: match }) => {
           </Link>
         </li>
         <li>
-          <Link to={`${match.url}/MarkdownSynapseDemoV2`}>
-            MarkdownSynapseDemoV2
-          </Link>
-        </li>
-        <li>
           <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
         </li>
         <li>
