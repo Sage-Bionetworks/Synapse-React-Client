@@ -5,7 +5,6 @@ import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import UserCard from './UserCard'
-import katex from 'katex'
 import { WikiPage } from '../utils/jsonResponses/WikiPage'
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -15,6 +14,8 @@ const TOC_CLASS = {
   5: 'toc-indent5',
   6: 'toc-indent6',
 }
+
+declare var katex: any
 
 declare var markdownitSynapse: any
 declare var markdownit: any
@@ -379,7 +380,7 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   /**
-   * RecursiveRender will render react tree from HTML tree
+   * recursiveRender will render react tree from HTML tree
    *
    * @param {Node} element This will be either a text Node or an HTMLElement
    * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
@@ -424,7 +425,7 @@ export default class MarkdownSynapse extends React.Component<
         return <>{this.recursiveRender(el, markdown)}</>
       })
       // manually add on props, depending on what comes through the markdown their could
-      // be unforseen issues with attrib  utes being misnamed according to what react will respect
+      // be unforseen issues with attrib utes being misnamed according to what react will respect
       // e.g. class instead of className
       const attributes = element.attributes
       const props = {}
@@ -440,6 +441,7 @@ export default class MarkdownSynapse extends React.Component<
           props[name] = value
         }
       }
+      // Render tagName as parent element of the children below
       return React.createElement(tagName, props, <>{children}</>)
     }
   }
@@ -556,9 +558,8 @@ export default class MarkdownSynapse extends React.Component<
     }
     if (alignLowerCase === 'center') {
       return (
-        <div style={{ textAlign: 'center' }}>
+        <div key={widgetparamsMapped.reactKey} style={{ textAlign: 'center' }}>
           <a
-            key={widgetparamsMapped.reactKey}
             href={widgetparamsMapped.url}
             className={'SRC-standard-button-shape ' + buttonClasses}
             role="button"
