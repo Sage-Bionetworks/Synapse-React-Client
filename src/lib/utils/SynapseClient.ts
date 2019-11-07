@@ -1292,7 +1292,7 @@ export const startMultipartUpload = (
 export const getFileEntityContent = (
   sessionToken: string,
   fileEntity: FileEntity,
-): Promise<any> => {
+): Promise<string> => {
   // get the presigned URL, download the data, and send that back (via resolve())
   return new Promise((resolve, reject) => {
     const fileHandleAssociationList = [
@@ -1371,6 +1371,7 @@ export const getFileHandleContent = (
           'Content-Type': fileHandle.contentType,
         },
       }).then(response => {
+        // the response is always decoded using UTF-8
         response.text().then(text => {
           resolve(text)
         })
