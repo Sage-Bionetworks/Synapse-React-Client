@@ -28,7 +28,7 @@ type HasAccessState = {
 export default class HasAccess extends React.Component<
   HasAccessProps,
   HasAccessState
-> {
+  > {
   constructor(props: HasAccessProps) {
     super(props)
     this.state = {}
@@ -58,9 +58,9 @@ export default class HasAccess extends React.Component<
   }
 
   render() {
-    const {restrictionInformation} = this.state
-    const {synapseId} = this.props
-    
+    const { restrictionInformation } = this.state
+    const { synapseId } = this.props
+
     // TODO: include a yellow alert icon with tooltip along with link
     const requestAccessLink = (
       <a

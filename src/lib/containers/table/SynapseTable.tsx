@@ -747,7 +747,7 @@ export default class SynapseTable extends React.Component<
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
         },
       )
-          // also push the access column value if we are showing user access for individual items (must be logged in)
+      // also push the access column value if we are showing user access for individual items (must be logged in)
       if (showAccessColumn && token) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
