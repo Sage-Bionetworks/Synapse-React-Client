@@ -57,7 +57,7 @@ class Demo extends React.Component<{}, DemoState> {
             title: 'Data',
             facetDisplayValue: 'Study',
             facet: 'projectStatus',
-            sql: 'SELECT createdBy FROM syn16787123',
+            sql: 'SELECT * FROM syn16787123',
           },
         ],
         rgbIndex: 2,
@@ -67,11 +67,12 @@ class Demo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           title: 'title',
           synapseId: 'syn16858331',
+          showAccessColumn: true,
         },
         menuConfig: [
           {
             facet: 'assay',
-            sql: 'SELECT * FROM syn16858331',
+            sql: 'SELECT * FROM syn21156352',
           },
           {
             facet: 'dataType',
