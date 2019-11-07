@@ -1,7 +1,7 @@
 import { SynapseClient } from '../utils'
 import * as React from 'react'
-import { RestrictionInformationResponse, RestrictionInformationRequest, RestrictableObjectType } from 'lib/utils/jsonResponses/RestrictionInformation'
-import { getEndpoint, BackendDestinationEnum } from 'lib/utils/getEndpoint'
+import { RestrictionInformationResponse, RestrictionInformationRequest, RestrictableObjectType } from '../utils/jsonResponses/RestrictionInformation'
+import { getEndpoint, BackendDestinationEnum } from '../utils/getEndpoint'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheckSquare,
