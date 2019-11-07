@@ -7,6 +7,7 @@ import QueryWrapperMenu, {
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
+import {testDownloadSpeed} from '../../lib/utils/DownloadSpeedTest'
 
 type DemoState = {
   token: string | null
@@ -18,6 +19,7 @@ type DemoState = {
   tabTwo: any
   showTabOne: boolean
   userFormDataSynId?: string
+  estimatedDownloadBytesPerSecond?: number
 }
 
 /**
@@ -89,6 +91,7 @@ class Demo extends React.Component<{}, DemoState> {
     }
     this.getVersion = this.getVersion.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
+    this.onRunDownloadSpeedTest = this.onRunDownloadSpeedTest.bind(this)
   }
 
   public onSubmitEntityForm() {
@@ -97,6 +100,17 @@ class Demo extends React.Component<{}, DemoState> {
 
   public onEntityFormSubmitted(synId: string) {
     this.setState({ userFormDataSynId: synId })
+  }
+
+  public onRunDownloadSpeedTest() {
+    const { token } = this.state
+    if (token) {
+      testDownloadSpeed(token).then((estimatedDownloadBytesPerSecond:number) => {
+        this.setState({ estimatedDownloadBytesPerSecond })
+      }).catch((error: any) => {
+        console.error('estimate download speed failed', error)
+      })
+    }
   }
 
   /**
@@ -134,12 +148,30 @@ class Demo extends React.Component<{}, DemoState> {
     this.getVersion()
   }
   public render(): JSX.Element {
-    const { token } = this.state
+    const { token, estimatedDownloadBytesPerSecond } = this.state
     return (
       <div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
+        {token && (
+          <div className="container">
+            <button
+              className="btn btn-default"
+              onClick={this.onRunDownloadSpeedTest}
+            >
+              Run Download Speed Test
+            </button>
+            <hr />
+          </div>
+        )}
+        {estimatedDownloadBytesPerSecond && (
+            <div className="container">
+              <h5>Estimated Download Speed: {(estimatedDownloadBytesPerSecond/1000000).toFixed(2)} MBps</h5>
+              <hr />
+            </div>
+          )
+        }
         {token && (
           <div className="container">
             <h5>Upload File(s) Demo</h5>
