@@ -149,7 +149,6 @@
 
   .panel.unauthenticated {
     border: 1px solid #ddd;
-    font-weight: 700;
     font-size: 1.4rem;
   }
 
@@ -336,6 +335,14 @@
   .radio-inline::before {
     width: 1.5rem;
     height: 1.5rem;
+  }
+
+  .radio input[type='radio'] + label, .radio input[type='radio'] + span {
+    padding-left: 24px;
+  }
+
+  .radio input[type='radio']:checked + label, .radio input[type='radio']:checked + span {
+    padding-left: 23px;
   }
 
   .radio input[type='radio']:checked + label::before,

@@ -19,6 +19,7 @@ import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
 
+
 export type UserFileGridProps = {
   token?: string
   formGroupId: string
@@ -252,15 +253,14 @@ export default class UserFileGrid extends React.Component<
       return <></>
     } else {
       return (
-        <div className="panel padding-full unauthenticated text-center">
-          Please{' '}
-          <button
-            className={`SRC-standard-button-shape SRC-light-button ${SRC_SIGN_IN_CLASS} SRC-sign-in-button`}
-          >
-            {' '}
-            sign in{' '}
-          </button>{' '}
-          to initiate or continue your submission{' '}
+        <div className="file-grid">
+          <h3>Your Submissions</h3>
+          <div className="panel padding-full unauthenticated text-center">
+          <p className="padding-full">Please sign in or register to initiate or continue your submission</p>
+            <button className={`btn btn-large ${SRC_SIGN_IN_CLASS}`}>
+              sign in
+            </button>
+          </div>
         </div>
       )
     }
@@ -318,7 +318,7 @@ export default class UserFileGrid extends React.Component<
     )
     if (fileList.length > 0) {
       content = (
-        <div className="file-table">
+        <div className="file-table" key={`table${fileListType}`}>
           <table className="table">
             <thead>{tableTitleRow}</thead>
             <tbody>
@@ -391,9 +391,9 @@ export default class UserFileGrid extends React.Component<
       )
     }
     return (
-      <>
+      <div key={`grid-${fileListType}`}>
         {subhead} {content}
-      </>
+      </div>
     )
   }
 
@@ -420,7 +420,7 @@ export default class UserFileGrid extends React.Component<
           inProgress.nextPageToken,
         ),
 
-        this.renderSubmissionsTable(
+       this.renderSubmissionsTable(
           submitted.fileList,
           pathpart,
           formGroupId,
