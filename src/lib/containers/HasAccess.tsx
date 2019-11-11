@@ -32,18 +32,18 @@ export default class HasAccess extends React.Component<
   constructor(props: HasAccessProps) {
     super(props)
     this.state = {}
-    this.getRestrictionInfomation = this.getRestrictionInfomation.bind(this)
+    this.getRestrictionInformation = this.getRestrictionInformation.bind(this)
   }
 
   componentDidMount() {
-    this.getRestrictionInfomation()
+    this.getRestrictionInformation()
   }
 
   componentDidUpdate() {
-    this.getRestrictionInfomation()
+    this.getRestrictionInformation()
   }
 
-  getRestrictionInfomation() {
+  getRestrictionInformation() {
     const { synapseId, token } = this.props
     if (this.state.restrictionInformation || !synapseId || !token) {
       return
@@ -60,7 +60,6 @@ export default class HasAccess extends React.Component<
   render() {
     const { restrictionInformation } = this.state
     const { synapseId } = this.props
-
     // TODO: include a yellow alert icon with tooltip along with link
     const requestAccessLink = (
       <a
