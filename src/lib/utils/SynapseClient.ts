@@ -46,6 +46,7 @@ import {
 import SparkMD5 from 'spark-md5'
 import { getEndpoint, BackendDestinationEnum } from './getEndpoint'
 import { LoginResponse } from './jsonResponses/LoginResponse'
+import { RestrictionInformationRequest, RestrictionInformationResponse } from './jsonResponses/RestrictionInformation'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -1756,4 +1757,18 @@ const getCookie = (name: string) => {
 }
 const removeCookie = (name: string) => {
   document.cookie = `${name}= ; expires= Thu, 21 Aug 2014 20:00:00 UTC; path=/`
+}
+
+// see https://docs.synapse.org/rest/POST/restrictionInformation.html
+export const getRestrictionInformation = (
+  request: RestrictionInformationRequest,
+  sessionToken: string | undefined,
+): Promise<RestrictionInformationResponse> => {
+  return doPost(
+    `/repo/v1/restrictionInformation`,
+    request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
