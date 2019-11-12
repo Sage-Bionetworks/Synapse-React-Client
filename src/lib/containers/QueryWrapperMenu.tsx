@@ -71,6 +71,7 @@ export type QueryWrapperMenuProps = {
   rgbIndex: number
   searchParams?: MenuSearchParams
   name?: string
+  globalQueryCountSql?: string
 } & CommonMenuProps
 
 type Info = {
@@ -192,12 +193,16 @@ export default class QueryWrapperMenu extends React.Component<
       name,
       menuConfig,
       token,
-      accordionConfig,
+      globalQueryCountSql = '',
     } = this.props
     const { activeMenuIndices } = this.state
     let sql = ''
     if (menuConfig) {
       sql = menuConfig[activeMenuIndices[0]].sql
+    }
+    if (globalQueryCountSql) {
+      // globalQueryCountSql takes precendence over menuconfig sql
+      sql = globalQueryCountSql
     }
     const hasGroupByInSql = isGroupByInSql(sql)
     const menuDropdown = this.renderMenuDropdown()
@@ -210,7 +215,7 @@ export default class QueryWrapperMenu extends React.Component<
             <QueryCount token={token} name={name} sql={sql} />
           </h3>
         )}
-        {(hasGroupByInSql || accordionConfig) && (
+        {hasGroupByInSql && (
           <h3 id="exploreCount" className="SRC-boldText">
             {name}
           </h3>
