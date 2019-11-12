@@ -55,7 +55,10 @@ import {
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
-
+import HasAccess from '../HasAccess'
+const EMPTY_HEADER:EntityHeader = {
+  id: '',name: '',type: '',versionNumber:-1,versionLabel:'',benefactorId:-1,createdBy:'', createdOn:'', modifiedBy:'',modifiedOn:''
+}
 // Add all icons to the library so you can use it in your page
 library.add(faColumns)
 library.add(faSort)
@@ -104,6 +107,7 @@ export type SynapseTableProps = {
   synapseId: string
   title: string
   loadingScreen?: JSX.Element
+  showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
 }
 
@@ -185,6 +189,10 @@ export default class SynapseTable extends React.Component<
         },
       )
       try {
+        // initialize mapEntityIdToHeader
+        referenceList.forEach(el => {
+          mapEntityIdToHeader[el.targetId] = EMPTY_HEADER
+        })
         const data = await SynapseClient.getEntityHeader(referenceList, token)
         const { results } = data
         results.forEach(el => {
@@ -697,6 +705,7 @@ export default class SynapseTable extends React.Component<
 
   private createTableRows(rows: Row[], headers: SelectColumn[]) {
     const rowsFormatted: JSX.Element[] = []
+    const { showAccessColumn, token } = this.props
     const {
       isColumnSelected,
       mapEntityIdToHeader,
@@ -765,6 +774,16 @@ export default class SynapseTable extends React.Component<
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
         },
       )
+      // also push the access column value if we are showing user access for individual items (must be logged in)
+      if (showAccessColumn && token) {
+        const rowSynapseId = `syn${row.rowId}`
+        rowContent.push(
+          <td key={`(${rowIndex},accessColumn)`} style={{ textAlign: 'center' }} className="SRC_noBorderTop">
+            <HasAccess synapseId={rowSynapseId} token={token}></HasAccess>
+          </td>
+        )
+      }
+
       const rowFormatted = <tr key={row.rowId}>{rowContent}</tr>
       rowsFormatted.push(rowFormatted)
     })
@@ -849,6 +868,7 @@ export default class SynapseTable extends React.Component<
     headers: SelectColumn[],
     facets: FacetColumnResult[],
   ) {
+    const { showAccessColumn, token } = this.props
     const {
       isColumnSelected,
       sortedColumnSelection,
@@ -860,7 +880,7 @@ export default class SynapseTable extends React.Component<
     )
       ? Infinity
       : visibleColumnCount
-    return headers.map((column: SelectColumn, index: number) => {
+    const tableColumnHeaderElements:JSX.Element[] = headers.map((column: SelectColumn, index: number) => {
       // two cases when rendering the column headers on init load
       // of the page we have to show only this.props.visibleColumnCount many
       // columns, afterwards we rely on the isColumnSelected to get choices
@@ -927,6 +947,17 @@ export default class SynapseTable extends React.Component<
         return <th className="SRC-hidden" key={column.name} />
       }
     })
+    // also push the access column if we are showing user access for individual items (must be logged in)
+    if (showAccessColumn && token) {
+      tableColumnHeaderElements.push(
+        <th key="accessColumn">
+          <div className="SRC-centerContent">
+            <span style={{ whiteSpace: 'nowrap' }}>Access</span>
+          </div>
+        </th>
+      )
+    }
+    return tableColumnHeaderElements
   }
 
   /**
