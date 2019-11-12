@@ -256,7 +256,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 <Dropdown.Menu>
                   {searchable.map((el, index) => {
                     const displayName =
-                      facetAliases[el.columnName] || el.columnName
+                      facetAliases[el.columnName] || unCamelCase(el.columnName)
                     return (
                       <Dropdown.Item
                         // @ts-ignore

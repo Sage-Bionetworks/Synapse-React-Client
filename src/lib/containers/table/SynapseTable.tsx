@@ -46,7 +46,7 @@ import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { UserProfile } from '../../utils/jsonResponses/UserProfile'
 import { getUserProfileWithProfilePicAttached } from '../getUserData'
 import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
-import { Modal } from 'react-bootstrap'
+import { Modal, Dropdown } from 'react-bootstrap'
 import {
   EllipsisDropdown,
   ExpandTable,
@@ -97,6 +97,7 @@ export type SynapseTableState = {
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
+  showColumnSelection: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -118,6 +119,9 @@ export default class SynapseTable extends React.Component<
     this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
+    this.onToggleColumnSelectionShow = this.onToggleColumnSelectionShow.bind(
+      this,
+    )
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
@@ -134,6 +138,7 @@ export default class SynapseTable extends React.Component<
       isColumnSelected: [],
       isModalDownloadOpen: false,
       isExpanded: false,
+      showColumnSelection: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -383,13 +388,35 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderDropdownColumnMenu = (headers: SelectColumn[]) => {
+  public onToggleColumnSelectionShow(
+    _show: boolean,
+    _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
+    metadata: any,
+  ) {
+    // Any click event for the Dropdown will close the dropdown (assuming its open), so we have
+    // to handle the onToggle event and manually manage the dropdown open state. If metadata
+    // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
+    // we close it.
+    if (metadata.source) {
+      this.setState({
+        showColumnSelection: true,
+      })
+    } else {
+      this.setState({
+        showColumnSelection: false,
+      })
+    }
+  }
+
+  private renderColumnSelection = (headers: SelectColumn[]) => {
     return (
       <ColumnSelection
         headers={headers}
         isColumnSelected={this.state.isColumnSelected}
-        toggleColumnSelection={this.toggleColumnSelection}
         visibleColumnCount={this.props.visibleColumnCount}
+        show={this.state.showColumnSelection}
+        toggleColumnSelection={this.toggleColumnSelection}
+        onToggle={this.onToggleColumnSelectionShow}
       />
     )
   }
@@ -476,7 +503,7 @@ export default class SynapseTable extends React.Component<
                 id={tooltipAdvancedSearchId}
               />
               {this.renderDropdownDownloadOptions()}
-              {this.renderDropdownColumnMenu(headers)}
+              {this.renderColumnSelection(headers)}
             </>
           )}
           <ExpandTable
@@ -489,7 +516,7 @@ export default class SynapseTable extends React.Component<
           onDownloadTableOnly={() =>
             this.setState(onDownloadTableOnlyArguments)
           }
-          onShowColumns={() => {}}
+          onShowColumns={() => this.setState({ showColumnSelection: true })}
           onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
         />
