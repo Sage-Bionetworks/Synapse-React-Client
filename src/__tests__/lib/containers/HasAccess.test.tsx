@@ -45,8 +45,8 @@ describe('basic tests', () => {
       token
     )
     expect(instance.state.restrictionInformation).toEqual(mockOpenRestrictionInformation)
-    const link = wrapper.find(FontAwesomeIcon)
-    expect(link).toHaveLength(1)
+    const icon = wrapper.find(FontAwesomeIcon)
+    expect(icon).toHaveLength(1)
   })
 
   it('get unmet controlled access data', async () => {

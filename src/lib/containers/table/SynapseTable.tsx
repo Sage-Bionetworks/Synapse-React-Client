@@ -751,11 +751,9 @@ export default class SynapseTable extends React.Component<
       if (showAccessColumn && token) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
-          <>
-            <td key={`(${rowIndex},accessColumn)`} style={{ textAlign: 'center' }} className="SRC_noBorderTop">
-              <HasAccess synapseId={rowSynapseId} token={token}></HasAccess>
-            </td>
-          </>
+          <td key={`(${rowIndex},accessColumn)`} style={{ textAlign: 'center' }} className="SRC_noBorderTop">
+            <HasAccess synapseId={rowSynapseId} token={token}></HasAccess>
+          </td>
         )
       }
 
@@ -925,13 +923,11 @@ export default class SynapseTable extends React.Component<
     // also push the access column if we are showing user access for individual items (must be logged in)
     if (showAccessColumn && token) {
       tableColumnHeaderElements.push(
-        <>
-          <th key="accessColumn">
-            <div className="SRC-centerContent">
-              <span style={{ whiteSpace: 'nowrap' }}>Access</span>
-            </div>
-          </th>
-        </>
+        <th key="accessColumn">
+          <div className="SRC-centerContent">
+            <span style={{ whiteSpace: 'nowrap' }}>Access</span>
+          </div>
+        </th>
       )
     }
     return tableColumnHeaderElements
