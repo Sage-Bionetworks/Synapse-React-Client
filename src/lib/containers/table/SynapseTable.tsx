@@ -56,8 +56,17 @@ import {
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
 import HasAccess from '../HasAccess'
-const EMPTY_HEADER:EntityHeader = {
-  id: '',name: '',type: '',versionNumber:-1,versionLabel:'',benefactorId:-1,createdBy:'', createdOn:'', modifiedBy:'',modifiedOn:''
+const EMPTY_HEADER: EntityHeader = {
+  id: '',
+  name: '',
+  type: '',
+  versionNumber: -1,
+  versionLabel: '',
+  benefactorId: -1,
+  createdBy: '',
+  createdOn: '',
+  modifiedBy: '',
+  modifiedOn: '',
 }
 // Add all icons to the library so you can use it in your page
 library.add(faColumns)
@@ -396,6 +405,10 @@ export default class SynapseTable extends React.Component<
     )
   }
 
+  /* 
+    The ColumnSelection dropdown state is held in SynapseTable because the EllipsisDropdown has
+    an option to open the dropdown, 'show columns'
+  */
   public onToggleColumnSelectionShow(
     _show: boolean,
     _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
@@ -778,9 +791,13 @@ export default class SynapseTable extends React.Component<
       if (showAccessColumn && token) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
-          <td key={`(${rowIndex},accessColumn)`} style={{ textAlign: 'center' }} className="SRC_noBorderTop">
+          <td
+            key={`(${rowIndex},accessColumn)`}
+            style={{ textAlign: 'center' }}
+            className="SRC_noBorderTop"
+          >
             <HasAccess synapseId={rowSynapseId} token={token}></HasAccess>
-          </td>
+          </td>,
         )
       }
 
@@ -880,73 +897,77 @@ export default class SynapseTable extends React.Component<
     )
       ? Infinity
       : visibleColumnCount
-    const tableColumnHeaderElements:JSX.Element[] = headers.map((column: SelectColumn, index: number) => {
-      // two cases when rendering the column headers on init load
-      // of the page we have to show only this.props.visibleColumnCount many
-      // columns, afterwards we rely on the isColumnSelected to get choices
-      const initRender: boolean =
-        index < usedVisibleColumnCount && isColumnSelected.length === 0
-      const subsequentRender =
-        isColumnSelected[index] && isColumnSelected.length !== 0
-      if (initRender || subsequentRender) {
-        // for background color
-        const isSelected: boolean =
-          this.findSelectionIndex(sortedColumnSelection, column.name) !== -1
-        // for icon state
-        const columnIndex: number =
-          columnIconSortState[index] === undefined
-            ? 0
-            : columnIconSortState[index]
-        // we have to figure out if the current column is a facet selection
-        const facetIndex: number = facets.findIndex(
-          (facetColumnResult: FacetColumnResult) => {
-            const facetDisplayValue =
-              facetAliases[facetColumnResult.columnName] ||
-              facetColumnResult.columnName
-            return facetDisplayValue === column.name
-          },
-        )
-        // the header must be included in the facets and it has to be enumerable for current rendering capabilities
-        const isFacetSelection: boolean =
-          facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
-        const isSelectedSpanClass = isSelected
-          ? 'SRC-primary-background-color SRC-anchor-light'
-          : ''
-        const isSelectedIconClass = isSelected
-          ? 'SRC-selected-table-icon'
-          : 'SRC-primary-text-color'
-        const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
-        const displayColumnName: string | undefined = unCamelCase(column.name)
-        return (
-          <th key={column.name}>
-            <div className="SRC-centerContent">
-              <span style={{ whiteSpace: 'nowrap' }}>{displayColumnName}</span>
-              {isFacetSelection &&
-                this.configureFacetDropdown(facets, facetIndex)}
-              <span
-                tabIndex={0}
-                className={sortSpanBackgoundClass}
-                onKeyPress={this.handleColumnSortPress({
-                  index,
-                  name: column.name,
-                })}
-                onClick={this.handleColumnSortPress({
-                  index,
-                  name: column.name,
-                })}
-              >
-                <FontAwesomeIcon
-                  className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
-                  icon={ICON_STATE[columnIndex] as IconProp}
-                />
-              </span>
-            </div>
-          </th>
-        )
-      } else {
-        return <th className="SRC-hidden" key={column.name} />
-      }
-    })
+    const tableColumnHeaderElements: JSX.Element[] = headers.map(
+      (column: SelectColumn, index: number) => {
+        // two cases when rendering the column headers on init load
+        // of the page we have to show only this.props.visibleColumnCount many
+        // columns, afterwards we rely on the isColumnSelected to get choices
+        const initRender: boolean =
+          index < usedVisibleColumnCount && isColumnSelected.length === 0
+        const subsequentRender =
+          isColumnSelected[index] && isColumnSelected.length !== 0
+        if (initRender || subsequentRender) {
+          // for background color
+          const isSelected: boolean =
+            this.findSelectionIndex(sortedColumnSelection, column.name) !== -1
+          // for icon state
+          const columnIndex: number =
+            columnIconSortState[index] === undefined
+              ? 0
+              : columnIconSortState[index]
+          // we have to figure out if the current column is a facet selection
+          const facetIndex: number = facets.findIndex(
+            (facetColumnResult: FacetColumnResult) => {
+              const facetDisplayValue =
+                facetAliases[facetColumnResult.columnName] ||
+                facetColumnResult.columnName
+              return facetDisplayValue === column.name
+            },
+          )
+          // the header must be included in the facets and it has to be enumerable for current rendering capabilities
+          const isFacetSelection: boolean =
+            facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
+          const isSelectedSpanClass = isSelected
+            ? 'SRC-primary-background-color SRC-anchor-light'
+            : ''
+          const isSelectedIconClass = isSelected
+            ? 'SRC-selected-table-icon'
+            : 'SRC-primary-text-color'
+          const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
+          const displayColumnName: string | undefined = unCamelCase(column.name)
+          return (
+            <th key={column.name}>
+              <div className="SRC-centerContent">
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  {displayColumnName}
+                </span>
+                {isFacetSelection &&
+                  this.configureFacetDropdown(facets, facetIndex)}
+                <span
+                  tabIndex={0}
+                  className={sortSpanBackgoundClass}
+                  onKeyPress={this.handleColumnSortPress({
+                    index,
+                    name: column.name,
+                  })}
+                  onClick={this.handleColumnSortPress({
+                    index,
+                    name: column.name,
+                  })}
+                >
+                  <FontAwesomeIcon
+                    className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
+                    icon={ICON_STATE[columnIndex] as IconProp}
+                  />
+                </span>
+              </div>
+            </th>
+          )
+        } else {
+          return <th className="SRC-hidden" key={column.name} />
+        }
+      },
+    )
     // also push the access column if we are showing user access for individual items (must be logged in)
     if (showAccessColumn && token) {
       tableColumnHeaderElements.push(
@@ -954,7 +975,7 @@ export default class SynapseTable extends React.Component<
           <div className="SRC-centerContent">
             <span style={{ whiteSpace: 'nowrap' }}>Access</span>
           </div>
-        </th>
+        </th>,
       )
     }
     return tableColumnHeaderElements
