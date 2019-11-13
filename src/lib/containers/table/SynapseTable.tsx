@@ -611,7 +611,10 @@ export default class SynapseTable extends React.Component<
     }
 
     // remove all tokens after (and including) group
-    tokens = tokens.slice(0, tokens.findIndex(el => el[0] === 'GROUP'))
+    tokens = tokens.slice(
+      0,
+      tokens.findIndex(el => el[0] === 'GROUP'),
+    )
     // replace all columns with *
     tokens.splice(selectIndex + 1, fromIndex - selectIndex - 1, [
       'STAR',
@@ -793,8 +796,7 @@ export default class SynapseTable extends React.Component<
         rowContent.push(
           <td
             key={`(${rowIndex},accessColumn)`}
-            style={{ textAlign: 'center' }}
-            className="SRC_noBorderTop"
+            className="SRC_noBorderTop text-center"
           >
             <HasAccess synapseId={rowSynapseId} token={token}></HasAccess>
           </td>,

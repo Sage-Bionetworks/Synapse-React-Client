@@ -62,7 +62,10 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
           if (isCurrentColumnSelected === undefined) {
             isCurrentColumnSelected = index < visibleColumnCount
           }
-          const iconStyle: any = { width: '11px', marginRight: '10px' }
+          const iconStyle: React.CSSProperties = {
+            width: '11px',
+            marginRight: '10px',
+          }
           if (!isCurrentColumnSelected) {
             iconStyle.visibility = 'hidden'
           }
@@ -70,9 +73,9 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
             ? 'SRC-primary-text-color'
             : ''
           return (
-            // @ts-ignore
             <Dropdown.Item
-              onClick={(event: any) => toggleColumnSelection(index)(event)}
+              // @ts-ignore
+              onClick={toggleColumnSelection(index)}
               key={header.name}
             >
               <FontAwesomeIcon
