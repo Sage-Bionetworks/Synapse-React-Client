@@ -8,6 +8,7 @@ import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
+import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -21,6 +22,11 @@ const App = ({ match }: { match: match }) => {
         <li>
           <Link to={`${match.url}/QueryWrapperMenuDemo`}>
             QueryWrapperMenuDemo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/QueryWrapperPlotNavDemo`}>
+          QueryWrapperPlotNavDemo
           </Link>
         </li>
         <li>
@@ -57,6 +63,12 @@ const App = ({ match }: { match: match }) => {
         exact={true}
         path={`${match.url}/QueryWrapperMenuDemo`}
         render={() => <QueryWrapperMenuDemo rgbIndex={0} />}
+      />
+      
+      <Route
+        exact={true}
+        path={`${match.url}/QueryWrapperPlotNavDemo`}
+        render={() => <QueryWrapperPlotNavDemo />}
       />
 
       <Route
