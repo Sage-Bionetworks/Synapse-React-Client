@@ -40,17 +40,11 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       initQueryRequest={initQueryRequest}
     >
       {
-        link
-        &&
-        linkText
-        ?
         <FacetsPlotNav
           loadingScreen={<></>}
           link={link}
           linkText={linkText}
         />
-        :
-        <></>
       }
       {
         synapseId && title ?

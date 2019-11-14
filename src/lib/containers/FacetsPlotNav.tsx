@@ -1,7 +1,7 @@
 import * as React from 'react'
 // import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
-import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { unCamelCase } from './table/SynapseTable'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
@@ -112,7 +112,6 @@ export default class FacetsPlotNav extends React.Component<
       )
     }
     const plotData = this.extractPropsData(data!)
-    
     // const { colorPalette, textColors } = getColorPallette(
     //   rgbIndex!,
     //   plotData.length,
@@ -120,24 +119,18 @@ export default class FacetsPlotNav extends React.Component<
     // const originalColor = colorPalette[0]
 
     // create a pie chart for each facet (values) result
+    const rowCount: number = Math.ceil(plotData.length/6)
+    const layout = {
+      grid: {rows: rowCount, columns: 6},
+      showlegend: false,
+      annotations: []
+    }
+
     return (
       <>
         <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
-            {
-              plotData.map((singlePieChartData: any, index) => {
-              // const textColor: string = textColors[index]
-              // const rgbColor: string = colorPalette[index]
-              const layout = {
-                grid: {rows: Math.ceil(plotData.length/6), columns: 6},
-                showlegend: false,
-                annotations: []
-              };
-              return (
-                <Plot layout={layout} data={plotData}></Plot>
-              )
-            })}
-          </div>
-        )}
+          <Plot layout={layout} data={plotData} className='SRC-fullWidth'></Plot>
+        </div>
         <div className="SRC-bar-border SRC-bar-border-bottom">
           {this.props.link && (
             <div className="SRC-chart-link">
@@ -151,7 +144,8 @@ export default class FacetsPlotNav extends React.Component<
   public extractPropsData(data: QueryResultBundle) {
     const plotData: any[] = []
     // pull out the data corresponding to the filter in question
-    data.facets!.forEach((item: FacetColumnResultValues) => {
+    const enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
+    enumerationFacets.forEach((item: any, index:number) => {
       if (item.facetType === 'enumeration') {
         const singlePieChartData: any = 
           {
@@ -161,6 +155,7 @@ export default class FacetsPlotNav extends React.Component<
             hoverinfo: 'label+percent',
             type: 'pie',
             title: unCamelCase(item.columnName),
+            domain: {row:Math.floor(index/6), column: index%6},
           }
         plotData.push(singlePieChartData)
         item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {

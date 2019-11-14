@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib/utils'
-import { QueryWrapperPlotNavProps } from 'lib/containers/QueryWrapperPlotNav'
+import QueryWrapperPlotNav, { QueryWrapperPlotNavProps } from 'lib/containers/QueryWrapperPlotNav'
 
 type DemoState = {
   ownerId: string
@@ -82,7 +82,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
     return (
       <div className="container">
         <h2>Demo of plot nav table</h2>
-        <QueryWrapperPlotNavDemo {...this.state.tableProps} />
+        <QueryWrapperPlotNav {...this.state.tableProps} />
       </div>
     )
   }
