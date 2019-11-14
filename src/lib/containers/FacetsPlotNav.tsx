@@ -62,7 +62,7 @@ export default class FacetsPlotNav extends React.Component<
     if (event.points && event.points[0]) {
       const plotPointData: any = event.points[0]
       const facetName = plotPointData.data.name
-      const facetValueClicked = plotPointData.data.labels[plotPointData.pointNumber]
+      const facetValueClicked = plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]
       // update the facet and selected index
       const chartSelectionIndex = plotPointData.pointNumber
       const { isAllFilterSelectedForFacet = {} } = this.props
@@ -196,8 +196,12 @@ export default class FacetsPlotNav extends React.Component<
         {
           values: [],
           labels: [],
+          facetEnumerationValues: [],
           name: item.columnName,
-          hoverinfo: 'label+percent',
+          // hoverinfo: 'label+percent',
+          hoverinfo: 'label',
+          textposition: "inside",
+          textinfo: "label",
           type: 'pie',
           title: unCamelCase(item.columnName),
           marker: {
@@ -208,7 +212,13 @@ export default class FacetsPlotNav extends React.Component<
         plotData.push(singlePieChartData)
         item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
           singlePieChartData.values.push(facetValue.count)
-          singlePieChartData.labels.push(facetValue.value)
+          const displayValue =
+            facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
+              ? 'unannotated'
+              : facetValue.value
+  
+          singlePieChartData.labels.push(displayValue)
+          singlePieChartData.facetEnumerationValues.push(facetValue.value)
         })
       }
     })
