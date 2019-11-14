@@ -1,11 +1,14 @@
 import * as React from 'react'
 // import { getColorPallette } from './ColorGradient'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { unCamelCase } from './table/SynapseTable'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBundle'
+import {SELECT_SINGLE_FACET} from './Facets'
+import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest'
+import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetColumnRequest'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -34,8 +37,6 @@ export default class FacetsPlotNav extends React.Component<
   > {
   constructor(props: InternalProps) {
     super(props)
-    this.handleHover = this.handleHover.bind(this)
-    this.handleExit = this.handleExit.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.rgba2rgb = this.rgba2rgb.bind(this)
     // the text currently under the cursor
@@ -46,41 +47,48 @@ export default class FacetsPlotNav extends React.Component<
   }
 
   /**
-   * Updates the hover text and update the view
-   *
-   * @memberof FacetsPlotNav
-   */
-  public handleHover(event: React.MouseEvent<SVGRectElement>) {
-    // add box shadow
-    event.currentTarget.style.boxShadow = '25px 20px'
-  }
-
-  /**
-   * Update the hover text and the view
-   *
-   * @param {*} event
-   * @memberof FacetsPlotNav
-   */
-  public handleExit(event: React.MouseEvent<SVGRectElement>) {
-    // remove box shadow
-    event.currentTarget.style.boxShadow = ''
-  }
-
-  /**
    * Handle click event
    */
   public handleClick = (event: any) => {
     if (event.points && event.points[0]) {
       const plotPointData: any = event.points[0]
       const facetName = plotPointData.data.name
-      // const facetValueClicked = plotPointData.data.labels[plotPointData.pointNumber]
+      const facetValueClicked = plotPointData.data.labels[plotPointData.pointNumber]
       // update the facet and selected index
       const chartSelectionIndex = plotPointData.pointNumber
-      debugger
+      const { isAllFilterSelectedForFacet = {} } = this.props
+      isAllFilterSelectedForFacet[facetName] = false
+      const lastFacetSelection = {
+        selector: SELECT_SINGLE_FACET,
+        facetValue:facetValueClicked,
+        columnName: facetName,
+      } as FacetSelection
       this.props.updateParentState!({
         chartSelectionIndex,
-        facet: facetName
+        lastFacetSelection,
+        isAllFilterSelectedForFacet,
       })
+
+      // run the query with the selected facet value
+      const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
+      const { selectedFacets = [] } = queryRequest.query
+      const specificFacet = selectedFacets!.find(el => el.columnName === facetName)!
+      if (!specificFacet) {
+        const facetColumnValuesRequest: FacetColumnValuesRequest = {
+          facetValues: [facetValueClicked],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: facetName,
+        }
+        selectedFacets.push(facetColumnValuesRequest)
+        // align the reference to selectedFacets
+        queryRequest.query.selectedFacets = selectedFacets
+      } else {
+        specificFacet.facetValues = [facetValueClicked]
+      }
+
+      queryRequest.query.offset = 0
+      this.props.executeQueryRequest!(queryRequest)
     }
   }
 
