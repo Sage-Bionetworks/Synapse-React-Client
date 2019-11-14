@@ -16,7 +16,7 @@ const Plot = createPlotlyComponent(Plotly)
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
-  selectedFacets: {}
+  showMore: boolean
 }
 
 export type FacetsPlotNavProps = {
@@ -42,9 +42,17 @@ export default class FacetsPlotNav extends React.Component<
     this.rgba2rgb = this.rgba2rgb.bind(this)
     // the text currently under the cursor
     this.state = {
-      selectedFacets: {},
+      showMore: false,
     }
     this.extractPropsData = this.extractPropsData.bind(this)
+    this.toggleShowMore = this.toggleShowMore.bind(this)
+  }
+
+  public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault()
+    this.setState({
+      showMore: true,
+    })
   }
 
   /**
@@ -123,6 +131,15 @@ export default class FacetsPlotNav extends React.Component<
         </div>
       )
     }
+    const showMoreButton = data!.facets!.length > CHARTS_PER_ROW && (
+      <a
+        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
+        className="SRC-primary-text-color"
+        onClick={this.toggleShowMore}
+      >
+        Show All
+      </a>
+    )
     const plotData = this.extractPropsData(data!)
     // create a pie chart for each facet (values) result
     const rowCount: number = Math.ceil(plotData.length / 6)
@@ -130,28 +147,27 @@ export default class FacetsPlotNav extends React.Component<
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
       annotations: [],
-      margin: {
-        l: 10,
-        r: 10,
-        b: 10,
-        t: 10,
-        pad: 4
-      }
+      margin: { l: 20, r: 20, b: 50, t: 10, pad: 25}
     }
 
     return (
       <>
-        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
-          <Plot
-            layout={layout}
-            data={plotData}
-            className='SRC-fullWidth'
-            config={{ displayModeBar: false }}
-            useResizeHandler={true}
-            onClick={this.handleClick}
-          ></Plot>
+        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top" >
+          <div>
+            <Plot
+              layout={layout}
+              data={plotData}
+              className='SRC-fullWidth'
+              config={{ displayModeBar: false }}
+              useResizeHandler={true}
+              onClick={this.handleClick}
+            ></Plot>
+          </div>
+          <div>
+            {!this.state.showMore && showMoreButton}
+          </div>
         </div>
-        <div className="SRC-bar-border SRC-bar-border-bottom">
+        <div className="SRC-bar-border SRC-bar-border-bottom" style={{ marginBottom: '15px' }}>
           {this.props.link && (
             <div className="SRC-chart-link">
               <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
@@ -165,7 +181,11 @@ export default class FacetsPlotNav extends React.Component<
     const plotData: any[] = []
     
     // pull out the data corresponding to the filter in question
-    const enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
+    let enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
+    if (!this.state.showMore) {
+      enumerationFacets = enumerationFacets.slice(0, CHARTS_PER_ROW)
+    }
+    
     enumerationFacets.forEach((item: any, index: number) => {
       if (item.facetType === 'enumeration') {
         const { colorPalette } = getColorPallette(
