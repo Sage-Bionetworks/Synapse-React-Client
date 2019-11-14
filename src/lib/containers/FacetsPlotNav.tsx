@@ -9,6 +9,7 @@ import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBund
 import {SELECT_SINGLE_FACET} from './Facets'
 import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetColumnRequest'
+import getColorPallette from './ColorGradient'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -123,18 +124,19 @@ export default class FacetsPlotNav extends React.Component<
       )
     }
     const plotData = this.extractPropsData(data!)
-    // const { colorPalette, textColors } = getColorPallette(
-    //   rgbIndex!,
-    //   plotData.length,
-    // )
-    // const originalColor = colorPalette[0]
-
     // create a pie chart for each facet (values) result
     const rowCount: number = Math.ceil(plotData.length / 6)
     const layout = {
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
-      annotations: []
+      annotations: [],
+      margin: {
+        l: 10,
+        r: 10,
+        b: 10,
+        t: 10,
+        pad: 4
+      }
     }
 
     return (
@@ -161,10 +163,15 @@ export default class FacetsPlotNav extends React.Component<
   }
   public extractPropsData(data: QueryResultBundle) {
     const plotData: any[] = []
+    
     // pull out the data corresponding to the filter in question
     const enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
     enumerationFacets.forEach((item: any, index: number) => {
       if (item.facetType === 'enumeration') {
+        const { colorPalette } = getColorPallette(
+          index,
+          item.facetValues.length,
+        )
         const singlePieChartData: any =
         {
           values: [],
@@ -173,6 +180,9 @@ export default class FacetsPlotNav extends React.Component<
           hoverinfo: 'label+percent',
           type: 'pie',
           title: unCamelCase(item.columnName),
+          marker: {
+            colors: colorPalette
+          },
           domain: { row: Math.floor(index / CHARTS_PER_ROW), column: index % CHARTS_PER_ROW },
         }
         plotData.push(singlePieChartData)
