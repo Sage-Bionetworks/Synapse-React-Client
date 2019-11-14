@@ -9,6 +9,7 @@ import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBund
 
 const Plot = createPlotlyComponent(Plotly)
 
+const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
   selectedFacets: {}
@@ -18,12 +19,6 @@ export type FacetsPlotNavProps = {
   loadingScreen: JSX.Element
   link?: string
   linkText?: string
-}
-
-type Info = {
-  value: string
-  count: number
-  index: number
 }
 
 type InternalProps = FacetsPlotNavProps & QueryWrapperChildProps
@@ -36,7 +31,7 @@ type InternalProps = FacetsPlotNavProps & QueryWrapperChildProps
 export default class FacetsPlotNav extends React.Component<
   InternalProps,
   FacetsPlotNavState
-> {
+  > {
   constructor(props: InternalProps) {
     super(props)
     this.handleHover = this.handleHover.bind(this)
@@ -72,13 +67,21 @@ export default class FacetsPlotNav extends React.Component<
   }
 
   /**
-   * Handle column click event
+   * Handle click event
    */
-  public handleClick = (dict: Info) => (
-    _event: React.MouseEvent<SVGElement>,
-  ) => {
-    // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-    this.props.updateParentState!({ chartSelectionIndex: dict.index })
+  public handleClick = (event: any) => {
+    if (event.points && event.points[0]) {
+      const plotPointData: any = event.points[0]
+      const facetName = plotPointData.data.name
+      // const facetValueClicked = plotPointData.data.labels[plotPointData.pointNumber]
+      // update the facet and selected index
+      const chartSelectionIndex = plotPointData.pointNumber
+      debugger
+      this.props.updateParentState!({
+        chartSelectionIndex,
+        facet: facetName
+      })
+    }
   }
 
   public rgba2rgb(background: number[], color: number[]) {
@@ -119,9 +122,9 @@ export default class FacetsPlotNav extends React.Component<
     // const originalColor = colorPalette[0]
 
     // create a pie chart for each facet (values) result
-    const rowCount: number = Math.ceil(plotData.length/6)
+    const rowCount: number = Math.ceil(plotData.length / 6)
     const layout = {
-      grid: {rows: rowCount, columns: 6},
+      grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
       annotations: []
     }
@@ -129,7 +132,14 @@ export default class FacetsPlotNav extends React.Component<
     return (
       <>
         <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
-          <Plot layout={layout} data={plotData} className='SRC-fullWidth'></Plot>
+          <Plot
+            layout={layout}
+            data={plotData}
+            className='SRC-fullWidth'
+            config={{ displayModeBar: false }}
+            useResizeHandler={true}
+            onClick={this.handleClick}
+          ></Plot>
         </div>
         <div className="SRC-bar-border SRC-bar-border-bottom">
           {this.props.link && (
@@ -145,18 +155,18 @@ export default class FacetsPlotNav extends React.Component<
     const plotData: any[] = []
     // pull out the data corresponding to the filter in question
     const enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
-    enumerationFacets.forEach((item: any, index:number) => {
+    enumerationFacets.forEach((item: any, index: number) => {
       if (item.facetType === 'enumeration') {
-        const singlePieChartData: any = 
-          {
-            values: [],
-            labels: [],
-            name: item.columnName,
-            hoverinfo: 'label+percent',
-            type: 'pie',
-            title: unCamelCase(item.columnName),
-            domain: {row:Math.floor(index/6), column: index%6},
-          }
+        const singlePieChartData: any =
+        {
+          values: [],
+          labels: [],
+          name: item.columnName,
+          hoverinfo: 'label+percent',
+          type: 'pie',
+          title: unCamelCase(item.columnName),
+          domain: { row: Math.floor(index / CHARTS_PER_ROW), column: index % CHARTS_PER_ROW },
+        }
         plotData.push(singlePieChartData)
         item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
           singlePieChartData.values.push(facetValue.count)
@@ -164,7 +174,7 @@ export default class FacetsPlotNav extends React.Component<
         })
       }
     })
-    
+
     return plotData
   }
 }

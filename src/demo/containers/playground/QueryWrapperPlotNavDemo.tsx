@@ -32,6 +32,8 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
       version: 0,
       tableProps: 
       {
+        title: 'Test only',
+        synapseId: 'syn20337467',
         sqlOperator: '=',
         unitDescription: 'datum',
         initQueryRequest:{
