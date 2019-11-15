@@ -219,13 +219,13 @@ export default class SynapseTable extends React.Component<
     }
     // Make call to get group headers and user profiles
     const ids = Array.from(distinctUserIds)
-    const idsWithUserProfiles: string[] = []
+    const userPorfileIds: string[] = []
     // TODO: Grab Team Badge
     try {
       const data = await SynapseClient.getGroupHeadersBatch(ids, token)
       data.children.forEach(el => {
         if (el.isIndividual) {
-          idsWithUserProfiles.push(el.ownerId)
+          userPorfileIds.push(el.ownerId)
         } else {
           mapUserIdToHeader[el.ownerId] = el
         }
@@ -233,10 +233,10 @@ export default class SynapseTable extends React.Component<
     } catch (err) {
       console.error('Error on getGroupHeaders batch: ', err)
     }
-    if (idsWithUserProfiles.length > 0) {
+    if (userPorfileIds.length > 0) {
       try {
         const data = await getUserProfileWithProfilePicAttached(
-          idsWithUserProfiles,
+          userPorfileIds,
           token,
         )
         data.list.forEach((el: UserProfile) => {
