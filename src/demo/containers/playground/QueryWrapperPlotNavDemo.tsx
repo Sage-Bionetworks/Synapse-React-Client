@@ -52,6 +52,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
           },
         },
         rgbIndex: 5,
+        // facetsToPlot: ['grant', 'softwareType'],
       }
     }
     this.handleChange = this.handleChange.bind(this)

@@ -25,6 +25,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     searchParams,
     initQueryRequest,
     sqlOperator,
+    facetsToPlot,
     ...rest
   } = props
   if (searchParams) {
@@ -44,6 +45,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
           loadingScreen={<></>}
           link={link}
           linkText={linkText}
+          facetsToPlot={facetsToPlot}
         />
       }
       {

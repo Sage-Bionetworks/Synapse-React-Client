@@ -21,6 +21,7 @@ export type FacetsPlotNavState = {
 
 export type FacetsPlotNavProps = {
   loadingScreen: JSX.Element
+  facetsToPlot?: string[]
   link?: string
   linkText?: string
 }
@@ -178,10 +179,16 @@ export default class FacetsPlotNav extends React.Component<
     )
   }
   public extractPropsData(data: QueryResultBundle) {
+    const { facetsToPlot } = this.props
     const plotData: any[] = []
     
     // pull out the data corresponding to the filter in question
     let enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
+    if (facetsToPlot) {
+      // filter to show plots for the chosen facets
+      enumerationFacets = enumerationFacets.filter(item => facetsToPlot.includes(item.columnName))
+    }
+
     if (!this.state.showMore) {
       enumerationFacets = enumerationFacets.slice(0, CHARTS_PER_ROW)
     }
