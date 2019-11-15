@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, Route, match } from 'react-router-dom'
+import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
@@ -8,12 +8,23 @@ import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
+import { RouteChildrenProps } from 'react-router'
+import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-const App = ({ match }: { match: match }) => {
+const App = ({
+  match,
+  token,
+}: {
+  match?: RouteChildrenProps['match']
+  token: string
+}) => {
+  if (!match) {
+    return <div />
+  }
   return (
     <div>
       <h2>Links to components under development </h2>
@@ -50,6 +61,12 @@ const App = ({ match }: { match: match }) => {
 
         <li>
           <Link to={`${match.url}/ModalDownloadDemo`}>ModalDownload</Link>
+        </li>
+
+        <li>
+          <Link to={`${match.url}/DownloadListTableDemo`}>
+            DownloadListTableDemo
+          </Link>
         </li>
       </ul>
 
@@ -97,6 +114,12 @@ const App = ({ match }: { match: match }) => {
         exact={true}
         path={`${match.url}/ModalDownloadDemo`}
         component={() => <ModalDownloadDemo />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/DownloadListTableDemo`}
+        component={() => <DownloadListTable token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

@@ -9,6 +9,7 @@ import Playground from './playground/Playground'
 import DrugUploadTool from '../../lib/containers/drug_upload_tool/DrugUploadTool'
 import FileGrid from '../../lib/containers/drug_upload_tool/UserFileGrid'
 import { SynapseClient } from '../../lib/utils/'
+import { RouteChildrenProps } from 'react-router'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -94,15 +95,16 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   public render(): JSX.Element {
+    const { token } = this.state
     return (
-      <TokenContext.Provider value={this.state.token}>
+      <TokenContext.Provider value={token}>
         <Router basename={process.env.PUBLIC_URL}>
           <div>
             <div className="App-header text-center">
               <img src={logoSvg} className="App-logo" alt="logo" />
               <h4 className="white-text">Synapse React Client Demo</h4>
             </div>
-            {this.renderLoginAndSignout(this.state.token)}
+            {this.renderLoginAndSignout(token)}
             <ul>
               <li>
                 <Link to="/">Demo</Link>
@@ -121,7 +123,12 @@ export default class App extends React.Component<{}, AppState> {
             </ul>
 
             <Route exact={true} path="/" component={Demo} />
-            <Route path="/Playground" component={Playground} />
+            <Route
+              path="/Playground"
+              component={(props: RouteChildrenProps) => (
+                <Playground {...props} token={token} />
+              )}
+            />
             <Route
               exact={true}
               path="/drugUploadTool"
@@ -135,7 +142,7 @@ export default class App extends React.Component<{}, AppState> {
                 return !props.location.search ? (
                   <FileGrid
                     pathpart="drugUploadTool"
-                    token={this.state.token}
+                    token={token}
                     formClass="drug-upload-tool"
                     formGroupId="9"
                     itemNoun="Compound"
@@ -147,7 +154,7 @@ export default class App extends React.Component<{}, AppState> {
                     fileNamePath="naming.compound_name"
                     formUiSchemaEntityId="syn20693568"
                     formNavSchemaEntityId="syn20680027"
-                    token={this.state.token}
+                    token={token}
                     formTitle="Your Submission"
                     formClass="drug-upload-tool"
                     searchParams={searchParamsProps}
@@ -171,7 +178,7 @@ export default class App extends React.Component<{}, AppState> {
                   <FileGrid
                     pathpart="contribReqForm"
                     formGroupId="11"
-                    token={this.state.token}
+                    token={token}
                     formClass="contribution-request"
                     itemNoun={'Contribution Request'}
                   />
@@ -183,7 +190,7 @@ export default class App extends React.Component<{}, AppState> {
                     formUiSchemaEntityId="syn20692911"
                     formNavSchemaEntityId="syn20968007"
                     isWizardMode={true}
-                    token={this.state.token}
+                    token={token}
                     formTitle="Your Contribution Request"
                     formClass="contribution-request"
                     searchParams={searchParamsProps}

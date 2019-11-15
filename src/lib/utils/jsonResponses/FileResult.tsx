@@ -3,7 +3,7 @@ import { FileHandle } from './FileHandle'
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileResult.html
 export type FileResult = {
   fileHandleId: string // The ID of the requested FileHandle.
-  fileHandle: FileHandle // The FileHandle interface defines all
+  fileHandle?: FileHandle // The FileHandle interface defines all
   // of the fields that are common to all implementations.
   preSignedURL: string // A pre-signed URL to download the requested file.
   // Null if the request.includePreSignedURLs=false.

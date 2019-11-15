@@ -1,11 +1,13 @@
 import { SynapseClient } from '../utils'
 import * as React from 'react'
-import { RestrictionInformationResponse, RestrictionInformationRequest, RestrictableObjectType } from '../utils/jsonResponses/RestrictionInformation'
+import {
+  RestrictionInformationResponse,
+  RestrictionInformationRequest,
+  RestrictableObjectType,
+} from '../utils/jsonResponses/RestrictionInformation'
 import { getEndpoint, BackendDestinationEnum } from '../utils/getEndpoint'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheckSquare,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 library.add(faCheckSquare)
 
@@ -28,7 +30,7 @@ type HasAccessState = {
 export default class HasAccess extends React.Component<
   HasAccessProps,
   HasAccessState
-  > {
+> {
   constructor(props: HasAccessProps) {
     super(props)
     this.state = {}
@@ -50,11 +52,15 @@ export default class HasAccess extends React.Component<
     }
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
-      objectId: synapseId
+      objectId: synapseId,
     }
-    SynapseClient.getRestrictionInformation(request, token).then(restrictionInformation => {
-      this.setState({ restrictionInformation })
-    })
+    SynapseClient.getRestrictionInformation(request, token)
+      .then(restrictionInformation => {
+        this.setState({ restrictionInformation })
+      })
+      .catch(err => {
+        console.error('Error on access requirements: ', err)
+      })
   }
 
   render() {
@@ -65,15 +71,21 @@ export default class HasAccess extends React.Component<
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
         className="SRC-primary-text-color"
-        href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}/#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
+        href={`${getEndpoint(
+          BackendDestinationEnum.PORTAL_ENDPOINT,
+        )}/#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         Request Access
       </a>
     )
-    const hasAccessIcon = <FontAwesomeIcon
-      style={{ marginLeft: '5px' }}
-      icon='check-square'
-    />
-    return restrictionInformation && restrictionInformation.hasUnmetAccessRequirement ? requestAccessLink : hasAccessIcon
+    const hasAccessIcon = (
+      <FontAwesomeIcon style={{ marginLeft: '5px' }} icon="check-square" />
+    )
+    return restrictionInformation &&
+      restrictionInformation.hasUnmetAccessRequirement
+      ? requestAccessLink
+      : hasAccessIcon
   }
 }

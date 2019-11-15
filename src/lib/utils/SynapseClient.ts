@@ -46,7 +46,11 @@ import {
 import SparkMD5 from 'spark-md5'
 import { getEndpoint, BackendDestinationEnum } from './getEndpoint'
 import { LoginResponse } from './jsonResponses/LoginResponse'
-import { RestrictionInformationRequest, RestrictionInformationResponse } from './jsonResponses/RestrictionInformation'
+import {
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+} from './jsonResponses/RestrictionInformation'
+import { DownloadList } from './jsonResponses/Download/DownloadList'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -1312,7 +1316,7 @@ export const getFileEntityContent = (
     getFiles(request, sessionToken)
       .then((data: BatchFileResult) => {
         const presignedUrl: string = data.requestedFiles[0].preSignedURL
-        const fileHandle: FileHandle = data.requestedFiles[0].fileHandle
+        const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!
         return getFileHandleContent(fileHandle, presignedUrl).then(
           (content: string) => {
             resolve(content)
@@ -1767,6 +1771,26 @@ export const getRestrictionInformation = (
   return doPost(
     `/repo/v1/restrictionInformation`,
     request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/download/list.html
+export const getDownloadList = (sessionToken: string | undefined) => {
+  return doGet<DownloadList>(
+    '/file/v1/download/list',
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/download/list.html
+export const deleteDownloadList = (sessionToken: string | undefined) => {
+  return doDelete(
+    '/file/v1/download/list',
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
