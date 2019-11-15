@@ -12,7 +12,7 @@ import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetCol
 import getColorPallette from './ColorGradient'
 
 const Plot = createPlotlyComponent(Plotly)
-const ROW_HEIGHT: number = 200
+const ROW_HEIGHT: number = 160
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
