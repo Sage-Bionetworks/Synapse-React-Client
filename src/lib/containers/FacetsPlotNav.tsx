@@ -160,7 +160,7 @@ export default class FacetsPlotNav extends React.Component<
     )
     const resetButton = (
       <a
-        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
+        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginRight: '5px', marginBottom: '10px', float: 'right' }}
         className="SRC-primary-text-color"
         onClick={this.onReset}
       >
