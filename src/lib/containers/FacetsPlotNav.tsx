@@ -16,7 +16,8 @@ const Plot = createPlotlyComponent(Plotly)
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
-  showMore: boolean
+  showMore: boolean,
+  isResetPossible: boolean
 }
 
 export type FacetsPlotNavProps = {
@@ -44,15 +45,30 @@ export default class FacetsPlotNav extends React.Component<
     // the text currently under the cursor
     this.state = {
       showMore: false,
+      isResetPossible: false
     }
     this.extractPropsData = this.extractPropsData.bind(this)
     this.toggleShowMore = this.toggleShowMore.bind(this)
+    this.onReset = this.onReset.bind(this)
   }
 
   public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
     this.setState({
       showMore: true,
+    })
+  }
+
+  public onReset(event: React.MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault()
+
+    const {executeInitialQueryRequest} = this.props
+    debugger
+    if (executeInitialQueryRequest) {
+      executeInitialQueryRequest()
+    }
+    this.setState( {
+      isResetPossible: false
     })
   }
 
@@ -100,6 +116,9 @@ export default class FacetsPlotNav extends React.Component<
       queryRequest.query.offset = 0
       this.props.executeQueryRequest!(queryRequest)
     }
+    this.setState( {
+      isResetPossible: true
+    })
   }
 
   public rgba2rgb(background: number[], color: number[]) {
@@ -141,6 +160,16 @@ export default class FacetsPlotNav extends React.Component<
         Show All
       </a>
     )
+    const resetButton =  (
+      <a
+        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
+        className="SRC-primary-text-color"
+        onClick={this.onReset}
+      >
+        Reset
+      </a>
+    )
+    
     const plotData = this.extractPropsData(data!)
     // create a pie chart for each facet (values) result
     const rowCount: number = Math.ceil(plotData.length / 6)
@@ -166,6 +195,7 @@ export default class FacetsPlotNav extends React.Component<
           </div>
           <div>
             {!this.state.showMore && showMoreButton}
+            {this.state.isResetPossible && resetButton}
           </div>
         </div>
         <div className="SRC-bar-border SRC-bar-border-bottom" style={{ marginBottom: '15px' }}>
