@@ -1,5 +1,4 @@
 import * as React from 'react'
-// import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { unCamelCase } from './table/SynapseTable'
