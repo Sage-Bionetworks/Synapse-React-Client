@@ -22,8 +22,8 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
    */
   constructor(props: any) {
     super(props)
-    const computationalSql:string =
-      "SELECT * FROM syn20337467 WHERE toolType = 'computational' LIMIT 100"
+    const sql:string =
+      "SELECT * FROM syn16858331"
     this.state = {
       isLoading: true,
       ownerId: '',
@@ -33,7 +33,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
       tableProps: 
       {
         title: 'Test only',
-        synapseId: 'syn20337467',
+        synapseId: 'syn16858331',
         sqlOperator: '=',
         unitDescription: 'datum',
         initQueryRequest:{
@@ -46,7 +46,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
             SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
             SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
           query: {
-            sql: computationalSql,
+            sql,
             limit: 25,
             offset: 0,
           },

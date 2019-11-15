@@ -170,7 +170,7 @@ export default class FacetsPlotNav extends React.Component<
 
     const plotData = this.extractPropsData(data!)
     // create a pie chart for each facet (values) result
-    const rowCount: number = Math.ceil(plotData.length / 6)
+    const rowCount: number = Math.ceil(plotData.length / CHARTS_PER_ROW)
     const layout = {
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
@@ -221,47 +221,45 @@ export default class FacetsPlotNav extends React.Component<
     if (!this.state.isShowingMore) {
       enumerationFacets = enumerationFacets.slice(0, CHARTS_PER_ROW)
     }
-
+    debugger
     enumerationFacets.forEach((item: any, index: number) => {
-      if (item.facetType === 'enumeration') {
-        const { colorPalette } = getColorPallette(
-          index,
-          item.facetValues.length,
-        )
-        const singlePieChartData: any =
-        {
-          values: [],
-          labels: [],
-          facetEnumerationValues: [],
-          name: item.columnName,
-          hoverinfo: 'label+value+percent',
-          textposition: "inside",
-          textinfo: "label",
-          type: 'pie',
-          title: unCamelCase(item.columnName),
-          marker: {
-            colors: colorPalette,
-            line: {
-              width: []
-            }
-          },
-          pull: [],
-          domain: { row: Math.floor(index / CHARTS_PER_ROW), column: index % CHARTS_PER_ROW },
-        }
-        plotData.push(singlePieChartData)
-        item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
-          singlePieChartData.values.push(facetValue.count)
-          const displayValue =
-            facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-              ? 'unannotated'
-              : facetValue.value
-
-          singlePieChartData.labels.push(displayValue)
-          singlePieChartData.facetEnumerationValues.push(facetValue.value)
-          singlePieChartData.marker.line.width.push(facetValue.isSelected ? 2 : 0)
-          singlePieChartData.pull.push(facetValue.isSelected ? .05 : 0)
-        })
+      const { colorPalette } = getColorPallette(
+        index,
+        item.facetValues.length,
+      )
+      const singlePieChartData: any =
+      {
+        values: [],
+        labels: [],
+        facetEnumerationValues: [],
+        name: item.columnName,
+        hoverinfo: 'label+value+percent',
+        textposition: "inside",
+        textinfo: "label",
+        type: 'pie',
+        title: unCamelCase(item.columnName),
+        marker: {
+          colors: colorPalette,
+          line: {
+            width: []
+          }
+        },
+        pull: [],
+        domain: { row: Math.floor(index / CHARTS_PER_ROW), column: index % CHARTS_PER_ROW },
       }
+      plotData.push(singlePieChartData)
+      item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
+        singlePieChartData.values.push(facetValue.count)
+        const displayValue =
+          facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
+            ? 'unannotated'
+            : facetValue.value
+
+        singlePieChartData.labels.push(displayValue)
+        singlePieChartData.facetEnumerationValues.push(facetValue.value)
+        singlePieChartData.marker.line.width.push(facetValue.isSelected ? 2 : 0)
+        singlePieChartData.pull.push(facetValue.isSelected ? .05 : 0)
+      })
     })
 
     return plotData
