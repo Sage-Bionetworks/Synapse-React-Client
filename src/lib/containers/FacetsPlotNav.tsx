@@ -198,15 +198,18 @@ export default class FacetsPlotNav extends React.Component<
           labels: [],
           facetEnumerationValues: [],
           name: item.columnName,
-          // hoverinfo: 'label+percent',
-          hoverinfo: 'label',
+          hoverinfo: 'label+value+percent',
           textposition: "inside",
           textinfo: "label",
           type: 'pie',
           title: unCamelCase(item.columnName),
           marker: {
-            colors: colorPalette
+            colors: colorPalette,
+            line: {
+              width: []
+            }
           },
+          pull: [],
           domain: { row: Math.floor(index / CHARTS_PER_ROW), column: index % CHARTS_PER_ROW },
         }
         plotData.push(singlePieChartData)
@@ -219,6 +222,8 @@ export default class FacetsPlotNav extends React.Component<
   
           singlePieChartData.labels.push(displayValue)
           singlePieChartData.facetEnumerationValues.push(facetValue.value)
+          singlePieChartData.marker.line.width.push(facetValue.isSelected ? 2 : 0)
+          singlePieChartData.pull.push(facetValue.isSelected ? .05 : 0)
         })
       }
     })
