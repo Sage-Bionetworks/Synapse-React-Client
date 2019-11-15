@@ -16,7 +16,7 @@ const ROW_HEIGHT: number = 200
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
-  showMore: boolean,
+  isShowingMore: boolean,
   isResetPossible: boolean
 }
 
@@ -44,7 +44,7 @@ export default class FacetsPlotNav extends React.Component<
     this.rgba2rgb = this.rgba2rgb.bind(this)
     // the text currently under the cursor
     this.state = {
-      showMore: false,
+      isShowingMore: false,
       isResetPossible: false
     }
     this.extractPropsData = this.extractPropsData.bind(this)
@@ -55,7 +55,7 @@ export default class FacetsPlotNav extends React.Component<
   public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
     this.setState({
-      showMore: true,
+      isShowingMore: !this.state.isShowingMore,
     })
   }
 
@@ -155,7 +155,7 @@ export default class FacetsPlotNav extends React.Component<
         className="SRC-primary-text-color"
         onClick={this.toggleShowMore}
       >
-        Show All
+        {this.state.isShowingMore ?  'Show Less' : 'Show More'}
       </a>
     )
     const resetButton = (
@@ -193,7 +193,7 @@ export default class FacetsPlotNav extends React.Component<
             ></Plot>
           </div>
           <div>
-            {!this.state.showMore && showMoreButton}
+            {showMoreButton}
             {this.state.isResetPossible && resetButton}
           </div>
         </div>
@@ -218,7 +218,7 @@ export default class FacetsPlotNav extends React.Component<
       enumerationFacets = enumerationFacets.filter(item => facetsToPlot.includes(item.columnName))
     }
 
-    if (!this.state.showMore) {
+    if (!this.state.isShowingMore) {
       enumerationFacets = enumerationFacets.slice(0, CHARTS_PER_ROW)
     }
 
