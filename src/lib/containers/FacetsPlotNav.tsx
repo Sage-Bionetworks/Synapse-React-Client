@@ -12,7 +12,7 @@ import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetCol
 import getColorPallette from './ColorGradient'
 
 const Plot = createPlotlyComponent(Plotly)
-
+const ROW_HEIGHT: number = 200
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
@@ -175,7 +175,8 @@ export default class FacetsPlotNav extends React.Component<
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
       annotations: [],
-      margin: { l: 20, r: 20, b: 50, t: 10, pad: 25 }
+      margin: { l: 20, r: 20, b: 10, t: 10, pad: 40 },
+      height: ROW_HEIGHT * rowCount
     }
 
     return (
