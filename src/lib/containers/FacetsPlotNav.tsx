@@ -6,7 +6,7 @@ import { unCamelCase } from './table/SynapseTable'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBundle'
-import {SELECT_SINGLE_FACET} from './Facets'
+import { SELECT_SINGLE_FACET } from './Facets'
 import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest'
 import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetColumnRequest'
 import getColorPallette from './ColorGradient'
@@ -61,13 +61,11 @@ export default class FacetsPlotNav extends React.Component<
 
   public onReset(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault()
-
-    const {executeInitialQueryRequest} = this.props
-    debugger
+    const { executeInitialQueryRequest } = this.props
     if (executeInitialQueryRequest) {
       executeInitialQueryRequest()
     }
-    this.setState( {
+    this.setState({
       isResetPossible: false
     })
   }
@@ -86,7 +84,7 @@ export default class FacetsPlotNav extends React.Component<
       isAllFilterSelectedForFacet[facetName] = false
       const lastFacetSelection = {
         selector: SELECT_SINGLE_FACET,
-        facetValue:facetValueClicked,
+        facetValue: facetValueClicked,
         columnName: facetName,
       } as FacetSelection
       this.props.updateParentState!({
@@ -116,7 +114,7 @@ export default class FacetsPlotNav extends React.Component<
       queryRequest.query.offset = 0
       this.props.executeQueryRequest!(queryRequest)
     }
-    this.setState( {
+    this.setState({
       isResetPossible: true
     })
   }
@@ -160,7 +158,7 @@ export default class FacetsPlotNav extends React.Component<
         Show All
       </a>
     )
-    const resetButton =  (
+    const resetButton = (
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
         className="SRC-primary-text-color"
@@ -169,7 +167,7 @@ export default class FacetsPlotNav extends React.Component<
         Reset
       </a>
     )
-    
+
     const plotData = this.extractPropsData(data!)
     // create a pie chart for each facet (values) result
     const rowCount: number = Math.ceil(plotData.length / 6)
@@ -177,7 +175,7 @@ export default class FacetsPlotNav extends React.Component<
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
       annotations: [],
-      margin: { l: 20, r: 20, b: 50, t: 10, pad: 25}
+      margin: { l: 20, r: 20, b: 50, t: 10, pad: 25 }
     }
 
     return (
@@ -211,7 +209,7 @@ export default class FacetsPlotNav extends React.Component<
   public extractPropsData(data: QueryResultBundle) {
     const { facetsToPlot } = this.props
     const plotData: any[] = []
-    
+
     // pull out the data corresponding to the filter in question
     let enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
     if (facetsToPlot) {
@@ -222,7 +220,7 @@ export default class FacetsPlotNav extends React.Component<
     if (!this.state.showMore) {
       enumerationFacets = enumerationFacets.slice(0, CHARTS_PER_ROW)
     }
-    
+
     enumerationFacets.forEach((item: any, index: number) => {
       if (item.facetType === 'enumeration') {
         const { colorPalette } = getColorPallette(
@@ -256,7 +254,7 @@ export default class FacetsPlotNav extends React.Component<
             facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
               ? 'unannotated'
               : facetValue.value
-  
+
           singlePieChartData.labels.push(displayValue)
           singlePieChartData.facetEnumerationValues.push(facetValue.value)
           singlePieChartData.marker.line.width.push(facetValue.isSelected ? 2 : 0)
