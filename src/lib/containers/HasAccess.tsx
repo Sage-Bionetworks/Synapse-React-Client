@@ -76,7 +76,7 @@ export default class HasAccess extends React.Component<
     
     let viewARsLink:React.ReactElement = <></>
     if (restrictionInformation && RestrictionLevel.OPEN != restrictionInformation.restrictionLevel) {
-      const linkText:string = restrictionInformation.hasUnmetAccessRequirement ? 'Get Access' : 'Show Terms'
+      const linkText:string = restrictionInformation.hasUnmetAccessRequirement ? 'Get Access' : 'View Access'
       viewARsLink = 
           <a
             style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
