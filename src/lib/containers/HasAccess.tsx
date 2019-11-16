@@ -64,7 +64,6 @@ export default class HasAccess extends React.Component<
   render() {
     const { restrictionInformation } = this.state
     const { synapseId } = this.props
-    // TODO: include a yellow alert icon with tooltip along with link
     const icon = restrictionInformation && restrictionInformation.hasUnmetAccessRequirement ? 
         <span className='fa-layers fa-fw' style={{marginRight:5}}>
           <FontAwesomeIcon icon={faCircle} className='SRC-warning-color' size='lg'/>
