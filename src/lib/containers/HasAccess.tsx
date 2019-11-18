@@ -1,13 +1,17 @@
 import { SynapseClient } from '../utils'
 import * as React from 'react'
-import { RestrictionInformationResponse, RestrictionInformationRequest, RestrictableObjectType } from '../utils/jsonResponses/RestrictionInformation'
+import { RestrictionInformationResponse, RestrictionInformationRequest, RestrictableObjectType, RestrictionLevel } from '../utils/jsonResponses/RestrictionInformation'
 import { getEndpoint, BackendDestinationEnum } from '../utils/getEndpoint'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
-  faCheckSquare,
+  faUnlockAlt,
+  faMinusCircle,
+  faCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-library.add(faCheckSquare)
+library.add(faUnlockAlt)
+library.add(faMinusCircle)
+library.add(faCircle)
 
 export type HasAccessProps = {
   synapseId: string
@@ -60,20 +64,28 @@ export default class HasAccess extends React.Component<
   render() {
     const { restrictionInformation } = this.state
     const { synapseId } = this.props
-    // TODO: include a yellow alert icon with tooltip along with link
-    const requestAccessLink = (
-      <a
-        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
-        className="SRC-primary-text-color"
-        href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}/#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
-      >
-        Request Access
-      </a>
-    )
-    const hasAccessIcon = <FontAwesomeIcon
-      style={{ marginLeft: '5px' }}
-      icon='check-square'
-    />
-    return restrictionInformation && restrictionInformation.hasUnmetAccessRequirement ? requestAccessLink : hasAccessIcon
+    const icon = restrictionInformation && restrictionInformation.hasUnmetAccessRequirement ? 
+        <span className='fa-layers fa-fw' style={{marginRight:5}}>
+          <FontAwesomeIcon icon={faCircle} className='SRC-warning-color' size='lg'/>
+          <FontAwesomeIcon icon={faMinusCircle} className='SRC-half-opacity' style={{transform: 'translate(4%, -4%)'}} size='xs'/>
+        </span> :
+        <span className='fa-layers fa-fw' style={{marginRight:5}}>
+          <FontAwesomeIcon icon={faCircle} className='SRC-success-color' size='lg'/>
+          <FontAwesomeIcon icon={faUnlockAlt} className='SRC-half-opacity' style={{transform: 'translate(4%, -4%)'}} size='xs'/>
+        </span>
+    
+    let viewARsLink:React.ReactElement = <></>
+    if (restrictionInformation && RestrictionLevel.OPEN != restrictionInformation.restrictionLevel) {
+      const linkText:string = restrictionInformation.hasUnmetAccessRequirement ? 'Get Access' : 'View Access'
+      viewARsLink = 
+          <a
+            style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
+            className='SRC-primary-text-color'
+            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}/#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
+          >
+            {linkText}
+          </a>
+    }
+    return <span style={{ whiteSpace: 'nowrap' }}>{icon} {viewARsLink}</span>
   }
 }
