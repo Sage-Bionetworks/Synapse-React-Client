@@ -969,8 +969,8 @@ a.dropdown-item {
 .SRC-half-opacity {
   opacity: 0.5; }
 
-.SRC-translateX {
-  transform: translateX(-4%); }
+.plotly .slice {
+  cursor: pointer; }
 
 .markdowntable {
   border: 1px solid #dddddd;
