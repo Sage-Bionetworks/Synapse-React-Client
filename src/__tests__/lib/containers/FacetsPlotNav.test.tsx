@@ -117,7 +117,7 @@ describe('it performs basic functionality', () => {
   it('renders the charts correctly, and has expected plot data', () => {
     let { wrapper, instance } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
-    let plotData: any[] = instance.extractPropsData(props.data!)
+    let plotData: any[] = instance.extractPlotDataArray(props.data!)
     expect(plotData).toHaveLength(facetsToPlot.length)
 
     expect(plotData[0].name).toEqual('projectStatus')
