@@ -51,6 +51,10 @@ import {
   RestrictionInformationResponse,
 } from './jsonResponses/RestrictionInformation'
 import { DownloadList } from './jsonResponses/Download/DownloadList'
+import { FileHandleAssociation } from './jsonResponses/FileHandleAssociation'
+import { DownloadOrder } from './jsonResponses/Download/DownloadOrder'
+import { BulkFileDownloadRequest } from './jsonResponses/BulkFileDownloadRequest'
+import { BulkFileDownloadResponse } from './jsonResponses/BulkFileDownloadResponse'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -219,11 +223,13 @@ export const doGet = <T>(
 
 export const doDelete = (
   url: string,
+  requestJsonObject: any | undefined = undefined,
   sessionToken: string | undefined,
   initCredentials: string | undefined,
   endpoint: BackendDestinationEnum,
 ) => {
   const options: any = {
+    body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'sessiontoken',
@@ -706,6 +712,34 @@ export const getFiles = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
+ * http://docs.synapse.org/rest/POST/fileHandle/batch.html
+ */
+export const getBulkFiles = (
+  bulkFileDownloadRequest: BulkFileDownloadRequest,
+  sessionToken: string | undefined = undefined,
+): Promise<BulkFileDownloadResponse> => {
+  return doPost(
+    'file/v1/file/bulk/async/start',
+    bulkFileDownloadRequest,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      const urlRequest = `/file/v1/file/bulk/async/get/${asyncJobId}`
+      return getAsyncResultFromJobId<BulkFileDownloadResponse>(
+        urlRequest,
+        sessionToken,
+      )
+    })
+    .catch(err => {
+      console.error('Error on getBulkFiles ', err)
+      return err
+    })
+}
 /**
  * Bundled access to Entity and related data components.
  * An EntityBundle can be used to create, fetch, or update an Entity and associated
@@ -774,6 +808,7 @@ export const deleteEntity: GetEntity = <T>(
   const url = `/repo/v1/entity/${entityId}`
   return doDelete(
     url,
+    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1622,6 +1657,7 @@ export const deleteFormData = (
 ) => {
   return doDelete(
     `/repo/v1/form/data/${formDataId}`,
+    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1787,10 +1823,40 @@ export const getDownloadList = (sessionToken: string | undefined) => {
   )
 }
 
+export const getDownloadOrder = (
+  zipFileName: string | undefined,
+  sessionToken: string | undefined,
+): Promise<DownloadOrder> => {
+  const baseURL = '/file/v1/download/order'
+  const url = zipFileName ? `${baseURL}?zipFileName=${zipFileName}` : baseURL
+  return doPost(
+    url,
+    undefined,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/download/list.html
+export const deleteDownloadListFiles = (
+  list: FileHandleAssociation[],
+  sessionToken: string | undefined,
+) => {
+  return doDelete(
+    '/file/v1/download/list',
+    { list },
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 // https://rest-docs.synapse.org/rest/GET/download/list.html
 export const deleteDownloadList = (sessionToken: string | undefined) => {
   return doDelete(
     '/file/v1/download/list',
+    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

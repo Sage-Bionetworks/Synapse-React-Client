@@ -4,6 +4,8 @@ import {
   getDownloadList,
   getEntityHeader,
   getFiles,
+  deleteDownloadListFiles,
+  deleteDownloadList,
 } from '../../utils/SynapseClient'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -17,14 +19,20 @@ import { PaginatedResults } from '../../utils/jsonResponses/PaginatedResults'
 import { BatchFileRequest } from '../../utils/jsonResponses/BatchFileRequest'
 import { BatchFileResult } from '../../utils/jsonResponses/BatchFileResult'
 import moment from 'moment'
-import { Table } from 'react-bootstrap'
+import * as ReactBootstrap from 'react-bootstrap'
 import { DownloadList } from '../../utils/jsonResponses/Download/DownloadList'
 import UserCard from '../UserCard'
+import {
+  FileHandleAssociation,
+  FileHandleAssociateType,
+} from '../..//utils/jsonResponses/FileHandleAssociation'
+import { cloneDeep } from '../..//utils/modules'
+import './DownloadList.scss'
 
 library.add(faTrash)
 
 type DownloadListTableState = {
-  isLoading: boolean
+  isLoading?: boolean
   references?: PaginatedResults<EntityHeader>
   batchFileResult?: BatchFileResult
   downloadList?: DownloadList
@@ -60,6 +68,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       try {
         const downloadList = await getDownloadList(token)
         const { filesToDownload } = downloadList
+        if (filesToDownload.length === 0) {
+          setState({
+            downloadList,
+            isLoading: false,
+          })
+          return
+        }
         const referenceCall: Reference[] = filesToDownload.map(el => {
           return { targetId: el.fileHandleId }
         })
@@ -84,17 +99,67 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     fetchData()
   }, [token])
 
+  const clearDownloadList = (
+    _event: React.SyntheticEvent<HTMLButtonElement>,
+  ) => {
+    deleteDownloadList(token)
+      .then(() => {
+        setState({
+          downloadList: undefined,
+        })
+      })
+      .catch(err => {
+        console.error('Error on clearing download list: ', err)
+      })
+  }
+
+  const deleteFileFromList = (
+    fileHandleId: string,
+    associateObjectId: string,
+  ) => {
+    const list: FileHandleAssociation[] = [
+      {
+        fileHandleId,
+        associateObjectId,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+      },
+    ]
+    const downloadListDeepCopy = cloneDeep(downloadList)
+    downloadListDeepCopy!.filesToDownload = downloadListDeepCopy!.filesToDownload.filter(
+      el => el.fileHandleId !== fileHandleId,
+    )
+    deleteDownloadListFiles(list, token)
+      .then(() => {
+        setState({
+          downloadList: downloadListDeepCopy,
+          isLoading,
+          references,
+          batchFileResult,
+        })
+      })
+      .catch(err => {
+        console.error('Error on delete from download list', err)
+      })
+  }
+
   const filesToDownload = (downloadList && downloadList.filesToDownload) || []
   const results = (references && references.results) || []
+  const style: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: '0px 10px',
+  }
   let numBytes = 0
-  let numFiles = requestedFiles.filter(el => el.failureCode).length
+  let numFiles = requestedFiles.filter(el => !el.failureCode).length
   return (
     <div>
-      <div>
+      <div style={style}>
         Download List
-        <button> Clear All </button>
+        <button className="SRC-primary-text-color" onClick={clearDownloadList}>
+          Clear All
+        </button>
       </div>
-      <Table>
+      <ReactBootstrap.Table>
         <thead>
           <tr>
             <th>File Name</th>
@@ -164,7 +229,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 )}
                 {contentSize && (
                   <td>
-                    <button>
+                    <button
+                      onClick={() => deleteFileFromList(fileHandleId, synId)}
+                    >
                       <FontAwesomeIcon icon="trash" />
                     </button>
                   </td>
@@ -173,7 +240,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             )
           })}
         </tbody>
-      </Table>
+      </ReactBootstrap.Table>
       {!isLoading && (
         <DownloadDetails
           numBytes={numBytes}

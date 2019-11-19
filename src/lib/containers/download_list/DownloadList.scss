@@ -1,0 +1,15 @@
+.download-details-container {
+  display: flex;
+  border-right: 2px solid #dddddd;
+  justify-content: center;
+  align-items: center;
+  height: 45px;
+  margin-bottom: 200px;
+  margin-right: 30px;
+  span {
+    flex: 1;
+  }
+  svg {
+    margin-right: 4px;
+  }
+}
