@@ -1,10 +1,8 @@
 import * as React from 'react'
-import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
+import { Plot } from '../FacetsPlotNav'
 import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
 import { SynapseConstants } from '../../utils/'
-const Plot = createPlotlyComponent(Plotly)
 
 type SynapsePlotProps = {
   token?: string

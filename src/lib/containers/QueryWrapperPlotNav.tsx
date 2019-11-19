@@ -18,8 +18,6 @@ export type QueryWrapperPlotNavProps = QueryWrapperProps & Partial<FacetsPlotNav
 
 const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (props) => {
   const {
-    link,
-    linkText,
     title,
     synapseId,
     searchParams,
@@ -43,8 +41,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       {
         <FacetsPlotNav
           loadingScreen={props.loadingScreen}
-          link={link}
-          linkText={linkText}
           facetsToPlot={facetsToPlot}
         />
       }

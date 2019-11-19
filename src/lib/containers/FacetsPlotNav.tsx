@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
-import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { unCamelCase } from './table/SynapseTable'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
@@ -22,8 +22,6 @@ export type FacetsPlotNavState = {
 export type FacetsPlotNavProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
   facetsToPlot?: string[]
-  link?: string
-  linkText?: string
 }
 
 type InternalProps = FacetsPlotNavProps & QueryWrapperChildProps
@@ -45,7 +43,7 @@ export default class FacetsPlotNav extends React.Component<
       isShowingMore: false,
       isResetPossible: false,
     }
-    this.extractPropsData = this.extractPropsData.bind(this)
+    this.extractPlotDataArray = this.extractPlotDataArray.bind(this)
     this.toggleShowMore = this.toggleShowMore.bind(this)
     this.onReset = this.onReset.bind(this)
     // this.onHover = this.onHover.bind(this)
@@ -100,8 +98,7 @@ export default class FacetsPlotNav extends React.Component<
       const plotPointData: any = event.points[0]
       const facetName = plotPointData.data.name
       const facetValueClicked = plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]
-      // update the facet and selected index
-      const chartSelectionIndex = plotPointData.pointNumber
+      // update the facet
       const { isAllFilterSelectedForFacet = {} } = this.props
       isAllFilterSelectedForFacet[facetName] = false
       const lastFacetSelection = {
@@ -110,7 +107,6 @@ export default class FacetsPlotNav extends React.Component<
         columnName: facetName,
       } as FacetSelection
       this.props.updateParentState!({
-        chartSelectionIndex,
         lastFacetSelection,
         isAllFilterSelectedForFacet,
       })
@@ -162,8 +158,8 @@ export default class FacetsPlotNav extends React.Component<
         </div>
       )
     }
-    const plotData = this.extractPropsData(data!)
-    const showMoreButton = data!.facets!.length > CHARTS_PER_ROW && (
+    const plotData = this.extractPlotDataArray(data!)
+    const showMoreButton = plotData.length > CHARTS_PER_ROW && (
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
         className="SRC-primary-text-color"
@@ -210,22 +206,15 @@ export default class FacetsPlotNav extends React.Component<
               // onUnhover={this.onUnhover}
             ></Plot>
           </div>
-          <div>
-            {showMoreButton}
-            {this.state.isResetPossible && resetButton}
-          </div>
         </div>
         <div className="SRC-bar-border SRC-bar-border-bottom" style={{ marginBottom: '15px' }}>
-          {this.props.link && (
-            <div className="SRC-chart-link">
-              <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
-            </div>
-          )}
+          {showMoreButton}
+          {this.state.isResetPossible && resetButton}        
         </div>
       </>
     )
   }
-  public extractPropsData(data: QueryResultBundle) {
+  public extractPlotDataArray(data: QueryResultBundle) {
     const { facetsToPlot } = this.props
     const plotData: any[] = []
 
@@ -236,7 +225,7 @@ export default class FacetsPlotNav extends React.Component<
       enumerationFacets = enumerationFacets.filter(item => facetsToPlot.includes(item.columnName))
     }
 
-    enumerationFacets.forEach((item: any, index: number) => {
+    enumerationFacets.forEach((item: FacetColumnResultValues, index: number) => {
       const { colorPalette } = getColorPallette(
         index,
         item.facetValues.length,

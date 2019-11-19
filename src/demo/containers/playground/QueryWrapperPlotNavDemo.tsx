@@ -52,7 +52,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
           },
         },
         rgbIndex: 5,
-        // facetsToPlot: ['grant', 'softwareType'],
+        // facetsToPlot: ['assay', 'dataType'],
         loadingScreen:<div> Im loading as fast I can !!! </div>
       }
     }

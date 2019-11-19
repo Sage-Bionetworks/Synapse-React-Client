@@ -105,7 +105,6 @@ export default class StackedBarChart extends React.Component<
     _event: React.MouseEvent<SVGElement>,
   ) => {
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-    debugger
     this.props.updateParentState!({ chartSelectionIndex: dict.index })
   }
 
