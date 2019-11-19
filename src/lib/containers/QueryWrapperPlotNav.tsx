@@ -42,7 +42,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     >
       {
         <FacetsPlotNav
-          loadingScreen={<></>}
+          loadingScreen={props.loadingScreen}
           link={link}
           linkText={linkText}
           facetsToPlot={facetsToPlot}
@@ -51,7 +51,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       {
         synapseId && title ?
         <SynapseTable
-          loadingScreen={<></>}
+          loadingScreen={props.loadingScreen}
           synapseId={synapseId}
           title={title}
         />

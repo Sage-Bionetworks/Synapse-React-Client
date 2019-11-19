@@ -10,18 +10,17 @@ import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleReq
 import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetColumnRequest'
 import getColorPallette from './ColorGradient'
 
-const Plot = createPlotlyComponent(Plotly)
+export const Plot = createPlotlyComponent(Plotly)
 const ROW_HEIGHT: number = 160
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
   isShowingMore: boolean,
   isResetPossible: boolean,
-  // datarevision: number
 }
 
 export type FacetsPlotNavProps = {
-  loadingScreen: JSX.Element
+  loadingScreen?: React.FunctionComponent | JSX.Element
   facetsToPlot?: string[]
   link?: string
   linkText?: string
@@ -41,12 +40,10 @@ export default class FacetsPlotNav extends React.Component<
   constructor(props: InternalProps) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
-    this.rgba2rgb = this.rgba2rgb.bind(this)
     // the text currently under the cursor
     this.state = {
       isShowingMore: false,
       isResetPossible: false,
-      // datarevision: 0
     }
     this.extractPropsData = this.extractPropsData.bind(this)
     this.toggleShowMore = this.toggleShowMore.bind(this)
@@ -77,6 +74,10 @@ export default class FacetsPlotNav extends React.Component<
   //   this.updateHover(true, event)
   // }
 
+  // NOTE: There's an issue where onUnhover() is not called after the first onHover().  
+  // Moving the plotData to state requires some consideration.  The plot must be updated by the table filter selection.
+  // Also, the Plot will not update if it points to the same (shallow compare) data object.  One way to force a Plot update is to
+  // update the layout.datarevision.
   // public onUnhover = (event: any) => {
   //   this.updateHover(false, event)
   // }
@@ -138,15 +139,6 @@ export default class FacetsPlotNav extends React.Component<
     this.setState({
       isResetPossible: true
     })
-  }
-
-  public rgba2rgb(background: number[], color: number[]) {
-    const alpha = color[3]
-    return [
-      Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
-      Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
-      Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5),
-    ]
   }
 
   public render() {

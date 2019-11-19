@@ -64,7 +64,6 @@ export default class StackedBarChart extends React.Component<
     this.handleArrowClick = this.handleArrowClick.bind(this)
     this.getTextForChartSelection = this.getTextForChartSelection.bind(this)
     this.onMeasureResize = this.onMeasureResize.bind(this)
-    this.rgba2rgb = this.rgba2rgb.bind(this)
     // the text currently under the cursor
     this.state = {
       // the dimensions of the bar chart itself
@@ -157,15 +156,6 @@ export default class StackedBarChart extends React.Component<
   public getFileCount(xData: any) {
     const { chartSelectionIndex = 1 } = this.props
     return xData[chartSelectionIndex] && xData[chartSelectionIndex].count
-  }
-
-  public rgba2rgb(background: number[], color: number[]) {
-    const alpha = color[3]
-    return [
-      Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
-      Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
-      Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5),
-    ]
   }
 
   public render() {
