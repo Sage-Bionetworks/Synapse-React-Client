@@ -16,7 +16,8 @@ const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
   isShowingMore: boolean,
-  isResetPossible: boolean
+  isResetPossible: boolean,
+  // datarevision: number
 }
 
 export type FacetsPlotNavProps = {
@@ -44,11 +45,14 @@ export default class FacetsPlotNav extends React.Component<
     // the text currently under the cursor
     this.state = {
       isShowingMore: false,
-      isResetPossible: false
+      isResetPossible: false,
+      // datarevision: 0
     }
     this.extractPropsData = this.extractPropsData.bind(this)
     this.toggleShowMore = this.toggleShowMore.bind(this)
     this.onReset = this.onReset.bind(this)
+    // this.onHover = this.onHover.bind(this)
+    // this.onUnhover = this.onUnhover.bind(this)
   }
 
   public toggleShowMore(event: React.MouseEvent<HTMLAnchorElement>) {
@@ -68,6 +72,24 @@ export default class FacetsPlotNav extends React.Component<
       isResetPossible: false
     })
   }
+
+  // public onHover = (event: any) => {
+  //   this.updateHover(true, event)
+  // }
+
+  // public onUnhover = (event: any) => {
+  //   this.updateHover(false, event)
+  // }
+
+  // public updateHover = (isHover:boolean, event: any) => {
+  //   if (event.points && event.points[0] && this.state.plotData) {
+  //     const plotPointData: any = event.points[0]
+  //     const domain = plotPointData.data.domain
+  //     const newMarkerLineWidth: number = isHover ? 1 : 0
+  //     this.state.plotData[(domain.row * CHARTS_PER_ROW) + domain.column].marker.line.width[plotPointData.pointNumber] = newMarkerLineWidth
+  //     this.setState({datarevision: this.state.datarevision + 1})
+  //   }
+  // }
 
   /**
    * Handle click event
@@ -136,7 +158,7 @@ export default class FacetsPlotNav extends React.Component<
       asyncJobStatus,
     } = this.props
     // while loading
-    if (isLoadingNewData) {
+    if (isLoadingNewData || !data) {
       return (
         <div className="SRC-loadingContainer SRC-centerContentColumn">
           {/*
@@ -148,6 +170,7 @@ export default class FacetsPlotNav extends React.Component<
         </div>
       )
     }
+    const plotData = this.extractPropsData(data!)
     const showMoreButton = data!.facets!.length > CHARTS_PER_ROW && (
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
@@ -166,16 +189,18 @@ export default class FacetsPlotNav extends React.Component<
         Reset
       </a>
     )
-
-    const plotData = this.extractPropsData(data!)
+    
     // create a pie chart for each facet (values) result
-    const rowCount: number = Math.ceil(plotData.length / CHARTS_PER_ROW)
+    const plotDataToShow: any[] = this.state.isShowingMore ? plotData : plotData.slice(0, CHARTS_PER_ROW)
+    
+    const rowCount: number = Math.ceil(plotDataToShow.length / CHARTS_PER_ROW)
     const layout = {
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
       showlegend: false,
       annotations: [],
       margin: { l: 20, r: 20, b: 10, t: 10, pad: 40 },
-      height: ROW_HEIGHT * rowCount
+      height: ROW_HEIGHT * rowCount,
+      // datarevision: this.state.datarevision
     }
 
     return (
@@ -184,11 +209,13 @@ export default class FacetsPlotNav extends React.Component<
           <div>
             <Plot
               layout={layout}
-              data={plotData}
+              data={plotDataToShow}
               className='SRC-fullWidth'
               config={{ displayModeBar: false }}
               useResizeHandler={true}
               onClick={this.handleClick}
+              // onHover={this.onHover}
+              // onUnhover={this.onUnhover}
             ></Plot>
           </div>
           <div>
@@ -217,10 +244,6 @@ export default class FacetsPlotNav extends React.Component<
       enumerationFacets = enumerationFacets.filter(item => facetsToPlot.includes(item.columnName))
     }
 
-    if (!this.state.isShowingMore) {
-      enumerationFacets = enumerationFacets.slice(0, CHARTS_PER_ROW)
-    }
-    debugger
     enumerationFacets.forEach((item: any, index: number) => {
       const { colorPalette } = getColorPallette(
         index,
@@ -232,11 +255,26 @@ export default class FacetsPlotNav extends React.Component<
         labels: [],
         facetEnumerationValues: [],
         name: item.columnName,
-        hoverinfo: 'label+value+percent',
+        // The only thing supported in hoverlabel today is bordercolor, but this also effects the hoverlabel text color!
+        // https://github.com/plotly/plotly.js/issues/2342
+        // hoverlabel: {
+        //   bordercolor: 'rgb(216, 216, 218)',
+        //   opacity: 0.7
+        // },
+        hovertemplate:
+            "<b>%{label}</b><br>" +
+            "%{value} (%{percent})<br>" +
+            "<extra></extra>",
         textposition: "inside",
-        textinfo: "label",
+        textinfo: "none",
         type: 'pie',
-        title: unCamelCase(item.columnName),
+        title: {
+          text: unCamelCase(item.columnName),
+          font: {
+            size: 14
+          },
+          position: 'top center'
+        },
         marker: {
           colors: colorPalette,
           line: {
@@ -256,8 +294,8 @@ export default class FacetsPlotNav extends React.Component<
 
         singlePieChartData.labels.push(displayValue)
         singlePieChartData.facetEnumerationValues.push(facetValue.value)
-        singlePieChartData.marker.line.width.push(facetValue.isSelected ? 2 : 0)
-        singlePieChartData.pull.push(facetValue.isSelected ? .05 : 0)
+        singlePieChartData.marker.line.width.push(facetValue.isSelected ? 1 : 0)
+        singlePieChartData.pull.push(facetValue.isSelected ? .04 : 0)
       })
     })
 
