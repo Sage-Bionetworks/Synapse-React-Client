@@ -295,7 +295,7 @@ export default class FacetsPlotNav extends React.Component<
         singlePieChartData.labels.push(displayValue)
         singlePieChartData.facetEnumerationValues.push(facetValue.value)
         singlePieChartData.marker.line.width.push(facetValue.isSelected ? 1 : 0)
-        singlePieChartData.pull.push(facetValue.isSelected ? .04 : 0)
+        singlePieChartData.pull.push(facetValue.isSelected ? .09 : 0)
       })
     })
 
