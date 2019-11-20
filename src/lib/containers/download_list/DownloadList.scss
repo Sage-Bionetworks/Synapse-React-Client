@@ -1,15 +1,51 @@
 .download-details-container {
-  display: flex;
+  display: inline-flex;
   border-right: 2px solid #dddddd;
   justify-content: center;
   align-items: center;
   height: 45px;
-  margin-bottom: 200px;
-  margin-right: 30px;
+  margin-right: 10px;
+  padding-right: 10px;
   span {
     flex: 1;
   }
   svg {
     margin-right: 4px;
   }
+}
+
+.create-package-container {
+  display: flex;
+  padding: 8px;
+  flex-flow: row wrap;
+  align-items: center;
+  & > :first-child {
+    flex: 3;
+  }
+  & > :last-child {
+    flex: 5;
+  }
+  input {
+    padding: 8px;
+  }
+  svg {
+    margin-right: 8px;
+  }
+}
+#create-package-btn {
+  margin-left: 15px;
+}
+
+.zip-extension {
+  font-size: 18px;
+  color: #666666;
+  margin-left: 3px;
+}
+
+.create-package-text {
+  font-size: 17px;
+}
+
+.download-list-table-top {
+  padding: 8px;
 }

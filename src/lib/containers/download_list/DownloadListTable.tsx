@@ -26,8 +26,8 @@ import {
   FileHandleAssociation,
   FileHandleAssociateType,
 } from '../..//utils/jsonResponses/FileHandleAssociation'
-import { cloneDeep } from '../..//utils/modules'
 import './DownloadList.scss'
+import { CreatePackage } from './CreatePackage'
 
 library.add(faTrash)
 
@@ -60,44 +60,45 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   let userProfiles = useGetProfiles({ ids: ownerIds, token })
 
   useEffect(() => {
-    async function fetchData() {
-      if (!token) {
-        // doesn't make sense with anonymous user!
-        return
-      }
-      try {
-        const downloadList = await getDownloadList(token)
-        const { filesToDownload } = downloadList
-        if (filesToDownload.length === 0) {
-          setState({
-            downloadList,
-            isLoading: false,
-          })
-          return
-        }
-        const referenceCall: Reference[] = filesToDownload.map(el => {
-          return { targetId: el.fileHandleId }
-        })
-        const references = await getEntityHeader(referenceCall, token)
-        const batchFileRequest: BatchFileRequest = {
-          requestedFiles: filesToDownload,
-          includeFileHandles: true,
-          includePreSignedURLs: false,
-          includePreviewPreSignedURLs: false,
-        }
-        const batchFileResult = await getFiles(batchFileRequest, token)
+    fetchData(token)
+  }, [token])
+
+  const fetchData = async (token: string | undefined) => {
+    if (!token) {
+      // doesn't make sense with anonymous user!
+      return
+    }
+    try {
+      const downloadList = await getDownloadList(token)
+      const { filesToDownload } = downloadList
+      if (filesToDownload.length === 0) {
         setState({
-          references,
-          batchFileResult,
           downloadList,
           isLoading: false,
         })
-      } catch (e) {
-        console.error('Error in DownloadList API call : ', e)
+        return
       }
+      const referenceCall: Reference[] = filesToDownload.map(el => {
+        return { targetId: el.fileHandleId }
+      })
+      const references = await getEntityHeader(referenceCall, token)
+      const batchFileRequest: BatchFileRequest = {
+        requestedFiles: filesToDownload,
+        includeFileHandles: true,
+        includePreSignedURLs: false,
+        includePreviewPreSignedURLs: false,
+      }
+      const batchFileResult = await getFiles(batchFileRequest, token)
+      setState({
+        references,
+        batchFileResult,
+        downloadList,
+        isLoading: false,
+      })
+    } catch (e) {
+      console.error('Error in DownloadList API call : ', e)
     }
-    fetchData()
-  }, [token])
+  }
 
   const clearDownloadList = (
     _event: React.SyntheticEvent<HTMLButtonElement>,
@@ -124,18 +125,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         associateObjectType: FileHandleAssociateType.FileEntity,
       },
     ]
-    const downloadListDeepCopy = cloneDeep(downloadList)
-    downloadListDeepCopy!.filesToDownload = downloadListDeepCopy!.filesToDownload.filter(
-      el => el.fileHandleId !== fileHandleId,
-    )
     deleteDownloadListFiles(list, token)
       .then(() => {
-        setState({
-          downloadList: downloadListDeepCopy,
-          isLoading,
-          references,
-          batchFileResult,
-        })
+        fetchData(token)
       })
       .catch(err => {
         console.error('Error on delete from download list', err)
@@ -144,22 +136,22 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   const filesToDownload = (downloadList && downloadList.filesToDownload) || []
   const results = (references && references.results) || []
-  const style: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    margin: '0px 10px',
-  }
   let numBytes = 0
   let numFiles = requestedFiles.filter(el => !el.failureCode).length
   return (
     <div>
-      <div style={style}>
-        Download List
-        <button className="SRC-primary-text-color" onClick={clearDownloadList}>
+      <div className="SRC-split download-list-table-top">
+        <span className="create-package-text SRC-centerContentInline">
+          Download List &nbsp;&nbsp; {isLoading && <span className="spinner" />}
+        </span>
+        <button
+          className="SRC-primary-text-color SRC-underline-on-hover"
+          onClick={clearDownloadList}
+        >
           Clear All
         </button>
       </div>
-      <ReactBootstrap.Table>
+      <ReactBootstrap.Table responsive={true}>
         <thead>
           <tr>
             <th>File Name</th>
@@ -167,10 +159,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             <th>Created By</th>
             <th>Created On</th>
             <th>Size</th>
+            {/* th below is made for trash can icon but holds no content */}
+            <th />
           </tr>
         </thead>
         <tbody>
-          {isLoading && <tr className="spinner" />}
           {filesToDownload.map(item => {
             const synId = item.associateObjectId
             const fileHandleId = item.fileHandleId
@@ -232,7 +225,10 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     <button
                       onClick={() => deleteFileFromList(fileHandleId, synId)}
                     >
-                      <FontAwesomeIcon icon="trash" />
+                      <FontAwesomeIcon
+                        className="SRC-primary-text-color"
+                        icon="trash"
+                      />
                     </button>
                   </td>
                 )}
@@ -241,14 +237,14 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           })}
         </tbody>
       </ReactBootstrap.Table>
-      {!isLoading && (
+      <CreatePackage token={token}>
         <DownloadDetails
           numBytes={numBytes}
           numFiles={numFiles}
           token={token}
           backgroundColor={'white'}
         />
-      )}
+      </CreatePackage>
     </div>
   )
 }

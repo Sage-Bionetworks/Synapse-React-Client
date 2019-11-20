@@ -46,18 +46,19 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
 
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 ? 0 : numBytes / downloadSpeed
-  const friendlyTime = moment
-    .duration(timeEstimateInSeconds, 'seconds')
-    .humanize()
+  const friendlyTime =
+    timeEstimateInSeconds === 0
+      ? ''
+      : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
   const numBytesTooltipId = 'num_bytes_id'
   const friendlyTimeTooltipId = 'friendly_time_id'
-
+  const iconClassName =
+    numFiles === 0 ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
-    <div className="download-details-container">
+    <span className="download-details-container">
       <span>
-        <FontAwesomeIcon icon="file" />
-        {numFiles}
-        files
+        <FontAwesomeIcon className={iconClassName} icon="file" />
+        {numFiles > 0 && <> {numFiles} &nbsp; files </>}
       </span>
       <span
         data-for={numBytesTooltipId}
@@ -70,7 +71,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           effect="solid"
           id={numBytesTooltipId}
         />
-        <FontAwesomeIcon icon="database" />
+        <FontAwesomeIcon className={iconClassName} icon="database" />
         {calculateFriendlyFileSize(numBytes)}
       </span>
       <span
@@ -84,10 +85,10 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           effect="solid"
           id={friendlyTimeTooltipId}
         />
-        <FontAwesomeIcon icon="clock" />
+        <FontAwesomeIcon className={iconClassName} icon="clock" />
         {isLoading && <span className="loader" />}
         {!isLoading && friendlyTime}
       </span>
-    </div>
+    </span>
   )
 }

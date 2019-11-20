@@ -119,7 +119,13 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/DownloadListTableDemo`}
-        component={() => <DownloadListTable token={token} />}
+        component={() => (
+          <div className="container">
+            <div className="col-xs-10">
+              <DownloadListTable token={token} />
+            </div>
+          </div>
+        )}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

@@ -729,7 +729,7 @@ export const getBulkFiles = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then((asyncJobId: AsyncJobId) => {
-      const urlRequest = `/file/v1/file/bulk/async/get/${asyncJobId}`
+      const urlRequest = `/file/v1/file/bulk/async/get/${asyncJobId.token}`
       return getAsyncResultFromJobId<BulkFileDownloadResponse>(
         urlRequest,
         sessionToken,
@@ -1838,13 +1838,13 @@ export const getDownloadOrder = (
   )
 }
 
-// https://rest-docs.synapse.org/rest/GET/download/list.html
+// https://rest-docs.synapse.org/rest/POST/download/list/remove.html
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
   sessionToken: string | undefined,
 ) => {
-  return doDelete(
-    '/file/v1/download/list',
+  return doPost(
+    '/file/v1/download/list/remove',
     { list },
     sessionToken,
     undefined,

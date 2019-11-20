@@ -1,5 +1,5 @@
-// Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
+// Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 
 svg.SRC-hoverBox {
@@ -618,6 +618,13 @@ div.SRC-userImg {
   justify-content: space-between;
 }
 
+.SRC-split {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .SRC-grid-item {
   height: 120px;
   flex-grow: 0;
@@ -920,4 +927,8 @@ a.dropdown-item {
 .dropdown button.btn {
   padding: 3px;
   margin: 0px 3px;
+}
+
+.SRC-inactive {
+  color: rgba(0, 0, 0, 0.25);
 }
