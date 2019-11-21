@@ -2,7 +2,7 @@ import { FileHandleAssociateType } from './FileHandleAssociation'
 
 // The download status of this file.
 export enum FileDownloadStatus {
-  SUCESS = 'SUCESS',
+  SUCCESS = 'SUCCESS',
   FAILURE = 'FAILURE',
 }
 
@@ -23,5 +23,5 @@ export type FileDownloadSummary = {
   zipEntryName: string //	The zip entry name used for this file. This entry includes both the path and file name. The value will only be set if the status is set to 'SUCCESS'
   status: FileDownloadStatus //	The download status of this file.
   failureMessage: string //	If the download status of this file is set to 'FAILURE', then this will be the failure message. Null for 'SUCCESS'.
-  failureCode: FileDownloadCode // If the download status of this file is set to 'FAILURE', then this will be the failure code. Null for 'SUCCESS'.
+  failureCode: FileDownloadCode | null // If the download status of this file is set to 'FAILURE', then this will be the failure code. Null for 'SUCCESS'.
 }

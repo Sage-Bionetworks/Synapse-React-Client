@@ -17,7 +17,7 @@ import {
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
 import * as ReactBoostrap from 'react-bootstrap'
-import { FileDownloadStatus } from 'lib/utils/jsonResponses/FileDownloadSummary'
+import { FileDownloadStatus } from '../../utils/jsonResponses/FileDownloadSummary'
 
 library.add(faCheck)
 library.add(faDownload)
@@ -35,6 +35,11 @@ type Alert = {
   className: string | undefined
 }
 
+export const templateDownload =
+  'files were downloaded and removed from the list.'
+export const templateErrorFileName =
+  'Please provide a package file name and try again.'
+
 export const CreatePackage = (props: CreatePackageProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
@@ -49,10 +54,10 @@ export const CreatePackage = (props: CreatePackageProps) => {
   const { token, children, updateDownloadList } = props
 
   const createPackageHandler = async (event: React.SyntheticEvent) => {
-    event.preventDefault()
+    event && event.preventDefault()
     if (!fileName) {
       setAlert({
-        message: 'Please provide a package file name and try again.',
+        message: templateErrorFileName,
         variant: 'danger',
         className: undefined,
       })
@@ -92,11 +97,11 @@ export const CreatePackage = (props: CreatePackageProps) => {
   const downloadPackageHandler = async () => {
     const { resultZipFileHandleId, fileSummary } = bulkFileDownloadResponse!
     try {
-      const filesDownloaded = fileSummary.filter(
-        el => el.status !== FileDownloadStatus.SUCESS,
+      const numfilesDownloaded = fileSummary.filter(
+        el => el.status === FileDownloadStatus.SUCCESS,
       ).length
       setAlert({
-        message: `${filesDownloaded} files were downloaded and removed from the list.`,
+        message: `${numfilesDownloaded} ${templateDownload}`,
         className: 'SRC-primary-background-color SRC-whiteText',
         variant: undefined,
       })
@@ -136,45 +141,45 @@ export const CreatePackage = (props: CreatePackageProps) => {
               </span>
             </span>
           )}
-          {!isLoading && !bulkFileDownloadResponse && (
-            <div className="SRC-split">
-              <form onSubmit={createPackageHandler}>
-                <input
-                  onChange={onChange}
-                  type="text"
-                  placeholder="PackageFileName"
-                ></input>
-                <span className="zip-extension SRC-boldText">.zip</span>
-              </form>
-              <button
-                className="SRC-standard-button-shape SRC-primary-button"
-                id="create-package-btn"
-                onClick={createPackageHandler}
-                type="button"
-              >
-                <FontAwesomeIcon icon="folder" />
-                Create Package
-              </button>
-            </div>
-          )}
-          {bulkFileDownloadResponse && (
-            <div className="SRC-split">
-              <section>
-                <FontAwesomeIcon icon="check" color="green" />
-                <span className="create-package-text">
-                  Package created! Ready for download.
-                </span>
-              </section>
-              <button
-                className="SRC-standard-button-shape SRC-primary-button"
-                id="create-package-btn"
-                onClick={downloadPackageHandler}
-              >
-                <FontAwesomeIcon icon="download" color="white" />
-                Download Package
-              </button>
-            </div>
-          )}
+          <div className="SRC-split">
+            {!isLoading && !bulkFileDownloadResponse && (
+              <>
+                <form onSubmit={createPackageHandler}>
+                  <input
+                    onChange={onChange}
+                    type="text"
+                    placeholder="PackageFileName"
+                  ></input>
+                  <span className="zip-extension SRC-boldText">.zip</span>
+                </form>
+                <button
+                  className="SRC-standard-button-shape SRC-primary-button action-button"
+                  onClick={createPackageHandler}
+                  type="button"
+                >
+                  <FontAwesomeIcon icon="folder" />
+                  Create Package
+                </button>
+              </>
+            )}
+            {bulkFileDownloadResponse && (
+              <>
+                <div className="package-created">
+                  <FontAwesomeIcon icon="check" color="green" />
+                  <span className="create-package-text">
+                    Package created! Ready for download.
+                  </span>
+                </div>
+                <button
+                  className="SRC-standard-button-shape SRC-primary-button action-button"
+                  onClick={downloadPackageHandler}
+                >
+                  <FontAwesomeIcon icon="download" color="white" />
+                  Download Package
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>
