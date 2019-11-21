@@ -214,7 +214,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       columnName: facet,
     } as FacetSelection
     isAllFilterSelectedForFacet[facet] = selector === SELECT_ALL
-
     this.props.updateParentState!({
       lastFacetSelection,
       isAllFilterSelectedForFacet,

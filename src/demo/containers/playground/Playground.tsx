@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, Route } from 'react-router-dom'
+import { Link, Route, RouteComponentProps } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
@@ -8,7 +8,7 @@ import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
-import { RouteChildrenProps } from 'react-router'
+import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
 
 /**
@@ -19,7 +19,7 @@ const App = ({
   match,
   token,
 }: {
-  match?: RouteChildrenProps['match']
+  match?: RouteComponentProps['match']
   token: string
 }) => {
   if (!match) {
@@ -32,6 +32,11 @@ const App = ({
         <li>
           <Link to={`${match.url}/QueryWrapperMenuDemo`}>
             QueryWrapperMenuDemo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/QueryWrapperPlotNavDemo`}>
+            QueryWrapperPlotNavDemo
           </Link>
         </li>
         <li>
@@ -74,6 +79,12 @@ const App = ({
         exact={true}
         path={`${match.url}/QueryWrapperMenuDemo`}
         render={() => <QueryWrapperMenuDemo rgbIndex={0} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/QueryWrapperPlotNavDemo`}
+        render={() => <QueryWrapperPlotNavDemo />}
       />
 
       <Route

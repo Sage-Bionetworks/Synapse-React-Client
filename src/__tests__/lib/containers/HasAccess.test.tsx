@@ -8,6 +8,7 @@ import {
 import _ from 'lodash'
 import { RestrictionInformationRequest, RestrictableObjectType } from 'lib/utils/jsonResponses/RestrictionInformation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMinusCircle, faUnlockAlt } from '@fortawesome/free-solid-svg-icons'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'
@@ -45,8 +46,9 @@ describe('basic tests', () => {
       token
     )
     expect(instance.state.restrictionInformation).toEqual(mockOpenRestrictionInformation)
-    const icon = wrapper.find(FontAwesomeIcon)
-    expect(icon).toHaveLength(1)
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.getElements()[1].props.icon).toEqual(faUnlockAlt)
   })
 
   it('get unmet controlled access data', async () => {
@@ -67,5 +69,8 @@ describe('basic tests', () => {
     expect(instance.state.restrictionInformation).toEqual(mockUnmetControlledDataRestrictionInformation)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.getElements()[1].props.icon).toEqual(faMinusCircle)
   })
 })

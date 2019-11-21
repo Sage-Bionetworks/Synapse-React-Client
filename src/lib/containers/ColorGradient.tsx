@@ -1,5 +1,14 @@
 import { COLOR_PALETTE_EVEN, COLOR_PALETTE_ODD } from './colorPalette'
 
+export function rgba2rgb(background: number[], color: number[]) {
+  const alpha = color[3]
+  return [
+    Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
+    Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
+    Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5),
+  ]
+}
+
 export function getColorPallette(
   start: number,
   end: number,

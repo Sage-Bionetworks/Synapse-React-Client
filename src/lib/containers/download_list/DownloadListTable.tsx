@@ -242,7 +242,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           numBytes={numBytes}
           numFiles={numFiles}
           token={token}
-          backgroundColor={'white'}
         />
       </CreatePackage>
     </div>

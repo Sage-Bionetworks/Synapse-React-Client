@@ -15,7 +15,6 @@ library.add(faClock)
 export type DownloadDetailsProps = {
   numFiles: number
   numBytes: number
-  backgroundColor: string
   token: string | undefined
 }
 

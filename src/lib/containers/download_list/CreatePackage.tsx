@@ -7,8 +7,8 @@ import {
 import {
   BulkFileDownloadRequest,
   ZipFileFormat,
-} from 'lib/utils/jsonResponses/BulkFileDownloadRequest'
-import { BulkFileDownloadResponse } from 'lib/utils/jsonResponses/BulkFileDownloadResponse'
+} from '../../utils/jsonResponses/BulkFileDownloadRequest'
+import { BulkFileDownloadResponse } from '../../utils/jsonResponses/BulkFileDownloadResponse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
