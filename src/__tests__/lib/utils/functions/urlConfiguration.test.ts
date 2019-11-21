@@ -1,4 +1,4 @@
-import { insertConditionsFromSearchParams } from '../../../../lib/utils/modules/sqlFunctions'
+import { insertConditionsFromSearchParams } from '../../../../lib/utils/functions/sqlFunctions'
 
 describe('inserting into WHERE clause from URL works', () => {
   const searchParams = {

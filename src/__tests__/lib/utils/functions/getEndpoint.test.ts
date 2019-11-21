@@ -2,7 +2,7 @@ import {
   getEndpoint,
   BackendDestinationEnum,
   PRODUCTION_ENDPOINT_CONFIG,
-} from '../../../lib/utils/getEndpoint'
+} from '../../../../lib/utils/functions/getEndpoint'
 
 describe('getting endpoints works', () => {
   it('returns PORTAL endpoint', () => {

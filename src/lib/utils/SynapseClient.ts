@@ -44,7 +44,7 @@ import {
   ProjectFilesStatisticsResponse,
 } from './jsonResponses/Statistics'
 import SparkMD5 from 'spark-md5'
-import { getEndpoint, BackendDestinationEnum } from './getEndpoint'
+import { getEndpoint, BackendDestinationEnum } from './functions/getEndpoint'
 import { LoginResponse } from './jsonResponses/LoginResponse'
 import {
   RestrictionInformationRequest,

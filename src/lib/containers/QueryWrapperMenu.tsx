@@ -13,7 +13,7 @@ import SynapseTable, {
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
-import { KeyValue, isGroupByInSql } from '../utils/modules/sqlFunctions'
+import { KeyValue, isGroupByInSql } from '../utils/functions/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

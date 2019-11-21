@@ -1,13 +1,13 @@
-import { getEntity, getFileHandleContent, getFiles } from './SynapseClient'
-import { FileEntity } from './jsonResponses/FileEntity'
-import { Entity } from './jsonResponses/Entity'
-import { BatchFileResult } from './jsonResponses/BatchFileResult'
-import { FileHandle } from './jsonResponses/FileHandle'
-import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
+import { getEntity, getFileHandleContent, getFiles } from '../SynapseClient'
+import { FileEntity } from '../jsonResponses/FileEntity'
+import { Entity } from '../jsonResponses/Entity'
+import { BatchFileResult } from '../jsonResponses/BatchFileResult'
+import { FileHandle } from '../jsonResponses/FileHandle'
+import { BatchFileRequest } from '../jsonResponses/BatchFileRequest'
 import {
   FileHandleAssociation,
   FileHandleAssociateType,
-} from './jsonResponses/FileHandleAssociation'
+} from '../jsonResponses/FileHandleAssociation'
 
 const ESTIMATED_CORS_TIME_MS: number = 200
 const ESTIMATED_DOWNLOAD_SPEED_EXPIRE_TIME_KEY: string =

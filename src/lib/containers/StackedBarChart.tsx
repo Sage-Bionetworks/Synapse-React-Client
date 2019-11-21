@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
-import { getIsValueSelected } from '../utils/modules/facetUtils'
+import { getIsValueSelected } from '../utils/functions/facetUtils'
 import { unCamelCase } from './table/SynapseTable'
 library.add(faAngleLeft)
 library.add(faAngleRight)

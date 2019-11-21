@@ -1,4 +1,4 @@
-import { getUserProfileWithProfilePicAttached } from '../../containers/getUserData'
+import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { useEffect, useState } from 'react'
 import { UserProfileList } from '../SynapseClient'
 

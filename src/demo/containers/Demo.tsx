@@ -7,7 +7,7 @@ import QueryWrapperMenu, {
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
-import {testDownloadSpeed} from '../../lib/utils/DownloadSpeedTest'
+import {testDownloadSpeed} from '../../lib/utils/functions/DownloadSpeedTest'
 
 type DemoState = {
   token: string | null

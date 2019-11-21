@@ -6,7 +6,7 @@ import {
   RestrictableObjectType,
   RestrictionLevel,
 } from '../utils/jsonResponses/RestrictionInformation'
-import { getEndpoint, BackendDestinationEnum } from '../utils/getEndpoint'
+import { getEndpoint, BackendDestinationEnum } from '../utils/functions/getEndpoint'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faUnlockAlt,

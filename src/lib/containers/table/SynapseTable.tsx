@@ -26,14 +26,14 @@ import {
 } from '../../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from '../ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from '../QueryWrapper'
-import { cloneDeep } from '../../utils/modules/'
+import { cloneDeep } from '../../utils/functions'
 import { SortItem } from '../../utils/jsonResponses/Table/Query'
-import { readFacetValues } from '../../utils/modules/facetUtils'
+import { readFacetValues } from '../../utils/functions/facetUtils'
 import { lexer } from 'sql-parser'
 import {
   formatSQLFromParser,
   isGroupByInSql,
-} from '../../utils/modules/sqlFunctions'
+} from '../../utils/functions/sqlFunctions'
 import ModalDownload from '../ModalDownload'
 import { SynapseClient } from '../../utils'
 import { ReferenceList } from '../../utils/jsonResponses/ReferenceList'
@@ -44,7 +44,7 @@ import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBu
 import UserCard from '../UserCard'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { UserProfile } from '../../utils/jsonResponses/UserProfile'
-import { getUserProfileWithProfilePicAttached } from '../getUserData'
+import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
 import { Modal, Dropdown } from 'react-bootstrap'
 import {

@@ -8,7 +8,7 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { insertConditionsFromSearchParams } from '../utils/modules/sqlFunctions'
+import { insertConditionsFromSearchParams } from '../utils/functions/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'

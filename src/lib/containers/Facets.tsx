@@ -10,7 +10,7 @@ import { SELECT_ALL } from './table/SynapseTable'
 import {
   getIsValueSelected,
   readFacetValues,
-} from '../utils/modules/facetUtils'
+} from '../utils/functions/facetUtils'
 import TotalQueryResults from './TotalQueryResults'
 
 export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
