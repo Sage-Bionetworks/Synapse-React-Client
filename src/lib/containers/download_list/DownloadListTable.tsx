@@ -237,7 +237,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           })}
         </tbody>
       </ReactBootstrap.Table>
-      <CreatePackage token={token}>
+      <CreatePackage updateDownloadList={() => fetchData(token)} token={token}>
         <DownloadDetails
           numBytes={numBytes}
           numFiles={numFiles}

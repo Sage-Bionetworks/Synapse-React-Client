@@ -132,7 +132,7 @@ const App = ({
         exact={true}
         path={`${match.url}/DownloadListTableDemo`}
         component={() => (
-          <div className="container">
+          <div className="container download-list-demo">
             <div className="col-xs-10">
               <DownloadListTable token={token} />
             </div>

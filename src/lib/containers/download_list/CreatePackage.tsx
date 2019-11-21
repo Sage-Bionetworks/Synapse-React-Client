@@ -17,6 +17,7 @@ import {
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
 import * as ReactBoostrap from 'react-bootstrap'
+import { FileDownloadStatus } from 'lib/utils/jsonResponses/FileDownloadSummary'
 
 library.add(faCheck)
 library.add(faDownload)
@@ -25,24 +26,39 @@ library.add(faFolder)
 export type CreatePackageProps = {
   token?: string
   children?: JSX.Element
+  updateDownloadList: Function
+}
+
+type Alert = {
+  message: string
+  variant: ReactBoostrap.AlertProps['variant']
+  className: string | undefined
 }
 
 export const CreatePackage = (props: CreatePackageProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [alert, setAlert] = useState<Alert>({
+    message: '',
+    className: undefined,
+    variant: undefined,
+  })
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     BulkFileDownloadResponse | undefined
   >(undefined)
-  const { token, children } = props
+  const { token, children, updateDownloadList } = props
 
   const createPackageHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!fileName) {
-      setErrorMessage('Please provide a package file name and try again.')
+      setAlert({
+        message: 'Please provide a package file name and try again.',
+        variant: 'danger',
+        className: undefined,
+      })
       return
     }
-    setErrorMessage('')
+    setAlert({ message: '', variant: undefined, className: undefined })
     setIsLoading(true)
     try {
       const fileNameWithZipExtension = `${fileName}.zip`
@@ -63,17 +79,31 @@ export const CreatePackage = (props: CreatePackageProps) => {
       )
       setBulkFileDownloadResponse(bulkFileDownloadResponse)
     } catch (err) {
-      console.error('Error on download request', err)
+      setAlert({
+        message: err.reason,
+        variant: 'danger',
+        className: undefined,
+      })
     } finally {
       setIsLoading(false)
     }
   }
 
   const downloadPackageHandler = async () => {
-    const { resultZipFileHandleId } = bulkFileDownloadResponse!
+    const { resultZipFileHandleId, fileSummary } = bulkFileDownloadResponse!
     try {
+      const filesDownloaded = fileSummary.filter(
+        el => el.status !== FileDownloadStatus.SUCESS,
+      ).length
+      setAlert({
+        message: `${filesDownloaded} files were downloaded and removed from the list.`,
+        className: 'SRC-primary-background-color SRC-whiteText',
+        variant: undefined,
+      })
       const url = await getFileHandleByIdURL(resultZipFileHandleId, token)
       window.location.href = url
+      updateDownloadList()
+      setBulkFileDownloadResponse(undefined)
     } catch (err) {
       console.error('Err on getFileHandleByIdURL = ', err)
     }
@@ -85,9 +115,14 @@ export const CreatePackage = (props: CreatePackageProps) => {
 
   return (
     <>
-      {errorMessage && (
-        <ReactBoostrap.Alert transition={'div'} variant={'danger'} show={true}>
-          {errorMessage}
+      {alert.message && (
+        <ReactBoostrap.Alert
+          transition={'div'}
+          variant={alert.variant}
+          show={true}
+          className={alert.className}
+        >
+          {alert.message}
         </ReactBoostrap.Alert>
       )}
       <div className="create-package-container">
