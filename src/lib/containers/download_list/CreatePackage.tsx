@@ -16,6 +16,7 @@ import {
   faDownload,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
+import * as ReactBoostrap from 'react-bootstrap'
 
 library.add(faCheck)
 library.add(faDownload)
@@ -29,12 +30,19 @@ export type CreatePackageProps = {
 export const CreatePackage = (props: CreatePackageProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     BulkFileDownloadResponse | undefined
   >(undefined)
   const { token, children } = props
 
-  const createPackageHandler = async () => {
+  const createPackageHandler = async (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    if (!fileName) {
+      setErrorMessage('Please provide a package file name and try again.')
+      return
+    }
+    setErrorMessage('')
     setIsLoading(true)
     try {
       const fileNameWithZipExtension = `${fileName}.zip`
@@ -76,56 +84,64 @@ export const CreatePackage = (props: CreatePackageProps) => {
   }
 
   return (
-    <div className="create-package-container">
-      {children}
-      <div>
-        {isLoading && (
-          <span className="SRC-centerContentInline">
-            <span className="spinner" />
-            <span style={{ marginLeft: 5 }} className="create-package-text">
-              Creating package...
-            </span>
-          </span>
-        )}
-        {!isLoading && !bulkFileDownloadResponse && (
-          <div className="SRC-split">
-            <section>
-              <input
-                onChange={onChange}
-                type="text"
-                placeholder="PackageFileName"
-              ></input>
-              <span className="zip-extension SRC-boldText">.zip</span>
-            </section>
-            <button
-              className="SRC-standard-button-shape SRC-primary-button"
-              id="create-package-btn"
-              onClick={createPackageHandler}
-            >
-              <FontAwesomeIcon icon="folder" />
-              Create Package
-            </button>
-          </div>
-        )}
-        {bulkFileDownloadResponse && (
-          <div className="SRC-split">
-            <section>
-              <FontAwesomeIcon icon="check" color="green" />
-              <span className="create-package-text">
-                Package created! Ready for download.
+    <>
+      {errorMessage && (
+        <ReactBoostrap.Alert transition={'div'} variant={'danger'} show={true}>
+          {errorMessage}
+        </ReactBoostrap.Alert>
+      )}
+      <div className="create-package-container">
+        {children}
+        <div>
+          {isLoading && (
+            <span className="SRC-centerContentInline">
+              <span className="spinner" />
+              <span style={{ marginLeft: 5 }} className="create-package-text">
+                Creating package...
               </span>
-            </section>
-            <button
-              className="SRC-standard-button-shape SRC-primary-button"
-              id="create-package-btn"
-              onClick={downloadPackageHandler}
-            >
-              <FontAwesomeIcon icon="download" color="white" />
-              Download Package
-            </button>
-          </div>
-        )}
+            </span>
+          )}
+          {!isLoading && !bulkFileDownloadResponse && (
+            <div className="SRC-split">
+              <form onSubmit={createPackageHandler}>
+                <input
+                  onChange={onChange}
+                  type="text"
+                  placeholder="PackageFileName"
+                ></input>
+                <span className="zip-extension SRC-boldText">.zip</span>
+              </form>
+              <button
+                className="SRC-standard-button-shape SRC-primary-button"
+                id="create-package-btn"
+                onClick={createPackageHandler}
+                type="button"
+              >
+                <FontAwesomeIcon icon="folder" />
+                Create Package
+              </button>
+            </div>
+          )}
+          {bulkFileDownloadResponse && (
+            <div className="SRC-split">
+              <section>
+                <FontAwesomeIcon icon="check" color="green" />
+                <span className="create-package-text">
+                  Package created! Ready for download.
+                </span>
+              </section>
+              <button
+                className="SRC-standard-button-shape SRC-primary-button"
+                id="create-package-btn"
+                onClick={downloadPackageHandler}
+              >
+                <FontAwesomeIcon icon="download" color="white" />
+                Download Package
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

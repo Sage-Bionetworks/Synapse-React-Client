@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, Route, RouteComponentProps } from 'react-router-dom'
+import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
@@ -10,6 +10,7 @@ import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
+import { RouteChildrenProps } from 'react-router'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -19,7 +20,7 @@ const App = ({
   match,
   token,
 }: {
-  match?: RouteComponentProps['match']
+  match?: RouteChildrenProps['match']
   token: string
 }) => {
   if (!match) {
