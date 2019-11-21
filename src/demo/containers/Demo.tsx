@@ -7,7 +7,7 @@ import QueryWrapperMenu, {
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
-import {testDownloadSpeed} from '../../lib/utils/functions/DownloadSpeedTest'
+import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
 
 type DemoState = {
   token: string | null
@@ -106,11 +106,13 @@ class Demo extends React.Component<{}, DemoState> {
   public onRunDownloadSpeedTest() {
     const { token } = this.state
     if (token) {
-      testDownloadSpeed(token).then((estimatedDownloadBytesPerSecond:number) => {
-        this.setState({ estimatedDownloadBytesPerSecond })
-      }).catch((error: any) => {
-        console.error('estimate download speed failed', error)
-      })
+      testDownloadSpeed(token)
+        .then((estimatedDownloadBytesPerSecond: number) => {
+          this.setState({ estimatedDownloadBytesPerSecond })
+        })
+        .catch((error: any) => {
+          console.error('estimate download speed failed', error)
+        })
     }
   }
 
@@ -167,12 +169,14 @@ class Demo extends React.Component<{}, DemoState> {
           </div>
         )}
         {estimatedDownloadBytesPerSecond && (
-            <div className="container">
-              <h5>Estimated Download Speed: {(estimatedDownloadBytesPerSecond/1000000).toFixed(2)} MBps</h5>
-              <hr />
-            </div>
-          )
-        }
+          <div className="container">
+            <h5>
+              Estimated Download Speed:{' '}
+              {(estimatedDownloadBytesPerSecond / 1000000).toFixed(2)} MBps
+            </h5>
+            <hr />
+          </div>
+        )}
         {token && (
           <div className="container">
             <h5>Upload File(s) Demo</h5>

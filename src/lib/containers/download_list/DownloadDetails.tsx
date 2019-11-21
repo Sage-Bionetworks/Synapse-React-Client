@@ -3,7 +3,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile, faDatabase, faClock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import calculateFriendlyFileSize from '../../utils/functions/calculateFriendlyFileSize'
-import { testDownloadSpeed } from '../../utils/functions/DownloadSpeedTest'
+import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTable'
@@ -32,16 +32,14 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const { token, numFiles, numBytes } = props
 
   useEffect(() => {
-    if (isLoading) {
-      token &&
-        testDownloadSpeed(token).then(speed => {
-          setState({
-            isLoading: false,
-            downloadSpeed: speed,
-          })
+    token &&
+      testDownloadSpeed(token).then(speed => {
+        setState({
+          isLoading: false,
+          downloadSpeed: speed,
         })
-    }
-  })
+      })
+  }, [token])
 
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 ? 0 : numBytes / downloadSpeed
