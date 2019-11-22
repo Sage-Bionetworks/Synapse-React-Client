@@ -12,7 +12,7 @@ const createShallowComponent = async (props: UserCardListProps) => {
 }
 
 describe('UserCardList functions correctly ', () => {
-  const getUserData = require('../../../lib/utils/getUserData')
+  const getUserData = require('../../../lib/utils/functions/getUserData')
   const userOneId = '1'
   const userTwoId = '2'
   const userThreeId = '3'

@@ -171,7 +171,7 @@ describe('it makes the correct URL for the secondary labels', () => {
   const DATASETS = 'datasets'
   const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
-  const LabelConfig: LabelConfig = [
+  const labelConfig: LabelConfig = [
     {
       isMarkdown: false,
       baseURL: datasetBaseURL,
@@ -192,7 +192,7 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a single value and single column', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, LabelConfig[0], false)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelConfig[0], false)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
@@ -204,7 +204,7 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a single value and multiple columns', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, LabelConfig[1], false)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelConfig[1], false)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
@@ -214,7 +214,7 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, LabelConfig[0], true)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelConfig[0], true)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
@@ -225,7 +225,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const wrapper = mount(<>{renderLabel(value, LabelConfig[0], false)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelConfig[0], false)} </>)
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
     expect(links.at(0).props().href).toEqual(
@@ -242,7 +242,7 @@ describe('it makes the correct URL for the secondary labels', () => {
   it('works with a markdown link ', async () => {
     const value = '# markdown [link](synapse.org) '
     const wrapper = await mount(
-      <>{renderLabel(value, LabelConfig[2], false)} </>,
+      <>{renderLabel(value, labelConfig[2], false)} </>,
     )
     const markdown = wrapper.find(MarkdownSynapse)
     expect(markdown).toHaveLength(1)

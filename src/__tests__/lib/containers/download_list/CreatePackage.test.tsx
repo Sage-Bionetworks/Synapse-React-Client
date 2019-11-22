@@ -121,7 +121,7 @@ describe('it performs all functionality ', () => {
           value: 'text',
         },
       })
-      // make create package ca;;
+      // creact package
       wrapper.find('.action-button').simulate('click')
     })
     expect(wrapper.find(Alert).text()).toEqual(error.reason)
