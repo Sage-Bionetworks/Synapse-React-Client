@@ -42,6 +42,9 @@ export type DownloadListTableProps = {
   token?: string
 }
 
+export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
+export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
+
 export default function DownloadListTable(props: DownloadListTableProps) {
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
   let [state, setState] = useState<DownloadListTableState>({
@@ -81,6 +84,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       const referenceCall: Reference[] = filesToDownload.map(el => {
         return { targetId: el.fileHandleId }
       })
+      // entity header is used to get the names of the files that the user
+      // doesn't have access to
       const references = await getEntityHeader(referenceCall, token)
       const batchFileRequest: BatchFileRequest = {
         requestedFiles: filesToDownload,
@@ -88,6 +93,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         includePreSignedURLs: false,
         includePreviewPreSignedURLs: false,
       }
+      // batch file result gives FilesHandle for the files the user can download
+      // which has additional metadata - createdBy, numBytes, etc.
       const batchFileResult = await getFiles(batchFileRequest, token)
       setState({
         references,
@@ -147,6 +154,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         <button
           className="SRC-primary-text-color SRC-underline-on-hover"
           onClick={clearDownloadList}
+          id={TESTING_CLEAR_BTN_CLASS}
         >
           Clear All
         </button>
@@ -165,21 +173,24 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         </thead>
         <tbody>
           {filesToDownload.map(item => {
-            const synId = item.associateObjectId
-            const fileHandleId = item.fileHandleId
-            const fileResult = requestedFiles.find(
-              fileRes => fileRes.fileHandleId === fileHandleId,
-            )
             let createdBy = ''
             let createdOn = ''
             let fileName = ''
             let contentSize = undefined
+            const synId = item.associateObjectId
+            const fileHandleId = item.fileHandleId
+            // See if batch file results has this fileHandleId
+            const fileResult = requestedFiles.find(
+              fileRes => fileRes.fileHandleId === fileHandleId,
+            )
             const fileHandle = fileResult ? fileResult.fileHandle : undefined
             if (fileHandle) {
+              // fileHandle is defined, this file is downloadable, show its metadata
               ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
               createdOn = moment(createdOn).format('L LT')
               numBytes += contentSize
             } else {
+              // file is not downloadable, only show its name from entity header info
               const requestedFile = results.find(
                 req => req.id === `syn${fileHandleId}`,
               )!
@@ -208,9 +219,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                       <UserCard
                         size={'SMALL USER CARD'}
                         userProfile={userProfile}
-                        preSignedURL={
-                          userProfile && userProfile.clientPreSignedURL
-                        }
+                        preSignedURL={userProfile.clientPreSignedURL}
                       />
                     )}
                     {!userProfile && <span className="spinner" />}
@@ -220,9 +229,10 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 {contentSize && (
                   <td>{calculateFriendlyFileSize(contentSize)}</td>
                 )}
-                {contentSize && (
+                {
                   <td>
                     <button
+                      className={TESTING_TRASH_BTN_CLASS}
                       onClick={() => deleteFileFromList(fileHandleId, synId)}
                     >
                       <FontAwesomeIcon
@@ -231,7 +241,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                       />
                     </button>
                   </td>
-                )}
+                }
               </tr>
             )
           })}

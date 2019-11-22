@@ -16,6 +16,7 @@ const difference = (setA: Set<string>, setB: Set<string>) => {
   return _difference
 }
 
+// React hook to get user profiles
 export default function useGetProfiles(props: UseGetProfilesProps) {
   const { token, ids } = props
   const [data, setData] = useState<UserProfileList | undefined>(undefined)

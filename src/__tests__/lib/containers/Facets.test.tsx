@@ -7,7 +7,6 @@ import {
   SELECT_SINGLE_FACET,
   FACET_NOT_SELECTED_CLASS,
 } from '../../../lib/containers/Facets'
-// import { SELECT_ALL, DESELECT_ALL  } from '../../../lib/containers/SynapseTable'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'

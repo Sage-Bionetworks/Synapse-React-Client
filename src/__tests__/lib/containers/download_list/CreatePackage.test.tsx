@@ -15,8 +15,9 @@ import { FileDownloadStatus } from 'lib/utils/jsonResponses/FileDownloadSummary'
 describe('it performs all functionality ', () => {
   const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
+  const updateDownloadListMock = jest.fn()
   const props: CreatePackageProps = {
-    updateDownloadList: jest.fn(),
+    updateDownloadList: updateDownloadListMock,
   }
   const downloadOrderMock: DownloadOrder = {
     files: [],
@@ -75,6 +76,7 @@ describe('it performs all functionality ', () => {
     expect(wrapper.find('.package-created')).toHaveLength(1)
     expect(wrapper.find(Alert)).toHaveLength(0)
     expect(wrapper.find('form')).toHaveLength(0)
+    expect(updateDownloadListMock).not.toHaveBeenCalled()
     // Step 4: Call download
     // Setup API call
     const urlMock = ''
@@ -86,6 +88,7 @@ describe('it performs all functionality ', () => {
       wrapper.find('.action-button').simulate('click')
     })
     expect(wrapper.find(Alert).text()).toEqual(`${1} ${templateDownload}`)
+    expect(updateDownloadListMock).toHaveBeenCalled()
   })
   it('Fails to creates a package without a filename', async () => {
     const error = {
