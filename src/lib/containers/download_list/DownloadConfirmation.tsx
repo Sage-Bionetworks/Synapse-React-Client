@@ -5,7 +5,7 @@ import { AddFilesToDownloadListRequest } from '../../utils/jsonResponses/AddFile
 import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
 import { testDownloadSpeed } from '../../utils/DownloadSpeedTest'
 import moment from 'moment'
-import { Query } from 'lib/utils/jsonResponses/Table/Query'
+import { Query } from '../../utils/jsonResponses/Table/Query'
 import { DownloadDetails } from './'
 
 enum StatusEnum {
