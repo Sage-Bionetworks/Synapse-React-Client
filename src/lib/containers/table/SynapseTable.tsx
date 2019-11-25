@@ -1,3 +1,4 @@
+import { DownloadConfirmation } from '../download_list/DownloadConfirmation';
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -106,6 +107,7 @@ export type SynapseTableState = {
   isColumnSelected: boolean[]
   columnIconSortState: number[]
   isModalDownloadOpen: boolean
+  isModalConfirmationOpen:boolean
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
@@ -150,6 +152,7 @@ export default class SynapseTable extends React.Component<
       columnIconSortState: [],
       isColumnSelected: [],
       isModalDownloadOpen: false,
+      isModalConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
       // sortedColumnSelection contains the columns which are
@@ -399,7 +402,7 @@ export default class SynapseTable extends React.Component<
     }
     return (
       <DownloadOptions
-        onDownloadFiles={this.advancedSearch}
+        onDownloadFiles={(e: React.SyntheticEvent)=>this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
       />
     )
@@ -475,9 +478,10 @@ export default class SynapseTable extends React.Component<
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
+         {this.state.isModalConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isModalConfirmationOpen: false})}/>}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
-            <tr>{this.createTableHeader(headers, facets)}</tr>
+           <tr>{this.createTableHeader(headers, facets)}</tr>
           </thead>
           <tbody>{this.createTableRows(rows, headers)}</tbody>
         </table>
@@ -533,7 +537,7 @@ export default class SynapseTable extends React.Component<
           />
         </span>
         <EllipsisDropdown
-          onDownloadFiles={this.advancedSearch}
+          onDownloadFiles= {(e: React.SyntheticEvent)=>this.showDownload(e)}
           onDownloadTableOnly={() =>
             this.setState(onDownloadTableOnlyArguments)
           }
@@ -1014,6 +1018,11 @@ export default class SynapseTable extends React.Component<
       `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`,
       '_blank',
     )
+  }
+
+
+  private showDownload(event: React.SyntheticEvent) {
+    this.setState({isModalConfirmationOpen : true})
   }
 
   private getLengthOfPropsData() {
