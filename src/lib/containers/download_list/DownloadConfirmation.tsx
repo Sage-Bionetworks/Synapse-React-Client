@@ -106,7 +106,7 @@ const StatusConstruct = {
     infoText: '',
   },
   [StatusEnum.SUCCESS]: {
-    class: 'alert-success',
+    class: 'alert-info',
     closeText: 'Close',
     infoText: '',
   },
