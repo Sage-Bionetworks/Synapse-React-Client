@@ -58,7 +58,7 @@ export const testDownloadSpeed = (sessionToken: string): Promise<number> => {
           requestedFiles: fileHandleAssociationList,
         }
         getFiles(request, sessionToken).then((data: BatchFileResult) => {
-          const presignedUrl: string = data.requestedFiles[0].preSignedURL
+          const presignedUrl: string = data.requestedFiles[0].preSignedURL!
           // we know this file exists
           const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!
           // start test!

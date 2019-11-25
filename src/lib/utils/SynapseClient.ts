@@ -1350,7 +1350,7 @@ export const getFileEntityContent = (
     }
     getFiles(request, sessionToken)
       .then((data: BatchFileResult) => {
-        const presignedUrl: string = data.requestedFiles[0].preSignedURL
+        const presignedUrl: string = data.requestedFiles[0].preSignedURL!
         const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!
         return getFileHandleContent(fileHandle, presignedUrl).then(
           (content: string) => {

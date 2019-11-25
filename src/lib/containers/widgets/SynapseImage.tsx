@@ -72,7 +72,7 @@ class SynapseImage extends React.Component<
           el => el.fileHandleId === id,
         )[0]
         this.setState({
-          preSignedURL: preSignedURL,
+          preSignedURL: preSignedURL!,
         })
       })
       .catch(err => {
