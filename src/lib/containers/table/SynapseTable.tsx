@@ -404,6 +404,7 @@ export default class SynapseTable extends React.Component<
       <DownloadOptions
         onDownloadFiles={(e: React.SyntheticEvent)=>this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
+        isUnauthenticated = {!this.props.token}
       />
     )
   }
@@ -544,6 +545,7 @@ export default class SynapseTable extends React.Component<
           onShowColumns={() => this.setState({ showColumnSelection: true })}
           onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
+          isUnauthenticated = {!this.props.token}
         />
       </div>
     )

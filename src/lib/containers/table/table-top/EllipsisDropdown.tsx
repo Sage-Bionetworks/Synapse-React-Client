@@ -14,12 +14,11 @@ type EllipsisDropdownProps = {
   onShowColumns: Function
   onFullScreen: Function
   isExpanded: boolean
+  isUnauthenticated?: boolean
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
-export const EllipsisDropdown: React.FunctionComponent<
-  EllipsisDropdownProps
-> = props => {
+export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = props => {
   const {
     onDownloadFiles,
     onDownloadTableOnly,
@@ -42,7 +41,11 @@ export const EllipsisDropdown: React.FunctionComponent<
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
-          <Dropdown.Item onClick={() => onDownloadFiles()}>
+          <Dropdown.Item
+            onClick={() => onDownloadFiles()}
+            className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
+            disabled={props.isUnauthenticated}
+          >
             Download Files
           </Dropdown.Item>
           <Dropdown.Item onClick={() => onDownloadTableOnly()}>
