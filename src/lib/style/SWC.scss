@@ -235,6 +235,10 @@
   animation: spinner 1s linear infinite;
   background-size: 20px 20px;
   background-repeat: no-repeat;
+
+  &.white {
+    background-image: url('../assets/logos/logo-white.svg');
+  }  
 }
 
 /* End loading spinner */
