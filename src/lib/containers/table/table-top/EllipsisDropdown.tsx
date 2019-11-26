@@ -23,7 +23,7 @@ export const EllipsisDropdown: React.FunctionComponent<
   const {
     onDownloadFiles,
     onDownloadTableOnly,
-    // onShowColumns,
+    onShowColumns,
     onFullScreen,
     isExpanded,
   } = props
@@ -49,10 +49,9 @@ export const EllipsisDropdown: React.FunctionComponent<
             Download Table Only
           </Dropdown.Item>
           <Dropdown.Divider />
-          {/* <Dropdown.Item onClick={() => onShowColumns()}>
-            {' '}
+          <Dropdown.Item onClick={() => onShowColumns()}>
             Show Columns
-          </Dropdown.Item> */}
+          </Dropdown.Item>
           <Dropdown.Item onClick={() => onFullScreen()}>
             {isExpanded ? 'Shrink' : 'Full Screen'}
           </Dropdown.Item>

@@ -26,6 +26,7 @@ type CheckboxGroupProps = {
     ref: React.RefObject<HTMLSpanElement>,
     facetValue: string,
     selector: string,
+    index: number,
   ) => (_event: React.MouseEvent<HTMLSpanElement>) => void
   showAllFacets: boolean
   lastFacetSelection: FacetSelection
@@ -114,7 +115,12 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
           </span>
           <input
             // @ts-ignore
-            onChange={props.applyChanges(ref, value, SELECT_SINGLE_FACET)}
+            onChange={props.applyChanges(
+              ref,
+              value,
+              SELECT_SINGLE_FACET,
+              index,
+            )}
             checked={isSelected}
             type="checkbox"
             value={value}
@@ -191,7 +197,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     ref: React.RefObject<HTMLSpanElement>,
     facetValue: string,
     selector: string,
-    index?: number,
+    index: number,
   ) => (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault()
     if (!this.state.showAllFacets) {
@@ -208,7 +214,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       columnName: facet,
     } as FacetSelection
     isAllFilterSelectedForFacet[facet] = selector === SELECT_ALL
-
     this.props.updateParentState!({
       lastFacetSelection,
       isAllFilterSelectedForFacet,
@@ -250,7 +255,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       return (
         <button
           className="SRC-primary-text-color SRC-facet-select-all SRC-no-text-decor"
-          onClick={this.applyChanges(ref, '', SELECT_ALL)}
+          onClick={this.applyChanges(ref, '', SELECT_ALL, 0)}
         >
           Select All
         </button>

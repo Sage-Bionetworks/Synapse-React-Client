@@ -954,6 +954,24 @@ a.dropdown-item {
   padding: 3px;
   margin: 0px 3px; }
 
+.SRC-success-color {
+  color: #53cf97; }
+
+.SRC-success-color-bg {
+  background-color: #53cf97; }
+
+.SRC-warning-color {
+  color: #f9a843; }
+
+.SRC-warning-color-bg {
+  background-color: #f9a843; }
+
+.SRC-half-opacity {
+  opacity: 0.5; }
+
+.plotly .slice {
+  cursor: pointer; }
+
 .markdowntable {
   border: 1px solid #dddddd;
   border-collapse: separate;
