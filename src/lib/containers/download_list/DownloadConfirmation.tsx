@@ -5,7 +5,6 @@ import { AddFilesToDownloadListRequest } from '../../utils/jsonResponses/AddFile
 import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
 import { testDownloadSpeed } from '../../utils/DownloadSpeedTest'
 import moment from 'moment'
-import Alert, { AlertProps } from 'react-bootstrap/Alert'
 import { Query } from '../../utils/jsonResponses/Table/Query'
 import { DownloadDetails } from './'
 
@@ -83,7 +82,7 @@ async function addToDownload(
 
 type UiStateDictionary = {
   [key: string]: {
-    alertProps: AlertProps
+    className: string
     infoText: string
     closeText: string
   }
@@ -92,30 +91,30 @@ type UiStateDictionary = {
 // css classes, text, and close button text associated with different stages
 const StatusConstruct: UiStateDictionary = {
   [StatusEnum.INFO]: {
-    alertProps: { variant: 'info' },
+    className: 'alert-info',
     infoText: 'Would you like to add all files to the download list?',
     closeText: 'Cancel',
   },
 
   [StatusEnum.PROCESSING]: {
-    alertProps: { variant: 'info' },
+    className: 'alert-info',
     infoText: 'Adding Files To List',
     closeText: 'Cancel',
   },
 
   [StatusEnum.LOADING_INFO]: {
-    alertProps: { variant: 'info' },
+    className: 'alert-info',
     infoText: 'Calculating File Size',
     closeText: 'Cancel',
   },
 
   [StatusEnum.ERROR]: {
-    alertProps: { variant: 'danger' },
+    className: 'alert-danger',
     closeText: 'Close',
     infoText: '',
   },
   [StatusEnum.SUCCESS]: {
-    alertProps: { variant: 'info' },
+    className: 'alert-info',
     closeText: 'Close',
     infoText: '',
   },
@@ -210,10 +209,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }
 
   return (
-    <Alert
-      className="download-confirmation"
-      variant={StatusConstruct[state.status].alertProps.variant}
-      dismissible={false}
+    <div
+      className={`alert download-confirmation ${
+        StatusConstruct[state.status].className
+      }`}
     >
       <div className="download-confirmation__section">
         {getContent(state, token)}
@@ -240,6 +239,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           </button>
         )}
       </div>
-    </Alert>
+    </div>
   )
 }
