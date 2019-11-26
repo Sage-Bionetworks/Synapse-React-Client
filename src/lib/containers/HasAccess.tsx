@@ -81,7 +81,7 @@ export default class HasAccess extends React.Component<
           <a
             style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
             className='SRC-primary-text-color'
-            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}/#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
+            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
           >
             {linkText}
           </a>
