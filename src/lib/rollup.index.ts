@@ -13,6 +13,7 @@ import CardContainer from './containers/CardContainer'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import StatisticsPlot from './containers/StatisticsPlot'
+import HasAccess from './containers/HasAccess'
 import './style/Index.scss'
 import { SynapseConstants, SynapseClient } from './utils/'
 
@@ -31,6 +32,7 @@ const SynapseComponents = {
   Markdown: MarkdownSynapse,
   ModalDownload,
   StatisticsPlot,
+  HasAccess,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
