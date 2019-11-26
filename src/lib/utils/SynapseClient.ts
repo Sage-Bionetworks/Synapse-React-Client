@@ -19,6 +19,8 @@ import { UserProfile } from './jsonResponses/UserProfile'
 import { AccessControlList } from './jsonResponses/AccessControlList'
 import { Submission } from './jsonResponses/Submission'
 import { DownloadFromTableRequest } from './jsonResponses/Table/DownloadFromTableRequest'
+import { AddFilesToDownloadListResponse} from './jsonResponses/AddFilesToDownloadListResponse'
+import { AddFilesToDownloadListRequest } from './jsonResponses/AddFilesToDownloadListRequest'
 import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTableResult'
 import { ReferenceList } from './jsonResponses/ReferenceList'
 import { EntityHeader } from './jsonResponses/EntityHeader'
@@ -46,7 +48,10 @@ import {
 import SparkMD5 from 'spark-md5'
 import { getEndpoint, BackendDestinationEnum } from './getEndpoint'
 import { LoginResponse } from './jsonResponses/LoginResponse'
-import { RestrictionInformationRequest, RestrictionInformationResponse } from './jsonResponses/RestrictionInformation'
+import {
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+} from './jsonResponses/RestrictionInformation'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -282,6 +287,35 @@ export const getVersion = (): Promise<SynapseVersion> => {
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+/**
+ * https://docs.synapse.org/rest/POST/download/list/add/async/start.html
+ */
+//Start an asynchronous job to add files to a user's download list.
+export const addFilesToDownloadList = (
+  request: AddFilesToDownloadListRequest,
+  sessionToken: string,
+  updateParentState?: any,
+) => {
+  return doPost(
+    `file/v1/download/list/add/async/start`,
+    request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((resp: AsyncJobId) => {
+      const requestUrl = `file/v1/download/list/add/async/get/${resp.token}`
+      return getAsyncResultFromJobId<AddFilesToDownloadListResponse>(
+        requestUrl,
+        sessionToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
 }
 
 /**

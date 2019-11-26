@@ -182,12 +182,12 @@ button.dropdown-toggle:hover {
 }
 
 .dropdown-menu.SRC-primary-color-hover-dropdown {
-  a.dropdown-item:hover {
+  a.dropdown-item:hover:not(.disabled) {
     background: $primary-action-color;
     color: white !important;
     text-decoration: none;
   }
-  a.dropdown-item:hover * {
+  a.dropdown-item:hover:not(.disabled) * {
     background: $primary-action-color;
     color: white !important;
     text-decoration: none;
