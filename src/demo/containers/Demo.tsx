@@ -61,6 +61,18 @@ class Demo extends React.Component<{}, DemoState> {
             facet: 'projectStatus',
             sql: 'SELECT * FROM syn16787123',
           },
+          {
+            title: 'File Add To List Demo',
+            facetDisplayValue: 'Name',
+            facet: 'name',
+            sql: 'SELECT name, grant FROM syn11346063',
+          },
+          {
+            title: 'File Add To List Demo with Where Clause',
+            facetDisplayValue: 'Name',
+            facet: 'consortium',
+            sql: 'SELECT name, grant FROM syn11346063 WHERE ( ( "consortium" IS NULL ) )',
+          },
         ],
         rgbIndex: 2,
       },

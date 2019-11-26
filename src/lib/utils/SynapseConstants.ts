@@ -7,6 +7,7 @@ export const BUNDLE_MASK_QUERY_SELECT_COLUMNS: number = 4
 export const BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE: number = 8
 export const BUNDLE_MASK_QUERY_COLUMN_MODELS: number = 16
 export const BUNDLE_MASK_QUERY_FACETS: number = 32
+export const BUNDLE_MASK_SUM_FILES_SIZE_BYTES: number = 64
 /** EntityBundle constants */
 export const ENTITY_BUNDLE_MASK_ENTITY: number = 1
 export const ENTITY_BUNDLE_MASK_ANNOTATIONS: number = 2
