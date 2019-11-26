@@ -4,13 +4,13 @@ import * as _ from 'lodash'
 import {
   Step,
   NavActionEnum,
-} from '../../../../lib/containers/drug_upload_tool/types'
+} from '../../../../lib/containers/synapse_form_wrapper/types'
 import {
   NavButtons,
   NavButtonsProps,
   NextStepLink,
   NextStepLinkProps,
-} from '../../../../lib/containers/drug_upload_tool/NavButtons'
+} from '../../../../lib/containers/synapse_form_wrapper/NavButtons'
 import { steps } from '../../../../mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(steps)

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow } from 'enzyme'
 import UserFileGrid, {
   UserFileGridProps,
-} from '../../../../lib/containers/drug_upload_tool/UserFileGrid'
+} from '../../../../lib/containers/synapse_form_wrapper/UserFileGrid'
 
 import {
   formListDataSubmitted,
