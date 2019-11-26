@@ -238,7 +238,10 @@
 
   &.white {
     background-image: url('../assets/logos/logo-white.svg');
-  }  
+  }
+  +.spinner__text {
+    margin-left: 5px
+  }
 }
 
 /* End loading spinner */

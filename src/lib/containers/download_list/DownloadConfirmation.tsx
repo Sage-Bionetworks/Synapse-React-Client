@@ -5,6 +5,7 @@ import { AddFilesToDownloadListRequest } from '../../utils/jsonResponses/AddFile
 import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
 import { testDownloadSpeed } from '../../utils/DownloadSpeedTest'
 import moment from 'moment'
+import Alert, { AlertProps } from 'react-bootstrap/Alert'
 import { Query } from '../../utils/jsonResponses/Table/Query'
 import { DownloadDetails } from './'
 
@@ -68,11 +69,11 @@ async function addToDownload(
 ): Promise<[StatusEnum, string]> {
   const req: AddFilesToDownloadListRequest = {
     concreteType:
-      'org.sagebionetworks.repo.model.file.AddFilesToDownloadListRequest',
+      'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
     query: query,
   }
   try {
-    const result = await SynapseClient.addFilestoDownloadListRequest(req, token)
+    const result = await SynapseClient.addFilesToDownloadList(req, token)
     const ownerId = result.downloadList.ownerId
     return [StatusEnum.SUCCESS, ownerId]
   } catch (error) {
@@ -80,39 +81,47 @@ async function addToDownload(
   }
 }
 
+type UiStateDictionary = {
+  [key: string]: {
+    alertProps: AlertProps
+    infoText: string
+    closeText: string
+  }
+}
+
 // css classes, text, and close button text associated with different stages
-const StatusConstruct = {
+const StatusConstruct: UiStateDictionary = {
   [StatusEnum.INFO]: {
-    class: 'alert-info',
+    alertProps: { variant: 'info' },
     infoText: 'Would you like to add all files to the download list?',
     closeText: 'Cancel',
   },
 
   [StatusEnum.PROCESSING]: {
-    class: 'alert-info',
+    alertProps: { variant: 'info' },
     infoText: 'Adding Files To List',
     closeText: 'Cancel',
   },
 
   [StatusEnum.LOADING_INFO]: {
-    class: 'alert-info',
+    alertProps: { variant: 'info' },
     infoText: 'Calculating File Size',
     closeText: 'Cancel',
   },
 
   [StatusEnum.ERROR]: {
-    class: 'alert-danger',
+    alertProps: { variant: 'danger' },
     closeText: 'Close',
     infoText: '',
   },
   [StatusEnum.SUCCESS]: {
-    class: 'alert-info',
+    alertProps: { variant: 'info' },
     closeText: 'Close',
     infoText: '',
   },
 }
 
-//============= DownloadConfirmation component ============= 
+//============= DownloadConfirmation component =============
 
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> = ({
   queryBundleRequest,
@@ -131,6 +140,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       setState(result)
     })(queryBundleRequest.query, token)
   }, [])
+
+  const hideComponent = () => fnClose()
 
   const triggerAddToDownload = async () => {
     setState({ ...state, status: StatusEnum.PROCESSING })
@@ -160,8 +171,9 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return (
           <div>
             <span className={'spinner white'} />
-            {}
-            {StatusConstruct[status].infoText}
+            <span className={'spinner__text'}>
+              {StatusConstruct[status].infoText}
+            </span>
           </div>
         )
 
@@ -198,10 +210,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }
 
   return (
-    <div
-      className={`alert download-confirmation ${
-        StatusConstruct[state.status].class
-      }`}
+    <Alert
+      className="download-confirmation"
+      variant={StatusConstruct[state.status].alertProps.variant}
+      dismissible={false}
     >
       <div className="download-confirmation__section">
         {getContent(state, token)}
@@ -213,7 +225,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         }}
       >
         {state.status !== StatusEnum.PROCESSING && (
-          <button className="btn btn-link" onClick={() => fnClose()}>
+          <button className="btn btn-link" onClick={hideComponent}>
             {StatusConstruct[state.status].closeText}
           </button>
         )}
@@ -222,12 +234,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => triggerAddToDownload()}
+            onClick={triggerAddToDownload}
           >
             Add
           </button>
         )}
       </div>
-    </div>
+    </Alert>
   )
 }

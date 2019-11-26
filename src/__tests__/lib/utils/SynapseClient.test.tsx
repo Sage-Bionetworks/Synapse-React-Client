@@ -108,17 +108,17 @@ it('get files', () => {
 it ('should attempt to add files to download list and return an error for anonimous user', () => {
   const  req: AddFilesToDownloadListRequest = {
       concreteType:
-        'org.sagebionetworks.repo.model.file.AddFilesToDownloadListRequest',
+        'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
       query: {sql: "SELECT * FROM syn21242549", includeEntityEtag: true, isConsistent: true, offset: 0, limit: 25}
     }
-  return SynapseClient.addFilestoDownloadListRequest(
+  return SynapseClient.addFilesToDownloadList(
     req, ''
   ) .then(data => {
     //it should be rejected because there is no token
-    expect(false).toBe(true)
+    fail('should not be able to downlod without  token')
   })
   .catch(err => {
-    expect(err.reason).toContain('100')
+    expect(err.reason).not.toBeUndefined()
   })
 });
 

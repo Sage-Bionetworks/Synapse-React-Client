@@ -107,7 +107,7 @@ export type SynapseTableState = {
   isColumnSelected: boolean[]
   columnIconSortState: number[]
   isModalDownloadOpen: boolean
-  isModalConfirmationOpen:boolean
+  isDownloadConfirmationOpen:boolean
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
@@ -152,7 +152,7 @@ export default class SynapseTable extends React.Component<
       columnIconSortState: [],
       isColumnSelected: [],
       isModalDownloadOpen: false,
-      isModalConfirmationOpen: false,
+      isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
       // sortedColumnSelection contains the columns which are
@@ -479,7 +479,7 @@ export default class SynapseTable extends React.Component<
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
-         {this.state.isModalConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isModalConfirmationOpen: false})}/>}
+         {this.state.isDownloadConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isDownloadConfirmationOpen: false})}/>}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
            <tr>{this.createTableHeader(headers, facets)}</tr>
@@ -1024,7 +1024,7 @@ export default class SynapseTable extends React.Component<
 
 
   private showDownload(event: React.SyntheticEvent) {
-    this.setState({isModalConfirmationOpen : true})
+    this.setState({isDownloadConfirmationOpen : true})
   }
 
   private getLengthOfPropsData() {

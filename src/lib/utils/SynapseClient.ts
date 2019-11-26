@@ -293,7 +293,7 @@ export const getVersion = (): Promise<SynapseVersion> => {
  * https://docs.synapse.org/rest/POST/download/list/add/async/start.html
  */
 //Start an asynchronous job to add files to a user's download list.
-export const addFilestoDownloadListRequest = (
+export const addFilesToDownloadList = (
   request: AddFilesToDownloadListRequest,
   sessionToken: string,
   updateParentState?: any,

@@ -42,13 +42,13 @@ const queryBundleResponse: any = {
 
 const addFilesToDownloadListRequest: AddFilesToDownloadListRequest = {
   concreteType:
-    'org.sagebionetworks.repo.model.file.AddFilesToDownloadListRequest',
+    'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
   query,
 }
 
 const addFilesToDownloadListResponse: AddFilesToDownloadListResponse = {
   concreteType:
-    'org.sagebionetworks.repo.model.file.AddFilesToDownloadListRequest',
+    'org.sagebionetworks.repo.model.file.AddFileToDownloadListResponse',
 
   downloadList: {
     tag: 'c57433e3-65b5-4aa8-888b-215da8585351',
@@ -95,7 +95,7 @@ const resolveAllPending = async (
 }
 
 describe('it performs the expected functionality', () => {
-  addFilesToDownloadRequestFn = SynapseClient.addFilestoDownloadListRequest = jest
+  addFilesToDownloadRequestFn = SynapseClient.addFilesToDownloadList = jest
     .fn()
     .mockResolvedValue(addFilesToDownloadListResponse)
 
