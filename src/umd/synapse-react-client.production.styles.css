@@ -943,6 +943,11 @@ a.dropdown-item {
   white-space: nowrap;
   background-color: transparent;
   border: 0; }
+  a.dropdown-item.disabled {
+    text-decoration: none;
+    outline: none;
+    color: #717e8c;
+    cursor: default; }
 
 .dropdown-divider {
   height: 0;
@@ -1181,5 +1186,60 @@ a.dropdown-item {
   animation: spinner 1s linear infinite;
   background-size: 20px 20px;
   background-repeat: no-repeat; }
+  .spinner.white {
+    background-image: url("../assets/logos/logo-white.svg"); }
+  .spinner + .spinner__text {
+    margin-left: 5px; }
 
 /* End loading spinner */
+.download-confirmation {
+  opacity: 1 !important;
+  display: table !important;
+  width: 100%; }
+
+.download-confirmation__section {
+  display: table-cell;
+  vertical-align: middle; }
+
+.download-details-container {
+  display: inline-flex;
+  border-right: 2px solid #dddddd;
+  justify-content: center;
+  align-items: center;
+  height: 45px;
+  margin-right: 10px;
+  padding-right: 10px; }
+  .download-details-container span {
+    flex: 1;
+    white-space: nowrap;
+    margin-right: 8px; }
+  .download-details-container svg {
+    margin-right: 4px; }
+
+.create-package-container {
+  display: flex;
+  padding: 8px;
+  flex-flow: row wrap;
+  align-items: center; }
+  .create-package-container > :first-child {
+    flex: 3; }
+  .create-package-container > :last-child {
+    flex: 5; }
+  .create-package-container input {
+    padding: 8px; }
+  .create-package-container svg {
+    margin-right: 8px; }
+
+#create-package-btn {
+  margin-left: 15px; }
+
+.zip-extension {
+  font-size: 18px;
+  color: #666666;
+  margin-left: 3px; }
+
+.create-package-text {
+  font-size: 17px; }
+
+.download-list-table-top {
+  padding: 8px; }
