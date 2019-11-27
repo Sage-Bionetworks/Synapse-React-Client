@@ -14,6 +14,7 @@ import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
 import StatisticsPlot from './containers/StatisticsPlot'
+import HasAccess from './containers/HasAccess'
 import './style/Index.scss'
 import { SynapseConstants, SynapseClient } from './utils/'
 
@@ -29,10 +30,11 @@ const SynapseComponents = {
   EntityForm,
   UserCard,
   QueryCount,
+  DownloadListTable,
   Markdown: MarkdownSynapse,
   ModalDownload,
   StatisticsPlot,
-  DownloadListTable,
+  HasAccess,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

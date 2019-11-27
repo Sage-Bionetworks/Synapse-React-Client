@@ -6,7 +6,10 @@ import {
   RestrictableObjectType,
   RestrictionLevel,
 } from '../utils/jsonResponses/RestrictionInformation'
-import { getEndpoint, BackendDestinationEnum } from '../utils/functions/getEndpoint'
+import {
+  getEndpoint,
+  BackendDestinationEnum,
+} from '../utils/functions/getEndpoint'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faUnlockAlt,
@@ -108,7 +111,7 @@ export default class HasAccess extends React.Component<
     let viewARsLink: React.ReactElement = <></>
     if (
       restrictionInformation &&
-      RestrictionLevel.OPEN != restrictionInformation.restrictionLevel
+      RestrictionLevel.OPEN !== restrictionInformation.restrictionLevel
     ) {
       const linkText: string = restrictionInformation.hasUnmetAccessRequirement
         ? 'Get Access'
@@ -119,7 +122,7 @@ export default class HasAccess extends React.Component<
           className="SRC-primary-text-color"
           href={`${getEndpoint(
             BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}/#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
+          )}#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
         >
           {linkText}
         </a>

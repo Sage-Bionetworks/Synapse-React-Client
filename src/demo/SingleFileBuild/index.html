@@ -131,6 +131,7 @@
     <div id="panel5"></div>
     <div id="panel6"></div>
     <div id="panel7"></div>
+    <div id="panel8"></div>
     <div style="height: 300px"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -248,11 +249,20 @@
     // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
     const downloadListTableContainer = document.querySelector('#panel7')
     const downloadDetailsProps = {
-      token: '',
+      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
     }
     ReactDOM.render(
       e(SRC.SynapseComponents.DownloadListTable, downloadDetailsProps, null),
       downloadListTableContainer,
+    )
+    const hasAccessContainer = document.querySelector('#panel8')
+    const hasAccessProps = {
+      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+      synapseId: 'syn12664802',
+    }
+    ReactDOM.render(
+      e(SRC.SynapseComponents.HasAccess, hasAccessProps, null),
+      hasAccessContainer,
     )
   </script>
 </html>

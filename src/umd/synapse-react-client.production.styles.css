@@ -949,6 +949,11 @@ a.dropdown-item {
   white-space: nowrap;
   background-color: transparent;
   border: 0; }
+  a.dropdown-item.disabled {
+    text-decoration: none;
+    outline: none;
+    color: #717e8c;
+    cursor: default; }
 
 .dropdown-divider {
   height: 0;
@@ -1190,6 +1195,10 @@ a.dropdown-item {
   animation: spinner 1s linear infinite;
   background-size: 20px 20px;
   background-repeat: no-repeat; }
+  .spinner.white {
+    background-image: url("../assets/logos/logo-white.svg"); }
+  .spinner + .spinner__text {
+    margin-left: 5px; }
 
 /* End loading spinner */
 .download-details-container {
@@ -1201,7 +1210,9 @@ a.dropdown-item {
   margin-right: 10px;
   padding-right: 10px; }
   .download-details-container span {
-    flex: 1; }
+    flex: 1;
+    white-space: nowrap;
+    margin-right: 8px; }
   .download-details-container svg {
     margin-right: 4px; }
 
@@ -1219,9 +1230,6 @@ a.dropdown-item {
   .create-package-container svg {
     margin-right: 8px; }
 
-#create-package-btn {
-  margin-left: 15px; }
-
 .zip-extension {
   font-size: 18px;
   color: #666666;
@@ -1233,3 +1241,15 @@ a.dropdown-item {
 
 .download-list-table-top {
   padding: 8px; }
+
+.action-button {
+  margin-left: 15px; }
+
+.download-confirmation {
+  opacity: 1 !important;
+  display: table !important;
+  width: 100%; }
+
+.download-confirmation__section {
+  display: table-cell;
+  vertical-align: middle; }
