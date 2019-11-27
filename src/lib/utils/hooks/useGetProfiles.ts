@@ -22,7 +22,8 @@ export default function useGetProfiles(props: UseGetProfilesProps) {
   const [data, setData] = useState<UserProfileList | undefined>(undefined)
   useEffect(() => {
     const getData = async () => {
-      // look at current list of data, see if incoming ids is different
+      // look at current list of data, see if incoming ids has new data,
+      // if so grab those ids
       const curList = (data && data.list.map(el => el.ownerId)) || []
       const curListSet = new Set(curList)
       const incomingListSet = new Set(ids)

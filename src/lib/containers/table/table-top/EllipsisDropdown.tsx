@@ -17,9 +17,7 @@ type EllipsisDropdownProps = {
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
-export const EllipsisDropdown: React.FunctionComponent<
-  EllipsisDropdownProps
-> = props => {
+export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = props => {
   const {
     onDownloadFiles,
     onDownloadTableOnly,
