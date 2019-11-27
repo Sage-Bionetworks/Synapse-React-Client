@@ -1,3 +1,4 @@
+import {  } from './SynapseTableConstants';
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation';
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -54,9 +55,13 @@ import {
   DownloadOptions,
   ColumnSelection,
 } from './table-top/'
+import {TOOLTIP_DELAY_SHOW,
+SELECT_ALL, ICON_STATE } from './SynapseTableConstants'
+
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
 import HasAccess from '../HasAccess'
+import { unCamelCase } from './../../utils/UtilityFns'
 const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
@@ -83,15 +88,7 @@ library.add(faGlobeAmericas)
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
-export const SELECT_ALL = 'SELECT_ALL'
-export const DESELECT_ALL = 'DESELECT_ALL'
-export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
-// double check these icons!
-export const ICON_STATE: string[] = [
-  'sort-amount-down',
-  'sort-amount-down',
-  'sort-amount-up',
-]
+
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
@@ -122,7 +119,6 @@ export type SynapseTableProps = {
   markdownColumns?: string[] // array of column names which should render as markdown
 }
 
-export const TOOLTIP_DELAY_SHOW = 500
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -1140,23 +1136,6 @@ export default class SynapseTable extends React.Component<
 
     this.props.executeQueryRequest!(newQueryRequest)
   }
-}
-export const unCamelCase = (str: string | undefined): string | undefined => {
-  // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
-  if (!str) {
-    return str
-  }
-  return (
-    str
-      // insert a space between lower & upper
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      // space before last upper in a sequence followed by lower
-      .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-      // uppercase the first character
-      .replace(/^./, (str: string) => {
-        return str.toUpperCase()
-      })
-  )
 }
 type ColumnReference = {
   index: number

@@ -2,7 +2,7 @@ import * as React from 'react'
 import ReactTooltip from 'react-tooltip'
 import ExpandSvg from '../../../assets/icons/expand.svg'
 import ShrinkSvg from '../../../assets/icons/shrink.svg'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTableConstants'
 
 type ExpandTableProps = {
   onExpand: Function

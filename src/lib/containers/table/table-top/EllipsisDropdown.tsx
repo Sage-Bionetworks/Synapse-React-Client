@@ -3,7 +3,7 @@ import { Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTableConstants'
 import ReactTooltip from 'react-tooltip'
 
 library.add(faEllipsisV)

@@ -13,7 +13,7 @@ import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/modules'
-import { SELECT_ALL } from '../../../lib/containers/table/SynapseTable'
+import { SELECT_ALL } from '../../../lib/containers/table/SynapseTableConstants'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {

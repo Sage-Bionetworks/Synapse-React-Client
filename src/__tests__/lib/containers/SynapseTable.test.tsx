@@ -3,8 +3,8 @@ import { shallow } from 'enzyme'
 import SynapseTable, {
   SynapseTableProps,
   SORT_STATE,
-  unCamelCase,
 } from '../../../lib/containers/table/SynapseTable'
+import { unCamelCase } from 'lib/utils/UtilityFns'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
