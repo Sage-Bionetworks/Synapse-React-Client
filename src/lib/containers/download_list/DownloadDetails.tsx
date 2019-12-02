@@ -1,12 +1,14 @@
+import './DownloadList.scss'
+
 import React, { useState, useEffect } from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile, faDatabase, faClock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import calculateFriendlyFileSize from '../../utils/functions/calculateFriendlyFileSize'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
+import { calculateFriendlyFileSize } from '../../utils/UtilityFns'
 import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
-import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTable'
+import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 
 library.add(faFile)
 library.add(faDatabase)

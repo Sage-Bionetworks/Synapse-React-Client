@@ -3,8 +3,8 @@ import { shallow } from 'enzyme'
 import SynapseTable, {
   SynapseTableProps,
   SORT_STATE,
-  unCamelCase,
 } from '../../../lib/containers/table/SynapseTable'
+import { unCamelCase } from 'lib/utils/functions/unCamelCase'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
@@ -455,9 +455,9 @@ describe('basic functionality', () => {
       const mapEntityIdToHeader = {
         [mockEntityLinkValue]: {} as EntityHeader,
       }
-      const mapUserIdToHeader: Dictionary<
-        Partial<UserGroupHeader & UserProfile>
-      > = {
+      const mapUserIdToHeader: Dictionary<Partial<
+        UserGroupHeader & UserProfile
+      >> = {
         [mockAllAuthenticatedUsersValue]: {
           isIndividual: false,
           userName: AUTHENTICATED_USERS,

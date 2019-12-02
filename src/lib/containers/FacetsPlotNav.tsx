@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
-import { unCamelCase } from './table/SynapseTable'
+import { unCamelCase } from '../utils/UtilityFns'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBundle'

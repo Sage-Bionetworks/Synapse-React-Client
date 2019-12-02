@@ -7,7 +7,7 @@ import {
   LabelMarkdown,
   CommonCardProps,
 } from './CardContainerLogic'
-import { unCamelCase } from './table/SynapseTable'
+import { unCamelCase } from '../utils/UtilityFns'
 import MarkdownSynapse from './MarkdownSynapse'
 
 export type KeyToAlias = {

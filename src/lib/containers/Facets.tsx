@@ -6,7 +6,7 @@ import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequ
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 
-import { SELECT_ALL } from './table/SynapseTable'
+import { SELECT_ALL } from './table/SynapseTableConstants'
 import {
   getIsValueSelected,
   readFacetValues,

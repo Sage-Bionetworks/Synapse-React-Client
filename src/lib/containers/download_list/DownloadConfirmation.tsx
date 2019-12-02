@@ -1,3 +1,5 @@
+import './DownloadConfirmation.scss'
+
 import React, { useState, useEffect } from 'react'
 import { SynapseClient } from '../../utils'
 import { SynapseConstants } from '../../utils'
@@ -6,7 +8,7 @@ import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleR
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import moment from 'moment'
 import { Query } from '../../utils/jsonResponses/Table/Query'
-import { DownloadDetails } from './'
+import  DownloadDetails  from './DownloadDetails'
 
 enum StatusEnum {
   LOADING_INFO,

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTable'
+import { TOOLTIP_DELAY_SHOW } from '../SynapseTableConstants'
 import ReactTooltip from 'react-tooltip'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'

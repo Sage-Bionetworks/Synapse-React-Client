@@ -7,9 +7,9 @@ import QueryCount from './QueryCount'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
 import SynapseTable, {
-  SynapseTableProps,
-  unCamelCase,
+  SynapseTableProps, 
 } from './table/SynapseTable'
+import { unCamelCase } from '../utils/UtilityFns'
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
