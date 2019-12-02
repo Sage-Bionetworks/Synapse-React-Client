@@ -31,13 +31,13 @@ import { CreatePackage } from './CreatePackage'
 
 library.add(faTrash)
 
-type DownloadListTableState = {
-  isLoading?: boolean
+type DownloadListTableData = {
   references?: PaginatedResults<EntityHeader>
   batchFileResult?: BatchFileResult
   downloadList?: DownloadList
 }
 
+type LoadingState = boolean
 export type DownloadListTableProps = {
   token?: string
 }
@@ -47,14 +47,15 @@ export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 export default function DownloadListTable(props: DownloadListTableProps) {
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
-  let [state, setState] = useState<DownloadListTableState>({
-    isLoading: true,
+  let [data, setData] = useState<DownloadListTableData>({
     references: undefined,
     batchFileResult: undefined,
     downloadList: undefined,
   })
+  // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
+  let [isLoading, setIsLoading] = useState<LoadingState>(true)
   const { token } = props
-  const { isLoading, references, batchFileResult, downloadList } = state
+  const { references, batchFileResult, downloadList } = data
   const requestedFiles =
     (batchFileResult && batchFileResult.requestedFiles) || []
   const ownerIds: any = requestedFiles
@@ -72,13 +73,14 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       return
     }
     try {
+      setIsLoading(true)
       const downloadList = await getDownloadList(token)
       const { filesToDownload } = downloadList
       if (filesToDownload.length === 0) {
-        setState({
+        setData({
           downloadList,
-          isLoading: false,
         })
+        setIsLoading(false)
         return
       }
       const referenceCall: Reference[] = filesToDownload.map(el => {
@@ -96,12 +98,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // batch file result gives FilesHandle for the files the user can download
       // which has additional metadata - createdBy, numBytes, etc.
       const batchFileResult = await getFiles(batchFileRequest, token)
-      setState({
+      setData({
         references,
         batchFileResult,
         downloadList,
-        isLoading: false,
       })
+      setIsLoading(false)
     } catch (e) {
       console.error('Error in DownloadList API call : ', e)
     }
@@ -110,9 +112,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const clearDownloadList = (
     _event: React.SyntheticEvent<HTMLButtonElement>,
   ) => {
+    setIsLoading(true)
     deleteDownloadList(token)
       .then(() => {
-        setState({
+        setIsLoading(false)
+        setData({
           downloadList: undefined,
         })
       })
@@ -132,6 +136,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         associateObjectType: FileHandleAssociateType.FileEntity,
       },
     ]
+    setIsLoading(true)
     deleteDownloadListFiles(list, token)
       .then(() => {
         fetchData(token)
