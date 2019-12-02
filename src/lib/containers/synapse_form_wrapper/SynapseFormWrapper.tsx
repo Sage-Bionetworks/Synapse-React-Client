@@ -5,7 +5,7 @@ import { FileEntity } from '../../utils/jsonResponses/FileEntity'
 import { UiSchema } from 'react-jsonschema-form'
 import { StatusEnum } from './types'
 import Alert from 'react-bootstrap/Alert'
-import DrugUploadForm from './DrugUploadForm'
+import SynapseForm from './SynapseForm'
 import { FormData } from '../../utils/jsonResponses/Forms'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import $RefParser from 'json-schema-ref-parser'
@@ -18,7 +18,7 @@ export type UploadToolSearchParams = {
   formGroupId: string
 }
 
-export type DrugUploadToolProps = {
+export type SynapseFormWrapperProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
@@ -31,7 +31,7 @@ export type DrugUploadToolProps = {
   formClass?: string // to support potential theaming
 }
 
-type DrugUploadToolState = {
+type SynapseFormWrapperState = {
   notification?: Notification
   isLoading?: boolean
   formDataId?: string // file holding user form data
@@ -52,11 +52,11 @@ interface Notification extends Error {
   type: StatusEnum
 }
 
-class DrugUploadTool extends React.Component<
-  DrugUploadToolProps,
-  DrugUploadToolState
+class SynapseFormWrapper extends React.Component<
+  SynapseFormWrapperProps,
+  SynapseFormWrapperState
 > {
-  constructor(props: DrugUploadToolProps) {
+  constructor(props: SynapseFormWrapperProps) {
     super(props)
     this.state = {
       isLoading: true,
@@ -68,7 +68,7 @@ class DrugUploadTool extends React.Component<
     await this.getData(this.props.token)
   }
 
-  async componentDidUpdate(prevProps: DrugUploadToolProps) {
+  async componentDidUpdate(prevProps: SynapseFormWrapperProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
       await this.getData(this.props.token)
@@ -329,7 +329,7 @@ class DrugUploadTool extends React.Component<
     }
   }
 
-  isReadyToDisplayForm = (state: DrugUploadToolState): boolean => {
+  isReadyToDisplayForm = (state: SynapseFormWrapperState): boolean => {
     return (
       this.state.status !== StatusEnum.ERROR_CRITICAL &&
       state.formSchema &&
@@ -340,8 +340,8 @@ class DrugUploadTool extends React.Component<
   }
 
   renderLoader = (
-    state: DrugUploadToolState,
-    props: DrugUploadToolProps,
+    state: SynapseFormWrapperState,
+    props: SynapseFormWrapperProps,
   ): JSX.Element => {
     if (
       !_.includes(
@@ -412,7 +412,7 @@ class DrugUploadTool extends React.Component<
 
           {this.isReadyToDisplayForm(this.state) && (
             <div>
-              <DrugUploadForm
+              <SynapseForm
                 schema={this.state.formSchema}
                 uiSchema={this.state.formUiSchema!}
                 formData={this.state.formData}
@@ -426,7 +426,7 @@ class DrugUploadTool extends React.Component<
                 isSubmitted={
                   this.props.searchParams && !!this.props.searchParams.submitted
                 }
-              ></DrugUploadForm>
+              ></SynapseForm>
             </div>
           )}
         </div>
@@ -435,4 +435,4 @@ class DrugUploadTool extends React.Component<
   }
 }
 
-export default DrugUploadTool
+export default SynapseFormWrapper

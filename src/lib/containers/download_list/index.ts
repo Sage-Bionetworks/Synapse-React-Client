@@ -1,5 +1,6 @@
 import DownloadDetails from './DownloadDetails'
-import './DownloadList.scss'
+import {DownloadConfirmation} from './DownloadConfirmation'
+
 
 export default { DownloadDetails } 
-export { DownloadDetails } 
+export { DownloadDetails, DownloadConfirmation}

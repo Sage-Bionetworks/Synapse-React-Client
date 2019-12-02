@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 
 import WarningModal, {
   WarningModalProps,
-} from '../../../../lib/containers/drug_upload_tool/WarningModal'
+} from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 const createMountedComponent = (props: WarningModalProps) => {
   const wrapper = mount(<WarningModal {...props} />)

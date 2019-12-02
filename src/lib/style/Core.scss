@@ -898,16 +898,24 @@ a.SRC-lightLink {
 }
 
 a.dropdown-item {
+  $color: #212529;
   display: block;
   width: 100%;
   padding: 0.25rem 1.5rem;
   clear: both;
   font-weight: 400;
-  color: #212529;
+  color: $color;
   text-align: inherit;
   white-space: nowrap;
   background-color: transparent;
   border: 0;
+
+  &.disabled {
+    text-decoration: none;
+    outline: none;
+    color: lighten($color, 35%);
+    cursor: default;
+  }
 }
 
 .dropdown-divider {
@@ -923,19 +931,19 @@ a.dropdown-item {
 }
 
 .SRC-success-color {
-  color: rgb(83, 207, 151)
+  color: rgb(83, 207, 151);
 }
 .SRC-success-color-bg {
-  background-color: rgb(83, 207, 151)
+  background-color: rgb(83, 207, 151);
 }
 .SRC-warning-color {
-  color: rgb(249, 168, 67)
+  color: rgb(249, 168, 67);
 }
 .SRC-warning-color-bg {
-  background-color: rgb(249, 168, 67)
+  background-color: rgb(249, 168, 67);
 }
 .SRC-half-opacity {
-  opacity: 0.5
+  opacity: 0.5;
 }
 
 .plotly .slice {

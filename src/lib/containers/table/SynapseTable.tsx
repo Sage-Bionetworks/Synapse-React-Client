@@ -1,3 +1,5 @@
+import {  } from './SynapseTableConstants';
+import { DownloadConfirmation } from '../download_list/DownloadConfirmation';
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -53,9 +55,13 @@ import {
   DownloadOptions,
   ColumnSelection,
 } from './table-top/'
+import {TOOLTIP_DELAY_SHOW,
+SELECT_ALL, ICON_STATE } from './SynapseTableConstants'
+
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
 import HasAccess from '../HasAccess'
+import { unCamelCase } from './../../utils/UtilityFns'
 const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
@@ -82,15 +88,7 @@ library.add(faGlobeAmericas)
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
-export const SELECT_ALL = 'SELECT_ALL'
-export const DESELECT_ALL = 'DESELECT_ALL'
-export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
-// double check these icons!
-export const ICON_STATE: string[] = [
-  'sort-amount-down',
-  'sort-amount-down',
-  'sort-amount-up',
-]
+
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
@@ -106,6 +104,7 @@ export type SynapseTableState = {
   isColumnSelected: boolean[]
   columnIconSortState: number[]
   isModalDownloadOpen: boolean
+  isDownloadConfirmationOpen:boolean
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
@@ -120,7 +119,6 @@ export type SynapseTableProps = {
   markdownColumns?: string[] // array of column names which should render as markdown
 }
 
-export const TOOLTIP_DELAY_SHOW = 500
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -150,6 +148,7 @@ export default class SynapseTable extends React.Component<
       columnIconSortState: [],
       isColumnSelected: [],
       isModalDownloadOpen: false,
+      isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
       // sortedColumnSelection contains the columns which are
@@ -399,8 +398,9 @@ export default class SynapseTable extends React.Component<
     }
     return (
       <DownloadOptions
-        onDownloadFiles={this.advancedSearch}
+        onDownloadFiles={(e: React.SyntheticEvent)=>this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
+        isUnauthenticated = {!this.props.token}
       />
     )
   }
@@ -475,9 +475,10 @@ export default class SynapseTable extends React.Component<
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
+         {this.state.isDownloadConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isDownloadConfirmationOpen: false})}/>}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
-            <tr>{this.createTableHeader(headers, facets)}</tr>
+           <tr>{this.createTableHeader(headers, facets)}</tr>
           </thead>
           <tbody>{this.createTableRows(rows, headers)}</tbody>
         </table>
@@ -533,13 +534,14 @@ export default class SynapseTable extends React.Component<
           />
         </span>
         <EllipsisDropdown
-          onDownloadFiles={this.advancedSearch}
+          onDownloadFiles= {(e: React.SyntheticEvent)=>this.showDownload(e)}
           onDownloadTableOnly={() =>
             this.setState(onDownloadTableOnlyArguments)
           }
           onShowColumns={() => this.setState({ showColumnSelection: true })}
           onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
+          isUnauthenticated = {!this.props.token}
         />
       </div>
     )
@@ -1016,6 +1018,11 @@ export default class SynapseTable extends React.Component<
     )
   }
 
+
+  private showDownload(event: React.SyntheticEvent) {
+    this.setState({isDownloadConfirmationOpen : true})
+  }
+
   private getLengthOfPropsData() {
     const { data } = this.props
     return data!.queryResult.queryResults.headers.length
@@ -1129,23 +1136,6 @@ export default class SynapseTable extends React.Component<
 
     this.props.executeQueryRequest!(newQueryRequest)
   }
-}
-export const unCamelCase = (str: string | undefined): string | undefined => {
-  // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
-  if (!str) {
-    return str
-  }
-  return (
-    str
-      // insert a space between lower & upper
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      // space before last upper in a sequence followed by lower
-      .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-      // uppercase the first character
-      .replace(/^./, (str: string) => {
-        return str.toUpperCase()
-      })
-  )
 }
 type ColumnReference = {
   index: number

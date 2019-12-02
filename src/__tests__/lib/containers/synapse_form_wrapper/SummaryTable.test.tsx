@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 import * as _ from 'lodash'
-import { Step } from '../../../../lib/containers/drug_upload_tool/types'
+import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import SummaryTable, {
   SummaryTableProps,
-} from '../../../../lib/containers/drug_upload_tool/SummaryTable'
+} from '../../../../lib/containers/synapse_form_wrapper/SummaryTable'
 import $RefParser from 'json-schema-ref-parser'
 
 import {
