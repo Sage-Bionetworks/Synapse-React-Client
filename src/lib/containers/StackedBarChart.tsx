@@ -8,7 +8,7 @@ import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { FacetColumnResultValueCount } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { getIsValueSelected } from '../utils/functions/facetUtils'
-import { unCamelCase } from '../utils/UtilityFns'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 

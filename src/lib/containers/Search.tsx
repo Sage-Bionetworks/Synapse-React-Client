@@ -13,7 +13,7 @@ import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
 import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
 import { Dropdown } from 'react-bootstrap'
-import { unCamelCase } from '../utils/UtilityFns'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 
 library.add(faCaretDown)
 library.add(faCaretUp)

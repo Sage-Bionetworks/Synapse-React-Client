@@ -6,10 +6,8 @@ import { Facets } from './Facets'
 import QueryCount from './QueryCount'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
-import SynapseTable, {
-  SynapseTableProps, 
-} from './table/SynapseTable'
-import { unCamelCase } from '../utils/UtilityFns'
+import SynapseTable, { SynapseTableProps } from './table/SynapseTable'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'

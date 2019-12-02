@@ -1,5 +1,5 @@
-import {  } from './SynapseTableConstants';
-import { DownloadConfirmation } from '../download_list/DownloadConfirmation';
+import {} from './SynapseTableConstants'
+import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -55,13 +55,16 @@ import {
   DownloadOptions,
   ColumnSelection,
 } from './table-top/'
-import {TOOLTIP_DELAY_SHOW,
-SELECT_ALL, ICON_STATE } from './SynapseTableConstants'
+import {
+  TOOLTIP_DELAY_SHOW,
+  SELECT_ALL,
+  ICON_STATE,
+} from './SynapseTableConstants'
 
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
 import HasAccess from '../HasAccess'
-import { unCamelCase } from './../../utils/UtilityFns'
+import { unCamelCase } from './../../utils/functions/unCamelCase'
 const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
@@ -104,7 +107,7 @@ export type SynapseTableState = {
   isColumnSelected: boolean[]
   columnIconSortState: number[]
   isModalDownloadOpen: boolean
-  isDownloadConfirmationOpen:boolean
+  isDownloadConfirmationOpen: boolean
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
@@ -118,7 +121,6 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
 }
-
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -398,9 +400,9 @@ export default class SynapseTable extends React.Component<
     }
     return (
       <DownloadOptions
-        onDownloadFiles={(e: React.SyntheticEvent)=>this.showDownload(e)}
+        onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
-        isUnauthenticated = {!this.props.token}
+        isUnauthenticated={!this.props.token}
       />
     )
   }
@@ -475,10 +477,16 @@ export default class SynapseTable extends React.Component<
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
-         {this.state.isDownloadConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isDownloadConfirmationOpen: false})}/>}
+        {this.state.isDownloadConfirmationOpen && (
+          <DownloadConfirmation
+            token={this.props.token!}
+            queryBundleRequest={this.props.getLastQueryRequest!()}
+            fnClose={() => this.setState({ isDownloadConfirmationOpen: false })}
+          />
+        )}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
-           <tr>{this.createTableHeader(headers, facets)}</tr>
+            <tr>{this.createTableHeader(headers, facets)}</tr>
           </thead>
           <tbody>{this.createTableRows(rows, headers)}</tbody>
         </table>
@@ -534,14 +542,14 @@ export default class SynapseTable extends React.Component<
           />
         </span>
         <EllipsisDropdown
-          onDownloadFiles= {(e: React.SyntheticEvent)=>this.showDownload(e)}
+          onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
           onDownloadTableOnly={() =>
             this.setState(onDownloadTableOnlyArguments)
           }
           onShowColumns={() => this.setState({ showColumnSelection: true })}
           onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
-          isUnauthenticated = {!this.props.token}
+          isUnauthenticated={!this.props.token}
         />
       </div>
     )
@@ -1018,9 +1026,8 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-
   private showDownload(event: React.SyntheticEvent) {
-    this.setState({isDownloadConfirmationOpen : true})
+    this.setState({ isDownloadConfirmationOpen: true })
   }
 
   private getLengthOfPropsData() {

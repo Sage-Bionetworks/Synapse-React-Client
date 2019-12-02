@@ -10,7 +10,7 @@ const sufixes: string[] = [
   'YB',
 ]
 
-export default function calculateFriendlyFileSize(bytes: number) {
+export function calculateFriendlyFileSize(bytes: number) {
   if (!bytes) {
     return ''
   }
