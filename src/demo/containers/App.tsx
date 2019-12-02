@@ -6,8 +6,8 @@ import '../style/App.scss'
 import '../style/DemoStyle.scss'
 import Demo from './Demo'
 import Playground from './playground/Playground'
-import DrugUploadTool from '../../lib/containers/drug_upload_tool/DrugUploadTool'
-import FileGrid from '../../lib/containers/drug_upload_tool/UserFileGrid'
+import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
+import FileGrid from '../../lib/containers/synapse_form_wrapper/UserFileGrid'
 import { SynapseClient } from '../../lib/utils/'
 
 /**
@@ -141,7 +141,7 @@ export default class App extends React.Component<{}, AppState> {
                     itemNoun="Compound"
                   />
                 ) : (
-                  <DrugUploadTool
+                  <SynapseFormWrapper
                     {...props}
                     formSchemaEntityId="syn20680102"
                     fileNamePath="naming.compound_name"
@@ -176,7 +176,7 @@ export default class App extends React.Component<{}, AppState> {
                     itemNoun={'Contribution Request'}
                   />
                 ) : (
-                  <DrugUploadTool
+                  <SynapseFormWrapper
                     {...props}
                     formSchemaEntityId="syn20692910"
                     fileNamePath="study.submission_name"

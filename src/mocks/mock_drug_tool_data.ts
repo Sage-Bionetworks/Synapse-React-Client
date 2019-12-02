@@ -1,5 +1,5 @@
 import { FileEntity } from '../lib/utils/jsonResponses/FileEntity'
-import { Step, StepStateEnum } from '../lib/containers/drug_upload_tool/types'
+import { Step, StepStateEnum } from '../lib/containers/synapse_form_wrapper/types'
 import { ListResponse, StatusEnum } from '../lib/utils/jsonResponses/Forms'
 import _mockFormData from './mockDrugToolFormData.json'
 import _mockNavSchema from './mockDrugToolFormNavSchema.json'

@@ -4,9 +4,9 @@ import { Engine } from 'json-rules-engine'
 import $RefParser from 'json-schema-ref-parser'
 import _ from 'lodash'
 
-import DrugUploadForm, {
-  DrugUploadFormProps,
-} from '../../../../lib/containers/drug_upload_tool/DrugUploadForm'
+import SynapseForm, {
+  SynapseFormProps,
+} from '../../../../lib/containers/synapse_form_wrapper/SynapseForm'
 
 import {
   mockFormSchema as formSchema,
@@ -15,7 +15,7 @@ import {
   mockUiSchema as formUiSchema,
   mockInvalidScreenData as inVivoData,
 } from '../../../../mocks/mock_drug_tool_data'
-import { NavActionEnum, Step } from 'lib/containers/drug_upload_tool/types'
+import { NavActionEnum, Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 
 const formTitle = 'my submission'
 
@@ -27,10 +27,10 @@ const newFormData = {
   },
 }
 
-const createShallowComponent = async (props: DrugUploadFormProps) => {
+const createShallowComponent = async (props: SynapseFormProps) => {
   const schema = await $RefParser.dereference(props.schema)
   const _props = { ...props, ...{ schema } }
-  const wrapper = shallow<DrugUploadForm>(<DrugUploadForm {..._props} />, {})
+  const wrapper = shallow<SynapseForm>(<SynapseForm {..._props} />, {})
 
   const instance = wrapper.instance()
   return { wrapper, instance }
@@ -47,7 +47,7 @@ const mock = {
   },
 }
 
-const props: DrugUploadFormProps = {
+const props: SynapseFormProps = {
   schema: formSchema,
 
   navSchema: formNavSchema,

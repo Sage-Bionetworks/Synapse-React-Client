@@ -1,4 +1,4 @@
-import './DrugUploadTool.scss'
+import './SynapseFormWrapper.scss'
 
 import * as React from 'react'
 import _ from 'lodash'
@@ -36,7 +36,7 @@ export interface IFormData {
   }
 }
 
-export type DrugUploadFormProps = {
+export type SynapseFormProps = {
   schema: FormSchema
   uiSchema: UiSchema
   navSchema: {
@@ -52,7 +52,7 @@ export type DrugUploadFormProps = {
   isSubmitted?: boolean
 }
 
-type DrugUploadFormState = {
+type SynapseFormState = {
   formData: IFormData // form data that prepopulates the form
   currentStep: Step
   nextStep?: Step
@@ -72,9 +72,9 @@ export interface SummaryFormat {
   value: string
 }
 
-export default class DrugUploadForm extends React.Component<
-  DrugUploadFormProps,
-  DrugUploadFormState
+export default class SynapseForm extends React.Component<
+  SynapseFormProps,
+  SynapseFormState
 > {
   excludeWarningText = (
     <div>
@@ -111,7 +111,7 @@ export default class DrugUploadForm extends React.Component<
     }
   }
 
-  constructor(props: DrugUploadFormProps) {
+  constructor(props: SynapseFormProps) {
     super(props)
 
     //will modify the ui:help to render html vs text
@@ -163,7 +163,7 @@ export default class DrugUploadForm extends React.Component<
     window.removeEventListener('beforeunload', this.onUnload)
   }
 
-  componentDidUpdate(prevProps: DrugUploadFormProps) {
+  componentDidUpdate(prevProps: SynapseFormProps) {
     const shouldUpdate = this.props.callbackStatus !== prevProps.callbackStatus
     const isSuccess =
       this.props.callbackStatus === StatusEnum.SAVE_SUCCESS ||
@@ -178,7 +178,7 @@ export default class DrugUploadForm extends React.Component<
   }
 
   _setIncludedPropInFormDataNonWizard = (
-    currentState: DrugUploadFormState,
+    currentState: SynapseFormState,
     schemaScreens: any,
   ): IFormData => {
     const result = {}
@@ -193,7 +193,7 @@ export default class DrugUploadForm extends React.Component<
   }
 
   _setIncludedPropInFormDataWizard = (
-    currentState: DrugUploadFormState,
+    currentState: SynapseFormState,
   ): IFormData => {
     const firstStepId = currentState.currentStep.id
     const newStateData = _.cloneDeep(currentState.formData)
