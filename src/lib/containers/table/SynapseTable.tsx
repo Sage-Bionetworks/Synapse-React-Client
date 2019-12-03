@@ -475,7 +475,7 @@ export default class SynapseTable extends React.Component<
       </button>
     )
     let isShowingAccessColumn: boolean | undefined = showAccessColumn
-    if ( showAccessColumn && rows.length > 0 ) {
+    if (showAccessColumn && rows.length > 0) {
       // PORTALS-924: verify that row actualy contains a defined rowId
       isShowingAccessColumn = rows[0].rowId !== undefined
     }
@@ -491,9 +491,13 @@ export default class SynapseTable extends React.Component<
         )}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
-           <tr>{this.createTableHeader(headers, facets, isShowingAccessColumn)}</tr>
+            <tr>
+              {this.createTableHeader(headers, facets, isShowingAccessColumn)}
+            </tr>
           </thead>
-          <tbody>{this.createTableRows(rows, headers, isShowingAccessColumn)}</tbody>
+          <tbody>
+            {this.createTableRows(rows, headers, isShowingAccessColumn)}
+          </tbody>
         </table>
         {hasMoreData && next}
         {pastZero && previous}
@@ -736,7 +740,11 @@ export default class SynapseTable extends React.Component<
     })
   }
 
-  private createTableRows(rows: Row[], headers: SelectColumn[], isShowingAccessColumn: boolean | undefined) {
+  private createTableRows(
+    rows: Row[],
+    headers: SelectColumn[],
+    isShowingAccessColumn: boolean | undefined,
+  ) {
     const rowsFormatted: JSX.Element[] = []
     const { token } = this.props
     const {
@@ -903,7 +911,7 @@ export default class SynapseTable extends React.Component<
   private createTableHeader(
     headers: SelectColumn[],
     facets: FacetColumnResult[],
-    isShowingAccessColumn: boolean | undefined
+    isShowingAccessColumn: boolean | undefined,
   ) {
     const { token } = this.props
     const {
@@ -1035,15 +1043,11 @@ export default class SynapseTable extends React.Component<
   }
 
   private showDownload(event: React.SyntheticEvent) {
-<<<<<<< HEAD
-    this.setState({ isDownloadConfirmationOpen: true })
-=======
-    if(this.props.enableDownloadConfirmation) {
+    if (this.props.enableDownloadConfirmation) {
       this.setState({ isDownloadConfirmationOpen: true })
     } else {
       this.advancedSearch(event)
     }
->>>>>>> 481a90e0394391f670c67bbaab4e7a192cf4ce20
   }
 
   private getLengthOfPropsData() {

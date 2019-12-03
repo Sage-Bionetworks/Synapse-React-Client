@@ -62,6 +62,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // then map to ownerIds
   const ownerIds: string[] = requestedFiles
     .filter(el => el.fileHandle && el.fileHandle.createdBy)
+    // @ts-ignore the error below could not occur if the filter is
     .map(el => el.fileHandle.createdBy)
   let userProfiles = useGetProfiles({ ids: ownerIds, token })
 
@@ -71,6 +72,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   const fetchData = async (token: string | undefined) => {
     if (!token) {
+      setIsLoading(false)
       // doesn't make sense with anonymous user!
       return
     }
