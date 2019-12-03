@@ -47,6 +47,7 @@ class Demo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           title: 'title',
           synapseId: 'syn16787123',
+          enableDownloadConfirmation: true,
         },
         menuConfig: [
           {
@@ -68,10 +69,16 @@ class Demo extends React.Component<{}, DemoState> {
             sql: 'SELECT name, grant FROM syn11346063',
           },
           {
+            title: 'File Add To List Demo',
+            facetDisplayValue: 'Group By Grant',
+            facet: 'grant',
+            sql: 'SELECT name, grant FROM syn11346063 Group by grant',
+          },
+          {
             title: 'File Add To List Demo with Where Clause',
             facetDisplayValue: 'Name',
             facet: 'consortium',
-            sql: 'SELECT name, grant FROM syn11346063 WHERE ( ( "consortium" IS NULL ) )',
+            sql: 'SELECT name, grant FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
           },
         ],
         rgbIndex: 2,

@@ -117,6 +117,7 @@ export type SynapseTableProps = {
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
+  enableDownloadConfirmation?: boolean
 }
 
 
@@ -501,11 +502,12 @@ export default class SynapseTable extends React.Component<
     const onExpandArguments = {
       isExpanded: !isExpanded,
     }
+    const queryRequest = this.props.getLastQueryRequest!()
     return (
       <div className="SRC-centerContent" style={{ background, padding: 8 }}>
         <h3 className="SRC-tableHeader"> {title}</h3>
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
-          {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && (
+          {!isGroupByInSql(queryRequest.query.sql) && (
             <>
               <span
                 tabIndex={0}
@@ -541,7 +543,8 @@ export default class SynapseTable extends React.Component<
           onShowColumns={() => this.setState({ showColumnSelection: true })}
           onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
-          isUnauthenticated = {!this.props.token}
+          isUnauthenticated={!this.props.token}
+          isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
         />
       </div>
     )
@@ -1020,7 +1023,11 @@ export default class SynapseTable extends React.Component<
 
 
   private showDownload(event: React.SyntheticEvent) {
-    this.setState({isDownloadConfirmationOpen : true})
+    if(this.props.enableDownloadConfirmation) {
+      this.setState({ isDownloadConfirmationOpen: true })
+    } else {
+      this.advancedSearch(event)
+    }
   }
 
   private getLengthOfPropsData() {
