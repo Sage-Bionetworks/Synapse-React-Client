@@ -12,8 +12,8 @@ import Login from './containers/Login'
 import QueryCount from './containers/QueryCount'
 import EntityForm from './containers/EntityForm'
 import CardContainer from './containers/CardContainer'
-import DrugUploadTool from './containers/drug_upload_tool/DrugUploadTool'
-import UserFileGrid from './containers/drug_upload_tool/UserFileGrid'
+import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWrapper'
+import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/UserFileGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import NewsFeedMenu from './containers/NewsFeedMenu'
@@ -35,8 +35,8 @@ const SynapseComponents = {
   Markdown: MarkdownSynapse,
   ModalDownload,
   NewsFeedMenu,
-  DrugUploadTool,
-  UserFileGrid,
+  SynapseFormWrapper,
+  SynapseFormSubmissionsGrid
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

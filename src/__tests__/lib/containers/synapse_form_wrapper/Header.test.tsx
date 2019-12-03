@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 import Header, {
   HeaderProps,
-} from '../../../../lib/containers/drug_upload_tool/Header'
+} from '../../../../lib/containers/synapse_form_wrapper/Header'
 
 const createMountedComponent = (props: HeaderProps) => {
   const wrapper = mount(<Header {...props} />)

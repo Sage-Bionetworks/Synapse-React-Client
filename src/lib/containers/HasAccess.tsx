@@ -64,13 +64,11 @@ export default class HasAccess extends React.Component<
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: synapseId,
     }
-    SynapseClient.getRestrictionInformation(request, token)
-      .then(restrictionInformation => {
+    SynapseClient.getRestrictionInformation(request, token).then(
+      restrictionInformation => {
         this.setState({ restrictionInformation })
-      })
-      .catch(err => {
-        console.error('Error on access requirements: ', err)
-      })
+      },
+    )
   }
 
   render() {

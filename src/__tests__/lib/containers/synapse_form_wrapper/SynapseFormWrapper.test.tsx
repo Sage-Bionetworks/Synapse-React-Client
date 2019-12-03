@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import DrugUploadTool, {
-  DrugUploadToolProps,
+import SynapseFormWrapper, {
+  SynapseFormWrapperProps,
   UploadToolSearchParams,
-} from '../../../../lib/containers/drug_upload_tool/DrugUploadTool'
+} from '../../../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
 
-import { DrugUploadFormProps } from '../../../../lib/containers/drug_upload_tool/DrugUploadForm'
+import { SynapseFormProps } from '../../../../lib/containers/synapse_form_wrapper/SynapseForm'
 import { mockFileEntity } from '../../../../mocks/mock_file_entity'
 import {
   mockFileEntityWithVersion,
@@ -30,17 +30,17 @@ const formTitle = 'my submission'
 const formClass = 'someFormClass'
 
 const createShallowComponent = async (
-  props: DrugUploadToolProps,
+  props: SynapseFormWrapperProps,
   disableLifecycleMethods: boolean = false,
 ) => {
-  const wrapper = await shallow<DrugUploadTool>(<DrugUploadTool {...props} />, {
+  const wrapper = await shallow<SynapseFormWrapper>(<SynapseFormWrapper {...props} />, {
     disableLifecycleMethods,
   })
 
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
-const props: DrugUploadToolProps = {
+const props: SynapseFormWrapperProps = {
   token,
   formSchemaEntityId,
   formUiSchemaEntityId,
@@ -190,9 +190,9 @@ describe('basic tests', () => {
         .find('div')
         .first()
         .hasClass('someFormClass')
-      const formProps: DrugUploadFormProps = (wrapper
-        .find('DrugUploadForm')
-        .props() as any) as DrugUploadFormProps
+      const formProps: SynapseFormProps = (wrapper
+        .find('SynapseForm')
+        .props() as any) as SynapseFormProps
       expect(formProps.formTitle).toBe(props.formTitle)
       expect(formProps.isWizardMode).toBeTruthy()
     })
@@ -207,9 +207,9 @@ describe('basic tests', () => {
         .find('div')
         .first()
         .hasClass('someFormClass')
-      const formProps: DrugUploadFormProps = (wrapper
-        .find('DrugUploadForm')
-        .props() as any) as DrugUploadFormProps
+      const formProps: SynapseFormProps = (wrapper
+        .find('SynapseForm')
+        .props() as any) as SynapseFormProps
       expect(formProps.formTitle).toBe('Another Title')
       expect(Object.keys(formProps.formData)).toEqual(['metadata'])
       expect(formProps.isWizardMode).toBeFalsy()

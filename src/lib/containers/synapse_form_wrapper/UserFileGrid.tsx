@@ -1,4 +1,4 @@
-import './DrugUploadTool.scss'
+import './SynapseFormWrapper.scss'
 
 import * as React from 'react'
 
