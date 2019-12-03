@@ -15,6 +15,7 @@ type EllipsisDropdownProps = {
   onFullScreen: Function
   isExpanded: boolean
   isUnauthenticated?: boolean
+  isGroupedQuery?: boolean
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
@@ -41,21 +42,23 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
-          <Dropdown.Item
-            onClick={() => onDownloadFiles()}
-            className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
-            disabled={props.isUnauthenticated}
-          >
-            Download Files
-          </Dropdown.Item>
-          <Dropdown.Item onClick={() => onDownloadTableOnly()}>
-            Download Table Only
-          </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={() => onShowColumns()}>
+          {!props.isGroupedQuery && [
+            <Dropdown.Item key='download_files'
+              onClick={() => onDownloadFiles()}
+              className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
+              disabled={props.isUnauthenticated}
+            >
+              Download Files
+            </Dropdown.Item>,
+            <Dropdown.Item key='download_tables' onClick={() => onDownloadTableOnly()}>
+              Download Table Only
+            </Dropdown.Item>,
+            <Dropdown.Divider  key='divider1'/>,
+          ]}
+          <Dropdown.Item  key='show_columns' onClick={() => onShowColumns()}>
             Show Columns
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => onFullScreen()}>
+          <Dropdown.Item key='expand' onClick={() => onFullScreen()}>
             {isExpanded ? 'Shrink' : 'Full Screen'}
           </Dropdown.Item>
         </Dropdown.Menu>
