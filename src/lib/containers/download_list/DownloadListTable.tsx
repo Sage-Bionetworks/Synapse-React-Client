@@ -58,9 +58,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
     (batchFileResult && batchFileResult.requestedFiles) || []
-  const ownerIds: any = requestedFiles
-    .map(el => el.fileHandle && el.fileHandle.createdBy)
-    .filter(el => el)
+  // Get owner ids from download list by filtering to items that have a file handle
+  // then map to ownerIds
+  const ownerIds: string[] = requestedFiles
+    .filter(el => el.fileHandle && el.fileHandle.createdBy)
+    .map(el => el.fileHandle.createdBy)
   let userProfiles = useGetProfiles({ ids: ownerIds, token })
 
   useEffect(() => {
@@ -80,7 +82,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         setData({
           downloadList,
         })
-        setIsLoading(false)
         return
       }
       const referenceCall: Reference[] = filesToDownload.map(el => {
@@ -103,29 +104,30 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         batchFileResult,
         downloadList,
       })
-      setIsLoading(false)
     } catch (e) {
       console.error('Error in DownloadList API call : ', e)
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const clearDownloadList = (
+  const clearDownloadList = async (
     _event: React.SyntheticEvent<HTMLButtonElement>,
   ) => {
     setIsLoading(true)
-    deleteDownloadList(token)
-      .then(() => {
-        setIsLoading(false)
-        setData({
-          downloadList: undefined,
-        })
+    try {
+      await deleteDownloadList(token)
+      setData({
+        downloadList: undefined,
       })
-      .catch(err => {
-        console.error('Error on clearing download list: ', err)
-      })
+    } catch (err) {
+      console.error('Error on clearing download list: ', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const deleteFileFromList = (
+  const deleteFileFromList = async (
     fileHandleId: string,
     associateObjectId: string,
   ) => {
@@ -137,13 +139,14 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       },
     ]
     setIsLoading(true)
-    deleteDownloadListFiles(list, token)
-      .then(() => {
-        fetchData(token)
-      })
-      .catch(err => {
-        console.error('Error on delete from download list', err)
-      })
+    try {
+      await deleteDownloadListFiles(list, token)
+      await fetchData(token)
+    } catch (err) {
+      console.error('Error on delete from download list', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const filesToDownload = (downloadList && downloadList.filesToDownload) || []

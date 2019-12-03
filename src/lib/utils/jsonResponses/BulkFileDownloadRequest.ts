@@ -1,5 +1,6 @@
 import { FileHandleAssociation } from './FileHandleAssociation'
 
+// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ZipFileFormat.html
 export enum ZipFileFormat {
   CommandLineCache = 'CommandLineCache', // This is the default format. Zip file format structure is: (%1000)//
   Flat = 'Flat', // Files are writtent to the zip 'flat' with no directory structure.

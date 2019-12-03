@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import {
   CreatePackage,
   CreatePackageProps,
-  templateDownload,
+  TEMPLATE_DOWNLOAD_MESSAGE,
 } from 'lib/containers/download_list/CreatePackage'
 import { Alert } from 'react-bootstrap'
 import { DownloadOrder } from 'lib/utils/jsonResponses/Download/DownloadOrder'
@@ -27,6 +27,9 @@ describe('it performs all functionality ', () => {
     zipFileName: '',
     totalNumberOfFiles: 0,
     totalSizeBytes: 0,
+  }
+  const actionButtonEventOptions = {
+    preventDefault: () => {},
   }
   it('renders without crashing', () => {
     const wrapper = shallow(<CreatePackage {...props} />)
@@ -70,7 +73,7 @@ describe('it performs all functionality ', () => {
         },
       })
       // Step 3: Call create package
-      wrapper.find('.action-button').simulate('click')
+      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
     })
     // Verify UI
     expect(wrapper.find('.package-created')).toHaveLength(1)
@@ -85,9 +88,11 @@ describe('it performs all functionality ', () => {
       /*
         Step 5: button press
       */
-      wrapper.find('.action-button').simulate('click')
+      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
     })
-    expect(wrapper.find(Alert).text()).toEqual(`${1} ${templateDownload}`)
+    expect(wrapper.find(Alert).text()).toEqual(
+      `${1} ${TEMPLATE_DOWNLOAD_MESSAGE}`,
+    )
     expect(updateDownloadListMock).toHaveBeenCalled()
   })
   it('Fails to creates a package without a filename', async () => {
@@ -102,8 +107,10 @@ describe('it performs all functionality ', () => {
       /*
         Step 5: button press
       */
-      wrapper.find('.action-button').simulate('click')
+      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
     })
+    // verify alert is showing
+    expect(wrapper.find(Alert)).toHaveLength(1)
   })
   it('Fails to creates a package when an http error occurs', async () => {
     const error = {
@@ -122,7 +129,7 @@ describe('it performs all functionality ', () => {
         },
       })
       // creact package
-      wrapper.find('.action-button').simulate('click')
+      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
     })
     expect(wrapper.find(Alert).text()).toEqual(error.reason)
   })

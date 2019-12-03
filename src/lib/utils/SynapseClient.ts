@@ -1883,7 +1883,7 @@ export const deleteDownloadListFiles = (
   )
 }
 
-// https://rest-docs.synapse.org/rest/GET/download/list.html
+// https://rest-docs.synapse.org/rest/DELETE/download/list.html ?
 export const deleteDownloadList = (sessionToken: string | undefined) => {
   return doDelete(
     '/file/v1/download/list',

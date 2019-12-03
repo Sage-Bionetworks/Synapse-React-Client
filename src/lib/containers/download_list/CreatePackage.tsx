@@ -35,9 +35,9 @@ type Alert = {
   className: string | undefined
 }
 
-export const templateDownload =
+export const TEMPLATE_DOWNLOAD_MESSAGE =
   'files were downloaded and removed from the list.'
-export const templateErrorFileName =
+export const TEMPLATE_ERROR_FILE_NAME =
   'Please provide a package file name and try again.'
 
 export const CreatePackage = (props: CreatePackageProps) => {
@@ -54,10 +54,10 @@ export const CreatePackage = (props: CreatePackageProps) => {
   const { token, children, updateDownloadList } = props
 
   const createPackageHandler = async (event: React.SyntheticEvent) => {
-    event && event.preventDefault()
+    event.preventDefault()
     if (!fileName) {
       setAlert({
-        message: templateErrorFileName,
+        message: TEMPLATE_ERROR_FILE_NAME,
         variant: 'danger',
         className: undefined,
       })
@@ -101,7 +101,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
         el => el.status === FileDownloadStatus.SUCCESS,
       ).length
       setAlert({
-        message: `${numfilesDownloaded} ${templateDownload}`,
+        message: `${numfilesDownloaded} ${TEMPLATE_DOWNLOAD_MESSAGE}`,
         className: 'SRC-primary-background-color SRC-whiteText',
         variant: undefined,
       })
