@@ -98,6 +98,11 @@ class Demo extends React.Component<{}, DemoState> {
             sql:
               'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
           },
+          {
+            facet: 'individuals',
+            sql:
+              'SELECT diagnosis, sex, dataType, assay, count(distinct(id)) as "Files", count(distinct(specimenID)) as "Specimens", count(distinct(individualID)) as "Individuals" FROM syn11346063 GROUP BY 1,2,3,4 ORDER BY 1 DESC',
+          },
         ] as MenuConfig[],
         rgbIndex: 5,
       },
