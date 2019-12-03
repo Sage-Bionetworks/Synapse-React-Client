@@ -461,7 +461,7 @@ export default class SynapseTable extends React.Component<
       </button>
     )
 
-    const hasMoreData = this.props.hasMoreData
+    const { hasMoreData, showAccessColumn } = this.props
     const next = (
       <button
         onClick={this.handlePaginationClick(NEXT)}
@@ -471,16 +471,20 @@ export default class SynapseTable extends React.Component<
         Next
       </button>
     )
-
+    let isShowingAccessColumn: boolean | undefined = showAccessColumn
+    if ( showAccessColumn && rows.length > 0 ) {
+      // PORTALS-924: verify that row actualy contains a defined rowId
+      isShowingAccessColumn = rows[0].rowId !== undefined
+    }
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
          {this.state.isDownloadConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isDownloadConfirmationOpen: false})}/>}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
-           <tr>{this.createTableHeader(headers, facets)}</tr>
+           <tr>{this.createTableHeader(headers, facets, isShowingAccessColumn)}</tr>
           </thead>
-          <tbody>{this.createTableRows(rows, headers)}</tbody>
+          <tbody>{this.createTableRows(rows, headers, isShowingAccessColumn)}</tbody>
         </table>
         {hasMoreData && next}
         {pastZero && previous}
@@ -721,9 +725,9 @@ export default class SynapseTable extends React.Component<
     })
   }
 
-  private createTableRows(rows: Row[], headers: SelectColumn[]) {
+  private createTableRows(rows: Row[], headers: SelectColumn[], isShowingAccessColumn: boolean | undefined) {
     const rowsFormatted: JSX.Element[] = []
-    const { showAccessColumn, token } = this.props
+    const { token } = this.props
     const {
       isColumnSelected,
       mapEntityIdToHeader,
@@ -793,7 +797,7 @@ export default class SynapseTable extends React.Component<
         },
       )
       // also push the access column value if we are showing user access for individual items (must be logged in)
-      if (showAccessColumn && token) {
+      if (isShowingAccessColumn && token) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
           <td
@@ -888,8 +892,9 @@ export default class SynapseTable extends React.Component<
   private createTableHeader(
     headers: SelectColumn[],
     facets: FacetColumnResult[],
+    isShowingAccessColumn: boolean | undefined
   ) {
-    const { showAccessColumn, token } = this.props
+    const { token } = this.props
     const {
       isColumnSelected,
       sortedColumnSelection,
@@ -973,7 +978,7 @@ export default class SynapseTable extends React.Component<
       },
     )
     // also push the access column if we are showing user access for individual items (must be logged in)
-    if (showAccessColumn && token) {
+    if (isShowingAccessColumn && token) {
       tableColumnHeaderElements.push(
         <th key="accessColumn">
           <div className="SRC-centerContent">
