@@ -222,6 +222,16 @@ class Demo extends React.Component<{}, DemoState> {
               request={{
                 concreteType:
                   'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+                objectId: 'syn2580853',
+                fileDownloads: true,
+                fileUploads: true,
+              }}
+            />
+            <StatisticsPlot
+              token={token}
+              request={{
+                concreteType:
+                  'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
                 objectId: 'syn5585645',
                 fileDownloads: true,
                 fileUploads: true,
