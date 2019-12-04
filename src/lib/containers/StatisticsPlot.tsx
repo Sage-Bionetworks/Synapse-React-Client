@@ -96,8 +96,10 @@ class StatisticsPlot extends React.Component<
           `%{y:n} <br><extra>${traceName}</extra>`,
     }
     for (const statPoint of stats) {
-      const month = months[new Date(statPoint.rangeStart).getUTCMonth()]
-      trace.x.push(month)
+      const statPointDate:Date = new Date(statPoint.rangeStart)
+      const month = months[statPointDate.getUTCMonth()]
+      const year:string = statPointDate.getUTCMonth() == 0 || statPointDate.getUTCMonth() == 11 ? ` (${statPointDate.getUTCFullYear()})` : ''
+      trace.x.push(`${month}${year}`)
       trace.y.push(statPoint.filesCount)
     }
     return trace
