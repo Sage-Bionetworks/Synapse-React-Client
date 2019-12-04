@@ -19,6 +19,7 @@ export type CardContainerProps = {
   data?: QueryResultBundle
   limit?: number
   isHeader?: boolean
+  isAlignToLeftNav?: boolean
   title?: string
   facetAliases?: {}
   getLastQueryRequest?: () => QueryBundleRequest
