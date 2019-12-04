@@ -490,7 +490,7 @@ export default class SynapseTable extends React.Component<
           />
         )}
         <table className="table table-striped table-condensed">
-          <thead className="SRC_borderTop">
+          <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(headers, facets, isShowingAccessColumn)}
             </tr>
@@ -965,10 +965,11 @@ export default class SynapseTable extends React.Component<
           const displayColumnName: string | undefined = unCamelCase(column.name)
           return (
             <th key={column.name}>
-              <div className="SRC-centerContent">
+              <div className="SRC-split">
                 <span style={{ whiteSpace: 'nowrap' }}>
                   {displayColumnName}
                 </span>
+                <div className="SRC-centerContent">
                 {isFacetSelection &&
                   this.configureFacetDropdown(facets, facetIndex)}
                 <span
@@ -988,6 +989,7 @@ export default class SynapseTable extends React.Component<
                     icon={ICON_STATE[columnIndex] as IconProp}
                   />
                 </span>
+                </div>
               </div>
             </th>
           )
