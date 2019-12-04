@@ -173,7 +173,13 @@ class StatisticsPlot extends React.Component<
         this.getTrace('File Uploads', plotData.fileUploads.months, orientation, '#D4689A'),
       )
     }
-    if (traces.length > 0) return <Plot layout={layout} data={traces} config={config}/>
+    if (traces.length > 0) return <Plot
+        layout={layout}
+        data={traces}
+        config={config} 
+        className='SRC-fullWidth'
+        useResizeHandler={true}
+      />
     else return <></>
   }
 
