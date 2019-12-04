@@ -5,7 +5,7 @@ import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
 } from '../../../utils/jsonResponses/Table/FacetColumnResult'
-import { SELECT_ALL } from '../SynapseTable'
+import { SELECT_ALL } from '../SynapseTableConstants'
 import { getIsValueSelected } from '../../../utils/modules/facetUtils'
 import { FacetSelection } from '../../../containers/QueryWrapper'
 

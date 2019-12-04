@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import * as _ from 'lodash'
-import { Step } from '../../../../lib/containers/drug_upload_tool/types'
+import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import StepsSideNav, {
   StepsSideNavProps,
-} from '../../../../lib/containers/drug_upload_tool/StepsSideNav'
+} from '../../../../lib/containers/synapse_form_wrapper/StepsSideNav'
 
 import { stepsWithChildren } from '../../../../mocks/mock_drug_tool_data'
 

@@ -12,18 +12,18 @@ import {
 const Plot = createPlotlyComponent(Plotly)
 
 const months = [
-  'January',
-  'February',
-  'March',
-  'April',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
   'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ]
 
 export type StatisticsPlotProps = {
@@ -80,6 +80,7 @@ class StatisticsPlot extends React.Component<
     traceName: string,
     stats: FilesCountStatistics[],
     orientation: string,
+    markerColor: string,
   ) => {
     let x: string[] = []
     let y: number[] = []
@@ -89,10 +90,14 @@ class StatisticsPlot extends React.Component<
       y,
       name: traceName,
       type: 'bar',
+      marker: {color: markerColor},
+      hovertemplate:
+          // see S3 Formatting options: https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format
+          `%{y:n} <br><extra>${traceName}</extra>`,
     }
     for (const statPoint of stats) {
-      const month = months[new Date(statPoint.rangeStart).getUTCMonth()]
-      trace.x.push(month)
+      const statPointDate:Date = new Date(statPoint.rangeStart)
+      trace.x.push(`${months[statPointDate.getUTCMonth()]} ${statPointDate.getUTCFullYear()}`)
       trace.y.push(statPoint.filesCount)
     }
     return trace
@@ -115,6 +120,13 @@ class StatisticsPlot extends React.Component<
       showlegend,
       title,
       barmode: 'stack',
+      hovermode: 'x',
+    }
+    const config:any = {
+      displayModeBar: true,
+      displaylogo: false,
+      // options found here: https://github.com/plotly/plotly.js/blob/master/src/components/modebar/buttons.js
+      modeBarButtonsToRemove: ['sendDataToCloud','hoverCompareCartesian','select2d','lasso2d','zoom2d','resetScale2d','hoverClosestCartesian','toggleSpikelines']
     }
     if (xtitle) {
       layout.xaxis = {
@@ -127,6 +139,7 @@ class StatisticsPlot extends React.Component<
         xaxistype: xaxistype.toLowerCase(),
       }
     }
+    
     if (ytitle) {
       layout.yaxis = {
         title: ytitle,
@@ -146,6 +159,7 @@ class StatisticsPlot extends React.Component<
           'File Downloads',
           plotData.fileDownloads.months,
           orientation,
+          '#7CC0C4'
         ),
       )
     }
@@ -156,10 +170,16 @@ class StatisticsPlot extends React.Component<
     ) {
       // add file uploads trace
       traces.push(
-        this.getTrace('File Uploads', plotData.fileUploads.months, orientation),
+        this.getTrace('File Uploads', plotData.fileUploads.months, orientation, '#D4689A'),
       )
     }
-    if (traces.length > 0) return <Plot layout={layout} data={traces} />
+    if (traces.length > 0) return <Plot
+        layout={layout}
+        data={traces}
+        config={config} 
+        className='SRC-fullWidth'
+        useResizeHandler={true}
+      />
     else return <></>
   }
 

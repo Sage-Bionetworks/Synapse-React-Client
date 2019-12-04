@@ -1,3 +1,4 @@
+import {  } from './SynapseTableConstants';
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation';
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -54,9 +55,13 @@ import {
   DownloadOptions,
   ColumnSelection,
 } from './table-top/'
+import {TOOLTIP_DELAY_SHOW,
+SELECT_ALL, ICON_STATE } from './SynapseTableConstants'
+
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
 import HasAccess from '../HasAccess'
+import { unCamelCase } from './../../utils/UtilityFns'
 const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
@@ -83,15 +88,7 @@ library.add(faGlobeAmericas)
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
-export const SELECT_ALL = 'SELECT_ALL'
-export const DESELECT_ALL = 'DESELECT_ALL'
-export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
-// double check these icons!
-export const ICON_STATE: string[] = [
-  'sort-amount-down',
-  'sort-amount-down',
-  'sort-amount-up',
-]
+
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
@@ -120,9 +117,9 @@ export type SynapseTableProps = {
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
+  enableDownloadConfirmation?: boolean
 }
 
-export const TOOLTIP_DELAY_SHOW = 500
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -465,7 +462,7 @@ export default class SynapseTable extends React.Component<
       </button>
     )
 
-    const hasMoreData = this.props.hasMoreData
+    const { hasMoreData, showAccessColumn } = this.props
     const next = (
       <button
         onClick={this.handlePaginationClick(NEXT)}
@@ -475,16 +472,20 @@ export default class SynapseTable extends React.Component<
         Next
       </button>
     )
-
+    let isShowingAccessColumn: boolean | undefined = showAccessColumn
+    if ( showAccessColumn && rows.length > 0 ) {
+      // PORTALS-924: verify that row actualy contains a defined rowId
+      isShowingAccessColumn = rows[0].rowId !== undefined
+    }
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
          {this.state.isDownloadConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isDownloadConfirmationOpen: false})}/>}
         <table className="table table-striped table-condensed">
           <thead className="SRC_borderTop">
-           <tr>{this.createTableHeader(headers, facets)}</tr>
+           <tr>{this.createTableHeader(headers, facets, isShowingAccessColumn)}</tr>
           </thead>
-          <tbody>{this.createTableRows(rows, headers)}</tbody>
+          <tbody>{this.createTableRows(rows, headers, isShowingAccessColumn)}</tbody>
         </table>
         {hasMoreData && next}
         {pastZero && previous}
@@ -505,11 +506,12 @@ export default class SynapseTable extends React.Component<
     const onExpandArguments = {
       isExpanded: !isExpanded,
     }
+    const queryRequest = this.props.getLastQueryRequest!()
     return (
       <div className="SRC-centerContent" style={{ background, padding: 8 }}>
         <h3 className="SRC-tableHeader"> {title}</h3>
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
-          {!isGroupByInSql(this.props.getLastQueryRequest!().query.sql) && (
+          {!isGroupByInSql(queryRequest.query.sql) && (
             <>
               <span
                 tabIndex={0}
@@ -545,7 +547,8 @@ export default class SynapseTable extends React.Component<
           onShowColumns={() => this.setState({ showColumnSelection: true })}
           onFullScreen={() => this.setState(onExpandArguments)}
           isExpanded={isExpanded}
-          isUnauthenticated = {!this.props.token}
+          isUnauthenticated={!this.props.token}
+          isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
         />
       </div>
     )
@@ -725,9 +728,9 @@ export default class SynapseTable extends React.Component<
     })
   }
 
-  private createTableRows(rows: Row[], headers: SelectColumn[]) {
+  private createTableRows(rows: Row[], headers: SelectColumn[], isShowingAccessColumn: boolean | undefined) {
     const rowsFormatted: JSX.Element[] = []
-    const { showAccessColumn, token } = this.props
+    const { token } = this.props
     const {
       isColumnSelected,
       mapEntityIdToHeader,
@@ -797,7 +800,7 @@ export default class SynapseTable extends React.Component<
         },
       )
       // also push the access column value if we are showing user access for individual items (must be logged in)
-      if (showAccessColumn && token) {
+      if (isShowingAccessColumn && token) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
           <td
@@ -892,8 +895,9 @@ export default class SynapseTable extends React.Component<
   private createTableHeader(
     headers: SelectColumn[],
     facets: FacetColumnResult[],
+    isShowingAccessColumn: boolean | undefined
   ) {
-    const { showAccessColumn, token } = this.props
+    const { token } = this.props
     const {
       isColumnSelected,
       sortedColumnSelection,
@@ -977,7 +981,7 @@ export default class SynapseTable extends React.Component<
       },
     )
     // also push the access column if we are showing user access for individual items (must be logged in)
-    if (showAccessColumn && token) {
+    if (isShowingAccessColumn && token) {
       tableColumnHeaderElements.push(
         <th key="accessColumn">
           <div className="SRC-centerContent">
@@ -1024,7 +1028,11 @@ export default class SynapseTable extends React.Component<
 
 
   private showDownload(event: React.SyntheticEvent) {
-    this.setState({isDownloadConfirmationOpen : true})
+    if(this.props.enableDownloadConfirmation) {
+      this.setState({ isDownloadConfirmationOpen: true })
+    } else {
+      this.advancedSearch(event)
+    }
   }
 
   private getLengthOfPropsData() {
@@ -1140,23 +1148,6 @@ export default class SynapseTable extends React.Component<
 
     this.props.executeQueryRequest!(newQueryRequest)
   }
-}
-export const unCamelCase = (str: string | undefined): string | undefined => {
-  // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
-  if (!str) {
-    return str
-  }
-  return (
-    str
-      // insert a space between lower & upper
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      // space before last upper in a sequence followed by lower
-      .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-      // uppercase the first character
-      .replace(/^./, (str: string) => {
-        return str.toUpperCase()
-      })
-  )
 }
 type ColumnReference = {
   index: number
