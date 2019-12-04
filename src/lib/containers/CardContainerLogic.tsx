@@ -56,6 +56,7 @@ export type CardContainerLogicProps = {
   facet?: string
   backgroundColor?: string
   isHeader?: boolean
+  isAlignToLeftNav?: boolean
   sql: string
 } & CardConfiguration
 
