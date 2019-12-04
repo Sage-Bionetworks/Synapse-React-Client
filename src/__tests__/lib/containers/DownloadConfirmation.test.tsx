@@ -14,7 +14,7 @@ let getQueryTableResultsFn: Function
 
 let addFilesToDownloadRequestFn: Function
 const SynapseClient = require('../../../lib/utils/SynapseClient')
-let TestDownloadSpeed = require('../../../lib/utils/DownloadSpeedTest')
+let TestDownloadSpeed = require('../../../lib/utils/functions/testDownloadSpeed')
 const mockClose = jest.fn()
 
 const query = {
@@ -56,7 +56,7 @@ const addFilesToDownloadListResponse: AddFilesToDownloadListResponse = {
       {
         fileHandleId: '000',
         associateObjectId: '000',
-        associateObjectType: FileHandleAssociateType.FileEntity, 
+        associateObjectType: FileHandleAssociateType.FileEntity,
       },
       {
         fileHandleId: '111',
@@ -113,7 +113,7 @@ describe('it performs the expected functionality', () => {
       .mockResolvedValue(queryBundleResponse)
   })
 
-  it("should render without crashing with just a cancel button", () => {
+  it('should render without crashing with just a cancel button', () => {
     const { wrapper } = createMountedComponent(props)
     expect(wrapper).toBeDefined()
     const mainDiv = wrapper.find('.download-confirmation')

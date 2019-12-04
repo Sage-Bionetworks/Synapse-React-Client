@@ -1,7 +1,10 @@
 import * as React from 'react'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
-import { FacetColumnResultValueCount, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
-import { unCamelCase } from '../utils/UtilityFns'
+import {
+  FacetColumnResultValueCount,
+  FacetColumnResultValues,
+} from '../utils/jsonResponses/Table/FacetColumnResult'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBundle'
@@ -15,8 +18,8 @@ const ROW_HEIGHT: number = 160
 const CHARTS_PER_ROW: number = 5
 
 export type FacetsPlotNavState = {
-  isShowingMore: boolean,
-  isResetPossible: boolean,
+  isShowingMore: boolean
+  isResetPossible: boolean
 }
 
 export type FacetsPlotNavProps = {
@@ -34,7 +37,7 @@ type InternalProps = FacetsPlotNavProps & QueryWrapperChildProps
 export default class FacetsPlotNav extends React.Component<
   InternalProps,
   FacetsPlotNavState
-  > {
+> {
   constructor(props: InternalProps) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
@@ -64,7 +67,7 @@ export default class FacetsPlotNav extends React.Component<
       executeInitialQueryRequest()
     }
     this.setState({
-      isResetPossible: false
+      isResetPossible: false,
     })
   }
 
@@ -72,7 +75,7 @@ export default class FacetsPlotNav extends React.Component<
   //   this.updateHover(true, event)
   // }
 
-  // NOTE: There's an issue where onUnhover() is not called after the first onHover().  
+  // NOTE: There's an issue where onUnhover() is not called after the first onHover().
   // Moving the plotData to state requires some consideration.  The plot must be updated by the table filter selection.
   // Also, the Plot will not update if it points to the same (shallow compare) data object.  One way to force a Plot update is to
   // update the layout.datarevision.
@@ -97,7 +100,8 @@ export default class FacetsPlotNav extends React.Component<
     if (event.points && event.points[0]) {
       const plotPointData: any = event.points[0]
       const facetName = plotPointData.data.name
-      const facetValueClicked = plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]
+      const facetValueClicked =
+        plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]
       // update the facet
       const { isAllFilterSelectedForFacet = {} } = this.props
       isAllFilterSelectedForFacet[facetName] = false
@@ -114,7 +118,9 @@ export default class FacetsPlotNav extends React.Component<
       // run the query with the selected facet value
       const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
       const { selectedFacets = [] } = queryRequest.query
-      const specificFacet = selectedFacets!.find(el => el.columnName === facetName)!
+      const specificFacet = selectedFacets!.find(
+        el => el.columnName === facetName,
+      )!
       if (!specificFacet) {
         const facetColumnValuesRequest: FacetColumnValuesRequest = {
           facetValues: [facetValueClicked],
@@ -133,7 +139,7 @@ export default class FacetsPlotNav extends React.Component<
       this.props.executeQueryRequest!(queryRequest)
     }
     this.setState({
-      isResetPossible: true
+      isResetPossible: true,
     })
   }
 
@@ -161,26 +167,40 @@ export default class FacetsPlotNav extends React.Component<
     const plotData = this.extractPlotDataArray(data!)
     const showMoreButton = plotData.length > CHARTS_PER_ROW && (
       <a
-        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginBottom: '10px' }}
+        style={{
+          fontSize: '14px',
+          cursor: 'pointer',
+          marginLeft: '5px',
+          marginBottom: '10px',
+        }}
         className="SRC-primary-text-color"
         onClick={this.toggleShowMore}
       >
-        {this.state.isShowingMore ?  'Show Less' : 'Show More'}
+        {this.state.isShowingMore ? 'Show Less' : 'Show More'}
       </a>
     )
     const resetButton = (
       <a
-        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px', marginRight: '5px', marginBottom: '10px', float: 'right' }}
+        style={{
+          fontSize: '14px',
+          cursor: 'pointer',
+          marginLeft: '5px',
+          marginRight: '5px',
+          marginBottom: '10px',
+          float: 'right',
+        }}
         className="SRC-primary-text-color"
         onClick={this.onReset}
       >
         Reset
       </a>
     )
-    
+
     // create a pie chart for each facet (values) result
-    const plotDataToShow: any[] = this.state.isShowingMore ? plotData : plotData.slice(0, CHARTS_PER_ROW)
-    
+    const plotDataToShow: any[] = this.state.isShowingMore
+      ? plotData
+      : plotData.slice(0, CHARTS_PER_ROW)
+
     const rowCount: number = Math.ceil(plotDataToShow.length / CHARTS_PER_ROW)
     const layout = {
       grid: { rows: rowCount, columns: CHARTS_PER_ROW },
@@ -193,12 +213,12 @@ export default class FacetsPlotNav extends React.Component<
 
     return (
       <>
-        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top" >
+        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
           <div>
             <Plot
               layout={layout}
               data={plotDataToShow}
-              className='SRC-fullWidth'
+              className="SRC-fullWidth"
               config={{ displayModeBar: false }}
               useResizeHandler={true}
               onClick={this.handleClick}
@@ -207,9 +227,12 @@ export default class FacetsPlotNav extends React.Component<
             ></Plot>
           </div>
         </div>
-        <div className="SRC-bar-border SRC-bar-border-bottom" style={{ marginBottom: '15px' }}>
+        <div
+          className="SRC-bar-border SRC-bar-border-bottom"
+          style={{ marginBottom: '15px' }}
+        >
           {showMoreButton}
-          {this.state.isResetPossible && resetButton}        
+          {this.state.isResetPossible && resetButton}
         </div>
       </>
     )
@@ -219,66 +242,76 @@ export default class FacetsPlotNav extends React.Component<
     const plotData: any[] = []
 
     // pull out the data corresponding to the filter in question
-    let enumerationFacets = data.facets!.filter(item => item.facetType === 'enumeration')
+    let enumerationFacets = data.facets!.filter(
+      item => item.facetType === 'enumeration',
+    )
     if (facetsToPlot) {
       // filter to show plots for the chosen facets
-      enumerationFacets = enumerationFacets.filter(item => facetsToPlot.includes(item.columnName))
+      enumerationFacets = enumerationFacets.filter(item =>
+        facetsToPlot.includes(item.columnName),
+      )
     }
 
-    enumerationFacets.forEach((item: FacetColumnResultValues, index: number) => {
-      const { colorPalette } = getColorPallette(
-        index,
-        item.facetValues.length,
-      )
-      const singlePieChartData: any =
-      {
-        values: [],
-        labels: [],
-        facetEnumerationValues: [],
-        name: item.columnName,
-        // The only thing supported in hoverlabel today is bordercolor, but this also effects the hoverlabel text color!
-        // https://github.com/plotly/plotly.js/issues/2342
-        // hoverlabel: {
-        //   bordercolor: 'rgb(216, 216, 218)',
-        //   opacity: 0.7
-        // },
-        hovertemplate:
-            "<b>%{label}</b><br>" +
-            "%{value} (%{percent})<br>" +
-            "<extra></extra>",
-        textposition: "inside",
-        textinfo: "none",
-        type: 'pie',
-        title: {
-          text: unCamelCase(item.columnName),
-          font: {
-            size: 14
+    enumerationFacets.forEach(
+      (item: FacetColumnResultValues, index: number) => {
+        const { colorPalette } = getColorPallette(
+          index,
+          item.facetValues.length,
+        )
+        const singlePieChartData: any = {
+          values: [],
+          labels: [],
+          facetEnumerationValues: [],
+          name: item.columnName,
+          // The only thing supported in hoverlabel today is bordercolor, but this also effects the hoverlabel text color!
+          // https://github.com/plotly/plotly.js/issues/2342
+          // hoverlabel: {
+          //   bordercolor: 'rgb(216, 216, 218)',
+          //   opacity: 0.7
+          // },
+          hovertemplate:
+            '<b>%{label}</b><br>' +
+            '%{value} (%{percent})<br>' +
+            '<extra></extra>',
+          textposition: 'inside',
+          textinfo: 'none',
+          type: 'pie',
+          title: {
+            text: unCamelCase(item.columnName),
+            font: {
+              size: 14,
+            },
+            position: 'top center',
           },
-          position: 'top center'
-        },
-        marker: {
-          colors: colorPalette,
-          line: {
-            width: []
-          }
-        },
-        pull: [],
-        domain: { row: Math.floor(index / CHARTS_PER_ROW), column: index % CHARTS_PER_ROW },
-      }
-      plotData.push(singlePieChartData)
-      item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
-        singlePieChartData.values.push(facetValue.count)
-        const displayValue =
-          facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-            ? 'unannotated'
-            : facetValue.value
+          marker: {
+            colors: colorPalette,
+            line: {
+              width: [],
+            },
+          },
+          pull: [],
+          domain: {
+            row: Math.floor(index / CHARTS_PER_ROW),
+            column: index % CHARTS_PER_ROW,
+          },
+        }
+        plotData.push(singlePieChartData)
+        item.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
+          singlePieChartData.values.push(facetValue.count)
+          const displayValue =
+            facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
+              ? 'unannotated'
+              : facetValue.value
 
-        singlePieChartData.labels.push(displayValue)
-        singlePieChartData.facetEnumerationValues.push(facetValue.value)
-        singlePieChartData.marker.line.width.push(facetValue.isSelected ? 1 : 0)
-        singlePieChartData.pull.push(facetValue.isSelected ? .09 : 0)
-      })
-    })
+          singlePieChartData.labels.push(displayValue)
+          singlePieChartData.facetEnumerationValues.push(facetValue.value)
+          singlePieChartData.marker.line.width.push(
+            facetValue.isSelected ? 1 : 0,
+          )
+          singlePieChartData.pull.push(facetValue.isSelected ? 0.09 : 0)
+        })
+      },
+    )
 
     return plotData
   }

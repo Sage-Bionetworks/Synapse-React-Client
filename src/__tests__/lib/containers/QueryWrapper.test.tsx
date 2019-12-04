@@ -5,7 +5,7 @@ import QueryWrapper, {
 } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
-import { cloneDeep } from '../../../lib/utils/modules'
+import { cloneDeep } from '../../../lib/utils/functions'
 import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
 
 // utility function

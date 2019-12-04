@@ -705,6 +705,12 @@ div.SRC-userImg {
   flex-flow: row wrap;
   justify-content: space-between; }
 
+.SRC-split {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between; }
+
 .SRC-grid-item {
   height: 120px;
   flex-grow: 0;
@@ -959,6 +965,9 @@ a.dropdown-item {
   padding: 3px;
   margin: 0px 3px; }
 
+.SRC-inactive {
+  color: rgba(0, 0, 0, 0.25); }
+
 .SRC-success-color {
   color: #53cf97; }
 
@@ -1192,15 +1201,6 @@ a.dropdown-item {
     margin-left: 5px; }
 
 /* End loading spinner */
-.download-confirmation {
-  opacity: 1 !important;
-  display: table !important;
-  width: 100%; }
-
-.download-confirmation__section {
-  display: table-cell;
-  vertical-align: middle; }
-
 .download-details-container {
   display: inline-flex;
   border-right: 2px solid #dddddd;
@@ -1230,16 +1230,26 @@ a.dropdown-item {
   .create-package-container svg {
     margin-right: 8px; }
 
-#create-package-btn {
-  margin-left: 15px; }
-
 .zip-extension {
   font-size: 18px;
   color: #666666;
-  margin-left: 3px; }
+  margin-left: 5px; }
 
 .create-package-text {
-  font-size: 17px; }
+  font-size: 17px;
+  margin: 0px; }
 
 .download-list-table-top {
   padding: 8px; }
+
+.action-button {
+  margin-left: 15px; }
+
+.download-confirmation {
+  opacity: 1 !important;
+  display: table !important;
+  width: 100%; }
+
+.download-confirmation__section {
+  display: table-cell;
+  vertical-align: middle; }

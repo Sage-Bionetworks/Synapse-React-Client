@@ -4,12 +4,12 @@ import SynapseTable, {
   SynapseTableProps,
   SORT_STATE,
 } from '../../../lib/containers/table/SynapseTable'
-import { unCamelCase } from 'lib/utils/UtilityFns'
+import { unCamelCase } from 'lib/utils/functions/unCamelCase'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib'
 import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
-import { cloneDeep } from '../../../lib/utils/modules'
+import { cloneDeep } from '../../../lib/utils/functions'
 import { Row } from '../../../lib/utils/jsonResponses/Table/QueryResult'
 import ModalDownload from '../../../lib/containers/ModalDownload'
 import { EntityLink } from 'lib/containers/EntityLink'
@@ -455,9 +455,9 @@ describe('basic functionality', () => {
       const mapEntityIdToHeader = {
         [mockEntityLinkValue]: {} as EntityHeader,
       }
-      const mapUserIdToHeader: Dictionary<
-        Partial<UserGroupHeader & UserProfile>
-      > = {
+      const mapUserIdToHeader: Dictionary<Partial<
+        UserGroupHeader & UserProfile
+      >> = {
         [mockAllAuthenticatedUsersValue]: {
           isIndividual: false,
           userName: AUTHENTICATED_USERS,

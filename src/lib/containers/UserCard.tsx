@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { getUserProfileWithProfilePic } from './getUserData'
+import { getUserProfileWithProfilePic } from '../utils/functions/getUserData'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'

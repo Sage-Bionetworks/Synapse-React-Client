@@ -7,7 +7,7 @@ import {
   faCopy,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getColor } from './getUserData'
+import { getColor } from '../utils/functions/getUserData'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'

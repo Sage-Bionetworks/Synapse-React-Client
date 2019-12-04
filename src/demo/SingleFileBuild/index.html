@@ -31,12 +31,6 @@
     <script src="https://unpkg.com/react-router/umd/react-router.min.js"></script>
     <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
 
-    <!-- bootstrap components -->
-    <!-- <script
-      src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"
-      crossorigin
-    ></script> -->
-
     <!-- katex -->
     <link
       rel="stylesheet"
@@ -104,7 +98,6 @@
       rel="stylesheet"
       href="../../umd/synapse-react-client.production.styles.css"
     />
-    <script src="../../umd/synapse-react-client.production.min.js"></script>
 
     <!--
       Notice the use of %PUBLIC_URL% in the tag above.
@@ -138,18 +131,25 @@
     <div id="panel5"></div>
     <div id="panel6"></div>
     <div id="panel7"></div>
+    <div id="panel8"></div>
     <div style="height: 300px"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
       if you open it directly in the browser, you will see some components render.
     -->
   </body>
+  <!-- bootstrap components -->
+  <script
+    src="https://unpkg.com/react-bootstrap@next/dist/react-bootstrap.min.js"
+    crossorigin
+  ></script>
+  <script src="../../umd/synapse-react-client.production.min.js"></script>
   <script type="text/javascript">
     // set portal endpoints
-    window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
-      REPO: 'https://repo-staging.prod.sagebase.org/',
-      PORTAL: 'https://staging.synapse.org/',
-    }
+    // window.SRC.OVERRIDE_ENDPOINT_CONFIG = {
+    //   REPO: 'https://repo-staging.prod.sagebase.org/',
+    //   PORTAL: 'https://staging.synapse.org/',
+    // }
     const e = React.createElement // utility for creating elements
     const queryWrapperMenuContainer = document.querySelector('#panel1')
     const queryWrapperProps = {
@@ -246,7 +246,16 @@
       loginContainer,
     )
 
-    const hasAccessContainer = document.querySelector('#panel7')
+    // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
+    const downloadListTableContainer = document.querySelector('#panel7')
+    const downloadDetailsProps = {
+      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+    }
+    ReactDOM.render(
+      e(SRC.SynapseComponents.DownloadListTable, downloadDetailsProps, null),
+      downloadListTableContainer,
+    )
+    const hasAccessContainer = document.querySelector('#panel8')
     const hasAccessProps = {
       token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
       synapseId: 'syn12664802',
@@ -255,6 +264,5 @@
       e(SRC.SynapseComponents.HasAccess, hasAccessProps, null),
       hasAccessContainer,
     )
-
   </script>
 </html>

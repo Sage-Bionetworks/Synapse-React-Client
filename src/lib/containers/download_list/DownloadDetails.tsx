@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile, faDatabase, faClock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {calculateFriendlyFileSize} from '../../utils/UtilityFns'
-import { testDownloadSpeed } from '../../utils/DownloadSpeedTest'
+import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
@@ -34,14 +34,13 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const { token, numFiles, numBytes } = props
 
   useEffect(() => {
-    if (isLoading) {
-      token &&
-        testDownloadSpeed(token).then(speed => {
-          setState({
-            isLoading: false,
-            downloadSpeed: speed,
-          })
+    if (isLoading && token) {
+      testDownloadSpeed(token).then(speed => {
+        setState({
+          isLoading: false,
+          downloadSpeed: speed,
         })
+      })
     }
   })
 

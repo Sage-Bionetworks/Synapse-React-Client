@@ -4,7 +4,7 @@ import QueryWrapper from './QueryWrapper'
 import FacetsPlotNav, { FacetsPlotNavProps } from './FacetsPlotNav'
 import { SynapseTableProps } from './table/SynapseTable'
 import SynapseTable from './table/SynapseTable'
-import { insertConditionsFromSearchParams, SQLOperator } from '../utils/modules/sqlFunctions'
+import { insertConditionsFromSearchParams, SQLOperator } from '../utils/functions/sqlFunctions'
 
 type SearchParams = {
   searchParams?: {

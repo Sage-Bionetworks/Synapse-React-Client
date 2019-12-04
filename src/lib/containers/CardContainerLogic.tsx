@@ -3,14 +3,14 @@ import CardContainer from './CardContainer'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { cloneDeep } from '../utils/modules'
-import { getNextPageOfData } from '../utils/modules/queryUtils'
+import { cloneDeep } from '../utils/functions'
+import { getNextPageOfData } from '../utils/functions/queryUtils'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import {
   insertConditionsFromSearchParams,
   KeyValue,
   SQLOperator,
-} from '../utils/modules/sqlFunctions'
+} from '../utils/functions/sqlFunctions'
 
 export interface CardLink {
   baseURL: string

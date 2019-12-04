@@ -5,7 +5,7 @@ import ReactTooltip from "react-tooltip"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
 import { UserProfile } from '../utils/jsonResponses/UserProfile'
-import { getColor } from './getUserData'
+import { getColor } from '../utils/functions/getUserData'
 
 library.add(faCircle)
 
