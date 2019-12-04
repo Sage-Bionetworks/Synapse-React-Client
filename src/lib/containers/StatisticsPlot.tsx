@@ -12,18 +12,18 @@ import {
 const Plot = createPlotlyComponent(Plotly)
 
 const months = [
-  'January',
-  'February',
-  'March',
-  'April',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
   'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ]
 
 export type StatisticsPlotProps = {
@@ -97,9 +97,7 @@ class StatisticsPlot extends React.Component<
     }
     for (const statPoint of stats) {
       const statPointDate:Date = new Date(statPoint.rangeStart)
-      const month = months[statPointDate.getUTCMonth()]
-      const year:string = statPointDate.getUTCMonth() == 0 || statPointDate.getUTCMonth() == 11 ? ` (${statPointDate.getUTCFullYear()})` : ''
-      trace.x.push(`${month}${year}`)
+      trace.x.push(`${months[statPointDate.getUTCMonth()]} ${statPointDate.getUTCFullYear()}`)
       trace.y.push(statPoint.filesCount)
     }
     return trace
@@ -121,7 +119,8 @@ class StatisticsPlot extends React.Component<
     const layout: any = {
       showlegend,
       title,
-      barmode: 'stack'      
+      barmode: 'stack',
+      hovermode: 'x',
     }
     const config:any = {
       displayModeBar: true,
@@ -140,6 +139,7 @@ class StatisticsPlot extends React.Component<
         xaxistype: xaxistype.toLowerCase(),
       }
     }
+    
     if (ytitle) {
       layout.yaxis = {
         title: ytitle,
