@@ -58,6 +58,10 @@ body * {
   border-top: 1px solid #dddddd;
 }
 
+.table > thead.SRC_bordered th {
+  border: 1px solid #dddddd;
+}
+
 .SRC-facets {
   padding: 4px 12px;
   border-radius: 20px;
@@ -392,7 +396,6 @@ button.SRC-roundBorder {
 
 .SRC-sortPadding {
   outline: none;
-  margin-left: 6px;
   padding: 2px 3px;
 }
 
@@ -935,6 +938,11 @@ a.dropdown-item {
 .dropdown button.btn {
   padding: 3px;
   margin: 0px 3px;
+
+  &.condenced {
+    padding: 1px;
+    margin: 0 0 0 1px
+  }
 }
 
 .SRC-inactive {

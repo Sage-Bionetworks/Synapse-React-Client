@@ -70,7 +70,7 @@ export default class FacetFilter extends React.Component<
     return (
       <Dropdown show={show} onToggle={this.onToggle}>
         <Dropdown.Toggle
-          className="SRC-primary-text-color SRC-primary-background-color-hover"
+          className="SRC-primary-text-color SRC-primary-background-color-hover condenced"
           id={facetColumnResult.columnName}
           variant={'light'}
         >
