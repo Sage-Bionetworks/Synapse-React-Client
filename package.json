@@ -118,7 +118,7 @@
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
-    "prepublishOnly": "yarn run build && yarn run test:coverage",
+    "prepublishOnly": "yarn run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts build",
     "deploy": "gh-pages -d build && gh-pages -d build -o upstream",
@@ -128,6 +128,7 @@
     "start": "npm-run-all -p watch-css start-js",
     "test": "react-scripts test --env=jsdom  --setupFiles ./src/setupTests.js",
     "test:coverage": "yarn test --coverage",
+    "test:noPrompt": "CI=true yarn test",
     "eject": "react-scripts eject",
     "type-check": "tsc --noEmit",
     "tslintfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --fix --",
