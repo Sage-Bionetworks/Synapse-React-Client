@@ -2,7 +2,7 @@ import {
   getIsValueSelected,
   readFacetValues,
   SyntheticHTMLInputElement,
-} from '../../../lib/utils/modules/facetUtils'
+} from '../../../lib/utils/functions/facetUtils'
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
 import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
 import { SELECT_SINGLE_FACET } from '../../../lib/containers/Facets'

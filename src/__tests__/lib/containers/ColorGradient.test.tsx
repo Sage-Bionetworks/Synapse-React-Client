@@ -2,7 +2,7 @@ import { getColorPallette } from '../../../lib/containers/ColorGradient'
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
-} from '../../../lib/containers/colorPalette'
+} from '../../../lib/utils/functions/colorPalette'
 
 describe('the color gradient calculated is correct', () => {
   it('calculates the odd case ', () => {

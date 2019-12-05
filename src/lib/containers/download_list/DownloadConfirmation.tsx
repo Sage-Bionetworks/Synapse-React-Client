@@ -5,7 +5,7 @@ import { SynapseClient } from '../../utils'
 import { SynapseConstants } from '../../utils'
 import { AddFilesToDownloadListRequest } from '../../utils/jsonResponses/AddFilesToDownloadListRequest'
 import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
-import { testDownloadSpeed } from '../../utils/DownloadSpeedTest'
+import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import moment from 'moment'
 import { Query } from '../../utils/jsonResponses/Table/Query'
 import  DownloadDetails  from './DownloadDetails'
@@ -137,10 +137,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
 
   useEffect(() => {
     ;(async function getDataOnLoad(query: Query, token: string) {
-      const result = await getFilesInformation(queryBundleRequest.query, token)
+      const result = await getFilesInformation(query, token)
       setState(result)
     })(queryBundleRequest.query, token)
-  }, [])
+  }, [queryBundleRequest.query, token])
 
   const hideComponent = () => fnClose()
 
@@ -199,6 +199,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             <a
               href={`https://www.synapse.org/#!Profile:${ownerId}/downloads`}
               target="_blank"
+              rel="noopener noreferrer"
             >
               View Download List
             </a>

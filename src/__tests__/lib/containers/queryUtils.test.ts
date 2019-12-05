@@ -1,4 +1,4 @@
-import { getNextPageOfData, cloneDeep } from '../../../lib/utils/modules/'
+import { getNextPageOfData, cloneDeep } from '../../../lib/utils/functions'
 import { SynapseConstants } from '../../../lib/utils'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from 'src/lib/utils/jsonResponses/Table/QueryResultBundle.js'

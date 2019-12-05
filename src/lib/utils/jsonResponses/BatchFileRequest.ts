@@ -1,5 +1,8 @@
 import { FileHandleAssociation } from './FileHandleAssociation'
 
+// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/BatchFileRequest.html
+// Batch Request for file pre-signed-URLs and/or FileHandles.
+
 export type BatchFileRequest = {
   requestedFiles: FileHandleAssociation[] // Defines the files to get.
   includePreSignedURLs: boolean //	Set to true to request a pre-signed URL for each file.

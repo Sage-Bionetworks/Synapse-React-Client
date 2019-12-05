@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
-import {calculateFriendlyFileSize} from '../../utils/UtilityFns'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
 
 type DatasetProps = {

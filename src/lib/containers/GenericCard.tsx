@@ -7,7 +7,7 @@ import {
   LabelMarkdown,
   CommonCardProps,
 } from './CardContainerLogic'
-import { unCamelCase } from '../utils/UtilityFns'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
 
 export type KeyToAlias = {
@@ -39,6 +39,7 @@ export type GenericCardProps = {
   iconOptions?: IconOptions
   backgroundColor?: string
   isHeader?: boolean
+  isAlignToLeftNav?: boolean
   schema: any
   data: any
 } & CommonCardProps
@@ -170,6 +171,7 @@ export default class GenericCard extends React.Component<
       titleLinkConfig,
       labelConfig,
       facetAliases = {},
+      isAlignToLeftNav = false
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -232,6 +234,7 @@ export default class GenericCard extends React.Component<
           iconValue={iconValue}
           iconOptions={iconOptions}
           values={values}
+          isAlignToLeftNav = {isAlignToLeftNav}
           secondaryLabelLimit={secondaryLabelLimit}
         />
       )

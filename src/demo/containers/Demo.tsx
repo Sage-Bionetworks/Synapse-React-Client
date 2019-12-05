@@ -7,7 +7,7 @@ import QueryWrapperMenu, {
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
-import {testDownloadSpeed} from '../../lib/utils/DownloadSpeedTest'
+import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
 
 type DemoState = {
   token: string | null
@@ -47,6 +47,7 @@ class Demo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           title: 'title',
           synapseId: 'syn16787123',
+          enableDownloadConfirmation: true,
         },
         menuConfig: [
           {
@@ -68,10 +69,16 @@ class Demo extends React.Component<{}, DemoState> {
             sql: 'SELECT name, grant FROM syn11346063',
           },
           {
+            title: 'File Add To List Demo',
+            facetDisplayValue: 'Group By Grant',
+            facet: 'grant',
+            sql: 'SELECT name, grant FROM syn11346063 Group by grant',
+          },
+          {
             title: 'File Add To List Demo with Where Clause',
             facetDisplayValue: 'Name',
             facet: 'consortium',
-            sql: 'SELECT name, grant FROM syn11346063 WHERE ( ( "consortium" IS NULL ) )',
+            sql: 'SELECT name, grant FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
           },
         ],
         rgbIndex: 2,
@@ -98,6 +105,11 @@ class Demo extends React.Component<{}, DemoState> {
             sql:
               'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
           },
+          {
+            facet: 'individuals',
+            sql:
+              'SELECT diagnosis, sex, dataType, assay, count(distinct(id)) as "Files", count(distinct(specimenID)) as "Specimens", count(distinct(individualID)) as "Individuals" FROM syn11346063 GROUP BY 1,2,3,4 ORDER BY 1 DESC',
+          },
         ] as MenuConfig[],
         rgbIndex: 5,
       },
@@ -118,11 +130,13 @@ class Demo extends React.Component<{}, DemoState> {
   public onRunDownloadSpeedTest() {
     const { token } = this.state
     if (token) {
-      testDownloadSpeed(token).then((estimatedDownloadBytesPerSecond:number) => {
-        this.setState({ estimatedDownloadBytesPerSecond })
-      }).catch((error: any) => {
-        console.error('estimate download speed failed', error)
-      })
+      testDownloadSpeed(token)
+        .then((estimatedDownloadBytesPerSecond: number) => {
+          this.setState({ estimatedDownloadBytesPerSecond })
+        })
+        .catch((error: any) => {
+          console.error('estimate download speed failed', error)
+        })
     }
   }
 
@@ -179,12 +193,14 @@ class Demo extends React.Component<{}, DemoState> {
           </div>
         )}
         {estimatedDownloadBytesPerSecond && (
-            <div className="container">
-              <h5>Estimated Download Speed: {(estimatedDownloadBytesPerSecond/1000000).toFixed(2)} MBps</h5>
-              <hr />
-            </div>
-          )
-        }
+          <div className="container">
+            <h5>
+              Estimated Download Speed:{' '}
+              {(estimatedDownloadBytesPerSecond / 1000000).toFixed(2)} MBps
+            </h5>
+            <hr />
+          </div>
+        )}
         {token && (
           <div className="container">
             <h5>Upload File(s) Demo</h5>
@@ -205,6 +221,16 @@ class Demo extends React.Component<{}, DemoState> {
         {token && (
           <div className="container">
             <h5>Project Statistics Demo</h5>
+            <StatisticsPlot
+              token={token}
+              request={{
+                concreteType:
+                  'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+                objectId: 'syn2580853',
+                fileDownloads: true,
+                fileUploads: true,
+              }}
+            />
             <StatisticsPlot
               token={token}
               request={{
