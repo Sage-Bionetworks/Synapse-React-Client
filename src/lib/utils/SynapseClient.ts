@@ -107,8 +107,8 @@ function parseJSON(response: any) {
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
   options: RequestInit,
-  delayMs: any,
-  retries: number,
+  delayMs: number = 1000,
+  retries: number = 5,
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
@@ -121,7 +121,6 @@ const fetchWithExponentialTimeout = <T>(
         return parseJSON(resp)
       }
       if (resp.status === 429 || resp.status === 0) {
-        console.log('network connection is down = ', resp)
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
         if (retries === 1) {
           return Promise.reject({
@@ -168,9 +167,18 @@ const fetchWithExponentialTimeout = <T>(
         })
     })
     .catch(error => {
-      console.log('error = ', error)
-      // this should never happen
-      return Promise.reject(error)
+       // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
+      if (retries === 1) {
+        return Promise.reject(error)
+      }
+      return delay(delayMs).then(() => {
+        return fetchWithExponentialTimeout(
+          url,
+          options,
+          delayMs * 2,
+          retries - 1,
+        )
+      })
     })
 }
 
@@ -197,7 +205,7 @@ export const doPost = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
@@ -219,7 +227,7 @@ export const doGet = <T>(
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 
 export const doDelete = (
@@ -244,7 +252,7 @@ export const doDelete = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout(usedEndpoint + url, options)
 }
 
 export const doPut = (
@@ -270,7 +278,7 @@ export const doPut = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout(usedEndpoint + url, options)
 }
 
 export const putRefreshSessionToken = (sessionToken: string) => {

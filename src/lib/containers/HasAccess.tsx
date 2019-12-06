@@ -83,10 +83,12 @@ export default class HasAccess extends React.Component<
       restrictionInformation => {
         this.setState({ restrictionInformation })
       },
-    )
+    ).catch(err => {
+      console.log('Error on getRestrictionInformation: ', err)
+    })
   }
 
-  formatIcon = (iconProp: IconProp, isWarning: boolean) => {
+  renderIconHelper = (iconProp: IconProp, isWarning: boolean) => {
     const classColor = isWarning ? 'SRC-warning-color' : 'SRC-success-color'
     return (
       <>
@@ -101,7 +103,7 @@ export default class HasAccess extends React.Component<
     )
   }
 
-  getIcon() {
+  renderIcon() {
     const { fileHandle } = this.props
     const { restrictionInformation } = this.state
     const isOpen = fileHandle || restrictionInformation &&
@@ -112,10 +114,10 @@ export default class HasAccess extends React.Component<
       // @ts-ignore
       const isExternalFileHandle = Object.values(ExternalFileHandleConcreteTypeEnum).includes(concreteType)
       icon = isExternalFileHandle
-        ? this.formatIcon(faLink, false)
-        : this.formatIcon(faUnlockAlt, false)
+        ? this.renderIconHelper(faLink, false)
+        : this.renderIconHelper(faUnlockAlt, false)
     } else {
-      icon = this.formatIcon(faMinusCircle, true)
+      icon = this.renderIconHelper(faMinusCircle, true)
     }
     return (
       <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
@@ -129,7 +131,7 @@ export default class HasAccess extends React.Component<
     const hasUnmetAccessRequirement =  (restrictionInformation && restrictionInformation!.hasUnmetAccessRequirement) || ''
     const restrictionLevel =  (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
     const { synapseId, deniedAccess } = this.props
-    const icon = this.getIcon()
+    const icon = this.renderIcon()
     let viewARsLink: React.ReactElement = <></>
     if (
       RestrictionLevel.OPEN !== restrictionLevel
