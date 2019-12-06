@@ -27,7 +27,7 @@ import {
   ToolExperimental,
 } from '../../../assets/themed_icons'
 
-import { KeyValue } from '../../../../lib/utils/modules/sqlFunctions'
+import { KeyValue } from '../../../utils/functions/sqlFunctions'
 
 type IconProps = {
   type: string

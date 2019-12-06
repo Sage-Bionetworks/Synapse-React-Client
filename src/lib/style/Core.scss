@@ -1,5 +1,5 @@
-// Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
+// Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 
 svg.SRC-hoverBox {
@@ -56,6 +56,10 @@ body * {
 
 .table > thead.SRC_borderTop {
   border-top: 1px solid #dddddd;
+}
+
+.table > thead.SRC_bordered th {
+  border: 1px solid #dddddd;
 }
 
 .SRC-facets {
@@ -192,6 +196,10 @@ button.SRC-roundBorder {
 
 .SRC-marginBottomTen {
   margin-bottom: 10px;
+}
+
+.SRC-marginTopMinusTen {
+  margin-top: -10px;
 }
 
 .SRC-flex {
@@ -392,7 +400,6 @@ button.SRC-roundBorder {
 
 .SRC-sortPadding {
   outline: none;
-  margin-left: 6px;
   padding: 2px 3px;
 }
 
@@ -615,6 +622,13 @@ div.SRC-userImg {
 .SRC-card-grid-row {
   display: flex;
   flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.SRC-split {
+  display: flex;
+  align-content: center;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -928,8 +942,16 @@ a.dropdown-item {
 .dropdown button.btn {
   padding: 3px;
   margin: 0px 3px;
+
+  &.condenced {
+    padding: 1px;
+    margin: 0 0 0 1px
+  }
 }
 
+.SRC-inactive {
+  color: rgba(0, 0, 0, 0.25);
+}
 .SRC-success-color {
   color: rgb(83, 207, 151);
 }
@@ -948,4 +970,11 @@ a.dropdown-item {
 
 .plotly .slice {
   cursor: pointer;
+}
+
+hr ~ .SRC-wrapper {
+  margin-top: 11px;
+  .SRC-marginTopMinusTen {
+    margin-top: 0
+  }
 }

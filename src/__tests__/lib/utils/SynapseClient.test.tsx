@@ -2,7 +2,7 @@ import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
 import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
 import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
-import { BackendDestinationEnum } from 'lib/utils/getEndpoint'
+import { BackendDestinationEnum } from 'lib/utils/functions/getEndpoint'
 import { AddFilesToDownloadListRequest } from 'lib/utils/jsonResponses/AddFilesToDownloadListRequest'
 
 it('invalid call', () => {
@@ -105,23 +105,27 @@ it('get files', () => {
     })
 })
 
-it ('should attempt to add files to download list and return an error for anonimous user', () => {
-  const  req: AddFilesToDownloadListRequest = {
-      concreteType:
-        'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
-      query: {sql: "SELECT * FROM syn21242549", includeEntityEtag: true, isConsistent: true, offset: 0, limit: 25}
-    }
-  return SynapseClient.addFilesToDownloadList(
-    req, ''
-  ) .then(data => {
-    //it should be rejected because there is no token
-    fail('should not be able to downlod without  token')
-  })
-  .catch(err => {
-    expect(err.reason).not.toBeUndefined()
-  })
-});
-
+it('should attempt to add files to download list and return an error for anonimous user', () => {
+  const req: AddFilesToDownloadListRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
+    query: {
+      sql: 'SELECT * FROM syn21242549',
+      includeEntityEtag: true,
+      isConsistent: true,
+      offset: 0,
+      limit: 25,
+    },
+  }
+  return SynapseClient.addFilesToDownloadList(req, '')
+    .then(data => {
+      //it should be rejected because there is no token
+      fail('should not be able to downlod without  token')
+    })
+    .catch(err => {
+      expect(err.reason).not.toBeUndefined()
+    })
+})
 
 it('get entity bundle latest version', () => {
   const partsMask =

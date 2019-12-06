@@ -306,4 +306,18 @@ img.iconImg.SRC-datasetIcon {
       padding-bottom: $baseline-grid / 2;
     }
   }
+  &.isAlignToLeftNav {
+    .iconContainer {
+      @media (min-width: 992px) {
+        text-align: right;
+        padding-right: 40px;
+      }
+    }
+
+    .SRC-cardContent {
+      @media (min-width: 992px) {
+        padding-left: 32px;
+      }
+    }
+  }
 }

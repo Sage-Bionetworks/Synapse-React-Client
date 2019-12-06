@@ -14,6 +14,7 @@ export type HeaderCardProps = {
   iconValue: string
   secondaryLabelLimit?: number
   values?: string[][]
+  isAlignToLeftNav?: boolean
 }
 
 const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
@@ -26,18 +27,19 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   backgroundColor,
   values,
   secondaryLabelLimit,
+  isAlignToLeftNav
 }) => {
   const style: React.CSSProperties = {
     background: backgroundColor,
   }
   return (
-    <div style={style} className="SRC-portalCardHeader">
+    <div style={style} className={`SRC-portalCardHeader${isAlignToLeftNav ? ' isAlignToLeftNav': ''}`}>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-md-1 iconContainer">
+          <div className={`iconContainer${isAlignToLeftNav ? ' col-md-offset-1 col-md-2': ' col-md-1'}`}>
             <Icon value={iconValue} iconOptions={iconOptions} type={type} />
           </div>
-          <div className="SRC-cardContent col-md-10">
+          <div className={`SRC-cardContent${isAlignToLeftNav ? ' col-md-8': ' col-md-10'}`}>
             <div className="SRC-type">{type}</div>
             <div>
               <h3

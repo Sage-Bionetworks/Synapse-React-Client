@@ -1,5 +1,5 @@
-import {  } from './SynapseTableConstants';
-import { DownloadConfirmation } from '../download_list/DownloadConfirmation';
+import {} from './SynapseTableConstants'
+import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -28,14 +28,14 @@ import {
 } from '../../utils/jsonResponses/Table/SelectColumn'
 import { getColorPallette } from '../ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from '../QueryWrapper'
-import { cloneDeep } from '../../utils/modules/'
+import { cloneDeep } from '../../utils/functions'
 import { SortItem } from '../../utils/jsonResponses/Table/Query'
-import { readFacetValues } from '../../utils/modules/facetUtils'
+import { readFacetValues } from '../../utils/functions/facetUtils'
 import { lexer } from 'sql-parser'
 import {
   formatSQLFromParser,
   isGroupByInSql,
-} from '../../utils/modules/sqlFunctions'
+} from '../../utils/functions/sqlFunctions'
 import ModalDownload from '../ModalDownload'
 import { SynapseClient } from '../../utils'
 import { ReferenceList } from '../../utils/jsonResponses/ReferenceList'
@@ -46,7 +46,7 @@ import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBu
 import UserCard from '../UserCard'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { UserProfile } from '../../utils/jsonResponses/UserProfile'
-import { getUserProfileWithProfilePicAttached } from '../getUserData'
+import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
 import { Modal, Dropdown } from 'react-bootstrap'
 import {
@@ -55,13 +55,16 @@ import {
   DownloadOptions,
   ColumnSelection,
 } from './table-top/'
-import {TOOLTIP_DELAY_SHOW,
-SELECT_ALL, ICON_STATE } from './SynapseTableConstants'
+import {
+  TOOLTIP_DELAY_SHOW,
+  SELECT_ALL,
+  ICON_STATE,
+} from './SynapseTableConstants'
 
 import FacetFilter from './table-top/FacetFilter'
 import MarkdownSynapse from '../MarkdownSynapse'
 import HasAccess from '../HasAccess'
-import { unCamelCase } from './../../utils/UtilityFns'
+import { unCamelCase } from './../../utils/functions/unCamelCase'
 const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
@@ -104,7 +107,7 @@ export type SynapseTableState = {
   isColumnSelected: boolean[]
   columnIconSortState: number[]
   isModalDownloadOpen: boolean
-  isDownloadConfirmationOpen:boolean
+  isDownloadConfirmationOpen: boolean
   isExpanded: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
@@ -119,7 +122,6 @@ export type SynapseTableProps = {
   markdownColumns?: string[] // array of column names which should render as markdown
   enableDownloadConfirmation?: boolean
 }
-
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -219,13 +221,13 @@ export default class SynapseTable extends React.Component<
     }
     // Make call to get group headers and user profiles
     const ids = Array.from(distinctUserIds)
-    const idsWithUserProfiles: string[] = []
+    const userPorfileIds: string[] = []
     // TODO: Grab Team Badge
     try {
       const data = await SynapseClient.getGroupHeadersBatch(ids, token)
       data.children.forEach(el => {
         if (el.isIndividual) {
-          idsWithUserProfiles.push(el.ownerId)
+          userPorfileIds.push(el.ownerId)
         } else {
           mapUserIdToHeader[el.ownerId] = el
         }
@@ -233,10 +235,10 @@ export default class SynapseTable extends React.Component<
     } catch (err) {
       console.error('Error on getGroupHeaders batch: ', err)
     }
-    if (idsWithUserProfiles.length > 0) {
+    if (userPorfileIds.length > 0) {
       try {
         const data = await getUserProfileWithProfilePicAttached(
-          idsWithUserProfiles,
+          userPorfileIds,
           token,
         )
         data.list.forEach((el: UserProfile) => {
@@ -313,18 +315,15 @@ export default class SynapseTable extends React.Component<
     const { isModalDownloadOpen, isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const { sql, selectedFacets } = queryRequest.query
-    const style: React.CSSProperties = {}
+    let className = 'SRC-marginTopMinusTen'
     if (showBarChart) {
-      style.marginTop = 15
-      style.marginBottom = 15
-    } else {
-      style.marginTop = -10
+      className = 'SRC-marginBottomTop'
     }
     const content = (
       <>
         <div
-          className="SRC-centerContent"
-          style={{ height: '20px', textAlign: 'left', ...style }}
+          className={`SRC-centerContent text-left ${className}`}
+          style={{ height: '20px'}}
         >
           {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
             <TotalQueryResults
@@ -399,9 +398,9 @@ export default class SynapseTable extends React.Component<
     }
     return (
       <DownloadOptions
-        onDownloadFiles={(e: React.SyntheticEvent)=>this.showDownload(e)}
+        onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
-        isUnauthenticated = {!this.props.token}
+        isUnauthenticated={!this.props.token}
       />
     )
   }
@@ -473,19 +472,29 @@ export default class SynapseTable extends React.Component<
       </button>
     )
     let isShowingAccessColumn: boolean | undefined = showAccessColumn
-    if ( showAccessColumn && rows.length > 0 ) {
+    if (showAccessColumn && rows.length > 0) {
       // PORTALS-924: verify that row actualy contains a defined rowId
       isShowingAccessColumn = rows[0].rowId !== undefined
     }
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
-         {this.state.isDownloadConfirmationOpen && <DownloadConfirmation token={this.props.token!} queryBundleRequest={this.props.getLastQueryRequest!()} fnClose={() => this.setState({isDownloadConfirmationOpen: false})}/>}
+        {this.state.isDownloadConfirmationOpen && (
+          <DownloadConfirmation
+            token={this.props.token!}
+            queryBundleRequest={this.props.getLastQueryRequest!()}
+            fnClose={() => this.setState({ isDownloadConfirmationOpen: false })}
+          />
+        )}
         <table className="table table-striped table-condensed">
-          <thead className="SRC_borderTop">
-           <tr>{this.createTableHeader(headers, facets, isShowingAccessColumn)}</tr>
+          <thead className="SRC_bordered">
+            <tr>
+              {this.createTableHeader(headers, facets, isShowingAccessColumn)}
+            </tr>
           </thead>
-          <tbody>{this.createTableRows(rows, headers, isShowingAccessColumn)}</tbody>
+          <tbody>
+            {this.createTableRows(rows, headers, isShowingAccessColumn)}
+          </tbody>
         </table>
         {hasMoreData && next}
         {pastZero && previous}
@@ -540,7 +549,7 @@ export default class SynapseTable extends React.Component<
           />
         </span>
         <EllipsisDropdown
-          onDownloadFiles= {(e: React.SyntheticEvent)=>this.showDownload(e)}
+          onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
           onDownloadTableOnly={() =>
             this.setState(onDownloadTableOnlyArguments)
           }
@@ -728,7 +737,11 @@ export default class SynapseTable extends React.Component<
     })
   }
 
-  private createTableRows(rows: Row[], headers: SelectColumn[], isShowingAccessColumn: boolean | undefined) {
+  private createTableRows(
+    rows: Row[],
+    headers: SelectColumn[],
+    isShowingAccessColumn: boolean | undefined,
+  ) {
     const rowsFormatted: JSX.Element[] = []
     const { token } = this.props
     const {
@@ -895,7 +908,7 @@ export default class SynapseTable extends React.Component<
   private createTableHeader(
     headers: SelectColumn[],
     facets: FacetColumnResult[],
-    isShowingAccessColumn: boolean | undefined
+    isShowingAccessColumn: boolean | undefined,
   ) {
     const { token } = this.props
     const {
@@ -949,10 +962,11 @@ export default class SynapseTable extends React.Component<
           const displayColumnName: string | undefined = unCamelCase(column.name)
           return (
             <th key={column.name}>
-              <div className="SRC-centerContent">
+              <div className="SRC-split">
                 <span style={{ whiteSpace: 'nowrap' }}>
                   {displayColumnName}
                 </span>
+                <div className="SRC-centerContent">
                 {isFacetSelection &&
                   this.configureFacetDropdown(facets, facetIndex)}
                 <span
@@ -972,6 +986,7 @@ export default class SynapseTable extends React.Component<
                     icon={ICON_STATE[columnIndex] as IconProp}
                   />
                 </span>
+                </div>
               </div>
             </th>
           )
@@ -1026,9 +1041,8 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-
   private showDownload(event: React.SyntheticEvent) {
-    if(this.props.enableDownloadConfirmation) {
+    if (this.props.enableDownloadConfirmation) {
       this.setState({ isDownloadConfirmationOpen: true })
     } else {
       this.advancedSearch(event)

@@ -70,9 +70,9 @@ class SynapseImage extends React.Component<
       .then((data: BatchFileResult) => {
         const { preSignedURL } = data.requestedFiles.filter(
           el => el.fileHandleId === id,
-        )[0] // this.matchToHandle(this.compareById(id, 'fileHandleId'), data.requestedFiles)
+        )[0]
         this.setState({
-          preSignedURL: preSignedURL,
+          preSignedURL: preSignedURL!,
         })
       })
       .catch(err => {

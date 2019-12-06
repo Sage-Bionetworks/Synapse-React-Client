@@ -1,5 +1,5 @@
 import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
-import { SynapseClient, SynapseConstants } from '../'
+import { SynapseClient, SynapseConstants } from '..'
 import { QueryResultBundle } from '../jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from './rollupCompatibleModules'
 

@@ -2,8 +2,8 @@ import * as React from 'react'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils/'
-import { cloneDeep } from '../utils/modules'
-import { getNextPageOfData } from '../utils/modules/queryUtils'
+import { cloneDeep } from '../utils/functions'
+import { getNextPageOfData } from '../utils/functions/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
 import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
 
@@ -340,11 +340,6 @@ export default class QueryWrapper extends React.Component<
     )
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
-    if (this.props.showMenu) {
-      // menu is to the left of the child components so we let that add its
-      // own html
-      return <div className={`${loadingCusrorClass}`}>{childrenWithProps}</div>
-    }
-    return <div className={`${loadingCusrorClass}`}>{childrenWithProps}</div>
+    return <div className={`SRC-wrapper ${loadingCusrorClass}`}>{childrenWithProps}</div>
   }
 }
