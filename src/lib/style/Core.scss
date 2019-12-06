@@ -198,6 +198,10 @@ button.SRC-roundBorder {
   margin-bottom: 10px;
 }
 
+.SRC-marginTopMinusTen {
+  margin-top: -10px;
+}
+
 .SRC-flex {
   display: flex;
 }
@@ -966,4 +970,11 @@ a.dropdown-item {
 
 .plotly .slice {
   cursor: pointer;
+}
+
+hr ~ .SRC-wrapper {
+  margin-top: 11px;
+  .SRC-marginTopMinusTen {
+    margin-top: 0
+  }
 }

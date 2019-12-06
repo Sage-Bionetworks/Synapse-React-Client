@@ -340,11 +340,6 @@ export default class QueryWrapper extends React.Component<
     )
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
-    if (this.props.showMenu) {
-      // menu is to the left of the child components so we let that add its
-      // own html
-      return <div className={`${loadingCusrorClass}`}>{childrenWithProps}</div>
-    }
-    return <div className={`${loadingCusrorClass}`}>{childrenWithProps}</div>
+    return <div className={`SRC-wrapper ${loadingCusrorClass}`}>{childrenWithProps}</div>
   }
 }
