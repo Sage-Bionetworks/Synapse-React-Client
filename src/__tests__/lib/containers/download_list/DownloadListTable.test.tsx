@@ -28,6 +28,8 @@ describe('it performs all functionality ', () => {
   const SynapseClient = require('../../../../lib/utils/SynapseClient')
   const fileOneId = '1'
   const fileTwoId = '2'
+  const entityOneId = 'syn1'
+  const entityTwoId = 'syn2'
   const fileOneName = 'fileNameOne'
   const fileTwoName = 'fileTwoName'
   const downloadListMock: DownloadList = {
@@ -37,12 +39,12 @@ describe('it performs all functionality ', () => {
     filesToDownload: [
       {
         fileHandleId: fileOneId,
-        associateObjectId: '',
+        associateObjectId: entityOneId,
         associateObjectType: FileHandleAssociateType.FileEntity,
       },
       {
         fileHandleId: fileTwoId,
-        associateObjectId: '',
+        associateObjectId: entityTwoId,
         associateObjectType: FileHandleAssociateType.FileEntity,
       },
     ],
@@ -53,7 +55,7 @@ describe('it performs all functionality ', () => {
     results: [
       {
         name: fileOneName,
-        id: `syn${fileOneId}`,
+        id: entityOneId,
         type: '',
         versionNumber: 0,
         versionLabel: '',
@@ -65,7 +67,7 @@ describe('it performs all functionality ', () => {
       },
       {
         name: fileTwoName,
-        id: `syn${fileTwoId}`,
+        id: entityTwoId,
         type: '',
         versionNumber: 0,
         versionLabel: '',

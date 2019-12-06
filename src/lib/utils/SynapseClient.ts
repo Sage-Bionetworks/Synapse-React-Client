@@ -105,14 +105,14 @@ function parseJSON(response: any) {
     )
 }
 const fetchWithExponentialTimeout = <T>(
-  url: string,
-  options: any,
+  url: RequestInfo,
+  options: RequestInit,
   delayMs: any,
   retries: number,
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
-      if (resp.status > 199 && resp.status < 300) {
+      if (resp.ok) {
         if (resp.status === 204) {
           // the response is empty, don't try to parse an empty response
           return resp
@@ -121,6 +121,7 @@ const fetchWithExponentialTimeout = <T>(
         return parseJSON(resp)
       }
       if (resp.status === 429 || resp.status === 0) {
+        console.log('network connection is down = ', resp)
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
         if (retries === 1) {
           return Promise.reject({
@@ -167,6 +168,7 @@ const fetchWithExponentialTimeout = <T>(
         })
     })
     .catch(error => {
+      console.log('error = ', error)
       // this should never happen
       return Promise.reject(error)
     })
@@ -176,10 +178,10 @@ export const doPost = (
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ): Promise<any> => {
-  const options: any = {
+  const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
@@ -190,10 +192,8 @@ export const doPost = (
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (initCredentials) {
-    options.credentials = initCredentials
-  }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
@@ -202,21 +202,20 @@ export const doPost = (
 export const doGet = <T>(
   url: string,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
-  const options: any = {
+  const options: RequestInit = {
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'sessiontoken',
     },
     method: 'GET',
     mode: 'cors',
-  }
-  if (initCredentials) {
-    options.credentials = initCredentials
+    credentials: initCredentials
   }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
@@ -227,10 +226,10 @@ export const doDelete = (
   url: string,
   requestJsonObject: any | undefined = undefined,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
-  const options: any = {
+  const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
@@ -240,10 +239,8 @@ export const doDelete = (
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (initCredentials) {
-    options.credentials = initCredentials
-  }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
@@ -254,10 +251,10 @@ export const doPut = (
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ): Promise<any> => {
-  const options: any = {
+  const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
@@ -266,11 +263,10 @@ export const doPut = (
     },
     method: 'PUT',
     mode: 'cors',
-  }
-  if (initCredentials) {
-    options.credentials = initCredentials
+    credentials: initCredentials
   }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)

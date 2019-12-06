@@ -86,12 +86,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         })
         return
       }
-      const referenceCall: Reference[] = filesToDownload.map(el => {
-        return { targetId: el.fileHandleId }
-      })
-      // entity header is used to get the names of the files that the user
-      // doesn't have access to
-      const references = await getEntityHeader(referenceCall, token)
       const batchFileRequest: BatchFileRequest = {
         requestedFiles: filesToDownload,
         includeFileHandles: true,
@@ -101,6 +95,20 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // batch file result gives FilesHandle for the files the user can download
       // which has additional metadata - createdBy, numBytes, etc.
       const batchFileResult = await getFiles(batchFileRequest, token)
+      
+      // Only make entity header calls to the files that the user doesn't have access to,
+      // which can be determined by whether the batchFileResult has a failure code for the
+      // corresponding download list item
+      const referenceCall: Reference[] = filesToDownload.filter(el => {
+        return batchFileResult.requestedFiles.find(batchFile => batchFile.fileHandleId === el.fileHandleId)!.failureCode !== undefined
+      }).map(
+        el => {
+          return { targetId: el.associateObjectId }
+        }
+      )
+      // entity header is used to get the names of the files that the user
+      // doesn't have access to
+      const references = await getEntityHeader(referenceCall, token)
       setData({
         references,
         batchFileResult,
@@ -194,20 +202,24 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               fileRes => fileRes.fileHandleId === fileHandleId,
             )
             const fileHandle = fileResult ? fileResult.fileHandle : undefined
+            const canDownload = fileHandle !== undefined
             if (fileHandle) {
               // fileHandle is defined, this file is downloadable, show its metadata
               ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
               createdOn = moment(createdOn).format('L LT')
-              numBytes += contentSize
+              if (contentSize) {
+                numBytes += contentSize
+              }
             } else {
               // file is not downloadable, only show its name from entity header info
               const requestedFile = results.find(
-                req => req.id === `syn${fileHandleId}`,
+                req => req.id === item.associateObjectId,
               )!
               fileName = requestedFile.name
             }
             const userProfile =
               userProfiles &&
+              userProfiles.list &&
               userProfiles.list.find(el => el.ownerId === createdBy)
             return (
               <tr key={fileHandleId}>
@@ -221,37 +233,31 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   </a>
                 </td>
                 <td>
-                  <HasAccess token={token} synapseId={synId} />
+                  <HasAccess deniedAccess={!canDownload} fileHandle={fileHandle} token={token} synapseId={synId} />
                 </td>
-                {createdBy && (
-                  <td>
-                    {userProfile && (
-                      <UserCard
-                        size={'SMALL USER CARD'}
-                        userProfile={userProfile}
-                        preSignedURL={userProfile.clientPreSignedURL}
-                      />
-                    )}
-                    {!userProfile && <span className="spinner" />}
-                  </td>
-                )}
-                {createdOn && <td>{createdOn}</td>}
-                {contentSize && (
-                  <td>{calculateFriendlyFileSize(contentSize)}</td>
-                )}
-                {
-                  <td>
-                    <button
-                      className={TESTING_TRASH_BTN_CLASS}
-                      onClick={() => deleteFileFromList(fileHandleId, synId)}
-                    >
-                      <FontAwesomeIcon
-                        className="SRC-primary-text-color"
-                        icon="trash"
-                      />
-                    </button>
-                  </td>
-                }
+                <td>
+                  {userProfile && (
+                    <UserCard
+                      size={'SMALL USER CARD'}
+                      userProfile={userProfile}
+                      preSignedURL={userProfile.clientPreSignedURL}
+                    />
+                  )}
+                  {canDownload && !userProfile && <span className="spinner" />}
+                </td>
+                <td>{createdOn}</td>
+                <td>{contentSize && calculateFriendlyFileSize(contentSize)}</td>
+                <td>
+                  <button
+                    className={TESTING_TRASH_BTN_CLASS}
+                    onClick={() => deleteFileFromList(fileHandleId, synId)}
+                  >
+                    <FontAwesomeIcon
+                      className="SRC-primary-text-color"
+                      icon="trash"
+                    />
+                  </button>
+                </td>
               </tr>
             )
           })}

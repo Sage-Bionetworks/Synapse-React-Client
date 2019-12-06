@@ -10,24 +10,34 @@ import {
   getEndpoint,
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library, IconProp } from '@fortawesome/fontawesome-svg-core'
 import {
   faUnlockAlt,
   faMinusCircle,
   faCircle,
+  faLink,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FileHandle } from '../utils/jsonResponses/FileHandle'
 library.add(faUnlockAlt)
 library.add(faMinusCircle)
 library.add(faCircle)
 
 export type HasAccessProps = {
+  fileHandle?: FileHandle
   synapseId: string
   token?: string
+  deniedAccess?: boolean
 }
 
 type HasAccessState = {
   restrictionInformation?: RestrictionInformationResponse
+}
+
+export enum ExternalFileHandleConcreteTypeEnum {
+  ProxyFileHandle = 'org.sagebionetworks.repo.model.file.ProxyFileHandle',
+  ExternalObjectStoreFileHandle = 'org.sagebionetworks.repo.model.file.ExternalObjectStoreFileHandle',
+  ExternalFileHandle = 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
 }
 
 /**
@@ -55,9 +65,14 @@ export default class HasAccess extends React.Component<
     this.getRestrictionInformation()
   }
 
-  getRestrictionInformation() {
-    const { synapseId, token } = this.props
-    if (this.state.restrictionInformation || !synapseId || !token) {
+  getRestrictionInformation = () => {
+    const { synapseId, token, deniedAccess = false } = this.props
+    if (
+      this.state.restrictionInformation ||
+      !synapseId ||
+      !token ||
+      deniedAccess
+    ) {
       return
     }
     const request: RestrictionInformationRequest = {
@@ -71,49 +86,57 @@ export default class HasAccess extends React.Component<
     )
   }
 
+  formatIcon = (iconProp: IconProp, isWarning: boolean) => {
+    const classColor = isWarning ? 'SRC-warning-color' : 'SRC-success-color'
+    return (
+      <>
+        <FontAwesomeIcon icon={faCircle} className={classColor} size="lg" />
+        <FontAwesomeIcon
+          icon={iconProp}
+          className="SRC-half-opacity"
+          style={{ transform: 'translate(4%, -4%)' }}
+          size="xs"
+        />
+      </>
+    )
+  }
+
+  getIcon() {
+    const { fileHandle } = this.props
+    const { restrictionInformation } = this.state
+    const isOpen = fileHandle || restrictionInformation &&
+    RestrictionLevel.OPEN === restrictionInformation.restrictionLevel
+    let icon = undefined
+    if (isOpen) {
+      const concreteType = fileHandle ? fileHandle.concreteType: ''
+      // @ts-ignore
+      const isExternalFileHandle = Object.values(ExternalFileHandleConcreteTypeEnum).includes(concreteType)
+      icon = isExternalFileHandle
+        ? this.formatIcon(faLink, false)
+        : this.formatIcon(faUnlockAlt, false)
+    } else {
+      icon = this.formatIcon(faMinusCircle, true)
+    }
+    return (
+      <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
+        {icon}
+      </span>
+    )
+  }
+
   render() {
     const { restrictionInformation } = this.state
-    const { synapseId } = this.props
-    const icon =
-      restrictionInformation &&
-      restrictionInformation.hasUnmetAccessRequirement ? (
-        <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
-          <FontAwesomeIcon
-            icon={faCircle}
-            className="SRC-warning-color"
-            size="lg"
-          />
-          <FontAwesomeIcon
-            icon={faMinusCircle}
-            className="SRC-half-opacity"
-            style={{ transform: 'translate(4%, -4%)' }}
-            size="xs"
-          />
-        </span>
-      ) : (
-        <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
-          <FontAwesomeIcon
-            icon={faCircle}
-            className="SRC-success-color"
-            size="lg"
-          />
-          <FontAwesomeIcon
-            icon={faUnlockAlt}
-            className="SRC-half-opacity"
-            style={{ transform: 'translate(4%, -4%)' }}
-            size="xs"
-          />
-        </span>
-      )
-
+    const hasUnmetAccessRequirement =  (restrictionInformation && restrictionInformation!.hasUnmetAccessRequirement) || ''
+    const restrictionLevel =  (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
+    const { synapseId, deniedAccess } = this.props
+    const icon = this.getIcon()
     let viewARsLink: React.ReactElement = <></>
     if (
-      restrictionInformation &&
-      RestrictionLevel.OPEN !== restrictionInformation.restrictionLevel
+      RestrictionLevel.OPEN !== restrictionLevel
     ) {
-      const linkText: string = restrictionInformation.hasUnmetAccessRequirement
+      const linkText: string = deniedAccess || hasUnmetAccessRequirement
         ? 'Get Access'
-        : 'View Access'
+        : 'View Terms'
       viewARsLink = (
         <a
           style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
