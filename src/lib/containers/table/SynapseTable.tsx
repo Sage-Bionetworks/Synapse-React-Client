@@ -315,18 +315,15 @@ export default class SynapseTable extends React.Component<
     const { isModalDownloadOpen, isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const { sql, selectedFacets } = queryRequest.query
-    const style: React.CSSProperties = {}
+    let className = 'SRC-marginTopMinusTen'
     if (showBarChart) {
-      style.marginTop = 15
-      style.marginBottom = 15
-    } else {
-      style.marginTop = -10
+      className = 'SRC-marginBottomTop'
     }
     const content = (
       <>
         <div
-          className="SRC-centerContent"
-          style={{ height: '20px', textAlign: 'left', ...style }}
+          className={`SRC-centerContent text-left ${className}`}
+          style={{ height: '20px'}}
         >
           {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
             <TotalQueryResults
