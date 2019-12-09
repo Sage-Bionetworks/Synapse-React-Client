@@ -123,7 +123,7 @@ it('should attempt to add files to download list and return an error for anonimo
       fail('should not be able to downlod without  token')
     })
     .catch(err => {
-      expect(err.reason).not.toBeUndefined()
+      expect(err.reason).toBeDefined()
     })
 })
 

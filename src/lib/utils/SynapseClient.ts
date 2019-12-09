@@ -137,7 +137,6 @@ const fetchWithExponentialTimeout = <T>(
           )
         })
       }
-      // error status that indicates no more retries
       return resp
         .json()
         .then(json => {
@@ -167,10 +166,10 @@ const fetchWithExponentialTimeout = <T>(
         })
     })
     .catch(error => {
-       // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-      if (retries === 1) {
+      if ((error && error.statusCode !== 429) || retries === 1) {
         return Promise.reject(error)
       }
+      // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
       return delay(delayMs).then(() => {
         return fetchWithExponentialTimeout(
           url,
