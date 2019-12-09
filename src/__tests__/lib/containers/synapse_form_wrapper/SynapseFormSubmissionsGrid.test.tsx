@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import UserFileGrid, {
-  UserFileGridProps,
-} from '../../../../lib/containers/synapse_form_wrapper/UserFileGrid'
+  SynapseFormSubmissionGridProps,
+} from '../../../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 
 import {
   formListDataSubmitted,
@@ -17,7 +17,7 @@ const itemNoun = 'submission'
 let synapseCall: Function
 
 const createShallowComponent = async (
-  props: UserFileGridProps,
+  props: SynapseFormSubmissionGridProps,
   disableLifecycleMethods: boolean = false,
 ) => {
   const wrapper = await shallow<UserFileGrid>(<UserFileGrid {...props} />, {
@@ -29,7 +29,7 @@ const createShallowComponent = async (
 }
 
 describe('basic tests', () => {
-  const props: UserFileGridProps = {
+  const props: SynapseFormSubmissionGridProps = {
     token,
     pathpart,
     formGroupId,

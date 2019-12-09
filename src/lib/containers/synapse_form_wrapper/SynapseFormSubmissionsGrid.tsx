@@ -20,7 +20,7 @@ import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
 
 
-export type UserFileGridProps = {
+export type SynapseFormSubmissionGridProps = {
   token?: string
   formGroupId: string
   pathpart: string
@@ -30,7 +30,7 @@ export type UserFileGridProps = {
 
 type FileListType = 'IN_PROGRESS' | 'SUBMITTED'
 
-type UserFileGridState = {
+type SynapseFormSubmissionGridState = {
   inProgress: {
     fileList: FormData[]
     nextPageToken?: string
@@ -44,9 +44,9 @@ type UserFileGridState = {
   modalContext?: { action: Function; arguments: any[] }
 }
 
-export default class UserFileGrid extends React.Component<
-  UserFileGridProps,
-  UserFileGridState
+export default class SynapseFormSubmissionGrid extends React.Component<
+  SynapseFormSubmissionGridProps,
+  SynapseFormSubmissionGridState
 > {
   modalTitle = 'Trash Submission?'
   listingText = {
@@ -77,7 +77,7 @@ export default class UserFileGrid extends React.Component<
     ],
   }
 
-  constructor(props: UserFileGridProps) {
+  constructor(props: SynapseFormSubmissionGridProps) {
     super(props)
     this.state = {
       isLoading: true,
@@ -95,7 +95,7 @@ export default class UserFileGrid extends React.Component<
     await this.refresh(this.props.token)
   }
 
-  async componentDidUpdate(prevProps: UserFileGridProps) {
+  async componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
       await this.refresh(this.props.token)
@@ -155,8 +155,8 @@ export default class UserFileGrid extends React.Component<
   getMore = async (fileListType: FileListType, nextPageToken: string) => {
     const statusList =
       fileListType === 'SUBMITTED'
-        ? UserFileGrid.requestFilter.SUBMITTED
-        : UserFileGrid.requestFilter.IN_PROGRESS
+        ? SynapseFormSubmissionGrid.requestFilter.SUBMITTED
+        : SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS
     const result = await this.getTypeFileListing(statusList, nextPageToken)
     if (fileListType === 'SUBMITTED') {
       this.setState(prevState => ({
@@ -177,11 +177,11 @@ export default class UserFileGrid extends React.Component<
 
   getUserFileListing = async (): Promise<void> => {
     const inProgress = await this.getTypeFileListing(
-      UserFileGrid.requestFilter.IN_PROGRESS,
+      SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS,
       this.state.inProgress.nextPageToken,
     )
     const submitted = await this.getTypeFileListing(
-      UserFileGrid.requestFilter.SUBMITTED,
+      SynapseFormSubmissionGrid.requestFilter.SUBMITTED,
       this.state.submitted.nextPageToken,
     )
 
