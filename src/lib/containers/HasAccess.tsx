@@ -45,7 +45,7 @@ export enum ExternalFileHandleConcreteTypeEnum {
 }
 
 export enum GoogleCloudFileHandleEnum {
-  GoogleCloudFileHandle = 'org.sagebionetworks.repo.model.file.GoogleCloudFileHandle'
+  GoogleCloudFileHandle = 'org.sagebionetworks.repo.model.file.GoogleCloudFileHandle',
 }
 
 const GIGABYTE_SIZE = 2 ** 30
@@ -55,7 +55,7 @@ enum DownloadTypeEnum {
   ExternalFileHandle,
   TooLargeFile,
   NoAccess,
-  IsOpenNoRestrictions
+  IsOpenNoRestrictions,
 }
 
 /**
@@ -69,12 +69,15 @@ export default class HasAccess extends React.Component<
   HasAccessProps,
   HasAccessState
 > {
-
   tooltipText = {
-    [DownloadTypeEnum.NoAccess]: "Your list has restricted files that can’t be downloaded. You must request access to these restricted files via Access Conditions page. All files will remain in the list and can be downloaded from here once your access is granted.",
-    [DownloadTypeEnum.TooLargeFile]: "Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.",
-    [DownloadTypeEnum.ExternalFileHandle]: "Your list contains external links, which must be downloaded manually. Clicking on the item will take you the download page.",
-    [DownloadTypeEnum.CloudFileHandle]: "Your list contains files that must be downloaded manually (e.g. files in Google Cloud). Clicking on the item will take you the download page.",
+    [DownloadTypeEnum.NoAccess]:
+      'Your list has restricted files that can’t be downloaded. You must request access to these restricted files via Access Conditions page. All files will remain in the list and can be downloaded from here once your access is granted.',
+    [DownloadTypeEnum.TooLargeFile]:
+      'Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.',
+    [DownloadTypeEnum.ExternalFileHandle]:
+      'Your list contains external links, which must be downloaded manually. Clicking on the item will take you the download page.',
+    [DownloadTypeEnum.CloudFileHandle]:
+      'Your list contains files that must be downloaded manually (e.g. files in Google Cloud). Clicking on the item will take you the download page.',
   }
 
   constructor(props: HasAccessProps) {
@@ -105,13 +108,13 @@ export default class HasAccess extends React.Component<
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: synapseId,
     }
-    SynapseClient.getRestrictionInformation(request, token).then(
-      restrictionInformation => {
+    SynapseClient.getRestrictionInformation(request, token)
+      .then(restrictionInformation => {
         this.setState({ restrictionInformation })
-      },
-    ).catch(err => {
-      console.log('Error on getRestrictionInformation: ', err)
-    })
+      })
+      .catch(err => {
+        console.log('Error on getRestrictionInformation: ', err)
+      })
   }
 
   renderIconHelper = (iconProp: IconProp, classColor: string) => {
@@ -129,13 +132,13 @@ export default class HasAccess extends React.Component<
   }
 
   renderIcon = (downloadType: DownloadTypeEnum) => {
-    switch(downloadType) {
+    switch (downloadType) {
       case DownloadTypeEnum.NoAccess:
         return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
       case DownloadTypeEnum.ExternalFileHandle:
-          return this.renderIconHelper(faLink, 'SRC-warning-color')
+        return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.CloudFileHandle:
-          return this.renderIconHelper(faLink, 'SRC-warning-color')
+        return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.IsOpenNoRestrictions:
         return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       case DownloadTypeEnum.TooLargeFile:
@@ -149,21 +152,26 @@ export default class HasAccess extends React.Component<
   getDownloadType = () => {
     const { fileHandle } = this.props
     const { restrictionInformation } = this.state
-    const isOpen = fileHandle || restrictionInformation &&
-    RestrictionLevel.OPEN === restrictionInformation.restrictionLevel
+    const isOpen =
+      fileHandle ||
+      (restrictionInformation &&
+        RestrictionLevel.OPEN === restrictionInformation.restrictionLevel)
     const isTooLarge = fileHandle && fileHandle.contentSize >= GIGABYTE_SIZE
     if (isTooLarge) {
       return DownloadTypeEnum.TooLargeFile
     } else if (isOpen) {
-      const concreteType = fileHandle ? fileHandle.concreteType: ''
-      const isGoogleCloudFileHandle = concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle
+      const concreteType = fileHandle ? fileHandle.concreteType : ''
+      const isGoogleCloudFileHandle =
+        concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle
       if (isGoogleCloudFileHandle) {
         return DownloadTypeEnum.CloudFileHandle
       } else {
         // @ts-ignore
-        const isExternalFileHandle = Object.values(ExternalFileHandleConcreteTypeEnum).includes(concreteType)
-        if (isExternalFileHandle) { 
-          return DownloadTypeEnum.ExternalFileHandle 
+        const isExternalFileHandle = Object.values(
+          ExternalFileHandleConcreteTypeEnum,
+        ).includes(concreteType)
+        if (isExternalFileHandle) {
+          return DownloadTypeEnum.ExternalFileHandle
         }
         return DownloadTypeEnum.IsOpenNoRestrictions
       }
@@ -176,17 +184,19 @@ export default class HasAccess extends React.Component<
   renderARsLink = (downloadType: DownloadTypeEnum) => {
     const { restrictionInformation } = this.state
     const { synapseId, deniedAccess } = this.props
-    const hasUnmetAccessRequirement =  (restrictionInformation && restrictionInformation!.hasUnmetAccessRequirement) || ''
-    const restrictionLevel =  (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
+    const hasUnmetAccessRequirement =
+      (restrictionInformation &&
+        restrictionInformation!.hasUnmetAccessRequirement) ||
+      ''
+    const restrictionLevel =
+      (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
     let viewARsLink: React.ReactElement = <></>
     if (
-      RestrictionLevel.OPEN !== restrictionLevel
-      &&
+      RestrictionLevel.OPEN !== restrictionLevel &&
       downloadType !== DownloadTypeEnum.TooLargeFile
     ) {
-      const linkText: string = deniedAccess || hasUnmetAccessRequirement
-        ? 'Get Access'
-        : 'View Terms'
+      const linkText: string =
+        deniedAccess || hasUnmetAccessRequirement ? 'Get Access' : 'View Terms'
       viewARsLink = (
         <a
           style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
@@ -210,15 +220,9 @@ export default class HasAccess extends React.Component<
     let viewARsLink: React.ReactElement = this.renderARsLink(downloadType)
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
-        {
-          tooltipText
-          &&
+        {tooltipText && (
           <>
-            <span
-              tabIndex={0}
-              data-for={synapseId}
-              data-tip={tooltipText}
-            >
+            <span tabIndex={0} data-for={synapseId} data-tip={tooltipText}>
               {icon}
             </span>
             <ReactTooltip
@@ -230,14 +234,12 @@ export default class HasAccess extends React.Component<
             />
             {viewARsLink}
           </>
-        }
-        {
-          !tooltipText
-          &&
+        )}
+        {!tooltipText && (
           <>
             {icon} {viewARsLink}
           </>
-        }
+        )}
       </span>
     )
   }

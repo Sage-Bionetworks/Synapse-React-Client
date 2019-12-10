@@ -95,17 +95,21 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // batch file result gives FilesHandle for the files the user can download
       // which has additional metadata - createdBy, numBytes, etc.
       const batchFileResult = await getFiles(batchFileRequest, token)
-      
+
       // Only make entity header calls to the files that the user doesn't have access to,
       // which can be determined by whether the batchFileResult has a failure code for the
       // corresponding download list item
-      const referenceCall: Reference[] = filesToDownload.filter(el => {
-        return batchFileResult.requestedFiles.find(batchFile => batchFile.fileHandleId === el.fileHandleId)!.failureCode !== undefined
-      }).map(
-        el => {
+      const referenceCall: Reference[] = filesToDownload
+        .filter(el => {
+          return (
+            batchFileResult.requestedFiles.find(
+              batchFile => batchFile.fileHandleId === el.fileHandleId,
+            )!.failureCode !== undefined
+          )
+        })
+        .map(el => {
           return { targetId: el.associateObjectId }
-        }
-      )
+        })
       // entity header is used to get the names of the files that the user
       // doesn't have access to
       const references = await getEntityHeader(referenceCall, token)
@@ -233,7 +237,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   </a>
                 </td>
                 <td>
-                  <HasAccess deniedAccess={!canDownload} fileHandle={fileHandle} token={token} synapseId={synId} />
+                  <HasAccess
+                    deniedAccess={!canDownload}
+                    fileHandle={fileHandle}
+                    token={token}
+                    synapseId={synId}
+                  />
                 </td>
                 <td>
                   {userProfile && (

@@ -166,7 +166,11 @@ const fetchWithExponentialTimeout = <T>(
         })
     })
     .catch(error => {
-      if (error.statusCode && error.statusCode !== 429 && error.statusCode !== 0) {
+      if (
+        error.statusCode &&
+        error.statusCode !== 429 &&
+        error.statusCode !== 0
+      ) {
         // If there is an error response and the error is nether a throttled response
         // or disconnected network
         return Promise.reject(error)
@@ -224,7 +228,7 @@ export const doGet = <T>(
     },
     method: 'GET',
     mode: 'cors',
-    credentials: initCredentials
+    credentials: initCredentials,
   }
   if (sessionToken) {
     // @ts-ignore
@@ -275,7 +279,7 @@ export const doPut = (
     },
     method: 'PUT',
     mode: 'cors',
-    credentials: initCredentials
+    credentials: initCredentials,
   }
   if (sessionToken) {
     // @ts-ignore
