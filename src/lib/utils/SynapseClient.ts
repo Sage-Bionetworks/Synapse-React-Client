@@ -83,27 +83,26 @@ export function delay(t: any) {
     setTimeout(resolve.bind(null, {}), t)
   })
 }
-function parseJSON(response: any) {
-  return response
-    .text()
-    .then((text: string) => {
-      let parsedJson = ''
-      try {
-        parsedJson = JSON.parse(text)
-      } catch (err) {
-        console.log('Caught exception with parsing json ', err)
-        parsedJson = text
-      }
-      return parsedJson ? parsedJson : {}
-    })
-    .catch(
-      // this should never happen!
-      (err: string) => {
-        console.log('Caught exception loading response text ', err)
-        return {}
-      },
-    )
+
+type SynapseError = {
+  reason: string
 }
+
+const retryFetch = <T>(
+  url: RequestInfo,
+  options: RequestInit,
+  delayMs: number,
+  ) => {
+  return delay(delayMs).then(() => {
+    return fetchWithExponentialTimeout<T>(
+      url,
+      options,
+      delayMs * 2,
+    )
+  })
+}
+
+// remove parseJson, combine ok and not okay response, except for 0 and 429..., make sure string responses got through
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
   options: RequestInit,
@@ -112,81 +111,44 @@ const fetchWithExponentialTimeout = <T>(
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
-      if (resp.ok) {
-        if (resp.status === 204) {
-          // the response is empty, don't try to parse an empty response
-          return resp
-        }
-        // ok!
-        return parseJSON(resp)
-      }
-      if (resp.status === 429 || resp.status === 0) {
+      if (retries > 0 && resp.status === 429 || resp.status === 0) {
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        if (retries === 1) {
-          return Promise.reject({
-            reason: resp.statusText,
-            statusCode: resp.status,
-          })
-        }
-        return delay(delayMs).then(() => {
-          return fetchWithExponentialTimeout(
-            url,
-            options,
-            delayMs * 2,
-            retries - 1,
-          )
-        })
+        return retryFetch<T>(url, options, delayMs)
+      } else if (resp.status === 204) {
+        // the response is empty, don't try to parse an empty response
+        return resp
       }
       return resp
         .json()
         .then(json => {
-          // on okay response return json, o.w. reject with json and
-          // send to catch block
-          const error = {
-            reason: json.reason,
-            status: resp.status,
-          }
-          return resp.ok ? json : Promise.reject(error)
+          return resp.ok ? json : Promise.reject<T>(json)
         })
-        .catch(error => {
-          // call failed above
-          if (error.reason && error.status) {
+        .catch((error: SynapseError) => {
+          if (error.reason && resp.status) {
             // successfull return from server but invalid call
             // the call was recieved, but staus wasn't ok-- return the json response from above
             // from the response directly
             return Promise.reject({
               reason: error.reason,
-              statusCode: error.status,
+              status: resp.status,
             })
           }
-          return Promise.reject({
-            reason: resp.statusText,
-            statusCode: resp.status,
-          })
+          return Promise.reject(resp)
         })
     })
     .catch(error => {
       if (
-        error.statusCode &&
-        error.statusCode !== 429 &&
-        error.statusCode !== 0
+        retries === 0
+        ||
+        (error.status &&
+        error.status !== 429 &&
+        error.status !== 0)
       ) {
         // If there is an error response and the error is nether a throttled response
         // or disconnected network
         return Promise.reject(error)
       }
-      if (retries === 1) {
-        return Promise.reject(error)
-      }
-      // Network connection is down.  Retry after a couple of seconds.
-      return delay(delayMs).then(() => {
-        return fetchWithExponentialTimeout(
-          url,
-          options,
-          delayMs * 2,
-          retries - 1,
-        )
-      })
+      return retryFetch(url, options, delayMs)
     })
 }
 
@@ -1076,7 +1038,7 @@ export const detectSSOCode = () => {
           })
       })
       .catch((err: any) => {
-        if (err.statusCode === 404) {
+        if (err.status === 404) {
           // Synapse account not found, send to registration page
           window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
         }

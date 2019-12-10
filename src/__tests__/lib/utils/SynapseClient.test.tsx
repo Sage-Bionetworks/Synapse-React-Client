@@ -12,7 +12,7 @@ it('invalid call', () => {
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).catch(error => {
-    expect(error.statusCode).toEqual(404)
+    expect(error.status).toEqual(404)
     expect(error.reason).toEqual(
       'GET /repo/v1/invalid was not found. Please reference API documentation at https://docs.synapse.org/rest/',
     )

@@ -189,7 +189,7 @@ export default class EntityForm extends React.Component<
       })
       return entityId.id
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.status === 404) {
         return this.onError(
           new Error(
             'Your folder has not yet been set up, please retry in a few minutes.',

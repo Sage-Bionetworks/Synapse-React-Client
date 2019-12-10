@@ -150,7 +150,7 @@ class Demo extends React.Component<{}, DemoState> {
     SynapseClient.getVersion()
       .then((data: SynapseVersion) => this.setState({ version: data.version }))
       .catch((error: any) => {
-        // Handle HTTPError.  Has statusCode and message.
+        // Handle HTTPError.  Has status and message.
         console.error('Get version failed', error)
       })
   }

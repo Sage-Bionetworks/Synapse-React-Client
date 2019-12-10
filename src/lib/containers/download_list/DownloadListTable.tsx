@@ -193,7 +193,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             <th />
           </tr>
         </thead>
-        <tbody>
+        <tbody className="download-list-table">
           {filesToDownload.map(item => {
             let createdBy = ''
             let createdOn = ''

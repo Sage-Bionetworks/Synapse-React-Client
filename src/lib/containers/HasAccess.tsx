@@ -75,9 +75,9 @@ export default class HasAccess extends React.Component<
     [DownloadTypeEnum.TooLargeFile]:
       'Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.',
     [DownloadTypeEnum.ExternalFileHandle]:
-      'Your list contains external links, which must be downloaded manually. Clicking on the item will take you the download page.',
+      'Your list contains external links, which must be downloaded manually. Clicking on the item will take you to the download page.',
     [DownloadTypeEnum.CloudFileHandle]:
-      'Your list contains files that must be downloaded manually (e.g. files in Google Cloud). Clicking on the item will take you the download page.',
+      'Your list contains files that must be downloaded manually (e.g. files in Google Cloud). Clicking on the item will take you to the download page.',
   }
 
   constructor(props: HasAccessProps) {
@@ -119,13 +119,13 @@ export default class HasAccess extends React.Component<
 
   renderIconHelper = (iconProp: IconProp, classColor: string) => {
     return (
-      <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
-        <FontAwesomeIcon icon={faCircle} className={classColor} size="lg" />
+      <span className="fa-layers fa-fw">
+        <FontAwesomeIcon icon={faCircle} className={classColor} size="2x" />
         <FontAwesomeIcon
           icon={iconProp}
-          className="SRC-half-opacity"
-          style={{ transform: 'translate(4%, -4%)' }}
-          size="xs"
+          className="SRC-whiteText"
+          size="1x"
+          transform={{x: 6}}
         />
       </span>
     )
@@ -166,9 +166,9 @@ export default class HasAccess extends React.Component<
       if (isGoogleCloudFileHandle) {
         return DownloadTypeEnum.CloudFileHandle
       } else {
-        // @ts-ignore
         const isExternalFileHandle = Object.values(
           ExternalFileHandleConcreteTypeEnum,
+          // @ts-ignore
         ).includes(concreteType)
         if (isExternalFileHandle) {
           return DownloadTypeEnum.ExternalFileHandle
@@ -199,7 +199,7 @@ export default class HasAccess extends React.Component<
         deniedAccess || hasUnmetAccessRequirement ? 'Get Access' : 'View Terms'
       viewARsLink = (
         <a
-          style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
+          style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '16px' }}
           className="SRC-primary-text-color"
           href={`${getEndpoint(
             BackendDestinationEnum.PORTAL_ENDPOINT,
@@ -231,6 +231,7 @@ export default class HasAccess extends React.Component<
               type="dark"
               effect="solid"
               id={synapseId}
+              className="has-access-tooltip-width"
             />
             {viewARsLink}
           </>
