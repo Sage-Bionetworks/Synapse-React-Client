@@ -16,11 +16,15 @@ import {
   faMinusCircle,
   faCircle,
   faLink,
+  faDatabase,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FileHandle } from '../utils/jsonResponses/FileHandle'
+import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
+import ReactTooltip from 'react-tooltip'
 library.add(faUnlockAlt)
 library.add(faMinusCircle)
+library.add(faDatabase)
 library.add(faCircle)
 
 export type HasAccessProps = {
@@ -40,6 +44,20 @@ export enum ExternalFileHandleConcreteTypeEnum {
   ExternalFileHandle = 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
 }
 
+export enum GoogleCloudFileHandleEnum {
+  GoogleCloudFileHandle = 'org.sagebionetworks.repo.model.file.GoogleCloudFileHandle'
+}
+
+const GIGABYTE_SIZE = 2 ** 30
+
+enum DownloadTypeEnum {
+  CloudFileHandle,
+  ExternalFileHandle,
+  TooLargeFile,
+  NoAccess,
+  IsOpenNoRestrictions
+}
+
 /**
  * HasAccess shows if the user has access.  Additionally has a link to the AR list if user does not have access
  *
@@ -51,6 +69,14 @@ export default class HasAccess extends React.Component<
   HasAccessProps,
   HasAccessState
 > {
+
+  tooltipText = {
+    [DownloadTypeEnum.NoAccess]: "Your list has restricted files that can’t be downloaded. You must request access to these restricted files via Access Conditions page. All files will remain in the list and can be downloaded from here once your access is granted.",
+    [DownloadTypeEnum.TooLargeFile]: "Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.",
+    [DownloadTypeEnum.ExternalFileHandle]: "Your list contains external links, which must be downloaded manually. Clicking on the item will take you the download page.",
+    [DownloadTypeEnum.CloudFileHandle]: "Your list contains files that must be downloaded manually (e.g. files in Google Cloud). Clicking on the item will take you the download page.",
+  }
+
   constructor(props: HasAccessProps) {
     super(props)
     this.state = {}
@@ -88,10 +114,9 @@ export default class HasAccess extends React.Component<
     })
   }
 
-  renderIconHelper = (iconProp: IconProp, isWarning: boolean) => {
-    const classColor = isWarning ? 'SRC-warning-color' : 'SRC-success-color'
+  renderIconHelper = (iconProp: IconProp, classColor: string) => {
     return (
-      <>
+      <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
         <FontAwesomeIcon icon={faCircle} className={classColor} size="lg" />
         <FontAwesomeIcon
           icon={iconProp}
@@ -99,42 +124,65 @@ export default class HasAccess extends React.Component<
           style={{ transform: 'translate(4%, -4%)' }}
           size="xs"
         />
-      </>
-    )
-  }
-
-  renderIcon() {
-    const { fileHandle } = this.props
-    const { restrictionInformation } = this.state
-    const isOpen = fileHandle || restrictionInformation &&
-    RestrictionLevel.OPEN === restrictionInformation.restrictionLevel
-    let icon = undefined
-    if (isOpen) {
-      const concreteType = fileHandle ? fileHandle.concreteType: ''
-      // @ts-ignore
-      const isExternalFileHandle = Object.values(ExternalFileHandleConcreteTypeEnum).includes(concreteType)
-      icon = isExternalFileHandle
-        ? this.renderIconHelper(faLink, false)
-        : this.renderIconHelper(faUnlockAlt, false)
-    } else {
-      icon = this.renderIconHelper(faMinusCircle, true)
-    }
-    return (
-      <span className="fa-layers fa-fw" style={{ marginRight: 5 }}>
-        {icon}
       </span>
     )
   }
 
-  render() {
+  renderIcon = (downloadType: DownloadTypeEnum) => {
+    switch(downloadType) {
+      case DownloadTypeEnum.NoAccess:
+        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
+      case DownloadTypeEnum.ExternalFileHandle:
+          return this.renderIconHelper(faLink, 'SRC-warning-color')
+      case DownloadTypeEnum.CloudFileHandle:
+          return this.renderIconHelper(faLink, 'SRC-warning-color')
+      case DownloadTypeEnum.IsOpenNoRestrictions:
+        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
+      case DownloadTypeEnum.TooLargeFile:
+        return this.renderIconHelper(faDatabase, 'SRC-danger-color')
+      default:
+        throw Error('downloadTypeEnum passed incorrectly')
+    }
+  }
+
+  // Utility to declare what type of download this is
+  getDownloadType = () => {
+    const { fileHandle } = this.props
     const { restrictionInformation } = this.state
+    const isOpen = fileHandle || restrictionInformation &&
+    RestrictionLevel.OPEN === restrictionInformation.restrictionLevel
+    const isTooLarge = fileHandle && fileHandle.contentSize >= GIGABYTE_SIZE
+    if (isTooLarge) {
+      return DownloadTypeEnum.TooLargeFile
+    } else if (isOpen) {
+      const concreteType = fileHandle ? fileHandle.concreteType: ''
+      const isGoogleCloudFileHandle = concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle
+      if (isGoogleCloudFileHandle) {
+        return DownloadTypeEnum.CloudFileHandle
+      } else {
+        // @ts-ignore
+        const isExternalFileHandle = Object.values(ExternalFileHandleConcreteTypeEnum).includes(concreteType)
+        if (isExternalFileHandle) { 
+          return DownloadTypeEnum.ExternalFileHandle 
+        }
+        return DownloadTypeEnum.IsOpenNoRestrictions
+      }
+    } else {
+      return DownloadTypeEnum.NoAccess
+    }
+  }
+
+  // Show Access Requirements
+  renderARsLink = (downloadType: DownloadTypeEnum) => {
+    const { restrictionInformation } = this.state
+    const { synapseId, deniedAccess } = this.props
     const hasUnmetAccessRequirement =  (restrictionInformation && restrictionInformation!.hasUnmetAccessRequirement) || ''
     const restrictionLevel =  (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
-    const { synapseId, deniedAccess } = this.props
-    const icon = this.renderIcon()
     let viewARsLink: React.ReactElement = <></>
     if (
       RestrictionLevel.OPEN !== restrictionLevel
+      &&
+      downloadType !== DownloadTypeEnum.TooLargeFile
     ) {
       const linkText: string = deniedAccess || hasUnmetAccessRequirement
         ? 'Get Access'
@@ -151,9 +199,45 @@ export default class HasAccess extends React.Component<
         </a>
       )
     }
+    return viewARsLink
+  }
+
+  render() {
+    const downloadType = this.getDownloadType()
+    const tooltipText = this.tooltipText[downloadType]
+    const synapseId = this.props.synapseId
+    const icon = this.renderIcon(downloadType)
+    let viewARsLink: React.ReactElement = this.renderARsLink(downloadType)
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
-        {icon} {viewARsLink}
+        {
+          tooltipText
+          &&
+          <>
+            <span
+              tabIndex={0}
+              data-for={synapseId}
+              data-tip={tooltipText}
+            >
+              {icon}
+            </span>
+            <ReactTooltip
+              delayShow={TOOLTIP_DELAY_SHOW}
+              place="top"
+              type="dark"
+              effect="solid"
+              id={synapseId}
+            />
+            {viewARsLink}
+          </>
+        }
+        {
+          !tooltipText
+          &&
+          <>
+            {icon} {viewARsLink}
+          </>
+        }
       </span>
     )
   }

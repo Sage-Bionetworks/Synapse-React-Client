@@ -166,10 +166,15 @@ const fetchWithExponentialTimeout = <T>(
         })
     })
     .catch(error => {
-      if ((error && error.statusCode !== 429) || retries === 1) {
+      if (error.statusCode && error.statusCode !== 429 && error.statusCode !== 0) {
+        // If there is an error response and the error is nether a throttled response
+        // or disconnected network
         return Promise.reject(error)
       }
-      // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
+      if (retries === 1) {
+        return Promise.reject(error)
+      }
+      // Network connection is down.  Retry after a couple of seconds.
       return delay(delayMs).then(() => {
         return fetchWithExponentialTimeout(
           url,
