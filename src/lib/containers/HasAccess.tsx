@@ -31,7 +31,7 @@ export type HasAccessProps = {
   fileHandle?: FileHandle
   synapseId: string
   token?: string
-  deniedAccess?: boolean
+  forceIsRestricted?: boolean
 }
 
 type HasAccessState = {
@@ -48,7 +48,7 @@ export enum GoogleCloudFileHandleEnum {
   GoogleCloudFileHandle = 'org.sagebionetworks.repo.model.file.GoogleCloudFileHandle',
 }
 
-const GIGABYTE_SIZE = 2 ** 30
+export const GIGABYTE_SIZE = 2 ** 30
 
 enum DownloadTypeEnum {
   CloudFileHandle,
@@ -95,12 +95,12 @@ export default class HasAccess extends React.Component<
   }
 
   getRestrictionInformation = () => {
-    const { synapseId, token, deniedAccess = false } = this.props
+    const { synapseId, token, forceIsRestricted = false } = this.props
     if (
       this.state.restrictionInformation ||
       !synapseId ||
       !token ||
-      deniedAccess
+      forceIsRestricted
     ) {
       return
     }
@@ -125,7 +125,7 @@ export default class HasAccess extends React.Component<
           icon={iconProp}
           className="SRC-whiteText"
           size="1x"
-          transform={{x: 6}}
+          transform={{ x: 6 }}
         />
       </span>
     )
@@ -181,9 +181,9 @@ export default class HasAccess extends React.Component<
   }
 
   // Show Access Requirements
-  renderARsLink = (downloadType: DownloadTypeEnum) => {
+  renderARsLink = () => {
     const { restrictionInformation } = this.state
-    const { synapseId, deniedAccess } = this.props
+    const { synapseId, forceIsRestricted } = this.props
     const hasUnmetAccessRequirement =
       (restrictionInformation &&
         restrictionInformation!.hasUnmetAccessRequirement) ||
@@ -191,12 +191,11 @@ export default class HasAccess extends React.Component<
     const restrictionLevel =
       (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
     let viewARsLink: React.ReactElement = <></>
-    if (
-      RestrictionLevel.OPEN !== restrictionLevel &&
-      downloadType !== DownloadTypeEnum.TooLargeFile
-    ) {
+    if (RestrictionLevel.OPEN !== restrictionLevel) {
       const linkText: string =
-        deniedAccess || hasUnmetAccessRequirement ? 'Get Access' : 'View Terms'
+        forceIsRestricted || hasUnmetAccessRequirement
+          ? 'Get Access'
+          : 'View Terms'
       viewARsLink = (
         <a
           style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '16px' }}
@@ -217,7 +216,7 @@ export default class HasAccess extends React.Component<
     const tooltipText = this.tooltipText[downloadType]
     const synapseId = this.props.synapseId
     const icon = this.renderIcon(downloadType)
-    let viewARsLink: React.ReactElement = this.renderARsLink(downloadType)
+    let viewARsLink: React.ReactElement = this.renderARsLink()
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         {tooltipText && (

@@ -54,6 +54,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   })
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
   let [isLoading, setIsLoading] = useState<LoadingState>(true)
+  let [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
   const { token } = props
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
@@ -153,12 +154,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       },
     ]
     setIsLoading(true)
+    setFileBeingDeleted(fileHandleId)
     try {
-      await deleteDownloadListFiles(list, token)
-      await fetchData(token)
+      const downloadList = await deleteDownloadListFiles(list, token)
+      // The current references and batchFileResult can be kept because the download
+      // list drives the view, so the stale values in those two won't be viewed.
+      setData({ downloadList, references, batchFileResult })
     } catch (err) {
       console.error('Error on delete from download list', err)
     } finally {
+      setFileBeingDeleted('')
       setIsLoading(false)
     }
   }
@@ -201,6 +206,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             let contentSize = undefined
             const synId = item.associateObjectId
             const fileHandleId = item.fileHandleId
+            const isCurrentlyBeingDeletedClass =
+              fileBeingDeleted === fileHandleId ? 'SRC-inactive-bg' : ''
             // See if batch file results has this fileHandleId
             const fileResult = requestedFiles.find(
               fileRes => fileRes.fileHandleId === fileHandleId,
@@ -226,7 +233,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               userProfiles.list &&
               userProfiles.list.find(el => el.ownerId === createdBy)
             return (
-              <tr key={fileHandleId}>
+              <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
                 <td>
                   <a
                     target="_blank"
@@ -238,7 +245,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </td>
                 <td>
                   <HasAccess
-                    deniedAccess={!canDownload}
+                    forceIsRestricted={!canDownload}
                     fileHandle={fileHandle}
                     token={token}
                     synapseId={synId}
@@ -258,8 +265,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 <td>{contentSize && calculateFriendlyFileSize(contentSize)}</td>
                 <td>
                   <button
+                    disabled={fileBeingDeleted !== ''}
                     className={TESTING_TRASH_BTN_CLASS}
-                    onClick={() => deleteFileFromList(fileHandleId, synId)}
+                    onClick={
+                      fileBeingDeleted === ''
+                        ? () => deleteFileFromList(fileHandleId, synId)
+                        : undefined
+                    }
                   >
                     <FontAwesomeIcon
                       className="SRC-primary-text-color"

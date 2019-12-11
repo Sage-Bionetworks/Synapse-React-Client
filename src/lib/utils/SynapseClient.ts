@@ -92,13 +92,9 @@ const retryFetch = <T>(
   url: RequestInfo,
   options: RequestInit,
   delayMs: number,
-  ) => {
+) => {
   return delay(delayMs).then(() => {
-    return fetchWithExponentialTimeout<T>(
-      url,
-      options,
-      delayMs * 2,
-    )
+    return fetchWithExponentialTimeout<T>(url, options, delayMs * 2)
   })
 }
 
@@ -111,12 +107,9 @@ const fetchWithExponentialTimeout = <T>(
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
-      if (retries > 0 && resp.status === 429 || resp.status === 0) {
+      if ((retries > 0 && resp.status === 429) || resp.status === 0) {
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
         return retryFetch<T>(url, options, delayMs)
-      } else if (resp.status === 204) {
-        // the response is empty, don't try to parse an empty response
-        return resp
       }
       return resp
         .json()
@@ -124,25 +117,26 @@ const fetchWithExponentialTimeout = <T>(
           return resp.ok ? json : Promise.reject<T>(json)
         })
         .catch((error: SynapseError) => {
+          if (resp.ok) {
+            // This is hit if the response is ok and the response doesn't have a json body 
+            // or the response is empty
+            return Promise.resolve(resp)
+          }
           if (error.reason && resp.status) {
             // successfull return from server but invalid call
-            // the call was recieved, but staus wasn't ok-- return the json response from above
-            // from the response directly
             return Promise.reject({
               reason: error.reason,
               status: resp.status,
             })
           }
+          // This occurs if the response is not ok and does not have json or is empty
           return Promise.reject(resp)
         })
     })
     .catch(error => {
       if (
-        retries === 0
-        ||
-        (error.status &&
-        error.status !== 429 &&
-        error.status !== 0)
+        retries === 0 ||
+        (error.status && error.status !== 429 && error.status !== 0)
       ) {
         // If there is an error response and the error is nether a throttled response
         // or disconnected network
@@ -1847,7 +1841,7 @@ export const getDownloadOrder = (
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
   sessionToken: string | undefined,
-) => {
+): Promise<DownloadList> => {
   return doPost(
     '/file/v1/download/list/remove',
     { list },

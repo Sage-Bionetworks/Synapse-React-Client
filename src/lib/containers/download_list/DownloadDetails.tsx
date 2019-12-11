@@ -52,13 +52,13 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
       : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
   const numBytesTooltipId = 'num_bytes_id'
   const friendlyTimeTooltipId = 'friendly_time_id'
-  const iconClassName =
-    numFiles === 0 ? 'SRC-inactive' : 'SRC-primary-text-color'
+  const isInactive = numFiles === 0 || timeEstimateInSeconds === 0
+  const iconClassName = isInactive? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
     <span className="download-details-container">
       <span>
         <FontAwesomeIcon className={iconClassName} icon="file" />
-        {numFiles > 0 && <> {numFiles} &nbsp; files </>}
+        {!isInactive && <> {numFiles} &nbsp; files </>}
       </span>
       <span
         data-for={numBytesTooltipId}
