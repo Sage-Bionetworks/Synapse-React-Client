@@ -18,6 +18,7 @@ type Props = {
   theme: string
   icon: boolean
   googleRedirectUrl?: string
+  redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
 }
 
 /**
@@ -72,6 +73,7 @@ class Login extends React.Component<Props, State> {
    * @param {*} clickEvent Userclick event
    */
   public async handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
+    const { redirectUrl } = this.props
     clickEvent.preventDefault() // avoid page refresh
     try {
       // get last valid receipt
@@ -90,6 +92,10 @@ class Login extends React.Component<Props, State> {
         data.authenticationReceipt,
       )
       // on session change, reload the page so that all components get the new token from the cookie
+      if (redirectUrl) {
+        // note that setting the href in SPA's (where just the hash fragment changes) does not cause a page reload (so we still do this below)
+        window.location.href = redirectUrl
+      }
       window.location.reload()
     } catch (err) {
       console.log('Error on login: ', err.reason)
