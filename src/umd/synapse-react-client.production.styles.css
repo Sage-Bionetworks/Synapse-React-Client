@@ -983,6 +983,11 @@ a.dropdown-item {
 .SRC-inactive {
   color: rgba(0, 0, 0, 0.25); }
 
+.SRC-inactive-bg {
+  background-color: rgba(0, 0, 0, 0.25); }
+  .SRC-inactive-bg * {
+    color: rgba(0, 0, 0, 0.25) !important; }
+
 .SRC-success-color {
   color: #28a745; }
 
@@ -995,9 +1000,11 @@ a.dropdown-item {
 .SRC-warning-color-bg {
   background-color: #e0b603; }
 
-.SRC-half-opacity {
-  opacity: 1;
-  color: white; }
+.SRC-danger-color {
+  color: #eb5757; }
+
+.SRC-danger-color-bg {
+  background-color: #eb5757; }
 
 .plotly .slice {
   cursor: pointer; }
@@ -1265,6 +1272,15 @@ hr ~ .SRC-wrapper {
 
 .action-button {
   margin-left: 15px; }
+
+.download-list-table td {
+  vertical-align: middle !important; }
+
+.has-access-tooltip-width {
+  max-width: 250px;
+  text-align: center;
+  white-space: normal;
+  word-wrap: normal; }
 
 .download-confirmation {
   opacity: 1 !important;
