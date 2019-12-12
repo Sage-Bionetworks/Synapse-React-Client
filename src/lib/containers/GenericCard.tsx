@@ -96,9 +96,10 @@ export default class GenericCard extends React.Component<
         console.error(
           `Could not find match for data: ${data} with columnName ${matchColumnName}`,
         )
+      } else {
+        const value = data[indexInData]
+        linkDisplay = `#/${titleLink.baseURL}?${URLColumnName}=${value}`
       }
-      const value = data[indexInData]
-      linkDisplay = `#/${titleLink.baseURL}?${URLColumnName}=${value}`
     }
     return { linkDisplay, target }
   }
