@@ -952,21 +952,32 @@ a.dropdown-item {
 .SRC-inactive {
   color: rgba(0, 0, 0, 0.25);
 }
+
+.SRC-inactive-bg {
+  background-color: rgba(0, 0, 0, 0.25);
+  * {
+    color: rgba(0, 0, 0, 0.25) !important;
+  }
+}
 .SRC-success-color {
-  color: rgb(83, 207, 151);
+  color: #28a745;
 }
 .SRC-success-color-bg {
-  background-color: rgb(83, 207, 151);
+  background-color: #28a745;
 }
 .SRC-warning-color {
-  color: rgb(249, 168, 67);
+  color: #e0b603;
 }
 .SRC-warning-color-bg {
-  background-color: rgb(249, 168, 67);
+  background-color: #e0b603;
 }
-.SRC-half-opacity {
-  opacity: 0.5;
+.SRC-danger-color {
+  color: #eb5757;
 }
+.SRC-danger-color-bg {
+  background-color: #eb5757;
+}
+
 
 .plotly .slice {
   cursor: pointer;
