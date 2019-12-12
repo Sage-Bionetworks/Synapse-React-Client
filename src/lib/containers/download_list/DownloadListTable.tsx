@@ -265,7 +265,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 <td>{contentSize && calculateFriendlyFileSize(contentSize)}</td>
                 <td>
                   <button
-                    disabled={fileBeingDeleted !== ''}
                     className={TESTING_TRASH_BTN_CLASS}
                     onClick={
                       fileBeingDeleted === ''

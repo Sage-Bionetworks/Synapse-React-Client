@@ -50,7 +50,7 @@ export enum GoogleCloudFileHandleEnum {
 
 export const GIGABYTE_SIZE = 2 ** 30
 
-enum DownloadTypeEnum {
+export enum DownloadTypeEnum {
   CloudFileHandle,
   ExternalFileHandle,
   TooLargeFile,
@@ -69,7 +69,7 @@ export default class HasAccess extends React.Component<
   HasAccessProps,
   HasAccessState
 > {
-  tooltipText = {
+  public static tooltipText = {
     [DownloadTypeEnum.NoAccess]:
       'Your list has restricted files that can’t be downloaded. You must request access to these restricted files via Access Conditions page. All files will remain in the list and can be downloaded from here once your access is granted.',
     [DownloadTypeEnum.TooLargeFile]:
@@ -213,7 +213,7 @@ export default class HasAccess extends React.Component<
 
   render() {
     const downloadType = this.getDownloadType()
-    const tooltipText = this.tooltipText[downloadType]
+    const tooltipText = HasAccess.tooltipText[downloadType]
     const synapseId = this.props.synapseId
     const icon = this.renderIcon(downloadType)
     let viewARsLink: React.ReactElement = this.renderARsLink()

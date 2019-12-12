@@ -14,29 +14,27 @@ import {
 
 export interface CardLink {
   baseURL: string
-  // the keys that will go into the url
-  URLColumnNames: string[]
+  // the key that will go into the url
+  URLColumnName: string
+  // the column name who's value will be used
+  matchColumnName: string
   isMarkdown: false
 }
 
-export interface LabelLink extends CardLink {
-  // the columns whos value will be paired with the columns URLColumnNames
+export type MarkdownLink = {
+  isMarkdown: true
+  // the columns whos value will be used for the markdown
   matchColumnName: string
 }
 
-export interface LabelMarkdown {
-  isMarkdown: true
-  // the columns whos value will be paired with the columns URLColumnNames
-  matchColumnName: string
-}
 // Specify the indices in the values [] that should be rendered specially
-export type LabelConfig = (LabelLink | LabelMarkdown)[]
+export type LabelLinkConfig = (CardLink | MarkdownLink ) []
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
-  labelConfig?: LabelConfig
+  labelLinkConfig?: LabelLinkConfig
 }
 
 export type CardConfiguration = {
