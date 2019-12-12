@@ -526,7 +526,7 @@ export default class SynapseTable extends React.Component<
                 tabIndex={0}
                 data-for={tooltipAdvancedSearchId}
                 data-tip="Open Advanced Search in Synapse"
-                className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                className="SRC-primary-background-color-hover SRC-extraPadding"
                 onKeyPress={this.advancedSearch}
                 onClick={this.advancedSearch}
               >
@@ -534,6 +534,7 @@ export default class SynapseTable extends React.Component<
               </span>
               <ReactTooltip
                 delayShow={TOOLTIP_DELAY_SHOW}
+                clickable={true}
                 place="top"
                 type="dark"
                 effect="solid"

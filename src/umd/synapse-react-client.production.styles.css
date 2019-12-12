@@ -203,6 +203,13 @@ img.iconImg.SRC-datasetIcon {
     .SRC-portalCardHeader .SRC-cardContent .SRC-author {
       font-style: italic;
       padding-bottom: 10.5px; }
+  @media (min-width: 992px) {
+    .SRC-portalCardHeader.isAlignToLeftNav .iconContainer {
+      text-align: right;
+      padding-right: 40px; } }
+  @media (min-width: 992px) {
+    .SRC-portalCardHeader.isAlignToLeftNav .SRC-cardContent {
+      padding-left: 32px; } }
 
 svg.SRC-hoverBox:hover {
   -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
@@ -248,6 +255,9 @@ body * {
 
 .table > thead.SRC_borderTop {
   border-top: 1px solid #dddddd; }
+
+.table > thead.SRC_bordered th {
+  border: 1px solid #dddddd; }
 
 .SRC-facets {
   padding: 4px 12px;
@@ -357,6 +367,9 @@ button.SRC-roundBorder {
 
 .SRC-marginBottomTen {
   margin-bottom: 10px; }
+
+.SRC-marginTopMinusTen {
+  margin-top: -10px; }
 
 .SRC-flex {
   display: flex; }
@@ -519,7 +532,6 @@ button.SRC-roundBorder {
 
 .SRC-sortPadding {
   outline: none;
-  margin-left: 6px;
   padding: 2px 3px; }
 
 .SRC-forceLeftDropdown {
@@ -964,27 +976,43 @@ a.dropdown-item {
 .dropdown button.btn {
   padding: 3px;
   margin: 0px 3px; }
+  .dropdown button.btn.condenced {
+    padding: 1px;
+    margin: 0 0 0 1px; }
 
 .SRC-inactive {
   color: rgba(0, 0, 0, 0.25); }
 
+.SRC-inactive-bg {
+  background-color: rgba(0, 0, 0, 0.25); }
+  .SRC-inactive-bg * {
+    color: rgba(0, 0, 0, 0.25) !important; }
+
 .SRC-success-color {
-  color: #53cf97; }
+  color: #28a745; }
 
 .SRC-success-color-bg {
-  background-color: #53cf97; }
+  background-color: #28a745; }
 
 .SRC-warning-color {
-  color: #f9a843; }
+  color: #e0b603; }
 
 .SRC-warning-color-bg {
-  background-color: #f9a843; }
+  background-color: #e0b603; }
 
-.SRC-half-opacity {
-  opacity: 0.5; }
+.SRC-danger-color {
+  color: #eb5757; }
+
+.SRC-danger-color-bg {
+  background-color: #eb5757; }
 
 .plotly .slice {
   cursor: pointer; }
+
+hr ~ .SRC-wrapper {
+  margin-top: 11px; }
+  hr ~ .SRC-wrapper .SRC-marginTopMinusTen {
+    margin-top: 0; }
 
 .markdowntable {
   border: 1px solid #dddddd;
@@ -1244,6 +1272,15 @@ a.dropdown-item {
 
 .action-button {
   margin-left: 15px; }
+
+.download-list-table td {
+  vertical-align: middle !important; }
+
+.has-access-tooltip-width {
+  max-width: 250px;
+  text-align: center;
+  white-space: normal;
+  word-wrap: normal; }
 
 .download-confirmation {
   opacity: 1 !important;

@@ -109,7 +109,7 @@ export default class Uploader extends React.Component<
           )
         })
         .catch((error: any) => {
-          if (error.statusCode === 404) {
+          if (error.status === 404) {
             // great, it's a new file!
             this.updateEntityFile(newFileEntity, file)
           } else {

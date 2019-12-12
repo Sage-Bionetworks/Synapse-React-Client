@@ -83,92 +83,66 @@ export function delay(t: any) {
     setTimeout(resolve.bind(null, {}), t)
   })
 }
-function parseJSON(response: any) {
-  return response
-    .text()
-    .then((text: string) => {
-      let parsedJson = ''
-      try {
-        parsedJson = JSON.parse(text)
-      } catch (err) {
-        console.log('Caught exception with parsing json ', err)
-        parsedJson = text
-      }
-      return parsedJson ? parsedJson : {}
-    })
-    .catch(
-      // this should never happen!
-      (err: string) => {
-        console.log('Caught exception loading response text ', err)
-        return {}
-      },
-    )
+
+type SynapseError = {
+  reason: string
 }
+
+const retryFetch = <T>(
+  url: RequestInfo,
+  options: RequestInit,
+  delayMs: number,
+) => {
+  return delay(delayMs).then(() => {
+    return fetchWithExponentialTimeout<T>(url, options, delayMs * 2)
+  })
+}
+
+// remove parseJson, combine ok and not okay response, except for 0 and 429..., make sure string responses got through
 const fetchWithExponentialTimeout = <T>(
-  url: string,
-  options: any,
-  delayMs: any,
-  retries: number,
+  url: RequestInfo,
+  options: RequestInit,
+  delayMs: number = 1000,
+  retries: number = 5,
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
-      if (resp.status > 199 && resp.status < 300) {
-        if (resp.status === 204) {
-          // the response is empty, don't try to parse an empty response
-          return resp
-        }
-        // ok!
-        return parseJSON(resp)
-      }
-      if (resp.status === 429 || resp.status === 0) {
+      if ((retries > 0 && resp.status === 429) || resp.status === 0) {
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        if (retries === 1) {
-          return Promise.reject({
-            reason: resp.statusText,
-            statusCode: resp.status,
-          })
-        }
-        return delay(delayMs).then(() => {
-          return fetchWithExponentialTimeout(
-            url,
-            options,
-            delayMs * 2,
-            retries - 1,
-          )
-        })
+        return retryFetch<T>(url, options, delayMs)
       }
-      // error status that indicates no more retries
       return resp
         .json()
         .then(json => {
-          // on okay response return json, o.w. reject with json and
-          // send to catch block
-          const error = {
-            reason: json.reason,
-            status: resp.status,
-          }
-          return resp.ok ? json : Promise.reject(error)
+          return resp.ok ? json : Promise.reject<T>(json)
         })
-        .catch(error => {
-          // call failed above
-          if (error.reason && error.status) {
+        .catch((error: SynapseError) => {
+          if (resp.ok) {
+            // This is hit if the response is ok and the response doesn't have a json body 
+            // or the response is empty
+            return Promise.resolve(resp)
+          }
+          if (error.reason && resp.status) {
             // successfull return from server but invalid call
-            // the call was recieved, but staus wasn't ok-- return the json response from above
-            // from the response directly
             return Promise.reject({
               reason: error.reason,
-              statusCode: error.status,
+              status: resp.status,
             })
           }
-          return Promise.reject({
-            reason: resp.statusText,
-            statusCode: resp.status,
-          })
+          // This occurs if the response is not ok and does not have json or is empty
+          return Promise.reject(resp)
         })
     })
     .catch(error => {
-      // this should never happen
-      return Promise.reject(error)
+      if (
+        retries === 0 ||
+        (error.status && error.status !== 429 && error.status !== 0)
+      ) {
+        // If there is an error response and the error is nether a throttled response
+        // or disconnected network
+        return Promise.reject(error)
+      }
+      return retryFetch(url, options, delayMs)
     })
 }
 
@@ -176,10 +150,10 @@ export const doPost = (
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ): Promise<any> => {
-  const options: any = {
+  const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
@@ -190,47 +164,44 @@ export const doPost = (
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (initCredentials) {
-    options.credentials = initCredentials
-  }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
-  const options: any = {
+  const options: RequestInit = {
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'sessiontoken',
     },
     method: 'GET',
     mode: 'cors',
-  }
-  if (initCredentials) {
-    options.credentials = initCredentials
+    credentials: initCredentials,
   }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 
 export const doDelete = (
   url: string,
   requestJsonObject: any | undefined = undefined,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
-  const options: any = {
+  const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
@@ -240,24 +211,22 @@ export const doDelete = (
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (initCredentials) {
-    options.credentials = initCredentials
-  }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout(usedEndpoint + url, options)
 }
 
 export const doPut = (
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
-  initCredentials: string | undefined,
+  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ): Promise<any> => {
-  const options: any = {
+  const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
@@ -266,15 +235,14 @@ export const doPut = (
     },
     method: 'PUT',
     mode: 'cors',
-  }
-  if (initCredentials) {
-    options.credentials = initCredentials
+    credentials: initCredentials,
   }
   if (sessionToken) {
+    // @ts-ignore
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options, 1000, 5)
+  return fetchWithExponentialTimeout(usedEndpoint + url, options)
 }
 
 export const putRefreshSessionToken = (sessionToken: string) => {
@@ -1064,7 +1032,7 @@ export const detectSSOCode = () => {
           })
       })
       .catch((err: any) => {
-        if (err.statusCode === 404) {
+        if (err.status === 404) {
           // Synapse account not found, send to registration page
           window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
         }
@@ -1873,7 +1841,7 @@ export const getDownloadOrder = (
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
   sessionToken: string | undefined,
-) => {
+): Promise<DownloadList> => {
   return doPost(
     '/file/v1/download/list/remove',
     { list },

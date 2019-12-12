@@ -7,7 +7,7 @@ import '../style/DemoStyle.scss'
 import Demo from './Demo'
 import Playground from './playground/Playground'
 import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
-import FileGrid from '../../lib/containers/synapse_form_wrapper/UserFileGrid'
+import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import { SynapseClient } from '../../lib/utils/'
 import { RouteChildrenProps } from 'react-router'
 
@@ -140,7 +140,7 @@ export default class App extends React.Component<{}, AppState> {
                   searchParamsProps[key] = value
                 })
                 return !props.location.search ? (
-                  <FileGrid
+                  <SynapseFormSubmissionsGrid
                     pathpart="drugUploadTool"
                     token={token}
                     formClass="drug-upload-tool"
@@ -175,7 +175,7 @@ export default class App extends React.Component<{}, AppState> {
                   searchParamsProps[key] = value
                 })
                 return !props.location.search ? (
-                  <FileGrid
+                  <SynapseFormSubmissionsGrid
                     pathpart="contribReqForm"
                     formGroupId="11"
                     token={token}

@@ -53,3 +53,17 @@
 .action-button {
   margin-left: 15px;
 }
+
+
+.download-list-table {
+  td {
+    vertical-align: middle !important;
+  }
+}
+
+.has-access-tooltip-width {
+  max-width: 250px;
+  text-align: center;
+  white-space: normal;
+  word-wrap: normal;
+}
