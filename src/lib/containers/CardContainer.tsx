@@ -12,11 +12,12 @@ import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
 import TotalQueryResults from './TotalQueryResults'
 import { CardConfiguration } from './CardContainerLogic'
+import { FacetColumnResultRange, FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
 
 const PAGE_SIZE: number = 25
 
 export type CardContainerProps = {
-  data?: QueryResultBundle
+  data?: QueryResultBundle<FacetColumnResultRange |FacetColumnResultValues>
   limit?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
@@ -135,7 +136,7 @@ export class CardContainer extends React.Component<
         el => el.values[userIdColumnIndex],
       )
       cards = (
-        <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
+        <UserCardList data={data as QueryResultBundle<FacetColumnResultValues>} list={listIds} size={MEDIUM_USER_CARD} />
       )
     } else {
       // render the cards

@@ -5,13 +5,15 @@ import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
+import {FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
+
 
 export type UserCardListProps = {
   list: string[]
   size?: UserCardSize
   // Data should not be needed, however, it gives the option to fill in a user profile with other column
   // fields. This is required specifically by AMP-AD Explore/People page
-  data?: QueryResultBundle
+  data?: QueryResultBundle<FacetColumnResultValues>
 }
 
 type MapOwnerIdToUserProfile = {
@@ -90,7 +92,7 @@ export default class UserCardList extends React.Component<
    * @returns list of UserProfiles with firstName, lastName, company, userName (first letter of firstName) filled out.
    * @memberof UserCardList
    */
-  manuallyExtractData(data: QueryResultBundle) {
+  manuallyExtractData(data: QueryResultBundle<FacetColumnResultValues>) {
     const firstNameIndex = data.queryResult.queryResults.headers.findIndex(
       el => el.name === 'firstName',
     )

@@ -5,7 +5,7 @@ import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
-import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValues, FacetColumnResultRange } from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
@@ -27,7 +27,7 @@ export type QueryWrapperState = {
      click event and syncs Facets.tsx and SynapseTable.tsx
   */
   isAllFilterSelectedForFacet: {}
-  data: QueryResultBundle | undefined
+  data: QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange> | undefined
   isLoadingNewData: boolean // occurs when props change
   isLoading: boolean // occurs when state changes
   lastQueryRequest: QueryBundleRequest
@@ -57,7 +57,8 @@ export type QueryWrapperChildProps = {
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
   getInitQueryRequest?: () => QueryBundleRequest
-  data?: QueryResultBundle
+  data?: QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange>
+
   facet?: string
   updateParentState?: (param: any) => void
   rgbIndex?: number
@@ -184,7 +185,7 @@ export default class QueryWrapper extends React.Component<
       this.props.token,
       this.updateParentState,
     )
-      .then((data: QueryResultBundle) => {
+      .then((data: QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange>) => {
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE
@@ -248,7 +249,7 @@ export default class QueryWrapper extends React.Component<
       this.props.token,
       this.updateParentState,
     )
-      .then((data: QueryResultBundle) => {
+      .then((data: QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange>) => {
         const lastQueryRequest: QueryBundleRequest = cloneDeep(
           this.props.initQueryRequest!,
         )
@@ -265,20 +266,21 @@ export default class QueryWrapper extends React.Component<
               'Error on query request, must include facets in partmask to show facets',
             )
           }
-          data.facets.forEach((el: FacetColumnResultValues) => {
-            if (el.facetType === 'enumeration') {
-              // isAll is only true iff there are no facets selected or all elements are selected
-              const { facetValues } = el
-              const isAllFalse = facetValues.every(facet => !facet.isSelected)
-              const isAllTrue = facetValues.every(facet => facet.isSelected)
-              const isByDefaultSelected = isAllFalse || isAllTrue
-              isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
-              if (el.columnName === this.props.facet && !isAllFalse) {
-                // Note - this picks the first selected facet
-                chartSelectionIndex = facetValues
-                  .sort((a, b) => b.count - a.count)
-                  .findIndex(facet => facet.isSelected)
-              }
+          const enumFacets = (data.facets).filter(
+            el => el.facetType === 'enumeration',
+          ) as FacetColumnResultValues[]
+          enumFacets.forEach(el => {
+            // isAll is only true iff there are no facets selected or all elements are selected
+            const { facetValues } = el
+            const isAllFalse = facetValues.every(facet => !facet.isSelected)
+            const isAllTrue = facetValues.every(facet => facet.isSelected)
+            const isByDefaultSelected = isAllFalse || isAllTrue
+            isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
+            if (el.columnName === this.props.facet && !isAllFalse) {
+              // Note - this picks the first selected facet
+              chartSelectionIndex = facetValues
+                .sort((a, b) => b.count - a.count)
+                .findIndex(facet => facet.isSelected)
             }
           })
         }
@@ -340,6 +342,10 @@ export default class QueryWrapper extends React.Component<
     )
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
-    return <div className={`SRC-wrapper ${loadingCusrorClass}`}>{childrenWithProps}</div>
+    return (
+      <div className={`SRC-wrapper ${loadingCusrorClass}`}>
+        {childrenWithProps}
+      </div>
+    )
   }
 }

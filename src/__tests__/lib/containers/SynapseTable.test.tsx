@@ -24,6 +24,7 @@ import { Modal } from 'react-bootstrap'
 import { ColumnSelection } from 'lib/containers/table/table-top'
 import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
+import { FacetColumnResultValues, FacetColumnResultRange } from 'lib/utils/jsonResponses/Table/FacetColumnResult'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -37,7 +38,8 @@ describe('basic functionality', () => {
   // setup tests
   const title = 'studies'
   const synapseId = 'syn16787123'
-  const castData = syn16787123Json as QueryResultBundle
+  const castData = syn16787123Json as QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange>
+
   const totalColumns = 13
   const lastQueryRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -354,7 +356,7 @@ describe('basic functionality', () => {
     const MOCKED_NUM = 1
     // syn16787123Json has two columns of type entity, the second
     // is of type ENTITYID, the third is USERID
-    const mockData: QueryResultBundle = {
+    const mockData: QueryResultBundle<FacetColumnResultValues> = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
       selectColumns: [
         {

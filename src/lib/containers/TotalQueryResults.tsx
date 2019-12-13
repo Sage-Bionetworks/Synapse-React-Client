@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
+import { FacetColumnResultValues, FacetColumnResultRange} from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export type TotalQueryResultsProps = {
-  data?: QueryResultBundle
+  data?: QueryResultBundle <FacetColumnResultValues | FacetColumnResultRange> 
+
   facet?: string
   isLoading: boolean
   style?: React.CSSProperties
@@ -44,11 +46,11 @@ export default class TotalQueryResults extends React.Component<
     if (data) {
       if (facet) {
         const { facets = [] } = data
-        const curFacetsIndex = facets.findIndex(
+        const curFacetsIndex = (facets).findIndex(
           el => el.facetType === 'enumeration' && el.columnName === facet,
         )
         // calculate the values chosen
-        const curFacets = facets[curFacetsIndex]
+        const curFacets = facets[curFacetsIndex] as FacetColumnResultValues
         // edge case -- if they are all false then they are considered all true..
         // sum up the counts of data
         let anyTrue = false

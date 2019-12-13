@@ -14,6 +14,7 @@ import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryR
 import { cloneDeep } from '../../../lib/utils/functions'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import { SELECT_ALL } from 'lib/containers/table/SynapseTableConstants'
+import { FacetColumnResultValues, FacetColumnResultRange } from 'lib/utils/jsonResponses/Table/FacetColumnResult'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
   const wrapper = mount(<Facets {...props} />)
@@ -67,7 +68,7 @@ describe('it performs basic functionality', () => {
       ],
     },
   }
-  const castData = syn16787123Json as QueryResultBundle
+  const castData = syn16787123Json as QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange>
   const updateParentState = jest.fn()
   const executeInitialQueryRequest = jest.fn()
   const executeQueryRequest = jest.fn()

@@ -385,7 +385,8 @@ export default class QueryWrapperMenu extends React.Component<
   public getPartMask(facet: string | undefined, hasGroupByInSql: boolean) {
     let partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
     if (facet) {
       partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
     } else {

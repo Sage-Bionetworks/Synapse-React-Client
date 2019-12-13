@@ -24,5 +24,4 @@ export interface FacetColumnResult {
   concreteType: string
   columnName: string // The name of the faceted column
   facetType: 'enumeration' | 'range'
-  facetValues: any // The list of QueryFacetResultValue that contain frequency counts for its most frequent values
 }

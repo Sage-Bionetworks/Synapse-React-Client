@@ -1,7 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
@@ -166,10 +166,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       )
     }
     // Find the facetcolumn result according to the input filter
-    const facetColumnResult = this.props.data!.facets!.find(
-      el =>
-        el.columnName === this.props.facet && el.facetType === 'enumeration',
-    )
+    const facetColumnResult= (this.props.data!.facets!).find(
+    el =>  el.columnName === this.props.facet && el.facetType === 'enumeration',
+    ) as FacetColumnResultValues
     if (!facetColumnResult) {
       throw Error('Error no matching facet found given specified facet')
     }
@@ -283,7 +282,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         'Error on query request, must include facets in partmask to show facets',
       )
     }
-    const curFacetsIndex = facets.findIndex(
+    const curFacetsIndex = (facets).findIndex(
       curFacet =>
         curFacet.columnName === facet && curFacet.facetType === 'enumeration',
     )

@@ -4,6 +4,7 @@ import createPlotlyComponent from 'react-plotly.js/factory'
 import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
 import { SynapseConstants } from '../../utils/'
+import { FacetColumnResultRange, FacetColumnResultValues } from '../../utils/jsonResponses/Table/FacetColumnResult'
 const Plot = createPlotlyComponent(Plotly)
 
 type SynapsePlotProps = {
@@ -15,7 +16,7 @@ type SynapsePlotProps = {
 
 type SynapsePlotState = {
   isLoaded: boolean
-  queryData: QueryResultBundle
+  queryData: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>
 }
 
 class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
@@ -23,7 +24,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
     super(props)
     this.state = {
       isLoaded: false,
-      queryData: {} as QueryResultBundle,
+      queryData: {} as QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>,
     }
     this.fetchPlotlyData = this.fetchPlotlyData.bind(this)
     this.showPlot = this.showPlot.bind(this)
@@ -48,7 +49,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
       },
     }
     getFullQueryTableResults(queryRequest, token)
-      .then((data: QueryResultBundle) => {
+      .then((data: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>) => {
         this.setState({
           isLoaded: true,
           queryData: data,

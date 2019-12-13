@@ -377,7 +377,7 @@ describe('Passing down props works correctly ', () => {
     const getPartMask = QueryWrapperMenu.prototype.getPartMask
     const partMaskBase =
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
     it('works with facet passed in', () => {
       const facet = 'MOCK_VALUE'
       const partMask = getPartMask(facet, false)

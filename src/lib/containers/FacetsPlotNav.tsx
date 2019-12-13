@@ -3,6 +3,7 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
+  FacetColumnResultRange,
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import Plotly from 'plotly.js-basic-dist'
@@ -237,14 +238,14 @@ export default class FacetsPlotNav extends React.Component<
       </>
     )
   }
-  public extractPlotDataArray(data: QueryResultBundle) {
+  public extractPlotDataArray(data: QueryResultBundle<FacetColumnResultValues|FacetColumnResultRange>) {
     const { facetsToPlot } = this.props
     const plotData: any[] = []
 
     // pull out the data corresponding to the filter in question
-    let enumerationFacets = data.facets!.filter(
+    let enumerationFacets = (data.facets!).filter(
       item => item.facetType === 'enumeration',
-    )
+    ) as FacetColumnResultValues[]
     if (facetsToPlot) {
       // filter to show plots for the chosen facets
       enumerationFacets = enumerationFacets.filter(item =>
