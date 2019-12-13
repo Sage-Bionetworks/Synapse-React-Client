@@ -125,8 +125,11 @@ const fetchWithExponentialTimeout = <T>(
         })
         .catch((error: SynapseError) => {
           if (resp.ok) {
-            // empty response
-            return Promise.resolve(resp)
+            // possible empty response
+            return Promise.resolve({
+              reason: error,
+              status: resp.status,
+            })
           }
           if (error.reason && resp.status) {
             // successfull return from server but invalid call
@@ -136,7 +139,10 @@ const fetchWithExponentialTimeout = <T>(
             })
           }
           // This occurs if the response is not ok and does not have json or is empty
-          return Promise.reject(resp)
+          return Promise.reject({
+            reason: error,
+            status: resp.status,
+          })
         })
     })
     .catch(error => {
