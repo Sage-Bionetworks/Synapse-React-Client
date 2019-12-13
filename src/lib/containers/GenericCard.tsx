@@ -3,9 +3,8 @@ import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
 import {
   CardLink,
-  LabelLink,
-  LabelMarkdown,
   CommonCardProps,
+  MarkdownLink,
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -91,16 +90,16 @@ export default class GenericCard extends React.Component<
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const urlParams = titleLink.URLColumnNames.map(el => {
-        if (!schema.hasOwnProperty(el)) {
-          console.error(
-            `Could not find match for data: ${data} with columnName ${el}`,
-          )
-        }
-        return `${el}=${data[schema[el]]}`
-      }).join('&')
-      // tested this link on the browser, there's no need to encode the URL, the browser picks up on that automatically
-      linkDisplay = `#/${titleLink.baseURL}?${urlParams}`
+      const { matchColumnName, URLColumnName } = titleLink
+      const indexInData = schema[matchColumnName]
+      if (indexInData === undefined) {
+        console.error(
+          `Could not find match for data: ${data} with columnName ${matchColumnName}`,
+        )
+      } else {
+        const value = data[indexInData]
+        linkDisplay = `#/${titleLink.baseURL}?${URLColumnName}=${value}`
+      }
     }
     return { linkDisplay, target }
   }
@@ -126,7 +125,7 @@ export default class GenericCard extends React.Component<
 
   public renderLabel(
     value: string,
-    labelLink: LabelLink | LabelMarkdown,
+    labelLink: CardLink | MarkdownLink,
     isHeader: boolean,
   ) {
     if (labelLink.isMarkdown) {
@@ -141,11 +140,8 @@ export default class GenericCard extends React.Component<
       className = 'SRC-primary-text-color'
     }
     return split.map((el, index) => {
-      const { baseURL } = labelLink
-      const urlParams = labelLink.URLColumnNames.map(urlColumn => {
-        return `${urlColumn}=${el}`
-      }).join('&')
-      const href = `#/${baseURL}?${urlParams}`
+      const { baseURL, URLColumnName } = labelLink
+      const href = `#/${baseURL}?${URLColumnName}=${el}`
       return (
         <React.Fragment key={el}>
           <a href={href} key={el} className={className} style={style}>
@@ -169,7 +165,7 @@ export default class GenericCard extends React.Component<
       iconOptions,
       isHeader = false,
       titleLinkConfig,
-      labelConfig,
+      labelLinkConfig: labelLinkConfig,
       facetAliases = {},
       isAlignToLeftNav = false
     } = this.props
@@ -200,8 +196,8 @@ export default class GenericCard extends React.Component<
       let value = data[schema[columnName]]
       if (value) {
         const labelLink =
-          labelConfig &&
-          labelConfig.find(el => el.matchColumnName === columnName)
+          labelLinkConfig &&
+          labelLinkConfig.find(el => el.matchColumnName === columnName)
         if (labelLink) {
           // create link for this column
           value = this.renderLabel(value, labelLink, isHeader)

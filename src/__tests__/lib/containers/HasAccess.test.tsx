@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import HasAccess, { HasAccessProps, ExternalFileHandleConcreteTypeEnum, GIGABYTE_SIZE, GoogleCloudFileHandleEnum } from '../../../lib/containers/HasAccess'
+import HasAccess, { HasAccessProps, ExternalFileHandleConcreteTypeEnum, GIGABYTE_SIZE, GoogleCloudFileHandleEnum, DownloadTypeEnum } from '../../../lib/containers/HasAccess'
 import { 
   mockUnmetControlledDataRestrictionInformation,
   mockOpenRestrictionInformation,
@@ -69,10 +69,12 @@ describe('basic tests', () => {
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faLink)
+    const tooltipSpan = wrapper.find(`[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.ExternalFileHandle]}"]`)
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('works when a cloud file handle is passed in', async () => {
-    const externalFileHandle: FileHandle = {
+    const cloudFileHandle: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -84,14 +86,16 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: 0
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({...props, fileHandle: cloudFileHandle})
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faLink)
+    const tooltipSpan = wrapper.find(`[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.CloudFileHandle]}"]`)
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('works when the file is too large', async () => {
-    const externalFileHandle: FileHandle = {
+    const tooLargeFileHandle: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -103,14 +107,16 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: GIGABYTE_SIZE
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({...props, fileHandle: tooLargeFileHandle})
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faDatabase)
+    const tooltipSpan = wrapper.find(`[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.TooLargeFile]}"]`)
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('works when download is IsOpenNoRestrictions', async () => {
-    const externalFileHandle: FileHandle = {
+    const isOpenNoRestrictionsFileHandle: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -122,7 +128,7 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: 0
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({...props, fileHandle: isOpenNoRestrictionsFileHandle})
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
@@ -149,6 +155,8 @@ describe('basic tests', () => {
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faMinusCircle)
+    const tooltipSpan = wrapper.find(`[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.NoAccess]}"]`)
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('Does not call getRestrictionInformation when forceIsRestricted=true', async () => {
