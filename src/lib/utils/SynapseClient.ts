@@ -112,15 +112,24 @@ const fetchWithExponentialTimeout = <T>(
         return retryFetch<T>(url, options, delayMs)
       }
       return resp
-        .json()
-        .then(json => {
-          return resp.ok ? json : Promise.reject<T>(json)
+        .text()
+        .then(text => {
+          // try to parse it as json
+          try {
+            const json = JSON.parse(text)
+            return resp.ok ? Promise.resolve(json) : Promise.reject<T>(json)
+          } catch (error) {
+            // failed to parse json, return text
+            return resp.ok ? Promise.resolve(text) : Promise.reject<T>(text)
+          }
         })
         .catch((error: SynapseError) => {
           if (resp.ok) {
-            // This is hit if the response is ok and the response doesn't have a json body 
-            // or the response is empty
-            return Promise.resolve(resp)
+            // possible empty response
+            return Promise.resolve({
+              reason: error,
+              status: resp.status,
+            })
           }
           if (error.reason && resp.status) {
             // successfull return from server but invalid call
@@ -130,7 +139,10 @@ const fetchWithExponentialTimeout = <T>(
             })
           }
           // This occurs if the response is not ok and does not have json or is empty
-          return Promise.reject(resp)
+          return Promise.reject({
+            reason: error,
+            status: resp.status,
+          })
         })
     })
     .catch(error => {
