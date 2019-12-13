@@ -29,13 +29,13 @@ it('version call', () => {
 })
 
 it('delete entity', () => {
-  return SynapseClient.deleteEntity('', '123')
+  return SynapseClient.deleteEntity('invalid_session_token', 'invalid_entity_id')
     .then(data => {
-      expect(data).toBeDefined()
-      expect(data['status']).toBe(204)
+      fail('should not be able to delete an entity with an invalid session token')
     })
-    .catch(err => {
-      fail(err.reason)
+    .catch(resp => {
+      // invalid session token
+      expect(resp['status']).toBe(401)
     })
 })
 
