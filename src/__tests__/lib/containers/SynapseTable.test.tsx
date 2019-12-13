@@ -24,7 +24,7 @@ import { Modal } from 'react-bootstrap'
 import { ColumnSelection } from 'lib/containers/table/table-top'
 import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import { FacetColumnResultValues, FacetColumnResultRange } from 'lib/utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValues, FacetColumnResult} from 'lib/utils/jsonResponses/Table/FacetColumnResult'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -38,7 +38,7 @@ describe('basic functionality', () => {
   // setup tests
   const title = 'studies'
   const synapseId = 'syn16787123'
-  const castData = syn16787123Json as QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange>
+  const castData = syn16787123Json as QueryResultBundle<FacetColumnResult>
 
   const totalColumns = 13
   const lastQueryRequest = {

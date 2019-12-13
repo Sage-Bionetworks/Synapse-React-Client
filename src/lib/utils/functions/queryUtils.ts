@@ -2,11 +2,11 @@ import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
 import { SynapseClient, SynapseConstants } from '..'
 import { QueryResultBundle } from '../jsonResponses/Table/QueryResultBundle'
 import { cloneDeep } from './rollupCompatibleModules'
-import { FacetColumnResultRange, FacetColumnResultValues } from '../jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResult } from '../jsonResponses/Table/FacetColumnResult'
 
 type PartialStateObject = {
   hasMoreData: boolean
-  data: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>
+  data: QueryResultBundle<FacetColumnResult>
 }
 
 /**
@@ -17,12 +17,12 @@ type PartialStateObject = {
  */
 export const getNextPageOfData = async (
   queryRequest: QueryBundleRequest,
-  data: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>,
+  data: QueryResultBundle<FacetColumnResult>,
   token?: string,
 ) => {
   return await SynapseClient.getQueryTableResults(queryRequest, token)
-    .then((newData: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>) => {
-      const oldData: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange> = cloneDeep(data)!
+    .then((newData: QueryResultBundle<FacetColumnResult>) => {
+      const oldData: QueryResultBundle<FacetColumnResult> = cloneDeep(data)!
       // push on the new data retrieved from the API call
       const hasMoreData =
         newData.queryResult.queryResults.rows.length ===

@@ -12,12 +12,12 @@ import GenericCard from './GenericCard'
 import UserCardList from './UserCardList'
 import TotalQueryResults from './TotalQueryResults'
 import { CardConfiguration } from './CardContainerLogic'
-import { FacetColumnResultRange, FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResult, FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
 
 const PAGE_SIZE: number = 25
 
 export type CardContainerProps = {
-  data?: QueryResultBundle<FacetColumnResultRange |FacetColumnResultValues>
+  data?: QueryResultBundle<FacetColumnResult>
   limit?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean

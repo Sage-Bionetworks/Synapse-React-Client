@@ -11,7 +11,7 @@ import {
   KeyValue,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
-import { FacetColumnResultRange, FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
+import {FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export interface CardLink {
   baseURL: string
@@ -60,7 +60,7 @@ export type CardContainerLogicProps = {
 } & CardConfiguration
 
 type State = {
-  data: QueryResultBundle <FacetColumnResultValues|FacetColumnResultRange> | undefined
+  data: QueryResultBundle <FacetColumnResult> | undefined
   isLoading: boolean
   queryRequest: QueryBundleRequest
   totalResultsNoFacet: number
@@ -201,7 +201,7 @@ export default class CardContainerLogic extends React.Component<
     }
 
     SynapseClient.getQueryTableResults(initQueryRequest, this.props.token)
-      .then((data: QueryResultBundle<FacetColumnResultRange|FacetColumnResultValues>) => {
+      .then((data: QueryResultBundle<FacetColumnResult>) => {
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

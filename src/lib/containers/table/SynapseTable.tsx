@@ -19,7 +19,6 @@ import ReactTooltip from 'react-tooltip'
 import {
   FacetColumnResult,
   FacetColumnResultValues,
-  FacetColumnResultRange
 } from '../../utils/jsonResponses/Table/FacetColumnResult'
 import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
 import { Row } from '../../utils/jsonResponses/Table/QueryResult'
@@ -258,7 +257,7 @@ export default class SynapseTable extends React.Component<
   }
 
   public getUniqueEntities(
-    data: QueryResultBundle<FacetColumnResultValues| FacetColumnResultRange>,
+    data: QueryResultBundle<FacetColumnResult>,
     mapIdToHeader: {},
     indicies: number[],
   ) {

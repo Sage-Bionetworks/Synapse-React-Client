@@ -1,7 +1,7 @@
 import {QueryResultBundle} from '../lib/utils/jsonResponses/Table/QueryResultBundle'
-import { FacetColumnResultValues, FacetColumnResultRange } from '../lib/utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValues} from '../lib/utils/jsonResponses/Table/FacetColumnResult'
 // result of querying table syn17328596
-export const syn17328596: QueryResultBundle<FacetColumnResultValues | FacetColumnResultRange> = {
+export const syn17328596: QueryResultBundle<FacetColumnResultValues> = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryResult: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',

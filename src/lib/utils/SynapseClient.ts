@@ -57,7 +57,7 @@ import { FileHandleAssociation } from './jsonResponses/FileHandleAssociation'
 import { DownloadOrder } from './jsonResponses/Download/DownloadOrder'
 import { BulkFileDownloadRequest } from './jsonResponses/BulkFileDownloadRequest'
 import { BulkFileDownloadResponse } from './jsonResponses/BulkFileDownloadResponse'
-import {FacetColumnResultValues, FacetColumnResultRange} from './jsonResponses/Table/FacetColumnResult'
+import {FacetColumnResult} from './jsonResponses/Table/FacetColumnResult'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -414,7 +414,7 @@ export const getQueryTableResults = (
   queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
-): Promise<QueryResultBundle<FacetColumnResultValues|FacetColumnResultRange>> => {
+): Promise<QueryResultBundle<FacetColumnResult>> => {
   return doPost(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
@@ -423,7 +423,7 @@ export const getQueryTableResults = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then(resp => {
-      return getAsyncResultFromJobId<QueryResultBundle<FacetColumnResultValues|FacetColumnResultRange>>(
+      return getAsyncResultFromJobId<QueryResultBundle<FacetColumnResult>>(
         `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${resp.token}`,
         sessionToken,
         updateParentState,
@@ -453,7 +453,7 @@ export const getQueryTableResults = (
 export const getFullQueryTableResults = async (
   queryBundleRequest: any,
   sessionToken: string | undefined = undefined,
-): Promise<QueryResultBundle<FacetColumnResultValues|FacetColumnResultRange>> => {
+): Promise<QueryResultBundle<FacetColumnResult>> => {
   // TODO: Find out why theres a bug causing the query limit
   const { query, ...rest } = queryBundleRequest
   let data: any = {}
@@ -466,7 +466,7 @@ export const getFullQueryTableResults = async (
   // we can get, the following uses that maximum and offsets to the appropriate location to get the data
   // afterwards, the process repeats
   await getQueryTableResults(queryRequest, sessionToken).then(
-    async (initData: QueryResultBundle<FacetColumnResultValues|FacetColumnResultRange>) => {
+    async (initData: QueryResultBundle<FacetColumnResult>) => {
       let queryCount: any = initData.queryResult.queryResults.rows.length
       let currentQueryCount: number = queryCount
       data = initData
