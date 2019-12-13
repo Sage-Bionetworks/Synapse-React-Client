@@ -169,7 +169,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const facetColumnResult = this.props.data!.facets!.find(
       el =>
         el.columnName === this.props.facet && el.facetType === 'enumeration',
-    )
+    ) as FacetColumnResultValues
     if (!facetColumnResult) {
       throw Error('Error no matching facet found given specified facet')
     }

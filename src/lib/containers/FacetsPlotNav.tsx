@@ -242,9 +242,9 @@ export default class FacetsPlotNav extends React.Component<
     const plotData: any[] = []
 
     // pull out the data corresponding to the filter in question
-    let enumerationFacets = data.facets!.filter(
+    let enumerationFacets = (data.facets!).filter(
       item => item.facetType === 'enumeration',
-    )
+    ) as FacetColumnResultValues[]
     if (facetsToPlot) {
       // filter to show plots for the chosen facets
       enumerationFacets = enumerationFacets.filter(item =>

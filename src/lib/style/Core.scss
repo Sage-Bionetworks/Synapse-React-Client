@@ -1,4 +1,6 @@
-//////////////////////////////////////////////////////////////
+@import './Vars.scss';
+
+/////////////////////////////////////////////////////////////
 // Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 
@@ -288,20 +290,24 @@ button.SRC-roundBorder {
 }
 
 .SRC-border-bottom-only {
-  border-bottom: 1px solid #dddddf;
+  border-bottom: 1px solid $border-color-gray;
+}
+
+.SRC-border-top-only {
+  border-top: 1px solid $border-color-gray;
 }
 
 .SRC-bar-border-bottom {
   padding: 7px; /*create more room around texts */
-  border-bottom: 1px solid #dddddf;
-  border-left: 1px solid #dddddf;
-  border-right: 1px solid #dddddf;
+  border-bottom: 1px solid $border-color-gray;
+  border-left: 1px solid $border-color-gray;
+  border-right: 1px solid $border-color-gray;
 }
 
 .SRC-bar-border-top {
-  border-top: 1px solid #dddddf;
-  border-left: 1px solid #dddddf;
-  border-right: 1px solid #dddddf;
+  border-top: 1px solid $border-color-gray;
+  border-left: 1px solid $border-color-gray;
+  border-right: 1px solid $border-color-gray;
 }
 
 #root {
@@ -647,6 +653,11 @@ div.SRC-userImg {
   margin-right: -15px;
 }
 
+.row.no-gutter > [class*='col-'] {
+  padding-right:0;
+  padding-left:0;
+}
+
 @media (min-width: 1501px) {
   .SRC-grid-item {
     flex-basis: 32%;
@@ -790,7 +801,7 @@ div.SRC-userImg {
   padding-right: 15px;
 }
 .srcRssFeedItem {
-  border: 1px solid #dddddf;
+  border: 1px solid $border-color-gray;
   margin-bottom: 30px;
 }
 .srcRssFeedItemTitle {

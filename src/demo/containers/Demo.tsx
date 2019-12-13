@@ -77,9 +77,17 @@ class Demo extends React.Component<{}, DemoState> {
           {
             title: 'File Add To List Demo with Where Clause',
             facetDisplayValue: 'Name',
-            facet: 'consortium',
-            sql: 'SELECT name, grant FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
+            facet: 'name',
+            sql: 'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
           },
+
+          {
+            title: 'Facet Filter Model',
+            facetDisplayValue: 'Model',
+            facet: 'model',
+            sql: 'SELECT * FROM syn7844998',
+          },
+         
         ],
         rgbIndex: 2,
       },
