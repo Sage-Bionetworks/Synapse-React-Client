@@ -5,7 +5,7 @@ import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
-import { FacetColumnResultValues, FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
@@ -27,7 +27,7 @@ export type QueryWrapperState = {
      click event and syncs Facets.tsx and SynapseTable.tsx
   */
   isAllFilterSelectedForFacet: {}
-  data: QueryResultBundle<FacetColumnResult> | undefined
+  data: QueryResultBundle | undefined
   isLoadingNewData: boolean // occurs when props change
   isLoading: boolean // occurs when state changes
   lastQueryRequest: QueryBundleRequest
@@ -57,7 +57,7 @@ export type QueryWrapperChildProps = {
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
   getInitQueryRequest?: () => QueryBundleRequest
-  data?: QueryResultBundle<FacetColumnResult>
+  data?: QueryResultBundle
 
   facet?: string
   updateParentState?: (param: any) => void
@@ -185,7 +185,7 @@ export default class QueryWrapper extends React.Component<
       this.props.token,
       this.updateParentState,
     )
-      .then((data: QueryResultBundle<FacetColumnResult>) => {
+      .then((data: QueryResultBundle) => {
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE
@@ -249,7 +249,7 @@ export default class QueryWrapper extends React.Component<
       this.props.token,
       this.updateParentState,
     )
-      .then((data: QueryResultBundle<FacetColumnResult>) => {
+      .then((data: QueryResultBundle) => {
         const lastQueryRequest: QueryBundleRequest = cloneDeep(
           this.props.initQueryRequest!,
         )

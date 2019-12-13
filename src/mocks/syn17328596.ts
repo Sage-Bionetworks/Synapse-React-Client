@@ -1,7 +1,5 @@
-import {QueryResultBundle} from '../lib/utils/jsonResponses/Table/QueryResultBundle'
-import { FacetColumnResultValues} from '../lib/utils/jsonResponses/Table/FacetColumnResult'
 // result of querying table syn17328596
-export const syn17328596: QueryResultBundle<FacetColumnResultValues> = {
+export const syn17328596 = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryResult: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',

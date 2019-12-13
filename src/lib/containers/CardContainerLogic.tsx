@@ -11,7 +11,6 @@ import {
   KeyValue,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
-import {FacetColumnResult } from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export interface CardLink {
   baseURL: string
@@ -29,7 +28,7 @@ export type MarkdownLink = {
 }
 
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (CardLink | MarkdownLink ) []
+export type LabelLinkConfig = (CardLink | MarkdownLink)[]
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
@@ -60,7 +59,7 @@ export type CardContainerLogicProps = {
 } & CardConfiguration
 
 type State = {
-  data: QueryResultBundle <FacetColumnResult> | undefined
+  data: QueryResultBundle | undefined
   isLoading: boolean
   queryRequest: QueryBundleRequest
   totalResultsNoFacet: number
@@ -201,7 +200,7 @@ export default class CardContainerLogic extends React.Component<
     }
 
     SynapseClient.getQueryTableResults(initQueryRequest, this.props.token)
-      .then((data: QueryResultBundle<FacetColumnResult>) => {
+      .then((data: QueryResultBundle) => {
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |

@@ -3,7 +3,6 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
-  FacetColumnResult,
 } from '../utils/jsonResponses/Table/FacetColumnResult'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import Plotly from 'plotly.js-basic-dist'
@@ -238,7 +237,7 @@ export default class FacetsPlotNav extends React.Component<
       </>
     )
   }
-  public extractPlotDataArray(data: QueryResultBundle<FacetColumnResult>) {
+  public extractPlotDataArray(data: QueryResultBundle) {
     const { facetsToPlot } = this.props
     const plotData: any[] = []
 

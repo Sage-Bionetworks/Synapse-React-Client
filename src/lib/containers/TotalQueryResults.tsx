@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import { FacetColumnResultValues, FacetColumnResult} from '../utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
 
 export type TotalQueryResultsProps = {
-  data?: QueryResultBundle <FacetColumnResult> 
+  data?: QueryResultBundle
 
   facet?: string
   isLoading: boolean

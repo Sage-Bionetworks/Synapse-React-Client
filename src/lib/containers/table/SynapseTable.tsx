@@ -257,7 +257,7 @@ export default class SynapseTable extends React.Component<
   }
 
   public getUniqueEntities(
-    data: QueryResultBundle<FacetColumnResult>,
+    data: QueryResultBundle,
     mapIdToHeader: {},
     indicies: number[],
   ) {
