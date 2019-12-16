@@ -5,10 +5,10 @@ import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
-import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { AddFilesToDownloadListRequest } from '../../../lib/utils/jsonResponses/AddFilesToDownloadListRequest'
-import { AddFilesToDownloadListResponse } from 'lib/utils/jsonResponses/AddFilesToDownloadListResponse'
-import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/Table/QueryBundleRequest'
+import { AddFilesToDownloadListRequest } from '../../../lib/utils/synapseTypes/AddFilesToDownloadListRequest'
+import { AddFilesToDownloadListResponse } from 'lib/utils/synapseTypes/AddFilesToDownloadListResponse'
+import { FileHandleAssociateType } from 'lib/utils/synapseTypes/FileHandleAssociation'
 
 let getQueryTableResultsFn: Function
 

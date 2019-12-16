@@ -3,11 +3,11 @@ import './DownloadConfirmation.scss'
 import React, { useState, useEffect } from 'react'
 import { SynapseClient } from '../../utils'
 import { SynapseConstants } from '../../utils'
-import { AddFilesToDownloadListRequest } from '../../utils/jsonResponses/AddFilesToDownloadListRequest'
-import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
+import { AddFilesToDownloadListRequest } from '../../utils/synapseTypes/AddFilesToDownloadListRequest'
+import { QueryBundleRequest } from '../../utils/synapseTypes/Table/QueryBundleRequest'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import moment from 'moment'
-import { Query } from '../../utils/jsonResponses/Table/Query'
+import { Query } from '../../utils/synapseTypes/Table/Query'
 import  DownloadDetails  from './DownloadDetails'
 
 enum StatusEnum {
@@ -30,12 +30,14 @@ export type DownloadConfirmationProps = {
   fnClose: Function
   token: string
   queryBundleRequest: QueryBundleRequest
+  entityId: string
 }
 
 //get the info about the files stats
 async function getFilesInformation(
   query: Query,
   token: string,
+  entityId: string
 ): Promise<DownloadConfirmationState> {
   const partMask =
     SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -43,7 +45,8 @@ async function getFilesInformation(
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    query: query,
+    query,
+    entityId,
     partMask,
   }
 
@@ -128,6 +131,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   queryBundleRequest,
   token,
   fnClose,
+  entityId
 }) => {
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,
@@ -136,11 +140,11 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   })
 
   useEffect(() => {
-    ;(async function getDataOnLoad(query: Query, token: string) {
-      const result = await getFilesInformation(query, token)
+    ;(async function getDataOnLoad(query: Query, token: string, entityId) {
+      const result = await getFilesInformation(query, token, entityId)
       setState(result)
-    })(queryBundleRequest.query, token)
-  }, [queryBundleRequest.query, token])
+    })(queryBundleRequest.query, token, entityId)
+  }, [queryBundleRequest.query, token, entityId])
 
   const hideComponent = () => fnClose()
 

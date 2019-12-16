@@ -6,7 +6,7 @@ import QueryWrapper, {
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
 import { cloneDeep } from '../../../lib/utils/functions'
-import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/Table/QueryBundleRequest'
 
 // utility function
 const createShallowComponent = async (
@@ -37,6 +37,7 @@ describe('basic functionality', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    entityId: 'syn16787123',
     query: {
       sql: 'SELECT * FROM syn16787123',
       isConsistent: false,

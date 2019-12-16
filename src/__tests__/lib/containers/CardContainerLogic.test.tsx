@@ -6,8 +6,8 @@ import CardContainerLogic, {
 } from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
 import CardContainer from '../../../lib/containers/CardContainer'
-import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle.js'
-import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest.jsx'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/Table/QueryResultBundle'
+import { QueryBundleRequest } from 'lib/utils/synapseTypes/Table/QueryBundleRequest'
 
 const createShallowComponent = async (
   props: CardContainerLogicProps,

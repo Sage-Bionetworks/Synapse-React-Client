@@ -8,7 +8,7 @@ import {
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
   FilesCountStatistics,
-} from '../utils/jsonResponses/Statistics'
+} from '../utils/synapseTypes/Statistics'
 const Plot = createPlotlyComponent(Plotly)
 
 const months = [

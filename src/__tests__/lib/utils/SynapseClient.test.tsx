@@ -1,7 +1,7 @@
 import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
-import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
-import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
+import { BatchFileRequest } from 'lib/utils/synapseTypes/BatchFileRequest'
+import { FileHandleAssociateType } from 'lib/utils/synapseTypes/FileHandleAssociation'
 import { BackendDestinationEnum } from 'lib/utils/functions/getEndpoint'
 
 it('invalid call', () => {

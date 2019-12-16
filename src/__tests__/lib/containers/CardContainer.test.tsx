@@ -5,8 +5,8 @@ import CardContainer, {
 } from '../../../lib/containers/CardContainer'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/Table/QueryBundleRequest'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/functions'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 

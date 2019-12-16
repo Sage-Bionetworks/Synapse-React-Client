@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { EntityHeader } from '../../utils/jsonResponses/EntityHeader'
+import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
 import {
   getDownloadList,
   getEntityHeader,
@@ -13,19 +13,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import HasAccess from '../HasAccess'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import DownloadDetails from './DownloadDetails'
-import { Reference } from '../../utils/jsonResponses/ReferenceList'
+import { Reference } from '../../utils/synapseTypes/ReferenceList'
 import useGetProfiles from '../../utils/hooks/useGetProfiles'
-import { PaginatedResults } from '../../utils/jsonResponses/PaginatedResults'
-import { BatchFileRequest } from '../../utils/jsonResponses/BatchFileRequest'
-import { BatchFileResult } from '../../utils/jsonResponses/BatchFileResult'
+import { PaginatedResults } from '../../utils/synapseTypes/PaginatedResults'
+import { BatchFileRequest } from '../../utils/synapseTypes/BatchFileRequest'
+import { BatchFileResult } from '../../utils/synapseTypes/BatchFileResult'
 import moment from 'moment'
 import * as ReactBootstrap from 'react-bootstrap'
-import { DownloadList } from '../../utils/jsonResponses/Download/DownloadList'
+import { DownloadList } from '../../utils/synapseTypes/Download/DownloadList'
 import UserCard from '../UserCard'
 import {
   FileHandleAssociation,
   FileHandleAssociateType,
-} from '../..//utils/jsonResponses/FileHandleAssociation'
+} from '../../utils/synapseTypes/FileHandleAssociation'
 import './DownloadList.scss'
 import { CreatePackage } from './CreatePackage'
 

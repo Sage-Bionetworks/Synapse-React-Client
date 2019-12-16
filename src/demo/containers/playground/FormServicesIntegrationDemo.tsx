@@ -6,9 +6,9 @@ import {
   ListRequest,
   ListResponse,
   StatusEnum,
-} from 'lib/utils/jsonResponses/Forms'
+} from 'lib/utils/synapseTypes/Forms'
 import { SynapseClient } from 'lib'
-import { FileUploadComplete } from 'lib/utils/jsonResponses/FileUploadComplete'
+import { FileUploadComplete } from 'lib/utils/synapseTypes/FileUploadComplete'
 
 type FormServicesIntegrationDemoState = {
   token?: string

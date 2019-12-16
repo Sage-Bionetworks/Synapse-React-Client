@@ -10,7 +10,7 @@ import {
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/Table/QueryResultBundle'
 import { cloneDeep } from '../../../lib/utils/functions'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import { SELECT_ALL } from 'lib/containers/table/SynapseTableConstants'

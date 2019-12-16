@@ -5,7 +5,7 @@ import {
   RestrictionInformationRequest,
   RestrictableObjectType,
   RestrictionLevel,
-} from '../utils/jsonResponses/RestrictionInformation'
+} from '../utils/synapseTypes/RestrictionInformation'
 import {
   getEndpoint,
   BackendDestinationEnum,
@@ -19,7 +19,7 @@ import {
   faDatabase,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FileHandle } from '../utils/jsonResponses/FileHandle'
+import { FileHandle } from '../utils/synapseTypes/FileHandle'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import ReactTooltip from 'react-tooltip'
 library.add(faUnlockAlt)

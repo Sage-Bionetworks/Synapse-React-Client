@@ -6,11 +6,11 @@ import {
   TEMPLATE_DOWNLOAD_MESSAGE,
 } from 'lib/containers/download_list/CreatePackage'
 import { Alert } from 'react-bootstrap'
-import { DownloadOrder } from 'lib/utils/jsonResponses/Download/DownloadOrder'
+import { DownloadOrder } from 'lib/utils/synapseTypes/Download/DownloadOrder'
 import { act } from 'react-dom/test-utils'
-import { BulkFileDownloadResponse } from 'lib/utils/jsonResponses/BulkFileDownloadResponse'
-import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
-import { FileDownloadStatus } from 'lib/utils/jsonResponses/FileDownloadSummary'
+import { BulkFileDownloadResponse } from 'lib/utils/synapseTypes/BulkFileDownloadResponse'
+import { FileHandleAssociateType } from 'lib/utils/synapseTypes/FileHandleAssociation'
+import { FileDownloadStatus } from 'lib/utils/synapseTypes/FileDownloadSummary'
 
 describe('it performs all functionality ', () => {
   const SynapseClient = require('../../../../lib/utils/SynapseClient')

@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
-import { FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
+import { QueryResultBundle } from '../utils/synapseTypes/Table/QueryResultBundle'
+import { FacetColumnResultValues} from '../utils/synapseTypes/Table/FacetColumnResult'
 
 export type TotalQueryResultsProps = {
   data?: QueryResultBundle

@@ -1,8 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
+import { FacetColumnResultValues } from '../utils/synapseTypes/Table/FacetColumnResult'
+import { QueryBundleRequest } from '../utils/synapseTypes/Table/QueryBundleRequest'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 

@@ -4,10 +4,10 @@ import {
   SyntheticHTMLInputElement,
 } from '../../../lib/utils/functions/facetUtils'
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
-import { FacetColumnResultValueCount } from '../../../lib/utils/jsonResponses/Table/FacetColumnResult'
+import { FacetColumnResultValueCount } from '../../../lib/utils/synapseTypes/Table/FacetColumnResult'
 import { SELECT_SINGLE_FACET } from '../../../lib/containers/Facets'
-import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { FacetColumnValuesRequest } from '../../../lib/utils/jsonResponses/Table/FacetColumnRequest'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/Table/QueryBundleRequest'
+import { FacetColumnValuesRequest } from '../../../lib/utils/synapseTypes/Table/FacetColumnRequest'
 
 describe('getIsValueSelected works', () => {
   const columnName = 'projectStatus'
@@ -121,6 +121,7 @@ describe('readFacetValues functions as a checkbox', () => {
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: 0x2,
+    entityId: 'syn123456789',
     query: {
       sql: 'SELECT * FROM syn123456789',
     },
@@ -254,6 +255,7 @@ describe('readFacetValues functions as a radio checkbox', () => {
   const queryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask: 0x2,
+    entityId: 'syn123456789',
     query: {
       sql: 'SELECT * FROM syn123456789',
     },

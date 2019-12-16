@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
+import { SynapseVersion } from '../../lib/utils/synapseTypes/SynapseVersion'
 import { SynapseClient } from '../../lib/utils/'
 import QueryWrapperMenu, {
   MenuConfig,
@@ -264,6 +264,7 @@ class Demo extends React.Component<{}, DemoState> {
           <QueryWrapperMenu
             isConsistent={true}
             name={'Demo'}
+            entityId={''}
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
             }

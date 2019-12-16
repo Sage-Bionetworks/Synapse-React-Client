@@ -12,7 +12,7 @@ import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue, isGroupByInSql } from '../utils/functions/sqlFunctions'
-import { FacetColumnValuesRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
+import { FacetColumnValuesRequest } from '../utils/synapseTypes/Table/FacetColumnRequest'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -66,6 +66,7 @@ export type QueryWrapperMenuProps = {
   accordionConfig?: AccordionConfig[]
   isConsistent?: boolean
   token?: string
+  entityId: string
   rgbIndex: number
   searchParams?: MenuSearchParams
   name?: string
@@ -192,6 +193,7 @@ export default class QueryWrapperMenu extends React.Component<
       menuConfig,
       token,
       globalQueryCountSql = '',
+      entityId
     } = this.props
     const { activeMenuIndices } = this.state
     let sql = ''
@@ -205,12 +207,12 @@ export default class QueryWrapperMenu extends React.Component<
     const hasGroupByInSql = isGroupByInSql(sql)
     const menuDropdown = this.renderMenuDropdown()
     const queryWrapper = this.renderQueryChildren()
-    const showBarChart = stackedBarChartConfiguration !== undefined
+    const showBarChart   = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
         {name && sql && !hasGroupByInSql && (
           <h3 id="exploreCount" className="SRC-boldText">
-            <QueryCount token={token} name={name} sql={sql} />
+            <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
           </h3>
         )}
         {hasGroupByInSql && (
@@ -247,6 +249,7 @@ export default class QueryWrapperMenu extends React.Component<
       searchParams,
       accordionConfig = [],
       facetAliases = {},
+      entityId
     } = this.props
     const {
       cardConfiguration,
@@ -311,10 +314,12 @@ export default class QueryWrapperMenu extends React.Component<
             showBarChart={showBarChart}
             loadNow={isSelected}
             showMenu={true}
+            entityId={entityId}
             initQueryRequest={{
               partMask,
               concreteType:
                 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+              entityId,
               query: {
                 sql,
                 selectedFacets,

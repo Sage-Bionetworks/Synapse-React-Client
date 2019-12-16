@@ -3,14 +3,14 @@ import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
 import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
-} from '../utils/jsonResponses/Table/FacetColumnResult'
+} from '../utils/synapseTypes/Table/FacetColumnResult'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { QueryResultBundle } from 'lib/utils/jsonResponses/Table/QueryResultBundle'
+import { QueryResultBundle } from 'lib/utils/synapseTypes/Table/QueryResultBundle'
 import { SELECT_SINGLE_FACET } from './Facets'
-import { QueryBundleRequest } from 'lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { FacetColumnValuesRequest } from 'lib/utils/jsonResponses/Table/FacetColumnRequest'
+import { QueryBundleRequest } from 'lib/utils/synapseTypes/Table/QueryBundleRequest'
+import { FacetColumnValuesRequest } from 'lib/utils/synapseTypes/Table/FacetColumnRequest'
 import getColorPallette from './ColorGradient'
 
 export const Plot = createPlotlyComponent(Plotly)

@@ -6,7 +6,7 @@ import FacetsPlotNav, {
 } from '../../../lib/containers/FacetsPlotNav'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
-import { QueryResultBundle } from '../../../lib/utils/jsonResponses/Table/QueryResultBundle'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/Table/QueryResultBundle'
 import { SynapseConstants } from '../../../lib'
 
 const createShallowComponent = (

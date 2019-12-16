@@ -8,7 +8,7 @@ import {
   ListRequest,
   StatusEnum,
   ListResponse,
-} from '../../utils/jsonResponses/Forms'
+} from '../../utils/synapseTypes/Forms'
 import { faTrash, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from './WarningModal'

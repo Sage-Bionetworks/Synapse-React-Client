@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { FileHandleResults } from '../utils/jsonResponses/FileHandleResults'
+import { FileHandleResults } from '../utils/synapseTypes/FileHandleResults'
 import { SynapseClient, SynapseConstants } from '../utils'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import UserCard from './UserCard'
-import { WikiPage } from '../utils/jsonResponses/WikiPage'
+import { WikiPage } from '../utils/synapseTypes/WikiPage'
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',

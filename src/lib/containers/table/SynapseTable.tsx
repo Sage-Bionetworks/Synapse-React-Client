@@ -19,17 +19,18 @@ import ReactTooltip from 'react-tooltip'
 import {
   FacetColumnResult,
   FacetColumnResultValues,
-} from '../../utils/jsonResponses/Table/FacetColumnResult'
-import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
-import { Row } from '../../utils/jsonResponses/Table/QueryResult'
+} from '../../utils/synapseTypes/Table/FacetColumnResult'
+import { QueryBundleRequest } from '../../utils/synapseTypes/Table/QueryBundleRequest'
+import { QueryResultBundle } from '../../utils/synapseTypes/Table/QueryResultBundle'
+import { Row } from '../../utils/synapseTypes/Table/QueryResult'
 import {
   SelectColumn,
   EntityColumnType,
-} from '../../utils/jsonResponses/Table/SelectColumn'
+} from '../../utils/synapseTypes/Table/SelectColumn'
 import { getColorPallette } from '../ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from '../QueryWrapper'
 import { cloneDeep } from '../../utils/functions'
-import { SortItem } from '../../utils/jsonResponses/Table/Query'
+import { SortItem } from '../../utils/synapseTypes/Table/Query'
 import { readFacetValues } from '../../utils/functions/facetUtils'
 import { lexer } from 'sql-parser'
 import {
@@ -38,16 +39,15 @@ import {
 } from '../../utils/functions/sqlFunctions'
 import ModalDownload from '../ModalDownload'
 import { SynapseClient } from '../../utils'
-import { ReferenceList } from '../../utils/jsonResponses/ReferenceList'
-import { EntityHeader } from '../../utils/jsonResponses/EntityHeader'
+import { ReferenceList } from '../../utils/synapseTypes/ReferenceList'
+import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
 import { EntityLink } from '../EntityLink'
 import TotalQueryResults from '../TotalQueryResults'
-import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
 import UserCard from '../UserCard'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
-import { UserProfile } from '../../utils/jsonResponses/UserProfile'
+import { UserProfile } from '../../utils/synapseTypes/UserProfile'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { UserGroupHeader } from '../../utils/jsonResponses/UserGroupHeader'
+import { UserGroupHeader } from '../../utils/synapseTypes/UserGroupHeader'
 import { Modal, Dropdown } from 'react-bootstrap'
 import {
   EllipsisDropdown,
@@ -461,7 +461,7 @@ export default class SynapseTable extends React.Component<
       </button>
     )
 
-    const { hasMoreData, showAccessColumn } = this.props
+    const { hasMoreData, showAccessColumn, entityId, token } = this.props
     const next = (
       <button
         onClick={this.handlePaginationClick(NEXT)}
@@ -481,7 +481,8 @@ export default class SynapseTable extends React.Component<
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
         {this.state.isDownloadConfirmationOpen && (
           <DownloadConfirmation
-            token={this.props.token!}
+            token={token!}
+            entityId={entityId!}
             queryBundleRequest={this.props.getLastQueryRequest!()}
             fnClose={() => this.setState({ isDownloadConfirmationOpen: false })}
           />
