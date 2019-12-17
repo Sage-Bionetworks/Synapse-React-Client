@@ -1,16 +1,18 @@
-import * as React from 'react'
 import { shallow } from 'enzyme'
 import {
   CreatePackage,
   CreatePackageProps,
   TEMPLATE_DOWNLOAD_MESSAGE,
 } from 'lib/containers/download_list/CreatePackage'
+import {
+  BulkFileDownloadResponse,
+  DownloadOrder,
+  FileDownloadStatus,
+  FileHandleAssociateType,
+} from 'lib/utils/synapseTypes/'
+import * as React from 'react'
 import { Alert } from 'react-bootstrap'
-import { DownloadOrder } from 'lib/utils/jsonResponses/Download/DownloadOrder'
 import { act } from 'react-dom/test-utils'
-import { BulkFileDownloadResponse } from 'lib/utils/jsonResponses/BulkFileDownloadResponse'
-import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
-import { FileDownloadStatus } from 'lib/utils/jsonResponses/FileDownloadSummary'
 
 describe('it performs all functionality ', () => {
   const SynapseClient = require('../../../../lib/utils/SynapseClient')

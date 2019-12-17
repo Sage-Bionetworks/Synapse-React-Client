@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { SynapseVersion } from '../../lib/utils/jsonResponses/SynapseVersion'
+import { SynapseVersion } from '../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../lib/utils/'
 import QueryWrapperMenu, {
-  MenuConfig,
+  MenuConfig, QueryWrapperMenuProps,
 } from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
@@ -15,8 +15,8 @@ type DemoState = {
   isLoading: boolean
   showMarkdown: boolean
   version: number
-  tabOne: any
-  tabTwo: any
+  tabOne: QueryWrapperMenuProps
+  tabTwo: QueryWrapperMenuProps
   showTabOne: boolean
   userFormDataSynId?: string
   estimatedDownloadBytesPerSecond?: number
@@ -46,44 +46,32 @@ class Demo extends React.Component<{}, DemoState> {
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
-          synapseId: 'syn16787123',
           enableDownloadConfirmation: true,
         },
+        entityId: 'syn16787123',
         menuConfig: [
           {
-            title: 'Data',
-            facetDisplayValue: 'Organism',
             facet: 'dataStatus',
             sql: 'SELECT studyStatus, dataStatus FROM syn16787123',
           },
           {
-            title: 'Data',
-            facetDisplayValue: 'Study',
             facet: 'projectStatus',
             sql: 'SELECT * FROM syn16787123',
           },
           {
-            title: 'File Add To List Demo',
-            facetDisplayValue: 'Name',
             facet: 'name',
             sql: 'SELECT name, grant FROM syn11346063',
           },
           {
-            title: 'File Add To List Demo',
-            facetDisplayValue: 'Group By Grant',
             facet: 'grant',
             sql: 'SELECT name, grant FROM syn11346063 Group by grant',
           },
           {
-            title: 'File Add To List Demo with Where Clause',
-            facetDisplayValue: 'Name',
             facet: 'name',
             sql: 'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
           },
 
           {
-            title: 'Facet Filter Model',
-            facetDisplayValue: 'Model',
             facet: 'model',
             sql: 'SELECT * FROM syn7844998',
           },
@@ -92,10 +80,9 @@ class Demo extends React.Component<{}, DemoState> {
         rgbIndex: 2,
       },
       tabTwo: {
-        unitDescription: 'datum',
+        entityId: 'syn16858331',
         tableConfiguration: {
           title: 'title',
-          synapseId: 'syn16858331',
           showAccessColumn: true,
         },
         menuConfig: [
@@ -123,7 +110,6 @@ class Demo extends React.Component<{}, DemoState> {
       },
     }
     this.getVersion = this.getVersion.bind(this)
-    this.removeHandler = this.removeHandler.bind(this)
     this.onRunDownloadSpeedTest = this.onRunDownloadSpeedTest.bind(this)
   }
 
@@ -161,10 +147,6 @@ class Demo extends React.Component<{}, DemoState> {
         // Handle HTTPError.  Has status and message.
         console.error('Get version failed', error)
       })
-  }
-
-  public removeHandler(): void {
-    this.setState({ showMarkdown: !this.state.showMarkdown })
   }
 
   public componentDidMount() {
@@ -264,6 +246,9 @@ class Demo extends React.Component<{}, DemoState> {
           <QueryWrapperMenu
             isConsistent={true}
             name={'Demo'}
+            entityId={ this.state.showTabOne
+              ? this.state.tabOne.entityId
+              : this.state.tabTwo.entityId}
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
             }

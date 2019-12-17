@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getColor } from '../utils/functions/getUserData'
-import { UserProfile } from '../utils/jsonResponses/UserProfile'
+import { UserProfile } from '../utils/synapseTypes/'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
 import IconCopy from '../assets/icons/IconCopy'

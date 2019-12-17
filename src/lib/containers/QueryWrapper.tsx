@@ -1,17 +1,18 @@
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
-import { AsynchronousJobStatus } from '../utils/jsonResponses/Table/AsynchronousJobStatus'
-import { FacetColumnResultValues} from '../utils/jsonResponses/Table/FacetColumnResult'
+import {
+  AsynchronousJobStatus,
+  FacetColumnResultValues,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '../utils/synapseTypes/'
 
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
   token?: string
-  showMenu?: boolean
   facet?: string
   loadingScreen?: JSX.Element
   unitDescription?: string
@@ -51,14 +52,14 @@ export type QueryWrapperChildProps = {
   isAllFilterSelectedForFacet?: {}
   isLoading?: boolean
   token?: string
+  entityId?: string
   isLoadingNewData?: boolean
-  executeQueryRequest?: (param: QueryBundleRequest) => Promise<undefined>
+  executeQueryRequest?: (param: QueryBundleRequest) => void
   executeInitialQueryRequest?: () => void
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   getLastQueryRequest?: () => QueryBundleRequest
   getInitQueryRequest?: () => QueryBundleRequest
   data?: QueryResultBundle
-
   facet?: string
   updateParentState?: (param: any) => void
   rgbIndex?: number
@@ -128,7 +129,7 @@ export default class QueryWrapper extends React.Component<
   /**
    * @memberof QueryWrapper
    */
-  public componentDidUpdate(prevProps: any) {
+  public componentDidUpdate(prevProps: QueryWrapperProps) {
     /**
      *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
      *  sql query has changed of the component then perform an update.
@@ -137,12 +138,13 @@ export default class QueryWrapper extends React.Component<
     const { loadNow = true } = this.props
     if (loadNow && !this.state.loadNowStarted) {
       this.executeInitialQueryRequest()
-    } else if (this.props.token !== '' && prevProps.token === '') {
+    } else if (loadNow && this.props.token && !prevProps.token) {
+      // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
       this.executeInitialQueryRequest()
     } else if (
       prevProps.initQueryRequest.query.sql !==
       this.props.initQueryRequest!.query.sql
-    ) {
+      ) {
       this.executeInitialQueryRequest()
     }
   }
@@ -197,11 +199,9 @@ export default class QueryWrapper extends React.Component<
           asyncJobStatus: undefined,
         }
         this.setState(newState)
-        return Promise.resolve(() => {})
       })
       .catch((err: string) => {
         console.log('Failed to get data ', err)
-        return Promise.resolve(() => {})
       })
   }
 
@@ -266,7 +266,7 @@ export default class QueryWrapper extends React.Component<
               'Error on query request, must include facets in partmask to show facets',
             )
           }
-          const enumFacets = (data.facets).filter(
+          const enumFacets = data.facets.filter(
             el => el.facetType === 'enumeration',
           ) as FacetColumnResultValues[]
           enumFacets.forEach(el => {
@@ -315,7 +315,7 @@ export default class QueryWrapper extends React.Component<
     const childrenWithProps = React.Children.map(
       this.props.children,
       (child: any) => {
-        return React.cloneElement(child, {
+        const queryWrapperChildProps: QueryWrapperChildProps = {
           facetAliases,
           isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
           data: this.state.data,
@@ -330,14 +330,14 @@ export default class QueryWrapper extends React.Component<
           rgbIndex: this.props.rgbIndex,
           unitDescription: this.props.unitDescription,
           updateParentState: this.updateParentState,
-          isQueryWrapperChild: true,
           hasMoreData: this.state.hasMoreData,
           lastFacetSelection: this.state.lastFacetSelection,
           chartSelectionIndex: this.state.chartSelectionIndex,
           getInitQueryRequest: this.getInitQueryRequest,
           asyncJobStatus: this.state.asyncJobStatus,
           showBarChart: this.props.showBarChart,
-        })
+        }
+        return React.cloneElement(child, queryWrapperChildProps)
       },
     )
 

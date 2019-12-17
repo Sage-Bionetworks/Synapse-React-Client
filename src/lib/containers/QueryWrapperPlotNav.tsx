@@ -19,7 +19,6 @@ export type QueryWrapperPlotNavProps = QueryWrapperProps & Partial<FacetsPlotNav
 const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (props) => {
   const {
     title,
-    synapseId,
     searchParams,
     initQueryRequest,
     sqlOperator,
@@ -45,10 +44,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
         />
       }
       {
-        synapseId && title ?
+        title ?
         <SynapseTable
           loadingScreen={props.loadingScreen}
-          synapseId={synapseId}
           title={title}
         />
         :

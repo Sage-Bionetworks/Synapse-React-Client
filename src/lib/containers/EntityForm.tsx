@@ -4,11 +4,13 @@
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import * as React from 'react'
 import Form from 'react-jsonschema-form'
-import { UserProfile } from '../utils/jsonResponses/UserProfile'
 import { SynapseClient } from '../utils'
-import { FileEntity } from '../utils/jsonResponses/FileEntity'
-import { EntityId } from '../utils/jsonResponses/EntityId'
-import { EntityLookupRequest } from '../utils/jsonResponses/EntityLookupRequest'
+import {
+  EntityId,
+  EntityLookupRequest,
+  FileEntity,
+  UserProfile,
+} from '../utils/synapseTypes/'
 
 export type EntityFormProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { SelectColumn } from '../../../utils/jsonResponses/Table/SelectColumn'
+import { SelectColumn } from '../../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColumnsSvg from '../../../assets/icons/columns.svg'
 import ReactTooltip from 'react-tooltip'

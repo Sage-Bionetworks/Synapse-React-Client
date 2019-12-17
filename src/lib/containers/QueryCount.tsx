@@ -1,15 +1,19 @@
 import { SynapseConstants, SynapseClient } from '../utils/'
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
+import { QueryBundleRequest } from '../utils/synapseTypes/'
 
 export type QueryCountProps = {
   sql: string
+  entityId: string
   name: string
   token?: string
 }
 
 type QueryCountState = {
-  [index: string]: number
+  storedSqlQueryCount: {}
+  // maps sql string to true/false, true if already made a request for this sql's query count
+  // false or undefined if not
+  isCalculatingQueryCountForSql: {}
 }
 
 /**
@@ -25,7 +29,10 @@ export default class QueryCount extends React.Component<
 > {
   constructor(props: QueryCountProps) {
     super(props)
-    this.state = {}
+    this.state = {
+      storedSqlQueryCount: {},
+      isCalculatingQueryCountForSql: {},
+    }
     this.calculateRowCount = this.calculateRowCount.bind(this)
   }
 
@@ -38,8 +45,12 @@ export default class QueryCount extends React.Component<
   }
 
   calculateRowCount() {
-    const { sql, token } = this.props
-    if (this.state[sql]) {
+    const { sql, token, entityId } = this.props
+    if (
+      this.state.isCalculatingQueryCountForSql[sql] ||
+      this.state.storedSqlQueryCount[sql]
+    ) {
+      // its either in progress or its already been calculated
       return
     }
     const request: QueryBundleRequest = {
@@ -47,16 +58,25 @@ export default class QueryCount extends React.Component<
       query: {
         sql,
       },
+      entityId,
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
     }
+    const { isCalculatingQueryCountForSql, storedSqlQueryCount } = this.state
+    isCalculatingQueryCountForSql[sql] = true
+    this.setState({
+      isCalculatingQueryCountForSql,
+    })
     SynapseClient.getQueryTableResults(request, token).then(data => {
-      this.setState({ [sql]: data.queryCount! })
+      storedSqlQueryCount[sql] = data!.queryCount
+      this.setState({
+        storedSqlQueryCount,
+      })
     })
   }
 
   render() {
     const { sql, name } = this.props
-    const count = this.state[sql]
+    const count = this.state.storedSqlQueryCount[sql]
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
     return (
       <React.Fragment>

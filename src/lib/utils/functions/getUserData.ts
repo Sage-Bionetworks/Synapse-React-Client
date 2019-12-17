@@ -1,5 +1,5 @@
 import { SynapseClient } from '..'
-import { UserProfile } from '../jsonResponses/UserProfile'
+import { UserProfile } from '../synapseTypes/'
 
 /*
   Utility functions for UserCards

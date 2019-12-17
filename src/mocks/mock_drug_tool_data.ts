@@ -1,6 +1,6 @@
-import { FileEntity } from '../lib/utils/jsonResponses/FileEntity'
+import { FileEntity } from '../lib/utils/synapseTypes/'
 import { Step, StepStateEnum } from '../lib/containers/synapse_form_wrapper/types'
-import { ListResponse, StatusEnum } from '../lib/utils/jsonResponses/Forms'
+import { ListResponse, StatusEnum } from '../lib/utils/synapseTypes/'
 import _mockFormData from './mockDrugToolFormData.json'
 import _mockNavSchema from './mockDrugToolFormNavSchema.json'
 import _mockFormSchema from './mockDrugToolFormSchema.json'

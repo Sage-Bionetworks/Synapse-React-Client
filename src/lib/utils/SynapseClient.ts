@@ -1,62 +1,58 @@
-import { Entity } from './jsonResponses/Entity'
-import { BatchFileResult } from './jsonResponses/BatchFileResult'
-import { FileHandleResults } from './jsonResponses/FileHandleResults'
-import { UserGroupHeaderResponsePage } from './jsonResponses/UserGroupHeaderResponsePage'
-import { SynapseVersion } from './jsonResponses/SynapseVersion'
-import { QueryResultBundle } from './jsonResponses/Table/QueryResultBundle'
-import { WikiPage } from './jsonResponses/WikiPage'
-import { UserBundle } from './jsonResponses/UserBundle'
-import { AsyncJobId } from './jsonResponses/Table/AsyncJobId'
-import { MultipartUploadRequest } from './jsonResponses/MultipartUploadRequest'
-import { BatchPresignedUploadUrlRequest } from './jsonResponses/BatchPresignedUploadUrlRequest'
-import { BatchPresignedUploadUrlResponse } from './jsonResponses/BatchPresignedUploadUrlResponse'
-import { MultipartUploadStatus } from './jsonResponses/MultipartUploadStatus'
-import { FileUploadComplete } from './jsonResponses/FileUploadComplete'
-import { AddPartResponse } from './jsonResponses/AddPartResponse'
-import { EntityLookupRequest } from './jsonResponses/EntityLookupRequest'
-import { FileEntity } from './jsonResponses/FileEntity'
-import { UserProfile } from './jsonResponses/UserProfile'
-import { AccessControlList } from './jsonResponses/AccessControlList'
-import { Submission } from './jsonResponses/Submission'
-import { DownloadFromTableRequest } from './jsonResponses/Table/DownloadFromTableRequest'
-import { AddFilesToDownloadListResponse } from './jsonResponses/AddFilesToDownloadListResponse'
-import { AddFilesToDownloadListRequest } from './jsonResponses/AddFilesToDownloadListRequest'
-import { DownloadFromTableResult } from './jsonResponses/Table/DownloadFromTableResult'
-import { ReferenceList } from './jsonResponses/ReferenceList'
-import { EntityHeader } from './jsonResponses/EntityHeader'
-import { PaginatedResults } from './jsonResponses/PaginatedResults'
-import { QueryBundleRequest } from './jsonResponses/Table/QueryBundleRequest'
-import { OIDCAuthorizationRequest } from './jsonResponses/OIDCAuthorizationRequest'
-import { OIDCAuthorizationRequestDescription } from './jsonResponses/OIDCAuthorizationRequestDescription'
-import { AccessCodeResponse } from './jsonResponses/AccessCodeResponse'
-import { OAuthClientPublic } from './jsonResponses/OAuthClientPublic'
-import { BatchFileRequest } from './jsonResponses/BatchFileRequest'
-import { QueryTableResults } from './jsonResponses/EvaluationQueryTable/QueryTableResults'
+import SparkMD5 from 'spark-md5'
+import { BackendDestinationEnum, getEndpoint } from './functions/getEndpoint'
 import {
-  FormGroup,
+  AccessCodeResponse,
+  AccessControlList,
+  AddFilesToDownloadListRequest,
+  AddFilesToDownloadListResponse,
+  AddPartResponse,
+  AsyncJobId,
+  BatchFileRequest,
+  BatchFileResult,
+  BatchPresignedUploadUrlRequest,
+  BatchPresignedUploadUrlResponse,
+  BulkFileDownloadRequest,
+  BulkFileDownloadResponse,
+  DownloadFromTableRequest,
+  DownloadFromTableResult,
+  DownloadList,
+  DownloadOrder,
+  Entity,
+  EntityHeader,
+  EntityLookupRequest,
+  FileEntity,
+  FileHandle,
+  FileHandleAssociation,
+  FileHandleResults,
+  FileUploadComplete,
+  FormChangeRequest,
   FormData,
+  FormGroup,
+  FormRejection,
   ListRequest,
   ListResponse,
-  FormChangeRequest,
-  FormRejection,
-} from './jsonResponses/Forms'
-import { FileHandle } from './jsonResponses/FileHandle'
-import {
+  LoginResponse,
+  MultipartUploadRequest,
+  MultipartUploadStatus,
+  OAuthClientPublic,
+  OIDCAuthorizationRequest,
+  OIDCAuthorizationRequestDescription,
+  PaginatedResults,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
-} from './jsonResponses/Statistics'
-import SparkMD5 from 'spark-md5'
-import { getEndpoint, BackendDestinationEnum } from './functions/getEndpoint'
-import { LoginResponse } from './jsonResponses/LoginResponse'
-import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  QueryTableResults,
+  ReferenceList,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
-} from './jsonResponses/RestrictionInformation'
-import { DownloadList } from './jsonResponses/Download/DownloadList'
-import { FileHandleAssociation } from './jsonResponses/FileHandleAssociation'
-import { DownloadOrder } from './jsonResponses/Download/DownloadOrder'
-import { BulkFileDownloadRequest } from './jsonResponses/BulkFileDownloadRequest'
-import { BulkFileDownloadResponse } from './jsonResponses/BulkFileDownloadResponse'
+  Submission,
+  SynapseVersion,
+  UserBundle,
+  UserGroupHeaderResponsePage,
+  UserProfile,
+  WikiPage,
+} from './synapseTypes/'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname

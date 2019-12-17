@@ -1,4 +1,4 @@
-import { ColumnType } from '../lib/utils/jsonResponses/Table/ColumnType'
+import { ColumnType } from '../lib/utils/synapseTypes/'
 let mockData =  {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   columnModels: [

@@ -1,8 +1,10 @@
-import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 import { fail } from 'assert'
-import { BatchFileRequest } from 'lib/utils/jsonResponses/BatchFileRequest'
-import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
 import { BackendDestinationEnum } from 'lib/utils/functions/getEndpoint'
+import {
+  BatchFileRequest,
+  FileHandleAssociateType,
+} from 'lib/utils/synapseTypes/'
+import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
 
 it('invalid call', () => {
   return SynapseClient.doGet(
@@ -29,9 +31,14 @@ it('version call', () => {
 })
 
 it('delete entity', () => {
-  return SynapseClient.deleteEntity('invalid_session_token', 'invalid_entity_id')
+  return SynapseClient.deleteEntity(
+    'invalid_session_token',
+    'invalid_entity_id',
+  )
     .then(data => {
-      fail('should not be able to delete an entity with an invalid session token')
+      fail(
+        'should not be able to delete an entity with an invalid session token',
+      )
     })
     .catch(resp => {
       // invalid session token
