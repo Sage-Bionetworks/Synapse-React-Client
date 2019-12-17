@@ -25,12 +25,14 @@ const query = {
 
 const mockGetQueryTableRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: 'syn123456789',
   partMask: 64 + 2,
   query,
 }
 
 const queryBundleRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: 'syn123456789',
   partMask: 0x2,
   query,
 }
@@ -53,7 +55,7 @@ const addFilesToDownloadListResponse: AddFilesToDownloadListResponse = {
     'org.sagebionetworks.repo.model.file.AddFileToDownloadListResponse',
 
   downloadList: {
-    tag: 'c57433e3-65b5-4aa8-888b-215da8585351',
+    etag: 'c57433e3-65b5-4aa8-888b-215da8585351',
     filesToDownload: [
       {
         fileHandleId: '000',

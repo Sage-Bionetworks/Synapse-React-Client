@@ -477,7 +477,6 @@ export default class SynapseTable extends React.Component<
         {this.state.isDownloadConfirmationOpen && (
           <DownloadConfirmation
             token={token!}
-            entityId={lastQueryRequest.entityId}
             queryBundleRequest={this.props.getLastQueryRequest!()}
             fnClose={() => this.setState({ isDownloadConfirmationOpen: false })}
           />

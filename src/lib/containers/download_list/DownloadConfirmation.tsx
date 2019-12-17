@@ -30,28 +30,24 @@ export type DownloadConfirmationProps = {
   fnClose: Function
   token: string
   queryBundleRequest: QueryBundleRequest
-  entityId: string
 }
 
 //get the info about the files stats
 async function getFilesInformation(
-  query: Query,
+  queryBundleRequest: QueryBundleRequest,
   token: string,
-  entityId: string,
 ): Promise<DownloadConfirmationState> {
   const partMask =
     SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
     SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
-  const queryBundleRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    query,
-    entityId,
+  const queryBundleRequestSizeInformation: QueryBundleRequest = {
+    ...queryBundleRequest,
     partMask,
   }
 
   const { queryCount, sumFileSizes } = await SynapseClient.getQueryTableResults(
-    queryBundleRequest,
+    queryBundleRequestSizeInformation,
   )
   const estimatedDownloadBytesPerSecond = await testDownloadSpeed(token)
   const size = sumFileSizes ? sumFileSizes['sumFileSizesBytes'] : 0
@@ -131,7 +127,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   queryBundleRequest,
   token,
   fnClose,
-  entityId,
 }) => {
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,
@@ -140,11 +135,11 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   })
 
   useEffect(() => {
-    ;(async function getDataOnLoad(query: Query, token: string, entityId) {
-      const result = await getFilesInformation(query, token, entityId)
+    ;(async function getDataOnLoad(query: QueryBundleRequest, token: string) {
+      const result = await getFilesInformation(query, token)
       setState(result)
-    })(queryBundleRequest.query, token, entityId)
-  }, [queryBundleRequest.query, token, entityId])
+    })(queryBundleRequest, token)
+  }, [queryBundleRequest, token])
 
   const hideComponent = () => fnClose()
 
