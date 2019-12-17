@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { QueryResultBundle } from '../../utils/synapseTypes/Table/QueryResultBundle'
+import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
 import { SynapseConstants } from '../../utils/'
 const Plot = createPlotlyComponent(Plotly)

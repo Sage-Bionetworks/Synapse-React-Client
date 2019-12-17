@@ -4,11 +4,11 @@ import DownloadListTable, {
   TESTING_TRASH_BTN_CLASS,
   TESTING_CLEAR_BTN_CLASS,
 } from 'lib/containers/download_list/DownloadListTable'
-import { EntityHeader } from 'lib/utils/synapseTypes/EntityHeader'
-import { PaginatedResults } from 'lib/utils/synapseTypes/PaginatedResults'
-import { BatchFileResult } from 'lib/utils/synapseTypes/BatchFileResult'
-import { DownloadList } from 'lib/utils/synapseTypes/Download/DownloadList'
-import { FileHandleAssociateType } from 'lib/utils/synapseTypes/FileHandleAssociation'
+import { EntityHeader } from 'lib/utils/synapseTypes/'
+import { PaginatedResults } from 'lib/utils/synapseTypes/'
+import { BatchFileResult } from 'lib/utils/synapseTypes/'
+import { DownloadList } from 'lib/utils/synapseTypes/'
+import { FileHandleAssociateType } from 'lib/utils/synapseTypes/'
 import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
 

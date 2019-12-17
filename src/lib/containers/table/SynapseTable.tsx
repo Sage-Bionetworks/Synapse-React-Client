@@ -19,18 +19,18 @@ import ReactTooltip from 'react-tooltip'
 import {
   FacetColumnResult,
   FacetColumnResultValues,
-} from '../../utils/synapseTypes/Table/FacetColumnResult'
-import { QueryBundleRequest } from '../../utils/synapseTypes/Table/QueryBundleRequest'
-import { QueryResultBundle } from '../../utils/synapseTypes/Table/QueryResultBundle'
+} from '../../utils/synapseTypes/'
+import { QueryBundleRequest } from '../../utils/synapseTypes/'
+import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { Row } from '../../utils/synapseTypes/Table/QueryResult'
 import {
   SelectColumn,
   EntityColumnType,
-} from '../../utils/synapseTypes/Table/SelectColumn'
+} from '../../utils/synapseTypes/'
 import { getColorPallette } from '../ColorGradient'
 import { QueryWrapperChildProps, FacetSelection } from '../QueryWrapper'
 import { cloneDeep } from '../../utils/functions'
-import { SortItem } from '../../utils/synapseTypes/Table/Query'
+import { SortItem } from '../../utils/synapseTypes/'
 import { readFacetValues } from '../../utils/functions/facetUtils'
 import { lexer } from 'sql-parser'
 import {
@@ -39,15 +39,15 @@ import {
 } from '../../utils/functions/sqlFunctions'
 import ModalDownload from '../ModalDownload'
 import { SynapseClient } from '../../utils'
-import { ReferenceList } from '../../utils/synapseTypes/ReferenceList'
-import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
+import { ReferenceList } from '../../utils/synapseTypes/'
+import { EntityHeader } from '../../utils/synapseTypes/'
 import { EntityLink } from '../EntityLink'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCard from '../UserCard'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
-import { UserProfile } from '../../utils/synapseTypes/UserProfile'
+import { UserProfile } from '../../utils/synapseTypes/'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { UserGroupHeader } from '../../utils/synapseTypes/UserGroupHeader'
+import { UserGroupHeader } from '../../utils/synapseTypes/'
 import { Modal, Dropdown } from 'react-bootstrap'
 import {
   EllipsisDropdown,
@@ -115,7 +115,6 @@ export type SynapseTableState = {
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
-  synapseId: string
   title: string
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
@@ -303,7 +302,6 @@ export default class SynapseTable extends React.Component<
       isLoading = true,
       unitDescription,
       token,
-      synapseId,
       facet,
       showBarChart,
     } = this.props
@@ -349,7 +347,7 @@ export default class SynapseTable extends React.Component<
             sql={sql}
             selectedFacets={selectedFacets}
             token={token}
-            entityId={synapseId}
+            entityId={queryRequest.entityId}
           />
         )}
         {isExpanded && (
@@ -447,10 +445,11 @@ export default class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
+    const lastQueryRequest = this.props.getLastQueryRequest!()
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean =
-      this.props.getLastQueryRequest!().query.offset! > 0
+      lastQueryRequest.query.offset! > 0
     const previous = (
       <button
         onClick={this.handlePaginationClick(PREVIOUS)}
@@ -461,7 +460,7 @@ export default class SynapseTable extends React.Component<
       </button>
     )
 
-    const { hasMoreData, showAccessColumn, entityId, token } = this.props
+    const { hasMoreData, showAccessColumn, token } = this.props
     const next = (
       <button
         onClick={this.handlePaginationClick(NEXT)}
@@ -482,7 +481,7 @@ export default class SynapseTable extends React.Component<
         {this.state.isDownloadConfirmationOpen && (
           <DownloadConfirmation
             token={token!}
-            entityId={entityId!}
+            entityId={lastQueryRequest.entityId}
             queryBundleRequest={this.props.getLastQueryRequest!()}
             fnClose={() => this.setState({ isDownloadConfirmationOpen: false })}
           />
@@ -759,7 +758,7 @@ export default class SynapseTable extends React.Component<
       this.props.getLastQueryRequest!().query.sql,
     )
     const { visibleColumnCount = Infinity, markdownColumns = [] } = this.props
-    rows.forEach((row: any, rowIndex) => {
+    rows.forEach((row, rowIndex) => {
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
@@ -822,7 +821,7 @@ export default class SynapseTable extends React.Component<
             key={`(${rowIndex},accessColumn)`}
             className="SRC_noBorderTop text-center"
           >
-            <HasAccess synapseId={rowSynapseId} token={token}></HasAccess>
+            <HasAccess entityId={rowSynapseId} token={token}></HasAccess>
           </td>,
         )
       }
@@ -1036,7 +1035,7 @@ export default class SynapseTable extends React.Component<
     const { query } = lastQueryRequest
     // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
-    const synTable = this.props.synapseId
+    const synTable = this.props.entityId
     window.open(
       `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`,
       '_blank',

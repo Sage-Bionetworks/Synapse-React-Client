@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
-import {
-  getDownloadList,
-  getEntityHeader,
-  getFiles,
-  deleteDownloadListFiles,
-  deleteDownloadList,
-} from '../../utils/SynapseClient'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import HasAccess from '../HasAccess'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import DownloadDetails from './DownloadDetails'
-import { Reference } from '../../utils/synapseTypes/ReferenceList'
-import useGetProfiles from '../../utils/hooks/useGetProfiles'
-import { PaginatedResults } from '../../utils/synapseTypes/PaginatedResults'
-import { BatchFileRequest } from '../../utils/synapseTypes/BatchFileRequest'
-import { BatchFileResult } from '../../utils/synapseTypes/BatchFileResult'
 import moment from 'moment'
+import React, { useEffect, useState } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
-import { DownloadList } from '../../utils/synapseTypes/Download/DownloadList'
-import UserCard from '../UserCard'
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import useGetProfiles from '../../utils/hooks/useGetProfiles'
 import {
-  FileHandleAssociation,
+  deleteDownloadList,
+  deleteDownloadListFiles,
+  getDownloadList,
+  getEntityHeader,
+  getFiles,
+} from '../../utils/SynapseClient'
+import {
+  BatchFileRequest,
+  BatchFileResult,
+  DownloadList,
+  EntityHeader,
   FileHandleAssociateType,
-} from '../../utils/synapseTypes/FileHandleAssociation'
-import './DownloadList.scss'
+  FileHandleAssociation,
+  PaginatedResults,
+  Reference,
+} from '../../utils/synapseTypes'
+import HasAccess from '../HasAccess'
+import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
+import DownloadDetails from './DownloadDetails'
+import './DownloadList.scss'
 
 library.add(faTrash)
 
@@ -248,7 +248,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     forceIsRestricted={!canDownload}
                     fileHandle={fileHandle}
                     token={token}
-                    synapseId={synId}
+                    entityId={synId}
                   />
                 </td>
                 <td>

@@ -6,9 +6,9 @@ import {
   ListRequest,
   ListResponse,
   StatusEnum,
-} from 'lib/utils/synapseTypes/Forms'
+} from 'lib/utils/synapseTypes/'
 import { SynapseClient } from 'lib'
-import { FileUploadComplete } from 'lib/utils/synapseTypes/FileUploadComplete'
+import { FileUploadComplete } from 'lib/utils/synapseTypes/'
 
 type FormServicesIntegrationDemoState = {
   token?: string
@@ -242,7 +242,7 @@ class FormServicesIntegrationDemo extends React.Component<
                     <tbody>
                       {this.state.myFormDataList.page.map(value => {
                         return (
-                          <tr>
+                          <tr key={value.formDataId}>
                             <td>{value.name}</td>
                             <td>{value.dataFileHandleId}</td>
                             <td>{value.submissionStatus.state}</td>
@@ -267,7 +267,7 @@ class FormServicesIntegrationDemo extends React.Component<
                     <tbody>
                       {this.state.formAdminFormDataList.page.map(value => {
                         return (
-                          <tr>
+                          <tr key={value.formDataId}>
                             <td>{value.name}</td>
                             <td>{value.dataFileHandleId}</td>
                             <td>{value.submissionStatus.state}</td>

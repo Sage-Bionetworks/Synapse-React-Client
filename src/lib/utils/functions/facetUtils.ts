@@ -1,8 +1,8 @@
 import { FacetSelection } from '../../containers/QueryWrapper'
-import { QueryBundleRequest } from '../synapseTypes/Table/QueryBundleRequest'
-import { FacetColumnValuesRequest } from '../synapseTypes/Table/FacetColumnRequest'
+import { QueryBundleRequest } from '../synapseTypes/'
+import { FacetColumnValuesRequest } from '../synapseTypes/'
 import { SELECT_SINGLE_FACET } from '../../containers/Facets'
-import { FacetColumnResultValueCount } from '../synapseTypes/Table/FacetColumnResult'
+import { FacetColumnResultValueCount } from '../synapseTypes/'
 
 /**
  *  Calculates the state of a specific facet value given the current state

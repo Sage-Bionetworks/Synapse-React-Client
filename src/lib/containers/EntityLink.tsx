@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EntityHeader } from '../utils/synapseTypes/EntityHeader'
+import { EntityHeader } from '../utils/synapseTypes/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faLink,

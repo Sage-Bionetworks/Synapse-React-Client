@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/synapseTypes/Table/QueryBundleRequest'
-import { QueryResultBundle } from '../utils/synapseTypes/Table/QueryResultBundle'
+import { QueryBundleRequest } from '../utils/synapseTypes/'
+import { QueryResultBundle } from '../utils/synapseTypes/'
 import {
   DATASET,
   FUNDER,

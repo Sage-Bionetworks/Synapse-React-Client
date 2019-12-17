@@ -5,7 +5,7 @@ import {
   RestrictionInformationRequest,
   RestrictableObjectType,
   RestrictionLevel,
-} from '../utils/synapseTypes/RestrictionInformation'
+} from '../utils/synapseTypes/'
 import {
   getEndpoint,
   BackendDestinationEnum,
@@ -19,7 +19,7 @@ import {
   faDatabase,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FileHandle } from '../utils/synapseTypes/FileHandle'
+import { FileHandle } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import ReactTooltip from 'react-tooltip'
 library.add(faUnlockAlt)
@@ -29,7 +29,7 @@ library.add(faCircle)
 
 export type HasAccessProps = {
   fileHandle?: FileHandle
-  synapseId: string
+  entityId: string
   token?: string
   forceIsRestricted?: boolean
 }
@@ -95,10 +95,10 @@ export default class HasAccess extends React.Component<
   }
 
   getRestrictionInformation = () => {
-    const { synapseId, token, forceIsRestricted = false } = this.props
+    const { entityId, token, forceIsRestricted = false } = this.props
     if (
       this.state.restrictionInformation ||
-      !synapseId ||
+      !entityId ||
       !token ||
       forceIsRestricted
     ) {
@@ -106,7 +106,7 @@ export default class HasAccess extends React.Component<
     }
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
-      objectId: synapseId,
+      objectId: entityId,
     }
     SynapseClient.getRestrictionInformation(request, token)
       .then(restrictionInformation => {
@@ -183,7 +183,7 @@ export default class HasAccess extends React.Component<
   // Show Access Requirements
   renderARsLink = () => {
     const { restrictionInformation } = this.state
-    const { synapseId, forceIsRestricted } = this.props
+    const { entityId, forceIsRestricted } = this.props
     const hasUnmetAccessRequirement =
       (restrictionInformation &&
         restrictionInformation!.hasUnmetAccessRequirement) ||
@@ -202,7 +202,7 @@ export default class HasAccess extends React.Component<
           className="SRC-primary-text-color"
           href={`${getEndpoint(
             BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}#!AccessRequirements:ID=${synapseId}&TYPE=ENTITY`}
+          )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
         >
           {linkText}
         </a>
@@ -214,14 +214,14 @@ export default class HasAccess extends React.Component<
   render() {
     const downloadType = this.getDownloadType()
     const tooltipText = HasAccess.tooltipText[downloadType]
-    const synapseId = this.props.synapseId
+    const entityId = this.props.entityId
     const icon = this.renderIcon(downloadType)
     let viewARsLink: React.ReactElement = this.renderARsLink()
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         {tooltipText && (
           <>
-            <span tabIndex={0} data-for={synapseId} data-tip={tooltipText}>
+            <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
               {icon}
             </span>
             <ReactTooltip
@@ -229,7 +229,7 @@ export default class HasAccess extends React.Component<
               place="top"
               type="dark"
               effect="solid"
-              id={synapseId}
+              id={entityId}
               className="has-access-tooltip-width"
             />
             {viewARsLink}

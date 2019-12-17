@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { UserProfile } from '../utils/synapseTypes/UserProfile'
+import { UserProfile } from '../utils/synapseTypes/'
 import UserCard, { UserCardSize } from './UserCard'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
-import { QueryResultBundle } from '../utils/synapseTypes/Table/QueryResultBundle'
+import { QueryResultBundle } from '../utils/synapseTypes/'
 
 export type UserCardListProps = {
   list: string[]

@@ -7,8 +7,8 @@ import {
 import {
   BulkFileDownloadRequest,
   ZipFileFormat,
-} from '../../utils/synapseTypes/BulkFileDownloadRequest'
-import { BulkFileDownloadResponse } from '../../utils/synapseTypes/BulkFileDownloadResponse'
+} from '../../utils/synapseTypes/'
+import { BulkFileDownloadResponse } from '../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -17,7 +17,7 @@ import {
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
 import * as ReactBoostrap from 'react-bootstrap'
-import { FileDownloadStatus } from '../../utils/synapseTypes/FileDownloadSummary'
+import { FileDownloadStatus } from '../../utils/synapseTypes/'
 
 library.add(faCheck)
 library.add(faDownload)

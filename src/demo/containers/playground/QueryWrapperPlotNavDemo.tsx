@@ -33,10 +33,10 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
       tableProps: 
       {
         title: 'Test only',
-        synapseId: 'syn16858331',
         sqlOperator: '=',
         unitDescription: 'datum',
         initQueryRequest:{
+          entityId: 'syn16858331',
           concreteType:
             'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           partMask:

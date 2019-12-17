@@ -1,13 +1,13 @@
 import { getEntity, getFileHandleContent, getFiles } from '../SynapseClient'
-import { FileEntity } from '../synapseTypes/FileEntity'
-import { Entity } from '../synapseTypes/Entity'
-import { BatchFileResult } from '../synapseTypes/BatchFileResult'
-import { FileHandle } from '../synapseTypes/FileHandle'
-import { BatchFileRequest } from '../synapseTypes/BatchFileRequest'
+import { FileEntity } from '../synapseTypes/'
+import { Entity } from '../synapseTypes/'
+import { BatchFileResult } from '../synapseTypes/'
+import { FileHandle } from '../synapseTypes/'
+import { BatchFileRequest } from '../synapseTypes/'
 import {
   FileHandleAssociation,
   FileHandleAssociateType,
-} from '../synapseTypes/FileHandleAssociation'
+} from '../synapseTypes/'
 
 const ESTIMATED_CORS_TIME_MS: number = 200
 const ESTIMATED_DOWNLOAD_SPEED_EXPIRE_TIME_KEY: string =

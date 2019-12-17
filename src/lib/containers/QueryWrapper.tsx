@@ -1,18 +1,18 @@
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/synapseTypes/Table/QueryBundleRequest'
-import { QueryResultBundle } from '../utils/synapseTypes/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
-import { AsynchronousJobStatus } from '../utils/synapseTypes/Table/AsynchronousJobStatus'
-import { FacetColumnResultValues} from '../utils/synapseTypes/Table/FacetColumnResult'
+import {
+  AsynchronousJobStatus,
+  FacetColumnResultValues,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '../utils/synapseTypes/'
 
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
   token?: string
-  showMenu?: boolean
-  entityId: string
   facet?: string
   loadingScreen?: JSX.Element
   unitDescription?: string
@@ -129,7 +129,7 @@ export default class QueryWrapper extends React.Component<
   /**
    * @memberof QueryWrapper
    */
-  public componentDidUpdate(prevProps: any) {
+  public componentDidUpdate(prevProps: QueryWrapperProps) {
     /**
      *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
      *  sql query has changed of the component then perform an update.
@@ -138,12 +138,13 @@ export default class QueryWrapper extends React.Component<
     const { loadNow = true } = this.props
     if (loadNow && !this.state.loadNowStarted) {
       this.executeInitialQueryRequest()
-    } else if (this.props.token !== '' && prevProps.token === '') {
+    } else if (loadNow && this.props.token && !prevProps.token) {
+      // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
       this.executeInitialQueryRequest()
     } else if (
       prevProps.initQueryRequest.query.sql !==
       this.props.initQueryRequest!.query.sql
-    ) {
+      ) {
       this.executeInitialQueryRequest()
     }
   }
@@ -265,7 +266,7 @@ export default class QueryWrapper extends React.Component<
               'Error on query request, must include facets in partmask to show facets',
             )
           }
-          const enumFacets = (data.facets).filter(
+          const enumFacets = data.facets.filter(
             el => el.facetType === 'enumeration',
           ) as FacetColumnResultValues[]
           enumFacets.forEach(el => {
@@ -316,7 +317,6 @@ export default class QueryWrapper extends React.Component<
       (child: any) => {
         const queryWrapperChildProps: QueryWrapperChildProps = {
           facetAliases,
-          entityId: this.props.entityId,
           isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
           data: this.state.data,
           token: this.props.token,

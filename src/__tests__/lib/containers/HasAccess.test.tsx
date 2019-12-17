@@ -6,10 +6,10 @@ import {
   mockOpenRestrictionInformation,
  } from '../../../mocks/mock_has_access_data'
 import _ from 'lodash'
-import { RestrictionInformationRequest, RestrictableObjectType } from 'lib/utils/synapseTypes/RestrictionInformation'
+import { RestrictionInformationRequest, RestrictableObjectType } from 'lib/utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinusCircle, faUnlockAlt, faLink, faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { FileHandle } from 'lib/utils/synapseTypes/FileHandle'
+import { FileHandle } from 'lib/utils/synapseTypes/'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'

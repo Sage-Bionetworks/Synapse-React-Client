@@ -12,7 +12,7 @@ import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
 import { KeyValue, isGroupByInSql } from '../utils/functions/sqlFunctions'
-import { FacetColumnValuesRequest } from '../utils/synapseTypes/Table/FacetColumnRequest'
+import { FacetColumnValuesRequest } from '../utils/synapseTypes/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -116,6 +116,7 @@ export default class QueryWrapperMenu extends React.Component<
     let { activeMenuIndices } = this.state
     const { rgbIndex, accordionConfig } = this.props
     if (rgbIndex !== prevProps.rgbIndex) {
+      console.log('setting state in component did update')
       activeMenuIndices = accordionConfig
         ? new Array(accordionConfig.length).fill(0)
         : [0]
@@ -307,14 +308,11 @@ export default class QueryWrapperMenu extends React.Component<
         stackedBarChartConfiguration,
         tableConfiguration,
       )
-
       return (
         <span key={facet} className={searchClass}>
           <QueryWrapper
             showBarChart={showBarChart}
             loadNow={isSelected}
-            showMenu={true}
-            entityId={entityId}
             initQueryRequest={{
               partMask,
               concreteType:

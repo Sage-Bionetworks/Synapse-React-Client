@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FileEntity } from '../utils/synapseTypes/FileEntity'
+import { FileEntity } from '../utils/synapseTypes/'
 import {
   uploadFile,
   createEntity,
@@ -7,9 +7,9 @@ import {
   lookupChildEntity,
   getEntity,
 } from '../utils/SynapseClient'
-import { FileUploadComplete } from '../utils/synapseTypes/FileUploadComplete'
-import { EntityId } from '../utils/synapseTypes/EntityId'
-import { EntityLookupRequest } from '../utils/synapseTypes/EntityLookupRequest'
+import { FileUploadComplete } from '../utils/synapseTypes/'
+import { EntityId } from '../utils/synapseTypes/'
+import { EntityLookupRequest } from '../utils/synapseTypes/'
 
 type UploaderState = {
   token?: string

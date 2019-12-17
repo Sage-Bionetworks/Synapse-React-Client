@@ -77,6 +77,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
           <CardContainerLogic
             type={SynapseConstants.GENERIC_CARD}
             sql={'SELECT * FROM syn17024173'}
+            entityId={'syn17024173'}
             searchParams={{ Program: 'AMP-AD' }}
             genericCardSchema={genericCardSchemaHeader}
             backgroundColor={'#5960a5'}
@@ -88,6 +89,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
           <CardContainerLogic
             type={SynapseConstants.MEDIUM_USER_CARD}
             sql={'SELECT ownerID as ownerId FROM syn13897207'}
+            entityId={'syn13897207'}
             loadingScreen={<div> Im loading as fast I can !!! </div>}
           />
         )}
@@ -98,6 +100,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
                 <CardContainerLogic
                   type={SynapseConstants.GENERIC_CARD}
                   sql={'SELECT * FROM syn16787123'}
+                  entityId={'syn16787123'}
                   unitDescription="studies"
                   genericCardSchema={genericCardSchema}
                   secondaryLabelLimit={3}

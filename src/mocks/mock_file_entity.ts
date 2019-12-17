@@ -1,4 +1,4 @@
-import { FileEntity } from '../lib/utils/synapseTypes/FileEntity'
+import { FileEntity } from '../lib/utils/synapseTypes/'
 
 export const mockFileEntity: FileEntity = {
   id: 'syn123',

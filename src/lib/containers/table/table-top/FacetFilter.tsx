@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
-} from '../../../utils/synapseTypes/Table/FacetColumnResult'
+} from '../../../utils/synapseTypes/'
 import { getIsValueSelected } from '../../../utils/functions/facetUtils'
 import { SELECT_ALL } from '../SynapseTableConstants'
 import { FacetSelection } from '../../../containers/QueryWrapper'

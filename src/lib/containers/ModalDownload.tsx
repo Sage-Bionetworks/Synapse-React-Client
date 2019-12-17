@@ -7,11 +7,11 @@ import {
   includeRowIdAndRowVersionOption,
   csvOption,
 } from './ModalDownload.FormSchema'
-import { DownloadFromTableRequest } from '../utils/synapseTypes/Table/DownloadFromTableRequest'
+import { DownloadFromTableRequest } from '../utils/synapseTypes/'
 import { SynapseClient } from '../utils'
-import { DownloadFromTableResult } from '../utils/synapseTypes/Table/DownloadFromTableResult'
-import { SortItem } from '../utils/synapseTypes/Table/Query'
-import { FacetColumnRequest } from '../utils/synapseTypes/Table/FacetColumnRequest'
+import { DownloadFromTableResult } from '../utils/synapseTypes/'
+import { SortItem } from '../utils/synapseTypes/'
+import { FacetColumnRequest } from '../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'

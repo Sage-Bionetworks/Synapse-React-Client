@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { UserProfile } from '../utils/synapseTypes/UserProfile'
+import { UserProfile } from '../utils/synapseTypes/'
 import { SEPERATOR } from '../utils/SynapseConstants'
 
 export type MenuAction = {

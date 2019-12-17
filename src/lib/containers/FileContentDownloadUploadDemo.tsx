@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { FileEntity } from '../utils/synapseTypes/FileEntity'
+import { FileEntity } from '../utils/synapseTypes/'
 import {
   getEntity,
   getFileEntityContent,
   uploadFile,
   updateEntity,
 } from '../utils/SynapseClient'
-import { Entity } from '../utils/synapseTypes/Entity'
-import { FileUploadComplete } from '../utils/synapseTypes/FileUploadComplete'
+import { Entity } from '../utils/synapseTypes/'
+import { FileUploadComplete } from '../utils/synapseTypes/'
 
 type FileContentDownloadUploadDemoState = {
   token?: string

@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import { QueryResultBundle } from '../../../lib/utils/synapseTypes/Table/QueryResultBundle'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import TotalQueryResults, {
   TotalQueryResultsProps,
 } from '../../../lib/containers/TotalQueryResults'
 import { cloneDeep } from 'lodash'
-import { FacetColumnResultValueCount } from '../../../lib/utils/synapseTypes/Table/FacetColumnResult'
+import { FacetColumnResultValueCount } from '../../../lib/utils/synapseTypes/'
 
 const createShallowComponent = (props: TotalQueryResultsProps) => {
   const wrapper = shallow<typeof TotalQueryResults>(

@@ -4,10 +4,10 @@ import {
   SyntheticHTMLInputElement,
 } from '../../../lib/utils/functions/facetUtils'
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
-import { FacetColumnResultValueCount } from '../../../lib/utils/synapseTypes/Table/FacetColumnResult'
+import { FacetColumnResultValueCount } from '../../../lib/utils/synapseTypes/'
 import { SELECT_SINGLE_FACET } from '../../../lib/containers/Facets'
-import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/Table/QueryBundleRequest'
-import { FacetColumnValuesRequest } from '../../../lib/utils/synapseTypes/Table/FacetColumnRequest'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
+import { FacetColumnValuesRequest } from '../../../lib/utils/synapseTypes/'
 
 describe('getIsValueSelected works', () => {
   const columnName = 'projectStatus'

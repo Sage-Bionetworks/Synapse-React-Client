@@ -48,6 +48,7 @@ export const SearchDemo: React.SFC = () => {
         facetAliases={facetAliases}
         rgbIndex={5}
         initQueryRequest={{
+          entityId: 'syn20337467',
           concreteType:
             'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           partMask:

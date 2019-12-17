@@ -1,4 +1,4 @@
-import { RestrictionInformationResponse, RestrictionLevel } from 'lib/utils/synapseTypes/RestrictionInformation'
+import { RestrictionInformationResponse, RestrictionLevel } from 'lib/utils/synapseTypes/'
 
 export const mockUnmetControlledDataRestrictionInformation: RestrictionInformationResponse = {
   restrictionLevel:RestrictionLevel.CONTROLLED_BY_ACT,

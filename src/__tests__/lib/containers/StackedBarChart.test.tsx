@@ -7,7 +7,7 @@ import StackedBarChart, {
 } from '../../../lib/containers/StackedBarChart'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
-import { QueryResultBundle } from '../../../lib/utils/synapseTypes/Table/QueryResultBundle'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import { SynapseConstants } from '../../../lib'
 
 const createShallowComponent = (
