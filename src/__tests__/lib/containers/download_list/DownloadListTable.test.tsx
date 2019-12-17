@@ -1,16 +1,18 @@
-import * as React from 'react'
 import DownloadListTable, {
   DownloadListTableProps,
-  TESTING_TRASH_BTN_CLASS,
   TESTING_CLEAR_BTN_CLASS,
+  TESTING_TRASH_BTN_CLASS,
 } from 'lib/containers/download_list/DownloadListTable'
-import { EntityHeader } from 'lib/utils/synapseTypes/'
-import { PaginatedResults } from 'lib/utils/synapseTypes/'
-import { BatchFileResult } from 'lib/utils/synapseTypes/'
-import { DownloadList } from 'lib/utils/synapseTypes/'
-import { FileHandleAssociateType } from 'lib/utils/synapseTypes/'
-import { act } from 'react-dom/test-utils'
+import {
+  BatchFileResult,
+  DownloadList,
+  EntityHeader,
+  FileHandleAssociateType,
+  PaginatedResults,
+} from 'lib/utils/synapseTypes/'
+import * as React from 'react'
 import ReactDOM from 'react-dom'
+import { act } from 'react-dom/test-utils'
 
 describe('it performs all functionality ', () => {
   let container: HTMLDivElement

@@ -1,6 +1,8 @@
 import * as React from 'react'
-import { QueryResultBundle } from '../utils/synapseTypes/'
-import { FacetColumnResultValues} from '../utils/synapseTypes/'
+import {
+  FacetColumnResultValues,
+  QueryResultBundle,
+} from '../utils/synapseTypes/'
 
 export type TotalQueryResultsProps = {
   data?: QueryResultBundle
@@ -46,7 +48,7 @@ export default class TotalQueryResults extends React.Component<
     if (data) {
       if (facet) {
         const { facets = [] } = data
-        const curFacetsIndex = (facets).findIndex(
+        const curFacetsIndex = facets.findIndex(
           el => el.facetType === 'enumeration' && el.columnName === facet,
         )
         // calculate the values chosen

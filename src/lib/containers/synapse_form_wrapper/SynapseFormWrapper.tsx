@@ -1,15 +1,13 @@
-import * as React from 'react'
-
-import { SynapseClient } from '../../utils'
-import { FileEntity } from '../../utils/synapseTypes/'
-import { UiSchema } from 'react-jsonschema-form'
-import { StatusEnum } from './types'
-import Alert from 'react-bootstrap/Alert'
-import SynapseForm from './SynapseForm'
-import { FormData } from '../../utils/synapseTypes/'
-import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import $RefParser from 'json-schema-ref-parser'
 import _ from 'lodash'
+import * as React from 'react'
+import Alert from 'react-bootstrap/Alert'
+import { UiSchema } from 'react-jsonschema-form'
+import { SynapseClient } from '../../utils'
+import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import { FileEntity, FormData } from '../../utils/synapseTypes/'
+import SynapseForm from './SynapseForm'
+import { StatusEnum } from './types'
 
 export type UploadToolSearchParams = {
   formDataId?: string //formDataId for user data form data

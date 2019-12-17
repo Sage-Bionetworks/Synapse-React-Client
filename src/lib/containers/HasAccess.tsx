@@ -1,27 +1,27 @@
-import { SynapseClient } from '../utils'
-import * as React from 'react'
+import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
-  RestrictionInformationResponse,
-  RestrictionInformationRequest,
-  RestrictableObjectType,
-  RestrictionLevel,
-} from '../utils/synapseTypes/'
-import {
-  getEndpoint,
-  BackendDestinationEnum,
-} from '../utils/functions/getEndpoint'
-import { library, IconProp } from '@fortawesome/fontawesome-svg-core'
-import {
-  faUnlockAlt,
-  faMinusCircle,
   faCircle,
-  faLink,
   faDatabase,
+  faLink,
+  faMinusCircle,
+  faUnlockAlt,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FileHandle } from '../utils/synapseTypes/'
-import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
+import * as React from 'react'
 import ReactTooltip from 'react-tooltip'
+import { SynapseClient } from '../utils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../utils/functions/getEndpoint'
+import {
+  FileHandle,
+  RestrictableObjectType,
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+  RestrictionLevel,
+} from '../utils/synapseTypes/'
+import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 library.add(faUnlockAlt)
 library.add(faMinusCircle)
 library.add(faDatabase)

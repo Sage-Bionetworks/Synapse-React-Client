@@ -1,15 +1,17 @@
 import * as React from 'react'
-import { FileEntity } from '../utils/synapseTypes/'
 import {
-  uploadFile,
   createEntity,
-  updateEntity,
-  lookupChildEntity,
   getEntity,
+  lookupChildEntity,
+  updateEntity,
+  uploadFile,
 } from '../utils/SynapseClient'
-import { FileUploadComplete } from '../utils/synapseTypes/'
-import { EntityId } from '../utils/synapseTypes/'
-import { EntityLookupRequest } from '../utils/synapseTypes/'
+import {
+  EntityId,
+  EntityLookupRequest,
+  FileEntity,
+  FileUploadComplete,
+} from '../utils/synapseTypes/'
 
 type UploaderState = {
   token?: string

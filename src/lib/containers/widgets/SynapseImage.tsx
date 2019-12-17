@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { BatchFileResult } from '../../utils/synapseTypes/'
-import { FileEntity } from '../../utils/synapseTypes/'
-import { FileHandle } from '../../utils/synapseTypes/'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
-import { BatchFileRequest } from '../../utils/synapseTypes/'
 import {
-  FileHandleAssociation,
+  BatchFileRequest,
+  BatchFileResult,
+  FileEntity,
+  FileHandle,
   FileHandleAssociateType,
+  FileHandleAssociation,
 } from '../../utils/synapseTypes/'
 
 type SynapseImageProps = {

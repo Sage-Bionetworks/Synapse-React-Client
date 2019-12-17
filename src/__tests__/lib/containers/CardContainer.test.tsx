@@ -1,14 +1,16 @@
-import * as React from 'react'
 import { shallow } from 'enzyme'
+import * as React from 'react'
+import { SynapseConstants } from '../../../lib'
 import CardContainer, {
   CardContainerProps,
 } from '../../../lib/containers/CardContainer'
-import { SynapseConstants } from '../../../lib'
-import syn16787123Json from '../../../mocks/syn16787123.json'
-import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
-import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
-import { cloneDeep } from '../../../lib/utils/functions'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
+import { cloneDeep } from '../../../lib/utils/functions'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '../../../lib/utils/synapseTypes/'
+import syn16787123Json from '../../../mocks/syn16787123.json'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(<CardContainer {...props} />)

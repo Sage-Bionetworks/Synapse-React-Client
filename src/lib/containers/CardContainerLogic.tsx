@@ -1,16 +1,15 @@
 import * as React from 'react'
-import CardContainer from './CardContainer'
-import { QueryBundleRequest } from '../utils/synapseTypes/'
-import { QueryResultBundle } from '../utils/synapseTypes/'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
-import { GenericCardSchema, IconOptions } from './GenericCard'
 import {
   insertConditionsFromSearchParams,
   KeyValue,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
+import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
+import CardContainer from './CardContainer'
+import { GenericCardSchema, IconOptions } from './GenericCard'
 
 export interface CardLink {
   baseURL: string

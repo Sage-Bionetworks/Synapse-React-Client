@@ -1,17 +1,16 @@
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/synapseTypes/'
-import { QueryResultBundle } from '../utils/synapseTypes/'
 import {
   DATASET,
   FUNDER,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
 } from '../utils/SynapseConstants'
-import { Dataset, Funder } from './row_renderers'
-import GenericCard from './GenericCard'
-import UserCardList from './UserCardList'
-import TotalQueryResults from './TotalQueryResults'
+import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
+import GenericCard from './GenericCard'
+import { Dataset, Funder } from './row_renderers'
+import TotalQueryResults from './TotalQueryResults'
+import UserCardList from './UserCardList'
 
 const PAGE_SIZE: number = 25
 

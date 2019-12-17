@@ -1,14 +1,14 @@
-import * as React from 'react'
-import { TokenContext } from '../App'
+import { SynapseClient } from 'lib'
 import {
-  FormGroup,
+  FileUploadComplete,
   FormData,
+  FormGroup,
   ListRequest,
   ListResponse,
   StatusEnum,
 } from 'lib/utils/synapseTypes/'
-import { SynapseClient } from 'lib'
-import { FileUploadComplete } from 'lib/utils/synapseTypes/'
+import * as React from 'react'
+import { TokenContext } from '../App'
 
 type FormServicesIntegrationDemoState = {
   token?: string

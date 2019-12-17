@@ -1,62 +1,58 @@
-import { Entity } from './synapseTypes/'
-import { BatchFileResult } from './synapseTypes/'
-import { FileHandleResults } from './synapseTypes/'
-import { UserGroupHeaderResponsePage } from './synapseTypes/'
-import { SynapseVersion } from './synapseTypes/'
-import { QueryResultBundle } from './synapseTypes/'
-import { WikiPage } from './synapseTypes/'
-import { UserBundle } from './synapseTypes/'
-import { AsyncJobId } from './synapseTypes/'
-import { MultipartUploadRequest } from './synapseTypes/'
-import { BatchPresignedUploadUrlRequest } from './synapseTypes/'
-import { BatchPresignedUploadUrlResponse } from './synapseTypes/'
-import { MultipartUploadStatus } from './synapseTypes/'
-import { FileUploadComplete } from './synapseTypes/'
-import { AddPartResponse } from './synapseTypes/'
-import { EntityLookupRequest } from './synapseTypes/'
-import { FileEntity } from './synapseTypes/'
-import { UserProfile } from './synapseTypes/'
-import { AccessControlList } from './synapseTypes/'
-import { Submission } from './synapseTypes/'
-import { DownloadFromTableRequest } from './synapseTypes/'
-import { AddFilesToDownloadListResponse } from './synapseTypes/'
-import { AddFilesToDownloadListRequest } from './synapseTypes/'
-import { DownloadFromTableResult } from './synapseTypes/'
-import { ReferenceList } from './synapseTypes/'
-import { EntityHeader } from './synapseTypes/'
-import { PaginatedResults } from './synapseTypes/'
-import { QueryBundleRequest } from './synapseTypes/'
-import { OIDCAuthorizationRequest } from './synapseTypes/'
-import { OIDCAuthorizationRequestDescription } from './synapseTypes/'
-import { AccessCodeResponse } from './synapseTypes/'
-import { OAuthClientPublic } from './synapseTypes/'
-import { BatchFileRequest } from './synapseTypes/'
-import { QueryTableResults } from './synapseTypes/'
+import SparkMD5 from 'spark-md5'
+import { BackendDestinationEnum, getEndpoint } from './functions/getEndpoint'
 import {
-  FormGroup,
+  AccessCodeResponse,
+  AccessControlList,
+  AddFilesToDownloadListRequest,
+  AddFilesToDownloadListResponse,
+  AddPartResponse,
+  AsyncJobId,
+  BatchFileRequest,
+  BatchFileResult,
+  BatchPresignedUploadUrlRequest,
+  BatchPresignedUploadUrlResponse,
+  BulkFileDownloadRequest,
+  BulkFileDownloadResponse,
+  DownloadFromTableRequest,
+  DownloadFromTableResult,
+  DownloadList,
+  DownloadOrder,
+  Entity,
+  EntityHeader,
+  EntityLookupRequest,
+  FileEntity,
+  FileHandle,
+  FileHandleAssociation,
+  FileHandleResults,
+  FileUploadComplete,
+  FormChangeRequest,
   FormData,
+  FormGroup,
+  FormRejection,
   ListRequest,
   ListResponse,
-  FormChangeRequest,
-  FormRejection,
-} from './synapseTypes/'
-import { FileHandle } from './synapseTypes/'
-import {
+  LoginResponse,
+  MultipartUploadRequest,
+  MultipartUploadStatus,
+  OAuthClientPublic,
+  OIDCAuthorizationRequest,
+  OIDCAuthorizationRequestDescription,
+  PaginatedResults,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
-} from './synapseTypes/'
-import SparkMD5 from 'spark-md5'
-import { getEndpoint, BackendDestinationEnum } from './functions/getEndpoint'
-import { LoginResponse } from './synapseTypes/'
-import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  QueryTableResults,
+  ReferenceList,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
+  Submission,
+  SynapseVersion,
+  UserBundle,
+  UserGroupHeaderResponsePage,
+  UserProfile,
+  WikiPage,
 } from './synapseTypes/'
-import { DownloadList } from './synapseTypes/'
-import { FileHandleAssociation } from './synapseTypes/'
-import { DownloadOrder } from './synapseTypes/'
-import { BulkFileDownloadRequest } from './synapseTypes/'
-import { BulkFileDownloadResponse } from './synapseTypes/'
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname

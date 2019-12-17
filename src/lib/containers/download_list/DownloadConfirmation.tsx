@@ -1,14 +1,14 @@
-import './DownloadConfirmation.scss'
-
-import React, { useState, useEffect } from 'react'
-import { SynapseClient } from '../../utils'
-import { SynapseConstants } from '../../utils'
-import { AddFilesToDownloadListRequest } from '../../utils/synapseTypes/'
-import { QueryBundleRequest } from '../../utils/synapseTypes/'
-import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import moment from 'moment'
-import { Query } from '../../utils/synapseTypes/'
-import  DownloadDetails  from './DownloadDetails'
+import React, { useEffect, useState } from 'react'
+import { SynapseClient, SynapseConstants } from '../../utils'
+import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
+import {
+  AddFilesToDownloadListRequest,
+  Query,
+  QueryBundleRequest,
+} from '../../utils/synapseTypes/'
+import './DownloadConfirmation.scss'
+import DownloadDetails from './DownloadDetails'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -37,7 +37,7 @@ export type DownloadConfirmationProps = {
 async function getFilesInformation(
   query: Query,
   token: string,
-  entityId: string
+  entityId: string,
 ): Promise<DownloadConfirmationState> {
   const partMask =
     SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -131,7 +131,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   queryBundleRequest,
   token,
   fnClose,
-  entityId
+  entityId,
 }) => {
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,

@@ -1,29 +1,31 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
-import SynapseTable, {
-  SynapseTableProps,
-  SORT_STATE,
-} from '../../../lib/containers/table/SynapseTable'
-import { unCamelCase } from 'lib/utils/functions/unCamelCase'
-import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
-import syn16787123Json from '../../../mocks/syn16787123.json'
-import { SynapseConstants } from '../../../lib'
-import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
-import { cloneDeep } from '../../../lib/utils/functions'
-import { Row } from '../../../lib/utils/synapseTypes/'
-import ModalDownload from '../../../lib/containers/ModalDownload'
-import { EntityLink } from 'lib/containers/EntityLink'
-import { EntityHeader } from 'lib/utils/synapseTypes/'
-import { Dictionary } from 'lodash'
-import { UserGroupHeader } from 'lib/utils/synapseTypes/'
-import { UserProfile } from 'lib/utils/synapseTypes/'
-import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import UserCard from 'lib/containers/UserCard'
-import { Modal } from 'react-bootstrap'
+import { shallow } from 'enzyme'
+import { EntityLink } from 'lib/containers/EntityLink'
+import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 import { ColumnSelection } from 'lib/containers/table/table-top'
 import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
-import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
+import UserCard from 'lib/containers/UserCard'
+import { unCamelCase } from 'lib/utils/functions/unCamelCase'
+import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
+import {
+  EntityHeader,
+  UserGroupHeader,
+  UserProfile,
+  QueryResultBundle,
+  Row,
+} from 'lib/utils/synapseTypes/'
+import { Dictionary } from 'lodash'
+import * as React from 'react'
+import { Modal } from 'react-bootstrap'
+import { SynapseConstants } from '../../../lib'
+import ModalDownload from '../../../lib/containers/ModalDownload'
+import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
+import SynapseTable, {
+  SORT_STATE,
+  SynapseTableProps,
+} from '../../../lib/containers/table/SynapseTable'
+import { cloneDeep } from '../../../lib/utils/functions'
+import syn16787123Json from '../../../mocks/syn16787123.json'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,

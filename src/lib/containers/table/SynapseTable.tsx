@@ -1,70 +1,67 @@
-import {} from './SynapseTableConstants'
-import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
   faColumns,
+  faDownload,
   faFilter,
+  faGlobeAmericas,
   faSort,
   faSortAmountDown,
   faSortAmountUp,
   faTimes,
-  faDownload,
   faUsers,
-  faGlobeAmericas,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
+import { Dropdown, Modal } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
-import {
-  FacetColumnResult,
-  FacetColumnResultValues,
-} from '../../utils/synapseTypes/'
-import { QueryBundleRequest } from '../../utils/synapseTypes/'
-import { QueryResultBundle } from '../../utils/synapseTypes/'
-import { Row } from '../../utils/synapseTypes/Table/QueryResult'
-import {
-  SelectColumn,
-  EntityColumnType,
-} from '../../utils/synapseTypes/'
-import { getColorPallette } from '../ColorGradient'
-import { QueryWrapperChildProps, FacetSelection } from '../QueryWrapper'
-import { cloneDeep } from '../../utils/functions'
-import { SortItem } from '../../utils/synapseTypes/'
-import { readFacetValues } from '../../utils/functions/facetUtils'
 import { lexer } from 'sql-parser'
+import { SynapseClient } from '../../utils'
+import { cloneDeep } from '../../utils/functions'
+import { readFacetValues } from '../../utils/functions/facetUtils'
+import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import {
   formatSQLFromParser,
   isGroupByInSql,
 } from '../../utils/functions/sqlFunctions'
-import ModalDownload from '../ModalDownload'
-import { SynapseClient } from '../../utils'
-import { ReferenceList } from '../../utils/synapseTypes/'
-import { EntityHeader } from '../../utils/synapseTypes/'
+import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
+import {
+  EntityColumnType,
+  EntityHeader,
+  FacetColumnResult,
+  FacetColumnResultValues,
+  QueryBundleRequest,
+  QueryResultBundle,
+  ReferenceList,
+  Row,
+  SelectColumn,
+  SortItem,
+  UserGroupHeader,
+  UserProfile,
+} from '../../utils/synapseTypes/'
+import { getColorPallette } from '../ColorGradient'
+import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import { EntityLink } from '../EntityLink'
+import HasAccess from '../HasAccess'
+import MarkdownSynapse from '../MarkdownSynapse'
+import ModalDownload from '../ModalDownload'
+import { FacetSelection, QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCard from '../UserCard'
-import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
-import { UserProfile } from '../../utils/synapseTypes/'
-import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { UserGroupHeader } from '../../utils/synapseTypes/'
-import { Modal, Dropdown } from 'react-bootstrap'
+import { unCamelCase } from './../../utils/functions/unCamelCase'
 import {
+  ICON_STATE,
+  SELECT_ALL,
+  TOOLTIP_DELAY_SHOW,
+} from './SynapseTableConstants'
+import {
+  ColumnSelection,
+  DownloadOptions,
   EllipsisDropdown,
   ExpandTable,
-  DownloadOptions,
-  ColumnSelection,
 } from './table-top/'
-import {
-  TOOLTIP_DELAY_SHOW,
-  SELECT_ALL,
-  ICON_STATE,
-} from './SynapseTableConstants'
-
 import FacetFilter from './table-top/FacetFilter'
-import MarkdownSynapse from '../MarkdownSynapse'
-import HasAccess from '../HasAccess'
-import { unCamelCase } from './../../utils/functions/unCamelCase'
+
 const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
@@ -321,7 +318,7 @@ export default class SynapseTable extends React.Component<
       <>
         <div
           className={`SRC-centerContent text-left ${className}`}
-          style={{ height: '20px'}}
+          style={{ height: '20px' }}
         >
           {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
             <TotalQueryResults
@@ -448,8 +445,7 @@ export default class SynapseTable extends React.Component<
     const lastQueryRequest = this.props.getLastQueryRequest!()
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
-    const pastZero: boolean =
-      lastQueryRequest.query.offset! > 0
+    const pastZero: boolean = lastQueryRequest.query.offset! > 0
     const previous = (
       <button
         onClick={this.handlePaginationClick(PREVIOUS)}
@@ -968,25 +964,25 @@ export default class SynapseTable extends React.Component<
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                {isFacetSelection &&
-                  this.configureFacetDropdown(facets, facetIndex)}
-                <span
-                  tabIndex={0}
-                  className={sortSpanBackgoundClass}
-                  onKeyPress={this.handleColumnSortPress({
-                    index,
-                    name: column.name,
-                  })}
-                  onClick={this.handleColumnSortPress({
-                    index,
-                    name: column.name,
-                  })}
-                >
-                  <FontAwesomeIcon
-                    className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
-                    icon={ICON_STATE[columnIndex] as IconProp}
-                  />
-                </span>
+                  {isFacetSelection &&
+                    this.configureFacetDropdown(facets, facetIndex)}
+                  <span
+                    tabIndex={0}
+                    className={sortSpanBackgoundClass}
+                    onKeyPress={this.handleColumnSortPress({
+                      index,
+                      name: column.name,
+                    })}
+                    onClick={this.handleColumnSortPress({
+                      index,
+                      name: column.name,
+                    })}
+                  >
+                    <FontAwesomeIcon
+                      className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
+                      icon={ICON_STATE[columnIndex] as IconProp}
+                    />
+                  </span>
                 </div>
               </div>
             </th>

@@ -1,17 +1,17 @@
+import Plotly from 'plotly.js-basic-dist'
 import * as React from 'react'
-import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
+import createPlotlyComponent from 'react-plotly.js/factory'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import {
   FacetColumnResultValueCount,
   FacetColumnResultValues,
+  FacetColumnValuesRequest,
+  QueryBundleRequest,
+  QueryResultBundle,
 } from '../utils/synapseTypes/'
-import { unCamelCase } from '../utils/functions/unCamelCase'
-import Plotly from 'plotly.js-basic-dist'
-import createPlotlyComponent from 'react-plotly.js/factory'
-import { QueryResultBundle } from 'lib/utils/synapseTypes/'
-import { SELECT_SINGLE_FACET } from './Facets'
-import { QueryBundleRequest } from 'lib/utils/synapseTypes/'
-import { FacetColumnValuesRequest } from 'lib/utils/synapseTypes/'
 import getColorPallette from './ColorGradient'
+import { SELECT_SINGLE_FACET } from './Facets'
+import { FacetSelection, QueryWrapperChildProps } from './QueryWrapper'
 
 export const Plot = createPlotlyComponent(Plotly)
 const ROW_HEIGHT: number = 160
@@ -242,7 +242,7 @@ export default class FacetsPlotNav extends React.Component<
     const plotData: any[] = []
 
     // pull out the data corresponding to the filter in question
-    let enumerationFacets = (data.facets!).filter(
+    let enumerationFacets = data.facets!.filter(
       item => item.facetType === 'enumeration',
     ) as FacetColumnResultValues[]
     if (facetsToPlot) {
