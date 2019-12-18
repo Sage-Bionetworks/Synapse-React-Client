@@ -1,10 +1,9 @@
 import * as React from 'react'
-import { UserProfile } from '../utils/jsonResponses/UserProfile'
-import UserCard, { UserCardSize } from './UserCard'
-import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
+import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
+import { QueryResultBundle, UserProfile } from '../utils/synapseTypes/'
+import UserCard, { UserCardSize } from './UserCard'
 
 export type UserCardListProps = {
   list: string[]

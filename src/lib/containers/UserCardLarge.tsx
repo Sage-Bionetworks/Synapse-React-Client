@@ -5,7 +5,7 @@ import {
   faEllipsisV,
   faCopy,
 } from '@fortawesome/free-solid-svg-icons'
-import { UserProfile } from '../utils/jsonResponses/UserProfile'
+import { UserProfile } from '../utils/synapseTypes/'
 
 library.add(faCircle)
 library.add(faEllipsisV)

@@ -1,8 +1,12 @@
 import * as React from 'react'
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
+import {
+  FacetColumnResultValues,
+  QueryResultBundle,
+} from '../utils/synapseTypes/'
 
 export type TotalQueryResultsProps = {
   data?: QueryResultBundle
+
   facet?: string
   isLoading: boolean
   style?: React.CSSProperties
@@ -48,7 +52,7 @@ export default class TotalQueryResults extends React.Component<
           el => el.facetType === 'enumeration' && el.columnName === facet,
         )
         // calculate the values chosen
-        const curFacets = facets[curFacetsIndex]
+        const curFacets = facets[curFacetsIndex] as FacetColumnResultValues
         // edge case -- if they are all false then they are considered all true..
         // sum up the counts of data
         let anyTrue = false

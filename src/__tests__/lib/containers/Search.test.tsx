@@ -5,8 +5,8 @@ import Search from 'lib/containers/Search'
 import QueryWrapper from 'lib/containers/QueryWrapper'
 import { SynapseConstants } from 'lib'
 import CardContainer from 'lib/containers/CardContainer'
-import { GenericCardSchema } from 'lib/containers/GenericCard.jsx'
-import { CommonCardProps } from 'lib/containers/CardContainerLogic.jsx'
+import { GenericCardSchema } from 'lib/containers/GenericCard'
+import { CommonCardProps } from 'lib/containers/CardContainerLogic'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const mockGetQueryTableResultsFn = jest.fn(() =>

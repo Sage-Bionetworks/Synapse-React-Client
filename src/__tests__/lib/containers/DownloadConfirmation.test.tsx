@@ -1,14 +1,16 @@
-import * as React from 'react'
 import { mount, ReactWrapper } from 'enzyme'
+import {
+  AddFilesToDownloadListResponse,
+  FileHandleAssociateType,
+  AddFilesToDownloadListRequest,
+  QueryBundleRequest,
+} from 'lib/utils/synapseTypes/'
+import * as React from 'react'
 import { act } from 'react-dom/test-utils'
 import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
-import { QueryBundleRequest } from '../../../lib/utils/jsonResponses/Table/QueryBundleRequest'
-import { AddFilesToDownloadListRequest } from '../../../lib/utils/jsonResponses/AddFilesToDownloadListRequest'
-import { AddFilesToDownloadListResponse } from 'lib/utils/jsonResponses/AddFilesToDownloadListResponse'
-import { FileHandleAssociateType } from 'lib/utils/jsonResponses/FileHandleAssociation'
 
 let getQueryTableResultsFn: Function
 
@@ -23,12 +25,14 @@ const query = {
 
 const mockGetQueryTableRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: 'syn123456789',
   partMask: 64 + 2,
   query,
 }
 
 const queryBundleRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: 'syn123456789',
   partMask: 0x2,
   query,
 }
@@ -51,7 +55,7 @@ const addFilesToDownloadListResponse: AddFilesToDownloadListResponse = {
     'org.sagebionetworks.repo.model.file.AddFileToDownloadListResponse',
 
   downloadList: {
-    tag: 'c57433e3-65b5-4aa8-888b-215da8585351',
+    etag: 'c57433e3-65b5-4aa8-888b-215da8585351',
     filesToDownload: [
       {
         fileHandleId: '000',

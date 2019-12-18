@@ -1,6 +1,5 @@
-import {QueryResultBundle} from '../lib/utils/jsonResponses/Table/QueryResultBundle'
 // result of querying table syn17328596
-export const syn17328596: QueryResultBundle = {
+export const syn17328596 = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryResult: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',

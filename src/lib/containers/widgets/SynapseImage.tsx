@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { BatchFileResult } from '../../utils/jsonResponses/BatchFileResult'
-import { FileEntity } from '../../utils/jsonResponses/FileEntity'
-import { FileHandle } from '../../utils/jsonResponses/FileHandle'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
-import { BatchFileRequest } from '../../utils/jsonResponses/BatchFileRequest'
 import {
-  FileHandleAssociation,
+  BatchFileRequest,
+  BatchFileResult,
+  FileEntity,
+  FileHandle,
   FileHandleAssociateType,
-} from '../../utils/jsonResponses/FileHandleAssociation'
+  FileHandleAssociation,
+} from '../../utils/synapseTypes/'
 
 type SynapseImageProps = {
   wikiId?: string

@@ -1,9 +1,9 @@
-import * as React from 'react'
 import Plotly from 'plotly.js-basic-dist'
+import * as React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { QueryResultBundle } from '../../utils/jsonResponses/Table/QueryResultBundle'
-import { getFullQueryTableResults } from '../../utils/SynapseClient'
 import { SynapseConstants } from '../../utils/'
+import { getFullQueryTableResults } from '../../utils/SynapseClient'
+import { QueryResultBundle } from '../../utils/synapseTypes/'
 const Plot = createPlotlyComponent(Plotly)
 
 type SynapsePlotProps = {
