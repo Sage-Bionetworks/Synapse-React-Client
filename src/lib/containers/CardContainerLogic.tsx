@@ -28,7 +28,7 @@ export type MarkdownLink = {
 }
 
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (CardLink | MarkdownLink ) []
+export type LabelLinkConfig = (CardLink | MarkdownLink)[]
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
@@ -52,6 +52,7 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
+  facetAliases?: {}
   backgroundColor?: string
   isHeader?: boolean
   isAlignToLeftNav?: boolean
