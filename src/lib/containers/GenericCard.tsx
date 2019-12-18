@@ -1,11 +1,7 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import {
-  CardLink,
-  CommonCardProps,
-  MarkdownLink,
-} from './CardContainerLogic'
+import { CardLink, CommonCardProps, MarkdownLink } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
 
@@ -165,9 +161,9 @@ export default class GenericCard extends React.Component<
       iconOptions,
       isHeader = false,
       titleLinkConfig,
-      labelLinkConfig: labelLinkConfig,
+      labelLinkConfig,
       facetAliases = {},
-      isAlignToLeftNav = false
+      isAlignToLeftNav = false,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -230,7 +226,7 @@ export default class GenericCard extends React.Component<
           iconValue={iconValue}
           iconOptions={iconOptions}
           values={values}
-          isAlignToLeftNav = {isAlignToLeftNav}
+          isAlignToLeftNav={isAlignToLeftNav}
           secondaryLabelLimit={secondaryLabelLimit}
         />
       )
