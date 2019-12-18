@@ -1,22 +1,21 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { FacetColumnResultValues } from '../utils/jsonResponses/Table/FacetColumnResult'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
-import { getColorPallette } from './ColorGradient'
-import { QueryWrapperChildProps, FacetSelection } from './QueryWrapper'
-
-import { SELECT_ALL } from './table/SynapseTableConstants'
 import {
   getIsValueSelected,
   readFacetValues,
 } from '../utils/functions/facetUtils'
+import {
+  FacetColumnResultValues,
+  QueryBundleRequest,
+} from '../utils/synapseTypes/'
+import { getColorPallette } from './ColorGradient'
+import { FacetSelection, QueryWrapperChildProps } from './QueryWrapper'
+import { SELECT_ALL } from './table/SynapseTableConstants'
 import TotalQueryResults from './TotalQueryResults'
+library.add(faPlus)
 
 export const SELECT_SINGLE_FACET = 'SELECT_SINGLE_FACET'
-// Add all icons to the library so you can use it in your page
-library.add(faTimes)
-library.add(faPlus)
 
 type CheckboxGroupProps = {
   isAllFilterSelected: boolean
@@ -169,7 +168,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     const facetColumnResult = this.props.data!.facets!.find(
       el =>
         el.columnName === this.props.facet && el.facetType === 'enumeration',
-    )
+    ) as FacetColumnResultValues
     if (!facetColumnResult) {
       throw Error('Error no matching facet found given specified facet')
     }

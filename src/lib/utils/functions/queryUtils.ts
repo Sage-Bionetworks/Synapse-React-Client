@@ -1,6 +1,6 @@
-import { QueryBundleRequest } from '../jsonResponses/Table/QueryBundleRequest'
+import { QueryBundleRequest } from '../synapseTypes/'
 import { SynapseClient, SynapseConstants } from '..'
-import { QueryResultBundle } from '../jsonResponses/Table/QueryResultBundle'
+import { QueryResultBundle } from '../synapseTypes/'
 import { cloneDeep } from './rollupCompatibleModules'
 
 type PartialStateObject = {

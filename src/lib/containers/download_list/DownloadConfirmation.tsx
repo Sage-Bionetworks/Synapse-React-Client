@@ -1,14 +1,14 @@
-import './DownloadConfirmation.scss'
-
-import React, { useState, useEffect } from 'react'
-import { SynapseClient } from '../../utils'
-import { SynapseConstants } from '../../utils'
-import { AddFilesToDownloadListRequest } from '../../utils/jsonResponses/AddFilesToDownloadListRequest'
-import { QueryBundleRequest } from '../../utils/jsonResponses/Table/QueryBundleRequest'
-import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import moment from 'moment'
-import { Query } from '../../utils/jsonResponses/Table/Query'
-import  DownloadDetails  from './DownloadDetails'
+import React, { useEffect, useState } from 'react'
+import { SynapseClient, SynapseConstants } from '../../utils'
+import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
+import {
+  AddFilesToDownloadListRequest,
+  Query,
+  QueryBundleRequest,
+} from '../../utils/synapseTypes/'
+import './DownloadConfirmation.scss'
+import DownloadDetails from './DownloadDetails'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -34,21 +34,20 @@ export type DownloadConfirmationProps = {
 
 //get the info about the files stats
 async function getFilesInformation(
-  query: Query,
+  queryBundleRequest: QueryBundleRequest,
   token: string,
 ): Promise<DownloadConfirmationState> {
   const partMask =
     SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
     SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
-  const queryBundleRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    query: query,
+  const queryBundleRequestSizeInformation: QueryBundleRequest = {
+    ...queryBundleRequest,
     partMask,
   }
 
   const { queryCount, sumFileSizes } = await SynapseClient.getQueryTableResults(
-    queryBundleRequest,
+    queryBundleRequestSizeInformation,
   )
   const estimatedDownloadBytesPerSecond = await testDownloadSpeed(token)
   const size = sumFileSizes ? sumFileSizes['sumFileSizesBytes'] : 0
@@ -136,11 +135,11 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   })
 
   useEffect(() => {
-    ;(async function getDataOnLoad(query: Query, token: string) {
+    ;(async function getDataOnLoad(query: QueryBundleRequest, token: string) {
       const result = await getFilesInformation(query, token)
       setState(result)
-    })(queryBundleRequest.query, token)
-  }, [queryBundleRequest.query, token])
+    })(queryBundleRequest, token)
+  }, [queryBundleRequest, token])
 
   const hideComponent = () => fnClose()
 

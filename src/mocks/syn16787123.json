@@ -25,6 +25,7 @@
       ],
       "concreteType": "org.sagebionetworks.repo.model.table.RowSet",
       "tableId": "syn16787123",
+      "etag": "",
       "rows": [
         {
           "values": [

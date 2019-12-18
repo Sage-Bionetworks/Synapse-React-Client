@@ -1,42 +1,39 @@
 import * as React from 'react'
-import CardContainer from './CardContainer'
-import { QueryBundleRequest } from '../utils/jsonResponses/Table/QueryBundleRequest'
-import { QueryResultBundle } from '../utils/jsonResponses/Table/QueryResultBundle'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
-import { GenericCardSchema, IconOptions } from './GenericCard'
 import {
   insertConditionsFromSearchParams,
   KeyValue,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
+import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
+import CardContainer from './CardContainer'
+import { GenericCardSchema, IconOptions } from './GenericCard'
 
 export interface CardLink {
   baseURL: string
-  // the keys that will go into the url
-  URLColumnNames: string[]
+  // the key that will go into the url
+  URLColumnName: string
+  // the column name who's value will be used
+  matchColumnName: string
   isMarkdown: false
 }
 
-export interface LabelLink extends CardLink {
-  // the columns whos value will be paired with the columns URLColumnNames
+export type MarkdownLink = {
+  isMarkdown: true
+  // the columns whos value will be used for the markdown
   matchColumnName: string
 }
 
-export interface LabelMarkdown {
-  isMarkdown: true
-  // the columns whos value will be paired with the columns URLColumnNames
-  matchColumnName: string
-}
 // Specify the indices in the values [] that should be rendered specially
-export type LabelConfig = (LabelLink | LabelMarkdown)[]
+export type LabelLinkConfig = (CardLink | MarkdownLink)[]
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
-  labelConfig?: LabelConfig
+  labelLinkConfig?: LabelLinkConfig
 }
 
 export type CardConfiguration = {
@@ -54,6 +51,8 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
+  entityId: string
+  facetAliases?: {}
   backgroundColor?: string
   isHeader?: boolean
   isAlignToLeftNav?: boolean
@@ -183,6 +182,7 @@ export default class CardContainerLogic extends React.Component<
         this.props.sqlOperator,
       )
     }
+    const entityId = this.props.entityId
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
@@ -193,6 +193,7 @@ export default class CardContainerLogic extends React.Component<
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+      entityId,
       query: {
         sql: sqlUsed,
         isConsistent: false,

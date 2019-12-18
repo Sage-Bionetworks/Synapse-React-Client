@@ -1,7 +1,5 @@
-import { QueryResultBundle } from '../lib/utils/jsonResponses/Table/QueryResultBundle'
-import { ColumnType } from '../lib/utils/jsonResponses/Table/ColumnType'
-import { FacetColumnResultValues } from '../lib/utils/jsonResponses/Table/FacetColumnResult'
-let mockData: QueryResultBundle = {
+import { ColumnType } from '../lib/utils/synapseTypes/'
+let mockData =  {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   columnModels: [
     {
@@ -36,7 +34,7 @@ let mockData: QueryResultBundle = {
           isSelected: true,
         },
       ],
-    } as FacetColumnResultValues,
+    } 
   ],
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

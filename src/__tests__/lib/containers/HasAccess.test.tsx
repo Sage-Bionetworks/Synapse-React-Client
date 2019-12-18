@@ -1,19 +1,32 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
-import HasAccess, { HasAccessProps, ExternalFileHandleConcreteTypeEnum, GIGABYTE_SIZE, GoogleCloudFileHandleEnum } from '../../../lib/containers/HasAccess'
-import { 
-  mockUnmetControlledDataRestrictionInformation,
-  mockOpenRestrictionInformation,
- } from '../../../mocks/mock_has_access_data'
-import _ from 'lodash'
-import { RestrictionInformationRequest, RestrictableObjectType } from 'lib/utils/jsonResponses/RestrictionInformation'
+import {
+  faDatabase,
+  faLink,
+  faMinusCircle,
+  faUnlockAlt,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinusCircle, faUnlockAlt, faLink, faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { FileHandle } from 'lib/utils/jsonResponses/FileHandle'
+import { shallow } from 'enzyme'
+import {
+  FileHandle,
+  RestrictableObjectType,
+  RestrictionInformationRequest,
+} from 'lib/utils/synapseTypes/'
+import * as React from 'react'
+import HasAccess, {
+  DownloadTypeEnum,
+  ExternalFileHandleConcreteTypeEnum,
+  GIGABYTE_SIZE,
+  GoogleCloudFileHandleEnum,
+  HasAccessProps,
+} from '../../../lib/containers/HasAccess'
+import {
+  mockOpenRestrictionInformation,
+  mockUnmetControlledDataRestrictionInformation,
+} from '../../../mocks/mock_has_access_data'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'
-const synapseId = 'syn9988882982'
+const entityId = 'syn9988882982'
 
 const createShallowComponent = async (
   props: HasAccessProps,
@@ -28,7 +41,7 @@ const createShallowComponent = async (
 }
 const props: HasAccessProps = {
   token,
-  synapseId
+  entityId,
 }
 
 describe('basic tests', () => {
@@ -40,13 +53,15 @@ describe('basic tests', () => {
     instance.getRestrictionInformation()
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
-      objectId: synapseId
+      objectId: entityId,
     }
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token
+      token,
     )
-    expect(instance.state.restrictionInformation).toEqual(mockOpenRestrictionInformation)
+    expect(instance.state.restrictionInformation).toEqual(
+      mockOpenRestrictionInformation,
+    )
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
@@ -63,16 +78,25 @@ describe('basic tests', () => {
       contentMd5: '',
       fileName: '',
       storageLocationId: 0,
-      contentSize: 0
+      contentSize: 0,
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      fileHandle: externalFileHandle,
+    })
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faLink)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${
+        HasAccess.tooltipText[DownloadTypeEnum.ExternalFileHandle]
+      }"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('works when a cloud file handle is passed in', async () => {
-    const externalFileHandle: FileHandle = {
+    const cloudFileHandle: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -82,16 +106,23 @@ describe('basic tests', () => {
       contentMd5: '',
       fileName: '',
       storageLocationId: 0,
-      contentSize: 0
+      contentSize: 0,
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      fileHandle: cloudFileHandle,
+    })
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faLink)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.CloudFileHandle]}"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('works when the file is too large', async () => {
-    const externalFileHandle: FileHandle = {
+    const tooLargeFileHandle: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -101,16 +132,23 @@ describe('basic tests', () => {
       contentMd5: '',
       fileName: '',
       storageLocationId: 0,
-      contentSize: GIGABYTE_SIZE
+      contentSize: GIGABYTE_SIZE,
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      fileHandle: tooLargeFileHandle,
+    })
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faDatabase)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.TooLargeFile]}"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('works when download is IsOpenNoRestrictions', async () => {
-    const externalFileHandle: FileHandle = {
+    const isOpenNoRestrictionsFileHandle: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -120,9 +158,12 @@ describe('basic tests', () => {
       contentMd5: '',
       fileName: '',
       storageLocationId: 0,
-      contentSize: 0
+      contentSize: 0,
     }
-    const { wrapper } = await createShallowComponent({...props, fileHandle: externalFileHandle})
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      fileHandle: isOpenNoRestrictionsFileHandle,
+    })
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
@@ -137,24 +178,33 @@ describe('basic tests', () => {
     instance.getRestrictionInformation()
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
-      objectId: synapseId
+      objectId: entityId,
     }
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token
+      token,
     )
-    expect(instance.state.restrictionInformation).toEqual(mockUnmetControlledDataRestrictionInformation)
+    expect(instance.state.restrictionInformation).toEqual(
+      mockUnmetControlledDataRestrictionInformation,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faMinusCircle)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.NoAccess]}"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
   })
 
   it('Does not call getRestrictionInformation when forceIsRestricted=true', async () => {
     const mockFn = jest.fn()
     SynapseClient.getRestrictionInformation = mockFn
-    const { wrapper } = await createShallowComponent({ ...props, forceIsRestricted: true})
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      forceIsRestricted: true,
+    })
     expect(mockFn).not.toHaveBeenCalled()
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)

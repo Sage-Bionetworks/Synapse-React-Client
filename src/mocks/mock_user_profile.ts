@@ -1,4 +1,4 @@
-import { UserProfile } from '../lib/utils/jsonResponses/UserProfile'
+import { UserProfile } from '../lib/utils/synapseTypes/'
 
 export const mockUserProfileData: UserProfile = {
   summary: 'my summary data',

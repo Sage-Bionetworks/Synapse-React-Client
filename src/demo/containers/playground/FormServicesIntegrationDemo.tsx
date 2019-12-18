@@ -1,14 +1,14 @@
-import * as React from 'react'
-import { TokenContext } from '../App'
+import { SynapseClient } from 'lib'
 import {
-  FormGroup,
+  FileUploadComplete,
   FormData,
+  FormGroup,
   ListRequest,
   ListResponse,
   StatusEnum,
-} from 'lib/utils/jsonResponses/Forms'
-import { SynapseClient } from 'lib'
-import { FileUploadComplete } from 'lib/utils/jsonResponses/FileUploadComplete'
+} from 'lib/utils/synapseTypes/'
+import * as React from 'react'
+import { TokenContext } from '../App'
 
 type FormServicesIntegrationDemoState = {
   token?: string
@@ -242,7 +242,7 @@ class FormServicesIntegrationDemo extends React.Component<
                     <tbody>
                       {this.state.myFormDataList.page.map(value => {
                         return (
-                          <tr>
+                          <tr key={value.formDataId}>
                             <td>{value.name}</td>
                             <td>{value.dataFileHandleId}</td>
                             <td>{value.submissionStatus.state}</td>
@@ -267,7 +267,7 @@ class FormServicesIntegrationDemo extends React.Component<
                     <tbody>
                       {this.state.formAdminFormDataList.page.map(value => {
                         return (
-                          <tr>
+                          <tr key={value.formDataId}>
                             <td>{value.name}</td>
                             <td>{value.dataFileHandleId}</td>
                             <td>{value.submissionStatus.state}</td>

@@ -1,21 +1,23 @@
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
+import { Modal } from 'react-bootstrap'
 import Form, { IChangeEvent } from 'react-jsonschema-form'
+import { SynapseClient } from '../utils'
 import {
+  DownloadFromTableRequest,
+  DownloadFromTableResult,
+  FacetColumnRequest,
+  SortItem,
+} from '../utils/synapseTypes/'
+import {
+  csvOption,
   formSchemaArray,
   formSchemaUIArray,
-  writeHeaderOption,
   includeRowIdAndRowVersionOption,
-  csvOption,
+  writeHeaderOption,
 } from './ModalDownload.FormSchema'
-import { DownloadFromTableRequest } from '../utils/jsonResponses/Table/DownloadFromTableRequest'
-import { SynapseClient } from '../utils'
-import { DownloadFromTableResult } from '../utils/jsonResponses/Table/DownloadFromTableResult'
-import { SortItem } from '../utils/jsonResponses/Table/Query'
-import { FacetColumnRequest } from '../utils/jsonResponses/Table/FacetColumnRequest'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { Modal } from 'react-bootstrap'
 
 library.add(faTimes)
 

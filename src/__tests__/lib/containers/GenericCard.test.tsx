@@ -9,7 +9,7 @@ import GenericCard, {
 import * as Utils from '../../../lib/containers/row_renderers/utils'
 import {
   CardLink,
-  LabelConfig,
+  LabelLinkConfig,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 
@@ -141,20 +141,20 @@ describe('it makes the correct URL for the title', () => {
   })
 
   it('creates an internal parameterized link', () => {
-    const grantNumberValue = '1234'
-    const funderValue = 'funder'
-    const data = [grantNumberValue, funderValue]
-    const URLColumnNames = ['Grant Number', 'Funder']
+    const value = '1234'
+    const data = [value]
+    const URLColumnName = 'Grant Number'
+    const matchColumnName = 'Funder'
     const schema = {
-      [URLColumnNames[0]]: 0,
-      [URLColumnNames[1]]: 1,
+      [matchColumnName]: 0,
     }
     const titleLinkConfig: CardLink = {
       isMarkdown: false,
       baseURL: 'Explore/Projects',
-      URLColumnNames: [URLColumnNames[0], URLColumnNames[1]],
+      matchColumnName,
+      URLColumnName,
     }
-    const expectedLink = `#/Explore/Projects?Grant Number=${grantNumberValue}&Funder=${funderValue}`
+    const expectedLink = `#/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
     const { linkDisplay, target } = createTitleLink(
       '',
       titleLinkConfig,
@@ -169,19 +169,12 @@ describe('it makes the correct URL for the title', () => {
 describe('it makes the correct URL for the secondary labels', () => {
   const renderLabel = GenericCard.prototype.renderLabel
   const DATASETS = 'datasets'
-  const STUDIES = 'studies'
   const datasetBaseURL = 'Explore/Datasets'
-  const labelConfig: LabelConfig = [
+  const labelLinkConfig: LabelLinkConfig = [
     {
       isMarkdown: false,
       baseURL: datasetBaseURL,
-      URLColumnNames: [DATASETS],
-      matchColumnName: 'dataset',
-    },
-    {
-      isMarkdown: false,
-      baseURL: datasetBaseURL,
-      URLColumnNames: [DATASETS, STUDIES],
+      URLColumnName: DATASETS,
       matchColumnName: 'dataset',
     },
     {
@@ -190,9 +183,9 @@ describe('it makes the correct URL for the secondary labels', () => {
     },
   ]
 
-  it('works with a single value and single column', () => {
+  it('works with a single value', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, labelConfig[0], false)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], false)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
@@ -202,19 +195,9 @@ describe('it makes the correct URL for the secondary labels', () => {
     expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
   })
 
-  it('works with a single value and multiple columns', () => {
-    const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, labelConfig[1], false)} </>)
-    const link = wrapper.find('a')
-    expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${value}&${STUDIES}=${value}`,
-    )
-  })
-
   it('works with a header', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, labelConfig[0], true)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], true)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
@@ -225,7 +208,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const wrapper = mount(<>{renderLabel(value, labelConfig[0], false)} </>)
+    const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], false)} </>)
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
     expect(links.at(0).props().href).toEqual(
@@ -242,7 +225,7 @@ describe('it makes the correct URL for the secondary labels', () => {
   it('works with a markdown link ', async () => {
     const value = '# markdown [link](synapse.org) '
     const wrapper = await mount(
-      <>{renderLabel(value, labelConfig[2], false)} </>,
+      <>{renderLabel(value, labelLinkConfig[1], false)} </>,
     )
     const markdown = wrapper.find(MarkdownSynapse)
     expect(markdown).toHaveLength(1)

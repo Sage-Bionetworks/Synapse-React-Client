@@ -1,23 +1,23 @@
-import React, { useState } from 'react'
-import {
-  getFileHandleByIdURL,
-  getDownloadOrder,
-  getBulkFiles,
-} from '../../utils/SynapseClient'
-import {
-  BulkFileDownloadRequest,
-  ZipFileFormat,
-} from '../../utils/jsonResponses/BulkFileDownloadRequest'
-import { BulkFileDownloadResponse } from '../../utils/jsonResponses/BulkFileDownloadResponse'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
   faDownload,
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useState } from 'react'
 import * as ReactBoostrap from 'react-bootstrap'
-import { FileDownloadStatus } from '../../utils/jsonResponses/FileDownloadSummary'
+import {
+  getBulkFiles,
+  getDownloadOrder,
+  getFileHandleByIdURL,
+} from '../../utils/SynapseClient'
+import {
+  BulkFileDownloadRequest,
+  BulkFileDownloadResponse,
+  FileDownloadStatus,
+  ZipFileFormat,
+} from '../../utils/synapseTypes/'
 
 library.add(faCheck)
 library.add(faDownload)
