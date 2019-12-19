@@ -13,6 +13,7 @@ import {
   UserProfile,
   QueryResultBundle,
   Row,
+  QueryBundleRequest,
 } from 'lib/utils/synapseTypes/'
 import { Dictionary } from 'lodash'
 import * as React from 'react'
@@ -41,8 +42,9 @@ describe('basic functionality', () => {
   const synapseId = 'syn16787123'
   const castData = syn16787123Json as QueryResultBundle
   const totalColumns = 13
-  const lastQueryRequest = {
+  const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: '12345',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -352,6 +354,7 @@ describe('basic functionality', () => {
   describe('table cells render correctly', () => {
     const ENTITYID_INDEX = 0
     const USERID_INDEX = 1
+    const DATE_INDEX = 2
     const MOCKED_STRING = 'MOCKED_VALUE'
     const MOCKED_NUM = 1
     // syn16787123Json has two columns of type entity, the second
@@ -368,6 +371,11 @@ describe('basic functionality', () => {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
           columnType: 'USERID',
+        },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'DATE',
         },
       ],
       queryResult: {
@@ -387,20 +395,26 @@ describe('basic functionality', () => {
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
+            {
+              columnType: 'DATE',
+              name: MOCKED_STRING,
+              id: MOCKED_STRING,
+            },
           ],
           rows: [
             {
-              values: ['syn123', 'syn120'],
+              values: ['syn123', 'syn120', '1567525763000'],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
             {
-              values: ['syn124', 'syn120'],
+              // @ts-ignore
+              values: ['syn124', 'syn120', null],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
             {
-              values: ['syn125', 'syn121'],
+              values: ['syn125', 'syn121', '1567525763003'],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
@@ -418,6 +432,8 @@ describe('basic functionality', () => {
       expect(entities).toEqual([ENTITYID_INDEX])
       const userIds = instance.getColumnIndiciesWithType('USERID')
       expect(userIds).toEqual([USERID_INDEX])
+      const dates = instance.getColumnIndiciesWithType('DATE')
+      expect(dates).toEqual([DATE_INDEX])
     })
 
     it('gets unique entities', () => {
@@ -446,12 +462,14 @@ describe('basic functionality', () => {
     describe('renders table cells correctly', () => {
       const entityColumnIndicies: number[] = [ENTITYID_INDEX]
       const userColumnIndicies: number[] = [USERID_INDEX]
+      const dateColumnIndicies: number[] = [DATE_INDEX]
       const mockEntityLinkValue: string = 'syn122'
       const mockUserCardValue: string = 'syn123'
       const mockAllAuthenticatedUsersValue: string = 'syn124'
       const mockTeamValue: string = 'syn125'
       const teamName: string = 'team name'
       const mockColumnValue: string = 'syn126'
+      const mockDateValue: string = '1574268563000'
       // We only care about the conditional rendering, not the
       // instantiation of the EntityLink, so we cast the value
       const mapEntityIdToHeader = {
@@ -476,6 +494,7 @@ describe('basic functionality', () => {
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
+              dateColumnIndicies,
               colIndex: ENTITYID_INDEX,
               columnValue: mockEntityLinkValue,
               isBold: '',
@@ -493,6 +512,7 @@ describe('basic functionality', () => {
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
+              dateColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockAllAuthenticatedUsersValue,
               isBold: '',
@@ -518,6 +538,7 @@ describe('basic functionality', () => {
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
+              dateColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockTeamValue,
               isBold: '',
@@ -541,6 +562,7 @@ describe('basic functionality', () => {
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
+              dateColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockUserCardValue,
               isBold: '',
@@ -559,6 +581,7 @@ describe('basic functionality', () => {
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
+              dateColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockMarkdownColumnValue,
               isBold: '',
@@ -578,6 +601,7 @@ describe('basic functionality', () => {
             {instance.renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
+              dateColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockColumnValue,
               isBold: '',
@@ -593,6 +617,50 @@ describe('basic functionality', () => {
             .text()
             .trim(),
         ).toEqual(mockColumnValue)
+      })
+
+      it('renders a date value', () => {
+        const tableCell = shallow(
+          <div>
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              dateColumnIndicies,
+              colIndex: DATE_INDEX,
+              columnValue: mockDateValue,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
+              isMarkdownColumn: false,
+            })}
+          </div>,
+        )
+        expect(
+          tableCell
+            .find('p')
+            .text()
+            .trim(),
+        ).toEqual(new Date(Number(mockDateValue)).toLocaleString())
+      })
+
+      it('renders an empty cell for null date', () => {
+        const tableCell = shallow(
+          <div>
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              dateColumnIndicies,
+              colIndex: DATE_INDEX,
+              // @ts-ignore
+              columnValue: null,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
+              isMarkdownColumn: false,
+            })}
+          </div>,
+        )
+        expect(tableCell.find('p')).toHaveLength(0)
       })
     })
   })

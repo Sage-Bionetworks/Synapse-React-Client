@@ -73,7 +73,7 @@ class Demo extends React.Component<{}, DemoState> {
 
           {
             facet: 'model',
-            sql: 'SELECT * FROM syn7844998',
+            sql: 'SELECT * FROM syn21450294',
           },
          
         ],
