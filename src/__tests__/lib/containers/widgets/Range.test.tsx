@@ -23,16 +23,20 @@ function init(overrides?: RangeProps) {
 
 beforeEach(() => init())
 
-function updateValue( wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>, min: number | string, max: number | string) {
+function updateValue(
+  wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>,
+  min: number | string,
+  max: number | string,
+) {
   wrapper
-  .find('input')
-  .at(0)
-  .simulate('change', { target: { value: min } })
-wrapper
-  .find('input')
-  .at(1)
-  .simulate('change', { target: { value: max } })
-wrapper.find('button').simulate('click')
+    .find('input')
+    .at(0)
+    .simulate('change', { target: { value: min } })
+  wrapper
+    .find('input')
+    .at(1)
+    .simulate('change', { target: { value: max } })
+  wrapper.find('button').simulate('click')
 }
 
 describe('number range ', () => {
@@ -43,13 +47,13 @@ describe('number range ', () => {
         .find('input')
         .at(0)
         .props().value,
-    ).toBe(props.initialValues.min)
+    ).toBe(props.initialValues!.min)
     expect(
       wrapper
         .find('input')
         .at(1)
         .props().value,
-    ).toBe(props.initialValues.max)
+    ).toBe(props.initialValues!.max)
     expect(
       wrapper
         .find('div')
@@ -58,13 +62,34 @@ describe('number range ', () => {
     ).toBe(true)
   })
 
-  it('should call callbackFn correctly', async () => {
+  it('should render without values specified', () => {
+    let noDefaultProps = { ...props, ...{ initialValues: undefined } }
+    init(noDefaultProps)
+    expect(wrapper).toBeDefined()
+    expect(
+      wrapper
+        .find('input')
+        .at(0)
+        .props().value,
+    ).toBeUndefined()
+
+    expect(
+      wrapper
+        .find('input')
+        .at(1)
+        .props().value,
+    ).toBeUndefined()
+  })
+
+  it('should call callbackFn correctly', () => {
+    mockCallback.mockClear()
     updateValue(wrapper, 2, 4.9)
     expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 4.9 })
   })
-  it('should not trigger callback for min > max and should show error', async () => {
+  it('should not trigger callback for min > max and should show error', () => {
+    mockCallback.mockClear()
     updateValue(wrapper, 4.9, 2)
-    expect(mockCallback).not.toHaveBeenCalledWith()
+    expect(mockCallback).not.toHaveBeenCalled()
     expect(wrapper.find('.SRC-danger-color')).toHaveLength(1)
   })
 })
@@ -94,14 +119,35 @@ describe('date range', () => {
     ).toBe('2019-10-03')
   })
 
+  it('should render without values specified', () => {
+    let noDefaultProps = { ...props, ...{ initialValues: undefined } }
+    init(noDefaultProps)
+    expect(wrapper).toBeDefined()
+    expect(
+      wrapper
+        .find('input')
+        .at(0)
+        .props().value,
+    ).toBeUndefined()
+
+    expect(
+      wrapper
+        .find('input')
+        .at(1)
+        .props().value,
+    ).toBeUndefined()
+  })
+
   it('should call callbackFn correctly', async () => {
+    mockCallback.mockClear()
     updateValue(wrapper, updatedValues.min, updatedValues.max)
     expect(mockCallback).toHaveBeenCalledWith(updatedValues)
   })
 
   it('should not trigger callback for min > max and should show error', async () => {
+    mockCallback.mockClear()
     updateValue(wrapper, updatedValues.max, updatedValues.min)
-    expect(mockCallback).not.toHaveBeenCalledWith()
+    expect(mockCallback).not.toHaveBeenCalled()
     expect(wrapper.find('.SRC-danger-color')).toHaveLength(1)
   })
 })

@@ -34,7 +34,7 @@ function init(overrides?: RadioGroupProps) {
 beforeEach(() => init())
 
 describe('basic function', () => {
-  it('should render with correct properties', async () => {
+  it('should render with correct properties', () => {
     expect(wrapper.find('.radio')).toHaveLength(props.options.length)
     expect(wrapper.find('input')).toHaveLength(props.options.length)
     expect(wrapper.find('div').at(0).hasClass('radioGroupClass')).toBe(true)
@@ -60,7 +60,7 @@ describe('basic function', () => {
     ).toBe(false)
   })
 
-  it('should have correct item changed', async () => {
+  it('should have correct item changed', () => {
     init({ ...props, ...{ value: 'value2' } })
     expect(
       wrapper
@@ -82,7 +82,7 @@ describe('basic function', () => {
     ).toBe(true)
   })
 
-  it('should not crash without value specified', async () => {
+  it('should not crash without value specified', () => {
     init({ ...props, ...{ value: undefined } })
     expect(
       wrapper
@@ -104,7 +104,7 @@ describe('basic function', () => {
     ).toBe(false)
   })
 
-  it('should call callbackFn on change with correct params and change the value', async () => {
+  it('should call callbackFn on change with correct params and change the value', () => {
     let radio = wrapper.find('input').at(1)
 
     expect(radio.props().checked).toBe(true)

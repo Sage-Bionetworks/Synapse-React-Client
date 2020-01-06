@@ -13,13 +13,20 @@ export const WidgetDemo: React.FunctionComponent = () => {
   const [check1, setCheck1] = useState(true)
   const [check2, setCheck2] = useState(false)
   const [optionValue, setOptionValue] = useState('option2')
-  const [rangeNumberValue, setRangeNumberValue] = useState({
-    min: '10.5',
-    max: '30',
+  const [rangeNumberValue, setRangeNumberValue] = useState(() => 
+  {
+    const result: RangeValues = {
+      min: '10.5',
+      max: '30',
+    }
+    return result
   })
-  const [rangeDateValue, setRangeDateValue] = useState({
-    min: new Date(2019, 5, 10).toISOString(),
-    max: new Date(2019, 6, 11).toISOString(),
+  const [rangeDateValue, setRangeDateValue] = useState(() => {
+    const result: RangeValues = {
+      min: new Date(2019, 5, 10).toISOString(),
+      max: new Date(2019, 6, 11).toISOString(),
+    }
+    return result
   })
 
   return (
