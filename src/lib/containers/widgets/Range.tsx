@@ -40,7 +40,12 @@ export const Range: React.FunctionComponent<RangeProps> = (
 
     type: ControlType = 'number',
   ) => {
-    if (!values.min || !values.max) {
+    if (
+      min === null ||
+      min === undefined ||
+      max === null ||
+      max === undefined
+    ) {
       setError(false)
       return true
     }
@@ -51,7 +56,7 @@ export const Range: React.FunctionComponent<RangeProps> = (
         return false
       }
     }
-    if (min && max && Date.parse(min) > Date.parse(max)) {
+    if (Date.parse(min) > Date.parse(max)) {
       setError(true)
       return false
     }

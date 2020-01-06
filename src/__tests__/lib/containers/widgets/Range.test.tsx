@@ -19,6 +19,7 @@ let props: RangeProps
 function init(overrides?: RangeProps) {
   props = createTestProps(overrides)
   wrapper = mount(<Range {...props} />)
+  mockCallback.mockClear()
 }
 
 beforeEach(() => init())
@@ -82,12 +83,10 @@ describe('number range ', () => {
   })
 
   it('should call callbackFn correctly', () => {
-    mockCallback.mockClear()
     updateValue(wrapper, 2, 4.9)
     expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 4.9 })
   })
   it('should not trigger callback for min > max and should show error', () => {
-    mockCallback.mockClear()
     updateValue(wrapper, 4.9, 2)
     expect(mockCallback).not.toHaveBeenCalled()
     expect(wrapper.find('.SRC-danger-color')).toHaveLength(1)
@@ -139,13 +138,11 @@ describe('date range', () => {
   })
 
   it('should call callbackFn correctly', async () => {
-    mockCallback.mockClear()
     updateValue(wrapper, updatedValues.min, updatedValues.max)
     expect(mockCallback).toHaveBeenCalledWith(updatedValues)
   })
 
   it('should not trigger callback for min > max and should show error', async () => {
-    mockCallback.mockClear()
     updateValue(wrapper, updatedValues.max, updatedValues.min)
     expect(mockCallback).not.toHaveBeenCalled()
     expect(wrapper.find('.SRC-danger-color')).toHaveLength(1)
