@@ -1043,7 +1043,7 @@ export default class SynapseTable extends React.Component<
     const { query } = lastQueryRequest
     // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
-    const synTable = this.props.getLastQueryRequest!().entityId
+    const synTable = this.props.entityId
     window.open(
       `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`,
       '_blank',
