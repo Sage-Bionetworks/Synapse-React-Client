@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
 
 export type RadioGroupProps = {
   options: { label: string; value: string }[]
@@ -12,10 +11,6 @@ export type RadioGroupProps = {
 export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
   props: RadioGroupProps,
 ) => {
-  const [value, setValue] = useState()
-  useEffect(() => {
-    setValue(props.value)
-  }, [value])
 
   const className = props.className
     ? `radiogroup ${props.className}`
@@ -25,12 +20,12 @@ export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
     <div className={className}>
       {props.options.map(option => (
         <div className="radio" key={option.value}>
-          {value == option.value}
+          {props.value == option.value}
           <label>
             <span>
               <input
                 type="radio"
-                checked={value === option.value}
+                checked={props.value === option.value}
                 value={option.value}
                 onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
                   props.onChange(target.value, target.checked)
