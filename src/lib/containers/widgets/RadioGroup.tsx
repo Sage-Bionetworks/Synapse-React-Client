@@ -15,7 +15,7 @@ export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
   const [value, setValue] = useState()
   useEffect(() => {
     setValue(props.value)
-  })
+  }, [value])
 
   const className = props.className
     ? `radiogroup ${props.className}`
