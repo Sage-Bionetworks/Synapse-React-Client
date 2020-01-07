@@ -1,5 +1,7 @@
 import * as React from 'react'
-import CardContainerLogic from '../../../lib/containers/CardContainerLogic'
+import CardContainerLogic, {
+  CardConfiguration,
+} from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
 import { GenericCardSchema } from '../../../lib/containers/GenericCard'
 import brainSvg from './icons/brain.svg'
@@ -28,26 +30,39 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
       'Resilience-AD': resilienceadSvg,
     }
     const genericCardSchemaHeader: GenericCardSchema = {
-      type: 'PROGRAM',
-      title: 'Full Name',
-      subTitle: 'Short Description',
-      description: 'Long Description',
-      icon: 'Program',
-      secondaryLabels: ['Full Name'],
-    }
-    const genericCardSchema: GenericCardSchema = {
-      title: 'studyName',
-      type: SynapseConstants.EXPERIMENTAL,
+      type: SynapseConstants.DATASET,
+      title: 'portalDisplayName',
+      subTitle: 'centerName',
       description: 'summary',
-      subTitle: 'studyLeads',
-      icon: 'studyStatus',
       secondaryLabels: [
-        'dataStatus',
-        'diseaseFocus',
-        'manifestation',
-        'fundingAgency',
-        'institutions',
-        'studyStatus',
+        'Title',
+        'overallDesign',
+        'PubMed',
+        'Theme',
+        'studies',
+        'tumorType',
+        'experimentalStrategy',
+        'species',
+        'externalLink',
+        'centerName',
+        'consortium',
+        'grantType',
+      ],
+    }
+    const genericCardSchema: CardConfiguration = {
+      type: SynapseConstants.GENERIC_CARD,
+      genericCardSchema: {
+        type: SynapseConstants.DATASET,
+        title: 'portalDisplayName',
+        subTitle: 'centerName',
+        description: 'summary',
+        secondaryLabels: ['externalLink'],
+      },
+      labelLinkConfig: [
+        {
+          isMarkdown: true,
+          matchColumnName: 'externalLink',
+        },
       ],
     }
     return (
@@ -99,10 +114,10 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
               <div className="col-md-10 col-md-offset-1">
                 <CardContainerLogic
                   type={SynapseConstants.GENERIC_CARD}
-                  sql={'SELECT * FROM syn16787123'}
-                  entityId={'syn16787123'}
+                  sql={'SELECT * FROM syn18488466 group by externalLink'}
+                  entityId={'syn18488466'}
                   unitDescription="studies"
-                  genericCardSchema={genericCardSchema}
+                  {...genericCardSchema}
                   secondaryLabelLimit={3}
                 />
               </div>
