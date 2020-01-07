@@ -989,6 +989,10 @@ a.dropdown-item {
   background-color: #eb5757;
 }
 
+// PORTALS-965: add a max-width to the bootstrap container-fluid class
+.container-fluid {
+  max-width: 1440px;
+}
 
 .plotly .slice {
   cursor: pointer;
