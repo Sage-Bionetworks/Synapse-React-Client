@@ -27,6 +27,12 @@ export default class FacetFilter extends React.Component<
 > {
   public ref: React.Ref<HTMLSpanElement>
 
+  style: React.CSSProperties = {
+    overflowY: 'auto',
+    maxHeight: 300,
+    zIndex: 1,
+  }
+
   constructor(props: FacetFilterProps) {
     super(props)
     this.state = {
@@ -81,7 +87,7 @@ export default class FacetFilter extends React.Component<
             color={color}
           />
         </Dropdown.Toggle>
-        <Dropdown.Menu>
+        <Dropdown.Menu style={this.style}>
           <Dropdown.Item
             onClick={() => {
               allRef.current!.click()

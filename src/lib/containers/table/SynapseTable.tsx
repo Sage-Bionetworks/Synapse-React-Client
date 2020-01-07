@@ -747,6 +747,7 @@ export default class SynapseTable extends React.Component<
     } = this.state
     const entityColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
     const userColumnIndicies = this.getColumnIndiciesWithType('USERID')
+    const dateColumnIndicies = this.getColumnIndiciesWithType('DATE')
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
@@ -795,6 +796,7 @@ export default class SynapseTable extends React.Component<
                   this.renderTableCell({
                     entityColumnIndicies,
                     userColumnIndicies,
+                    dateColumnIndicies,
                     colIndex,
                     columnValue,
                     isBold,
@@ -831,6 +833,7 @@ export default class SynapseTable extends React.Component<
   public renderTableCell({
     entityColumnIndicies,
     userColumnIndicies,
+    dateColumnIndicies,
     colIndex,
     columnValue,
     isBold,
@@ -840,6 +843,7 @@ export default class SynapseTable extends React.Component<
   }: {
     entityColumnIndicies: number[]
     userColumnIndicies: number[]
+    dateColumnIndicies: number[]
     colIndex: number
     columnValue: string
     isBold: string
@@ -848,7 +852,7 @@ export default class SynapseTable extends React.Component<
     isMarkdownColumn: boolean
   }): React.ReactNode {
     if (isMarkdownColumn) {
-      return <MarkdownSynapse markdown={columnValue} />
+      return <MarkdownSynapse renderInline={true} markdown={columnValue} />
     }
     if (
       entityColumnIndicies.includes(colIndex) &&
@@ -859,6 +863,15 @@ export default class SynapseTable extends React.Component<
           entityHeader={mapEntityIdToHeader[columnValue]}
           className={isBold}
         />
+      )
+    }
+    if (dateColumnIndicies.includes(colIndex)) {
+      return columnValue ? (
+        <p className={isBold}>
+          {new Date(Number(columnValue)).toLocaleString()}{' '}
+        </p>
+      ) : (
+        <></>
       )
     } else if (
       userColumnIndicies.includes(colIndex) &&

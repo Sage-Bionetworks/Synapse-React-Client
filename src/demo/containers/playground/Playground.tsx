@@ -10,6 +10,7 @@ import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
+import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
 
 /**
@@ -64,15 +65,16 @@ const App = ({
             FormServicesIntegrationDemo
           </Link>
         </li>
-
         <li>
           <Link to={`${match.url}/ModalDownloadDemo`}>ModalDownload</Link>
         </li>
-
         <li>
           <Link to={`${match.url}/DownloadListTableDemo`}>
             DownloadListTableDemo
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/WidgetDemo`}>WidgetDemo</Link>
         </li>
       </ul>
 
@@ -138,6 +140,12 @@ const App = ({
             </div>
           </div>
         )}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/WidgetDemo`}
+        component={() => <WidgetDemo />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

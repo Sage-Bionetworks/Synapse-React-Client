@@ -125,7 +125,7 @@ export default class GenericCard extends React.Component<
     isHeader: boolean,
   ) {
     if (labelLink.isMarkdown) {
-      return <MarkdownSynapse markdown={value} />
+      return <MarkdownSynapse renderInline={true} markdown={value} />
     }
     const split = value.split(',')
     let className = ''
