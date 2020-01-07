@@ -377,8 +377,6 @@ export default class MarkdownSynapse extends React.Component<
     if (markup.length > 0) {
       const domParser = new DOMParser()
       const document = domParser.parseFromString(markup, 'text/html')
-      // @ts-ignore
-      window.md = this.state.md
       return <>{this.recursiveRender(document.body, markup)}</>
     }
     return
