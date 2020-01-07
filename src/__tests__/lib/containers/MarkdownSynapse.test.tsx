@@ -77,6 +77,18 @@ describe('it performs all functionality', () => {
       expect(mockGetWikiAttachments).toHaveBeenCalledTimes(1)
     })
 
+    it('renders correctly inline', async () => {
+      const markdownPlaceholder = `[linkname](synapse.org)`
+      const props: MarkdownSynapseProps = {
+        markdown: markdownPlaceholder,
+        renderInline: true,
+      }
+      const { wrapper } = await createShallowComponent(props)
+      expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
+      expect(wrapper.html().indexOf('<p>')).toEqual(-1)
+      expect(wrapper.html().indexOf('<a href=')).toBeGreaterThan(-1)
+    })
+
     it('runs componentDidUpdate correctly ', async () => {
       const props = {
         wikiId: 'xxx', // placeholder

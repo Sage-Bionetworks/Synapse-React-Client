@@ -852,7 +852,7 @@ export default class SynapseTable extends React.Component<
     isMarkdownColumn: boolean
   }): React.ReactNode {
     if (isMarkdownColumn) {
-      return <MarkdownSynapse markdown={columnValue} />
+      return <MarkdownSynapse renderInline={true} markdown={columnValue} />
     }
     if (
       entityColumnIndicies.includes(colIndex) &&

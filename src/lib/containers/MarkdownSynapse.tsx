@@ -38,6 +38,7 @@ export type MarkdownSynapseProps = {
   ownerId?: string
   wikiId?: string
   markdown?: string
+  renderInline?: boolean
 }
 const md = markdownit({ html: true })
 
@@ -171,7 +172,10 @@ export default class MarkdownSynapse extends React.Component<
     if (!markdown) {
       return { __html: '' }
     }
-    const initText = this.state.md.render(markdown)
+    // Note - renderInline parses out any block level elements contained in the markdown
+    const initText = this.props.renderInline
+      ? this.state.md.renderInline(markdown)
+      : this.state.md.render(markdown)
     const cleanText = sanitizeHtml(initText, {
       allowedAttributes: {
         a: ['href', 'target'],
@@ -373,6 +377,8 @@ export default class MarkdownSynapse extends React.Component<
     if (markup.length > 0) {
       const domParser = new DOMParser()
       const document = domParser.parseFromString(markup, 'text/html')
+      // @ts-ignore
+      window.md = this.state.md
       return <>{this.recursiveRender(document.body, markup)}</>
     }
     return
@@ -683,11 +689,24 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public render() {
+    const { renderInline } = this.props
     const bookmarks = this.addBookmarks()
-    return (
-      <div className="markdown" ref={this.markupRef}>
+    const content = (
+      <>
         {this.renderMarkdown()}
         {bookmarks && <div>{this.addBookmarks()}</div>}
+      </>
+    )
+    if (renderInline) {
+      return (
+        <span className="markdown markdown-inline" ref={this.markupRef}>
+          {content}
+        </span>
+      )
+    }
+    return (
+      <div className="markdown" ref={this.markupRef}>
+        {content}
       </div>
     )
   }

@@ -62,6 +62,9 @@
   overflow-y: hidden;
   line-height: 1.8em;
   color: #515359;
+  &.markdown-inline {
+    line-height: unset;
+  }
 }
 .markdown ol {
   list-style-type: decimal;
@@ -239,8 +242,8 @@
   &.white {
     background-image: url('../assets/logos/logo-white.svg');
   }
-  +.spinner__text {
-    margin-left: 5px
+  + .spinner__text {
+    margin-left: 5px;
   }
 }
 
