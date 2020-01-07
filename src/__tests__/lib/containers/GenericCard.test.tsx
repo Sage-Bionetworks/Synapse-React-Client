@@ -222,16 +222,15 @@ describe('it makes the correct URL for the secondary labels', () => {
     )
   })
 
-  it.only('works with a markdown link ', async () => {
+  it('works with a markdown link ', async () => {
     const value = '[link](www.synapse.org)'
     const wrapper = await mount(
       <>{renderLabel(value, labelLinkConfig[1], false)} </>,
     )
     const markdown = wrapper.find(MarkdownSynapse)
-    console.log('markdown.html() = ', markdown.html())
     expect(markdown).toHaveLength(1)
     // double check the html elements show up correctly from the markdown component
-    expect(markdown.html().indexOf('<p>')).toEqual(-1)
-    expect(markdown.html().indexOf('<a href=')).toBeGreaterThan(-1)
+    expect(markdown.html().includes('<p>')).toBeFalsy()
+    expect(markdown.html().includes('<a href=')).toBeTruthy()
   })
 })

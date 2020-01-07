@@ -85,8 +85,8 @@ describe('it performs all functionality', () => {
       }
       const { wrapper } = await createShallowComponent(props)
       expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
-      expect(wrapper.html().indexOf('<p>')).toEqual(-1)
-      expect(wrapper.html().indexOf('<a href=')).toBeGreaterThan(-1)
+      expect(wrapper.html().includes('<p>')).toBeFalsy()
+      expect(wrapper.html().includes('<a href=')).toBeTruthy()
     })
 
     it('runs componentDidUpdate correctly ', async () => {
