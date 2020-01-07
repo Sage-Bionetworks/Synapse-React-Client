@@ -106,6 +106,7 @@ export type SynapseTableState = {
   isModalDownloadOpen: boolean
   isDownloadConfirmationOpen: boolean
   isExpanded: boolean
+  isFileView: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
@@ -150,6 +151,7 @@ export default class SynapseTable extends React.Component<
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
+      isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -174,6 +176,12 @@ export default class SynapseTable extends React.Component<
     if (!data) {
       return
     }
+
+    const { concreteType } = await SynapseClient.getEntity(
+      token!,
+      data.queryResult.queryResults.tableId,
+    )
+    this.setState({ isFileView: concreteType.includes('EntityView') })
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
@@ -386,7 +394,7 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderDropdownDownloadOptions = () => {
+  private renderDropdownDownloadOptions = (isFileView?: boolean) => {
     const partialState = {
       isModalDownloadOpen: true,
       isExpanded: false,
@@ -396,6 +404,7 @@ export default class SynapseTable extends React.Component<
         onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
         isUnauthenticated={!this.props.token}
+        isFileView={isFileView}
       />
     )
   }
@@ -499,7 +508,7 @@ export default class SynapseTable extends React.Component<
 
   private renderTableTop = (headers: SelectColumn[]) => {
     const { title } = this.props
-    const { isExpanded } = this.state
+    const { isExpanded, isFileView } = this.state
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
@@ -535,7 +544,7 @@ export default class SynapseTable extends React.Component<
                 effect="solid"
                 id={tooltipAdvancedSearchId}
               />
-              {this.renderDropdownDownloadOptions()}
+              {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}
             </>
           )}
@@ -554,6 +563,7 @@ export default class SynapseTable extends React.Component<
           isExpanded={isExpanded}
           isUnauthenticated={!this.props.token}
           isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
+          isFileView={this.state.isFileView}
         />
       </div>
     )
