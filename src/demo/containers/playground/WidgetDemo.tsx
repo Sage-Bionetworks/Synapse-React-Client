@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
-import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
 import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
+import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
+import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
 
 export const WidgetDemo: React.FunctionComponent = () => {
@@ -13,8 +14,7 @@ export const WidgetDemo: React.FunctionComponent = () => {
   const [check1, setCheck1] = useState(true)
   const [check2, setCheck2] = useState(false)
   const [optionValue, setOptionValue] = useState('option2')
-  const [rangeNumberValue, setRangeNumberValue] = useState(() => 
-  {
+  const [rangeNumberValue, setRangeNumberValue] = useState(() => {
     const result: RangeValues = {
       min: '10.5',
       max: '30',
@@ -27,6 +27,11 @@ export const WidgetDemo: React.FunctionComponent = () => {
       max: new Date(2019, 6, 11).toISOString(),
     }
     return result
+  })
+
+  const [rangeSliderValue, setRangeSliderValue] = useState({
+    min: '10',
+    max: '25',
   })
 
   return (
@@ -77,6 +82,18 @@ export const WidgetDemo: React.FunctionComponent = () => {
         initialValues={{ min: rangeDateValue.min, max: rangeDateValue.max }}
         onChange={(values: RangeValues) => setRangeDateValue(values)}
       ></Range>
+      <hr></hr>
+      <h4>Range Slider</h4>
+      Range Slider Value is: {rangeSliderValue.min} - {rangeSliderValue.max}
+      <br />
+      <RangeSlider
+        initialValues={rangeSliderValue}
+        onChange={(values: { min: string; max: string }) =>
+          setRangeSliderValue(values)
+        }
+        domain={['0', '100']}
+        step={1}
+      ></RangeSlider>
     </div>
   )
 }
