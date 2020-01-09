@@ -17,7 +17,7 @@ $textLight:  #b7b7b7;
     &--flex {
       display: flex;
       align-items: center;
-      height: 35px;
+      height: 10px;
       width: 100%;
     }
     &--block {
@@ -25,6 +25,9 @@ $textLight:  #b7b7b7;
         width: 100%;
       display: block;
     }
+  }
+  &__values {
+   font-size: .85em
   }
   &__slider {
     margin: 0;

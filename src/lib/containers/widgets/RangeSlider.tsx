@@ -117,8 +117,8 @@ export type RangeSliderState = {
 
 function getInitialValues(initialValues: RangeValues, domain: string[]) {
   const result = [
-    initialValues.min ? +initialValues.min : +domain[0],
-    initialValues.max ? +initialValues.max : +domain[1],
+    initialValues.min ? Number(initialValues.min) : Number(domain[0]),
+    initialValues.max ? Number(initialValues.max) : Number(domain[1]),
   ]
   return result
 }
@@ -150,6 +150,7 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
 
   return (
     <div className="rangeSlider">
+      <div className="rangeSlider__values">{values[0]} - {values[1]}</div>
       <div
         className={`rangeSlider__wrapper${
           doUpdateOnApply ? '--flex' : '--block'
