@@ -16,6 +16,7 @@ type EllipsisDropdownProps = {
   isExpanded: boolean
   isUnauthenticated?: boolean
   isGroupedQuery?: boolean
+  isFileView?: boolean
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
@@ -43,7 +44,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           alignRight={true}
         >
           {!props.isGroupedQuery && [
-            <Dropdown.Item key='download_files'
+           props.isFileView && <Dropdown.Item key='download_files'
               onClick={() => onDownloadFiles()}
               className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
               disabled={props.isUnauthenticated}

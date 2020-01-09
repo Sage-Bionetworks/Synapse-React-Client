@@ -10,6 +10,7 @@ type DownloadOptionsProps = {
   onDownloadFiles: Function
   onExportMetadata: Function
   isUnauthenticated?: boolean
+  isFileView?: boolean
 }
 
 export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
@@ -38,14 +39,16 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           >
             Export Metadata
           </Dropdown.Item>
-          <Dropdown.Item
-            className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
-            disabled={props.isUnauthenticated}
-            // @ts-ignore
-            onClick={onDownloadFiles}
-          >
-            {DOWNLOAD_FILES_MENU_TEXT}
-          </Dropdown.Item>
+          {props.isFileView && (
+            <Dropdown.Item
+              className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
+              disabled={props.isUnauthenticated}
+              // @ts-ignore
+              onClick={onDownloadFiles}
+            >
+              {DOWNLOAD_FILES_MENU_TEXT}
+            </Dropdown.Item>
+          )}
         </Dropdown.Menu>
       </Dropdown>
       <ReactTooltip
