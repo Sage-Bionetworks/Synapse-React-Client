@@ -224,7 +224,7 @@ export default class QueryWrapperMenu extends React.Component<
         <div className="break">
           <hr />
         </div>
-        <div className="row">
+        <div className="row" key="row">
           <div
             className={`col-xs-12 col-sm-3 col-lg-2 SRC-menuLayout ${
               showBarChart ? 'SRC-menuPadding' : 'SRC-menuPaddingLess'
@@ -232,7 +232,7 @@ export default class QueryWrapperMenu extends React.Component<
           >
             {menuDropdown}
           </div>
-          <div className="col-xs-12 col-sm-9 col-lg-10">{queryWrapper}</div>
+          <div className="col-xs-12 col-sm-9 col-lg-10" key="queryWrapper">{queryWrapper}</div>
         </div>
       </React.Fragment>
     )

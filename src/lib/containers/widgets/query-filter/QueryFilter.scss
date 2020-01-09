@@ -1,0 +1,15 @@
+@import '../../../style/Vars.scss';
+
+.queryFilter {
+    margin: 0rem 1rem 1rem 0;
+    border: 1px solid $border-color-gray;
+    padding: 1rem;
+}
+
+.queryFilter-facet {
+    margin: 20px 0;
+
+    .checkbox:first-child {
+        margin-top: 0px
+    }
+}
