@@ -61,8 +61,9 @@
   }
 }
 
-.SRC-primary-button {
+.SRC-primary-button,  .SRC-primary-button.btn.btn-primary {
   background: $primary-action-color;
+  border: none;
   color: white !important;
   &:hover {
     @extend %hoverFade;

@@ -1,3 +1,4 @@
+import { DownloadLoginModal } from './DownloadLoginModal'
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -17,7 +18,9 @@ export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 const tooltipDownloadId = 'download'
 
 export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = props => {
+  const [showModal, setShowModal] = React.useState(false)
   const { onDownloadFiles, onExportMetadata } = props
+
   return (
     <React.Fragment>
       <Dropdown style={{ padding: 5 }}>
@@ -41,10 +44,9 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           </Dropdown.Item>
           {props.isFileView && (
             <Dropdown.Item
-              className={props.isUnauthenticated ? 'SRC-deemphasized-text' : ''}
-              disabled={props.isUnauthenticated}
-              // @ts-ignore
-              onClick={onDownloadFiles}
+              onClick={() =>
+                props.isUnauthenticated ? setShowModal(true) : onDownloadFiles()
+              }
             >
               {DOWNLOAD_FILES_MENU_TEXT}
             </Dropdown.Item>
@@ -58,6 +60,12 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
         effect="solid"
         id={tooltipDownloadId}
       />
+      {showModal && (
+        <DownloadLoginModal
+          showModal={showModal}
+          onHide={() => setShowModal(false)}
+        ></DownloadLoginModal>
+      )}
     </React.Fragment>
   )
 }
