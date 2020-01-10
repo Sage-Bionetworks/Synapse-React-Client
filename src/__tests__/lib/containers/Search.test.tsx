@@ -6,7 +6,8 @@ import QueryWrapper from 'lib/containers/QueryWrapper'
 import { SynapseConstants } from 'lib'
 import CardContainer from 'lib/containers/CardContainer'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
-import { CommonCardProps } from 'lib/containers/CardContainerLogic'
+import { CardConfiguration } from 'lib/containers/CardContainerLogic'
+import TotalQueryResults from 'lib/containers/TotalQueryResults'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const mockGetQueryTableResultsFn = jest.fn(() =>
@@ -32,7 +33,7 @@ const createMountedComponent = () => {
     icon: 'icon',
     secondaryLabels: ['contributor', 'diagnosis', 'program'],
   }
-  const commonCardProps: CommonCardProps = {
+  const commonCardProps: CardConfiguration = {
     type: SynapseConstants.GENERIC_CARD,
     genericCardSchema,
   }
@@ -41,6 +42,7 @@ const createMountedComponent = () => {
       facetAliases={facetAliases}
       initQueryRequest={{
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        entityId: '',
         partMask:
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -95,6 +97,8 @@ describe('it performs basic functionality', () => {
         }),
       }),
     )
+    const searchLabel = `Displaying 59 studies containing "${searchText}" in Data Status `
+    expect(searchWrapper.find(TotalQueryResults).text()).toEqual(searchLabel)
   })
   it('handles special characters correctly', () => {
     const withQuote = "that's"
