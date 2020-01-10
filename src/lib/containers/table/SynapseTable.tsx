@@ -123,7 +123,7 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
   enableDownloadConfirmation?: boolean
-  enableNewFiltering?: boolean
+  enableLeftFacetFilter?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -157,7 +157,7 @@ export default class SynapseTable extends React.Component<
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
-      isShowLeftFilter : this.props.enableNewFiltering,
+      isShowLeftFilter : this.props.enableLeftFacetFilter,
       isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -348,7 +348,7 @@ export default class SynapseTable extends React.Component<
               />
             )}
           </div>
-          {this.renderTableTop(headers, this.props.enableNewFiltering)}
+          {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
           {this.state.isShowLeftFilter && (
             <div className="col-xs-12 col-sm-3 col-lg-3">
               {
@@ -540,7 +540,7 @@ export default class SynapseTable extends React.Component<
 
   private renderTableTop = (
     headers: SelectColumn[],
-    enableNewFiltering?: boolean,
+    enableLeftFacetFilter?: boolean,
   ) => {
     const { title } = this.props
     const { isExpanded, isFileView } = this.state
@@ -566,7 +566,7 @@ export default class SynapseTable extends React.Component<
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
-              {!enableNewFiltering /* old Implementation*/ && (
+              {!enableLeftFacetFilter /* old Implementation*/ && (
                 <>
                   <span
                     tabIndex={0}
@@ -587,7 +587,7 @@ export default class SynapseTable extends React.Component<
                   />
                 </>
               )}
-              {enableNewFiltering && (
+              {enableLeftFacetFilter && (
                 /* New Implementation*/ <>
                   <span
                     tabIndex={0}
@@ -1076,7 +1076,7 @@ export default class SynapseTable extends React.Component<
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                  {(isFacetSelection && !this.props.enableNewFiltering) &&
+                  {(isFacetSelection && !this.props.enableLeftFacetFilter) &&
                     this.configureFacetDropdown(facets, facetIndex)}
                   <span
                     tabIndex={0}
