@@ -7,9 +7,12 @@
 }
 
 .queryFilter-facet {
-    margin: 20px 0;
+    margin: 2rem 0;
+    &:first-child {
+        margin-top: 0
+    }
 
     .checkbox:first-child {
-        margin-top: 0px
+        margin-top: 0
     }
 }

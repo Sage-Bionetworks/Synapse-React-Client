@@ -128,7 +128,6 @@ export const QueryEnum: React.FunctionComponent<QueryEnumProps> = (
     <div>
       <button
         className="btn btn-link SRC-noPadding"
-        style={{ marginLeft: '5px', marginRight: '5px' }}
         onClick={() => props.onClear(props.columnModel.name)}
       >
         All
@@ -157,7 +156,7 @@ export const QueryEnum: React.FunctionComponent<QueryEnumProps> = (
           )
         })}
         {!isShowAll && props.facetValues.length > visibleItemsCount && (
-          <button className="btn-link" onClick={() => setIsShowAll(true)}>
+          <button className="btn btn-link SRC-noPadding" onClick={() => setIsShowAll(true)}>
             Show All
           </button>
         )}

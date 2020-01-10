@@ -78,7 +78,6 @@ export const QueryRange: React.FunctionComponent<QueryRangeProps> = ({
 
   const result = (
     <div>
-      {value}
       <RadioGroup
         value={value}
         id="rangeSelector"
@@ -99,7 +98,7 @@ export const QueryRange: React.FunctionComponent<QueryRangeProps> = ({
                 initialValues={{min: selectedMin, max: selectedMax}}
                 step={1}
                 doUpdateOnApply={true}
-                onChange={(values: string[]) => onChange(values)}
+                onChange={(values: RangeValues) => onChange([values.min, values.max])}
               >
                 ) >
               </RangeSlider>
