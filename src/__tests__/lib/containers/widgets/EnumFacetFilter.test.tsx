@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { mount, ReactWrapper, shallow } from 'enzyme'
 import {
-  QueryEnum,
-  QueryEnumProps,
-} from '../../../../lib/containers/widgets/query-filter/QueryEnum'
+  EnumFacetFilter,
+  EnumFacetFilterProps,
+} from '../../../../lib/containers/widgets/query-filter/EnumFacetFilter'
 import {
   ColumnModel,
   FacetColumnResultValueCount,
@@ -88,7 +88,7 @@ const resolveAllPending = async (
   )
 }
 
-function createTestProps(overrides?: QueryEnumProps): QueryEnumProps {
+function createTestProps(overrides?: EnumFacetFilterProps): EnumFacetFilterProps {
   return {
     facetValues: stringFacetValues,
     columnModel: columnModel,
@@ -100,11 +100,11 @@ function createTestProps(overrides?: QueryEnumProps): QueryEnumProps {
 }
 
 let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
-let props: QueryEnumProps
+let props: EnumFacetFilterProps
 
-function init(overrides?: QueryEnumProps) {
+function init(overrides?: EnumFacetFilterProps) {
   props = createTestProps(overrides)
-  wrapper = mount(<QueryEnum {...props} />)
+  wrapper = mount(<EnumFacetFilter {...props} />)
 }
 
 beforeEach(() => init())

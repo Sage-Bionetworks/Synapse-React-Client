@@ -77,8 +77,8 @@ describe('initialization', () => {
     const rangeFacets = mockQueryResponseData.facets.filter(
       facet => facet.facetType === 'range',
     )
-    expect(wrapper.find('QueryEnum')).toHaveLength(enumFacets.length)
-    expect(wrapper.find('QueryRange')).toHaveLength(rangeFacets.length)
+    expect(wrapper.find('EnumFacetFilter')).toHaveLength(enumFacets.length)
+    expect(wrapper.find('RangeFacetFilter')).toHaveLength(rangeFacets.length)
   })
 })
 
@@ -100,7 +100,7 @@ describe('handling child component callbacks', () => {
       },
     ]
 
-    const enumWrapper = wrapper.find('QueryEnum').at(0)
+    const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
     enumWrapper.simulate('change', 'Ford', true)
   
     expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
@@ -116,7 +116,7 @@ describe('handling child component callbacks', () => {
         min: 1997,
       },
     ]
-    const enumWrapper = wrapper.find('QueryEnum').at(0)
+    const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
     enumWrapper.simulate('clear')
     expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
   })
@@ -137,7 +137,7 @@ describe('handling child component callbacks', () => {
         min: '1997',
       },
     ]
-    const enumWrapper = wrapper.find('QueryRange').at(0)
+    const enumWrapper = wrapper.find('RangeFacetFilter').at(0)
     enumWrapper.simulate('change', ['1997', '1998'])
     expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
   })

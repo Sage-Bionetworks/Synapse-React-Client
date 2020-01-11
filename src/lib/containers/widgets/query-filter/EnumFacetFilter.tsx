@@ -10,7 +10,7 @@ import { UserProfile } from '../../../utils/synapseTypes/UserProfile'
 import { useEffect, useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 
-export type QueryEnumProps = {
+export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
   columnModel: ColumnModel
   token?: string
@@ -83,8 +83,8 @@ function formatFacetValuesForDisplay(
 
 /************* QUERY ENUM CONMPONENT  *************/
 
-export const QueryEnum: React.FunctionComponent<QueryEnumProps> = (
-  props: QueryEnumProps,
+export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = (
+  props: EnumFacetFilterProps,
 ) => {
   const [userArray, setUserArray] = useState<UserProfile[]>([])
   const [entityHeaderArray, setEntityHeaderArray] = useState<EntityHeader[]>([])

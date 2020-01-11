@@ -15,22 +15,22 @@ export enum RadioValuesEnum {
   ANY = '',
 }
 
-export type QueryRangeProps = {
+export type RangeFacetFilterProps = {
   facetResult: FacetColumnResultRange
   columnModel: ColumnModel
   onChange: Function
 }
 
-export type QueryRangeState = {
+export type RangeFacetFilterState = {
   facetResult: FacetColumnResultRange
   columnModel: ColumnModel
 }
 
-export const QueryRange: React.FunctionComponent<QueryRangeProps> = ({
+export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = ({
   facetResult,
   columnModel,
   onChange,
-}: QueryRangeProps) => {
+}: RangeFacetFilterProps) => {
   //const[values, setValues] = useState()
 
   const options = [

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { mount, ReactWrapper, shallow } from 'enzyme'
 import {
-  QueryRange,
-  QueryRangeProps,
-} from '../../../../lib/containers/widgets/query-filter/QueryRange'
+  RangeFacetFilter,
+  RangeFacetFilterProps,
+} from '../../../../lib/containers/widgets/query-filter/RangeFacetFilter'
 import {
   FacetColumnResultRange,
   ColumnModel,
@@ -41,7 +41,7 @@ const columnModel: ColumnModel = {
   name: 'Year',
 }
 
-function createTestProps(overrides?: QueryRangeProps): QueryRangeProps {
+function createTestProps(overrides?: RangeFacetFilterProps): RangeFacetFilterProps {
   return {
     facetResult: intFacetResult,
     columnModel: columnModel,
@@ -51,11 +51,11 @@ function createTestProps(overrides?: QueryRangeProps): QueryRangeProps {
 }
 
 let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
-let props: QueryRangeProps
+let props: RangeFacetFilterProps
 
-function init(overrides?: QueryRangeProps) {
+function init(overrides?: RangeFacetFilterProps) {
   props = createTestProps(overrides)
-  wrapper = mount(<QueryRange {...props} />)
+  wrapper = mount(<RangeFacetFilter {...props} />)
 }
 
 beforeEach(() => init())
@@ -180,7 +180,7 @@ describe('basic function', () => {
       }
 
       init(updatedProps)
-      const wrapperShallow = shallow(<QueryRange {...updatedProps} />)
+      const wrapperShallow = shallow(<RangeFacetFilter {...updatedProps} />)
       const range = wrapperShallow.find('Range')
       range.simulate('change', { min: '22', max: '23' })
       expect(mockCallback).toHaveBeenCalledWith(['22', '23'])

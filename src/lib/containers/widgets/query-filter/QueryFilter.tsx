@@ -1,11 +1,9 @@
 import './QueryFilter.scss'
 import * as React from 'react'
-import { QueryRange } from './QueryRange'
-import { QueryEnum } from './QueryEnum'
-
+import { RangeFacetFilter } from './RangeFacetFilter'
+import { EnumFacetFilter } from './EnumFacetFilter'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import _ from 'lodash'
-
 import {
   FacetColumnResultValues,
   FacetColumnResult,
@@ -16,7 +14,10 @@ import {
   FacetColumnRangeRequest,
   FacetColumnRequest,
 } from '../../../utils/synapseTypes/Table/FacetColumnRequest'
-import { QueryBundleRequest, QueryResultBundle } from '../../../utils/synapseTypes'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '../../../utils/synapseTypes'
 
 export type QueryFilterProps = {
   applyChanges: Function
@@ -60,12 +61,15 @@ const patchRequestFacets = (
     facet => facet.columnName === changedFacet.columnName,
   )
 
-  const isEmptyValuesFacet = (changedFacet.concreteType === 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' && (!changedFacet.facetValues || !changedFacet.facetValues.length))
+  const isEmptyValuesFacet =
+    changedFacet.concreteType ===
+      'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
+    (!changedFacet.facetValues || !changedFacet.facetValues.length)
   if (changedFacetIndex > -1) {
     if (isEmptyValuesFacet) {
       selections.splice(changedFacetIndex, 1)
     } else {
-    selections[changedFacetIndex] = changedFacet
+      selections[changedFacetIndex] = changedFacet
     }
   } else {
     selections.push(changedFacet)
@@ -88,6 +92,7 @@ const applyChangesToValuesColumn = (
       }
     })
   } else {
+    // else clear all
     facet.facetValues.forEach(facet => {
       facet.isSelected = false
     })
@@ -105,26 +110,23 @@ const applyChangesToRangeColumn = (
   onChangeFn: Function,
   values: string[],
 ) => {
-  //console.log('TYPE' + typeof facet)
   facet.columnMin = values[0]
   facet.columnMax = values[1]
-
   const changedFacet = convertFacetColumnRangeRequest(facet)
   const result = patchRequestFacets(changedFacet, lastRequest)
   onChangeFn(result)
 }
 
-export const QueryFilter: React.FunctionComponent<QueryFilterProps> = 
-(
-  {data, isLoading = false, getLastQueryRequest, token, applyChanges} : QueryFilterProps,
-): JSX.Element => {
+export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
+  data,
+  isLoading = false,
+  getLastQueryRequest,
+  token,
+  applyChanges,
+}: QueryFilterProps): JSX.Element => {
   const columnModels = data.columnModels
   const facets = data.facets as FacetColumnResult[]
-  const lastRequest = getLastQueryRequest
-    ? getLastQueryRequest()
-    : undefined
-
-  //console.log(lastRequest && lastRequest.query.selectedFacets)
+  const lastRequest = getLastQueryRequest ? getLastQueryRequest() : undefined
 
   return (
     <div className="queryFilter">
@@ -138,51 +140,43 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> =
           return (
             <div className="queryFilter-facet" key={facet.columnName}>
               <label>{unCamelCase(facet.columnName)}</label>
-
               {facet.facetType === 'enumeration' && columnModel && (
-                <QueryEnum
+                <EnumFacetFilter
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
                   token={token}
-                  onChange={
-           
-                      (facetName: string, checked: boolean) =>
-                          applyChangesToValuesColumn(
-                            lastRequest,
-                            facet as FacetColumnResultValues,
-                            applyChanges,
-                            facetName,
-                            checked,
-                          )
-                
+                  onChange={(facetName: string, checked: boolean) =>
+                    applyChangesToValuesColumn(
+                      lastRequest,
+                      facet as FacetColumnResultValues,
+                      applyChanges,
+                      facetName,
+                      checked,
+                    )
                   }
-                  onClear={
-                    () =>
-                          applyChangesToValuesColumn(
-                            lastRequest,
+                  onClear={() =>
+                    applyChangesToValuesColumn(
+                      lastRequest,
 
-                            facet as FacetColumnResultValues,
-                            applyChanges,
-                          )
-             
+                      facet as FacetColumnResultValues,
+                      applyChanges,
+                    )
                   }
-                ></QueryEnum>
+                ></EnumFacetFilter>
               )}
               {facet.facetType === 'range' && columnModel && (
-                <QueryRange
+                <RangeFacetFilter
                   facetResult={facet as FacetColumnResultRange}
                   columnModel={columnModel}
-                  onChange={
-                    (values: string[]) =>
-                          applyChangesToRangeColumn(
-                            lastRequest,
-                            facet as FacetColumnResultRange,
-                            applyChanges,
-                            values,
-                          )
-                    
+                  onChange={(values: string[]) =>
+                    applyChangesToRangeColumn(
+                      lastRequest,
+                      facet as FacetColumnResultRange,
+                      applyChanges,
+                      values,
+                    )
                   }
-                ></QueryRange>
+                ></RangeFacetFilter>
               )}
             </div>
           )
