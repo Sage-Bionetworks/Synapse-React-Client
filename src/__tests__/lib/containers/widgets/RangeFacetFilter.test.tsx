@@ -31,7 +31,8 @@ const notSetFacetResult: FacetColumnResultRange = {
 
 const rangeFacetResult = {
   ...notSetFacetResult,
-  ...{ selectedMin: '1997', selectedMax: '1998' },
+  selectedMin: '1997',
+  selectedMax: '1998',
 }
 
 const columnModel: ColumnModel = {
@@ -41,7 +42,9 @@ const columnModel: ColumnModel = {
   name: 'Year',
 }
 
-function createTestProps(overrides?: RangeFacetFilterProps): RangeFacetFilterProps {
+function createTestProps(
+  overrides?: RangeFacetFilterProps,
+): RangeFacetFilterProps {
   return {
     facetResult: intFacetResult,
     columnModel: columnModel,
@@ -75,7 +78,7 @@ describe('basic function', () => {
     })
 
     it('should set for not set', () => {
-      init({ ...props, ...{ facetResult: notSetFacetResult } })
+      init({ ...props, facetResult: notSetFacetResult })
       const radios = wrapper.find('input[type="radio"]')
       expect(radios.at(0).props().checked).toBe(true)
       expect(
@@ -87,7 +90,7 @@ describe('basic function', () => {
     })
 
     it('interval', () => {
-      init({ ...props, ...{ facetResult: rangeFacetResult } })
+      init({ ...props, facetResult: rangeFacetResult })
       const radios = wrapper.find('input[type="radio"]')
 
       expect(radios.at(2).props().checked).toBe(true)
@@ -103,30 +106,32 @@ describe('basic function', () => {
   describe('displaying  correct range control', () => {
     const dateColumnModel: ColumnModel = {
       ...columnModel,
-      ...{ columnType: 'DATE' },
+      columnType: 'DATE',
     }
     const doubleColumnModel: ColumnModel = {
       ...columnModel,
-      ...{ columnType: 'DOUBLE' },
+      columnType: 'DOUBLE',
     }
     it('should set for integer', () => {
-      init({ ...props, ...{ facetResult: rangeFacetResult } })
+      init({ ...props, facetResult: rangeFacetResult })
       const slider = wrapper.find('.rangeSlider')
       expect(slider).toHaveLength(1)
     })
     it('should set for date', async () => {
       init({
         ...props,
-        ...{ facetResult: rangeFacetResult, columnModel: dateColumnModel },
+        facetResult: rangeFacetResult,
+        columnModel: dateColumnModel,
       })
       const doubleRange = wrapper.find('.range input[type="date"]')
       expect(doubleRange).toHaveLength(2)
     })
 
-    it('should set for double', async () => {
+    it('should set for double', () => {
       init({
         ...props,
-        ...{ facetResult: rangeFacetResult, columnModel: doubleColumnModel },
+        facetResult: rangeFacetResult,
+        columnModel: doubleColumnModel,
       })
       const doubleRange = wrapper.find('.range input[type="number"]')
       expect(doubleRange).toHaveLength(2)
@@ -171,18 +176,26 @@ describe('basic function', () => {
     it('should update from a range control', () => {
       const dateColumnModel: ColumnModel = {
         ...columnModel,
-        ...{ columnType: 'DATE' },
+        columnType: 'DATE',
       }
 
       const updatedProps = {
         ...props,
-        ...{ facetResult: rangeFacetResult, columnModel: dateColumnModel },
+        facetResult: rangeFacetResult,
+        columnModel: dateColumnModel,
       }
 
       init(updatedProps)
       const wrapperShallow = shallow(<RangeFacetFilter {...updatedProps} />)
       const range = wrapperShallow.find('Range')
       range.simulate('change', { min: '22', max: '23' })
+      expect(mockCallback).toHaveBeenCalledWith(['22', '23'])
+    })
+
+    it('should update from a range  slider control', () => {
+      const wrapperShallow = shallow(<RangeFacetFilter { ...{...props, facetResult: rangeFacetResult} } />)
+      const slider = wrapperShallow.find('RangeSlider')
+      slider.simulate('change', { min: '22', max: '23' })
       expect(mockCallback).toHaveBeenCalledWith(['22', '23'])
     })
   })

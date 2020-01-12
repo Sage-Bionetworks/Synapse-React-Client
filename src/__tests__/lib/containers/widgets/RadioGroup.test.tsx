@@ -61,7 +61,7 @@ describe('basic function', () => {
   })
 
   it('should have correct item changed', () => {
-    init({ ...props, ...{ value: 'value2' } })
+    init({ ...props, value: 'value2' })
     expect(
       wrapper
         .find('input')
@@ -83,7 +83,7 @@ describe('basic function', () => {
   })
 
   it('should not crash without value specified', () => {
-    init({ ...props, ...{ value: undefined } })
+    init({ ...props, value: undefined })
     expect(
       wrapper
         .find('input')

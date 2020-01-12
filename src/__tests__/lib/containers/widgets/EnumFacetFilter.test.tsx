@@ -67,8 +67,7 @@ function generateManyFacetColumnResultValueCounts(): FacetColumnResultValueCount
   for (let i = 0; i < 20; i++) {
     result.push({
       value: `Honda${i}`,
-      count:
-        i === 5 ? 12 : i === 6 ? 1 : Math.floor(Math.random() * Math.floor(10)),
+      count: i === 5 ? 12 : i === 6 ? 1 : Math.floor(Math.random() * 10),
       isSelected: false,
     })
   }
@@ -88,7 +87,9 @@ const resolveAllPending = async (
   )
 }
 
-function createTestProps(overrides?: EnumFacetFilterProps): EnumFacetFilterProps {
+function createTestProps(
+  overrides?: EnumFacetFilterProps,
+): EnumFacetFilterProps {
   return {
     facetValues: stringFacetValues,
     columnModel: columnModel,
@@ -143,9 +144,7 @@ describe('initialization', () => {
 
       init({
         ...props,
-        ...{
-          facetValues,
-        },
+        facetValues,
       })
 
       await resolveAllPending(wrapper)
@@ -160,9 +159,7 @@ describe('initialization', () => {
 
       init({
         ...props,
-        ...{
-          facetValues,
-        },
+        facetValues,
       })
 
       await resolveAllPending(wrapper)
@@ -173,7 +170,8 @@ describe('initialization', () => {
     it('should set labels correctly for ENTITYID type', async () => {
       const entityColumnModel: ColumnModel = {
         ...columnModel,
-        ...{ columnType: 'ENTITYID', name: 'File' },
+        columnType: 'ENTITYID',
+        name: 'File',
       }
 
       const updatedProps = {
@@ -203,15 +201,14 @@ describe('initialization', () => {
   it('should set labels correctly for USERID type', async () => {
     const userColumnModel: ColumnModel = {
       ...columnModel,
-      ...{ columnType: 'USERID', name: 'Users' },
+      columnType: 'USERID',
+      name: 'Users',
     }
 
     const updatedProps = {
       ...props,
-      ...{
-        facetValues: userEntityFacetValues,
-        columnModel: userColumnModel,
-      },
+      facetValues: userEntityFacetValues,
+      columnModel: userColumnModel,
     }
 
     init(updatedProps)

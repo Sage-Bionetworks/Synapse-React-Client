@@ -5,7 +5,6 @@ import { FacetColumnResultRange } from '../../../utils/synapseTypes/Table/FacetC
 import { ColumnModel } from '../../../utils/synapseTypes/Table/ColumnModel'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 
-
 import { RadioGroup } from '../RadioGroup'
 import { useState } from 'react'
 
@@ -31,30 +30,22 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
   columnModel,
   onChange,
 }: RangeFacetFilterProps) => {
-  //const[values, setValues] = useState()
-
   const options = [
     { label: 'Not Set', value: RadioValuesEnum.NOT_SET },
     { label: 'Any', value: RadioValuesEnum.ANY },
     { label: 'Range', value: RadioValuesEnum.RANGE },
   ]
 
-  let {
-    columnMin,
-    columnMax,
-    selectedMin,
-    selectedMax,
-  } = facetResult // the upper bound of the selected range
+  let { columnMin, columnMax, selectedMin, selectedMax } = facetResult // the upper bound of the selected range
 
-  const  hasAnyValue = !selectedMin && !selectedMax
-
+  const hasAnyValue = !selectedMin && !selectedMax
 
   selectedMin = selectedMin || columnMin
- selectedMax = selectedMax || columnMax
+  selectedMax = selectedMax || columnMax
 
   const rangeType = columnModel.columnType === 'DOUBLE' ? 'number' : 'date'
 
-  const getValue = (min: string, max: string, isAnyValue: boolean) => {
+  const getRadioValue = (min: string, isAnyValue: boolean) => {
     if (isAnyValue) {
       return RadioValuesEnum.ANY
     } else if (min === VALUE_NOT_SET) {
@@ -64,45 +55,47 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
   }
 
   const handleRadioGroupChange = (
-    value: RadioValuesEnum,
+    radioValue: RadioValuesEnum,
     onChangeCallback: Function,
   ) => {
-    setValue(value)
+    setRadioValue(radioValue)
 
-    if (value !== RadioValuesEnum.RANGE) {
-      onChangeCallback([value, value])
+    if (radioValue !== RadioValuesEnum.RANGE) {
+      onChangeCallback([radioValue, radioValue])
     }
   }
 
-  const [value, setValue] = useState(getValue(selectedMin, selectedMax, hasAnyValue))
+  const [radioValue, setRadioValue] = useState(getRadioValue(selectedMin, hasAnyValue))
 
   const result = (
     <div>
       <RadioGroup
-        value={value}
+        value={radioValue}
         id="rangeSelector"
         options={options}
-        onChange={(value: RadioValuesEnum) =>
-          handleRadioGroupChange(value, onChange)
+        onChange={(radioValue: RadioValuesEnum) =>
+          handleRadioGroupChange(radioValue, onChange)
         }
       ></RadioGroup>
-      {value === RadioValuesEnum.RANGE &&
+      {radioValue === RadioValuesEnum.RANGE &&
         (columnMin === columnMax ? (
           <label>{columnMax}</label>
         ) : (
-          [
+          <>
             columnModel.columnType === 'INTEGER' && (
               <RangeSlider
                 key="RangeSlider"
                 domain={[columnMin, columnMax]}
-                initialValues={{min: selectedMin, max: selectedMax}}
+                initialValues={{ min: selectedMin, max: selectedMax }}
                 step={1}
                 doUpdateOnApply={true}
-                onChange={(values: RangeValues) => onChange([values.min, values.max])}
+                onChange={(values: RangeValues) =>
+                  onChange([values.min, values.max])
+                }
               >
                 ) >
               </RangeSlider>
-            ),
+            )
 
             (columnModel.columnType === 'DATE' ||
               columnModel.columnType === 'DOUBLE') && (
@@ -118,7 +111,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
                 }
               ></Range>
             ),
-          ]
+        </>
         ))}
     </div>
   )

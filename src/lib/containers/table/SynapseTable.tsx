@@ -353,9 +353,7 @@ export default class SynapseTable extends React.Component<
             <div className="col-xs-12 col-sm-3 col-lg-3">
               {
                 <QueryFilter
-                  {...{
-                    ...this.props,
-                  }}
+                  {...this.props}
                   data={this.props.data!}
                   token={this.props.token!}
                   applyChanges={(newFacets: FacetColumnRequest[])=>this.applyChangesFromQueryFilter(newFacets)}
