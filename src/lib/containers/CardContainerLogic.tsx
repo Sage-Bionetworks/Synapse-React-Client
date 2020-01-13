@@ -10,6 +10,7 @@ import {
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+import isEqual from 'lodash/isEqual'
 
 export interface CardLink {
   baseURL: string
@@ -114,33 +115,18 @@ export default class CardContainerLogic extends React.Component<
    */
   public componentDidUpdate(prevProps: CardContainerLogicProps) {
     /**
-     *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
-     *  sql query has changed of the component then perform an update.
+     *  If token has changed (they signed in) or sql query has changed
+     *  or search params have updated then perform an update.
      */
-
-    if (this.props.token !== '' && prevProps.token === '') {
-      this.executeInitialQueryRequest()
-    }
-    if (prevProps.sql !== this.props.sql) {
-      this.executeInitialQueryRequest()
-    }
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
-    // check if search parameters have changed
-    if (
-      Object.keys(prevSearchParams).length === 0 &&
-      Object.keys(currentSearchParams).length === 0
-    ) {
-      return
-    }
-    const hasSearchParamsChanged =
-      !Object.keys(prevSearchParams).every(el => {
-        return currentSearchParams[el] === prevSearchParams[el]
-      }) ||
-      !Object.keys(currentSearchParams).every(el => {
-        return currentSearchParams[el] === prevSearchParams[el]
-      })
-    if (hasSearchParamsChanged) {
+    const hasSearchParamsChanged = !isEqual(
+      prevSearchParams,
+      currentSearchParams,
+    )
+    const hasTokenChanged = this.props.token !== '' && prevProps.token === ''
+    const hasSqlChanged = this.props.sql !== prevProps.sql
+    if (hasTokenChanged || hasSqlChanged || hasSearchParamsChanged) {
       this.executeInitialQueryRequest()
     }
   }

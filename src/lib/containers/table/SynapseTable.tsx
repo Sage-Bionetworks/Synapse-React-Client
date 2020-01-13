@@ -61,6 +61,7 @@ import {
   ExpandTable,
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
+import { get } from '../../utils/functions/get'
 
 const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -176,11 +177,17 @@ export default class SynapseTable extends React.Component<
     prevProps: QueryWrapperChildProps & SynapseTableProps,
   ) {
     const { data, token } = this.props
-    const previousTableId =
-      prevProps.data && prevProps.data.queryResult.queryResults!.tableId
-    const currentTableId = data && data.queryResult.queryResults!.tableId
-    // only get concreteType if table is defined and has changed
-    if (previousTableId !== currentTableId && currentTableId) {
+    if (!data) {
+      return
+    }
+    const currentTableId = get(data, 'queryResult', 'queryResults', 'tableId')
+    const previousTableId = get(
+      prevProps.data,
+      'queryResult',
+      'queryResults',
+      'tableId',
+    )
+    if (currentTableId && previousTableId !== currentTableId) {
       const entityData = await SynapseClient.getEntity(token, currentTableId)
       this.setState({
         isFileView: entityData.concreteType.includes('EntityView'),

@@ -111,7 +111,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-postprocess": "^1.0.2",
-    "rollup-plugin-scss": "1.0.1",
+    "rollup-plugin-scss": "2.1.0",
     "rollup-plugin-svg": "2.0.0",
     "sinon": "^7.2.2",
     "typescript": "3.5.3",
