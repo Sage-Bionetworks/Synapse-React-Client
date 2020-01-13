@@ -28,7 +28,7 @@ function init(overrides?: DownloadLoginModalProps) {
 beforeEach(() => init())
 
 describe('basic function', () => {
-  it('should render with explanqtory links and without login', () => {
+  it('should render with explanatory links and without login', () => {
     expect(wrapper.find('ModalHeader')).toHaveLength(1)
     expect(wrapper.find('ModalFooter').find('button')).toHaveLength(2)
     expect(
@@ -65,7 +65,6 @@ describe('basic function', () => {
     wrapper = wrapper.update()
     expect(wrapper.find('ModalFooter').find('button')).toHaveLength(1)
     expect(wrapper.find('Login')).toHaveLength(1)
-    const but = wrapper.find('Login').find('button')
     expect(
       wrapper
         .find('Login')

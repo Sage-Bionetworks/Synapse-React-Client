@@ -12,16 +12,18 @@ export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps
   const [showLogin, setShowLogin] = useState(false)
 
   const getModalContent = (isShowLogin: boolean): JSX.Element => {
-    if (!isShowLogin) {
+    if (isShowLogin) {
+      return <Login token={''} theme={'light'} icon={true} />
+    } else {
       return (
         <>
           <p>
-            Anyone can browse public content on the Synapse we site, but in
-            order todownload and create content you will need to register for an
-            account using an email address
+            Anyone can browse public content on the Synapse website, but in
+            order to download and create content you will need to register for
+            an account using an email address.
           </p>
           <p>
-            To find out more see, see{' '}
+            To find out more see&nbsp;
             <a
               href="https://docs.synapse.org/articles/user_profiles.html"
               target="_blank"
@@ -34,12 +36,10 @@ export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps
               target="_blank"
             >
               Governance Overview
-            </a>
+            </a>.
           </p>
         </>
       )
-    } else {
-      return <Login token={''} theme={'light'} icon={true} />
     }
   }
   return (
