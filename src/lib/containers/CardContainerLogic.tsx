@@ -10,7 +10,9 @@ import {
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
-import isEqual from 'lodash/isEqual'
+// TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
+// will have to find a way to use individual lodash packages instead of the entire thing
+import _ from 'lodash'
 
 export interface CardLink {
   baseURL: string
@@ -120,7 +122,7 @@ export default class CardContainerLogic extends React.Component<
      */
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
-    const hasSearchParamsChanged = !isEqual(
+    const hasSearchParamsChanged = _.isEqual(
       prevSearchParams,
       currentSearchParams,
     )
