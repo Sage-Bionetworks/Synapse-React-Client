@@ -124,6 +124,25 @@ export default class CardContainerLogic extends React.Component<
     if (prevProps.sql !== this.props.sql) {
       this.executeInitialQueryRequest()
     }
+    const { searchParams: prevSearchParams = {} } = prevProps
+    const { searchParams: currentSearchParams = {} } = this.props
+    // check if search parameters have changed
+    if (
+      Object.keys(prevSearchParams).length === 0 &&
+      Object.keys(currentSearchParams).length === 0
+    ) {
+      return
+    }
+    const hasSearchParamsChanged =
+      !Object.keys(prevSearchParams).every(el => {
+        return currentSearchParams[el] === prevSearchParams[el]
+      }) ||
+      !Object.keys(currentSearchParams).every(el => {
+        return currentSearchParams[el] === prevSearchParams[el]
+      })
+    if (hasSearchParamsChanged) {
+      this.executeInitialQueryRequest()
+    }
   }
 
   /**
