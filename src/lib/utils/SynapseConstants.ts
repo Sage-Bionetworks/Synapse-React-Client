@@ -25,6 +25,8 @@ export const ENTITY_BUNDLE_MASK_THREAD_COUNT: number = 131072
 export const ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION: number = 262144
 /** Row Types  */
 export const STUDY: string = 'study'
+/** Not set value for query */
+export const VALUE_NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
 // for study icons
 export const STUDY_ACTIVE: string = 'study active'
 export const STUDY_COMPLETE: string = 'study complete'

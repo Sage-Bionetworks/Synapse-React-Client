@@ -35,16 +35,21 @@ describe('basic function', () => {
     expect(wrapper.find('span span').text()).toBe(props.label)
     expect(checkboxProps.checked).toBe(true)
     expect(checkboxProps.id).toBe(props.id)
-    expect(wrapper.find('div').at(0).hasClass('checkboxClass')).toBe(true)
+    expect(
+      wrapper
+        .find('div')
+        .at(0)
+        .hasClass('checkboxClass'),
+    ).toBe(true)
   })
 
   it('should render with correct checked state', () => {
-    init({ ...props, ...{ checked: false } })
+    init({ ...props, checked: false })
     expect(checkboxProps.checked).toBe(false)
   })
 
   it('should call callbackFn on change with correct params and change the value', () => {
-    init({ ...props, ...{ checked: false } })
+    init({ ...props, checked: false })
 
     let event = {
       target: {

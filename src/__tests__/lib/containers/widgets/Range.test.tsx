@@ -64,7 +64,7 @@ describe('number range ', () => {
   })
 
   it('should render without values specified', () => {
-    let noDefaultProps = { ...props, ...{ initialValues: undefined } }
+    let noDefaultProps = { ...props, initialValues: undefined}
     init(noDefaultProps)
     expect(wrapper).toBeDefined()
     expect(
@@ -103,7 +103,7 @@ describe('date range', () => {
     max: new Date(2019, 7, 3).toString(),
   }
   it('should render with correct checked state', () => {
-    init({ ...props, ...{ type: 'date', initialValues: initialValues } })
+    init({ ...props, type: 'date', initialValues: initialValues})
     expect(
       wrapper
         .find('input')
@@ -119,7 +119,7 @@ describe('date range', () => {
   })
 
   it('should render without values specified', () => {
-    let noDefaultProps = { ...props, ...{ initialValues: undefined } }
+    let noDefaultProps = { ...props, initialValues: undefined }
     init(noDefaultProps)
     expect(wrapper).toBeDefined()
     expect(

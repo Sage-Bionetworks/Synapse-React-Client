@@ -75,31 +75,33 @@ export const Range: React.FunctionComponent<RangeProps> = (
   }
 
   return (
-    <div className={className}>
-      <input
-        key="range_min"
-        type={props.type}
-        value={values.min}
-        onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
-          setValues({ min: target.value, max: values.max })
-        }
-      />
-      <div>to</div>
-      <input
-        key="range_max"
-        type={props.type}
-        value={values.max}
-        onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
-          setValues({ min: values.min, max: target.value })
-        }
-      />
-      <button
-        className="btn btn-link"
-        style={{ marginLeft: '10px' }}
-        onClick={() => handleAppyChanges(values, props.onChange, props.type)}
-      >
-        Apply
-      </button>
+    <div className={className} style={{ display: "flex" }}>
+      <div >
+        <input
+          key="range_min"
+          type={props.type}
+          value={values.min}
+          onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+            setValues({ min: target.value, max: values.max })
+          }
+        />
+        <div>to</div>
+        <input
+          key="range_max"
+          type={props.type}
+          value={values.max}
+          onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+            setValues({ min: values.min, max: target.value })
+          }
+        />
+        </div>
+        <button
+          className="btn btn-link"
+          style={{ marginLeft: '10px' }}
+          onClick={() => handleAppyChanges(values, props.onChange, props.type)}
+        >
+          Apply
+        </button>
       {error && (
         <div className="SRC-danger-color">{props.errorText || errorText}</div>
       )}

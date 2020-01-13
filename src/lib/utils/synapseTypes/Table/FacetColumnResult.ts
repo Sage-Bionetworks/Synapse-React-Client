@@ -16,8 +16,8 @@ export interface FacetColumnResultRange extends FacetColumnResult {
   columnName: string // The name of the faceted column
   columnMin: string // the smallest value in the column
   columnMax: string // the largest value in the column
-  selectedMin: string // the lower bound of the selected range
-  selectedMax: string // the upper bound of the selected range
+  selectedMin?: string // the lower bound of the selected range
+  selectedMax?: string // the upper bound of the selected range
 }
 
 export interface FacetColumnResult {
