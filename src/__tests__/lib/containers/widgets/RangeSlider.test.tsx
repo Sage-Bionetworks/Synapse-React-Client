@@ -47,14 +47,14 @@ describe('callbacks', () => {
   })
 
   it('should call the callbackFn on change when doUpdateOnApply is false',  () => {
-    init({...props, ...{doUpdateOnApply: false }})
+    init({...props, doUpdateOnApply: false})
     mockCallback.mockClear()
     wrapper.find('Slider').simulate('change', [2, 10])
     expect(mockCallback).toHaveBeenCalledWith({min:2, max: 10})
   })
  
   it('should allways call callbackFn on Apply', () => {
-    init({...props, ...{doUpdateOnApply: true}})
+    init({...props, doUpdateOnApply: true})
     mockCallback.mockClear()
     wrapper.find('Slider').simulate('change', [2, 10])
     wrapper.find('button').simulate('click')

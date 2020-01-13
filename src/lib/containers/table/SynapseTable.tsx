@@ -3,6 +3,7 @@ import {
   faCheck,
   faColumns,
   faDownload,
+  faCog,
   faFilter,
   faGlobeAmericas,
   faSort,
@@ -38,6 +39,7 @@ import {
   SortItem,
   UserGroupHeader,
   UserProfile,
+  FacetColumnRequest,
 } from '../../utils/synapseTypes/'
 import { getColorPallette } from '../ColorGradient'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
@@ -62,6 +64,7 @@ import {
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
 import { get } from '../../utils/functions/get'
+import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 
 const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -83,6 +86,7 @@ library.add(faSortAmountDown)
 library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
+library.add(faCog)
 library.add(faDownload)
 library.add(faUsers)
 library.add(faGlobeAmericas)
@@ -111,6 +115,7 @@ export type SynapseTableState = {
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
+  isShowLeftFilter?: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -119,6 +124,7 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
   enableDownloadConfirmation?: boolean
+  enableLeftFacetFilter?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -152,6 +158,7 @@ export default class SynapseTable extends React.Component<
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
+      isShowLeftFilter: this.props.enableLeftFacetFilter,
       isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -336,29 +343,54 @@ export default class SynapseTable extends React.Component<
     const { isModalDownloadOpen, isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const { sql, selectedFacets } = queryRequest.query
+
     let className = 'SRC-marginTopMinusTen'
     if (showBarChart) {
       className = 'SRC-marginBottomTop'
     }
     const content = (
       <>
-        <div
-          className={`SRC-centerContent text-left ${className}`}
-          style={{ height: '20px' }}
-        >
-          {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
-            <TotalQueryResults
-              facet={facet}
-              data={data}
-              isLoading={isLoading}
-              style={{ fontSize: 15 }}
-              unitDescription={unitDescription}
-              frontText={'Showing'}
-            />
+        <div className={`row no-gutter ${className}`}>
+          <div
+            className={`SRC-centerContent text-left`}
+            style={{ height: '20px' }}
+          >
+            {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
+              <TotalQueryResults
+                facet={facet}
+                data={data}
+                isLoading={isLoading}
+                style={{ fontSize: 15 }}
+                unitDescription={unitDescription}
+                frontText={'Showing'}
+              />
+            )}
+          </div>
+          {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
+          {this.state.isShowLeftFilter && (
+            <div className="col-xs-12 col-sm-3 col-lg-3">
+              {
+                <QueryFilter
+                  {...this.props}
+                  data={this.props.data!}
+                  token={this.props.token!}
+                  applyChanges={(newFacets: FacetColumnRequest[]) =>
+                    this.applyChangesFromQueryFilter(newFacets)
+                  }
+                />
+              }
+            </div>
           )}
+          <div
+            className={`${
+              this.state.isShowLeftFilter
+                ? 'col-sm-9 col-lg-9 SRC-border-top-only'
+                : ''
+            }`}
+          >
+            {this.renderTable(headers, facets, rows)}
+          </div>
         </div>
-        {this.renderTableTop(headers)}
-        {this.renderTable(headers, facets, rows)}
       </>
     )
     return (
@@ -524,7 +556,10 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderTableTop = (headers: SelectColumn[]) => {
+  private renderTableTop = (
+    headers: SelectColumn[],
+    enableLeftFacetFilter?: boolean,
+  ) => {
     const { title } = this.props
     const { isExpanded, isFileView } = this.state
     const tooltipAdvancedSearchId = 'openAdvancedSearch'
@@ -539,29 +574,84 @@ export default class SynapseTable extends React.Component<
     }
     const queryRequest = this.props.getLastQueryRequest!()
     return (
-      <div className="SRC-centerContent" style={{ background, padding: 8 }}>
+      <div
+        className={`SRC-centerContent${
+          this.state.isShowLeftFilter ? ' SRC-marginBottomTen' : ''
+        }`}
+        style={{ background, padding: 8 }}
+      >
         <h3 className="SRC-tableHeader"> {title}</h3>
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
-              <span
-                tabIndex={0}
-                data-for={tooltipAdvancedSearchId}
-                data-tip="Open Advanced Search in Synapse"
-                className="SRC-primary-background-color-hover SRC-extraPadding"
-                onKeyPress={this.advancedSearch}
-                onClick={this.advancedSearch}
-              >
-                <FontAwesomeIcon size="1x" color="white" icon={'filter'} />
-              </span>
-              <ReactTooltip
-                delayShow={TOOLTIP_DELAY_SHOW}
-                clickable={true}
-                place="top"
-                type="dark"
-                effect="solid"
-                id={tooltipAdvancedSearchId}
-              />
+              {!enableLeftFacetFilter /* old Implementation*/ && (
+                <>
+                  <span
+                    tabIndex={0}
+                    data-for={tooltipAdvancedSearchId}
+                    data-tip="Open Advanced Search in Synapse"
+                    className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                    onKeyPress={this.advancedSearch}
+                    onClick={this.advancedSearch}
+                  >
+                    <FontAwesomeIcon size="1x" color="white" icon={'filter'} />
+                  </span>
+                  <ReactTooltip
+                    delayShow={TOOLTIP_DELAY_SHOW}
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                    id={tooltipAdvancedSearchId}
+                  />
+                </>
+              )}
+              {enableLeftFacetFilter && (
+                /* New Implementation*/ <>
+                  <span
+                    tabIndex={0}
+                    data-for={tooltipAdvancedSearchId}
+                    data-tip="Open Advanced Search in Synapse"
+                    className="SRC-primary-background-color-hover SRC-extraPadding"
+                    onKeyPress={this.advancedSearch}
+                    onClick={this.advancedSearch}
+                  >
+                    <FontAwesomeIcon size="1x" color="white" icon={'cog'} />
+                  </span>
+                  <ReactTooltip
+                    delayShow={TOOLTIP_DELAY_SHOW}
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                    id={tooltipAdvancedSearchId}
+                  />
+                  <span
+                    tabIndex={0}
+                    data-for={tooltipAdvancedSearchId}
+                    data-tip="Open Filter"
+                    className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
+                    onKeyPress={() =>
+                      this.setState({
+                        isShowLeftFilter: !this.state.isShowLeftFilter,
+                      })
+                    }
+                    onClick={() =>
+                      this.setState({
+                        isShowLeftFilter: !this.state.isShowLeftFilter,
+                      })
+                    }
+                  >
+                    <FontAwesomeIcon size="1x" color="white" icon={'filter'} />
+                  </span>
+                  <ReactTooltip
+                    delayShow={TOOLTIP_DELAY_SHOW}
+                    clickable={true}
+                    place="top"
+                    type="dark"
+                    effect="solid"
+                    id={tooltipAdvancedSearchId}
+                  />
+                </>
+              )}
               {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}
             </>
@@ -1005,6 +1095,7 @@ export default class SynapseTable extends React.Component<
                 </span>
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
+                    !this.props.enableLeftFacetFilter &&
                     this.configureFacetDropdown(facets, facetIndex)}
                   <span
                     tabIndex={0}
@@ -1155,6 +1246,12 @@ export default class SynapseTable extends React.Component<
         facetColumnResult={facetColumnResult}
       />
     )
+  }
+
+  public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
+    const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
+    queryRequest.query.selectedFacets = facets
+    this.props.executeQueryRequest!(queryRequest)
   }
 
   /**
