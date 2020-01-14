@@ -63,7 +63,6 @@ import {
   ExpandTable,
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
-import { get } from '../../utils/functions/get'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 
 const EMPTY_HEADER: EntityHeader = {
@@ -187,13 +186,8 @@ export default class SynapseTable extends React.Component<
     if (!data) {
       return
     }
-    const currentTableId = get(data, 'queryResult', 'queryResults', 'tableId')
-    const previousTableId = get(
-      prevProps.data,
-      'queryResult',
-      'queryResults',
-      'tableId',
-    )
+    const currentTableId = data?.queryResult.queryResults.tableId
+    const previousTableId = prevProps.data?.queryResult.queryResults.tableId
     if (currentTableId && previousTableId !== currentTableId) {
       const entityData = await SynapseClient.getEntity(token, currentTableId)
       this.setState({

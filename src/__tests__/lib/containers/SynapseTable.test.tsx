@@ -37,6 +37,7 @@ const createShallowComponent = (
 }
 
 describe('basic functionality', () => {
+  const SynapseClient = require('../../../lib/utils/SynapseClient')
   // setup tests
   const title = 'studies'
   const synapseId = 'syn16787123'
@@ -100,6 +101,24 @@ describe('basic functionality', () => {
   it('renders without crashing', async () => {
     const { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
+  })
+
+  it('updates correctly', async () => {
+    const { wrapper } = createShallowComponent(props)
+    expect(wrapper).toBeDefined()
+    const newTableId = 'syn123'
+    // setup data
+    const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
+    dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
+    // listen to function call
+    const mockEntityCall = jest.fn().mockResolvedValue({
+      concreteType: 'EntityView',
+    })
+    SynapseClient.getEntity = mockEntityCall
+    await wrapper.setProps({
+      data: dataWithNewTableId,
+    })
+    expect(mockEntityCall).toHaveBeenCalledWith(undefined, newTableId)
   })
 
   describe('unCamelCase', () => {

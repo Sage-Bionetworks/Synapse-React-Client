@@ -126,9 +126,10 @@ export default class CardContainerLogic extends React.Component<
       prevSearchParams,
       currentSearchParams,
     )
-    const hasTokenChanged = this.props.token !== '' && prevProps.token === ''
+    const hasTokenBeenAquired =
+      this.props.token !== '' && prevProps.token === ''
     const hasSqlChanged = this.props.sql !== prevProps.sql
-    if (hasTokenChanged || hasSqlChanged || hasSearchParamsChanged) {
+    if (hasTokenBeenAquired || hasSqlChanged || hasSearchParamsChanged) {
       this.executeInitialQueryRequest()
     }
   }
