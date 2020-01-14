@@ -4,11 +4,15 @@ import { ImageButtonWithTooltip } from '../../../../lib/containers/widgets/Image
 import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 const mockCallback = jest.fn()
-type ImageButtonWithTooltipProps = React.ComponentProps<typeof ImageButtonWithTooltip>
+type ImageButtonWithTooltipProps = React.ComponentProps<
+  typeof ImageButtonWithTooltip
+>
 
 afterEach(cleanup)
 
-function createTestProps(overrides?: ImageButtonWithTooltipProps): ImageButtonWithTooltipProps {
+function createTestProps(
+  overrides?: ImageButtonWithTooltipProps,
+): ImageButtonWithTooltipProps {
   return {
     image: faCheck,
     callbackFn: mockCallback,
@@ -37,9 +41,8 @@ describe('basic function', () => {
     expect(imageButton.attributes['data-for'].value).toBe(
       container.getElementsByTagName('div').item(0)!.id,
     )
-    expect(container.children.item(0)!.attributes['data-tip'].value).toBe(
-      props.tooltipText,
-    )
+    expect(imageButton.attributes['data-tip'].value).toBe(props.tooltipText)
+    expect(imageButton.classList.contains('dropdown-toggle')).toBe(false)
   })
 
   it('should render with correct properties for icon and custom image', () => {
@@ -66,11 +69,15 @@ describe('basic function', () => {
     expect(imageButton.getElementsByTagName('img').item(0)!.alt).toContain(
       (props_.image as { svgImg: string; altText: string }).altText,
     )
+    expect(imageButton.classList.contains('dropdown-toggle')).toBe(false)
   })
 
-  it('should call the callback Fn', async () => {
-    const iconButton = container.getElementsByTagName('button').item(0)!
-    fireEvent.click(iconButton!)
+  it('should create dropdown toggle element without callbackFn passed in', () => {
+    init({ ...props, callbackFn: undefined })
+    expect(imageButton.classList.contains('dropdown-toggle')).toBe(true)
+  })
+  it('should call the callback Fn', () => {
+    fireEvent.click(imageButton)
     expect(mockCallback).toHaveBeenCalled()
   })
 })

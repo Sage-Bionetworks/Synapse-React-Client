@@ -12,11 +12,10 @@ type CustomImageProps = {
 
 type ImageButtonWithTooltipProps = {
   image: IconDefinition | CustomImageProps
-  callbackFn: Function
+  callbackFn?: Function
   tooltipText: string
   cssClass?: string
   idForToolTip: string
-  isDropdownToggle?: boolean
 }
 
 export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipProps> = ({
@@ -25,7 +24,6 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
   callbackFn,
   tooltipText,
   cssClass,
-  isDropdownToggle,
 }) => {
   var buttonImage = <></>
   if ('svgImg' in image) {
@@ -33,17 +31,8 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
   } else {
     buttonImage = <FontAwesomeIcon size="1x" color="white" icon={image} />
   }
-
-  const button = isDropdownToggle ? (
-    <Dropdown.Toggle
-      data-for={idForToolTip}
-      data-tip={tooltipText}
-      id={idForToolTip}
-      variant={'light'}
-    >
-      {buttonImage}
-    </Dropdown.Toggle>
-  ) : (
+  //if there is no callbackFn - assume it's a toggle
+  const button = callbackFn ? (
     <button
       style={{ padding: '0 5px 0 5px' }}
       tabIndex={0}
@@ -57,6 +46,15 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
     >
       {buttonImage}
     </button>
+  ) : (
+    <Dropdown.Toggle
+      data-for={idForToolTip}
+      data-tip={tooltipText}
+      id={idForToolTip}
+      variant={'light'}
+    >
+      {buttonImage}
+    </Dropdown.Toggle>
   )
 
   return (

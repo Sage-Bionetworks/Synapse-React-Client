@@ -24,9 +24,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
     <React.Fragment>
       <Dropdown style={{ padding: 0 }}>
         <ImageButtonWithTooltip
-          isDropdownToggle={true}
           idForToolTip={tooltipDownloadId}
-          callbackFn={() => null}
           tooltipText={'Download Options'}
           image={faDownload}
         ></ImageButtonWithTooltip>

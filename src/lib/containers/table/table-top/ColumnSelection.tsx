@@ -42,9 +42,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       show={show}
     >
       <ImageButtonWithTooltip
-        isDropdownToggle={true}
         idForToolTip={tooltipColumnSelectionId}
-        callbackFn={() => null}
         tooltipText={'Add / Remove Columns'}
         image={{
           svgImg: ColumnsSvg,

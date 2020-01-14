@@ -32,9 +32,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
     <>
       <Dropdown style={{ padding: 0 }}>
         <ImageButtonWithTooltip
-          isDropdownToggle={true}
           idForToolTip={tooltipEllipsis}
-          callbackFn={() => null}
           tooltipText={'Table Options'}
           image={faEllipsisV}
         ></ImageButtonWithTooltip>
