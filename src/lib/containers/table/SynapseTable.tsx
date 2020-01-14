@@ -1,8 +1,10 @@
+import { ImageButtonWithTooltip } from '../widgets/ImageButtonWithTooltip'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
   faColumns,
   faDownload,
+  faCog,
   faFilter,
   faGlobeAmericas,
   faSort,
@@ -14,7 +16,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import { Dropdown, Modal } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
 import { cloneDeep } from '../../utils/functions'
@@ -38,6 +39,7 @@ import {
   SortItem,
   UserGroupHeader,
   UserProfile,
+  FacetColumnRequest,
 } from '../../utils/synapseTypes/'
 import { getColorPallette } from '../ColorGradient'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
@@ -49,11 +51,7 @@ import { FacetSelection, QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCard from '../UserCard'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
-import {
-  ICON_STATE,
-  SELECT_ALL,
-  TOOLTIP_DELAY_SHOW,
-} from './SynapseTableConstants'
+import { ICON_STATE, SELECT_ALL } from './SynapseTableConstants'
 import {
   ColumnSelection,
   DownloadOptions,
@@ -61,6 +59,7 @@ import {
   ExpandTable,
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
+import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 
 const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -82,6 +81,7 @@ library.add(faSortAmountDown)
 library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
+library.add(faCog)
 library.add(faDownload)
 library.add(faUsers)
 library.add(faGlobeAmericas)
@@ -106,9 +106,11 @@ export type SynapseTableState = {
   isModalDownloadOpen: boolean
   isDownloadConfirmationOpen: boolean
   isExpanded: boolean
+  isFileView: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
+  isShowLeftFilter?: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -117,6 +119,7 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
   enableDownloadConfirmation?: boolean
+  enableLeftFacetFilter?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -150,6 +153,8 @@ export default class SynapseTable extends React.Component<
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
+      isShowLeftFilter: this.props.enableLeftFacetFilter,
+      isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -165,8 +170,26 @@ export default class SynapseTable extends React.Component<
     this.getEntityHeadersInData()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData()
+    this.getTableConcreteType(prevProps)
+  }
+
+  public async getTableConcreteType(
+    prevProps: QueryWrapperChildProps & SynapseTableProps,
+  ) {
+    const { data, token } = this.props
+    if (!data) {
+      return
+    }
+    const currentTableId = data?.queryResult.queryResults.tableId
+    const previousTableId = prevProps.data?.queryResult.queryResults.tableId
+    if (currentTableId && previousTableId !== currentTableId) {
+      const entityData = await SynapseClient.getEntity(token, currentTableId)
+      this.setState({
+        isFileView: entityData.concreteType.includes('EntityView'),
+      })
+    }
   }
 
   public async getEntityHeadersInData() {
@@ -310,29 +333,56 @@ export default class SynapseTable extends React.Component<
     const { isModalDownloadOpen, isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
     const { sql, selectedFacets } = queryRequest.query
+
     let className = 'SRC-marginTopMinusTen'
     if (showBarChart) {
       className = 'SRC-marginBottomTop'
     }
     const content = (
       <>
-        <div
-          className={`SRC-centerContent text-left ${className}`}
-          style={{ height: '20px' }}
-        >
-          {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
-            <TotalQueryResults
-              facet={facet}
-              data={data}
-              isLoading={isLoading}
-              style={{ fontSize: 15 }}
-              unitDescription={unitDescription}
-              frontText={'Showing'}
-            />
+        <div className={className}>
+          <div
+            className={`SRC-centerContent text-left`}
+            style={{ height: '20px' }}
+          >
+            {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
+              <TotalQueryResults
+                facet={facet}
+                data={data}
+                isLoading={isLoading}
+                style={{ fontSize: 15 }}
+                unitDescription={unitDescription}
+                frontText={'Showing'}
+              />
+            )}
+          </div>
+          {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
+          <div className="row ">
+          {this.state.isShowLeftFilter && (
+            <div className="col-xs-12 col-sm-3 col-lg-3">
+              {
+                <QueryFilter
+                  {...this.props}
+                  data={this.props.data!}
+                  token={this.props.token!}
+                  applyChanges={(newFacets: FacetColumnRequest[]) =>
+                    this.applyChangesFromQueryFilter(newFacets)
+                  }
+                />
+              }
+            </div>
           )}
+          <div
+            className={`${
+              this.state.isShowLeftFilter
+                ? 'col-xs-12 col-sm-9 col-lg-9'
+                : 'col-xs-12'
+            }`}
+          >
+            {this.renderTable(headers, facets, rows)}
+            </div>
+          </div>
         </div>
-        {this.renderTableTop(headers)}
-        {this.renderTable(headers, facets, rows)}
       </>
     )
     return (
@@ -373,7 +423,7 @@ export default class SynapseTable extends React.Component<
     _event: React.MouseEvent<HTMLAnchorElement>,
   ) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
-    const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
+    const queryCopy = this.props.getLastQueryRequest!().query
     const parsed = this.getSqlUnderlyingDataForRow(selectedRow, queryCopy.sql)
     queryCopy.sql = parsed.newSql
     const queryJSON = JSON.stringify(queryCopy)
@@ -386,7 +436,7 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderDropdownDownloadOptions = () => {
+  private renderDropdownDownloadOptions = (isFileView?: boolean) => {
     const partialState = {
       isModalDownloadOpen: true,
       isExpanded: false,
@@ -396,6 +446,7 @@ export default class SynapseTable extends React.Component<
         onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
         isUnauthenticated={!this.props.token}
+        isFileView={isFileView}
       />
     )
   }
@@ -497,10 +548,12 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderTableTop = (headers: SelectColumn[]) => {
+  private renderTableTop = (
+    headers: SelectColumn[],
+    enableLeftFacetFilter?: boolean,
+  ) => {
     const { title } = this.props
-    const { isExpanded } = this.state
-    const tooltipAdvancedSearchId = 'openAdvancedSearch'
+    const { isExpanded, isFileView } = this.state
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
     const onDownloadTableOnlyArguments = {
@@ -512,30 +565,45 @@ export default class SynapseTable extends React.Component<
     }
     const queryRequest = this.props.getLastQueryRequest!()
     return (
-      <div className="SRC-centerContent" style={{ background, padding: 8 }}>
+      <div
+        className={`SRC-centerContent${
+          this.state.isShowLeftFilter ? ' SRC-marginBottomTen' : ''
+        }`}
+        style={{ background, padding: 8 }}
+      >
         <h3 className="SRC-tableHeader"> {title}</h3>
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
-              <span
-                tabIndex={0}
-                data-for={tooltipAdvancedSearchId}
-                data-tip="Open Advanced Search in Synapse"
-                className="SRC-primary-background-color-hover SRC-extraPadding"
-                onKeyPress={this.advancedSearch}
-                onClick={this.advancedSearch}
-              >
-                <FontAwesomeIcon size="1x" color="white" icon={'filter'} />
-              </span>
-              <ReactTooltip
-                delayShow={TOOLTIP_DELAY_SHOW}
-                clickable={true}
-                place="top"
-                type="dark"
-                effect="solid"
-                id={tooltipAdvancedSearchId}
-              />
-              {this.renderDropdownDownloadOptions()}
+              {!enableLeftFacetFilter /* without filter flag*/ && (
+                <ImageButtonWithTooltip
+                  idForToolTip={'advancedSearch'}
+                  image={faFilter}
+                  callbackFn={this.advancedSearch}
+                  tooltipText={'Open Advanced Search in Synapse'}
+                />
+              )}
+              {enableLeftFacetFilter && (
+                <>
+                  <ImageButtonWithTooltip
+                    idForToolTip={'advancedSearch'}
+                    image={faCog}
+                    callbackFn={this.advancedSearch}
+                    tooltipText={'Open Advanced Search in Synapse'}
+                  />
+                  <ImageButtonWithTooltip
+                    idForToolTip={'filter'}
+                    image={faFilter}
+                    callbackFn={() =>
+                      this.setState({
+                        isShowLeftFilter: !this.state.isShowLeftFilter,
+                      })
+                    }
+                    tooltipText={'Toggle Search Panel'}
+                  />
+                </>
+              )}
+              {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}
             </>
           )}
@@ -554,6 +622,7 @@ export default class SynapseTable extends React.Component<
           isExpanded={isExpanded}
           isUnauthenticated={!this.props.token}
           isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
+          isFileView={this.state.isFileView}
         />
       </div>
     )
@@ -977,6 +1046,7 @@ export default class SynapseTable extends React.Component<
                 </span>
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
+                    !this.props.enableLeftFacetFilter &&
                     this.configureFacetDropdown(facets, facetIndex)}
                   <span
                     tabIndex={0}
@@ -1127,6 +1197,12 @@ export default class SynapseTable extends React.Component<
         facetColumnResult={facetColumnResult}
       />
     )
+  }
+
+  public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
+    const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
+    queryRequest.query.selectedFacets = facets
+    this.props.executeQueryRequest!(queryRequest)
   }
 
   /**

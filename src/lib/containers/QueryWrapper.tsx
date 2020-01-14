@@ -144,7 +144,7 @@ export default class QueryWrapper extends React.Component<
     } else if (
       prevProps.initQueryRequest.query.sql !==
       this.props.initQueryRequest!.query.sql
-      ) {
+    ) {
       this.executeInitialQueryRequest()
     }
   }

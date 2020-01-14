@@ -47,6 +47,7 @@ class Demo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           title: 'title',
           enableDownloadConfirmation: true,
+          enableLeftFacetFilter: true
         },
         entityId: 'syn16787123',
         menuConfig: [
@@ -73,7 +74,7 @@ class Demo extends React.Component<{}, DemoState> {
 
           {
             facet: 'model',
-            sql: 'SELECT * FROM syn21450294',
+            sql: 'SELECT * FROM syn21498718',
           },
          
         ],

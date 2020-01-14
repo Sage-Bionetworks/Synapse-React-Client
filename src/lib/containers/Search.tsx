@@ -25,6 +25,7 @@ type SearchState = {
   show: boolean
   searchText: string
   submittedSearchText: string
+  lastSearchedFacet: string
 }
 export type Searchable = {
   columnName: string
@@ -39,6 +40,8 @@ export type SearchProps = {
 type InternalSearchProps = QueryWrapperChildProps & SearchProps
 
 class Search extends React.Component<InternalSearchProps, SearchState> {
+  public inputRef: React.RefObject<HTMLInputElement>
+
   constructor(props: InternalSearchProps) {
     super(props)
     this.state = {
@@ -46,7 +49,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       show: false,
       searchText: '',
       submittedSearchText: '',
+      lastSearchedFacet: '',
     }
+    this.inputRef = React.createRef()
   }
 
   componentDidUpdate(prevProps: InternalSearchProps) {
@@ -64,6 +69,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   public setDropdownIndex = (index: number) => (_: React.SyntheticEvent) => {
+    this.inputRef.current && this.inputRef.current.focus()
     this.setState({
       dropdownIndex: index,
       show: false,
@@ -152,6 +158,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     lastQueryRequestDeepCopy.query.sql = newSql
     this.setState({
       submittedSearchText: searchText,
+      lastSearchedFacet: searchItem.columnName,
     })
     this.props.executeQueryRequest!(lastQueryRequestDeepCopy)
   }
@@ -171,7 +178,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       unitDescription = '',
       facetAliases = {},
     } = this.props
-    const { show, dropdownIndex, searchText, submittedSearchText } = this.state
+    const {
+      show,
+      dropdownIndex,
+      searchText,
+      submittedSearchText,
+      lastSearchedFacet,
+    } = this.state
     const searchableItem = searchable[dropdownIndex]
     const containerStyle: React.CSSProperties = {
       border: '1px solid #DCDCDC',
@@ -217,10 +230,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const curFacetDisplayText =
       facetAliases[searchableItem.columnName] ||
       unCamelCase(searchableItem.columnName)
-    let usedUnitDescription = unitDescription
-    if (submittedSearchText !== '') {
-      usedUnitDescription = `${unitDescription} containing "${submittedSearchText}" in ${curFacetDisplayText}`
-    }
+    const lastSearchedFacetDisplayText =
+      facetAliases[lastSearchedFacet] || unCamelCase(lastSearchedFacet)
+    const usedUnitDescription = submittedSearchText
+      ? `${unitDescription} containing "${submittedSearchText}" in ${lastSearchedFacetDisplayText}`
+      : unitDescription
     return (
       <div>
         <p>
@@ -288,6 +302,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
               <input
                 placeholder={`e.g. "${searchableItem.hintText}"`}
                 style={inputStyle}
+                ref={this.inputRef}
                 onChange={this.handleChange}
                 value={searchText}
                 type="text"

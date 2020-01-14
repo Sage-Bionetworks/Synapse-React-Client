@@ -39,6 +39,10 @@ body * {
   margin: 0px;
 }
 
+.SRC-noPadding {
+  padding: 0px;
+}
+
 .SRC-floatLeft,
 .wp-block-image .alignleft {
   float: left;
@@ -61,7 +65,7 @@ body * {
 }
 
 .table > thead.SRC_bordered th {
-  border: 1px solid #dddddd;
+  border: 1px solid #dddddd !important;
 }
 
 .SRC-facets {
