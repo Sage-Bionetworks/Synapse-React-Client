@@ -340,7 +340,7 @@ export default class SynapseTable extends React.Component<
     }
     const content = (
       <>
-        <div className={`row no-gutter ${className}`}>
+        <div className={className}>
           <div
             className={`SRC-centerContent text-left`}
             style={{ height: '20px' }}
@@ -357,6 +357,7 @@ export default class SynapseTable extends React.Component<
             )}
           </div>
           {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
+          <div className="row ">
           {this.state.isShowLeftFilter && (
             <div className="col-xs-12 col-sm-3 col-lg-3">
               {
@@ -374,11 +375,12 @@ export default class SynapseTable extends React.Component<
           <div
             className={`${
               this.state.isShowLeftFilter
-                ? 'col-sm-9 col-lg-9 SRC-border-top-only'
-                : ''
+                ? 'col-xs-12 col-sm-9 col-lg-9'
+                : 'col-xs-12'
             }`}
           >
             {this.renderTable(headers, facets, rows)}
+            </div>
           </div>
         </div>
       </>
