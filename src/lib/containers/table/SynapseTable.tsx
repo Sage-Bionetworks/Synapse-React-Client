@@ -1,3 +1,4 @@
+import { ImageButtonWithTooltip } from '../widgets/ImageButtonWithTooltip'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -15,7 +16,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import { Dropdown, Modal } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
 import { cloneDeep } from '../../utils/functions'
@@ -51,11 +51,7 @@ import { FacetSelection, QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCard from '../UserCard'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
-import {
-  ICON_STATE,
-  SELECT_ALL,
-  TOOLTIP_DELAY_SHOW,
-} from './SynapseTableConstants'
+import { ICON_STATE, SELECT_ALL } from './SynapseTableConstants'
 import {
   ColumnSelection,
   DownloadOptions,
@@ -556,7 +552,6 @@ export default class SynapseTable extends React.Component<
   ) => {
     const { title } = this.props
     const { isExpanded, isFileView } = this.state
-    const tooltipAdvancedSearchId = 'openAdvancedSearch'
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
     const onDownloadTableOnlyArguments = {
@@ -578,71 +573,31 @@ export default class SynapseTable extends React.Component<
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
-              {!enableLeftFacetFilter /* old Implementation*/ && (
-                <>
-                  <span
-                    tabIndex={0}
-                    data-for={tooltipAdvancedSearchId}
-                    data-tip="Open Advanced Search in Synapse"
-                    className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                    onKeyPress={this.advancedSearch}
-                    onClick={this.advancedSearch}
-                  >
-                    <FontAwesomeIcon size="1x" color="white" icon={'filter'} />
-                  </span>
-                  <ReactTooltip
-                    delayShow={TOOLTIP_DELAY_SHOW}
-                    place="top"
-                    type="dark"
-                    effect="solid"
-                    id={tooltipAdvancedSearchId}
-                  />
-                </>
+              {!enableLeftFacetFilter /* without filter flag*/ && (
+                <ImageButtonWithTooltip
+                  idForToolTip={'advancedSearch'}
+                  image={faFilter}
+                  callbackFn={this.advancedSearch}
+                  tooltipText={'Open Advanced Search in Synapse'}
+                />
               )}
               {enableLeftFacetFilter && (
-                /* New Implementation*/ <>
-                  <span
-                    tabIndex={0}
-                    data-for={tooltipAdvancedSearchId}
-                    data-tip="Open Advanced Search in Synapse"
-                    className="SRC-primary-background-color-hover SRC-extraPadding"
-                    onKeyPress={this.advancedSearch}
-                    onClick={this.advancedSearch}
-                  >
-                    <FontAwesomeIcon size="1x" color="white" icon={'cog'} />
-                  </span>
-                  <ReactTooltip
-                    delayShow={TOOLTIP_DELAY_SHOW}
-                    place="top"
-                    type="dark"
-                    effect="solid"
-                    id={tooltipAdvancedSearchId}
+                <>
+                  <ImageButtonWithTooltip
+                    idForToolTip={'advancedSearch'}
+                    image={faCog}
+                    callbackFn={this.advancedSearch}
+                    tooltipText={'Open Advanced Search in Synapse'}
                   />
-                  <span
-                    tabIndex={0}
-                    data-for={tooltipAdvancedSearchId}
-                    data-tip="Open Filter"
-                    className="SRC-primary-background-color-hover SRC-extraPadding SRC-hand-cursor"
-                    onKeyPress={() =>
+                  <ImageButtonWithTooltip
+                    idForToolTip={'filter'}
+                    image={faFilter}
+                    callbackFn={() =>
                       this.setState({
                         isShowLeftFilter: !this.state.isShowLeftFilter,
                       })
                     }
-                    onClick={() =>
-                      this.setState({
-                        isShowLeftFilter: !this.state.isShowLeftFilter,
-                      })
-                    }
-                  >
-                    <FontAwesomeIcon size="1x" color="white" icon={'filter'} />
-                  </span>
-                  <ReactTooltip
-                    delayShow={TOOLTIP_DELAY_SHOW}
-                    clickable={true}
-                    place="top"
-                    type="dark"
-                    effect="solid"
-                    id={tooltipAdvancedSearchId}
+                    tooltipText={'Toggle Search Panel'}
                   />
                 </>
               )}

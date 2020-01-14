@@ -1,11 +1,9 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTableConstants'
 import { DownloadLoginModal } from './DownloadLoginModal'
-import ReactTooltip from 'react-tooltip'
 
 library.add(faEllipsisV)
 
@@ -32,15 +30,14 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
   const [showModal, setShowModal] = React.useState(false)
   return (
     <>
-      <Dropdown>
-        <Dropdown.Toggle
-          data-for={tooltipEllipsis}
-          data-tip="Table Options"
-          id={tooltipEllipsis}
-          variant={'light'}
-        >
-          <FontAwesomeIcon color="white" icon={'ellipsis-v'} />
-        </Dropdown.Toggle>
+      <Dropdown style={{ padding: 0 }}>
+        <ImageButtonWithTooltip
+          isDropdownToggle={true}
+          idForToolTip={tooltipEllipsis}
+          callbackFn={() => null}
+          tooltipText={'Table Options'}
+          image={faEllipsisV}
+        ></ImageButtonWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
@@ -74,13 +71,6 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place="top"
-        type="dark"
-        effect="solid"
-        id={tooltipEllipsis}
-      />
       {showModal && (
         <DownloadLoginModal
           showModal={showModal}

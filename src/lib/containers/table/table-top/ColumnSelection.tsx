@@ -1,10 +1,9 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColumnsSvg from '../../../assets/icons/columns.svg'
-import ReactTooltip from 'react-tooltip'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTableConstants'
 
 type ColumnSelectionProps = {
   headers: SelectColumn[]
@@ -36,19 +35,23 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
   } = props
   return (
     <Dropdown
+      style={{ padding: 0 }}
       onToggle={(show: boolean, event: any, metadata: any) =>
         onToggle(show, event, metadata)
       }
       show={show}
     >
-      <Dropdown.Toggle
-        data-for={tooltipColumnSelectionId}
-        id={tooltipColumnSelectionId}
-        data-tip="Add / Remove Columns"
-        variant="light"
-      >
-        <img alt="columns selection" src={ColumnsSvg} />
-      </Dropdown.Toggle>
+      <ImageButtonWithTooltip
+        isDropdownToggle={true}
+        idForToolTip={tooltipColumnSelectionId}
+        callbackFn={() => null}
+        tooltipText={'Add / Remove Columns'}
+        image={{
+          svgImg: ColumnsSvg,
+          altText: 'columns selection',
+        }}
+      ></ImageButtonWithTooltip>
+
       {/* There's a known issue if the number of dropdown items is very large, ~30+, the dropdown
           will unexpectedly render with the list going upwards instead of downwards.
         */}
@@ -88,13 +91,6 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
           )
         })}
       </Dropdown.Menu>
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place="top"
-        type="dark"
-        effect="solid"
-        id={tooltipColumnSelectionId}
-      />
     </Dropdown>
   )
 }
