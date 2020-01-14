@@ -1,9 +1,8 @@
 import { DownloadLoginModal } from './DownloadLoginModal'
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { TOOLTIP_DELAY_SHOW } from '../SynapseTableConstants'
-import ReactTooltip from 'react-tooltip'
+import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
+import { faDownload } from '@fortawesome/free-solid-svg-icons'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
@@ -23,15 +22,12 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
 
   return (
     <React.Fragment>
-      <Dropdown style={{ padding: 5 }}>
-        <Dropdown.Toggle
-          data-for={tooltipDownloadId}
-          data-tip="Download Options"
-          variant={'light'}
-          id="dropdown-download-options-button"
-        >
-          <FontAwesomeIcon size="1x" color="white" icon="download" />
-        </Dropdown.Toggle>
+      <Dropdown style={{ padding: 0 }}>
+        <ImageButtonWithTooltip
+          idForToolTip={tooltipDownloadId}
+          tooltipText={'Download Options'}
+          image={faDownload}
+        ></ImageButtonWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
@@ -53,13 +49,6 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           )}
         </Dropdown.Menu>
       </Dropdown>
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place="top"
-        type="dark"
-        effect="solid"
-        id={tooltipDownloadId}
-      />
       {showModal && (
         <DownloadLoginModal
           showModal={showModal}
