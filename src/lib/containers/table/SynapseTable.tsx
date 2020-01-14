@@ -157,7 +157,7 @@ export default class SynapseTable extends React.Component<
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
-      isShowLeftFilter : this.props.enableLeftFacetFilter,
+      isShowLeftFilter: this.props.enableLeftFacetFilter,
       isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -174,8 +174,26 @@ export default class SynapseTable extends React.Component<
     this.getEntityHeadersInData()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData()
+    this.getTableConcreteType(prevProps)
+  }
+
+  public async getTableConcreteType(
+    prevProps: QueryWrapperChildProps & SynapseTableProps,
+  ) {
+    const { data, token } = this.props
+    if (!data) {
+      return
+    }
+    const currentTableId = data?.queryResult.queryResults.tableId
+    const previousTableId = prevProps.data?.queryResult.queryResults.tableId
+    if (currentTableId && previousTableId !== currentTableId) {
+      const entityData = await SynapseClient.getEntity(token, currentTableId)
+      this.setState({
+        isFileView: entityData.concreteType.includes('EntityView'),
+      })
+    }
   }
 
   public async getEntityHeadersInData() {
@@ -183,12 +201,6 @@ export default class SynapseTable extends React.Component<
     if (!data) {
       return
     }
-
-    const { concreteType } = await SynapseClient.getEntity(
-      token!,
-      data.queryResult.queryResults.tableId,
-    )
-    this.setState({ isFileView: concreteType.includes('EntityView') })
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
@@ -356,7 +368,9 @@ export default class SynapseTable extends React.Component<
                   {...this.props}
                   data={this.props.data!}
                   token={this.props.token!}
-                  applyChanges={(newFacets: FacetColumnRequest[])=>this.applyChangesFromQueryFilter(newFacets)}
+                  applyChanges={(newFacets: FacetColumnRequest[]) =>
+                    this.applyChangesFromQueryFilter(newFacets)
+                  }
                 />
               }
             </div>
@@ -411,7 +425,7 @@ export default class SynapseTable extends React.Component<
     _event: React.MouseEvent<HTMLAnchorElement>,
   ) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
-    const queryCopy = cloneDeep(this.props.getLastQueryRequest!().query)
+    const queryCopy = this.props.getLastQueryRequest!().query
     const parsed = this.getSqlUnderlyingDataForRow(selectedRow, queryCopy.sql)
     queryCopy.sql = parsed.newSql
     const queryJSON = JSON.stringify(queryCopy)
@@ -1074,7 +1088,8 @@ export default class SynapseTable extends React.Component<
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                  {(isFacetSelection && !this.props.enableLeftFacetFilter) &&
+                  {isFacetSelection &&
+                    !this.props.enableLeftFacetFilter &&
                     this.configureFacetDropdown(facets, facetIndex)}
                   <span
                     tabIndex={0}

@@ -10,6 +10,9 @@ import {
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+// TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
+// will have to find a way to use individual lodash packages instead of the entire thing
+import _ from 'lodash'
 
 export interface CardLink {
   baseURL: string
@@ -114,14 +117,19 @@ export default class CardContainerLogic extends React.Component<
    */
   public componentDidUpdate(prevProps: CardContainerLogicProps) {
     /**
-     *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
-     *  sql query has changed of the component then perform an update.
+     *  If token has changed (they signed in) or sql query has changed
+     *  or search params have updated then perform an update.
      */
-
-    if (this.props.token !== '' && prevProps.token === '') {
-      this.executeInitialQueryRequest()
-    }
-    if (prevProps.sql !== this.props.sql) {
+    const { searchParams: prevSearchParams = {} } = prevProps
+    const { searchParams: currentSearchParams = {} } = this.props
+    const hasSearchParamsChanged = !_.isEqual(
+      prevSearchParams,
+      currentSearchParams,
+    )
+    const hasTokenBeenAquired =
+      this.props.token !== '' && prevProps.token === ''
+    const hasSqlChanged = this.props.sql !== prevProps.sql
+    if (hasTokenBeenAquired || hasSqlChanged || hasSearchParamsChanged) {
       this.executeInitialQueryRequest()
     }
   }
