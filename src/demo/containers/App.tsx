@@ -38,7 +38,7 @@ export default class App extends React.Component<{}, AppState> {
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-      .then((sessionToken: any) => this.handleChange({ token: sessionToken }))
+      .then(sessionToken => this.handleChange({ token: sessionToken }))
       .catch((error: any) => {
         console.error(error)
       })
