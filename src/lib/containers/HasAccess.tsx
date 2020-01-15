@@ -31,6 +31,7 @@ export type HasAccessProps = {
   fileHandle?: FileHandle
   entityId: string
   token?: string
+  // this prop is needed because fileHandle is optional
   forceIsRestricted?: boolean
 }
 
@@ -55,7 +56,8 @@ export enum DownloadTypeEnum {
   ExternalFileHandle,
   TooLargeFile,
   NoAccess,
-  IsOpenNoRestrictions,
+  NoUnmetAccessRestrictions,
+  HasUnmetAccessRestrictions,
 }
 
 /**
@@ -95,12 +97,12 @@ export default class HasAccess extends React.Component<
   }
 
   getRestrictionInformation = () => {
-    const { entityId, token, forceIsRestricted = false } = this.props
+    const { entityId, token, fileHandle } = this.props
     if (
       this.state.restrictionInformation ||
       !entityId ||
       !token ||
-      forceIsRestricted
+      fileHandle
     ) {
       return
     }
@@ -110,7 +112,9 @@ export default class HasAccess extends React.Component<
     }
     SynapseClient.getRestrictionInformation(request, token)
       .then(restrictionInformation => {
-        this.setState({ restrictionInformation })
+        this.setState({
+          restrictionInformation,
+        })
       })
       .catch(err => {
         console.log('Error on getRestrictionInformation: ', err)
@@ -136,10 +140,12 @@ export default class HasAccess extends React.Component<
       case DownloadTypeEnum.NoAccess:
         return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
       case DownloadTypeEnum.ExternalFileHandle:
-        return this.renderIconHelper(faLink, 'SRC-warning-color')
+        return this.renderIconHelper(faLink, 'SRC-success-color')
       case DownloadTypeEnum.CloudFileHandle:
+        return this.renderIconHelper(faLink, 'SRC-success-color')
+      case DownloadTypeEnum.HasUnmetAccessRestrictions:
         return this.renderIconHelper(faLink, 'SRC-warning-color')
-      case DownloadTypeEnum.IsOpenNoRestrictions:
+      case DownloadTypeEnum.NoUnmetAccessRestrictions:
         return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       case DownloadTypeEnum.TooLargeFile:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
@@ -148,67 +154,74 @@ export default class HasAccess extends React.Component<
     }
   }
 
-  // Utility to declare what type of download this is
+  // Get type of download
   getDownloadType = () => {
     const { fileHandle } = this.props
-    const { restrictionInformation } = this.state
-    const isOpen =
-      fileHandle ||
-      (restrictionInformation &&
-        RestrictionLevel.OPEN === restrictionInformation.restrictionLevel)
+    // Check of file is too large, over >= 1gb
     const isTooLarge = fileHandle && fileHandle.contentSize >= GIGABYTE_SIZE
     if (isTooLarge) {
       return DownloadTypeEnum.TooLargeFile
-    } else if (isOpen) {
-      const concreteType = fileHandle ? fileHandle.concreteType : ''
-      const isGoogleCloudFileHandle =
-        concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle
-      if (isGoogleCloudFileHandle) {
-        return DownloadTypeEnum.CloudFileHandle
-      } else {
-        const isExternalFileHandle = Object.values(
-          ExternalFileHandleConcreteTypeEnum,
-          // @ts-ignore
-        ).includes(concreteType)
-        if (isExternalFileHandle) {
-          return DownloadTypeEnum.ExternalFileHandle
-        }
-        return DownloadTypeEnum.IsOpenNoRestrictions
-      }
-    } else {
-      return DownloadTypeEnum.NoAccess
     }
+    // Check if google cloud file handle
+    const concreteType = fileHandle?.concreteType ?? ''
+    const isGoogleCloudFileHandle =
+      concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle
+    if (isGoogleCloudFileHandle) {
+      return DownloadTypeEnum.CloudFileHandle
+    }
+    // check if external file handle
+    const isExternalFileHandle = Object.values<string>(
+      ExternalFileHandleConcreteTypeEnum,
+    ).includes(concreteType)
+    if (isExternalFileHandle) {
+      return DownloadTypeEnum.ExternalFileHandle
+    }
+    // check if they have unmet access requirements
+    const { restrictionInformation } = this.state
+    if (restrictionInformation?.hasUnmetAccessRequirement) {
+      return DownloadTypeEnum.HasUnmetAccessRestrictions
+    }
+    if (
+      fileHandle ||
+      !restrictionInformation?.hasUnmetAccessRequirement === false
+    ) {
+      return DownloadTypeEnum.NoUnmetAccessRestrictions
+    }
+    return DownloadTypeEnum.NoAccess
   }
 
   // Show Access Requirements
   renderARsLink = () => {
     const { restrictionInformation } = this.state
-    const { entityId, forceIsRestricted } = this.props
+    const { entityId } = this.props
     const hasUnmetAccessRequirement =
-      (restrictionInformation &&
-        restrictionInformation!.hasUnmetAccessRequirement) ||
-      ''
-    const restrictionLevel =
-      (restrictionInformation && restrictionInformation!.restrictionLevel) || ''
-    let viewARsLink: React.ReactElement = <></>
-    if (RestrictionLevel.OPEN !== restrictionLevel) {
-      const linkText: string =
-        forceIsRestricted || hasUnmetAccessRequirement
-          ? 'Get Access'
-          : 'View Terms'
-      viewARsLink = (
-        <a
-          style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '16px' }}
-          className="SRC-primary-text-color"
-          href={`${getEndpoint(
-            BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
-        >
-          {linkText}
-        </a>
-      )
+      restrictionInformation?.hasUnmetAccessRequirement ?? false
+    const restrictionLevel = restrictionInformation?.restrictionLevel ?? ''
+    if (hasUnmetAccessRequirement === false) {
+      // user has fullfilled everything
+      return <></>
     }
-    return viewARsLink
+    let linkText = ''
+    if (RestrictionLevel.RESTRICTED_BY_TERMS_OF_USE === restrictionLevel) {
+      linkText = 'View Terms'
+    } else if (RestrictionLevel.CONTROLLED_BY_ACT === restrictionLevel) {
+      linkText = 'Request Access'
+    }
+    return (
+      <a
+        style={{
+          fontSize: '14px',
+          cursor: 'pointer',
+          marginLeft: '16px',
+        }}
+        className="SRC-primary-text-color"
+        href={`${getEndpoint(
+          BackendDestinationEnum.PORTAL_ENDPOINT,
+        )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
+      >
+        {linkText}
+      </a>
+    )
   }
 
   render() {
@@ -216,7 +229,7 @@ export default class HasAccess extends React.Component<
     const tooltipText = HasAccess.tooltipText[downloadType]
     const entityId = this.props.entityId
     const icon = this.renderIcon(downloadType)
-    let viewARsLink: React.ReactElement = this.renderARsLink()
+    const viewARsLink: React.ReactElement = this.renderARsLink()
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         {tooltipText && (
