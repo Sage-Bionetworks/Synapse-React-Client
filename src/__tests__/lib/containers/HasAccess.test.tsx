@@ -243,6 +243,6 @@ describe('basic tests', () => {
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a').text()).toEqual('View Terms')
+    expect(wrapper.find('a').text()).toEqual('Request Access')
   })
 })

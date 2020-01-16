@@ -23,7 +23,10 @@ import {
   PaginatedResults,
   Reference,
 } from '../../utils/synapseTypes'
-import HasAccess, { getFileHandleType, DownloadTypeEnum } from '../HasAccess'
+import HasAccess, {
+  getDownloadTypeForFileHandle,
+  DownloadTypeEnum,
+} from '../HasAccess'
 import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
 import DownloadDetails from './DownloadDetails'
@@ -219,7 +222,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
               createdOn = moment(createdOn).format('L LT')
               if (
-                getFileHandleType(fileHandle) ===
+                getDownloadTypeForFileHandle(fileHandle) ===
                 DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
               ) {
                 numBytes += contentSize
