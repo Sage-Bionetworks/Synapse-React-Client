@@ -129,7 +129,7 @@ export default class GenericCard extends React.Component<
     }
     const split = value.split(',')
     let className = ''
-    let style: React.CSSProperties = {}
+    const style: React.CSSProperties = {}
     if (isHeader) {
       className = 'SRC-lightLink'
     } else {

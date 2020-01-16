@@ -46,7 +46,7 @@ const props: HasAccessProps = {
 }
 
 describe('basic tests', () => {
-  it('get open data', async () => {
+  it('works with open data no restrictions', async () => {
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )

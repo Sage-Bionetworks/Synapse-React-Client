@@ -213,16 +213,6 @@ class QueryWrapperMenuDemo extends React.Component<
     }
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
-    this.rgba2rgb = this.rgba2rgb.bind(this)
-  }
-
-  public rgba2rgb(background: number[], color: number[]) {
-    const alpha = color[3]
-    return [
-      Math.floor((1 - alpha) * background[0] + alpha * color[0] + 0.5),
-      Math.floor((1 - alpha) * background[1] + alpha * color[1] + 0.5),
-      Math.floor((1 - alpha) * background[2] + alpha * color[2] + 0.5),
-    ]
   }
 
   /**

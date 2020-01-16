@@ -94,7 +94,7 @@ export default class HasAccess extends React.Component<
 > {
   public static tooltipText = {
     [DownloadTypeEnum.HasUnmetAccessRestrictions]:
-      'You must request access to this restricted files via Access Conditions page.',
+      'You must request access to this restricted file via the Access Conditions page.',
     [DownloadTypeEnum.TooLargeFile]:
       'Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.',
     [DownloadTypeEnum.ExternalFileHandle]:
@@ -158,11 +158,6 @@ export default class HasAccess extends React.Component<
 
   renderIcon = (downloadType: DownloadTypeEnum | string) => {
     switch (downloadType) {
-      // no file handle
-      case DownloadTypeEnum.HasUnmetAccessRestrictions:
-        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
-      case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
-        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       // fileHandle passed in
       case DownloadTypeEnum.ExternalFileHandle:
         return this.renderIconHelper(faLink, 'SRC-warning-color')
@@ -170,6 +165,11 @@ export default class HasAccess extends React.Component<
         return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.TooLargeFile:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
+      // no fileHandle
+      case DownloadTypeEnum.HasUnmetAccessRestrictions:
+        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
+      case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
+        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       default:
         // nothing is rendered until access requirement is loaded
         return <></>
@@ -193,8 +193,8 @@ export default class HasAccess extends React.Component<
         : DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
     }
     if (restrictionInformation || fileHandle) {
-      // this should have mapped to a download type
-      console.error('Unmapped download type for entity', this.props.entityId)
+      // this should have mapped to a download type, something went wrong
+      console.error('Unmapped download type for entity: ', this.props.entityId)
     }
     // else its loading
     return ''
@@ -204,7 +204,7 @@ export default class HasAccess extends React.Component<
   renderARsLink = () => {
     const { restrictionInformation } = this.state
     if (!restrictionInformation) {
-      // is loading
+      // loading
       return <></>
     }
     const { entityId } = this.props
@@ -214,7 +214,6 @@ export default class HasAccess extends React.Component<
     let linkText = ''
     if (hasUnmetAccessRequirement) {
       linkText = 'Request Access'
-      // user has fullfilled everything
     } else if (RestrictionLevel.OPEN === restrictionLevel) {
       return <></>
     } else {
