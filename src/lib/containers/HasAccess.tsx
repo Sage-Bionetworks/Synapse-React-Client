@@ -31,8 +31,6 @@ export type HasAccessProps = {
   fileHandle?: FileHandle
   entityId: string
   token?: string
-  // this prop is needed because fileHandle is optional
-  forceIsRestricted?: boolean
 }
 
 type HasAccessState = {
@@ -58,6 +56,27 @@ export enum DownloadTypeEnum {
   NoAccess,
   NoUnmetAccessRestrictions,
   HasUnmetAccessRestrictions,
+}
+
+export const getFileHandleType = (fileHandle: FileHandle) => {
+  const { concreteType, contentSize } = fileHandle
+  // check if it's too large
+  if (contentSize >= GIGABYTE_SIZE) {
+    return DownloadTypeEnum.TooLargeFile
+  }
+  // check if it's a google cloud file handle
+  if (concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle) {
+    return DownloadTypeEnum.CloudFileHandle
+  }
+  // check if it's an external file handle
+  const isExternalFileHandle = Object.values<string>(
+    ExternalFileHandleConcreteTypeEnum,
+  ).includes(concreteType)
+  if (isExternalFileHandle) {
+    return DownloadTypeEnum.ExternalFileHandle
+  }
+  // otherwise its open
+  return DownloadTypeEnum.NoUnmetAccessRestrictions
 }
 
 /**
@@ -138,17 +157,17 @@ export default class HasAccess extends React.Component<
   renderIcon = (downloadType: DownloadTypeEnum) => {
     switch (downloadType) {
       case DownloadTypeEnum.NoAccess:
-        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
+        return this.renderIconHelper(faMinusCircle, 'SRC-danger-color')
       case DownloadTypeEnum.ExternalFileHandle:
-        return this.renderIconHelper(faLink, 'SRC-success-color')
-      case DownloadTypeEnum.CloudFileHandle:
-        return this.renderIconHelper(faLink, 'SRC-success-color')
-      case DownloadTypeEnum.HasUnmetAccessRestrictions:
         return this.renderIconHelper(faLink, 'SRC-warning-color')
-      case DownloadTypeEnum.NoUnmetAccessRestrictions:
-        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
+      case DownloadTypeEnum.CloudFileHandle:
+        return this.renderIconHelper(faLink, 'SRC-warning-color')
+      case DownloadTypeEnum.HasUnmetAccessRestrictions:
+        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
       case DownloadTypeEnum.TooLargeFile:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
+      case DownloadTypeEnum.NoUnmetAccessRestrictions:
+        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       default:
         throw Error('downloadTypeEnum passed incorrectly')
     }
@@ -156,48 +175,33 @@ export default class HasAccess extends React.Component<
 
   // Get type of download
   getDownloadType = () => {
-    const { fileHandle } = this.props
-    // Check of file is too large, over >= 1gb
-    const isTooLarge = fileHandle && fileHandle.contentSize >= GIGABYTE_SIZE
-    if (isTooLarge) {
-      return DownloadTypeEnum.TooLargeFile
-    }
-    // Check if google cloud file handle
-    const concreteType = fileHandle?.concreteType ?? ''
-    const isGoogleCloudFileHandle =
-      concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle
-    if (isGoogleCloudFileHandle) {
-      return DownloadTypeEnum.CloudFileHandle
-    }
-    // check if external file handle
-    const isExternalFileHandle = Object.values<string>(
-      ExternalFileHandleConcreteTypeEnum,
-    ).includes(concreteType)
-    if (isExternalFileHandle) {
-      return DownloadTypeEnum.ExternalFileHandle
-    }
     // check if they have unmet access requirements
     const { restrictionInformation } = this.state
-    if (restrictionInformation?.hasUnmetAccessRequirement) {
-      return DownloadTypeEnum.HasUnmetAccessRestrictions
+    if (restrictionInformation) {
+      const { hasUnmetAccessRequirement } = restrictionInformation
+      if (hasUnmetAccessRequirement) {
+        return DownloadTypeEnum.HasUnmetAccessRestrictions
+      } else {
+        return DownloadTypeEnum.NoUnmetAccessRestrictions
+      }
     }
-    if (
-      fileHandle ||
-      !restrictionInformation?.hasUnmetAccessRequirement === false
-    ) {
-      return DownloadTypeEnum.NoUnmetAccessRestrictions
+    // if file handle is present show more detailed download information
+    const { fileHandle } = this.props
+    if (fileHandle) {
+      return getFileHandleType(fileHandle)
     }
+    // otherwise no access to this file
     return DownloadTypeEnum.NoAccess
   }
 
   // Show Access Requirements
   renderARsLink = () => {
     const { restrictionInformation } = this.state
-    const { entityId } = this.props
+    const { entityId, fileHandle } = this.props
     const hasUnmetAccessRequirement =
-      restrictionInformation?.hasUnmetAccessRequirement ?? false
-    const restrictionLevel = restrictionInformation?.restrictionLevel ?? ''
-    if (hasUnmetAccessRequirement === false) {
+      restrictionInformation?.hasUnmetAccessRequirement
+    const restrictionLevel = restrictionInformation?.restrictionLevel
+    if (fileHandle || hasUnmetAccessRequirement === false) {
       // user has fullfilled everything
       return <></>
     }

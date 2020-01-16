@@ -23,7 +23,7 @@ import {
   PaginatedResults,
   Reference,
 } from '../../utils/synapseTypes'
-import HasAccess from '../HasAccess'
+import HasAccess, { getFileHandleType, DownloadTypeEnum } from '../HasAccess'
 import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
 import DownloadDetails from './DownloadDetails'
@@ -47,14 +47,14 @@ export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 export default function DownloadListTable(props: DownloadListTableProps) {
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
-  let [data, setData] = useState<DownloadListTableData>({
+  const [data, setData] = useState<DownloadListTableData>({
     references: undefined,
     batchFileResult: undefined,
     downloadList: undefined,
   })
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
-  let [isLoading, setIsLoading] = useState<LoadingState>(true)
-  let [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<LoadingState>(true)
+  const [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
   const { token } = props
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
@@ -65,7 +65,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     .filter(el => el.fileHandle && el.fileHandle.createdBy)
     // @ts-ignore the error below could not occur if the filter is
     .map(el => el.fileHandle.createdBy)
-  let userProfiles = useGetProfiles({ ids: ownerIds, token })
+  const userProfiles = useGetProfiles({ ids: ownerIds, token })
 
   useEffect(() => {
     fetchData(token)
@@ -171,7 +171,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const filesToDownload = (downloadList && downloadList.filesToDownload) || []
   const results = (references && references.results) || []
   let numBytes = 0
-  let numFiles = requestedFiles.filter(el => !el.failureCode).length
+  let numFiles = 0
   return (
     <div>
       <div className="SRC-split download-list-table-top">
@@ -218,8 +218,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               // fileHandle is defined, this file is downloadable, show its metadata
               ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
               createdOn = moment(createdOn).format('L LT')
-              if (contentSize) {
+              if (
+                getFileHandleType(fileHandle) ===
+                DownloadTypeEnum.NoUnmetAccessRestrictions
+              ) {
                 numBytes += contentSize
+                numFiles += 1
               }
             } else {
               // file is not downloadable, only show its name from entity header info
@@ -245,7 +249,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </td>
                 <td>
                   <HasAccess
-                    forceIsRestricted={!canDownload}
                     fileHandle={fileHandle}
                     token={token}
                     entityId={synId}
