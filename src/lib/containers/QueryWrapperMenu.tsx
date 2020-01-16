@@ -309,7 +309,7 @@ export default class QueryWrapperMenu extends React.Component<
         tableConfiguration,
       )
       return (
-        <span key={facet} className={searchClass}>
+        <span key={(facet||'nofacet')+index} className={searchClass}>
           <QueryWrapper
             showBarChart={showBarChart}
             loadNow={isSelected}
@@ -438,7 +438,7 @@ export default class QueryWrapperMenu extends React.Component<
       return accordionConfig.map((el, index) => {
         return (
           <div
-            key={JSON.stringify(el)}
+            key={JSON.stringify(el)+index}
             className={accordionGroupIndex === index ? '' : 'SRC-hidden'}
           >
             {this.renderQueryChild(el.menuConfig, el, index)}
@@ -582,12 +582,11 @@ export default class QueryWrapperMenu extends React.Component<
       const infoLeave: Info = { isSelected, originalColor: defaultColor }
       const facetDisplayValue: string =
         (facet && facetAliases[facet]) || unCamelCase(facet)
-
       return (
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
-          key={config.facet}
+          key={(config.facet||'nofacet')+ index}
           className={`SRC-hand-cursor SRC-background-unset ${selectedStyling} SRC-menu-button-base SRC-gap`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
