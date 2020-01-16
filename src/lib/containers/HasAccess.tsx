@@ -54,7 +54,7 @@ export enum DownloadTypeEnum {
   ExternalFileHandle,
   TooLargeFile,
   NoAccess,
-  NoUnmetAccessRestrictions,
+  IsOpenNoUnmetAccessRestrictions,
   HasUnmetAccessRestrictions,
 }
 
@@ -76,7 +76,7 @@ export const getFileHandleType = (fileHandle: FileHandle) => {
     return DownloadTypeEnum.ExternalFileHandle
   }
   // otherwise its open
-  return DownloadTypeEnum.NoUnmetAccessRestrictions
+  return DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
 }
 
 /**
@@ -92,6 +92,8 @@ export default class HasAccess extends React.Component<
 > {
   public static tooltipText = {
     [DownloadTypeEnum.NoAccess]:
+      'Your list has restricted files that can’t be downloaded. You must request access to these restricted files via Access Conditions page. All files will remain in the list and can be downloaded from here once your access is granted.',
+    [DownloadTypeEnum.HasUnmetAccessRestrictions]:
       'Your list has restricted files that can’t be downloaded. You must request access to these restricted files via Access Conditions page. All files will remain in the list and can be downloaded from here once your access is granted.',
     [DownloadTypeEnum.TooLargeFile]:
       'Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.',
@@ -166,7 +168,7 @@ export default class HasAccess extends React.Component<
         return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
       case DownloadTypeEnum.TooLargeFile:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
-      case DownloadTypeEnum.NoUnmetAccessRestrictions:
+      case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
         return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       default:
         throw Error('downloadTypeEnum passed incorrectly')
@@ -182,7 +184,7 @@ export default class HasAccess extends React.Component<
       if (hasUnmetAccessRequirement) {
         return DownloadTypeEnum.HasUnmetAccessRestrictions
       } else {
-        return DownloadTypeEnum.NoUnmetAccessRestrictions
+        return DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
       }
     }
     // if file handle is present show more detailed download information

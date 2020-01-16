@@ -220,7 +220,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               createdOn = moment(createdOn).format('L LT')
               if (
                 getFileHandleType(fileHandle) ===
-                DownloadTypeEnum.NoUnmetAccessRestrictions
+                DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
               ) {
                 numBytes += contentSize
                 numFiles += 1

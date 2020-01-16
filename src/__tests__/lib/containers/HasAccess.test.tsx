@@ -148,7 +148,7 @@ describe('basic tests', () => {
   })
 
   it('works when download is IsOpenNoRestrictions', async () => {
-    const isOpenNoRestrictionsFileHandle: FileHandle = {
+    const IsOpenNoUnmetAccessRestrictions: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -162,7 +162,7 @@ describe('basic tests', () => {
     }
     const { wrapper } = await createShallowComponent({
       ...props,
-      fileHandle: isOpenNoRestrictionsFileHandle,
+      fileHandle: IsOpenNoUnmetAccessRestrictions,
     })
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
@@ -193,23 +193,10 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faMinusCircle)
     const tooltipSpan = wrapper.find(
-      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.NoAccess]}"]`,
+      `[data-tip="${
+        HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
+      }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
-  })
-
-  it('Does not call getRestrictionInformation when forceIsRestricted=true', async () => {
-    const mockFn = jest.fn()
-    SynapseClient.getRestrictionInformation = mockFn
-    const { wrapper } = await createShallowComponent({
-      ...props,
-      forceIsRestricted: true,
-    })
-    expect(mockFn).not.toHaveBeenCalled()
-    const link = wrapper.find('a')
-    expect(link).toHaveLength(1)
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faMinusCircle)
   })
 })
