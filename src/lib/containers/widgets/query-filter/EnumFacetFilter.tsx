@@ -32,7 +32,7 @@ function valueToLabel(
   const { value, count } = facet
   let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
-    return 'Not Set'
+    displayValue = 'Not Set'
   }
   const profile = profiles.find(profile => profile.ownerId === value)
   if (profile) {
@@ -93,7 +93,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     references: entityIds,
     token,
   })?.results
-
   if (!columnModel) {
     return <></>
   }
@@ -111,7 +110,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           facetValues,
           isShowAll,
           visibleItemsCount,
-        ).map((facet: any, index: number) => {
+        ).map((facet, index: number) => {
           const id = valueToId(facet.value)
           return (
             <Checkbox
