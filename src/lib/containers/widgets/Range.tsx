@@ -75,8 +75,8 @@ export const Range: React.FunctionComponent<RangeProps> = (
   }
 
   return (
-    <div className={className} style={{ display: "flex" }}>
-      <div >
+    <div className={className} style={{ display: 'flex', flexWrap: 'wrap' }}>
+      <div style={{ marginRight: '10px' }}>
         <input
           key="range_min"
           type={props.type}
@@ -94,14 +94,13 @@ export const Range: React.FunctionComponent<RangeProps> = (
             setValues({ min: values.min, max: target.value })
           }
         />
-        </div>
-        <button
-          className="btn btn-link"
-          style={{ marginLeft: '10px' }}
-          onClick={() => handleAppyChanges(values, props.onChange, props.type)}
-        >
-          Apply
-        </button>
+      </div>
+      <button
+        className="btn btn-link SRC-noPadding"
+        onClick={() => handleAppyChanges(values, props.onChange, props.type)}
+      >
+        Apply
+      </button>
       {error && (
         <div className="SRC-danger-color">{props.errorText || errorText}</div>
       )}

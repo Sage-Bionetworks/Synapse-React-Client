@@ -1,43 +1,43 @@
 $controlColor: #c94281;
-$textLight:  #b7b7b7;
-
+$textLight: #b7b7b7;
 
 .rangeSlider {
-  $height: 6px;
+  $rail-height: 6px;
+  height: 60px;
+  $handleLeftOffset: 1- ($rail-height + 10)/2;
   &__rail {
     position: absolute;
     width: 100%;
-    height: $height;
-    border-radius: $height/2;
+    height: $rail-height;
+    border-radius: $rail-height/2;
     cursor: pointer;
-    background-color: $textLight
+    background-color: $textLight;
   }
 
   &__wrapper {
     &--flex {
       display: flex;
       align-items: center;
-      height: 10px;
       width: 100%;
     }
     &--block {
-        height: 35px;
-        width: 100%;
+      margin-right: -$handleLeftOffset;
+      margin-top: 10px;
       display: block;
     }
   }
   &__values {
-   font-size: .85rem
+    font-size: 0.85rem;
   }
   &__slider {
-    margin: 0;
+    margin: 0 0 0 (-$handleLeftOffset);
     position: relative;
     width: 100%;
   }
   &__btnApply {
     color: #337ab7;
     margin-left: 10px;
-    l &:hover {
+    &:hover {
       color: #23527c;
       text-decoration: underline;
       background-color: transparent;
@@ -46,11 +46,11 @@ $textLight:  #b7b7b7;
 
   &__handle {
     position: absolute;
-    margin-left: 1- ($height + 10)/2;
-    margin-top: -6px;
+    margin-left: $handleLeftOffset;
+    margin-top: -$rail-height;
     z-index: 2;
-    width: $height + 10;
-    height: $height + 10;
+    width: $rail-height + 10;
+    height: $rail-height + 10;
     cursor: pointer;
     border-radius: 50%;
     box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
@@ -59,23 +59,23 @@ $textLight:  #b7b7b7;
 
   &__track {
     position: absolute;
-    height: $height;
+    height: $rail-height;
     z-index: 1;
     background-color: $controlColor;
-    border-radius: $height/2;
+    border-radius: $rail-height/2;
     cursor: pointer;
   }
 
   &__tick {
     position: absolute;
-    margin-top: $height/2;
+    margin-top: $rail-height/2;
     width: 1px;
     height: 5px;
-    background-color: $textLight
+    background-color: $textLight;
   }
   &__tickInner {
     position: absolute;
-    margin-top: $height +8;
+    margin-top: $rail-height + 8;
     font-size: 10px;
     text-align: center;
   }
