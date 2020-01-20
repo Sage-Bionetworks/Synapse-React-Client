@@ -76,7 +76,10 @@ class Demo extends React.Component<{}, DemoState> {
             facet: 'model',
             sql: 'SELECT * FROM syn21498718',
           },
-         
+          {
+            facet: 'metadataType',
+            sql: "SELECT `id`, `metadataType`, `dataType`, `assay`↵  FROM syn11346063↵  WHERE ((`study` LIKE '%BroadAstrom109%') AND (`dataSubtype` = 'metadata'))"
+          }
         ],
         rgbIndex: 2,
       },
