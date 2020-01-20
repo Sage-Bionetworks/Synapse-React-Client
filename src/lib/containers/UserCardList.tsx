@@ -2,6 +2,7 @@ import * as React from 'react'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
+import { difference } from '../utils/functions/difference'
 import { QueryResultBundle, UserProfile } from '../utils/synapseTypes/'
 import UserCard, { UserCardSize } from './UserCard'
 
@@ -36,15 +37,6 @@ export default class UserCardList extends React.Component<
     this.update(list)
   }
 
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Implementing_basic_set_operations
-  difference(setA: Set<String>, setB: Set<String>) {
-    const _difference = new Set(setA)
-    for (const elem of Array.from(setB)) {
-      _difference.delete(elem)
-    }
-    return _difference
-  }
-
   componentDidUpdate(prevProps: UserCardListProps) {
     // Note - Set object not fully supported by IE11, additionally there are a few caveats to using the Set object
     // described here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
@@ -52,15 +44,15 @@ export default class UserCardList extends React.Component<
     const priorListOfIds = new Set(prevProps.list)
     const curListOfIds = new Set(this.props.list.filter(el => el))
     // check that the props have changed by seeing that at least one element is different
-    if (this.difference(curListOfIds, priorListOfIds).size > 0) {
+    if (difference(curListOfIds, priorListOfIds).size > 0) {
       const internalData = new Set(Object.keys(this.state.userProfileMap))
       // get the set difference between the current list and whats stored in state, describes what
       // needs to get looked up.
-      const difference = Array.from(
-        this.difference(curListOfIds, internalData),
+      const differenceValues = Array.from(
+        difference(curListOfIds, internalData),
       ) as string[]
-      if (difference.length > 0) {
-        this.update(difference)
+      if (differenceValues.length > 0) {
+        this.update(differenceValues)
       }
     }
   }

@@ -5,10 +5,12 @@ import {
   ColumnModel,
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
-import { SynapseClient, SynapseConstants } from '../../../utils'
-import { UserProfile } from '../../../utils/synapseTypes/UserProfile'
-import { useEffect, useState } from 'react'
+import { SynapseConstants } from '../../../utils'
+import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
+import useGetProfiles from '../../../utils/hooks/useGetProfiles'
+import useGetEntityHeaders from '../../../utils/hooks/useGetEntityHeaders'
+import { ReferenceList, UserProfile } from 'lib/utils/synapseTypes'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -23,43 +25,25 @@ function valueToId(value: string): string {
 }
 
 function valueToLabel(
-  value: string,
+  facet: FacetColumnResultValueCount,
   profiles: UserProfile[] = [],
   entityHeaders: EntityHeader[] = [],
 ): string {
+  const { value, count } = facet
+  let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
     return 'Not Set'
   }
-  if (profiles.length > 0) {
-    const profile = profiles.find(profile => profile.ownerId === value)
-    return !profile ? `unknown (${value})` : profile.userName
+  const profile = profiles.find(profile => profile.ownerId === value)
+  if (profile) {
+    displayValue = profile ? profile.userName : `unknown (${value})`
   }
 
-  if (entityHeaders.length > 0) {
-    const eh = entityHeaders.find(eh => eh.id === value)
-    return !eh ? `unknown (${value})` : eh.name
+  const eh = entityHeaders.find(eh => eh.id === value)
+  if (eh) {
+    displayValue = eh ? eh.name : `unknown (${value})`
   }
-  return value
-}
-
-async function getEntityArray(
-  //alina TODO: handle > 50 returned records
-  facetValues: FacetColumnResultValueCount[],
-  token?: string,
-): Promise<EntityHeader[]> {
-  const references = facetValues.map(facet => ({ targetId: facet.value }))
-  const headers = await SynapseClient.getEntityHeader(references, token)
-  return headers.results
-}
-
-async function getUserProfileArray(
-  facetValues: FacetColumnResultValueCount[],
-
-  token?: string,
-): Promise<UserProfile[]> {
-  const ids = facetValues.map(facet => facet.value)
-  const profiles = await SynapseClient.getUserProfiles(ids, token)
-  return profiles.list
+  return `${displayValue} (${count})`
 }
 
 function formatFacetValuesForDisplay(
@@ -83,85 +67,73 @@ function formatFacetValuesForDisplay(
 
 /************* QUERY ENUM CONMPONENT  *************/
 
-export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = (
-  props: EnumFacetFilterProps,
-) => {
-  const [userArray, setUserArray] = useState<UserProfile[]>([])
-  const [entityHeaderArray, setEntityHeaderArray] = useState<EntityHeader[]>([])
+export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
+  token,
+  facetValues,
+  columnModel,
+  onClear,
+  onChange,
+}: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
   const visibleItemsCount = 5
 
-  useEffect(() => {
-    ;(async function getDataOnLoad(
-      columnModel: ColumnModel,
-      facetValues: FacetColumnResultValueCount[],
-      token?: string,
-    ) {
-      if (
-        columnModel.columnType !== 'USERID' &&
-        columnModel.columnType !== 'ENTITYID'
-      ) {
-        return
-      }
+  const userIds =
+    columnModel.columnType === 'USERID'
+      ? facetValues.map(facet => facet.value)
+      : []
+  const userProfiles = useGetProfiles({ ids: userIds, token })?.list
 
-      const facetValuesWithName = facetValues.filter(
-        facet => facet.value !== SynapseConstants.VALUE_NOT_SET,
-      )
+  const entityIds: ReferenceList =
+    columnModel.columnType === 'ENTITYID'
+      ? facetValues.map(facet => {
+          return { targetId: facet.value }
+        })
+      : []
+  const entityHeaders = useGetEntityHeaders({
+    references: entityIds,
+    token,
+  })?.results
 
-      if (columnModel.columnType === 'USERID') {
-        const profiles = await getUserProfileArray(facetValuesWithName, token)
-        setUserArray(profiles)
-      }
-
-      if (columnModel.columnType === 'ENTITYID') {
-        const entities = await getEntityArray(facetValuesWithName, token)
-        setEntityHeaderArray(entities)
-      }
-    })(props.columnModel, props.facetValues, props.token)
-  }, [props.columnModel, props.facetValues, props.token])
-
-  if (!props.columnModel) {
+  if (!columnModel) {
     return <></>
   }
 
-  const result = (
+  return (
     <div>
       <button
         className="btn btn-link SRC-noPadding"
-        onClick={() => props.onClear(props.columnModel.name)}
+        onClick={() => onClear(columnModel.name)}
       >
         All
       </button>
       <div>
         {formatFacetValuesForDisplay(
-          props.facetValues,
+          facetValues,
           isShowAll,
           visibleItemsCount,
-        ).map((facet: any) => {
+        ).map(facet => {
           const id = valueToId(facet.value)
           return (
             <Checkbox
               onChange={(isChecked: boolean) =>
-                props.onChange(facet.value, isChecked)
+                onChange(facet.value, isChecked)
               }
               key={id}
               checked={facet.isSelected}
-              label={`${valueToLabel(
-                facet.value,
-                userArray,
-                entityHeaderArray,
-              )} (${facet.count})`}
+              label={valueToLabel(facet, userProfiles, entityHeaders)}
               id={id}
             ></Checkbox>
           )
         })}
-        {!isShowAll && props.facetValues.length > visibleItemsCount && (
-          <button className="btn btn-link SRC-noPadding" onClick={() => setIsShowAll(true)}>
+        {!isShowAll && facetValues.length > visibleItemsCount && (
+          <button
+            className="btn btn-link SRC-noPadding"
+            onClick={() => setIsShowAll(true)}
+          >
             Show All
           </button>
         )}
       </div>
     </div>
   )
-  return result
 }
