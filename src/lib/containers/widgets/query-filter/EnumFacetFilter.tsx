@@ -111,18 +111,14 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           facetValues,
           isShowAll,
           visibleItemsCount,
-<<<<<<< HEAD
-        ).map(facet => {
-=======
         ).map((facet: any, index: number) => {
->>>>>>> 639bc491b7df4f8bcd8948deea9a8deb59c01657
           const id = valueToId(facet.value)
           return (
             <Checkbox
               onChange={(isChecked: boolean) =>
                 onChange(facet.value, isChecked)
               }
-              key={id+index}
+              key={id + index}
               checked={facet.isSelected}
               label={valueToLabel(facet, userProfiles, entityHeaders)}
               id={id}
