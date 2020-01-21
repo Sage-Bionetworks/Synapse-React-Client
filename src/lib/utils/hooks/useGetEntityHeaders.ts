@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { EntityHeader, ReferenceList, PaginatedResults } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { difference } from '../functions/difference'
+import { SynapseConstants } from '..'
 
 export type UseGetProfilesProps = {
   references: ReferenceList
@@ -20,7 +21,11 @@ export default function useGetEntityHeaders(props: UseGetProfilesProps) {
       // if so grab those ids
       const curList = data?.results.map(el => el.id)
       const curListSet = new Set(curList)
-      const incomingListSet = new Set(references.map(el => el.targetId))
+      const incomingListSet = new Set(
+        references
+          .filter(el => el.targetId !== SynapseConstants.VALUE_NOT_SET)
+          .map(el => el.targetId),
+      )
       const setDifference = difference(incomingListSet, curListSet)
       if (setDifference.size > 0) {
         try {
