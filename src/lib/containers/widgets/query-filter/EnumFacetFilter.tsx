@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import useGetProfiles from '../../../utils/hooks/useGetProfiles'
 import useGetEntityHeaders from '../../../utils/hooks/useGetEntityHeaders'
-import { ReferenceList, UserProfile } from 'lib/utils/synapseTypes'
+import { ReferenceList, UserProfile } from '../../../utils/synapseTypes'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
