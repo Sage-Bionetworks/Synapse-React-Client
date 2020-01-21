@@ -10,6 +10,7 @@
     "react/prop-types": [0],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "no-extra-semi": "off"
+    "no-extra-semi": "off",
+    "prefer-const": "warn"
   }
 }

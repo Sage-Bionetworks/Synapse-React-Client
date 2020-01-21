@@ -18,6 +18,16 @@ svg.SRC-hoverBox {
   }
 }
 
+.SRCBorderedPanel {
+  background: $gray-light;
+  border: 1px solid $border-color-gray;
+  padding: 10px;
+
+  &--padded2x {
+    padding: 20px
+  }
+}
+
 .SRC-syn-border {
   border-color: lightgray;
   border-style: solid;
@@ -792,6 +802,7 @@ div.SRC-userImg {
   height: 30px;
   position: absolute;
   right: 15px;
+  z-index: 99;
 }
 
 .SRC-loadingContainer {

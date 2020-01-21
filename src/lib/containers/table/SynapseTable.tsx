@@ -60,6 +60,7 @@ import {
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
+import NoData from '../../assets/icons/file-dotted.svg'
 
 const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -111,6 +112,7 @@ export type SynapseTableState = {
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
   isShowLeftFilter?: boolean
+  isUserModifiedQuery?: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -338,6 +340,17 @@ export default class SynapseTable extends React.Component<
     if (showBarChart) {
       className = 'SRC-marginBottomTop'
     }
+    const hasResults = data.queryResult.queryResults.rows.length > 0
+    if (!hasResults && !this.state.isUserModifiedQuery) {
+        return (
+          <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+            <img src={NoData} alt="no data"></img>
+            <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+              This table is currently empty
+            </div>
+          </div>
+        )
+    }
     const content = (
       <>
         <div className={className}>
@@ -358,28 +371,31 @@ export default class SynapseTable extends React.Component<
           </div>
           {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
           <div className="row ">
-          {this.state.isShowLeftFilter && (
-            <div className="col-xs-12 col-sm-3 col-lg-3">
-              {
-                <QueryFilter
-                  {...this.props}
-                  data={this.props.data!}
-                  token={this.props.token!}
-                  applyChanges={(newFacets: FacetColumnRequest[]) =>
-                    this.applyChangesFromQueryFilter(newFacets)
-                  }
-                />
-              }
-            </div>
-          )}
-          <div
-            className={`${
-              this.state.isShowLeftFilter
-                ? 'col-xs-12 col-sm-9 col-lg-9'
-                : 'col-xs-12'
-            }`}
-          >
-            {this.renderTable(headers, facets, rows)}
+            {this.state.isShowLeftFilter && (
+              <div
+                className="col-xs-12 col-sm-3 col-lg-3"
+                style={{ paddingRight: '0px' }}
+              >
+                {
+                  <QueryFilter
+                    {...this.props}
+                    data={this.props.data!}
+                    token={this.props.token!}
+                    applyChanges={(newFacets: FacetColumnRequest[]) =>
+                      this.applyChangesFromQueryFilter(newFacets)
+                    }
+                  />
+                }
+              </div>
+            )}
+            <div
+              className={`${
+                this.state.isShowLeftFilter
+                  ? 'col-xs-12 col-sm-9 col-lg-9'
+                  : 'col-xs-12'
+              }`}
+            >
+              {this.renderTable(headers, facets, rows)}
             </div>
           </div>
         </div>
@@ -1113,7 +1129,7 @@ export default class SynapseTable extends React.Component<
     const { query } = lastQueryRequest
     // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
-    const synTable = this.props.entityId
+    const synTable = lastQueryRequest.entityId
     window.open(
       `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`,
       '_blank',
@@ -1202,6 +1218,7 @@ export default class SynapseTable extends React.Component<
   public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     queryRequest.query.selectedFacets = facets
+    this.setState({ isUserModifiedQuery: true })
     this.props.executeQueryRequest!(queryRequest)
   }
 
@@ -1246,6 +1263,7 @@ export default class SynapseTable extends React.Component<
     })
 
     this.props.executeQueryRequest!(newQueryRequest)
+    this.setState({ isUserModifiedQuery: true })
   }
 }
 type ColumnReference = {

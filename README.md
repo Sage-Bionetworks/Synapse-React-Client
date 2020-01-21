@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/Sage-Bionetworks/Synapse-React-Client.svg?branch=master)](https://travis-ci.org/Sage-Bionetworks/Synapse-React-Client)  [![npm version](https://badge.fury.io/js/synapse-react-client.svg)](https://badge.fury.io/js/synapse-react-client)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
 
 ## Synapse React Client
 
@@ -8,7 +10,7 @@ This project helps you integrate your app with the Synapse API backend.
 
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
 
-Interested in contributing to this project?  See the Available Scripts section below.
+Interested in contributing to this project?  See [contributing](./CONTRIBUTING.md).
 
 ## Installation with npm
 Run the following command:<br>
@@ -23,7 +25,7 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  ```
 
 ## Installation without npm or yarn
-To see an example index.html page with all the necessary imports view [here](https://github.com/leem42/Synapse-React-Client/blob/ts/develop/src/demo/SingleFileBuild/index.html)
+To see an example index.html page with all the necessary imports view [here](./src/demo/SingleFileBuild/index.html)
 
 
 You can use a cdn containing the javascript and css required for the client here (the client is exposed as SRC to the browser)-
@@ -102,12 +104,12 @@ Note - this will apply to all calls being made.
 ## Style
 
 The core css lives in `src/lib/style` and `src/lib/template_style`. 
-* `src/lib/style`contains all scss that doesn't use any external variables.
-* `src/lib/template_style`contains any scss files that require external variables.
+* `src/lib/style` contains all scss that doesn't use any external variables.
+* `src/lib/template_style` contains any scss files that require external variables.
 
 ## Overrides
 Import the main `src/lib/template_style/Index.scss` file into your application and override the main theme color `$primary-action-color` 
-``` scss
+```scss
     $primary-action-color: blue;
     @import 'node_modules/synapse-react-client/dist/template_style/Index.scss';
 ```
@@ -151,7 +153,7 @@ SynapseClient.getQueryTableResults(request, sessionToken)
       });
 ```
 #### Markdown Rendering Example
-View the demo app incorporation of markdown [here]((https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/demo/containers/App.js)).
+View the demo app incorporation of markdown [here](./src/demo/containers/App.tsx).
 
 To use the synapse markdown-it component you must pass it a wiki page id and an owner id. Additionally, you can configure an error view to display.
 
@@ -386,8 +388,7 @@ UserCard represents a synapse user, it is responsible for three different sized 
 |  menuActions | Array of MenuActions[], where MenuAction is an object of the form - {field:string, callback?: (userProfile: UserProfile) => void}, specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. NOTE: If left undefined the menu will not render to the screen. |
 
 
-#### Other calls available.  See functions found in [SynapseClient](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/lib/utils/SynapseClient.js)
-#### Example calls (with links to documentation) can be found in the [tests](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/master/src/test/lib/utils/SynapseClient.test.js).
+#### Other calls available.  See functions found in [SynapseClient](./src/lib/utils/SynapseClient.ts)
 
 ## Project Contents
 
@@ -418,7 +419,7 @@ UserCard represents a synapse user, it is responsible for three different sized 
 ```
 ./types.d.ts       In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.
 ./tsconfig.json      Typescript configuration
-./rollup.config.json rollup config
+./rollup.config.js rollup config
 ```
 
 ## Project Development
@@ -431,7 +432,7 @@ Motivation for dependencies-
   * rollup allows the client to be built as a UMD bundle **without** having to eject the application from react's built in webpack configuation.
 
 Caveats of these dependencies-
-  When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](https://github.com/Sage-Bionetworks/Synapse-React-Client/rollup.config.js),
+  When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](./rollup.config.js),
   specify this in the `external` and `output.globals` fields.
 
 ## Release Cycle
