@@ -36,7 +36,8 @@ export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps
               target="_blank"
             >
               Governance Overview
-            </a>.
+            </a>
+            .
           </p>
         </>
       )
