@@ -108,10 +108,10 @@ The core css lives in `src/lib/style` and `src/lib/template_style`.
 * `src/lib/template_style` contains any scss files that require external variables.
 
 ## Overrides
-Import the main `src/lib/template_style/Index.scss` file into your application and override the main theme color `$primary-action-color` 
+Import the main `src/lib/template_style/main.scss` file into your application and override the main theme color `$primary-action-color` 
 ```scss
     $primary-action-color: blue;
-    @import 'node_modules/synapse-react-client/dist/template_style/Index.scss';
+    @import 'node_modules/synapse-react-client/dist/template_style/main.scss';
 ```
 
 ## Examples

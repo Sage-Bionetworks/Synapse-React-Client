@@ -15,7 +15,7 @@ import ModalDownload from './containers/ModalDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
 import StatisticsPlot from './containers/StatisticsPlot'
 import HasAccess from './containers/HasAccess'
-import './style/Index.scss'
+import './style/main.scss'
 import { SynapseConstants, SynapseClient } from './utils/'
 
 const SynapseComponents = {

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import './RangeSlider.scss'
 
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider'
 import {

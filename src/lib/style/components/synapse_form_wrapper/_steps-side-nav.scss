@@ -1,4 +1,6 @@
-@import './Vars.scss';
+@import '../../abstracts/variables';
+@import '../../abstracts/mixins';
+@import '../../abstracts/functions';
 /* --- Steps Left Nav ---*/
 .json-forms-menu {
   // top level menu
@@ -90,7 +92,7 @@
     }
 
     .static .fa-circle {
-      border: 1px solid $action-color;
+      border: 1px solid $secondary-action-color;
       @include themify($themes) {
         color: themed('action-color');
       }

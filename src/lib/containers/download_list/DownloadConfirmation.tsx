@@ -7,7 +7,6 @@ import {
   Query,
   QueryBundleRequest,
 } from '../../utils/synapseTypes/'
-import './DownloadConfirmation.scss'
 import DownloadDetails from './DownloadDetails'
 
 enum StatusEnum {

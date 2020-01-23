@@ -112,7 +112,7 @@ export type SynapseTableState = {
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
   isShowLeftFilter?: boolean
-  isUserModifiedQuery?: boolean
+  isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number

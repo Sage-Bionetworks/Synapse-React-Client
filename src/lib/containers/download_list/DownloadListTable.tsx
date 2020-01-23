@@ -30,7 +30,6 @@ import HasAccess, {
 import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
 import DownloadDetails from './DownloadDetails'
-import './DownloadList.scss'
 
 library.add(faTrash)
 
