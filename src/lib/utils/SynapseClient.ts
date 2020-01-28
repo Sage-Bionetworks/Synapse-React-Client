@@ -1069,7 +1069,7 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = async (sessionCallback?: Function) => {
+export const signOut = (sessionCallback?: Function) => {
   setSessionTokenCookie(undefined, sessionCallback).catch(err => {
     console.error('err when clearing the session cookie ', err)
   })

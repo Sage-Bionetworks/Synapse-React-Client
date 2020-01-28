@@ -22,8 +22,7 @@ type Props = {
   icon: boolean
   googleRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
-  // have a change listener subscribe to if the cookie changes
-  sessionCallback?: Function
+  sessionCallback?: Function // Callback is invoked after login
 }
 
 /**
