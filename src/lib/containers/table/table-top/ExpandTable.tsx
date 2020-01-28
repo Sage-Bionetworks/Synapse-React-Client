@@ -1,7 +1,7 @@
 import * as React from 'react'
 import ExpandSvg from '../../../assets/icons/expand.svg'
 import ShrinkSvg from '../../../assets/icons/shrink.svg'
-import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 
 type ExpandTableProps = {
   onExpand: Function
@@ -13,7 +13,7 @@ export const ExpandTable: React.FunctionComponent<ExpandTableProps> = props => {
 
   return (
     <>
-      <ImageButtonWithTooltip
+      <ElementWithTooltip
         idForToolTip={'expand'}
         callbackFn={() => onExpand()}
         tooltipText={

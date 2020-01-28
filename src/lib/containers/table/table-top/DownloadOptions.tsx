@@ -1,7 +1,7 @@
 import { DownloadLoginModal } from './DownloadLoginModal'
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
@@ -23,11 +23,11 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
   return (
     <React.Fragment>
       <Dropdown style={{ padding: 0 }}>
-        <ImageButtonWithTooltip
+        <ElementWithTooltip
           idForToolTip={tooltipDownloadId}
           tooltipText={'Download Options'}
           image={faDownload}
-        ></ImageButtonWithTooltip>
+        ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}

@@ -1,4 +1,4 @@
-import { ImageButtonWithTooltip } from '../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -14,6 +14,7 @@ import {
   faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import _ from 'lodash'
 import * as React from 'react'
 import { Dropdown, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
@@ -342,14 +343,14 @@ export default class SynapseTable extends React.Component<
     }
     const hasResults = data.queryResult.queryResults.rows.length > 0
     if (!hasResults && !this.state.isUserModifiedQuery) {
-        return (
-          <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            <img src={NoData} alt="no data"></img>
-            <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-              This table is currently empty
-            </div>
+      return (
+        <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+          <img src={NoData} alt="no data"></img>
+          <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+            This table is currently empty
           </div>
-        )
+        </div>
+      )
     }
     const content = (
       <>
@@ -592,7 +593,7 @@ export default class SynapseTable extends React.Component<
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
               {!enableLeftFacetFilter /* without filter flag*/ && (
-                <ImageButtonWithTooltip
+                <ElementWithTooltip
                   idForToolTip={'advancedSearch'}
                   image={faFilter}
                   callbackFn={this.advancedSearch}
@@ -601,13 +602,13 @@ export default class SynapseTable extends React.Component<
               )}
               {enableLeftFacetFilter && (
                 <>
-                  <ImageButtonWithTooltip
+                  <ElementWithTooltip
                     idForToolTip={'advancedSearch'}
                     image={faCog}
                     callbackFn={this.advancedSearch}
                     tooltipText={'Open Advanced Search in Synapse'}
                   />
-                  <ImageButtonWithTooltip
+                  <ElementWithTooltip
                     idForToolTip={'filter'}
                     image={faFilter}
                     callbackFn={() =>
@@ -888,6 +889,7 @@ export default class SynapseTable extends React.Component<
                     mapEntityIdToHeader,
                     mapUserIdToHeader,
                     isMarkdownColumn,
+                    rowIndex,
                   })}
               </td>
             )
@@ -925,6 +927,7 @@ export default class SynapseTable extends React.Component<
     mapEntityIdToHeader,
     mapUserIdToHeader,
     isMarkdownColumn,
+    rowIndex,
   }: {
     entityColumnIndicies: number[]
     userColumnIndicies: number[]
@@ -935,7 +938,18 @@ export default class SynapseTable extends React.Component<
     mapEntityIdToHeader: Dictionary<EntityHeader>
     mapUserIdToHeader: Dictionary<any>
     isMarkdownColumn: boolean
+    rowIndex?: number
   }): React.ReactNode {
+    const getShortString = (
+      longString: string,
+      maxCharCount = 20,
+    ): [string, boolean] => {
+      if (!longString || longString.length <= maxCharCount) {
+        return [longString, false]
+      } else {
+        return [longString.substr(0, maxCharCount), true]
+      }
+    }
     if (isMarkdownColumn) {
       return <MarkdownSynapse renderInline={true} markdown={columnValue} />
     }
@@ -995,7 +1009,22 @@ export default class SynapseTable extends React.Component<
         )
       }
     } else {
-      return <p className={isBold}> {columnValue} </p>
+      const [displayString, isShortened] = getShortString(columnValue)
+      if (!isShortened) {
+        return <p className={isBold}> {columnValue}</p>
+      } else {
+        return (
+          <p className={isBold}>
+            <ElementWithTooltip
+              tooltipText={columnValue}
+              callbackFn={_.noop}
+              idForToolTip={`${colIndex}_${rowIndex}`}
+            >
+              <p className={isBold}> {displayString}...</p>
+            </ElementWithTooltip>
+          </p>
+        )
+      }
     }
   }
 
