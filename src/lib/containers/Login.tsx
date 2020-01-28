@@ -2,7 +2,6 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
-import { ReactCookieProps } from 'react-cookie'
 import {
   getEndpoint,
   BackendDestinationEnum,
@@ -23,7 +22,6 @@ type Props = {
   icon: boolean
   googleRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
-  cookies?: ReactCookieProps['cookies'] // use the cookies object in case the component calling this wants to
   // have a change listener subscribe to if the cookie changes
   sessionCallback?: Function
 }
@@ -60,7 +58,7 @@ class Login extends React.Component<Props, State> {
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
-    this.onSignIn = this.onSignIn.bind(this)
+    this.onGoogleSignIn = this.onGoogleSignIn.bind(this)
   }
   /**
    * Updates internal state with the event that was triggered
@@ -95,7 +93,6 @@ class Login extends React.Component<Props, State> {
       // now get session token from cookie has to be called in the portals repo
       await SynapseClient.setSessionTokenCookie(
         data.sessionToken,
-        this.props.cookies,
         this.props.sessionCallback,
       )
       // Set the new receipt
@@ -159,7 +156,7 @@ class Login extends React.Component<Props, State> {
     }
     return false
   }
-  public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
+  public onGoogleSignIn(event: React.MouseEvent<HTMLButtonElement>) {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
@@ -188,7 +185,7 @@ class Login extends React.Component<Props, State> {
       >
         <form>
           <button
-            onClick={this.onSignIn}
+            onClick={this.onGoogleSignIn}
             className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}
           >
             <GoogleIcon key={1} active={true} />

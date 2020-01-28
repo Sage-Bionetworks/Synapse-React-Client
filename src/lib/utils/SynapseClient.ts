@@ -53,8 +53,9 @@ import {
   UserProfile,
   WikiPage,
 } from './synapseTypes/'
-import { ReactCookieProps } from 'react-cookie'
-type Cookies = ReactCookieProps['cookies']
+import Cookies from 'universal-cookie'
+
+const cookies = new Cookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -959,16 +960,20 @@ export const getWikiAttachmentsFromEvaluation = (
  */
 export const setSessionTokenCookie = async (
   token: string | undefined,
-  cookies?: Cookies,
   sessionCallback?: Function,
 ) => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
-    // set's cookie in session storage
-    cookies?.set(SESSION_TOKEN_COOKIE_KEY, token, {
-      // expires in a day
-      maxAge: 60 * 60 * 24,
-    })
-    return Promise.resolve()
+    if (!token) {
+      cookies.remove(SESSION_TOKEN_COOKIE_KEY)
+    } else {
+      // set's cookie in session storage
+      cookies.set(SESSION_TOKEN_COOKIE_KEY, token, {
+        // expires in a day
+        maxAge: 60 * 60 * 24,
+      })
+    }
+    sessionCallback?.()
+    return
   }
   // will set cookie in the http header
   return doPost(
@@ -989,9 +994,9 @@ export const setSessionTokenCookie = async (
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getSessionTokenFromCookie = async (cookies?: Cookies) => {
+export const getSessionTokenFromCookie = async () => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
-    return cookies?.get(SESSION_TOKEN_COOKIE_KEY)
+    return cookies.get(SESSION_TOKEN_COOKIE_KEY)
   }
   return doGet<string>(
     'Portal/sessioncookie',
@@ -1064,17 +1069,10 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = async (
-  cookies?: Cookies,
-  sessionCallback?: Function,
-) => {
-  if (IS_OUTSIDE_SYNAPSE_ORG) {
-    cookies?.remove(SESSION_TOKEN_COOKIE_KEY)
-  } else {
-    setSessionTokenCookie(undefined, cookies, sessionCallback).catch(err => {
-      console.error('err when clearing the session cookie ', err)
-    })
-  }
+export const signOut = async (sessionCallback?: Function) => {
+  setSessionTokenCookie(undefined, sessionCallback).catch(err => {
+    console.error('err when clearing the session cookie ', err)
+  })
 }
 
 /**
