@@ -2,6 +2,8 @@ import * as React from 'react'
 import RssFeed from './RssFeed'
 import TwitterFeed from './TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
+import { KeyValue } from 'lib/utils/functions/sqlFunctions'
+import _ from 'lodash'
 
 type MenuState = {
   menuIndex: number
@@ -11,6 +13,7 @@ export type MenuConfig = {
   feedName: string
   feedDescription: string
   feedUrl: string
+  feedKeyValue?: KeyValue
   defaultItemsToShow: number
   mailChimpListName?: string
   mailChimpUrl?: string
@@ -18,6 +21,7 @@ export type MenuConfig = {
 }
 export type NewsFeedMenuProps = {
   menuConfig: MenuConfig[]
+  searchParams?: KeyValue
 }
 
 export default class NewsFeedMenu extends React.Component<
@@ -26,9 +30,18 @@ export default class NewsFeedMenu extends React.Component<
 > {
   constructor(props: NewsFeedMenuProps) {
     super(props)
+    let initMenuIndex = 0
+    if (props.searchParams) {
+      // do the search params match a menu config?
+      props.menuConfig.forEach((config, index) => {
+        if (_.isEqual(props.searchParams, config.feedKeyValue)) {
+          initMenuIndex = index
+        }
+      })
+    }
     // See here - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
     this.state = {
-      menuIndex: 0,
+      menuIndex: initMenuIndex,
     }
     this.switchFeed = this.switchFeed.bind(this)
   }
@@ -45,6 +58,12 @@ export default class NewsFeedMenu extends React.Component<
     // this is a fix for that, but this shouldn't be necessary
     if (this.state.menuIndex !== menuIndex) {
       this.setState({ menuIndex })
+      // TODO: update URL on click of menu
+      // let currentUrlParams = new URLSearchParams(window.location.search);
+      // Object.getOwnPropertyNames(this.props.menuConfig[menuIndex].feedKeyValue).forEach(key => {
+      //   currentUrlParams.set(key, this.props.menuConfig[menuIndex]!.feedKeyValue![key]);  
+      // });
+      // this.props.history.push(window.location.pathname + "?" + currentUrlParams.toString());
     }
   }
 
@@ -55,12 +74,18 @@ export default class NewsFeedMenu extends React.Component<
       feedName,
       feedDescription,
       feedUrl,
+      feedKeyValue,
       defaultItemsToShow,
       mailChimpUrl,
       twitterFeedUrl,
       mailChimpListName,
     } = menuConfig[this.state.menuIndex]
-
+    let modifiedFeedUrl = feedUrl
+    if (feedKeyValue) {
+      Object.getOwnPropertyNames(feedKeyValue).forEach(key => {
+        modifiedFeedUrl = `${modifiedFeedUrl}&${key}=${feedKeyValue[key]}`
+      });
+    }
     return (
       <div className="row">
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">
@@ -87,8 +112,8 @@ export default class NewsFeedMenu extends React.Component<
               <h3 className="srcRssFeed">{feedName}</h3>
               <p>{feedDescription}</p>
               <RssFeed
-                key={feedUrl}
-                url={feedUrl}
+                key={modifiedFeedUrl}
+                url={modifiedFeedUrl}
                 defaultItemsToShow={defaultItemsToShow}
               />
             </>
