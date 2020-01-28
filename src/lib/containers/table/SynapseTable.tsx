@@ -1,4 +1,4 @@
-import { ImageButtonWithTooltip } from '../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -593,7 +593,7 @@ export default class SynapseTable extends React.Component<
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
               {!enableLeftFacetFilter /* without filter flag*/ && (
-                <ImageButtonWithTooltip
+                <ElementWithTooltip
                   idForToolTip={'advancedSearch'}
                   image={faFilter}
                   callbackFn={this.advancedSearch}
@@ -602,13 +602,13 @@ export default class SynapseTable extends React.Component<
               )}
               {enableLeftFacetFilter && (
                 <>
-                  <ImageButtonWithTooltip
+                  <ElementWithTooltip
                     idForToolTip={'advancedSearch'}
                     image={faCog}
                     callbackFn={this.advancedSearch}
                     tooltipText={'Open Advanced Search in Synapse'}
                   />
-                  <ImageButtonWithTooltip
+                  <ElementWithTooltip
                     idForToolTip={'filter'}
                     image={faFilter}
                     callbackFn={() =>
@@ -1015,13 +1015,13 @@ export default class SynapseTable extends React.Component<
       } else {
         return (
           <p className={isBold}>
-            <ImageButtonWithTooltip
+            <ElementWithTooltip
               tooltipText={columnValue}
               callbackFn={_.noop}
               idForToolTip={`${colIndex}_${rowIndex}`}
             >
-              {displayString}...
-            </ImageButtonWithTooltip>
+              <p className={isBold}> {displayString}...</p>
+            </ElementWithTooltip>
           </p>
         )
       }

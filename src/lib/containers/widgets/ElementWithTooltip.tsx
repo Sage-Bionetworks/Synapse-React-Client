@@ -10,7 +10,14 @@ type CustomImageProps = {
   altText: string
 }
 
-type ImageButtonWithTooltipProps = {
+/*****************************************
+ *  The control needs to either have a child element or needs to have an image supplied
+ *  If the child element is supplied the control renders the child applying additional proiperties
+ *  If the image is supplied the control renders a clickable image
+ *  If there are no children and callback Fn is not supplied it is assumed to be a a dropdown trigger
+ */
+
+type ElementWithTooltipProps = {
   image?: IconDefinition | CustomImageProps
   imageColor?: string
   idForToolTip: string
@@ -32,7 +39,7 @@ function getTooltipTriggerContents(
   }
 }
 
-export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipProps> = ({
+export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   image,
   idForToolTip,
   callbackFn,
@@ -47,7 +54,9 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
 
   //if there is no callbackFn - assume it's a toggle
 
-  const tooltipTrigger = callbackFn ? (
+  let tooltipTrigger: JSX.Element;
+  if (!children) {
+tooltipTrigger = callbackFn ? (
    
     <button
       style={{ padding: '0 5px 0 5px' }}
@@ -73,6 +82,10 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
       {tooltipTriggerContents}
     </Dropdown.Toggle>
   )
+  } else {
+    const outerChild = children as JSX.Element
+    tooltipTrigger = React.cloneElement(outerChild, { className: `${outerChild.props.className} SRC-hand-cursor`,  id: idForToolTip, ['data-for']: idForToolTip, ['data-tip']: tooltipText})
+  }
 
   return (
     <>
