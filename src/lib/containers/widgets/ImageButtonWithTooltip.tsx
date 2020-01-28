@@ -41,7 +41,7 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
   imageColor,
   children,
 }) => {
-  var tooltipTriggerContents = image
+  const tooltipTriggerContents = image
     ? getTooltipTriggerContents(image, imageColor)
     : children || <></>
 
