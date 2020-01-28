@@ -1,5 +1,3 @@
-import './SynapseFormWrapper.scss'
-
 import * as React from 'react'
 
 import { SynapseClient } from '../../utils'

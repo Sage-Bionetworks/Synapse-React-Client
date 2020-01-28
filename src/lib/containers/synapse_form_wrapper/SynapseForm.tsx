@@ -1,5 +1,3 @@
-import './SynapseFormWrapper.scss'
-
 import * as React from 'react'
 import _ from 'lodash'
 import { Engine } from 'json-rules-engine'
