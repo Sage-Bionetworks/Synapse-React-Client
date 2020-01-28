@@ -27,7 +27,7 @@ export const Handle: React.FunctionComponent<IHandleProps> = ({
 }) => (
   <div
     role="slider"
-    className="rangeSlider__handle"
+    className="RangeSlider__handle"
     aria-valuemin={min}
     aria-valuemax={max}
     aria-valuenow={value}
@@ -52,7 +52,7 @@ export const Track: React.FunctionComponent<ITrackProps> = ({
   getTrackProps,
 }) => (
   <div
-    className="rangeSlider__track"
+    className="RangeSlider__track"
     style={{
       left: `${source.percent}%`,
       width: `${target.percent - source.percent}%`,
@@ -76,13 +76,13 @@ export const Tick: React.FunctionComponent<ITickProps> = ({
 }) => (
   <div>
     <div
-      className="rangeSlider__tick"
+      className="RangeSlider__tick"
       style={{
         left: `${tick.percent}%`,
       }}
     />
     <div
-      className="rangeSlider__tickInner"
+      className="RangeSlider__tickInner"
       style={{
         marginLeft: `${-(100 / count) / 2}%`,
         width: `${100 / count}%`,
@@ -148,10 +148,10 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
   }
 
   return (
-    <div className="rangeSlider">
-      <div className="rangeSlider__values">{values[0]} - {values[1]}</div>
+    <div className="RangeSlider">
+      <div className="RangeSlider__values">{values[0]} - {values[1]}</div>
       <div
-        className={`rangeSlider__wrapper${
+        className={`RangeSlider__wrapper${
           doUpdateOnApply ? '--flex' : '--block'
         }`}
       >
@@ -159,7 +159,7 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
           mode={1}
           step={props.step}
           domain={stringArrToNumArr(props.domain)}
-          className="rangeSlider__slider"
+          className="RangeSlider__slider"
           onChange={(values: readonly number[]) =>
             handleSliderChange(
               values,
@@ -170,7 +170,7 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
         >
           <Rail>
             {({ getRailProps }) => (
-              <div className="rangeSlider__rail" {...getRailProps()} />
+              <div className="RangeSlider__rail" {...getRailProps()} />
             )}
           </Rail>
           <Handles>
@@ -213,7 +213,7 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
         </Slider>
         {doUpdateOnApply && (
           <button
-            className="rangeSlider__btnApply"
+            className="RangeSlider__btnApply"
             onClick={() =>  props.onChange({ min: values[0], max: values[1] })}
           >
             Apply

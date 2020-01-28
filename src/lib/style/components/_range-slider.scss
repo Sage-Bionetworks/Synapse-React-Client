@@ -1,8 +1,6 @@
-@import '../abstracts/variables';
-
 $textLight: #b7b7b7;
 
-.rangeSlider {
+.RangeSlider {
   $rail-height: 6px;
   height: 60px;
   $handleLeftOffset: 1- ($rail-height + 10)/2;
