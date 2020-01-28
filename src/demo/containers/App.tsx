@@ -44,7 +44,7 @@ export default class App extends React.Component<{}, AppState> {
       })
   }
 
-  establishSession = () => {
+  getSession = () => {
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
       .then(sessionToken => this.handleChange({ token: sessionToken }))
@@ -59,7 +59,7 @@ export default class App extends React.Component<{}, AppState> {
         You are logged in.&nbsp;
         <button
           onClick={() => {
-            SynapseClient.signOut(this.establishSession)
+            SynapseClient.signOut(this.getSession)
           }}
         >
           <span aria-hidden="true">Sign out</span>
@@ -74,7 +74,7 @@ export default class App extends React.Component<{}, AppState> {
           token={
             SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
           }
-          sessionCallback={this.establishSession}
+          sessionCallback={this.getSession}
           theme={'light'}
           icon={true}
         />
@@ -86,7 +86,7 @@ export default class App extends React.Component<{}, AppState> {
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
             }
-            sessionCallback={this.establishSession}
+            sessionCallback={this.getSession}
             theme={'dark'}
             icon={true}
             googleRedirectUrl={
