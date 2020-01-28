@@ -1,4 +1,5 @@
 import * as React from 'react'
+import _ from 'lodash'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { ImageButtonWithTooltip } from '../../../../lib/containers/widgets/ImageButtonWithTooltip'
 import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'
@@ -79,5 +80,19 @@ describe('basic function', () => {
   it('should call the callback Fn', () => {
     fireEvent.click(imageButton)
     expect(mockCallback).toHaveBeenCalled()
+  })
+  it('should create correctly without image as a text tooltip', () => {
+    init({
+      ...props,
+      callbackFn: _.noop,
+      children: 'hello world',
+      className: 'my_class',
+      image: undefined,
+    })
+    expect(imageButton.classList.contains('my_class')).toBe(true)
+    expect(imageButton.innerHTML).toBe('hello world')
+    expect(imageButton.attributes['data-tip'].value).toBe(props.tooltipText)
+    expect(imageButton.getElementsByTagName('svg')).toHaveLength(0)
+    expect(imageButton.getElementsByTagName('img')).toHaveLength(0)
   })
 })

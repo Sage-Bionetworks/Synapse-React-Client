@@ -11,11 +11,25 @@ type CustomImageProps = {
 }
 
 type ImageButtonWithTooltipProps = {
-  image: IconDefinition | CustomImageProps
-  callbackFn?: Function
-  tooltipText: string
-  cssClass?: string
+  image?: IconDefinition | CustomImageProps
+  imageColor?: string
   idForToolTip: string
+  tooltipText: string
+  callbackFn?: Function
+  className?: string
+}
+
+function getTooltipTriggerContents(
+  image: IconDefinition | CustomImageProps,
+  imageColor?: string,
+): JSX.Element {
+  if ('svgImg' in image) {
+    return <img src={image.svgImg} alt={image.altText} />
+  } else {
+    return (
+      <FontAwesomeIcon size="1x" color={imageColor || 'white'} icon={image} />
+    )
+  }
 }
 
 export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipProps> = ({
@@ -23,28 +37,31 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
   idForToolTip,
   callbackFn,
   tooltipText,
-  cssClass,
+  className,
+  imageColor,
+  children,
 }) => {
-  var buttonImage = <></>
-  if ('svgImg' in image) {
-    buttonImage = <img src={image.svgImg} alt={image.altText} />
-  } else {
-    buttonImage = <FontAwesomeIcon size="1x" color="white" icon={image} />
-  }
+  var tooltipTriggerContents = image
+    ? getTooltipTriggerContents(image, imageColor)
+    : children || <></>
+
   //if there is no callbackFn - assume it's a toggle
-  const button = callbackFn ? (
+
+  const tooltipTrigger = callbackFn ? (
+   
     <button
       style={{ padding: '0 5px 0 5px' }}
       tabIndex={0}
       id={idForToolTip}
       data-for={idForToolTip}
       data-tip={tooltipText}
-      className={`SRC-primary-background-color-hover SRC-hand-cursor ${cssClass}`}
+      className={`SRC-hand-cursor ${image ?
+        'SRC-primary-background-color-hover': ''} ${className}`}
       onKeyPress={() => callbackFn()}
       onClick={() => callbackFn()}
       aria-label={tooltipText}
     >
-      {buttonImage}
+      {tooltipTriggerContents}
     </button>
   ) : (
     <Dropdown.Toggle
@@ -53,13 +70,13 @@ export const ImageButtonWithTooltip: FunctionComponent<ImageButtonWithTooltipPro
       id={idForToolTip}
       variant={'light'}
     >
-      {buttonImage}
+      {tooltipTriggerContents}
     </Dropdown.Toggle>
   )
 
   return (
     <>
-      {button}
+      {tooltipTrigger}
       <ReactTooltip
         delayShow={TOOLTIP_DELAY_SHOW}
         place="top"
