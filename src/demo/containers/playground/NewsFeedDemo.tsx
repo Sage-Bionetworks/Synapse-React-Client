@@ -2,6 +2,7 @@ import * as React from 'react'
 import NewsFeedMenu from '../../../lib/containers/NewsFeedMenu'
 
 export const NewsFeedDemo:React.SFC = () => {
+  // in the portal, search params should be filled in based on URL query parameters.
   const searchParams: any = {'cat':'3'}
   return (
     <NewsFeedMenu
@@ -32,6 +33,7 @@ export const NewsFeedDemo:React.SFC = () => {
         },
       ]}
       searchParams={searchParams}
+      // routeToNewsFeed={'/Playground/NewsFeedDemo'}
     />
   )
 }

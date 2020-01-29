@@ -22,6 +22,7 @@ export type MenuConfig = {
 export type NewsFeedMenuProps = {
   menuConfig: MenuConfig[]
   searchParams?: KeyValue
+  routeToNewsFeed?: string // if set, news feed nav bar links are hardcoded to this route, with query params set to the selected menu config key/value
 }
 
 export default class NewsFeedMenu extends React.Component<
@@ -57,13 +58,19 @@ export default class NewsFeedMenu extends React.Component<
     // there's an odd bug where clicking a menu item twice will select the first tab,
     // this is a fix for that, but this shouldn't be necessary
     if (this.state.menuIndex !== menuIndex) {
-      this.setState({ menuIndex })
-      // TODO: update URL on click of menu
-      // let currentUrlParams = new URLSearchParams(window.location.search);
-      // Object.getOwnPropertyNames(this.props.menuConfig[menuIndex].feedKeyValue).forEach(key => {
-      //   currentUrlParams.set(key, this.props.menuConfig[menuIndex]!.feedKeyValue![key]);  
-      // });
-      // this.props.history.push(window.location.pathname + "?" + currentUrlParams.toString());
+      const { routeToNewsFeed } = this.props
+      if (routeToNewsFeed) {
+        // Update the URL!
+        // The route has been given, so instead of switching the feed, change the page to surface the feed key/value in the url
+        const urlParams = new URLSearchParams(window.location.search)
+        Object.getOwnPropertyNames(this.props.menuConfig[menuIndex].feedKeyValue).forEach(key => {
+          urlParams.set(key, this.props.menuConfig[menuIndex]!.feedKeyValue![key]);  
+        })
+        window.location.href = `${routeToNewsFeed}?${urlParams + ''}`
+      } else {
+        // Update the state
+        this.setState({ menuIndex })
+      }
     }
   }
 
