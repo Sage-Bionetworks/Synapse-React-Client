@@ -2,7 +2,7 @@ import * as React from 'react'
 import RssFeed from './RssFeed'
 import TwitterFeed from './TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
-import { KeyValue } from 'lib/utils/functions/sqlFunctions'
+import { KeyValue } from '../utils/functions/sqlFunctions'
 import _ from 'lodash'
 
 type MenuState = {
