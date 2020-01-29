@@ -958,10 +958,10 @@ export const getWikiAttachmentsFromEvaluation = (
  *
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
-export const setSessionTokenCookie = async (
+export const setSessionTokenCookie = (
   token: string | undefined,
-  sessionCallback?: Function,
-) => {
+  sessionCallback: Function,
+): void => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
       cookies.remove(SESSION_TOKEN_COOKIE_KEY)
@@ -972,23 +972,23 @@ export const setSessionTokenCookie = async (
         maxAge: 60 * 60 * 24,
       })
     }
-    sessionCallback?.()
-    return
+    sessionCallback()
+  } else {
+    // will set cookie in the http header
+    doPost(
+      'Portal/sessioncookie',
+      { sessionToken: token },
+      undefined,
+      'include',
+      BackendDestinationEnum.PORTAL_ENDPOINT,
+    )
+      .then(_ => {
+        sessionCallback()
+      })
+      .catch(err => {
+        console.error('Error on setting session token ', err)
+      })
   }
-  // will set cookie in the http header
-  return doPost(
-    'Portal/sessioncookie',
-    { sessionToken: token },
-    undefined,
-    'include',
-    BackendDestinationEnum.PORTAL_ENDPOINT,
-  )
-    .then(_ => {
-      sessionCallback?.()
-    })
-    .catch(err => {
-      console.error('Error on setting session token ', err)
-    })
 }
 /**
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
@@ -1046,18 +1046,14 @@ export const detectSSOCode = () => {
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
-        setSessionTokenCookie(synToken.sessionToken)
-          .then(() => {
-            // go back to original route after successful SSO login
-            const originalUrl = localStorage.getItem('after-sso-login-url')
-            localStorage.removeItem('after-sso-login-url')
-            if (originalUrl) {
-              window.location.replace(originalUrl)
-            }
-          })
-          .catch(errSetSession => {
-            console.error('Error on set sesion token cookie ', errSetSession)
-          })
+        setSessionTokenCookie(synToken.sessionToken, () => {
+          // go back to original route after successful SSO login
+          const originalUrl = localStorage.getItem('after-sso-login-url')
+          localStorage.removeItem('after-sso-login-url')
+          if (originalUrl) {
+            window.location.replace(originalUrl)
+          }
+        })
       })
       .catch((err: any) => {
         if (err.status === 404) {
@@ -1069,10 +1065,8 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = (sessionCallback?: Function) => {
-  setSessionTokenCookie(undefined, sessionCallback).catch(err => {
-    console.error('err when clearing the session cookie ', err)
-  })
+export const signOut = (sessionCallback: Function) => {
+  setSessionTokenCookie(undefined, sessionCallback)
 }
 
 /**
