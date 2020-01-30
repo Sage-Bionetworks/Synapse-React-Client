@@ -53,6 +53,9 @@ import {
   UserProfile,
   WikiPage,
 } from './synapseTypes/'
+import Cookies from 'universal-cookie'
+
+const cookies = new Cookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -525,7 +528,7 @@ export const login = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
-export let oAuthUrlRequest = (
+export const oAuthUrlRequest = (
   provider: string,
   redirectUrl: string,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
@@ -546,7 +549,7 @@ export let oAuthUrlRequest = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
-export let oAuthSessionRequest = (
+export const oAuthSessionRequest = (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
@@ -955,35 +958,52 @@ export const getWikiAttachmentsFromEvaluation = (
  *
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
-export const setSessionTokenCookie = (token: string | undefined) => {
-  if (!IS_OUTSIDE_SYNAPSE_ORG) {
-    return doPost(
+export const setSessionTokenCookie = (
+  token: string | undefined,
+  sessionCallback: Function,
+): void => {
+  if (IS_OUTSIDE_SYNAPSE_ORG) {
+    if (!token) {
+      cookies.remove(SESSION_TOKEN_COOKIE_KEY)
+    } else {
+      // set's cookie in session storage
+      cookies.set(SESSION_TOKEN_COOKIE_KEY, token, {
+        // expires in a day
+        maxAge: 60 * 60 * 24,
+      })
+    }
+    sessionCallback()
+  } else {
+    // will set cookie in the http header
+    doPost(
       'Portal/sessioncookie',
       { sessionToken: token },
       undefined,
       'include',
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )
+      .then(_ => {
+        sessionCallback()
+      })
+      .catch(err => {
+        console.error('Error on setting session token ', err)
+      })
   }
-  // else not on a synapse.org subdomain, no Synapse SSO
-  setCookie(SESSION_TOKEN_COOKIE_KEY, token, 1)
-  return Promise.resolve()
 }
 /**
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getSessionTokenFromCookie = () => {
-  if (!IS_OUTSIDE_SYNAPSE_ORG) {
-    return doGet<string>(
-      'Portal/sessioncookie',
-      undefined,
-      'include',
-      BackendDestinationEnum.PORTAL_ENDPOINT,
-    )
+export const getSessionTokenFromCookie = async () => {
+  if (IS_OUTSIDE_SYNAPSE_ORG) {
+    return cookies.get(SESSION_TOKEN_COOKIE_KEY)
   }
-  // else (is not on a synapse.org subdomain)
-  return Promise.resolve(getCookie(SESSION_TOKEN_COOKIE_KEY))
+  return doGet<string>(
+    'Portal/sessioncookie',
+    undefined,
+    'include',
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )
 }
 
 export const getPrincipalAliasRequest = (
@@ -1026,18 +1046,14 @@ export const detectSSOCode = () => {
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
-        setSessionTokenCookie(synToken.sessionToken)
-          .then(() => {
-            // go back to original route after successful SSO login
-            const originalUrl = localStorage.getItem('after-sso-login-url')
-            localStorage.removeItem('after-sso-login-url')
-            if (originalUrl) {
-              window.location.replace(originalUrl)
-            }
-          })
-          .catch(errSetSession => {
-            console.error('Error on set sesion token cookie ', errSetSession)
-          })
+        setSessionTokenCookie(synToken.sessionToken, () => {
+          // go back to original route after successful SSO login
+          const originalUrl = localStorage.getItem('after-sso-login-url')
+          localStorage.removeItem('after-sso-login-url')
+          if (originalUrl) {
+            window.location.replace(originalUrl)
+          }
+        })
       })
       .catch((err: any) => {
         if (err.status === 404) {
@@ -1049,20 +1065,8 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = () => {
-  if (!IS_OUTSIDE_SYNAPSE_ORG) {
-    setSessionTokenCookie(undefined)
-      .then(() => {
-        window.location.reload()
-      })
-      .catch(err => {
-        console.error('err when clearing the session cookie ', err)
-      })
-  } else {
-    // is not on a synapse.org subdomain
-    removeCookie(SESSION_TOKEN_COOKIE_KEY)
-    window.location.reload()
-  }
+export const signOut = (sessionCallback: Function) => {
+  setSessionTokenCookie(undefined, sessionCallback)
 }
 
 /**
@@ -1104,13 +1108,13 @@ export const uploadFile = (
 const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
   // code taken from md5 example from library
   return new Promise((resolve, reject) => {
-    let blobSlice = File.prototype.slice,
+    const blobSlice = File.prototype.slice,
       file = fileBlob,
       chunkSize = 2097152, // Read in chunks of 2MB
       chunks = Math.ceil(file.size / chunkSize),
-      currentChunk = 0,
       spark = new SparkMD5.ArrayBuffer(),
       fileReader = new FileReader()
+    let currentChunk = 0
 
     fileReader.onload = function(e) {
       console.log('read chunk nr', currentChunk + 1, 'of', chunks)
@@ -1121,7 +1125,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
         loadNext()
       } else {
         console.log('finished loading')
-        let md5: string = spark.end()
+        const md5: string = spark.end()
         console.info('computed hash', md5) // Compute hash
         resolve(md5)
       }
@@ -1132,8 +1136,8 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
       reject(fileReader.error)
     }
 
-    let loadNext = () => {
-      let start = currentChunk * chunkSize,
+    const loadNext = () => {
+      const start = currentChunk * chunkSize,
         end = start + chunkSize >= file.size ? file.size : start + chunkSize
 
       fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
@@ -1778,32 +1782,6 @@ export const getProjectStatistics = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-}
-
-const setCookie = (name: string, value: string | undefined, days: number) => {
-  if (!value) {
-    return
-  }
-  let expires = ''
-  if (days) {
-    const date = new Date()
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
-    expires = `; expires=${date.toUTCString()}`
-  }
-  document.cookie = `${name}=${value || ''}${expires}; path=/`
-}
-const getCookie = (name: string) => {
-  const nameEQ = `${name}=`
-  const ca = document.cookie.split(';')
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i]
-    while (c.charAt(0) == ' ') c = c.substring(1, c.length)
-    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length)
-  }
-  return null
-}
-const removeCookie = (name: string) => {
-  document.cookie = `${name}= ; expires= Thu, 21 Aug 2014 20:00:00 UTC; path=/`
 }
 
 // see https://docs.synapse.org/rest/POST/restrictionInformation.html
