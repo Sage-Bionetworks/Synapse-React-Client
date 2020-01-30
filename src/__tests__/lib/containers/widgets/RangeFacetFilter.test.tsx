@@ -114,7 +114,7 @@ describe('basic function', () => {
     }
     it('should set for integer', () => {
       init({ ...props, facetResult: rangeFacetResult })
-      const slider = wrapper.find('.rangeSlider')
+      const slider = wrapper.find('.RangeSlider')
       expect(slider).toHaveLength(1)
     })
     it('should set for date', async () => {
@@ -157,7 +157,7 @@ describe('basic function', () => {
       //click the third radio
       radios.at(2).simulate('change')
       expect(mockCallback).not.toHaveBeenCalled()
-      expect(wrapper.find('.rangeSlider')).toHaveLength(1)
+      expect(wrapper.find('.RangeSlider')).toHaveLength(1)
       //get updated wrapper and clear mocks
       mockCallback.mockClear()
       wrapper = wrapper.update()
@@ -167,7 +167,7 @@ describe('basic function', () => {
       //click the third radio
       radios.at(1).simulate('change')
       expect(mockCallback).toHaveBeenCalledWith(['', ''])
-      expect(wrapper.find('.rangeSlider')).toHaveLength(0)
+      expect(wrapper.find('.RangeSlider')).toHaveLength(0)
       wrapper = wrapper.update()
       radios = wrapper.find('input[type="radio"]')
       expect(radios.at(1).props().checked).toBe(true)

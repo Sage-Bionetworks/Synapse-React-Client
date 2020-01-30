@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColumnsSvg from '../../../assets/icons/columns.svg'
@@ -41,14 +41,14 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       }
       show={show}
     >
-      <ImageButtonWithTooltip
+      <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}
         tooltipText={'Add / Remove Columns'}
         image={{
           svgImg: ColumnsSvg,
           altText: 'columns selection',
         }}
-      ></ImageButtonWithTooltip>
+      ></ElementWithTooltip>
 
       {/* There's a known issue if the number of dropdown items is very large, ~30+, the dropdown
           will unexpectedly render with the list going upwards instead of downwards.

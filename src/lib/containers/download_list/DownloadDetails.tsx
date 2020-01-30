@@ -1,5 +1,3 @@
-import './DownloadList.scss'
-
 import React, { useState, useEffect } from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile, faDatabase, faClock } from '@fortawesome/free-solid-svg-icons'
