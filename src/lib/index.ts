@@ -17,7 +17,7 @@ import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/Synaps
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import NewsFeedMenu from './containers/NewsFeedMenu'
-import './style/Index.scss'
+import './style/main.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 
 const SynapseComponents = {

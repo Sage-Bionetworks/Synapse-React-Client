@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { ImageButtonWithTooltip } from '../../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { DownloadLoginModal } from './DownloadLoginModal'
@@ -31,11 +31,11 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
   return (
     <>
       <Dropdown style={{ padding: 0 }}>
-        <ImageButtonWithTooltip
+        <ElementWithTooltip
           idForToolTip={tooltipEllipsis}
           tooltipText={'Table Options'}
           image={faEllipsisV}
-        ></ImageButtonWithTooltip>
+        ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}

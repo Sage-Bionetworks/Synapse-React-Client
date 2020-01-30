@@ -1,4 +1,3 @@
-import './QueryFilter.scss'
 import * as React from 'react'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { EnumFacetFilter } from './EnumFacetFilter'

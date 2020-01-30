@@ -1,18 +1,19 @@
 import * as React from 'react'
+import _ from 'lodash'
 import { render, fireEvent, cleanup } from '@testing-library/react'
-import { ImageButtonWithTooltip } from '../../../../lib/containers/widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 const mockCallback = jest.fn()
-type ImageButtonWithTooltipProps = React.ComponentProps<
-  typeof ImageButtonWithTooltip
+type ElementWithTooltipProps = React.ComponentProps<
+  typeof ElementWithTooltip
 >
 
 afterEach(cleanup)
 
 function createTestProps(
-  overrides?: ImageButtonWithTooltipProps,
-): ImageButtonWithTooltipProps {
+  overrides?: ElementWithTooltipProps,
+): ElementWithTooltipProps {
   return {
     image: faCheck,
     callbackFn: mockCallback,
@@ -22,14 +23,14 @@ function createTestProps(
   }
 }
 
-let props: ImageButtonWithTooltipProps
+let props: ElementWithTooltipProps
 let container: HTMLElement
 let imageButton: HTMLElement
 
-function init(overrides?: ImageButtonWithTooltipProps) {
+function init(overrides?: ElementWithTooltipProps) {
   props = createTestProps(overrides)
   mockCallback.mockClear()
-  container = render(<ImageButtonWithTooltip {...props} />).container
+  container = render(<ElementWithTooltip {...props} />).container
   imageButton = container.getElementsByTagName('button').item(0)!
 }
 
@@ -52,7 +53,7 @@ describe('basic function', () => {
     ).toBe((props.image as IconDefinition).iconName)
     expect(imageButton.getElementsByTagName('img')).toHaveLength(0)
 
-    const props_: ImageButtonWithTooltipProps = {
+    const props_: ElementWithTooltipProps = {
       ...props,
       image: {
         svgImg: '/path/to/img',
@@ -79,5 +80,20 @@ describe('basic function', () => {
   it('should call the callback Fn', () => {
     fireEvent.click(imageButton)
     expect(mockCallback).toHaveBeenCalled()
+  })
+  it('should create correctly without image as a text tooltip', () => {
+    const child = <span className="my_class">hello world</span>
+    init({
+      ...props,
+      callbackFn: _.noop,
+      children: child,
+      image: undefined,
+    })
+    expect(imageButton).toBeNull
+    const tooltipTrigger = container.getElementsByClassName('my_class').item(0)
+    expect(tooltipTrigger).toBeDefined
+    expect(tooltipTrigger!.classList.contains('my_class')).toBe(true)
+    expect(tooltipTrigger!.innerHTML).toBe('hello world')
+    expect(tooltipTrigger!.attributes['data-tip'].value).toBe(props.tooltipText)
   })
 })

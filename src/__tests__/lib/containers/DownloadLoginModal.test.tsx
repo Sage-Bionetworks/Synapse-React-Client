@@ -48,34 +48,4 @@ describe('basic function', () => {
     expect(wrapper.find('a')).toHaveLength(2)
     expect(wrapper.find('Login')).toHaveLength(0)
   })
-
-  it('should display Login  and hide header and it\'s "sign-in" button when "Sign in" is clicked', () => {
-    expect(
-      wrapper
-        .find('ModalFooter')
-        .find('button')
-        .findWhere(n => n.text() === 'Sign in' && n.type() === 'button'),
-    ).toHaveLength(1)
-
-    wrapper
-      .find('ModalFooter')
-      .find('button')
-      .at(1)
-      .simulate('click')
-    wrapper = wrapper.update()
-    expect(wrapper.find('ModalFooter').find('button')).toHaveLength(1)
-    expect(wrapper.find('Login')).toHaveLength(1)
-    expect(
-      wrapper
-        .find('Login')
-        .find('button')
-        .findWhere(n => n.text() === 'Sign in' && n.type() === 'button'),
-    ).toHaveLength(1)
-    expect(
-      wrapper
-        .find('ModalFooter')
-        .find('button')
-        .findWhere(n => n.text() === 'Sign in' && n.type() === 'button'),
-    ).toHaveLength(0)
-  })
 })

@@ -1,5 +1,3 @@
-import './StepsSideNav.scss'
-
 import * as React from 'react'
 import { Step, StepStateEnum } from './types'
 
