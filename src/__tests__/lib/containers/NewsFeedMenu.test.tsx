@@ -6,6 +6,7 @@ import NewsFeedMenu, {
 import RssFeed from '../../../lib/containers/RssFeed'
 import TwitterFeed from '../../../lib/containers/TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
+import { KeyValue } from 'lib/utils/functions/sqlFunctions'
 
 const createShallowComponent = (props: NewsFeedMenuProps) => {
   const wrapper = shallow<NewsFeedMenu>(<NewsFeedMenu {...props} />)
@@ -15,10 +16,12 @@ const createShallowComponent = (props: NewsFeedMenuProps) => {
 
 describe('it renders with basic functionality', () => {
   const feedName: string = 'feed1'
-  const feedUrl: string = 'https://portalnewsstg.wpengine.com/?feed=rss2&cat=4'
+  const feedUrl: string = 'https://portalnewsstg.wpengine.com/?feed=rss2'
+  const feedDescription: string = 'test feed'
   const defaultItemsToShow: number = 3
   const props: NewsFeedMenuProps = {
-    menuConfig: [{ feedName, feedUrl, defaultItemsToShow }],
+    menuConfig: [{ feedName, feedUrl, defaultItemsToShow, feedDescription }],
+    routeToNewsFeed: '/News'
   }
 
   it('renders without crashing', () => {
@@ -27,7 +30,8 @@ describe('it renders with basic functionality', () => {
   })
 
   it('renders with a MailChimp signup', async () => {
-    const mailChimpSignupText: string = 'Sign up now!'
+    const feedDescription: string = 'test feed'
+    const feedKeyValue: KeyValue = {'cat':'4'}
     const mailChimpUrl: string =
       'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a'
     const propsWithMailChimpSignup: NewsFeedMenuProps = {
@@ -35,11 +39,13 @@ describe('it renders with basic functionality', () => {
         {
           feedName,
           feedUrl,
+          feedKeyValue,
           defaultItemsToShow,
-          mailChimpSignupText,
           mailChimpUrl,
+          feedDescription,
         },
       ],
+      routeToNewsFeed: '/News',
     }
     const { wrapper } = await createShallowComponent(propsWithMailChimpSignup)
     expect(wrapper).toBeDefined()
@@ -51,6 +57,7 @@ describe('it renders with basic functionality', () => {
   it('renders with a Twitter feed', async () => {
     const twitterFeedUrl: string =
       'https://twitter.com/AMPADPortal?ref_src=twsrc%5Etfw'
+    const feedDescription: string = 'test feed'
     const propsWithMailChimpSignup: NewsFeedMenuProps = {
       menuConfig: [
         {
@@ -58,8 +65,10 @@ describe('it renders with basic functionality', () => {
           feedUrl,
           defaultItemsToShow,
           twitterFeedUrl,
+          feedDescription,
         },
       ],
+      routeToNewsFeed: '/News',
     }
     const { wrapper } = await createShallowComponent(propsWithMailChimpSignup)
     expect(wrapper).toBeDefined()

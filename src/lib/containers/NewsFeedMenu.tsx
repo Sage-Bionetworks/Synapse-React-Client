@@ -2,15 +2,15 @@ import * as React from 'react'
 import RssFeed from './RssFeed'
 import TwitterFeed from './TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
-
-type MenuState = {
-  menuIndex: number
-}
+import { KeyValue } from '../utils/functions/sqlFunctions'
+import _ from 'lodash'
+import { Link } from 'react-router-dom'
 
 export type MenuConfig = {
   feedName: string
   feedDescription: string
   feedUrl: string
+  feedKeyValue?: KeyValue
   defaultItemsToShow: number
   mailChimpListName?: string
   mailChimpUrl?: string
@@ -18,49 +18,38 @@ export type MenuConfig = {
 }
 export type NewsFeedMenuProps = {
   menuConfig: MenuConfig[]
+  searchParams?: KeyValue
+  routeToNewsFeed: string // news feed nav bar links are hardcoded to this route, with query params set to the selected menu config key/value
 }
 
 export default class NewsFeedMenu extends React.Component<
-  NewsFeedMenuProps,
-  MenuState
+  NewsFeedMenuProps, {}
 > {
   constructor(props: NewsFeedMenuProps) {
     super(props)
-    // See here - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
-    this.state = {
-      menuIndex: 0,
-    }
-    this.switchFeed = this.switchFeed.bind(this)
-  }
-
-  /**
-   * Handle user clicking menu item, event isn't used so we denote it as an _
-   *
-   * @memberof Menu
-   */
-  public switchFeed = (menuIndex: number) => (
-    _: React.SyntheticEvent<HTMLDivElement>,
-  ) => {
-    // there's an odd bug where clicking a menu item twice will select the first tab,
-    // this is a fix for that, but this shouldn't be necessary
-    if (this.state.menuIndex !== menuIndex) {
-      this.setState({ menuIndex })
-    }
+    this.getMenuIndex = this.getMenuIndex.bind(this)
   }
 
   public render() {
+    const menuIndex = this.getMenuIndex()
     const menuDropdown = this.renderMenu()
     const { menuConfig } = this.props
     const {
       feedName,
       feedDescription,
       feedUrl,
+      feedKeyValue,
       defaultItemsToShow,
       mailChimpUrl,
       twitterFeedUrl,
       mailChimpListName,
-    } = menuConfig[this.state.menuIndex]
-
+    } = menuConfig[menuIndex]
+    let modifiedFeedUrl = feedUrl
+    if (feedKeyValue) {
+      Object.getOwnPropertyNames(feedKeyValue).forEach(key => {
+        modifiedFeedUrl = `${modifiedFeedUrl}&${key}=${feedKeyValue[key]}`
+      });
+    }
     return (
       <div className="row">
         <div className="col-xs-2 SRC-menuLayout SRC-menuPadding">
@@ -87,8 +76,8 @@ export default class NewsFeedMenu extends React.Component<
               <h3 className="srcRssFeed">{feedName}</h3>
               <p>{feedDescription}</p>
               <RssFeed
-                key={feedUrl}
-                url={feedUrl}
+                key={modifiedFeedUrl}
+                url={modifiedFeedUrl}
                 defaultItemsToShow={defaultItemsToShow}
               />
             </>
@@ -99,10 +88,24 @@ export default class NewsFeedMenu extends React.Component<
     )
   }
 
+  getMenuIndex = () => {
+    let menuIndex = 0
+    if (this.props.searchParams) {
+      // do the search params match a menu config?
+      this.props.menuConfig.forEach((config, index) => {
+        if (config.feedKeyValue && _.isEqual(this.props.searchParams, config.feedKeyValue)) {
+          menuIndex = index
+        }
+      })
+    }
+    return menuIndex
+  }
+
   private renderMenu() {
-    const { menuConfig } = this.props
+    const menuIndex = this.getMenuIndex()
+    const { menuConfig, routeToNewsFeed } = this.props
     return menuConfig.map((config: MenuConfig, index: number) => {
-      const isSelected: boolean = index === this.state.menuIndex
+      const isSelected: boolean = index === menuIndex
       const style: any = {}
       let selectedStyling: string = ''
       if (isSelected) {
@@ -111,17 +114,25 @@ export default class NewsFeedMenu extends React.Component<
       } else {
         selectedStyling = 'SRC-blackText SRC-light-background'
       }
+      const urlParams = new URLSearchParams(window.location.search)
+      if (config.feedKeyValue) {
+        Object.getOwnPropertyNames(config.feedKeyValue).forEach(key => {
+          urlParams.set(key, config.feedKeyValue![key])
+        })
+      }
       return (
-        <div
+        <Link 
           key={config.feedName}
           className={`SRC-hand-cursor SRC-menu-button-base SRC-gap SRC-hoverWhiteText SRC-primary-background-color-hover ${selectedStyling}`}
-          onClick={this.switchFeed(index)}
           role="button"
           tabIndex={0}
           style={style}
-        >
-          {config.feedName}
-        </div>
+          to ={{
+            pathname: routeToNewsFeed, 
+            search: urlParams + ''
+           }}
+          > {config.feedName}
+        </Link>
       )
     })
   }
