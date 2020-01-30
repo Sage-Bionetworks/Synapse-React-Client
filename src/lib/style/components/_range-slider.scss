@@ -1,7 +1,6 @@
-$controlColor: #c94281;
 $textLight: #b7b7b7;
 
-.rangeSlider {
+.RangeSlider {
   $rail-height: 6px;
   height: 60px;
   $handleLeftOffset: 1- ($rail-height + 10)/2;
@@ -54,14 +53,14 @@ $textLight: #b7b7b7;
     cursor: pointer;
     border-radius: 50%;
     box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
-    background-color: $controlColor;
+    background-color: $primary-action-color;
   }
 
   &__track {
     position: absolute;
     height: $rail-height;
     z-index: 1;
-    background-color: $controlColor;
+    background-color: $primary-action-color;
     border-radius: $rail-height/2;
     cursor: pointer;
   }

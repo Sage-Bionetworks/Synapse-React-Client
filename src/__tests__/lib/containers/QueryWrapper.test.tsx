@@ -76,22 +76,25 @@ describe('basic functionality', () => {
     const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
 
     const newToken = '123'
-    const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
+    const spyOnExecuteQueryRequest = jest.spyOn(instance, 'executeQueryRequest')
 
     // test login
     wrapper.setProps({
       token: newToken,
     })
-    expect(spy).toHaveBeenCalled()
+    expect(spyOnExecuteQueryRequest).toHaveBeenCalled()
 
+    const spyOnExecuteInitQueryRequest = jest.spyOn(
+      instance,
+      'executeInitialQueryRequest',
+    )
     const newQueryRequest = cloneDeep(lastQueryRequest)
     newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
     // test new query lastQueryRequest
-    spy.mockReset()
     wrapper.setProps({
       initQueryRequest: newQueryRequest,
     })
-    expect(spy).toHaveBeenCalled()
+    expect(spyOnExecuteInitQueryRequest).toHaveBeenCalled()
   })
 
   it('returns the last query lastQueryRequest correctly ', async () => {

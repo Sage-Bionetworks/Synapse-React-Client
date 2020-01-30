@@ -1,9 +1,7 @@
-@import './Vars.scss';
-
 /////////////////////////////////////////////////////////////
 // Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
-
+// from // from SWC.scss and core.scss
 svg.SRC-hoverBox {
   &:hover {
     -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
@@ -39,10 +37,6 @@ svg.SRC-hoverBox {
 }
 .SRC-syn-lightbackground {
   background: #f9f9f9;
-}
-
-body * {
-  font-family: 'Lato';
 }
 
 .SRC-noMargin {
@@ -1018,4 +1012,35 @@ hr ~ .SRC-wrapper {
   .SRC-marginTopMinusTen {
     margin-top: 0
   }
+}
+
+// from SWC.scss
+
+.inlineWidgetContainer {
+  display: inline-block;
+}
+
+.link {
+  color: #2b688f;
+}
+
+.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.floatleft {
+  float: left;
+}
+
+.floatright {
+  float: right;
+}
+
+.userProfileImage {
+  border-radius: 50%;
+  height: 23px;
+  width: 23px;
+  min-width: 23px;
 }
