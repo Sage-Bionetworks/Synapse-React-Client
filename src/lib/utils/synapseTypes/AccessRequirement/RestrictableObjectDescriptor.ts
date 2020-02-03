@@ -1,8 +1,4 @@
-export enum RestrictableObjectType {
-  ENTITY = 'ENTITY',
-  EVALUATION = 'EVALUATION',
-  TEAM = 'TEAM',
-}
+import { RestrictableObjectType } from '..'
 
 export type RestrictableObjectDescriptor = {
   id: string
