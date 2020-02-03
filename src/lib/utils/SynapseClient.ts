@@ -1814,7 +1814,7 @@ export const getRestrictionInformation = (
  * @param {number} [offset=0]
  * @returns {Promise<PaginatedResults<AccessRequirement>>}
  */
-const getAccessRequirement = (
+export const getAccessRequirement = (
   sessionToken: string | undefined,
   id: string,
   limit: number = 50,
@@ -1846,12 +1846,18 @@ export const getAllAccessRequirements = async (
   const limit = 50
   let offset = 0
   while (isMoreData) {
-    const data = await getAccessRequirement(sessionToken, id, limit, offset)
-    accessRequirementResults.push(...data.results)
-    if (data.totalNumberOfResults < 50) {
-      isMoreData = false
+    try {
+      const data = await getAccessRequirement(sessionToken, id, limit, offset)
+      console.log('data = ', data)
+      accessRequirementResults.push(...data.results)
+      if (data.totalNumberOfResults < 50) {
+        isMoreData = false
+      }
+      offset += data.totalNumberOfResults
+    } catch (e) {
+      console.log('e = ', e)
+      return e
     }
-    offset += data.totalNumberOfResults
   }
   return accessRequirementResults
 }
