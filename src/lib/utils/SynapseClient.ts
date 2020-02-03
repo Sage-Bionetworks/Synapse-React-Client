@@ -52,6 +52,9 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
   WikiPage,
+  AccessRequirement,
+  AccessApproval,
+  EntityId,
 } from './synapseTypes/'
 import Cookies from 'universal-cookie'
 
@@ -157,13 +160,13 @@ const fetchWithExponentialTimeout = <T>(
     })
 }
 
-export const doPost = (
+export const doPost = <T>(
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -180,7 +183,7 @@ export const doPost = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
@@ -284,7 +287,7 @@ export const addFilesToDownloadList = (
   sessionToken: string,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `file/v1/download/list/add/async/start`,
     request,
     sessionToken,
@@ -312,7 +315,7 @@ export const getDownloadFromTableRequest = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
     sessionToken,
@@ -413,7 +416,7 @@ export const getQueryTableResults = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<QueryResultBundle> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     sessionToken,
@@ -567,8 +570,11 @@ export const oAuthSessionRequest = (
  * Create an entity (Project, Folder, File, Table, View)
  * http://docs.synapse.org/rest/POST/entity.html
  */
-export const createEntity = (entity: any, sessionToken: string | undefined) => {
-  return doPost(
+export const createEntity = <T extends Entity>(
+  entity: T,
+  sessionToken: string | undefined,
+) => {
+  return doPost<T>(
     '/repo/v1/entity',
     entity,
     sessionToken,
@@ -583,7 +589,7 @@ export const createEntity = (entity: any, sessionToken: string | undefined) => {
 export const createProject = (
   name: string,
   sessionToken: string | undefined,
-): Promise<Response> => {
+): Promise<Entity> => {
   return createEntity(
     {
       name,
@@ -697,7 +703,7 @@ export const lookupChildEntity = (
   request: EntityLookupRequest,
   sessionToken: string | undefined = undefined,
 ) => {
-  return doPost(
+  return doPost<EntityId>(
     '/repo/v1/entity/child',
     request,
     sessionToken,
@@ -731,7 +737,7 @@ export const getBulkFiles = (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
   sessionToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     'file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     sessionToken,
@@ -797,10 +803,10 @@ export const getEntityHeader = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
-export const updateEntity = (
-  entity: Entity,
+export const updateEntity = <T extends Entity>(
+  entity: T,
   sessionToken: string | undefined = undefined,
-): Promise<Entity> => {
+): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
   return doPut(
     url,
@@ -1168,7 +1174,7 @@ const processFilePart = (
     partNumbers: [partNumber],
   }
   const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
-  doPost(
+  doPost<BatchPresignedUploadUrlResponse>(
     presignedUrlUrl,
     presignedUploadUrlRequest,
     sessionToken,
@@ -1290,7 +1296,7 @@ export const startMultipartUpload = (
   fileUploadReject: (reason: any) => void,
 ) => {
   const url = 'file/v1/file/multipart'
-  doPost(
+  doPost<MultipartUploadStatus>(
     url,
     request,
     sessionToken,
@@ -1792,6 +1798,78 @@ export const getRestrictionInformation = (
   return doPost(
     `/repo/v1/restrictionInformation`,
     request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+/**
+ * Returns a paginated result of access requirements associated for an entity
+ *
+ * See https://rest-docs.synapse.org/rest/GET/entity/id/accessRequirement.html
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity
+ * @param {number} [limit=50]
+ * @param {number} [offset=0]
+ * @returns {Promise<PaginatedResults<AccessRequirement>>}
+ */
+const getAccessRequirement = (
+  sessionToken: string | undefined,
+  id: string,
+  limit: number = 50,
+  offset: number = 0,
+): Promise<PaginatedResults<AccessRequirement>> => {
+  const url = `/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+  return doGet<PaginatedResults<AccessRequirement>>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns all the access requirements associated to an entity {id}, calling the
+ * paginated getAccessRequirement service until all results are returned.
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity to lookup
+ * @returns {Promise<Array<AccessRequirement>>}
+ */
+export const getAllAccessRequirements = async (
+  sessionToken: string | undefined,
+  id: string,
+): Promise<Array<AccessRequirement>> => {
+  let isMoreData = true
+  const accessRequirementResults = [] as AccessRequirement[]
+  const limit = 50
+  let offset = 0
+  while (isMoreData) {
+    const data = await getAccessRequirement(sessionToken, id, limit, offset)
+    accessRequirementResults.concat(data.results)
+    if (data.totalNumberOfResults < 50) {
+      isMoreData = false
+    }
+    offset += data.totalNumberOfResults
+  }
+  return accessRequirementResults
+}
+
+/**
+ *
+ *
+ * @param {(string | undefined)} sessionToken user session token
+ * @param {AccessApproval} accessApproval access approval request object
+ * @returns {AccessApproval}
+ */
+export const postAccessApproval = async (
+  sessionToken: string | undefined,
+  accessApproval: AccessApproval,
+): Promise<AccessApproval> => {
+  return doPost<AccessApproval>(
+    'https://repo-prod.prod.sagebase.org/repo/v1/accessApproval',
+    accessApproval,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

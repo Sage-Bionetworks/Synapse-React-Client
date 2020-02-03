@@ -11,7 +11,16 @@
   display: table;
 }
 
+/**
+* Uppercase text
+*/
+.uppercase-text {
+  text-transform: uppercase;
+}
 
+.bold-text {
+  font-weight: 600;
+}
 
 /**
  * Hide text while making it readable for screen readers

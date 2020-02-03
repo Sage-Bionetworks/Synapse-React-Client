@@ -80,6 +80,7 @@ export default class EntityForm extends React.Component<
         .then(values => {
           const userprofile: UserProfile = values[0]
           this.getTargetContainer(userprofile, this.props.token!).then(
+            // @ts-ignore
             (targetContainerId: string) => {
               const formSchemaFileEntity: FileEntity = values[1]
               const formUiSchemaFileEntity: FileEntity = values[2]
@@ -233,7 +234,7 @@ export default class EntityForm extends React.Component<
   createEntityFile = (fileContentsBlob: Blob) => {
     const fileName = `${this.state.formSchema.title}.json`
     SynapseClient.uploadFile(this.props.token, fileName, fileContentsBlob)
-      .then((fileUploadComplete: any) => {
+      .then(fileUploadComplete => {
         // do we need to create a new file entity, or update an existing file entity?
         const newFileHandleId = fileUploadComplete.fileHandleId
         if (this.state.currentFileEntity) {
@@ -252,7 +253,7 @@ export default class EntityForm extends React.Component<
         }
         return SynapseClient.createEntity(newFileEntity, this.props.token)
       })
-      .then((fileEntity: FileEntity) => {
+      .then(fileEntity => {
         // by this point we've either found and updated the existing file entity, or created a new one.
         this.finishedProcessing()
         if (this.props.synIdCallback) {
