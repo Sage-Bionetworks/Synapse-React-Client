@@ -3,7 +3,7 @@ import { AccessRequirement } from 'lib/utils/synapseTypes/AccessRequirement/Acce
 import { getAllAccessRequirements } from 'lib/utils/SynapseClient'
 import { SynapseConstants } from 'lib/utils/'
 import Modal from 'react-bootstrap/Modal'
-import SelfSignAccessRequirement from './SelfSignAccessRequirement'
+import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 
@@ -12,6 +12,11 @@ library.add(faCircle)
 type Props = {
   entityId: string
   token: string | undefined
+}
+
+enum SUPPORTED_ACCESS_REQUIREMENTS {
+  SelfSignAccessRequirement = 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
+  TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
 }
 
 export default function AccessRequirementList({ entityId, token }: Props) {
@@ -52,11 +57,13 @@ export default function AccessRequirementList({ entityId, token }: Props) {
    */
   const renderAccessRequirement = (accessRequirement: AccessRequirement) => {
     switch (accessRequirement.concreteType) {
-      case 'org.sagebionetworks.repo.model.SelfSignAccessRequirement':
+      case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
         return (
-          <SelfSignAccessRequirement accessRequirement={accessRequirement} />
+          <SelfSignAccessRequirementComponent
+            accessRequirement={accessRequirement}
+          />
         )
-      case 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement':
+      case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
         return <div> TODO: Create TermsOfUseAccessRequirement component </div>
       default:
         // case not supported yet, go to synapse

@@ -1847,7 +1847,7 @@ export const getAllAccessRequirements = async (
   let offset = 0
   while (isMoreData) {
     const data = await getAccessRequirement(sessionToken, id, limit, offset)
-    accessRequirementResults.concat(data.results)
+    accessRequirementResults.push(...data.results)
     if (data.totalNumberOfResults < 50) {
       isMoreData = false
     }

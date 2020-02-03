@@ -2,6 +2,7 @@
 export * from './Download'
 export * from './EvaluationQueryTable'
 export * from './Table'
+export * from './AccessRequirement'
 // https://basarat.gitbooks.io/typescript/docs/tips/barrel.html
 export * from './AccessCodeResponse'
 export * from './AccessControlList'
@@ -54,5 +55,4 @@ export * from './UserProfile'
 export * from './VerificationSubmission'
 export * from './WikiPage'
 export * from './Evaluation'
-export * from './AccessRequirement/AccessRequirement'
 export * from './AccessApproval'

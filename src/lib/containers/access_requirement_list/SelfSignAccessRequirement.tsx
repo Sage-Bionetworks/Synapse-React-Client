@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { AccessRequirement } from 'lib/utils/synapseTypes/AccessRequirement/AccessRequirement'
 
-type Props = {
+export type SelfSignAccessRequirement = {
   accessRequirement: AccessRequirement
 }
 
 export default function SelfSignAccessRequirement({
   accessRequirement,
-}: Props) {
+}: SelfSignAccessRequirement) {
   return <div></div>
 }
