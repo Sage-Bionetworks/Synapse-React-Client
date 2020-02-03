@@ -1848,14 +1848,13 @@ export const getAllAccessRequirements = async (
   while (isMoreData) {
     try {
       const data = await getAccessRequirement(sessionToken, id, limit, offset)
-      console.log('data = ', data)
       accessRequirementResults.push(...data.results)
-      if (data.totalNumberOfResults < 50) {
+      if (data.totalNumberOfResults !== 50) {
         isMoreData = false
       }
       offset += data.totalNumberOfResults
     } catch (e) {
-      console.log('e = ', e)
+      console.error('err on getAllAccessRequirements = ', e)
       return e
     }
   }
