@@ -12,6 +12,8 @@ import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
 import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
+import { AccessRequirementDemo } from './AccessRequirementDemo'
+import TemplateComponentDemo from './TemplateComponentDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -75,6 +77,16 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/WidgetDemo`}>WidgetDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/AccessRequirementDemo`}>
+            AccessRequirementDemo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/TemplateComponentDemo`}>
+            TemplateComponentDemo
+          </Link>
         </li>
       </ul>
 
@@ -146,6 +158,18 @@ const App = ({
         exact={true}
         path={`${match.url}/WidgetDemo`}
         component={() => <WidgetDemo />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/AccessRequirementDemo`}
+        component={() => <AccessRequirementDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/TemplateComponentDemo`}
+        component={() => <TemplateComponentDemo />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
