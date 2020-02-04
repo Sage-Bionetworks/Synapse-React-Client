@@ -7,5 +7,13 @@ type Props = {
 
 export const AccessRequirementDemo: React.FunctionComponent<Props> = props => {
   const { token } = props
-  return <AccessRequirementList entityId={'syn2426151'} token={token} />
+  return (
+    <AccessRequirementList
+      onHide={() => {
+        window.location.href = 'http://localhost:3000/Playground'
+      }}
+      entityId={'syn2426398'}
+      token={token}
+    />
+  )
 }

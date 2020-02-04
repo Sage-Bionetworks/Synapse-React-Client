@@ -12,6 +12,7 @@ library.add(faCircle)
 type Props = {
   entityId: string
   token: string | undefined
+  onHide?: Function
 }
 
 enum SUPPORTED_ACCESS_REQUIREMENTS {
@@ -19,7 +20,11 @@ enum SUPPORTED_ACCESS_REQUIREMENTS {
   TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
 }
 
-export default function AccessRequirementList({ entityId, token }: Props) {
+export default function AccessRequirementList({
+  entityId,
+  token,
+  onHide,
+}: Props) {
   const [accessRequirements, setAccessRequirements] = useState<
     Array<AccessRequirement>
   >([])
@@ -27,7 +32,7 @@ export default function AccessRequirementList({ entityId, token }: Props) {
 
   useEffect(() => {
     const getAccessRequirements = async () => {
-      if (!token) {
+      if (!token || accessRequirements.length !== 0) {
         return
       }
       setIsLoading(true)
@@ -68,7 +73,9 @@ export default function AccessRequirementList({ entityId, token }: Props) {
       default:
         // case not supported yet, go to synapse
         return (
-          <a href="https://www.synapse.org/#!AccessRequirements:ID=syn2426151&TYPE=ENTITY">
+          <a
+            href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
+          >
             See Requirements on synapse.org
           </a>
         )
@@ -76,7 +83,7 @@ export default function AccessRequirementList({ entityId, token }: Props) {
   }
 
   return (
-    <Modal show={true} animation={false}>
+    <Modal onHide={() => onHide?.()} show={true} animation={false}>
       <Modal.Header closeButton={true}>
         <Modal.Title>Data Access Request</Modal.Title>
       </Modal.Header>

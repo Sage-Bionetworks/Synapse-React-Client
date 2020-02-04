@@ -1820,7 +1820,7 @@ export const getAccessRequirement = (
   limit: number = 50,
   offset: number = 0,
 ): Promise<PaginatedResults<AccessRequirement>> => {
-  const url = `/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+  const url = `/repo/v1/entity/${id}/accessRequirement`
   return doGet<PaginatedResults<AccessRequirement>>(
     url,
     sessionToken,
@@ -1849,10 +1849,10 @@ export const getAllAccessRequirements = async (
     try {
       const data = await getAccessRequirement(sessionToken, id, limit, offset)
       accessRequirementResults.push(...data.results)
-      if (data.totalNumberOfResults !== 50) {
+      if (data.results.length !== 50) {
         isMoreData = false
       }
-      offset += data.totalNumberOfResults
+      offset += data.results.length
     } catch (e) {
       console.error('err on getAllAccessRequirements = ', e)
       return e
