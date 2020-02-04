@@ -33,6 +33,11 @@ export default function AccessRequirementList({
 
   useEffect(() => {
     const getAccessRequirements = async () => {
+      if (!token) {
+        setAccessRequirements([])
+        // this view only makes sense when the user is logged in
+        return
+      }
       setIsLoading(true)
       try {
         const incomingAccessRequirements = await getAllAccessRequirements(
