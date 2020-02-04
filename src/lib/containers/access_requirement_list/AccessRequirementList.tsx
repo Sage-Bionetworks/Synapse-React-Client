@@ -3,9 +3,10 @@ import { AccessRequirement } from 'lib/utils/synapseTypes/AccessRequirement/Acce
 import { getAllAccessRequirements } from 'lib/utils/SynapseClient'
 import { SynapseConstants } from 'lib/utils/'
 import Modal from 'react-bootstrap/Modal'
-import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
+import SelfSignAccessRequirement from './SelfSignAccessRequirement'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
+import TermsOfUseAccessRequirement from './TermsOfUseAccessRequirement'
 
 library.add(faCircle)
 
@@ -32,17 +33,16 @@ export default function AccessRequirementList({
 
   useEffect(() => {
     const getAccessRequirements = async () => {
-      if (!token || accessRequirements.length !== 0) {
-        return
-      }
       setIsLoading(true)
       try {
         const incomingAccessRequirements = await getAllAccessRequirements(
           token,
           entityId,
         )
-        setAccessRequirements(
-          accessRequirements.concat(incomingAccessRequirements),
+        // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
+        // because we want react hooks to update without a dependency on accessRequirements
+        setAccessRequirements(prevAcessRequirements =>
+          prevAcessRequirements.concat(incomingAccessRequirements),
         )
       } catch (err) {
         console.error('Error on get access requirements: ', err)
@@ -51,7 +51,7 @@ export default function AccessRequirementList({
       }
     }
     getAccessRequirements()
-  }, [accessRequirements, token, entityId])
+  }, [token, entityId])
 
   /**
    * Returns rendering for the access requirement.
@@ -64,12 +64,12 @@ export default function AccessRequirementList({
     switch (accessRequirement.concreteType) {
       case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
         return (
-          <SelfSignAccessRequirementComponent
-            accessRequirement={accessRequirement}
-          />
+          <SelfSignAccessRequirement accessRequirement={accessRequirement} />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
-        return <div> TODO: Create TermsOfUseAccessRequirement component </div>
+        return (
+          <TermsOfUseAccessRequirement accessRequirement={accessRequirement} />
+        )
       default:
         // case not supported yet, go to synapse
         return (
@@ -92,27 +92,23 @@ export default function AccessRequirementList({
         <p> TODO: Entity Name </p>
         <h4 className="uppercase-text bold-text"> What do I need to do? </h4>
         <div className="requirement-container">
-          {!token && (
-            <>
-              <div className="direction-label">1</div>
-              <div>
-                <p className="bold-text">
-                  <button
-                    className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn`}
-                  >
-                    Sign in
-                  </button>
-                  with a Sage Platform (synapse) user account.
-                </p>
-                <p>
-                  If you do not have a Sage Account, you can
-                  <a href="https://www.synapse.org/#!RegisterAccount:0">
-                    &nbsp;Register for free.
-                  </a>
-                </p>
-              </div>
-            </>
-          )}
+          <div className="direction-label">1</div>
+          <div>
+            <p className="bold-text">
+              <button
+                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn`}
+              >
+                Sign in
+              </button>
+              with a Sage Platform (synapse) user account.
+            </p>
+            <p>
+              If you do not have a Sage Account, you can
+              <a href="https://www.synapse.org/#!RegisterAccount:0">
+                &nbsp;Register for free.
+              </a>
+            </p>
+          </div>
         </div>
         {isLoading && <span className="spinner" />}
         {accessRequirements.map(req => {

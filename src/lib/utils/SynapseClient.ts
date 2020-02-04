@@ -80,7 +80,14 @@ export const getRootURL = () => {
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
-export function delay(t: any) {
+/**
+ * Waits t number of milliseconds
+ *
+ * @export
+ * @param {number} t milliseconds
+ * @returns after t milliseconds
+ */
+export function delay(t: number) {
   return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
@@ -1820,7 +1827,7 @@ export const getAccessRequirement = (
   limit: number = 50,
   offset: number = 0,
 ): Promise<PaginatedResults<AccessRequirement>> => {
-  const url = `/repo/v1/entity/${id}/accessRequirement`
+  const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
   return doGet<PaginatedResults<AccessRequirement>>(
     url,
     sessionToken,
@@ -1849,10 +1856,10 @@ export const getAllAccessRequirements = async (
     try {
       const data = await getAccessRequirement(sessionToken, id, limit, offset)
       accessRequirementResults.push(...data.results)
+      offset += data.results.length
       if (data.results.length !== 50) {
         isMoreData = false
       }
-      offset += data.results.length
     } catch (e) {
       console.error('err on getAllAccessRequirements = ', e)
       return e
