@@ -11,9 +11,10 @@ import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
-import { cloneDeep } from '../../../lib/utils/functions'
+import {} from '../../../lib/utils/functions'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import { SELECT_ALL } from 'lib/containers/table/SynapseTableConstants'
+import { cloneDeep } from 'lodash-es'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
   const wrapper = mount(<Facets {...props} />)

@@ -85,6 +85,10 @@
     <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@2.0.0/dist/markdown-it-container.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sanitize-html@1.20.0/dist/sanitize-html.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/universal-cookie@3/umd/universalCookie.min.js"
+    ></script>
     <!-- end imports -->
 
     <!-- react-css-transition-group -->
@@ -151,22 +155,30 @@
     //   PORTAL: 'https://staging.synapse.org/',
     // }
     const e = React.createElement // utility for creating elements
+    const renderInTryCatch = (reactNode, container, name) => {
+      try {
+        ReactDOM.render(reactNode, container)
+      } catch (e) {
+        console.error('Error rendering: ', name)
+        // error  message isn't informative
+      }
+    }
     const queryWrapperMenuContainer = document.querySelector('#panel1')
     const queryWrapperProps = {
       token: '',
       menuConfig: [
         {
-          facetName: 'Organism',
+          facet: 'Organism',
           sql: 'SELECT * FROM syn9886254',
-          synapseId: 'syn9886254',
+          entityId: 'syn9886254',
           unitDescription: 'data files',
           visibleColumnCount: 3,
           title: 'my title',
         },
         {
-          facetName: 'Study',
+          facet: 'Study',
           sql: 'SELECT * FROM syn9886254',
-          synapseId: 'syn9886254',
+          entityId: 'syn9886254',
           unitDescription: 'data files',
           visibleColumnCount: 5,
         },
@@ -193,37 +205,47 @@
       size: SRC.SynapseConstants.MEDIUM_USER_CARD,
     }
 
-    ReactDOM.render(
+    renderInTryCatch(
       e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null),
       queryWrapperMenuContainer,
+      'QueryWrapperMenu',
     )
-    ReactDOM.render(
+
+    renderInTryCatch(
       e(SRC.SynapseComponents.Markdown, markdownProps, null),
       markdownContainer,
+      'MarkdownSynapse',
     )
-    ReactDOM.render(
+
+    renderInTryCatch(
       e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null),
       userCardSmallContainer,
+      'UserCardSmall',
     )
-    ReactDOM.render(
+
+    renderInTryCatch(
       e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null),
       UserCardMediumAndLargeContainer,
+      'UserCardMediumAndLargeContainer',
     )
 
     const formContainer = document.querySelector('#panel5')
     const entityFormProps = {
       parentContainerId: 'syn20355732',
-      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+      token: '',
       formSchemaEntityId: 'syn20184776',
       formUiSchemaEntityId: 'syn20184771',
       initFormData: false,
     }
-    ReactDOM.render(
+
+    renderInTryCatch(
       e(SRC.SynapseComponents.EntityForm, entityFormProps, null),
       formContainer,
+      'EntityForm',
     )
+
     const statsPlotProps = {
-      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+      token: '',
       request: {
         concreteType:
           'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
@@ -233,36 +255,35 @@
       },
       endpoint: 'https://repo-staging.prod.sagebase.org/',
     }
-    ReactDOM.render(
+
+    const statsPlotContainer = document.querySelector('#panel6')
+    renderInTryCatch(
       e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null),
-      formContainer,
+      statsPlotContainer,
+      'EntityForm',
     )
 
     // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
-    const loginContainer = document.querySelector('#panel6')
-    const loginProps = {}
-    ReactDOM.render(
+    const loginContainer = document.querySelector('#panel7')
+    const loginProps = {
+      sessionCallback: () => {
+        console.log('session was just changed!')
+      },
+    }
+    renderInTryCatch(
       e(SRC.SynapseComponents.Login, loginProps, null),
       loginContainer,
-    )
-
-    // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
-    const downloadListTableContainer = document.querySelector('#panel7')
-    const downloadDetailsProps = {
-      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
-    }
-    ReactDOM.render(
-      e(SRC.SynapseComponents.DownloadListTable, downloadDetailsProps, null),
-      downloadListTableContainer,
+      'Login',
     )
     const hasAccessContainer = document.querySelector('#panel8')
     const hasAccessProps = {
-      token: 'DO_NOT_CHECKIN_CHANGES_TO_THIS',
+      token: '',
       synapseId: 'syn12664802',
     }
-    ReactDOM.render(
+    renderInTryCatch(
       e(SRC.SynapseComponents.HasAccess, hasAccessProps, null),
       hasAccessContainer,
+      'HasAccess',
     )
   </script>
 </html>

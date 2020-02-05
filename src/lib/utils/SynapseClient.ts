@@ -53,9 +53,9 @@ import {
   UserProfile,
   WikiPage,
 } from './synapseTypes/'
-import Cookies from 'universal-cookie'
+import UniversalCookies from 'universal-cookie'
 
-const cookies = new Cookies()
+const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname

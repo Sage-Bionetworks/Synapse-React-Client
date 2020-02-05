@@ -17,7 +17,6 @@ type State = {
 }
 
 type Props = {
-  token: string | undefined
   theme: string
   icon: boolean
   googleRedirectUrl?: string
@@ -126,28 +125,7 @@ class Login extends React.Component<Props, State> {
     }
     return false
   }
-  /**
-   * Show whether user is signed in or not, display banner on login success
-   *
-   * @returns View corresponding to whether the user is signed in, whether they've dismissed
-   * sign in banner
-   */
-  public getSignInStateView(): JSX.Element | boolean {
-    if (!this.state.isSignedIn) {
-      return (
-        <p>
-          {' '}
-          You are currently{' '}
-          <strong>
-            {' '}
-            <i> not </i>{' '}
-          </strong>{' '}
-          signed in to Synpase{' '}
-        </p>
-      )
-    }
-    return false
-  }
+
   public onGoogleSignIn(event: React.MouseEvent<HTMLButtonElement>) {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)

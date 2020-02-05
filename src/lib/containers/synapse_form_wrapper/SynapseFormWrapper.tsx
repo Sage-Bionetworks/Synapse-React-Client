@@ -1,5 +1,5 @@
 import $RefParser from 'json-schema-ref-parser'
-import _ from 'lodash'
+import { get, includes } from 'lodash-es'
 import * as React from 'react'
 import Alert from 'react-bootstrap/Alert'
 import { UiSchema } from 'react-jsonschema-form'
@@ -58,7 +58,7 @@ class SynapseFormWrapper extends React.Component<
     super(props)
     this.state = {
       isLoading: true,
-      formDataId: _.get(this.props, 'searchParams.formDataId'),
+      formDataId: this.props?.searchParams?.formDataId,
     }
   }
 
@@ -109,12 +109,12 @@ class SynapseFormWrapper extends React.Component<
     entityId: string,
     versionNumber?: string,
   ): Promise<{ version?: number; content: JSON }> => {
-    let { version, content } = await this.getFileEntityData(
+    const { version, content } = await this.getFileEntityData(
       token,
       entityId,
       versionNumber,
     )
-    let derefContent = (await $RefParser.dereference(content)) as JSON
+    const derefContent = (await $RefParser.dereference(content)) as JSON
     return {
       version: version,
       content: derefContent,
@@ -279,7 +279,7 @@ class SynapseFormWrapper extends React.Component<
   }
 
   saveToFile = async (data: any) => {
-    const fileName = _.get(data, this.props.fileNamePath)
+    const fileName = get(data, this.props.fileNamePath)
     this.setState({
       status: StatusEnum.PROGRESS,
       notification: { type: StatusEnum.PROGRESS, message: 'Progress' },
@@ -296,7 +296,7 @@ class SynapseFormWrapper extends React.Component<
           '.',
           '.properties.',
         )}.title`
-        errorTitle = _.get(
+        errorTitle = get(
           this.state.formSchema.properties,
           searchString,
           errorTitle,
@@ -342,10 +342,7 @@ class SynapseFormWrapper extends React.Component<
     props: SynapseFormWrapperProps,
   ): JSX.Element => {
     if (
-      !_.includes(
-        [StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL],
-        state.status,
-      ) &&
+      includes([StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL], state.status) &&
       props.token &&
       state.isLoading
     ) {

@@ -14,12 +14,11 @@ import {
   faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import _ from 'lodash'
+import { cloneDeep, noop } from 'lodash-es'
 import * as React from 'react'
 import { Dropdown, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
-import { cloneDeep } from '../../utils/functions'
 import { readFacetValues } from '../../utils/functions/facetUtils'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import {
@@ -98,7 +97,7 @@ type Info = {
   index: number
   name: string
 }
-interface Dictionary<T> {
+export interface Dictionary<T> {
   [key: string]: T
 }
 export type SynapseTableState = {
@@ -1017,7 +1016,7 @@ export default class SynapseTable extends React.Component<
           <p className={isBold}>
             <ElementWithTooltip
               tooltipText={columnValue}
-              callbackFn={_.noop}
+              callbackFn={noop}
               idForToolTip={`${colIndex}_${rowIndex}`}
             >
               <p className={isBold}> {displayString}...</p>

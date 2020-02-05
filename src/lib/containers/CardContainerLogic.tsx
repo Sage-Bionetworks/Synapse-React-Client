@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import {
   insertConditionsFromSearchParams,
@@ -12,8 +11,7 @@ import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
-import _ from 'lodash'
-
+import { cloneDeep } from 'lodash-es'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -122,10 +120,7 @@ export default class CardContainerLogic extends React.Component<
      */
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
-    const hasSearchParamsChanged = !_.isEqual(
-      prevSearchParams,
-      currentSearchParams,
-    )
+    const hasSearchParamsChanged = prevSearchParams === currentSearchParams
     const hasTokenBeenAquired =
       this.props.token !== '' && prevProps.token === ''
     const hasSqlChanged = this.props.sql !== prevProps.sql

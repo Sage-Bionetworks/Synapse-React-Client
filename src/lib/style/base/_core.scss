@@ -22,7 +22,7 @@ svg.SRC-hoverBox {
   padding: 10px;
 
   &--padded2x {
-    padding: 20px
+    padding: 20px;
   }
 }
 
@@ -109,10 +109,10 @@ span.SRC-facets svg.SRC-facets-icon {
   display: inline-flex;
   align-items: center;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
-  padding: 0;
-  border-radius: 2;
+  padding: 0px;
+  border-radius: 2px;
   border: 1px solid transparent;
-  font-size: 14;
+  font-size: 14px;
   font-weight: 500;
   font-family: Lato sans-serif;
   width: 100%;
@@ -171,7 +171,9 @@ a.SRC-anchor-light {
   border-radius: 15px;
 }
 
-.SRC-whiteText, .SRC-whiteText:focus, .SRC-whiteText:hover {
+.SRC-whiteText,
+.SRC-whiteText:focus,
+.SRC-whiteText:hover {
   color: white;
 }
 
@@ -662,8 +664,8 @@ div.SRC-userImg {
 }
 
 .row.no-gutter > [class*='col-'] {
-  padding-right:0;
-  padding-left:0;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 @media (min-width: 1501px) {
@@ -965,7 +967,7 @@ a.dropdown-item {
 
   &.condenced {
     padding: 1px;
-    margin: 0 0 0 1px
+    margin: 0 0 0 1px;
   }
 }
 
@@ -1010,7 +1012,7 @@ a.dropdown-item {
 hr ~ .SRC-wrapper {
   margin-top: 11px;
   .SRC-marginTopMinusTen {
-    margin-top: 0
+    margin-top: 0;
   }
 }
 
