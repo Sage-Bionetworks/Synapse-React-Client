@@ -116,7 +116,6 @@ export default class QueryWrapperMenu extends React.Component<
     let { activeMenuIndices } = this.state
     const { rgbIndex, accordionConfig } = this.props
     if (rgbIndex !== prevProps.rgbIndex) {
-      console.log('setting state in component did update')
       activeMenuIndices = accordionConfig
         ? new Array(accordionConfig.length).fill(0)
         : [0]
@@ -194,7 +193,7 @@ export default class QueryWrapperMenu extends React.Component<
       menuConfig,
       token,
       globalQueryCountSql = '',
-      entityId
+      entityId,
     } = this.props
     const { activeMenuIndices } = this.state
     let sql = ''
@@ -208,12 +207,17 @@ export default class QueryWrapperMenu extends React.Component<
     const hasGroupByInSql = isGroupByInSql(sql)
     const menuDropdown = this.renderMenuDropdown()
     const queryWrapper = this.renderQueryChildren()
-    const showBarChart   = stackedBarChartConfiguration !== undefined
+    const showBarChart = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
         {name && sql && !hasGroupByInSql && (
           <h3 id="exploreCount" className="SRC-boldText">
-            <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
+            <QueryCount
+              entityId={entityId}
+              token={token}
+              name={name}
+              sql={sql}
+            />
           </h3>
         )}
         {hasGroupByInSql && (
@@ -232,7 +236,9 @@ export default class QueryWrapperMenu extends React.Component<
           >
             {menuDropdown}
           </div>
-          <div className="col-xs-12 col-sm-9 col-lg-10" key="queryWrapper">{queryWrapper}</div>
+          <div className="col-xs-12 col-sm-9 col-lg-10" key="queryWrapper">
+            {queryWrapper}
+          </div>
         </div>
       </React.Fragment>
     )
@@ -250,7 +256,7 @@ export default class QueryWrapperMenu extends React.Component<
       searchParams,
       accordionConfig = [],
       facetAliases = {},
-      entityId
+      entityId,
     } = this.props
     const {
       cardConfiguration,
@@ -309,7 +315,7 @@ export default class QueryWrapperMenu extends React.Component<
         tableConfiguration,
       )
       return (
-        <span key={(facet||'nofacet')+index} className={searchClass}>
+        <span key={(facet || 'nofacet') + index} className={searchClass}>
           <QueryWrapper
             showBarChart={showBarChart}
             loadNow={isSelected}
@@ -438,7 +444,7 @@ export default class QueryWrapperMenu extends React.Component<
       return accordionConfig.map((el, index) => {
         return (
           <div
-            key={JSON.stringify(el)+index}
+            key={JSON.stringify(el) + index}
             className={accordionGroupIndex === index ? '' : 'SRC-hidden'}
           >
             {this.renderQueryChild(el.menuConfig, el, index)}
@@ -586,7 +592,7 @@ export default class QueryWrapperMenu extends React.Component<
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
-          key={(config.facet||'nofacet')+ index}
+          key={(config.facet || 'nofacet') + index}
           className={`SRC-hand-cursor SRC-background-unset ${selectedStyling} SRC-menu-button-base SRC-gap`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
