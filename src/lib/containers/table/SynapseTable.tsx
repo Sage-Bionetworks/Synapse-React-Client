@@ -1,4 +1,4 @@
-import { ImageButtonWithTooltip } from '../widgets/ImageButtonWithTooltip'
+import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
@@ -14,11 +14,11 @@ import {
   faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { cloneDeep, noop } from 'lodash-es'
 import * as React from 'react'
 import { Dropdown, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
-import { cloneDeep } from '../../utils/functions'
 import { readFacetValues } from '../../utils/functions/facetUtils'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import {
@@ -60,6 +60,7 @@ import {
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
+import NoData from '../../assets/icons/file-dotted.svg'
 
 const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -96,7 +97,7 @@ type Info = {
   index: number
   name: string
 }
-interface Dictionary<T> {
+export interface Dictionary<T> {
   [key: string]: T
 }
 export type SynapseTableState = {
@@ -111,6 +112,7 @@ export type SynapseTableState = {
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
   isShowLeftFilter?: boolean
+  isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -338,6 +340,17 @@ export default class SynapseTable extends React.Component<
     if (showBarChart) {
       className = 'SRC-marginBottomTop'
     }
+    const hasResults = data.queryResult.queryResults.rows.length > 0
+    if (!hasResults && !this.state.isUserModifiedQuery) {
+      return (
+        <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+          <img src={NoData} alt="no data"></img>
+          <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+            This table is currently empty
+          </div>
+        </div>
+      )
+    }
     const content = (
       <>
         <div className={className}>
@@ -358,28 +371,31 @@ export default class SynapseTable extends React.Component<
           </div>
           {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
           <div className="row ">
-          {this.state.isShowLeftFilter && (
-            <div className="col-xs-12 col-sm-3 col-lg-3">
-              {
-                <QueryFilter
-                  {...this.props}
-                  data={this.props.data!}
-                  token={this.props.token!}
-                  applyChanges={(newFacets: FacetColumnRequest[]) =>
-                    this.applyChangesFromQueryFilter(newFacets)
-                  }
-                />
-              }
-            </div>
-          )}
-          <div
-            className={`${
-              this.state.isShowLeftFilter
-                ? 'col-xs-12 col-sm-9 col-lg-9'
-                : 'col-xs-12'
-            }`}
-          >
-            {this.renderTable(headers, facets, rows)}
+            {this.state.isShowLeftFilter && (
+              <div
+                className="col-xs-12 col-sm-3 col-lg-3"
+                style={{ paddingRight: '0px' }}
+              >
+                {
+                  <QueryFilter
+                    {...this.props}
+                    data={this.props.data!}
+                    token={this.props.token!}
+                    applyChanges={(newFacets: FacetColumnRequest[]) =>
+                      this.applyChangesFromQueryFilter(newFacets)
+                    }
+                  />
+                }
+              </div>
+            )}
+            <div
+              className={`${
+                this.state.isShowLeftFilter
+                  ? 'col-xs-12 col-sm-9 col-lg-9'
+                  : 'col-xs-12'
+              }`}
+            >
+              {this.renderTable(headers, facets, rows)}
             </div>
           </div>
         </div>
@@ -576,7 +592,7 @@ export default class SynapseTable extends React.Component<
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
               {!enableLeftFacetFilter /* without filter flag*/ && (
-                <ImageButtonWithTooltip
+                <ElementWithTooltip
                   idForToolTip={'advancedSearch'}
                   image={faFilter}
                   callbackFn={this.advancedSearch}
@@ -585,13 +601,13 @@ export default class SynapseTable extends React.Component<
               )}
               {enableLeftFacetFilter && (
                 <>
-                  <ImageButtonWithTooltip
+                  <ElementWithTooltip
                     idForToolTip={'advancedSearch'}
                     image={faCog}
                     callbackFn={this.advancedSearch}
                     tooltipText={'Open Advanced Search in Synapse'}
                   />
-                  <ImageButtonWithTooltip
+                  <ElementWithTooltip
                     idForToolTip={'filter'}
                     image={faFilter}
                     callbackFn={() =>
@@ -872,6 +888,7 @@ export default class SynapseTable extends React.Component<
                     mapEntityIdToHeader,
                     mapUserIdToHeader,
                     isMarkdownColumn,
+                    rowIndex,
                   })}
               </td>
             )
@@ -909,6 +926,7 @@ export default class SynapseTable extends React.Component<
     mapEntityIdToHeader,
     mapUserIdToHeader,
     isMarkdownColumn,
+    rowIndex,
   }: {
     entityColumnIndicies: number[]
     userColumnIndicies: number[]
@@ -919,7 +937,18 @@ export default class SynapseTable extends React.Component<
     mapEntityIdToHeader: Dictionary<EntityHeader>
     mapUserIdToHeader: Dictionary<any>
     isMarkdownColumn: boolean
+    rowIndex?: number
   }): React.ReactNode {
+    const getShortString = (
+      longString: string,
+      maxCharCount = 20,
+    ): [string, boolean] => {
+      if (!longString || longString.length <= maxCharCount) {
+        return [longString, false]
+      } else {
+        return [longString.substr(0, maxCharCount), true]
+      }
+    }
     if (isMarkdownColumn) {
       return <MarkdownSynapse renderInline={true} markdown={columnValue} />
     }
@@ -937,7 +966,7 @@ export default class SynapseTable extends React.Component<
     if (dateColumnIndicies.includes(colIndex)) {
       return columnValue ? (
         <p className={isBold}>
-          {new Date(Number(columnValue)).toLocaleString()}{' '}
+          {new Date(Number(columnValue)).toLocaleString()}
         </p>
       ) : (
         <></>
@@ -954,7 +983,7 @@ export default class SynapseTable extends React.Component<
         if (userName === AUTHENTICATED_USERS) {
           return (
             <span>
-              <FontAwesomeIcon icon={icon} /> All registered Synapse users{' '}
+              <FontAwesomeIcon icon={icon} /> All registered Synapse users
             </span>
           )
         }
@@ -964,8 +993,7 @@ export default class SynapseTable extends React.Component<
             rel="noopener noreferrer"
             href={`https://www.synapse.org/#!Team:${ownerId}`}
           >
-            {' '}
-            <FontAwesomeIcon icon={icon} /> {userName}{' '}
+            <FontAwesomeIcon icon={icon} /> {userName}
           </a>
         )
       } else {
@@ -979,7 +1007,22 @@ export default class SynapseTable extends React.Component<
         )
       }
     } else {
-      return <p className={isBold}> {columnValue} </p>
+      const [displayString, isShortened] = getShortString(columnValue)
+      if (!isShortened) {
+        return <p className={isBold}> {columnValue}</p>
+      } else {
+        return (
+          <p className={isBold}>
+            <ElementWithTooltip
+              tooltipText={columnValue}
+              callbackFn={noop}
+              idForToolTip={`${colIndex}_${rowIndex}`}
+            >
+              <p className={isBold}> {displayString}...</p>
+            </ElementWithTooltip>
+          </p>
+        )
+      }
     }
   }
 
@@ -1202,6 +1245,7 @@ export default class SynapseTable extends React.Component<
   public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     queryRequest.query.selectedFacets = facets
+    this.setState({ isUserModifiedQuery: true })
     this.props.executeQueryRequest!(queryRequest)
   }
 
@@ -1246,6 +1290,7 @@ export default class SynapseTable extends React.Component<
     })
 
     this.props.executeQueryRequest!(newQueryRequest)
+    this.setState({ isUserModifiedQuery: true })
   }
 }
 type ColumnReference = {

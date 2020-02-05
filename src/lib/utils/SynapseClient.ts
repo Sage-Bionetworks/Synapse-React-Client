@@ -52,7 +52,13 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
   WikiPage,
+  AccessRequirement,
+  AccessApproval,
+  EntityId,
 } from './synapseTypes/'
+import UniversalCookies from 'universal-cookie'
+
+const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -74,7 +80,14 @@ export const getRootURL = () => {
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
-export function delay(t: any) {
+/**
+ * Waits t number of milliseconds
+ *
+ * @export
+ * @param {number} t milliseconds
+ * @returns after t milliseconds
+ */
+export function delay(t: number) {
   return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
@@ -154,13 +167,13 @@ const fetchWithExponentialTimeout = <T>(
     })
 }
 
-export const doPost = (
+export const doPost = <T>(
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -177,7 +190,7 @@ export const doPost = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
@@ -281,7 +294,7 @@ export const addFilesToDownloadList = (
   sessionToken: string,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `file/v1/download/list/add/async/start`,
     request,
     sessionToken,
@@ -309,7 +322,7 @@ export const getDownloadFromTableRequest = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
     sessionToken,
@@ -410,7 +423,7 @@ export const getQueryTableResults = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<QueryResultBundle> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     sessionToken,
@@ -525,7 +538,7 @@ export const login = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
-export let oAuthUrlRequest = (
+export const oAuthUrlRequest = (
   provider: string,
   redirectUrl: string,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
@@ -546,7 +559,7 @@ export let oAuthUrlRequest = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
-export let oAuthSessionRequest = (
+export const oAuthSessionRequest = (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
@@ -564,8 +577,11 @@ export let oAuthSessionRequest = (
  * Create an entity (Project, Folder, File, Table, View)
  * http://docs.synapse.org/rest/POST/entity.html
  */
-export const createEntity = (entity: any, sessionToken: string | undefined) => {
-  return doPost(
+export const createEntity = <T extends Entity>(
+  entity: T,
+  sessionToken: string | undefined,
+) => {
+  return doPost<T>(
     '/repo/v1/entity',
     entity,
     sessionToken,
@@ -580,7 +596,7 @@ export const createEntity = (entity: any, sessionToken: string | undefined) => {
 export const createProject = (
   name: string,
   sessionToken: string | undefined,
-): Promise<Response> => {
+): Promise<Entity> => {
   return createEntity(
     {
       name,
@@ -694,7 +710,7 @@ export const lookupChildEntity = (
   request: EntityLookupRequest,
   sessionToken: string | undefined = undefined,
 ) => {
-  return doPost(
+  return doPost<EntityId>(
     '/repo/v1/entity/child',
     request,
     sessionToken,
@@ -728,7 +744,7 @@ export const getBulkFiles = (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
   sessionToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     'file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     sessionToken,
@@ -794,10 +810,10 @@ export const getEntityHeader = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
-export const updateEntity = (
-  entity: Entity,
+export const updateEntity = <T extends Entity>(
+  entity: T,
   sessionToken: string | undefined = undefined,
-): Promise<Entity> => {
+): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
   return doPut(
     url,
@@ -955,35 +971,52 @@ export const getWikiAttachmentsFromEvaluation = (
  *
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
-export const setSessionTokenCookie = (token: string | undefined) => {
-  if (!IS_OUTSIDE_SYNAPSE_ORG) {
-    return doPost(
+export const setSessionTokenCookie = (
+  token: string | undefined,
+  sessionCallback: Function,
+): void => {
+  if (IS_OUTSIDE_SYNAPSE_ORG) {
+    if (!token) {
+      cookies.remove(SESSION_TOKEN_COOKIE_KEY)
+    } else {
+      // set's cookie in session storage
+      cookies.set(SESSION_TOKEN_COOKIE_KEY, token, {
+        // expires in a day
+        maxAge: 60 * 60 * 24,
+      })
+    }
+    sessionCallback()
+  } else {
+    // will set cookie in the http header
+    doPost(
       'Portal/sessioncookie',
       { sessionToken: token },
       undefined,
       'include',
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )
+      .then(_ => {
+        sessionCallback()
+      })
+      .catch(err => {
+        console.error('Error on setting session token ', err)
+      })
   }
-  // else not on a synapse.org subdomain, no Synapse SSO
-  setCookie(SESSION_TOKEN_COOKIE_KEY, token, 1)
-  return Promise.resolve()
 }
 /**
  * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getSessionTokenFromCookie = () => {
-  if (!IS_OUTSIDE_SYNAPSE_ORG) {
-    return doGet<string>(
-      'Portal/sessioncookie',
-      undefined,
-      'include',
-      BackendDestinationEnum.PORTAL_ENDPOINT,
-    )
+export const getSessionTokenFromCookie = async () => {
+  if (IS_OUTSIDE_SYNAPSE_ORG) {
+    return cookies.get(SESSION_TOKEN_COOKIE_KEY)
   }
-  // else (is not on a synapse.org subdomain)
-  return Promise.resolve(getCookie(SESSION_TOKEN_COOKIE_KEY))
+  return doGet<string>(
+    'Portal/sessioncookie',
+    undefined,
+    'include',
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )
 }
 
 export const getPrincipalAliasRequest = (
@@ -1026,18 +1059,14 @@ export const detectSSOCode = () => {
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
-        setSessionTokenCookie(synToken.sessionToken)
-          .then(() => {
-            // go back to original route after successful SSO login
-            const originalUrl = localStorage.getItem('after-sso-login-url')
-            localStorage.removeItem('after-sso-login-url')
-            if (originalUrl) {
-              window.location.replace(originalUrl)
-            }
-          })
-          .catch(errSetSession => {
-            console.error('Error on set sesion token cookie ', errSetSession)
-          })
+        setSessionTokenCookie(synToken.sessionToken, () => {
+          // go back to original route after successful SSO login
+          const originalUrl = localStorage.getItem('after-sso-login-url')
+          localStorage.removeItem('after-sso-login-url')
+          if (originalUrl) {
+            window.location.replace(originalUrl)
+          }
+        })
       })
       .catch((err: any) => {
         if (err.status === 404) {
@@ -1049,20 +1078,8 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = () => {
-  if (!IS_OUTSIDE_SYNAPSE_ORG) {
-    setSessionTokenCookie(undefined)
-      .then(() => {
-        window.location.reload()
-      })
-      .catch(err => {
-        console.error('err when clearing the session cookie ', err)
-      })
-  } else {
-    // is not on a synapse.org subdomain
-    removeCookie(SESSION_TOKEN_COOKIE_KEY)
-    window.location.reload()
-  }
+export const signOut = (sessionCallback: Function) => {
+  setSessionTokenCookie(undefined, sessionCallback)
 }
 
 /**
@@ -1104,13 +1121,13 @@ export const uploadFile = (
 const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
   // code taken from md5 example from library
   return new Promise((resolve, reject) => {
-    let blobSlice = File.prototype.slice,
+    const blobSlice = File.prototype.slice,
       file = fileBlob,
       chunkSize = 2097152, // Read in chunks of 2MB
       chunks = Math.ceil(file.size / chunkSize),
-      currentChunk = 0,
       spark = new SparkMD5.ArrayBuffer(),
       fileReader = new FileReader()
+    let currentChunk = 0
 
     fileReader.onload = function(e) {
       console.log('read chunk nr', currentChunk + 1, 'of', chunks)
@@ -1121,7 +1138,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
         loadNext()
       } else {
         console.log('finished loading')
-        let md5: string = spark.end()
+        const md5: string = spark.end()
         console.info('computed hash', md5) // Compute hash
         resolve(md5)
       }
@@ -1132,8 +1149,8 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
       reject(fileReader.error)
     }
 
-    let loadNext = () => {
-      let start = currentChunk * chunkSize,
+    const loadNext = () => {
+      const start = currentChunk * chunkSize,
         end = start + chunkSize >= file.size ? file.size : start + chunkSize
 
       fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
@@ -1164,7 +1181,7 @@ const processFilePart = (
     partNumbers: [partNumber],
   }
   const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
-  doPost(
+  doPost<BatchPresignedUploadUrlResponse>(
     presignedUrlUrl,
     presignedUploadUrlRequest,
     sessionToken,
@@ -1286,7 +1303,7 @@ export const startMultipartUpload = (
   fileUploadReject: (reason: any) => void,
 ) => {
   const url = 'file/v1/file/multipart'
-  doPost(
+  doPost<MultipartUploadStatus>(
     url,
     request,
     sessionToken,
@@ -1780,32 +1797,6 @@ export const getProjectStatistics = (
   )
 }
 
-const setCookie = (name: string, value: string | undefined, days: number) => {
-  if (!value) {
-    return
-  }
-  let expires = ''
-  if (days) {
-    const date = new Date()
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
-    expires = `; expires=${date.toUTCString()}`
-  }
-  document.cookie = `${name}=${value || ''}${expires}; path=/`
-}
-const getCookie = (name: string) => {
-  const nameEQ = `${name}=`
-  const ca = document.cookie.split(';')
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i]
-    while (c.charAt(0) == ' ') c = c.substring(1, c.length)
-    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length)
-  }
-  return null
-}
-const removeCookie = (name: string) => {
-  document.cookie = `${name}= ; expires= Thu, 21 Aug 2014 20:00:00 UTC; path=/`
-}
-
 // see https://docs.synapse.org/rest/POST/restrictionInformation.html
 export const getRestrictionInformation = (
   request: RestrictionInformationRequest,
@@ -1814,6 +1805,83 @@ export const getRestrictionInformation = (
   return doPost(
     `/repo/v1/restrictionInformation`,
     request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+/**
+ * Returns a paginated result of access requirements associated for an entity
+ *
+ * See https://rest-docs.synapse.org/rest/GET/entity/id/accessRequirement.html
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity
+ * @param {number} [limit=50]
+ * @param {number} [offset=0]
+ * @returns {Promise<PaginatedResults<AccessRequirement>>}
+ */
+export const getAccessRequirement = (
+  sessionToken: string | undefined,
+  id: string,
+  limit: number = 50,
+  offset: number = 0,
+): Promise<PaginatedResults<AccessRequirement>> => {
+  const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+  return doGet<PaginatedResults<AccessRequirement>>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns all the access requirements associated to an entity {id}, calling the
+ * paginated getAccessRequirement service until all results are returned.
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity to lookup
+ * @returns {Promise<Array<AccessRequirement>>}
+ */
+export const getAllAccessRequirements = async (
+  sessionToken: string | undefined,
+  id: string,
+): Promise<Array<AccessRequirement>> => {
+  let isMoreData = true
+  const accessRequirementResults = [] as AccessRequirement[]
+  const limit = 50
+  let offset = 0
+  while (isMoreData) {
+    try {
+      const data = await getAccessRequirement(sessionToken, id, limit, offset)
+      accessRequirementResults.push(...data.results)
+      offset += data.results.length
+      if (data.results.length !== 50) {
+        isMoreData = false
+      }
+    } catch (e) {
+      console.error('err on getAllAccessRequirements = ', e)
+      return e
+    }
+  }
+  return accessRequirementResults
+}
+
+/**
+ *
+ *
+ * @param {(string | undefined)} sessionToken user session token
+ * @param {AccessApproval} accessApproval access approval request object
+ * @returns {AccessApproval}
+ */
+export const postAccessApproval = async (
+  sessionToken: string | undefined,
+  accessApproval: AccessApproval,
+): Promise<AccessApproval> => {
+  return doPost<AccessApproval>(
+    'https://repo-prod.prod.sagebase.org/repo/v1/accessApproval',
+    accessApproval,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

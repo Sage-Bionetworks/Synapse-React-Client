@@ -21,7 +21,8 @@ import HasAccess, {
 } from '../../../lib/containers/HasAccess'
 import {
   mockOpenRestrictionInformation,
-  mockUnmetControlledDataRestrictionInformation,
+  mockUnmetControlledDataRestrictionInformationACT,
+  mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../../mocks/mock_has_access_data'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
@@ -45,7 +46,7 @@ const props: HasAccessProps = {
 }
 
 describe('basic tests', () => {
-  it('get open data', async () => {
+  it('works with open data no restrictions', async () => {
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )
@@ -65,6 +66,8 @@ describe('basic tests', () => {
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
   })
 
   it('works when an ExternalFileHandle is passed in', async () => {
@@ -93,6 +96,8 @@ describe('basic tests', () => {
       }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
   })
 
   it('works when a cloud file handle is passed in', async () => {
@@ -119,6 +124,8 @@ describe('basic tests', () => {
       `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.CloudFileHandle]}"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
   })
 
   it('works when the file is too large', async () => {
@@ -145,10 +152,12 @@ describe('basic tests', () => {
       `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.TooLargeFile]}"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
   })
 
   it('works when download is IsOpenNoRestrictions', async () => {
-    const isOpenNoRestrictionsFileHandle: FileHandle = {
+    const IsOpenNoUnmetAccessRestrictions: FileHandle = {
       id: '',
       etag: '',
       createdBy: '',
@@ -162,16 +171,18 @@ describe('basic tests', () => {
     }
     const { wrapper } = await createShallowComponent({
       ...props,
-      fileHandle: isOpenNoRestrictionsFileHandle,
+      fileHandle: IsOpenNoUnmetAccessRestrictions,
     })
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
   })
 
-  it('get unmet controlled access data', async () => {
+  it('works with unmet controlled access data - controlled by act', async () => {
     SynapseClient.getRestrictionInformation = jest.fn(() =>
-      Promise.resolve(mockUnmetControlledDataRestrictionInformation),
+      Promise.resolve(mockUnmetControlledDataRestrictionInformationACT),
     )
 
     const { wrapper, instance } = await createShallowComponent(props)
@@ -185,7 +196,7 @@ describe('basic tests', () => {
       token,
     )
     expect(instance.state.restrictionInformation).toEqual(
-      mockUnmetControlledDataRestrictionInformation,
+      mockUnmetControlledDataRestrictionInformationACT,
     )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
@@ -193,23 +204,45 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faMinusCircle)
     const tooltipSpan = wrapper.find(
-      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.NoAccess]}"]`,
+      `[data-tip="${
+        HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
+      }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
+    // no access restrictions
+    expect(wrapper.find('a').text()).toEqual('Request Access')
   })
 
-  it('Does not call getRestrictionInformation when forceIsRestricted=true', async () => {
-    const mockFn = jest.fn()
-    SynapseClient.getRestrictionInformation = mockFn
-    const { wrapper } = await createShallowComponent({
-      ...props,
-      forceIsRestricted: true,
-    })
-    expect(mockFn).not.toHaveBeenCalled()
+  it('works with unmet controlled access data - terms of use', async () => {
+    SynapseClient.getRestrictionInformation = jest.fn(() =>
+      Promise.resolve(mockUnmetControlledDataRestrictionInformationRestricted),
+    )
+
+    const { wrapper, instance } = await createShallowComponent(props)
+    instance.getRestrictionInformation()
+    const request: RestrictionInformationRequest = {
+      restrictableObjectType: RestrictableObjectType.ENTITY,
+      objectId: entityId,
+    }
+    expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
+      request,
+      token,
+    )
+    expect(instance.state.restrictionInformation).toEqual(
+      mockUnmetControlledDataRestrictionInformationRestricted,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faMinusCircle)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${
+        HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
+      }"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
+    // no access restrictions
+    expect(wrapper.find('a').text()).toEqual('Request Access')
   })
 })

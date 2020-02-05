@@ -2,7 +2,10 @@ import * as React from 'react'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
-import { getEndpoint, BackendDestinationEnum } from '../utils/functions/getEndpoint'
+import {
+  getEndpoint,
+  BackendDestinationEnum,
+} from '../utils/functions/getEndpoint'
 
 type State = {
   username: string
@@ -14,11 +17,11 @@ type State = {
 }
 
 type Props = {
-  token: string | undefined
   theme: string
   icon: boolean
   googleRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
+  sessionCallback: Function // Callback is invoked after login
 }
 
 /**
@@ -53,7 +56,7 @@ class Login extends React.Component<Props, State> {
     this.handleChange = this.handleChange.bind(this)
     this.handleLogin = this.handleLogin.bind(this)
     this.getLoginFailureView = this.getLoginFailureView.bind(this)
-    this.onSignIn = this.onSignIn.bind(this)
+    this.onGoogleSignIn = this.onGoogleSignIn.bind(this)
   }
   /**
    * Updates internal state with the event that was triggered
@@ -73,7 +76,6 @@ class Login extends React.Component<Props, State> {
    * @param {*} clickEvent Userclick event
    */
   public async handleLogin(clickEvent: React.FormEvent<HTMLElement>) {
-    const { redirectUrl } = this.props
     clickEvent.preventDefault() // avoid page refresh
     try {
       // get last valid receipt
@@ -85,18 +87,16 @@ class Login extends React.Component<Props, State> {
         this.state.password,
         authenticationReceipt,
       )
-      await SynapseClient.setSessionTokenCookie(data.sessionToken)
+      // now get session token from cookie has to be called in the portals repo
+      await SynapseClient.setSessionTokenCookie(
+        data.sessionToken,
+        this.props.sessionCallback,
+      )
       // Set the new receipt
       localStorage.setItem(
         this.authenticationReceiptKey,
         data.authenticationReceipt,
       )
-      // on session change, reload the page so that all components get the new token from the cookie
-      if (redirectUrl) {
-        // note that setting the href in SPA's (where just the hash fragment changes) does not cause a page reload (so we still do this below)
-        window.location.href = redirectUrl
-      }
-      window.location.reload()
     } catch (err) {
       console.log('Error on login: ', err.reason)
       this.setState({
@@ -117,8 +117,7 @@ class Login extends React.Component<Props, State> {
       return (
         <div>
           <small className="form-text text-danger">
-            {' '}
-            {this.state.errorMessage}{' '}
+            {this.state.errorMessage}
           </small>
           <div className="invalid-feedback" />
         </div>
@@ -126,29 +125,8 @@ class Login extends React.Component<Props, State> {
     }
     return false
   }
-  /**
-   * Show whether user is signed in or not, display banner on login success
-   *
-   * @returns View corresponding to whether the user is signed in, whether they've dismissed
-   * sign in banner
-   */
-  public getSignInStateView(): JSX.Element | boolean {
-    if (!this.state.isSignedIn) {
-      return (
-        <p>
-          {' '}
-          You are currently{' '}
-          <strong>
-            {' '}
-            <i> not </i>{' '}
-          </strong>{' '}
-          signed in to Synpase{' '}
-        </p>
-      )
-    }
-    return false
-  }
-  public onSignIn(event: React.MouseEvent<HTMLButtonElement>) {
+
+  public onGoogleSignIn(event: React.MouseEvent<HTMLButtonElement>) {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
@@ -177,7 +155,7 @@ class Login extends React.Component<Props, State> {
       >
         <form>
           <button
-            onClick={this.onSignIn}
+            onClick={this.onGoogleSignIn}
             className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}
           >
             <GoogleIcon key={1} active={true} />
@@ -232,7 +210,9 @@ class Login extends React.Component<Props, State> {
         </form>
         <div>
           <a
-            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`}
+            href={`${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}#!PasswordReset:0`}
             className="SRC-floatLeft SRC-primary-text-color"
           >
             Forgot password?
@@ -241,7 +221,9 @@ class Login extends React.Component<Props, State> {
             &nbsp;It's free!
           </span>
           <a
-            href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!RegisterAccount:0`}
+            href={`${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}#!RegisterAccount:0`}
             className="SRC-floatRight SRC-primary-text-color"
           >
             Register

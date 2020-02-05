@@ -2,7 +2,17 @@ import * as React from 'react'
 
 import { UiSchema } from 'react-jsonschema-form'
 import { SummaryFormat, Step, FormSchema } from './types'
-import _ from 'lodash'
+import {
+  first,
+  cloneDeep,
+  keys,
+  find,
+  isObject,
+  get,
+  isArray,
+  isString,
+  isDate,
+} from 'lodash-es'
 
 export interface SummaryTableProps {
   isWizard?: boolean
@@ -26,21 +36,21 @@ function findLabel(key: string, schema: any, uiSchema: UiSchema): string {
   const labelFromUi = `${key}.ui:title`
   //for array fields we need to change the property e.g.
   //  ld50.experiments[0].species_other should look like 'ld50.experiments.items.species_other'
-  let arrayLabelFromSchema = labelFromSchema.replace(regex1, '.items.')
-  let arrayLabelFromUiSchema = labelFromUi.replace(regex1, '.items.')
+  const arrayLabelFromSchema = labelFromSchema.replace(regex1, '.items.')
+  const arrayLabelFromUiSchema = labelFromUi.replace(regex1, '.items.')
   const indexMatch = labelFromSchema.match(regex1)
-  let index = _.first(indexMatch)
+  let index = first(indexMatch)
 
   if (index) {
     index = index.substring(1, index.length - 2)
     index = !isNaN(parseInt(index)) ? parseInt(index) + 1 + '' : ''
   }
 
-  let label =
-    _.get(uiSchema, labelFromUi) ||
-    _.get(schema.properties, labelFromSchema) ||
-    _.get(uiSchema, arrayLabelFromUiSchema) ||
-    _.get(schema.properties, arrayLabelFromSchema) ||
+  const label =
+    get(uiSchema, labelFromUi) ||
+    get(schema.properties, labelFromSchema) ||
+    get(uiSchema, arrayLabelFromUiSchema) ||
+    get(schema.properties, arrayLabelFromSchema) ||
     `${arrayLabelFromSchema}`
   return `${index ? '[' + index + '] ' : ''}${label}`
 }
@@ -64,13 +74,13 @@ export function getFlatData(
         flattenedObject[prefix + key] = ''
       } else if (
         //if the value is a proper array
-        _.isArray(object[key]) &&
-        !_.isString(object[key])
+        isArray(object[key]) &&
+        !isString(object[key])
       ) {
-        for (let i in object[key]) {
+        for (const i in object[key]) {
           if (
-            _.isArray(object[key][i]) ||
-            (_.isObject(object[key]) && !_.isString(object[key][i]))
+            isArray(object[key][i]) ||
+            (isObject(object[key]) && !isString(object[key][i]))
           ) {
             flatten(
               object[key][i],
@@ -83,7 +93,7 @@ export function getFlatData(
             flattenedObject[`${prefix}${key}`] = prevVal + object[key][i]
           }
         }
-      } else if (_.isObject(object[key]) && !_.isDate(object[key])) {
+      } else if (isObject(object[key]) && !isDate(object[key])) {
         flatten(object[key], flattenedObject, `${prefix}${key}${separator}`)
       } else {
         flattenedObject[prefix + key] = object[key]
@@ -92,8 +102,8 @@ export function getFlatData(
     return flattenedObject
   }
 
-  const flatData = flatten(_.cloneDeep(formData), [], '')
-  const flatFormData = _.keys(flatData)
+  const flatData = flatten(cloneDeep(formData), [], '')
+  const flatFormData = keys(flatData)
     .map(key => {
       let val = flatData[key]
       if (flatData[key] === false) {
@@ -104,7 +114,7 @@ export function getFlatData(
       }
       const boundary = key.indexOf('.')
       return {
-        screen: _.find(steps, { id: key.substring(0, boundary) }),
+        screen: find(steps, { id: key.substring(0, boundary) }),
         label: findLabel(key, schema, uiSchema),
         value: val,
       }
@@ -129,7 +139,7 @@ export default function SummaryTable(props: SummaryTableProps): JSX.Element {
   let flatFormData: SummaryFormat[] = []
 
   flatFormData = getFlatData(
-    _.cloneDeep(props.formData),
+    cloneDeep(props.formData),
     props.steps,
     props.schema,
     props.uiSchema,

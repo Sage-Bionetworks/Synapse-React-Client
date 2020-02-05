@@ -1,5 +1,3 @@
-import './SynapseFormWrapper.scss'
-
 import * as React from 'react'
 
 import { SynapseClient } from '../../utils'
@@ -386,7 +384,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               })}
             </tbody>
           </table>
-          {viewMore}{' '}
+          {viewMore}
         </div>
       )
     }

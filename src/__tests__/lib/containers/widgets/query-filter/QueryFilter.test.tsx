@@ -4,12 +4,9 @@ import {
   QueryFilterProps,
   QueryFilter,
 } from '../../../../../lib/containers/widgets/query-filter/QueryFilter'
-import {
+import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
 
-  QueryResultBundle,
-} from '../../../../../lib/utils/synapseTypes'
-
-import _ from 'lodash'
+import _ from 'lodash-es'
 
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
 
@@ -102,7 +99,7 @@ describe('handling child component callbacks', () => {
 
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
     enumWrapper.simulate('change', 'Ford', true)
-  
+
     expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
   })
 

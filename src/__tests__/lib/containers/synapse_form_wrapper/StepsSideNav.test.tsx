@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import * as _ from 'lodash'
+import * as _ from 'lodash-es'
 import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import StepsSideNav, {
   StepsSideNavProps,

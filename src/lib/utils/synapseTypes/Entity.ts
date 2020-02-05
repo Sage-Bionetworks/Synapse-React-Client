@@ -15,7 +15,7 @@ export interface Entity {
   modifiedBy?: string // The ID of the user that last modified this entity.
   annotations?: string // This field is deprecated and will be removed in future versions of Synapse
   accessControlList?: string // This field is deprecated and will be removed in future versions of Synapse
-  parentId: string // The ID of the Entity that is the parent of this Entity.
+  parentId?: string // The ID of the Entity that is the parent of this Entity.
   entityType?: string // This field is deprecated and will be removed in future versions of Synapse
   concreteType: string // Indicates which implementation of Entity this object represents. It should be set to one of the following: org.sagebionetworks.repo.model.Project, org.sagebionetworks.repo.model.Folder, or org.sagebionetworks.repo.model.FileEntity.
 }

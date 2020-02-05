@@ -139,7 +139,6 @@ export default class ModalDownload extends React.Component<
         animation={false}
         centered={true}
         show={true}
-        // @ts-ignore
         onHide={this.props.onClose}
       >
         <Modal.Header>

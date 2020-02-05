@@ -1,0 +1,26 @@
+.direction-label {
+  background-color: orange;
+  color: white;
+  border-radius: 50%;
+  padding: 15px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  align-self: baseline;
+  margin-right: 10px;
+}
+
+.sign-in-btn {
+  padding: 0px 5px 0px 0px;
+  color: purple;
+}
+
+.requirement-container {
+  display: flex;
+  &:first-child {
+    flex: 1;
+  }
+  &:last-child {
+    flex: 4;
+  }
+}

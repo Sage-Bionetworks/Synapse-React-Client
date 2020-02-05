@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { SynapseClient, SynapseConstants } from '../utils/'
-import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import {
   AsynchronousJobStatus,
@@ -8,6 +7,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../utils/synapseTypes/'
+import { cloneDeep } from 'lodash-es'
 
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
@@ -140,7 +140,7 @@ export default class QueryWrapper extends React.Component<
       this.executeInitialQueryRequest()
     } else if (loadNow && this.props.token && !prevProps.token) {
       // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
-      this.executeInitialQueryRequest()
+      this.executeQueryRequest(this.getLastQueryRequest())
     } else if (
       prevProps.initQueryRequest.query.sql !==
       this.props.initQueryRequest!.query.sql

@@ -12,7 +12,7 @@ import {
   mockFormData,
   mockFormSchema as formschemaJson,
 } from '../../../../mocks/mock_drug_tool_data'
-import _ from 'lodash'
+import _ from 'lodash-es'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const token: string = '123444'

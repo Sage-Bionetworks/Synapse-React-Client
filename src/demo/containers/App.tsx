@@ -44,13 +44,22 @@ export default class App extends React.Component<{}, AppState> {
       })
   }
 
+  getSession = () => {
+    SynapseClient.detectSSOCode()
+    SynapseClient.getSessionTokenFromCookie()
+      .then(sessionToken => this.handleChange({ token: sessionToken }))
+      .catch((error: any) => {
+        console.error(error)
+      })
+  }
+
   renderLoginAndSignout(token: string): JSX.Element {
     const signedInState = (
       <div className="bg-success text-center" role="alert">
         You are logged in.&nbsp;
         <button
           onClick={() => {
-            SynapseClient.signOut()
+            SynapseClient.signOut(this.getSession)
           }}
         >
           <span aria-hidden="true">Sign out</span>
@@ -61,21 +70,13 @@ export default class App extends React.Component<{}, AppState> {
     const notSignedInState = (
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
-        <Login
-          token={
-            SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
-          }
-          theme={'light'}
-          icon={true}
-        />
+        <Login sessionCallback={this.getSession} theme={'light'} icon={true} />
         <details>
           <summary>
             Synapse Staging (Google SSO redirects to staging site)
           </summary>
           <Login
-            token={
-              SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
-            }
+            sessionCallback={this.getSession}
             theme={'dark'}
             icon={true}
             googleRedirectUrl={

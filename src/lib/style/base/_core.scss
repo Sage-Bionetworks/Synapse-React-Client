@@ -1,9 +1,7 @@
-@import './Vars.scss';
-
 /////////////////////////////////////////////////////////////
 // Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
-
+// from // from SWC.scss and core.scss
 svg.SRC-hoverBox {
   &:hover {
     -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
@@ -18,6 +16,16 @@ svg.SRC-hoverBox {
   }
 }
 
+.SRCBorderedPanel {
+  background: $gray-light;
+  border: 1px solid $border-color-gray;
+  padding: 10px;
+
+  &--padded2x {
+    padding: 20px;
+  }
+}
+
 .SRC-syn-border {
   border-color: lightgray;
   border-style: solid;
@@ -29,10 +37,6 @@ svg.SRC-hoverBox {
 }
 .SRC-syn-lightbackground {
   background: #f9f9f9;
-}
-
-body * {
-  font-family: 'Lato';
 }
 
 .SRC-noMargin {
@@ -105,10 +109,10 @@ span.SRC-facets svg.SRC-facets-icon {
   display: inline-flex;
   align-items: center;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
-  padding: 0;
-  border-radius: 2;
+  padding: 0px;
+  border-radius: 2px;
   border: 1px solid transparent;
-  font-size: 14;
+  font-size: 14px;
   font-weight: 500;
   font-family: Lato sans-serif;
   width: 100%;
@@ -167,7 +171,9 @@ a.SRC-anchor-light {
   border-radius: 15px;
 }
 
-.SRC-whiteText {
+.SRC-whiteText,
+.SRC-whiteText:focus,
+.SRC-whiteText:hover {
   color: white;
 }
 
@@ -658,8 +664,8 @@ div.SRC-userImg {
 }
 
 .row.no-gutter > [class*='col-'] {
-  padding-right:0;
-  padding-left:0;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 @media (min-width: 1501px) {
@@ -961,7 +967,7 @@ a.dropdown-item {
 
   &.condenced {
     padding: 1px;
-    margin: 0 0 0 1px
+    margin: 0 0 0 1px;
   }
 }
 
@@ -1006,6 +1012,37 @@ a.dropdown-item {
 hr ~ .SRC-wrapper {
   margin-top: 11px;
   .SRC-marginTopMinusTen {
-    margin-top: 0
+    margin-top: 0;
   }
+}
+
+// from SWC.scss
+
+.inlineWidgetContainer {
+  display: inline-block;
+}
+
+.link {
+  color: #2b688f;
+}
+
+.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.floatleft {
+  float: left;
+}
+
+.floatright {
+  float: right;
+}
+
+.userProfileImage {
+  border-radius: 50%;
+  height: 23px;
+  width: 23px;
+  min-width: 23px;
 }

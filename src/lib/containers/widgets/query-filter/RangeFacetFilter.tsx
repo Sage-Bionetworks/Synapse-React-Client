@@ -65,7 +65,9 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
     }
   }
 
-  const [radioValue, setRadioValue] = useState(getRadioValue(selectedMin, hasAnyValue))
+  const [radioValue, setRadioValue] = useState(
+    getRadioValue(selectedMin, hasAnyValue),
+  )
 
   const result = (
     <div>
@@ -82,7 +84,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
           <label>{columnMax}</label>
         ) : (
           <>
-            columnModel.columnType === 'INTEGER' && (
+            {columnModel.columnType === 'INTEGER' && (
               <RangeSlider
                 key="RangeSlider"
                 domain={[columnMin, columnMax]}
@@ -95,9 +97,9 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
               >
                 ) >
               </RangeSlider>
-            )
+            )}
 
-            (columnModel.columnType === 'DATE' ||
+            {(columnModel.columnType === 'DATE' ||
               columnModel.columnType === 'DOUBLE') && (
               <Range
                 key="Range"
@@ -110,8 +112,8 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
                   onChange([values.min, values.max])
                 }
               ></Range>
-            ),
-        </>
+            )}
+          </>
         ))}
     </div>
   )
