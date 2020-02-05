@@ -638,8 +638,7 @@ export default class MarkdownSynapse extends React.Component<
       elements.push(
         <div key={p4}>
           <a className={`link ${TOC_CLASS[Number(p2)]}`} data-anchor={p3}>
-            {' '}
-            {p4}{' '}
+            {p4}
           </a>
         </div>,
       )

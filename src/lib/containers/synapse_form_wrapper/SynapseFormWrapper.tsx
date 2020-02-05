@@ -384,14 +384,13 @@ class SynapseFormWrapper extends React.Component<
     } else {
       return (
         <div className="panel padding-full unauthenticated text-center">
-          Please{' '}
+          Please
           <button
             className={`SRC-standard-button-shape SRC-light-button SRC-sign-in-button ${SRC_SIGN_IN_CLASS}`}
           >
-            {' '}
-            sign in{' '}
-          </button>{' '}
-          to initiate or continue your submission{' '}
+            sign in
+          </button>
+          to initiate or continue your submission
         </div>
       )
     }

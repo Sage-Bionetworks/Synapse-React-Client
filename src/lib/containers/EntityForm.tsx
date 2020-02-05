@@ -274,7 +274,7 @@ export default class EntityForm extends React.Component<
             </div>
             <ul className="list-group">
               <li className="list-group-item text-danger">
-                {this.state.error.name} {this.state.error.reason}{' '}
+                {this.state.error.name} {this.state.error.reason}
                 {this.state.error.message}
               </li>
             </ul>

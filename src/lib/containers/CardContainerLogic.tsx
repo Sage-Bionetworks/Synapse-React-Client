@@ -11,7 +11,7 @@ import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -120,7 +120,10 @@ export default class CardContainerLogic extends React.Component<
      */
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
-    const hasSearchParamsChanged = prevSearchParams === currentSearchParams
+    const hasSearchParamsChanged = isEqual(
+      prevSearchParams,
+      currentSearchParams,
+    )
     const hasTokenBeenAquired =
       this.props.token !== '' && prevProps.token === ''
     const hasSqlChanged = this.props.sql !== prevProps.sql

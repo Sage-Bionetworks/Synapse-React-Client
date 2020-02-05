@@ -622,7 +622,7 @@ export default class SynapseForm extends React.Component<
       return (
         <div className="step-exclude-directions">
           This form is currently included in the submission. Enter some data if
-          you have it, or click "Skip".{' '}
+          you have it, or click "Skip".
           <button
             className="btn btn-link"
             onClick={() =>
@@ -1027,7 +1027,7 @@ function renderTransformedErrorObject(
       <span>
         <strong>
           {screen.title}
-          {index}:{' '}
+          {index}:
         </strong>
         {label}&nbsp; {error.message}
       </span>

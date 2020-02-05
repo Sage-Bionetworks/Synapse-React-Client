@@ -966,7 +966,7 @@ export default class SynapseTable extends React.Component<
     if (dateColumnIndicies.includes(colIndex)) {
       return columnValue ? (
         <p className={isBold}>
-          {new Date(Number(columnValue)).toLocaleString()}{' '}
+          {new Date(Number(columnValue)).toLocaleString()}
         </p>
       ) : (
         <></>
@@ -983,7 +983,7 @@ export default class SynapseTable extends React.Component<
         if (userName === AUTHENTICATED_USERS) {
           return (
             <span>
-              <FontAwesomeIcon icon={icon} /> All registered Synapse users{' '}
+              <FontAwesomeIcon icon={icon} /> All registered Synapse users
             </span>
           )
         }
@@ -993,8 +993,7 @@ export default class SynapseTable extends React.Component<
             rel="noopener noreferrer"
             href={`https://www.synapse.org/#!Team:${ownerId}`}
           >
-            {' '}
-            <FontAwesomeIcon icon={icon} /> {userName}{' '}
+            <FontAwesomeIcon icon={icon} /> {userName}
           </a>
         )
       } else {

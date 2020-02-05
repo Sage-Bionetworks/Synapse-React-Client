@@ -80,8 +80,7 @@ export default class QueryCount extends React.Component<
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
     return (
       <React.Fragment>
-        {' '}
-        {name} ({count && count.toLocaleString()}){' '}
+        {name} ({count && count.toLocaleString()})
       </React.Fragment>
     )
   }

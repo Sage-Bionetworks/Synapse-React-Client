@@ -272,8 +272,7 @@ export default class GenericCard extends React.Component<
               data-search-handle={stubTitleSearchHandle}
               className="SRC-author"
             >
-              {' '}
-              {subTitle}{' '}
+              {subTitle}
             </div>
           )}
           {/* 
@@ -299,7 +298,7 @@ export default class GenericCard extends React.Component<
                   className="SRC-primary-text-color"
                   onClick={this.toggleShowMore}
                 >
-                  ...Show More{' '}
+                  ...Show More
                 </a>
               )}
             </div>

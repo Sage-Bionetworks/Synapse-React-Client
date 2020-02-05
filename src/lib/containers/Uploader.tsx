@@ -157,7 +157,7 @@ export default class Uploader extends React.Component<
         {this.state.isUploading && (
           <React.Fragment>
             <span style={{ marginLeft: '10px' }}>
-              {this.state.filesUploadedCount} /{' '}
+              {this.state.filesUploadedCount} /
               {this.state.totalFilesToUploadCount} file(s)
             </span>
             <span style={{ marginLeft: '2px' }} className={'spinner'} />

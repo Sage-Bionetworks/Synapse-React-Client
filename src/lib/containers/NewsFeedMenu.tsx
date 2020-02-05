@@ -136,7 +136,6 @@ export default class NewsFeedMenu extends React.Component<
             search: urlParams + '',
           }}
         >
-          {' '}
           {config.feedName}
         </Link>
       )
