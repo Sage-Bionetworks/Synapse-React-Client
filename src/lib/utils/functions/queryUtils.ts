@@ -1,7 +1,7 @@
 import { QueryBundleRequest } from '../synapseTypes/'
 import { SynapseClient, SynapseConstants } from '..'
 import { QueryResultBundle } from '../synapseTypes/'
-import { cloneDeep } from './rollupCompatibleModules'
+import { cloneDeep } from 'lodash-es'
 
 type PartialStateObject = {
   hasMoreData: boolean

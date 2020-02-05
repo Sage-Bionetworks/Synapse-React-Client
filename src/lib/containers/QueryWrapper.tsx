@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { SynapseClient, SynapseConstants } from '../utils/'
-import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import {
   AsynchronousJobStatus,
@@ -8,6 +7,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../utils/synapseTypes/'
+import { cloneDeep } from 'lodash-es'
 
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest

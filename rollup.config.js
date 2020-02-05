@@ -40,6 +40,7 @@ export default {
     'sanitizeHtml',
     'react-transition-group',
     'sql-parser',
+    'universal-cookie',
   ],
   onwarn: function(warning) {
     // Skip certain warnings
@@ -117,6 +118,7 @@ export default {
       sanitizeHtml: 'sanitizeHtml',
       'prop-types': 'PropTypes',
       'sql-parser': 'sqlParser',
+      'universal-cookie': 'UniversalCookie',
     },
     format: 'umd',
     name: 'SRC',

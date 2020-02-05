@@ -1,7 +1,8 @@
-import { getNextPageOfData, cloneDeep } from '../../../lib/utils/functions'
+import { getNextPageOfData } from '../../../lib/utils/functions'
 import { SynapseConstants } from '../../../lib/utils'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryResultBundle } from 'src/lib/utils/synapseTypes/Table/QueryResultBundle.js'
+import { cloneDeep } from 'lodash-es'
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'
@@ -11,6 +12,7 @@ describe('get next page of data', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    entityId: 'syn16787123',
     query: {
       sql,
       isConsistent: false,

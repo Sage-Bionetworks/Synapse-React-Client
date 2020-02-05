@@ -2,7 +2,6 @@ import * as React from 'react'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { EnumFacetFilter } from './EnumFacetFilter'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import _ from 'lodash'
 import {
   FacetColumnResultValues,
   FacetColumnResult,
