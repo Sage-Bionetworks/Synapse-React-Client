@@ -120,7 +120,7 @@ export default class CardContainerLogic extends React.Component<
      */
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
-    const hasSearchParamsChanged = isEqual(
+    const hasSearchParamsChanged = !isEqual(
       prevSearchParams,
       currentSearchParams,
     )
