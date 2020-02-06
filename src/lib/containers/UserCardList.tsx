@@ -2,9 +2,9 @@ import * as React from 'react'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
-import { difference } from '../utils/functions/difference'
 import { QueryResultBundle, UserProfile } from '../utils/synapseTypes/'
 import UserCard, { UserCardSize } from './UserCard'
+import { without } from 'lodash-es'
 
 export type UserCardListProps = {
   list: string[]
@@ -38,22 +38,14 @@ export default class UserCardList extends React.Component<
   }
 
   componentDidUpdate(prevProps: UserCardListProps) {
-    // Note - Set object not fully supported by IE11, additionally there are a few caveats to using the Set object
-    // described here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
-    // the use below with primitives is well defined.
-    const priorListOfIds = new Set(prevProps.list)
-    const curListOfIds = new Set(this.props.list.filter(el => el))
+    const priorListOfIds = prevProps.list
+    const newValues = without(
+      this.props.list.filter(el => el),
+      ...priorListOfIds,
+    )
     // check that the props have changed by seeing that at least one element is different
-    if (difference(curListOfIds, priorListOfIds).size > 0) {
-      const internalData = new Set(Object.keys(this.state.userProfileMap))
-      // get the set difference between the current list and whats stored in state, describes what
-      // needs to get looked up.
-      const differenceValues = Array.from(
-        difference(curListOfIds, internalData),
-      ) as string[]
-      if (differenceValues.length > 0) {
-        this.update(differenceValues)
-      }
+    if (newValues.length > 0) {
+      this.update(newValues)
     }
   }
 
