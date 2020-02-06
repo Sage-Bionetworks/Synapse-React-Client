@@ -22,12 +22,10 @@ SynapseClient.getUserProfiles = jest.fn().mockResolvedValue({
   ],
 })
 
-SynapseClient.getEntityHeader = jest.fn().mockResolvedValue({
-  results: [
-    { id: '123', name: 'Entity1' },
-    { id: '1234', name: 'Entity2' },
-  ],
-})
+SynapseClient.getAllEntityHeader = jest.fn().mockResolvedValue([
+  { id: '123', name: 'Entity1' },
+  { id: '1234', name: 'Entity2' },
+])
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },
@@ -169,7 +167,9 @@ describe('initialization', () => {
       }
 
       await act(async () => await init(updatedProps))
-      let labels = container.querySelectorAll<HTMLInputElement>('input ~ span')
+      const labels = container.querySelectorAll<HTMLInputElement>(
+        'input ~ span',
+      )
       expect(labels.item(0).textContent).toBe(
         `Not Set (${userEntityFacetValues[0].count})`,
       )

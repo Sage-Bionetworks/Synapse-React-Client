@@ -3,8 +3,10 @@ import { BackendDestinationEnum } from 'lib/utils/functions/getEndpoint'
 import {
   BatchFileRequest,
   FileHandleAssociateType,
+  PaginatedResults,
 } from 'lib/utils/synapseTypes/'
 import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
+import { FunctionReturningPaginatedResults } from 'lib/utils/SynapseClient'
 
 describe('it works at integration level testing', () => {
   it('invalid call', () => {
@@ -185,14 +187,60 @@ describe('it works at integration level testing', () => {
   })
 })
 
-describe.skip('it works in unit tests', () => {
-  // TODO: Write unit tests for synapse client functions that we want to test logic
-  // independent of the backend
-  // See this issue https://stackoverflow.com/questions/39755439/how-to-mock-imported-named-function-in-jest-when-module-is-unmocked
-  // for additional information on mocking calls, could not get any of those solutions to work
-  describe('getAllAccessRequirements pagination works', () => {
-    it('works with < 50 results', () => {})
-    it('works with > 50 results', () => {})
-    it('works with exacty 50 results', () => {})
+describe('it works in unit tests', () => {
+  describe('getAllOfPaginatedService', () => {
+    it('works with < 50 results', async () => {
+      const results = ['a']
+      const mockPaginatedObject: PaginatedResults<string> = {
+        results,
+      }
+      const mockFn: FunctionReturningPaginatedResults<string> = jest
+        .fn()
+        .mockResolvedValueOnce(mockPaginatedObject)
+      const data = await SynapseClient.getAllOfPaginatedService(mockFn)
+      expect(data).toEqual(results)
+      expect(mockFn).toHaveBeenCalledTimes(1)
+      expect(mockFn).toHaveBeenNthCalledWith(1, 50, 0)
+    })
+
+    it('works with exacty 50 results', async () => {
+      const totalResults = Array(50).fill('a')
+      const mockFirstReturn: PaginatedResults<string> = {
+        results: totalResults,
+      }
+      const mockSecondReturn: PaginatedResults<string> = {
+        results: [],
+      }
+      const mockFn: FunctionReturningPaginatedResults<string> = jest
+        .fn()
+        .mockResolvedValueOnce(mockFirstReturn)
+        .mockResolvedValueOnce(mockSecondReturn)
+      const data = await SynapseClient.getAllOfPaginatedService(mockFn)
+      expect(data).toEqual(totalResults)
+      expect(mockFn).toHaveBeenCalledTimes(2)
+      expect(mockFn).toHaveBeenNthCalledWith(1, 50, 0)
+      expect(mockFn).toHaveBeenNthCalledWith(2, 50, 50)
+    })
+
+    it('works with > 50 results', async () => {
+      const totalResults = Array(75).fill('a')
+      const firstResult = totalResults.slice(0, 50)
+      const secondResult = totalResults.slice(50)
+      const mockFirstReturn: PaginatedResults<string> = {
+        results: firstResult,
+      }
+      const mockSecondReturn: PaginatedResults<string> = {
+        results: secondResult,
+      }
+      const mockFn: FunctionReturningPaginatedResults<string> = jest
+        .fn()
+        .mockResolvedValueOnce(mockFirstReturn)
+        .mockResolvedValueOnce(mockSecondReturn)
+      const data = await SynapseClient.getAllOfPaginatedService(mockFn)
+      expect(data).toEqual(totalResults)
+      expect(mockFn).toHaveBeenCalledTimes(2)
+      expect(mockFn).toHaveBeenNthCalledWith(1, 50, 0)
+      expect(mockFn).toHaveBeenNthCalledWith(2, 50, 50)
+    })
   })
 })

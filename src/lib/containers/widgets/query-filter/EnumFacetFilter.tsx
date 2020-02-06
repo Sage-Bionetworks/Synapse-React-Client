@@ -81,7 +81,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     columnModel.columnType === 'USERID'
       ? facetValues.map(facet => facet.value)
       : []
-  const userProfiles = useGetProfiles({ ids: userIds, token })?.list
+  const userProfiles = useGetProfiles({ ids: userIds, token })
 
   const entityIds: ReferenceList =
     columnModel.columnType === 'ENTITYID'
@@ -92,7 +92,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const entityHeaders = useGetEntityHeaders({
     references: entityIds,
     token,
-  })?.results
+  })
   if (!columnModel) {
     return <></>
   }
