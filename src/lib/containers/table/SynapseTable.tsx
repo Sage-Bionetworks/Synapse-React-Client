@@ -435,9 +435,7 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private showGroupRowData = (selectedRow: Row) => (
-    _event: React.MouseEvent<HTMLAnchorElement>,
-  ) => {
+  private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = this.props.getLastQueryRequest!().query
     const parsed = this.getSqlUnderlyingDataForRow(selectedRow, queryCopy.sql)
@@ -445,11 +443,7 @@ export default class SynapseTable extends React.Component<
     const queryJSON = JSON.stringify(queryCopy)
     // encode this copy of the query (json)
     const encodedQuery = btoa(queryJSON)
-    // open this in a new window on synapse.org
-    window.open(
-      `https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`,
-      '_self',
-    )
+    return `https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`
   }
 
   private renderDropdownDownloadOptions = (isFileView?: boolean) => {
@@ -513,26 +507,32 @@ export default class SynapseTable extends React.Component<
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = lastQueryRequest.query.offset! > 0
-    const previous = (
-      <button
-        onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-light-button SRC-standard-button-shape pull-right"
-        type="button"
-      >
-        Previous
-      </button>
-    )
-
     const { hasMoreData, showAccessColumn, token } = this.props
-    const next = (
+
+    const zeroMarginRight: React.CSSProperties = {
+      marginRight: 0,
+    }
+    const nextBtn = (
       <button
         onClick={this.handlePaginationClick(NEXT)}
-        className="SRC-light-button SRC-standard-button-shape pull-right"
+        className="SRC-light-button SRC-standard-button-shape"
+        style={zeroMarginRight}
         type="button"
       >
         Next
       </button>
     )
+    const previousBtn = (
+      <button
+        onClick={this.handlePaginationClick(PREVIOUS)}
+        className="SRC-light-button SRC-standard-button-shape"
+        type="button"
+        style={!hasMoreData && pastZero ? zeroMarginRight : undefined}
+      >
+        Previous
+      </button>
+    )
+
     let isShowingAccessColumn: boolean | undefined = showAccessColumn
     if (showAccessColumn && rows.length > 0) {
       // PORTALS-924: verify that row actualy contains a defined rowId
@@ -558,8 +558,10 @@ export default class SynapseTable extends React.Component<
             {this.createTableRows(rows, headers, isShowingAccessColumn)}
           </tbody>
         </table>
-        {hasMoreData && next}
-        {pastZero && previous}
+        <div style={{ textAlign: 'right' }}>
+          {pastZero && previousBtn}
+          {hasMoreData && nextBtn}
+        </div>
       </div>
     )
   }
@@ -871,8 +873,9 @@ export default class SynapseTable extends React.Component<
               >
                 {isCountColumn && (
                   <a
-                    href="javascript:void"
-                    onClick={this.showGroupRowData(row)}
+                    href={this.showGroupRowData(row)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <p className={isBold}>{columnValue}</p>
                   </a>
@@ -900,10 +903,7 @@ export default class SynapseTable extends React.Component<
       if (isShowingAccessColumn && token) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
-          <td
-            key={`(${rowIndex},accessColumn)`}
-            className="SRC_noBorderTop text-center"
-          >
+          <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
             <HasAccess entityId={rowSynapseId} token={token}></HasAccess>
           </td>,
         )
