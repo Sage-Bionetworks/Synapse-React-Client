@@ -140,10 +140,9 @@ export default class StackedBarChart extends React.Component<
       <span>
         <span className="SRC-text-title SRC-filter-display">
           {filterDisplay}
-        </span>{' '}
+        </span>
         :
         <span className="SRC-facet-view SRC-text-title">
-          {' '}
           {facetValueDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
             ? 'unannotated'
             : facetValueDisplay}
@@ -311,7 +310,7 @@ export default class StackedBarChart extends React.Component<
           </p>
           {this.props.link && (
             <div className="SRC-chart-link">
-              <a href={`#/${this.props.link}`}> {this.props.linkText} </a>
+              <a href={`/${this.props.link}`}> {this.props.linkText} </a>
             </div>
           )}
         </div>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import * as _ from 'lodash'
+import * as _ from 'lodash-es'
 import {
   Step,
   NavActionEnum,
@@ -57,7 +57,7 @@ describe('NavButtons tests', () => {
 
     it('should callback with correct params', async () => {
       const spy = jest.spyOn(mock, 'onNavActionFn')
-      let { wrapper } = createShallowNavButtonsComponent(props)
+      const { wrapper } = createShallowNavButtonsComponent(props)
       wrapper.find('button.prev').simulate('click')
       expect(spy).toHaveBeenCalledWith(NavActionEnum.PREVIOUS)
     })
@@ -77,7 +77,7 @@ describe('NavButtons tests', () => {
 
     it('should callback with correct params', () => {
       const spy = jest.spyOn(mock, 'onNavActionFn')
-      let { wrapper } = createShallowNavButtonsComponent(props)
+      const { wrapper } = createShallowNavButtonsComponent(props)
       wrapper.find('button.next').simulate('click')
       expect(spy).toHaveBeenCalledWith(NavActionEnum.NEXT)
       wrapper.find('button.save').simulate('click')

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow } from 'enzyme'
 import { Engine } from 'json-rules-engine'
 import $RefParser from 'json-schema-ref-parser'
-import _ from 'lodash'
+import _ from 'lodash-es'
 
 import SynapseForm, {
   SynapseFormProps,

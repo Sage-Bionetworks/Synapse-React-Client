@@ -15,7 +15,6 @@ import {
   Row,
   QueryBundleRequest,
 } from 'lib/utils/synapseTypes/'
-import { Dictionary } from 'lodash'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
@@ -24,9 +23,10 @@ import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,
+  Dictionary,
 } from '../../../lib/containers/table/SynapseTable'
-import { cloneDeep } from '../../../lib/utils/functions'
 import syn16787123Json from '../../../mocks/syn16787123.json'
+import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -41,7 +41,7 @@ describe('basic functionality', () => {
   // setup tests
   const title = 'studies'
   const synapseId = 'syn16787123'
-  const castData = syn16787123Json as QueryResultBundle
+  const castData = syn16787123Json
   const totalColumns = 13
   const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

@@ -70,22 +70,12 @@ export default class App extends React.Component<{}, AppState> {
     const notSignedInState = (
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
-        <Login
-          token={
-            SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
-          }
-          sessionCallback={this.getSession}
-          theme={'light'}
-          icon={true}
-        />
+        <Login sessionCallback={this.getSession} theme={'light'} icon={true} />
         <details>
           <summary>
             Synapse Staging (Google SSO redirects to staging site)
           </summary>
           <Login
-            token={
-              SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
-            }
             sessionCallback={this.getSession}
             theme={'dark'}
             icon={true}

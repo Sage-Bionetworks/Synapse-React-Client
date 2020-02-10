@@ -1,5 +1,5 @@
 import * as React from 'react'
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'

@@ -52,10 +52,13 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
   WikiPage,
+  AccessRequirement,
+  AccessApproval,
+  EntityId,
 } from './synapseTypes/'
-import Cookies from 'universal-cookie'
+import UniversalCookies from 'universal-cookie'
 
-const cookies = new Cookies()
+const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -77,7 +80,14 @@ export const getRootURL = () => {
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
-export function delay(t: any) {
+/**
+ * Waits t number of milliseconds
+ *
+ * @export
+ * @param {number} t milliseconds
+ * @returns after t milliseconds
+ */
+export function delay(t: number) {
   return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
@@ -157,13 +167,13 @@ const fetchWithExponentialTimeout = <T>(
     })
 }
 
-export const doPost = (
+export const doPost = <T>(
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -180,7 +190,7 @@ export const doPost = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
@@ -284,7 +294,7 @@ export const addFilesToDownloadList = (
   sessionToken: string,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `file/v1/download/list/add/async/start`,
     request,
     sessionToken,
@@ -312,7 +322,7 @@ export const getDownloadFromTableRequest = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
     sessionToken,
@@ -413,7 +423,7 @@ export const getQueryTableResults = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<QueryResultBundle> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     sessionToken,
@@ -567,8 +577,11 @@ export const oAuthSessionRequest = (
  * Create an entity (Project, Folder, File, Table, View)
  * http://docs.synapse.org/rest/POST/entity.html
  */
-export const createEntity = (entity: any, sessionToken: string | undefined) => {
-  return doPost(
+export const createEntity = <T extends Entity>(
+  entity: T,
+  sessionToken: string | undefined,
+) => {
+  return doPost<T>(
     '/repo/v1/entity',
     entity,
     sessionToken,
@@ -583,7 +596,7 @@ export const createEntity = (entity: any, sessionToken: string | undefined) => {
 export const createProject = (
   name: string,
   sessionToken: string | undefined,
-): Promise<Response> => {
+): Promise<Entity> => {
   return createEntity(
     {
       name,
@@ -697,7 +710,7 @@ export const lookupChildEntity = (
   request: EntityLookupRequest,
   sessionToken: string | undefined = undefined,
 ) => {
-  return doPost(
+  return doPost<EntityId>(
     '/repo/v1/entity/child',
     request,
     sessionToken,
@@ -731,7 +744,7 @@ export const getBulkFiles = (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
   sessionToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     'file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     sessionToken,
@@ -797,10 +810,31 @@ export const getEntityHeader = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
-export const updateEntity = (
-  entity: Entity,
+/**
+ * Get all entity header
+ */
+export const getAllEntityHeader = (
+  references: ReferenceList,
   sessionToken: string | undefined = undefined,
-): Promise<Entity> => {
+) => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `repo/v1/entity/header?limit${limit}&offset=${offset}`
+    return doPost<PaginatedResults<EntityHeader>>(
+      url,
+      { references },
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+export const updateEntity = <T extends Entity>(
+  entity: T,
+  sessionToken: string | undefined = undefined,
+): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
   return doPut(
     url,
@@ -1168,7 +1202,7 @@ const processFilePart = (
     partNumbers: [partNumber],
   }
   const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
-  doPost(
+  doPost<BatchPresignedUploadUrlResponse>(
     presignedUrlUrl,
     presignedUploadUrlRequest,
     sessionToken,
@@ -1290,7 +1324,7 @@ export const startMultipartUpload = (
   fileUploadReject: (reason: any) => void,
 ) => {
   const url = 'file/v1/file/multipart'
-  doPost(
+  doPost<MultipartUploadStatus>(
     url,
     request,
     sessionToken,
@@ -1797,6 +1831,71 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+/**
+ * Returns a paginated result of access requirements associated for an entity
+ *
+ * See https://rest-docs.synapse.org/rest/GET/entity/id/accessRequirement.html
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity
+ * @param {number} [limit=50]
+ * @param {number} [offset=0]
+ * @returns {Promise<PaginatedResults<AccessRequirement>>}
+ */
+export const getAccessRequirement = (
+  sessionToken: string | undefined,
+  id: string,
+  limit: number = 50,
+  offset: number = 0,
+): Promise<PaginatedResults<AccessRequirement>> => {
+  const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+  return doGet<PaginatedResults<AccessRequirement>>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get all access requirements
+ */
+export const getAllAccessRequirements = (
+  sessionToken: string | undefined,
+  id: string,
+): Promise<Array<AccessRequirement>> => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+    return doGet<PaginatedResults<AccessRequirement>>(
+      url,
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+/**
+ *
+ *
+ * @param {(string | undefined)} sessionToken user session token
+ * @param {AccessApproval} accessApproval access approval request object
+ * @returns {AccessApproval}
+ */
+export const postAccessApproval = async (
+  sessionToken: string | undefined,
+  accessApproval: AccessApproval,
+): Promise<AccessApproval> => {
+  return doPost<AccessApproval>(
+    'https://repo-prod.prod.sagebase.org/repo/v1/accessApproval',
+    accessApproval,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
 
 // https://rest-docs.synapse.org/rest/GET/download/list.html
 export const getDownloadList = (sessionToken: string | undefined) => {
@@ -1821,6 +1920,41 @@ export const getDownloadOrder = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+export type FunctionReturningPaginatedResults<T> = (
+  limit: number,
+  offset: number,
+) => Promise<PaginatedResults<T>>
+/**
+ * Utility function to get all the results of a paginated service
+ *
+ * @template T Type of paginated service
+ * @param {FunctionReturningPaginatedResults<T>} fn Function that returns a paginated synapse object, accepts a limit and offset
+ * @returns
+ */
+export const getAllOfPaginatedService = async <T>(
+  fn: FunctionReturningPaginatedResults<T>,
+) => {
+  const limit = 50
+  let offset = 0
+  let existsMoreData = true
+  const results: T[] = []
+
+  while (existsMoreData) {
+    try {
+      const data = await fn(limit, offset)
+      results.push(...data.results)
+      offset += data.results.length
+      if (data.results.length < limit) {
+        existsMoreData = false
+      }
+    } catch (e) {
+      throw Error(`Error on getting paginated results ${e}`)
+    }
+  }
+
+  return results
 }
 
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html

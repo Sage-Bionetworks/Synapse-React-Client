@@ -5,12 +5,12 @@ import CardContainer, {
   CardContainerProps,
 } from '../../../lib/containers/CardContainer'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
-import { cloneDeep } from '../../../lib/utils/functions'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/syn16787123.json'
+import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(<CardContainer {...props} />)
