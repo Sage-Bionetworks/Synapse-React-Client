@@ -983,7 +983,7 @@ export default class SynapseTable extends React.Component<
       return jsonData.map(
         (val: number, index: number) => {
           return <span className={isBold}>
-            {new Date(Number(val)).toLocaleString()}{index !== jsonData.length-1 ? ', ' : ''}
+            {new Date(val).toLocaleString()}{index !== jsonData.length-1 ? ', ' : ''}
           </span>
       })
     }
