@@ -57,6 +57,8 @@ import {
   EntityId,
 } from './synapseTypes/'
 import Cookies from 'universal-cookie'
+import { WikiPageKey, ObjectType } from './synapseTypes/WikiPageKey'
+import { AccessRequirementStatus } from './synapseTypes/AccessRequirement/AccessRequirementStatus'
 
 const cookies = new Cookies()
 
@@ -863,6 +865,16 @@ export const getEntityBundleForVersion = (
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<any>
 }
+
+
+
+/**
+ * Get a corresponding string value of ObjectType:
+ **/
+function getObjectTypeToString(key: ObjectType) {
+  return ObjectType[key];
+}
+
 /**
  * Get Wiki page contents, call is of the form:
  * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
@@ -871,8 +883,11 @@ export const getEntityWiki = (
   sessionToken: string | undefined,
   ownerId: string | undefined,
   wikiId: string | undefined,
+  objectType: ObjectType | undefined,
 ) => {
-  const url = `/repo/v1/entity/${ownerId}/wiki/${wikiId}`
+  const objectTypeString = getObjectTypeToString(objectType!)
+
+  const url = `/repo/v1/${objectTypeString?.toLocaleLowerCase()}/${ownerId}/wiki/${wikiId}`
   return doGet(
     url,
     sessionToken,
@@ -939,12 +954,34 @@ export const getTeamList = (
   )
 }
 
+/**
+ * https://rest-docs.synapse.org/rest/GET/access_requirement/ownerId/wikikey.html
+ * Get the root WikiPageKey for an Access Requirement.  
+ * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
+ * @return WikiPageKey
+ **/
+
+export const getWikiPageKey = (  
+  sessionToken: string | undefined, 
+  ownerId: string | number,
+): Promise<WikiPageKey> => {
+  const url = `repo/v1/access_requirement/${ownerId}/wikikey`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
 export const getWikiAttachmentsFromEntity = (
   sessionToken: string | undefined,
   id: string | number,
   wikiId: string | number,
+  objectType: ObjectType | undefined,
 ): Promise<FileHandleResults> => {
-  const url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
+  const objectTypeString = getObjectTypeToString(objectType!) 
+  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(
     url,
     sessionToken,
@@ -1837,6 +1874,27 @@ export const getAccessRequirement = (
 }
 
 /**
+ * Retrieve an access requirement status for a given access requirement ID.
+ * 
+ * @param {string} requirementId id of entity to lookup
+ * @returns {AccessRequirementStatus}
+ */
+
+ export const getAccessRequirementStatus = (
+   sessionToken: string | undefined,
+  requirementId: string | number,
+ ): Promise<AccessRequirementStatus> => {
+   const url = `repo/v1/accessRequirement/${requirementId}/status`
+   return doGet(
+     url,
+     sessionToken,
+     undefined,
+     BackendDestinationEnum.REPO_ENDPOINT
+   )
+
+ }
+
+/**
  * Returns all the access requirements associated to an entity {id}, calling the
  * paginated getAccessRequirement service until all results are returned.
  *
@@ -1868,6 +1926,27 @@ export const getAllAccessRequirements = async (
   return accessRequirementResults
 }
 
+
+/**
+ *
+ *
+ * @param {(string | undefined)} sessionToken user session token
+ * @param {(number | undefined)} id the unique immutable ID
+ * @returns {AccessApproval}
+ */
+export const getAccessApproval = async (
+  sessionToken: string | undefined,
+  approvalId: number | undefined,
+): Promise<AccessApproval> => {
+  const url = `repo/v1/accessApproval/${approvalId}`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
 /**
  *
  *
@@ -1880,7 +1959,7 @@ export const postAccessApproval = async (
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
   return doPost<AccessApproval>(
-    'https://repo-prod.prod.sagebase.org/repo/v1/accessApproval',
+    'repo/v1/accessApproval',
     accessApproval,
     sessionToken,
     undefined,

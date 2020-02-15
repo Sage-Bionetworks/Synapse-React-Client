@@ -1,18 +1,5 @@
-.direction-label {
-  background-color: orange;
-  color: white;
-  border-radius: 50%;
-  padding: 15px;
-  height: 10px;
-  display: flex;
-  align-items: center;
-  align-self: baseline;
-  margin-right: 10px;
-}
-
-.sign-in-btn {
-  padding: 0px 5px 0px 0px;
-  color: purple;
+.data-access-requirement-title {
+  margin-top: 30px;
 }
 
 .requirement-container {
@@ -23,4 +10,122 @@
   &:last-child {
     flex: 4;
   }
+}
+
+.sign-in-btn {
+  padding: 15px 5px 0px 0px;
+  &.default {color: black};
+  &.blue {color: rgb(77, 85, 144)};
+
+}
+
+.register-text-link {
+  color: rgb(77, 85, 144);
+}
+
+.check-mark-container {
+  &.orange {background-color: orange;}
+  &.green {background-color: rgb(39, 167, 69);}
+  color: white;
+  border-radius: 50%;
+  padding: 15px;
+  height: 15px;
+  width: 15px;
+  display: flex;
+  align-items: center;
+  align-self: baseline;
+  margin-top: 20px;
+  margin-right: 15px;
+  margin-left: 5px;
+  text-align: center;
+  justify-content: center;
+}
+
+.terms-of-use-title {
+  margin-top: 20px;
+}
+
+.button-container {
+  &.hide{
+    visibility: hidden;
+  }
+
+}
+
+.view-terms-button {
+  color: rgb(77, 85, 144);
+}
+.view-terms {
+  &.hide{
+    visibility: hidden;
+  }
+
+}
+
+
+
+
+.accept-button-container {
+  margin-top: 30px;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.accept-button {
+  background-color: rgb(77, 85, 144);
+  padding: 10px 70px 10px 70px;
+  color: white;
+}
+
+.not-accept-button-container {
+  margin-top: 15px;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  color: rgb(77, 85, 144);
+}
+
+
+.self-sign-access-title {
+  margin-top: 20px;
+}
+      
+.self-sign-access-certified-success-text {
+  &.hide {
+    visibility: hidden;
+  }
+}
+
+.self-sign-access-verified-success-text {
+  &.hide {
+    visibility: hidden;
+  }
+}
+
+.check-mark-container * {
+  &.signed-in, &.accepted, &.verified, &.certified, &.approved {
+    display:inline-block;
+  
+    &:after{
+      /*Add another block-level blank space*/
+      content: '';
+      display: block;
+   
+      /*Make it a small rectangle so the border will create an L-shape*/
+      width: 7px;
+      height: 14px;
+   
+      /*Add a white border on the bottom and left, creating that 'L' */
+      border: solid;
+      border-width: 0 2px 2px 0;
+   
+      /*Rotate the L 45 degrees to turn it into a checkmark*/
+      transform: rotate(45deg);
+    }
+  }
+  &.unsigned::before {
+    content: "1";
+  }
+  
 }

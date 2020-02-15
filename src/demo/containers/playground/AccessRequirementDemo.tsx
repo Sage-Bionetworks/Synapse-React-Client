@@ -12,8 +12,10 @@ export const AccessRequirementDemo: React.FunctionComponent<Props> = props => {
       onHide={() => {
         window.location.href = 'http://localhost:3000/Playground'
       }}
-      entityId={'syn2426398'}
+      entityId={'syn3191087'}
       token={token}
     />
   )
 }
+// syn2426398
+// syn3850484

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { AccessRequirement } from 'lib/utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { getAllAccessRequirements } from 'lib/utils/SynapseClient'
-import { SynapseConstants } from 'lib/utils/'
+import { SynapseConstants, SynapseClient} from 'lib/utils/'
 import Modal from 'react-bootstrap/Modal'
-import SelfSignAccessRequirement from './SelfSignAccessRequirement'
+import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
-import TermsOfUseAccessRequirement from './TermsOfUseAccessRequirement'
+import TermsOfUseAccessRequirementComponent  from './TermsOfUseAccessRequirement'
+import { UserProfile } from 'lib/utils/synapseTypes'
 
 library.add(faCircle)
 
@@ -26,37 +27,47 @@ export default function AccessRequirementList({
   token,
   onHide,
 }: Props) {
-  const [accessRequirements, setAccessRequirements] = useState<
-    Array<AccessRequirement>
-  >([])
+  const [accessRequirements, setAccessRequirements] = useState<Array<AccessRequirement>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [user, setUser] = useState<UserProfile | undefined>(undefined)
 
   useEffect(() => {
     const getAccessRequirements = async () => {
-      if (!token) {
-        setAccessRequirements([])
-        // this view only makes sense when the user is logged in
-        return
-      }
+      // if (!token) {
+      //   setAccessRequirements([])
+      //   // this view only makes sense when the user is logged in
+      //   return
+      // }
       setIsLoading(true)
       try {
         const incomingAccessRequirements = await getAllAccessRequirements(
           token,
           entityId,
         )
+
+        const userProfile = await SynapseClient.getUserProfile(token) 
+        setUser(userProfile)   
+
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
         // because we want react hooks to update without a dependency on accessRequirements
         setAccessRequirements(prevAcessRequirements =>
-          prevAcessRequirements.concat(incomingAccessRequirements),
+          prevAcessRequirements.concat(incomingAccessRequirements)
         )
+
       } catch (err) {
         console.error('Error on get access requirements: ', err)
       } finally {
         setIsLoading(false)
       }
     }
+
+    //*********************왜 이 함수를 호출 하고 나서 accessrequirment를 부를수 없는지 (왜 엠티인지) 만약 부를수 있다면 어떻게 부르는지
     getAccessRequirements()
+
   }, [token, entityId])
+
+  const isSignedIn:boolean = token !== undefined
+  // const isApproved:boolean = true
 
   /**
    * Returns rendering for the access requirement.
@@ -65,28 +76,64 @@ export default function AccessRequirementList({
    *
    * @param {AccessRequirement} accessRequirement accessRequirement being rendered
    */
-  const renderAccessRequirement = (accessRequirement: AccessRequirement) => {
+  const renderAccessRequirement = (accessRequirement: AccessRequirement) => {    
     switch (accessRequirement.concreteType) {
       case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
         return (
-          <SelfSignAccessRequirement accessRequirement={accessRequirement} />
+          <div>
+              {isLoading && <span className="spinner" />}
+                <SelfSignAccessRequirementComponent RequirementComponent
+                  //@ts-ignore
+                  accessRequirement={accessRequirement}
+                  token={token}
+                  user={user}
+                  />    
+          </div>
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
         return (
-          <TermsOfUseAccessRequirement accessRequirement={accessRequirement} />
+          <div>
+            {isLoading && <span className="spinner" />}
+            <TermsOfUseAccessRequirementComponent 
+              //@ts-ignore
+              accessRequirement={accessRequirement} 
+              token={token}
+              user={user} 
+            />
+          </div>
         )
       default:
         // case not supported yet, go to synapse
         return (
-          <a
-            href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
-          >
-            See Requirements on synapse.org
-          </a>
+          <div className="case-not-supporeted-container">
+            {/* <a 
+              href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
+            >
+              See Requirements on synapse.org
+            </a> */}
+          </div>
         )
     }
   }
 
+  const SignedIn = () => {
+    if (token) {
+      return (
+        <p>You have signed in as <b>{ ` ${user?.userName}@synapse.org` }</b>
+        </p>
+      );
+    }else{
+      return (
+        <p>
+          If you do not have a Sage Account, you can
+          <a className="register-text-link bold-text" href="https://www.synapse.org/#!RegisterAccount:0">
+            &nbsp;Register for free.
+          </a>
+        </p>
+      );
+    }
+  }
+  
   return (
     <Modal onHide={() => onHide?.()} show={true} animation={false}>
       <Modal.Header closeButton={true}>
@@ -95,31 +142,30 @@ export default function AccessRequirementList({
       <Modal.Body>
         <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
         <p> TODO: Entity Name </p>
-        <h4 className="uppercase-text bold-text"> What do I need to do? </h4>
-        <div className="requirement-container">
-          <div className="direction-label">1</div>
+        <h4 className="data-access-requirement-title uppercase-text bold-text"> What do I need to do? </h4>
+        <div className="requirement-container"> 
+          <div className={`check-mark-container ${isSignedIn ? 'green' : 'orange'}`} >
+            <div className={`check-mark ${isSignedIn ? 'signed-in' : 'unsigned'}`}>
+            </div>
+          </div>
           <div>
             <p className="bold-text">
               <button
-                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn`}
+                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn ${isSignedIn ? 'default' : 'blue'}`}
               >
                 Sign in
               </button>
               with a Sage Platform (synapse) user account.
             </p>
-            <p>
-              If you do not have a Sage Account, you can
-              <a href="https://www.synapse.org/#!RegisterAccount:0">
-                &nbsp;Register for free.
-              </a>
-            </p>
+            <SignedIn/>
           </div>
         </div>
-        {isLoading && <span className="spinner" />}
         {accessRequirements.map(req => {
-          return renderAccessRequirement(req)
-        })}
-      </Modal.Body>
+            return renderAccessRequirement(req)
+          })}
+        </Modal.Body>
     </Modal>
   )
 }
+
+

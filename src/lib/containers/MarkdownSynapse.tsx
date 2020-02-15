@@ -5,6 +5,8 @@ import UserCard from './UserCard'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
+import { ObjectType } from 'lib/utils/synapseTypes/WikiPageKey'
+
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -39,6 +41,7 @@ export type MarkdownSynapseProps = {
   wikiId?: string
   markdown?: string
   renderInline?: boolean
+  objectType?: ObjectType
 }
 const md = markdownit({ html: true })
 
@@ -275,9 +278,9 @@ export default class MarkdownSynapse extends React.Component<
    * Get wiki page markdown and file attachment handles
    */
   public async getWikiPageMarkdown() {
-    const { ownerId, wikiId = '', token } = this.props
+    const { ownerId, wikiId = '', token, objectType} = this.props
     try {
-      const wikiPage = await SynapseClient.getEntityWiki(token, ownerId, wikiId)
+      const wikiPage = await SynapseClient.getEntityWiki(token, ownerId, wikiId, objectType)
       try {
         const fileHandles = await this.getWikiAttachments(
           wikiId ? wikiId : wikiPage.id,
@@ -294,7 +297,7 @@ export default class MarkdownSynapse extends React.Component<
     }
   }
   public async getWikiAttachments(wikiId: string) {
-    const { token, ownerId } = this.props
+    const { token, ownerId, objectType} = this.props
     if (!ownerId) {
       console.error(
         'Cannot get wiki attachments without ownerId on Markdown Component',
@@ -305,6 +308,7 @@ export default class MarkdownSynapse extends React.Component<
       token,
       ownerId,
       wikiId,
+      objectType,
     )
       .then(data => {
         return data

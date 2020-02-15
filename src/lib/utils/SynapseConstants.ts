@@ -50,3 +50,11 @@ export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
 // For internal testing only
 export const _TIME_DELAY = 75
 export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'
+
+// UserBundle constants
+export const USER_BUNDLE_MASK_USER_PROFILE = 0X1;
+export const USER_BUNDLE_MASK_ORCID = 0X2;
+export const USER_BUNDLE_MASK_VERIFICATION_SUBMISSION = 0X4;
+export const USER_BUNDLE_MASK_IS_CERTIFIED = 0X8;
+export const USER_BUNDLE_MASK_IS_VERIFIED = 0X10;
+export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0X2;
