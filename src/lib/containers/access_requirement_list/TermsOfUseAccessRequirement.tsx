@@ -24,6 +24,7 @@ export default function TermsOfUseAccessRequirementComponent({
   const [isHide, setIsHide] = useState<boolean>(true);
   const [isApproved, setIsApproved] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  
   useEffect(() => {
 
     const getPrepareTermsOfUse = async () => {

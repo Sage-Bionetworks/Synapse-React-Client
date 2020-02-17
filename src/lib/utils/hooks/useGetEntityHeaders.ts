@@ -4,13 +4,13 @@ import { getAllEntityHeader } from '../SynapseClient'
 import { SynapseConstants } from '..'
 import { without } from 'lodash-es'
 
-export type UseGetProfilesProps = {
+export type UseGetEntityHeaderProps = {
   references: ReferenceList
   token?: string
 }
 
 // React hook to get user profiles
-export default function useGetEntityHeaders(props: UseGetProfilesProps) {
+export default function useGetEntityHeaders(props: UseGetEntityHeaderProps) {
   const { token, references } = props
   const [data, setData] = useState<Array<EntityHeader>>([])
   useEffect(() => {

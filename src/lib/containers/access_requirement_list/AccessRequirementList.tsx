@@ -8,6 +8,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent  from './TermsOfUseAccessRequirement'
 import { UserProfile } from 'lib/utils/synapseTypes'
+import useGetEntityHeaders, {UseGetEntityHeaderProps} from '../../utils/hooks/useGetEntityHeaders'
+
 
 library.add(faCircle)
 
@@ -30,6 +32,17 @@ export default function AccessRequirementList({
   const [accessRequirements, setAccessRequirements] = useState<Array<AccessRequirement>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile | undefined>(undefined)
+  
+  const entityHeaderProps:UseGetEntityHeaderProps = {
+    references: [{
+      targetId: entityId,
+    }],
+    token: token
+  }
+  
+  const entityInformation = useGetEntityHeaders(entityHeaderProps)
+
+  // console.log(entityInformation[0].name)
 
   useEffect(() => {
     const getAccessRequirements = async () => {
@@ -141,7 +154,7 @@ export default function AccessRequirementList({
       </Modal.Header>
       <Modal.Body>
         <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
-        <p> {entityId} </p>
+        <p> {entityInformation[0]?.name} </p>
         <h4 className="data-access-requirement-title uppercase-text bold-text"> What do I need to do? </h4>
         <div className="requirement-container"> 
           <div className={`check-mark-container ${isSignedIn ? 'green' : 'orange'}`} >
