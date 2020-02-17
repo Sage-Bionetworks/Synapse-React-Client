@@ -29,6 +29,15 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   secondaryLabelLimit,
   isAlignToLeftNav
 }) => {
+  // update page title and description based on header card values
+  if (title && document.title !== title) {
+    document.title = title
+  }
+  const descriptionElement:Element|null = document.querySelector('meta[name="description"]')
+  if (descriptionElement && (description || subTitle)) {
+    descriptionElement.setAttribute('content', description ? description : subTitle)
+  }
+
   const style: React.CSSProperties = {
     background: backgroundColor,
   }
