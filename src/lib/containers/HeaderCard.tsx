@@ -34,21 +34,20 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   const [docTitle] = useState<string>(document.title)
   const [docDescription] = useState<string>(descriptionElement ? descriptionElement.getAttribute('content')! : '')
   useEffect(() => {
+    // update page title and description based on header card values
+    if (title && document.title !== title) {
+      document.title = title
+    }
+    
+    if (description || subTitle) {
+      descriptionElement?.setAttribute('content', description ? description : subTitle)
+    }
+
     return function cleanup() {
       document.title = docTitle
-      if (descriptionElement) {
-        descriptionElement.setAttribute('content', docDescription)
-      }
+      descriptionElement?.setAttribute('content', docDescription)
     }
   })
-  // update page title and description based on header card values
-  if (title && document.title !== title) {
-    document.title = title
-  }
-  
-  if (descriptionElement && (description || subTitle)) {
-    descriptionElement.setAttribute('content', description ? description : subTitle)
-  }
 
   const style: React.CSSProperties = {
     background: backgroundColor,
