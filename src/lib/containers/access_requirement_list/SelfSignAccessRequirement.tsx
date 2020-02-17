@@ -1,9 +1,11 @@
 import * as React from 'react'
 import {  useEffect, useState} from 'react'
-import { SelfSignAccessRequirement, UserProfile } from 'lib/utils/synapseTypes'
+import { SelfSignAccessRequirement, UserProfile, AccessApproval, ApprovalState } from 'lib/utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from 'lib/utils'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 import { ObjectType } from 'lib/utils/synapseTypes/WikiPageKey'
+import { AccessRequirementStatus } from 'lib/utils/synapseTypes/AccessRequirement/AccessRequirementStatus'
+
 
 type Props = {
   accessRequirement: SelfSignAccessRequirement,
@@ -21,7 +23,10 @@ export default function SelfSignAccessRequirementComponent({
   const [wikiPage, setWikiPage] = useState({wikiPageKey: '', ownerId: '', objectType: ''})
   const [isUserCertified, setIsUserCertified] = useState<boolean>(false)
   const [isUserVerified, setIsUserVerified] = useState<boolean>(false)
+  const [accessRequirementStatus, setAccessRequirementStatus] = useState<AccessRequirementStatus | undefined>(undefined)
+  const [isHide, setIsHide] = useState<boolean>(true)
   const [isApproved, setIsApproved] = useState<boolean>(false)
+
 
   useEffect(() => {
 
@@ -41,15 +46,34 @@ export default function SelfSignAccessRequirementComponent({
       setIsUserCertified(userCertification.isCertified)
 
       const userVerification = await SynapseClient.getUserBundle(user!.ownerId,SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED ,token)
-      setIsUserVerified(!userVerification.isVerified)
+      setIsUserVerified(userVerification.isVerified)
 
-      const aa = await SynapseClient.getAccessRequirementStatus(token, accessRequirement.id)
-      console.log(aa)
+      const selfSignAccessRequirement = await SynapseClient.getAccessRequirementStatus(token, accessRequirement.id)
+      setAccessRequirementStatus(selfSignAccessRequirement)
+      setIsApproved(selfSignAccessRequirement.isApproved)
     }
 
     getPrepareSelfSignAccessRequirement()
   },[accessRequirement, token, user])
 
+
+  const onAccepClicked = () => {
+    
+    if(!accessRequirementStatus?.isApproved){
+      const accessApprovalRequest: AccessApproval = {
+        requirementId: accessRequirement.id,
+        submitterId: user?.ownerId!,
+        accessorId: user?.ownerId!,
+        state: ApprovalState.APPROVED
+      }
+
+        SynapseClient.postAccessApproval(token, accessApprovalRequest).then(data =>
+          setIsApproved(true)
+          ).catch(
+          err => console.log('Error on post access approval: ', err))
+  
+    }
+  }
 
   
   const SelfSignAccessRequirement = () => {
@@ -74,7 +98,17 @@ export default function SelfSignAccessRequirementComponent({
 
     return(
       <div>
-
+        <p>
+          You have accepted self sign access requirements
+          <button className="view-terms-button bold-text" onClick={() => {
+            setIsHide(!isHide)
+          }}>
+            View Terms
+          </button>
+        </p>
+        <div className={`view-terms ${isHide ? 'hide' : 'show'}`}>
+          <SelfSignAccessRequirementContent/>
+          </div>
       </div>
     )
   }
@@ -84,7 +118,13 @@ export default function SelfSignAccessRequirementComponent({
       {accessRequirement.isCertifiedUserRequired && 
         <div className="requirement-container">
           <div className={`check-mark-container ${isUserCertified ? 'green' : 'orange'}`}>
-            <div className={`check-mark ${isUserCertified ? 'certified' : 'not-certified'}`}/>
+          {isUserCertified ? (          
+          <div className={`check-mark ${isUserCertified ? 'signed-in' : 'unsigned'}`}/>
+          ) : ( 
+          <div className="lock-container">
+            <span className="lock"/>
+          </div>         
+          )}
           </div>
           <div>
             <p className="self-sign-access-title bold-text">
@@ -102,7 +142,13 @@ export default function SelfSignAccessRequirementComponent({
       {accessRequirement.isValidatedProfileRequired && 
         <div className="requirement-container">
           <div className={`check-mark-container ${isUserVerified ? 'green' : 'orange'}`}>
-            <div className={`check-mark ${isUserVerified ? 'verified' : 'not-verified'}`}/>
+          {isUserVerified ? (          
+          <div className={`check-mark ${isUserVerified ? 'signed-in' : 'unsigned'}`}/>
+          ) : ( 
+          <div className="lock-container">
+            <span className="lock"/>
+          </div>         
+          )}
           </div>
           <div>
             <p className="self-sign-access-title bold-text">
@@ -121,7 +167,14 @@ export default function SelfSignAccessRequirementComponent({
       }
       <div className="requirement-container">
         <div className={`check-mark-container ${isApproved ? 'green' : 'orange'}`}>
-          <div className={`check-mark ${isApproved ? 'approved' : 'not-approved'}`}/>
+        {isApproved ? (          
+          <div className={`check-mark ${isApproved ? 'signed-in' : 'unsigned'}`}/>
+          ) : ( 
+          <div className="lock-container">
+            <span className="lock"/>
+          </div>         
+          )}
+
         </div>
         <div>
           <p className="self-sign-access-title bold-text">
@@ -132,10 +185,7 @@ export default function SelfSignAccessRequirementComponent({
       </div>
       <div className={`button-container ${isApproved ? 'hide' : 'default'}`}>
         <div className="accept-button-container">
-          <button className="accept-button" onClick={() => {
-            if(isUserCertified && isUserVerified){
-              setIsApproved(true)}
-            }}>Accept Terms of Use
+          <button className="accept-button" onClick={onAccepClicked}>Accept Terms of Use
           </button>
         </div>
         <div className="not-accept-button-container"> 
@@ -148,5 +198,4 @@ export default function SelfSignAccessRequirementComponent({
     </div>
   )
 }
-
 

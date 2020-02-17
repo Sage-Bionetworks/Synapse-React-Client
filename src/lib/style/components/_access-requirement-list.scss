@@ -122,10 +122,61 @@
    
       /*Rotate the L 45 degrees to turn it into a checkmark*/
       transform: rotate(45deg);
+
+      
     }
   }
-  &.unsigned::before {
-    content: "1";
-  }
-  
+
+    
 }
+
+
+
+
+.lock-container {
+  --locked-color:white;
+  // margin: 10px, 10px, 10px, 100px;
+  padding: 18px 10px 15px 10px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+/* :::::::::::::: Required CSS */
+/* Locked */
+.lock {
+  width: 18px;
+  height: 14px;
+  border: 1.5px solid var(--locked-color);
+  border-radius: 5px;
+  position: relative;
+
+}
+.lock:after {
+  content: "";
+  display: block;
+  background: var(--locked-color);
+  width: 3px;
+  height: 3px;
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  margin: -3.5px 0 0 -2px;
+}
+.lock:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 7px;
+  bottom: 100%;
+  position: absolute;
+  left: 70%;
+  margin-left: -8px;
+  border: 1.5px solid var(--locked-color);
+  border-top-right-radius: 50%;
+  border-top-left-radius: 50%;
+  border-bottom: 0;
+}
+

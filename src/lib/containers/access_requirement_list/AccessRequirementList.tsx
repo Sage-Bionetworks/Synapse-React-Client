@@ -141,12 +141,17 @@ export default function AccessRequirementList({
       </Modal.Header>
       <Modal.Body>
         <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
-        <p> TODO: Entity Name </p>
+        <p> {entityId} </p>
         <h4 className="data-access-requirement-title uppercase-text bold-text"> What do I need to do? </h4>
         <div className="requirement-container"> 
           <div className={`check-mark-container ${isSignedIn ? 'green' : 'orange'}`} >
-            <div className={`check-mark ${isSignedIn ? 'signed-in' : 'unsigned'}`}>
-            </div>
+            {isSignedIn ? (          
+          <div className={`check-mark ${isSignedIn ? 'signed-in' : 'unsigned'}`}/>
+          ) : ( 
+          <div className="lock-container">
+            <span className="lock"/>
+          </div>         
+          )}
           </div>
           <div>
             <p className="bold-text">
@@ -160,6 +165,8 @@ export default function AccessRequirementList({
             <SignedIn/>
           </div>
         </div>
+        {isLoading && (<span className="spinner" />)}
+
         {accessRequirements.map(req => {
             return renderAccessRequirement(req)
           })}

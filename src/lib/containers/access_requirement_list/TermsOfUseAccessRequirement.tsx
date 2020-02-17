@@ -21,28 +21,42 @@ export default function TermsOfUseAccessRequirementComponent({
 
   const [wikiPage, setWikiPage] = useState({wikiPageKey: '', ownerId: '', objectType: ''})
   const [termsOfUseRequirementStatus, setTermsOfUseRequirementStatus] = useState<AccessRequirementStatus | undefined>(undefined)
-  const [accessApproval, setAccessApproval] = useState<AccessApproval | undefined>(undefined)
   const [isHide, setIsHide] = useState<boolean>(true);
+  const [isApproved, setIsApproved] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   useEffect(() => {
 
     const getPrepareTermsOfUse = async () => {
-      if(!accessRequirement.termsOfUse){
 
-        const wikiPageRequirment = await SynapseClient.getWikiPageKey(token, accessRequirement.id)
+      setIsLoading(true)
+      try{
 
-        const markDownWikiRequirements = {
-          wikiPageKey: wikiPageRequirment.wikiPageId, 
-          ownerId: wikiPageRequirment.ownerObjectId, 
-          objectType: wikiPageRequirment.ownerObjectType,
+        if(!accessRequirement.termsOfUse){
+
+          const wikiPageRequirment = await SynapseClient.getWikiPageKey(token, accessRequirement.id)
+  
+          const markDownWikiRequirements = {
+            wikiPageKey: wikiPageRequirment.wikiPageId, 
+            ownerId: wikiPageRequirment.ownerObjectId, 
+            objectType: wikiPageRequirment.ownerObjectType,
+          }
+  
+          setWikiPage(markDownWikiRequirements)
         }
+        
+  
+        SynapseClient.getAccessRequirementStatus(token, accessRequirement!.id).then(
+          data => {
+          setTermsOfUseRequirementStatus(data)
+          setIsApproved(data.isApproved)
+          }
+        )
+      }catch(err){
+        console.error('Error on prepare terms of use ', err)
 
-        setWikiPage(markDownWikiRequirements)
+      }finally{
+        setIsLoading(false)
       }
-      
-
-      const requirementStatus = await SynapseClient.getAccessRequirementStatus(token, accessRequirement!.id)
-      setTermsOfUseRequirementStatus(requirementStatus)
-      console.log(requirementStatus)
       
     }
 
@@ -50,7 +64,6 @@ export default function TermsOfUseAccessRequirementComponent({
     
   }, [token, accessRequirement])
 
-  // const isApproved:boolean = accessApproval?.state === ApprovalState.APPROVED
 
   const onAcceptClicked = () => {
 
@@ -62,19 +75,18 @@ export default function TermsOfUseAccessRequirementComponent({
         state: ApprovalState.APPROVED,
       }  
     
-      SynapseClient.postAccessApproval(token, accessApprovalRequest).then(
-        data => {
-          setAccessApproval(data)
-          console.log(data)
-        }
-      )
+      SynapseClient.postAccessApproval(token, accessApprovalRequest).then(data =>
+        {
+          setIsApproved(true)
+        }).catch(
+        err => console.log('Error on post access approval: ', err))
     }
 
   }
 
   const TermsAndConditions = () => {
 
-    if(accessApproval){
+    if(isApproved){
       return <TermsAndConditionResult/>
     }
     return (
@@ -83,7 +95,6 @@ export default function TermsOfUseAccessRequirementComponent({
   }
 
   const TermsAndConditionsContent = () => {
-    console.log(accessRequirement.termsOfUse)
     return (
       <div>
       {accessRequirement.termsOfUse ? (
@@ -100,14 +111,11 @@ export default function TermsOfUseAccessRequirementComponent({
   }
 
   const TermsAndConditionResult = () => {
-    
-    const dates = accessApproval?.createdOn?.split('T')[0].split('-')!;
-    const approvalDate =`${dates[1]}/${dates[2]}/${dates[0]}`;
-  
+      
     return(
       <div>
         <p>
-          You have accepted Terms of Use on {approvalDate} 
+          You have accepted Terms of Use 
           <button className="view-terms-button bold-text" onClick={() => {
             setIsHide(!isHide)
           }}>
@@ -122,21 +130,32 @@ export default function TermsOfUseAccessRequirementComponent({
   }
   
   return (
+    
     <div>
+        {isLoading && (<span className="spinner" />)}
+
       <div className="requirement-container">
-        <div className={`check-mark-container ${termsOfUseRequirementStatus?.isApproved ? 'green' : 'orange'}`} >
-          <div className={`check-mark ${termsOfUseRequirementStatus?.isApproved ? 'accepted' : 'not-accepted'}`}/>
+        <div className={`check-mark-container ${isApproved ? 'green' : 'orange'}`} >
+        {isApproved ? (          
+          <div className={`check-mark ${isApproved ? 'signed-in' : 'unsigned'}`}/>
+          ) : ( 
+          <div className="lock-container">
+            <span className="lock"/>
+          </div>         
+          )}
         </div>
+        
         <div>
           <p className="terms-of-use-title bold-text">
             Agree to the following terms and conditions.
           </p>
+
           <div className="terms-of-use-content">
             <TermsAndConditions/>
           </div>
         </div>
       </div>
-      <div className={`button-container ${termsOfUseRequirementStatus?.isApproved ? `hide` : `default`}`}>
+      <div className={`button-container ${isApproved ? `hide` : `default`}`}>
         <div className="accept-button-container">
           <button className="accept-button" onClick={onAcceptClicked}>Accept Terms of Use</button>
         </div>
