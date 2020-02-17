@@ -1,5 +1,5 @@
-import * as React from 'react'
 import { CardFooter, Icon } from './row_renderers/utils'
+import React, { useState, useEffect } from 'react'
 
 export type IconOptions = {
   [index: string]: string
@@ -29,11 +29,23 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   secondaryLabelLimit,
   isAlignToLeftNav
 }) => {
+  // store old document title and description so that we can restore when this component is removed
+  const descriptionElement:Element|null = document.querySelector('meta[name="description"]')
+  const [docTitle] = useState<string>(document.title)
+  const [docDescription] = useState<string>(descriptionElement ? descriptionElement.getAttribute('content')! : '')
+  useEffect(() => {
+    return function cleanup() {
+      document.title = docTitle
+      if (descriptionElement) {
+        descriptionElement.setAttribute('content', docDescription)
+      }
+    }
+  })
   // update page title and description based on header card values
   if (title && document.title !== title) {
     document.title = title
   }
-  const descriptionElement:Element|null = document.querySelector('meta[name="description"]')
+  
   if (descriptionElement && (description || subTitle)) {
     descriptionElement.setAttribute('content', description ? description : subTitle)
   }
