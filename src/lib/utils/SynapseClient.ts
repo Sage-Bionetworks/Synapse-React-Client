@@ -56,11 +56,11 @@ import {
   AccessApproval,
   EntityId,
 } from './synapseTypes/'
-import Cookies from 'universal-cookie'
 import { WikiPageKey, ObjectType } from './synapseTypes/WikiPageKey'
 import { AccessRequirementStatus } from './synapseTypes/AccessRequirement/AccessRequirementStatus'
+import UniversalCookies from 'universal-cookie'
 
-const cookies = new Cookies()
+const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -810,6 +810,27 @@ export const getEntityHeader = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<PaginatedResults<EntityHeader>>
+}
+
+/**
+ * Get all entity header
+ */
+export const getAllEntityHeader = (
+  references: ReferenceList,
+  sessionToken: string | undefined = undefined,
+) => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `repo/v1/entity/header?limit${limit}&offset=${offset}`
+    return doPost<PaginatedResults<EntityHeader>>(
+      url,
+      { references },
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
 }
 
 export const updateEntity = <T extends Entity>(
@@ -1874,6 +1895,7 @@ export const getAccessRequirement = (
 }
 
 /**
+<<<<<<< HEAD
  * Retrieve an access requirement status for a given access requirement ID.
  * 
  * @param {string} requirementId id of entity to lookup
@@ -1901,29 +1923,25 @@ export const getAccessRequirement = (
  * @param {(string | undefined)} sessionToken token of user
  * @param {string} id id of entity to lookup
  * @returns {Promise<Array<AccessRequirement>>}
+=======
+ * Get all access requirements
+>>>>>>> d74ab15c3cd4c0aea7b4b918eda6c8b8758d7f20
  */
-export const getAllAccessRequirements = async (
+export const getAllAccessRequirements = (
   sessionToken: string | undefined,
   id: string,
 ): Promise<Array<AccessRequirement>> => {
-  let isMoreData = true
-  const accessRequirementResults = [] as AccessRequirement[]
-  const limit = 50
-  let offset = 0
-  while (isMoreData) {
-    try {
-      const data = await getAccessRequirement(sessionToken, id, limit, offset)
-      accessRequirementResults.push(...data.results)
-      offset += data.results.length
-      if (data.results.length !== 50) {
-        isMoreData = false
-      }
-    } catch (e) {
-      console.error('err on getAllAccessRequirements = ', e)
-      return e
-    }
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+    return doGet<PaginatedResults<AccessRequirement>>(
+      url,
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
   }
-  return accessRequirementResults
+  return getAllOfPaginatedService(fn)
 }
 
 
@@ -1990,6 +2008,41 @@ export const getDownloadOrder = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+export type FunctionReturningPaginatedResults<T> = (
+  limit: number,
+  offset: number,
+) => Promise<PaginatedResults<T>>
+/**
+ * Utility function to get all the results of a paginated service
+ *
+ * @template T Type of paginated service
+ * @param {FunctionReturningPaginatedResults<T>} fn Function that returns a paginated synapse object, accepts a limit and offset
+ * @returns
+ */
+export const getAllOfPaginatedService = async <T>(
+  fn: FunctionReturningPaginatedResults<T>,
+) => {
+  const limit = 50
+  let offset = 0
+  let existsMoreData = true
+  const results: T[] = []
+
+  while (existsMoreData) {
+    try {
+      const data = await fn(limit, offset)
+      results.push(...data.results)
+      offset += data.results.length
+      if (data.results.length < limit) {
+        existsMoreData = false
+      }
+    } catch (e) {
+      throw Error(`Error on getting paginated results ${e}`)
+    }
+  }
+
+  return results
 }
 
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { Engine } from 'json-rules-engine'
 import {
   default as Form,
@@ -250,7 +250,7 @@ export default class SynapseForm extends React.Component<
     }
 
     // if there are rules - run the engine and go to the first next step
-    let engine = new Engine(currentStep.rules)
+    const engine = new Engine(currentStep.rules)
 
     try {
       const result: RulesResult = await engine.run(formData)
@@ -485,6 +485,7 @@ export default class SynapseForm extends React.Component<
 
       case NavActionEnum.SUBMIT: {
         this.props.onSubmit(formData)
+        return
       }
       case NavActionEnum.VALIDATE: {
         //we get here is we clicked validate and the data is valid.
@@ -507,6 +508,7 @@ export default class SynapseForm extends React.Component<
           this.moveStep(this.state.formData, steps[0].id, false)
           this.setState({ isLoadingSaved: false })
         }
+        return
       }
       default:
         return
@@ -620,7 +622,7 @@ export default class SynapseForm extends React.Component<
       return (
         <div className="step-exclude-directions">
           This form is currently included in the submission. Enter some data if
-          you have it, or click "Skip".{' '}
+          you have it, or click "Skip".
           <button
             className="btn btn-link"
             onClick={() =>
@@ -668,7 +670,7 @@ export default class SynapseForm extends React.Component<
     currentStep: Step,
     allSteps: Step[],
   ): Promise<AjvError[]> => {
-    let errors: AjvError[] = []
+    const errors: AjvError[] = []
 
     //default - running on current step
     let rules = currentStep.validationRules || []
@@ -692,7 +694,7 @@ export default class SynapseForm extends React.Component<
 
     //this is a workaround for inability to define a rule to run on all members of the data array
     // we define the generic rule with path e.g."path": ".experiments[*].dose_range.dose_range_min",
-    let allRules: any[] = []
+    const allRules: any[] = []
     rules.forEach(rule => {
       //take a rule
       const paramProp = rule.event.params.property
@@ -716,7 +718,7 @@ export default class SynapseForm extends React.Component<
       }
     })
     // no we run  all the rules through the engine
-    let engine = new Engine(allRules, {
+    const engine = new Engine(allRules, {
       allowUndefinedFacts: true,
     })
 
@@ -796,7 +798,7 @@ export default class SynapseForm extends React.Component<
   }
 
   renderErrorListTemplate = (props: ErrorListProps) => {
-    let { errors } = props
+    const { errors } = props
     const currentLis = errors
       .map((error, i) => {
         return renderTransformedErrorObject(
@@ -1009,7 +1011,7 @@ function renderTransformedErrorObject(
     index = !isNaN(parseInt(index)) ? ` [${parseInt(index) + 1}]` : ''
   }
 
-  let label =
+  const label =
     _.get(uiSchema, labelFromUi) ||
     _.get(schema.properties, labelFromSchema) ||
     _.get(uiSchema, arrayLabelFromUI) ||
@@ -1025,7 +1027,7 @@ function renderTransformedErrorObject(
       <span>
         <strong>
           {screen.title}
-          {index}:{' '}
+          {index}:
         </strong>
         {label}&nbsp; {error.message}
       </span>

@@ -22,9 +22,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
     props.onChange(event.target.checked)
   }
 
-  const className = props.className
-    ? `checkbox ${props.className}`
-    : `checkbox`
+  const className = props.className ? `checkbox ${props.className}` : `checkbox`
 
   return (
     <div className={className}>

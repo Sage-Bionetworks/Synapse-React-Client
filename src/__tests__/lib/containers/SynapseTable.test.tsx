@@ -15,7 +15,6 @@ import {
   Row,
   QueryBundleRequest,
 } from 'lib/utils/synapseTypes/'
-import { Dictionary } from 'lodash'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
@@ -24,9 +23,10 @@ import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,
+  Dictionary,
 } from '../../../lib/containers/table/SynapseTable'
-import { cloneDeep } from '../../../lib/utils/functions'
 import syn16787123Json from '../../../mocks/syn16787123.json'
+import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -41,7 +41,7 @@ describe('basic functionality', () => {
   // setup tests
   const title = 'studies'
   const synapseId = 'syn16787123'
-  const castData = syn16787123Json as QueryResultBundle
+  const castData = syn16787123Json
   const totalColumns = 13
   const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -374,7 +374,16 @@ describe('basic functionality', () => {
     const ENTITYID_INDEX = 0
     const USERID_INDEX = 1
     const DATE_INDEX = 2
+    const STRING_LIST_INDEX = 3
+    const DATE_LIST_INDEX = 4
+    const BOOLEAN_LIST_INDEX = 5
+    const INTEGER_LIST_INDEX = 6
     const MOCKED_STRING = 'MOCKED_VALUE'
+    const MOCKED_STRING_LIST = '["MOCKED_VALUE1","MOCKED_VALUE2"]'
+    const MOCK_DATE_VALUE = '1581360939000'
+    const MOCKED_DATE_LIST = `[${MOCK_DATE_VALUE}]`
+    const MOCKED_BOOLEAN_LIST = '[true, false]'
+    const MOCKED_INTEGER_LIST = '[10, 11]'
     const MOCKED_NUM = 1
     // syn16787123Json has two columns of type entity, the second
     // is of type ENTITYID, the third is USERID
@@ -395,6 +404,26 @@ describe('basic functionality', () => {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
           columnType: 'DATE',
+        },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'STRING_LIST',
+        },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'DATE_LIST',
+        },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'BOOLEAN_LIST',
+        },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: 'INTEGER_LIST',
         },
       ],
       queryResult: {
@@ -419,21 +448,41 @@ describe('basic functionality', () => {
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
+            {
+              id: MOCKED_STRING,
+              name: MOCKED_STRING,
+              columnType: 'STRING_LIST',
+            },
+            {
+              id: MOCKED_STRING,
+              name: MOCKED_STRING,
+              columnType: 'DATE_LIST',
+            },
+            {
+              id: MOCKED_STRING,
+              name: MOCKED_STRING,
+              columnType: 'BOOLEAN_LIST',
+            },
+            {
+              id: MOCKED_STRING,
+              name: MOCKED_STRING,
+              columnType: 'INTEGER_LIST',
+            },
           ],
           rows: [
             {
-              values: ['syn123', 'syn120', '1567525763000'],
+              values: ['syn123', 'syn120', '1567525763000', MOCKED_STRING_LIST, MOCKED_DATE_LIST, MOCKED_BOOLEAN_LIST, MOCKED_INTEGER_LIST],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
             {
               // @ts-ignore
-              values: ['syn124', 'syn120', null],
+              values: ['syn124', 'syn120', null, MOCKED_STRING_LIST, MOCKED_DATE_LIST, MOCKED_BOOLEAN_LIST, MOCKED_INTEGER_LIST],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
             {
-              values: ['syn125', 'syn121', '1567525763003'],
+              values: ['syn125', 'syn121', '1567525763003', MOCKED_STRING_LIST, MOCKED_DATE_LIST, MOCKED_BOOLEAN_LIST, MOCKED_INTEGER_LIST],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
@@ -453,6 +502,16 @@ describe('basic functionality', () => {
       expect(userIds).toEqual([USERID_INDEX])
       const dates = instance.getColumnIndiciesWithType('DATE')
       expect(dates).toEqual([DATE_INDEX])
+      const stringLists = instance.getColumnIndiciesWithType('STRING_LIST')
+      expect(stringLists).toEqual([STRING_LIST_INDEX])
+      const dateLists = instance.getColumnIndiciesWithType('DATE_LIST')
+      expect(dateLists).toEqual([DATE_LIST_INDEX])
+      const booleanLists = instance.getColumnIndiciesWithType('BOOLEAN_LIST')
+      expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
+      const integerLists = instance.getColumnIndiciesWithType('INTEGER_LIST')
+      expect(integerLists).toEqual([INTEGER_LIST_INDEX])
+      const dateOrIntegerLists = instance.getColumnIndiciesWithType('DATE_LIST','INTEGER_LIST')
+      expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
     })
 
     it('gets unique entities', () => {
@@ -482,6 +541,9 @@ describe('basic functionality', () => {
       const entityColumnIndicies: number[] = [ENTITYID_INDEX]
       const userColumnIndicies: number[] = [USERID_INDEX]
       const dateColumnIndicies: number[] = [DATE_INDEX]
+      const otherListColumnIndicies: number[] = [STRING_LIST_INDEX, INTEGER_LIST_INDEX]
+      const dateListColumnIndicies: number[] = [DATE_LIST_INDEX]
+      const booleanListColumnIndicies: number[] = [BOOLEAN_LIST_INDEX]
       const mockEntityLinkValue: string = 'syn122'
       const mockUserCardValue: string = 'syn123'
       const mockAllAuthenticatedUsersValue: string = 'syn124'
@@ -514,6 +576,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: ENTITYID_INDEX,
               columnValue: mockEntityLinkValue,
               isBold: '',
@@ -532,6 +597,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockAllAuthenticatedUsersValue,
               isBold: '',
@@ -558,6 +626,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockTeamValue,
               isBold: '',
@@ -582,6 +653,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockUserCardValue,
               isBold: '',
@@ -601,6 +675,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockMarkdownColumnValue,
               isBold: '',
@@ -621,6 +698,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: USERID_INDEX,
               columnValue: mockColumnValue,
               isBold: '',
@@ -645,6 +725,9 @@ describe('basic functionality', () => {
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
               colIndex: DATE_INDEX,
               columnValue: mockDateValue,
               isBold: '',
@@ -660,6 +743,103 @@ describe('basic functionality', () => {
             .text()
             .trim(),
         ).toEqual(new Date(Number(mockDateValue)).toLocaleString())
+      })
+
+      it('renders a date list value', () => {
+        const tableCell = shallow(
+          <div>
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
+              colIndex: DATE_LIST_INDEX,
+              columnValue: MOCKED_DATE_LIST,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
+              isMarkdownColumn: false,
+            })}
+          </div>,
+        )
+        expect(
+          tableCell
+            .find('span')
+            .text()
+            .trim(),
+        ).toEqual(new Date(Number(MOCK_DATE_VALUE)).toLocaleString())
+      })
+
+      it('renders a integer list value', () => {
+        const tableCell = shallow(
+          <div>
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
+              colIndex: INTEGER_LIST_INDEX,
+              columnValue: MOCKED_INTEGER_LIST,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
+              isMarkdownColumn: false,
+            })}
+          </div>,
+        )
+        expect(
+          tableCell
+            .find('span')
+            .first()
+            .text()
+            .trim(),
+        ).toEqual('10,')
+        expect(
+          tableCell
+            .find('span')
+            .last()
+            .text()
+            .trim(),
+        ).toEqual('11')
+      })
+
+      it('renders a boolean list value', () => {
+        const tableCell = shallow(
+          <div>
+            {instance.renderTableCell({
+              entityColumnIndicies,
+              userColumnIndicies,
+              dateColumnIndicies,
+              booleanListColumnIndicies,
+              dateListColumnIndicies,
+              otherListColumnIndicies,
+              colIndex: BOOLEAN_LIST_INDEX,
+              columnValue: MOCKED_BOOLEAN_LIST,
+              isBold: '',
+              mapEntityIdToHeader: {},
+              mapUserIdToHeader,
+              isMarkdownColumn: false,
+            })}
+          </div>,
+        )
+        expect(
+          tableCell
+            .find('span')
+            .first()
+            .text()
+            .trim(),
+        ).toEqual('true,')
+        expect(
+          tableCell
+            .find('span')
+            .last()
+            .text()
+            .trim(),
+        ).toEqual('false')
       })
 
       it('renders an empty cell for null date', () => {

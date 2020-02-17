@@ -3,7 +3,7 @@ import RssFeed from './RssFeed'
 import TwitterFeed from './TwitterFeed'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { KeyValue } from '../utils/functions/sqlFunctions'
-import _ from 'lodash'
+import { isEqual } from 'lodash-es'
 import { Link } from 'react-router-dom'
 
 export type MenuConfig = {
@@ -23,7 +23,8 @@ export type NewsFeedMenuProps = {
 }
 
 export default class NewsFeedMenu extends React.Component<
-  NewsFeedMenuProps, {}
+  NewsFeedMenuProps,
+  {}
 > {
   constructor(props: NewsFeedMenuProps) {
     super(props)
@@ -48,7 +49,7 @@ export default class NewsFeedMenu extends React.Component<
     if (feedKeyValue) {
       Object.getOwnPropertyNames(feedKeyValue).forEach(key => {
         modifiedFeedUrl = `${modifiedFeedUrl}&${key}=${feedKeyValue[key]}`
-      });
+      })
     }
     return (
       <div className="row">
@@ -93,7 +94,10 @@ export default class NewsFeedMenu extends React.Component<
     if (this.props.searchParams) {
       // do the search params match a menu config?
       this.props.menuConfig.forEach((config, index) => {
-        if (config.feedKeyValue && _.isEqual(this.props.searchParams, config.feedKeyValue)) {
+        if (
+          config.feedKeyValue &&
+          isEqual(this.props.searchParams, config.feedKeyValue)
+        ) {
           menuIndex = index
         }
       })
@@ -121,17 +125,18 @@ export default class NewsFeedMenu extends React.Component<
         })
       }
       return (
-        <Link 
+        <Link
           key={config.feedName}
           className={`SRC-hand-cursor SRC-menu-button-base SRC-gap SRC-hoverWhiteText SRC-primary-background-color-hover ${selectedStyling}`}
           role="button"
           tabIndex={0}
           style={style}
-          to ={{
-            pathname: routeToNewsFeed, 
-            search: urlParams + ''
-           }}
-          > {config.feedName}
+          to={{
+            pathname: routeToNewsFeed,
+            search: urlParams + '',
+          }}
+        >
+          {config.feedName}
         </Link>
       )
     })

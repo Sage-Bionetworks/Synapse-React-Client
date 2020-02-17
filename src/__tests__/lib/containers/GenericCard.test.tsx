@@ -154,7 +154,7 @@ describe('it makes the correct URL for the title', () => {
       matchColumnName,
       URLColumnName,
     }
-    const expectedLink = `#/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
+    const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
     const { linkDisplay, target } = createTitleLink(
       '',
       titleLinkConfig,
@@ -189,7 +189,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${value}`,
+      `/${datasetBaseURL}?${DATASETS}=${value}`,
     )
     // double check the style
     expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
@@ -212,13 +212,13 @@ describe('it makes the correct URL for the secondary labels', () => {
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
     expect(links.at(0).props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${val1}`,
+      `/${datasetBaseURL}?${DATASETS}=${val1}`,
     )
     expect(links.at(1).props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${val2}`,
+      `/${datasetBaseURL}?${DATASETS}=${val2}`,
     )
     expect(links.at(2).props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${val3}`,
+      `/${datasetBaseURL}?${DATASETS}=${val3}`,
     )
   })
 

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import * as _ from 'lodash'
+import * as _ from 'lodash-es'
 
 import WarningModal, {
   WarningModalProps,

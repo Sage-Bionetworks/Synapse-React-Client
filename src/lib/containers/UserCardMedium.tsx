@@ -160,8 +160,7 @@ export default class UserCardMedium extends React.Component<
                 timeout={{ enter: 500, exit: 300 }}
               >
                 <div key={email} className="SRC-modal">
-                  {' '}
-                  Email address copied to clipboard{' '}
+                  Email address copied to clipboard
                 </div>
               </CSSTransition>
             )}
@@ -187,8 +186,7 @@ export default class UserCardMedium extends React.Component<
             {/* make SRC-whiteText overridable with a good name! */}
             {isLarge || disableLink ? (
               <span className={isLarge ? 'SRC-whiteText' : 'SRC-blackText'}>
-                {' '}
-                {name}{' '}
+                {name}
               </span>
             ) : (
               // consolidate click events

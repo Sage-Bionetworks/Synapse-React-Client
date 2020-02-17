@@ -110,7 +110,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
           key={key}
         >
           <span className="SRC-facets-text">
-            {displayValue} ({count}){' '}
+            {displayValue} ({count})
           </span>
           <input
             // @ts-ignore

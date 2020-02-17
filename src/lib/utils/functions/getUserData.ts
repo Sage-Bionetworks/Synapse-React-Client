@@ -46,7 +46,7 @@ function getUserProfileWithProfilePicAttached(
         return Promise.resolve(data)
       })
       .catch(err => {
-        return err
+        throw Error(`Err on getting user data ${err}`)
       })
   })
 }

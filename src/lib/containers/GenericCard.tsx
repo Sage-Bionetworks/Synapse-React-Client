@@ -94,7 +94,7 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        linkDisplay = `#/${titleLink.baseURL}?${URLColumnName}=${value}`
+        linkDisplay = `/${titleLink.baseURL}?${URLColumnName}=${value}`
       }
     }
     return { linkDisplay, target }
@@ -137,7 +137,7 @@ export default class GenericCard extends React.Component<
     }
     return split.map((el, index) => {
       const { baseURL, URLColumnName } = labelLink
-      const href = `#/${baseURL}?${URLColumnName}=${el}`
+      const href = `/${baseURL}?${URLColumnName}=${el}`
       return (
         <React.Fragment key={el}>
           <a href={href} key={el} className={className} style={style}>
@@ -272,8 +272,7 @@ export default class GenericCard extends React.Component<
               data-search-handle={stubTitleSearchHandle}
               className="SRC-author"
             >
-              {' '}
-              {subTitle}{' '}
+              {subTitle}
             </div>
           )}
           {/* 
@@ -299,7 +298,7 @@ export default class GenericCard extends React.Component<
                   className="SRC-primary-text-color"
                   onClick={this.toggleShowMore}
                 >
-                  ...Show More{' '}
+                  ...Show More
                 </a>
               )}
             </div>
