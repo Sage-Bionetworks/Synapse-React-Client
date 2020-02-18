@@ -133,10 +133,8 @@ export default class HasAccess extends React.Component<
   }
   getFileEntityFileHandle = () => {
     const { entityId, entityVersionNumber, token, isInDownloadList } = this.props
-    if (
-      this.state.downloadType ||
-      !entityId
-    ) {
+    if (this.state.downloadType) {
+      // already know the downloadType
       return
     }
     // fileHandle was not passed to us, ask for it.

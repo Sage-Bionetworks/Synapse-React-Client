@@ -55,6 +55,8 @@ import {
   AccessRequirement,
   AccessApproval,
   EntityId,
+  FileResult,
+  FileHandleAssociateType,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 
@@ -1421,16 +1423,15 @@ export const getFileEntityFileHandle = (
   sessionToken?: string,
 ): Promise<FileHandle> => {
   return new Promise((resolve, reject) => {
-    getEntity(sessionToken, fileEntityId, fileEntityVersionNumber).then((entity:Entity) => {
-      const fileEntity:FileEntity = entity as FileEntity
-      const fileHandleAssociationList = [
+    getEntity<FileEntity>(sessionToken, fileEntityId, fileEntityVersionNumber).then((fileEntity:FileEntity) => {
+      const fileHandleAssociationList:FileHandleAssociation[] = [
         {
-          associateObjectId: fileEntity.id,
-          associateObjectType: 'FileEntity',
+          associateObjectId: fileEntity.id!,
+          associateObjectType: FileHandleAssociateType.FileEntity,
           fileHandleId: fileEntity.dataFileHandleId,
         },
       ]
-      const request: any = {
+      const request:BatchFileRequest = {
         includeFileHandles: true,
         includePreSignedURLs: false,
         includePreviewPreSignedURLs: false,
