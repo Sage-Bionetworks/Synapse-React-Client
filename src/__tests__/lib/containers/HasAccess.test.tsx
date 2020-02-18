@@ -24,6 +24,9 @@ import {
   mockUnmetControlledDataRestrictionInformationACT,
   mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../../mocks/mock_has_access_data'
+import {
+  mockFileHandle
+} from '../../../mocks/mock_file_handle'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'
@@ -47,6 +50,9 @@ const props: HasAccessProps = {
 
 describe('basic tests', () => {
   it('works with open data no restrictions', async () => {
+    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
+      Promise.resolve(mockFileHandle),
+    )
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )

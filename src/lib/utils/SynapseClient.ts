@@ -1409,6 +1409,45 @@ export const getFileEntityContent = (
   })
 }
 
+/**
+ * Return the FileHandle of the file (latest version) associated to the given FileEntity.
+ * @param sessionToken
+ * @param fileEntityId: ID of the FileEntity
+ * @param endpoint
+ */
+export const getFileEntityFileHandle = (
+  fileEntityId: string,
+  fileEntityVersionNumber?: string,
+  sessionToken?: string,
+): Promise<FileHandle> => {
+  return new Promise((resolve, reject) => {
+    getEntity(sessionToken, fileEntityId, fileEntityVersionNumber).then((entity:Entity) => {
+      const fileEntity:FileEntity = entity as FileEntity
+      const fileHandleAssociationList = [
+        {
+          associateObjectId: fileEntity.id,
+          associateObjectType: 'FileEntity',
+          fileHandleId: fileEntity.dataFileHandleId,
+        },
+      ]
+      const request: any = {
+        includeFileHandles: true,
+        includePreSignedURLs: false,
+        includePreviewPreSignedURLs: false,
+        requestedFiles: fileHandleAssociationList,
+      }
+      getFiles(request, sessionToken)
+        .then((data: BatchFileResult) => {
+          const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!
+          resolve(fileHandle)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  })
+}
+
 export const getFileHandleContentFromID = (
   fileHandleId: string,
   sessionToken: string,
