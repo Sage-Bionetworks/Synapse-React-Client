@@ -95,9 +95,9 @@ class Demo extends React.Component<{}, DemoState> {
             sql: 'SELECT * FROM syn21156352',
           },
           {
-            facet: 'dataType',
+            facet: 'study',
             sql:
-              'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            'SELECT study, dataType, assay, id AS file_id, specimenID, individualID, diagnosis, sex, consortium as "Program", grant, species, organ, tissue, cellType, fileFormat FROM syn11346063',
           },
           {
             facet: 'diagnosis',
