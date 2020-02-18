@@ -55,7 +55,6 @@ import {
   AccessRequirement,
   AccessApproval,
   EntityId,
-  FileResult,
   FileHandleAssociateType,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
