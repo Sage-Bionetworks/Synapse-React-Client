@@ -6,6 +6,8 @@ import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import StackedBarChart from './containers/StackedBarChart'
+import HasAccess from './containers/HasAccess'
+import DownloadListTable from './containers/download_list/DownloadListTable'
 import SynapseTable from './containers/table/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
@@ -36,7 +38,9 @@ const SynapseComponents = {
   ModalDownload,
   NewsFeedMenu,
   SynapseFormWrapper,
-  SynapseFormSubmissionsGrid
+  SynapseFormSubmissionsGrid,
+  HasAccess,
+  DownloadListTable
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
