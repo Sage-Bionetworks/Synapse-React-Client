@@ -1438,8 +1438,12 @@ export const getFileEntityFileHandle = (
       }
       getFiles(request, sessionToken)
         .then((data: BatchFileResult) => {
-          const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!
-          resolve(fileHandle)
+          if (data.requestedFiles.length > 0 && data.requestedFiles[0].fileHandle) {
+            resolve(data.requestedFiles[0].fileHandle)  
+          } else {
+            // not found, or not allowed to access
+            reject(undefined)
+          }
         })
         .catch(err => {
           reject(err)

@@ -3,7 +3,6 @@ import {
   faCircle,
   faDatabase,
   faLink,
-  faMinusCircle,
   faUnlockAlt,
   faLock
 } from '@fortawesome/free-solid-svg-icons'
@@ -24,13 +23,13 @@ import {
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 library.add(faUnlockAlt)
-library.add(faMinusCircle)
 library.add(faDatabase)
 library.add(faCircle)
 
 export type HasAccessProps = {
   fileHandle?: FileHandle
   entityId: string
+  isInDownloadList?: boolean // set to show errors in UI about package creation
   entityVersionNumber?: string
   token?: string
 }
@@ -61,7 +60,10 @@ export enum DownloadTypeEnum {
   ClosedForAnonymousDownload
 }
 
-export const getDownloadTypeForFileHandle = (fileHandle: FileHandle) => {
+export const getDownloadTypeForFileHandle = (fileHandle: FileHandle, isInDownloadList?: boolean) => {
+  if (fileHandle && !isInDownloadList) {
+    return DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+  }
   const { concreteType, contentSize } = fileHandle
   // check if it's too large
   if (contentSize >= GIGABYTE_SIZE) {
@@ -114,7 +116,7 @@ export default class HasAccess extends React.Component<
     this.getRestrictionInformation = this.getRestrictionInformation.bind(this)
     this.getFileEntityFileHandle = this.getFileEntityFileHandle.bind(this)
     
-    const downloadType = props.fileHandle ? getDownloadTypeForFileHandle(props.fileHandle) : undefined
+    const downloadType = props.fileHandle ? getDownloadTypeForFileHandle(props.fileHandle, props.isInDownloadList) : undefined
     this.state = {
       downloadType
     }
@@ -130,7 +132,7 @@ export default class HasAccess extends React.Component<
     this.getFileEntityFileHandle()
   }
   getFileEntityFileHandle = () => {
-    const { entityId, entityVersionNumber, token } = this.props
+    const { entityId, entityVersionNumber, token, isInDownloadList } = this.props
     if (
       this.state.downloadType ||
       !entityId
@@ -140,7 +142,7 @@ export default class HasAccess extends React.Component<
     // fileHandle was not passed to us, ask for it.
     SynapseClient.getFileEntityFileHandle(entityId, entityVersionNumber, token)
       .then(fileHandle => {
-        const downloadType = getDownloadTypeForFileHandle(fileHandle)
+        const downloadType = getDownloadTypeForFileHandle(fileHandle, isInDownloadList)
         this.setState({
           downloadType
         })
@@ -193,20 +195,18 @@ export default class HasAccess extends React.Component<
 
   renderIcon = (downloadType: DownloadTypeEnum | string) => {
     switch (downloadType) {
-      // fileHandle passed in
+      // fileHandle available
       case DownloadTypeEnum.ExternalFileHandle:
-        return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.CloudFileHandle:
         return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.TooLargeFile:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
-      // no fileHandle
+      // no fileHandle available
       case DownloadTypeEnum.HasUnmetAccessRestrictions:
-        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
-      case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
-        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       case DownloadTypeEnum.ClosedForAnonymousDownload:
         return this.renderIconHelper(faLock, 'SRC-warning-color')
+      case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
+        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       default:
         // nothing is rendered until access requirement is loaded
         return <></>
@@ -251,7 +251,8 @@ export default class HasAccess extends React.Component<
 
   render() {
     const downloadType = this.state.downloadType
-    if (!downloadType) {
+    if (typeof downloadType === 'undefined') {
+      // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
       // loading
       return <></>
     }

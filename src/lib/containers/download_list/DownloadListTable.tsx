@@ -253,6 +253,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     fileHandle={fileHandle}
                     token={token}
                     entityId={synId}
+                    isInDownloadList={true}
                   />
                 </td>
                 <td>

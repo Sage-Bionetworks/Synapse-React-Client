@@ -1,8 +1,8 @@
 import {
   faDatabase,
   faLink,
-  faMinusCircle,
   faUnlockAlt,
+  faLock,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { shallow } from 'enzyme'
@@ -31,6 +31,31 @@ import {
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'
 const entityId = 'syn9988882982'
+const isInDownloadList:boolean = true
+const externalFileHandle: FileHandle = {
+  id: '',
+  etag: '',
+  createdBy: '',
+  createdOn: '',
+  concreteType: ExternalFileHandleConcreteTypeEnum.ExternalFileHandle,
+  contentType: '',
+  contentMd5: '',
+  fileName: '',
+  storageLocationId: 0,
+  contentSize: 0,
+}
+const tooLargeFileHandle: FileHandle = {
+  id: '',
+  etag: '',
+  createdBy: '',
+  createdOn: '',
+  concreteType: '',
+  contentType: '',
+  contentMd5: '',
+  fileName: '',
+  storageLocationId: 0,
+  contentSize: GIGABYTE_SIZE,
+}
 
 const createShallowComponent = async (
   props: HasAccessProps,
@@ -46,6 +71,7 @@ const createShallowComponent = async (
 const props: HasAccessProps = {
   token,
   entityId,
+  isInDownloadList
 }
 
 describe('basic tests', () => {
@@ -76,19 +102,20 @@ describe('basic tests', () => {
     expect(wrapper.find('a')).toHaveLength(0)
   })
 
-  it('works when an ExternalFileHandle is passed in', async () => {
-    const externalFileHandle: FileHandle = {
-      id: '',
-      etag: '',
-      createdBy: '',
-      createdOn: '',
-      concreteType: ExternalFileHandleConcreteTypeEnum.ExternalFileHandle,
-      contentType: '',
-      contentMd5: '',
-      fileName: '',
-      storageLocationId: 0,
-      contentSize: 0,
-    }
+  it('works when an ExternalFileHandle is passed in - not in download list', async () => {
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      isInDownloadList: false,
+      fileHandle: externalFileHandle,
+    })
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
+  })
+
+  it('works when an ExternalFileHandle is passed in - in Download List', async () => {
     const { wrapper } = await createShallowComponent({
       ...props,
       fileHandle: externalFileHandle,
@@ -106,7 +133,7 @@ describe('basic tests', () => {
     expect(wrapper.find('a')).toHaveLength(0)
   })
 
-  it('works when a cloud file handle is passed in', async () => {
+  it('works when a cloud file handle is passed in - in Download List', async () => {
     const cloudFileHandle: FileHandle = {
       id: '',
       etag: '',
@@ -119,6 +146,10 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: 0,
     }
+    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
+      Promise.resolve(cloudFileHandle),
+    )
+
     const { wrapper } = await createShallowComponent({
       ...props,
       fileHandle: cloudFileHandle,
@@ -134,19 +165,7 @@ describe('basic tests', () => {
     expect(wrapper.find('a')).toHaveLength(0)
   })
 
-  it('works when the file is too large', async () => {
-    const tooLargeFileHandle: FileHandle = {
-      id: '',
-      etag: '',
-      createdBy: '',
-      createdOn: '',
-      concreteType: '',
-      contentType: '',
-      contentMd5: '',
-      fileName: '',
-      storageLocationId: 0,
-      contentSize: GIGABYTE_SIZE,
-    }
+  it('works when the file is too large in Download List', async () => {
     const { wrapper } = await createShallowComponent({
       ...props,
       fileHandle: tooLargeFileHandle,
@@ -158,6 +177,19 @@ describe('basic tests', () => {
       `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.TooLargeFile]}"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
+    // no access restrictions
+    expect(wrapper.find('a')).toHaveLength(0)
+  })
+
+  it('works when the file is too large for Download List, but HasAccess is not in the Download List', async () => {
+    const { wrapper } = await createShallowComponent({
+      ...props,
+      isInDownloadList: false,
+      fileHandle: tooLargeFileHandle,
+    })
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
     expect(wrapper.find('a')).toHaveLength(0)
   })
@@ -187,6 +219,10 @@ describe('basic tests', () => {
   })
 
   it('works with unmet controlled access data - controlled by act', async () => {
+    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
+      Promise.resolve(undefined),
+    )
+
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockUnmetControlledDataRestrictionInformationACT),
     )
@@ -208,7 +244,7 @@ describe('basic tests', () => {
     expect(link).toHaveLength(1)
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faMinusCircle)
+    expect(icons.get(1).props.icon).toEqual(faLock)
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
@@ -220,6 +256,10 @@ describe('basic tests', () => {
   })
 
   it('works with unmet controlled access data - terms of use', async () => {
+    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
+      Promise.resolve(undefined),
+    )
+
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockUnmetControlledDataRestrictionInformationRestricted),
     )
@@ -241,7 +281,7 @@ describe('basic tests', () => {
     expect(link).toHaveLength(1)
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faMinusCircle)
+    expect(icons.get(1).props.icon).toEqual(faLock)
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
