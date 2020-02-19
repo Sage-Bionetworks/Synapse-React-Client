@@ -55,9 +55,10 @@ import {
   AccessRequirement,
   AccessApproval,
   EntityId,
+  WikiPageKey,
+  ObjectType,
+  AccessRequirementStatus,
 } from './synapseTypes/'
-import { WikiPageKey, ObjectType } from './synapseTypes/WikiPageKey'
-import { AccessRequirementStatus } from './synapseTypes/AccessRequirement/AccessRequirementStatus'
 import UniversalCookies from 'universal-cookie'
 
 const cookies = new UniversalCookies()
@@ -904,7 +905,7 @@ export const getEntityWiki = (
   sessionToken: string | undefined,
   ownerId: string | undefined,
   wikiId: string | undefined,
-  objectType: ObjectType | undefined,
+  objectType: ObjectType = ObjectType.ENTITY,
 ) => {
   const objectTypeString = getObjectTypeToString(objectType!)
 
@@ -966,7 +967,7 @@ export const getTeamList = (
 ) => {
   const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
-  }`
+    }`
   return doGet(
     url,
     sessionToken,
@@ -982,12 +983,12 @@ export const getTeamList = (
  * @return WikiPageKey
  **/
 
-export const getWikiPageKey = (  
-  sessionToken: string | undefined, 
+export const getWikiPageKey = (
+  sessionToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
   const url = `repo/v1/access_requirement/${ownerId}/wikikey`
-  return doGet(
+  return doGet<WikiPageKey>(
     url,
     sessionToken,
     undefined,
@@ -999,9 +1000,9 @@ export const getWikiAttachmentsFromEntity = (
   sessionToken: string | undefined,
   id: string | number,
   wikiId: string | number,
-  objectType: ObjectType | undefined,
+  objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<FileHandleResults> => {
-  const objectTypeString = getObjectTypeToString(objectType!) 
+  const objectTypeString = getObjectTypeToString(objectType!)
   const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(
     url,
@@ -1187,7 +1188,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
       fileReader = new FileReader()
     let currentChunk = 0
 
-    fileReader.onload = function(e) {
+    fileReader.onload = function (e) {
       console.log('read chunk nr', currentChunk + 1, 'of', chunks)
       spark.append(fileReader.result as ArrayBuffer) // Append array buffer
       currentChunk++
@@ -1202,7 +1203,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
       }
     }
 
-    fileReader.onerror = function() {
+    fileReader.onerror = function () {
       console.warn('oops, something went wrong.')
       reject(fileReader.error)
     }
@@ -1895,26 +1896,25 @@ export const getAccessRequirement = (
 }
 
 /**
-<<<<<<< HEAD
  * Retrieve an access requirement status for a given access requirement ID.
  * 
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
 
- export const getAccessRequirementStatus = (
-   sessionToken: string | undefined,
+export const getAccessRequirementStatus = (
+  sessionToken: string | undefined,
   requirementId: string | number,
- ): Promise<AccessRequirementStatus> => {
-   const url = `repo/v1/accessRequirement/${requirementId}/status`
-   return doGet(
-     url,
-     sessionToken,
-     undefined,
-     BackendDestinationEnum.REPO_ENDPOINT
-   )
+): Promise<AccessRequirementStatus> => {
+  const url = `repo/v1/accessRequirement/${requirementId}/status`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
 
- }
+}
 
 /**
  * Returns all the access requirements associated to an entity {id}, calling the
@@ -1923,9 +1923,6 @@ export const getAccessRequirement = (
  * @param {(string | undefined)} sessionToken token of user
  * @param {string} id id of entity to lookup
  * @returns {Promise<Array<AccessRequirement>>}
-=======
- * Get all access requirements
->>>>>>> d74ab15c3cd4c0aea7b4b918eda6c8b8758d7f20
  */
 export const getAllAccessRequirements = (
   sessionToken: string | undefined,
@@ -1957,7 +1954,7 @@ export const getAccessApproval = async (
   approvalId: number | undefined,
 ): Promise<AccessApproval> => {
   const url = `repo/v1/accessApproval/${approvalId}`
-  return doGet(
+  return doGet<AccessApproval>(
     url,
     sessionToken,
     undefined,

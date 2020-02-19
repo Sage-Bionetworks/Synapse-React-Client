@@ -5,7 +5,7 @@ import UserCard from './UserCard'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
-import { ObjectType } from 'lib/utils/synapseTypes/WikiPageKey'
+import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
 
 const TOC_CLASS = {
   1: 'toc-indent1',
