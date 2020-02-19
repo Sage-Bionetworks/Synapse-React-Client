@@ -4,17 +4,16 @@ import {
   TermsOfUseAccessRequirement,
   UserProfile,
   WikiPageKey,
-  AccessRequirementStatus
+  AccessRequirementStatus,
 } from '../../../lib/utils/synapseTypes'
 import { SynapseClient } from '../../../lib/utils'
-// import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
 
 type Props = {
-  accessRequirement: TermsOfUseAccessRequirement,
-  token: string | undefined,
-  user: UserProfile | undefined,
-  onHide?: Function,
+  accessRequirement: TermsOfUseAccessRequirement
+  token: string | undefined
+  user: UserProfile | undefined
+  onHide?: Function
 }
 
 export default function TermsOfUseAccessRequirementComponent({
@@ -23,59 +22,53 @@ export default function TermsOfUseAccessRequirementComponent({
   user,
   onHide,
 }: Props) {
-
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
-  const [termsOfUseRequirementStatus, setTermsOfUseRequirementStatus] = useState<AccessRequirementStatus | undefined>(undefined)
-  const [isApproved, setIsApproved] = useState<boolean>(false)
+  const [
+    termsOfUseRequirementStatus,
+    setTermsOfUseRequirementStatus,
+  ] = useState<AccessRequirementStatus | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
-
-    const getPrepareTermsOfUse = async () => {
-
+    const getTermsOfUseData = async () => {
       setIsLoading(true)
 
       try {
-
         if (!accessRequirement.termsOfUse) {
-
-          const wikiPageRequirment = await SynapseClient.getWikiPageKey(token, accessRequirement.id)
+          const wikiPageRequirment = await SynapseClient.getWikiPageKey(
+            token,
+            accessRequirement.id,
+          )
 
           setWikiPage(wikiPageRequirment)
         }
 
-        const requirementStatus = await SynapseClient.getAccessRequirementStatus(token, accessRequirement!.id)
+        const requirementStatus = await SynapseClient.getAccessRequirementStatus(
+          token,
+          accessRequirement!.id,
+        )
         setTermsOfUseRequirementStatus(requirementStatus)
-        setIsApproved(requirementStatus.isApproved)
-
       } catch (err) {
         console.error('Error on prepare terms of use ', err)
-
       } finally {
         setIsLoading(false)
       }
-
     }
 
-    getPrepareTermsOfUse()
-
+    getTermsOfUseData()
   }, [token, accessRequirement])
 
   return (
     <div>
-      {isLoading && (<span className="spinner" />)}
-      <div className="terms-of-use-content">
-        <AcceptedRequirements
-          user={user}
-          token={token}
-          wikiPage={wikiPage!}
-          accessRequirement={accessRequirement}
-          accessRequirementStatus={termsOfUseRequirementStatus!}
-          approval={isApproved}
-          onHide={onHide}
-        />
-      </div>
+      {isLoading && <span className="spinner" />}
+      <AcceptedRequirements
+        user={user}
+        token={token}
+        wikiPage={wikiPage}
+        accessRequirement={accessRequirement}
+        accessRequirementStatus={termsOfUseRequirementStatus}
+        onHide={onHide}
+      />
     </div>
   )
 }
-
