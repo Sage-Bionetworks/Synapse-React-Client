@@ -3,8 +3,8 @@ import {
   faCircle,
   faDatabase,
   faLink,
-  faMinusCircle,
   faUnlockAlt,
+  faLock
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
@@ -23,18 +23,20 @@ import {
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 library.add(faUnlockAlt)
-library.add(faMinusCircle)
 library.add(faDatabase)
 library.add(faCircle)
 
 export type HasAccessProps = {
   fileHandle?: FileHandle
   entityId: string
+  isInDownloadList?: boolean // set to show errors in UI about package creation
+  entityVersionNumber?: string
   token?: string
 }
 
 type HasAccessState = {
   restrictionInformation?: RestrictionInformationResponse
+  downloadType?: DownloadTypeEnum
 }
 
 export enum ExternalFileHandleConcreteTypeEnum {
@@ -55,9 +57,13 @@ export enum DownloadTypeEnum {
   TooLargeFile,
   IsOpenNoUnmetAccessRestrictions,
   HasUnmetAccessRestrictions,
+  ClosedForAnonymousDownload
 }
 
-export const getDownloadTypeForFileHandle = (fileHandle: FileHandle) => {
+export const getDownloadTypeForFileHandle = (fileHandle: FileHandle, isInDownloadList?: boolean) => {
+  if (fileHandle && !isInDownloadList) {
+    return DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+  }
   const { concreteType, contentSize } = fileHandle
   // check if it's too large
   if (contentSize >= GIGABYTE_SIZE) {
@@ -93,37 +99,66 @@ export default class HasAccess extends React.Component<
   HasAccessState
 > {
   public static tooltipText = {
+    [DownloadTypeEnum.ClosedForAnonymousDownload]:
+      'You must sign in to access this file.',
     [DownloadTypeEnum.HasUnmetAccessRestrictions]:
-      'You must request access to this restricted file via the Access Conditions page.',
+      'You must request access to this restricted file.',
     [DownloadTypeEnum.TooLargeFile]:
-      'Your list contains files that are too large to download as a package and must be downloaded manually. Click on the item to go to the manual download page.',
+      'This file is too large to download as a package and must be downloaded manually.',
     [DownloadTypeEnum.ExternalFileHandle]:
-      'Your list contains external links, which must be downloaded manually. Clicking on the item will take you to the download page.',
+      'This is an external link, which must be downloaded manually.',
     [DownloadTypeEnum.CloudFileHandle]:
-      'Your list contains files that must be downloaded manually (e.g. files in Google Cloud). Clicking on the item will take you to the download page.',
+      'This file must be downloaded manually (e.g. a file in Google Cloud).',
   }
 
   constructor(props: HasAccessProps) {
     super(props)
-    this.state = {}
     this.getRestrictionInformation = this.getRestrictionInformation.bind(this)
+    this.getFileEntityFileHandle = this.getFileEntityFileHandle.bind(this)
+    
+    const downloadType = props.fileHandle ? getDownloadTypeForFileHandle(props.fileHandle, props.isInDownloadList) : undefined
+    this.state = {
+      downloadType
+    }
   }
 
   componentDidMount() {
     this.getRestrictionInformation()
+    this.getFileEntityFileHandle()
   }
 
   componentDidUpdate() {
     this.getRestrictionInformation()
+    this.getFileEntityFileHandle()
   }
-
+  getFileEntityFileHandle = () => {
+    const { entityId, entityVersionNumber, token, isInDownloadList } = this.props
+    if (this.state.downloadType) {
+      // already know the downloadType
+      return
+    }
+    // fileHandle was not passed to us, ask for it.
+    SynapseClient.getFileEntityFileHandle(entityId, entityVersionNumber, token)
+      .then(fileHandle => {
+        const downloadType = getDownloadTypeForFileHandle(fileHandle, isInDownloadList)
+        this.setState({
+          downloadType
+        })
+      })
+      .catch(err => {
+        // could not get file handle
+        const downloadType = token ? DownloadTypeEnum.HasUnmetAccessRestrictions : DownloadTypeEnum.ClosedForAnonymousDownload
+        this.setState({
+          downloadType
+        })
+      })
+  }
   getRestrictionInformation = () => {
-    const { entityId, token, fileHandle } = this.props
+    const { entityId, token } = this.props
     if (
       this.state.restrictionInformation ||
       !entityId ||
-      !token ||
-      fileHandle
+      !token
     ) {
       return
     }
@@ -158,46 +193,22 @@ export default class HasAccess extends React.Component<
 
   renderIcon = (downloadType: DownloadTypeEnum | string) => {
     switch (downloadType) {
-      // fileHandle passed in
+      // fileHandle available
       case DownloadTypeEnum.ExternalFileHandle:
-        return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.CloudFileHandle:
         return this.renderIconHelper(faLink, 'SRC-warning-color')
       case DownloadTypeEnum.TooLargeFile:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
-      // no fileHandle
+      // no fileHandle available
       case DownloadTypeEnum.HasUnmetAccessRestrictions:
-        return this.renderIconHelper(faMinusCircle, 'SRC-warning-color')
+      case DownloadTypeEnum.ClosedForAnonymousDownload:
+        return this.renderIconHelper(faLock, 'SRC-warning-color')
       case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
         return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       default:
         // nothing is rendered until access requirement is loaded
         return <></>
     }
-  }
-
-  // Get type of download
-  getDownloadType = () => {
-    // if file handle is present show more detailed download information
-    const { fileHandle } = this.props
-    if (fileHandle) {
-      return getDownloadTypeForFileHandle(fileHandle)
-    }
-
-    // check if access requirements
-    const { restrictionInformation } = this.state
-    if (restrictionInformation) {
-      const { hasUnmetAccessRequirement } = restrictionInformation
-      return hasUnmetAccessRequirement
-        ? DownloadTypeEnum.HasUnmetAccessRestrictions
-        : DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
-    }
-    if (restrictionInformation || fileHandle) {
-      // this should have mapped to a download type, something went wrong
-      console.error('Unmapped download type for entity: ', this.props.entityId)
-    }
-    // else its loading
-    return ''
   }
 
   // Show Access Requirements
@@ -237,7 +248,12 @@ export default class HasAccess extends React.Component<
   }
 
   render() {
-    const downloadType = this.getDownloadType()
+    const downloadType = this.state.downloadType
+    if (typeof downloadType === 'undefined') {
+      // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
+      // loading
+      return <></>
+    }
     const tooltipText = HasAccess.tooltipText[downloadType]
     const entityId = this.props.entityId
     const icon = this.renderIcon(downloadType)

@@ -55,6 +55,7 @@ import {
   AccessRequirement,
   AccessApproval,
   EntityId,
+  FileHandleAssociateType,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 
@@ -1406,6 +1407,48 @@ export const getFileEntityContent = (
       .catch(err => {
         reject(err)
       })
+  })
+}
+
+/**
+ * Return the FileHandle of the file (latest version) associated to the given FileEntity.
+ * @param sessionToken
+ * @param fileEntityId: ID of the FileEntity
+ * @param endpoint
+ */
+export const getFileEntityFileHandle = (
+  fileEntityId: string,
+  fileEntityVersionNumber?: string,
+  sessionToken?: string,
+): Promise<FileHandle> => {
+  return new Promise((resolve, reject) => {
+    getEntity<FileEntity>(sessionToken, fileEntityId, fileEntityVersionNumber).then((fileEntity:FileEntity) => {
+      const fileHandleAssociationList:FileHandleAssociation[] = [
+        {
+          associateObjectId: fileEntity.id!,
+          associateObjectType: FileHandleAssociateType.FileEntity,
+          fileHandleId: fileEntity.dataFileHandleId,
+        },
+      ]
+      const request:BatchFileRequest = {
+        includeFileHandles: true,
+        includePreSignedURLs: false,
+        includePreviewPreSignedURLs: false,
+        requestedFiles: fileHandleAssociationList,
+      }
+      getFiles(request, sessionToken)
+        .then((data: BatchFileResult) => {
+          if (data.requestedFiles.length > 0 && data.requestedFiles[0].fileHandle) {
+            resolve(data.requestedFiles[0].fileHandle)  
+          } else {
+            // not found, or not allowed to access
+            reject(undefined)
+          }
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   })
 }
 
