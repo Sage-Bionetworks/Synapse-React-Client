@@ -11,6 +11,8 @@ import {
     ApprovalState
 } from '../../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../../lib/utils'
+import AccessApprovalCheckMark from './AccessApprovalCheckMark'
+
 
 type Props = {
     user: UserProfile | undefined,
@@ -110,22 +112,24 @@ export default function AcceptedRequirements({
 
     return (
         <div>
-            <div>
-                <p className="terms-of-use-title bold-text">
-                    Agree to the following terms and conditions.
+            <div className="requirement-container">
+                <AccessApprovalCheckMark isCompleted={isApproved} />
+                <div>
+                    <p className="terms-of-use-title bold-text">
+                        Agree to the following terms and conditions.
                 </p>
-                <RenderAcceptedRequirements />
+                    <RenderAcceptedRequirements />
+                </div>
             </div>
             <div className={`button-container ${isApproved ? `hide` : `default`}`}>
                 <div className="accept-button-container">
                     <button className="accept-button" onClick={onAcceptClicked}>Accept Terms of Use
-                    </button>
+                        </button>
                 </div>
                 <div className="not-accept-button-container">
                     <button className="not-accpet-button" onClick={() => onHide?.()}>I do not accept</button>
                 </div>
             </div >
         </div>
-
     )
 }

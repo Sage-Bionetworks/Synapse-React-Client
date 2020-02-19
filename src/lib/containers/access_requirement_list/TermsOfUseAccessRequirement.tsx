@@ -7,7 +7,7 @@ import {
   AccessRequirementStatus
 } from '../../../lib/utils/synapseTypes'
 import { SynapseClient } from '../../../lib/utils'
-import AccessApprovalCheckMark from './AccessApprovalCheckMark'
+// import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
 
 type Props = {
@@ -64,19 +64,16 @@ export default function TermsOfUseAccessRequirementComponent({
   return (
     <div>
       {isLoading && (<span className="spinner" />)}
-      <div className="requirement-container">
-        <AccessApprovalCheckMark isCompleted={isApproved} />
-        <div className="terms-of-use-content">
-          <AcceptedRequirements
-            user={user}
-            token={token}
-            wikiPage={wikiPage!}
-            accessRequirement={accessRequirement}
-            accessRequirementStatus={termsOfUseRequirementStatus!}
-            approval={isApproved}
-            onHide={onHide}
-          />
-        </div>
+      <div className="terms-of-use-content">
+        <AcceptedRequirements
+          user={user}
+          token={token}
+          wikiPage={wikiPage!}
+          accessRequirement={accessRequirement}
+          accessRequirementStatus={termsOfUseRequirementStatus!}
+          approval={isApproved}
+          onHide={onHide}
+        />
       </div>
     </div>
   )

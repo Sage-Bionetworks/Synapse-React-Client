@@ -84,19 +84,16 @@ export default function SelfSignAccessRequirementComponent({
           </div>
         </div>
       }
-      <div className="requirement-container">
-        <AccessApprovalCheckMark isCompleted={isApproved} />
-        <div className="terms-of-use-content">
-          <AcceptedRequirements
-            user={user}
-            token={token}
-            wikiPage={wikiPage!}
-            accessRequirement={accessRequirement}
-            accessRequirementStatus={accessRequirementStatus!}
-            approval={isApproved}
-            onHide={onHide}
-          />
-        </div>
+      <div className="terms-of-use-content">
+        <AcceptedRequirements
+          user={user}
+          token={token}
+          wikiPage={wikiPage!}
+          accessRequirement={accessRequirement}
+          accessRequirementStatus={accessRequirementStatus!}
+          approval={isApproved}
+          onHide={onHide}
+        />
       </div>
     </div>
   )
