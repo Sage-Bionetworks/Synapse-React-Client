@@ -25,7 +25,7 @@ import {
 } from '../../utils/synapseTypes'
 import HasAccess, {
   getDownloadTypeForFileHandle,
-  DownloadTypeEnum,
+  FileHandleDownloadTypeEnum,
 } from '../HasAccess'
 import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
@@ -222,7 +222,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               createdOn = moment(createdOn).format('L LT')
               if (
                 getDownloadTypeForFileHandle(fileHandle) ===
-                DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+                FileHandleDownloadTypeEnum.Accessible
               ) {
                 numBytes += contentSize
                 numFiles += 1

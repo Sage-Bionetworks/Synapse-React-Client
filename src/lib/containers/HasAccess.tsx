@@ -20,6 +20,7 @@ import {
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   RestrictionLevel,
+  FileEntity
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 library.add(faUnlockAlt)
@@ -36,7 +37,7 @@ export type HasAccessProps = {
 
 type HasAccessState = {
   restrictionInformation?: RestrictionInformationResponse
-  downloadType?: DownloadTypeEnum
+  fileHandleDownloadType?: FileHandleDownloadTypeEnum
 }
 
 export enum ExternalFileHandleConcreteTypeEnum {
@@ -51,37 +52,38 @@ export enum GoogleCloudFileHandleEnum {
 
 export const GIGABYTE_SIZE = 2 ** 30
 
-export enum DownloadTypeEnum {
-  CloudFileHandle,
-  ExternalFileHandle,
-  TooLargeFile,
-  IsOpenNoUnmetAccessRestrictions,
-  HasUnmetAccessRestrictions,
-  ClosedForAnonymousDownload
+export enum FileHandleDownloadTypeEnum {
+  ExternalCloudFile,
+  ExternalFileLink,
+  TooLarge,
+  Accessible,
+  AccessBlocked,
+  AccessBlockedToAnonymous,
+  NoFileHandle
 }
 
 export const getDownloadTypeForFileHandle = (fileHandle: FileHandle, isInDownloadList?: boolean) => {
   if (fileHandle && !isInDownloadList) {
-    return DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+    return FileHandleDownloadTypeEnum.Accessible
   }
   const { concreteType, contentSize } = fileHandle
   // check if it's too large
   if (contentSize >= GIGABYTE_SIZE) {
-    return DownloadTypeEnum.TooLargeFile
+    return FileHandleDownloadTypeEnum.TooLarge
   }
   // check if it's a google cloud file handle
   if (concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle) {
-    return DownloadTypeEnum.CloudFileHandle
+    return FileHandleDownloadTypeEnum.ExternalCloudFile
   }
   // check if it's an external file handle
   const isExternalFileHandle = Object.values<string>(
     ExternalFileHandleConcreteTypeEnum,
   ).includes(concreteType)
   if (isExternalFileHandle) {
-    return DownloadTypeEnum.ExternalFileHandle
+    return FileHandleDownloadTypeEnum.ExternalFileLink
   }
-  // otherwise its open
-  return DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+  // otherwise its available
+  return FileHandleDownloadTypeEnum.Accessible
 }
 
 /**
@@ -99,15 +101,15 @@ export default class HasAccess extends React.Component<
   HasAccessState
 > {
   public static tooltipText = {
-    [DownloadTypeEnum.ClosedForAnonymousDownload]:
+    [FileHandleDownloadTypeEnum.AccessBlockedToAnonymous]:
       'You must sign in to access this file.',
-    [DownloadTypeEnum.HasUnmetAccessRestrictions]:
+    [FileHandleDownloadTypeEnum.AccessBlocked]:
       'You must request access to this restricted file.',
-    [DownloadTypeEnum.TooLargeFile]:
+    [FileHandleDownloadTypeEnum.TooLarge]:
       'This file is too large to download as a package and must be downloaded manually.',
-    [DownloadTypeEnum.ExternalFileHandle]:
+    [FileHandleDownloadTypeEnum.ExternalFileLink]:
       'This is an external link, which must be downloaded manually.',
-    [DownloadTypeEnum.CloudFileHandle]:
+    [FileHandleDownloadTypeEnum.ExternalCloudFile]:
       'This file must be downloaded manually (e.g. a file in Google Cloud).',
   }
 
@@ -115,10 +117,11 @@ export default class HasAccess extends React.Component<
     super(props)
     this.getRestrictionInformation = this.getRestrictionInformation.bind(this)
     this.getFileEntityFileHandle = this.getFileEntityFileHandle.bind(this)
+    this.updateStateFileHandleAccessBlocked = this.updateStateFileHandleAccessBlocked.bind(this)
     
-    const downloadType = props.fileHandle ? getDownloadTypeForFileHandle(props.fileHandle, props.isInDownloadList) : undefined
+    const fileHandleDownloadType = props.fileHandle ? getDownloadTypeForFileHandle(props.fileHandle, props.isInDownloadList) : undefined
     this.state = {
-      downloadType
+      fileHandleDownloadType
     }
   }
 
@@ -133,26 +136,47 @@ export default class HasAccess extends React.Component<
   }
   getFileEntityFileHandle = () => {
     const { entityId, entityVersionNumber, token, isInDownloadList } = this.props
-    if (this.state.downloadType) {
+    if (this.state.fileHandleDownloadType) {
       // already know the downloadType
       return
     }
     // fileHandle was not passed to us, ask for it.
-    SynapseClient.getFileEntityFileHandle(entityId, entityVersionNumber, token)
-      .then(fileHandle => {
-        const downloadType = getDownloadTypeForFileHandle(fileHandle, isInDownloadList)
-        this.setState({
-          downloadType
-        })
+    // is this a FileEntity?
+    SynapseClient.getEntity(token, entityId, entityVersionNumber)
+      .then((entity) => {
+        if (entity.hasOwnProperty('dataFileHandleId')) {
+          // looks like a FileEntity, get the FileHandle
+          SynapseClient.getFileEntityFileHandle(entity as FileEntity, token)
+            .then((fileHandle:FileHandle) => {
+              const fileHandleDownloadType = getDownloadTypeForFileHandle(fileHandle, isInDownloadList)
+              this.setState({
+                fileHandleDownloadType
+              })
+            }).catch(err => {
+              // could not get the file handle
+              this.updateStateFileHandleAccessBlocked()
+            })
+        } else {
+          // entity looks like something else.
+          this.setState({
+            fileHandleDownloadType: FileHandleDownloadTypeEnum.NoFileHandle
+          })
+        }
       })
       .catch(err => {
-        // could not get file handle
-        const downloadType = token ? DownloadTypeEnum.HasUnmetAccessRestrictions : DownloadTypeEnum.ClosedForAnonymousDownload
-        this.setState({
-          downloadType
-        })
+        // could not get entity
+        this.updateStateFileHandleAccessBlocked()
       })
   }
+
+  updateStateFileHandleAccessBlocked = () => {
+    const { token } = this.props
+    const fileHandleDownloadType = token ? FileHandleDownloadTypeEnum.AccessBlocked : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
+        this.setState({
+          fileHandleDownloadType
+        })
+  }
+
   getRestrictionInformation = () => {
     const { entityId, token } = this.props
     if (
@@ -191,19 +215,26 @@ export default class HasAccess extends React.Component<
     )
   }
 
-  renderIcon = (downloadType: DownloadTypeEnum | string) => {
+  renderIcon = (downloadType: FileHandleDownloadTypeEnum | string, restrictionInformation?:RestrictionInformationResponse) => {
+    // if there are any access restrictions
+    if (restrictionInformation?.hasUnmetAccessRequirement) {
+      return this.renderIconHelper(faLock, 'SRC-warning-color')
+    }
     switch (downloadType) {
       // fileHandle available
-      case DownloadTypeEnum.ExternalFileHandle:
-      case DownloadTypeEnum.CloudFileHandle:
+      case FileHandleDownloadTypeEnum.ExternalFileLink:
+      case FileHandleDownloadTypeEnum.ExternalCloudFile:
         return this.renderIconHelper(faLink, 'SRC-warning-color')
-      case DownloadTypeEnum.TooLargeFile:
+      case FileHandleDownloadTypeEnum.TooLarge:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
-      // no fileHandle available
-      case DownloadTypeEnum.HasUnmetAccessRestrictions:
-      case DownloadTypeEnum.ClosedForAnonymousDownload:
+      // was FileEntity, but no fileHandle was available
+      case FileHandleDownloadTypeEnum.AccessBlocked:
+      case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
         return this.renderIconHelper(faLock, 'SRC-warning-color')
-      case DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions:
+      // was a FileEntity, and fileHandle was available
+      case FileHandleDownloadTypeEnum.Accessible:
+      // or was not a FileEntity, but no unmet access restrictions
+      case FileHandleDownloadTypeEnum.NoFileHandle:
         return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
       default:
         // nothing is rendered until access requirement is loaded
@@ -248,15 +279,15 @@ export default class HasAccess extends React.Component<
   }
 
   render() {
-    const downloadType = this.state.downloadType
-    if (typeof downloadType === 'undefined') {
+    const fileHandleDownloadType = this.state.fileHandleDownloadType
+    if (typeof fileHandleDownloadType === 'undefined') {
       // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
       // loading
       return <></>
     }
-    const tooltipText = HasAccess.tooltipText[downloadType]
+    const tooltipText = HasAccess.tooltipText[fileHandleDownloadType]
     const entityId = this.props.entityId
-    const icon = this.renderIcon(downloadType)
+    const icon = this.renderIcon(fileHandleDownloadType, this.state.restrictionInformation)
     const viewARsLink: React.ReactElement = this.renderARsLink()
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
