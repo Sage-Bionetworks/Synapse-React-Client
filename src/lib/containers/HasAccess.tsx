@@ -148,15 +148,13 @@ export default class HasAccess extends React.Component<
           // looks like a FileEntity, get the FileHandle
           SynapseClient.getFileEntityFileHandle(entity as FileEntity, token)
             .then((fileHandle:FileHandle) => {
-              if (fileHandle) {
-                const fileHandleDownloadType = getDownloadTypeForFileHandle(fileHandle, isInDownloadList)
-                this.setState({
-                  fileHandleDownloadType
-                })
-              } else {
-                // no file handle is undefined
-                this.updateStateFileHandleAccessBlocked()
-              }
+              const fileHandleDownloadType = getDownloadTypeForFileHandle(fileHandle, isInDownloadList)
+              this.setState({
+                fileHandleDownloadType
+              })
+            }).catch(err => {
+              // could not get the file handle
+              this.updateStateFileHandleAccessBlocked()
             })
         } else {
           // entity looks like something else.
