@@ -13,7 +13,7 @@ import {
 } from 'lib/utils/synapseTypes/'
 import * as React from 'react'
 import HasAccess, {
-  DownloadTypeEnum,
+  FileHandleDownloadTypeEnum,
   ExternalFileHandleConcreteTypeEnum,
   GIGABYTE_SIZE,
   GoogleCloudFileHandleEnum,
@@ -27,6 +27,10 @@ import {
 import {
   mockFileHandle
 } from '../../../mocks/mock_file_handle'
+import {
+  mockFileEntity
+} from '../../../mocks/mock_file_entity'
+
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'
@@ -76,9 +80,13 @@ const props: HasAccessProps = {
 
 describe('basic tests', () => {
   it('works with open data no restrictions', async () => {
+    SynapseClient.getEntity = jest.fn(() => 
+      Promise.resolve(mockFileEntity),
+    )
     SynapseClient.getFileEntityFileHandle = jest.fn(() => 
       Promise.resolve(mockFileHandle),
     )
+
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )
@@ -125,7 +133,7 @@ describe('basic tests', () => {
     expect(icons.get(1).props.icon).toEqual(faLink)
     const tooltipSpan = wrapper.find(
       `[data-tip="${
-        HasAccess.tooltipText[DownloadTypeEnum.ExternalFileHandle]
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalFileLink]
       }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
@@ -146,6 +154,9 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: 0,
     }
+    SynapseClient.getEntity = jest.fn(() => 
+      Promise.resolve(mockFileEntity),
+    )
     SynapseClient.getFileEntityFileHandle = jest.fn(() => 
       Promise.resolve(cloudFileHandle),
     )
@@ -158,7 +169,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faLink)
     const tooltipSpan = wrapper.find(
-      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.CloudFileHandle]}"]`,
+      `[data-tip="${HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalCloudFile]}"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
@@ -174,7 +185,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faDatabase)
     const tooltipSpan = wrapper.find(
-      `[data-tip="${HasAccess.tooltipText[DownloadTypeEnum.TooLargeFile]}"]`,
+      `[data-tip="${HasAccess.tooltipText[FileHandleDownloadTypeEnum.TooLarge]}"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
@@ -219,6 +230,9 @@ describe('basic tests', () => {
   })
 
   it('works with unmet controlled access data - controlled by act', async () => {
+    SynapseClient.getEntity = jest.fn(() => 
+      Promise.resolve(mockFileEntity),
+    )
     SynapseClient.getFileEntityFileHandle = jest.fn(() => 
       Promise.resolve(undefined),
     )
@@ -247,7 +261,7 @@ describe('basic tests', () => {
     expect(icons.get(1).props.icon).toEqual(faLock)
     const tooltipSpan = wrapper.find(
       `[data-tip="${
-        HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlocked]
       }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
@@ -256,6 +270,9 @@ describe('basic tests', () => {
   })
 
   it('works with unmet controlled access data - terms of use', async () => {
+    SynapseClient.getEntity = jest.fn(() => 
+      Promise.resolve(mockFileEntity),
+    )
     SynapseClient.getFileEntityFileHandle = jest.fn(() => 
       Promise.resolve(undefined),
     )
@@ -284,7 +301,7 @@ describe('basic tests', () => {
     expect(icons.get(1).props.icon).toEqual(faLock)
     const tooltipSpan = wrapper.find(
       `[data-tip="${
-        HasAccess.tooltipText[DownloadTypeEnum.HasUnmetAccessRestrictions]
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlocked]
       }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
