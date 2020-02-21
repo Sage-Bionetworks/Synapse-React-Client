@@ -298,13 +298,13 @@ export default class SynapseTable extends React.Component<
     return distinctEntities
   }
 
-  public getColumnIndiciesWithType(columnType: EntityColumnType) {
+  public getColumnIndiciesWithType(...columnTypes: EntityColumnType[]) {
     const { data } = this.props
     const columnsOfTypeEntity: number[] = []
     data &&
       data.selectColumns &&
       data.selectColumns.forEach((el, index) => {
-        if (el.columnType === columnType) {
+        if (columnTypes.includes(el.columnType)) {
           columnsOfTypeEntity.push(index)
         }
       })
@@ -435,9 +435,7 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private showGroupRowData = (selectedRow: Row) => (
-    _event: React.MouseEvent<HTMLAnchorElement>,
-  ) => {
+  private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = this.props.getLastQueryRequest!().query
     const parsed = this.getSqlUnderlyingDataForRow(selectedRow, queryCopy.sql)
@@ -445,11 +443,7 @@ export default class SynapseTable extends React.Component<
     const queryJSON = JSON.stringify(queryCopy)
     // encode this copy of the query (json)
     const encodedQuery = btoa(queryJSON)
-    // open this in a new window on synapse.org
-    window.open(
-      `https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`,
-      '_self',
-    )
+    return `https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`
   }
 
   private renderDropdownDownloadOptions = (isFileView?: boolean) => {
@@ -513,26 +507,32 @@ export default class SynapseTable extends React.Component<
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = lastQueryRequest.query.offset! > 0
-    const previous = (
-      <button
-        onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-light-button SRC-standard-button-shape pull-right"
-        type="button"
-      >
-        Previous
-      </button>
-    )
-
     const { hasMoreData, showAccessColumn, token } = this.props
-    const next = (
+
+    const zeroMarginRight: React.CSSProperties = {
+      marginRight: 0,
+    }
+    const nextBtn = (
       <button
         onClick={this.handlePaginationClick(NEXT)}
-        className="SRC-light-button SRC-standard-button-shape pull-right"
+        className="SRC-light-button SRC-standard-button-shape"
+        style={zeroMarginRight}
         type="button"
       >
         Next
       </button>
     )
+    const previousBtn = (
+      <button
+        onClick={this.handlePaginationClick(PREVIOUS)}
+        className="SRC-light-button SRC-standard-button-shape"
+        type="button"
+        style={!hasMoreData && pastZero ? zeroMarginRight : undefined}
+      >
+        Previous
+      </button>
+    )
+
     let isShowingAccessColumn: boolean | undefined = showAccessColumn
     if (showAccessColumn && rows.length > 0) {
       // PORTALS-924: verify that row actualy contains a defined rowId
@@ -558,8 +558,10 @@ export default class SynapseTable extends React.Component<
             {this.createTableRows(rows, headers, isShowingAccessColumn)}
           </tbody>
         </table>
-        {hasMoreData && next}
-        {pastZero && previous}
+        <div style={{ textAlign: 'right' }}>
+          {pastZero && previousBtn}
+          {hasMoreData && nextBtn}
+        </div>
       </div>
     )
   }
@@ -833,6 +835,9 @@ export default class SynapseTable extends React.Component<
     const entityColumnIndicies = this.getColumnIndiciesWithType('ENTITYID')
     const userColumnIndicies = this.getColumnIndiciesWithType('USERID')
     const dateColumnIndicies = this.getColumnIndiciesWithType('DATE')
+    const dateListColumnIndicies = this.getColumnIndiciesWithType('DATE_LIST')
+    const booleanListColumnIndicies = this.getColumnIndiciesWithType('BOOLEAN_LIST')
+    const otherListColumnIndicies = this.getColumnIndiciesWithType('STRING_LIST', 'INTEGER_LIST')
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
@@ -871,8 +876,9 @@ export default class SynapseTable extends React.Component<
               >
                 {isCountColumn && (
                   <a
-                    href="javascript:void"
-                    onClick={this.showGroupRowData(row)}
+                    href={this.showGroupRowData(row)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <p className={isBold}>{columnValue}</p>
                   </a>
@@ -882,6 +888,9 @@ export default class SynapseTable extends React.Component<
                     entityColumnIndicies,
                     userColumnIndicies,
                     dateColumnIndicies,
+                    dateListColumnIndicies,
+                    booleanListColumnIndicies,
+                    otherListColumnIndicies,
                     colIndex,
                     columnValue,
                     isBold,
@@ -896,15 +905,12 @@ export default class SynapseTable extends React.Component<
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
         },
       )
-      // also push the access column value if we are showing user access for individual items (must be logged in)
-      if (isShowingAccessColumn && token) {
+      // also push the access column value if we are showing user access for individual items (still shown if not logged in)
+      if (isShowingAccessColumn) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
-          <td
-            key={`(${rowIndex},accessColumn)`}
-            className="SRC_noBorderTop text-center"
-          >
-            <HasAccess entityId={rowSynapseId} token={token}></HasAccess>
+          <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
+            <HasAccess entityId={rowSynapseId} entityVersionNumber={row.versionNumber?.toString()} token={token}></HasAccess>
           </td>,
         )
       }
@@ -920,6 +926,9 @@ export default class SynapseTable extends React.Component<
     entityColumnIndicies,
     userColumnIndicies,
     dateColumnIndicies,
+    dateListColumnIndicies,
+    booleanListColumnIndicies,
+    otherListColumnIndicies,
     colIndex,
     columnValue,
     isBold,
@@ -931,6 +940,9 @@ export default class SynapseTable extends React.Component<
     entityColumnIndicies: number[]
     userColumnIndicies: number[]
     dateColumnIndicies: number[]
+    dateListColumnIndicies: number[]
+    booleanListColumnIndicies: number[]
+    otherListColumnIndicies: number[]
     colIndex: number
     columnValue: string
     isBold: string
@@ -949,6 +961,9 @@ export default class SynapseTable extends React.Component<
         return [longString.substr(0, maxCharCount), true]
       }
     }
+    if (!columnValue) {
+      return <></>
+    }
     if (isMarkdownColumn) {
       return <MarkdownSynapse renderInline={true} markdown={columnValue} />
     }
@@ -963,14 +978,37 @@ export default class SynapseTable extends React.Component<
         />
       )
     }
+    if (dateListColumnIndicies.includes(colIndex)) {
+      const jsonData:number[] = JSON.parse(columnValue)
+      return jsonData.map(
+        (val: number, index: number) => {
+          return <span className={isBold}>
+            {new Date(val).toLocaleString()}{index !== jsonData.length-1 ? ', ' : ''}
+          </span>
+      })
+    }
+    if (booleanListColumnIndicies.includes(colIndex)) {
+      const jsonData:boolean[] = JSON.parse(columnValue)
+      return jsonData.map(
+        (val: boolean, index: number) => {
+          return <span className={isBold}>
+            {val ? 'true' : 'false'}{index !== jsonData.length-1 ? ', ' : ''}
+          </span>
+      })
+    }
+    if (otherListColumnIndicies.includes(colIndex)) {
+      const jsonData:string[] = JSON.parse(columnValue)
+      return jsonData.map(
+        (val: string, index: number) => {
+          return <span className={isBold}>
+            {val}{index !== jsonData.length-1 ? ', ' : ''}
+          </span>
+      })
+    }
     if (dateColumnIndicies.includes(colIndex)) {
-      return columnValue ? (
-        <p className={isBold}>
+      return <p className={isBold}>
           {new Date(Number(columnValue)).toLocaleString()}
         </p>
-      ) : (
-        <></>
-      )
     } else if (
       userColumnIndicies.includes(colIndex) &&
       Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)
@@ -1031,7 +1069,6 @@ export default class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     isShowingAccessColumn: boolean | undefined,
   ) {
-    const { token } = this.props
     const {
       isColumnSelected,
       sortedColumnSelection,
@@ -1118,7 +1155,7 @@ export default class SynapseTable extends React.Component<
       },
     )
     // also push the access column if we are showing user access for individual items (must be logged in)
-    if (isShowingAccessColumn && token) {
+    if (isShowingAccessColumn) {
       tableColumnHeaderElements.push(
         <th key="accessColumn">
           <div className="SRC-centerContent">

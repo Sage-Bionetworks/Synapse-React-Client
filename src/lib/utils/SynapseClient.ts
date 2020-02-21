@@ -55,6 +55,7 @@ import {
   AccessRequirement,
   AccessApproval,
   EntityId,
+  FileHandleAssociateType,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 
@@ -810,6 +811,27 @@ export const getEntityHeader = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
+/**
+ * Get all entity header
+ */
+export const getAllEntityHeader = (
+  references: ReferenceList,
+  sessionToken: string | undefined = undefined,
+) => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `repo/v1/entity/header?limit${limit}&offset=${offset}`
+    return doPost<PaginatedResults<EntityHeader>>(
+      url,
+      { references },
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
 export const updateEntity = <T extends Entity>(
   entity: T,
   sessionToken: string | undefined = undefined,
@@ -1388,6 +1410,45 @@ export const getFileEntityContent = (
   })
 }
 
+/**
+ * Return the FileHandle of the file associated to the given FileEntity.
+ * * @param fileEntity: FileEntity
+ * @param sessionToken
+ * @param endpoint
+ */
+export const getFileEntityFileHandle = (
+  fileEntity: FileEntity,
+  sessionToken?: string,
+): Promise<FileHandle> => {
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList:FileHandleAssociation[] = [
+      {
+        associateObjectId: fileEntity.id!,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+        fileHandleId: fileEntity.dataFileHandleId,
+      },
+    ]
+    const request:BatchFileRequest = {
+      includeFileHandles: true,
+      includePreSignedURLs: false,
+      includePreviewPreSignedURLs: false,
+      requestedFiles: fileHandleAssociationList,
+    }
+    getFiles(request, sessionToken)
+      .then((data: BatchFileResult) => {
+        if (data.requestedFiles.length > 0 && data.requestedFiles[0].fileHandle) {
+          resolve(data.requestedFiles[0].fileHandle)  
+        } else {
+          // not found, or not allowed to access
+          reject(undefined)
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
 export const getFileHandleContentFromID = (
   fileHandleId: string,
   sessionToken: string,
@@ -1837,35 +1898,23 @@ export const getAccessRequirement = (
 }
 
 /**
- * Returns all the access requirements associated to an entity {id}, calling the
- * paginated getAccessRequirement service until all results are returned.
- *
- * @param {(string | undefined)} sessionToken token of user
- * @param {string} id id of entity to lookup
- * @returns {Promise<Array<AccessRequirement>>}
+ * Get all access requirements
  */
-export const getAllAccessRequirements = async (
+export const getAllAccessRequirements = (
   sessionToken: string | undefined,
   id: string,
 ): Promise<Array<AccessRequirement>> => {
-  let isMoreData = true
-  const accessRequirementResults = [] as AccessRequirement[]
-  const limit = 50
-  let offset = 0
-  while (isMoreData) {
-    try {
-      const data = await getAccessRequirement(sessionToken, id, limit, offset)
-      accessRequirementResults.push(...data.results)
-      offset += data.results.length
-      if (data.results.length !== 50) {
-        isMoreData = false
-      }
-    } catch (e) {
-      console.error('err on getAllAccessRequirements = ', e)
-      return e
-    }
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+    return doGet<PaginatedResults<AccessRequirement>>(
+      url,
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
   }
-  return accessRequirementResults
+  return getAllOfPaginatedService(fn)
 }
 
 /**
@@ -1911,6 +1960,41 @@ export const getDownloadOrder = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+export type FunctionReturningPaginatedResults<T> = (
+  limit: number,
+  offset: number,
+) => Promise<PaginatedResults<T>>
+/**
+ * Utility function to get all the results of a paginated service
+ *
+ * @template T Type of paginated service
+ * @param {FunctionReturningPaginatedResults<T>} fn Function that returns a paginated synapse object, accepts a limit and offset
+ * @returns
+ */
+export const getAllOfPaginatedService = async <T>(
+  fn: FunctionReturningPaginatedResults<T>,
+) => {
+  const limit = 50
+  let offset = 0
+  let existsMoreData = true
+  const results: T[] = []
+
+  while (existsMoreData) {
+    try {
+      const data = await fn(limit, offset)
+      results.push(...data.results)
+      offset += data.results.length
+      if (data.results.length < limit) {
+        existsMoreData = false
+      }
+    } catch (e) {
+      throw Error(`Error on getting paginated results ${e}`)
+    }
+  }
+
+  return results
 }
 
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html

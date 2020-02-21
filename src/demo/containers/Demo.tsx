@@ -8,6 +8,7 @@ import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
+import HasAccess from 'lib/containers/HasAccess'
 
 type DemoState = {
   token: string | null
@@ -95,9 +96,9 @@ class Demo extends React.Component<{}, DemoState> {
             sql: 'SELECT * FROM syn21156352',
           },
           {
-            facet: 'dataType',
+            facet: 'study',
             sql:
-              'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+            'SELECT study, dataType, assay, id AS file_id, specimenID, individualID, diagnosis, sex, consortium as "Program", grant, species, organ, tissue, cellType, fileFormat FROM syn11346063',
           },
           {
             facet: 'diagnosis',
@@ -212,6 +213,29 @@ class Demo extends React.Component<{}, DemoState> {
             <hr />
           </div>
         )}
+        { 
+        <div className="container">
+            <h5>Public Folder - HasAccess widget</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn7122428'}
+              isInDownloadList={false}
+            />
+            <h5>A Controlled Access Folder - HasAccess widget</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn7383419'}
+              isInDownloadList={false}
+            />
+            <h5>Open Data</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn5481758'}
+              isInDownloadList={false}
+            />
+            <hr />
+          </div>
+        }
         {token && (
           <div className="container">
             <h5>Project Statistics Demo</h5>

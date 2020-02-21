@@ -9,10 +9,9 @@ const HookWrapper = (props: UseGetProfilesProps) => {
   const useHookGetProfilesHook = useGetProfiles(props)
   return (
     <ul>
-      {useHookGetProfilesHook &&
-        useHookGetProfilesHook.list.map(el => (
-          <li key={el.ownerId}> {el.ownerId} </li>
-        ))}
+      {useHookGetProfilesHook.map(el => (
+        <li key={el.ownerId}> {el.ownerId} </li>
+      ))}
     </ul>
   )
 }

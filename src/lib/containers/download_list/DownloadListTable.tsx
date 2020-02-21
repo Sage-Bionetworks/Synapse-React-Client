@@ -25,7 +25,7 @@ import {
 } from '../../utils/synapseTypes'
 import HasAccess, {
   getDownloadTypeForFileHandle,
-  DownloadTypeEnum,
+  FileHandleDownloadTypeEnum,
 } from '../HasAccess'
 import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
@@ -65,8 +65,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // then map to ownerIds
   const ownerIds: string[] = requestedFiles
     .filter(el => el.fileHandle && el.fileHandle.createdBy)
-    // @ts-ignore the error below could not occur if the filter is
-    .map(el => el.fileHandle.createdBy)
+    // use bang operator because filter function guarentee's that file handle will be defined
+    .map(el => el.fileHandle!.createdBy!)
   const userProfiles = useGetProfiles({ ids: ownerIds, token })
 
   useEffect(() => {
@@ -222,7 +222,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               createdOn = moment(createdOn).format('L LT')
               if (
                 getDownloadTypeForFileHandle(fileHandle) ===
-                DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+                FileHandleDownloadTypeEnum.Accessible
               ) {
                 numBytes += contentSize
                 numFiles += 1
@@ -234,10 +234,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               )!
               fileName = requestedFile.name
             }
-            const userProfile =
-              userProfiles &&
-              userProfiles.list &&
-              userProfiles.list.find(el => el.ownerId === createdBy)
+            const userProfile = userProfiles.find(
+              el => el.ownerId === createdBy,
+            )
             return (
               <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
                 <td>
@@ -254,6 +253,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     fileHandle={fileHandle}
                     token={token}
                     entityId={synId}
+                    isInDownloadList={true}
                   />
                 </td>
                 <td>
