@@ -41,7 +41,8 @@ type DownloadListTableData = {
 
 type LoadingState = boolean
 export type DownloadListTableProps = {
-  token?: string
+  token?: string,
+  listUpdatedCallback?: VoidFunction
 }
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -121,6 +122,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         batchFileResult,
         downloadList,
       })
+      invokeDownloadListUpdatedEvent()
     } catch (e) {
       console.error('Error in DownloadList API call : ', e)
     } finally {
@@ -128,6 +130,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }
 
+  const invokeDownloadListUpdatedEvent = () => {
+    if (props.listUpdatedCallback) {
+      props.listUpdatedCallback()
+    }
+  }
+  
   const clearDownloadList = async (
     _event: React.SyntheticEvent<HTMLButtonElement>,
   ) => {
@@ -137,6 +145,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       setData({
         downloadList: undefined,
       })
+      invokeDownloadListUpdatedEvent()
     } catch (err) {
       console.error('Error on clearing download list: ', err)
     } finally {
@@ -162,6 +171,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // The current references and batchFileResult can be kept because the download
       // list drives the view, so the stale values in those two won't be viewed.
       setData({ downloadList, references, batchFileResult })
+      invokeDownloadListUpdatedEvent()
     } catch (err) {
       console.error('Error on delete from download list', err)
     } finally {
