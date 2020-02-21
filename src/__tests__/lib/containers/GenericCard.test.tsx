@@ -10,6 +10,7 @@ import * as Utils from '../../../lib/containers/row_renderers/utils'
 import {
   CardLink,
   LabelLinkConfig,
+  MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 
@@ -232,5 +233,34 @@ describe('it makes the correct URL for the secondary labels', () => {
     // double check the html elements show up correctly from the markdown component
     expect(markdown.html().includes('<p>')).toBeFalsy()
     expect(markdown.html().includes('<a href=')).toBeTruthy()
+  })
+})
+
+describe('It renders markdown for the description', () => {
+  const renderShortDescription = GenericCard.prototype.renderShortDescription
+  const renderLongDescription = GenericCard.prototype.renderLongDescription
+  const descriptionLinkConfig: MarkdownValue = {
+    isMarkdown: true,
+  }
+  const value = '# header [website](synapse.org)'
+
+  it('hides the short description if MarkdownValue is specified', () => {
+    const wrapper = mount(
+      <>{renderShortDescription(value, false, '', descriptionLinkConfig)} </>,
+    )
+    expect(wrapper.find(<div />)).toHaveLength(0)
+  })
+  it('shows the short description if MarkdownValue is not specified', () => {
+    const wrapper = mount(
+      <>{renderShortDescription(value, false, '', undefined)} </>,
+    )
+    expect(wrapper.find('div')).toHaveLength(1)
+  })
+  it('hides the short description if MarkdownValue is specified', () => {
+    const wrapper = mount(
+      <>{renderLongDescription(value, false, '', descriptionLinkConfig)} </>,
+    )
+    expect(wrapper.find(MarkdownSynapse)).toHaveLength(1)
+    expect(wrapper.find(MarkdownSynapse).props().markdown).toEqual(value)
   })
 })

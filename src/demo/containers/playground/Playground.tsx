@@ -148,7 +148,7 @@ const App = ({
         component={() => (
           <div className="container download-list-demo">
             <div className="col-xs-10">
-              <DownloadListTable token={token} />
+              <DownloadListTable token={token} listUpdatedCallback={() => {console.log('DownloadList updated')}} />
             </div>
           </div>
         )}
