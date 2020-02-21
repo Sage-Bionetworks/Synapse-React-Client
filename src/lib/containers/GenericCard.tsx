@@ -240,6 +240,7 @@ export default class GenericCard extends React.Component<
     if (isHeader) {
       return (
         <HeaderCard
+          descriptionLinkConfig={descriptionLinkConfig}
           type={type}
           title={title}
           subTitle={subTitle}
