@@ -88,6 +88,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         setData({
           downloadList,
         })
+        invokeDownloadListUpdatedEvent()
         return
       }
       const batchFileRequest: BatchFileRequest = {
