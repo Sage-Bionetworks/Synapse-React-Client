@@ -459,57 +459,38 @@ export const getQueryTableResults = (
  * data-- (internally this limits the row count to 1 on the request)
  * @returns Full dataset from synapse table query
  */
+
 export const getFullQueryTableResults = async (
-  queryBundleRequest: any,
+  queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
+  maxPageSize: number = 2500,
 ): Promise<QueryResultBundle> => {
-  // TODO: Find out why theres a bug causing the query limit
+  let data: QueryResultBundle
+  // get first page
+  let offset = 0
   const { query, ...rest } = queryBundleRequest
-  let data: any = {}
-  let maxPageSize: number = 150
   const queryRequest: any = {
     ...rest,
-    query: { ...query, limit: maxPageSize },
+    query: { ...query, limit: maxPageSize, offset: offset },
   }
-  // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
-  // we can get, the following uses that maximum and offsets to the appropriate location to get the data
-  // afterwards, the process repeats
-  await getQueryTableResults(queryRequest, sessionToken).then(
-    async (initData: QueryResultBundle) => {
-      let queryCount: any = initData.queryResult.queryResults.rows.length
-      let currentQueryCount: number = queryCount
-      data = initData
-      // Get the subsequent data, note- although the function calls itself, it runs
-      // iteratively due to the await
-      const getData = async () => {
-        if (queryCount === maxPageSize) {
-          maxPageSize = initData.maxRowsPerPage!
-          const queryRequestWithMaxPageSize = {
-            ...rest,
-            query: { ...query, limit: maxPageSize, offset: currentQueryCount },
-          }
-          await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
-            .then((postData: any) => {
-              queryCount += postData.queryResult.queryResults.rows.length
-              if (queryCount > 0) {
-                currentQueryCount += queryCount
-                data.queryResult.queryResults.rows.push(
-                  ...postData.queryResult.queryResults.rows, // ... spread operator to push all elements on
-                )
-              }
-              return getData()
-            })
-            .catch(err => {
-              console.log('Error on getting table results ', err)
-            })
-        } else {
-          // set data to this plots sql in the query data
-          return data
-        }
-      }
-      return getData()
-    },
-  )
+  let response = await getQueryTableResults(queryRequest, sessionToken)
+  data = response
+  //we are done if we return less than a pagesize
+  let isDone = response.queryResult.queryResults.rows.length < maxPageSize
+
+  while (!isDone) {
+    offset += maxPageSize
+    queryRequest.query.offset = offset
+    let response = await getQueryTableResults(queryRequest, sessionToken)
+
+    data.queryResult.queryResults.rows.push(
+      ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
+    )
+
+    if (response.queryResult.queryResults.rows.length < maxPageSize) {
+      isDone = true
+    }
+  }
   return data
 }
 
