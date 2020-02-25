@@ -49,6 +49,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
         sql: query,
       },
     }
+
     getFullQueryTableResults(queryRequest, token)
       .then((data: QueryResultBundle) => {
         this.setState({

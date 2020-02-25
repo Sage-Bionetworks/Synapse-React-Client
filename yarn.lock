@@ -1528,9 +1528,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-plotly.js@^2.2.2":
+"@types/react-plotly.js@^2.2.4":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@types/react-plotly.js/-/react-plotly.js-2.2.4.tgz#360fcfcace64d0ef173cf0c7d67fc2441b39f659"
+  integrity sha512-dsvngno7Ar13XoF2eJXM609Msoc5DPboNp8x4NE4L+rsBEEsu16/0b0Fze8REx3fA4HEUk4rcn3uJsx48m2sew==
   dependencies:
     "@types/plotly.js" "*"
     "@types/react" "*"
@@ -7101,7 +7102,7 @@ lodash.without@~4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.without/-/lodash.without-4.4.0.tgz#3cd4574a00b67bae373a94b748772640507b7aac"
 
-"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.5, lodash@~4.17.10:
+"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4, lodash@^4.17.5, lodash@~4.17.10:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
 
@@ -9703,6 +9704,13 @@ react-plotly.js@^2.3.0:
   resolved "https://registry.yarnpkg.com/react-plotly.js/-/react-plotly.js-2.4.0.tgz#7a8fd89ffa126daa36a5855890282960e2e4eaf0"
   dependencies:
     prop-types "^15.7.2"
+
+react-plotlyjs-ts@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-plotlyjs-ts/-/react-plotlyjs-ts-2.2.1.tgz#8fe4a9068bb8b124ba7e4fee7b3ddccbe5934a70"
+  integrity sha512-uT+OAAaescZp8bbzFabjQc+kEj7Mef53dfSQtOXc+p5l7//3fTIs9bA2qlTfDch6sIxC2ndGipMfvR/xq+QP9g==
+  dependencies:
+    lodash "^4.17.4"
 
 react-router-dom@5.0.1:
   version "5.0.1"
