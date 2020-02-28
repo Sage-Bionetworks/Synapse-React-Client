@@ -317,6 +317,7 @@ export default class GenericCard extends React.Component<
               hasClickedShowMore,
               descriptionSubTitle,
               descriptionLinkConfig,
+              this.props.token,
             )}
         </div>
         {showFooter && (
@@ -335,10 +336,11 @@ export default class GenericCard extends React.Component<
     hasClickedShowMore: boolean,
     descriptionSubTitle: any,
     descriptionLinkConfig?: MarkdownValue,
+    token?: string,
   ): React.ReactNode {
     let content: JSX.Element | string = description
     if (descriptionLinkConfig?.isMarkdown) {
-      content = <MarkdownSynapse token={this.props.token} markdown={content} />
+      content = <MarkdownSynapse token={token} markdown={content} />
     }
     const show = hasClickedShowMore || descriptionLinkConfig
     return (
