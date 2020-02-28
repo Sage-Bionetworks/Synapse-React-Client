@@ -469,7 +469,7 @@ export const getFullQueryTableResults = async (
   // get first page
   let offset = 0
   const { query, ...rest } = queryBundleRequest
-  const queryRequest: any = {
+  const queryRequest: QueryBundleRequest = {
     ...rest,
     query: { ...query, limit: maxPageSize, offset: offset },
   }
@@ -487,9 +487,7 @@ export const getFullQueryTableResults = async (
       ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
     )
 
-    if (response.queryResult.queryResults.rows.length < maxPageSize) {
-      isDone = true
-    }
+    isDone =  response.queryResult.queryResults.rows.length < maxPageSize
   }
   return data
 }
