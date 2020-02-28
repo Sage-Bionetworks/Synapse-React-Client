@@ -27,14 +27,19 @@ export type MarkdownLink = {
   matchColumnName: string
 }
 
+export type MarkdownValue = {
+  isMarkdown: true
+}
+
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (CardLink | MarkdownLink)[]
+export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
   labelLinkConfig?: LabelLinkConfig
+  descriptionLinkConfig?: MarkdownValue
 }
 
 export type CardConfiguration = {
@@ -243,6 +248,7 @@ export default class CardContainerLogic extends React.Component<
       <CardContainer
         {...rest}
         data={this.state.data}
+        token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         hasMoreData={this.state.hasMoreData}

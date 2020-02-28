@@ -11,7 +11,7 @@ import { unCamelCase } from '../utils/functions/unCamelCase'
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
-import { KeyValue, isGroupByInSql } from '../utils/functions/sqlFunctions'
+import { isGroupByInSql } from '../utils/functions/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/synapseTypes/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -40,9 +40,9 @@ export const ACCORDION_GROUP_ACTIVE_CSS = 'SRC-IS-ACTIVE'
 // for search component querying on cardcontainer
 export const SEARCH_CLASS_CSS = 'SRC-search-component'
 
-interface MenuSearchParams extends KeyValue {
-  menuIndex: string
+interface MenuSearchParams {
   facetValue: string
+  facet: string
 }
 
 type CommonMenuProps = {
@@ -87,10 +87,14 @@ export default class QueryWrapperMenu extends React.Component<
     super(props)
     // See note about initializing props from state here
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
-    const { searchParams, accordionConfig } = this.props
+    const { searchParams, accordionConfig, menuConfig } = this.props
     let activeMenuIndices = []
-    const indexFromURLOrDefaultZero =
-      (searchParams && Number(searchParams.menuIndex)) || 0
+    const facetIndexFromFacetSearchParam = menuConfig?.findIndex(
+      el => el.facet && el.facet === searchParams?.facet,
+    )
+    const usedFacetIndex =
+      facetIndexFromFacetSearchParam === -1 ? 0 : facetIndexFromFacetSearchParam
+    const indexFromURLOrDefaultZero = usedFacetIndex || 0
     if (accordionConfig) {
       activeMenuIndices = new Array(accordionConfig.length).fill(0)
     } else {
@@ -267,10 +271,14 @@ export default class QueryWrapperMenu extends React.Component<
     } = queryConfig
     const { activeMenuIndices, accordionGroupIndex } = this.state
     let facetValue = ''
-    let menuIndexFromProps = ''
+    let facetValueFromSearchParams = ''
     if (searchParams) {
-      ;({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
+      ;({
+        facetValue = '',
+        facet: facetValueFromSearchParams = '',
+      } = searchParams)
     }
+
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean =
         groupIndex === accordionGroupIndex &&
@@ -303,8 +311,11 @@ export default class QueryWrapperMenu extends React.Component<
         accordionConfig.length > 0,
         name,
       )
+      const isSelectedFromURL =
+        config.facet !== undefined &&
+        config.facet === facetValueFromSearchParams
       const selectedFacets = this.getSelectedFacets(
-        Number(menuIndexFromProps) === index,
+        isSelectedFromURL,
         facet,
         facetValue,
       )
@@ -466,11 +477,11 @@ export default class QueryWrapperMenu extends React.Component<
       return accordionConfig.map((el, index) => {
         const isActive = accordionGroupIndex === index
         const primaryColor = colorPalette[0]
-        let style: React.CSSProperties = {
+        const style: React.CSSProperties = {
           background: isActive ? primaryColor : lightColor,
           color: isActive ? 'white' : '',
         }
-        let indicatorClasses = isActive
+        const indicatorClasses = isActive
           ? 'SRC-whiteText SRC-pointed-triangle-down'
           : ' SRC-hand-cursor '
         if (isActive) {
@@ -558,7 +569,7 @@ export default class QueryWrapperMenu extends React.Component<
       defaultColor = colorPalette[4]
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
-      let searchIconStyle: React.CSSProperties = {
+      const searchIconStyle: React.CSSProperties = {
         margin: 'auto 0',
         opacity: 0.4,
       }

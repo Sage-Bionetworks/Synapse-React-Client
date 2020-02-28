@@ -101,7 +101,7 @@ class Demo extends React.Component<{}, DemoState> {
           {
             facet: 'study',
             sql:
-              'SELECT study, dataType, assay, id AS file_id, specimenID, individualID, diagnosis, sex, consortium as "Program", grant, species, organ, tissue, cellType, fileFormat FROM syn11346063',
+            'SELECT study, dataType, assay, id AS file_id, specimenID, individualID, diagnosis, sex, consortium as "Program", grant, species, organ, tissue, cellType, fileFormat FROM syn11346063',
           },
           {
             facet: 'diagnosis',
@@ -216,8 +216,8 @@ class Demo extends React.Component<{}, DemoState> {
             <hr />
           </div>
         )}
-        {
-          <div className="container">
+        { 
+        <div className="container">
             <h5>Public Folder - HasAccess widget</h5>
             <HasAccess
               token={token ? token : undefined}
