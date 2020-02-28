@@ -248,6 +248,7 @@ export default class CardContainerLogic extends React.Component<
       <CardContainer
         {...rest}
         data={this.state.data}
+        token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         hasMoreData={this.state.hasMoreData}
