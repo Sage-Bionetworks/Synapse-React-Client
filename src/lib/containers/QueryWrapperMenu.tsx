@@ -271,7 +271,6 @@ export default class QueryWrapperMenu extends React.Component<
     } = queryConfig
     const { activeMenuIndices, accordionGroupIndex } = this.state
     let facetValue = ''
-    let menuIndex: number | undefined = undefined
     let facetValueFromSearchParams = ''
     if (searchParams) {
       ;({
@@ -279,12 +278,6 @@ export default class QueryWrapperMenu extends React.Component<
         facet: facetValueFromSearchParams = '',
       } = searchParams)
     }
-    menuIndex =
-      (facetValueFromSearchParams &&
-        menuConfig.findIndex(
-          el => el.facet && el.facet === facetValueFromSearchParams,
-        )) ||
-      0
 
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean =
@@ -318,8 +311,11 @@ export default class QueryWrapperMenu extends React.Component<
         accordionConfig.length > 0,
         name,
       )
+      const isSelectedFromURL =
+        config.facet !== undefined &&
+        config.facet === facetValueFromSearchParams
       const selectedFacets = this.getSelectedFacets(
-        Number(menuIndex) === index,
+        isSelectedFromURL,
         facet,
         facetValue,
       )
