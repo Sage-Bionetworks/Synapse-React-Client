@@ -42,6 +42,7 @@ export type GenericCardProps = {
   isAlignToLeftNav?: boolean
   schema: any
   data: any
+  token?: string
 } & CommonCardProps
 
 export type GenericCardState = {
@@ -337,7 +338,7 @@ export default class GenericCard extends React.Component<
   ): React.ReactNode {
     let content: JSX.Element | string = description
     if (descriptionLinkConfig?.isMarkdown) {
-      content = <MarkdownSynapse renderInline={true} markdown={content} />
+      content = <MarkdownSynapse token={this.props.token} markdown={content} />
     }
     const show = hasClickedShowMore || descriptionLinkConfig
     return (

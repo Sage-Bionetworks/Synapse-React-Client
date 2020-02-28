@@ -28,6 +28,7 @@ export type CardContainerProps = {
   unitDescription?: string
   hasMoreData?: boolean
   showBarChart?: boolean
+  token?: string
 } & CardConfiguration
 
 type CardContainerState = {
