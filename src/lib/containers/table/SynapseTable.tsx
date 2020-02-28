@@ -905,12 +905,12 @@ export default class SynapseTable extends React.Component<
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
         },
       )
-      // also push the access column value if we are showing user access for individual items (must be logged in)
-      if (isShowingAccessColumn && token) {
+      // also push the access column value if we are showing user access for individual items (still shown if not logged in)
+      if (isShowingAccessColumn) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
           <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
-            <HasAccess entityId={rowSynapseId} token={token}></HasAccess>
+            <HasAccess entityId={rowSynapseId} entityVersionNumber={row.versionNumber?.toString()} token={token}></HasAccess>
           </td>,
         )
       }
@@ -1069,7 +1069,6 @@ export default class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     isShowingAccessColumn: boolean | undefined,
   ) {
-    const { token } = this.props
     const {
       isColumnSelected,
       sortedColumnSelection,
@@ -1156,7 +1155,7 @@ export default class SynapseTable extends React.Component<
       },
     )
     // also push the access column if we are showing user access for individual items (must be logged in)
-    if (isShowingAccessColumn && token) {
+    if (isShowingAccessColumn) {
       tableColumnHeaderElements.push(
         <th key="accessColumn">
           <div className="SRC-centerContent">

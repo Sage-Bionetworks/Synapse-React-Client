@@ -14,7 +14,7 @@ import { SynapseClient } from '../../../lib/utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
 
-type Props = {
+export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
   token: string | undefined
   wikiPage: WikiPageKey | undefined
@@ -30,11 +30,13 @@ export default function AcceptedRequirements({
   accessRequirement,
   accessRequirementStatus,
   onHide,
-}: Props) {
+}: AcceptedRequirementsProps) {
   const [isHide, setIsHide] = useState<boolean>(true)
-  const [isApproved, setIsApproved] = useState<boolean | undefined>()
-
   const propsIsApproved = accessRequirementStatus?.isApproved
+  const [isApproved, setIsApproved] = useState<boolean | undefined>(
+    propsIsApproved,
+  )
+
   useEffect(() => {
     const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
       setIsApproved(propsIsApproved)
@@ -83,7 +85,6 @@ export default function AcceptedRequirements({
       </div>
     )
   }
-
   const RenderAcceptedRequirements = () => {
     if (isApproved) {
       return (

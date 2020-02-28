@@ -58,6 +58,7 @@ import {
   WikiPageKey,
   ObjectType,
   AccessRequirementStatus,
+  FileHandleAssociateType,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 
@@ -888,13 +889,11 @@ export const getEntityBundleForVersion = (
   ) as Promise<any>
 }
 
-
-
 /**
  * Get a corresponding string value of ObjectType:
  **/
 function getObjectTypeToString(key: ObjectType) {
-  return ObjectType[key];
+  return ObjectType[key]
 }
 
 /**
@@ -967,7 +966,7 @@ export const getTeamList = (
 ) => {
   const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
-    }`
+  }`
   return doGet(
     url,
     sessionToken,
@@ -978,7 +977,7 @@ export const getTeamList = (
 
 /**
  * https://rest-docs.synapse.org/rest/GET/access_requirement/ownerId/wikikey.html
- * Get the root WikiPageKey for an Access Requirement.  
+ * Get the root WikiPageKey for an Access Requirement.
  * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
  * @return WikiPageKey
  **/
@@ -992,7 +991,7 @@ export const getWikiPageKey = (
     url,
     sessionToken,
     undefined,
-    BackendDestinationEnum.REPO_ENDPOINT
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -1188,7 +1187,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
       fileReader = new FileReader()
     let currentChunk = 0
 
-    fileReader.onload = function (e) {
+    fileReader.onload = function(e) {
       console.log('read chunk nr', currentChunk + 1, 'of', chunks)
       spark.append(fileReader.result as ArrayBuffer) // Append array buffer
       currentChunk++
@@ -1203,7 +1202,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
       }
     }
 
-    fileReader.onerror = function () {
+    fileReader.onerror = function() {
       console.warn('oops, something went wrong.')
       reject(fileReader.error)
     }
@@ -1440,6 +1439,48 @@ export const getFileEntityContent = (
             resolve(content)
           },
         )
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+/**
+ * Return the FileHandle of the file associated to the given FileEntity.
+ * * @param fileEntity: FileEntity
+ * @param sessionToken
+ * @param endpoint
+ */
+export const getFileEntityFileHandle = (
+  fileEntity: FileEntity,
+  sessionToken?: string,
+): Promise<FileHandle> => {
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList: FileHandleAssociation[] = [
+      {
+        associateObjectId: fileEntity.id!,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+        fileHandleId: fileEntity.dataFileHandleId,
+      },
+    ]
+    const request: BatchFileRequest = {
+      includeFileHandles: true,
+      includePreSignedURLs: false,
+      includePreviewPreSignedURLs: false,
+      requestedFiles: fileHandleAssociationList,
+    }
+    getFiles(request, sessionToken)
+      .then((data: BatchFileResult) => {
+        if (
+          data.requestedFiles.length > 0 &&
+          data.requestedFiles[0].fileHandle
+        ) {
+          resolve(data.requestedFiles[0].fileHandle)
+        } else {
+          // not found, or not allowed to access
+          reject(undefined)
+        }
       })
       .catch(err => {
         reject(err)
@@ -1897,7 +1938,7 @@ export const getAccessRequirement = (
 
 /**
  * Retrieve an access requirement status for a given access requirement ID.
- * 
+ *
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
@@ -1911,9 +1952,8 @@ export const getAccessRequirementStatus = (
     url,
     sessionToken,
     undefined,
-    BackendDestinationEnum.REPO_ENDPOINT
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
-
 }
 
 /**
@@ -1941,7 +1981,6 @@ export const getAllAccessRequirements = (
   return getAllOfPaginatedService(fn)
 }
 
-
 /**
  *
  *
@@ -1958,7 +1997,7 @@ export const getAccessApproval = async (
     url,
     sessionToken,
     undefined,
-    BackendDestinationEnum.REPO_ENDPOINT
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 

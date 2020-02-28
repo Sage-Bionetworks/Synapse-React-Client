@@ -15,9 +15,10 @@ import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 
 library.add(faCircle)
 
-type Props = {
+export type AccessRequirementListProps = {
   entityId: string
   token: string | undefined
+  accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
 }
 
@@ -26,16 +27,35 @@ export enum SUPPORTED_ACCESS_REQUIREMENTS {
   TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
 }
 
+export const checkUnSupportedRequirement = (
+  accessRequirements: Array<AccessRequirement>,
+): boolean => {
+  let hasUnSupported = false
+  for (let i = 0; i < accessRequirements.length; i++) {
+    if (
+      accessRequirements[i].concreteType !==
+        SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
+      accessRequirements[i].concreteType !==
+        SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement
+    ) {
+      hasUnSupported = hasUnSupported || true
+    }
+  }
+  return hasUnSupported
+}
+
 export default function AccessRequirementList({
   entityId,
   token,
   onHide,
-}: Props) {
+  accessRequirementFromProps,
+}: AccessRequirementListProps) {
   const [accessRequirements, setAccessRequirements] = useState<
     Array<AccessRequirement>
-  >([])
+  >(accessRequirementFromProps ?? [])
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [user, setUser] = useState<UserProfile | undefined>(undefined)
+  const [user, setUser] = useState<UserProfile>()
 
   const entityHeaderProps: UseGetEntityHeaderProps = {
     references: [
@@ -51,20 +71,19 @@ export default function AccessRequirementList({
   useEffect(() => {
     const getAccessRequirements = async () => {
       setIsLoading(true)
+
       try {
-        const incomingAccessRequirements = await getAllAccessRequirements(
-          token,
-          entityId,
-        )
+        if (!accessRequirementFromProps) {
+          getAllAccessRequirements(token, entityId).then(result => {
+            setAccessRequirements(result)
+          })
+        }
 
         const userProfile = await SynapseClient.getUserProfile(token)
         setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
         // because we want react hooks to update without a dependency on accessRequirements
-        setAccessRequirements(prevAcessRequirements =>
-          prevAcessRequirements.concat(incomingAccessRequirements),
-        )
       } catch (err) {
         console.error('Error on get access requirements: ', err)
       } finally {
@@ -73,7 +92,7 @@ export default function AccessRequirementList({
     }
 
     getAccessRequirements()
-  }, [token, entityId])
+  }, [token, entityId, accessRequirementFromProps])
 
   const isSignedIn: boolean = token !== undefined
 
@@ -110,11 +129,11 @@ export default function AccessRequirementList({
         // case not supported yet, go to synapse
         return (
           <div className="case-not-supporeted-container">
-            {/* <a 
-              href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
-            >
-              See Requirements on synapse.org
-            </a> */}
+            {/* <a
+href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
+>
+See Requirements on synapse.org
+</a> */}
           </div>
         )
     }

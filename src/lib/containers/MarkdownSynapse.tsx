@@ -50,6 +50,7 @@ type MarkdownSynapseState = {
   data: Partial<WikiPage>
   fileHandles?: FileHandleResults
   errorMessage: string
+  isLoading: boolean
 }
 /**
  * Basic Markdown functionality for Synapse, supporting Images/Plots/References/Bookmarks/buttonlinks
@@ -96,6 +97,7 @@ export default class MarkdownSynapse extends React.Component<
       errorMessage: '',
       fileHandles: undefined,
       data,
+      isLoading: true,
     }
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -278,9 +280,14 @@ export default class MarkdownSynapse extends React.Component<
    * Get wiki page markdown and file attachment handles
    */
   public async getWikiPageMarkdown() {
-    const { ownerId, wikiId = '', token, objectType} = this.props
+    const { ownerId, wikiId = '', token, objectType } = this.props
     try {
-      const wikiPage = await SynapseClient.getEntityWiki(token, ownerId, wikiId, objectType)
+      const wikiPage = await SynapseClient.getEntityWiki(
+        token,
+        ownerId,
+        wikiId,
+        objectType,
+      )
       try {
         const fileHandles = await this.getWikiAttachments(
           wikiId ? wikiId : wikiPage.id,
@@ -297,7 +304,7 @@ export default class MarkdownSynapse extends React.Component<
     }
   }
   public async getWikiAttachments(wikiId: string) {
-    const { token, ownerId, objectType} = this.props
+    const { token, ownerId, objectType } = this.props
     if (!ownerId) {
       console.error(
         'Cannot get wiki attachments without ownerId on Markdown Component',
@@ -448,6 +455,7 @@ export default class MarkdownSynapse extends React.Component<
           props[name] = value
         }
       }
+
       // Render tagName as parent element of the children below
       return React.createElement(tagName, props, <>{children}</>)
     }
@@ -674,6 +682,7 @@ export default class MarkdownSynapse extends React.Component<
     // get wiki attachments
     await this.getWikiPageMarkdown()
     this.processMath()
+    this.setState({ isLoading: false })
   }
 
   // on component update find and re-render the math/widget items accordingly
@@ -691,9 +700,12 @@ export default class MarkdownSynapse extends React.Component<
 
   public render() {
     const { renderInline } = this.props
+    const { isLoading } = this.state
+
     const bookmarks = this.addBookmarks()
     const content = (
       <>
+        {isLoading && <span className="spinner" />}
         {this.renderMarkdown()}
         {bookmarks && <div>{this.addBookmarks()}</div>}
       </>

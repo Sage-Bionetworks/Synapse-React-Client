@@ -31,31 +31,42 @@ export default function SelfSignAccessRequirementComponent({
   const [accessRequirementStatus, setAccessRequirementStatus] = useState<
     AccessRequirementStatus | undefined
   >(undefined)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const getSelfSignAccessData = async () => {
-      const wikiPageRequirment = await SynapseClient.getWikiPageKey(
-        token,
-        accessRequirement.id,
-      )
+      try {
+        setIsLoading(true)
+        const wikiPageRequirment = await SynapseClient.getWikiPageKey(
+          token,
+          accessRequirement.id,
+        )
 
-      setWikiPage(wikiPageRequirment)
+        setWikiPage(wikiPageRequirment)
 
-      const certificationOrVerification =
-        SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-        SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
-      const bundle = await SynapseClient.getUserBundle(
-        user!.ownerId,
-        certificationOrVerification,
-        token,
-      )
-      setUserBundle(bundle)
+        const certificationOrVerification =
+          SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+          SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
 
-      const selfSignAccessRequirement = await SynapseClient.getAccessRequirementStatus(
-        token,
-        accessRequirement.id,
-      )
-      setAccessRequirementStatus(selfSignAccessRequirement)
+        if (user && user.ownerId) {
+          const bundle = await SynapseClient.getUserBundle(
+            user!.ownerId,
+            certificationOrVerification,
+            token,
+          )
+          setUserBundle(bundle)
+        }
+
+        const selfSignAccessRequirement = await SynapseClient.getAccessRequirementStatus(
+          token,
+          accessRequirement.id,
+        )
+        setAccessRequirementStatus(selfSignAccessRequirement)
+      } catch (err) {
+        console.error('Error on get Self Sign Access Requirement: ', err)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     getSelfSignAccessData()
@@ -76,6 +87,8 @@ export default function SelfSignAccessRequirementComponent({
                 &nbsp;certified user
               </a>
             </p>
+            {isLoading && <span className="spinner" />}
+
             <p
               className={`self-sign-access-certified-success-text ${
                 userBundle?.isCertified ? 'show' : 'hide'
@@ -99,6 +112,8 @@ export default function SelfSignAccessRequirementComponent({
                 &nbsp;user profile validated
               </a>
             </p>
+            {isLoading && <span className="spinner" />}
+
             <p
               className={`self-sign-access-verified-success-text ${
                 userBundle?.isVerified ? 'show' : 'hide'
