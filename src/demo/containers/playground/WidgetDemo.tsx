@@ -10,7 +10,9 @@ type WigetDemoPros = {
   token: string
 }
 
-export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (props: WigetDemoPros) => {
+export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
+  props: WigetDemoPros,
+) => {
   const options = [
     { label: 'option 1', value: 'option1' },
     { label: 'option 2', value: 'option2' },
@@ -52,14 +54,23 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (props: WigetD
     groupField: 'consortium',
   }
 
-  const dotPlotProps ={
+  const dotPlotProps = {
     entityId: 'syn21639584',
     xField: 'totalCount',
     yField: 'theme',
     groupField: 'groupBy',
-    whereClause: 'groupBy IN (\'publications\', \'tools\', \'datasets\')'
+    whereClause: "groupBy IN ('publications', 'tools', 'datasets')",
   }
 
+  const plotCallback = ({
+    facetValue,
+    type,
+  }: {
+    facetValue: string
+    type: string
+  }) => {
+    alert(`facetValue: ${facetValue} type: ${type}`)
+  }
   return (
     <div className="container">
       <div style={{ fontWeight: 'bold' }}></div>
@@ -120,7 +131,13 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (props: WigetD
         domain={['0', '100']}
         step={1}
       ></RangeSlider>
-      <DotPlot token={props.token}  topBarPlot={topBarPlotProps} sideBarPlot={sideBarPlotProps} dotPlot={dotPlotProps} ></DotPlot>
+      <DotPlot
+        token={props.token}
+        onPointClick={plotCallback}
+        topBarPlot={topBarPlotProps}
+        sideBarPlot={sideBarPlotProps}
+        dotPlot={dotPlotProps}
+      ></DotPlot>
     </div>
   )
 }

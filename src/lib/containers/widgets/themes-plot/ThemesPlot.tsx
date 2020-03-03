@@ -27,6 +27,7 @@ export type PlotProps = {
 
 type ThemesPlotProps = {
   token?: string
+  onPointClick: Function
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
@@ -160,6 +161,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   topBarPlot,
   sideBarPlot,
   tooltipProps = tooltipVisualProps,
+  onPointClick,
 }: ThemesPlotProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
@@ -202,6 +204,11 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
     lineHeight: '40px',
     padding: '0',
     overflow: 'hidden',
+  }
+
+  const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent) => {
+    const pointData = e.points[0].data
+    return { facetValue: pointData.y[0], type: pointData.name }
   }
 
   return (
@@ -282,7 +289,9 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                       <div style={{ width: '100%' }}>
                         <DotPlot
                           id={i + ''}
-                          onClick={(e: any) => console.debug(e)}
+                          onClick={(e: any) =>
+                            onPointClick(getClickTargetData(e))
+                          }
                           plotData={dotPlotQueryData}
                           xMax={xMaxForDotPlot}
                           label={label}
@@ -297,7 +306,15 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                   </tr>
                 ))}
                 <tr>
-                  <td style={{ textAlign: 'right',paddingBottom: '18px', paddingRight: '10px' }}>VOLUME:</td>
+                  <td
+                    style={{
+                      textAlign: 'right',
+                      paddingBottom: '18px',
+                      paddingRight: '10px',
+                    }}
+                  >
+                    VOLUME:
+                  </td>
                   <td>
                     {' '}
                     <DotPlot
