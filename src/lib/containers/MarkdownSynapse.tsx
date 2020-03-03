@@ -419,18 +419,8 @@ export default class MarkdownSynapse extends React.Component<
         // process widget
         return this.processHTMLWidgetMapping(widgetParams, markdown)
       }
-      if (element.childNodes.length === 0) {
-        // case 2
-        // e.g. self closing tag like <br/>
-        return React.createElement(tagName)
-      }
-      // case 3
-      // recursively render children
-      const children = Array.from(element.childNodes).map(el => {
-        return <>{this.recursiveRender(el, markdown)}</>
-      })
       // manually add on props, depending on what comes through the markdown their could
-      // be unforseen issues with attrib utes being misnamed according to what react will respect
+      // be unforseen issues with attributes being misnamed according to what react will respect
       // e.g. class instead of className
       const attributes = element.attributes
       const props = {}
@@ -446,6 +436,16 @@ export default class MarkdownSynapse extends React.Component<
           props[name] = value
         }
       }
+      if (element.childNodes.length === 0) {
+        // case 2
+        // e.g. self closing tag like <br/> or <img>
+        return React.createElement(tagName, props)
+      }
+      // case 3
+      // recursively render children
+      const children = Array.from(element.childNodes).map(el => {
+        return <>{this.recursiveRender(el, markdown)}</>
+      })
       // Render tagName as parent element of the children below
       return React.createElement(tagName, props, <>{children}</>)
     }

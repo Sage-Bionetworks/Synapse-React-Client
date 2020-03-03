@@ -1,11 +1,18 @@
 import * as React from 'react'
 import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
 import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
+import DotPlot from '../../../lib/containers/widgets/themes-plot/ThemesPlot'
 import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
 import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
 
-export const WidgetDemo: React.FunctionComponent = () => {
+type WigetDemoPros = {
+  token: string
+}
+
+export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
+  props: WigetDemoPros,
+) => {
   const options = [
     { label: 'option 1', value: 'option1' },
     { label: 'option 2', value: 'option2' },
@@ -34,6 +41,36 @@ export const WidgetDemo: React.FunctionComponent = () => {
     max: '25',
   })
 
+  const topBarPlotProps = {
+    entityId: 'syn21641485',
+    xField: 'totalCount',
+    yField: 'groupBy',
+    groupField: 'consortium',
+  }
+  const sideBarPlotProps = {
+    entityId: 'syn21649281',
+    xField: 'projects',
+    yField: 'theme',
+    groupField: 'consortium',
+  }
+
+  const dotPlotProps = {
+    entityId: 'syn21639584',
+    xField: 'totalCount',
+    yField: 'theme',
+    groupField: 'groupBy',
+    whereClause: "groupBy IN ('publications', 'tools', 'datasets')",
+  }
+
+  const plotCallback = ({
+    facetValue,
+    type,
+  }: {
+    facetValue: string
+    type: string
+  }) => {
+    alert(`facetValue: ${facetValue} type: ${type}`)
+  }
   return (
     <div className="container">
       <div style={{ fontWeight: 'bold' }}></div>
@@ -94,6 +131,13 @@ export const WidgetDemo: React.FunctionComponent = () => {
         domain={['0', '100']}
         step={1}
       ></RangeSlider>
+      <DotPlot
+        token={props.token}
+        onPointClick={plotCallback}
+        topBarPlot={topBarPlotProps}
+        sideBarPlot={sideBarPlotProps}
+        dotPlot={dotPlotProps}
+      ></DotPlot>
     </div>
   )
 }
