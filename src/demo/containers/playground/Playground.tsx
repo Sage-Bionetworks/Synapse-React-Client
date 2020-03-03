@@ -157,7 +157,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/WidgetDemo`}
-        component={() => <WidgetDemo />}
+        component={() => <WidgetDemo token={token} />}
       />
 
       <Route
