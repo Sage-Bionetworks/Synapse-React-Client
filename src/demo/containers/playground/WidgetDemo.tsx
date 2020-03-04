@@ -54,7 +54,7 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
   
   const sideBarPlotProps = {
     entityId: 'syn21649281',
-    xField: 'projects',
+    xField: 'totalCount',
     yField: 'theme',
     groupField: 'consortium',
     colors: {

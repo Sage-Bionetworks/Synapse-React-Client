@@ -18,6 +18,7 @@ export type GraphItem = {
     yField: string
     groupField: string
     whereClause?: string
+    infoField?: string
     colors?: BarPlotColors
     markerStyle?:  MarkerStyle
   }
