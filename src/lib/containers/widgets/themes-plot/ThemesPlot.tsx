@@ -25,9 +25,15 @@ export type PlotProps = {
   whereClause?: string
 }
 
-type ThemesPlotProps = {
+export type ThemesPlotProps = {
   token?: string
-  onPointClick: Function
+  onPointClick: ({
+    facetValue,
+    type,
+  }: {
+    facetValue: any
+    type: string
+  }) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
