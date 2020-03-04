@@ -2,7 +2,7 @@ import React, { FunctionComponent/*, useState , useEffect */ } from 'react' // i
 import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem} from './types'
+import { GraphItem, MarkerStyle} from './types'
 import _ from 'lodash-es'
 const Plot = createPlotlyComponent(Plotly)
 
@@ -11,41 +11,43 @@ export type DotPlotProps = {
   layoutConfig: Partial<PlotlyTyped.Layout>
   optionsConfig: Partial<PlotlyTyped.Config>
   label?: string, 
+  style?: React.CSSProperties
   id: string,
-  isHeader?: boolean,
-  isFooter?: boolean,
+  isLegend?: boolean,
+  isXAxis?: boolean,
   xMax?: number,
+  markerStyle?: MarkerStyle,
   onClick?: Function
 }
 
 
 type LayoutOptions = {
-  isHeader: boolean
-  isFooter: boolean
+  isLegend: boolean
+  isXAxis: boolean
   maxValue?: number
 }
 
 function getLayout(
   dotPlotLayoutConfig: Partial<PlotlyTyped.Layout>,
   layoutOptions?: LayoutOptions,
-) {
+): Partial<PlotlyTyped.Layout> {
   const result = _.cloneDeep(dotPlotLayoutConfig)
   if (!layoutOptions) {
     return result
   }
   result.yaxis!.showticklabels = false
   result.xaxis!.range = [-5, layoutOptions.maxValue! + 30]
-  result.xaxis!.visible = layoutOptions.isFooter
-  result.showlegend = layoutOptions.isHeader
+  result.xaxis!.visible = layoutOptions.isXAxis
+  result.showlegend = layoutOptions.isLegend
   result.margin = {
     t: 0,
-    b: layoutOptions.isFooter ? 50 : 0,
+    b: layoutOptions.isXAxis ? 50 : 0,
     l: 0,
     r: 0,
     pad: 15,
   }
   let height = 30
-  if (layoutOptions.isHeader) {
+  if (layoutOptions.isLegend) {
     height = 35
     result.margin.pad = 0
     result.xaxis = {
@@ -61,7 +63,7 @@ function getLayout(
       showline: false,
     }
   }
-  if (layoutOptions.isFooter) {
+  if (layoutOptions.isXAxis) {
     result.yaxis = {
       visible: false,
       showgrid: false,
@@ -89,6 +91,7 @@ function createArrayOfGroupValues(
 
 function getPlotDataPoints(
   graphItems: GraphItem[],
+  markerStyle: MarkerStyle,
   ySorted?: string[],
 ): any[] {
   const isFakeData = ySorted === undefined
@@ -108,7 +111,7 @@ function getPlotDataPoints(
       type: 'scatter',
 
       x: isFakeData
-        ? [-10]
+        ? [-10]  // fake datavalue outside of the bounds
         : createArrayOfGroupValues(
             ySorted!,
             graphItems.filter(row => row.group === group),
@@ -119,13 +122,13 @@ function getPlotDataPoints(
       mode: 'markers',
       name: group,
       marker: {
-        color: 'rgba(70, 50, 158, 0.95)',
+        color: markerStyle.fill,
         line: {
-          color: 'rgba(0, 0, 0, 1.0)',
+          color: markerStyle.line,
           width: 1,
         },
         symbol: symbols[i],
-        size: 8,
+        size: markerStyle.size,
       },
     })
   })
@@ -139,7 +142,9 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
   label,
   id,
   xMax,
-  onClick, isHeader= false, isFooter = false
+  style = { width: '100%', height: '100%' },
+  markerStyle= { fill: '#515359', line: '#515359', size: 9},
+  onClick, isLegend= false, isXAxis = false
 }: DotPlotProps) => {
   const pointsTypes = label? [label]: undefined
 
@@ -147,12 +152,12 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
     <Plot
       key={`dotPlot_${id}`}
       layout={getLayout(layoutConfig, {
-        isHeader: isHeader,
-        isFooter: isFooter,
+        isLegend: isLegend,
+        isXAxis: isXAxis,
         maxValue: xMax,
       })}
-      style={{ width: '100%', height: '100%' }}
-      data={getPlotDataPoints(plotData, pointsTypes)}
+      style={style}
+      data={getPlotDataPoints(plotData, markerStyle, pointsTypes )}
       config={optionsConfig}
       onClick={(e: any) => onClick? onClick(e): _.noop}
     />
