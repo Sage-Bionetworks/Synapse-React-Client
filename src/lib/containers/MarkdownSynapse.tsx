@@ -448,9 +448,6 @@ export default class MarkdownSynapse extends React.Component<
           props[name] = value
         }
       }
-<<<<<<< HEAD
-
-=======
       if (element.childNodes.length === 0) {
         // case 2
         // e.g. self closing tag like <br/> or <img>
@@ -461,7 +458,6 @@ export default class MarkdownSynapse extends React.Component<
       const children = Array.from(element.childNodes).map(el => {
         return <>{this.recursiveRender(el, markdown)}</>
       })
->>>>>>> f74450dece809f9fe866fff6f4896699a8a3cd2e
       // Render tagName as parent element of the children below
       return React.createElement(tagName, props, <>{children}</>)
     }
