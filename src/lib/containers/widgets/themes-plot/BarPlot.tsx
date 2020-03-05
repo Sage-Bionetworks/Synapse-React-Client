@@ -2,31 +2,36 @@ import React, { FunctionComponent } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem } from './types'
+import { GraphItem, BarPlotColors } from './types'
 import _ from 'lodash-es'
 
 const Plot = createPlotlyComponent(Plotly)
 
 export type BarPlotProps = {
   isTop: boolean
-  isEvenColor: boolean
   style?: React.CSSProperties
   plotData: GraphItem[]
   layoutConfig: Partial<PlotlyTyped.Layout>
   optionsConfig: Partial<PlotlyTyped.Config>
   label: string
-  xMax?: number
+  xMax: number
+  colors?:  BarPlotColors
   onClick?: Function
 }
 
-function getBarPlotDataPoints(data: any[], isFade = false, filter?: string) {
+type LayoutOptions = { isTop: boolean; maxValue: number; isLegend?: boolean }
+
+function getBarPlotDataPoints(
+  data: any[],
+  filter?: string,
+  colors?: BarPlotColors,
+): any[] {
   if (filter) {
     data = data.filter(item => item.y === filter)
   }
   var groups = _.uniq(data.map(item => item['group']))
   const result: any[] = []
-  const opacity = isFade ? 0.4 : 1
-  const color = [`(28,118,175, ${opacity})`, `rgba(91,176,181,${opacity})`]
+  const defaultColors = [`(28,118,175,1)`, `rgba(91,176,181,1)`]
 
   groups.forEach((group, i) => {
     const items = data.filter(item => item.group === group)
@@ -36,7 +41,7 @@ function getBarPlotDataPoints(data: any[], isFade = false, filter?: string) {
       name: group,
       orientation: 'h',
       marker: {
-        color: color[i],
+        color: colors ? colors[group] : defaultColors[i],
         width: 1,
       },
       type: 'bar',
@@ -46,17 +51,17 @@ function getBarPlotDataPoints(data: any[], isFade = false, filter?: string) {
   return result
 }
 
-function getSideBarLayout(
+function getLayout(
   layoutConfig: Partial<PlotlyTyped.Layout>,
-  maxX: number,
-) {
+  { isTop, maxValue }: LayoutOptions,
+): Partial<PlotlyTyped.Layout> {
   const layout = _.cloneDeep(layoutConfig)
   layout.xaxis = {
     visible: false,
-    range: [0, maxX],
+    range: [0, maxValue],
   }
   layout.showlegend = false
-  layout.height = 20
+  layout.height = isTop ? 40 : 20
   return layout
 }
 
@@ -64,18 +69,21 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
   plotData,
   optionsConfig,
   isTop,
-  isEvenColor,
   layoutConfig,
   label,
   xMax,
+  colors,
   style = { width: '100%', height: '100%' },
 }: BarPlotProps) => {
   return (
     <Plot
       style={style}
-      layout={isTop ? layoutConfig : getSideBarLayout(layoutConfig, xMax!)}
+      layout={getLayout(layoutConfig, {
+        isTop,
+        maxValue: xMax,
+      })}
       config={optionsConfig}
-      data={getBarPlotDataPoints(plotData, isEvenColor, label)}
+      data={getBarPlotDataPoints(plotData, label, colors)}
     />
   )
 }
