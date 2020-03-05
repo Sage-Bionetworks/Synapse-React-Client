@@ -5,6 +5,7 @@ import UserCard from './UserCard'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
+import SynapseVideo from './widgets/SynapseVideo'
 import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
 
 const TOC_CLASS = {
@@ -553,9 +554,26 @@ export default class MarkdownSynapse extends React.Component<
         return this.renderSynapseTOC(originalMarkup)
       case 'badge':
         return this.renderUserBadge(widgetparamsMapped)
+      case 'video':
+      case 'vimeo':
+      case 'youtube':
+        return this.renderVideo(widgetparamsMapped)
       default:
         return
     }
+  }
+
+  public renderVideo(widgetparamsMapped: any) {
+    const { token, ownerId, wikiId } = this.props
+
+    return (
+      <SynapseVideo
+        token={token}
+        synapseId={ownerId}
+        wikiId={wikiId}
+        params={widgetparamsMapped}
+      />
+    )
   }
 
   public renderSynapseButton(widgetparamsMapped: any) {

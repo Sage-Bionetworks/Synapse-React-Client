@@ -20,12 +20,6 @@ import {
   getEndpoint,
 } from '../../utils/functions/getEndpoint'
 
-export enum ACCESS_REQUIREMENTS_TYPE {
-  SelfSignAccessRequirement = 'Self Sign Access Requirement',
-  TermsOfUseAccessRequirement = 'Terms of Use',
-  ManagedACTAccessRequirement = 'Managed ACT Access Requirement',
-}
-
 export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
   token: string | undefined
@@ -63,8 +57,8 @@ export default function AcceptedRequirements({
     setIsApprovedValueFromProps(propsIsApproved)
 
     if (
-      accessRequirementText ===
-      ACCESS_REQUIREMENTS_TYPE.ManagedACTAccessRequirement
+      accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
     ) {
       setButtonText(`Get ${accessRequirementText} via synapse.org`)
     } else {
@@ -74,8 +68,8 @@ export default function AcceptedRequirements({
 
   const onAcceptClicked = () => {
     if (
-      accessRequirementText ===
-      ACCESS_REQUIREMENTS_TYPE.ManagedACTAccessRequirement
+      accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
     ) {
       window.open(
         `${getEndpoint(

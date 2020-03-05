@@ -283,6 +283,7 @@ export default class HasAccess extends React.Component<
             `${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+            '_blank',
           )
         } else {
           this.setState({

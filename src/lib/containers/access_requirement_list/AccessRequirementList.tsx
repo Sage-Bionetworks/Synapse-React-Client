@@ -181,8 +181,6 @@ See Requirements on synapse.org
     }
   }
 
-  console.log(accessRequirements)
-
   const SignedIn = () => {
     if (token) {
       return (
