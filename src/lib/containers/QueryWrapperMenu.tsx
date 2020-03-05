@@ -194,7 +194,10 @@ export default class QueryWrapperMenu extends React.Component<
     }
   }
 
-  public getCurrentSqlFromActiveTab = () => {
+  public getCurrentSqlFromActiveTab = (): {
+    sql: string
+    selectedFacets: FacetColumnValuesRequest[] | undefined
+  } => {
     const { searchParams, menuConfig } = this.props
     const { activeMenuIndices } = this.state
     let facetValue = ''
@@ -212,16 +215,18 @@ export default class QueryWrapperMenu extends React.Component<
         config.facet === facetValueFromSearchParams &&
         activeMenuIndices[0] === i
       if (isSelectedFromURL) {
-        const sql = this.getSqlWithAdditionalClause(
+        const selectedFacets = this.getSelectedFacets(
           isSelectedFromURL,
           config.facet,
           facetValue,
-          config.sql,
         )
-        return sql
+        return { sql: config.sql, selectedFacets }
       }
     }
-    return menuConfig![activeMenuIndices[0]].sql
+    return {
+      sql: menuConfig![activeMenuIndices[0]].sql,
+      selectedFacets: undefined,
+    }
   }
 
   public render() {
@@ -235,8 +240,9 @@ export default class QueryWrapperMenu extends React.Component<
     } = this.props
 
     let sql = ''
+    let selectedFacets = undefined
     if (menuConfig) {
-      sql = this.getCurrentSqlFromActiveTab()
+      ;({ sql, selectedFacets } = this.getCurrentSqlFromActiveTab())
     }
     if (globalQueryCountSql) {
       // globalQueryCountSql takes precendence over menuconfig sql
@@ -255,6 +261,7 @@ export default class QueryWrapperMenu extends React.Component<
               token={token}
               name={name}
               sql={sql}
+              selectedFacets={selectedFacets}
             />
           </h3>
         )}
@@ -348,11 +355,10 @@ export default class QueryWrapperMenu extends React.Component<
       const isSelectedFromURL =
         config.facet !== undefined &&
         config.facet === facetValueFromSearchParams
-      const usedSql = this.getSqlWithAdditionalClause(
+      const selectedFacets = this.getSelectedFacets(
         isSelectedFromURL,
         facet,
         facetValue,
-        sql,
       )
       const partMask = this.getPartMask(facet, hasGroupByInSql)
       const tableLoadingScreen = this.getTableLoadingScreen(
@@ -371,7 +377,8 @@ export default class QueryWrapperMenu extends React.Component<
                 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
               entityId,
               query: {
-                sql: usedSql,
+                sql,
+                selectedFacets,
                 isConsistent,
                 limit: 25,
                 offset: 0,

@@ -9,6 +9,7 @@ import {
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
+import { SelectColumn } from '../utils/synapseTypes'
 
 export type KeyToAlias = {
   key: string
@@ -35,6 +36,7 @@ export type IconOptions = {
 }
 
 export type GenericCardProps = {
+  selectColumns?: SelectColumn[]
   facetAliases?: {}
   iconOptions?: IconOptions
   backgroundColor?: string
@@ -180,6 +182,7 @@ export default class GenericCard extends React.Component<
       genericCardSchema,
       secondaryLabelLimit,
       backgroundColor,
+      selectColumns,
       iconOptions,
       isHeader = false,
       titleLinkConfig,
@@ -213,6 +216,13 @@ export default class GenericCard extends React.Component<
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
+
+      const selectedColumnOrUndefined = selectColumns?.find(
+        el => el.name === columnName,
+      )
+      const isMultiValue =
+        selectedColumnOrUndefined?.columnType === 'STRING_LIST' ||
+        selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
       if (value) {
         const labelLink =
           labelLinkConfig &&
@@ -223,6 +233,14 @@ export default class GenericCard extends React.Component<
         }
         const columnDisplayName =
           facetAliases[columnName] || unCamelCase(columnName)
+        if (isMultiValue) {
+          try {
+            value = JSON.parse(value)
+            value = (value as string[]).join(' , ')
+          } catch (e) {
+            console.error('Error on parsing value for ', value)
+          }
+        }
         const keyValue = [columnDisplayName, value]
         values.push(keyValue)
       }

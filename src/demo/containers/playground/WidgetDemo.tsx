@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
 import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
-import DotPlot from '../../../lib/containers/widgets/themes-plot/ThemesPlot'
+import ThemesPlot from '../../../lib/containers/widgets/themes-plot/ThemesPlot'
 import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
 import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
@@ -46,12 +46,23 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
     xField: 'totalCount',
     yField: 'groupBy',
     groupField: 'consortium',
+    whereClause: 'totalCount is not NULL',
+    colors: {
+      ['CSBC']: 'rgba(64,123,160, 1)',
+      ['PS-ON']: 'rgba(91,176,181,1)'
+    }
   }
+  
   const sideBarPlotProps = {
     entityId: 'syn21649281',
-    xField: 'projects',
+    xField: 'totalCount',
     yField: 'theme',
     groupField: 'consortium',
+    countLabel: 'projects',
+    colors: {
+      ['CSBC']: '#1c76af',
+      ['PS-ON']: '#5bb0b5'
+    }
   }
 
   const dotPlotProps = {
@@ -59,7 +70,13 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
     xField: 'totalCount',
     yField: 'theme',
     groupField: 'groupBy',
+    infoField:  'themeDescription',
     whereClause: "groupBy IN ('publications', 'tools', 'datasets')",
+    markerStyle: {
+      line: 'rgba(0, 0, 0,0.5)',
+      fill: 'rgba(0, 0, 0,0.5)',
+      size: 9
+    }
   }
 
   const plotCallback = ({
@@ -131,13 +148,13 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
         domain={['0', '100']}
         step={1}
       ></RangeSlider>
-      <DotPlot
+      <ThemesPlot
         token={props.token}
         onPointClick={plotCallback}
         topBarPlot={topBarPlotProps}
         sideBarPlot={sideBarPlotProps}
         dotPlot={dotPlotProps}
-      ></DotPlot>
+      ></ThemesPlot>
     </div>
   )
 }
