@@ -35,6 +35,7 @@ import {
   MultipartUploadRequest,
   MultipartUploadStatus,
   OAuthClientPublic,
+  OAuthConsentGrantedResponse,
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
   PaginatedResults,
@@ -1563,6 +1564,23 @@ export const getOAuth2RequestDescription = (
 ): Promise<OIDCAuthorizationRequestDescription> => {
   return doPost(
     '/auth/v1/oauth2/description',
+    oidcAuthRequest,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Check whether user has already granted consent for the given OAuth client, scope, and claims.
+ * Consent persists for one year.
+ */
+export const hasUserAuthorizedOAuthClient = (
+  oidcAuthRequest: OIDCAuthorizationRequest,
+  sessionToken: string | undefined,
+): Promise<OAuthConsentGrantedResponse> => {
+  return doPost(
+    '/auth/v1/oauth2/consentcheck',
     oidcAuthRequest,
     sessionToken,
     undefined,
