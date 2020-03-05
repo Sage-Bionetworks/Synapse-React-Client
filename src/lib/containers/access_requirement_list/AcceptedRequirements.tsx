@@ -7,6 +7,8 @@ import {
   AccessRequirement,
   UserProfile,
   TermsOfUseAccessRequirement,
+  SelfSignAccessRequirement,
+  ManagedACTAccessRequirement,
   AccessApproval,
   ApprovalState,
 } from '../../../lib/utils/synapseTypes/'
@@ -14,11 +16,22 @@ import { SynapseClient } from '../../../lib/utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
 
+export enum ACCESS_REQUIREMENTS_TYPE {
+  SelfSignAccessRequirement = 'Self Sign Access Requirement',
+  TermsOfUseAccessRequirement = 'Terms of Use',
+  ManagedACTAccessRequirement = 'Managed ACT Access Requirement',
+}
+
 export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
   token: string | undefined
   wikiPage: WikiPageKey | undefined
-  accessRequirement: AccessRequirement | TermsOfUseAccessRequirement
+  accessRequirement:
+    | AccessRequirement
+    | TermsOfUseAccessRequirement
+    | SelfSignAccessRequirement
+    | ManagedACTAccessRequirement
+  accessRequirementText: string
   accessRequirementStatus: AccessRequirementStatus | undefined
   onHide?: Function
 }
@@ -28,6 +41,7 @@ export default function AcceptedRequirements({
   token,
   wikiPage,
   accessRequirement,
+  accessRequirementText,
   accessRequirementStatus,
   onHide,
 }: AcceptedRequirementsProps) {
@@ -45,19 +59,26 @@ export default function AcceptedRequirements({
   }, [propsIsApproved])
 
   const onAcceptClicked = () => {
-    if (!isApproved) {
-      const accessApprovalRequest: AccessApproval = {
-        requirementId: accessRequirement?.id!,
-        submitterId: user?.ownerId!,
-        accessorId: user?.ownerId!,
-        state: ApprovalState.APPROVED,
-      }
+    if (
+      accessRequirementText ===
+      ACCESS_REQUIREMENTS_TYPE.ManagedACTAccessRequirement
+    ) {
+      console.log('Input Link Here')
+    } else {
+      if (!isApproved) {
+        const accessApprovalRequest: AccessApproval = {
+          requirementId: accessRequirement?.id!,
+          submitterId: user?.ownerId!,
+          accessorId: user?.ownerId!,
+          state: ApprovalState.APPROVED,
+        }
 
-      SynapseClient.postAccessApproval(token, accessApprovalRequest)
-        .then(_ => {
-          setIsApproved(true)
-        })
-        .catch(err => console.error('Error on post access approval: ', err))
+        SynapseClient.postAccessApproval(token, accessApprovalRequest)
+          .then(_ => {
+            setIsApproved(true)
+          })
+          .catch(err => console.error('Error on post access approval: ', err))
+      }
     }
   }
 
@@ -70,27 +91,25 @@ export default function AcceptedRequirements({
         {accessRequirement.concreteType ===
           SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
         termsOfUse ? (
-          <div>
-            <MarkdownSynapse markdown={termsOfUse} />
-          </div>
+          <MarkdownSynapse markdown={termsOfUse} token={token} />
         ) : (
-          <div>
-            <MarkdownSynapse
-              wikiId={wikiPage?.wikiPageId}
-              ownerId={wikiPage?.ownerObjectId}
-              objectType={wikiPage?.ownerObjectType}
-            />
-          </div>
+          <MarkdownSynapse
+            token={token}
+            wikiId={wikiPage?.wikiPageId}
+            ownerId={wikiPage?.ownerObjectId}
+            objectType={wikiPage?.ownerObjectType}
+          />
         )}
       </div>
     )
   }
+
   const RenderAcceptedRequirements = () => {
     if (isApproved) {
       return (
         <div>
           <p>
-            You have accepted Terms of Use.
+            You have accepted {accessRequirementText}.
             <button
               className="view-terms-button bold-text"
               onClick={() => {
@@ -123,7 +142,7 @@ export default function AcceptedRequirements({
       <div className={`button-container ${isApproved ? `hide` : `default`}`}>
         <div className="accept-button-container">
           <button className="accept-button" onClick={onAcceptClicked}>
-            Accept Terms of Use
+            Accept {accessRequirementText}
           </button>
         </div>
         <div className="not-accept-button-container">

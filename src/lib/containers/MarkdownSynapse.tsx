@@ -673,6 +673,7 @@ export default class MarkdownSynapse extends React.Component<
 
   public async componentDidMount() {
     if (this.state.data.markdown) {
+      this.setState({ isLoading: false })
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined

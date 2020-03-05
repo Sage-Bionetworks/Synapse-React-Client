@@ -7,6 +7,7 @@ import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
+import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import { UserProfile } from '../../utils/synapseTypes'
 import useGetEntityHeaders, {
   UseGetEntityHeaderProps,
@@ -25,6 +26,7 @@ export type AccessRequirementListProps = {
 export enum SUPPORTED_ACCESS_REQUIREMENTS {
   SelfSignAccessRequirement = 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
   TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+  ManagedACTAccessRequirement = 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
 }
 
 export const checkUnSupportedRequirement = (
@@ -56,7 +58,6 @@ export default function AccessRequirementList({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile>()
-
   const entityHeaderProps: UseGetEntityHeaderProps = {
     references: [
       {
@@ -69,13 +70,45 @@ export default function AccessRequirementList({
   const entityInformation = useGetEntityHeaders(entityHeaderProps)
 
   useEffect(() => {
+    const sortAccessRequirementByCompletion = async (
+      requirements: Array<AccessRequirement>,
+    ): Promise<Array<AccessRequirement>> => {
+      const statuses = requirements.map(req => {
+        return SynapseClient.getAccessRequirementStatus(token, req.id)
+      })
+
+      const accessRequirementStatuses = await Promise.all(statuses)
+
+      const sortOrder = accessRequirementStatuses
+        .sort((requirementA, requirementB) => {
+          return (
+            Number(requirementB.isApproved) - Number(requirementA.isApproved)
+          )
+        })
+        .map(status => {
+          return parseInt(status.accessRequirementId)
+        })
+
+      requirements = requirements.sort((requirementA, requirementB) => {
+        return (
+          sortOrder.indexOf(requirementA.id) -
+          sortOrder.indexOf(requirementB.id)
+        )
+      })
+
+      return requirements
+    }
+
     const getAccessRequirements = async () => {
       setIsLoading(true)
 
       try {
         if (!accessRequirementFromProps) {
-          getAllAccessRequirements(token, entityId).then(result => {
-            setAccessRequirements(result)
+          getAllAccessRequirements(token, entityId).then(async requirements => {
+            const sortedAccessRequirements = await sortAccessRequirementByCompletion(
+              requirements,
+            )
+            setAccessRequirements(sortedAccessRequirements)
           })
         }
 
@@ -90,7 +123,6 @@ export default function AccessRequirementList({
         setIsLoading(false)
       }
     }
-
     getAccessRequirements()
   }, [token, entityId, accessRequirementFromProps])
 
@@ -125,6 +157,16 @@ export default function AccessRequirementList({
             onHide={onHide}
           />
         )
+      case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
+        return (
+          <ManagedACTAccessRequirementComponent
+            //@ts-ignore
+            accessRequirement={accessRequirement}
+            token={token}
+            user={user}
+            onHide={onHide}
+          />
+        )
       default:
         // case not supported yet, go to synapse
         return (
@@ -138,6 +180,8 @@ See Requirements on synapse.org
         )
     }
   }
+
+  console.log(accessRequirements)
 
   const SignedIn = () => {
     if (token) {

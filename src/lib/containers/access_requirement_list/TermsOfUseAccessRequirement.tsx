@@ -28,6 +28,7 @@ export default function TermsOfUseAccessRequirementComponent({
     setTermsOfUseRequirementStatus,
   ] = useState<AccessRequirementStatus | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const accessRequirementText = 'Terms of Use'
 
   useEffect(() => {
     const getTermsOfUseData = async () => {
@@ -67,6 +68,7 @@ export default function TermsOfUseAccessRequirementComponent({
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
         accessRequirementStatus={termsOfUseRequirementStatus}
+        accessRequirementText={accessRequirementText}
         onHide={onHide}
       />
     </div>

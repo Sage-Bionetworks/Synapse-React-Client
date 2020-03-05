@@ -10,10 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../utils'
-// import {
-//   BackendDestinationEnum,
-//   getEndpoint,
-// } from '../utils/functions/getEndpoint'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../utils/functions/getEndpoint'
 import {
   FileHandle,
   RestrictableObjectType,
@@ -268,6 +268,32 @@ export default class HasAccess extends React.Component<
     }
   }
 
+  refresh = () => {
+    this.getRestrictionInformation()
+    this.getFileEntityFileHandle()
+  }
+
+  handleGetAccess = () => {
+    const { token, entityId } = this.props
+    const { displayAccessRequirement } = this.state
+    SynapseClient.getAllAccessRequirements(token, entityId).then(
+      requirements => {
+        if (checkUnSupportedRequirement(requirements)) {
+          window.open(
+            `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+          )
+        } else {
+          this.setState({
+            accessRequirements: requirements,
+            displayAccessRequirement: !displayAccessRequirement,
+          })
+        }
+      },
+    )
+  }
+
   // Show Access Requirements
   renderARsLink = () => {
     const { entityId, token } = this.props
@@ -301,36 +327,20 @@ export default class HasAccess extends React.Component<
             marginLeft: '16px',
             color: 'rgb(77, 85, 144)',
           }}
-          onClick={() => {
-            SynapseClient.getAllAccessRequirements(token, entityId).then(
-              requirements => {
-                if (checkUnSupportedRequirement(requirements)) {
-                  window.open(
-                    `https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-                  )
-                } else {
-                  this.setState({
-                    accessRequirements: requirements,
-                    displayAccessRequirement: !displayAccessRequirement,
-                  })
-                }
-              },
-            )
-          }}
+          onClick={this.handleGetAccess}
         >
           {linkText}
         </button>
         {displayAccessRequirement && (
-          <div>
-            <AccessRequirementList
-              token={token}
-              entityId={entityId}
-              accessRequirementFromProps={accessRequirements}
-              onHide={() => {
-                window.location.href = 'http://localhost:3000/'
-              }}
-            />
-          </div>
+          <AccessRequirementList
+            token={token}
+            entityId={entityId}
+            accessRequirementFromProps={accessRequirements}
+            onHide={() => {
+              this.setState({ displayAccessRequirement: false })
+              this.refresh()
+            }}
+          />
         )}
       </>
     )

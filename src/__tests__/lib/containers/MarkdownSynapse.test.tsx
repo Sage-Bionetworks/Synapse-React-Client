@@ -202,7 +202,7 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent({
         markdown: '# header [text](https://synapse.org)',
       })
-      const expectedValue = `<div class="markdown"><span class="spinner"></span><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1> 
+      const expectedValue = `<div class="markdown"><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1> 
  </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
@@ -210,7 +210,7 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent({
         markdown: 'some more free \n# header\nloose text',
       })
-      const expectedValue = `<div class="markdown"><span class="spinner"></span><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
+      const expectedValue = `<div class="markdown"><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
     it('works with two inline widgets', async () => {
@@ -218,7 +218,7 @@ describe('it performs all functionality', () => {
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
-      const expectedValue = `<div class="markdown"><span class="spinner"></span><span><p><a href="#/Help/How It Works" class="SRC-standard-button-shape  SRC-primary-button " role="button">sometext</a><a href="#/Apply" class="SRC-standard-button-shape  SRC-primary-button " role="button">APPLY</a></p> 
+      const expectedValue = `<div class="markdown"><span><p><a href="#/Help/How It Works" class="SRC-standard-button-shape  SRC-primary-button " role="button">sometext</a><a href="#/Apply" class="SRC-standard-button-shape  SRC-primary-button " role="button">APPLY</a></p> 
  </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })

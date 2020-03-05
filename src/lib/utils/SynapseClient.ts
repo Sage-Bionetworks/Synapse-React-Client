@@ -490,7 +490,7 @@ export const getFullQueryTableResults = async (
       ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
     )
 
-    isDone =  response.queryResult.queryResults.rows.length < maxPageSize
+    isDone = response.queryResult.queryResults.rows.length < maxPageSize
   }
   return data
 }
