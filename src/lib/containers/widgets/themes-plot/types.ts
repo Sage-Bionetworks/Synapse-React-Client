@@ -1,6 +1,7 @@
 export type GraphItem = {
     x: number
     y: string
+    info?: string
     group: string
   }
 
@@ -17,6 +18,7 @@ export type GraphItem = {
     xField: string
     yField: string
     groupField: string
+    countLabel?: string
     whereClause?: string
     infoField?: string
     colors?: BarPlotColors

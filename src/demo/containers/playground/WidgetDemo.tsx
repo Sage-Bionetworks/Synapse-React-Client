@@ -46,6 +46,7 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
     xField: 'totalCount',
     yField: 'groupBy',
     groupField: 'consortium',
+    whereClause: 'totalCount is not NULL',
     colors: {
       ['CSBC']: 'rgba(64,123,160, 1)',
       ['PS-ON']: 'rgba(91,176,181,1)'
@@ -57,6 +58,7 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
     xField: 'totalCount',
     yField: 'theme',
     groupField: 'consortium',
+    countLabel: 'projects',
     colors: {
       ['CSBC']: '#1c76af',
       ['PS-ON']: '#5bb0b5'
@@ -68,10 +70,11 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
     xField: 'totalCount',
     yField: 'theme',
     groupField: 'groupBy',
+    infoField:  'themeDescription',
     whereClause: "groupBy IN ('publications', 'tools', 'datasets')",
     markerStyle: {
-      line: '#000',
-      fill: '#000',
+      line: 'rgba(0, 0, 0,0.5)',
+      fill: 'rgba(0, 0, 0,0.5)',
       size: 9
     }
   }

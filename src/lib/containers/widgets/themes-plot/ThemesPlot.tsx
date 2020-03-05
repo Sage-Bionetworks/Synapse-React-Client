@@ -12,12 +12,12 @@ import {
   RowSet,
 } from '../../../utils/synapseTypes'
 import { resultToJson } from '../../../utils/functions/sqlFunctions'
-import { GraphItem, PlotProps} from './types'
+import { GraphItem, PlotProps, BarPlotColors } from './types'
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
 
-type ThemesPlotProps = {
+export type ThemesPlotProps = {
   token?: string
   onPointClick: ({
     facetValue,
@@ -102,7 +102,6 @@ const barLayoutConfig: Partial<PlotlyTyped.Layout> = {
   },
 }
 
-
 const TableCellStyle: React.CSSProperties = {
   boxSizing: 'border-box',
   flex: 1,
@@ -114,9 +113,12 @@ const TableCellStyle: React.CSSProperties = {
 
 function fetchData(
   token: string,
-  { xField, yField, groupField, entityId, whereClause }: PlotProps,
+  { xField, yField, groupField, entityId, whereClause, infoField }: PlotProps,
 ): Promise<RowSet> {
-  const sql = `SELECT ${xField} as "x", ${yField} as "y", ${groupField} as "group" FROM ${entityId} ${
+  //renderTopBarLegend
+  const sql = `SELECT ${xField} as "x", ${yField} as "y", ${
+    infoField ? infoField + ' as "info", ' : ''
+  }   ${groupField} as "group" FROM ${entityId} ${
     whereClause ? ' WHERE ' + whereClause : ''
   }`
 
@@ -139,7 +141,6 @@ function fetchData(
 function getTotalsByY(data: GraphItem[]): { y: string; count: number }[] {
   const resultObject = data.reduce((res, obj) => {
     res[obj.y] = (obj.y in res ? Number(res[obj.y]) : 0) + Number(obj.x)
-
     return res
   }, {})
   const result = []
@@ -147,6 +148,64 @@ function getTotalsByY(data: GraphItem[]): { y: string; count: number }[] {
     result.push({ y: property, count: resultObject[property] as number })
   }
   return result
+}
+
+const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent) => {
+  const pointData = e.points[0].data
+  return { facetValue: pointData.y[0], type: pointData.name }
+}
+
+const renderTopBarLegend = (
+  colors: BarPlotColors | undefined,
+  xLabels: string[],
+): JSX.Element => (
+  <div
+    style={{
+      textAlign: 'right',
+
+      float: 'right',
+      marginTop: '8px',
+    }}
+  >
+    {xLabels.map((item, i) => (
+      <div style={{ float: 'left' }} key={`topBar_${i}`}>
+        <div
+          key="topBar_label"
+          style={{
+            width: '5px',
+            height: '15px',
+            float: 'left',
+            marginRight: '7px',
+            backgroundColor: `${colors ? colors[item] : 'transparent'}`,
+          }}
+        ></div>
+        <div
+          key="topBar_graph"
+          style={{
+            paddingRight: '30px',
+            height: '15px',
+            lineHeight: '15px',
+            float: 'left',
+          }}
+        >
+          {item}
+        </div>{' '}
+      </div>
+    ))}
+  </div>
+)
+
+const fadeColors = (colors: { [key: string]: string }, opacity: string) => {
+  for (let key in colors) {
+    colors[key] = colors[key]
+      .replace(',1)', `, ${opacity})`)
+      .replace(',1.0)', `, ${opacity})`)
+  }
+  return colors
+}
+
+const getTooltip = (data: GraphItem[], filter: string) => {
+  return _.first(data.filter(item => item.y === filter).map(item => item.info))
 }
 
 const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
@@ -193,65 +252,10 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
     xLabelsForTopBarPlot = _.uniq(topBarPlotData.map(item => item.group))
   }
 
-
-  const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent) => {
-    const pointData = e.points[0].data
-    return { facetValue: pointData.y[0], type: pointData.name }
-  }
-
-  const renderTopBarLegend = (
-    colors: { [key: string]: string },
-    colorLabels: string[],
-  ): JSX.Element => (
-    <div
-      style={{
-        textAlign: 'right',
-
-        float: 'right',
-        marginTop: '8px',
-      }}
-    >
-      {xLabelsForTopBarPlot.map((item, i) => (
-        <div style={{ float: 'left' }} key={`topBar_${i}`}>
-          <div key="topBar_label"
-            style={{
-              width: '5px',
-              height: '15px',
-              float: 'left',
-              marginRight: '7px',
-              backgroundColor: `${
-                topBarPlot.colors ? topBarPlot.colors[item] : 'transparent'
-              }`,
-            }}
-          ></div>
-          <div key="topBar_graph"
-            style={{
-              paddingRight: '30px',
-              height: '15px',
-              lineHeight: '15px',
-              float: 'left',
-            }}
-          >
-            {item}
-          </div>{' '}
-        </div>
-      ))}
-    </div>
-  )
-
-  const fadeColors = (colors: { [key: string]: string }, opacity: string) => {
-    for (let key in colors) {
-      colors[key] = colors[key]
-        .replace(',1)', `, ${opacity})`)
-        .replace(',1.0)', `, ${opacity})`)
-    }
-    return colors
-  }
-
   return (
     <>
       <div style={{ width: '100%' }}>
-        {!isLoaded && <span className="spinner"/>}
+        {!isLoaded && <span className="spinner" />}
         {isLoaded && (
           <>
             <div style={{ textAlign: 'right', width: '300px', float: 'right' }}>
@@ -311,14 +315,14 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                     <td style={{ height: '60px', padding: '10px' }}>
                       <ElementWithTooltip
                         idForToolTip={`plotDiv1_${+i}`}
-                        tooltipText={`${label} `}
+                        tooltipText={`${getTooltip(dotPlotQueryData, label)} `}
                         tooltipVisualProps={tooltipProps}
                         callbackFn={() => _.noop}
                       >
                         <div>
                           <span>{label}</span>
                           <br />
-                          {totalsByDotPlotY[i].count} {sideBarPlot.xField}
+                          {totalsByDotPlotY[i].count} {sideBarPlot.countLabel}
                           <br />
                           <BarPlot
                             style={{ width: '100%' }}
