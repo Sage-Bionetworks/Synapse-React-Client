@@ -149,6 +149,7 @@ export class CardContainer extends React.Component<
             isHeader,
             secondaryLabelLimit,
             data: rowData.values,
+            selectColumns: data.selectColumns,
             ...rest,
           }
           return this.renderCard(propsForCard, type)
