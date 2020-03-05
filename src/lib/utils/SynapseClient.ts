@@ -1557,15 +1557,15 @@ export const getEvaluationSubmissions = (
 
 /**
  * Get user-friendly OAuth2 request information (to present to the user so they can choose if they want to give consent).
+ * http://rest-docs.synapse.org/rest/POST/oauth2/description.html
  */
 export const getOAuth2RequestDescription = (
-  oidcAuthRequest: OIDCAuthorizationRequest,
-  sessionToken: string,
+  oidcAuthRequest: OIDCAuthorizationRequest
 ): Promise<OIDCAuthorizationRequestDescription> => {
   return doPost(
     '/auth/v1/oauth2/description',
     oidcAuthRequest,
-    sessionToken,
+    undefined, // sessionToken: this is not an authenticated call
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
