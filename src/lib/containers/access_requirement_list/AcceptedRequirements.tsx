@@ -15,6 +15,10 @@ import {
 import { SynapseClient } from '../../../lib/utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 
 export enum ACCESS_REQUIREMENTS_TYPE {
   SelfSignAccessRequirement = 'Self Sign Access Requirement',
@@ -50,20 +54,35 @@ export default function AcceptedRequirements({
   const [isApproved, setIsApproved] = useState<boolean | undefined>(
     propsIsApproved,
   )
+  const [buttonText, setButtonText] = useState<string>()
 
   useEffect(() => {
     const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
       setIsApproved(propsIsApproved)
     }
     setIsApprovedValueFromProps(propsIsApproved)
-  }, [propsIsApproved])
+
+    if (
+      accessRequirementText ===
+      ACCESS_REQUIREMENTS_TYPE.ManagedACTAccessRequirement
+    ) {
+      setButtonText(`Get ${accessRequirementText} via synapse.org`)
+    } else {
+      setButtonText(`Accept ${accessRequirementText}`)
+    }
+  }, [propsIsApproved, accessRequirementText])
 
   const onAcceptClicked = () => {
     if (
       accessRequirementText ===
       ACCESS_REQUIREMENTS_TYPE.ManagedACTAccessRequirement
     ) {
-      console.log('Input Link Here')
+      window.open(
+        `${getEndpoint(
+          BackendDestinationEnum.PORTAL_ENDPOINT,
+        )}#!AccessRequirement:AR_ID=${accessRequirement.id}`,
+      )
+      window.location.reload()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
@@ -142,7 +161,7 @@ export default function AcceptedRequirements({
       <div className={`button-container ${isApproved ? `hide` : `default`}`}>
         <div className="accept-button-container">
           <button className="accept-button" onClick={onAcceptClicked}>
-            Accept {accessRequirementText}
+            {buttonText}
           </button>
         </div>
         <div className="not-accept-button-container">

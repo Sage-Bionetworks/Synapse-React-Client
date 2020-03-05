@@ -48,6 +48,7 @@ export default function ManagedACTAccessRequirementComponent({
 
     getManagedACTAccessData()
   }, [token, accessRequirement])
+
   return (
     <AcceptedRequirements
       accessRequirement={accessRequirement}
