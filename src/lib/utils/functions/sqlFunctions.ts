@@ -1,5 +1,6 @@
 import { lexer, parser } from 'sql-parser'
 import { SYNAPSE_REGX } from '../../containers/GenericCard'
+import { SelectColumn, Row } from '../synapseTypes'
 
 export type KeyValue = {
   [index: string]: string
@@ -91,4 +92,21 @@ export const parseEntityIdFromSqlStatement = (sql:string): string => {
   const matches = sql.match(/(from)\s+(syn)\d+/gi)
   return  (matches && matches[0])? matches[0].substr(5).trim() : ''
 }
+
+export const resultToJson = <T>(  
+  headerColumns: SelectColumn[],
+     rowColumns: Row[]
+   ): T[] => {
+     const result: T[] = [];
+     const rows = rowColumns.map(row => row.values);
+     const headers = headerColumns.map(column => column.name);
+     rows.forEach((row, index) => {
+       result[index] = {} as T;
+       row.forEach((text, cellIndex) => {
+         result[index][headers[cellIndex]] = text;
+       });
+     });
+     return result;
+   };
+  
 

@@ -11,7 +11,10 @@ import { unCamelCase } from '../utils/functions/unCamelCase'
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
-import { isGroupByInSql } from '../utils/functions/sqlFunctions'
+import {
+  isGroupByInSql,
+  insertConditionsFromSearchParams,
+} from '../utils/functions/sqlFunctions'
 import { FacetColumnValuesRequest } from '../utils/synapseTypes/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -109,6 +112,7 @@ export default class QueryWrapperMenu extends React.Component<
     this.getUnitDescription = this.getUnitDescription.bind(this)
     this.getPartMask = this.getPartMask.bind(this)
     this.getSelectedFacets = this.getSelectedFacets.bind(this)
+    this.getSqlWithAdditionalClause = this.getSqlWithAdditionalClause.bind(this)
     this.getTableLoadingScreen = this.getTableLoadingScreen.bind(this)
   }
 
@@ -190,6 +194,41 @@ export default class QueryWrapperMenu extends React.Component<
     }
   }
 
+  public getCurrentSqlFromActiveTab = (): {
+    sql: string
+    selectedFacets: FacetColumnValuesRequest[] | undefined
+  } => {
+    const { searchParams, menuConfig } = this.props
+    const { activeMenuIndices } = this.state
+    let facetValue = ''
+    let facetValueFromSearchParams = ''
+    if (searchParams) {
+      ;({
+        facetValue = '',
+        facet: facetValueFromSearchParams = '',
+      } = searchParams)
+    }
+    for (let i = 0; i < menuConfig!.length; i++) {
+      const config = menuConfig![i]
+      const isSelectedFromURL =
+        config.facet !== undefined &&
+        config.facet === facetValueFromSearchParams &&
+        activeMenuIndices[0] === i
+      if (isSelectedFromURL) {
+        const selectedFacets = this.getSelectedFacets(
+          isSelectedFromURL,
+          config.facet,
+          facetValue,
+        )
+        return { sql: config.sql, selectedFacets }
+      }
+    }
+    return {
+      sql: menuConfig![activeMenuIndices[0]].sql,
+      selectedFacets: undefined,
+    }
+  }
+
   public render() {
     const {
       stackedBarChartConfiguration,
@@ -199,10 +238,11 @@ export default class QueryWrapperMenu extends React.Component<
       globalQueryCountSql = '',
       entityId,
     } = this.props
-    const { activeMenuIndices } = this.state
+
     let sql = ''
+    let selectedFacets = undefined
     if (menuConfig) {
-      sql = menuConfig[activeMenuIndices[0]].sql
+      ;({ sql, selectedFacets } = this.getCurrentSqlFromActiveTab())
     }
     if (globalQueryCountSql) {
       // globalQueryCountSql takes precendence over menuconfig sql
@@ -221,6 +261,7 @@ export default class QueryWrapperMenu extends React.Component<
               token={token}
               name={name}
               sql={sql}
+              selectedFacets={selectedFacets}
             />
           </h3>
         )}
@@ -433,6 +474,22 @@ export default class QueryWrapperMenu extends React.Component<
       ]
     }
     return []
+  }
+
+  public getSqlWithAdditionalClause(
+    isSelected: boolean,
+    facet: string | undefined,
+    facetValue: string | undefined,
+    sql: string,
+  ): string {
+    if (isSelected && facet && facetValue && this.props.searchParams) {
+      return insertConditionsFromSearchParams(
+        { [facet]: facetValue },
+        sql,
+        'LIKE',
+      )
+    }
+    return sql
   }
 
   public getTableLoadingScreen(
