@@ -35,6 +35,7 @@ import {
   MultipartUploadRequest,
   MultipartUploadStatus,
   OAuthClientPublic,
+  OAuthConsentGrantedResponse,
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
   PaginatedResults,
@@ -1595,13 +1596,30 @@ export const getEvaluationSubmissions = (
 
 /**
  * Get user-friendly OAuth2 request information (to present to the user so they can choose if they want to give consent).
+ * http://rest-docs.synapse.org/rest/POST/oauth2/description.html
  */
 export const getOAuth2RequestDescription = (
-  oidcAuthRequest: OIDCAuthorizationRequest,
-  sessionToken: string | undefined,
+  oidcAuthRequest: OIDCAuthorizationRequest
 ): Promise<OIDCAuthorizationRequestDescription> => {
   return doPost(
     '/auth/v1/oauth2/description',
+    oidcAuthRequest,
+    undefined, // sessionToken: this is not an authenticated call
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Check whether user has already granted consent for the given OAuth client, scope, and claims.
+ * Consent persists for one year.
+ */
+export const hasUserAuthorizedOAuthClient = (
+  oidcAuthRequest: OIDCAuthorizationRequest,
+  sessionToken: string,
+): Promise<OAuthConsentGrantedResponse> => {
+  return doPost(
+    '/auth/v1/oauth2/consentcheck',
     oidcAuthRequest,
     sessionToken,
     undefined,

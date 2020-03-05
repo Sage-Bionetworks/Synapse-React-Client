@@ -836,8 +836,13 @@ export default class SynapseTable extends React.Component<
     const userColumnIndicies = this.getColumnIndiciesWithType('USERID')
     const dateColumnIndicies = this.getColumnIndiciesWithType('DATE')
     const dateListColumnIndicies = this.getColumnIndiciesWithType('DATE_LIST')
-    const booleanListColumnIndicies = this.getColumnIndiciesWithType('BOOLEAN_LIST')
-    const otherListColumnIndicies = this.getColumnIndiciesWithType('STRING_LIST', 'INTEGER_LIST')
+    const booleanListColumnIndicies = this.getColumnIndiciesWithType(
+      'BOOLEAN_LIST',
+    )
+    const otherListColumnIndicies = this.getColumnIndiciesWithType(
+      'STRING_LIST',
+      'INTEGER_LIST',
+    )
     const isColumnSelectedLen = isColumnSelected.length
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
@@ -910,7 +915,11 @@ export default class SynapseTable extends React.Component<
         const rowSynapseId = `syn${row.rowId}`
         rowContent.push(
           <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
-            <HasAccess entityId={rowSynapseId} entityVersionNumber={row.versionNumber?.toString()} token={token}></HasAccess>
+            <HasAccess
+              entityId={rowSynapseId}
+              entityVersionNumber={row.versionNumber?.toString()}
+              token={token}
+            ></HasAccess>
           </td>,
         )
       }
@@ -979,36 +988,44 @@ export default class SynapseTable extends React.Component<
       )
     }
     if (dateListColumnIndicies.includes(colIndex)) {
-      const jsonData:number[] = JSON.parse(columnValue)
-      return jsonData.map(
-        (val: number, index: number) => {
-          return <span className={isBold}>
-            {new Date(val).toLocaleString()}{index !== jsonData.length-1 ? ', ' : ''}
+      const jsonData: number[] = JSON.parse(columnValue)
+      return jsonData.map((val: number, index: number) => {
+        return (
+          <span className={isBold}>
+            {new Date(val).toLocaleString()}
+            {index !== jsonData.length - 1 ? ', ' : ''}
           </span>
+        )
       })
     }
     if (booleanListColumnIndicies.includes(colIndex)) {
-      const jsonData:boolean[] = JSON.parse(columnValue)
-      return jsonData.map(
-        (val: boolean, index: number) => {
-          return <span className={isBold}>
-            {val ? 'true' : 'false'}{index !== jsonData.length-1 ? ', ' : ''}
+      const jsonData: boolean[] = JSON.parse(columnValue)
+      return jsonData.map((val: boolean, index: number) => {
+        return (
+          <span className={isBold}>
+            {val ? 'true' : 'false'}
+            {index !== jsonData.length - 1 ? ', ' : ''}
           </span>
+        )
       })
     }
     if (otherListColumnIndicies.includes(colIndex)) {
-      const jsonData:string[] = JSON.parse(columnValue)
-      return jsonData.map(
-        (val: string, index: number) => {
-          return <span className={isBold}>
-            {val}{index !== jsonData.length-1 ? ', ' : ''}
+      const jsonData: string[] = JSON.parse(columnValue)
+      return jsonData.map((val: string, index: number) => {
+        return (
+          <span className={isBold}>
+            {val}
+            {index !== jsonData.length - 1 ? ', ' : ''}
           </span>
+        )
       })
     }
     if (dateColumnIndicies.includes(colIndex)) {
-      return <p className={isBold}>
+      return (
+        <p className={isBold}>
           {new Date(Number(columnValue)).toLocaleString()}
         </p>
+      )
     } else if (
       userColumnIndicies.includes(colIndex) &&
       Object.prototype.hasOwnProperty.call(mapUserIdToHeader, columnValue)
