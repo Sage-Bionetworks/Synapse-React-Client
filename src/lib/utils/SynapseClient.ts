@@ -1560,7 +1560,7 @@ export const getEvaluationSubmissions = (
  */
 export const getOAuth2RequestDescription = (
   oidcAuthRequest: OIDCAuthorizationRequest,
-  sessionToken: string | undefined,
+  sessionToken: string,
 ): Promise<OIDCAuthorizationRequestDescription> => {
   return doPost(
     '/auth/v1/oauth2/description',
@@ -1577,7 +1577,7 @@ export const getOAuth2RequestDescription = (
  */
 export const hasUserAuthorizedOAuthClient = (
   oidcAuthRequest: OIDCAuthorizationRequest,
-  sessionToken: string | undefined,
+  sessionToken: string,
 ): Promise<OAuthConsentGrantedResponse> => {
   return doPost(
     '/auth/v1/oauth2/consentcheck',
