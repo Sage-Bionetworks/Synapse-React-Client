@@ -12,7 +12,7 @@ import {
   RowSet,
 } from '../../../utils/synapseTypes'
 import { resultToJson } from '../../../utils/functions/sqlFunctions'
-import { GraphItem, PlotProps, BarPlotColors } from './types'
+import { GraphItem, PlotProps, BarPlotColors, ClickCallbackParams  } from './types'
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
@@ -22,10 +22,11 @@ export type ThemesPlotProps = {
   onPointClick: ({
     facetValue,
     type,
-  }: {
-    facetValue: any
-    type: string
-  }) => void
+  }: ClickCallbackParams) => void
+  onTopBarClick: ({
+    facetValue,
+    type,
+  }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
@@ -194,6 +195,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
   const [topBarPlotData, setTopBarQueryData] = useState<GraphItem[]>([])
   const [sideBarPlotData, setSideBarQueryData] = useState<GraphItem[]>([])
+  
   useEffect(() => {
     const dotPlotData = fetchData(token!, dotPlot)
     const topBarPlotData = fetchData(token!, topBarPlot)
@@ -208,6 +210,8 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
       .catch(err => {
         throw err
       })
+      return () => {
+      };
   }, [token, dotPlot, topBarPlot, sideBarPlot])
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
@@ -266,6 +270,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                   isTop={true}
                   label={item.y}
                   xMax={item.count}
+                  onClick={(e: any) => onPointClick(getClickTargetData(e))}
                   colors={
                     i % 2 === 0
                       ? topBarPlot.colors

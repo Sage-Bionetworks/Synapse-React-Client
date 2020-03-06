@@ -80,6 +80,7 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
   colors,
   plotStyle = {backgroundColor: 'transparent'},
   style = { width: '100%', height: '100%' },
+  onClick
 }: BarPlotProps) => {
   return (
     <Plot
@@ -91,6 +92,7 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
       })}
       config={optionsConfig}
       data={getBarPlotDataPoints(plotData, label, colors)}
+      onClick={(e: any) => onClick? onClick(e): _.noop}
     />
   )
 }

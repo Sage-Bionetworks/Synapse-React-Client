@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
 import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
 import ThemesPlot from '../../../lib/containers/widgets/themes-plot/ThemesPlot'
-import { PlotProps} from '../../../lib/containers/widgets/themes-plot/types'
+import { PlotProps, ClickCallbackParams} from '../../../lib/containers/widgets/themes-plot/types'
 import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
 import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
@@ -92,12 +92,10 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
   const plotCallback = ({
     facetValue,
     type,
-  }: {
-    facetValue: string
-    type: string
-  }) => {
+  }: ClickCallbackParams) => {
     alert(`facetValue: ${facetValue} type: ${type}`)
   }
+
   return (
     <div className="container">
       <div style={{ fontWeight: 'bold' }}></div>
@@ -161,6 +159,7 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
       <ThemesPlot
         token={props.token}
         onPointClick={plotCallback}
+        onTopBarClick={plotCallback}
         topBarPlot={topBarPlotProps}
         sideBarPlot={sideBarPlotProps}
         dotPlot={dotPlotProps}
