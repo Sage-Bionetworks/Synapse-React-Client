@@ -53,7 +53,7 @@ describe('it works', () => {
     expect(tree).toBeDefined()
   })
 
-  // TODO: Fix this test
+  // Michael-TODO: Fix this test
   it.skip('calls synapse with query count part mask', async () => {
     const { wrapper } = await createMountedComponent(props)
     expect(wrapper.find('.SRC-boldText').text()).toEqual(
