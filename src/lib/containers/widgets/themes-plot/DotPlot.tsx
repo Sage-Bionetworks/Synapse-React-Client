@@ -2,7 +2,7 @@ import React, { FunctionComponent/*, useState , useEffect */ } from 'react' // i
 import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem, MarkerStyle} from './types'
+import { GraphItem, PlotStyle, Dictionary} from './types'
 import _ from 'lodash-es'
 const Plot = createPlotlyComponent(Plotly)
 
@@ -16,7 +16,8 @@ export type DotPlotProps = {
   isLegend?: boolean,
   isXAxis?: boolean,
   xMax?: number,
-  markerStyle?: MarkerStyle,
+  plotStyle?: PlotStyle,
+  markerSymbols?: Dictionary
   onClick?: Function
 }
 
@@ -25,6 +26,7 @@ type LayoutOptions = {
   isLegend: boolean
   isXAxis: boolean
   maxValue?: number
+  backgroundColor?: string
 }
 
 function getLayout(
@@ -34,6 +36,9 @@ function getLayout(
   const result = _.cloneDeep(dotPlotLayoutConfig)
   if (!layoutOptions) {
     return result
+  }
+  if (layoutOptions.backgroundColor) {
+    result.plot_bgcolor = layoutOptions.backgroundColor
   }
   result.yaxis!.showticklabels = false
   result.xaxis!.range = [-5, layoutOptions.maxValue! + 30]
@@ -91,14 +96,15 @@ function createArrayOfGroupValues(
 
 function getPlotDataPoints(
   graphItems: GraphItem[],
-  markerStyle: MarkerStyle,
+  plotStyle: PlotStyle,
   ySorted?: string[],
+  markerSymbols?: Dictionary
 ): any[] {
   const isFakeData = ySorted === undefined
   var groups = _.uniq(graphItems.map(item => item.group))
   let data: any = []
-  let symbols = [
-    'circle',
+  let defaultSymbols = [
+    'y-down',
     'triangle-up',
     'cross-thin-open',
     'triangle-up-open-dot',
@@ -122,13 +128,14 @@ function getPlotDataPoints(
       mode: 'markers',
       name: group,
       marker: {
-        color: markerStyle.fill,
+        color: plotStyle.markerFill,
         line: {
-          color: markerStyle.line,
+          color: plotStyle.markerLine,
           width: 1,
         },
-        symbol: symbols[i],
-        size: markerStyle.size,
+     
+        symbol: markerSymbols? markerSymbols[group] : defaultSymbols[i],
+        size: plotStyle.markerSize,
       },
     })
   })
@@ -143,7 +150,8 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
   id,
   xMax,
   style = { width: '100%', height: '100%' },
-  markerStyle= { fill: '#515359', line: '#515359', size: 9},
+  markerSymbols,
+  plotStyle= { markerFill: '#515359', markerLine: '#515359', markerSize: 9, backgroundColor: 'transparent'},
   onClick, isLegend= false, isXAxis = false
 }: DotPlotProps) => {
   const pointsTypes = label? [label]: undefined
@@ -155,9 +163,10 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
         isLegend: isLegend,
         isXAxis: isXAxis,
         maxValue: xMax,
+        backgroundColor: plotStyle.backgroundColor
       })}
       style={style}
-      data={getPlotDataPoints(plotData, markerStyle, pointsTypes )}
+      data={getPlotDataPoints(plotData, plotStyle, pointsTypes, markerSymbols )}
       config={optionsConfig}
       onClick={(e: any) => onClick? onClick(e): _.noop}
     />

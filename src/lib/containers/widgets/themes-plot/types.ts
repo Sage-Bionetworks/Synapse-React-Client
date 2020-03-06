@@ -5,13 +5,17 @@ export type GraphItem = {
     group: string
   }
 
-  export type MarkerStyle = {
-      fill: string
-      line: string
-      size: number
+  export type PlotStyle = {
+      markerFill?: string
+      markerLine?: string
+      markerSize?: number
+      backgroundColor?: string
   }
 
-  export type BarPlotColors = { [key: string]: string }
+  export type Dictionary = { [key: string]: string }
+
+  export type BarPlotColors = Dictionary  
+
 
   export type PlotProps = {
     entityId: string
@@ -22,6 +26,7 @@ export type GraphItem = {
     whereClause?: string
     infoField?: string
     colors?: BarPlotColors
-    markerStyle?:  MarkerStyle
+    markerSymbols?: Dictionary
+    plotStyle?:  PlotStyle
   }
 

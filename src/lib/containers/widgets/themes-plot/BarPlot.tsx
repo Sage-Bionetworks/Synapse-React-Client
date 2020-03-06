@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem, BarPlotColors } from './types'
+import { GraphItem, BarPlotColors, PlotStyle } from './types'
 import _ from 'lodash-es'
 
 const Plot = createPlotlyComponent(Plotly)
@@ -16,10 +16,11 @@ export type BarPlotProps = {
   label: string
   xMax: number
   colors?:  BarPlotColors
+  plotStyle?: PlotStyle
   onClick?: Function
 }
 
-type LayoutOptions = { isTop: boolean; maxValue: number; isLegend?: boolean }
+type LayoutOptions = { isTop: boolean; maxValue: number; isLegend?: boolean; backgroundColor?: string }
 
 function getBarPlotDataPoints(
   data: any[],
@@ -29,7 +30,7 @@ function getBarPlotDataPoints(
   if (filter) {
     data = data.filter(item => item.y === filter)
   }
-  var groups = _.uniq(data.map(item => item['group']))
+  var groups = _.uniq(data.map(item => item['group'])).sort()
   const result: any[] = []
   const defaultColors = [`(28,118,175,1)`, `rgba(91,176,181,1)`]
 
@@ -53,13 +54,17 @@ function getBarPlotDataPoints(
 
 function getLayout(
   layoutConfig: Partial<PlotlyTyped.Layout>,
-  { isTop, maxValue }: LayoutOptions,
+  { isTop, maxValue, backgroundColor }: LayoutOptions,
 ): Partial<PlotlyTyped.Layout> {
   const layout = _.cloneDeep(layoutConfig)
   layout.xaxis = {
     visible: false,
     range: [0, maxValue],
   }
+  if(backgroundColor) {
+      layout.plot_bgcolor = backgroundColor
+      layout.paper_bgcolor = backgroundColor
+    }
   layout.showlegend = false
   layout.height = isTop ? 40 : 20
   return layout
@@ -73,6 +78,7 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
   label,
   xMax,
   colors,
+  plotStyle = {backgroundColor: 'transparent'},
   style = { width: '100%', height: '100%' },
 }: BarPlotProps) => {
   return (
@@ -81,6 +87,7 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
       layout={getLayout(layoutConfig, {
         isTop,
         maxValue: xMax,
+        backgroundColor: plotStyle.backgroundColor
       })}
       config={optionsConfig}
       data={getBarPlotDataPoints(plotData, label, colors)}

@@ -45,8 +45,9 @@ const optionsConfig: Partial<PlotlyTyped.Config> = {
 const tooltipVisualProps: TooltipVisualProps = {
   delayShow: 0,
   place: 'right',
-  type: 'dark',
-  effect: 'float',
+  type: 'light',
+  effect: 'solid',
+  border: true,
 }
 const dotPlotLayoutConfig: Partial<PlotlyTyped.Layout> = {
   showlegend: true,
@@ -253,142 +254,179 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   }
 
   return (
-    <>
-      <div style={{ width: '100%' }}>
-        {!isLoaded && <span className="spinner" />}
-        {isLoaded && (
-          <>
-            <div style={{ textAlign: 'right', width: '300px', float: 'right' }}>
-              <DotPlot
-                id="head"
-                plotData={dotPlotQueryData}
-                isLegend={true}
-                style={{ width: '100%', height: '100%' }}
-                layoutConfig={dotPlotLayoutConfig}
-                optionsConfig={{
-                  ...optionsConfig,
-                  responsive: true,
-                  staticPlot: true,
-                }}
-                markerStyle={dotPlot.markerStyle}
-              ></DotPlot>
+    <div className="ThemesPlot">
+      {!isLoaded && <span className="spinner" />}
+      {isLoaded && (
+        <>
+          <div style={{ textAlign: 'right', width: '300px', float: 'right' }}>
+            <DotPlot
+              id="head"
+              plotData={dotPlotQueryData}
+              isLegend={true}
+              markerSymbols={dotPlot.markerSymbols}
+              style={{ width: '100%', height: '100%' }}
+              layoutConfig={dotPlotLayoutConfig}
+              optionsConfig={{
+                ...optionsConfig,
+                responsive: true,
+                staticPlot: true,
+              }}
+              plotStyle={{
+                ...dotPlot.plotStyle!,
+                backgroundColor: 'transparent',
+              }}
+            ></DotPlot>
+          </div>
+          {topBarPlot.colors &&
+            renderTopBarLegend(topBarPlot.colors, xLabelsForTopBarPlot)}
+          {topBarPlotDataSorted.map((item, i) => (
+            <div
+              style={{ width: '100%', display: 'flex' }}
+              key={`topBarDiv_${i}`}
+            >
+              <div style={{ ...TableCellStyle, flex: '0 0 100px' }}>
+                {item.count}&nbsp;{unCamelCase(item.y)}
+              </div>
+              <div style={{ ...TableCellStyle }}>
+                <BarPlot
+                  style={{ width: '100%', height: '100%' }}
+                  layoutConfig={_.cloneDeep(barLayoutConfig)}
+                  optionsConfig={{ ...optionsConfig }}
+                  plotData={topBarPlotData}
+                  isTop={true}
+                  label={item.y}
+                  xMax={item.count}
+                  colors={
+                    i % 2 === 0
+                      ? topBarPlot.colors
+                      : fadeColors({ ...topBarPlot.colors }, '0.4')
+                  }
+                />
+              </div>
             </div>
-            {topBarPlot.colors &&
-              renderTopBarLegend(topBarPlot.colors, xLabelsForTopBarPlot)}
-            {topBarPlotDataSorted.map((item, i) => (
+          ))}
+
+          <div style={{ marginTop: '50px' }}>
+            {yLabelsForDotPlot.map((label, i) => (
               <div
-                style={{ width: '100%', display: 'flex' }}
-                key={`topBarDiv_${i}`}
+                key={`plotDiv_${+i}`}
+                style={{
+                  width: '100%',
+                  clear: 'left',
+                  marginBottom: '4px',
+                  float: 'left',
+                  backgroundColor: dotPlot.plotStyle?.backgroundColor,
+                }}
               >
-                <div style={{ ...TableCellStyle, flex: '0 0 100px' }}>
-                  {item.count}&nbsp;{unCamelCase(item.y)}
+                <div
+                  style={{
+                    padding: '12px 30px 12px 12px',
+                    width: '20%',
+                    float: 'left',
+                  }}
+                >
+                  <ElementWithTooltip
+                    idForToolTip={`plotDiv1_${+i}`}
+                    tooltipText={`${getTooltip(dotPlotQueryData, label)} `}
+                    tooltipVisualProps={tooltipProps}
+                    callbackFn={() => _.noop}
+                  >
+                    <div>
+                      <span
+                        style={{
+                          color: '#515359',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {label}
+                      </span>
+                      <br />
+                      <span style={{ color: '#515359', fontSize: '12px' }}>
+                        {totalsByDotPlotY[i].count} {sideBarPlot.countLabel}
+                      </span>
+                      <br />
+                      <BarPlot
+                        style={{ width: '100%' }}
+                        layoutConfig={barLayoutConfig}
+                        optionsConfig={{
+                          ...optionsConfig,
+                          staticPlot: true,
+                        }}
+                        plotData={sideBarPlotData}
+                        isTop={false}
+                        xMax={xMaxForSideBarPlot}
+                        label={label}
+                        colors={fadeColors({ ...topBarPlot.colors }, '0.4')}
+                      />
+                    </div>
+                  </ElementWithTooltip>
                 </div>
-                <div style={{ ...TableCellStyle }}>
-                  <BarPlot
-                    style={{ width: '100%', height: '100%' }}
-                    layoutConfig={_.cloneDeep(barLayoutConfig)}
-                    optionsConfig={{ ...optionsConfig }}
-                    plotData={topBarPlotData}
-                    isTop={true}
-                    label={item.y}
-                    xMax={item.count}
-                    colors={
-                      i % 2 === 0
-                        ? topBarPlot.colors
-                        : fadeColors({ ...topBarPlot.colors }, '0.4')
-                    }
-                  />
+                <div
+                  style={{
+                    width: '80%',
+                    marginTop: '28px',
+                    float: 'left',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '100%',
+                      backgroundColor: dotPlot.plotStyle?.backgroundColor,
+                    }}
+                  >
+                    <DotPlot
+                      id={i + ''}
+                      onClick={(e: any) => onPointClick(getClickTargetData(e))}
+                      plotData={dotPlotQueryData}
+                      plotStyle={dotPlot.plotStyle}
+                      markerSymbols={dotPlot.markerSymbols}
+                      xMax={xMaxForDotPlot}
+                      label={label}
+                      layoutConfig={dotPlotLayoutConfig}
+                      optionsConfig={{
+                        ...optionsConfig,
+                        responsive: false,
+                      }}
+                    ></DotPlot>
+                  </div>
                 </div>
               </div>
             ))}
+            <div style={{ width: '100%' }}>
+              <div
+                style={{
+                  textAlign: 'right',
+                  paddingTop: '11px',
+                  paddingRight: '30px',
+                  float: 'left',
+                  width: '20%',
+                }}
+              >
+                VOLUME:
+              </div>
+              <div
+                style={{
+                  width: '80%',
 
-            <table style={{ width: '100%' }}>
-              <thead>
-                <tr>
-                  <th style={{ width: '20%' }}>&nbsp;</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {yLabelsForDotPlot.map((label, i) => (
-                  <tr key={`plotDiv_${+i}`}>
-                    <td style={{ height: '60px', padding: '10px' }}>
-                      <ElementWithTooltip
-                        idForToolTip={`plotDiv1_${+i}`}
-                        tooltipText={`${getTooltip(dotPlotQueryData, label)} `}
-                        tooltipVisualProps={tooltipProps}
-                        callbackFn={() => _.noop}
-                      >
-                        <div>
-                          <span>{label}</span>
-                          <br />
-                          {totalsByDotPlotY[i].count} {sideBarPlot.countLabel}
-                          <br />
-                          <BarPlot
-                            style={{ width: '100%' }}
-                            layoutConfig={barLayoutConfig}
-                            optionsConfig={{
-                              ...optionsConfig,
-                              staticPlot: true,
-                            }}
-                            plotData={sideBarPlotData}
-                            isTop={false}
-                            xMax={xMaxForSideBarPlot}
-                            label={label}
-                            colors={fadeColors({ ...topBarPlot.colors }, '0.4')}
-                          />
-                        </div>
-                      </ElementWithTooltip>
-                    </td>
-                    <td>
-                      <div style={{ width: '100%' }}>
-                        <DotPlot
-                          id={i + ''}
-                          onClick={(e: any) =>
-                            onPointClick(getClickTargetData(e))
-                          }
-                          plotData={dotPlotQueryData}
-                          markerStyle={dotPlot.markerStyle}
-                          xMax={xMaxForDotPlot}
-                          label={label}
-                          layoutConfig={dotPlotLayoutConfig}
-                          optionsConfig={{
-                            ...optionsConfig,
-                            responsive: false,
-                          }}
-                        ></DotPlot>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                <tr>
-                  <td
-                    style={{
-                      textAlign: 'right',
-                      paddingBottom: '18px',
-                      paddingRight: '10px',
-                    }}
-                  >
-                    VOLUME:
-                  </td>
-                  <td>
-                    {' '}
-                    <DotPlot
-                      id={'footer'}
-                      plotData={dotPlotQueryData}
-                      isXAxis={true}
-                      xMax={xMaxForDotPlot}
-                      layoutConfig={dotPlotLayoutConfig}
-                      optionsConfig={{ ...optionsConfig, responsive: false }}
-                    ></DotPlot>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </>
-        )}
-      </div>
-    </>
+                  float: 'left',
+                }}
+              >
+                {' '}
+                <DotPlot
+                  id={'footer'}
+                  plotData={dotPlotQueryData}
+                  isXAxis={true}
+                  xMax={xMaxForDotPlot}
+                  layoutConfig={dotPlotLayoutConfig}
+                  optionsConfig={{ ...optionsConfig, responsive: false }}
+                ></DotPlot>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   )
 }
 
