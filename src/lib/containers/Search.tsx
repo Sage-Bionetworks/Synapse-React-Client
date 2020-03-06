@@ -150,7 +150,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     // Always grabs initQueryRequest so that it doesn't build a chain of
     // LIKE clauses
     const lastQueryRequestDeepCopy = this.props.getInitQueryRequest!()
-    let { sql } = lastQueryRequestDeepCopy.query
+    const { sql } = lastQueryRequestDeepCopy.query
     const searchParams = {
       [searchItem.columnName]: Search.addEscapeCharacters(searchText),
     }
@@ -172,9 +172,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   render() {
     const {
       searchable,
-      data,
       isLoading,
-      facet,
+      getLastQueryRequest,
       unitDescription = '',
       facetAliases = {},
     } = this.props
@@ -330,9 +329,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         <TotalQueryResults
           style={totalQueryResultsStyle}
           isLoading={isLoading!}
-          data={data}
-          facet={facet!}
           frontText={'Displaying'}
+          token={this.props.token}
+          getLastQueryRequest={getLastQueryRequest}
           unitDescription={usedUnitDescription}
         />
       </div>

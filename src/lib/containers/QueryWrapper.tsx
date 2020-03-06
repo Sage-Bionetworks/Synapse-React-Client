@@ -181,6 +181,7 @@ export default class QueryWrapper extends React.Component<
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
     this.setState({
       isLoading: true,
+      lastQueryRequest: cloneDeep(queryRequest),
     })
     return SynapseClient.getQueryTableResults(
       queryRequest,
@@ -195,7 +196,6 @@ export default class QueryWrapper extends React.Component<
           hasMoreData,
           data,
           isLoading: false,
-          lastQueryRequest: cloneDeep(queryRequest),
           asyncJobStatus: undefined,
         }
         this.setState(newState)
