@@ -309,10 +309,9 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                       <BarPlot
                         style={{ width: '100%' }}
                         layoutConfig={barLayoutConfig}
-                        optionsConfig={{
-                          ...optionsConfig,
-                          staticPlot: true,
-                        }}
+                        optionsConfig={
+                          optionsConfig
+                        }
                         plotData={sideBarPlotData}
                         isTop={false}
                         xMax={xMaxForSideBarPlot}
