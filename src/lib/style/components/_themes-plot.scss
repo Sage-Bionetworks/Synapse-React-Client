@@ -1,3 +1,71 @@
 .ThemesPlot {
-    width:100%
+  width: 100%;
+  &__dotPlotLegend {
+    text-align: right;
+    width: 300px;
+    float: right;
+  }
+  &__barPlotLegend {
+    text-align: right;
+    float: right;
+    margin-top: 8px;
+
+    &__label {
+      width: 5px;
+      height: 15px;
+      float: left;
+      margin-right: 7px;
+    }
+    &__graph {
+      padding-right: 30px;
+      height: 15px;
+      line-height: 15px;
+      float: left;
+    }
+  }
+  &__topBarPlot {
+    width: 100%;
+    display: flex;
+    &__label {
+      flex: 0 0 100px;
+    }
+    &__plot {
+      box-sizing: border-box;
+      flex: 1;
+      height: 40px;
+      line-height: 40px;
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
+  &__dotPlot {
+    margin-top: 50px;
+    &__row {
+      width: 100%;
+      clear: left;
+      margin-bottom: 4px;
+      float: left;
+    }
+    &__barColumn {
+      padding: 12px 30px 12px 12px;
+      width: 20%;
+      float: left;
+    }
+    &__themeLabel {
+      color: #515359;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    &__countLabel {
+      color: #515359;
+      font-size: 12px;
+    }
+
+    &__dotPlotColumn {
+      width: 80%;
+      margin-top: 28px;
+      float: left;
+    }
+  }
 }

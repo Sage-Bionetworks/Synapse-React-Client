@@ -15,12 +15,17 @@ export type BarPlotProps = {
   optionsConfig: Partial<PlotlyTyped.Config>
   label: string
   xMax: number
-  colors?:  BarPlotColors
+  colors?: BarPlotColors
   plotStyle?: PlotStyle
   onClick?: Function
 }
 
-type LayoutOptions = { isTop: boolean; maxValue: number; isLegend?: boolean; backgroundColor?: string }
+type LayoutOptions = {
+  isTop: boolean
+  maxValue: number
+  isLegend?: boolean
+  backgroundColor?: string
+}
 
 function getBarPlotDataPoints(
   data: any[],
@@ -45,6 +50,8 @@ function getBarPlotDataPoints(
         color: colors ? colors[group] : defaultColors[i],
         width: 1,
       },
+      text: [group],
+      hovertemplate: `%{x} %{text}<extra></extra>`,
       type: 'bar',
     })
   })
@@ -61,10 +68,17 @@ function getLayout(
     visible: false,
     range: [0, maxValue],
   }
-  if(backgroundColor) {
-      layout.plot_bgcolor = backgroundColor
-      layout.paper_bgcolor = backgroundColor
+  if (backgroundColor) {
+    layout.plot_bgcolor = backgroundColor
+    layout.paper_bgcolor = backgroundColor
+  }
+  if (!isTop) {
+    layout.hoverlabel = {
+      font: {
+        size: 10,
+      },
     }
+  }
   layout.showlegend = false
   layout.height = isTop ? 40 : 20
   return layout
@@ -78,8 +92,9 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
   label,
   xMax,
   colors,
-  plotStyle = {backgroundColor: 'transparent'},
+  plotStyle = { backgroundColor: 'transparent' },
   style = { width: '100%', height: '100%' },
+  onClick,
 }: BarPlotProps) => {
   return (
     <Plot
@@ -87,10 +102,11 @@ const BarPlot: FunctionComponent<BarPlotProps> = ({
       layout={getLayout(layoutConfig, {
         isTop,
         maxValue: xMax,
-        backgroundColor: plotStyle.backgroundColor
+        backgroundColor: plotStyle.backgroundColor,
       })}
       config={optionsConfig}
       data={getBarPlotDataPoints(plotData, label, colors)}
+      onClick={(e: any) => (onClick ? onClick(e) : _.noop)}
     />
   )
 }
