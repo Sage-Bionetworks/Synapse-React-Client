@@ -12,8 +12,7 @@ import { SynapseConstants } from 'lib'
 
 const createMountedComponent = async (props: TotalQueryResultsProps) => {
   const wrapper = await mount(<TotalQueryResults {...props} />)
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+  return { wrapper }
 }
 
 describe('it works', () => {
@@ -35,9 +34,9 @@ describe('it works', () => {
   }
   const getLastQueryRequest = jest.fn().mockReturnValue(mockQueryRequest)
   const SynapseClient = require('../../../lib/utils/SynapseClient')
-  const mockGetQueryTableResultsFn = jest.fn().mockResolvedValue(() => {
-    return mockQueryReturn
-  })
+  const mockGetQueryTableResultsFn = jest
+    .fn()
+    .mockResolvedValue(mockQueryReturn)
   SynapseClient.getQueryTableResults = mockGetQueryTableResultsFn
   const displayText = 'Displaying'
   const unitDescription = 'units'
@@ -53,8 +52,8 @@ describe('it works', () => {
     expect(tree).toBeDefined()
   })
 
-  // Michael-TODO: Fix this test
-  it.skip('calls synapse with query count part mask', async () => {
+  it('calls synapse with query count part mask', async () => {
+    mockGetQueryTableResultsFn.mockClear()
     const { wrapper } = await createMountedComponent(props)
     expect(wrapper.find('.SRC-boldText').text()).toEqual(
       `${displayText} ${mockQueryReturn.queryCount} ${unitDescription} `,
@@ -63,6 +62,7 @@ describe('it works', () => {
       expect.objectContaining({
         partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
       }),
+      '',
     )
   })
 })
