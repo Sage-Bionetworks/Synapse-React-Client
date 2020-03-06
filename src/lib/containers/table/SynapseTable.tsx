@@ -324,7 +324,6 @@ export default class SynapseTable extends React.Component<
       isLoading = true,
       unitDescription,
       token,
-      facet,
       showBarChart,
     } = this.props
     const { queryResult } = data
@@ -360,11 +359,11 @@ export default class SynapseTable extends React.Component<
           >
             {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
               <TotalQueryResults
-                facet={facet}
-                data={data}
                 isLoading={isLoading}
                 style={{ fontSize: 15 }}
                 unitDescription={unitDescription}
+                getLastQueryRequest={this.props.getLastQueryRequest}
+                token={token}
                 frontText={'Showing'}
               />
             )}

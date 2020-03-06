@@ -2,7 +2,7 @@ import { SelectColumn } from './SelectColumn'
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/QueryResult.html
 export type QueryResult = {
-  concreteType: string
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryResult'
   queryResults: RowSet // Represents a set of row of a TableEntity
   nextPageToken?: QueryNextPageToken
 }

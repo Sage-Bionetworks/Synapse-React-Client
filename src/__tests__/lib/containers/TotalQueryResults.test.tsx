@@ -1,64 +1,68 @@
-import { shallow } from 'enzyme'
-import { cloneDeep } from 'lodash-es'
+import { mount } from 'enzyme'
 import * as React from 'react'
 import TotalQueryResults, {
   TotalQueryResultsProps,
 } from '../../../lib/containers/TotalQueryResults'
 import {
-  FacetColumnResultValueCount,
   QueryResultBundle,
+  RowSet,
+  QueryBundleRequest,
 } from '../../../lib/utils/synapseTypes/'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import { SynapseConstants } from 'lib'
 
-const createShallowComponent = (props: TotalQueryResultsProps) => {
-  const wrapper = shallow<typeof TotalQueryResults>(
-    <TotalQueryResults {...props} />,
-  )
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+const createMountedComponent = async (props: TotalQueryResultsProps) => {
+  const wrapper = await mount(<TotalQueryResults {...props} />)
+  return { wrapper }
 }
 
 describe('it works', () => {
-  const FUNDING_AGENCY_COUNT = 59
-  const FUNDING_AGENCY_FACET_INDEX = 2
+  const mockQueryRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: '',
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {
+      sql: '',
+    },
+  }
+  const mockQueryReturn: QueryResultBundle = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+    queryCount: 98,
+    queryResult: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+      queryResults: {} as RowSet,
+    },
+  }
+  const getLastQueryRequest = jest.fn().mockReturnValue(mockQueryRequest)
+  const SynapseClient = require('../../../lib/utils/SynapseClient')
+  const mockGetQueryTableResultsFn = jest
+    .fn()
+    .mockResolvedValue(mockQueryReturn)
+  SynapseClient.getQueryTableResults = mockGetQueryTableResultsFn
   const displayText = 'Displaying'
   const unitDescription = 'units'
-  // cast the data to ignore ts warning
-  const data = syn16787123Json as QueryResultBundle
   const props: TotalQueryResultsProps = {
-    data,
     unitDescription,
     isLoading: false,
-    facet: 'fundingAgency',
+    token: '',
+    getLastQueryRequest,
     frontText: 'Displaying',
   }
   it('renders without crashing', () => {
-    const tree = createShallowComponent(props)
+    const tree = createMountedComponent(props)
     expect(tree).toBeDefined()
   })
 
-  it('renders with a faceted view correctly', async () => {
-    const { wrapper } = createShallowComponent(props)
+  it('calls synapse with query count part mask', async () => {
+    mockGetQueryTableResultsFn.mockClear()
+    const { wrapper } = await createMountedComponent(props)
     expect(wrapper.find('.SRC-boldText').text()).toEqual(
-      `${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `,
+      `${displayText} ${mockQueryReturn.queryCount} ${unitDescription} `,
     )
-  })
-
-  it('renders with a loading spinner when loading', async () => {
-    const { wrapper } = createShallowComponent({ ...props, isLoading: true })
-    expect(wrapper.find('span.spinner')).toHaveLength(1)
-  })
-
-  it('displays the total sum with zero facets selected in the given data', () => {
-    const cloneData = cloneDeep(data)
-    cloneData.facets[FUNDING_AGENCY_FACET_INDEX].facetValues.forEach(
-      (element: FacetColumnResultValueCount) => {
-        element.isSelected = false
-      },
-    )
-    const { wrapper } = createShallowComponent({ ...props, data: cloneData })
-    expect(wrapper.find('.SRC-boldText').text()).toEqual(
-      `${displayText} ${FUNDING_AGENCY_COUNT} ${unitDescription} `,
+    expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+      }),
+      '',
     )
   })
 })

@@ -1,15 +1,12 @@
 import * as React from 'react'
-import {
-  FacetColumnResultValues,
-  QueryResultBundle,
-} from '../utils/synapseTypes/'
+import { QueryBundleRequest } from '../utils/synapseTypes'
+import { SynapseClient, SynapseConstants } from '../'
 
 export type TotalQueryResultsProps = {
-  data?: QueryResultBundle
-
-  facet?: string
   isLoading: boolean
   style?: React.CSSProperties
+  getLastQueryRequest: (() => QueryBundleRequest) | undefined
+  token: string | undefined
   unitDescription: string
   frontText: string
 }
@@ -36,66 +33,35 @@ export default class TotalQueryResults extends React.Component<
   }
 
   componentDidUpdate(prevProps: TotalQueryResultsProps) {
-    // check that its done loading
-    if (!this.props.isLoading && prevProps.isLoading) {
+    // Check that it has entered a loading state, meaning that there is new data
+    if (this.props.isLoading && !prevProps.isLoading) {
       this.calculateTotal()
     }
   }
 
   calculateTotal() {
-    const { data, facet } = this.props
-    let { total } = this.state
-    if (data) {
-      if (facet) {
-        const { facets = [] } = data
-        const curFacetsIndex = facets.findIndex(
-          el => el.facetType === 'enumeration' && el.columnName === facet,
-        )
-        // calculate the values chosen
-        const curFacets = facets[curFacetsIndex] as FacetColumnResultValues
-        // edge case -- if they are all false then they are considered all true..
-        // sum up the counts of data
-        let anyTrue = false
-        let totalAllFalseCase = 0
-        let totalStandardCase = 0
-
-        if (curFacets) {
-          for (const key of curFacets.facetValues) {
-            anyTrue = anyTrue || key.isSelected
-            totalAllFalseCase += key.count
-            totalStandardCase += key.isSelected ? key.count : 0
-          }
-        }
-        total = anyTrue ? totalStandardCase : totalAllFalseCase
-        if (data.queryResult.queryResults.rows.length === 0) {
-          // we override the statements above if there are zero results because the current UI
-          // would be showing zero results
-          total = 0
-        }
-      } else {
-        if (data.queryCount === undefined) {
-          throw Error(
-            'Failed to specify either a facet or query count in part mask',
-          )
-        }
-        total = data.queryCount
-      }
-    }
-    this.setState({
-      total,
+    const { getLastQueryRequest, token } = this.props
+    const queryRequest = getLastQueryRequest!()
+    queryRequest.partMask = SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+    SynapseClient.getQueryTableResults(queryRequest, token).then(data => {
+      this.setState({
+        total: data.queryCount!,
+      })
     })
   }
 
   render() {
     const { isLoading, style, unitDescription, frontText } = this.props
     const { total } = this.state
-    const loader = <span style={{ marginLeft: '2px' }} className={'spinner'} />
     return (
       <p
         style={style}
         className="SRC-boldText SRC-text-title SRC-centerContent"
       >
-        {frontText} {total} {unitDescription} {isLoading && loader}
+        {frontText} {total} {unitDescription}{' '}
+        {isLoading && (
+          <span style={{ marginLeft: '2px' }} className={'spinner'} />
+        )}
       </p>
     )
   }
