@@ -143,10 +143,15 @@ function getTotalsByY(data: GraphItem[]): { y: string; count: number }[] {
 
 const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent, swap: boolean) => {
   const pointData = e.points[0].data
+
+  let facetValue = pointData.y[0]
+  let type = pointData.name
+
   if (swap) {
-    return { facetValue: pointData.name, type: pointData.y[0] }
+    // @ts-ignore
+    ;[facetValue, type] = [type, facetValue]
   }
-  return { facetValue: pointData.y[0], type: pointData.name }
+  return { facetValue, type }
 }
 
 const renderTopBarLegend = (
