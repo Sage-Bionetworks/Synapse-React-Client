@@ -12,21 +12,19 @@ import {
   RowSet,
 } from '../../../utils/synapseTypes'
 import { resultToJson } from '../../../utils/functions/sqlFunctions'
-import { GraphItem, PlotProps, BarPlotColors, ClickCallbackParams  } from './types'
+import {
+  GraphItem,
+  PlotProps,
+  BarPlotColors,
+  ClickCallbackParams,
+} from './types'
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
 
 export type ThemesPlotProps = {
   token?: string
-  onPointClick: ({
-    facetValue,
-    type,
-  }: ClickCallbackParams) => void
-  onTopBarClick: ({
-    facetValue,
-    type,
-  }: ClickCallbackParams) => void
+  onPointClick: ({ facetValue, type }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
@@ -143,8 +141,11 @@ function getTotalsByY(data: GraphItem[]): { y: string; count: number }[] {
   return result
 }
 
-const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent) => {
+const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent, swap: boolean) => {
   const pointData = e.points[0].data
+  if (swap) {
+    return { facetValue: pointData.name, type: pointData.y[0] }
+  }
   return { facetValue: pointData.y[0], type: pointData.name }
 }
 
@@ -195,7 +196,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
   const [topBarPlotData, setTopBarQueryData] = useState<GraphItem[]>([])
   const [sideBarPlotData, setSideBarQueryData] = useState<GraphItem[]>([])
-  
+
   useEffect(() => {
     const dotPlotData = fetchData(token!, dotPlot)
     const topBarPlotData = fetchData(token!, topBarPlot)
@@ -210,8 +211,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
       .catch(err => {
         throw err
       })
-      return () => {
-      };
+    return () => {}
   }, [token, dotPlot, topBarPlot, sideBarPlot])
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
@@ -270,7 +270,9 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                   isTop={true}
                   label={item.y}
                   xMax={item.count}
-                  onClick={(e: any) => onPointClick(getClickTargetData(e))}
+                  onClick={(e: any) =>
+                    onPointClick(getClickTargetData(e, true))
+                  }
                   colors={
                     i % 2 === 0
                       ? topBarPlot.colors
@@ -309,9 +311,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                       <BarPlot
                         style={{ width: '100%' }}
                         layoutConfig={barLayoutConfig}
-                        optionsConfig={
-                          optionsConfig
-                        }
+                        optionsConfig={optionsConfig}
                         plotData={sideBarPlotData}
                         isTop={false}
                         xMax={xMaxForSideBarPlot}
@@ -330,7 +330,9 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                   >
                     <DotPlot
                       id={i + ''}
-                      onClick={(e: any) => onPointClick(getClickTargetData(e))}
+                      onClick={(e: any) =>
+                        onPointClick(getClickTargetData(e, false))
+                      }
                       plotData={dotPlotQueryData}
                       plotStyle={dotPlot.plotStyle}
                       markerSymbols={dotPlot.markerSymbols}

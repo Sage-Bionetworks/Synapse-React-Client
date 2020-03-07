@@ -13,6 +13,7 @@ export type TotalQueryResultsProps = {
 
 type State = {
   total: number
+  isLoading: boolean
 }
 
 // This is a stateful component so that during load the component can hold onto the previous
@@ -25,6 +26,7 @@ export default class TotalQueryResults extends React.Component<
     super(props)
     this.state = {
       total: 0,
+      isLoading: false,
     }
   }
 
@@ -43,16 +45,21 @@ export default class TotalQueryResults extends React.Component<
     const { getLastQueryRequest, token } = this.props
     const queryRequest = getLastQueryRequest!()
     queryRequest.partMask = SynapseConstants.BUNDLE_MASK_QUERY_COUNT
+
+    this.setState({
+      isLoading: true,
+    })
     SynapseClient.getQueryTableResults(queryRequest, token).then(data => {
       this.setState({
         total: data.queryCount!,
+        isLoading: false,
       })
     })
   }
 
   render() {
-    const { isLoading, style, unitDescription, frontText } = this.props
-    const { total } = this.state
+    const { style, unitDescription, frontText } = this.props
+    const { total, isLoading } = this.state
     return (
       <p
         style={style}
