@@ -32,5 +32,5 @@ export type PlotProps = {
 
 export type ClickCallbackParams = {
   facetValue: string | number | Date | PlotlyTyped.Datum[] | null
-  type: string
+  type: string | number | Date | PlotlyTyped.Datum[] | null
 }
