@@ -123,7 +123,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/MarkdownSynapseDemo`}
-        component={() => <MarkdownSynapseDemo />}
+        component={() => <MarkdownSynapseDemo token={token} />}
       />
 
       <Route

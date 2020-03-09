@@ -542,6 +542,7 @@ export default class MarkdownSynapse extends React.Component<
     // we make keys out of the widget params
     const key = JSON.stringify(widgetparamsMapped)
     widgetparamsMapped.reactKey = key
+
     switch (widgetType) {
       case 'buttonlink':
         return this.renderSynapseButton(widgetparamsMapped)
@@ -560,19 +561,6 @@ export default class MarkdownSynapse extends React.Component<
       default:
         return
     }
-  }
-
-  public renderVideo(widgetparamsMapped: any) {
-    const { token, ownerId, wikiId } = this.props
-
-    return (
-      <SynapseVideo
-        token={token}
-        synapseId={ownerId}
-        wikiId={wikiId}
-        params={widgetparamsMapped}
-      />
-    )
   }
 
   public renderSynapseButton(widgetparamsMapped: any) {
@@ -622,6 +610,21 @@ export default class MarkdownSynapse extends React.Component<
         ownerId={this.props.ownerId}
         wikiId={this.props.wikiId || this.state.data.id}
         widgetparamsMapped={widgetparamsMapped}
+      />
+    )
+  }
+
+  public renderVideo(widgetparamsMapped: any) {
+    const { token, ownerId, wikiId } = this.props
+    const { reactKey } = widgetparamsMapped
+
+    return (
+      <SynapseVideo
+        sessionToken={token}
+        reactKey={reactKey}
+        synapseId={ownerId}
+        wikiId={wikiId}
+        params={widgetparamsMapped}
       />
     )
   }

@@ -8,7 +8,10 @@ type State = {
   markdownPropsArray: MarkdownSynapseProps[]
 }
 
-export default class MarkdownSynapseDemo extends React.Component<{}, State> {
+export default class MarkdownSynapseDemo extends React.Component<
+  { token?: string },
+  State
+> {
   constructor(props: any) {
     super(props)
     this.state = {
@@ -45,7 +48,9 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
         },
         {
           // video
-          ownerId: 'syn4993293',
+          ownerId: 'syn21714219',
+          token: this.props.token,
+          // ownerId: 'syn4993293',
           // wikiId: '247859',
         },
       ],

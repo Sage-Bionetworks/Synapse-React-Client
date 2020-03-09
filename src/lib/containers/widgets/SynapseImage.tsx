@@ -37,6 +37,7 @@ class SynapseImage extends React.Component<
 
   public getEntity() {
     const { token, synapseId } = this.props
+
     if (synapseId) {
       getEntity<FileEntity>(token, synapseId).then(
         // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
@@ -48,6 +49,7 @@ class SynapseImage extends React.Component<
               fileHandleId: data.dataFileHandleId,
             },
           ]
+
           this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
         },
       )
@@ -68,9 +70,11 @@ class SynapseImage extends React.Component<
     }
     getFiles(request, this.props.token)
       .then((data: BatchFileResult) => {
+        console.log('data', data)
         const { preSignedURL } = data.requestedFiles.filter(
           el => el.fileHandleId === id,
         )[0]
+        console.log('url', data.requestedFiles)
         this.setState({
           preSignedURL: preSignedURL!,
         })
