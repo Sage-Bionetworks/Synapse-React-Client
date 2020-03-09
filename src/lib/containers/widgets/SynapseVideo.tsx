@@ -26,8 +26,9 @@ export default function SynapseVideo({
 }: Props) {
   const [video, setVideo] = useState<string>()
   const [videoUrl, setVideoUrl] = useState<string>()
-  const [videoWidth, setVideoWidth] = useState<string>()
-  const [videoHeight, setVideoHeight] = useState<string>()
+
+  const videoWidth = params.videoWidth ?? ''
+  const videoHeight = params.videoHeight ?? ''
 
   useEffect(() => {
     const getVideo = () => {
@@ -79,19 +80,14 @@ export default function SynapseVideo({
           console.error('Error on getting video ', err)
         })
     }
-    const getVideoSize = () => {
-      if (params.weight) setVideoHeight(params.weight)
-      if (params.width) setVideoWidth(params.width)
-    }
     getVideo()
-    getVideoSize()
   }, [video, params, sessionToken])
 
   return (
     <div>
       {videoUrl ? (
         <video controls src={videoUrl} width={videoWidth} height={videoHeight}>
-          Your user agent does not support the HTML5 Video element.
+          It does not support the HTML5 Video element.
         </video>
       ) : (
         <iframe
