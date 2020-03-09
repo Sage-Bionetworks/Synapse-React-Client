@@ -159,7 +159,6 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
       <ThemesPlot
         token={props.token}
         onPointClick={plotCallback}
-        onTopBarClick={plotCallback}
         topBarPlot={topBarPlotProps}
         sideBarPlot={sideBarPlotProps}
         dotPlot={dotPlotProps}

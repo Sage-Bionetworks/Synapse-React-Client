@@ -51,6 +51,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
             offset: 0,
           },
         },
+        enableLeftFacetFilter: true,
         rgbIndex: 5,
         // facetsToPlot: ['assay', 'dataType'],
         loadingScreen:<div> Im loading as fast I can !!! </div>
