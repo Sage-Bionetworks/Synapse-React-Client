@@ -15,6 +15,7 @@ export type TooltipVisualProps = {
   place: 'top' | 'right' | 'bottom' | 'left'
   type: 'dark' | 'success' | 'warning' | 'error' | 'info' | 'light'
   effect: 'float' | 'solid'
+  border?: boolean
 }
 
 /*****************************************
@@ -57,7 +58,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   tooltipVisualProps = { place: 'top', type: 'dark', effect: 'solid' },
   children,
 }) => {
-  const { place, type, effect } = tooltipVisualProps
+  const { place, type, effect, border } = tooltipVisualProps
   const tooltipTriggerContents = image
     ? getTooltipTriggerContents(image, imageColor)
     : children || <></>
@@ -110,6 +111,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
         place={place}
         type={type}
         effect={effect}
+        border={border ? true : false}
         id={idForToolTip}
       />
     </>
