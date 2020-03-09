@@ -38,9 +38,22 @@
       overflow: hidden;
     }
   }
-
+  &__dotPlotYLabel {
+    margin-left: -20px;
+    width: 20px;
+    font-size: 12px;
+    padding-top: 50px;
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+    transform: rotate(180deg);
+  }
   &__dotPlot {
     margin-top: 50px;
+    width: 100%;
+
     &__row {
       width: 100%;
       clear: left;
