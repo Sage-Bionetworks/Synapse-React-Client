@@ -32,7 +32,8 @@ export type ThemesPlotProps = {
   dotPlotYAxisLabel?: string
 }
 
-type TotalsGroup = { y: string; count: number }
+type TotalsGroupByY = { y: string; count: number }
+type TotalsGroupByGroup = { group: string; count: number }
 
 const optionsConfig: Partial<PlotlyTyped.Config> = {
   displayModeBar: false,
@@ -129,14 +130,14 @@ function fetchData(
   )
 }
 
-function getTotalsByY(data: GraphItem[]): { y: string; count: number }[] {
+function getTotalsByProp<T>(data: GraphItem[], prop: string): T[] {
   const resultObject = data.reduce((res, obj) => {
-    res[obj.y] = (obj.y in res ? Number(res[obj.y]) : 0) + Number(obj.x)
+    res[obj[prop]] = (obj[prop] in res ? Number(res[obj[prop]]) : 0) + Number(obj.x)
     return res
   }, {})
   const result = []
   for (const property in resultObject) {
-    result.push({ y: property, count: resultObject[property] as number })
+    result.push({ [prop]: property, count: resultObject[property] as number } as unknown as T)
   }
   return result
 }
@@ -223,17 +224,17 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   let xLabelsForTopBarPlot: string[] = []
   let xMaxForDotPlot = 0
   let xMaxForSideBarPlot = 0
-  let topBarPlotDataSorted: TotalsGroup[] = []
-  let totalsByDotPlotY: TotalsGroup[] = []
+  let topBarPlotDataSorted: TotalsGroupByY[] = []
+  let totalsByDotPlotY: TotalsGroupByY[] = []
   if (isLoaded) {
-    totalsByDotPlotY = getTotalsByY(sideBarPlotData)
+    totalsByDotPlotY = getTotalsByProp(sideBarPlotData, 'y')
     yLabelsForDotPlot = totalsByDotPlotY
       .sort((a, b) => b.count - a.count)
       .map(item => item.y)
     xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
-    topBarPlotDataSorted = _.orderBy(getTotalsByY(topBarPlotData), ['y'])
-    xLabelsForTopBarPlot = _.uniq(topBarPlotData.map(item => item.group))
+    topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), ['y'])
+   xLabelsForTopBarPlot = _.orderBy(getTotalsByProp<TotalsGroupByGroup>(topBarPlotData, 'group'), ['group']).map(item => item.group)
   }
 
   return (
@@ -285,9 +286,10 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                     onPointClick(getClickTargetData(e, true))
                   }
                   colors={
+                    // we are not actually fading colors for now. But keeping implemenation in case it changes
                     i % 2 === 0
                       ? topBarPlot.colors
-                      : fadeColors({ ...topBarPlot.colors }, '0.4')
+                      : fadeColors({ ...topBarPlot.colors }, '1')
                   }
                 />
               </div>
@@ -328,7 +330,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
                           isTop={false}
                           xMax={xMaxForSideBarPlot}
                           label={label}
-                          colors={fadeColors({ ...topBarPlot.colors }, '0.4')}
+                          colors={fadeColors({ ...topBarPlot.colors }, '1')}
                         />
                       </div>
                     </ElementWithTooltip>
