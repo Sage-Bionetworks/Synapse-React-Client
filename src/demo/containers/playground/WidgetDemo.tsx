@@ -64,7 +64,7 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
       backgroundColor: '#f5f9fa'
     },
     colors: {
-      ['CSBC']: '#1c76af',
+      ['CSBC']: '#4788A5',
       ['PS-ON']: '#5bb0b5'
     }
   }
