@@ -113,6 +113,7 @@ export default class MarkdownSynapse extends React.Component<
     this.renderWidget = this.renderWidget.bind(this)
     this.renderSynapseButton = this.renderSynapseButton.bind(this)
     this.renderSynapseImage = this.renderSynapseImage.bind(this)
+    this.renderVideo = this.renderVideo.bind(this)
     this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
     this.renderSynapseTOC = this.renderSynapseTOC.bind(this)
     this.getErrorView = this.getErrorView.bind(this)
@@ -615,18 +616,9 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public renderVideo(widgetparamsMapped: any) {
-    const { token, ownerId, wikiId } = this.props
-    const { reactKey } = widgetparamsMapped
+    const { token } = this.props
 
-    return (
-      <SynapseVideo
-        sessionToken={token}
-        reactKey={reactKey}
-        synapseId={ownerId}
-        wikiId={wikiId}
-        params={widgetparamsMapped}
-      />
-    )
+    return <SynapseVideo token={token} params={widgetparamsMapped} />
   }
 
   public renderSynapseImage(widgetparamsMapped: any) {

@@ -19,7 +19,6 @@ import {
   ApprovalState,
 } from '../../../lib/utils/synapseTypes/'
 import { mount, ReactWrapper } from 'enzyme'
-import { wrap } from 'lodash-es'
 
 describe('Accepted Requirements works as expect', () => {
   let container: HTMLElement

@@ -11,25 +11,15 @@ import {
 
 export type Props = {
   params: any
-  wikiId?: string
-  synapseId?: string
-  sessionToken?: string
-  reactKey?: any
+  token?: string
 }
 
-export default function SynapseVideo({
-  params,
-  wikiId,
-  synapseId,
-  sessionToken,
-  reactKey,
-}: Props) {
+export default function SynapseVideo({ params, token }: Props) {
   const [video, setVideo] = useState<string>()
   const [videoUrl, setVideoUrl] = useState<string>()
 
-  const videoWidth = params.videoWidth ?? ''
-  const videoHeight = params.videoHeight ?? ''
-
+  const videoWidth = params.width ?? ''
+  const videoHeight = params.height ?? ''
   useEffect(() => {
     const getVideo = () => {
       if (params.videoId)
@@ -40,18 +30,16 @@ export default function SynapseVideo({
         const videoKey =
           params.oggSynapseId || params.mp4SynapseId || params.webmSynapseId
 
-        getEntity<FileEntity>(sessionToken, videoKey).then(
-          (data: FileEntity) => {
-            const fileHandleAssociationList: FileHandleAssociation[] = [
-              {
-                associateObjectId: videoKey,
-                associateObjectType: FileHandleAssociateType.FileEntity,
-                fileHandleId: data.dataFileHandleId,
-              },
-            ]
-            getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
-          },
-        )
+        getEntity<FileEntity>(token, videoKey).then((data: FileEntity) => {
+          const fileHandleAssociationList: FileHandleAssociation[] = [
+            {
+              associateObjectId: videoKey,
+              associateObjectType: FileHandleAssociateType.FileEntity,
+              fileHandleId: data.dataFileHandleId,
+            },
+          ]
+          getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+        })
       }
     }
 
@@ -59,9 +47,6 @@ export default function SynapseVideo({
       fileHandleAssociationList: FileHandleAssociation[],
       id: string,
     ) => {
-      // overload the method for two different use cases, one where
-      // the image is attached to an entity and creates a list on the spot,
-      // the other where list is passed in from componentDidMount in MarkdownSynapse
       const request: BatchFileRequest = {
         includeFileHandles: false,
         includePreSignedURLs: true,
@@ -69,7 +54,7 @@ export default function SynapseVideo({
         requestedFiles: fileHandleAssociationList,
       }
 
-      getFiles(request, sessionToken)
+      getFiles(request, token)
         .then((data: BatchFileResult) => {
           const { preSignedURL } = data.requestedFiles.filter(
             el => el.fileHandleId === id,
@@ -81,21 +66,38 @@ export default function SynapseVideo({
         })
     }
     getVideo()
-  }, [video, params, sessionToken])
+  }, [video, params, token, videoHeight, videoWidth])
 
+  const RenderVideo = () => {
+    return (
+      <div>
+        {videoUrl ? (
+          <video
+            controls
+            src={videoUrl}
+            width={videoWidth}
+            height={videoHeight}
+          >
+            It does not support the HTML5 Video element.
+          </video>
+        ) : (
+          <iframe
+            title="video frame"
+            src={video}
+            width={videoWidth}
+            height={videoHeight}
+          ></iframe>
+        )}
+      </div>
+    )
+  }
+  console.log('3')
   return (
     <div>
-      {videoUrl ? (
-        <video controls src={videoUrl} width={videoWidth} height={videoHeight}>
-          It does not support the HTML5 Video element.
-        </video>
+      {token ? (
+        <RenderVideo />
       ) : (
-        <iframe
-          title="video frame"
-          src={video}
-          width={videoWidth}
-          height={videoHeight}
-        ></iframe>
+        <p>You will need to sign in for access to that resource.</p>
       )}
     </div>
   )

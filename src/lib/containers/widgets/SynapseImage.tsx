@@ -49,7 +49,6 @@ class SynapseImage extends React.Component<
               fileHandleId: data.dataFileHandleId,
             },
           ]
-
           this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
         },
       )
@@ -70,11 +69,9 @@ class SynapseImage extends React.Component<
     }
     getFiles(request, this.props.token)
       .then((data: BatchFileResult) => {
-        console.log('data', data)
         const { preSignedURL } = data.requestedFiles.filter(
           el => el.fileHandleId === id,
         )[0]
-        console.log('url', data.requestedFiles)
         this.setState({
           preSignedURL: preSignedURL!,
         })
