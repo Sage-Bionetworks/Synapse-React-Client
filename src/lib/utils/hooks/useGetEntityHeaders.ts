@@ -4,20 +4,19 @@ import { getAllEntityHeader } from '../SynapseClient'
 import { SynapseConstants } from '..'
 import { without, chunk } from 'lodash-es'
 
-export type UseGetEntityHeaderProps = {
-  references: ReferenceList
+export type useGetEntityHeadersProps = {
+  references: string[]
   token?: string
 }
 
 // React hook to get user profiles
-export default function useGetEntityHeaders(props: UseGetEntityHeaderProps) {
+export default function useGetEntityHeaders(props: useGetEntityHeadersProps) {
   const { token, references } = props
   const [data, setData] = useState<Array<EntityHeader>>([])
   useEffect(() => {
     const getData = async () => {
       // look at current list of data, see if incoming ids has new data,
       // if so grab those ids
-      console.log('called')
       const curList = data.map(el => el.id)
       const incomingList = references.filter(
         el => el !== SynapseConstants.VALUE_NOT_SET,

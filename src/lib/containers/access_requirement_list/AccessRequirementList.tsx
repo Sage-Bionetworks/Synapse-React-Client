@@ -8,9 +8,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
+import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import { UserProfile } from '../../utils/synapseTypes'
 import useGetEntityHeaders, {
-  UseGetEntityHeaderProps,
+  useGetEntityHeadersProps,
 } from '../../utils/hooks/useGetEntityHeaders'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 
@@ -27,6 +28,7 @@ export enum SUPPORTED_ACCESS_REQUIREMENTS {
   SelfSignAccessRequirement = 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
   TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
   ManagedACTAccessRequirement = 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+  ACTAccessRequirement = 'org.sagebionetworks.repo.model.ACTAccessRequirement',
 }
 
 export const checkUnSupportedRequirement = (
@@ -58,12 +60,9 @@ export default function AccessRequirementList({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile>()
-  const entityHeaderProps: UseGetEntityHeaderProps = {
-    references: [
-      {
-        targetId: entityId,
-      },
-    ],
+
+  const entityHeaderProps: useGetEntityHeadersProps = {
+    references: [entityId],
     token: token,
   }
 
@@ -167,6 +166,16 @@ export default function AccessRequirementList({
             onHide={onHide}
           />
         )
+      case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
+        return (
+          <ACTAccessRequirementComponent
+            //@ts-ignore
+            accessRequirement={accessRequirement}
+            token={token}
+            user={user}
+            onHide={onHide}
+          />
+        )
       default:
         // case not supported yet, go to synapse
         return (
@@ -219,7 +228,9 @@ See Requirements on synapse.org
           <div>
             <p className="bold-text">
               <button
-                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn ${
+                className={`${
+                  SynapseConstants.SRC_SIGN_IN_CLASS
+                } sign-in-btn access-requirement ${
                   isSignedIn ? 'default' : 'blue'
                 }`}
               >
