@@ -10,7 +10,7 @@ import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import { UserProfile } from '../../utils/synapseTypes'
 import useGetEntityHeaders, {
-  UseGetEntityHeaderProps,
+  useGetEntityHeadersProps,
 } from '../../utils/hooks/useGetEntityHeaders'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 
@@ -58,12 +58,8 @@ export default function AccessRequirementList({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile>()
-  const entityHeaderProps: UseGetEntityHeaderProps = {
-    references: [
-      {
-        targetId: entityId,
-      },
-    ],
+  const entityHeaderProps: useGetEntityHeadersProps = {
+    references: [entityId],
     token: token,
   }
 

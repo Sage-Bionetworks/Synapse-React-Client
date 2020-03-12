@@ -24,6 +24,9 @@ import {
   AccessRequirement,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
+import AccessRequirementList, {
+  checkUnSupportedRequirement,
+} from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -323,19 +326,30 @@ export default class HasAccess extends React.Component<
       linkText = 'View Terms'
     }
     return (
-      <a
-        style={{
-          fontSize: '14px',
-          cursor: 'pointer',
-          marginLeft: '9px',
-        }}
-        className="SRC-primary-text-color"
-        href={`${getEndpoint(
-          BackendDestinationEnum.PORTAL_ENDPOINT,
-        )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
-      >
-        {linkText}
-      </a>
+      <>
+        <button
+          style={{
+            fontSize: '14px',
+            cursor: 'pointer',
+            marginLeft: '16px',
+            color: 'rgb(77, 85, 144)',
+          }}
+          onClick={this.handleGetAccess}
+        >
+          {linkText}
+        </button>
+        {displayAccessRequirement && (
+          <AccessRequirementList
+            token={token}
+            entityId={entityId}
+            accessRequirementFromProps={accessRequirements}
+            onHide={() => {
+              this.setState({ displayAccessRequirement: false })
+              this.refresh()
+            }}
+          />
+        )}
+      </>
     )
   }
 
