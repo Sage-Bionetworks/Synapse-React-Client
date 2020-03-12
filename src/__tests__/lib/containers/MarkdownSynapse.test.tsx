@@ -116,10 +116,10 @@ describe('it performs all functionality', () => {
   })
 
   describe('it renders a video widget', () => {
-    it.only('renders a video with given a synapseID', async () => {
+    it('renders a video widget given a synapseID', async () => {
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
-        markdown: '${youtube?videoId=Bey4XXJAqS8}',
-        // markdown: '${video?mp4SynapseId=syn21714374}'
+        // markdown: '${youtube?videoId=Bey4XXJAqS8}',
+        markdown: '${video?mp4SynapseId=syn21714374}',
       })
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
@@ -131,25 +131,32 @@ describe('it performs all functionality', () => {
       expect(wrapper.find(SynapseVideo)).toHaveLength(1)
     })
 
-    it.only('do not render a video without token', async () => {
+    it('do not render a video widget without token', async () => {
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
         markdown: '${video?mp4SynapseId=syn21714374}',
       })
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: '_',
+        token: undefined,
       }
       const { wrapper } = await createShallowComponent(props)
       expect(wrapper.find(SynapseVideo).html()).toMatch(
-        '<div><div><p>You will need to sign in for access to that resource<p></div></div>',
+        '<div><p>You will need to<button class="SRC-SIGN-IN-CLASS sign-in-btn default',
       )
     })
 
-    it.only('renders a video with given height and width', async () => {
+    it('renders a video widget with a given height and width', async () => {
+      const height = 300
+      const width = 400
+      const givenMarkdown = '${youtube?videoId=Bey4XXJAqS8&height='
+        .concat(`${height}`)
+        .concat('&width=')
+        .concat(`${width}`)
+        .concat('}')
+
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
-        markdown: '${youtube?videoId=Bey4XXJAqS8&height=300&width=400}',
-        // markdown: '${video?mp4SynapseId=syn21714374}'
+        markdown: givenMarkdown,
       })
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
@@ -160,7 +167,7 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent(props)
 
       expect(wrapper.find(SynapseVideo).html()).toMatch(
-        '<div><div><iframe title="video frame" width="400" height="300"></iframe></div></div>',
+        `<div><div><iframe title="video frame" width="${width}" height="${height}"></iframe></div></div>`,
       )
     })
   })

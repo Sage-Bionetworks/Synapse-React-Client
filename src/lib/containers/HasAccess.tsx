@@ -24,9 +24,6 @@ import {
   AccessRequirement,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
-import AccessRequirementList, {
-  checkUnSupportedRequirement,
-} from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -227,12 +224,18 @@ export default class HasAccess extends React.Component<
   renderIconHelper = (iconProp: IconProp, classColor: string) => {
     return (
       <span className="fa-layers fa-fw">
-        <FontAwesomeIcon icon={faCircle} className={classColor} size="2x" />
+        <FontAwesomeIcon
+          icon={faCircle}
+          className={classColor}
+          size="1x"
+          style={{ fontSize: '24px' }}
+        />
         <FontAwesomeIcon
           icon={iconProp}
           className="SRC-whiteText"
           size="1x"
-          transform={{ x: 6 }}
+          transform={{ x: 5 }}
+          style={{ fontSize: '13px' }}
         />
       </span>
     )
@@ -320,30 +323,19 @@ export default class HasAccess extends React.Component<
       linkText = 'View Terms'
     }
     return (
-      <>
-        <button
-          style={{
-            fontSize: '14px',
-            cursor: 'pointer',
-            marginLeft: '16px',
-            color: 'rgb(77, 85, 144)',
-          }}
-          onClick={this.handleGetAccess}
-        >
-          {linkText}
-        </button>
-        {displayAccessRequirement && (
-          <AccessRequirementList
-            token={token}
-            entityId={entityId}
-            accessRequirementFromProps={accessRequirements}
-            onHide={() => {
-              this.setState({ displayAccessRequirement: false })
-              this.refresh()
-            }}
-          />
-        )}
-      </>
+      <a
+        style={{
+          fontSize: '14px',
+          cursor: 'pointer',
+          marginLeft: '9px',
+        }}
+        className="SRC-primary-text-color"
+        href={`${getEndpoint(
+          BackendDestinationEnum.PORTAL_ENDPOINT,
+        )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
+      >
+        {linkText}
+      </a>
     )
   }
 

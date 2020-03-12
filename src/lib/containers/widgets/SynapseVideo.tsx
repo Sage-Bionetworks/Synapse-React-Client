@@ -8,6 +8,7 @@ import {
   BatchFileRequest,
   BatchFileResult,
 } from '../../utils/synapseTypes'
+import { SynapseConstants } from '../../utils/'
 
 export type Props = {
   params: any
@@ -91,13 +92,21 @@ export default function SynapseVideo({ params, token }: Props) {
       </div>
     )
   }
-  console.log('3')
   return (
     <div>
       {token ? (
         <RenderVideo />
       ) : (
-        <p>You will need to sign in for access to that resource.</p>
+        <p>
+          You will need to
+          <button
+            className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
+                `}
+          >
+            Sign in
+          </button>
+          in for access to that resource.
+        </p>
       )}
     </div>
   )

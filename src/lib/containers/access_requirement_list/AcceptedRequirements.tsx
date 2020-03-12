@@ -98,7 +98,6 @@ export default function AcceptedRequirements({
   const RenderMarkdown = () => {
     const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
       .termsOfUse
-
     return (
       <div>
         {accessRequirement.concreteType ===

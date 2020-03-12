@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import useGetProfiles from '../../../utils/hooks/useGetProfiles'
 import useGetEntityHeaders from '../../../utils/hooks/useGetEntityHeaders'
-import { ReferenceList, UserProfile } from '../../../utils/synapseTypes'
+import { UserProfile } from '../../../utils/synapseTypes'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -83,11 +83,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       : []
   const userProfiles = useGetProfiles({ ids: userIds, token })
 
-  const entityIds: ReferenceList =
+  const entityIds =
     columnModel.columnType === 'ENTITYID'
-      ? facetValues.map(facet => {
-          return { targetId: facet.value }
-        })
+      ? facetValues.map(facet =>  facet.value )
       : []
   const entityHeaders = useGetEntityHeaders({
     references: entityIds,

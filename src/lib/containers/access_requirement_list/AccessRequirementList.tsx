@@ -212,8 +212,7 @@ See Requirements on synapse.org
         <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
         <p> {entityInformation[0]?.name} </p>
         <h4 className="data-access-requirement-title uppercase-text bold-text">
-          {' '}
-          What do I need to do?{' '}
+          What do I need to do?
         </h4>
         <div className="requirement-container">
           <AccessApprovalCheckMark isCompleted={isSignedIn} />
