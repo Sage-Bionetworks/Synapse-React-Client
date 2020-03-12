@@ -1,16 +1,45 @@
 .queryFilter {
-    margin: 0rem 1rem 1rem 0;
-    border: 1px solid $border-color-gray;
-    padding: 1rem;
+  margin: 0rem 1rem 1rem 0;
+  border: 1px solid $border-color-gray;
+  padding: 1rem;
 }
 
 .queryFilter-facet {
-    margin: 2rem 0;
-    &:first-child {
-        margin-top: 0
+  margin: 2rem 0;
+  &:first-child {
+    margin-top: 0;
+  }
+
+  .EnumFacetFilter {
+    &__checkboxContainer {
+      display: flex;
+      justify-content: space-between;
+
+      &:first-child {
+        margin-top: 0;
+      }
     }
 
-    .checkbox:first-child {
-        margin-top: 0
+    &__checkbox {
+      > label {
+        display: flex;
+        flex-wrap: nowrap;
+        &::before {
+          flex: none;
+          align-self: center;
+        }
+
+        > span {
+          margin-left: 2px;
+          color: $gray-regular;
+        }
+      }
     }
+
+    &__count {
+        margin-left:10px;
+        align-self: center;
+        color:  $gray-deemphasized;
+    }
+  }
 }

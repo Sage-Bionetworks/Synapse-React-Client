@@ -5,7 +5,7 @@ import {
   ColumnModel,
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
-import { SynapseConstants } from '../../../utils'
+import { SynapseConstants} from '../../../utils'
 import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
@@ -28,7 +28,7 @@ function valueToLabel(
   profiles: UserProfile[] = [],
   entityHeaders: EntityHeader[] = [],
 ): string {
-  const { value, count } = facet
+  const { value } = facet
   let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
     displayValue = 'Not Set'
@@ -42,7 +42,8 @@ function valueToLabel(
   if (eh) {
     displayValue = eh ? eh.name : `unknown (${value})`
   }
-  return `${displayValue} (${count})`
+
+  return `${displayValue}`
 }
 
 function formatFacetValuesForDisplay(
@@ -101,7 +102,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   }
 
   return (
-    <div>
+    <div className="EnumFacetFilter">
       <button
         className="btn btn-link SRC-noPadding"
         onClick={() => onClear(columnModel.name)}
@@ -116,15 +117,22 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         ).map((facet, index: number) => {
           const id = valueToId(facet.value)
           return (
-            <Checkbox
-              onChange={(isChecked: boolean) =>
-                onChange(facet.value, isChecked)
-              }
-              key={id + index}
-              checked={facet.isSelected}
-              label={valueToLabel(facet, userProfiles, entityHeaders)}
-              id={id}
-            ></Checkbox>
+            <div className="EnumFacetFilter__checkboxContainer"
+        
+              key={`checkLabel${index}`}
+            >
+              <Checkbox
+                className="EnumFacetFilter__checkbox"
+                onChange={(isChecked: boolean) =>
+                  onChange(facet.value, isChecked)
+                }
+                key={id + index}
+                checked={facet.isSelected}
+                label={valueToLabel(facet, userProfiles, entityHeaders)}
+                id={id}
+              ></Checkbox>
+              <div className="EnumFacetFilter__count">{facet.count}</div>
+            </div>
           )
         })}
         {!isShowAll && facetValues.length > visibleItemsCount && (
