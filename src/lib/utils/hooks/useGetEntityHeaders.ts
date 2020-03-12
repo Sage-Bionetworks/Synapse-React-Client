@@ -50,9 +50,9 @@ export default function useGetEntityHeaders(props: UseGetProfilesProps) {
               name: `Unknown/Unable to Access (${item.targetId})`
             }))
             setData(oldData =>
-              oldData.concat(...newData, ...notFoundPlaceholders),
+              oldData.concat(...newData, ...notFoundPlaceholders)
             )
-            setData(oldData => oldData.concat(...newData))
+
           }
         } catch (error) {
           console.error('Error on data retrieval', error)
