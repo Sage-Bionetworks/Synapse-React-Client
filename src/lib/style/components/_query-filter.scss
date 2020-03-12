@@ -36,6 +36,28 @@
       }
     }
 
+    &__showMoreFacetsLabel {
+        margin-left: 25px
+    }
+
+    &__showMoreFacetsBtn {
+        width: 100%;
+        margin:10px 0 0 0;
+        padding: 0;
+        color: #337ab7 !important;
+       
+        
+
+        &:hover {
+            color: #23527c !important;
+            text-decoration: underline;
+        }
+    }
+
+    &__showMoreFacetsCount {
+        align-self: center;
+    }
+
     &__count {
         margin-left:10px;
         align-self: center;

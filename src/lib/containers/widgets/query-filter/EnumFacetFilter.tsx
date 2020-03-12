@@ -5,7 +5,7 @@ import {
   ColumnModel,
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
-import { SynapseConstants} from '../../../utils'
+import { SynapseConstants } from '../../../utils'
 import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
@@ -117,8 +117,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         ).map((facet, index: number) => {
           const id = valueToId(facet.value)
           return (
-            <div className="EnumFacetFilter__checkboxContainer"
-        
+            <div
+              className="EnumFacetFilter__checkboxContainer"
               key={`checkLabel${index}`}
             >
               <Checkbox
@@ -137,10 +137,14 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         })}
         {!isShowAll && facetValues.length > visibleItemsCount && (
           <button
-            className="btn btn-link SRC-noPadding"
+            className="EnumFacetFilter__showMoreFacetsBtn"
             onClick={() => setIsShowAll(true)}
           >
-            Show All
+            <div className="EnumFacetFilter__checkboxContainer">
+              <div className="EnumFacetFilter__showMoreFacetsLabel">Show more</div>
+              <div className="EnumFacetFilter__howMoreFacetsCount">{facetValues.length}</div>
+            </div>
+            
           </button>
         )}
       </div>
