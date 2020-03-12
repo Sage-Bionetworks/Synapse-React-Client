@@ -13,11 +13,22 @@ export type UseGetProfilesProps = {
 export default function useGetEntityHeaders(props: UseGetProfilesProps) {
   const { token, references } = props
   const [data, setData] = useState<Array<EntityHeader>>([])
+  const entityHeaderTemplate: EntityHeader = {
+    name: 'Unknown', //	The name of the entity
+    id: 'unknown', //	The id of the entity
+    type: 'unknown', //	The type of the entity
+    versionNumber: 0, //	The version number of the entity
+    versionLabel: 'placeholder', //	The user defined version label of the entity
+    benefactorId: 0, //	The ID of the entity that this Entity's ACL is inherited from.
+    createdOn: 'null', //	The date this entity was created.
+    modifiedOn: 'null', //	The date this entity was last modified.
+    createdBy: 'null', //	The ID of the user that created this entity.
+    modifiedBy: 'null', //	The ID of the user that last modified this entity.
+  }
   useEffect(() => {
     const getData = async () => {
       // look at current list of data, see if incoming ids has new data,
       // if so grab those ids
-      console.log ('called')
       const curList = data.map(el => el.id)
       const incomingList = references
         .filter(el => el!== SynapseConstants.VALUE_NOT_SET)
@@ -30,6 +41,17 @@ export default function useGetEntityHeaders(props: UseGetProfilesProps) {
           const newReferencesChunks = chunk(newReferences, 45)
           for (const newReferences of newReferencesChunks) {
             const newData = await getAllEntityHeader(newReferences, token)
+            const notFound = newReferences.filter(
+              item => newData.map(item => item.id).indexOf(item.targetId) == -1,
+            )
+            const notFoundPlaceholders: EntityHeader[] = notFound.map(item => ({
+              ...entityHeaderTemplate,
+              id: item.targetId,
+              name: `Unknown/Unable to Access (${item.targetId})`
+            }))
+            setData(oldData =>
+              oldData.concat(...newData, ...notFoundPlaceholders),
+            )
             setData(oldData => oldData.concat(...newData))
           }
         } catch (error) {
@@ -38,6 +60,6 @@ export default function useGetEntityHeaders(props: UseGetProfilesProps) {
       }
     }
     getData()
-  }, [token])
+  }, [token, references, data])
   return data
 }
