@@ -22,10 +22,10 @@ SynapseClient.getUserProfiles = jest.fn().mockResolvedValue({
   ],
 })
 
-SynapseClient.getAllEntityHeader = jest.fn().mockResolvedValue([
+SynapseClient.getEntityHeader = jest.fn().mockResolvedValue({results: [
   { id: '123', name: 'Entity1' },
   { id: '1234', name: 'Entity2' },
-])
+]})
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },
@@ -225,7 +225,7 @@ describe('callbacks', () => {
 
   it('should trigger callback on clear', () => {
     const clear = container.querySelector<HTMLButtonElement>('button')
-    fireEvent.click(clear)
+    fireEvent.click(clear!)
     expect(mockOnClear).toHaveBeenCalledWith(props.columnModel.name)
   })
 })
