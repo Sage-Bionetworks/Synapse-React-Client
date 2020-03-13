@@ -18,6 +18,13 @@
       &:first-child {
         margin-top: 0;
       }
+
+      &--forAll {
+        border-top: solid 1px #ddd;
+        border-bottom: dotted 1px #ddd;
+        padding: 0;
+        margin-top: 10px;
+      }
     }
 
     &__checkbox {
@@ -37,31 +44,29 @@
     }
 
     &__showMoreFacetsLabel {
-        margin-left: 25px
+      margin-left: 25px;
     }
 
     &__showMoreFacetsBtn {
-        width: 100%;
-        margin:10px 0 0 0;
-        padding: 0;
-        color: #337ab7 !important;
-       
-        
+      width: 100%;
+      margin: 10px 0 0 0;
+      padding: 0;
+      color: #337ab7 !important;
 
-        &:hover {
-            color: #23527c !important;
-            text-decoration: underline;
-        }
+      &:hover {
+        color: #23527c !important;
+        text-decoration: underline;
+      }
     }
 
     &__showMoreFacetsCount {
-        align-self: center;
+      align-self: center;
     }
 
     &__count {
-        margin-left:10px;
-        align-self: center;
-        color:  $gray-deemphasized;
+      margin-left: 10px;
+      align-self: center;
+      color: $gray-deemphasized;
     }
   }
 }

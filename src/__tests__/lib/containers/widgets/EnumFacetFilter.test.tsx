@@ -94,7 +94,7 @@ beforeEach(() => init())
 describe('initialization', () => {
   it('should initiate selected items correctly', async () => {
     const checkboxes = container.querySelectorAll<HTMLInputElement>(
-      'input[type="checkbox"]',
+      'input[type="checkbox"]:not(#select_all)',
     )
     expect(checkboxes).toHaveLength(3)
     checkboxes.forEach((checkbox, i) => {
@@ -109,25 +109,19 @@ describe('initialization', () => {
   describe('label initialization', () => {
     it('should set labels correctly for STRING type', async () => {
       const labels = container.querySelectorAll<HTMLSpanElement>(
-        'input[type="checkbox"] ~ span',
+        'input[type="checkbox"]:not(#select_all) ~ span',
       )
-      const counts = container.querySelectorAll<HTMLDivElement>('.EnumFacetFilter__count')
+      const counts = container.querySelectorAll<HTMLDivElement>(
+        '.EnumFacetFilter__count',
+      )
       expect(labels).toHaveLength(3)
       labels.forEach((label, i) => {
         if (i !== 2) {
-          expect(label.textContent).toBe(
-            `${stringFacetValues[i].value}`,
-          )
-          expect(counts[i].textContent).toBe(
-            `${stringFacetValues[i].count}`,
-          )
+          expect(label.textContent).toBe(`${stringFacetValues[i].value}`)
+          expect(counts[i].textContent).toBe(`${stringFacetValues[i].count}`)
         } else {
-          expect(label.textContent).toBe(
-            `Not Set`,
-          )
-          expect(counts[i].textContent).toBe(
-            `${stringFacetValues[i].count}`,
-          )
+          expect(label.textContent).toBe(`Not Set`)
+          expect(counts[i].textContent).toBe(`${stringFacetValues[i].count}`)
         }
       })
     })
@@ -140,7 +134,9 @@ describe('initialization', () => {
         facetValues,
       })
 
-      const labels = container.querySelectorAll<HTMLDivElement>('.EnumFacetFilter__count')
+      const labels = container.querySelectorAll<HTMLDivElement>(
+        '.EnumFacetFilter__count',
+      )
       expect(labels).toHaveLength(5)
       expect(labels.item(0).textContent).toContain('12')
     })
@@ -154,7 +150,9 @@ describe('initialization', () => {
         facetValues,
       })
 
-      const labels = container.querySelectorAll('input[type="checkbox"] ~ span')
+      const labels = container.querySelectorAll(
+        'input[type="checkbox"]:not(#select_all) ~ span',
+      )
       expect(labels).toHaveLength(20)
     })
 
@@ -173,24 +171,20 @@ describe('initialization', () => {
 
       await act(async () => await init(updatedProps))
       const labels = container.querySelectorAll<HTMLInputElement>(
-        'input ~ span',
+        'input:not(#select_all) ~ span',
       )
-      const counts = container.querySelectorAll<HTMLDivElement>('.EnumFacetFilter__count')
-      expect(labels.item(0).textContent).toBe(
-        `Not Set`,
+      const counts = container.querySelectorAll<HTMLDivElement>(
+        '.EnumFacetFilter__count',
       )
+      expect(labels.item(0).textContent).toBe(`Not Set`)
       expect(counts.item(0).textContent).toBe(
         `${userEntityFacetValues[0].count}`,
       )
-      expect(labels.item(1).textContent).toBe(
-        `Entity1`,
-      )
+      expect(labels.item(1).textContent).toBe(`Entity1`)
       expect(counts.item(1).textContent).toBe(
         `${userEntityFacetValues[1].count}`,
       )
-      expect(labels.item(2).textContent).toBe(
-        `Entity2`,
-      )
+      expect(labels.item(2).textContent).toBe(`Entity2`)
       expect(counts.item(2).textContent).toBe(
         `${userEntityFacetValues[2].count}`,
       )
@@ -212,33 +206,25 @@ describe('initialization', () => {
 
     await act(async () => await init(updatedProps))
     const labels = container.querySelectorAll<HTMLSpanElement>(
-      'input[type="checkbox"] ~ span',
+      'input[type="checkbox"]:not(#select_all) ~ span',
     )
-    const counts = container.querySelectorAll<HTMLDivElement>('.EnumFacetFilter__count')
+    const counts = container.querySelectorAll<HTMLDivElement>(
+      '.EnumFacetFilter__count',
+    )
     expect(labels).toHaveLength(3)
-    expect(labels.item(0).textContent).toBe(
-      `Not Set`,
-    )
+    expect(labels.item(0).textContent).toBe(`Not Set`)
     expect(counts.item(0).textContent).toBe(`${userEntityFacetValues[0].count}`)
-    expect(labels.item(1).textContent).toBe(
-      `somename`,
-    )
-    expect(counts.item(1).textContent).toBe(
-      `${userEntityFacetValues[1].count}`,
-    )
-    expect(labels.item(2).textContent).toBe(
-      `somename2`,
-    )
-    expect(counts.item(2).textContent).toBe(
-      `${userEntityFacetValues[2].count}`,
-    )
+    expect(labels.item(1).textContent).toBe(`somename`)
+    expect(counts.item(1).textContent).toBe(`${userEntityFacetValues[1].count}`)
+    expect(labels.item(2).textContent).toBe(`somename2`)
+    expect(counts.item(2).textContent).toBe(`${userEntityFacetValues[2].count}`)
   })
 })
 
 describe('callbacks', () => {
   it('should trigger callback on checkbox change', () => {
     const checkboxes = container.querySelectorAll<HTMLInputElement>(
-      'input[type="checkbox"]',
+      'input[type="checkbox"]:not(#select_all)',
     )
     fireEvent.click(checkboxes.item(0))
     expect(mockCallback).toHaveBeenCalledWith(stringFacetValues[0].value, true)
@@ -247,7 +233,9 @@ describe('callbacks', () => {
   })
 
   it('should trigger callback on clear', () => {
-    const clear = container.querySelector<HTMLButtonElement>('button')
+    const clear = container.querySelector<HTMLInputElement>(
+      'input[type="checkbox"]#select_all',
+    )
     fireEvent.click(clear!)
     expect(mockOnClear).toHaveBeenCalledWith(props.columnModel.name)
   })

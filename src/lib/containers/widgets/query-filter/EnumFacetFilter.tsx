@@ -103,12 +103,16 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
 
   return (
     <div className="EnumFacetFilter">
-      <button
-        className="btn btn-link SRC-noPadding"
-        onClick={() => onClear(columnModel.name)}
-      >
-        All
-      </button>
+      <div className="EnumFacetFilter__checkboxContainer--forAll">
+        <Checkbox
+          className="EnumFacetFilter__checkbox"
+          onChange={() => onClear(columnModel.name)}
+          key="select_all"
+          checked={facetValues.filter(item => item.isSelected).length === 0}
+          label="All"
+          id="select_all"
+        ></Checkbox>
+      </div>
       <div>
         {formatFacetValuesForDisplay(
           facetValues,
@@ -141,10 +145,13 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             onClick={() => setIsShowAll(true)}
           >
             <div className="EnumFacetFilter__checkboxContainer">
-              <div className="EnumFacetFilter__showMoreFacetsLabel">Show more</div>
-              <div className="EnumFacetFilter__howMoreFacetsCount">{facetValues.length}</div>
+              <div className="EnumFacetFilter__showMoreFacetsLabel">
+                Show more
+              </div>
+              <div className="EnumFacetFilter__howMoreFacetsCount">
+                {facetValues.length}
+              </div>
             </div>
-            
           </button>
         )}
       </div>
