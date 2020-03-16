@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { getAllAccessRequirements } from '../../utils/SynapseClient'
 import { SynapseConstants, SynapseClient } from '../../utils/'
-import Modal from 'react-bootstrap/Modal'
+import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
@@ -111,6 +111,12 @@ export default function AccessRequirementList({
           })
         }
 
+        const sortedAccessRequirements = await sortAccessRequirementByCompletion(
+          accessRequirementFromProps!,
+        )
+
+        setAccessRequirements(sortedAccessRequirements)
+
         const userProfile = await SynapseClient.getUserProfile(token)
         setUser(userProfile)
 
@@ -213,11 +219,17 @@ See Requirements on synapse.org
   }
 
   return (
-    <Modal onHide={() => onHide?.()} show={true} animation={false}>
-      <Modal.Header closeButton={true}>
-        <Modal.Title>Data Access Request</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+    <ReactBootstrap.Modal
+      onHide={() => onHide?.()}
+      show={true}
+      animation={false}
+    >
+      <ReactBootstrap.Modal.Header closeButton={true}>
+        <ReactBootstrap.Modal.Title>
+          Data Access Request
+        </ReactBootstrap.Modal.Title>
+      </ReactBootstrap.Modal.Header>
+      <ReactBootstrap.Modal.Body>
         <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
         <p> {entityInformation[0]?.name} </p>
         <h4 className="data-access-requirement-title uppercase-text bold-text">
@@ -245,7 +257,7 @@ See Requirements on synapse.org
         {accessRequirements.map(req => {
           return renderAccessRequirement(req)
         })}
-      </Modal.Body>
-    </Modal>
+      </ReactBootstrap.Modal.Body>
+    </ReactBootstrap.Modal>
   )
 }
