@@ -63,7 +63,6 @@ export default function AcceptedRequirements({
       window.open(
         `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
       )
-      window.location.reload()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
