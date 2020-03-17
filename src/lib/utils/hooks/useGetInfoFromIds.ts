@@ -39,7 +39,7 @@ const getEntityHeaderItems = async (
   lookupList: ReferenceList,
   token: string | undefined,
 ): Promise<EntityHeader[]> => {
-  const newData = await getEntityHeader(lookupList as ReferenceList, token)
+  const newData = await getEntityHeader(lookupList, token)
   const notFound = lookupList.filter(
     item =>
       newData.results.map(item => item.id).indexOf(item.targetId) == -1,
@@ -58,7 +58,7 @@ const getUserProfileItems = async (
   token: string | undefined,
 ): Promise<UserProfile[]> => {
   const newData = await getUserProfileWithProfilePicAttached(
-    lookupList as string[],
+    lookupList,
     token,
   )
   const notFound = lookupList.filter(
