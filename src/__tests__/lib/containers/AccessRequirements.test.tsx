@@ -183,7 +183,6 @@ describe('Access Requirement List works as expect', () => {
     SynpaseClient.getAccessRequirementStatus = jest
       .fn()
       .mockResolvedValue(stauses)
-    expect.assertions(1)
     await act(
       (list.sortAccessRequirementByCompletion = jest
         .fn()

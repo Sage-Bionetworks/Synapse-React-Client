@@ -33,7 +33,6 @@ export default function SelfSignAccessRequirementComponent({
   >(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const accessRequirementText = 'Self Sign Access Requirement'
-  console.log('id', accessRequirement.id)
   useEffect(() => {
     const getSelfSignAccessData = async () => {
       try {
