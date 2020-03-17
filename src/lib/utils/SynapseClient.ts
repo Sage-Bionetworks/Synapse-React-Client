@@ -791,27 +791,6 @@ export const getEntityHeader = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
-/**
- * Get all entity header
- */
-export const getAllEntityHeader = (
-  references: ReferenceList,
-  sessionToken: string | undefined = undefined,
-) => {
-  // format function to be callable by getAllOfPaginatedService
-  const fn = (limit: number, offset: number) => {
-    const url = `repo/v1/entity/header?limit${limit}&offset=${offset}`
-    return doPost<PaginatedResults<EntityHeader>>(
-      url,
-      { references },
-      sessionToken,
-      undefined,
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )
-  }
-  return getAllOfPaginatedService(fn)
-}
-
 export const updateEntity = <T extends Entity>(
   entity: T,
   sessionToken: string | undefined = undefined,
