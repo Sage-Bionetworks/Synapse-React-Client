@@ -1,5 +1,9 @@
 .ThemesPlot {
   width: 100%;
+  .js-plotly-plot .plotly .cursor-ew-resize {
+    cursor: pointer !important;
+  }
+  
   &__dotPlotLegend {
     text-align: right;
     width: 300px;
