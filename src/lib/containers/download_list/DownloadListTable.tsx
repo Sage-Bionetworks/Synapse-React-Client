@@ -5,7 +5,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import useGetProfiles from '../../utils/hooks/useGetProfiles'
+import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   deleteDownloadList,
   deleteDownloadListFiles,
@@ -22,6 +22,7 @@ import {
   FileHandleAssociation,
   PaginatedResults,
   Reference,
+  UserProfile,
 } from '../../utils/synapseTypes'
 import HasAccess, {
   getDownloadTypeForFileHandle,
@@ -68,7 +69,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     .filter(el => el.fileHandle && el.fileHandle.createdBy)
     // use bang operator because filter function guarentee's that file handle will be defined
     .map(el => el.fileHandle!.createdBy!)
-  const userProfiles = useGetProfiles({ ids: ownerIds, token })
+  const userProfiles = useGetInfoFromIds<UserProfile>({ ids: ownerIds, token,type: 'USER_PROFILE' })
 
   useEffect(() => {
     fetchData(token)

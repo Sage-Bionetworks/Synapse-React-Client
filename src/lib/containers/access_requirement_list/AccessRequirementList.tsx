@@ -9,10 +9,10 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
-import { UserProfile } from '../../utils/synapseTypes'
-import useGetEntityHeaders, {
-  useGetEntityHeadersProps,
-} from '../../utils/hooks/useGetEntityHeaders'
+import { UserProfile, EntityHeader } from '../../utils/synapseTypes'
+import useGetInfoFromIds, {
+  UseGetInfoFromIdsProps,
+} from '../../utils/hooks/useGetInfoFromIds'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 
 library.add(faCircle)
@@ -61,12 +61,13 @@ export default function AccessRequirementList({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile>()
 
-  const entityHeaderProps: useGetEntityHeadersProps = {
-    references: [entityId],
+  const entityHeaderProps: UseGetInfoFromIdsProps = {
+    ids: [entityId],
     token: token,
+    type: 'ENTITY_HEADER',
   }
 
-  const entityInformation = useGetEntityHeaders(entityHeaderProps)
+  const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
     const sortAccessRequirementByCompletion = async (
@@ -75,7 +76,6 @@ export default function AccessRequirementList({
       const statuses = requirements.map(req => {
         return SynapseClient.getAccessRequirementStatus(token, req.id)
       })
-
       const accessRequirementStatuses = await Promise.all(statuses)
 
       const sortOrder = accessRequirementStatuses
@@ -109,15 +109,16 @@ export default function AccessRequirementList({
             )
             setAccessRequirements(sortedAccessRequirements)
           })
+        } else {
+          const sortedAccessRequirements = await sortAccessRequirementByCompletion(
+            accessRequirementFromProps!,
+          )
+          setAccessRequirements(sortedAccessRequirements)
         }
 
-        const sortedAccessRequirements = await sortAccessRequirementByCompletion(
-          accessRequirementFromProps!,
-        )
-
-        setAccessRequirements(sortedAccessRequirements)
-
         const userProfile = await SynapseClient.getUserProfile(token)
+        SynapseClient.getUserProfile(token).then(data => {})
+
         setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
@@ -182,17 +183,9 @@ export default function AccessRequirementList({
             onHide={onHide}
           />
         )
+      // case not supported yet
       default:
-        // case not supported yet, go to synapse
-        return (
-          <div className="case-not-supporeted-container">
-            {/* <a
-href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
->
-See Requirements on synapse.org
-</a> */}
-          </div>
-        )
+        return undefined
     }
   }
 

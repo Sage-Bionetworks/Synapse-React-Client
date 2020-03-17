@@ -47,22 +47,12 @@ export default function AcceptedRequirements({
   const [isApproved, setIsApproved] = useState<boolean | undefined>(
     propsIsApproved,
   )
-  const [buttonText, setButtonText] = useState<string>()
 
   useEffect(() => {
     const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
       setIsApproved(propsIsApproved)
     }
     setIsApprovedValueFromProps(propsIsApproved)
-
-    if (
-      accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-    ) {
-      setButtonText(`Get ${accessRequirementText} via synapse.org`)
-    } else {
-      setButtonText(`Accept ${accessRequirementText}`)
-    }
   }, [propsIsApproved, accessRequirementText])
 
   const onAcceptClicked = () => {
@@ -71,7 +61,7 @@ export default function AcceptedRequirements({
       SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
     ) {
       window.open(
-        `https://staging.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
+        `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
       )
       window.location.reload()
     } else {
@@ -163,7 +153,10 @@ export default function AcceptedRequirements({
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
-              {buttonText}
+              {accessRequirement.concreteType ===
+              SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+                ? `Get ${accessRequirementText} via synapse.org`
+                : `Accept ${accessRequirementText}`}
             </button>
           </div>
 

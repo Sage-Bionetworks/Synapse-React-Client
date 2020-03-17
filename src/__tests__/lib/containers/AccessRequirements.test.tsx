@@ -17,6 +17,7 @@ import {
   ACCESS_TYPE,
   AccessApproval,
   ApprovalState,
+  AccessRequirementStatus,
 } from '../../../lib/utils/synapseTypes/'
 import { mount, ReactWrapper } from 'enzyme'
 import SelfSignAccessRequirementComponent from 'lib/containers/access_requirement_list/SelfSignAccessRequirement'
@@ -104,10 +105,9 @@ describe('Access Requirement List works as expect', () => {
     expect(wrapper.find(SelfSignAccessRequirementComponent)).toHaveLength(1)
     expect(wrapper.find(ManagedACTAccessRequirementComponent)).toHaveLength(1)
     expect(wrapper.find(ACTAccessRequirementComponent)).toHaveLength(1)
-    // console.log(wrapper.html())
   })
 
-  it.only('Renders a Access Requirements List with order', async () => {
+  it.only('Renders a Access Requirements List with completion order', async () => {
     const accessRequirementsMock: Array<AccessRequirement> = [
       {
         versionNumber: 1,
@@ -162,6 +162,28 @@ describe('Access Requirement List works as expect', () => {
       },
     ]
     await init(props)
+
+    const stauses: AccessRequirementStatus[] = [
+      {
+        accessRequirementId: '_',
+        concreteType:
+          'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+        isApproved: true,
+        expiredOn: '-',
+      },
+      {
+        accessRequirementId: '_',
+        concreteType:
+          'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
+        isApproved: true,
+        expiredOn: '-',
+      },
+    ]
+
+    SynpaseClient.getAccessRequirementStatus = jest
+      .fn()
+      .mockResolvedValue(stauses)
+    expect.assertions(1)
     await act(
       (list.sortAccessRequirementByCompletion = jest
         .fn()
