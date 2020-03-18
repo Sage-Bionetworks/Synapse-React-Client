@@ -25,6 +25,7 @@ export const AccessRequirementDemo: React.FunctionComponent<AccessRequirementDem
         <AccessRequirementList
           onHide={() => {
             window.location.href = 'http://localhost:3000/Playground'
+            setDisplayAccessRequirement(false)
           }}
           entityId={inputValue}
           token={token}
