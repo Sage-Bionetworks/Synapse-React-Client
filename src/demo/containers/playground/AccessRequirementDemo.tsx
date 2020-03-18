@@ -1,11 +1,11 @@
 import * as React from 'react'
 import AccessRequirementList from 'lib/containers/access_requirement_list/AccessRequirementList'
 
-type Props = {
+type AccessRequirementDemoProps = {
   token: string
 }
 
-export const AccessRequirementDemo: React.FunctionComponent<Props> = props => {
+export const AccessRequirementDemo: React.FunctionComponent<AccessRequirementDemoProps> = props => {
   const { token } = props
   const [
     displayAccessRequirement,
