@@ -300,7 +300,6 @@ export default class HasAccess extends React.Component<
     // )
 
     const { forceSamePage = false, entityId } = this.props
-    console.log('value', forceSamePage)
     window.open(
       `${getEndpoint(
         BackendDestinationEnum.PORTAL_ENDPOINT,
