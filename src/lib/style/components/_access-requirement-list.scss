@@ -71,7 +71,11 @@
     visibility: hidden;
   }
 }
-
+.get-access-requirement-button {
+  margin-left: 10px;
+  background-color: rgb(77, 85, 144);
+  color: white;
+}
 .check-mark-container {
   &.orange {
     background-color: orange;
