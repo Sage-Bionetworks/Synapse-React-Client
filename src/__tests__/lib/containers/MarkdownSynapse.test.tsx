@@ -1,10 +1,13 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
+import { act } from '@testing-library/react'
+
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from '../../../lib/containers/MarkdownSynapse'
 import Bookmarks from '../../../lib/containers/widgets/Bookmarks'
 import SynapseImage from '../../../lib/containers/widgets/SynapseImage'
+import SynapseVideo from '../../../lib/containers/widgets/SynapseVideo'
 import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
 import { delay } from '../../../lib/utils/SynapseClient'
 import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
@@ -112,13 +115,70 @@ describe('it performs all functionality', () => {
     })
   })
 
+  describe('it renders a video widget', () => {
+    it('renders a video widget given a synapseID', async () => {
+      const mockGetEntityWiki = jest.fn().mockResolvedValue({
+        // markdown: '${youtube?videoId=Bey4XXJAqS8}',
+        markdown: '${video?mp4SynapseId=syn21714374}',
+      })
+      SynapseClient.getEntityWiki = mockGetEntityWiki
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        token: '_',
+      }
+
+      const { wrapper } = await createShallowComponent(props)
+      expect(wrapper.find(SynapseVideo)).toHaveLength(1)
+    })
+
+    it('do not render a video widget without token', async () => {
+      const mockGetEntityWiki = jest.fn().mockResolvedValue({
+        markdown: '${video?mp4SynapseId=syn21714374}',
+      })
+      SynapseClient.getEntityWiki = mockGetEntityWiki
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        token: undefined,
+      }
+      const { wrapper } = await createShallowComponent(props)
+      expect(wrapper.find(SynapseVideo).html()).toMatch(
+        '<div><p>You will need to<button class="SRC-SIGN-IN-CLASS sign-in-btn default',
+      )
+    })
+
+    it('renders a video widget with a given height and width', async () => {
+      const height = 300
+      const width = 400
+      const givenMarkdown = '${youtube?videoId=Bey4XXJAqS8&height='
+        .concat(`${height}`)
+        .concat('&width=')
+        .concat(`${width}`)
+        .concat('}')
+
+      const mockGetEntityWiki = jest.fn().mockResolvedValue({
+        markdown: givenMarkdown,
+      })
+      SynapseClient.getEntityWiki = mockGetEntityWiki
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        token: '_',
+      }
+
+      const { wrapper } = await createShallowComponent(props)
+
+      expect(wrapper.find(SynapseVideo).html()).toMatch(
+        `<div><div><iframe title="video frame" width="${width}" height="${height}"></iframe></div></div>`,
+      )
+    })
+  })
+
   describe('it renders an image widget', () => {
     const mockGetEntity = jest.fn().mockResolvedValue({})
     const mockGetFiles = jest.fn().mockResolvedValue({})
     SynapseClient.getEntity = mockGetEntity
     SynapseClient.getFiles = mockGetFiles
 
-    it('renders an image from a synapseId ', async () => {
+    it.only('renders an image from a synapseId ', async () => {
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
         markdown: '${image?synapseId=syn7809125&align=None&responsive=true}',
       })

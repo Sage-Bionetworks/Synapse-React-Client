@@ -123,7 +123,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/MarkdownSynapseDemo`}
-        component={() => <MarkdownSynapseDemo />}
+        component={() => <MarkdownSynapseDemo token={token} />}
       />
 
       <Route
@@ -148,7 +148,12 @@ const App = ({
         component={() => (
           <div className="container download-list-demo">
             <div className="col-xs-10">
-              <DownloadListTable token={token} listUpdatedCallback={() => {console.log('DownloadList updated')}} />
+              <DownloadListTable
+                token={token}
+                listUpdatedCallback={() => {
+                  console.log('DownloadList updated')
+                }}
+              />
             </div>
           </div>
         )}

@@ -5,6 +5,9 @@ import UserCard from './UserCard'
 import Bookmarks from './widgets/Bookmarks'
 import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
+import SynapseVideo from './widgets/SynapseVideo'
+import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
+
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -39,6 +42,7 @@ export type MarkdownSynapseProps = {
   wikiId?: string
   markdown?: string
   renderInline?: boolean
+  objectType?: ObjectType
 }
 const md = markdownit({ html: true })
 
@@ -47,6 +51,7 @@ type MarkdownSynapseState = {
   data: Partial<WikiPage>
   fileHandles?: FileHandleResults
   errorMessage: string
+  isLoading: boolean
 }
 /**
  * Basic Markdown functionality for Synapse, supporting Images/Plots/References/Bookmarks/buttonlinks
@@ -93,6 +98,7 @@ export default class MarkdownSynapse extends React.Component<
       errorMessage: '',
       fileHandles: undefined,
       data,
+      isLoading: true,
     }
     this.markupRef = React.createRef()
     this.handleLinkClicks = this.handleLinkClicks.bind(this)
@@ -107,6 +113,7 @@ export default class MarkdownSynapse extends React.Component<
     this.renderWidget = this.renderWidget.bind(this)
     this.renderSynapseButton = this.renderSynapseButton.bind(this)
     this.renderSynapseImage = this.renderSynapseImage.bind(this)
+    this.renderVideo = this.renderVideo.bind(this)
     this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
     this.renderSynapseTOC = this.renderSynapseTOC.bind(this)
     this.getErrorView = this.getErrorView.bind(this)
@@ -277,9 +284,14 @@ export default class MarkdownSynapse extends React.Component<
    * Get wiki page markdown and file attachment handles
    */
   public async getWikiPageMarkdown() {
-    const { ownerId, wikiId = '', token } = this.props
+    const { ownerId, wikiId = '', token, objectType } = this.props
     try {
-      const wikiPage = await SynapseClient.getEntityWiki(token, ownerId, wikiId)
+      const wikiPage = await SynapseClient.getEntityWiki(
+        token,
+        ownerId,
+        wikiId,
+        objectType,
+      )
       try {
         const fileHandles = await this.getWikiAttachments(
           wikiId ? wikiId : wikiPage.id,
@@ -296,7 +308,7 @@ export default class MarkdownSynapse extends React.Component<
     }
   }
   public async getWikiAttachments(wikiId: string) {
-    const { token, ownerId } = this.props
+    const { token, ownerId, objectType } = this.props
     if (!ownerId) {
       console.error(
         'Cannot get wiki attachments without ownerId on Markdown Component',
@@ -307,6 +319,7 @@ export default class MarkdownSynapse extends React.Component<
       token,
       ownerId,
       wikiId,
+      objectType,
     )
       .then(data => {
         return data
@@ -530,6 +543,7 @@ export default class MarkdownSynapse extends React.Component<
     // we make keys out of the widget params
     const key = JSON.stringify(widgetparamsMapped)
     widgetparamsMapped.reactKey = key
+
     switch (widgetType) {
       case 'buttonlink':
         return this.renderSynapseButton(widgetparamsMapped)
@@ -541,6 +555,10 @@ export default class MarkdownSynapse extends React.Component<
         return this.renderSynapseTOC(originalMarkup)
       case 'badge':
         return this.renderUserBadge(widgetparamsMapped)
+      case 'video':
+      case 'vimeo':
+      case 'youtube':
+        return this.renderVideo(widgetparamsMapped)
       default:
         return
     }
@@ -595,6 +613,12 @@ export default class MarkdownSynapse extends React.Component<
         widgetparamsMapped={widgetparamsMapped}
       />
     )
+  }
+
+  public renderVideo(widgetparamsMapped: any) {
+    const { token } = this.props
+
+    return <SynapseVideo token={token} params={widgetparamsMapped} />
   }
 
   public renderSynapseImage(widgetparamsMapped: any) {
@@ -661,6 +685,7 @@ export default class MarkdownSynapse extends React.Component<
 
   public async componentDidMount() {
     if (this.state.data.markdown) {
+      this.setState({ isLoading: false })
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
@@ -672,6 +697,7 @@ export default class MarkdownSynapse extends React.Component<
     // get wiki attachments
     await this.getWikiPageMarkdown()
     this.processMath()
+    this.setState({ isLoading: false })
   }
 
   // on component update find and re-render the math/widget items accordingly
@@ -689,9 +715,12 @@ export default class MarkdownSynapse extends React.Component<
 
   public render() {
     const { renderInline } = this.props
+    const { isLoading } = this.state
+
     const bookmarks = this.addBookmarks()
     const content = (
       <>
+        {isLoading && <span className="spinner" />}
         {this.renderMarkdown()}
         {bookmarks && <div>{this.addBookmarks()}</div>}
       </>

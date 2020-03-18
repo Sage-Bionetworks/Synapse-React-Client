@@ -933,6 +933,24 @@ a.SRC-lightLink {
   margin: 10px;
 }
 
+.SRC-SIGN-IN-CLASS.sign-in-btn {
+  &.access-requirement {
+    padding: 15px 5px 0px 0px;
+
+    &.default {
+      color: black;
+    }
+    &.blue {
+      color: rgb(77, 85, 144);
+    }
+  }
+
+  &.default {
+    padding-left: 5px;
+    color: rgb(77, 85, 144);
+  }
+}
+
 a.dropdown-item {
   $color: #212529;
   display: block;
