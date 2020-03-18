@@ -8,9 +8,8 @@ import { Checkbox } from '../Checkbox'
 import { SynapseConstants } from '../../../utils'
 import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
-import useGetProfiles from '../../../utils/hooks/useGetProfiles'
-import useGetEntityHeaders from '../../../utils/hooks/useGetEntityHeaders'
-import { ReferenceList, UserProfile } from '../../../utils/synapseTypes'
+import { UserProfile } from '../../../utils/synapseTypes'
+import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -81,18 +80,22 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     columnModel.columnType === 'USERID'
       ? facetValues.map(facet => facet.value)
       : []
-  const userProfiles = useGetProfiles({ ids: userIds, token })
-
-  const entityIds: ReferenceList =
-    columnModel.columnType === 'ENTITYID'
-      ? facetValues.map(facet => {
-          return { targetId: facet.value }
-        })
-      : []
-  const entityHeaders = useGetEntityHeaders({
-    references: entityIds,
+  const userProfiles = useGetInfoFromIds<UserProfile>({
+    ids: userIds,
     token,
+    type: 'USER_PROFILE',
   })
+
+  const entityIds =
+    columnModel.columnType === 'ENTITYID'
+      ? facetValues.map(facet => facet.value)
+      : []
+  const entityHeaders = useGetInfoFromIds<EntityHeader>({
+    ids: entityIds,
+    token,
+    type: 'ENTITY_HEADER',
+  })
+
   if (!columnModel) {
     return <></>
   }

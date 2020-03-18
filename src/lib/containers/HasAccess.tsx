@@ -204,12 +204,13 @@ export default class HasAccess extends React.Component<
   renderIconHelper = (iconProp: IconProp, classColor: string) => {
     return (
       <span className="fa-layers fa-fw">
-        <FontAwesomeIcon icon={faCircle} className={classColor} size="2x" />
+        <FontAwesomeIcon icon={faCircle} className={classColor} size="1x" style={{fontSize: '24px'}} />
         <FontAwesomeIcon
           icon={iconProp}
           className="SRC-whiteText"
           size="1x"
-          transform={{ x: 6 }}
+          transform={{ x: 5 }}
+          style={{fontSize: '13px'}}
         />
       </span>
     )
@@ -266,7 +267,7 @@ export default class HasAccess extends React.Component<
         style={{
           fontSize: '14px',
           cursor: 'pointer',
-          marginLeft: '16px',
+          marginLeft: '9px',
         }}
         className="SRC-primary-text-color"
         href={`${getEndpoint(

@@ -23,6 +23,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     initQueryRequest,
     sqlOperator,
     facetsToPlot,
+    enableLeftFacetFilter,
+    loadingScreen,
     ...rest
   } = props
   if (searchParams) {
@@ -39,15 +41,16 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     >
       {
         <FacetsPlotNav
-          loadingScreen={props.loadingScreen}
+          loadingScreen={loadingScreen}
           facetsToPlot={facetsToPlot}
         />
       }
       {
         title ?
         <SynapseTable
-          loadingScreen={props.loadingScreen}
+          loadingScreen={loadingScreen}
           title={title}
+          enableLeftFacetFilter={enableLeftFacetFilter}
         />
         :
         <></>

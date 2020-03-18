@@ -1,6 +1,6 @@
 {
   "extends": ["react-app", "eslint:recommended", "plugin:react/recommended"],
-  "plugins": ["react"],
+  "plugins": ["react",  "react-hooks"],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
