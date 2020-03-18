@@ -8,18 +8,11 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
-<<<<<<< HEAD
-import { UserProfile } from '../../utils/synapseTypes'
-import useGetEntityHeaders, {
-  useGetEntityHeadersProps,
-} from '../../utils/hooks/useGetEntityHeaders'
-=======
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import { UserProfile, EntityHeader } from '../../utils/synapseTypes'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
->>>>>>> b7b22c1d2a41a077fc2571533f5c3231684f00b9
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 
 library.add(faCircle)
@@ -67,14 +60,9 @@ export default function AccessRequirementList({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile>()
-<<<<<<< HEAD
-  const entityHeaderProps: useGetEntityHeadersProps = {
-    references: [entityId],
-=======
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
->>>>>>> b7b22c1d2a41a077fc2571533f5c3231684f00b9
     token: token,
     type: 'ENTITY_HEADER',
   }
