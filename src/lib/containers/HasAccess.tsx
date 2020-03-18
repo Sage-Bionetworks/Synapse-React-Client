@@ -24,9 +24,7 @@ import {
   AccessRequirement,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
-import AccessRequirementList, {
-  checkUnSupportedRequirement,
-} from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
+import AccessRequirementList from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -38,6 +36,7 @@ export type HasAccessProps = {
   isInDownloadList?: boolean // set to show errors in UI about package creation
   entityVersionNumber?: string
   token?: string
+  forceSamePage?: boolean
 }
 
 type HasAccessState = {
@@ -280,24 +279,33 @@ export default class HasAccess extends React.Component<
   }
 
   handleGetAccess = () => {
-    const { token, entityId } = this.props
-    const { displayAccessRequirement } = this.state
-    SynapseClient.getAllAccessRequirements(token, entityId).then(
-      requirements => {
-        if (checkUnSupportedRequirement(requirements)) {
-          window.open(
-            `${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-            '_blank',
-          )
-        } else {
-          this.setState({
-            accessRequirements: requirements,
-            displayAccessRequirement: !displayAccessRequirement,
-          })
-        }
-      },
+    // const { token, entityId } = this.props
+    // const { displayAccessRequirement } = this.state
+    // SynapseClient.getAllAccessRequirements(token, entityId).then(
+    //   requirements => {
+    //     if (checkUnSupportedRequirement(requirements)) {
+    //       window.open(
+    //         `${getEndpoint(
+    //           BackendDestinationEnum.PORTAL_ENDPOINT,
+    //         )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+    //         '_blank',
+    //       )
+    //     } else {
+    //       this.setState({
+    //         accessRequirements: requirements,
+    //         displayAccessRequirement: !displayAccessRequirement,
+    //       })
+    //     }
+    //   },
+    // )
+
+    const { forceSamePage = false, entityId } = this.props
+    console.log('value', forceSamePage)
+    window.open(
+      `${getEndpoint(
+        BackendDestinationEnum.PORTAL_ENDPOINT,
+      )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+      forceSamePage ? '_self' : '_blank',
     )
   }
 

@@ -42,8 +42,9 @@ type DownloadListTableData = {
 
 type LoadingState = boolean
 export type DownloadListTableProps = {
-  token?: string,
+  token?: string
   listUpdatedCallback?: VoidFunction
+  forceSamePage?: boolean
 }
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -60,6 +61,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const [isLoading, setIsLoading] = useState<LoadingState>(true)
   const [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
   const { token } = props
+  const { forceSamePage = false } = props
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
     (batchFileResult && batchFileResult.requestedFiles) || []
@@ -69,7 +71,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     .filter(el => el.fileHandle && el.fileHandle.createdBy)
     // use bang operator because filter function guarentee's that file handle will be defined
     .map(el => el.fileHandle!.createdBy!)
-  const userProfiles = useGetInfoFromIds<UserProfile>({ ids: ownerIds, token,type: 'USER_PROFILE' })
+  const userProfiles = useGetInfoFromIds<UserProfile>({
+    ids: ownerIds,
+    token,
+    type: 'USER_PROFILE',
+  })
 
   useEffect(() => {
     fetchData(token)
@@ -137,7 +143,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       props.listUpdatedCallback()
     }
   }
-  
+
   const clearDownloadList = async (
     _event: React.SyntheticEvent<HTMLButtonElement>,
   ) => {
@@ -266,6 +272,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     token={token}
                     entityId={synId}
                     isInDownloadList={true}
+                    forceSamePage={forceSamePage}
                   />
                 </td>
                 <td>
