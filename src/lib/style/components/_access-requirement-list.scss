@@ -12,38 +12,27 @@
   }
 }
 
-.sign-in-btn {
-  padding: 15px 5px 0px 0px;
-  &.default {color: black};
-  &.blue {color: rgb(77, 85, 144)};
-
-}
-
 .register-text-link {
   color: rgb(77, 85, 144);
 }
-
-
 
 .terms-of-use-title {
   margin-top: 20px;
 }
 
 .button-container {
-  &.hide{
+  &.hide {
     visibility: hidden;
   }
-
 }
 
 .view-terms-button {
   color: rgb(77, 85, 144);
 }
 .view-terms {
-  &.hide{
+  &.hide {
     visibility: hidden;
   }
-
 }
 
 .accept-button-container {
@@ -67,11 +56,10 @@
   color: rgb(77, 85, 144);
 }
 
-
 .self-sign-access-title {
   margin-top: 20px;
 }
-      
+
 .self-sign-access-certified-success-text {
   &.hide {
     visibility: hidden;
@@ -85,8 +73,12 @@
 }
 
 .check-mark-container {
-  &.orange {background-color: orange;}
-  &.green {background-color: rgb(39, 167, 69);}
+  &.orange {
+    background-color: orange;
+  }
+  &.green {
+    background-color: rgb(39, 167, 69);
+  }
   color: white;
   border-radius: 50%;
   padding: 15px;

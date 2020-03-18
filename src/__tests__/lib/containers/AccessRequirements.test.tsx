@@ -17,8 +17,179 @@ import {
   ACCESS_TYPE,
   AccessApproval,
   ApprovalState,
+  AccessRequirementStatus,
 } from '../../../lib/utils/synapseTypes/'
 import { mount, ReactWrapper } from 'enzyme'
+import SelfSignAccessRequirementComponent from 'lib/containers/access_requirement_list/SelfSignAccessRequirement'
+import TermsOfUseAccessRequirementComponent from 'lib/containers/access_requirement_list/TermsOfUseAccessRequirement'
+import ManagedACTAccessRequirementComponent from 'lib/containers/access_requirement_list/ManagedACTAccessRequirement'
+import ACTAccessRequirementComponent from 'lib/containers/access_requirement_list/ACTAccessRequirement'
+
+describe('Access Requirement List works as expect', () => {
+  let container: HTMLElement
+  let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
+
+  async function init(props: AccessRequirementListProps) {
+    await act(async () => {
+      wrapper = await mount(<AccessRequirementList {...props} />)
+      container = await render(<AccessRequirementList {...props} />)
+    })
+  }
+
+  const SynpaseClient = require('../../../lib/utils/SynapseClient')
+  const list = require('../../../lib/containers/access_requirement_list/AccessRequirementList')
+  const accessRequirements: Array<AccessRequirement> = [
+    {
+      versionNumber: 1,
+      id: 1,
+      etag: '_',
+      createdOn: '_',
+      modifiedOn: '_',
+      createdBy: '_',
+      modifiedBy: '_',
+      subjectIds: [],
+      accessType: ACCESS_TYPE.CREATE,
+      concreteType: 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
+    },
+    {
+      versionNumber: 2,
+      id: 1,
+      etag: '_',
+      createdOn: '_',
+      modifiedOn: '_',
+      createdBy: '_',
+      modifiedBy: '_',
+      subjectIds: [],
+      accessType: ACCESS_TYPE.CREATE,
+      concreteType:
+        'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+    },
+    {
+      versionNumber: 3,
+      id: 1,
+      etag: '_',
+      createdOn: '_',
+      modifiedOn: '_',
+      createdBy: '_',
+      modifiedBy: '_',
+      subjectIds: [],
+      accessType: ACCESS_TYPE.CREATE,
+      concreteType:
+        'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+    },
+    {
+      versionNumber: 4,
+      id: 1,
+      etag: '_',
+      createdOn: '_',
+      modifiedOn: '_',
+      createdBy: '_',
+      modifiedBy: '_',
+      subjectIds: [],
+      accessType: ACCESS_TYPE.CREATE,
+      concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
+    },
+  ]
+
+  const props = {
+    entityID: '_',
+    token: '_',
+    accessRequirementFromProps: accessRequirements,
+    onHide: jest.fn(),
+  }
+
+  it('Redners a Access Requirements List with valid props', async () => {
+    await init(props)
+    expect(container.innerHTML).not.toEqual('')
+    expect(wrapper.find(TermsOfUseAccessRequirementComponent)).toHaveLength(1)
+    expect(wrapper.find(SelfSignAccessRequirementComponent)).toHaveLength(1)
+    expect(wrapper.find(ManagedACTAccessRequirementComponent)).toHaveLength(1)
+    expect(wrapper.find(ACTAccessRequirementComponent)).toHaveLength(1)
+  })
+
+  it.only('Renders a Access Requirements List with completion order', async () => {
+    const accessRequirementsMock: Array<AccessRequirement> = [
+      {
+        versionNumber: 1,
+        id: 1,
+        etag: '_',
+        createdOn: '_',
+        modifiedOn: '_',
+        createdBy: '_',
+        modifiedBy: '_',
+        subjectIds: [],
+        accessType: ACCESS_TYPE.CREATE,
+        concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
+      },
+      {
+        versionNumber: 2,
+        id: 1,
+        etag: '_',
+        createdOn: '_',
+        modifiedOn: '_',
+        createdBy: '_',
+        modifiedBy: '_',
+        subjectIds: [],
+        accessType: ACCESS_TYPE.CREATE,
+        concreteType:
+          'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+      },
+      {
+        versionNumber: 3,
+        id: 1,
+        etag: '_',
+        createdOn: '_',
+        modifiedOn: '_',
+        createdBy: '_',
+        modifiedBy: '_',
+        subjectIds: [],
+        accessType: ACCESS_TYPE.CREATE,
+        concreteType:
+          'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+      },
+      {
+        versionNumber: 4,
+        id: 1,
+        etag: '_',
+        createdOn: '_',
+        modifiedOn: '_',
+        createdBy: '_',
+        modifiedBy: '_',
+        subjectIds: [],
+        accessType: ACCESS_TYPE.CREATE,
+        concreteType:
+          'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
+      },
+    ]
+    await init(props)
+
+    const stauses: AccessRequirementStatus[] = [
+      {
+        accessRequirementId: '_',
+        concreteType:
+          'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+        isApproved: true,
+        expiredOn: '-',
+      },
+      {
+        accessRequirementId: '_',
+        concreteType:
+          'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
+        isApproved: true,
+        expiredOn: '-',
+      },
+    ]
+
+    SynpaseClient.getAccessRequirementStatus = jest
+      .fn()
+      .mockResolvedValue(stauses)
+    await act(
+      (list.sortAccessRequirementByCompletion = jest
+        .fn()
+        .mockResolvedValue(accessRequirementsMock)),
+    )
+  })
+})
 
 describe('Accepted Requirements works as expect', () => {
   let container: HTMLElement

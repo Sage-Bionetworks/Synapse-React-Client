@@ -24,17 +24,20 @@ type DemoState = {
   estimatedDownloadBytesPerSecond?: number
 }
 
+type DemoProps = {
+  forceSamePage?: boolean
+}
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
 
  */
-class Demo extends React.Component<{}, DemoState> {
+class Demo extends React.Component<DemoProps, DemoState> {
   entityFormRef: any
   /**
    * Maintain internal state of user session
    */
-  constructor(props: any) {
+  constructor(props: DemoProps) {
     super(props)
     this.entityFormRef = React.createRef()
     this.state = {
@@ -173,6 +176,7 @@ class Demo extends React.Component<{}, DemoState> {
     this.getVersion()
   }
   public render(): JSX.Element {
+    const { forceSamePage = false } = this.props
     const { token, estimatedDownloadBytesPerSecond } = this.state
     return (
       <div>
@@ -223,24 +227,28 @@ class Demo extends React.Component<{}, DemoState> {
               token={token ? token : undefined}
               entityId={'syn7122428'}
               isInDownloadList={false}
+              forceSamePage={forceSamePage}
             />
             <h5>A Controlled Access Folder - HasAccess widget</h5>
             <HasAccess
               token={token ? token : undefined}
               entityId={'syn7383419'}
               isInDownloadList={false}
+              forceSamePage={forceSamePage}
             />
             <h5>Open Data</h5>
             <HasAccess
               token={token ? token : undefined}
               entityId={'syn5481758'}
               isInDownloadList={false}
+              forceSamePage={forceSamePage}
             />
             <h5>Acces Requirements required Data</h5>
             <HasAccess
               token={token ? token : undefined}
               entityId={'syn2426398'}
               isInDownloadList={false}
+              forceSamePage={forceSamePage}
             />
             <h5>
               Acces Requirements required Data without unsupported requirement
@@ -249,6 +257,7 @@ class Demo extends React.Component<{}, DemoState> {
               token={token ? token : undefined}
               entityId={'syn4993293'}
               isInDownloadList={false}
+              forceSamePage={forceSamePage}
             />
 
             <hr />

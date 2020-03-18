@@ -33,7 +33,6 @@ export default function SelfSignAccessRequirementComponent({
   >(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const accessRequirementText = 'Self Sign Access Requirement'
-
   useEffect(() => {
     const getSelfSignAccessData = async () => {
       try {
@@ -95,7 +94,7 @@ export default function SelfSignAccessRequirementComponent({
                 userBundle?.isCertified ? 'show' : 'hide'
               }`}
             >
-              You have became a certified user
+              You are a certified user
             </p>
           </div>
         </div>

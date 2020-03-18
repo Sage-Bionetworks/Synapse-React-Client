@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { getAllAccessRequirements } from '../../utils/SynapseClient'
 import { SynapseConstants, SynapseClient } from '../../utils/'
-import Modal from 'react-bootstrap/Modal'
+import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
+<<<<<<< HEAD
 import { UserProfile } from '../../utils/synapseTypes'
 import useGetEntityHeaders, {
   useGetEntityHeadersProps,
 } from '../../utils/hooks/useGetEntityHeaders'
+=======
+import ACTAccessRequirementComponent from './ACTAccessRequirement'
+import { UserProfile, EntityHeader } from '../../utils/synapseTypes'
+import useGetInfoFromIds, {
+  UseGetInfoFromIdsProps,
+} from '../../utils/hooks/useGetInfoFromIds'
+>>>>>>> b7b22c1d2a41a077fc2571533f5c3231684f00b9
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 
 library.add(faCircle)
@@ -27,6 +35,7 @@ export enum SUPPORTED_ACCESS_REQUIREMENTS {
   SelfSignAccessRequirement = 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
   TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
   ManagedACTAccessRequirement = 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+  ACTAccessRequirement = 'org.sagebionetworks.repo.model.ACTAccessRequirement',
 }
 
 export const checkUnSupportedRequirement = (
@@ -58,12 +67,19 @@ export default function AccessRequirementList({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [user, setUser] = useState<UserProfile>()
+<<<<<<< HEAD
   const entityHeaderProps: useGetEntityHeadersProps = {
     references: [entityId],
+=======
+
+  const entityHeaderProps: UseGetInfoFromIdsProps = {
+    ids: [entityId],
+>>>>>>> b7b22c1d2a41a077fc2571533f5c3231684f00b9
     token: token,
+    type: 'ENTITY_HEADER',
   }
 
-  const entityInformation = useGetEntityHeaders(entityHeaderProps)
+  const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
     const sortAccessRequirementByCompletion = async (
@@ -72,7 +88,6 @@ export default function AccessRequirementList({
       const statuses = requirements.map(req => {
         return SynapseClient.getAccessRequirementStatus(token, req.id)
       })
-
       const accessRequirementStatuses = await Promise.all(statuses)
 
       const sortOrder = accessRequirementStatuses
@@ -106,9 +121,16 @@ export default function AccessRequirementList({
             )
             setAccessRequirements(sortedAccessRequirements)
           })
+        } else {
+          const sortedAccessRequirements = await sortAccessRequirementByCompletion(
+            accessRequirementFromProps!,
+          )
+          setAccessRequirements(sortedAccessRequirements)
         }
 
         const userProfile = await SynapseClient.getUserProfile(token)
+        SynapseClient.getUserProfile(token).then(data => {})
+
         setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
@@ -163,17 +185,19 @@ export default function AccessRequirementList({
             onHide={onHide}
           />
         )
-      default:
-        // case not supported yet, go to synapse
+      case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
         return (
-          <div className="case-not-supporeted-container">
-            {/* <a
-href={`https://www.synapse.org/#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`}
->
-See Requirements on synapse.org
-</a> */}
-          </div>
+          <ACTAccessRequirementComponent
+            //@ts-ignore
+            accessRequirement={accessRequirement}
+            token={token}
+            user={user}
+            onHide={onHide}
+          />
         )
+      // case not supported yet
+      default:
+        return undefined
     }
   }
 
@@ -200,11 +224,17 @@ See Requirements on synapse.org
   }
 
   return (
-    <Modal onHide={() => onHide?.()} show={true} animation={false}>
-      <Modal.Header closeButton={true}>
-        <Modal.Title>Data Access Request</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+    <ReactBootstrap.Modal
+      onHide={() => onHide?.()}
+      show={true}
+      animation={false}
+    >
+      <ReactBootstrap.Modal.Header closeButton={true}>
+        <ReactBootstrap.Modal.Title>
+          Data Access Request
+        </ReactBootstrap.Modal.Title>
+      </ReactBootstrap.Modal.Header>
+      <ReactBootstrap.Modal.Body>
         <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
         <p> {entityInformation[0]?.name} </p>
         <h4 className="data-access-requirement-title uppercase-text bold-text">
@@ -215,7 +245,9 @@ See Requirements on synapse.org
           <div>
             <p className="bold-text">
               <button
-                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn ${
+                className={`${
+                  SynapseConstants.SRC_SIGN_IN_CLASS
+                } sign-in-btn access-requirement ${
                   isSignedIn ? 'default' : 'blue'
                 }`}
               >
@@ -230,7 +262,7 @@ See Requirements on synapse.org
         {accessRequirements.map(req => {
           return renderAccessRequirement(req)
         })}
-      </Modal.Body>
-    </Modal>
+      </ReactBootstrap.Modal.Body>
+    </ReactBootstrap.Modal>
   )
 }

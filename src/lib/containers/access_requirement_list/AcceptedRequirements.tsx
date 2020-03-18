@@ -11,14 +11,11 @@ import {
   ManagedACTAccessRequirement,
   AccessApproval,
   ApprovalState,
+  ACTAccessRequirement,
 } from '../../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../../lib/utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../utils/functions/getEndpoint'
 
 export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
@@ -31,6 +28,7 @@ export type AcceptedRequirementsProps = {
     | ManagedACTAccessRequirement
   accessRequirementText: string
   accessRequirementStatus: AccessRequirementStatus | undefined
+  showButton?: boolean
   onHide?: Function
 }
 
@@ -41,6 +39,7 @@ export default function AcceptedRequirements({
   accessRequirement,
   accessRequirementText,
   accessRequirementStatus,
+  showButton,
   onHide,
 }: AcceptedRequirementsProps) {
   const [isHide, setIsHide] = useState<boolean>(true)
@@ -48,22 +47,12 @@ export default function AcceptedRequirements({
   const [isApproved, setIsApproved] = useState<boolean | undefined>(
     propsIsApproved,
   )
-  const [buttonText, setButtonText] = useState<string>()
 
   useEffect(() => {
     const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
       setIsApproved(propsIsApproved)
     }
     setIsApprovedValueFromProps(propsIsApproved)
-
-    if (
-      accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-    ) {
-      setButtonText(`Get ${accessRequirementText} via synapse.org`)
-    } else {
-      setButtonText(`Accept ${accessRequirementText}`)
-    }
   }, [propsIsApproved, accessRequirementText])
 
   const onAcceptClicked = () => {
@@ -72,11 +61,8 @@ export default function AcceptedRequirements({
       SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
     ) {
       window.open(
-        `${getEndpoint(
-          BackendDestinationEnum.PORTAL_ENDPOINT,
-        )}#!AccessRequirement:AR_ID=${accessRequirement.id}`,
+        `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
       )
-      window.location.reload()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
@@ -98,22 +84,32 @@ export default function AcceptedRequirements({
   const RenderMarkdown = () => {
     const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
       .termsOfUse
-    return (
-      <div>
-        {accessRequirement.concreteType ===
-          SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
-        termsOfUse ? (
-          <MarkdownSynapse markdown={termsOfUse} token={token} />
-        ) : (
-          <MarkdownSynapse
-            token={token}
-            wikiId={wikiPage?.wikiPageId}
-            ownerId={wikiPage?.ownerObjectId}
-            objectType={wikiPage?.ownerObjectType}
-          />
-        )}
-      </div>
-    )
+
+    const actContactInfo = (accessRequirement as ACTAccessRequirement)
+      .actContactInfo
+
+    if (
+      accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
+      termsOfUse
+    ) {
+      return <MarkdownSynapse markdown={termsOfUse} token={token} />
+    } else if (
+      accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement &&
+      actContactInfo
+    ) {
+      return <p>{actContactInfo}</p>
+    } else {
+      return (
+        <MarkdownSynapse
+          token={token}
+          wikiId={wikiPage?.wikiPageId}
+          ownerId={wikiPage?.ownerObjectId}
+          objectType={wikiPage?.ownerObjectType}
+        />
+      )
+    }
   }
 
   const RenderAcceptedRequirements = () => {
@@ -151,18 +147,25 @@ export default function AcceptedRequirements({
           <RenderAcceptedRequirements />
         </div>
       </div>
-      <div className={`button-container ${isApproved ? `hide` : `default`}`}>
-        <div className="accept-button-container">
-          <button className="accept-button" onClick={onAcceptClicked}>
-            {buttonText}
-          </button>
+
+      {showButton ?? (
+        <div className={`button-container ${isApproved ? `hide` : `default`}`}>
+          <div className="accept-button-container">
+            <button className="accept-button" onClick={onAcceptClicked}>
+              {accessRequirement.concreteType ===
+              SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+                ? `Get ${accessRequirementText} via synapse.org`
+                : `Accept ${accessRequirementText}`}
+            </button>
+          </div>
+
+          <div className="not-accept-button-container">
+            <button className="not-accpet-button" onClick={() => onHide?.()}>
+              I do not accept
+            </button>
+          </div>
         </div>
-        <div className="not-accept-button-container">
-          <button className="not-accpet-button" onClick={() => onHide?.()}>
-            I do not accept
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   )
 }

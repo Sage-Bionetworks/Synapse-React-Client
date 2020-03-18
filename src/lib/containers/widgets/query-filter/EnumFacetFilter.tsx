@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
+import { FacetFilterHeader} from './FacetFilterHeader'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -28,7 +29,7 @@ function valueToLabel(
   profiles: UserProfile[] = [],
   entityHeaders: EntityHeader[] = [],
 ): string {
-  const { value, count } = facet
+  const { value } = facet
   let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
     displayValue = 'Not Set'
@@ -42,7 +43,8 @@ function valueToLabel(
   if (eh) {
     displayValue = eh ? eh.name : `unknown (${value})`
   }
-  return `${displayValue} (${count})`
+
+  return `${displayValue}`
 }
 
 function formatFacetValuesForDisplay(
@@ -74,6 +76,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onChange,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const visibleItemsCount = 5
 
   const userIds =
@@ -101,40 +104,61 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   }
 
   return (
-    <div>
-      <button
-        className="btn btn-link SRC-noPadding"
-        onClick={() => onClear(columnModel.name)}
-      >
-        All
-      </button>
-      <div>
-        {formatFacetValuesForDisplay(
-          facetValues,
-          isShowAll,
-          visibleItemsCount,
-        ).map((facet, index: number) => {
-          const id = valueToId(facet.value)
-          return (
-            <Checkbox
-              onChange={(isChecked: boolean) =>
-                onChange(facet.value, isChecked)
-              }
-              key={id + index}
-              checked={facet.isSelected}
-              label={valueToLabel(facet, userProfiles, entityHeaders)}
-              id={id}
-            ></Checkbox>
-          )
-        })}
-        {!isShowAll && facetValues.length > visibleItemsCount && (
-          <button
-            className="btn btn-link SRC-noPadding"
-            onClick={() => setIsShowAll(true)}
-          >
-            Show All
-          </button>
-        )}
+    <div className="EnumFacetFilter">
+      <FacetFilterHeader  isCollapsed = {isCollapsed} label={columnModel.name} onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}></FacetFilterHeader>
+      <div style={{ display: isCollapsed ? 'none' : 'block' }}>
+        <div className="EnumFacetFilter__checkboxContainer--forAll">
+          <Checkbox
+            className="EnumFacetFilter__checkbox"
+            onChange={() => onClear(columnModel.name)}
+            key="select_all"
+            checked={facetValues.filter(item => item.isSelected).length === 0}
+            label="All"
+            id="select_all"
+          ></Checkbox>
+        </div>
+        <div>
+          {formatFacetValuesForDisplay(
+            facetValues,
+            isShowAll,
+            visibleItemsCount,
+          ).map((facet, index: number) => {
+            const id = valueToId(facet.value)
+            return (
+              <div
+                className="EnumFacetFilter__checkboxContainer"
+                key={`checkLabel${index}`}
+              >
+                <Checkbox
+                  className="EnumFacetFilter__checkbox"
+                  onChange={(isChecked: boolean) =>
+                    onChange(facet.value, isChecked)
+                  }
+                  key={id + index}
+                  checked={facet.isSelected}
+                  label={valueToLabel(facet, userProfiles, entityHeaders)}
+                  id={id}
+                ></Checkbox>
+                <div className="EnumFacetFilter__count">{facet.count}</div>
+              </div>
+            )
+          })}
+          {!isShowAll && facetValues.length > visibleItemsCount && (
+            <button
+              className="EnumFacetFilter__showMoreFacetsBtn"
+              onClick={() => setIsShowAll(true)}
+            >
+              <div className="EnumFacetFilter__checkboxContainer">
+                <div className="EnumFacetFilter__showMoreFacetsLabel">
+                  Show more
+                </div>
+                <div className="EnumFacetFilter__howMoreFacetsCount">
+                  {facetValues.length}
+                </div>
+              </div>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
