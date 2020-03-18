@@ -7,21 +7,51 @@ type Props = {
 
 export const AccessRequirementDemo: React.FunctionComponent<Props> = props => {
   const { token } = props
+  const [
+    displayAccessRequirement,
+    setDisplayAccessRequirement,
+  ] = React.useState<boolean>(false)
+  const [inputValue, setInputValue] = React.useState<string>('')
+
+  const getAccessRequirement = () => {
+    if (inputValue !== '' && inputValue.startsWith('syn')) {
+      setDisplayAccessRequirement(!displayAccessRequirement)
+    }
+  }
+
   return (
-    <AccessRequirementList
-      onHide={() => {
-        window.location.href = 'http://localhost:3000/Playground'
-      }}
-<<<<<<< HEAD
-      entityId={'syn12634840'}
-=======
-      entityId={'syn3850484'}
->>>>>>> b7b22c1d2a41a077fc2571533f5c3231684f00b9
-      token={token}
-    />
+    <div>
+      {displayAccessRequirement ? (
+        <AccessRequirementList
+          onHide={() => {
+            window.location.href = 'http://localhost:3000/Playground'
+          }}
+          entityId={inputValue}
+          token={token}
+        />
+      ) : (
+        <>
+          <p>SynId for Self Sign Access: syn3850484</p>
+          <p>SynId for Terms Of Use: syn2426398</p>
+          <p>SynId for Managed ACT Access: syn3191087</p>
+          <p>SynId for ACT Access: syn12634840</p>
+
+          <input
+            id="AccessRequirementInput"
+            type="text"
+            placeholder="Synapse Id"
+            onChange={event => {
+              setInputValue(event.target.value)
+            }}
+          ></input>
+          <button
+            className="get-access-requirement-button"
+            onClick={getAccessRequirement}
+          >
+            Get Access Requirement
+          </button>
+        </>
+      )}
+    </div>
   )
 }
-//syn12634840
-// syn2426398
-// syn3191087
-// syn3850484

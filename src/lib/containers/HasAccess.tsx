@@ -24,13 +24,7 @@ import {
   AccessRequirement,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
-<<<<<<< HEAD
-import AccessRequirementList, {
-  checkUnSupportedRequirement,
-} from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
-=======
 import AccessRequirementList from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
->>>>>>> b7b22c1d2a41a077fc2571533f5c3231684f00b9
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
