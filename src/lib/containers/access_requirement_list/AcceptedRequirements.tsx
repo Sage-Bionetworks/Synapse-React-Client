@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
+import MarkdownSynapse from '../MarkdownSynapse'
 import {
   WikiPageKey,
   AccessRequirementStatus,
@@ -12,8 +12,8 @@ import {
   AccessApproval,
   ApprovalState,
   ACTAccessRequirement,
-} from '../../../lib/utils/synapseTypes/'
-import { SynapseClient } from '../../../lib/utils'
+} from '../../utils/synapseTypes/'
+import { SynapseClient } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
 
