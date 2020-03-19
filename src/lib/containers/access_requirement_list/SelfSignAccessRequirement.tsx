@@ -6,8 +6,8 @@ import {
   WikiPageKey,
   UserBundle,
   AccessRequirementStatus,
-} from '../../../lib/utils/synapseTypes'
-import { SynapseClient, SynapseConstants } from '../../../lib/utils'
+} from '../../utils/synapseTypes'
+import { SynapseClient, SynapseConstants } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
 

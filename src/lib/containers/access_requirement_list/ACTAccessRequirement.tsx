@@ -4,8 +4,8 @@ import {
   UserProfile,
   WikiPageKey,
   AccessRequirementStatus,
-} from '../../../lib/utils/synapseTypes'
-import { SynapseClient } from '../../../lib/utils'
+} from '../../utils/synapseTypes'
+import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
 
 export type Props = {
