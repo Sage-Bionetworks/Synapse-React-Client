@@ -155,14 +155,14 @@ export default class HasAccess extends React.Component<
       this.getFileEntityFileHandle()
     }
   }
-  getFileEntityFileHandle = (forceGetRestrictionInformation?: boolean) => {
+  getFileEntityFileHandle = (forceRefresh?: boolean) => {
     const {
       entityId,
       entityVersionNumber,
       token,
       isInDownloadList,
     } = this.props
-    if (!forceGetRestrictionInformation && this.state.fileHandleDownloadType) {
+    if (!forceRefresh && this.state.fileHandleDownloadType) {
       // already know the downloadType
       return
     }
@@ -209,10 +209,10 @@ export default class HasAccess extends React.Component<
     })
   }
 
-  getRestrictionInformation = (forceGetRestrictionInformation?: boolean) => {
+  getRestrictionInformation = (forceRefresh?: boolean) => {
     const { entityId, token } = this.props
     if (
-      !forceGetRestrictionInformation &&
+      !forceRefresh &&
       (this.state.restrictionInformation || !entityId || !token)
     ) {
       return
