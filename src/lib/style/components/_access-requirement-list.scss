@@ -4,13 +4,6 @@
 
 .requirement-container {
   display: flex;
-
-  &:first-child {
-    flex: 1;
-  }
-  &:last-child {
-    flex: 4;
-  }
 }
 
 .register-text-link {
