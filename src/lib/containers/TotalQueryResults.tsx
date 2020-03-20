@@ -49,12 +49,19 @@ export default class TotalQueryResults extends React.Component<
     this.setState({
       isLoading: true,
     })
-    SynapseClient.getQueryTableResults(queryRequest, token).then(data => {
-      this.setState({
-        total: data.queryCount!,
-        isLoading: false,
+    SynapseClient.getQueryTableResults(queryRequest, token)
+      .then(data => {
+        this.setState({
+          total: data.queryCount!,
+          isLoading: false,
+        })
       })
-    })
+      .catch(err => {
+        console.error('err ', err)
+        this.setState({
+          isLoading: false,
+        })
+      })
   }
 
   render() {

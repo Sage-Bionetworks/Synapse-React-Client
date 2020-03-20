@@ -38,7 +38,6 @@ export type QueryWrapperState = {
   asyncJobStatus?: AsynchronousJobStatus
   facetAliases?: {}
   loadNowStarted: boolean
-  initQueryRequest: QueryBundleRequest
 }
 
 export type FacetSelection = {
@@ -87,22 +86,6 @@ export default class QueryWrapper extends React.Component<
     token: '',
   }
 
-  public static initialState = {
-    data: undefined,
-    isLoading: true,
-    isLoadingNewData: true,
-    lastQueryRequest: {} as QueryBundleRequest,
-    hasMoreData: true,
-    lastFacetSelection: {
-      columnName: '',
-      facetValue: '',
-      selector: '',
-    },
-    chartSelectionIndex: 0,
-    isAllFilterSelectedForFacet: {},
-    loadNowStarted: false,
-  } as QueryWrapperState
-
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -111,7 +94,21 @@ export default class QueryWrapper extends React.Component<
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
     this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
-    this.state = QueryWrapper.initialState
+    this.state = {
+      data: undefined,
+      isLoading: true,
+      isLoadingNewData: true,
+      hasMoreData: true,
+      lastFacetSelection: {
+        columnName: '',
+        facetValue: '',
+        selector: '',
+      },
+      chartSelectionIndex: 0,
+      isAllFilterSelectedForFacet: {},
+      loadNowStarted: false,
+      lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
+    }
   }
 
   /**
