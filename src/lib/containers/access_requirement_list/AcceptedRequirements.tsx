@@ -26,7 +26,6 @@ export type AcceptedRequirementsProps = {
     | TermsOfUseAccessRequirement
     | SelfSignAccessRequirement
     | ManagedACTAccessRequirement
-  accessRequirementText: string
   accessRequirementStatus: AccessRequirementStatus | undefined
   showButton?: boolean
   onHide?: Function
@@ -37,7 +36,6 @@ export default function AcceptedRequirements({
   token,
   wikiPage,
   accessRequirement,
-  accessRequirementText,
   accessRequirementStatus,
   showButton,
   onHide,
@@ -53,7 +51,7 @@ export default function AcceptedRequirements({
       setIsApproved(propsIsApproved)
     }
     setIsApprovedValueFromProps(propsIsApproved)
-  }, [propsIsApproved, accessRequirementText])
+  }, [propsIsApproved])
 
   const onAcceptClicked = () => {
     if (
@@ -117,7 +115,7 @@ export default function AcceptedRequirements({
       return (
         <div>
           <p>
-            You have accepted {accessRequirementText}.
+            You have accepted the terms of use.
             <button
               className="view-terms-button bold-text"
               onClick={() => {
@@ -140,10 +138,7 @@ export default function AcceptedRequirements({
     <div>
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isApproved} />
-        <div>
-          <p className="terms-of-use-title bold-text">
-            Agree to the following terms and conditions.
-          </p>
+        <div className="terms-of-use-content">
           <RenderAcceptedRequirements />
         </div>
       </div>
@@ -154,8 +149,8 @@ export default function AcceptedRequirements({
             <button className="accept-button" onClick={onAcceptClicked}>
               {accessRequirement.concreteType ===
               SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-                ? `Get ${accessRequirementText} via synapse.org`
-                : `Accept ${accessRequirementText}`}
+                ? `Get access via Synapse.org`
+                : `I Accept Terms of Use`}
             </button>
           </div>
 

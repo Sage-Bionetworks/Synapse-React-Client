@@ -935,12 +935,14 @@ a.SRC-lightLink {
 
 .SRC-SIGN-IN-CLASS.sign-in-btn {
   &.access-requirement {
-    padding: 15px 5px 0px 0px;
+    margin-top: 5px;
 
     &.default {
+      padding: 15px 5px 0px 0px;
       color: black;
     }
     &.blue {
+      padding: 15px 5px 0px 0px;
       color: rgb(77, 85, 144);
     }
   }

@@ -4,6 +4,7 @@
 
 .requirement-container {
   display: flex;
+
   &:first-child {
     flex: 1;
   }
@@ -16,7 +17,7 @@
   color: rgb(77, 85, 144);
 }
 
-.terms-of-use-title {
+.terms-of-use-content {
   margin-top: 20px;
 }
 

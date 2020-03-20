@@ -25,7 +25,6 @@ export default function ACTAccessRequirementComponent({
   const [accessRequirementStatus, setAccessRequirementStatus] = useState<
     AccessRequirementStatus
   >()
-  const accessRequirementText = 'ACT Access Requirement'
 
   useEffect(() => {
     const getACTAccessData = async () => {
@@ -52,7 +51,6 @@ export default function ACTAccessRequirementComponent({
   return (
     <AcceptedRequirements
       accessRequirement={accessRequirement}
-      accessRequirementText={accessRequirementText}
       accessRequirementStatus={accessRequirementStatus}
       token={token}
       user={user}
