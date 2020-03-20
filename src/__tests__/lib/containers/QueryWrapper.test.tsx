@@ -57,7 +57,6 @@ describe('basic functionality', () => {
       true,
     )
 
-    expect(wrapper.state()).toEqual(QueryWrapper.initialState)
     const spyOnExecute = jest.spyOn(instance, 'executeInitialQueryRequest')
     await instance.componentDidMount()
     expect(spyOnExecute).toHaveBeenCalled()
