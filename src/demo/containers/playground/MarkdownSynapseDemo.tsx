@@ -8,7 +8,10 @@ type State = {
   markdownPropsArray: MarkdownSynapseProps[]
 }
 
-export default class MarkdownSynapseDemo extends React.Component<{}, State> {
+export default class MarkdownSynapseDemo extends React.Component<
+  { token?: string },
+  State
+> {
   constructor(props: any) {
     super(props)
     this.state = {
@@ -42,6 +45,13 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
           // nested link
           ownerId: 'syn12666371',
           wikiId: '595383',
+        },
+        {
+          // video
+          ownerId: 'syn21714219',
+          token: this.props.token,
+          // ownerId: 'syn4993293',
+          // wikiId: '247859',
         },
       ],
     }
@@ -98,6 +108,14 @@ export default class MarkdownSynapseDemo extends React.Component<{}, State> {
           }}
         >
           Show nested anchor
+        </button>
+        <button
+          className="btn btn-default"
+          onClick={() => {
+            this.setState({ index: 6 })
+          }}
+        >
+          Video
         </button>
         {/* footnotes with html */}
         <MarkdownSynapse {...props} />
