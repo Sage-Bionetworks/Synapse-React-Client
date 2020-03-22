@@ -41,6 +41,13 @@
         color: $gray-regular;
       }
     }
+    input ~ span{
+      display: flex;
+      &::before {
+        flex: none;
+        align-self: center;
+      }
+    }
   }
 
   &__showMoreFacetsLabel {
