@@ -193,7 +193,7 @@ export default function AccessRequirementList({
     if (token) {
       return (
         <p>
-          You have signed in as <b>{` ${user?.userName}@synapse.org`}</b>
+          You have signed in as <b>{` @${user?.userName}`}</b>
         </p>
       )
     } else {
@@ -241,7 +241,7 @@ export default function AccessRequirementList({
               >
                 Sign in
               </button>
-              with a Sage Platform (synapse) user account.
+              with a Sage Platform (Synapse) user account.
             </p>
             <SignedIn />
           </div>

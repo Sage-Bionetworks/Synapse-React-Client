@@ -11,6 +11,7 @@ export const AccessRequirementDemo: React.FunctionComponent<AccessRequirementDem
     displayAccessRequirement,
     setDisplayAccessRequirement,
   ] = React.useState<boolean>(false)
+  const currentWindowLocation = window.location.href
   const [inputValue, setInputValue] = React.useState<string>('')
 
   const getAccessRequirement = () => {
@@ -24,7 +25,7 @@ export const AccessRequirementDemo: React.FunctionComponent<AccessRequirementDem
       {displayAccessRequirement ? (
         <AccessRequirementList
           onHide={() => {
-            window.location.href = 'http://localhost:3000/Playground'
+            window.location.href = currentWindowLocation
             setDisplayAccessRequirement(false)
           }}
           entityId={inputValue}

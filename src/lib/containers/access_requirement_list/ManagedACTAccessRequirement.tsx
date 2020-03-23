@@ -25,7 +25,6 @@ export default function ManagedACTAccessRequirementComponent({
   const [accessRequirementStatus, setAccessRequirementStatus] = useState<
     AccessRequirementStatus
   >()
-  const accessRequirementText = 'Managed ACT Access Requirement'
 
   useEffect(() => {
     const getManagedACTAccessData = async () => {
@@ -52,7 +51,6 @@ export default function ManagedACTAccessRequirementComponent({
   return (
     <AcceptedRequirements
       accessRequirement={accessRequirement}
-      accessRequirementText={accessRequirementText}
       accessRequirementStatus={accessRequirementStatus}
       token={token}
       user={user}
