@@ -46,6 +46,24 @@ export default function AcceptedRequirements({
     propsIsApproved,
   )
 
+  let acceptButtonText = ''
+
+  if (
+    accessRequirement.concreteType ===
+    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+  ) {
+    if (
+      window.location.hostname === 'www.synapse.org' ||
+      window.location.hostname === 'staging.synapse.org'
+    ) {
+      acceptButtonText = 'Get access'
+    } else {
+      acceptButtonText = 'Get access via Synapse.org'
+    }
+  } else {
+    acceptButtonText = 'I Accept Terms of Use'
+  }
+
   useEffect(() => {
     const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
       setIsApproved(propsIsApproved)
@@ -142,15 +160,11 @@ export default function AcceptedRequirements({
           <RenderAcceptedRequirements />
         </div>
       </div>
-
       {showButton ?? (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
-              {accessRequirement.concreteType ===
-              SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-                ? `Get access via Synapse.org`
-                : `I Accept Terms of Use`}
+              {acceptButtonText}
             </button>
           </div>
 
