@@ -6,6 +6,7 @@ import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
+import ShowDownloadDemo from './ShowDownloadDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
@@ -87,6 +88,9 @@ const App = ({
           <Link to={`${match.url}/TemplateComponentDemo`}>
             TemplateComponentDemo
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
         </li>
       </ul>
 
@@ -175,6 +179,12 @@ const App = ({
         exact={true}
         path={`${match.url}/TemplateComponentDemo`}
         component={() => <TemplateComponentDemo />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ShowDownloadDemo`}
+        component={() => <ShowDownloadDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

@@ -193,20 +193,20 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   let numBytes = 0
   let numFiles = 0
   return (
-    <div>
-      <div className="SRC-split download-list-table-top">
-        <span className="create-package-text SRC-centerContentInline">
+    <div className="DownloadListTable">
+      <div className="SRC-split download-list-table-top SRC-primary-background-color SRC-border-bottom-only">
+        <span className="create-package-text">
           Download List &nbsp;&nbsp; {isLoading && <span className="spinner" />}
         </span>
         <button
-          className="SRC-primary-text-color SRC-underline-on-hover"
+          className="SRC-underline-on-hover uppercase-text"
           onClick={clearDownloadList}
           id={TESTING_CLEAR_BTN_CLASS}
         >
-          Clear All
+          Clear list
         </button>
       </div>
-      <ReactBootstrap.Table responsive={true}>
+      <ReactBootstrap.Table striped={true} responsive={true}>
         <thead>
           <tr>
             <th>File Name</th>

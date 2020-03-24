@@ -62,6 +62,7 @@ import {
   FileHandleAssociateType,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
+import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 
 const cookies = new UniversalCookies()
 
@@ -1578,7 +1579,7 @@ export const getEvaluationSubmissions = (
  * http://rest-docs.synapse.org/rest/POST/oauth2/description.html
  */
 export const getOAuth2RequestDescription = (
-  oidcAuthRequest: OIDCAuthorizationRequest
+  oidcAuthRequest: OIDCAuthorizationRequest,
 ): Promise<OIDCAuthorizationRequestDescription> => {
   return doPost(
     '/auth/v1/oauth2/description',
@@ -2062,13 +2063,16 @@ export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
   sessionToken: string | undefined,
 ): Promise<DownloadList> => {
-  return doPost(
+  return doPost<DownloadList>(
     '/file/v1/download/list/remove',
     { list },
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  ).then(data => {
+    dispatchDownloadListChangeEvent(data)
+    return data
+  })
 }
 
 // https://rest-docs.synapse.org/rest/DELETE/download/list.html ?
@@ -2079,5 +2083,7 @@ export const deleteDownloadList = (sessionToken: string | undefined) => {
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  ).then(_ => {
+    dispatchDownloadListChangeEvent(undefined)
+  })
 }

@@ -8,6 +8,7 @@ import {
   QueryBundleRequest,
 } from '../../utils/synapseTypes/'
 import DownloadDetails from './DownloadDetails'
+import { dispatchDownloadListChangeEvent } from '../../utils/functions/dispatchDownloadListChangeEvent'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -194,13 +195,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       case StatusEnum.SUCCESS:
         return (
           <span>
-            <a
-              href={`https://www.synapse.org/#!Profile:${ownerId}/downloads`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              // @ts-ignore
+              onClick={dispatchDownloadListChangeEvent}
             >
               View Download List
-            </a>
+            </button>
           </span>
         )
 
