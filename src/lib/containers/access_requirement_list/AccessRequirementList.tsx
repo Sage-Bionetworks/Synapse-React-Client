@@ -223,8 +223,13 @@ export default function AccessRequirementList({
         </ReactBootstrap.Modal.Title>
       </ReactBootstrap.Modal.Header>
       <ReactBootstrap.Modal.Body>
-        <h4 className="uppercase-text bold-text">You Requested Access For:</h4>
-        <p> {entityInformation[0]?.name} </p>
+        <h4 className="uppercase-text bold-text">Access For:</h4>
+        <a
+          className="register-text-link bold-text"
+          href={`https://www.synapse.org/#!Synapse:${entityId}`}
+        >
+          &nbsp;{entityInformation[0]?.name}
+        </a>
         <h4 className="data-access-requirement-title uppercase-text bold-text">
           What do I need to do?
         </h4>
