@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/Synapse-React-Client/static/css/main.644bf134.chunk.css",
-    "main.js": "/Synapse-React-Client/static/js/main.92e816da.chunk.js",
-    "main.js.map": "/Synapse-React-Client/static/js/main.92e816da.chunk.js.map",
+    "main.js": "/Synapse-React-Client/static/js/main.a178a2c6.chunk.js",
+    "main.js.map": "/Synapse-React-Client/static/js/main.a178a2c6.chunk.js.map",
     "runtime-main.js": "/Synapse-React-Client/static/js/runtime-main.356b4286.js",
     "runtime-main.js.map": "/Synapse-React-Client/static/js/runtime-main.356b4286.js.map",
     "static/js/2.93c58004.chunk.js": "/Synapse-React-Client/static/js/2.93c58004.chunk.js",
     "static/js/2.93c58004.chunk.js.map": "/Synapse-React-Client/static/js/2.93c58004.chunk.js.map",
     "index.html": "/Synapse-React-Client/index.html",
-    "precache-manifest.bc3c0582381cedf865acaeb20731d543.js": "/Synapse-React-Client/precache-manifest.bc3c0582381cedf865acaeb20731d543.js",
+    "precache-manifest.54c2ba9ebd69c7ffc19fb597858955ba.js": "/Synapse-React-Client/precache-manifest.54c2ba9ebd69c7ffc19fb597858955ba.js",
     "service-worker.js": "/Synapse-React-Client/service-worker.js",
     "static/css/main.644bf134.chunk.css.map": "/Synapse-React-Client/static/css/main.644bf134.chunk.css.map",
     "static/js/2.93c58004.chunk.js.LICENSE": "/Synapse-React-Client/static/js/2.93c58004.chunk.js.LICENSE",
@@ -32,6 +32,6 @@
     "static/js/runtime-main.356b4286.js",
     "static/js/2.93c58004.chunk.js",
     "static/css/main.644bf134.chunk.css",
-    "static/js/main.92e816da.chunk.js"
+    "static/js/main.a178a2c6.chunk.js"
   ]
 }
