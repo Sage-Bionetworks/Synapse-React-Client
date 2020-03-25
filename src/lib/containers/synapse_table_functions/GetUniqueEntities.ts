@@ -1,4 +1,4 @@
-import { QueryResultBundle } from '../../utils/synapseTypes/'
+import { QueryResultBundle } from '../../utils/synapseTypes'
 
 export const getUniqueEntities = (
   data: QueryResultBundle,

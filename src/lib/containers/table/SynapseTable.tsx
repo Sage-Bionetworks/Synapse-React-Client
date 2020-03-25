@@ -55,9 +55,9 @@ import {
 import FacetFilter from './table-top/FacetFilter'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import NoData from '../../assets/icons/file-dotted.svg'
-import { renderTableCell } from '../synapse_table_functions/RenderTableCell'
-import { getUniqueEntities } from '../synapse_table_functions/GetUniqueEntities'
-import { getColumnIndiciesWithType } from '../synapse_table_functions/GetColumnIndiciesWithType'
+import { renderTableCell } from '../synapse_table_functions/renderTableCell'
+import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
+import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -886,23 +886,7 @@ export default class SynapseTable extends React.Component<
                     mapUserIdToHeader,
                     isMarkdownColumn,
                     rowIndex,
-                  })
-                // <RenderTableCell
-                //   entityColumnIndicies={entityColumnIndicies}
-                //   userColumnIndicies={userColumnIndicies}
-                //   dateColumnIndicies={dateColumnIndicies}
-                //   dateListColumnIndicies={dateListColumnIndicies}
-                //   booleanListColumnIndicies={booleanListColumnIndicies}
-                //   otherListColumnIndicies={otherListColumnIndicies}
-                //   colIndex={colIndex}
-                //   columnValue={columnValue}
-                //   isBold={isBold}
-                //   mapEntityIdToHeader={mapEntityIdToHeader}
-                //   mapUserIdToHeader={mapUserIdToHeader}
-                //   isMarkdownColumn={isMarkdownColumn}
-                //   rowIndex={rowIndex}
-                // />
-                }
+                  })}
               </td>
             )
           }

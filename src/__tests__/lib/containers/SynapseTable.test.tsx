@@ -20,9 +20,9 @@ import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
 import ModalDownload from '../../../lib/containers/ModalDownload'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
-import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/GetColumnIndiciesWithType'
-import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/GetUniqueEntities'
-import { renderTableCell } from '../../../lib/containers/synapse_table_functions/RenderTableCell'
+import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
+import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
+import { renderTableCell } from '../../../lib/containers/synapse_table_functions/renderTableCell'
 
 import SynapseTable, {
   SORT_STATE,
