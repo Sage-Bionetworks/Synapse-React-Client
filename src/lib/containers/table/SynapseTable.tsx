@@ -55,7 +55,7 @@ import {
 import FacetFilter from './table-top/FacetFilter'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import NoData from '../../assets/icons/file-dotted.svg'
-import RenderTableCell from '../synapse_table_functions/RenderTableCell'
+import { renderTableCell } from '../synapse_table_functions/RenderTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/GetUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/GetColumnIndiciesWithType'
 
@@ -871,24 +871,38 @@ export default class SynapseTable extends React.Component<
                   </a>
                 )}
 
-                {!isCountColumn && (
-                  //@ts-ignore
-                  <RenderTableCell
-                    entityColumnIndicies={entityColumnIndicies}
-                    userColumnIndicies={userColumnIndicies}
-                    dateColumnIndicies={dateColumnIndicies}
-                    dateListColumnIndicies={dateListColumnIndicies}
-                    booleanListColumnIndicies={booleanListColumnIndicies}
-                    otherListColumnIndicies={otherListColumnIndicies}
-                    colIndex={colIndex}
-                    columnValue={columnValue}
-                    isBold={isBold}
-                    mapEntityIdToHeader={mapEntityIdToHeader}
-                    mapUserIdToHeader={mapUserIdToHeader}
-                    isMarkdownColumn={isMarkdownColumn}
-                    rowIndex={rowIndex}
-                  />
-                )}
+                {!isCountColumn &&
+                  renderTableCell({
+                    entityColumnIndicies,
+                    userColumnIndicies,
+                    dateColumnIndicies,
+                    dateListColumnIndicies,
+                    booleanListColumnIndicies,
+                    otherListColumnIndicies,
+                    colIndex,
+                    columnValue,
+                    isBold,
+                    mapEntityIdToHeader,
+                    mapUserIdToHeader,
+                    isMarkdownColumn,
+                    rowIndex,
+                  })
+                // <RenderTableCell
+                //   entityColumnIndicies={entityColumnIndicies}
+                //   userColumnIndicies={userColumnIndicies}
+                //   dateColumnIndicies={dateColumnIndicies}
+                //   dateListColumnIndicies={dateListColumnIndicies}
+                //   booleanListColumnIndicies={booleanListColumnIndicies}
+                //   otherListColumnIndicies={otherListColumnIndicies}
+                //   colIndex={colIndex}
+                //   columnValue={columnValue}
+                //   isBold={isBold}
+                //   mapEntityIdToHeader={mapEntityIdToHeader}
+                //   mapUserIdToHeader={mapUserIdToHeader}
+                //   isMarkdownColumn={isMarkdownColumn}
+                //   rowIndex={rowIndex}
+                // />
+                }
               </td>
             )
           }

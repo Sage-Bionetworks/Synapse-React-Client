@@ -20,6 +20,10 @@ import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
 import ModalDownload from '../../../lib/containers/ModalDownload'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
+import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/GetColumnIndiciesWithType'
+import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/GetUniqueEntities'
+import { renderTableCell } from '../../../lib/containers/synapse_table_functions/RenderTableCell'
+
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,
@@ -471,18 +475,42 @@ describe('basic functionality', () => {
           ],
           rows: [
             {
-              values: ['syn123', 'syn120', '1567525763000', MOCKED_STRING_LIST, MOCKED_DATE_LIST, MOCKED_BOOLEAN_LIST, MOCKED_INTEGER_LIST],
+              values: [
+                'syn123',
+                'syn120',
+                '1567525763000',
+                MOCKED_STRING_LIST,
+                MOCKED_DATE_LIST,
+                MOCKED_BOOLEAN_LIST,
+                MOCKED_INTEGER_LIST,
+              ],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
             {
               // @ts-ignore
-              values: ['syn124', 'syn120', null, MOCKED_STRING_LIST, MOCKED_DATE_LIST, MOCKED_BOOLEAN_LIST, MOCKED_INTEGER_LIST],
+              values: [
+                'syn124',
+                'syn120',
+                null,
+                MOCKED_STRING_LIST,
+                MOCKED_DATE_LIST,
+                MOCKED_BOOLEAN_LIST,
+                MOCKED_INTEGER_LIST,
+              ],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
             {
-              values: ['syn125', 'syn121', '1567525763003', MOCKED_STRING_LIST, MOCKED_DATE_LIST, MOCKED_BOOLEAN_LIST, MOCKED_INTEGER_LIST],
+              values: [
+                'syn125',
+                'syn121',
+                '1567525763003',
+                MOCKED_STRING_LIST,
+                MOCKED_DATE_LIST,
+                MOCKED_BOOLEAN_LIST,
+                MOCKED_INTEGER_LIST,
+              ],
               versionNumber: MOCKED_NUM,
               rowId: MOCKED_NUM,
             },
@@ -490,27 +518,27 @@ describe('basic functionality', () => {
         },
       },
     }
-    const { instance } = createShallowComponent({
-      ...props,
-      data: mockData,
-    })
 
     it('gets column indicies correctly ', () => {
-      const entities = instance.getColumnIndiciesWithType('ENTITYID')
+      const entities = getColumnIndiciesWithType(mockData, 'ENTITYID')
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = instance.getColumnIndiciesWithType('USERID')
+      const userIds = getColumnIndiciesWithType(mockData, 'USERID')
       expect(userIds).toEqual([USERID_INDEX])
-      const dates = instance.getColumnIndiciesWithType('DATE')
+      const dates = getColumnIndiciesWithType(mockData, 'DATE')
       expect(dates).toEqual([DATE_INDEX])
-      const stringLists = instance.getColumnIndiciesWithType('STRING_LIST')
+      const stringLists = getColumnIndiciesWithType(mockData, 'STRING_LIST')
       expect(stringLists).toEqual([STRING_LIST_INDEX])
-      const dateLists = instance.getColumnIndiciesWithType('DATE_LIST')
+      const dateLists = getColumnIndiciesWithType(mockData, 'DATE_LIST')
       expect(dateLists).toEqual([DATE_LIST_INDEX])
-      const booleanLists = instance.getColumnIndiciesWithType('BOOLEAN_LIST')
+      const booleanLists = getColumnIndiciesWithType(mockData, 'BOOLEAN_LIST')
       expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
-      const integerLists = instance.getColumnIndiciesWithType('INTEGER_LIST')
+      const integerLists = getColumnIndiciesWithType(mockData, 'INTEGER_LIST')
       expect(integerLists).toEqual([INTEGER_LIST_INDEX])
-      const dateOrIntegerLists = instance.getColumnIndiciesWithType('DATE_LIST','INTEGER_LIST')
+      const dateOrIntegerLists = getColumnIndiciesWithType(
+        mockData,
+        'DATE_LIST',
+        'INTEGER_LIST',
+      )
       expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
     })
 
@@ -518,7 +546,7 @@ describe('basic functionality', () => {
       // test entityId column type
       let mapEntityIdToHeader = {}
       let indicies = [ENTITYID_INDEX]
-      let uniqueEntities = instance.getUniqueEntities(
+      let uniqueEntities = getUniqueEntities(
         mockData,
         mapEntityIdToHeader,
         indicies,
@@ -529,7 +557,7 @@ describe('basic functionality', () => {
         syn120: {},
       }
       indicies = [USERID_INDEX]
-      uniqueEntities = instance.getUniqueEntities(
+      uniqueEntities = getUniqueEntities(
         mockData,
         mapEntityIdToHeader,
         indicies,
@@ -541,7 +569,10 @@ describe('basic functionality', () => {
       const entityColumnIndicies: number[] = [ENTITYID_INDEX]
       const userColumnIndicies: number[] = [USERID_INDEX]
       const dateColumnIndicies: number[] = [DATE_INDEX]
-      const otherListColumnIndicies: number[] = [STRING_LIST_INDEX, INTEGER_LIST_INDEX]
+      const otherListColumnIndicies: number[] = [
+        STRING_LIST_INDEX,
+        INTEGER_LIST_INDEX,
+      ]
       const dateListColumnIndicies: number[] = [DATE_LIST_INDEX]
       const booleanListColumnIndicies: number[] = [BOOLEAN_LIST_INDEX]
       const mockEntityLinkValue: string = 'syn122'
@@ -572,7 +603,7 @@ describe('basic functionality', () => {
       it('renders an entity link', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -593,7 +624,7 @@ describe('basic functionality', () => {
       it('renders a link for all authenticated users', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -622,7 +653,7 @@ describe('basic functionality', () => {
       it('renders a link for a team', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -649,7 +680,7 @@ describe('basic functionality', () => {
       it('renders a user card link', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -671,7 +702,7 @@ describe('basic functionality', () => {
         const mockMarkdownColumnValue = '# column markdown'
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -694,7 +725,7 @@ describe('basic functionality', () => {
       it('renders a standard value', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -721,7 +752,7 @@ describe('basic functionality', () => {
       it('renders a date value', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -748,7 +779,7 @@ describe('basic functionality', () => {
       it('renders a date list value', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -775,7 +806,7 @@ describe('basic functionality', () => {
       it('renders a integer list value', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -810,7 +841,7 @@ describe('basic functionality', () => {
       it('renders a boolean list value', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
@@ -845,7 +876,7 @@ describe('basic functionality', () => {
       it('renders an empty cell for null date', () => {
         const tableCell = shallow(
           <div>
-            {instance.renderTableCell({
+            {renderTableCell({
               entityColumnIndicies,
               userColumnIndicies,
               dateColumnIndicies,
