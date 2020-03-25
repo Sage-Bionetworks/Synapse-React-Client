@@ -834,7 +834,6 @@ export default class SynapseTable extends React.Component<
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
-          //@ts-ignore
           const isMarkdownColumn = markdownColumns.includes(columnName)
           const index = this.findSelectionIndex(
             this.state.sortedColumnSelection,
