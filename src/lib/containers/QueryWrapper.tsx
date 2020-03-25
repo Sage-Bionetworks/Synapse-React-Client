@@ -1,6 +1,8 @@
 import * as React from 'react'
+
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
+import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import {
   AsynchronousJobStatus,
   FacetColumnResultValues,
@@ -8,7 +10,6 @@ import {
   QueryResultBundle,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
-
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
@@ -19,6 +20,7 @@ export type QueryWrapperProps = {
   facetAliases?: {}
   loadNow?: boolean
   showBarChart?: boolean
+  componentIndex?: number
 }
 
 export type QueryWrapperState = {
@@ -86,6 +88,7 @@ export default class QueryWrapper extends React.Component<
     token: '',
   }
 
+  private componentIndex: number
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -109,6 +112,7 @@ export default class QueryWrapper extends React.Component<
       loadNowStarted: false,
       lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
     }
+    this.componentIndex = props.componentIndex || 0
   }
 
   /**
@@ -118,8 +122,10 @@ export default class QueryWrapper extends React.Component<
    */
   public componentDidMount() {
     const { loadNow = true } = this.props
+    const query = DeepLinkingUtils.getQueryRequestFromLink('QueryWrapper', this.componentIndex)
+
     if (loadNow) {
-      this.executeInitialQueryRequest()
+      this.executeInitialQueryRequest(query)
     }
   }
 
@@ -167,7 +173,6 @@ export default class QueryWrapper extends React.Component<
   public getInitQueryRequest(): QueryBundleRequest {
     return cloneDeep(this.props.initQueryRequest)
   }
-
   /**
    * Execute the given query
    *
@@ -180,6 +185,17 @@ export default class QueryWrapper extends React.Component<
       isLoading: true,
       lastQueryRequest: cloneDeep(queryRequest),
     })
+
+    if (queryRequest.query) {
+      const stringifiedQuery = encodeURIComponent(
+        JSON.stringify(queryRequest.query),
+      )
+      DeepLinkingUtils.updateUrlWithNewSearchParam(
+        'QueryWrapper',
+        this.componentIndex,
+        stringifiedQuery,
+      )
+    }
     return SynapseClient.getQueryTableResults(
       queryRequest,
       this.props.token,
@@ -234,7 +250,9 @@ export default class QueryWrapper extends React.Component<
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  public executeInitialQueryRequest() {
+  public executeInitialQueryRequest(
+    initQueryRequest: QueryBundleRequest =  this.props.initQueryRequest
+  ) {
     this.setState({
       isLoading: true,
       isLoadingNewData: true,
@@ -242,13 +260,13 @@ export default class QueryWrapper extends React.Component<
       loadNowStarted: true,
     })
     SynapseClient.getQueryTableResults(
-      this.props.initQueryRequest,
+      initQueryRequest,
       this.props.token,
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
         const lastQueryRequest: QueryBundleRequest = cloneDeep(
-          this.props.initQueryRequest!,
+          initQueryRequest,
         )
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===

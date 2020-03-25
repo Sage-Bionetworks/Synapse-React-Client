@@ -6,6 +6,7 @@ import QueryWrapperMenu, {
   ACCORDION_GROUP_CSS,
   ACCORDION_GROUP_ACTIVE_CSS,
   MENU_DROPDOWN_CSS,
+  MenuConfig,
 } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import StackedBarChart, {
@@ -19,6 +20,7 @@ import SynapseTable, {
 import { SynapseConstants } from '../../../lib/'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import Search from 'lib/containers/Search'
+import * as _ from 'lodash'
 
 const createMountedComponent = (props: QueryWrapperMenuProps) => {
   const wrapper = mount<QueryWrapperMenu>(<QueryWrapperMenu {...props} />)
@@ -37,6 +39,7 @@ describe('it renders with basic functionality', () => {
   const props: QueryWrapperMenuProps = {
     token,
     name,
+    entityId: synapseId,
     menuConfig: [{ sql, facet }],
     rgbIndex: 3,
     stackedBarChartConfiguration: {
@@ -54,8 +57,8 @@ describe('it renders with basic functionality', () => {
       token,
       name,
       rgbIndex: 3,
+      entityId: synapseId,
       tableConfiguration: {
-        synapseId,
         title: 'title',
       },
       stackedBarChartConfiguration: {
@@ -76,6 +79,7 @@ describe('it renders with basic functionality', () => {
       token,
       name,
       rgbIndex: 3,
+      entityId: synapseId,
       cardConfiguration: {
         type: SynapseConstants.STUDY,
       },
@@ -142,6 +146,7 @@ describe('it renders an accordion config', () => {
     secondaryLabels: ['labelOne', 'labelTwo'],
   }
   const props: QueryWrapperMenuProps = {
+    entityId: 'syn5604373',
     accordionConfig: [
       {
         name: 'Computational',
@@ -157,7 +162,10 @@ describe('it renders an accordion config', () => {
       },
       {
         name: 'Experimental',
-        menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
+        menuConfig: [
+          { sql, facet: 'd' },
+          { sql, facet: 'e' },
+        ],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema,
@@ -255,6 +263,39 @@ describe('it renders an accordion config', () => {
     ).toBeTruthy()
   })
 
+  describe('deeplinking function', () => {
+    const searchParams = {
+      facetValue: 'something',
+      facet: 'e',
+    }
+    const menuConfig = _.cloneDeep<MenuConfig[]>(
+      props.accordionConfig![1].menuConfig,
+    )
+    const wrapperProps = {
+      ...props,
+      searchParams,
+      accordionConfig: undefined,
+      menuConfig,
+    }
+
+    it('sets the right facet from the search params', async () => {
+      const { instance } = await createMountedComponent(wrapperProps)
+
+      expect(instance.state.activeMenuIndices).toEqual([1])
+      expect(instance.props.menuConfig![1].facet).toBe('e')
+    })
+
+    it('updates url search string on facet selection', async () => {
+      const { instance, wrapper } = await createMountedComponent(wrapperProps)
+      await wrapper
+        .find('.SRC-hand-cursor')
+        .at(0)
+        .simulate('click')
+      expect(instance.props.menuConfig![0].facet).toBe('d')
+      expect(window.location.search).toBe('?menuIndex=0&facet=d')
+    })
+  })
+
   it('passes down the correct unitDescription correctly', async () => {
     const { wrapper } = await createMountedComponent(props)
     const queryWrapper = wrapper.find(QueryWrapper).at(0)
@@ -278,6 +319,7 @@ describe('it renders with search correctly configured ', () => {
     secondaryLabels: ['labelOne', 'labelTwo'],
   }
   const props: QueryWrapperMenuProps = {
+    entityId: 'syn5604373',
     accordionConfig: [
       {
         name: 'Computational',
@@ -301,7 +343,10 @@ describe('it renders with search correctly configured ', () => {
       },
       {
         name: 'Experimental',
-        menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
+        menuConfig: [
+          { sql, facet: 'd' },
+          { sql, facet: 'e' },
+        ],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema,
@@ -348,7 +393,7 @@ describe('Passing down props works correctly ', () => {
       )
       expect(unitDescription).toEqual(`${name} Tools by ${aliasedFacet}`)
     })
-    it('works with accordiong that is on a search tab', () => {
+    it('works with accordion that is on a search tab', () => {
       const aliasedFacet = 'MOCK_VALUE'
       const name = 'Computational'
       const unitDescription = getUnitDescription(
@@ -377,7 +422,8 @@ describe('Passing down props works correctly ', () => {
     const getPartMask = QueryWrapperMenu.prototype.getPartMask
     const partMaskBase =
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
     it('works with facet passed in', () => {
       const facet = 'MOCK_VALUE'
       const partMask = getPartMask(facet, false)
