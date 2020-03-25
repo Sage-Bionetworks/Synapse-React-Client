@@ -8,7 +8,7 @@ import {
   QueryBundleRequest,
 } from '../../utils/synapseTypes/'
 import DownloadDetails from './DownloadDetails'
-import { dispatchDownloadListChangeEvent } from '../../utils/functions/dispatchDownloadListChangeEvent'
+import DownloadListTable from './DownloadListTable'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -133,6 +133,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     fileSize: 0,
     status: StatusEnum.LOADING_INFO,
   })
+  const [showDownloadList, setShowDownloadList] = useState(false)
 
   useEffect(() => {
     ;(async function getDataOnLoad(query: QueryBundleRequest, token: string) {
@@ -195,10 +196,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       case StatusEnum.SUCCESS:
         return (
           <span>
-            <button
-              // @ts-ignore
-              onClick={dispatchDownloadListChangeEvent}
-            >
+            <button onClick={() => setShowDownloadList(true)}>
               View Download List
             </button>
           </span>
@@ -210,36 +208,45 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }
 
   return (
-    <div
-      className={`alert download-confirmation ${
-        StatusConstruct[state.status].className
-      }`}
-    >
-      <div className="download-confirmation__section">
-        {getContent(state, token)}
-      </div>
+    <>
       <div
-        className="download-confirmation__section text-right"
-        style={{
-          width: '150px',
-        }}
+        className={`alert download-confirmation ${
+          StatusConstruct[state.status].className
+        }`}
       >
-        {state.status !== StatusEnum.PROCESSING && (
-          <button className="btn btn-link" onClick={hideComponent}>
-            {StatusConstruct[state.status].closeText}
-          </button>
-        )}
+        <div className="download-confirmation__section">
+          {getContent(state, token)}
+        </div>
+        <div
+          className="download-confirmation__section text-right"
+          style={{
+            width: '150px',
+          }}
+        >
+          {state.status !== StatusEnum.PROCESSING && (
+            <button className="btn btn-link" onClick={hideComponent}>
+              {StatusConstruct[state.status].closeText}
+            </button>
+          )}
 
-        {state.status === StatusEnum.INFO && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={triggerAddToDownload}
-          >
-            Add
-          </button>
-        )}
+          {state.status === StatusEnum.INFO && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={triggerAddToDownload}
+            >
+              Add
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+      {showDownloadList && (
+        <DownloadListTable
+          token={token}
+          renderAsModal={true}
+          onHide={() => setShowDownloadList(false)}
+        />
+      )}
+    </>
   )
 }

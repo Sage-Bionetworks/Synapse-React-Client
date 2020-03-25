@@ -313,7 +313,10 @@ export const addFilesToDownloadList = (
         requestUrl,
         sessionToken,
         updateParentState,
-      )
+      ).then(data => {
+        dispatchDownloadListChangeEvent(data.downloadList)
+        return data
+      })
     })
     .catch((error: any) => {
       throw error
