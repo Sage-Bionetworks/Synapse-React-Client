@@ -2,7 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
@@ -62,9 +62,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
   const [isLoading, setIsLoading] = useState<LoadingState>(true)
   const [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
-  const [showAsModalState, setShowAsModalState] = useState(true)
   const { token } = props
-  const { forceSamePage = false, renderAsModal = false, onHide } = props
+  const {
+    forceSamePage = false,
+    renderAsModal = false,
+    onHide,
+    listUpdatedCallback,
+  } = props
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
     (batchFileResult && batchFileResult.requestedFiles) || []
@@ -80,11 +84,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     type: 'USER_PROFILE',
   })
 
-  useEffect(() => {
-    fetchData(token)
-  }, [token])
-
-  const fetchData = async (token: string | undefined) => {
+  const fetchData = useCallback(async () => {
     if (!token) {
       setIsLoading(false)
       // doesn't make sense with anonymous user!
@@ -98,7 +98,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         setData({
           downloadList,
         })
-        invokeDownloadListUpdatedEvent()
         return
       }
       const batchFileRequest: BatchFileRequest = {
@@ -133,19 +132,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         batchFileResult,
         downloadList,
       })
-      invokeDownloadListUpdatedEvent()
     } catch (e) {
       console.error('Error in DownloadList API call : ', e)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [token])
 
-  const invokeDownloadListUpdatedEvent = () => {
-    if (props.listUpdatedCallback) {
-      props.listUpdatedCallback()
-    }
-  }
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const clearDownloadList = async (
     _event: React.SyntheticEvent<HTMLButtonElement>,
@@ -156,7 +152,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       setData({
         downloadList: undefined,
       })
-      invokeDownloadListUpdatedEvent()
+      listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on clearing download list: ', err)
     } finally {
@@ -182,7 +178,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // The current references and batchFileResult can be kept because the download
       // list drives the view, so the stale values in those two won't be viewed.
       setData({ downloadList, references, batchFileResult })
-      invokeDownloadListUpdatedEvent()
+      listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on delete from download list', err)
     } finally {
@@ -191,28 +187,30 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }
 
-  const Container = (props: any) => {
-    return renderAsModal ? (
-      <ReactBootstrap.Modal
-        centered={true}
-        animation={false}
-        size={'lg'}
-        dialogClassName={'download-list-modal-container'}
-        show={showAsModalState}
-        onHide={() => {
-          setShowAsModalState(false)
-          onHide?.()
-        }}
-      >
-        {props.children}
-      </ReactBootstrap.Modal>
-    ) : (
-      <>{props.children}</>
-    )
-  }
+  const Container = useCallback(
+    (props: any) => {
+      return renderAsModal ? (
+        <ReactBootstrap.Modal
+          centered={true}
+          animation={false}
+          size={'lg'}
+          dialogClassName={'download-list-modal-container'}
+          show={true}
+          onHide={() => {
+            onHide?.()
+          }}
+        >
+          {props.children}
+        </ReactBootstrap.Modal>
+      ) : (
+        <>{props.children}</>
+      )
+    },
+    [onHide, renderAsModal],
+  )
 
-  const filesToDownload = (downloadList && downloadList.filesToDownload) || []
-  const results = (references && references.results) || []
+  const filesToDownload = downloadList?.filesToDownload ?? []
+  const results = references?.results ?? []
   let numBytes = 0
   let numFiles = 0
   return (
@@ -336,10 +334,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             })}
           </tbody>
         </ReactBootstrap.Table>
-        <CreatePackage
-          updateDownloadList={() => fetchData(token)}
-          token={token}
-        >
+        <CreatePackage updateDownloadList={fetchData} token={token}>
           <DownloadDetails
             numBytes={numBytes}
             numFiles={numFiles}

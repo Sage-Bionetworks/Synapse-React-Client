@@ -32,7 +32,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const { token, numFiles, numBytes } = props
 
   useEffect(() => {
-    if (isLoading && token) {
+    if (token) {
       testDownloadSpeed(token).then(speed => {
         setState({
           isLoading: false,
@@ -40,7 +40,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         })
       })
     }
-  })
+  }, [token])
 
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 ? 0 : numBytes / downloadSpeed

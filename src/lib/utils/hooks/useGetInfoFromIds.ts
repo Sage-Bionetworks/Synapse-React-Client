@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
-import { without, chunk } from 'lodash-es'
+import { without, chunk, uniq } from 'lodash-es'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
@@ -41,8 +41,7 @@ const getEntityHeaderItems = async (
 ): Promise<EntityHeader[]> => {
   const newData = await getEntityHeader(lookupList, token)
   const notFound = lookupList.filter(
-    item =>
-      newData.results.map(item => item.id).indexOf(item.targetId) == -1,
+    item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
   )
   const notFoundPlaceholders = notFound.map(item => ({
     ...entityHeaderTemplate,
@@ -57,12 +56,9 @@ const getUserProfileItems = async (
   lookupList: string[],
   token: string | undefined,
 ): Promise<UserProfile[]> => {
-  const newData = await getUserProfileWithProfilePicAttached(
-    lookupList,
-    token,
-  )
+  const newData = await getUserProfileWithProfilePicAttached(lookupList, token)
   const notFound = lookupList.filter(
-    item => newData.list.map(item => item.ownerId).indexOf(item) == -1,
+    item => newData.list.map(item => item.ownerId).indexOf(item) === -1,
   )
   const notFoundPlaceholders = notFound.map(item => ({
     ...UserProfileTemplate,
@@ -80,46 +76,50 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
 ) {
   const { token, ids, type } = props
   const [data, setData] = useState<Array<T>>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
-  useEffect(() => {
+  const getData = useCallback(async () => {
+    if (isLoading) {
+      // We use isLoading to ensure that we don't load extra data while its process the data in batches
+      return
+    }
+    // look at current list of data, see if incoming ids has new data,
+    // if so grab those ids
+    const curList = data.map(el => el[idProp(type)])
+    const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
+    const newValues = uniq(without(incomingList, ...curList))
+    if (newValues.length > 0) {
+      setIsLoading(true)
+      try {
+        const newIds = Array.from<string>(newValues)
+        const newReferences: LookupRequestType[] =
+          type === 'USER_PROFILE'
+            ? newIds
+            : newIds.map(el => ({ targetId: el }))
+        const newReferencesChunks = chunk(newReferences, 45)
 
-    const getData = async () => {
-      // look at current list of data, see if incoming ids has new data,
-      // if so grab those ids
-      const curList = data.map(el => el[idProp(type)])
-      const incomingList = ids.filter(
-        el => el !== SynapseConstants.VALUE_NOT_SET,
-      )
-      const newValues = without(incomingList, ...curList)
-      if (newValues.length > 0) {
-        try {
-          const newIds = Array.from<string>(newValues)
-          const newReferences: LookupRequestType[] =
+        for (const newReferences of newReferencesChunks) {
+          const newData =
             type === 'USER_PROFILE'
-              ? newIds
-              : newIds.map(el => ({ targetId: el }))
-          const newReferencesChunks = chunk(newReferences, 45)
-
-          for (const newReferences of newReferencesChunks) {
-            const newData =
-              type === 'USER_PROFILE'
-                ? await getUserProfileItems(newReferences as string[], token)
-                : await getEntityHeaderItems(
-                    newReferences as ReferenceList,
-                    token,
-                  )
-
-            setData(oldData => oldData.concat(...(newData as T[])))
-          }
-        } catch (error) {
-          console.error('Error on data retrieval', error)
+              ? await getUserProfileItems(newReferences as string[], token)
+              : await getEntityHeaderItems(
+                  newReferences as ReferenceList,
+                  token,
+                )
+          setData(oldData => oldData.concat(...(newData as T[])))
         }
+      } catch (error) {
+        console.error('Error on data retrieval', error)
+      } finally {
+        setIsLoading(false)
       }
     }
+  }, [token, ids, data, type, isLoading])
+  useEffect(() => {
     getData()
-  }, [token, ids])
+  }, [getData])
   return data
 }
