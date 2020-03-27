@@ -13,12 +13,12 @@ import StackedBarChart, {
 } from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
 import CardContainer from '../../../lib/containers/CardContainer'
-import SynapseTableComponent, {
-  SynapseTableProps,
-} from '../../../lib/containers/table/SynapseTableHook'
-// import SynapseTable, {
+// import SynapseTableComponent, {
 //   SynapseTableProps,
-// } from '../../../lib/containers/table/SynapseTable'
+// } from '../../../lib/containers/table/SynapseTableHook'
+import SynapseTable, {
+  SynapseTableProps,
+} from '../../../lib/containers/table/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import Search from 'lib/containers/Search'
@@ -71,7 +71,7 @@ describe('it renders with basic functionality', () => {
     expect(wrapper.find(QueryWrapper)).toHaveLength(1)
     expect(wrapper.find(StackedBarChart)).toHaveLength(1)
     expect(wrapper.find(Facets)).toHaveLength(1)
-    expect(wrapper.find(SynapseTableComponent)).toHaveLength(1)
+    expect(wrapper.find(SynapseTable)).toHaveLength(1)
   })
 
   it('renders cards and no bar chart', async () => {
