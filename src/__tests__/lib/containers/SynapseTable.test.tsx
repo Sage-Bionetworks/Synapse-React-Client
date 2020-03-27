@@ -20,22 +20,31 @@ import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
 import ModalDownload from '../../../lib/containers/ModalDownload'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
-import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
-import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
-import { renderTableCell } from '../../../lib/containers/synapse_table_functions/renderTableCell'
+import { getColumnIndiciesWithType } from '../../../lib/containers/table/table-top/table_helpers/getColumnIndiciesWithType'
+import { getUniqueEntities } from '../../../lib/containers/table/table-top/table_helpers/getUniqueEntities'
+import { renderTableCell } from '../../../lib/containers/table/table-top/table_helpers/renderTableCell'
 
-import SynapseTable, {
+// import SynapseTable, {
+//   SORT_STATE,
+//   SynapseTableProps,
+//   Dictionary,
+// } from '../../../lib/containers/table/SynapseTable'
+
+import SynapseTableComponent, {
   SORT_STATE,
   SynapseTableProps,
   Dictionary,
 } from '../../../lib/containers/table/SynapseTable'
+
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
 ) => {
-  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />)
+  const wrapper = shallow<SynapseTableComponent>(
+    <SynapseTableComponent {...props} />,
+  )
   const instance = wrapper.instance()
   return { wrapper, instance }
 }

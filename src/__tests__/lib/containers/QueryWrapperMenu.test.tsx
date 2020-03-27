@@ -13,9 +13,12 @@ import StackedBarChart, {
 } from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
 import CardContainer from '../../../lib/containers/CardContainer'
-import SynapseTable, {
+import SynapseTableComponent, {
   SynapseTableProps,
-} from '../../../lib/containers/table/SynapseTable'
+} from '../../../lib/containers/table/SynapseTableHook'
+// import SynapseTable, {
+//   SynapseTableProps,
+// } from '../../../lib/containers/table/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import Search from 'lib/containers/Search'
@@ -68,7 +71,7 @@ describe('it renders with basic functionality', () => {
     expect(wrapper.find(QueryWrapper)).toHaveLength(1)
     expect(wrapper.find(StackedBarChart)).toHaveLength(1)
     expect(wrapper.find(Facets)).toHaveLength(1)
-    expect(wrapper.find(SynapseTable)).toHaveLength(1)
+    expect(wrapper.find(SynapseTableComponent)).toHaveLength(1)
   })
 
   it('renders cards and no bar chart', async () => {
@@ -157,7 +160,10 @@ describe('it renders an accordion config', () => {
       },
       {
         name: 'Experimental',
-        menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
+        menuConfig: [
+          { sql, facet: 'd' },
+          { sql, facet: 'e' },
+        ],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema,
@@ -301,7 +307,10 @@ describe('it renders with search correctly configured ', () => {
       },
       {
         name: 'Experimental',
-        menuConfig: [{ sql, facet: 'd' }, { sql, facet: 'e' }],
+        menuConfig: [
+          { sql, facet: 'd' },
+          { sql, facet: 'e' },
+        ],
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema,
@@ -377,7 +386,8 @@ describe('Passing down props works correctly ', () => {
     const getPartMask = QueryWrapperMenu.prototype.getPartMask
     const partMaskBase =
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS | SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
     it('works with facet passed in', () => {
       const facet = 'MOCK_VALUE'
       const partMask = getPartMask(facet, false)

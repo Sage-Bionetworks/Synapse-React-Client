@@ -1,4 +1,7 @@
-import { EntityColumnType, QueryResultBundle } from '../../utils/synapseTypes'
+import {
+  EntityColumnType,
+  QueryResultBundle,
+} from '../../../../utils/synapseTypes'
 
 export const getColumnIndiciesWithType = (
   data: QueryResultBundle | undefined,
