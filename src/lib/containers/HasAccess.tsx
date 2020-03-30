@@ -344,6 +344,10 @@ export default class HasAccess extends React.Component<
     )
   }
 
+  componentWillUnmount() {
+    console.log('unmounting')
+  }
+
   // Show Access Requirements
   renderARsLink = () => {
     const { entityId, token } = this.props

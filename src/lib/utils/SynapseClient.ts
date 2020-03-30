@@ -1439,7 +1439,7 @@ export const getFileEntityFileHandle = (
           data.requestedFiles.length > 0 &&
           data.requestedFiles[0].fileHandle
         ) {
-          resolve(data.requestedFiles[0].fileHandle)
+          return resolve(data.requestedFiles[0].fileHandle)
         } else {
           // not found, or not allowed to access
           reject(undefined)
