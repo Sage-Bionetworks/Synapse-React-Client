@@ -163,10 +163,7 @@ describe('it performs the expected functionality', () => {
     wrapper.find('button.btn-primary').simulate('click')
     await resolveAllPending(wrapper)
     expect(wrapper.find('button.btn-primary')).toHaveLength(0)
-    const link = wrapper.find('a')
+    const link = wrapper.find('button.test-view-downloadlist')
     expect(link.text()).toBe('View Download List')
-    expect(link.props().href).toBe(
-      `https://www.synapse.org/#!Profile:${addFilesToDownloadListResponse.downloadList.ownerId}/downloads`,
-    )
   })
 })

@@ -168,10 +168,6 @@ export default class HasAccess extends React.Component<
     this.getFileEntityFileHandle(forceRefresh)
   }
 
-  componentWillUnmount() {
-    console.log('has access is unmounting')
-  }
-
   getFileEntityFileHandle = (forceRefresh?: boolean) => {
     const {
       entityId,

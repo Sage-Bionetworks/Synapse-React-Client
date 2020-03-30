@@ -97,7 +97,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/QueryWrapperMenuDemo`}
-        render={() => <QueryWrapperMenuDemo rgbIndex={0} />}
+        render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
       />
 
       <Route
