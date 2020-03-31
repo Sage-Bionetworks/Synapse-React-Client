@@ -124,6 +124,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       sumFileSizes,
     } = await SynapseClient.getQueryTableResults(
       queryBundleRequestSizeInformation,
+      token,
     )
     const estimatedDownloadBytesPerSecond = await testDownloadSpeed(token)
     const size = sumFileSizes ? sumFileSizes['sumFileSizesBytes'] : 0

@@ -19,6 +19,7 @@ describe('it performs all functionality ', () => {
   beforeEach(() => {
     container = document.createElement('div')
     document.body.appendChild(container)
+    jest.clearAllMocks()
   })
 
   afterEach(() => {
@@ -51,7 +52,8 @@ describe('it performs all functionality ', () => {
       },
     ],
   }
-  SynapseClient.getDownloadList = jest.fn().mockResolvedValue(downloadListMock)
+  const mockGetDownloadListFn = jest.fn().mockResolvedValue(downloadListMock)
+  SynapseClient.getDownloadList = mockGetDownloadListFn
   const entityHeaderMock: PaginatedResults<EntityHeader> = {
     totalNumberOfResults: 3,
     results: [
@@ -81,7 +83,8 @@ describe('it performs all functionality ', () => {
       },
     ],
   }
-  SynapseClient.getEntityHeader = jest.fn().mockResolvedValue(entityHeaderMock)
+  const mockGetEntityHeaderFn = jest.fn().mockResolvedValue(entityHeaderMock)
+  SynapseClient.getEntityHeader = mockGetEntityHeaderFn
   const batchFileResultMock: BatchFileResult = {
     requestedFiles: [
       {
@@ -93,11 +96,12 @@ describe('it performs all functionality ', () => {
       },
     ],
   }
-  SynapseClient.getFiles = jest.fn().mockResolvedValue(batchFileResultMock)
-  const deleteDownloadListFnMock = jest.fn().mockResolvedValue('')
-  SynapseClient.deleteDownloadListFiles = deleteDownloadListFnMock
-  const clearDownloadListMock = jest.fn().mockResolvedValue('')
-  SynapseClient.deleteDownloadList = clearDownloadListMock
+  const mockGetFilesFn = jest.fn().mockResolvedValue(batchFileResultMock)
+  SynapseClient.getFiles = mockGetFilesFn
+  const mockDeleteDownloadListFn = jest.fn().mockResolvedValue('')
+  SynapseClient.deleteDownloadListFiles = mockDeleteDownloadListFn
+  const mockClearDownloadListFn = jest.fn().mockResolvedValue('')
+  SynapseClient.deleteDownloadList = mockClearDownloadListFn
 
   const tokenMock = 'token'
   const props: DownloadListTableProps = {
@@ -122,11 +126,17 @@ describe('it performs all functionality ', () => {
     expect(
       rows.item(1).querySelector<HTMLAnchorElement>('td a')!.innerHTML,
     ).toEqual(fileTwoName)
+    expect(mockGetDownloadListFn).toHaveBeenCalledTimes(1)
+    expect(mockGetEntityHeaderFn).toHaveBeenCalledTimes(1)
+    expect(mockGetFilesFn).toHaveBeenCalledTimes(1)
   })
   it('deletes a specific row', async () => {
     await act(async () => {
       ReactDOM.render(<DownloadListTable {...props} />, container)
     })
+    mockGetDownloadListFn.mockClear()
+    mockGetEntityHeaderFn.mockClear()
+    mockGetFilesFn.mockClear()
     const trashBtn = container
       .querySelectorAll<HTMLTableRowElement>('tbody tr')
       .item(0)
@@ -134,7 +144,7 @@ describe('it performs all functionality ', () => {
     await act(async () => {
       trashBtn.click()
     })
-    expect(deleteDownloadListFnMock).toHaveBeenCalledWith(
+    expect(mockDeleteDownloadListFn).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({
           fileHandleId: fileOneId,
@@ -142,16 +152,24 @@ describe('it performs all functionality ', () => {
       ]),
       tokenMock,
     )
+    expect(mockGetDownloadListFn).not.toHaveBeenCalled()
+    expect(mockGetEntityHeaderFn).not.toHaveBeenCalled()
+    expect(mockGetFilesFn).not.toHaveBeenCalled()
   })
   it('Clears all rows', async () => {
     await act(async () => {
       ReactDOM.render(<DownloadListTable {...props} />, container)
     })
+    mockGetDownloadListFn.mockClear()
+    mockGetEntityHeaderFn.mockClear()
+    mockGetFilesFn.mockClear()
     await act(async () => {
       container
         .querySelector<HTMLButtonElement>(`#${TESTING_CLEAR_BTN_CLASS}`)!
         .click()
     })
-    expect(clearDownloadListMock).toHaveBeenCalled()
+    expect(mockGetDownloadListFn).not.toHaveBeenCalled()
+    expect(mockGetEntityHeaderFn).not.toHaveBeenCalled()
+    expect(mockGetFilesFn).not.toHaveBeenCalled()
   })
 })
