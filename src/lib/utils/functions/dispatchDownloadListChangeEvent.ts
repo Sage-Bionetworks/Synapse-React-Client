@@ -8,6 +8,5 @@ export const dispatchDownloadListChangeEvent = (
   const downloadEvent = new CustomEvent(DOWNLOAD_LIST_CHANGE_EVENT, {
     detail: downloadList,
   })
-  console.log('dispatched event')
   document.dispatchEvent(downloadEvent)
 }

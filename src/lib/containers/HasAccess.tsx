@@ -149,11 +149,10 @@ export default class HasAccess extends React.Component<
   }
 
   componentDidUpdate(prevProps: HasAccessProps) {
-    if (!prevProps.token && this.props.token) {
-      this.refresh(true)
-    } else {
-      this.refresh()
-    }
+    const forceRefresh =
+      prevProps.token === undefined && this.props.token !== undefined
+    // if there token has updated then force refresh the component state
+    this.refresh(forceRefresh)
   }
 
   refresh = (forceRefresh?: boolean) => {
@@ -342,10 +341,6 @@ export default class HasAccess extends React.Component<
       )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
       forceSamePage ? '_self' : '_blank',
     )
-  }
-
-  componentWillUnmount() {
-    console.log('unmounting')
   }
 
   // Show Access Requirements
