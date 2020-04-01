@@ -34,7 +34,7 @@ export const NewsFeedDemo:React.SFC = () => {
       ]}
       searchParams={searchParams}
       routeToNewsFeed={'/Playground/NewsFeedDemo'}
-    />
+  />
   )
 }
 
