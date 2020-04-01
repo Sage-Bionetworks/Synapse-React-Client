@@ -80,6 +80,7 @@ export default class NewsFeedMenu extends React.Component<
                 key={modifiedFeedUrl}
                 url={modifiedFeedUrl}
                 defaultItemsToShow={defaultItemsToShow}
+                showMoreElements={true}
               />
             </>
           }

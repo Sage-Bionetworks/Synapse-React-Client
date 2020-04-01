@@ -19,6 +19,7 @@ type RssState = {
 export type RssFeedProps = {
   url: string
   defaultItemsToShow: number
+  showMoreElements: boolean
 }
 
 const parser = new DOMParser()
@@ -118,7 +119,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
               'text/html',
             )
             let bodyElement = parsedHtml.querySelector('body')
-            let moreElement = parsedHtml.querySelector('[id^="more-"]')
+            let moreElement = this.props.showMoreElements && parsedHtml.querySelector('[id^="more-"]')
             if (moreElement && bodyElement) {
               let foundMoreElement = false
               const children = bodyElement.children
