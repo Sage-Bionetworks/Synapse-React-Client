@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { without, chunk, uniq } from 'lodash-es'
+// import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
@@ -81,45 +82,48 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
-  const getData = useCallback(async () => {
-    if (isLoading) {
-      // We use isLoading to ensure that we don't load extra data while its process the data in batches
-      return
-    }
-    // look at current list of data, see if incoming ids has new data,
-    // if so grab those ids
-    const curList = data.map(el => el[idProp(type)])
-    const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
-    const newValues = uniq(without(incomingList, ...curList))
-    if (newValues.length > 0) {
-      setIsLoading(true)
-      try {
-        const newIds = Array.from<string>(newValues)
-        const newReferences: LookupRequestType[] =
-          type === 'USER_PROFILE'
-            ? newIds
-            : newIds.map(el => ({ targetId: el }))
-        const newReferencesChunks = chunk(newReferences, 45)
+  // look at current list of data, see if incoming ids has new data,
+  // if so grab those ids
+  const curList = data.map(el => el[idProp(type)])
+  const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
+  const newValues = uniq(without(incomingList, ...curList))
 
-        for (const newReferences of newReferencesChunks) {
-          const newData =
+  // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes
+  // this can be fixed by seperate this useEffect into two, one which updates itself if the token changes and the other
+  // which responds to the incoming ids changing
+  useEffect(() => {
+    const getData = async () => {
+      if (isLoading) {
+        return
+      }
+      setIsLoading(true)
+      if (newValues.length > 0) {
+        try {
+          const newIds = Array.from<string>(newValues)
+          const newReferences: LookupRequestType[] =
             type === 'USER_PROFILE'
-              ? await getUserProfileItems(newReferences as string[], token)
-              : await getEntityHeaderItems(
-                  newReferences as ReferenceList,
-                  token,
-                )
-          setData(oldData => oldData.concat(...(newData as T[])))
+              ? newIds
+              : newIds.map(el => ({ targetId: el }))
+          const newReferencesChunks = chunk(newReferences, 45)
+
+          for (const newReferences of newReferencesChunks) {
+            const newData =
+              type === 'USER_PROFILE'
+                ? await getUserProfileItems(newReferences as string[], token)
+                : await getEntityHeaderItems(
+                    newReferences as ReferenceList,
+                    token,
+                  )
+            setData(oldData => oldData.concat(...(newData as T[])))
+          }
+        } catch (error) {
+          console.error('Error on data retrieval', error)
+        } finally {
+          setIsLoading(false)
         }
-      } catch (error) {
-        console.error('Error on data retrieval', error)
-      } finally {
-        setIsLoading(false)
       }
     }
-  }, [token, ids, data, type, isLoading])
-  useEffect(() => {
     getData()
-  }, [getData])
+  }, [token, type, newValues, isLoading])
   return data
 }
