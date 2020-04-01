@@ -1,4 +1,4 @@
-import React, { useState } from 'react' // importing FunctionComponent
+import React from 'react' // importing FunctionComponent
 import RssFeed from './RssFeed'
 
 export type SingleNewsFeedPostProps = {
@@ -6,7 +6,6 @@ export type SingleNewsFeedPostProps = {
 }
 
 export default function SingleNewsFeedPost(props: SingleNewsFeedPostProps) {
-  const [modifiedFeedUrl, setModifiedFeedUrl] = useState()
   const {feedUrl} = props
   let updatedModifiedFeedUrl = feedUrl
   const urlParams = new URLSearchParams(window.location.search)
@@ -15,14 +14,12 @@ export default function SingleNewsFeedPost(props: SingleNewsFeedPostProps) {
       updatedModifiedFeedUrl = `${updatedModifiedFeedUrl}&${key}=${value}`
     })
   }
-  if (updatedModifiedFeedUrl && modifiedFeedUrl !== updatedModifiedFeedUrl)
-    setModifiedFeedUrl(updatedModifiedFeedUrl)
   return (
       <>
-        {modifiedFeedUrl && (
+        {updatedModifiedFeedUrl && (
           <RssFeed
-            key={modifiedFeedUrl}
-            url={modifiedFeedUrl}
+            key={updatedModifiedFeedUrl}
+            url={updatedModifiedFeedUrl}
             defaultItemsToShow={1}
             showMoreElements={false}
           />
