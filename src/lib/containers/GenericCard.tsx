@@ -9,7 +9,7 @@ import {
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
-import { SelectColumn } from '../utils/synapseTypes'
+import { SelectColumn, ColumnModel } from '../utils/synapseTypes'
 
 export type KeyToAlias = {
   key: string
@@ -37,6 +37,7 @@ export type IconOptions = {
 
 export type GenericCardProps = {
   selectColumns?: SelectColumn[]
+  columnModels?: ColumnModel[]
   facetAliases?: {}
   iconOptions?: IconOptions
   backgroundColor?: string
@@ -183,6 +184,7 @@ export default class GenericCard extends React.Component<
       secondaryLabelLimit,
       backgroundColor,
       selectColumns,
+      columnModels,
       iconOptions,
       isHeader = false,
       titleLinkConfig,
@@ -217,12 +219,13 @@ export default class GenericCard extends React.Component<
       const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
 
-      const selectedColumnOrUndefined = selectColumns?.find(
-        el => el.name === columnName,
-      )
+      const selectedColumnOrUndefined =
+        selectColumns?.find(el => el.name === columnName) ||
+        columnModels?.find(el => el.name === columnName)
       const isMultiValue =
         selectedColumnOrUndefined?.columnType === 'STRING_LIST' ||
         selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
+
       if (value) {
         const labelLink =
           labelLinkConfig &&
