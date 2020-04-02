@@ -4,19 +4,13 @@
 
 .requirement-container {
   display: flex;
-  &:first-child {
-    flex: 1;
-  }
-  &:last-child {
-    flex: 4;
-  }
 }
 
 .register-text-link {
   color: rgb(77, 85, 144);
 }
 
-.terms-of-use-title {
+.terms-of-use-content {
   margin-top: 20px;
 }
 

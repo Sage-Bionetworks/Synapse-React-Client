@@ -26,7 +26,6 @@ export type AcceptedRequirementsProps = {
     | TermsOfUseAccessRequirement
     | SelfSignAccessRequirement
     | ManagedACTAccessRequirement
-  accessRequirementText: string
   accessRequirementStatus: AccessRequirementStatus | undefined
   showButton?: boolean
   onHide?: Function
@@ -37,7 +36,6 @@ export default function AcceptedRequirements({
   token,
   wikiPage,
   accessRequirement,
-  accessRequirementText,
   accessRequirementStatus,
   showButton,
   onHide,
@@ -48,12 +46,30 @@ export default function AcceptedRequirements({
     propsIsApproved,
   )
 
+  let acceptButtonText = ''
+
+  if (
+    accessRequirement.concreteType ===
+    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+  ) {
+    if (
+      window.location.hostname === 'www.synapse.org' ||
+      window.location.hostname === 'staging.synapse.org'
+    ) {
+      acceptButtonText = 'Get access'
+    } else {
+      acceptButtonText = 'Get access via Synapse.org'
+    }
+  } else {
+    acceptButtonText = 'I Accept Terms of Use'
+  }
+
   useEffect(() => {
     const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
       setIsApproved(propsIsApproved)
     }
     setIsApprovedValueFromProps(propsIsApproved)
-  }, [propsIsApproved, accessRequirementText])
+  }, [propsIsApproved])
 
   const onAcceptClicked = () => {
     if (
@@ -117,7 +133,7 @@ export default function AcceptedRequirements({
       return (
         <div>
           <p>
-            You have accepted {accessRequirementText}.
+            You have accepted the terms of use.
             <button
               className="view-terms-button bold-text"
               onClick={() => {
@@ -140,22 +156,15 @@ export default function AcceptedRequirements({
     <div>
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isApproved} />
-        <div>
-          <p className="terms-of-use-title bold-text">
-            Agree to the following terms and conditions.
-          </p>
+        <div className="terms-of-use-content">
           <RenderAcceptedRequirements />
         </div>
       </div>
-
       {showButton ?? (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
-              {accessRequirement.concreteType ===
-              SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-                ? `Get ${accessRequirementText} via synapse.org`
-                : `Accept ${accessRequirementText}`}
+              {acceptButtonText}
             </button>
           </div>
 

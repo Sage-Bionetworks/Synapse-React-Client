@@ -1,11 +1,11 @@
 {
   "name": "synapse-react-client",
-  "version": "1.13.16",
+  "version": "1.13.17",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "dist/index.js",
-  "homepage": "https://conundrumgirl.github.io/Synapse-React-Client/",
+  "homepage": "https://sage-bionetworks.github.io/Synapse-React-Client/",
   "files": [
     "dist",
     "README.md"
@@ -15,6 +15,7 @@
     "url": "https://github.com/Sage-Bionetworks/Synapse-React-Client"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.4",
     "@fortawesome/free-solid-svg-icons": "^5.3.1",
     "@fortawesome/react-fontawesome": "^0.1.3",

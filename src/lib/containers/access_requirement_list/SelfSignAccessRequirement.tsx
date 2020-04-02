@@ -32,7 +32,7 @@ export default function SelfSignAccessRequirementComponent({
     AccessRequirementStatus | undefined
   >(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const accessRequirementText = 'Self Sign Access Requirement'
+
   useEffect(() => {
     const getSelfSignAccessData = async () => {
       try {
@@ -130,7 +130,6 @@ export default function SelfSignAccessRequirementComponent({
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}
-        accessRequirementText={accessRequirementText}
         onHide={onHide}
       />
     </div>

@@ -41,6 +41,13 @@
         color: $gray-regular;
       }
     }
+    input ~ span{
+      display: flex;
+      &::before {
+        flex: none;
+        align-self: center;
+      }
+    }
   }
 
   &__showMoreFacetsLabel {
@@ -51,10 +58,10 @@
     width: 100%;
     margin: 10px 0 0 0;
     padding: 0;
-    color: #337ab7 !important;
+    color: $primary-action-color !important;
 
     &:hover {
-      color: #23527c !important;
+      color: $primary-action-color !important;
       text-decoration: underline;
     }
   }
@@ -84,10 +91,10 @@
     padding: 0;
     line-height: 14px;
     font-size: 18px;
-    color: #337ab7 !important;
+    color: $primary-action-color !important;
 
     &:hover {
-      color: #23527c !important;
+      color: $primary-action-color !important;
       text-decoration: underline;
     }
   }
