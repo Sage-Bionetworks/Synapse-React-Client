@@ -152,6 +152,7 @@ export class CardContainer extends React.Component<
             secondaryLabelLimit,
             data: rowData.values,
             selectColumns: data.selectColumns,
+            columnModels: data.columnModels,
             token,
             ...rest,
           }
