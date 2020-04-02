@@ -227,15 +227,6 @@ export default class GenericCard extends React.Component<
         selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
 
       if (value) {
-        const labelLink =
-          labelLinkConfig &&
-          labelLinkConfig.find(el => el.matchColumnName === columnName)
-        if (labelLink) {
-          // create link for this column
-          value = this.renderLabel(value, labelLink, isHeader)
-        }
-        const columnDisplayName =
-          facetAliases[columnName] || unCamelCase(columnName)
         if (isMultiValue) {
           try {
             value = JSON.parse(value)
@@ -244,6 +235,15 @@ export default class GenericCard extends React.Component<
             console.error('Error on parsing value for ', value)
           }
         }
+        const labelLink = labelLinkConfig?.find(
+          el => el.matchColumnName === columnName,
+        )
+        if (labelLink) {
+          // create link for this column
+          value = this.renderLabel(value, labelLink, isHeader)
+        }
+        const columnDisplayName =
+          facetAliases[columnName] || unCamelCase(columnName)
         const keyValue = [columnDisplayName, value]
         values.push(keyValue)
       }
