@@ -169,7 +169,7 @@ export default class GenericCard extends React.Component<
             {el}
           </a>
           {index < split.length - 1 && (
-            <span style={{ marginRight: 4 }}> , </span>
+            <span style={{ marginRight: 4 }}>, </span>
           )}
         </React.Fragment>
       )
