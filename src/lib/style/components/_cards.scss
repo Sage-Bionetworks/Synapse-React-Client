@@ -151,40 +151,6 @@ $text-color-lighter: #898989;
     }
   }
 
-  .SRC-cardMetadataColumn {
-    display: flex;
-    @media (max-width: 568px) {
-      flex-direction: column !important;
-    }
-    background-color: $color-gray-background;
-    margin-top: $baseline-grid;
-    padding: 20px 20px;
-    .SRC-halfWidth {
-      flex-grow: 1;
-    }
-    .row {
-      margin: 5px !important;
-      > * {
-        min-width: 200px;
-      }
-      &.extraWide > * {
-        min-width: 150px;
-      }
-    }
-    .SRC-row-label {
-      white-space: nowrap;
-      color: $text-color-lighter;
-      text-transform: uppercase;
-    }
-    .SRC-row-data {
-      font-weight: 400;
-      display: inline-block;
-      a {
-        font-size: 14px !important;
-      }
-    }
-  }
-
   &.SRC-typeDataset {
     // single row metadata for dataset type
     .row {
@@ -281,6 +247,10 @@ img.iconImg.SRC-datasetIcon {
       margin: 0;
       font-weight: 700;
     }
+  }
+
+  .SRC-row-label {
+    text-transform: uppercase;
   }
 
   .SRC-type,

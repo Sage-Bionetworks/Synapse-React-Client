@@ -230,7 +230,7 @@ export default class GenericCard extends React.Component<
         if (isMultiValue) {
           try {
             value = JSON.parse(value)
-            value = (value as string[]).join(' , ')
+            value = (value as string[]).join(', ')
           } catch (e) {
             console.error('Error on parsing value for ', value)
           }
