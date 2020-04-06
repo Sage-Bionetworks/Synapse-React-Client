@@ -44,6 +44,8 @@ type HasAccessState = {
   fileHandleDownloadType?: FileHandleDownloadTypeEnum
   displayAccessRequirement: boolean
   accessRequirements?: Array<AccessRequirement>
+  isGettingRestrictionInformation: boolean
+  isGettingEntityInformation: boolean
 }
 
 export enum ExternalFileHandleConcreteTypeEnum {
@@ -59,13 +61,13 @@ export enum GoogleCloudFileHandleEnum {
 export const GIGABYTE_SIZE = 2 ** 30
 
 export enum FileHandleDownloadTypeEnum {
-  ExternalCloudFile,
-  ExternalFileLink,
-  TooLarge,
-  Accessible,
-  AccessBlocked,
-  AccessBlockedToAnonymous,
-  NoFileHandle,
+  ExternalCloudFile = 'ExternalCloudFile',
+  ExternalFileLink = 'ExternalFileLink',
+  TooLarge = 'TooLarge',
+  Accessible = 'Accessible',
+  AccessBlocked = 'AccessBlocked',
+  AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
+  NoFileHandle = 'NoFileHandle',
 }
 
 export const getDownloadTypeForFileHandle = (
@@ -137,24 +139,34 @@ export default class HasAccess extends React.Component<
       fileHandleDownloadType,
       displayAccessRequirement: false,
       accessRequirements: [],
+      isGettingEntityInformation: false,
+      isGettingRestrictionInformation: false,
     }
   }
 
   componentDidMount() {
-    this.getRestrictionInformation()
-    this.getFileEntityFileHandle()
+    this.refresh()
   }
 
   componentDidUpdate(prevProps: HasAccessProps) {
-    if (!prevProps.token && this.props.token) {
-      // they just signed in, force refresh the data
-      this.getRestrictionInformation(true)
-      this.getFileEntityFileHandle(true)
-    } else {
-      this.getRestrictionInformation()
-      this.getFileEntityFileHandle()
-    }
+    const forceRefresh =
+      prevProps.token === undefined && this.props.token !== undefined
+    // if there token has updated then force refresh the component state
+    this.refresh(forceRefresh)
   }
+
+  refresh = (forceRefresh?: boolean) => {
+    if (
+      !this.props.token ||
+      this.state.isGettingEntityInformation ||
+      this.state.isGettingRestrictionInformation
+    ) {
+      return
+    }
+    this.getRestrictionInformation(forceRefresh)
+    this.getFileEntityFileHandle(forceRefresh)
+  }
+
   getFileEntityFileHandle = (forceRefresh?: boolean) => {
     const {
       entityId,
@@ -162,13 +174,16 @@ export default class HasAccess extends React.Component<
       token,
       isInDownloadList,
     } = this.props
-    if (!forceRefresh && this.state.fileHandleDownloadType) {
+    if (this.state.fileHandleDownloadType && !forceRefresh) {
       // already know the downloadType
       return
     }
+    this.setState({
+      isGettingEntityInformation: true,
+    })
     // fileHandle was not passed to us, ask for it.
     // is this a FileEntity?
-    SynapseClient.getEntity(token, entityId, entityVersionNumber)
+    return SynapseClient.getEntity(token, entityId, entityVersionNumber)
       .then(entity => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
@@ -183,19 +198,30 @@ export default class HasAccess extends React.Component<
               })
             })
             .catch(err => {
+              console.error('Error on getFileHandle = ', err)
               // could not get the file handle
               this.updateStateFileHandleAccessBlocked()
+            })
+            .finally(() => {
+              this.setState({
+                isGettingEntityInformation: false,
+              })
             })
         } else {
           // entity looks like something else.
           this.setState({
             fileHandleDownloadType: FileHandleDownloadTypeEnum.NoFileHandle,
+            isGettingEntityInformation: false,
           })
         }
       })
       .catch(err => {
+        console.error('Error on get Entity = ', err)
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
+        this.setState({
+          isGettingEntityInformation: false,
+        })
       })
   }
 
@@ -211,24 +237,29 @@ export default class HasAccess extends React.Component<
 
   getRestrictionInformation = (forceRefresh?: boolean) => {
     const { entityId, token } = this.props
-    if (
-      !forceRefresh &&
-      (this.state.restrictionInformation || !entityId || !token)
-    ) {
+    if (this.state.restrictionInformation && !forceRefresh) {
       return
     }
+    this.setState({
+      isGettingRestrictionInformation: true,
+    })
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: entityId,
     }
-    SynapseClient.getRestrictionInformation(request, token)
+    return SynapseClient.getRestrictionInformation(request, token)
       .then(restrictionInformation => {
         this.setState({
           restrictionInformation,
         })
       })
       .catch(err => {
-        console.log('Error on getRestrictionInformation: ', err)
+        console.error('Error on getRestrictionInformation: ', err)
+      })
+      .finally(() => {
+        this.setState({
+          isGettingRestrictionInformation: false,
+        })
       })
   }
 
@@ -280,11 +311,6 @@ export default class HasAccess extends React.Component<
         // nothing is rendered until access requirement is loaded
         return <></>
     }
-  }
-
-  refresh = () => {
-    this.getRestrictionInformation()
-    this.getFileEntityFileHandle()
   }
 
   handleGetAccess = () => {

@@ -22,7 +22,7 @@ type DemoState = {
  * module
  */
 class QueryWrapperMenuDemo extends React.Component<
-  { rgbIndex: number },
+  { rgbIndex: number; token: string | undefined },
   DemoState
 > {
   /**
@@ -46,7 +46,7 @@ class QueryWrapperMenuDemo extends React.Component<
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      activeTab: 3,
+      activeTab: 2,
       tabFour: {
         stackedBarChartConfiguration: {
           loadingScreen: <div> Im loading as fast I can! </div>,
@@ -73,6 +73,7 @@ class QueryWrapperMenuDemo extends React.Component<
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
+          enableDownloadConfirmation: true,
         },
         searchConfiguration: {
           searchable: [
@@ -274,7 +275,11 @@ class QueryWrapperMenuDemo extends React.Component<
           Table with markdown
         </button>
         <h2>Demo of table</h2>
-        <QueryWrapperMenu isConsistent={true} {...props} />
+        <QueryWrapperMenu
+          token={this.props.token}
+          isConsistent={true}
+          {...props}
+        />
       </div>
     )
   }

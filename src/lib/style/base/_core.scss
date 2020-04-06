@@ -543,11 +543,17 @@ div.SRC-logo-cursor * {
   font-size: 26px;
 }
 
+.UserCardSmall {
+  height: fit-content;
+  width: fit-content;
+}
+
 .SRC-userImgSmall {
+  font-size: 18px;
   border-radius: 50%;
-  height: 23px;
-  width: 23px;
-  min-width: 23px;
+  width: 30px;
+  height: 30px;
+  padding: 20px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
