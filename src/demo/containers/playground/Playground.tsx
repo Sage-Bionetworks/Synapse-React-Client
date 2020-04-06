@@ -6,6 +6,7 @@ import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
+import ShowDownloadDemo from './ShowDownloadDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
 import { SingleNewsFeedPostDemo } from './SingleNewsFeedPostDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
@@ -92,12 +93,15 @@ const App = ({
             TemplateComponentDemo
           </Link>
         </li>
+        <li>
+          <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
+        </li>
       </ul>
 
       <Route
         exact={true}
         path={`${match.url}/QueryWrapperMenuDemo`}
-        render={() => <QueryWrapperMenuDemo rgbIndex={0} />}
+        render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
       />
 
       <Route
@@ -184,6 +188,12 @@ const App = ({
         exact={true}
         path={`${match.url}/TemplateComponentDemo`}
         component={() => <TemplateComponentDemo />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ShowDownloadDemo`}
+        component={() => <ShowDownloadDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

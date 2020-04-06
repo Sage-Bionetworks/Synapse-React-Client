@@ -2,7 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
@@ -45,6 +45,8 @@ export type DownloadListTableProps = {
   token?: string
   listUpdatedCallback?: VoidFunction
   forceSamePage?: boolean
+  renderAsModal?: boolean
+  onHide?: Function
 }
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -61,7 +63,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const [isLoading, setIsLoading] = useState<LoadingState>(true)
   const [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
   const { token } = props
-  const { forceSamePage = false } = props
+  const {
+    forceSamePage = false,
+    renderAsModal = false,
+    onHide,
+    listUpdatedCallback,
+  } = props
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
     (batchFileResult && batchFileResult.requestedFiles) || []
@@ -77,11 +84,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     type: 'USER_PROFILE',
   })
 
-  useEffect(() => {
-    fetchData(token)
-  }, [token])
-
-  const fetchData = async (token: string | undefined) => {
+  const fetchData = useCallback(async () => {
     if (!token) {
       setIsLoading(false)
       // doesn't make sense with anonymous user!
@@ -95,7 +98,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         setData({
           downloadList,
         })
-        invokeDownloadListUpdatedEvent()
         return
       }
       const batchFileRequest: BatchFileRequest = {
@@ -130,19 +132,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         batchFileResult,
         downloadList,
       })
-      invokeDownloadListUpdatedEvent()
     } catch (e) {
       console.error('Error in DownloadList API call : ', e)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [token])
 
-  const invokeDownloadListUpdatedEvent = () => {
-    if (props.listUpdatedCallback) {
-      props.listUpdatedCallback()
-    }
-  }
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const clearDownloadList = async (
     _event: React.SyntheticEvent<HTMLButtonElement>,
@@ -153,7 +152,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       setData({
         downloadList: undefined,
       })
-      invokeDownloadListUpdatedEvent()
+      listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on clearing download list: ', err)
     } finally {
@@ -179,7 +178,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // The current references and batchFileResult can be kept because the download
       // list drives the view, so the stale values in those two won't be viewed.
       setData({ downloadList, references, batchFileResult })
-      invokeDownloadListUpdatedEvent()
+      listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on delete from download list', err)
     } finally {
@@ -188,25 +187,25 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }
 
-  const filesToDownload = (downloadList && downloadList.filesToDownload) || []
-  const results = (references && references.results) || []
+  const filesToDownload = downloadList?.filesToDownload ?? []
+  const results = references?.results ?? []
   let numBytes = 0
   let numFiles = 0
-  return (
-    <div>
-      <div className="SRC-split download-list-table-top">
-        <span className="create-package-text SRC-centerContentInline">
+  const content = (
+    <div className="DownloadListTable">
+      <div className="SRC-split download-list-table-top SRC-primary-background-color SRC-border-bottom-only">
+        <span className="create-package-text">
           Download List &nbsp;&nbsp; {isLoading && <span className="spinner" />}
         </span>
         <button
-          className="SRC-primary-text-color SRC-underline-on-hover"
+          className="SRC-underline-on-hover uppercase-text"
           onClick={clearDownloadList}
           id={TESTING_CLEAR_BTN_CLASS}
         >
-          Clear All
+          Clear list
         </button>
       </div>
-      <ReactBootstrap.Table responsive={true}>
+      <ReactBootstrap.Table striped={true} responsive={true}>
         <thead>
           <tr>
             <th>File Name</th>
@@ -307,7 +306,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           })}
         </tbody>
       </ReactBootstrap.Table>
-      <CreatePackage updateDownloadList={() => fetchData(token)} token={token}>
+      <CreatePackage updateDownloadList={fetchData} token={token}>
         <DownloadDetails
           numBytes={numBytes}
           numFiles={numFiles}
@@ -316,4 +315,22 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       </CreatePackage>
     </div>
   )
+  if (renderAsModal) {
+    return (
+      <ReactBootstrap.Modal
+        centered={true}
+        animation={false}
+        size={'lg'}
+        dialogClassName={'download-list-modal-container'}
+        show={true}
+        onHide={() => {
+          onHide?.()
+        }}
+      >
+        {content}
+      </ReactBootstrap.Modal>
+    )
+  } else {
+    return content
+  }
 }
