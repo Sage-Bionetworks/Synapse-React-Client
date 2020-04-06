@@ -157,7 +157,6 @@ export default class HasAccess extends React.Component<
 
   refresh = (forceRefresh?: boolean) => {
     if (
-      !this.props.token ||
       this.state.isGettingEntityInformation ||
       this.state.isGettingRestrictionInformation
     ) {
@@ -184,7 +183,7 @@ export default class HasAccess extends React.Component<
     // fileHandle was not passed to us, ask for it.
     // is this a FileEntity?
     return SynapseClient.getEntity(token, entityId, entityVersionNumber)
-      .then(entity => {
+      .then((entity) => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
           SynapseClient.getFileEntityFileHandle(entity as FileEntity, token)
@@ -197,7 +196,7 @@ export default class HasAccess extends React.Component<
                 fileHandleDownloadType,
               })
             })
-            .catch(err => {
+            .catch((err) => {
               console.error('Error on getFileHandle = ', err)
               // could not get the file handle
               this.updateStateFileHandleAccessBlocked()
@@ -215,7 +214,7 @@ export default class HasAccess extends React.Component<
           })
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error on get Entity = ', err)
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
@@ -248,12 +247,12 @@ export default class HasAccess extends React.Component<
       objectId: entityId,
     }
     return SynapseClient.getRestrictionInformation(request, token)
-      .then(restrictionInformation => {
+      .then((restrictionInformation) => {
         this.setState({
           restrictionInformation,
         })
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error on getRestrictionInformation: ', err)
       })
       .finally(() => {
