@@ -12,6 +12,7 @@ type EllipsisDropdownProps = {
   onDownloadTableOnly: Function
   onShowColumns: Function
   onFullScreen: Function
+  onOpenAdvancedSearch: Function
   isExpanded: boolean
   isUnauthenticated?: boolean
   isGroupedQuery?: boolean
@@ -19,18 +20,22 @@ type EllipsisDropdownProps = {
 }
 const tooltipEllipsis = 'tooltip-ellipsis'
 
-export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = props => {
+export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = (
+  props,
+) => {
   const {
     onDownloadFiles,
     onDownloadTableOnly,
     onShowColumns,
     onFullScreen,
+    //@ts-ignore
+    onOpenAdvancedSearch,
     isExpanded,
   } = props
   const [showModal, setShowModal] = React.useState(false)
   return (
     <>
-      <Dropdown style={{ padding: 0 }}>
+      <Dropdown>
         <ElementWithTooltip
           idForToolTip={tooltipEllipsis}
           tooltipText={'Table Options'}
@@ -39,6 +44,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
+          style={{ width: '100%', right: '-100px' }}
         >
           {!props.isGroupedQuery && [
             props.isFileView && (
@@ -66,6 +72,10 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           </Dropdown.Item>
           <Dropdown.Item key="expand" onClick={() => onFullScreen()}>
             {isExpanded ? 'Shrink' : 'Full Screen'}
+          </Dropdown.Item>
+          <Dropdown.Divider key="divider2" />
+          <Dropdown.Item onClick={() => onOpenAdvancedSearch()}>
+            Advanced Search
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>

@@ -6,6 +6,8 @@ import { Facets } from './Facets'
 import QueryCount from './QueryCount'
 import QueryWrapper from './QueryWrapper'
 import StackedBarChart from './StackedBarChart'
+import SynapseTableComponent from './table/SynapseTableHook'
+//@ts-ignore
 import SynapseTable, { SynapseTableProps } from './table/SynapseTable'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import CardContainer from './CardContainer'
@@ -370,7 +372,7 @@ export default class QueryWrapperMenu extends React.Component<
                 which will happen if either configuration is undefined.
             */}
             {tableConfiguration ? (
-              <SynapseTable
+              <SynapseTableComponent
                 {...{
                   ...tableConfiguration,
                   loadingScreen: tableLoadingScreen,

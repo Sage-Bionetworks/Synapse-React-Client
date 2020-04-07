@@ -61,7 +61,8 @@
   }
 }
 
-.SRC-primary-button,  .SRC-primary-button.btn.btn-primary {
+.SRC-primary-button,
+.SRC-primary-button.btn.btn-primary {
   background: $primary-action-color;
   border: none;
   color: white !important;
@@ -207,6 +208,10 @@ button.dropdown-toggle:hover {
     fill: white;
   }
 }
-a, a:link, a:visited, a:hover, a:active {
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
   color: $primary-action-color;
 }

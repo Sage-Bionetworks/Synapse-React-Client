@@ -221,18 +221,18 @@ export default function SynapseTableComponent({
       // Make call to resolve entity ids
       if (distinctEntityIds.size > 0) {
         const referenceList: ReferenceList = Array.from(distinctEntityIds).map(
-          id => {
+          (id) => {
             return { targetId: id }
           },
         )
         try {
           // initialize mapEntityIdToHeader
-          referenceList.forEach(el => {
+          referenceList.forEach((el) => {
             _mapEntityIdToHeader[el.targetId] = EMPTY_HEADER
           })
           const data = await SynapseClient.getEntityHeader(referenceList, token)
           const { results } = data
-          results.forEach(el => {
+          results.forEach((el) => {
             _mapEntityIdToHeader[el.id] = el
           })
         } catch (err) {
@@ -252,7 +252,7 @@ export default function SynapseTableComponent({
       // TODO: Grab Team Badge
       try {
         const data = await SynapseClient.getGroupHeadersBatch(ids, token)
-        data.children.forEach(el => {
+        data.children.forEach((el) => {
           if (el.isIndividual) {
             userPorfileIds.push(el.ownerId)
           } else {
@@ -366,7 +366,6 @@ export default function SynapseTableComponent({
       // })
     }
   }
-
   const renderColumnSelection = (headers: SelectColumn[]) => {
     return (
       <ColumnSelection
@@ -486,12 +485,12 @@ export default function SynapseTableComponent({
               )}
               {enableLeftFacetFilter && (
                 <>
-                  <ElementWithTooltip
+                  {/* <ElementWithTooltip
                     idForToolTip={'advancedSearch'}
                     image={faCog}
                     callbackFn={advancedSearch}
                     tooltipText={'Open Advanced Search in Synapse'}
-                  />
+                  /> */}
                   <ElementWithTooltip
                     idForToolTip={'filter'}
                     image={faFilter}
@@ -536,6 +535,7 @@ export default function SynapseTableComponent({
           isUnauthenticated={!token}
           isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
           isFileView={isFileView}
+          onOpenAdvancedSearch={advancedSearch}
         />
       </div>
     )
@@ -550,8 +550,8 @@ export default function SynapseTableComponent({
     const indexes: number[] = []
     if (isGroupByInSql(originalSql)) {
       const tokens: string[][] = lexer.tokenize(originalSql)
-      const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
-      const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
+      const selectIndex = tokens.findIndex((el) => el[0] === 'SELECT')
+      const fromIndex = tokens.findIndex((el) => el[0] === 'FROM')
       let columnIndex = 0
       for (
         let index = selectIndex + 1;
@@ -576,8 +576,8 @@ export default function SynapseTableComponent({
     originalSql: string,
   ): { synId: string; newSql: string } => {
     let tokens: string[][] = lexer.tokenize(originalSql)
-    const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
-    const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
+    const selectIndex = tokens.findIndex((el) => el[0] === 'SELECT')
+    const fromIndex = tokens.findIndex((el) => el[0] === 'FROM')
 
     // gather all of the column names literals between select and from (and their indices)
     const columnReferences: ColumnReference[] = []
@@ -609,7 +609,7 @@ export default function SynapseTableComponent({
     // remove all tokens after (and including) group
     tokens = tokens.slice(
       0,
-      tokens.findIndex(el => el[0] === 'GROUP'),
+      tokens.findIndex((el) => el[0] === 'GROUP'),
     )
     // replace all columns with *
     tokens.splice(selectIndex + 1, fromIndex - selectIndex - 1, [
@@ -622,7 +622,7 @@ export default function SynapseTableComponent({
     if (data === undefined) {
       return { synId: '', newSql: '' }
     }
-    const whereIndex = tokens.findIndex(el => el[0] === 'WHERE')
+    const whereIndex = tokens.findIndex((el) => el[0] === 'WHERE')
     if (whereIndex === -1) {
       // does not contain a where clause
       tokens.push(['WHERE', 'WHERE', '1'])
@@ -654,7 +654,7 @@ export default function SynapseTableComponent({
     // remove the last AND
     tokens.pop()
     // remove backtick from output sql (for table name): `syn1234` becomes syn1234
-    const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
+    const synId = tokens[tokens.findIndex((el) => el[0] === 'FROM') + 1][1]
     tokens.push(['EOF', '', '1'])
     return { synId, newSql: formatSQLFromParser(tokens) }
   }
@@ -964,7 +964,7 @@ export default function SynapseTableComponent({
 
   // Direct user to corresponding query on synapse
   const advancedSearch = (event: React.SyntheticEvent) => {
-    event && event.preventDefault()
+    event?.preventDefault()
     const lastQueryRequest = getLastQueryRequest!()
     const { query } = lastQueryRequest
     // base 64 encode the json of the query and go to url with the encoded object
@@ -1206,19 +1206,21 @@ export default function SynapseTableComponent({
     )
     return (
       <React.Fragment>
-        {// modal can render anywhere, this is not a particular location
-        isModalDownloadOpen && (
-          <ModalDownload
-            onClose={() => {
-              // this.setState({ isModalDownloadOpen: false })
-              setIsModalDownloadOpen(false)
-            }}
-            sql={sql}
-            selectedFacets={selectedFacets}
-            token={token}
-            entityId={queryRequest.entityId}
-          />
-        )}
+        {
+          // modal can render anywhere, this is not a particular location
+          isModalDownloadOpen && (
+            <ModalDownload
+              onClose={() => {
+                // this.setState({ isModalDownloadOpen: false })
+                setIsModalDownloadOpen(false)
+              }}
+              sql={sql}
+              selectedFacets={selectedFacets}
+              token={token}
+              entityId={queryRequest.entityId}
+            />
+          )
+        }
         {isExpanded && (
           <Modal
             animation={false}
