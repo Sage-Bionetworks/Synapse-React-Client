@@ -75,7 +75,7 @@ const patchRequestFacets = (
   return selections
 }
 
-const applyChangesToValuesColumn = (
+export const applyChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
 
   facet: FacetColumnResultValues,

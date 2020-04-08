@@ -143,7 +143,7 @@ export const renderTableCell = ({
       return <p className={isBold}> {columnValue}</p>
     } else {
       return (
-        <p className={isBold}>
+        <div className={isBold}>
           <ElementWithTooltip
             tooltipText={columnValue}
             callbackFn={noop}
@@ -151,7 +151,7 @@ export const renderTableCell = ({
           >
             <p className={isBold}> {displayString}...</p>
           </ElementWithTooltip>
-        </p>
+        </div>
       )
     }
   }

@@ -54,7 +54,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
         enableLeftFacetFilter: true,
         rgbIndex: 5,
         // facetsToPlot: ['assay', 'dataType'],
-        loadingScreen:<div> Im loading as fast I can !!! </div>
+        loadingScreen:<div><div className='spinner'> </div>Im loading as fast I can !!! </div>
       }
     }
     this.handleChange = this.handleChange.bind(this)
