@@ -12,40 +12,45 @@ import { cloneDeep } from 'lodash-es'
 const createShallowComponent = async (
   mockRequest: QueryBundleRequest,
   disableLifecycleMethods: boolean = false,
+  shouldDeepLink: boolean = false,
 ) => {
   const wrapper = await shallow(
-    <QueryWrapper initQueryRequest={mockRequest} facet={'projectStatus'} />,
+    <QueryWrapper
+      initQueryRequest={mockRequest}
+      facet={'projectStatus'}
+      shouldDeepLink={shouldDeepLink}
+    />,
     { disableLifecycleMethods },
   )
   const instance = wrapper.instance() as QueryWrapper
   return { instance, wrapper }
 }
 
+// Test setup
+const SynapseClient = require('../../../lib/utils/SynapseClient')
+SynapseClient.getQueryTableResults = jest.fn(() =>
+  Promise.resolve(syn16787123Json),
+)
+SynapseClient.getIntuitiveQueryTableResults = jest.fn(() =>
+  Promise.resolve(syn16787123Json),
+)
+
+const lastQueryRequest: QueryBundleRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  partMask:
+    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+    SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  entityId: 'syn16787123',
+  query: {
+    sql: 'SELECT * FROM syn16787123',
+    isConsistent: false,
+    limit: 25,
+    offset: 0,
+  },
+}
+
 describe('basic functionality', () => {
-  // Test setup
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
-  SynapseClient.getQueryTableResults = jest.fn(() =>
-    Promise.resolve(syn16787123Json),
-  )
-  SynapseClient.getIntuitiveQueryTableResults = jest.fn(() =>
-    Promise.resolve(syn16787123Json),
-  )
-
-  const lastQueryRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    entityId: 'syn16787123',
-    query: {
-      sql: 'SELECT * FROM syn16787123',
-      isConsistent: false,
-      limit: 25,
-      offset: 0,
-    },
-  }
-
   it('renders without crashing', async () => {
     const { wrapper } = await createShallowComponent(lastQueryRequest, true)
     expect(wrapper).toBeDefined()
@@ -107,5 +112,70 @@ describe('basic functionality', () => {
     await instance.executeQueryRequest(lastQueryRequest)
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
     expect(state.hasMoreData).toEqual(true)
+  })
+
+  it('executeQueryRequest updates url if param is set', async () => {
+    const { instance } = await createShallowComponent(
+      lastQueryRequest,
+      false,
+      true,
+    )
+
+    await instance.executeQueryRequest(lastQueryRequest)
+    const location = window.location
+    expect(location.search).toContain('QueryWrapper0')
+    const query = JSON.parse(
+      decodeURIComponent(location.search.split('QueryWrapper0=')[1]),
+    )
+    expect(query.sql).toEqual(lastQueryRequest.query.sql)
+    expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
+  })
+})
+
+describe('deep linking', () => {
+  it('when there are no searchParams', async () => {
+    window.history.pushState({}, 'Page Title', '/any/url/you/like')
+    const { instance } = await createShallowComponent(lastQueryRequest)
+    expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
+  })
+  it('when there are no applicable search params', async () => {
+    window.history.pushState(
+      {},
+      'Page Title',
+      '/any/url/you/like?someparam=someValue',
+    )
+    const { instance } = await createShallowComponent(lastQueryRequest)
+    expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
+  })
+
+  it('when there is a single param in the url', async () => {
+    const lqr = cloneDeep(lastQueryRequest)
+    lqr.query.sql = 'SELECT * FROM syn12345'
+    window.history.pushState(
+      {},
+      'Page Title',
+      '/any/url/you/like?QueryWrapper0=' +
+        encodeURIComponent(JSON.stringify(lqr.query)),
+    )
+    const { instance } = await createShallowComponent(lastQueryRequest)
+    const lastQuery = instance.getLastQueryRequest()
+    // expect(lastQuery).not.toEqual(lastQueryRequest)
+    expect(lastQuery.entityId).toBe('syn12345')
+    expect(lastQuery.query.sql).toBe(lqr.query.sql)
+  })
+  it('when there are multiple params in the url', async () => {
+    const lqr = cloneDeep(lastQueryRequest)
+    lqr.query.sql = 'SELECT * FROM syn12345'
+    window.history.pushState(
+      {},
+      'Page Title',
+      '/any/url/you/like?someotherParam=param&QueryWrapper0=' +
+        encodeURIComponent(JSON.stringify(lqr.query)),
+    ) + '&anotherPram=somethingElse'
+    const { instance } = await createShallowComponent(lastQueryRequest)
+    const lastQuery = instance.getLastQueryRequest()
+    expect(lastQuery).not.toEqual(lastQueryRequest)
+    expect(lastQuery.entityId).toBe('syn12345')
+    expect(lastQuery.query.sql).toBe(lqr.query.sql)
   })
 })
