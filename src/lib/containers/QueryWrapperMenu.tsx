@@ -292,6 +292,7 @@ export default class QueryWrapperMenu extends React.Component<
       accordionConfig = [],
       facetAliases = {},
       entityId,
+      shouldDeepLink
     } = this.props
     const {
       cardConfiguration,
@@ -386,6 +387,7 @@ export default class QueryWrapperMenu extends React.Component<
             token={token}
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
+            shouldDeepLink={shouldDeepLink}
           >
             {showBarChart ? (
               <StackedBarChart {...stackedBarChartConfiguration!} />
