@@ -128,7 +128,7 @@ export default class NewsFeedMenu extends React.Component<
       return (
         <Link
           key={config.feedName}
-          className={`SRC-hand-cursor SRC-menu-button-base SRC-gap SRC-hoverWhiteText SRC-primary-background-color-hover ${selectedStyling}`}
+          className={`SRC-hand-cursor SRC-menu-button-base SRC-gap SRC-hoverWhiteText SRC-primary-background-color-hover SRC-no-underline-on-hover ${selectedStyling}`}
           role="button"
           tabIndex={0}
           style={style}
