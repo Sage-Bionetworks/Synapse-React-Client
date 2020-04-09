@@ -20,7 +20,8 @@ export type QueryWrapperProps = {
   facetAliases?: {}
   loadNow?: boolean
   showBarChart?: boolean
-  componentIndex?: number
+  componentIndex?: number //used for deep linking
+  shouldDeepLink?: boolean
 }
 
 export type QueryWrapperState = {
@@ -121,8 +122,12 @@ export default class QueryWrapper extends React.Component<
    * @memberof QueryWrapper
    */
   public componentDidMount() {
-    const { loadNow = true } = this.props
-    const query = DeepLinkingUtils.getQueryRequestFromLink('QueryWrapper', this.componentIndex)
+    const { loadNow = true} = this.props
+    const query =  DeepLinkingUtils.getQueryRequestFromLink(
+          'QueryWrapper',
+          this.componentIndex,
+        )
+     
 
     if (loadNow) {
       this.executeInitialQueryRequest(query)
@@ -190,11 +195,13 @@ export default class QueryWrapper extends React.Component<
       const stringifiedQuery = encodeURIComponent(
         JSON.stringify(queryRequest.query),
       )
-      DeepLinkingUtils.updateUrlWithNewSearchParam(
-        'QueryWrapper',
-        this.componentIndex,
-        stringifiedQuery,
-      )
+      if (this.props.shouldDeepLink) {
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          this.componentIndex,
+          stringifiedQuery,
+        )
+      }
     }
     return SynapseClient.getQueryTableResults(
       queryRequest,
@@ -251,7 +258,7 @@ export default class QueryWrapper extends React.Component<
    * @memberof QueryWrapper
    */
   public executeInitialQueryRequest(
-    initQueryRequest: QueryBundleRequest =  this.props.initQueryRequest
+    initQueryRequest: QueryBundleRequest = this.props.initQueryRequest,
   ) {
     this.setState({
       isLoading: true,
@@ -265,9 +272,7 @@ export default class QueryWrapper extends React.Component<
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
-        const lastQueryRequest: QueryBundleRequest = cloneDeep(
-          initQueryRequest,
-        )
+        const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE

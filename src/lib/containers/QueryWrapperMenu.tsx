@@ -79,7 +79,8 @@ export type QueryWrapperMenuProps = {
   searchParams?: MenuSearchParams
   name?: string
   globalQueryCountSql?: string
-  componentIndex?: number
+  componentIndex?: number //used for deep linking
+  shouldDeepLink?: boolean
 } & CommonMenuProps
 
 type Info = {
@@ -182,14 +183,21 @@ export default class QueryWrapperMenu extends React.Component<
         activeMenuIndices,
         accordionGroupIndex: accordionIndexIn,
       })
-      const facetName = this.props.menuConfig?.[menuIndexIn].facet
-      DeepLinkingUtils.updateUrlWithNewSearchParam(
-        'menuIndex',
-        undefined,
-        accordionIndexIn.toString(),
-      )
-      if (facetName) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam('facet', undefined, facetName)
+
+      if (this.props.shouldDeepLink) {
+        const facetName = this.props.menuConfig?.[menuIndexIn].facet
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'menuIndex',
+          undefined,
+          accordionIndexIn.toString(),
+        )
+        if (facetName) {
+          DeepLinkingUtils.updateUrlWithNewSearchParam(
+            'facet',
+            undefined,
+            facetName,
+          )
+        }
       }
     }
   }

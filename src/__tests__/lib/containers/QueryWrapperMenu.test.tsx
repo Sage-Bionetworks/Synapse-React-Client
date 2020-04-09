@@ -285,8 +285,21 @@ describe('it renders an accordion config', () => {
       expect(instance.props.menuConfig![1].facet).toBe('e')
     })
 
-    it('updates url search string on facet selection', async () => {
+    it("doesn't update url search string on facet selection if deepLinking flag is not set", async () => {
       const { instance, wrapper } = await createMountedComponent(wrapperProps)
+      await wrapper
+        .find('.SRC-hand-cursor')
+        .at(0)
+        .simulate('click')
+      expect(instance.props.menuConfig![0].facet).toBe('d')
+      expect(window.location.search).not.toBe('?menuIndex=0&facet=d')
+    })
+
+    it('updates url search string on facet selection if deepLinking flag is set', async () => {
+      const { instance, wrapper } = await createMountedComponent({
+        ...wrapperProps,
+        shouldDeepLink: true,
+      })
       await wrapper
         .find('.SRC-hand-cursor')
         .at(0)
