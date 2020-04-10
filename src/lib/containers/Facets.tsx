@@ -110,7 +110,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
           key={key}
         >
           <span className="SRC-facets-text">
-            {displayValue} ({count}){' '}
+            {displayValue} ({count})
           </span>
           <input
             // @ts-ignore
@@ -299,8 +299,8 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       <div className="SRC-syn-border-spacing">
         {!showBarChart && (
           <TotalQueryResults
-            data={data}
-            facet={facet!}
+            getLastQueryRequest={this.props.getLastQueryRequest}
+            token={this.props.token}
             unitDescription={unitDescription!}
             frontText={'Displaying'}
             isLoading={isLoading!}

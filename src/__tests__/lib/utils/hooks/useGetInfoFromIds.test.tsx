@@ -1,23 +1,23 @@
 import React from 'react'
-import useGetProfiles, {
-  UseGetProfilesProps,
-} from 'lib/utils/hooks/useGetProfiles'
+import useGetInfoFromIds, {
+  UseGetInfoFromIdsProps,
+} from 'lib/utils/hooks/useGetInfoFromIds'
 import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
+import { UserProfile } from 'lib/utils/synapseTypes'
 
-const HookWrapper = (props: UseGetProfilesProps) => {
-  const useHookGetProfilesHook = useGetProfiles(props)
+const HookWrapper = (props: UseGetInfoFromIdsProps) => {
+  const useHookGetProfilesHook = useGetInfoFromIds(props) as UserProfile[]
   return (
     <ul>
-      {useHookGetProfilesHook &&
-        useHookGetProfilesHook.list.map(el => (
-          <li key={el.ownerId}> {el.ownerId} </li>
-        ))}
+      {useHookGetProfilesHook.map(el => (
+        <li key={el.ownerId}> {el.ownerId} </li>
+      ))}
     </ul>
   )
 }
 
-describe('useGetProfiles hook works', () => {
+describe('useGetInfoFromIds hook works', () => {
   let container: HTMLDivElement
   beforeEach(() => {
     container = document.createElement('div')
@@ -35,8 +35,9 @@ describe('useGetProfiles hook works', () => {
   pkg.getUserProfileWithProfilePicAttached = mockFn
 
   it('gets initial data', async () => {
-    const props: UseGetProfilesProps = {
+    const props: UseGetInfoFromIdsProps = {
       ids: ['aaa'],
+      type: 'USER_PROFILE',
     }
     await act(async () => {
       ReactDOM.render(<HookWrapper {...props} />, container)

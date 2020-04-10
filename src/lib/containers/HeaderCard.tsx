@@ -1,5 +1,7 @@
-import * as React from 'react'
 import { CardFooter, Icon } from './row_renderers/utils'
+import { MarkdownValue } from './CardContainerLogic'
+import MarkdownSynapse from './MarkdownSynapse'
+import React, { useState, useEffect } from 'react'
 
 export type IconOptions = {
   [index: string]: string
@@ -15,6 +17,7 @@ export type HeaderCardProps = {
   secondaryLabelLimit?: number
   values?: string[][]
   isAlignToLeftNav?: boolean
+  descriptionLinkConfig?: MarkdownValue
 }
 
 const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
@@ -27,19 +30,60 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   backgroundColor,
   values,
   secondaryLabelLimit,
-  isAlignToLeftNav
+  isAlignToLeftNav,
+  descriptionLinkConfig,
 }) => {
+  // store old document title and description so that we can restore when this component is removed
+  const descriptionElement: Element | null = document.querySelector(
+    'meta[name="description"]',
+  )
+  const [docTitle] = useState<string>(document.title)
+  const [docDescription] = useState<string>(
+    descriptionElement ? descriptionElement.getAttribute('content')! : '',
+  )
+  useEffect(() => {
+    // update page title and description based on header card values
+    if (title && document.title !== title) {
+      document.title = title
+    }
+
+    if (description || subTitle) {
+      descriptionElement?.setAttribute(
+        'content',
+        description ? description : subTitle,
+      )
+    }
+
+    return function cleanup() {
+      document.title = docTitle
+      descriptionElement?.setAttribute('content', docDescription)
+    }
+  })
+
   const style: React.CSSProperties = {
     background: backgroundColor,
   }
   return (
-    <div style={style} className={`SRC-portalCardHeader${isAlignToLeftNav ? ' isAlignToLeftNav': ''}`}>
+    <div
+      style={style}
+      className={`SRC-portalCardHeader${
+        isAlignToLeftNav ? ' isAlignToLeftNav' : ''
+      }`}
+    >
       <div className="container-fluid">
         <div className="row">
-          <div className={`iconContainer${isAlignToLeftNav ? ' col-md-offset-1 col-md-2': ' col-md-1'}`}>
+          <div
+            className={`iconContainer${
+              isAlignToLeftNav ? ' col-md-offset-1 col-md-2' : ' col-md-1'
+            }`}
+          >
             <Icon value={iconValue} iconOptions={iconOptions} type={type} />
           </div>
-          <div className={`SRC-cardContent${isAlignToLeftNav ? ' col-md-8': ' col-md-10'}`}>
+          <div
+            className={`SRC-cardContent${
+              isAlignToLeftNav ? ' col-md-8' : ' col-md-10'
+            }`}
+          >
             <div className="SRC-type">{type}</div>
             <div>
               <h3
@@ -50,7 +94,15 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
               </h3>
             </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}
-            <span className="SRC-font-size-base">{description}</span>
+            {description && (
+              <span className="SRC-font-size-base">
+                {descriptionLinkConfig ? (
+                  <MarkdownSynapse markdown={description} />
+                ) : (
+                  description
+                )}
+              </span>
+            )}
             <div
               style={{
                 borderTop: '1px solid rgba(26, 28, 41, 0.2)',

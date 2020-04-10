@@ -6,6 +6,7 @@ import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import StackedBarChart from './containers/StackedBarChart'
+import HasAccess from './containers/HasAccess'
 import SynapseTable from './containers/table/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
@@ -16,7 +17,10 @@ import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWra
 import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
+import ShowDownload from './containers/download_list/ShowDownload'
+import DownloadListTable from './containers/download_list/DownloadListTable'
 import NewsFeedMenu from './containers/NewsFeedMenu'
+import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import './style/main.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 
@@ -36,7 +40,11 @@ const SynapseComponents = {
   ModalDownload,
   NewsFeedMenu,
   SynapseFormWrapper,
-  SynapseFormSubmissionsGrid
+  SynapseFormSubmissionsGrid,
+  HasAccess,
+  DownloadListTable,
+  ThemesPlot,
+  ShowDownload,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

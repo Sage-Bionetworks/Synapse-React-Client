@@ -4,6 +4,7 @@ import Login from '../../lib/containers/Login'
 import logoSvg from '../../images/logo.svg'
 import '../style/App.scss'
 import '../style/DemoStyle.scss'
+import '@fortawesome/fontawesome-free/css/all.css'
 import Demo from './Demo'
 import Playground from './playground/Playground'
 import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
@@ -70,22 +71,12 @@ export default class App extends React.Component<{}, AppState> {
     const notSignedInState = (
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
-        <Login
-          token={
-            SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
-          }
-          sessionCallback={this.getSession}
-          theme={'light'}
-          icon={true}
-        />
+        <Login sessionCallback={this.getSession} theme={'light'} icon={true} />
         <details>
           <summary>
             Synapse Staging (Google SSO redirects to staging site)
           </summary>
           <Login
-            token={
-              SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token : this.state.token
-            }
             sessionCallback={this.getSession}
             theme={'dark'}
             icon={true}

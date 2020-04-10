@@ -384,7 +384,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               })}
             </tbody>
           </table>
-          {viewMore}{' '}
+          {viewMore}
         </div>
       )
     }

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { cloneDeep } from '../utils/functions'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import {
   insertConditionsFromSearchParams,
@@ -12,8 +11,7 @@ import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
-import _ from 'lodash'
-
+import { cloneDeep, isEqual } from 'lodash-es'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -29,14 +27,19 @@ export type MarkdownLink = {
   matchColumnName: string
 }
 
+export type MarkdownValue = {
+  isMarkdown: true
+}
+
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (CardLink | MarkdownLink)[]
+export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
   labelLinkConfig?: LabelLinkConfig
+  descriptionLinkConfig?: MarkdownValue
 }
 
 export type CardConfiguration = {
@@ -122,7 +125,7 @@ export default class CardContainerLogic extends React.Component<
      */
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
-    const hasSearchParamsChanged = !_.isEqual(
+    const hasSearchParamsChanged = !isEqual(
       prevSearchParams,
       currentSearchParams,
     )
@@ -245,6 +248,7 @@ export default class CardContainerLogic extends React.Component<
       <CardContainer
         {...rest}
         data={this.state.data}
+        token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         hasMoreData={this.state.hasMoreData}

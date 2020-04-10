@@ -14,6 +14,10 @@ export type ColumnModel = {
     | 'LINK'
     | 'LARGETEXT'
     | 'USERID' // The column type determines the type of data that can be stored in a column.
+    | 'STRING_LIST'
+    | 'INTEGER_LIST'
+    | 'BOOLEAN_LIST'
+    | 'DATE_LIST'
   maximumSize?: number // A parameter for columnTypes with a maximum size. For example, ColumnType.strings have a default maximum size of 50 characters, but can be set to a maximumSize of 1 to 1000 characters.
   enumValues?: string[] // Columns of type string can be constrained to an enumeration values set on this list. The maximum number of entries for an enum is 100
   facetType?: 'enumeration' | 'range'

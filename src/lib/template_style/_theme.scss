@@ -207,3 +207,6 @@ button.dropdown-toggle:hover {
     fill: white;
   }
 }
+a, a:link, a:visited, a:hover, a:active {
+  color: $primary-action-color;
+}

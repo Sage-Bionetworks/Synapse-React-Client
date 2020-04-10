@@ -22,7 +22,7 @@ svg.SRC-hoverBox {
   padding: 10px;
 
   &--padded2x {
-    padding: 20px
+    padding: 20px;
   }
 }
 
@@ -109,10 +109,10 @@ span.SRC-facets svg.SRC-facets-icon {
   display: inline-flex;
   align-items: center;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
-  padding: 0;
-  border-radius: 2;
+  padding: 0px;
+  border-radius: 2px;
   border: 1px solid transparent;
-  font-size: 14;
+  font-size: 14px;
   font-weight: 500;
   font-family: Lato sans-serif;
   width: 100%;
@@ -171,7 +171,10 @@ a.SRC-anchor-light {
   border-radius: 15px;
 }
 
-.SRC-whiteText, .SRC-whiteText:focus, .SRC-whiteText:hover {
+.SRC-whiteText,
+.SRC-whiteText:focus,
+.SRC-whiteText:hover,
+a.SRC-whiteText {
   color: white;
 }
 
@@ -541,11 +544,17 @@ div.SRC-logo-cursor * {
   font-size: 26px;
 }
 
+.UserCardSmall {
+  height: fit-content;
+  width: fit-content;
+}
+
 .SRC-userImgSmall {
+  font-size: 18px;
   border-radius: 50%;
-  height: 23px;
-  width: 23px;
-  min-width: 23px;
+  width: 30px;
+  height: 30px;
+  padding: 20px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -662,8 +671,8 @@ div.SRC-userImg {
 }
 
 .row.no-gutter > [class*='col-'] {
-  padding-right:0;
-  padding-left:0;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 @media (min-width: 1501px) {
@@ -931,6 +940,26 @@ a.SRC-lightLink {
   margin: 10px;
 }
 
+.SRC-SIGN-IN-CLASS.sign-in-btn {
+  &.access-requirement {
+    margin-top: 5px;
+
+    &.default {
+      padding: 15px 5px 0px 0px;
+      color: black;
+    }
+    &.blue {
+      padding: 15px 5px 0px 0px;
+      color: rgb(77, 85, 144);
+    }
+  }
+
+  &.default {
+    padding-left: 5px;
+    color: rgb(77, 85, 144);
+  }
+}
+
 a.dropdown-item {
   $color: #212529;
   display: block;
@@ -965,7 +994,7 @@ a.dropdown-item {
 
   &.condenced {
     padding: 1px;
-    margin: 0 0 0 1px
+    margin: 0 0 0 1px;
   }
 }
 
@@ -1010,7 +1039,7 @@ a.dropdown-item {
 hr ~ .SRC-wrapper {
   margin-top: 11px;
   .SRC-marginTopMinusTen {
-    margin-top: 0
+    margin-top: 0;
   }
 }
 

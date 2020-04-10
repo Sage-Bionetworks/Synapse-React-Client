@@ -1,16 +1,101 @@
-.queryFilter {
-    margin: 0rem 1rem 1rem 0;
-    border: 1px solid $border-color-gray;
-    padding: 1rem;
-}
+.QueryFilter {
+  margin: 0rem 1rem 1rem 0;
+  border: 1px solid $border-color-gray;
+  padding: 1rem;
 
-.queryFilter-facet {
+  &__facet {
     margin: 2rem 0;
     &:first-child {
-        margin-top: 0
+      margin-top: 0;
+    }
+  }
+}
+
+.EnumFacetFilter {
+  &__checkboxContainer {
+    display: flex;
+    justify-content: space-between;
+
+    &:first-child {
+      margin-top: 0;
     }
 
-    .checkbox:first-child {
-        margin-top: 0
+    &--forAll {
+      border-bottom: dotted 1px $border-color-gray;
+      padding: 0;
+      margin-top: 10px;
     }
+  }
+
+  &__checkbox {
+    > label {
+      display: flex;
+      flex-wrap: nowrap;
+      &::before {
+        flex: none;
+        align-self: center;
+      }
+
+      > span {
+        margin-left: 2px;
+        color: $gray-regular;
+      }
+    }
+    input ~ span{
+      display: flex;
+      &::before {
+        flex: none;
+        align-self: center;
+      }
+    }
+  }
+
+  &__showMoreFacetsLabel {
+    margin-left: 25px;
+  }
+
+  &__showMoreFacetsBtn {
+    width: 100%;
+    margin: 10px 0 0 0;
+    padding: 0;
+    color: $primary-action-color !important;
+
+    &:hover {
+      color: $primary-action-color !important;
+      text-decoration: underline;
+    }
+  }
+
+  &__showMoreFacetsCount {
+    align-self: center;
+  }
+
+  &__count {
+    margin-left: 10px;
+    align-self: center;
+    color: $gray-deemphasized;
+  }
+}
+
+.FacetFilterHeader {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid $border-color-gray;
+
+  &__label {
+    font-weight: bold;
+  }
+
+  &__collapseToggleBtn {
+    margin: 0;
+    padding: 0;
+    line-height: 14px;
+    font-size: 18px;
+    color: $primary-action-color !important;
+
+    &:hover {
+      color: $primary-action-color !important;
+      text-decoration: underline;
+    }
+  }
 }

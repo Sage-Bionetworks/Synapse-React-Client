@@ -11,7 +11,19 @@
   display: table;
 }
 
+/**
+* Uppercase text
+*/
+.uppercase-text {
+  text-transform: uppercase;
+}
 
+/**
+* Bold text
+*/
+.bold-text {
+  font-weight: 600;
+}
 
 /**
  * Hide text while making it readable for screen readers
@@ -39,4 +51,10 @@
   padding: 0;
   position: absolute;
   width: 1px;
+}
+
+.center-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

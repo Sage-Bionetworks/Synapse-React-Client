@@ -5,11 +5,10 @@ import {
   faLongArrowAltDown,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Parser from 'rss-parser'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
-let Parser = require('rss-parser')
 let rssParser = new Parser()
-
 type RssState = {
   rssFeed: any
   isLoadingError: boolean
@@ -20,11 +19,15 @@ type RssState = {
 export type RssFeedProps = {
   url: string
   defaultItemsToShow: number
+  showMoreElements: boolean
 }
 
 const parser = new DOMParser()
 
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
+  // only update the state if this component is mounted
+  _isMounted = false
+  
   constructor(props: RssFeedProps) {
     super(props)
     this.state = {
@@ -34,16 +37,28 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
       itemId2MoreItem: {},
     }
   }
-
+  
   componentDidMount() {
+    this._isMounted = true
     const { url } = this.props
     fetch(url)
       .then(response => response.text())
       .then(responseData => rssParser.parseString(responseData))
-      .then(rss => this.setState({ rssFeed: rss }))
-      .catch(err => this.setState({ isLoadingError: true }))
+      .then(rss => {
+        if (this._isMounted) {
+          this.setState({ rssFeed: rss })
+        }
+      })
+      .catch(err => {
+        if (this._isMounted) {
+          this.setState({ isLoadingError: true })
+        }
+      })
   }
 
+  componentWillUnmount() {
+    this._isMounted = false
+  }
   public onToggleReadMore = (itemId: string) => (
     event: React.SyntheticEvent<HTMLButtonElement>,
   ) => {
@@ -104,7 +119,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
               'text/html',
             )
             let bodyElement = parsedHtml.querySelector('body')
-            let moreElement = parsedHtml.querySelector('[id^="more-"]')
+            let moreElement = this.props.showMoreElements && parsedHtml.querySelector('[id^="more-"]')
             if (moreElement && bodyElement) {
               let foundMoreElement = false
               const children = bodyElement.children

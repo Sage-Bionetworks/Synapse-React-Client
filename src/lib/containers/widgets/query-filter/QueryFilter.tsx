@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { RangeFacetFilter } from './RangeFacetFilter'
 import { EnumFacetFilter } from './EnumFacetFilter'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import _ from 'lodash'
+
 import {
   FacetColumnResultValues,
   FacetColumnResult,
@@ -128,7 +127,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   const lastRequest = getLastQueryRequest ? getLastQueryRequest() : undefined
 
   return (
-    <div className="queryFilter">
+    <div className="QueryFilter">
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
         facets.map(facet => {
@@ -137,8 +136,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
           )
 
           return (
-            <div className="queryFilter-facet" key={facet.columnName}>
-              <label>{unCamelCase(facet.columnName)}</label>
+            <div className="QueryFilter__facet" key={facet.columnName}>
               {facet.facetType === 'enumeration' && columnModel && (
                 <EnumFacetFilter
                   facetValues={(facet as FacetColumnResultValues).facetValues}

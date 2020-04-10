@@ -3,7 +3,6 @@ import CardContainerLogic, {
   CardConfiguration,
 } from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
-import { GenericCardSchema } from '../../../lib/containers/GenericCard'
 import brainSvg from './icons/brain.svg'
 import circleSvg from './icons/circle.svg'
 import mouseSvg from './icons/mouse.svg'
@@ -29,26 +28,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
       'MODEL-AD': mouseSvg,
       'Resilience-AD': resilienceadSvg,
     }
-    const genericCardSchemaHeader: GenericCardSchema = {
-      type: SynapseConstants.DATASET,
-      title: 'portalDisplayName',
-      subTitle: 'centerName',
-      description: 'summary',
-      secondaryLabels: [
-        'Title',
-        'overallDesign',
-        'PubMed',
-        'Theme',
-        'studies',
-        'tumorType',
-        'experimentalStrategy',
-        'species',
-        'externalLink',
-        'centerName',
-        'consortium',
-        'grantType',
-      ],
-    }
+    
     const genericCardSchema: CardConfiguration = {
       type: SynapseConstants.GENERIC_CARD,
       genericCardSchema: {
@@ -94,7 +74,12 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
             sql={'SELECT * FROM syn17024173'}
             entityId={'syn17024173'}
             searchParams={{ Program: 'AMP-AD' }}
-            genericCardSchema={genericCardSchemaHeader}
+            genericCardSchema={{
+              type: 'Program',
+              title: 'Full Name',
+              subTitle: 'Short Description',
+              icon: 'Program',
+            }}
             backgroundColor={'#5960a5'}
             isHeader={true}
             iconOptions={iconOptions}

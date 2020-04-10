@@ -35,6 +35,7 @@ import {
   MultipartUploadRequest,
   MultipartUploadStatus,
   OAuthClientPublic,
+  OAuthConsentGrantedResponse,
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
   PaginatedResults,
@@ -52,10 +53,18 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
   WikiPage,
+  AccessRequirement,
+  AccessApproval,
+  EntityId,
+  WikiPageKey,
+  ObjectType,
+  AccessRequirementStatus,
+  FileHandleAssociateType,
 } from './synapseTypes/'
-import Cookies from 'universal-cookie'
+import UniversalCookies from 'universal-cookie'
+import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 
-const cookies = new Cookies()
+const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
 export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
@@ -77,7 +86,14 @@ export const getRootURL = () => {
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
 
-export function delay(t: any) {
+/**
+ * Waits t number of milliseconds
+ *
+ * @export
+ * @param {number} t milliseconds
+ * @returns after t milliseconds
+ */
+export function delay(t: number) {
   return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
@@ -157,13 +173,13 @@ const fetchWithExponentialTimeout = <T>(
     })
 }
 
-export const doPost = (
+export const doPost = <T>(
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -180,7 +196,7 @@ export const doPost = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
@@ -284,7 +300,7 @@ export const addFilesToDownloadList = (
   sessionToken: string,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `file/v1/download/list/add/async/start`,
     request,
     sessionToken,
@@ -297,7 +313,10 @@ export const addFilesToDownloadList = (
         requestUrl,
         sessionToken,
         updateParentState,
-      )
+      ).then(data => {
+        dispatchDownloadListChangeEvent(data.downloadList)
+        return data
+      })
     })
     .catch((error: any) => {
       throw error
@@ -312,7 +331,7 @@ export const getDownloadFromTableRequest = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ) => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
     sessionToken,
@@ -413,7 +432,7 @@ export const getQueryTableResults = (
   sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<QueryResultBundle> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     sessionToken,
@@ -448,57 +467,36 @@ export const getQueryTableResults = (
  * data-- (internally this limits the row count to 1 on the request)
  * @returns Full dataset from synapse table query
  */
+
 export const getFullQueryTableResults = async (
-  queryBundleRequest: any,
+  queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
+  maxPageSize: number = 2500,
 ): Promise<QueryResultBundle> => {
-  // TODO: Find out why theres a bug causing the query limit
+  let data: QueryResultBundle
+  // get first page
+  let offset = 0
   const { query, ...rest } = queryBundleRequest
-  let data: any = {}
-  let maxPageSize: number = 150
-  const queryRequest: any = {
+  const queryRequest: QueryBundleRequest = {
     ...rest,
-    query: { ...query, limit: maxPageSize },
+    query: { ...query, limit: maxPageSize, offset: offset },
   }
-  // Have to make two "sets" of calls for query, the first one tells us the maximum size per page of data
-  // we can get, the following uses that maximum and offsets to the appropriate location to get the data
-  // afterwards, the process repeats
-  await getQueryTableResults(queryRequest, sessionToken).then(
-    async (initData: QueryResultBundle) => {
-      let queryCount: any = initData.queryResult.queryResults.rows.length
-      let currentQueryCount: number = queryCount
-      data = initData
-      // Get the subsequent data, note- although the function calls itself, it runs
-      // iteratively due to the await
-      const getData = async () => {
-        if (queryCount === maxPageSize) {
-          maxPageSize = initData.maxRowsPerPage!
-          const queryRequestWithMaxPageSize = {
-            ...rest,
-            query: { ...query, limit: maxPageSize, offset: currentQueryCount },
-          }
-          await getQueryTableResults(queryRequestWithMaxPageSize, sessionToken)
-            .then((postData: any) => {
-              queryCount += postData.queryResult.queryResults.rows.length
-              if (queryCount > 0) {
-                currentQueryCount += queryCount
-                data.queryResult.queryResults.rows.push(
-                  ...postData.queryResult.queryResults.rows, // ... spread operator to push all elements on
-                )
-              }
-              return getData()
-            })
-            .catch(err => {
-              console.log('Error on getting table results ', err)
-            })
-        } else {
-          // set data to this plots sql in the query data
-          return data
-        }
-      }
-      return getData()
-    },
-  )
+  let response = await getQueryTableResults(queryRequest, sessionToken)
+  data = response
+  //we are done if we return less than a pagesize
+  let isDone = response.queryResult.queryResults.rows.length < maxPageSize
+
+  while (!isDone) {
+    offset += maxPageSize
+    queryRequest.query.offset = offset
+    let response = await getQueryTableResults(queryRequest, sessionToken)
+
+    data.queryResult.queryResults.rows.push(
+      ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
+    )
+
+    isDone = response.queryResult.queryResults.rows.length < maxPageSize
+  }
   return data
 }
 
@@ -567,8 +565,11 @@ export const oAuthSessionRequest = (
  * Create an entity (Project, Folder, File, Table, View)
  * http://docs.synapse.org/rest/POST/entity.html
  */
-export const createEntity = (entity: any, sessionToken: string | undefined) => {
-  return doPost(
+export const createEntity = <T extends Entity>(
+  entity: T,
+  sessionToken: string | undefined,
+) => {
+  return doPost<T>(
     '/repo/v1/entity',
     entity,
     sessionToken,
@@ -583,7 +584,7 @@ export const createEntity = (entity: any, sessionToken: string | undefined) => {
 export const createProject = (
   name: string,
   sessionToken: string | undefined,
-): Promise<Response> => {
+): Promise<Entity> => {
   return createEntity(
     {
       name,
@@ -697,7 +698,7 @@ export const lookupChildEntity = (
   request: EntityLookupRequest,
   sessionToken: string | undefined = undefined,
 ) => {
-  return doPost(
+  return doPost<EntityId>(
     '/repo/v1/entity/child',
     request,
     sessionToken,
@@ -731,7 +732,7 @@ export const getBulkFiles = (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
   sessionToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
-  return doPost(
+  return doPost<AsyncJobId>(
     'file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     sessionToken,
@@ -797,10 +798,10 @@ export const getEntityHeader = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
-export const updateEntity = (
-  entity: Entity,
+export const updateEntity = <T extends Entity>(
+  entity: T,
   sessionToken: string | undefined = undefined,
-): Promise<Entity> => {
+): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
   return doPut(
     url,
@@ -850,6 +851,14 @@ export const getEntityBundleForVersion = (
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<any>
 }
+
+/**
+ * Get a corresponding string value of ObjectType:
+ **/
+function getObjectTypeToString(key: ObjectType) {
+  return ObjectType[key]
+}
+
 /**
  * Get Wiki page contents, call is of the form:
  * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
@@ -858,8 +867,11 @@ export const getEntityWiki = (
   sessionToken: string | undefined,
   ownerId: string | undefined,
   wikiId: string | undefined,
+  objectType: ObjectType = ObjectType.ENTITY,
 ) => {
-  const url = `/repo/v1/entity/${ownerId}/wiki/${wikiId}`
+  const objectTypeString = getObjectTypeToString(objectType!)
+
+  const url = `/repo/v1/${objectTypeString?.toLocaleLowerCase()}/${ownerId}/wiki/${wikiId}`
   return doGet(
     url,
     sessionToken,
@@ -926,12 +938,34 @@ export const getTeamList = (
   )
 }
 
+/**
+ * https://rest-docs.synapse.org/rest/GET/access_requirement/ownerId/wikikey.html
+ * Get the root WikiPageKey for an Access Requirement.
+ * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
+ * @return WikiPageKey
+ **/
+
+export const getWikiPageKey = (
+  sessionToken: string | undefined,
+  ownerId: string | number,
+): Promise<WikiPageKey> => {
+  const url = `repo/v1/access_requirement/${ownerId}/wikikey`
+  return doGet<WikiPageKey>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 export const getWikiAttachmentsFromEntity = (
   sessionToken: string | undefined,
   id: string | number,
   wikiId: string | number,
+  objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<FileHandleResults> => {
-  const url = `repo/v1/entity/${id}/wiki/${wikiId}/attachmenthandles`
+  const objectTypeString = getObjectTypeToString(objectType!)
+  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(
     url,
     sessionToken,
@@ -1168,7 +1202,7 @@ const processFilePart = (
     partNumbers: [partNumber],
   }
   const presignedUrlUrl = `/file/v1/file/multipart/${uploadId}/presigned/url/batch`
-  doPost(
+  doPost<BatchPresignedUploadUrlResponse>(
     presignedUrlUrl,
     presignedUploadUrlRequest,
     sessionToken,
@@ -1290,7 +1324,7 @@ export const startMultipartUpload = (
   fileUploadReject: (reason: any) => void,
 ) => {
   const url = 'file/v1/file/multipart'
-  doPost(
+  doPost<MultipartUploadStatus>(
     url,
     request,
     sessionToken,
@@ -1368,6 +1402,48 @@ export const getFileEntityContent = (
             resolve(content)
           },
         )
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+/**
+ * Return the FileHandle of the file associated to the given FileEntity.
+ * * @param fileEntity: FileEntity
+ * @param sessionToken
+ * @param endpoint
+ */
+export const getFileEntityFileHandle = (
+  fileEntity: FileEntity,
+  sessionToken?: string,
+): Promise<FileHandle> => {
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList: FileHandleAssociation[] = [
+      {
+        associateObjectId: fileEntity.id!,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+        fileHandleId: fileEntity.dataFileHandleId,
+      },
+    ]
+    const request: BatchFileRequest = {
+      includeFileHandles: true,
+      includePreSignedURLs: false,
+      includePreviewPreSignedURLs: false,
+      requestedFiles: fileHandleAssociationList,
+    }
+    getFiles(request, sessionToken)
+      .then((data: BatchFileResult) => {
+        if (
+          data.requestedFiles.length > 0 &&
+          data.requestedFiles[0].fileHandle
+        ) {
+          return resolve(data.requestedFiles[0].fileHandle)
+        } else {
+          // not found, or not allowed to access
+          reject(undefined)
+        }
       })
       .catch(err => {
         reject(err)
@@ -1503,13 +1579,30 @@ export const getEvaluationSubmissions = (
 
 /**
  * Get user-friendly OAuth2 request information (to present to the user so they can choose if they want to give consent).
+ * http://rest-docs.synapse.org/rest/POST/oauth2/description.html
  */
 export const getOAuth2RequestDescription = (
   oidcAuthRequest: OIDCAuthorizationRequest,
-  sessionToken: string | undefined,
 ): Promise<OIDCAuthorizationRequestDescription> => {
   return doPost(
     '/auth/v1/oauth2/description',
+    oidcAuthRequest,
+    undefined, // sessionToken: this is not an authenticated call
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Check whether user has already granted consent for the given OAuth client, scope, and claims.
+ * Consent persists for one year.
+ */
+export const hasUserAuthorizedOAuthClient = (
+  oidcAuthRequest: OIDCAuthorizationRequest,
+  sessionToken: string,
+): Promise<OAuthConsentGrantedResponse> => {
+  return doPost(
+    '/auth/v1/oauth2/consentcheck',
     oidcAuthRequest,
     sessionToken,
     undefined,
@@ -1797,6 +1890,116 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+/**
+ * Returns a paginated result of access requirements associated for an entity
+ *
+ * See https://rest-docs.synapse.org/rest/GET/entity/id/accessRequirement.html
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity
+ * @param {number} [limit=50]
+ * @param {number} [offset=0]
+ * @returns {Promise<PaginatedResults<AccessRequirement>>}
+ */
+export const getAccessRequirement = (
+  sessionToken: string | undefined,
+  id: string,
+  limit: number = 50,
+  offset: number = 0,
+): Promise<PaginatedResults<AccessRequirement>> => {
+  const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+  return doGet<PaginatedResults<AccessRequirement>>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Retrieve an access requirement status for a given access requirement ID.
+ *
+ * @param {string} requirementId id of entity to lookup
+ * @returns {AccessRequirementStatus}
+ */
+
+export const getAccessRequirementStatus = (
+  sessionToken: string | undefined,
+  requirementId: string | number,
+): Promise<AccessRequirementStatus> => {
+  const url = `repo/v1/accessRequirement/${requirementId}/status`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns all the access requirements associated to an entity {id}, calling the
+ * paginated getAccessRequirement service until all results are returned.
+ *
+ * @param {(string | undefined)} sessionToken token of user
+ * @param {string} id id of entity to lookup
+ * @returns {Promise<Array<AccessRequirement>>}
+ */
+export const getAllAccessRequirements = (
+  sessionToken: string | undefined,
+  id: string,
+): Promise<Array<AccessRequirement>> => {
+  // format function to be callable by getAllOfPaginatedService
+  const fn = (limit: number, offset: number) => {
+    const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
+    return doGet<PaginatedResults<AccessRequirement>>(
+      url,
+      sessionToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return getAllOfPaginatedService(fn)
+}
+
+/**
+ *
+ *
+ * @param {(string | undefined)} sessionToken user session token
+ * @param {(number | undefined)} id the unique immutable ID
+ * @returns {AccessApproval}
+ */
+export const getAccessApproval = async (
+  sessionToken: string | undefined,
+  approvalId: number | undefined,
+): Promise<AccessApproval> => {
+  const url = `repo/v1/accessApproval/${approvalId}`
+  return doGet<AccessApproval>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ *
+ *
+ * @param {(string | undefined)} sessionToken user session token
+ * @param {AccessApproval} accessApproval access approval request object
+ * @returns {AccessApproval}
+ */
+export const postAccessApproval = async (
+  sessionToken: string | undefined,
+  accessApproval: AccessApproval,
+): Promise<AccessApproval> => {
+  return doPost<AccessApproval>(
+    'repo/v1/accessApproval',
+    accessApproval,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
 
 // https://rest-docs.synapse.org/rest/GET/download/list.html
 export const getDownloadList = (sessionToken: string | undefined) => {
@@ -1823,18 +2026,56 @@ export const getDownloadOrder = (
   )
 }
 
+export type FunctionReturningPaginatedResults<T> = (
+  limit: number,
+  offset: number,
+) => Promise<PaginatedResults<T>>
+/**
+ * Utility function to get all the results of a paginated service
+ *
+ * @template T Type of paginated service
+ * @param {FunctionReturningPaginatedResults<T>} fn Function that returns a paginated synapse object, accepts a limit and offset
+ * @returns
+ */
+export const getAllOfPaginatedService = async <T>(
+  fn: FunctionReturningPaginatedResults<T>,
+) => {
+  const limit = 50
+  let offset = 0
+  let existsMoreData = true
+  const results: T[] = []
+
+  while (existsMoreData) {
+    try {
+      const data = await fn(limit, offset)
+      results.push(...data.results)
+      offset += data.results.length
+      if (data.results.length < limit) {
+        existsMoreData = false
+      }
+    } catch (e) {
+      throw Error(`Error on getting paginated results ${e}`)
+    }
+  }
+
+  return results
+}
+
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
   sessionToken: string | undefined,
 ): Promise<DownloadList> => {
-  return doPost(
+  return doPost<DownloadList>(
     '/file/v1/download/list/remove',
     { list },
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  ).then(data => {
+    dispatchDownloadListChangeEvent(data)
+    return data
+  })
 }
 
 // https://rest-docs.synapse.org/rest/DELETE/download/list.html ?
@@ -1845,5 +2086,7 @@ export const deleteDownloadList = (sessionToken: string | undefined) => {
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  ).then(_ => {
+    dispatchDownloadListChangeEvent(undefined)
+  })
 }

@@ -3,7 +3,8 @@ import * as React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants } from '../../utils/'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
-import { QueryResultBundle } from '../../utils/synapseTypes/'
+import { QueryResultBundle, QueryBundleRequest } from '../../utils/synapseTypes/'
+import {parseEntityIdFromSqlStatement} from '../../utils/functions/sqlFunctions'
 const Plot = createPlotlyComponent(Plotly)
 
 type SynapsePlotProps = {
@@ -40,13 +41,15 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
   public fetchPlotlyData() {
     const { token } = this.props
     const { query } = this.props.widgetparamsMapped
-    const queryRequest = {
+    const queryRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      entityId: parseEntityIdFromSqlStatement(query),
       query: {
         sql: query,
       },
     }
+
     getFullQueryTableResults(queryRequest, token)
       .then((data: QueryResultBundle) => {
         this.setState({

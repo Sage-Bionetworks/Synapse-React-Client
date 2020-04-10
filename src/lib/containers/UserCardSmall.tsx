@@ -1,9 +1,9 @@
 import * as React from 'react'
 // ignore because this is rollup requiring imports be named a certain way
 // tslint:disable-next-line
-import ReactTooltip from "react-tooltip"
+import ReactTooltip from 'react-tooltip'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircle,  } from '@fortawesome/free-solid-svg-icons'
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { UserProfile } from '../utils/synapseTypes/'
 import { getColor } from '../utils/functions/getUserData'
 
@@ -17,10 +17,16 @@ export type UserCardSmallProps = {
   link?: string
 }
 
-export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = (
-  { userProfile, hideText = false, hideTooltip = false, preSignedURL, link }
-) => {
-  const linkLocation = link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
+  userProfile,
+  hideText = false,
+  hideTooltip = false,
+  preSignedURL,
+  link,
+}) => {
+  const linkLocation = link
+    ? link
+    : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
   let marginLeft
   let label = ''
@@ -28,7 +34,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = (
     if (userProfile.displayName) {
       label += userProfile.displayName
     } else if (userProfile.firstName && userProfile.lastName) {
-      label += (`${userProfile.firstName} ${userProfile.lastName}`)
+      label += `${userProfile.firstName} ${userProfile.lastName}`
     }
     if (userProfile.userName) {
       label += ` (${userProfile.userName})`
@@ -55,19 +61,28 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = (
     const color = getColor(userProfile.userName)
     marginLeft = '3px'
     img = (
-      <div style={{ background: color }} className="SRC-userImgSmall SRC-centerContentInline">
-        {(userProfile.firstName && userProfile.firstName[0]) || userProfile.userName[0]}
+      <div
+        style={{ background: color }}
+        className="SRC-userImgSmall SRC-centerContentInline"
+      >
+        {(userProfile.firstName && userProfile.firstName[0]) ||
+          userProfile.userName[0]}
       </div>
     )
   }
   return (
     <a
       href={linkLocation}
-      className="SRC-userCard SRC-primary-text-color SRC-no-underline-on-hover"
+      className="SRC-userCard UserCardSmall SRC-primary-text-color SRC-no-underline-on-hover"
     >
       {img}
-        <ReactTooltip delayShow={1000} id={label} multiline={true}/>
-        {!hideText && <span className="SRC-primary-text-color SRC-underline-on-hover" style={{ marginLeft, whiteSpace: 'nowrap' }}>{`@${userProfile.userName}`}</span>}
+      <ReactTooltip delayShow={1000} id={label} multiline={true} />
+      {!hideText && (
+        <span
+          className="SRC-primary-text-color SRC-underline-on-hover"
+          style={{ marginLeft, whiteSpace: 'nowrap' }}
+        >{`@${userProfile.userName}`}</span>
+      )}
     </a>
   )
 }

@@ -28,6 +28,7 @@ export type CardContainerProps = {
   unitDescription?: string
   hasMoreData?: boolean
   showBarChart?: boolean
+  token?: string
 } & CardConfiguration
 
 type CardContainerState = {
@@ -82,6 +83,8 @@ export class CardContainer extends React.Component<
       secondaryLabelLimit = 3,
       showBarChart = true,
       title,
+      token,
+      getLastQueryRequest,
       ...rest
     } = this.props
     // the cards only show the loading screen on initial load, this occurs when data is undefined
@@ -148,6 +151,9 @@ export class CardContainer extends React.Component<
             isHeader,
             secondaryLabelLimit,
             data: rowData.values,
+            selectColumns: data.selectColumns,
+            columnModels: data.columnModels,
+            token,
             ...rest,
           }
           return this.renderCard(propsForCard, type)
@@ -161,10 +167,10 @@ export class CardContainer extends React.Component<
         {title && <h2 className="SRC-card-overview-title">{title}</h2>}
         {!title && unitDescription && showBarChart && (
           <TotalQueryResults
-            data={data}
-            facet={facet!}
+            token={token}
             isLoading={isLoading!}
             unitDescription={unitDescription}
+            getLastQueryRequest={getLastQueryRequest}
             frontText={'Displaying'}
           />
         )}

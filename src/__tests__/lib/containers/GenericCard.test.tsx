@@ -10,6 +10,7 @@ import * as Utils from '../../../lib/containers/row_renderers/utils'
 import {
   CardLink,
   LabelLinkConfig,
+  MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 
@@ -154,7 +155,7 @@ describe('it makes the correct URL for the title', () => {
       matchColumnName,
       URLColumnName,
     }
-    const expectedLink = `#/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
+    const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
     const { linkDisplay, target } = createTitleLink(
       '',
       titleLinkConfig,
@@ -189,7 +190,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${value}`,
+      `/${datasetBaseURL}?${DATASETS}=${value}`,
     )
     // double check the style
     expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
@@ -212,13 +213,13 @@ describe('it makes the correct URL for the secondary labels', () => {
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
     expect(links.at(0).props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${val1}`,
+      `/${datasetBaseURL}?${DATASETS}=${val1}`,
     )
     expect(links.at(1).props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${val2}`,
+      `/${datasetBaseURL}?${DATASETS}=${val2}`,
     )
     expect(links.at(2).props().href).toEqual(
-      `#/${datasetBaseURL}?${DATASETS}=${val3}`,
+      `/${datasetBaseURL}?${DATASETS}=${val3}`,
     )
   })
 
@@ -232,5 +233,34 @@ describe('it makes the correct URL for the secondary labels', () => {
     // double check the html elements show up correctly from the markdown component
     expect(markdown.html().includes('<p>')).toBeFalsy()
     expect(markdown.html().includes('<a href=')).toBeTruthy()
+  })
+})
+
+describe('It renders markdown for the description', () => {
+  const renderShortDescription = GenericCard.prototype.renderShortDescription
+  const renderLongDescription = GenericCard.prototype.renderLongDescription
+  const descriptionLinkConfig: MarkdownValue = {
+    isMarkdown: true,
+  }
+  const value = '# header [website](synapse.org)'
+
+  it('hides the short description if MarkdownValue is specified', () => {
+    const wrapper = mount(
+      <>{renderShortDescription(value, false, '', descriptionLinkConfig)} </>,
+    )
+    expect(wrapper.find(<div />)).toHaveLength(0)
+  })
+  it('shows the short description if MarkdownValue is not specified', () => {
+    const wrapper = mount(
+      <>{renderShortDescription(value, false, '', undefined)} </>,
+    )
+    expect(wrapper.find('div')).toHaveLength(1)
+  })
+  it('hides the short description if MarkdownValue is specified', () => {
+    const wrapper = mount(
+      <>{renderLongDescription(value, false, '', descriptionLinkConfig)} </>,
+    )
+    expect(wrapper.find(MarkdownSynapse)).toHaveLength(1)
+    expect(wrapper.find(MarkdownSynapse).props().markdown).toEqual(value)
   })
 })

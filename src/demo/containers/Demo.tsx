@@ -2,12 +2,14 @@ import * as React from 'react'
 import { SynapseVersion } from '../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../lib/utils/'
 import QueryWrapperMenu, {
-  MenuConfig, QueryWrapperMenuProps,
+  MenuConfig,
+  QueryWrapperMenuProps,
 } from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
+import HasAccess from 'lib/containers/HasAccess'
 
 type DemoState = {
   token: string | null
@@ -22,17 +24,21 @@ type DemoState = {
   estimatedDownloadBytesPerSecond?: number
 }
 
+type DemoProps = {
+  forceSamePage?: boolean
+}
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
 
  */
-class Demo extends React.Component<{}, DemoState> {
+class Demo extends React.Component<DemoProps, DemoState> {
   entityFormRef: any
+  searchParamsProps: any 
   /**
    * Maintain internal state of user session
    */
-  constructor(props: any) {
+  constructor(props: DemoProps) {
     super(props)
     this.entityFormRef = React.createRef()
     this.state = {
@@ -47,7 +53,7 @@ class Demo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           title: 'title',
           enableDownloadConfirmation: true,
-          enableLeftFacetFilter: true
+          enableLeftFacetFilter: true,
         },
         entityId: 'syn16787123',
         menuConfig: [
@@ -69,7 +75,8 @@ class Demo extends React.Component<{}, DemoState> {
           },
           {
             facet: 'name',
-            sql: 'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
+            sql:
+              'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
           },
 
           {
@@ -78,8 +85,9 @@ class Demo extends React.Component<{}, DemoState> {
           },
           {
             facet: 'metadataType',
-            sql: "SELECT `id`, `metadataType`, `dataType`, `assay`↵  FROM syn11346063↵  WHERE ((`study` LIKE '%BroadAstrom109%') AND (`dataSubtype` = 'metadata'))"
-          }
+            sql:
+              "SELECT `id`, `metadataType`, `dataType`, `assay`↵  FROM syn11346063↵  WHERE ((`study` LIKE '%BroadAstrom109%') AND (`dataSubtype` = 'metadata'))",
+          },
         ],
         rgbIndex: 2,
       },
@@ -95,9 +103,9 @@ class Demo extends React.Component<{}, DemoState> {
             sql: 'SELECT * FROM syn21156352',
           },
           {
-            facet: 'dataType',
+            facet: 'study',
             sql:
-              'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
+              'SELECT study, dataType, assay, id AS file_id, specimenID, individualID, diagnosis, sex, consortium as "Program", grant, species, organ, tissue, cellType, fileFormat FROM syn11346063',
           },
           {
             facet: 'diagnosis',
@@ -115,6 +123,11 @@ class Demo extends React.Component<{}, DemoState> {
     }
     this.getVersion = this.getVersion.bind(this)
     this.onRunDownloadSpeedTest = this.onRunDownloadSpeedTest.bind(this)
+    this.searchParamsProps = {}
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.forEach((value, key) => {
+      this.searchParamsProps[key] = value
+    })
   }
 
   public onSubmitEntityForm() {
@@ -169,6 +182,7 @@ class Demo extends React.Component<{}, DemoState> {
     this.getVersion()
   }
   public render(): JSX.Element {
+    const { forceSamePage = false } = this.props
     const { token, estimatedDownloadBytesPerSecond } = this.state
     return (
       <div>
@@ -212,6 +226,49 @@ class Demo extends React.Component<{}, DemoState> {
             <hr />
           </div>
         )}
+        {
+          <div className="container">
+            <h5>Public Folder - HasAccess widget</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn7122428'}
+              isInDownloadList={false}
+              forceSamePage={forceSamePage}
+            />
+            <h5>A Controlled Access Folder - HasAccess widget</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn7383419'}
+              isInDownloadList={false}
+              forceSamePage={forceSamePage}
+            />
+            <h5>Open Data</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn5481758'}
+              isInDownloadList={false}
+              forceSamePage={forceSamePage}
+            />
+            <h5>Acces Requirements required Data</h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn2426398'}
+              isInDownloadList={false}
+              forceSamePage={forceSamePage}
+            />
+            <h5>
+              Acces Requirements required Data without unsupported requirement
+            </h5>
+            <HasAccess
+              token={token ? token : undefined}
+              entityId={'syn4993293'}
+              isInDownloadList={false}
+              forceSamePage={forceSamePage}
+            />
+
+            <hr />
+          </div>
+        }
         {token && (
           <div className="container">
             <h5>Project Statistics Demo</h5>
@@ -250,9 +307,11 @@ class Demo extends React.Component<{}, DemoState> {
           <QueryWrapperMenu
             isConsistent={true}
             name={'Demo'}
-            entityId={ this.state.showTabOne
-              ? this.state.tabOne.entityId
-              : this.state.tabTwo.entityId}
+            entityId={
+              this.state.showTabOne
+                ? this.state.tabOne.entityId
+                : this.state.tabTwo.entityId
+            }
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
             }
@@ -279,6 +338,7 @@ class Demo extends React.Component<{}, DemoState> {
             stackedBarChartConfiguration={{
               loadingScreen: <div />,
             }}
+            searchParams = {{facet: this.searchParamsProps['facet'], facetValue: this.searchParamsProps['facetValue']}}
           />
         </div>
       </div>

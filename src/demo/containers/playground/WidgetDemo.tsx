@@ -1,11 +1,19 @@
 import * as React from 'react'
 import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
 import { RadioGroup } from '../../../lib/containers/widgets/RadioGroup'
+import ThemesPlot from '../../../lib/containers/widgets/themes-plot/ThemesPlot'
+import { PlotProps, ClickCallbackParams} from '../../../lib/containers/widgets/themes-plot/types'
 import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
 import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
 
-export const WidgetDemo: React.FunctionComponent = () => {
+type WigetDemoPros = {
+  token: string
+}
+
+export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
+  props: WigetDemoPros,
+) => {
   const options = [
     { label: 'option 1', value: 'option1' },
     { label: 'option 2', value: 'option2' },
@@ -33,6 +41,60 @@ export const WidgetDemo: React.FunctionComponent = () => {
     min: '10',
     max: '25',
   })
+
+  const topBarPlotProps: PlotProps = {
+    entityId: 'syn21641485',
+    xField: 'totalCount',
+    yField: 'groupBy',
+    groupField: 'consortium',
+    whereClause: 'totalCount is not NULL',
+    colors: {
+      ['CSBC']: 'rgba(64,123,160, 1)',
+      ['PS-ON']: 'rgba(91,176,181,1)'
+    }
+  }
+  
+  const sideBarPlotProps: PlotProps = {
+    entityId: 'syn21649281',
+    xField: 'totalCount',
+    yField: 'theme',
+    groupField: 'consortium',
+    countLabel: 'projects',
+    plotStyle: {
+      backgroundColor: '#f5f9fa'
+    },
+    colors: {
+      ['CSBC']: '#4788A5',
+      ['PS-ON']: '#5bb0b5'
+    }
+  }
+
+  const dotPlotProps:PlotProps = {
+    entityId: 'syn21639584',
+    xField: 'totalCount',
+    yField: 'theme',
+    groupField: 'groupBy',
+    infoField:  'themeDescription',
+    whereClause: "groupBy IN ('publications', 'tools', 'datasets')",
+    markerSymbols: {
+      tools: 'y-down',
+      datasets: 'diamond-x',
+      publications: 'circle',
+    },
+    plotStyle: {
+      markerLine: 'rgba(0, 0, 0,1)',
+      markerFill: 'rgba(255, 255, 255,1)',
+      markerSize: 11,
+      backgroundColor: '#f5f9fa'
+    }
+  }
+
+  const plotCallback = ({
+    facetValue,
+    type,
+  }: ClickCallbackParams) => {
+    alert(`facetValue: ${facetValue} type: ${type}`)
+  }
 
   return (
     <div className="container">
@@ -94,6 +156,13 @@ export const WidgetDemo: React.FunctionComponent = () => {
         domain={['0', '100']}
         step={1}
       ></RangeSlider>
+      <ThemesPlot
+        token={props.token}
+        onPointClick={plotCallback}
+        topBarPlot={topBarPlotProps}
+        sideBarPlot={sideBarPlotProps}
+        dotPlot={dotPlotProps}
+      ></ThemesPlot>
     </div>
   )
 }

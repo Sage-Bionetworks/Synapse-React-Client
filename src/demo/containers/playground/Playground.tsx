@@ -6,12 +6,16 @@ import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
+import ShowDownloadDemo from './ShowDownloadDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
+import { SingleNewsFeedPostDemo } from './SingleNewsFeedPostDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
 import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
+import { AccessRequirementDemo } from './AccessRequirementDemo'
+import TemplateComponentDemo from './TemplateComponentDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -61,6 +65,9 @@ const App = ({
           <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
         </li>
         <li>
+          <Link to={`${match.url}/SingleNewsFeedPostDemo?tag=centenarians`}>SingleNewsFeedPostDemo</Link>
+        </li>
+        <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
             FormServicesIntegrationDemo
           </Link>
@@ -76,12 +83,25 @@ const App = ({
         <li>
           <Link to={`${match.url}/WidgetDemo`}>WidgetDemo</Link>
         </li>
+        <li>
+          <Link to={`${match.url}/AccessRequirementDemo`}>
+            AccessRequirementDemo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/TemplateComponentDemo`}>
+            TemplateComponentDemo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
+        </li>
       </ul>
 
       <Route
         exact={true}
         path={`${match.url}/QueryWrapperMenuDemo`}
-        render={() => <QueryWrapperMenuDemo rgbIndex={0} />}
+        render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
       />
 
       <Route
@@ -111,13 +131,18 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/MarkdownSynapseDemo`}
-        component={() => <MarkdownSynapseDemo />}
+        component={() => <MarkdownSynapseDemo token={token} />}
       />
 
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
         component={() => <NewsFeedDemo />}
+      />
+      <Route
+        exact={true}
+        path={`${match.url}/SingleNewsFeedPostDemo`}
+        component={() => <SingleNewsFeedPostDemo />}
       />
       <Route
         exact={true}
@@ -136,7 +161,12 @@ const App = ({
         component={() => (
           <div className="container download-list-demo">
             <div className="col-xs-10">
-              <DownloadListTable token={token} />
+              <DownloadListTable
+                token={token}
+                listUpdatedCallback={() => {
+                  console.log('DownloadList updated')
+                }}
+              />
             </div>
           </div>
         )}
@@ -145,7 +175,25 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/WidgetDemo`}
-        component={() => <WidgetDemo />}
+        component={() => <WidgetDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/AccessRequirementDemo`}
+        component={() => <AccessRequirementDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/TemplateComponentDemo`}
+        component={() => <TemplateComponentDemo />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ShowDownloadDemo`}
+        component={() => <ShowDownloadDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

@@ -32,7 +32,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const { token, numFiles, numBytes } = props
 
   useEffect(() => {
-    if (isLoading && token) {
+    if (token) {
       testDownloadSpeed(token).then(speed => {
         setState({
           isLoading: false,
@@ -40,7 +40,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         })
       })
     }
-  })
+  }, [token])
 
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 ? 0 : numBytes / downloadSpeed
@@ -51,7 +51,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const numBytesTooltipId = 'num_bytes_id'
   const friendlyTimeTooltipId = 'friendly_time_id'
   const isInactive = numFiles === 0 || timeEstimateInSeconds === 0
-  const iconClassName = isInactive? 'SRC-inactive' : 'SRC-primary-text-color'
+  const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
     <span className="download-details-container">
       <span>
@@ -84,7 +84,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           id={friendlyTimeTooltipId}
         />
         <FontAwesomeIcon className={iconClassName} icon="clock" />
-        {isLoading && <span className="loader" />}
+        {isLoading && numFiles > 0 && <span className="spinner" />}
         {!isLoading && friendlyTime}
       </span>
     </span>

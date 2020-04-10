@@ -2,10 +2,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import useGetProfiles from '../../utils/hooks/useGetProfiles'
+import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import {
   deleteDownloadList,
   deleteDownloadListFiles,
@@ -22,10 +22,11 @@ import {
   FileHandleAssociation,
   PaginatedResults,
   Reference,
+  UserProfile,
 } from '../../utils/synapseTypes'
 import HasAccess, {
   getDownloadTypeForFileHandle,
-  DownloadTypeEnum,
+  FileHandleDownloadTypeEnum,
 } from '../HasAccess'
 import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
@@ -42,6 +43,10 @@ type DownloadListTableData = {
 type LoadingState = boolean
 export type DownloadListTableProps = {
   token?: string
+  listUpdatedCallback?: VoidFunction
+  forceSamePage?: boolean
+  renderAsModal?: boolean
+  onHide?: Function
 }
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -58,6 +63,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const [isLoading, setIsLoading] = useState<LoadingState>(true)
   const [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
   const { token } = props
+  const {
+    forceSamePage = false,
+    renderAsModal = false,
+    onHide,
+    listUpdatedCallback,
+  } = props
   const { references, batchFileResult, downloadList } = data
   const requestedFiles =
     (batchFileResult && batchFileResult.requestedFiles) || []
@@ -65,15 +76,15 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // then map to ownerIds
   const ownerIds: string[] = requestedFiles
     .filter(el => el.fileHandle && el.fileHandle.createdBy)
-    // @ts-ignore the error below could not occur if the filter is
-    .map(el => el.fileHandle.createdBy)
-  const userProfiles = useGetProfiles({ ids: ownerIds, token })
+    // use bang operator because filter function guarentee's that file handle will be defined
+    .map(el => el.fileHandle!.createdBy!)
+  const userProfiles = useGetInfoFromIds<UserProfile>({
+    ids: ownerIds,
+    token,
+    type: 'USER_PROFILE',
+  })
 
-  useEffect(() => {
-    fetchData(token)
-  }, [token])
-
-  const fetchData = async (token: string | undefined) => {
+  const fetchData = useCallback(async () => {
     if (!token) {
       setIsLoading(false)
       // doesn't make sense with anonymous user!
@@ -126,7 +137,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [token])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const clearDownloadList = async (
     _event: React.SyntheticEvent<HTMLButtonElement>,
@@ -137,6 +152,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       setData({
         downloadList: undefined,
       })
+      listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on clearing download list: ', err)
     } finally {
@@ -162,6 +178,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // The current references and batchFileResult can be kept because the download
       // list drives the view, so the stale values in those two won't be viewed.
       setData({ downloadList, references, batchFileResult })
+      listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on delete from download list', err)
     } finally {
@@ -170,25 +187,25 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }
 
-  const filesToDownload = (downloadList && downloadList.filesToDownload) || []
-  const results = (references && references.results) || []
+  const filesToDownload = downloadList?.filesToDownload ?? []
+  const results = references?.results ?? []
   let numBytes = 0
   let numFiles = 0
-  return (
-    <div>
-      <div className="SRC-split download-list-table-top">
-        <span className="create-package-text SRC-centerContentInline">
+  const content = (
+    <div className="DownloadListTable">
+      <div className="SRC-split download-list-table-top SRC-primary-background-color SRC-border-bottom-only">
+        <span className="create-package-text">
           Download List &nbsp;&nbsp; {isLoading && <span className="spinner" />}
         </span>
         <button
-          className="SRC-primary-text-color SRC-underline-on-hover"
+          className="SRC-underline-on-hover uppercase-text"
           onClick={clearDownloadList}
           id={TESTING_CLEAR_BTN_CLASS}
         >
-          Clear All
+          Clear list
         </button>
       </div>
-      <ReactBootstrap.Table responsive={true}>
+      <ReactBootstrap.Table striped={true} responsive={true}>
         <thead>
           <tr>
             <th>File Name</th>
@@ -222,7 +239,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               createdOn = moment(createdOn).format('L LT')
               if (
                 getDownloadTypeForFileHandle(fileHandle) ===
-                DownloadTypeEnum.IsOpenNoUnmetAccessRestrictions
+                FileHandleDownloadTypeEnum.Accessible
               ) {
                 numBytes += contentSize
                 numFiles += 1
@@ -234,10 +251,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               )!
               fileName = requestedFile.name
             }
-            const userProfile =
-              userProfiles &&
-              userProfiles.list &&
-              userProfiles.list.find(el => el.ownerId === createdBy)
+            const userProfile = userProfiles.find(
+              el => el.ownerId === createdBy,
+            )
             return (
               <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
                 <td>
@@ -254,6 +270,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     fileHandle={fileHandle}
                     token={token}
                     entityId={synId}
+                    isInDownloadList={true}
+                    forceSamePage={forceSamePage}
                   />
                 </td>
                 <td>
@@ -288,7 +306,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           })}
         </tbody>
       </ReactBootstrap.Table>
-      <CreatePackage updateDownloadList={() => fetchData(token)} token={token}>
+      <CreatePackage updateDownloadList={fetchData} token={token}>
         <DownloadDetails
           numBytes={numBytes}
           numFiles={numFiles}
@@ -297,4 +315,22 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       </CreatePackage>
     </div>
   )
+  if (renderAsModal) {
+    return (
+      <ReactBootstrap.Modal
+        centered={true}
+        animation={false}
+        size={'lg'}
+        dialogClassName={'download-list-modal-container'}
+        show={true}
+        onHide={() => {
+          onHide?.()
+        }}
+      >
+        {content}
+      </ReactBootstrap.Modal>
+    )
+  } else {
+    return content
+  }
 }

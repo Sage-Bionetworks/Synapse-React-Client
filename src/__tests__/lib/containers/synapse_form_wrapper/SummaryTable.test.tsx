@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
-import * as _ from 'lodash'
+import { mount } from 'enzyme'
+import * as _ from 'lodash-es'
 import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import SummaryTable, {
   SummaryTableProps,
@@ -28,7 +28,7 @@ describe('basic tests', () => {
     callbackFn: jest.fn(() => 'ok'),
   }
 
-  let { efficacy, basic, naming } = submissionData
+  const { efficacy, basic, naming } = submissionData
 
   const props: SummaryTableProps = {
     isWizard: true,
@@ -83,13 +83,13 @@ describe('basic tests', () => {
     expect(Object.keys(_props.formData.basic).indexOf('reqtextfield')).not.toBe(
       -1,
     )
-    expect(_props.formData.basic.reqtextfield).toBeUndefined
+    expect(_props.formData.basic.reqtextfield).toBeUndefined()
     expect(wrapper.text().indexOf('reqtextfield')).toBe(-1)
 
     expect(
       Object.keys(_props.formData.naming).indexOf('chemical_name'),
     ).not.toBe(-1)
-    expect(_props.formData.naming.chemical_name).not.toBeUndefined
+    expect(_props.formData.naming.chemical_name).not.toBeUndefined()
     expect(wrapper.text().indexOf('Chemical Name')).not.toBe(-1)
 
     const firstColumns = wrapper.find('td:first-child')
@@ -112,11 +112,11 @@ describe('basic tests', () => {
 
     const cell1 = wrapper.findWhere(
       n =>
-        n.html() ==
+        n.html() ===
         '<td>[1] What cell line was used for the efficacy assay?</td>',
     )
     const cell2 = wrapper.findWhere(
-      n => n.html() == '<td>Cell Line Efficacy Value</td>',
+      n => n.html() === '<td>Cell Line Efficacy Value</td>',
     )
 
     expect(cell1).toHaveLength(1)

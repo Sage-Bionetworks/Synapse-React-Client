@@ -5,10 +5,12 @@ import {
   ColumnModel,
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
-import { SynapseClient, SynapseConstants } from '../../../utils'
-import { UserProfile } from '../../../utils/synapseTypes/UserProfile'
-import { useEffect, useState } from 'react'
+import { SynapseConstants } from '../../../utils'
+import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
+import { UserProfile } from '../../../utils/synapseTypes'
+import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
+import { FacetFilterHeader} from './FacetFilterHeader'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -23,43 +25,26 @@ function valueToId(value: string): string {
 }
 
 function valueToLabel(
-  value: string,
+  facet: FacetColumnResultValueCount,
   profiles: UserProfile[] = [],
   entityHeaders: EntityHeader[] = [],
 ): string {
+  const { value } = facet
+  let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
-    return 'Not Set'
+    displayValue = 'Not Set'
   }
-  if (profiles.length > 0) {
-    const profile = profiles.find(profile => profile.ownerId === value)
-    return !profile ? `unknown (${value})` : profile.userName
+  const profile = profiles.find(profile => profile.ownerId === value)
+  if (profile) {
+    displayValue = profile ? profile.userName : `unknown (${value})`
   }
 
-  if (entityHeaders.length > 0) {
-    const eh = entityHeaders.find(eh => eh.id === value)
-    return !eh ? `unknown (${value})` : eh.name
+  const eh = entityHeaders.find(eh => eh.id === value)
+  if (eh) {
+    displayValue = eh ? eh.name : `unknown (${value})`
   }
-  return value
-}
 
-async function getEntityArray(
-  //alina TODO: handle > 50 returned records
-  facetValues: FacetColumnResultValueCount[],
-  token?: string,
-): Promise<EntityHeader[]> {
-  const references = facetValues.map(facet => ({ targetId: facet.value }))
-  const headers = await SynapseClient.getEntityHeader(references, token)
-  return headers.results
-}
-
-async function getUserProfileArray(
-  facetValues: FacetColumnResultValueCount[],
-
-  token?: string,
-): Promise<UserProfile[]> {
-  const ids = facetValues.map(facet => facet.value)
-  const profiles = await SynapseClient.getUserProfiles(ids, token)
-  return profiles.list
+  return `${displayValue}`
 }
 
 function formatFacetValuesForDisplay(
@@ -83,85 +68,98 @@ function formatFacetValuesForDisplay(
 
 /************* QUERY ENUM CONMPONENT  *************/
 
-export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = (
-  props: EnumFacetFilterProps,
-) => {
-  const [userArray, setUserArray] = useState<UserProfile[]>([])
-  const [entityHeaderArray, setEntityHeaderArray] = useState<EntityHeader[]>([])
+export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
+  token,
+  facetValues,
+  columnModel,
+  onClear,
+  onChange,
+}: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const visibleItemsCount = 5
 
-  useEffect(() => {
-    ;(async function getDataOnLoad(
-      columnModel: ColumnModel,
-      facetValues: FacetColumnResultValueCount[],
-      token?: string,
-    ) {
-      if (
-        columnModel.columnType !== 'USERID' &&
-        columnModel.columnType !== 'ENTITYID'
-      ) {
-        return
-      }
+  const userIds =
+    columnModel.columnType === 'USERID'
+      ? facetValues.map(facet => facet.value)
+      : []
+  const userProfiles = useGetInfoFromIds<UserProfile>({
+    ids: userIds,
+    token,
+    type: 'USER_PROFILE',
+  })
 
-      const facetValuesWithName = facetValues.filter(
-        facet => facet.value !== SynapseConstants.VALUE_NOT_SET,
-      )
+  const entityIds =
+    columnModel.columnType === 'ENTITYID'
+      ? facetValues.map(facet => facet.value)
+      : []
+  const entityHeaders = useGetInfoFromIds<EntityHeader>({
+    ids: entityIds,
+    token,
+    type: 'ENTITY_HEADER',
+  })
 
-      if (columnModel.columnType === 'USERID') {
-        const profiles = await getUserProfileArray(facetValuesWithName, token)
-        setUserArray(profiles)
-      }
-
-      if (columnModel.columnType === 'ENTITYID') {
-        const entities = await getEntityArray(facetValuesWithName, token)
-        setEntityHeaderArray(entities)
-      }
-    })(props.columnModel, props.facetValues, props.token)
-  }, [props.columnModel, props.facetValues, props.token])
-
-  if (!props.columnModel) {
+  if (!columnModel) {
     return <></>
   }
 
-  const result = (
-    <div>
-      <button
-        className="btn btn-link SRC-noPadding"
-        onClick={() => props.onClear(props.columnModel.name)}
-      >
-        All
-      </button>
-      <div>
-        {formatFacetValuesForDisplay(
-          props.facetValues,
-          isShowAll,
-          visibleItemsCount,
-        ).map((facet: any, index: number) => {
-          const id = valueToId(facet.value)
-          return (
-            <Checkbox
-              onChange={(isChecked: boolean) =>
-                props.onChange(facet.value, isChecked)
-              }
-              key={id+index}
-              checked={facet.isSelected}
-              label={`${valueToLabel(
-                facet.value,
-                userArray,
-                entityHeaderArray,
-              )} (${facet.count})`}
-              id={id}
-            ></Checkbox>
-          )
-        })}
-        {!isShowAll && props.facetValues.length > visibleItemsCount && (
-          <button className="btn btn-link SRC-noPadding" onClick={() => setIsShowAll(true)}>
-            Show All
-          </button>
-        )}
+  return (
+    <div className="EnumFacetFilter">
+      <FacetFilterHeader  isCollapsed = {isCollapsed} label={columnModel.name} onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}></FacetFilterHeader>
+      <div style={{ display: isCollapsed ? 'none' : 'block' }}>
+        <div className="EnumFacetFilter__checkboxContainer--forAll">
+          <Checkbox
+            className="EnumFacetFilter__checkbox"
+            onChange={() => onClear(columnModel.name)}
+            key="select_all"
+            checked={facetValues.filter(item => item.isSelected).length === 0}
+            label="All"
+            id="select_all"
+          ></Checkbox>
+        </div>
+        <div>
+          {formatFacetValuesForDisplay(
+            facetValues,
+            isShowAll,
+            visibleItemsCount,
+          ).map((facet, index: number) => {
+            const id = valueToId(facet.value)
+            return (
+              <div
+                className="EnumFacetFilter__checkboxContainer"
+                key={`checkLabel${index}`}
+              >
+                <Checkbox
+                  className="EnumFacetFilter__checkbox"
+                  onChange={(isChecked: boolean) =>
+                    onChange(facet.value, isChecked)
+                  }
+                  key={id + index}
+                  checked={facet.isSelected}
+                  label={valueToLabel(facet, userProfiles, entityHeaders)}
+                  id={id}
+                ></Checkbox>
+                <div className="EnumFacetFilter__count">{facet.count}</div>
+              </div>
+            )
+          })}
+          {!isShowAll && facetValues.length > visibleItemsCount && (
+            <button
+              className="EnumFacetFilter__showMoreFacetsBtn"
+              onClick={() => setIsShowAll(true)}
+            >
+              <div className="EnumFacetFilter__checkboxContainer">
+                <div className="EnumFacetFilter__showMoreFacetsLabel">
+                  Show more
+                </div>
+                <div className="EnumFacetFilter__howMoreFacetsCount">
+                  {facetValues.length}
+                </div>
+              </div>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
-  return result
 }

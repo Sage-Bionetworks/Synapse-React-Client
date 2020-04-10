@@ -1,9 +1,13 @@
 import { SynapseConstants, SynapseClient } from '../utils/'
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/synapseTypes/'
+import {
+  QueryBundleRequest,
+  FacetColumnValuesRequest,
+} from '../utils/synapseTypes/'
 
 export type QueryCountProps = {
   sql: string
+  selectedFacets?: FacetColumnValuesRequest[]
   entityId: string
   name: string
   token?: string
@@ -45,7 +49,7 @@ export default class QueryCount extends React.Component<
   }
 
   calculateRowCount() {
-    const { sql, token, entityId } = this.props
+    const { sql, token, entityId, selectedFacets } = this.props
     if (
       this.state.isCalculatingQueryCountForSql[sql] ||
       this.state.storedSqlQueryCount[sql]
@@ -57,6 +61,7 @@ export default class QueryCount extends React.Component<
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       query: {
         sql,
+        selectedFacets,
       },
       entityId,
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
@@ -80,8 +85,7 @@ export default class QueryCount extends React.Component<
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
     return (
       <React.Fragment>
-        {' '}
-        {name} ({count && count.toLocaleString()}){' '}
+        {name} ({count && count.toLocaleString()})
       </React.Fragment>
     )
   }

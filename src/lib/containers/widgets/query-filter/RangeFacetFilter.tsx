@@ -4,7 +4,7 @@ import { RangeSlider } from '../RangeSlider'
 import { FacetColumnResultRange } from '../../../utils/synapseTypes/Table/FacetColumnResult'
 import { ColumnModel } from '../../../utils/synapseTypes/Table/ColumnModel'
 import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
-
+import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioGroup } from '../RadioGroup'
 import { useState } from 'react'
 
@@ -30,6 +30,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
   columnModel,
   onChange,
 }: RangeFacetFilterProps) => {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const options = [
     { label: 'Not Set', value: RadioValuesEnum.NOT_SET },
     { label: 'Any', value: RadioValuesEnum.ANY },
@@ -71,6 +72,12 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
 
   const result = (
     <div>
+      <FacetFilterHeader
+        isCollapsed={isCollapsed}
+        label={columnModel.name}
+        onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
+      ></FacetFilterHeader>
+
       <RadioGroup
         value={radioValue}
         id="rangeSelector"

@@ -1,9 +1,15 @@
 import * as React from 'react'
 import HeaderCard from './HeaderCard'
 import { CardFooter, Icon } from './row_renderers/utils'
-import { CardLink, CommonCardProps, MarkdownLink } from './CardContainerLogic'
+import {
+  CardLink,
+  CommonCardProps,
+  MarkdownLink,
+  MarkdownValue,
+} from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
+import { SelectColumn, ColumnModel } from '../utils/synapseTypes'
 
 export type KeyToAlias = {
   key: string
@@ -30,6 +36,8 @@ export type IconOptions = {
 }
 
 export type GenericCardProps = {
+  selectColumns?: SelectColumn[]
+  columnModels?: ColumnModel[]
   facetAliases?: {}
   iconOptions?: IconOptions
   backgroundColor?: string
@@ -37,10 +45,11 @@ export type GenericCardProps = {
   isAlignToLeftNav?: boolean
   schema: any
   data: any
+  token?: string
 } & CommonCardProps
 
 export type GenericCardState = {
-  showMoreDescription: boolean
+  hasClickedShowMore: boolean
 }
 
 const CHAR_COUNT_CUTOFF = 400
@@ -53,6 +62,20 @@ export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/
 // check for 'syn' followed and ended by a digit of unlimited length, must also begin the line
 export const SYNAPSE_REGX = /^syn\d+$/
 
+// This function isn't in the class only for ease of testing with renderShortDescription
+export const getCutoff = (summary: string) => {
+  let previewText = ''
+  const summarySplit = summary!.split(' ')
+  // find num words to join such that its >= char_count_cutoff
+  let i = 0
+  while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
+    previewText += `${summarySplit[i]} `
+    i += 1
+  }
+  previewText = previewText.trim()
+  return { previewText }
+}
+
 export default class GenericCard extends React.Component<
   GenericCardProps,
   GenericCardState
@@ -60,10 +83,12 @@ export default class GenericCard extends React.Component<
   constructor(props: GenericCardProps) {
     super(props)
     this.state = {
-      showMoreDescription: false,
+      hasClickedShowMore: false,
     }
     this.renderTitleLink = this.renderTitleLink.bind(this)
     this.renderLabel = this.renderLabel.bind(this)
+    this.renderLongDescription = this.renderLongDescription.bind(this)
+    this.renderShortDescription = this.renderShortDescription.bind(this)
   }
 
   public renderTitleLink(
@@ -94,7 +119,7 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        linkDisplay = `#/${titleLink.baseURL}?${URLColumnName}=${value}`
+        linkDisplay = `/${titleLink.baseURL}?${URLColumnName}=${value}`
       }
     }
     return { linkDisplay, target }
@@ -115,7 +140,7 @@ export default class GenericCard extends React.Component<
 
   toggleShowMore = () => {
     this.setState({
-      showMoreDescription: true,
+      hasClickedShowMore: true,
     })
   }
 
@@ -137,14 +162,14 @@ export default class GenericCard extends React.Component<
     }
     return split.map((el, index) => {
       const { baseURL, URLColumnName } = labelLink
-      const href = `#/${baseURL}?${URLColumnName}=${el}`
+      const href = `/${baseURL}?${URLColumnName}=${el}`
       return (
         <React.Fragment key={el}>
           <a href={href} key={el} className={className} style={style}>
             {el}
           </a>
           {index < split.length - 1 && (
-            <span style={{ marginRight: 4 }}> , </span>
+            <span style={{ marginRight: 4 }}>, </span>
           )}
         </React.Fragment>
       )
@@ -158,18 +183,21 @@ export default class GenericCard extends React.Component<
       genericCardSchema,
       secondaryLabelLimit,
       backgroundColor,
+      selectColumns,
+      columnModels,
       iconOptions,
       isHeader = false,
       titleLinkConfig,
       labelLinkConfig,
       facetAliases = {},
       isAlignToLeftNav = false,
+      descriptionLinkConfig,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
     const genericCardSchemaDefined = genericCardSchema!
-    const { showMoreDescription } = this.state
+    const { hasClickedShowMore } = this.state
     const { link = '', type } = genericCardSchemaDefined
     const title = data[schema[genericCardSchemaDefined.title]]
     const subTitle =
@@ -190,10 +218,26 @@ export default class GenericCard extends React.Component<
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
+
+      const selectedColumnOrUndefined =
+        selectColumns?.find(el => el.name === columnName) ||
+        columnModels?.find(el => el.name === columnName)
+      const isMultiValue =
+        selectedColumnOrUndefined?.columnType === 'STRING_LIST' ||
+        selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
+
       if (value) {
-        const labelLink =
-          labelLinkConfig &&
-          labelLinkConfig.find(el => el.matchColumnName === columnName)
+        if (isMultiValue) {
+          try {
+            value = JSON.parse(value)
+            value = (value as string[]).join(', ')
+          } catch (e) {
+            console.error('Error on parsing value for ', value)
+          }
+        }
+        const labelLink = labelLinkConfig?.find(
+          el => el.matchColumnName === columnName,
+        )
         if (labelLink) {
           // create link for this column
           value = this.renderLabel(value, labelLink, isHeader)
@@ -218,6 +262,7 @@ export default class GenericCard extends React.Component<
     if (isHeader) {
       return (
         <HeaderCard
+          descriptionLinkConfig={descriptionLinkConfig}
           type={type}
           title={title}
           subTitle={subTitle}
@@ -272,48 +317,29 @@ export default class GenericCard extends React.Component<
               data-search-handle={stubTitleSearchHandle}
               className="SRC-author"
             >
-              {' '}
-              {subTitle}{' '}
+              {subTitle}
             </div>
           )}
           {/* 
-            Below is a hack that allows word highlighting to work, the Search componenet insert's
+            Below is a hack that allows word highlighting to work, the Search component insert's
             html elements outside of the React DOM which if detected would break the app,
             but as written below this avoids that reconcilliation process.
           */}
-          {description && (
-            <div className={showMoreDescription ? 'SRC-hidden' : ''}>
-              <span
-                data-search-handle={descriptionSubTitle}
-                className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
-              >
-                {this.getCutoff(description).previewText}
-              </span>
-              {description.length >= CHAR_COUNT_CUTOFF && (
-                <a
-                  style={{
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    marginLeft: '3px',
-                  }}
-                  className="SRC-primary-text-color"
-                  onClick={this.toggleShowMore}
-                >
-                  ...Show More{' '}
-                </a>
-              )}
-            </div>
-          )}
-          {description && (
-            <div className={showMoreDescription ? '' : 'SRC-hidden'}>
-              <span
-                data-search-handle={descriptionSubTitle}
-                className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
-              >
-                {description}
-              </span>
-            </div>
-          )}
+          {description &&
+            this.renderShortDescription(
+              description,
+              hasClickedShowMore,
+              descriptionSubTitle,
+              descriptionLinkConfig,
+            )}
+          {description &&
+            this.renderLongDescription(
+              description,
+              hasClickedShowMore,
+              descriptionSubTitle,
+              descriptionLinkConfig,
+              this.props.token,
+            )}
         </div>
         {showFooter && (
           <CardFooter
@@ -321,6 +347,64 @@ export default class GenericCard extends React.Component<
             secondaryLabelLimit={secondaryLabelLimit}
             values={values}
           />
+        )}
+      </div>
+    )
+  }
+
+  public renderLongDescription(
+    description: string,
+    hasClickedShowMore: boolean,
+    descriptionSubTitle: any,
+    descriptionLinkConfig?: MarkdownValue,
+    token?: string,
+  ): React.ReactNode {
+    let content: JSX.Element | string = description
+    if (descriptionLinkConfig?.isMarkdown) {
+      content = <MarkdownSynapse token={token} markdown={content} />
+    }
+    const show = hasClickedShowMore || descriptionLinkConfig
+    return (
+      <div className={show ? '' : 'SRC-hidden'}>
+        <span
+          data-search-handle={descriptionSubTitle}
+          className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
+        >
+          {content}
+        </span>
+      </div>
+    )
+  }
+
+  public renderShortDescription(
+    description: string,
+    hasClickedShowMore: boolean,
+    descriptionSubTitle: any,
+    descriptionLinkConfig?: MarkdownValue,
+  ): React.ReactNode {
+    if (descriptionLinkConfig) {
+      return <></>
+    }
+    return (
+      <div className={hasClickedShowMore ? 'SRC-hidden' : ''}>
+        <span
+          data-search-handle={descriptionSubTitle}
+          className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
+        >
+          {getCutoff(description).previewText}
+        </span>
+        {description.length >= CHAR_COUNT_CUTOFF && (
+          <button
+            style={{
+              fontSize: '14px',
+              cursor: 'pointer',
+              marginLeft: '-2px',
+            }}
+            className="SRC-primary-text-color"
+            onClick={this.toggleShowMore}
+          >
+            ...Show More
+          </button>
         )}
       </div>
     )

@@ -97,15 +97,13 @@ class CardFooter extends React.Component<CardFooterProps, State> {
         return (
           <tr className={'SRC-cardRowDesktop ' + hideClass} key={index}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}>
-              {' '}
-              {columnName}{' '}
+              {columnName}
             </td>
             <td
               data-search-handle={columnName}
               className={'SRC-row-data SRC-limitMaxWidth '}
             >
-              {' '}
-              {value}{' '}
+              {value}
             </td>
           </tr>
         )
@@ -114,8 +112,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
         <React.Fragment key={index}>
           <tr className={'SRC-cardRowMobile ' + hideClass}>
             <td className={'SRC-verticalAlignTop SRC-row-label'}>
-              {' '}
-              {columnName}{' '}
+              {columnName}
             </td>
           </tr>
           <tr className={'SRC-cardRowMobile ' + hideClass}>
@@ -123,8 +120,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
               data-search-handle={columnName}
               className="SRC-row-data SRC-limitMaxWidth"
             >
-              {' '}
-              {value}{' '}
+              {value}
             </td>
           </tr>
         </React.Fragment>

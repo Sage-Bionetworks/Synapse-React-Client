@@ -13,10 +13,9 @@ import {
 } from '../../../lib/containers/download_list/DownloadConfirmation'
 
 let getQueryTableResultsFn: Function
-
 let addFilesToDownloadRequestFn: Function
 const SynapseClient = require('../../../lib/utils/SynapseClient')
-let TestDownloadSpeed = require('../../../lib/utils/functions/testDownloadSpeed')
+const TestDownloadSpeed = require('../../../lib/utils/functions/testDownloadSpeed')
 const mockClose = jest.fn()
 
 const query = {
@@ -104,6 +103,9 @@ describe('it performs the expected functionality', () => {
     .mockResolvedValue(addFilesToDownloadListResponse)
 
   TestDownloadSpeed.testDownloadSpeed = jest.fn().mockResolvedValue(55)
+  getQueryTableResultsFn = SynapseClient.getQueryTableResults = jest
+    .fn()
+    .mockResolvedValue(queryBundleResponse)
 
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
@@ -112,9 +114,7 @@ describe('it performs the expected functionality', () => {
   }
 
   beforeEach(() => {
-    getQueryTableResultsFn = SynapseClient.getQueryTableResults = jest
-      .fn()
-      .mockResolvedValue(queryBundleResponse)
+    jest.clearAllMocks()
   })
 
   it('should render without crashing with just a cancel button', () => {
@@ -124,6 +124,7 @@ describe('it performs the expected functionality', () => {
     expect(mainDiv.hasClass('alert-info')).toBe(true)
     expect(wrapper.find('button')).toHaveLength(1)
     expect(wrapper.find('button').text()).toBe('Cancel')
+    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
   })
 
   it("should call the 'close' function on cancel", () => {
@@ -135,10 +136,11 @@ describe('it performs the expected functionality', () => {
   it("should call getQueryTableResults with correct params and show 'add' and 'cancel' buttons once info is loaded", async () => {
     const { wrapper } = createMountedComponent(props)
     await resolveAllPending(wrapper)
-
     expect(getQueryTableResultsFn).toHaveBeenCalledWith(
       mockGetQueryTableRequest,
+      props.token,
     )
+    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
     expect(wrapper.find('button')).toHaveLength(2)
     expect(wrapper.find('button.btn-link').text()).toBe('Cancel')
     expect(wrapper.find('button.btn-primary').text()).toBe('Add')
@@ -163,10 +165,7 @@ describe('it performs the expected functionality', () => {
     wrapper.find('button.btn-primary').simulate('click')
     await resolveAllPending(wrapper)
     expect(wrapper.find('button.btn-primary')).toHaveLength(0)
-    const link = wrapper.find('a')
+    const link = wrapper.find('button.test-view-downloadlist')
     expect(link.text()).toBe('View Download List')
-    expect(link.props().href).toBe(
-      `https://www.synapse.org/#!Profile:${addFilesToDownloadListResponse.downloadList.ownerId}/downloads`,
-    )
   })
 })

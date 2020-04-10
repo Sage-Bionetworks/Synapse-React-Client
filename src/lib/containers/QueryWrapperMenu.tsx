@@ -11,12 +11,19 @@ import { unCamelCase } from '../utils/functions/unCamelCase'
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
-import { KeyValue, isGroupByInSql } from '../utils/functions/sqlFunctions'
-import { FacetColumnValuesRequest } from '../utils/synapseTypes/'
+import {
+  isGroupByInSql,
+  insertConditionsFromSearchParams,
+} from '../utils/functions/sqlFunctions'
+import {
+  FacetColumnValuesRequest,
+  QueryBundleRequest,
+} from '../utils/synapseTypes/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import Search, { SearchProps } from './Search'
+import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 
 library.add(faPlus)
 library.add(faSearch)
@@ -40,9 +47,10 @@ export const ACCORDION_GROUP_ACTIVE_CSS = 'SRC-IS-ACTIVE'
 // for search component querying on cardcontainer
 export const SEARCH_CLASS_CSS = 'SRC-search-component'
 
-interface MenuSearchParams extends KeyValue {
-  menuIndex: string
+interface MenuSearchParams {
   facetValue: string
+  facet: string
+  menuIndex?: string
 }
 
 type CommonMenuProps = {
@@ -71,6 +79,8 @@ export type QueryWrapperMenuProps = {
   searchParams?: MenuSearchParams
   name?: string
   globalQueryCountSql?: string
+  componentIndex?: number //used for deep linking
+  shouldDeepLink?: boolean
 } & CommonMenuProps
 
 type Info = {
@@ -87,10 +97,17 @@ export default class QueryWrapperMenu extends React.Component<
     super(props)
     // See note about initializing props from state here
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
-    const { searchParams, accordionConfig } = this.props
+    const { searchParams, accordionConfig, menuConfig } = this.props
     let activeMenuIndices = []
-    const indexFromURLOrDefaultZero =
-      (searchParams && Number(searchParams.menuIndex)) || 0
+    let accordionGroupIndex = searchParams?.menuIndex
+      ? Number.parseInt(searchParams?.menuIndex) || 0
+      : 0
+    const facetIndexFromFacetSearchParam = menuConfig?.findIndex(
+      el => el.facet && el.facet === searchParams?.facet,
+    )
+    const usedFacetIndex =
+      facetIndexFromFacetSearchParam === -1 ? 0 : facetIndexFromFacetSearchParam
+    const indexFromURLOrDefaultZero = usedFacetIndex || 0
     if (accordionConfig) {
       activeMenuIndices = new Array(accordionConfig.length).fill(0)
     } else {
@@ -98,13 +115,14 @@ export default class QueryWrapperMenu extends React.Component<
     }
     this.state = {
       activeMenuIndices,
-      accordionGroupIndex: 0,
+      accordionGroupIndex,
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
     this.getUnitDescription = this.getUnitDescription.bind(this)
     this.getPartMask = this.getPartMask.bind(this)
     this.getSelectedFacets = this.getSelectedFacets.bind(this)
+    this.getSqlWithAdditionalClause = this.getSqlWithAdditionalClause.bind(this)
     this.getTableLoadingScreen = this.getTableLoadingScreen.bind(this)
   }
 
@@ -116,7 +134,6 @@ export default class QueryWrapperMenu extends React.Component<
     let { activeMenuIndices } = this.state
     const { rgbIndex, accordionConfig } = this.props
     if (rgbIndex !== prevProps.rgbIndex) {
-      console.log('setting state in component did update')
       activeMenuIndices = accordionConfig
         ? new Array(accordionConfig.length).fill(0)
         : [0]
@@ -160,12 +177,28 @@ export default class QueryWrapperMenu extends React.Component<
     const isClickingCurrentSelection =
       accordionGroupIndex === accordionIndexIn &&
       activeMenuIndices[accordionIndexIn] === menuIndexIn
-    activeMenuIndices[accordionIndexIn] = menuIndexIn
     if (!isClickingCurrentSelection) {
+      activeMenuIndices[accordionIndexIn] = menuIndexIn
       this.setState({
         activeMenuIndices,
         accordionGroupIndex: accordionIndexIn,
       })
+
+      if (this.props.shouldDeepLink) {
+        const facetName = this.props.menuConfig?.[menuIndexIn].facet
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'menuIndex',
+          undefined,
+          accordionIndexIn.toString(),
+        )
+        if (facetName) {
+          DeepLinkingUtils.updateUrlWithNewSearchParam(
+            'facet',
+            undefined,
+            facetName,
+          )
+        }
+      }
     }
   }
 
@@ -194,12 +227,13 @@ export default class QueryWrapperMenu extends React.Component<
       menuConfig,
       token,
       globalQueryCountSql = '',
-      entityId
+      entityId,
     } = this.props
     const { activeMenuIndices } = this.state
+
     let sql = ''
     if (menuConfig) {
-      sql = menuConfig[activeMenuIndices[0]].sql
+      sql = menuConfig![activeMenuIndices[0]].sql
     }
     if (globalQueryCountSql) {
       // globalQueryCountSql takes precendence over menuconfig sql
@@ -208,12 +242,17 @@ export default class QueryWrapperMenu extends React.Component<
     const hasGroupByInSql = isGroupByInSql(sql)
     const menuDropdown = this.renderMenuDropdown()
     const queryWrapper = this.renderQueryChildren()
-    const showBarChart   = stackedBarChartConfiguration !== undefined
+    const showBarChart = stackedBarChartConfiguration !== undefined
     return (
       <React.Fragment>
         {name && sql && !hasGroupByInSql && (
           <h3 id="exploreCount" className="SRC-boldText">
-            <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
+            <QueryCount
+              entityId={entityId}
+              token={token}
+              name={name}
+              sql={sql}
+            />
           </h3>
         )}
         {hasGroupByInSql && (
@@ -232,7 +271,9 @@ export default class QueryWrapperMenu extends React.Component<
           >
             {menuDropdown}
           </div>
-          <div className="col-xs-12 col-sm-9 col-lg-10" key="queryWrapper">{queryWrapper}</div>
+          <div className="col-xs-12 col-sm-9 col-lg-10" key="queryWrapper">
+            {queryWrapper}
+          </div>
         </div>
       </React.Fragment>
     )
@@ -250,7 +291,8 @@ export default class QueryWrapperMenu extends React.Component<
       searchParams,
       accordionConfig = [],
       facetAliases = {},
-      entityId
+      entityId,
+      shouldDeepLink
     } = this.props
     const {
       cardConfiguration,
@@ -261,10 +303,14 @@ export default class QueryWrapperMenu extends React.Component<
     } = queryConfig
     const { activeMenuIndices, accordionGroupIndex } = this.state
     let facetValue = ''
-    let menuIndexFromProps = ''
+    let facetValueFromSearchParams = ''
     if (searchParams) {
-      ;({ facetValue = '', menuIndex: menuIndexFromProps } = searchParams)
+      ;({
+        facetValue = '',
+        facet: facetValueFromSearchParams = '',
+      } = searchParams)
     }
+
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean =
         groupIndex === accordionGroupIndex &&
@@ -297,8 +343,11 @@ export default class QueryWrapperMenu extends React.Component<
         accordionConfig.length > 0,
         name,
       )
+      const isSelectedFromURL =
+        config.facet !== undefined &&
+        config.facet === facetValueFromSearchParams
       const selectedFacets = this.getSelectedFacets(
-        Number(menuIndexFromProps) === index,
+        isSelectedFromURL,
         facet,
         facetValue,
       )
@@ -308,29 +357,37 @@ export default class QueryWrapperMenu extends React.Component<
         stackedBarChartConfiguration,
         tableConfiguration,
       )
+      let initQueryRequest: QueryBundleRequest = {
+        partMask,
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        entityId,
+        query: {
+          sql,
+          selectedFacets,
+          isConsistent,
+          limit: 25,
+          offset: 0,
+        },
+      }
+
+      const queryFromUrl = DeepLinkingUtils.getQueryRequestFromLink(
+        'QueryWrapper',
+        index,
+      )
+
       return (
-        <span key={(facet||'nofacet')+index} className={searchClass}>
+        <span key={(facet || 'nofacet') + index} className={searchClass}>
           <QueryWrapper
+            componentIndex={index}
             showBarChart={showBarChart}
             loadNow={isSelected}
-            initQueryRequest={{
-              partMask,
-              concreteType:
-                'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-              entityId,
-              query: {
-                sql,
-                selectedFacets,
-                isConsistent,
-                limit: 25,
-                offset: 0,
-              },
-            }}
+            initQueryRequest={queryFromUrl || initQueryRequest}
             unitDescription={usedUnitDescription}
             facet={facet}
             token={token}
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
+            shouldDeepLink={shouldDeepLink}
           >
             {showBarChart ? (
               <StackedBarChart {...stackedBarChartConfiguration!} />
@@ -418,6 +475,22 @@ export default class QueryWrapperMenu extends React.Component<
     return []
   }
 
+  public getSqlWithAdditionalClause(
+    isSelected: boolean,
+    facet: string | undefined,
+    facetValue: string | undefined,
+    sql: string,
+  ): string {
+    if (isSelected && facet && facetValue && this.props.searchParams) {
+      return insertConditionsFromSearchParams(
+        { [facet]: facetValue },
+        sql,
+        'LIKE',
+      )
+    }
+    return sql
+  }
+
   public getTableLoadingScreen(
     hasGroupByInSql: boolean,
     stackedBarChartConfiguration: StackedBarChartProps | undefined,
@@ -438,7 +511,7 @@ export default class QueryWrapperMenu extends React.Component<
       return accordionConfig.map((el, index) => {
         return (
           <div
-            key={JSON.stringify(el)+index}
+            key={JSON.stringify(el) + index}
             className={accordionGroupIndex === index ? '' : 'SRC-hidden'}
           >
             {this.renderQueryChild(el.menuConfig, el, index)}
@@ -460,11 +533,11 @@ export default class QueryWrapperMenu extends React.Component<
       return accordionConfig.map((el, index) => {
         const isActive = accordionGroupIndex === index
         const primaryColor = colorPalette[0]
-        let style: React.CSSProperties = {
+        const style: React.CSSProperties = {
           background: isActive ? primaryColor : lightColor,
           color: isActive ? 'white' : '',
         }
-        let indicatorClasses = isActive
+        const indicatorClasses = isActive
           ? 'SRC-whiteText SRC-pointed-triangle-down'
           : ' SRC-hand-cursor '
         if (isActive) {
@@ -552,7 +625,7 @@ export default class QueryWrapperMenu extends React.Component<
       defaultColor = colorPalette[4]
     }
     return menuConfig.map((config: MenuConfig, index: number) => {
-      let searchIconStyle: React.CSSProperties = {
+      const searchIconStyle: React.CSSProperties = {
         margin: 'auto 0',
         opacity: 0.4,
       }
@@ -586,7 +659,7 @@ export default class QueryWrapperMenu extends React.Component<
         <div
           onMouseEnter={this.handleHoverLogic(infoEnter)}
           onMouseLeave={this.handleHoverLogic(infoLeave)}
-          key={(config.facet||'nofacet')+ index}
+          key={(config.facet || 'nofacet') + index}
           className={`SRC-hand-cursor SRC-background-unset ${selectedStyling} SRC-menu-button-base SRC-gap`}
           onClick={this.switchFacet(index, curLevel)}
           onKeyPress={this.switchFacet(index, curLevel)}
