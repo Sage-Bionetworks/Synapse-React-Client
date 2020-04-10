@@ -75,9 +75,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // Get owner ids from download list by filtering to items that have a file handle
   // then map to ownerIds
   const ownerIds: string[] = requestedFiles
-    .filter(el => el.fileHandle && el.fileHandle.createdBy)
+    .filter((el) => el.fileHandle && el.fileHandle.createdBy)
     // use bang operator because filter function guarentee's that file handle will be defined
-    .map(el => el.fileHandle!.createdBy!)
+    .map((el) => el.fileHandle!.createdBy!)
   const userProfiles = useGetInfoFromIds<UserProfile>({
     ids: ownerIds,
     token,
@@ -114,14 +114,14 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // which can be determined by whether the batchFileResult has a failure code for the
       // corresponding download list item
       const referenceCall: Reference[] = filesToDownload
-        .filter(el => {
+        .filter((el) => {
           return (
             batchFileResult.requestedFiles.find(
-              batchFile => batchFile.fileHandleId === el.fileHandleId,
+              (batchFile) => batchFile.fileHandleId === el.fileHandleId,
             )!.failureCode !== undefined
           )
         })
-        .map(el => {
+        .map((el) => {
           return { targetId: el.associateObjectId }
         })
       // entity header is used to get the names of the files that the user
@@ -218,7 +218,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           </tr>
         </thead>
         <tbody className="download-list-table">
-          {filesToDownload.map(item => {
+          {filesToDownload.map((item) => {
             let createdBy = ''
             let createdOn = ''
             let fileName = ''
@@ -229,7 +229,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               fileBeingDeleted === fileHandleId ? 'SRC-inactive-bg' : ''
             // See if batch file results has this fileHandleId
             const fileResult = requestedFiles.find(
-              fileRes => fileRes.fileHandleId === fileHandleId,
+              (fileRes) => fileRes.fileHandleId === fileHandleId,
             )
             const fileHandle = fileResult ? fileResult.fileHandle : undefined
             const canDownload = fileHandle !== undefined
@@ -247,12 +247,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             } else {
               // file is not downloadable, only show its name from entity header info
               const requestedFile = results.find(
-                req => req.id === item.associateObjectId,
+                (req) => req.id === item.associateObjectId,
               )!
               fileName = requestedFile.name
             }
             const userProfile = userProfiles.find(
-              el => el.ownerId === createdBy,
+              (el) => el.ownerId === createdBy,
             )
             return (
               <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
@@ -267,6 +267,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </td>
                 <td>
                   <HasAccess
+                    onHide={onHide}
                     fileHandle={fileHandle}
                     token={token}
                     entityId={synId}

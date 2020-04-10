@@ -24,13 +24,16 @@ import {
   AccessRequirement,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
-import AccessRequirementList from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
+import AccessRequirementList, {
+  checkHasUnsportedRequirement,
+} from './access_requirement_list/AccessRequirementList'
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
 library.add(faCircle)
 
 export type HasAccessProps = {
+  onHide?: Function
   fileHandle?: FileHandle
   entityId: string
   isInDownloadList?: boolean // set to show errors in UI about package creation
@@ -313,32 +316,23 @@ export default class HasAccess extends React.Component<
   }
 
   handleGetAccess = () => {
-    // const { token, entityId } = this.props
-    // const { displayAccessRequirement } = this.state
-    // SynapseClient.getAllAccessRequirements(token, entityId).then(
-    //   requirements => {
-    //     if (checkUnSupportedRequirement(requirements)) {
-    //       window.open(
-    //         `${getEndpoint(
-    //           BackendDestinationEnum.PORTAL_ENDPOINT,
-    //         )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-    //         '_blank',
-    //       )
-    //     } else {
-    //       this.setState({
-    //         accessRequirements: requirements,
-    //         displayAccessRequirement: !displayAccessRequirement,
-    //       })
-    //     }
-    //   },
-    // )
-
-    const { forceSamePage = false, entityId } = this.props
-    window.open(
-      `${getEndpoint(
-        BackendDestinationEnum.PORTAL_ENDPOINT,
-      )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-      forceSamePage ? '_self' : '_blank',
+    const { token, entityId } = this.props
+    SynapseClient.getAllAccessRequirements(token, entityId).then(
+      (requirements) => {
+        if (checkHasUnsportedRequirement(requirements)) {
+          window.open(
+            `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+            '_blank',
+          )
+        } else {
+          this.setState({
+            accessRequirements: requirements,
+            displayAccessRequirement: true,
+          })
+        }
+      },
     )
   }
 

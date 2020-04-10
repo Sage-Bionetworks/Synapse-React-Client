@@ -31,21 +31,27 @@ export enum SUPPORTED_ACCESS_REQUIREMENTS {
   ACTAccessRequirement = 'org.sagebionetworks.repo.model.ACTAccessRequirement',
 }
 
-export const checkUnSupportedRequirement = (
+export const checkHasUnsportedRequirement = (
   accessRequirements: Array<AccessRequirement>,
 ): boolean => {
-  let hasUnSupported = false
   for (let i = 0; i < accessRequirements.length; i++) {
-    if (
-      accessRequirements[i].concreteType !==
-        SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
-      accessRequirements[i].concreteType !==
-        SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement
-    ) {
-      hasUnSupported = hasUnSupported || true
+    if (isARUnsupported(accessRequirements[i].concreteType)) {
+      return true
     }
   }
-  return hasUnSupported
+  return false
+}
+
+const isARUnsupported = (accessRequirement: string) => {
+  switch (accessRequirement) {
+    case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
+    case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
+    case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
+    case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
+      return false
+    default:
+      return true
+  }
 }
 
 export default function AccessRequirementList({
@@ -73,7 +79,7 @@ export default function AccessRequirementList({
     const sortAccessRequirementByCompletion = async (
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirement>> => {
-      const statuses = requirements.map(req => {
+      const statuses = requirements.map((req) => {
         return SynapseClient.getAccessRequirementStatus(token, req.id)
       })
       const accessRequirementStatuses = await Promise.all(statuses)
@@ -84,7 +90,7 @@ export default function AccessRequirementList({
             Number(requirementB.isApproved) - Number(requirementA.isApproved)
           )
         })
-        .map(status => {
+        .map((status) => {
           return parseInt(status.accessRequirementId)
         })
 
@@ -103,12 +109,14 @@ export default function AccessRequirementList({
 
       try {
         if (!accessRequirementFromProps) {
-          getAllAccessRequirements(token, entityId).then(async requirements => {
-            const sortedAccessRequirements = await sortAccessRequirementByCompletion(
-              requirements,
-            )
-            setAccessRequirements(sortedAccessRequirements)
-          })
+          getAllAccessRequirements(token, entityId).then(
+            async (requirements) => {
+              const sortedAccessRequirements = await sortAccessRequirementByCompletion(
+                requirements,
+              )
+              setAccessRequirements(sortedAccessRequirements)
+            },
+          )
         } else {
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             accessRequirementFromProps!,
@@ -117,7 +125,7 @@ export default function AccessRequirementList({
         }
 
         const userProfile = await SynapseClient.getUserProfile(token)
-        SynapseClient.getUserProfile(token).then(data => {})
+        SynapseClient.getUserProfile(token).then((data) => {})
 
         setUser(userProfile)
 
@@ -252,7 +260,7 @@ export default function AccessRequirementList({
           </div>
         </div>
         {isLoading && <span className="spinner" />}
-        {accessRequirements.map(req => {
+        {accessRequirements.map((req) => {
           return renderAccessRequirement(req)
         })}
       </ReactBootstrap.Modal.Body>
