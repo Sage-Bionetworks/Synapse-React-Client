@@ -5,8 +5,6 @@ import { SynapseConstants, SynapseClient } from '../../utils/'
 import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
@@ -23,8 +21,11 @@ import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faFile } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faCircle)
+library.add(faFile)
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
@@ -192,7 +193,7 @@ export default function AccessRequirementList({
         return (
           <TermsOfUseAccessRequirementComponent
             accessRequirement={accessRequirement as TermsOfUseAccessRequirement}
-            AccessRequirementStatus={AccessRequirementStatus}
+            accessRequirementStatus={accessRequirementStatus}
             token={token}
             user={user}
             onHide={onHide}
@@ -249,36 +250,45 @@ export default function AccessRequirementList({
   const content = (
     <>
       <ReactBootstrap.Modal.Header closeButton={true}>
-        <ReactBootstrap.Modal.Title>
+        <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
           Data Access Request
         </ReactBootstrap.Modal.Title>
       </ReactBootstrap.Modal.Header>
       <ReactBootstrap.Modal.Body></ReactBootstrap.Modal.Body>
-      <h4 className="uppercase-text bold-text">Access For:</h4>
+      <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
+        Access For:
+      </h4>
       <a
-        className="register-text-link bold-text"
+        className="AccessRequirementList__register-text-link"
         href={`https://www.synapse.org/#!Synapse:${entityId}`}
       >
+        <FontAwesomeIcon
+          size="lg"
+          icon="file"
+          className="AccessRequirementList__file"
+        />{' '}
         &nbsp;{entityInformation[0]?.name}
       </a>
-      <h4 className="data-access-requirement-title uppercase-text bold-text">
+      <h4 className="AccessRequirementList__instruction">
         What do I need to do?
       </h4>
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isSignedIn} />
         <div>
-          <p className="bold-text">
-            <button
-              className={`${
-                SynapseConstants.SRC_SIGN_IN_CLASS
-              } sign-in-btn access-requirement ${
-                isSignedIn ? 'default' : 'blue'
-              }`}
-            >
-              Sign in
-            </button>
-            with a Sage Platform (Synapse) user account.
-          </p>
+          {!token && (
+            <p className="AccessRequirementList__sign">
+              <button
+                className={`${
+                  SynapseConstants.SRC_SIGN_IN_CLASS
+                } sign-in-btn access-requirement ${
+                  isSignedIn ? 'default' : 'blue'
+                }`}
+              >
+                Sign in
+              </button>
+              with a Sage Platform (Synapse) user account.
+            </p>
+          )}
           <SignedIn />
         </div>
       </div>
@@ -296,6 +306,7 @@ export default function AccessRequirementList({
   if (renderAsModal) {
     return (
       <ReactBootstrap.Modal
+        className="AccessRequirementList"
         onHide={() => onHide?.()}
         show={true}
         animation={false}
@@ -304,5 +315,5 @@ export default function AccessRequirementList({
       </ReactBootstrap.Modal>
     )
   }
-  return <>{content}</>
+  return <div className="AccessRequirementList">{content}</div>
 }
