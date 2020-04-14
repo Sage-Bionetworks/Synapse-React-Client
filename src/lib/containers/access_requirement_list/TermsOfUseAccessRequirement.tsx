@@ -1,32 +1,21 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import {
-  TermsOfUseAccessRequirement,
-  UserProfile,
   WikiPageKey,
-  AccessRequirementStatus,
+  TermsOfUseAccessRequirement,
 } from '../../utils/synapseTypes'
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
-
-type Props = {
-  accessRequirement: TermsOfUseAccessRequirement
-  token: string | undefined
-  user: UserProfile | undefined
-  onHide?: Function
-}
+import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function TermsOfUseAccessRequirementComponent({
   accessRequirement,
   token,
   user,
   onHide,
-}: Props) {
+  accessRequirementStatus,
+}: AccessRequirementProps<TermsOfUseAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
-  const [
-    termsOfUseRequirementStatus,
-    setTermsOfUseRequirementStatus,
-  ] = useState<AccessRequirementStatus | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -42,12 +31,6 @@ export default function TermsOfUseAccessRequirementComponent({
 
           setWikiPage(wikiPageRequirment)
         }
-
-        const requirementStatus = await SynapseClient.getAccessRequirementStatus(
-          token,
-          accessRequirement!.id,
-        )
-        setTermsOfUseRequirementStatus(requirementStatus)
       } catch (err) {
         console.error('Error on prepare terms of use ', err)
       } finally {
@@ -66,7 +49,7 @@ export default function TermsOfUseAccessRequirementComponent({
         token={token}
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
-        accessRequirementStatus={termsOfUseRequirementStatus}
+        accessRequirementStatus={accessRequirementStatus}
         onHide={onHide}
       />
     </div>

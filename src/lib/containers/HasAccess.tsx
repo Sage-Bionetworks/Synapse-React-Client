@@ -26,6 +26,7 @@ import {
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import AccessRequirementList, {
   checkHasUnsportedRequirement,
+  AccessRequirementListProps,
 } from './access_requirement_list/AccessRequirementList'
 
 library.add(faUnlockAlt)
@@ -40,6 +41,7 @@ export type HasAccessProps = {
   entityVersionNumber?: string
   token?: string
   forceSamePage?: boolean
+  set_arPropsFromHasAccess?: (props: AccessRequirementListProps) => void
 }
 
 type HasAccessState = {
@@ -316,7 +318,7 @@ export default class HasAccess extends React.Component<
   }
 
   handleGetAccess = () => {
-    const { token, entityId } = this.props
+    const { token, entityId, set_arPropsFromHasAccess } = this.props
     SynapseClient.getAllAccessRequirements(token, entityId).then(
       (requirements) => {
         if (checkHasUnsportedRequirement(requirements)) {
@@ -327,10 +329,17 @@ export default class HasAccess extends React.Component<
             '_blank',
           )
         } else {
-          this.setState({
-            accessRequirements: requirements,
-            displayAccessRequirement: true,
-          })
+          if (set_arPropsFromHasAccess) {
+            set_arPropsFromHasAccess({
+              accessRequirementFromProps: requirements,
+              entityId,
+            })
+          } else {
+            this.setState({
+              accessRequirements: requirements,
+              displayAccessRequirement: true,
+            })
+          }
         }
       },
     )
