@@ -1,7 +1,5 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { act } from '@testing-library/react'
-
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from '../../../lib/containers/MarkdownSynapse'
@@ -15,7 +13,13 @@ import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
 // shallow doesn't await all nested promises resolve inside component...
 
 const createShallowComponent = async (props: MarkdownSynapseProps) => {
-  const wrapper = await shallow<MarkdownSynapse>(<MarkdownSynapse {...props} />)
+  const wrapper = await shallow<MarkdownSynapse>(
+    <MarkdownSynapse
+      ownerId="mock_owner_id"
+      wikiId="mock_wiki_id"
+      {...props}
+    />,
+  )
   await delay(_TIME_DELAY)
   const instance = wrapper.instance()
   return { wrapper, instance }
@@ -178,7 +182,7 @@ describe('it performs all functionality', () => {
     SynapseClient.getEntity = mockGetEntity
     SynapseClient.getFiles = mockGetFiles
 
-    it.only('renders an image from a synapseId ', async () => {
+    it('renders an image from a synapseId ', async () => {
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
         markdown: '${image?synapseId=syn7809125&align=None&responsive=true}',
       })
@@ -215,7 +219,6 @@ describe('it performs all functionality', () => {
     it('renders the SynapsePlot component', async () => {
       SynapseClient.getEntityWiki = jest.fn(() =>
         Promise.resolve({
-          // tslint:disable-next-line:max-line-length
           markdown:
             '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
         }),

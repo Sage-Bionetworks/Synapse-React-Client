@@ -1,5 +1,8 @@
 .AccessRequirementList {
   color: #515359;
+  p {
+    margin-bottom: 0px;
+  }
 
   &__instruction {
     font-size: 18px;
@@ -23,7 +26,7 @@
   .requirement-container {
     display: flex;
     align-items: center;
-    align-content: center;
+    margin-top: 15px;
   }
 
   &__register-text-link {
@@ -33,7 +36,7 @@
     margin-bottom: 20px;
   }
 
-  .terms-of-use-content {
+  &__AccessRequirementList__signin .terms-of-use-content {
     margin-top: 20px;
   }
 
@@ -102,10 +105,12 @@
     }
     color: white;
     border-radius: 50%;
+    margin-right: 15px;
     padding: 15px;
     height: 15px;
     width: 15px;
     display: flex;
+    align-self: baseline;
     align-items: center;
     text-align: center;
     justify-content: center;

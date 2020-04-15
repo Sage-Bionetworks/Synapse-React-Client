@@ -19,7 +19,7 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
   const [downloadList, setDownloadList] = useState<DownloadList | undefined>(
     undefined,
   )
-  const [showDownloadModal, setShowDownloadModal] = useState(false)
+  const [showDownloadModal, setShowDownloadModal] = useState(true)
   useEffect(() => {
     if (!token) {
       return
@@ -31,7 +31,7 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
         setDownloadList(event.detail)
       } else {
         // for initialization
-        SynapseClient.getDownloadList(token).then(downloadList => {
+        SynapseClient.getDownloadList(token).then((downloadList) => {
           setDownloadList(downloadList)
         })
       }

@@ -276,7 +276,7 @@ export default function AccessRequirementList({
         <AccessApprovalCheckMark isCompleted={isSignedIn} />
         <div>
           {!token && (
-            <p className="AccessRequirementList__sign">
+            <p className="AccessRequirementList__signin">
               <button
                 className={`${
                   SynapseConstants.SRC_SIGN_IN_CLASS
@@ -294,9 +294,13 @@ export default function AccessRequirementList({
       </div>
       {accessRequirements?.map(
         ({ accessRequirement, accessRequirementStatus }) => {
-          return renderAccessRequirement(
-            accessRequirement,
-            accessRequirementStatus,
+          return (
+            <React.Fragment key={accessRequirement.id}>
+              {renderAccessRequirement(
+                accessRequirement,
+                accessRequirementStatus,
+              )}
+            </React.Fragment>
           )
         },
       )}
