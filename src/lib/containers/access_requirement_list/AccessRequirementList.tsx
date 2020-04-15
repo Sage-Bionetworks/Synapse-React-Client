@@ -248,7 +248,7 @@ export default function AccessRequirementList({
   }
 
   const content = (
-    <>
+    <div className={renderAsModal ? '__modal' : ''}>
       <ReactBootstrap.Modal.Header closeButton={true}>
         <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
           Data Access Request
@@ -304,7 +304,7 @@ export default function AccessRequirementList({
           )
         },
       )}
-    </>
+    </div>
   )
 
   if (renderAsModal) {

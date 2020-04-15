@@ -1,5 +1,10 @@
 .AccessRequirementList {
   color: #515359;
+
+  &__modal {
+    padding: 15px;
+  }
+
   p {
     margin-bottom: 0px;
   }

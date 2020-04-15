@@ -70,7 +70,8 @@ export enum FileHandleDownloadTypeEnum {
   ExternalFileLink = 'ExternalFileLink',
   TooLarge = 'TooLarge',
   Accessible = 'Accessible',
-  AccessBlocked = 'AccessBlocked',
+  AccessBlockedByRestriction = 'AccessBlockedByRestriction',
+  AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   NoFileHandle = 'NoFileHandle',
 }
@@ -119,8 +120,10 @@ export default class HasAccess extends React.Component<
   public static tooltipText = {
     [FileHandleDownloadTypeEnum.AccessBlockedToAnonymous]:
       'You must sign in to access this file.',
-    [FileHandleDownloadTypeEnum.AccessBlocked]:
+    [FileHandleDownloadTypeEnum.AccessBlockedByRestriction]:
       'You must request access to this restricted file.',
+    [FileHandleDownloadTypeEnum.AccessBlockedByACL]:
+      'You do not have download access for this item.',
     [FileHandleDownloadTypeEnum.TooLarge]:
       'This file is too large to download as a package and must be downloaded manually.',
     [FileHandleDownloadTypeEnum.ExternalFileLink]:
@@ -191,32 +194,25 @@ export default class HasAccess extends React.Component<
       .then((entity) => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
-          SynapseClient.getFileEntityFileHandle(entity as FileEntity, token)
-            .then((fileHandle: FileHandle) => {
-              const fileHandleDownloadType = getDownloadTypeForFileHandle(
-                fileHandle,
-                isInDownloadList,
-              )
-              this.setState({
-                fileHandleDownloadType,
-              })
+          return SynapseClient.getFileEntityFileHandle(
+            entity as FileEntity,
+            token,
+          ).then((fileHandle: FileHandle) => {
+            const fileHandleDownloadType = getDownloadTypeForFileHandle(
+              fileHandle,
+              isInDownloadList,
+            )
+            this.setState({
+              fileHandleDownloadType,
             })
-            .catch((err) => {
-              console.error('Error on getFileHandle = ', err)
-              // could not get the file handle
-              this.updateStateFileHandleAccessBlocked()
-            })
-            .finally(() => {
-              this.setState({
-                isGettingEntityInformation: false,
-              })
-            })
+          })
         } else {
           // entity looks like something else.
           this.setState({
             fileHandleDownloadType: FileHandleDownloadTypeEnum.NoFileHandle,
             isGettingEntityInformation: false,
           })
+          return Promise.resolve()
         }
       })
       .catch((err) => {
@@ -232,7 +228,7 @@ export default class HasAccess extends React.Component<
   updateStateFileHandleAccessBlocked = () => {
     const { token } = this.props
     const fileHandleDownloadType = token
-      ? FileHandleDownloadTypeEnum.AccessBlocked
+      ? FileHandleDownloadTypeEnum.AccessBlockedByACL
       : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
     this.setState({
       fileHandleDownloadType,
@@ -303,7 +299,8 @@ export default class HasAccess extends React.Component<
       case FileHandleDownloadTypeEnum.TooLarge:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
       // was FileEntity, but no fileHandle was available
-      case FileHandleDownloadTypeEnum.AccessBlocked:
+      case FileHandleDownloadTypeEnum.AccessBlockedByRestriction:
+      case FileHandleDownloadTypeEnum.AccessBlockedByACL:
       case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
         return this.renderIconHelper(faLock, 'SRC-warning-color')
       // was a FileEntity, and fileHandle was available
@@ -376,9 +373,9 @@ export default class HasAccess extends React.Component<
             fontSize: '14px',
             cursor: 'pointer',
             marginLeft: '16px',
-            color: 'rgb(77, 85, 144)',
           }}
           onClick={this.handleGetAccess}
+          className="SRC-primary-text-color"
         >
           {linkText}
         </button>
@@ -387,6 +384,7 @@ export default class HasAccess extends React.Component<
             token={token}
             entityId={entityId}
             accessRequirementFromProps={accessRequirements}
+            renderAsModal={true}
             onHide={() => {
               this.setState({ displayAccessRequirement: false })
               this.refresh()

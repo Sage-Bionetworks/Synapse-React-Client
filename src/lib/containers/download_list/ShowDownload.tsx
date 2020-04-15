@@ -7,6 +7,8 @@ import { SynapseClient } from '../../utils'
 import { DownloadList } from '../../utils/synapseTypes'
 import { DOWNLOAD_LIST_CHANGE_EVENT } from '../../utils/functions/dispatchDownloadListChangeEvent'
 import DownloadListTable from './DownloadListTable'
+import ReactTooltip from 'react-tooltip'
+import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 
 library.add(faDownload)
 
@@ -20,6 +22,8 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
     undefined,
   )
   const [showDownloadModal, setShowDownloadModal] = useState(true)
+  const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
+  const tooltipText = 'Click to view items in your download list.'
   useEffect(() => {
     if (!token) {
       return
@@ -56,10 +60,20 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
   const positionClass = to ? 'position-by-anchor' : 'position-by-button'
   const content = (
     <>
-      <span className="icon-container">
-        <FontAwesomeIcon icon="download" />
+      <span id={idForToolTip} data-for={idForToolTip} data-tip={tooltipText}>
+        <span className="icon-container">
+          <FontAwesomeIcon icon="download" />
+        </span>
+        <span className={`download-size ${positionClass}`}>{size}</span>
       </span>
-      <span className={`download-size ${positionClass}`}>{size}</span>
+      <ReactTooltip
+        delayShow={TOOLTIP_DELAY_SHOW}
+        place={'bottom'}
+        type={'dark'}
+        effect={'solid'}
+        border={true}
+        id={idForToolTip}
+      />
     </>
   )
 

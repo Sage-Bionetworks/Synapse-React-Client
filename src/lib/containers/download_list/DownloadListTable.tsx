@@ -80,10 +80,21 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     (batchFileResult && batchFileResult.requestedFiles) || []
   // Get owner ids from download list by filtering to items that have a file handle
   // then map to ownerIds
-  const ownerIds: string[] = requestedFiles
-    .filter((el) => el.fileHandle && el.fileHandle.createdBy)
-    // use bang operator because filter function guarentee's that file handle will be defined
-    .map((el) => el.fileHandle!.createdBy!)
+  const ownerIdsFromHeaders = references?.results
+    .filter((el) => el.createdBy)
+    .map((el) => el.createdBy)
+  const ownerIdsFromFileHandles = requestedFiles
+    .filter((el) => el.fileHandle?.createdBy !== undefined)
+    .map((el) => el.fileHandle!.createdBy)
+
+  const ownerIds: string[] = []
+  if (ownerIdsFromFileHandles) {
+    ownerIds.push(...ownerIdsFromFileHandles)
+  }
+  if (ownerIdsFromHeaders) {
+    ownerIds.push(...ownerIdsFromHeaders)
+  }
+  // use bang operator because filter function guarentee's that file handle will be defined
   const userProfiles = useGetInfoFromIds<UserProfile>({
     ids: ownerIds,
     token,
@@ -227,9 +238,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           </thead>
           <tbody className="download-list-table">
             {filesToDownload.map((item) => {
-              let createdBy = ''
-              let createdOn = ''
-              let fileName = ''
+              let createdBy: string | undefined = ''
+              let createdOn: string | undefined = ''
+              let fileName: string | undefined = ''
               let contentSize = undefined
               const synId = item.associateObjectId
               const fileHandleId = item.fileHandleId
@@ -244,7 +255,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               if (fileHandle) {
                 // fileHandle is defined, this file is downloadable, show its metadata
                 ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
-                createdOn = moment(createdOn).format('L LT')
                 if (
                   getDownloadTypeForFileHandle(fileHandle) ===
                   FileHandleDownloadTypeEnum.Accessible
@@ -256,9 +266,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 // file is not downloadable, only show its name from entity header info
                 const requestedFile = results.find(
                   (req) => req.id === item.associateObjectId,
-                )!
-                fileName = requestedFile.name
+                )
+                fileName = requestedFile?.name
+                createdBy = requestedFile?.createdBy
+                createdOn = requestedFile?.createdOn
               }
+              createdOn = moment(createdOn).format('L LT')
               const userProfile = userProfiles.find(
                 (el) => el.ownerId === createdBy,
               )
@@ -290,6 +303,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         size={'SMALL USER CARD'}
                         userProfile={userProfile}
                         preSignedURL={userProfile.clientPreSignedURL}
+                        token={token}
+                        extraSmall={true}
                       />
                     )}
                     {canDownload && !userProfile && (

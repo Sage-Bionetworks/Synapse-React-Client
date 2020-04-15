@@ -31,26 +31,28 @@ export type UserCardProps = {
   hideTooltip?: boolean
   menuActions?: MenuAction[]
   link?: string
+  token?: string
   disableLink?: boolean
+  extraSmall?: boolean
 }
 
 export default class UserCard extends React.Component<
   UserCardProps,
   UserCardState
 > {
-  constructor(props: any) {
+  constructor(props: UserCardProps) {
     super(props)
     this.state = { userProfile: undefined, isLoading: true, preSignedURL: '' }
     this.getUserProfile = this.getUserProfile.bind(this)
   }
 
   public componentDidMount() {
-    const { userProfile, ownerId, alias } = this.props
+    const { userProfile, ownerId, alias, token } = this.props
     if (userProfile) {
       return
     }
     if (alias) {
-      getPrincipalAliasRequest('', alias, 'USER_NAME').then(
+      getPrincipalAliasRequest(token, alias, 'USER_NAME').then(
         (aliasData: any) => {
           this.getUserProfile(aliasData.principalId!)
         },
@@ -62,12 +64,12 @@ export default class UserCard extends React.Component<
   }
 
   public getUserProfile(ownerId: string) {
-    getUserProfileWithProfilePic(ownerId!, '')
-      .then(data => {
+    getUserProfileWithProfilePic(ownerId!, this.props.token)
+      .then((data) => {
         const { userProfile, preSignedURL } = data
         this.setState({ userProfile, preSignedURL, isLoading: false })
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('failed to get user bundle ', err)
       })
   }

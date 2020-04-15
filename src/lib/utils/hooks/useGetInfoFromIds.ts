@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { without, chunk, uniq } from 'lodash-es'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 // import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
@@ -42,9 +43,10 @@ const getEntityHeaderItems = async (
 ): Promise<EntityHeader[]> => {
   const newData = await getEntityHeader(lookupList, token)
   const notFound = lookupList.filter(
-    item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
+    (item) =>
+      newData.results.map((item) => item.id).indexOf(item.targetId) === -1,
   )
-  const notFoundPlaceholders = notFound.map(item => ({
+  const notFoundPlaceholders = notFound.map((item) => ({
     ...entityHeaderTemplate,
     id: item.targetId,
     name: `${item.targetId}`,
@@ -59,9 +61,9 @@ const getUserProfileItems = async (
 ): Promise<UserProfile[]> => {
   const newData = await getUserProfileWithProfilePicAttached(lookupList, token)
   const notFound = lookupList.filter(
-    item => newData.list.map(item => item.ownerId).indexOf(item) === -1,
+    (item) => newData.list.map((item) => item.ownerId).indexOf(item) === -1,
   )
-  const notFoundPlaceholders = notFound.map(item => ({
+  const notFoundPlaceholders = notFound.map((item) => ({
     ...UserProfileTemplate,
     ownerId: item,
     name: `Unknown User (${item})`,
@@ -77,35 +79,29 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
 ) {
   const { token, ids, type } = props
   const [data, setData] = useState<Array<T>>([])
-  const [isLoading, setIsLoading] = useState(false)
 
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
   // look at current list of data, see if incoming ids has new data,
   // if so grab those ids
-  const curList = data.map(el => el[idProp(type)])
-  const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
+  const curList = data.map((el) => el[idProp(type)])
+  const incomingList = ids.filter((el) => el !== SynapseConstants.VALUE_NOT_SET)
   const newValues = uniq(without(incomingList, ...curList))
 
-  // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes
-  // this can be fixed by seperate this useEffect into two, one which updates itself if the token changes and the other
-  // which responds to the incoming ids changing
-  useEffect(() => {
+  // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes,
+  // this can be solved by using the useCompare hook on the token to track when it changes
+  useDeepCompareEffect(() => {
     const getData = async () => {
-      if (isLoading) {
-        return
-      }
-      setIsLoading(true)
       if (newValues.length > 0) {
         try {
           const newIds = Array.from<string>(newValues)
           const newReferences: LookupRequestType[] =
             type === 'USER_PROFILE'
               ? newIds
-              : newIds.map(el => ({ targetId: el }))
+              : newIds.map((el) => ({ targetId: el }))
           const newReferencesChunks = chunk(newReferences, 45)
-
+          const totalData: T[] = []
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
@@ -114,16 +110,15 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
                     newReferences as ReferenceList,
                     token,
                   )
-            setData(oldData => oldData.concat(...(newData as T[])))
+            totalData.push(...(newData as T[]))
           }
+          setData((oldData) => oldData.concat(...(totalData as T[])))
         } catch (error) {
           console.error('Error on data retrieval', error)
-        } finally {
-          setIsLoading(false)
         }
       }
     }
     getData()
-  }, [token, type, newValues, isLoading])
+  }, [token, type, newValues])
   return data
 }
