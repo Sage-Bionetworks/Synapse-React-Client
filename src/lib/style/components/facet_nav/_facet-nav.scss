@@ -3,9 +3,13 @@
 
     &__row {
         background-color: #fff;
-        overflow: hidden;
+
         div[class*=" col-"] {
             min-height: 200px
         }
     }
+
+   &__showMore {
+       float:right
+   }
 }

@@ -8,6 +8,13 @@
       margin-left: auto;
       order: 2;
       text-align: right;
+      display: flex;
+
+      .show button.dropdown-toggle, button.dropdown-toggle:hover {
+        background: transparent;
+  
+        color:inherit;
+    }
     }
   }
   &__body {
