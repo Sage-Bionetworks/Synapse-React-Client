@@ -49,7 +49,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   }
   return (
     <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-      {<FacetNav applyChanges={() => ''} loadingScreen={loadingScreen} facetsToPlot={['assay', 'consortium', 'diagnosis', 'tumorType', 'fileFormat']} />}
+      {<FacetNav applyChanges={() => ''} loadingScreen={loadingScreen}  />}
 
       {
         /*<FacetsPlotNav

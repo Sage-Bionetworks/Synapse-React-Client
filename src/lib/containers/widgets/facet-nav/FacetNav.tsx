@@ -1,13 +1,14 @@
 import * as React from 'react'
 import FacetNavPanel from './FacetNavPanel'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
-import { QueryWrapperChildProps } from 'lib/containers/QueryWrapper'
+import { QueryWrapperChildProps } from '../../QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
   FacetColumnRequest,
   FacetColumnResult,
-} from 'lib/utils/synapseTypes'
+  QueryResultBundle,
+} from '../../../utils/synapseTypes'
 import { useState, useEffect } from 'react'
 import * as _ from 'lodash'
 
@@ -38,16 +39,29 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   getLastQueryRequest,
   isLoadingNewData,
   loadingScreen,
+  isLoading,
   executeQueryRequest,
   asyncJobStatus,
   facetsToPlot,
 }: FacetNavProps): JSX.Element => {
-  const [facets, setFacets] = useState<FacetColumnResult[]>([])
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [expandedFacets, setExpandedFacets] = useState<ExpandedFacet[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
 
   const request = getLastQueryRequest!()
+  const getFacets = (data: QueryResultBundle | undefined): FacetColumnResult[] =>  {
+    const result = data?.facets?.filter(
+      item =>
+        item.facetType === 'enumeration' &&
+        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
+    )
+    if (!result) {
+      return []
+    } else {
+      return result
+    }
+
+  }
 
   useEffect(() => {
     let result = data?.facets?.filter(
@@ -56,6 +70,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
         (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
     )
     if (!result) {
+      console.log('no data')
       return
     }
     if (isFirstTime) {
@@ -68,7 +83,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       )
       setIsFirstTime(false)
     }
-    setFacets(result)
   }, [data])
 
   // when 'show more/less' is clicked
@@ -111,7 +125,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     }
     if (
       facetUiStateArray.find(item => item.isHidden === true) ||
-      facets.length < facetUiStateArray.length
+      getFacets(data).length < facetUiStateArray.length
     ) {
       return 'MORE'
     }
@@ -160,11 +174,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     propName: 'isHidden' | 'isExpanded',
     value: boolean,
   ) => {
-    const cloneArray = _.cloneDeep(facetUiStateArray)
-    const itemToChange = cloneArray.find(item => item.name === columnName)
-    if (itemToChange) {
-      itemToChange[propName] = value
-    }
 
     setFacetUiStateArray(facetUiStateArray =>
       facetUiStateArray.map(item =>
@@ -176,8 +185,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   if (isLoadingNewData || !data) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
-        {!!loadingScreen && loadingScreen}
-        <div>{asyncJobStatus && asyncJobStatus.progressMessage}</div>
+        {loadingScreen}
+        {asyncJobStatus?.progressMessage && <div>{asyncJobStatus.progressMessage} </div>}
       </div>
     )
   } else {
@@ -211,7 +220,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           ))}
         </div>
         <div className="FacetNav__row">
-          {facets?.map((item, index) => (
+          {getFacets(data).map((item, index) => (
             <div
               className="col-sm-12 col-md-6"
               style={{
@@ -220,6 +229,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               key={`facetPanel_${index}`}
             >
               <FacetNavPanel
+              isLoading={isLoading}
                 index={index}
                 data={data}
                 onHide={() => hideFacetInGrid(item.columnName)}
@@ -227,14 +237,15 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                 facetToPlot={item as FacetColumnResultValues}
                 applyChanges={(
                   facet: FacetColumnResultValues,
-                  value: FacetColumnResultValueCount,
+                  value: FacetColumnResultValueCount | undefined,
+                  isSelected: boolean
                 ) =>
                   applyChangesToValuesColumn(
                     request,
                     facet,
                     applyChangesFromQueryFilter,
-                    value.value,
-                    !value.isSelected,
+                    value?.value,
+                    isSelected,
                   )
                 }
               ></FacetNavPanel>
