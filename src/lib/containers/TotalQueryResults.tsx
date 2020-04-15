@@ -1,5 +1,7 @@
 import * as React from 'react'
-import { QueryBundleRequest } from '../utils/synapseTypes'
+import {
+  QueryBundleRequest,
+} from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../'
 
 export type TotalQueryResultsProps = {
@@ -11,72 +13,52 @@ export type TotalQueryResultsProps = {
   frontText: string
 }
 
-type State = {
-  total: number
-  isLoading: boolean
-}
-
 // This is a stateful component so that during load the component can hold onto the previous
 // total instead of showing 0 results for the intermittent loading state.
-export default class TotalQueryResults extends React.Component<
-  TotalQueryResultsProps,
-  State
-> {
-  constructor(props: TotalQueryResultsProps) {
-    super(props)
-    this.state = {
-      total: 0,
-      isLoading: false,
-    }
-  }
 
-  componentDidMount() {
-    this.calculateTotal()
-  }
+const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> = ({
+  style,
+  unitDescription,
+  frontText,
+  getLastQueryRequest,
+  token,
+  isLoading: parentLoading,
+}) => {
+  const [total, setTotal] = React.useState(0)
+  const [isLoading, setIsLoading] = React.useState(false)
 
-  componentDidUpdate(prevProps: TotalQueryResultsProps) {
-    // Check that it has entered a loading state, meaning that there is new data
-    if (this.props.isLoading && !prevProps.isLoading) {
-      this.calculateTotal()
-    }
-  }
-
-  calculateTotal() {
-    const { getLastQueryRequest, token } = this.props
-    const queryRequest = getLastQueryRequest!()
-    queryRequest.partMask = SynapseConstants.BUNDLE_MASK_QUERY_COUNT
-
-    this.setState({
-      isLoading: true,
-    })
-    SynapseClient.getQueryTableResults(queryRequest, token)
-      .then(data => {
-        this.setState({
-          total: data.queryCount!,
-          isLoading: false,
+  React.useEffect(() => {
+    const calculateTotal = async () => {
+      const queryRequest = getLastQueryRequest!()
+      queryRequest.partMask =
+        SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+        SynapseConstants.BUNDLE_MASK_QUERY_FACETS
+      setIsLoading(true)
+      SynapseClient.getQueryTableResults(queryRequest, token)
+        .then(data => {
+          setTotal(data.queryCount!)
         })
-      })
-      .catch(err => {
-        console.error('err ', err)
-        this.setState({
-          isLoading: false,
+        .catch(err => {
+          console.error('err ', err)
         })
-      })
-  }
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    calculateTotal()
+  }, [parentLoading, token, getLastQueryRequest])
 
-  render() {
-    const { style, unitDescription, frontText } = this.props
-    const { total, isLoading } = this.state
-    return (
-      <p
-        style={style}
-        className="SRC-boldText SRC-text-title SRC-centerContent"
-      >
-        {frontText} {total} {unitDescription}{' '}
-        {isLoading && (
-          <span style={{ marginLeft: '2px' }} className={'spinner'} />
-        )}
-      </p>
-    )
-  }
+  return (
+    <div
+      className="TotalQueryResults SRC-boldText SRC-text-title SRC-centerContent"
+      style={style}
+    >
+      {frontText} {total} {unitDescription}{' '}
+      {isLoading && (
+        <span style={{ marginLeft: '2px' }} className={'spinner'} />
+      )}
+    </div>
+  )
 }
+
+export default TotalQueryResults

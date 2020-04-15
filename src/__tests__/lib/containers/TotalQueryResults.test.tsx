@@ -19,7 +19,8 @@ describe('it works', () => {
   const mockQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: '',
-    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+    SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
     query: {
       sql: '',
     },
@@ -60,7 +61,8 @@ describe('it works', () => {
     )
     expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
       expect.objectContaining({
-        partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+        partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+        SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
       }),
       '',
     )
