@@ -1,7 +1,5 @@
 import * as React from 'react'
-import {
-  QueryBundleRequest,
-} from '../utils/synapseTypes'
+import { QueryBundleRequest } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../'
 
 export type TotalQueryResultsProps = {
@@ -33,17 +31,20 @@ const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> = ({
       queryRequest.partMask =
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS
-      setIsLoading(true)
-      SynapseClient.getQueryTableResults(queryRequest, token)
-        .then(data => {
-          setTotal(data.queryCount!)
-        })
-        .catch(err => {
-          console.error('err ', err)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+
+      if (parentLoading) {
+        setIsLoading(true)
+        SynapseClient.getQueryTableResults(queryRequest, token)
+          .then(data => {
+            setTotal(data.queryCount!)
+          })
+          .catch(err => {
+            console.error('err ', err)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      }
     }
     calculateTotal()
   }, [parentLoading, token, getLastQueryRequest])

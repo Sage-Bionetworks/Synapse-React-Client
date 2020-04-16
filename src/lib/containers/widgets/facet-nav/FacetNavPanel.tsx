@@ -291,7 +291,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 facetValue: '',
                 selector: '',
               }}
-              isLoading={false}
+              isLoading={!!isLoading}
               className=""
               colorOnExpanded="#000"
               applyChanges={(_: any) => (evt: React.ChangeEvent<HTMLInputElement>) =>

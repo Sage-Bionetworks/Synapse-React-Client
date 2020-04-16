@@ -43,7 +43,7 @@ describe('it works', () => {
   const unitDescription = 'units'
   const props: TotalQueryResultsProps = {
     unitDescription,
-    isLoading: false,
+    isLoading: true,
     token: '',
     getLastQueryRequest,
     frontText: 'Displaying',
