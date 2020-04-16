@@ -120,6 +120,7 @@ export default class HasAccess extends React.Component<
   public static tooltipText = {
     [FileHandleDownloadTypeEnum.AccessBlockedToAnonymous]:
       'You must sign in to access this file.',
+    // Note AccessBlockedByRestriction is never explicitly set, its value is calculated
     [FileHandleDownloadTypeEnum.AccessBlockedByRestriction]:
       'You must request access to this restricted file.',
     [FileHandleDownloadTypeEnum.AccessBlockedByACL]:
@@ -140,11 +141,8 @@ export default class HasAccess extends React.Component<
       this,
     )
 
-    const fileHandleDownloadType = props.fileHandle
-      ? getDownloadTypeForFileHandle(props.fileHandle, props.isInDownloadList)
-      : undefined
     this.state = {
-      fileHandleDownloadType,
+      fileHandleDownloadType: undefined,
       displayAccessRequirement: false,
       accessRequirements: [],
       isGettingEntityInformation: false,
@@ -174,15 +172,37 @@ export default class HasAccess extends React.Component<
     this.getFileEntityFileHandle(forceRefresh)
   }
 
+  updateStateFileHandleAccessBlocked = () => {
+    const { token } = this.props
+    const fileHandleDownloadType = token
+      ? FileHandleDownloadTypeEnum.AccessBlockedByACL
+      : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
+    this.setState({
+      fileHandleDownloadType,
+    })
+  }
+
   getFileEntityFileHandle = (forceRefresh?: boolean) => {
     const {
       entityId,
       entityVersionNumber,
       token,
       isInDownloadList,
+      fileHandle,
     } = this.props
+
     if (this.state.fileHandleDownloadType && !forceRefresh) {
       // already know the downloadType
+      return
+    }
+    if (fileHandle) {
+      const fileHandleDownloadType = getDownloadTypeForFileHandle(
+        fileHandle,
+        isInDownloadList,
+      )
+      this.setState({
+        fileHandleDownloadType,
+      })
       return
     }
     this.setState({
@@ -223,16 +243,6 @@ export default class HasAccess extends React.Component<
           isGettingEntityInformation: false,
         })
       })
-  }
-
-  updateStateFileHandleAccessBlocked = () => {
-    const { token } = this.props
-    const fileHandleDownloadType = token
-      ? FileHandleDownloadTypeEnum.AccessBlockedByACL
-      : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
-    this.setState({
-      fileHandleDownloadType,
-    })
   }
 
   getRestrictionInformation = (forceRefresh?: boolean) => {
@@ -299,7 +309,6 @@ export default class HasAccess extends React.Component<
       case FileHandleDownloadTypeEnum.TooLarge:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
       // was FileEntity, but no fileHandle was available
-      case FileHandleDownloadTypeEnum.AccessBlockedByRestriction:
       case FileHandleDownloadTypeEnum.AccessBlockedByACL:
       case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
         return this.renderIconHelper(faLock, 'SRC-warning-color')
@@ -362,6 +371,7 @@ export default class HasAccess extends React.Component<
     if (hasUnmetAccessRequirement) {
       linkText = 'Request Access'
     } else if (RestrictionLevel.OPEN === restrictionLevel) {
+      // they need to sign in
       return <></>
     } else {
       linkText = 'View Terms'
@@ -396,18 +406,27 @@ export default class HasAccess extends React.Component<
   }
 
   render() {
-    const fileHandleDownloadType = this.state.fileHandleDownloadType
+    const { restrictionInformation, fileHandleDownloadType } = this.state
     if (typeof fileHandleDownloadType === 'undefined') {
       // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
       // loading
       return <></>
     }
-    const tooltipText = HasAccess.tooltipText[fileHandleDownloadType]
+    let tooltipText = HasAccess.tooltipText[fileHandleDownloadType]
+    if (
+      fileHandleDownloadType ===
+        FileHandleDownloadTypeEnum.AccessBlockedByACL &&
+      restrictionInformation?.hasUnmetAccessRequirement
+    ) {
+      // If blocked by ACL check if blocked by Access Restrictions, those can be taken care of
+      // though they will then be blocked by ACL afterwards.
+      tooltipText =
+        HasAccess.tooltipText[
+          FileHandleDownloadTypeEnum.AccessBlockedByRestriction
+        ]
+    }
     const entityId = this.props.entityId
-    const icon = this.renderIcon(
-      fileHandleDownloadType,
-      this.state.restrictionInformation,
-    )
+    const icon = this.renderIcon(fileHandleDownloadType, restrictionInformation)
     const viewARsLink: React.ReactElement = this.renderARsLink()
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
