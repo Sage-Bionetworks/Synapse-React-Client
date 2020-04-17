@@ -8,6 +8,7 @@ import CardContainer from 'lib/containers/CardContainer'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import { CardConfiguration } from 'lib/containers/CardContainerLogic'
 import TotalQueryResults from 'lib/containers/TotalQueryResults'
+import { act } from '@testing-library/react'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const mockGetQueryTableResultsFn = jest.fn(() =>
@@ -85,8 +86,10 @@ describe('it performs basic functionality', () => {
     const stateUpdate = {
       searchText,
     }
-    await searchWrapper.setState(stateUpdate)
-    await searchWrapper.find('form').simulate('submit')
+    await act(async () => {
+      await searchWrapper.setState(stateUpdate)
+      await searchWrapper.find('form').simulate('submit')
+    })
     expect(spyOnExecuteQueryRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         query: expect.objectContaining({
