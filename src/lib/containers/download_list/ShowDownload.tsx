@@ -21,7 +21,7 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
   const [downloadList, setDownloadList] = useState<DownloadList | undefined>(
     undefined,
   )
-  const [showDownloadModal, setShowDownloadModal] = useState(true)
+  const [showDownloadModal, setShowDownloadModal] = useState(false)
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download list.'
   useEffect(() => {
@@ -54,7 +54,8 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
     return <></>
   }
   const size = downloadList?.filesToDownload.length ?? 0
-  if (size === 0) {
+  if (size === 0 && !showDownloadModal) {
+    // close only if the download modal is already closed too
     return <></>
   }
   const positionClass = to ? 'position-by-anchor' : 'position-by-button'
