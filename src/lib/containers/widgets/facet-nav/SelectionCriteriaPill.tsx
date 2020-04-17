@@ -1,23 +1,22 @@
 import * as React from 'react'
 import { FunctionComponent } from 'react'
+
 import {
   FacetColumnResult,
-  //FacetColumnResultValues,
   FacetColumnResultRange,
   FacetColumnResultValueCount,
-
- // EntityHeader,
- // UserProfile,
 } from '../../../utils/synapseTypes'
+import { unCamelCase } from '../../../utils/functions/unCamelCase'
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ElementWithTooltip } from '../ElementWithTooltip'
+import _ from 'lodash'
 
 export type FacetWithSelection = {
   facet: FacetColumnResult
   selectedValue?: FacetColumnResultValueCount
   displayValue?: string
-
 }
 
 export type SelectionCriteriaPillProps = {
@@ -25,7 +24,6 @@ export type SelectionCriteriaPillProps = {
   index: number
   className?: string
   onRemove: Function
-
 }
 
 // This is a stateful component so that during load the component can hold onto the previous
@@ -36,51 +34,37 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
 
   index,
   onRemove,
-
 }) => {
-  let innerText: string | null = ''
-  //const getInnerText = ({facet, selectedValue}: FacetWithSelection) => {
+  let innerText,
+    tooltipText: string | null = ''
   if (facet.facet.facetType === 'enumeration') {
-   /* if (facet.columnType === 'ENTITYID') {
-      const x = JSON.parse(
-        localStorage.getItem('INFO_FROM_IDS_ENTITY_HEADER') || '',
-      )
-      const entity = x.find(
-        (item: EntityHeader) => item.id === facet.selectedValue?.value,
-      ) as EntityHeader
-      innerText = entity.name
-    } else if (facet.columnType === 'USERID') {
-      const x = JSON.parse(
-        localStorage.getItem('INFO_FROM_IDS_USER_PROFILE') || '',
-      )
-      console.log(x)
-      const user = x.find(
-        (item: UserProfile) => item.ownerId === facet.selectedValue?.value,
-      ) as UserProfile
-      innerText = user?.userName
-    } else {*/
-      innerText = facet.displayValue || ''
-   // }
+    innerText = facet.displayValue || ''
   } else {
     innerText =
       (facet.facet as FacetColumnResultRange).selectedMin +
       ' - ' +
       (facet.facet as FacetColumnResultRange).selectedMax
   }
-  //}
+  tooltipText = `${unCamelCase(facet.facet.columnName)}: ${innerText}`
   return (
-    <label
-      className="SelectionCriteriaPill"
-      key={index + '__SelectionCriteriaPill'}
+    <ElementWithTooltip
+      idForToolTip={`selectionCriteria_${+index}`}
+      tooltipText={tooltipText}
+      callbackFn={() => _.noop}
     >
-      <span>{innerText}</span>
-      <button
-        onClick={() => onRemove(facet)}
-        className="SelectionCriteriaPill__btnRemove"
+      <label
+        className="SelectionCriteriaPill"
+        key={index + '__SelectionCriteriaPill'}
       >
-        <FontAwesomeIcon icon={faTimes} title="deselect" />
-      </button>
-    </label>
+        <span>{innerText}</span>
+        <button
+          onClick={() => onRemove(facet)}
+          className="SelectionCriteriaPill__btnRemove"
+        >
+          <FontAwesomeIcon icon={faTimes} title="deselect" />
+        </button>
+      </label>
+    </ElementWithTooltip>
   )
 }
 
