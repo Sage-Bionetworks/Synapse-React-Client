@@ -83,6 +83,9 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
+  const storageKey = (type: HookType) =>
+  type === 'USER_PROFILE' ? SynapseConstants.USER_PROFILE_STORAGE_KEY : SynapseConstants.ENTITY_HEADER_STORAGE_KEY
+
   // look at current list of data, see if incoming ids has new data,
   // if so grab those ids
   const curList = data.map((el) => el[idProp(type)])
@@ -116,6 +119,11 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
         } catch (error) {
           console.error('Error on data retrieval', error)
         }
+        
+      }
+
+      if(data.length > 0) {
+      localStorage.setItem(storageKey(type), JSON.stringify(data))
       }
     }
     getData()

@@ -102,7 +102,7 @@ export const applyChangesToValuesColumn = (
 }
 
 //rangeChanges
-const applyChangesToRangeColumn = (
+export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultRange,
   onChangeFn: Function,

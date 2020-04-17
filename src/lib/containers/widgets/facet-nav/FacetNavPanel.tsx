@@ -7,7 +7,9 @@ import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
+import { Dropdown } from 'react-bootstrap'
 import {
+  faChartBar,
   faExpandAlt,
   faCompressAlt,
   faTimes,
@@ -15,14 +17,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import FacetFilter from '../../table/table-top/FacetFilter'
 
-import { QueryWrapperChildProps } from 'lib/containers/QueryWrapper'
+import { QueryWrapperChildProps } from  '../../../containers/QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
-} from 'lib/utils/synapseTypes'
-import getColorPallette from 'lib/containers/ColorGradient'
+} from '../../../utils/synapseTypes'
+import getColorPallette from '../../../containers/ColorGradient'
 
-import { unCamelCase } from 'lib/utils/functions/unCamelCase'
+import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 const Plot = createPlotlyComponent(Plotly)
 
@@ -37,6 +39,8 @@ export type FacetNavPanelOwnProps = {
 }
 
 type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
+
+type PlotType = 'PIE' | 'BAR'
 
 const layout: Partial<PlotlyTyped.Layout> = {
   showlegend: false,
@@ -57,7 +61,7 @@ export type GraphData = {
   labels: string[]
   colors: string[]
 }
-/* THIS IS WIP. WILL uncomment once is gets fleshed out better
+//THIS IS WIP. WILL uncomment once is gets fleshed out better
 function extractPlotDataArrayBar(
   facetToPlot: FacetColumnResultValues,
   index: number,
@@ -90,12 +94,10 @@ function extractPlotDataArrayBar(
 
     marker: {
       color: colorPalette,
-     
-    }
+    },
   }
 
   facetToPlot.facetValues.forEach((facetValue: FacetColumnResultValueCount) => {
-
     const displayValue =
       facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
         ? 'unannotated'
@@ -120,7 +122,6 @@ function extractPlotDataArrayBar(
   }
   return result
 }
-*/
 
 function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
@@ -210,8 +211,18 @@ const applyDropdownFilter = (
   }
 }
 
-const getGraphSize = (width: number | null): string => {
-  return width ? `${width * 0.6}px` : `200px`
+const getPlotStyle = (
+  parentWidth: number | null,
+  plotType: PlotType,
+): { width: string; height: string } => {
+  const quotient = plotType === 'BAR' ? 0.8 : 0.6
+  const width = parentWidth ? parentWidth * quotient : 200
+  const height = plotType === 'PIE' ? width : width / 3
+
+  return {
+    width: `${width}px`,
+    height: `${height}px`,
+  }
 }
 const renderLegend = (
   labels: string[] = [],
@@ -241,6 +252,21 @@ const renderLegend = (
   )
 }
 
+const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
+  if (!isExpanded) {
+    return 'FacetNavPanel__body__plot'
+  }
+  return `FacetNavPanel__body__plot--expanded${
+    plotType === 'BAR' ? 'Bar' : 'Pie'
+  }`
+}
+
+/*
+const getClassNameForDiv(isExpanded: boolean = false, postfix = '', plotType: PlotType): string => {
+  const className = `FacetNavPanel__body${postfix}${isExpanded ? '--expanded' : ''}${plotType==='BAR' ? '--bar' : '--chart'}`
+  return className
+}*/
+
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   onHide,
   onExpand,
@@ -252,12 +278,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   asyncJobStatus,
   facetToPlot,
   data,
-  isLoading
+  isLoading,
 }: FacetNavPanelProps): JSX.Element => {
   const [plotData, setPlotData] = useState<GraphData>()
   const [isExpanded, setIsExpanded] = useState(false)
+  const [plotType, setPlotType] = useState<PlotType>('PIE')
 
   useEffect(() => {
+    console.log(plotType)
     if (!facetToPlot) {
       return
     } else {
@@ -270,7 +298,29 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     setIsExpanded(onCollapse !== undefined)
   }, [onCollapse])
 
- 
+  const changePlotType = (plotType: PlotType) => {
+    if (plotType === 'BAR') {
+      setPlotData(extractPlotDataArrayBar(facetToPlot, index))
+    } else {
+      setPlotData(extractPlotDataArray(facetToPlot, index))
+    }
+    setPlotType(plotType)
+  }
+
+  /* rendering functions */
+  const renderChartSelectionToggle = (): JSX.Element => (
+    <Dropdown>
+      <Dropdown.Toggle variant="light" id="plot-selector">
+        <FontAwesomeIcon icon={faChartBar} title="expand" />
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>Bar Chart
+        </Dropdown.Item>
+        <Dropdown.Item as="button" onClick={() => changePlotType('PIE')}>Pie Chart
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  )
 
   if (isLoadingNewData || !facetToPlot) {
     return (
@@ -283,8 +333,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       <div className="FacetNavPanel">
         <div className="FacetNavPanel__title">
           <span>{unCamelCase(facetToPlot.columnName)}</span>
-          {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'} />}
+          {isLoading && (
+            <span style={{ marginLeft: '2px' }} className={'spinner'} />
+          )}
           <div className="FacetNavPanel__title__tools">
+            {isExpanded && renderChartSelectionToggle()}
             <FacetFilter
               lastFacetSelection={{
                 columnName: '',
@@ -294,12 +347,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               isLoading={!!isLoading}
               className=""
               colorOnExpanded="#000"
-              applyChanges={(_: any) => (evt: React.ChangeEvent<HTMLInputElement>) =>
-                applyDropdownFilter(
-                  evt,
-                  facetToPlot,
-                  applyChanges,
-                )}
+              applyChanges={(_: any) => (
+                evt: React.ChangeEvent<HTMLInputElement>,
+              ) => applyDropdownFilter(evt, facetToPlot, applyChanges)}
               isAllFilterSelectedForFacet={
                 facetToPlot.facetValues.filter(item => item.isSelected)
                   .length === 0
@@ -322,23 +372,15 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
             </button>
           </div>
         </div>
-     
-        
+
         <div className={`FacetNavPanel__body${isExpanded ? '--expanded' : ''}`}>
           <SizeMe monitorHeight>
             {({ size }) => (
-              <div
-                className={`FacetNavPanel__body__plot${
-                  isExpanded ? '--expanded' : ''
-                }`}
-              >
+              <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
                 <Plot
                   layout={layout}
                   data={plotData?.data || []}
-                  style={{
-                    height: getGraphSize(size.width),
-                    width: getGraphSize(size.width),
-                  }}
+                  style={getPlotStyle(size.width, plotType)}
                   config={{ displayModeBar: false, responsive: true }}
                   useResizeHandler={true}
                   onClick={evt =>

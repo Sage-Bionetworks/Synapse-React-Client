@@ -1,0 +1,37 @@
+.TotalQueryResults {
+    background: $gray-light;
+/* Divider */
+
+border: 1px solid #DCDCDC;
+padding: 1.6rem 2.4rem;
+width: 100%;
+margin-bottom: 2rem;
+display: flex;
+
+&__selections {
+    display: flex
+}
+}
+
+.SelectionCriteriaPill {
+padding: 6px 12px;
+border-radius: 20px;
+margin-left: 1rem;
+font-size: 1.2rem;
+line-height: 100%;
+cursor: pointer;
+background-color: $primary-action-color !important;
+color: #fff;
+font-weight: normal;
+margin-bottom: 0;
+
+
+
+&__btnRemove {
+    float: right;
+    padding: 0;
+    margin-left: 12px;
+    font-size: 1rem;
+}
+
+}
