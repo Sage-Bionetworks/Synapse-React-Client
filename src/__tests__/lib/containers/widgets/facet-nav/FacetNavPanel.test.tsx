@@ -58,9 +58,10 @@ describe('initialization', () => {
     expect(panel).toHaveLength(1)
 
     const buttons =  container.querySelectorAll<HTMLElement>('button > svg')
-    expect(buttons.length).toBe(2)
-    expect((buttons[0].getAttribute('data-icon'))).toBe('expand-alt')
-    expect((buttons[1].getAttribute('data-icon'))).toBe('times')
+    expect(buttons.length).toBe(3)
+    expect((buttons[0].getAttribute('data-icon'))).toBe('filter')
+    expect((buttons[1].getAttribute('data-icon'))).toBe('expand-alt')
+    expect((buttons[2].getAttribute('data-icon'))).toBe('times')
 
     const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
     expect(panelBody.length).toBe(1)
@@ -83,10 +84,10 @@ describe('initialization', () => {
     expect(panel).toHaveLength(1)
 
     const buttons =  container.querySelectorAll<HTMLElement>('button > svg')
-    expect(buttons.length).toBe(2)
-
-    expect((buttons[0].getAttribute('data-icon'))).toBe('compress-alt')
-    expect((buttons[1].getAttribute('data-icon'))).toBe('times')
+    expect(buttons.length).toBe(3)
+    expect((buttons[0].getAttribute('data-icon'))).toBe('filter')
+    expect((buttons[1].getAttribute('data-icon'))).toBe('compress-alt')
+    expect((buttons[2].getAttribute('data-icon'))).toBe('times')
 
     const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
     expect(panelBody.length).toBe(0)

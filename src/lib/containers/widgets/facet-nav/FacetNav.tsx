@@ -219,7 +219,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
             </div>
           ))}
         </div>
-        <div className="FacetNav__row">
+        <div className="FacetNav__row clearfix">
           {getFacets(data).map((item, index) => (
             <div
               className="col-sm-12 col-md-6"

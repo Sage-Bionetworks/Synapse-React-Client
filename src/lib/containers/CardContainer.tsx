@@ -170,7 +170,7 @@ export class CardContainer extends React.Component<
             token={token}
             isLoading={isLoading!}
             unitDescription={unitDescription}
-            getLastQueryRequest={getLastQueryRequest}
+            lastQueryRequest={getLastQueryRequest!()}
             frontText={'Displaying'}
           />
         )}

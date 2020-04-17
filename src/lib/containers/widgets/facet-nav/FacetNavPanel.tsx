@@ -8,12 +8,12 @@ import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import {
-  faFilter,
   faExpandAlt,
   faCompressAlt,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import FacetFilter from '../../table/table-top/FacetFilter'
 
 import { QueryWrapperChildProps } from 'lib/containers/QueryWrapper'
 import {
@@ -156,7 +156,7 @@ function extractPlotDataArray(
     const displayValue =
       facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
         ? 'Unannotated'
-        : facetValue.value 
+        : facetValue.value
     singlePieChartData.labels?.push(displayValue)
     // @ts-ignore
     singlePieChartData.facetEnumerationValues.push(facetValue.value)
@@ -177,8 +177,11 @@ function extractPlotDataArray(
   return result
 }
 
-
-const applyFacetFilter = (event: PlotlyTyped.PlotMouseEvent, allFacetValues: FacetColumnResultValues, callbackApplyFn: Function) => {
+const applyFacetFilter = (
+  event: PlotlyTyped.PlotMouseEvent,
+  allFacetValues: FacetColumnResultValues,
+  callbackApplyFn: Function,
+) => {
   if (event.points && event.points[0]) {
     const plotPointData: any = event.points[0]
     const facetValueClickedValue =
@@ -186,12 +189,56 @@ const applyFacetFilter = (event: PlotlyTyped.PlotMouseEvent, allFacetValues: Fac
     const facetValueClicked = allFacetValues.facetValues.find(
       facet => facet.value === facetValueClickedValue,
     )
-    callbackApplyFn(allFacetValues, facetValueClicked)
+    callbackApplyFn(
+      allFacetValues,
+      facetValueClicked,
+      !facetValueClicked!.isSelected,
+    )
+  }
+}
+
+const applyDropdownFilter = (
+  evt: React.ChangeEvent<HTMLInputElement>,
+  allFacetValues: FacetColumnResultValues,
+  callbackApplyFn: Function,
+) => {
+  if (evt.target.value) {
+    const facetValueClicked = allFacetValues.facetValues.find(
+      facet => facet.value === evt.target.value,
+    )
+    callbackApplyFn(allFacetValues, facetValueClicked, evt.target.checked)
   }
 }
 
 const getGraphSize = (width: number | null): string => {
   return width ? `${width * 0.6}px` : `200px`
+}
+const renderLegend = (
+  labels: string[] = [],
+  colors: string[] = [],
+  isExpanded: boolean,
+): JSX.Element => {
+  const numLegendItems = isExpanded
+    ? Math.min(labels.length, 9)
+    : Math.min(labels.length, 3)
+  if (numLegendItems === 0) {
+    return <></>
+  }
+  return (
+    <div
+      className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
+    >
+      {labels.slice(0, numLegendItems).map((label, index) => (
+        <div
+          className="FacetNavPanel__body__legend__row"
+          key={`legendLabel_${index}`}
+        >
+          <div style={{ backgroundColor: colors[index] }}></div>
+          <label>{label}</label>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
@@ -205,8 +252,10 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   asyncJobStatus,
   facetToPlot,
   data,
+  isLoading
 }: FacetNavPanelProps): JSX.Element => {
   const [plotData, setPlotData] = useState<GraphData>()
+  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     if (!facetToPlot) {
@@ -217,12 +266,16 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     }
   }, [facetToPlot, data])
 
+  useEffect(() => {
+    setIsExpanded(onCollapse !== undefined)
+  }, [onCollapse])
+
+ 
 
   if (isLoadingNewData || !facetToPlot) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
-        {!!loadingScreen && loadingScreen}
-        <div>{asyncJobStatus && asyncJobStatus.progressMessage}</div>
+        {loadingScreen}
       </div>
     )
   } else {
@@ -230,31 +283,53 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       <div className="FacetNavPanel">
         <div className="FacetNavPanel__title">
           <span>{unCamelCase(facetToPlot.columnName)}</span>
+          {isLoading && <span style={{ marginLeft: '2px' }} className={'spinner'} />}
           <div className="FacetNavPanel__title__tools">
-          <FontAwesomeIcon icon={faFilter} title="filter" />
-           
-            {onExpand && (
-              <button onClick={() => onExpand(index)}>
+            <FacetFilter
+              lastFacetSelection={{
+                columnName: '',
+                facetValue: '',
+                selector: '',
+              }}
+              isLoading={!!isLoading}
+              className=""
+              colorOnExpanded="#000"
+              applyChanges={(_: any) => (evt: React.ChangeEvent<HTMLInputElement>) =>
+                applyDropdownFilter(
+                  evt,
+                  facetToPlot,
+                  applyChanges,
+                )}
+              isAllFilterSelectedForFacet={
+                facetToPlot.facetValues.filter(item => item.isSelected)
+                  .length === 0
+              }
+              facetColumnResult={facetToPlot}
+            />
+
+            {!isExpanded && (
+              <button onClick={() => onExpand!(index)}>
                 <FontAwesomeIcon icon={faExpandAlt} title="expand" />
               </button>
             )}
-            {onCollapse && (
-              <button onClick={() => onCollapse(index)}>
+            {isExpanded && (
+              <button onClick={() => onCollapse!(index)}>
                 <FontAwesomeIcon icon={faCompressAlt} title="contract" />
               </button>
             )}
             <button onClick={() => onHide(index)}>
               <FontAwesomeIcon icon={faTimes} title="collapse" />
             </button>
-            
           </div>
         </div>
-        <div className={`FacetNavPanel__body${onCollapse ? '--expanded' : ''}`}>
+     
+        
+        <div className={`FacetNavPanel__body${isExpanded ? '--expanded' : ''}`}>
           <SizeMe monitorHeight>
             {({ size }) => (
               <div
                 className={`FacetNavPanel__body__plot${
-                  onCollapse ? '--expanded' : ''
+                  isExpanded ? '--expanded' : ''
                 }`}
               >
                 <Plot
@@ -266,23 +341,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                   }}
                   config={{ displayModeBar: false, responsive: true }}
                   useResizeHandler={true}
-                  onClick={evt => applyFacetFilter(evt, facetToPlot, applyChanges)}
+                  onClick={evt =>
+                    applyFacetFilter(evt, facetToPlot, applyChanges)
+                  }
                 ></Plot>
               </div>
             )}
           </SizeMe>
-          <div
-            className={`FacetNavPanel__body__legend${
-              onCollapse ? '--expanded' : ''
-            }`}
-          >
-            {plotData?.labels.slice(0, 3).map((label, index) => (
-              <div className="FacetNavPanel__body__legend__row" key={`legendLabel_${index}`}>
-                <div style={{ backgroundColor: plotData?.colors[index] }}></div>
-                <label>{label}</label>
-              </div>
-            ))}{' '}
-          </div>
+          {renderLegend(plotData?.labels, plotData?.colors, isExpanded)}
         </div>
       </div>
     )
