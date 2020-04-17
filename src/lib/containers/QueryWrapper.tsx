@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
@@ -10,6 +9,8 @@ import {
   QueryResultBundle,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
+// import { withRouter, RouteComponentProps } from 'react-router-dom'
+
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
@@ -74,6 +75,8 @@ export type QueryWrapperChildProps = {
   hasMoreData?: boolean
 }
 
+type InternalProps = QueryWrapperProps // & RouteComponentProps
+
 /**
  * Class wraps around any Synapse views that are dependent on a query bundle
  * Those classes then take in as props:
@@ -81,16 +84,13 @@ export type QueryWrapperChildProps = {
  * @class QueryWrapper
  * @extends {React.Component}
  */
-export default class QueryWrapper extends React.Component<
-  QueryWrapperProps,
-  QueryWrapperState
-> {
+class QueryWrapper extends React.Component<InternalProps, QueryWrapperState> {
   public static defaultProps = {
     token: '',
   }
 
   private componentIndex: number
-  constructor(props: QueryWrapperProps) {
+  constructor(props: InternalProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
     this.executeQueryRequest = this.executeQueryRequest.bind(this)
@@ -136,7 +136,7 @@ export default class QueryWrapper extends React.Component<
   /**
    * @memberof QueryWrapper
    */
-  public componentDidUpdate(prevProps: QueryWrapperProps) {
+  public componentDidUpdate(prevProps: InternalProps) {
     /**
      *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
      *  sql query has changed of the component then perform an update.
@@ -154,6 +154,11 @@ export default class QueryWrapper extends React.Component<
     ) {
       this.executeInitialQueryRequest()
     }
+    // else if (prevProps.location.search !== this.props.location.search) {
+    //   // console.log('search has changed')
+    //   // console.log('prevProps.location.search = ', prevProps.location.search)
+    //   // console.log('this.props.location.search = ', this.props.location.search)
+    // }
   }
 
   /**
@@ -191,15 +196,15 @@ export default class QueryWrapper extends React.Component<
     })
 
     if (queryRequest.query) {
-      const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(queryRequest.query),
-      )
+      // const stringifiedQuery = encodeURIComponent(
+      //   JSON.stringify(queryRequest.query),
+      // )
       if (this.props.shouldDeepLink) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
-          this.componentIndex,
-          stringifiedQuery,
-        )
+        // DeepLinkingUtils.updateUrlWithNewSearchParam(
+        //   'QueryWrapper',
+        //   this.componentIndex,
+        //   stringifiedQuery,
+        // )
       }
     }
     return SynapseClient.getQueryTableResults(
@@ -371,3 +376,5 @@ export default class QueryWrapper extends React.Component<
     )
   }
 }
+
+export default QueryWrapper

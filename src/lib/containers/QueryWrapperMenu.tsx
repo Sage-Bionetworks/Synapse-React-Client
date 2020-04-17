@@ -11,6 +11,7 @@ import { unCamelCase } from '../utils/functions/unCamelCase'
 import CardContainer from './CardContainer'
 import { CardConfiguration } from './CardContainerLogic'
 import { StackedBarChartProps } from './StackedBarChart'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import {
   isGroupByInSql,
   insertConditionsFromSearchParams,
@@ -31,6 +32,7 @@ library.add(faSearch)
 type MenuState = {
   activeMenuIndices: number[]
   accordionGroupIndex: number
+  lastPathname: string
 }
 
 export type MenuConfig = {
@@ -89,21 +91,20 @@ type Info = {
   hoverWhiteTextClass?: string
 }
 
-export default class QueryWrapperMenu extends React.Component<
-  QueryWrapperMenuProps,
-  MenuState
-> {
-  constructor(props: QueryWrapperMenuProps) {
+type InternalProps = QueryWrapperMenuProps & RouteComponentProps
+
+class QueryWrapperMenu extends React.Component<InternalProps, MenuState> {
+  constructor(props: InternalProps) {
     super(props)
     // See note about initializing props from state here
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
     const { searchParams, accordionConfig, menuConfig } = this.props
     let activeMenuIndices = []
-    let accordionGroupIndex = searchParams?.menuIndex
+    const accordionGroupIndex = searchParams?.menuIndex
       ? Number.parseInt(searchParams?.menuIndex) || 0
       : 0
     const facetIndexFromFacetSearchParam = menuConfig?.findIndex(
-      el => el.facet && el.facet === searchParams?.facet,
+      (el) => el.facet && el.facet === searchParams?.facet,
     )
     const usedFacetIndex =
       facetIndexFromFacetSearchParam === -1 ? 0 : facetIndexFromFacetSearchParam
@@ -116,6 +117,7 @@ export default class QueryWrapperMenu extends React.Component<
     this.state = {
       activeMenuIndices,
       accordionGroupIndex,
+      lastPathname: '',
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -126,7 +128,7 @@ export default class QueryWrapperMenu extends React.Component<
     this.getTableLoadingScreen = this.getTableLoadingScreen.bind(this)
   }
 
-  componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
+  componentDidUpdate(prevProps: InternalProps, _prevState: MenuState) {
     /*
       Update the row count or the menu index if the props changed by looking at whether the sql or the rgbIndex
       changed
@@ -141,6 +143,12 @@ export default class QueryWrapperMenu extends React.Component<
         activeMenuIndices,
         accordionGroupIndex: 0,
       })
+    }
+
+    if (prevProps.location.search !== this.props.location.search) {
+      console.log('search has changed')
+      console.log('prevProps.location.search = ', prevProps.location.search)
+      console.log('this.props.location.search = ', this.props.location.search)
     }
   }
 
@@ -292,7 +300,7 @@ export default class QueryWrapperMenu extends React.Component<
       accordionConfig = [],
       facetAliases = {},
       entityId,
-      shouldDeepLink
+      shouldDeepLink,
     } = this.props
     const {
       cardConfiguration,
@@ -357,7 +365,7 @@ export default class QueryWrapperMenu extends React.Component<
         stackedBarChartConfiguration,
         tableConfiguration,
       )
-      let initQueryRequest: QueryBundleRequest = {
+      const initQueryRequest: QueryBundleRequest = {
         partMask,
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         entityId,
@@ -449,9 +457,6 @@ export default class QueryWrapperMenu extends React.Component<
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
     if (facet) {
       partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_FACETS
-    } else {
-      // Needed to calculate the total count for TotalQueryResults
-      partMask = partMask | SynapseConstants.BUNDLE_MASK_QUERY_COUNT
     }
     // note: COLUMN_MODELS unnecessary for Synapse Table link for aggregate functions since we now rely on the sql parser to distinguish.
     return partMask
@@ -683,3 +688,5 @@ export default class QueryWrapperMenu extends React.Component<
     })
   }
 }
+
+export default withRouter(QueryWrapperMenu)
