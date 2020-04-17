@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Dropdown } from 'react-bootstrap'
+import { Dropdown} from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   FacetColumnResultValues,
@@ -15,6 +15,9 @@ type FacetFilterProps = {
   applyChanges: Function
   lastFacetSelection: FacetSelection
   isLoading: boolean
+  className?: string
+  variant?: 'light'|'dark'|'primary'
+  colorOnExpanded?: string
 }
 
 type FacetFilterState = {
@@ -68,17 +71,20 @@ export default class FacetFilter extends React.Component<
       applyChanges,
       isLoading,
       lastFacetSelection,
+      className = 'SRC-primary-text-color SRC-primary-background-color-hover condenced',
+      colorOnExpanded= 'white',
+      variant = 'light'
     } = this.props
     const { columnName } = facetColumnResult
     const { show } = this.state
-    const color = show ? 'white' : ''
+    const color = show ? colorOnExpanded : ''
     const allRef: React.Ref<HTMLInputElement> = React.createRef()
     return (
       <Dropdown show={show} onToggle={this.onToggle}>
         <Dropdown.Toggle
-          className="SRC-primary-text-color SRC-primary-background-color-hover condenced"
+          className={className}
           id={facetColumnResult.columnName}
-          variant={'light'}
+          variant={variant}
         >
           <FontAwesomeIcon
             style={{ margin: 'auto' }}
@@ -148,11 +154,11 @@ export default class FacetFilter extends React.Component<
                       <label className="dropdownList SRC-overflowWrap SRC-base-font SRC-fullWidth">
                         <input
                           ref={inputRef}
-                          onChange={applyChanges({
+                          onChange={(event) => applyChanges({
                             ref: this.ref,
                             columnName,
                             facetValue,
-                          })}
+                          })(event)}
                           checked={isValueSelected}
                           className="SRC-facet-checkboxes"
                           type="checkbox"

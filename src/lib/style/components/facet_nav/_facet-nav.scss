@@ -1,0 +1,15 @@
+.FacetNav {
+    margin-bottom: 40px;
+
+    &__row {
+        background-color: #fff;
+
+        div[class*=" col-"] {
+            min-height: 200px
+        }
+    }
+
+   &__showMore {
+       float:right
+   }
+}

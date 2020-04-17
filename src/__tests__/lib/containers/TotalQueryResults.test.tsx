@@ -19,7 +19,8 @@ describe('it works', () => {
   const mockQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: '',
-    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+    SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
     query: {
       sql: '',
     },
@@ -32,7 +33,7 @@ describe('it works', () => {
       queryResults: {} as RowSet,
     },
   }
-  const getLastQueryRequest = jest.fn().mockReturnValue(mockQueryRequest)
+  const lastQueryRequest = mockQueryRequest
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   const mockGetQueryTableResultsFn = jest
     .fn()
@@ -44,7 +45,7 @@ describe('it works', () => {
     unitDescription,
     isLoading: false,
     token: '',
-    getLastQueryRequest,
+    lastQueryRequest,
     frontText: 'Displaying',
   }
   it('renders without crashing', () => {
@@ -60,7 +61,8 @@ describe('it works', () => {
     )
     expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
       expect.objectContaining({
-        partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+        partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+        SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
       }),
       '',
     )

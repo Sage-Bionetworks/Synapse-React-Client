@@ -330,7 +330,7 @@ export default class SynapseTable extends React.Component<
                 isLoading={isLoading}
                 style={{ fontSize: 15 }}
                 unitDescription={unitDescription}
-                getLastQueryRequest={this.props.getLastQueryRequest}
+                lastQueryRequest={this.props.getLastQueryRequest!()}
                 token={token}
                 frontText={'Showing'}
               />
