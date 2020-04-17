@@ -33,7 +33,7 @@ describe('it works', () => {
       queryResults: {} as RowSet,
     },
   }
-  const getLastQueryRequest = jest.fn().mockReturnValue(mockQueryRequest)
+  const lastQueryRequest = mockQueryRequest
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   const mockGetQueryTableResultsFn = jest
     .fn()
@@ -43,9 +43,9 @@ describe('it works', () => {
   const unitDescription = 'units'
   const props: TotalQueryResultsProps = {
     unitDescription,
-    isLoading: true,
+    isLoading: false,
     token: '',
-    getLastQueryRequest,
+    lastQueryRequest,
     frontText: 'Displaying',
   }
   it('renders without crashing', () => {

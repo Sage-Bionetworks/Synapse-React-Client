@@ -1,11 +1,13 @@
 import * as React from 'react'
 import { QueryBundleRequest } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
   style?: React.CSSProperties
-  getLastQueryRequest: (() => QueryBundleRequest) | undefined
+  //getLastQueryRequest: (() => QueryBundleRequest) | undefined
+  lastQueryRequest: QueryBundleRequest 
   token: string | undefined
   unitDescription: string
   frontText: string
@@ -18,23 +20,24 @@ const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> = ({
   style,
   unitDescription,
   frontText,
-  getLastQueryRequest,
+  //getLastQueryRequest,
+  lastQueryRequest,
   token,
   isLoading: parentLoading,
 }) => {
   const [total, setTotal] = React.useState(0)
   const [isLoading, setIsLoading] = React.useState(false)
 
-  React.useEffect(() => {
+  useDeepCompareEffect(() => {
     const calculateTotal = async () => {
-      const queryRequest = getLastQueryRequest!()
-      queryRequest.partMask =
+     // const lastQueryRequest = getLastQueryRequest!()
+      lastQueryRequest.partMask =
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS
 
-      if (parentLoading) {
+      if (!parentLoading) {
         setIsLoading(true)
-        SynapseClient.getQueryTableResults(queryRequest, token)
+        SynapseClient.getQueryTableResults(lastQueryRequest, token)
           .then(data => {
             setTotal(data.queryCount!)
           })
@@ -47,7 +50,7 @@ const TotalQueryResults: React.FunctionComponent<TotalQueryResultsProps> = ({
       }
     }
     calculateTotal()
-  }, [parentLoading, token, getLastQueryRequest])
+  }, [parentLoading, token, lastQueryRequest])
 
   return (
     <div
