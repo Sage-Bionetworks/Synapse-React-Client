@@ -10,11 +10,12 @@
       text-align: right;
       display: flex;
 
-      .show button.dropdown-toggle, button.dropdown-toggle:hover {
+      .show button.dropdown-toggle,
+      button.dropdown-toggle:hover {
         background: transparent;
-  
-        color:inherit;
-    }
+
+        color: inherit;
+      }
     }
   }
   &__body {
@@ -27,10 +28,8 @@
       position: relative;
     }
     &__plot {
-  
       width: 50%;
-      &--expandedPie{
- 
+      &--expandedPie {
         width: 50%;
         margin: 0 auto;
         .js-plotly-plot {
@@ -41,7 +40,7 @@
     &__legend {
       width: 50%;
       align-self: center;
-  
+
       &--expanded {
         position: absolute;
         right: 0;

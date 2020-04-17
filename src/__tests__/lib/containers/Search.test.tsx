@@ -25,8 +25,6 @@ const searchable = [
   },
 ]
 
-
-
 const createMountedComponent = () => {
   const genericCardSchema: GenericCardSchema = {
     title: 'Title',
@@ -70,15 +68,15 @@ const createMountedComponent = () => {
 }
 
 describe('it performs basic functionality', () => {
-  it('renders without crashing and displays correctly', async() => {
+  it('renders without crashing and displays correctly', async () => {
     const { wrapper } = createMountedComponent()
     await act(async () => {
-    expect(wrapper).toBeDefined()
-    const searchWrapper = wrapper.find(Search)
-    expect(searchWrapper).toHaveLength(1)
-    expect(wrapper.find('input').props().placeholder).toEqual(
-      `e.g. "${searchable[0].hintText}"`,
-    )
+      expect(wrapper).toBeDefined()
+      const searchWrapper = wrapper.find(Search)
+      expect(searchWrapper).toHaveLength(1)
+      expect(wrapper.find('input').props().placeholder).toEqual(
+        `e.g. "${searchable[0].hintText}"`,
+      )
     })
   })
   it('queries correctly', async () => {
@@ -107,19 +105,18 @@ describe('it performs basic functionality', () => {
     )
     const searchLabel = `Displaying 59 studies containing "${searchText}" in Data Status`
     expect(searchWrapper.find(TotalQueryResults).text()).toContain(searchLabel)
-    })
   })
-  it('handles special characters correctly', () => {
-    const withQuote = "that's"
-    const withEscapedQuote = "that''s"
-    expect(Search.addEscapeCharacters(withQuote)).toEqual(withEscapedQuote)
-    const withPercent = '100%'
-    const withEscapedPercent = '100%'
-    expect(Search.addEscapeCharacters(withPercent)).toContain(withEscapedPercent)
-    const withBackSlash = `he\\o`
-    const withEscapedBackSlash = 'he\\\\o'
-    expect(Search.addEscapeCharacters(withBackSlash)).toContain(
-      withEscapedBackSlash,
-    )
-  })
-
+})
+it('handles special characters correctly', () => {
+  const withQuote = "that's"
+  const withEscapedQuote = "that''s"
+  expect(Search.addEscapeCharacters(withQuote)).toEqual(withEscapedQuote)
+  const withPercent = '100%'
+  const withEscapedPercent = '100%'
+  expect(Search.addEscapeCharacters(withPercent)).toContain(withEscapedPercent)
+  const withBackSlash = `he\\o`
+  const withEscapedBackSlash = 'he\\\\o'
+  expect(Search.addEscapeCharacters(withBackSlash)).toContain(
+    withEscapedBackSlash,
+  )
+})

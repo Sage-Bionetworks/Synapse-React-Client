@@ -16,13 +16,15 @@ const createMountedComponent = async (props: TotalQueryResultsProps) => {
   return { wrapper }
 }
 
-
-const actions = async (wrapper: { update: () => void }, _actions: () => void) => {
+const actions = async (
+  wrapper: { update: () => void },
+  _actions: () => void,
+) => {
   await act(async () => {
-    await (new Promise(resolve => setTimeout(resolve, 0)));
-    _actions();
-    wrapper.update();
-  });
+    await new Promise(resolve => setTimeout(resolve, 0))
+    _actions()
+    wrapper.update()
+  })
 }
 
 describe('it works', () => {
@@ -73,7 +75,7 @@ describe('it works', () => {
           'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
         columnName: 'dataStatus',
         facetType: 'enumeration',
-         // @ts-ignore
+        // @ts-ignore
         facetValues: [
           { value: 'Published', count: 11, isSelected: false },
           { value: 'None', count: 9, isSelected: false },
@@ -85,7 +87,6 @@ describe('it works', () => {
     queryResult: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
       queryResults: {} as RowSet,
-    
     },
   }
 
@@ -104,10 +105,10 @@ describe('it works', () => {
     lastQueryRequest,
     frontText: 'Displaying',
   }
-  it('renders without crashing', async() => {
+  it('renders without crashing', async () => {
     const { wrapper } = await createMountedComponent(props)
     await actions(wrapper, () => {
-    expect(wrapper).toBeDefined()
+      expect(wrapper).toBeDefined()
     })
   })
 
@@ -115,21 +116,18 @@ describe('it works', () => {
     mockGetQueryTableResultsFn.mockClear()
     const { wrapper } = await createMountedComponent(props)
     await actions(wrapper, () => {
-      console.log(wrapper.find('.SRC-boldText').text())
-   
-    expect(wrapper.find('.SRC-boldText').text()).toContain(
-      `${displayText} ${mockQueryReturn.queryCount} ${unitDescription} `,
-    )
-    console.log(wrapper.find('.SRC-boldText').text())
-    expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS,
-      }),
-      '',
-    )
+      expect(wrapper.find('.SRC-boldText').text()).toContain(
+        `${displayText} ${mockQueryReturn.queryCount} ${unitDescription} `,
+      )
+      expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          partMask:
+            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS,
+        }),
+        '',
+      )
+    })
   })
-})
 })

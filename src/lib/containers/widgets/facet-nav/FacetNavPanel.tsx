@@ -17,7 +17,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import FacetFilter from '../../table/table-top/FacetFilter'
 
-import { QueryWrapperChildProps } from  '../../../containers/QueryWrapper'
+import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
@@ -259,12 +259,6 @@ const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
   }`
 }
 
-/*
-const getClassNameForDiv(isExpanded: boolean = false, postfix = '', plotType: PlotType): string => {
-  const className = `FacetNavPanel__body${postfix}${isExpanded ? '--expanded' : ''}${plotType==='BAR' ? '--bar' : '--chart'}`
-  return className
-}*/
-
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   onHide,
   onExpand,
@@ -311,9 +305,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         <FontAwesomeIcon icon={faChartBar} title="expand" />
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>Bar Chart
+        <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
+          Bar Chart
         </Dropdown.Item>
-        <Dropdown.Item as="button" onClick={() => changePlotType('PIE')}>Pie Chart
+        <Dropdown.Item as="button" onClick={() => changePlotType('PIE')}>
+          Pie Chart
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>

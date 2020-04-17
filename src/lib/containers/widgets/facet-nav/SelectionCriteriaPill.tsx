@@ -7,7 +7,6 @@ import {
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'

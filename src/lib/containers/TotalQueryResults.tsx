@@ -6,7 +6,6 @@ import {
   EntityHeader,
   UserProfile,
   FacetColumnResult,
- 
   ColumnModel,
 } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../'
@@ -40,7 +39,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   style,
   unitDescription,
   frontText,
-  //getLastQueryRequest,
   lastQueryRequest,
   token,
   isLoading: parentLoading,
@@ -85,6 +83,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       return []
     }
   }
+
   const getStoredUserProfiles = (): UserProfile[] => {
     try {
       const lookUpUserIds: UserProfile[] = JSON.parse(
@@ -118,13 +117,11 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   ): FacetWithSelection[] => {
     const lookUpEntityHeaders = getStoredEntityHeaders()
     const lookUpUserProfiles = getStoredUserProfiles()
-
     let filteredEnumWithSelectedValuesOnly: FacetWithSelection[] = []
     facets.forEach(facet => {
       const columnModel = columnModels.find(
         model => model.name === facet.columnName,
       )
-
       facet.facetValues.forEach(facetValue => {
         if (facetValue.isSelected) {
           let displayValue = facetValue.value
@@ -215,11 +212,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   }
 
   return (
-    <div
-      className="TotalQueryResults"
-      style={style}
-    ><span className="SRC-boldText SRC-text-title SRC-centerContent">
-      {frontText} {total} {unitDescription} </span>
+    <div className="TotalQueryResults" style={style}>
+      <span className="SRC-boldText SRC-text-title SRC-centerContent">
+        {frontText} {total} {unitDescription}{' '}
+      </span>
       <div className="TotalQueryResults__selections">
         {selectedFacets.map((facet, index) => (
           <SelectionCriteriaPill
