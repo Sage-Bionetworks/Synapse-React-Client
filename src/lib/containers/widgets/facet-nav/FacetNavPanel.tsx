@@ -66,8 +66,6 @@ function extractPlotDataArrayBar(
   facetToPlot: FacetColumnResultValues,
   index: number,
 ) {
-  //console.log(facetToPlot.columnName, 'getting data1')
-
   const { colorPalette } = getColorPallette(
     index,
     facetToPlot.facetValues.length,
@@ -285,7 +283,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const [plotType, setPlotType] = useState<PlotType>('PIE')
 
   useEffect(() => {
-    console.log(plotType)
     if (!facetToPlot) {
       return
     } else {

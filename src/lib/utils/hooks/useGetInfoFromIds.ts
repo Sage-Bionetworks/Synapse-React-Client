@@ -121,7 +121,8 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
         }
         
       }
-
+      // agendel TODO - this should be an addition not a replacement.
+      // Also - this function should probably check the storage before making the backend call.
       if(data.length > 0) {
       localStorage.setItem(storageKey(type), JSON.stringify(data))
       }

@@ -216,10 +216,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
 
   return (
     <div
-      className="TotalQueryResults SRC-boldText SRC-text-title SRC-centerContent"
+      className="TotalQueryResults"
       style={style}
-    >
-      {frontText} {total} {unitDescription}
+    ><span className="SRC-boldText SRC-text-title SRC-centerContent">
+      {frontText} {total} {unitDescription} </span>
       <div className="TotalQueryResults__selections">
         {selectedFacets.map((facet, index) => (
           <SelectionCriteriaPill

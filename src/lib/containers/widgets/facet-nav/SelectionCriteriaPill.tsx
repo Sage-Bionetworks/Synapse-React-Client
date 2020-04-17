@@ -26,12 +26,8 @@ export type SelectionCriteriaPillProps = {
   onRemove: Function
 }
 
-// This is a stateful component so that during load the component can hold onto the previous
-// total instead of showing 0 results for the intermittent loading state.
-
 const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
   facet,
-
   index,
   onRemove,
 }) => {
