@@ -252,10 +252,10 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
             </div>
           ))}
         </div>
-        <div>
+        <div className="clearfix">
           {getShowMoreState() !== 'NONE' && (
             <button
-              className="btn btn-primary FacetNav__showMore"
+              className="btn btn-default FacetNav__showMore"
               onClick={() => showMore(getShowMoreState() === 'MORE')}
             >
               {getShowMoreState() === 'LESS' ? 'Show Less' : 'Show More'}

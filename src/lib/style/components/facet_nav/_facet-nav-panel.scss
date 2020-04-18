@@ -1,8 +1,9 @@
 .FacetNavPanel {
+  padding: 10px 0;
   &__title {
     font-size: 16px;
     padding-bottom: 10;
-    border-bottom: 1px solid #9e9e9e2b;
+    border-bottom: 1px solid $gray-dark;
     display: flex;
     &__tools {
       margin-left: auto;
@@ -63,5 +64,9 @@
         font-weight: normal;
       }
     }
+  }
+
+  &--expanded  {
+    padding: 15px;
   }
 }

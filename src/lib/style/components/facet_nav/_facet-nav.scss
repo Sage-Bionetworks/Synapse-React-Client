@@ -1,5 +1,6 @@
 .FacetNav {
-    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border: 1px solid $gray-dark;
 
     &__row {
         background-color: #fff;
@@ -10,6 +11,9 @@
     }
 
    &__showMore {
-       float:right
+       float:right;
+       
+       margin-right:15px;
+       margin-top:15px;
    }
 }

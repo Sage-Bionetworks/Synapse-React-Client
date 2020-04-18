@@ -320,7 +320,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     )
   } else {
     return (
-      <div className="FacetNavPanel">
+      <div className={`FacetNavPanel${isExpanded? '--expanded':  ''}`}>
         <div className="FacetNavPanel__title">
           <span>{unCamelCase(facetToPlot.columnName)}</span>
           {isLoading && (
