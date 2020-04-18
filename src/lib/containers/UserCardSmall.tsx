@@ -15,6 +15,7 @@ export type UserCardSmallProps = {
   hideText?: boolean
   hideTooltip?: boolean
   link?: string
+  extraSmall?: boolean
 }
 
 export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
@@ -23,6 +24,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   hideTooltip = false,
   preSignedURL,
   link,
+  extraSmall = false,
 }) => {
   const linkLocation = link
     ? link
@@ -47,11 +49,14 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     }
   }
 
+  const imgClassName = `SRC-userImgSmall ${extraSmall ? 'extraSmall' : ''} ${
+    preSignedURL ? '' : 'SRC-centerContentInline'
+  } `
   if (preSignedURL) {
     marginLeft = '3px'
     img = (
       <div
-        className="SRC-userImgSmall"
+        className={imgClassName}
         style={{ backgroundImage: `url(${preSignedURL})` }}
         data-for={label}
         data-tip={label}
@@ -61,10 +66,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     const color = getColor(userProfile.userName)
     marginLeft = '3px'
     img = (
-      <div
-        style={{ background: color }}
-        className="SRC-userImgSmall SRC-centerContentInline"
-      >
+      <div style={{ background: color }} className={imgClassName}>
         {(userProfile.firstName && userProfile.firstName[0]) ||
           userProfile.userName[0]}
       </div>
@@ -73,7 +75,9 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   return (
     <a
       href={linkLocation}
-      className="SRC-userCard UserCardSmall SRC-primary-text-color SRC-no-underline-on-hover"
+      className={
+        'SRC-userCard UserCardSmall SRC-primary-text-color SRC-no-underline-on-hover '
+      }
     >
       {img}
       <ReactTooltip delayShow={1000} id={label} multiline={true} />

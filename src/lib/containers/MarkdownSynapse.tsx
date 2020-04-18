@@ -256,7 +256,7 @@ export default class MarkdownSynapse extends React.Component<
       HTMLElement
     >('[id^="mathjax-"]')
     // go through all obtained elements and transform them with katex
-    mathExpressions.forEach(element => {
+    mathExpressions.forEach((element) => {
       element.textContent &&
         katex.render(element.textContent, element, {
           // @ts-ignore
@@ -285,6 +285,9 @@ export default class MarkdownSynapse extends React.Component<
    */
   public async getWikiPageMarkdown() {
     const { ownerId, wikiId = '', token, objectType } = this.props
+    if (!ownerId && !wikiId) {
+      return
+    }
     try {
       const wikiPage = await SynapseClient.getEntityWiki(
         token,
@@ -321,10 +324,10 @@ export default class MarkdownSynapse extends React.Component<
       wikiId,
       objectType,
     )
-      .then(data => {
+      .then((data) => {
         return data
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           errorMessage: err.reason,
         })
@@ -456,8 +459,12 @@ export default class MarkdownSynapse extends React.Component<
       }
       // case 3
       // recursively render children
-      const children = Array.from(element.childNodes).map(el => {
-        return <>{this.recursiveRender(el, markdown)}</>
+      const children = Array.from(element.childNodes).map((el, index) => {
+        return (
+          <React.Fragment key={index}>
+            {this.recursiveRender(el, markdown)}
+          </React.Fragment>
+        )
       })
       // Render tagName as parent element of the children below
       return React.createElement(tagName, props, <>{children}</>)
@@ -518,7 +525,7 @@ export default class MarkdownSynapse extends React.Component<
     decodedWidgetParams
       .substring(questionIndex + 1)
       .split('&')
-      .forEach(keyPair => {
+      .forEach((keyPair) => {
         let [key, value] = keyPair.split('=')
         value = decodeURIComponent(value)
         widgetparamsMapped[key] = value

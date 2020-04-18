@@ -89,10 +89,10 @@ export default function AcceptedRequirements({
         }
 
         SynapseClient.postAccessApproval(token, accessApprovalRequest)
-          .then(_ => {
+          .then((_) => {
             setIsApproved(true)
           })
-          .catch(err => console.error('Error on post access approval: ', err))
+          .catch((err) => console.error('Error on post access approval: ', err))
       }
     }
   }
@@ -143,7 +143,7 @@ export default function AcceptedRequirements({
               View Terms
             </button>
           </p>
-          <div className={`view-terms ${isHide ? 'hide' : 'show'}`}>
+          <div className={`view-terms ${isHide ? 'hidden' : 'show'}`}>
             <RenderMarkdown />
           </div>
         </div>
