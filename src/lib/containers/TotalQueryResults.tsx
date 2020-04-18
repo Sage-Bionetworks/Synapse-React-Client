@@ -9,6 +9,7 @@ import {
   ColumnModel,
 } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../'
+import { getStoredEntityHeaders, getStoredUserProfiles } from '../utils/functions/getDataFromFromStorage'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { cloneDeep } from 'lodash-es'
 import SelectionCriteriaPill, {
@@ -71,28 +72,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       facet => facet.selectedMax || facet.selectedMin,
     )
     return rangeFacetsWithSelections
-  }
-
-  const getStoredEntityHeaders = (): EntityHeader[] => {
-    try {
-      const lookUpEntityHeaders: EntityHeader[] = JSON.parse(
-        localStorage.getItem(SynapseConstants.ENTITY_HEADER_STORAGE_KEY) || '',
-      )
-      return lookUpEntityHeaders
-    } catch (e) {
-      return []
-    }
-  }
-
-  const getStoredUserProfiles = (): UserProfile[] => {
-    try {
-      const lookUpUserIds: UserProfile[] = JSON.parse(
-        localStorage.getItem(SynapseConstants.USER_PROFILE_STORAGE_KEY) || '',
-      )
-      return lookUpUserIds
-    } catch (e) {
-      return []
-    }
   }
 
   const getDisplayValueForEntityColumn = (
@@ -219,6 +198,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       <div className="TotalQueryResults__selections">
         {selectedFacets.map((facet, index) => (
           <SelectionCriteriaPill
+          key='pill_index'
             facet={facet}
             index={index}
             onRemove={removeSelection}
