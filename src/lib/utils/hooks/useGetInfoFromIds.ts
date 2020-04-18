@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
+import { EntityHeader, Reference, ReferenceList} from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { without, chunk, uniq } from 'lodash-es'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-// import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
@@ -43,10 +42,9 @@ const getEntityHeaderItems = async (
 ): Promise<EntityHeader[]> => {
   const newData = await getEntityHeader(lookupList, token)
   const notFound = lookupList.filter(
-    (item) =>
-      newData.results.map((item) => item.id).indexOf(item.targetId) === -1,
+    item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
   )
-  const notFoundPlaceholders = notFound.map((item) => ({
+  const notFoundPlaceholders = notFound.map(item => ({
     ...entityHeaderTemplate,
     id: item.targetId,
     name: `${item.targetId}`,
@@ -61,9 +59,9 @@ const getUserProfileItems = async (
 ): Promise<UserProfile[]> => {
   const newData = await getUserProfileWithProfilePicAttached(lookupList, token)
   const notFound = lookupList.filter(
-    (item) => newData.list.map((item) => item.ownerId).indexOf(item) === -1,
+    item => newData.list.map(item => item.ownerId).indexOf(item) === -1,
   )
-  const notFoundPlaceholders = notFound.map((item) => ({
+  const notFoundPlaceholders = notFound.map(item => ({
     ...UserProfileTemplate,
     ownerId: item,
     name: `Unknown User (${item})`,
@@ -84,13 +82,39 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
 
   const storageKey = (type: HookType) =>
-  type === 'USER_PROFILE' ? SynapseConstants.USER_PROFILE_STORAGE_KEY : SynapseConstants.ENTITY_HEADER_STORAGE_KEY
+    type === 'USER_PROFILE'
+      ? SynapseConstants.USER_PROFILE_STORAGE_KEY
+      : SynapseConstants.ENTITY_HEADER_STORAGE_KEY
 
   // look at current list of data, see if incoming ids has new data,
   // if so grab those ids
-  const curList = data.map((el) => el[idProp(type)])
-  const incomingList = ids.filter((el) => el !== SynapseConstants.VALUE_NOT_SET)
+  const curList = data.map(el => el[idProp(type)])
+  const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
   const newValues = uniq(without(incomingList, ...curList))
+
+  const saveToLocalStorage = (data: T[], type: HookType) => {
+    if (!data.length) {
+      return
+    }
+    //get what's there
+    const dataInStorage = localStorage.getItem(storageKey(type))
+      try {
+        const dataInStorageAsObjectArr: T[] = dataInStorage? JSON.parse(dataInStorage) : []
+        //get an array of ids for items already in storage
+        const ids = dataInStorageAsObjectArr.map(item => item[idProp(type)])
+        //push all the new data if ids are new
+        for (const dataObject of data) {
+           if(!ids.includes( dataObject[idProp(type)]))  {
+            dataInStorageAsObjectArr.push(dataObject)
+           }
+        }
+        localStorage.setItem(storageKey(type), JSON.stringify(dataInStorageAsObjectArr))
+      } catch (e) {
+        localStorage.setItem(storageKey(type), JSON.stringify(data))
+      }
+  }
+
+  // Alina TODO: check if the items are already in Local Storage before making server call.
 
   // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes,
   // this can be solved by using the useCompare hook on the token to track when it changes
@@ -102,7 +126,7 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
           const newReferences: LookupRequestType[] =
             type === 'USER_PROFILE'
               ? newIds
-              : newIds.map((el) => ({ targetId: el }))
+              : newIds.map(el => ({ targetId: el }))
           const newReferencesChunks = chunk(newReferences, 45)
           const totalData: T[] = []
           for (const newReferences of newReferencesChunks) {
@@ -115,17 +139,12 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
                   )
             totalData.push(...(newData as T[]))
           }
-          setData((oldData) => oldData.concat(...(totalData as T[])))
+          setData(oldData => oldData.concat(...(totalData as T[])))
         } catch (error) {
           console.error('Error on data retrieval', error)
         }
-        
       }
-      // agendel TODO - this should be an addition not a replacement.
-      // Also - this function should probably check the storage before making the backend call.
-      if(data.length > 0) {
-      localStorage.setItem(storageKey(type), JSON.stringify(data))
-      }
+      saveToLocalStorage(data, type)
     }
     getData()
   }, [token, type, newValues])
