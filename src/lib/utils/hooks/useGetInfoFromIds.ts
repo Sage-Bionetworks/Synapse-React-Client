@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { EntityHeader, Reference, ReferenceList} from '../synapseTypes'
+import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
@@ -92,26 +92,31 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
   const newValues = uniq(without(incomingList, ...curList))
 
-  const saveToLocalStorage = (data: T[], type: HookType) => {
+  const saveToSessionStorage = (data: T[], type: HookType) => {
     if (!data.length) {
       return
     }
     //get what's there
-    const dataInStorage = localStorage.getItem(storageKey(type))
-      try {
-        const dataInStorageAsObjectArr: T[] = dataInStorage? JSON.parse(dataInStorage) : []
-        //get an array of ids for items already in storage
-        const ids = dataInStorageAsObjectArr.map(item => item[idProp(type)])
-        //push all the new data if ids are new
-        for (const dataObject of data) {
-           if(!ids.includes( dataObject[idProp(type)]))  {
-            dataInStorageAsObjectArr.push(dataObject)
-           }
+    const dataInStorage = sessionStorage.getItem(storageKey(type))
+    try {
+      const dataInStorageAsObjectArr: T[] = dataInStorage
+        ? JSON.parse(dataInStorage)
+        : []
+      //get an array of ids for items already in storage
+      const ids = dataInStorageAsObjectArr.map(item => item[idProp(type)])
+      //push all the new data if ids are new
+      for (const dataObject of data) {
+        if (!ids.includes(dataObject[idProp(type)])) {
+          dataInStorageAsObjectArr.push(dataObject)
         }
-        localStorage.setItem(storageKey(type), JSON.stringify(dataInStorageAsObjectArr))
-      } catch (e) {
-        localStorage.setItem(storageKey(type), JSON.stringify(data))
       }
+      sessionStorage.setItem(
+        storageKey(type),
+        JSON.stringify(dataInStorageAsObjectArr),
+      )
+    } catch (e) {
+      sessionStorage.setItem(storageKey(type), JSON.stringify(data))
+    }
   }
 
   // Alina TODO: check if the items are already in Local Storage before making server call.
@@ -144,7 +149,7 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
           console.error('Error on data retrieval', error)
         }
       }
-      saveToLocalStorage(data, type)
+      saveToSessionStorage(data, type)
     }
     getData()
   }, [token, type, newValues])

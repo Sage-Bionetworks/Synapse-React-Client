@@ -79,7 +79,7 @@ describe('initialization', () => {
         onExpand: undefined
       })
     const panel = container.querySelectorAll<HTMLElement>(
-      'div.FacetNavPanel',
+      'div.FacetNavPanel--expanded',
     )
     expect(panel).toHaveLength(1)
 
