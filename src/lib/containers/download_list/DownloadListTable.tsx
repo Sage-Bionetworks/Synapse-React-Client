@@ -250,7 +250,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               const fileResult = requestedFiles.find(
                 (fileRes) => fileRes.fileHandleId === fileHandleId,
               )
-              const fileHandle = fileResult ? fileResult.fileHandle : undefined
+              const fileHandle = fileResult?.fileHandle
               const canDownload = fileHandle !== undefined
               if (fileHandle) {
                 // fileHandle is defined, this file is downloadable, show its metadata

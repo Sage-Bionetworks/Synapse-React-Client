@@ -24,6 +24,7 @@ import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile } from '@fortawesome/free-solid-svg-icons'
+import { sortBy } from 'lodash-es'
 
 library.add(faFile)
 
@@ -50,16 +51,11 @@ export enum SUPPORTED_ACCESS_REQUIREMENTS {
 export const checkHasUnsportedRequirement = (
   accessRequirements: Array<AccessRequirement>,
 ): boolean => {
-  for (let i = 0; i < accessRequirements.length; i++) {
-    if (isARUnsupported(accessRequirements[i].concreteType)) {
-      return true
-    }
-  }
-  return false
+  return accessRequirements.filter(isARUnsupported).length > 0
 }
 
-const isARUnsupported = (accessRequirement: string) => {
-  switch (accessRequirement) {
+const isARUnsupported = (accessRequirement: AccessRequirement) => {
+  switch (accessRequirement.concreteType) {
     case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
     case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
     case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
@@ -103,33 +99,25 @@ export default function AccessRequirementList({
       })
       const accessRequirementStatuses = await Promise.all(statuses)
 
-      const sortOrder = accessRequirementStatuses
-        .sort((requirementA, requirementB) => {
-          return (
-            Number(requirementB.isApproved) - Number(requirementA.isApproved)
-          )
-        })
-        .map((status) => {
-          return parseInt(status.accessRequirementId)
-        })
+      const requirementsAndStatuses = requirements.map((req) => {
+        return {
+          accessRequirement: req,
+          accessRequirementStatus: accessRequirementStatuses.find(
+            (el) => Number(el.accessRequirementId) === req.id,
+          )!,
+        }
+      })
 
-      const requirementsAndStatuses = requirements
-        .sort((requirementA, requirementB) => {
-          return (
-            sortOrder.indexOf(requirementA.id) -
-            sortOrder.indexOf(requirementB.id)
-          )
-        })
-        .map((req) => {
-          return {
-            accessRequirement: req,
-            accessRequirementStatus: accessRequirementStatuses.find(
-              (el) => Number(el.accessRequirementId) === req.id,
-            )!,
-          }
-        })
+      const sortedRequirementsAndStatuses = sortBy(
+        requirementsAndStatuses,
+        (reqAndStatus) => {
+          // if its true then it should come first, which means that it should be higher in the list
+          // which is sorted ascendingly
+          return -1 * Number(reqAndStatus.accessRequirementStatus.isApproved)
+        },
+      )
 
-      return requirementsAndStatuses
+      return sortedRequirementsAndStatuses
     }
 
     const getAccessRequirements = async () => {
@@ -138,14 +126,11 @@ export default function AccessRequirementList({
           return
         }
         if (!accessRequirementFromProps) {
-          getAllAccessRequirements(token, entityId).then(
-            async (requirements) => {
-              const sortedAccessRequirements = await sortAccessRequirementByCompletion(
-                requirements,
-              )
-              setAccessRequirements(sortedAccessRequirements)
-            },
+          const requirements = await getAllAccessRequirements(token, entityId)
+          const sortedAccessRequirements = await sortAccessRequirementByCompletion(
+            requirements,
           )
+          setAccessRequirements(sortedAccessRequirements)
         } else {
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             accessRequirementFromProps!,

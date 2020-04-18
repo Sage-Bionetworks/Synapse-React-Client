@@ -75,7 +75,7 @@ export default function SelfSignAccessRequirementComponent({
 
             <p
               className={`self-sign-access-certified-success-text ${
-                userBundle?.isCertified ? 'show' : 'hide'
+                userBundle?.isCertified ? 'show' : 'hidden'
               }`}
             >
               You are a certified user
@@ -100,7 +100,7 @@ export default function SelfSignAccessRequirementComponent({
 
             <p
               className={`self-sign-access-verified-success-text ${
-                userBundle?.isVerified ? 'show' : 'hide'
+                userBundle?.isVerified ? 'show' : 'hidden'
               }`}
             >
               You have applied to have user profile valiadation successfully
