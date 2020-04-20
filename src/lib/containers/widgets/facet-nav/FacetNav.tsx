@@ -13,7 +13,6 @@ import { useState, useEffect } from 'react'
 import * as _ from 'lodash'
 
 export type FacetNavOwnProps = {
-  applyChanges: Function
   loadingScreen?: React.FunctionComponent | JSX.Element
   facetsToPlot?: string[] | undefined
 }

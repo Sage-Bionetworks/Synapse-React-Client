@@ -18,10 +18,11 @@ import {
 } from '../../../utils/synapseTypes'
 
 export type QueryFilterProps = {
-  applyChanges: Function
+  //applyChanges: Function
   isLoading?: boolean
   data: QueryResultBundle
   getLastQueryRequest?: Function
+  executeQueryRequest?: Function
   token: string
 }
 
@@ -119,12 +120,21 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   data,
   isLoading = false,
   getLastQueryRequest,
+  executeQueryRequest,
   token,
-  applyChanges,
 }: QueryFilterProps): JSX.Element => {
+  if (!data) {
+    return <></>
+  }
   const columnModels = data.columnModels
   const facets = data.facets as FacetColumnResult[]
   const lastRequest = getLastQueryRequest ? getLastQueryRequest() : undefined
+
+  const applyChanges = (facets: FacetColumnRequest[]) => {
+    const queryRequest: QueryBundleRequest = getLastQueryRequest!()
+    queryRequest.query.selectedFacets = facets
+    executeQueryRequest!(queryRequest)
+  }
 
   return (
     <div className="QueryFilter">
