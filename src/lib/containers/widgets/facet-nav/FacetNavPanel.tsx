@@ -83,29 +83,35 @@ function extractPlotDataArray(
     facetValues: FacetColumnResultValueCount[],
     columnType?: ColumnType,
   ): string[] => {
-    return facetValues.map(facetValue => {
-      if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-        return 'Unannotated'
-      }
+    return facetValues.map(facetValue => getLabel(facetValue, columnType))
+  }
 
-      if (columnType === 'ENTITYID') {
-        const lookup = getStoredEntityHeaders()
-       
-        return lookup.find(item => item.id === facetValue.value)?.name ||
-          facetValue.value
-        
-      }
+  const getLabel = (
+    facetValue: FacetColumnResultValueCount,
+    columnType?: ColumnType,
+  ): string => {
+    if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
+      return 'Unannotated'
+    }
 
-      if (columnType === 'USERID') {
-        const lookup = getStoredUserProfiles()
-        return (
-          lookup.find(item => item.ownerId === facetValue.value)?.userName ||
-          facetValue.value
-        )
-      }
+    if (columnType === 'ENTITYID') {
+      const lookup = getStoredEntityHeaders()
 
-      return unCamelCase(facetValue.value)!
-    })
+      return (
+        lookup.find(item => item.id === facetValue.value)?.name ||
+        facetValue.value
+      )
+    }
+
+    if (columnType === 'USERID') {
+      const lookup = getStoredUserProfiles()
+      return (
+        lookup.find(item => item.ownerId === facetValue.value)?.userName ||
+        facetValue.value
+      )
+    }
+
+    return unCamelCase(facetValue.value)!
   }
   const singleChartData: PlotlyTyped.Data = {
     values:
@@ -115,7 +121,7 @@ function extractPlotDataArray(
     labels: getLabels(facetToPlot.facetValues, columnType),
     x:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map(facet => facet.value)
+        ? facetToPlot.facetValues.map(facet => getLabel(facet, columnType))
         : undefined,
     y:
       plotType === 'BAR'
@@ -126,9 +132,12 @@ function extractPlotDataArray(
       facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
-    hovertemplate: plotType === 'PIE' ?
-      '<b>%{label}</b><br>' + '%{value} (%{percent})<br>' + '<extra></extra>' :
-      '<b>%{label}</b><br>' + '%{value} <br>' + '<extra></extra>',
+    hovertemplate:
+      plotType === 'PIE'
+        ? '<b>%{label}</b><br>' +
+          '%{value} (%{percent})<br>' +
+          '<extra></extra>'
+        : '<b>%{label}: </b><br>' + '%{value} <br>' + '<extra></extra>',
     textposition: 'inside',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
@@ -142,9 +151,12 @@ function extractPlotDataArray(
         ),
       },
     },
-    pull: plotType === 'PIE' ? (facetToPlot.facetValues.map(facetValue =>
-      facetValue.isSelected ? 0.04 : 0 )): undefined,
-    
+    pull:
+      plotType === 'PIE'
+        ? facetToPlot.facetValues.map(facetValue =>
+            facetValue.isSelected ? 0.04 : 0,
+          )
+        : undefined,
   }
 
   const result = {
@@ -153,7 +165,7 @@ function extractPlotDataArray(
     colors:
       plotType === 'PIE'
         ? (singleChartData.marker?.colors as string[])
-        : (singleChartData.marker?.color as string[])
+        : (singleChartData.marker?.color as string[]),
   }
   console.log(result)
   return result
@@ -261,7 +273,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
 
   const getColumnType = (): ColumnType | undefined =>
     data?.columnModels?.find(
-      columnModel => (columnModel.name === facetToPlot.columnName),
+      columnModel => columnModel.name === facetToPlot.columnName,
     )?.columnType as ColumnType
 
   useEffect(() => {
@@ -320,7 +332,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     )
   } else {
     return (
-      <div className={`FacetNavPanel${isExpanded? '--expanded':  ''}`}>
+      <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
         <div className="FacetNavPanel__title">
           <span>{unCamelCase(facetToPlot.columnName)}</span>
           {isLoading && (
