@@ -74,6 +74,7 @@ class QueryWrapperMenuDemo extends React.Component<
         tableConfiguration: {
           title: 'title',
           enableDownloadConfirmation: true,
+          showAccessColumn: true,
         },
         searchConfiguration: {
           searchable: [
@@ -85,8 +86,8 @@ class QueryWrapperMenuDemo extends React.Component<
         },
         menuConfig: [
           {
-            facet: 'species',
-            sql: 'SELECT id, name FROM syn11346063 LIMIT 1000',
+            facet: 'resourceType',
+            sql: 'SELECT id, name, resourceType FROM syn11346063 LIMIT 1000',
           },
           {
             facet: 'study',

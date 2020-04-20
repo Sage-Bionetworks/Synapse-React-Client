@@ -2,6 +2,7 @@ import {
   faDatabase,
   faLink,
   faUnlockAlt,
+  faLock,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { shallow } from 'enzyme'
@@ -21,7 +22,6 @@ import HasAccess, {
 import {
   mockOpenRestrictionInformation,
   mockUnmetControlledDataRestrictionInformationACT,
-  mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../../mocks/mock_has_access_data'
 import { mockFileHandle } from '../../../mocks/mock_file_handle'
 import { mockFolderEntity } from '../../../mocks/mock_folder_entity'
@@ -74,6 +74,10 @@ const props: HasAccessProps = {
 }
 
 describe('basic tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('works with open data no restrictions', async () => {
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
     SynapseClient.getFileEntityFileHandle = jest.fn(() =>
@@ -104,14 +108,12 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works with a public folder', async () => {
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFolderEntity))
-    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
-      Promise.reject('it is a folder'),
-    )
+    expect(SynapseClient.getFileEntityFileHandle).not.toHaveBeenCalled()
 
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
@@ -121,7 +123,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when an ExternalFileHandle is passed in - not in download list', async () => {
@@ -134,7 +136,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when an ExternalFileHandle is passed in - in Download List', async () => {
@@ -152,7 +154,7 @@ describe('basic tests', () => {
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when a cloud file handle is passed in - in Download List', async () => {
@@ -187,7 +189,7 @@ describe('basic tests', () => {
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when the file is too large in Download List', async () => {
@@ -205,7 +207,7 @@ describe('basic tests', () => {
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when the file is too large for Download List, but HasAccess is not in the Download List', async () => {
@@ -218,7 +220,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when download is IsOpenNoRestrictions', async () => {
@@ -241,16 +243,10 @@ describe('basic tests', () => {
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
-    // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
   })
 
-  it('works with unmet controlled access data - controlled by act', async () => {
-    SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
-      Promise.reject('unmet restriction'),
-    )
-
+  it('works with unmet controlled access data AND an UNAUTHORIZED ACL', async () => {
+    SynapseClient.getEntity = jest.fn(() => Promise.reject('UNAUTHORIZED'))
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockUnmetControlledDataRestrictionInformationACT),
     )
@@ -267,28 +263,24 @@ describe('basic tests', () => {
     expect(wrapper.instance().state.restrictionInformation).toEqual(
       mockUnmetControlledDataRestrictionInformationACT,
     )
-    // const link = wrapper.find('a')
-    // expect(link).toHaveLength(1)
-    // const icons = wrapper.find(FontAwesomeIcon)
-    // expect(icons).toHaveLength(2)
-    // expect(icons.get(1).props.icon).toEqual(faLock)
-    // const tooltipSpan = wrapper.find(
-    //   `[data-tip="${
-    //     HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlocked]
-    //   }"]`,
-    // )
-    // expect(tooltipSpan).toHaveLength(1)
-    // // no access restrictions
-    // expect(wrapper.find('a').text()).toEqual('Request Access')
+
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.get(1).props.icon).toEqual(faLock)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${
+        HasAccess.tooltipText[
+          FileHandleDownloadTypeEnum.AccessBlockedByRestriction
+        ]
+      }"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
   })
 
-  it('works with unmet controlled access data - terms of use', async () => {
-    SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
-      Promise.reject('unmet terms of use'),
-    )
+  it('works with an UNAUTHORIZED ACL but no unmet access restrictions', async () => {
+    SynapseClient.getEntity = jest.fn(() => Promise.reject('UNAUTHORIZED'))
     SynapseClient.getRestrictionInformation = jest.fn(() =>
-      Promise.resolve(mockUnmetControlledDataRestrictionInformationRestricted),
+      Promise.resolve(mockOpenRestrictionInformation),
     )
     const { wrapper } = await createShallowComponent(props)
     const request: RestrictionInformationRequest = {
@@ -300,20 +292,18 @@ describe('basic tests', () => {
       token,
     )
     expect(wrapper.instance().state.restrictionInformation).toEqual(
-      mockUnmetControlledDataRestrictionInformationRestricted,
+      mockOpenRestrictionInformation,
     )
-    // const link = wrapper.find('a')
-    // expect(link).toHaveLength(1)
-    // const icons = wrapper.find(FontAwesomeIcon)
-    // expect(icons).toHaveLength(2)
-    // expect(icons.get(1).props.icon).toEqual(faLock)
-    // const tooltipSpan = wrapper.find(
-    //   `[data-tip="${
-    //     HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlocked]
-    //   }"]`,
-    // )
-    // expect(tooltipSpan).toHaveLength(1)
-    // // no access restrictions
-    // expect(wrapper.find('a').text()).toEqual('Request Access')
+
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.get(1).props.icon).toEqual(faLock)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlockedByACL]
+      }"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 })

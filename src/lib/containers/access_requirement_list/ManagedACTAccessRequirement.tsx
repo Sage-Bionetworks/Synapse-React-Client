@@ -1,30 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import {
   ManagedACTAccessRequirement,
-  UserProfile,
   WikiPageKey,
-  AccessRequirementStatus,
 } from '../../utils/synapseTypes'
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
-
-type ManagedACTAccessRequirementProps = {
-  accessRequirement: ManagedACTAccessRequirement
-  token: string | undefined
-  user: UserProfile | undefined
-  onHide?: Function
-}
+import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function ManagedACTAccessRequirementComponent({
   accessRequirement,
   token,
   user,
   onHide,
-}: ManagedACTAccessRequirementProps) {
+  accessRequirementStatus,
+}: AccessRequirementProps<ManagedACTAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
-  const [accessRequirementStatus, setAccessRequirementStatus] = useState<
-    AccessRequirementStatus
-  >()
 
   useEffect(() => {
     const getManagedACTAccessData = async () => {
@@ -34,12 +24,6 @@ export default function ManagedACTAccessRequirementComponent({
           accessRequirement.id,
         )
         setWikiPage(wikipageRequirement)
-
-        const accessRequirementStatus = await SynapseClient.getAccessRequirementStatus(
-          token,
-          accessRequirement.id,
-        )
-        setAccessRequirementStatus(accessRequirementStatus)
       } catch (err) {
         console.error('Error on get ManagedACTAccessRequirement', err)
       }

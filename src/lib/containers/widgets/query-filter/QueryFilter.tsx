@@ -75,7 +75,7 @@ const patchRequestFacets = (
   return selections
 }
 
-const applyChangesToValuesColumn = (
+export const applyChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
 
   facet: FacetColumnResultValues,
@@ -102,7 +102,7 @@ const applyChangesToValuesColumn = (
 }
 
 //rangeChanges
-const applyChangesToRangeColumn = (
+export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultRange,
   onChangeFn: Function,

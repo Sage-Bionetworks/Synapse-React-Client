@@ -1,0 +1,72 @@
+.FacetNavPanel {
+  padding: 10px 0;
+  &__title {
+    font-size: 16px;
+    padding-bottom: 10;
+    border-bottom: 1px solid $gray-dark;
+    display: flex;
+    &__tools {
+      margin-left: auto;
+      order: 2;
+      text-align: right;
+      display: flex;
+
+      .show button.dropdown-toggle,
+      button.dropdown-toggle:hover {
+        background: transparent;
+
+        color: inherit;
+      }
+    }
+  }
+  &__body {
+    display: flex;
+    padding: 20px 0;
+    &--expanded {
+      display: block;
+      padding: 20px 0 40px 0;
+      text-align: center;
+      position: relative;
+    }
+    &__plot {
+      width: 50%;
+      &--expandedPie {
+        width: 50%;
+        margin: 0 auto;
+        .js-plotly-plot {
+          margin: 0 auto;
+        }
+      }
+    }
+    &__legend {
+      width: 50%;
+      align-self: center;
+
+      &--expanded {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+    &__legend__row {
+      display: flex;
+      margin: 5px 0;
+
+      div {
+        width: 14px;
+        height: 14px;
+        margin-right: 5px;
+        flex-shrink: 0;
+      }
+      label {
+        line-height: 14px;
+        font-weight: normal;
+      }
+    }
+  }
+
+  &--expanded  {
+    padding: 15px;
+  }
+}

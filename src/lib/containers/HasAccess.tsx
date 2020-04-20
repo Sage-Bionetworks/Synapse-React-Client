@@ -24,19 +24,24 @@ import {
   AccessRequirement,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
-import AccessRequirementList from './access_requirement_list/AccessRequirementList' // checkUnSupportedRequirement,
+import AccessRequirementList, {
+  checkHasUnsportedRequirement,
+  AccessRequirementListProps,
+} from './access_requirement_list/AccessRequirementList'
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
 library.add(faCircle)
 
 export type HasAccessProps = {
+  onHide?: Function
   fileHandle?: FileHandle
   entityId: string
   isInDownloadList?: boolean // set to show errors in UI about package creation
   entityVersionNumber?: string
   token?: string
   forceSamePage?: boolean
+  set_arPropsFromHasAccess?: (props: AccessRequirementListProps) => void
 }
 
 type HasAccessState = {
@@ -65,7 +70,8 @@ export enum FileHandleDownloadTypeEnum {
   ExternalFileLink = 'ExternalFileLink',
   TooLarge = 'TooLarge',
   Accessible = 'Accessible',
-  AccessBlocked = 'AccessBlocked',
+  AccessBlockedByRestriction = 'AccessBlockedByRestriction',
+  AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   NoFileHandle = 'NoFileHandle',
 }
@@ -114,8 +120,11 @@ export default class HasAccess extends React.Component<
   public static tooltipText = {
     [FileHandleDownloadTypeEnum.AccessBlockedToAnonymous]:
       'You must sign in to access this file.',
-    [FileHandleDownloadTypeEnum.AccessBlocked]:
+    // Note AccessBlockedByRestriction is never explicitly set, its value is calculated
+    [FileHandleDownloadTypeEnum.AccessBlockedByRestriction]:
       'You must request access to this restricted file.',
+    [FileHandleDownloadTypeEnum.AccessBlockedByACL]:
+      'You do not have download access for this item.',
     [FileHandleDownloadTypeEnum.TooLarge]:
       'This file is too large to download as a package and must be downloaded manually.',
     [FileHandleDownloadTypeEnum.ExternalFileLink]:
@@ -132,11 +141,8 @@ export default class HasAccess extends React.Component<
       this,
     )
 
-    const fileHandleDownloadType = props.fileHandle
-      ? getDownloadTypeForFileHandle(props.fileHandle, props.isInDownloadList)
-      : undefined
     this.state = {
-      fileHandleDownloadType,
+      fileHandleDownloadType: undefined,
       displayAccessRequirement: false,
       accessRequirements: [],
       isGettingEntityInformation: false,
@@ -166,15 +172,37 @@ export default class HasAccess extends React.Component<
     this.getFileEntityFileHandle(forceRefresh)
   }
 
+  updateStateFileHandleAccessBlocked = () => {
+    const { token } = this.props
+    const fileHandleDownloadType = token
+      ? FileHandleDownloadTypeEnum.AccessBlockedByACL
+      : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
+    this.setState({
+      fileHandleDownloadType,
+    })
+  }
+
   getFileEntityFileHandle = (forceRefresh?: boolean) => {
     const {
       entityId,
       entityVersionNumber,
       token,
       isInDownloadList,
+      fileHandle,
     } = this.props
+
     if (this.state.fileHandleDownloadType && !forceRefresh) {
       // already know the downloadType
+      return
+    }
+    if (fileHandle) {
+      const fileHandleDownloadType = getDownloadTypeForFileHandle(
+        fileHandle,
+        isInDownloadList,
+      )
+      this.setState({
+        fileHandleDownloadType,
+      })
       return
     }
     this.setState({
@@ -186,32 +214,25 @@ export default class HasAccess extends React.Component<
       .then((entity) => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
-          SynapseClient.getFileEntityFileHandle(entity as FileEntity, token)
-            .then((fileHandle: FileHandle) => {
-              const fileHandleDownloadType = getDownloadTypeForFileHandle(
-                fileHandle,
-                isInDownloadList,
-              )
-              this.setState({
-                fileHandleDownloadType,
-              })
+          return SynapseClient.getFileEntityFileHandle(
+            entity as FileEntity,
+            token,
+          ).then((fileHandle: FileHandle) => {
+            const fileHandleDownloadType = getDownloadTypeForFileHandle(
+              fileHandle,
+              isInDownloadList,
+            )
+            this.setState({
+              fileHandleDownloadType,
             })
-            .catch((err) => {
-              console.error('Error on getFileHandle = ', err)
-              // could not get the file handle
-              this.updateStateFileHandleAccessBlocked()
-            })
-            .finally(() => {
-              this.setState({
-                isGettingEntityInformation: false,
-              })
-            })
+          })
         } else {
           // entity looks like something else.
           this.setState({
             fileHandleDownloadType: FileHandleDownloadTypeEnum.NoFileHandle,
             isGettingEntityInformation: false,
           })
+          return Promise.resolve()
         }
       })
       .catch((err) => {
@@ -222,16 +243,6 @@ export default class HasAccess extends React.Component<
           isGettingEntityInformation: false,
         })
       })
-  }
-
-  updateStateFileHandleAccessBlocked = () => {
-    const { token } = this.props
-    const fileHandleDownloadType = token
-      ? FileHandleDownloadTypeEnum.AccessBlocked
-      : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
-    this.setState({
-      fileHandleDownloadType,
-    })
   }
 
   getRestrictionInformation = (forceRefresh?: boolean) => {
@@ -298,7 +309,7 @@ export default class HasAccess extends React.Component<
       case FileHandleDownloadTypeEnum.TooLarge:
         return this.renderIconHelper(faDatabase, 'SRC-danger-color')
       // was FileEntity, but no fileHandle was available
-      case FileHandleDownloadTypeEnum.AccessBlocked:
+      case FileHandleDownloadTypeEnum.AccessBlockedByACL:
       case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
         return this.renderIconHelper(faLock, 'SRC-warning-color')
       // was a FileEntity, and fileHandle was available
@@ -313,32 +324,30 @@ export default class HasAccess extends React.Component<
   }
 
   handleGetAccess = () => {
-    // const { token, entityId } = this.props
-    // const { displayAccessRequirement } = this.state
-    // SynapseClient.getAllAccessRequirements(token, entityId).then(
-    //   requirements => {
-    //     if (checkUnSupportedRequirement(requirements)) {
-    //       window.open(
-    //         `${getEndpoint(
-    //           BackendDestinationEnum.PORTAL_ENDPOINT,
-    //         )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-    //         '_blank',
-    //       )
-    //     } else {
-    //       this.setState({
-    //         accessRequirements: requirements,
-    //         displayAccessRequirement: !displayAccessRequirement,
-    //       })
-    //     }
-    //   },
-    // )
-
-    const { forceSamePage = false, entityId } = this.props
-    window.open(
-      `${getEndpoint(
-        BackendDestinationEnum.PORTAL_ENDPOINT,
-      )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-      forceSamePage ? '_self' : '_blank',
+    const { token, entityId, set_arPropsFromHasAccess } = this.props
+    SynapseClient.getAllAccessRequirements(token, entityId).then(
+      (requirements) => {
+        if (checkHasUnsportedRequirement(requirements)) {
+          window.open(
+            `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+            '_blank',
+          )
+        } else {
+          if (set_arPropsFromHasAccess) {
+            set_arPropsFromHasAccess({
+              accessRequirementFromProps: requirements,
+              entityId,
+            })
+          } else {
+            this.setState({
+              accessRequirements: requirements,
+              displayAccessRequirement: true,
+            })
+          }
+        }
+      },
     )
   }
 
@@ -362,6 +371,7 @@ export default class HasAccess extends React.Component<
     if (hasUnmetAccessRequirement) {
       linkText = 'Request Access'
     } else if (RestrictionLevel.OPEN === restrictionLevel) {
+      // they need to sign in
       return <></>
     } else {
       linkText = 'View Terms'
@@ -373,9 +383,9 @@ export default class HasAccess extends React.Component<
             fontSize: '14px',
             cursor: 'pointer',
             marginLeft: '16px',
-            color: 'rgb(77, 85, 144)',
           }}
           onClick={this.handleGetAccess}
+          className="SRC-primary-text-color"
         >
           {linkText}
         </button>
@@ -384,6 +394,7 @@ export default class HasAccess extends React.Component<
             token={token}
             entityId={entityId}
             accessRequirementFromProps={accessRequirements}
+            renderAsModal={true}
             onHide={() => {
               this.setState({ displayAccessRequirement: false })
               this.refresh()
@@ -395,18 +406,27 @@ export default class HasAccess extends React.Component<
   }
 
   render() {
-    const fileHandleDownloadType = this.state.fileHandleDownloadType
+    const { restrictionInformation, fileHandleDownloadType } = this.state
     if (typeof fileHandleDownloadType === 'undefined') {
       // note, this can't be "if (!downloadType)" since DownloadTypeEnum has a 0 value (which is falsy)
       // loading
       return <></>
     }
-    const tooltipText = HasAccess.tooltipText[fileHandleDownloadType]
+    let tooltipText = HasAccess.tooltipText[fileHandleDownloadType]
+    if (
+      fileHandleDownloadType ===
+        FileHandleDownloadTypeEnum.AccessBlockedByACL &&
+      restrictionInformation?.hasUnmetAccessRequirement
+    ) {
+      // If blocked by ACL check if blocked by Access Restrictions, those can be taken care of
+      // though they will then be blocked by ACL afterwards.
+      tooltipText =
+        HasAccess.tooltipText[
+          FileHandleDownloadTypeEnum.AccessBlockedByRestriction
+        ]
+    }
     const entityId = this.props.entityId
-    const icon = this.renderIcon(
-      fileHandleDownloadType,
-      this.state.restrictionInformation,
-    )
+    const icon = this.renderIcon(fileHandleDownloadType, restrictionInformation)
     const viewARsLink: React.ReactElement = this.renderARsLink()
     return (
       <span style={{ whiteSpace: 'nowrap' }}>

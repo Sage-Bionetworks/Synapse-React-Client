@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeader } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { without, chunk, uniq } from 'lodash-es'
-// import useDeepCompareEffect from 'use-deep-compare-effect'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
@@ -77,10 +77,14 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
 ) {
   const { token, ids, type } = props
   const [data, setData] = useState<Array<T>>([])
-  const [isLoading, setIsLoading] = useState(false)
 
   const idProp = (type: HookType) =>
     type === 'USER_PROFILE' ? 'ownerId' : 'id'
+
+  const storageKey = (type: HookType) =>
+    type === 'USER_PROFILE'
+      ? SynapseConstants.USER_PROFILE_STORAGE_KEY
+      : SynapseConstants.ENTITY_HEADER_STORAGE_KEY
 
   // look at current list of data, see if incoming ids has new data,
   // if so grab those ids
@@ -88,15 +92,39 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   const incomingList = ids.filter(el => el !== SynapseConstants.VALUE_NOT_SET)
   const newValues = uniq(without(incomingList, ...curList))
 
-  // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes
-  // this can be fixed by seperate this useEffect into two, one which updates itself if the token changes and the other
-  // which responds to the incoming ids changing
-  useEffect(() => {
-    const getData = async () => {
-      if (isLoading) {
-        return
+  const saveToSessionStorage = (data: T[], type: HookType) => {
+    if (!data.length) {
+      return
+    }
+    //get what's there
+    const dataInStorage = sessionStorage.getItem(storageKey(type))
+    try {
+      const dataInStorageAsObjectArr: T[] = dataInStorage
+        ? JSON.parse(dataInStorage)
+        : []
+      //get an array of ids for items already in storage
+      const ids = dataInStorageAsObjectArr.map(item => item[idProp(type)])
+      //push all the new data if ids are new
+      for (const dataObject of data) {
+        if (!ids.includes(dataObject[idProp(type)])) {
+          dataInStorageAsObjectArr.push(dataObject)
+        }
       }
-      setIsLoading(true)
+      sessionStorage.setItem(
+        storageKey(type),
+        JSON.stringify(dataInStorageAsObjectArr),
+      )
+    } catch (e) {
+      sessionStorage.setItem(storageKey(type), JSON.stringify(data))
+    }
+  }
+
+  // Alina TODO: check if the items are already in Local Storage before making server call.
+
+  // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes,
+  // this can be solved by using the useCompare hook on the token to track when it changes
+  useDeepCompareEffect(() => {
+    const getData = async () => {
       if (newValues.length > 0) {
         try {
           const newIds = Array.from<string>(newValues)
@@ -105,7 +133,7 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
               ? newIds
               : newIds.map(el => ({ targetId: el }))
           const newReferencesChunks = chunk(newReferences, 45)
-
+          const totalData: T[] = []
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
@@ -114,16 +142,16 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
                     newReferences as ReferenceList,
                     token,
                   )
-            setData(oldData => oldData.concat(...(newData as T[])))
+            totalData.push(...(newData as T[]))
           }
+          setData(oldData => oldData.concat(...(totalData as T[])))
         } catch (error) {
           console.error('Error on data retrieval', error)
-        } finally {
-          setIsLoading(false)
         }
       }
+      saveToSessionStorage(data, type)
     }
     getData()
-  }, [token, type, newValues, isLoading])
+  }, [token, type, newValues])
   return data
 }

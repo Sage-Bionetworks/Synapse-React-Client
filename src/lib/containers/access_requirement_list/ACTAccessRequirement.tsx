@@ -1,30 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import {
-  ACTAccessRequirement,
-  UserProfile,
-  WikiPageKey,
-  AccessRequirementStatus,
-} from '../../utils/synapseTypes'
+import { ACTAccessRequirement, WikiPageKey } from '../../utils/synapseTypes'
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
-
-export type Props = {
-  accessRequirement: ACTAccessRequirement
-  token: string | undefined
-  user: UserProfile | undefined
-  onHide?: Function
-}
+import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function ACTAccessRequirementComponent({
   accessRequirement,
   token,
   user,
   onHide,
-}: Props) {
+  accessRequirementStatus,
+}: AccessRequirementProps<ACTAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
-  const [accessRequirementStatus, setAccessRequirementStatus] = useState<
-    AccessRequirementStatus
-  >()
 
   useEffect(() => {
     const getACTAccessData = async () => {
@@ -34,12 +21,6 @@ export default function ACTAccessRequirementComponent({
           accessRequirement.id,
         )
         setWikiPage(wikipageRequirement)
-
-        const accessRequirementStatus = await SynapseClient.getAccessRequirementStatus(
-          token,
-          accessRequirement.id,
-        )
-        setAccessRequirementStatus(accessRequirementStatus)
       } catch (err) {
         console.error('Error on get ACTAccessRequirement', err)
       }
