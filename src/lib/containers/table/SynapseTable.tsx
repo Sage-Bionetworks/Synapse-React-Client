@@ -323,7 +323,8 @@ export default class SynapseTable extends React.Component<
         <div className={className}>
           <div
             className={`SRC-centerContent text-left`}
-            style={{ height: '20px' }}
+            style={{ minHeight: '20px' }}
+           
           >
             {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
               <TotalQueryResults
@@ -333,6 +334,9 @@ export default class SynapseTable extends React.Component<
                 lastQueryRequest={this.props.getLastQueryRequest!()}
                 token={token}
                 frontText={'Showing'}
+                applyChanges={(newFacets: FacetColumnRequest[]) =>
+                  this.applyChangesFromQueryFilter(newFacets)
+                }
               />
             )}
           </div>

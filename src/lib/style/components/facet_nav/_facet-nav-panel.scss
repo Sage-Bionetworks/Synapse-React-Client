@@ -1,8 +1,9 @@
 .FacetNavPanel {
+  padding: 10px 0;
   &__title {
     font-size: 16px;
     padding-bottom: 10;
-    border-bottom: 1px solid #9e9e9e2b;
+    border-bottom: 1px solid $gray-dark;
     display: flex;
     &__tools {
       margin-left: auto;
@@ -10,11 +11,12 @@
       text-align: right;
       display: flex;
 
-      .show button.dropdown-toggle, button.dropdown-toggle:hover {
+      .show button.dropdown-toggle,
+      button.dropdown-toggle:hover {
         background: transparent;
-  
-        color:inherit;
-    }
+
+        color: inherit;
+      }
     }
   }
   &__body {
@@ -27,10 +29,8 @@
       position: relative;
     }
     &__plot {
-  
       width: 50%;
-      &--expanded {
- 
+      &--expandedPie {
         width: 50%;
         margin: 0 auto;
         .js-plotly-plot {
@@ -41,7 +41,7 @@
     &__legend {
       width: 50%;
       align-self: center;
-  
+
       &--expanded {
         position: absolute;
         right: 0;
@@ -64,5 +64,9 @@
         font-weight: normal;
       }
     }
+  }
+
+  &--expanded  {
+    padding: 15px;
   }
 }

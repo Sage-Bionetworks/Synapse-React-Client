@@ -68,17 +68,20 @@ const createMountedComponent = () => {
 }
 
 describe('it performs basic functionality', () => {
-  it('renders without crashing and displays correctly', () => {
+  it('renders without crashing and displays correctly', async () => {
     const { wrapper } = createMountedComponent()
-    expect(wrapper).toBeDefined()
-    const searchWrapper = wrapper.find(Search)
-    expect(searchWrapper).toHaveLength(1)
-    expect(wrapper.find('input').props().placeholder).toEqual(
-      `e.g. "${searchable[0].hintText}"`,
-    )
+    await act(async () => {
+      expect(wrapper).toBeDefined()
+      const searchWrapper = wrapper.find(Search)
+      expect(searchWrapper).toHaveLength(1)
+      expect(wrapper.find('input').props().placeholder).toEqual(
+        `e.g. "${searchable[0].hintText}"`,
+      )
+    })
   })
   it('queries correctly', async () => {
     const { wrapper, instance } = createMountedComponent()
+
     const spyOnExecuteQueryRequest = jest.spyOn(instance, 'executeQueryRequest')
     const searchWrapper = wrapper.find(Search)
     // Set the search text
@@ -100,20 +103,20 @@ describe('it performs basic functionality', () => {
         }),
       }),
     )
-    const searchLabel = `Displaying 59 studies containing "${searchText}" in Data Status `
-    expect(searchWrapper.find(TotalQueryResults).text()).toEqual(searchLabel)
+    const searchLabel = `Displaying 59 studies containing "${searchText}" in Data Status`
+    expect(searchWrapper.find(TotalQueryResults).text()).toContain(searchLabel)
   })
-  it('handles special characters correctly', () => {
-    const withQuote = "that's"
-    const withEscapedQuote = "that''s"
-    expect(Search.addEscapeCharacters(withQuote)).toEqual(withEscapedQuote)
-    const withPercent = '100%'
-    const withEscapedPercent = '100%'
-    expect(Search.addEscapeCharacters(withPercent)).toEqual(withEscapedPercent)
-    const withBackSlash = `he\\o`
-    const withEscapedBackSlash = 'he\\\\o'
-    expect(Search.addEscapeCharacters(withBackSlash)).toEqual(
-      withEscapedBackSlash,
-    )
-  })
+})
+it('handles special characters correctly', () => {
+  const withQuote = "that's"
+  const withEscapedQuote = "that''s"
+  expect(Search.addEscapeCharacters(withQuote)).toEqual(withEscapedQuote)
+  const withPercent = '100%'
+  const withEscapedPercent = '100%'
+  expect(Search.addEscapeCharacters(withPercent)).toContain(withEscapedPercent)
+  const withBackSlash = `he\\o`
+  const withEscapedBackSlash = 'he\\\\o'
+  expect(Search.addEscapeCharacters(withBackSlash)).toContain(
+    withEscapedBackSlash,
+  )
 })
