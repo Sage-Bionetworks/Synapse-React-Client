@@ -166,7 +166,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     }
     // Find the facetcolumn result according to the input filter
     const facetColumnResult = this.props.data!.facets!.find(
-      el =>
+      (el) =>
         el.columnName === this.props.facet && el.facetType === 'enumeration',
     ) as FacetColumnResultValues
     if (!facetColumnResult) {
@@ -283,7 +283,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       )
     }
     const curFacetsIndex = facets.findIndex(
-      curFacet =>
+      (curFacet) =>
         curFacet.columnName === facet && curFacet.facetType === 'enumeration',
     )
     // cast is necessary because filter returns an array of arrays

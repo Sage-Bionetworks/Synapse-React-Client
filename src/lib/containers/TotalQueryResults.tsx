@@ -7,9 +7,13 @@ import {
   UserProfile,
   FacetColumnResult,
   ColumnModel,
+  FacetColumnRequest,
 } from '../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../'
-import { getStoredEntityHeaders, getStoredUserProfiles } from '../utils/functions/getDataFromFromStorage'
+import {
+  getStoredEntityHeaders,
+  getStoredUserProfiles,
+} from '../utils/functions/getDataFromFromStorage'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { cloneDeep } from 'lodash-es'
 import SelectionCriteriaPill, {
@@ -25,8 +29,8 @@ import { useState, FunctionComponent } from 'react'
 export type TotalQueryResultsProps = {
   isLoading: boolean
   style?: React.CSSProperties
-  //getLastQueryRequest: (() => QueryBundleRequest) | undefined
   lastQueryRequest: QueryBundleRequest
+  executeQueryRequest?: (param: QueryBundleRequest) => void
   token: string | undefined
   unitDescription: string
   frontText: string
@@ -43,21 +47,30 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   lastQueryRequest,
   token,
   isLoading: parentLoading,
-  applyChanges = () => '',
+  executeQueryRequest,
 }) => {
-  const [total, setTotal] = useState(0)
+  const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedFacets, setSelectedFacets] = useState<FacetWithSelection[]>([])
+  const [facetsWithSelection, setFacetsWithSelection] = useState<
+    FacetWithSelection[]
+  >([])
+
+  const applyChanges = (facets: FacetColumnRequest[]) => {
+    const queryRequest: QueryBundleRequest = cloneDeep(lastQueryRequest)
+    queryRequest.query.selectedFacets = facets
+    executeQueryRequest!(queryRequest)
+  }
 
   const getEnumFacetsWithSelections = (
     facets: FacetColumnResult[],
   ): FacetColumnResultValues[] => {
     const enumFacets = facets.filter(
-      facet => facet.facetType === 'enumeration',
+      (facet) => facet.facetType === 'enumeration',
     ) as FacetColumnResultValues[]
     const enumFacetsWithSelections = enumFacets.filter(
-      facet =>
-        facet.facetValues.filter(value => value.isSelected === true).length > 0,
+      (facet) =>
+        facet.facetValues.filter((value) => value.isSelected === true).length >
+        0,
     )
     return enumFacetsWithSelections
   }
@@ -66,10 +79,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     facets: FacetColumnResult[],
   ): FacetColumnResultRange[] => {
     const rangeFacets = facets.filter(
-      facet => facet.facetType === 'range',
+      (facet) => facet.facetType === 'range',
     ) as FacetColumnResultRange[]
     const rangeFacetsWithSelections = rangeFacets.filter(
-      facet => facet.selectedMax || facet.selectedMin,
+      (facet) => facet.selectedMax || facet.selectedMin,
     )
     return rangeFacetsWithSelections
   }
@@ -78,7 +91,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     entityHeaders: EntityHeader[],
     facetValue: string,
   ): string => {
-    const entity = entityHeaders.find(item => item.id === facetValue)
+    const entity = entityHeaders.find((item) => item.id === facetValue)
     return entity?.name || facetValue
   }
 
@@ -86,7 +99,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     userProfiles: UserProfile[],
     facetValue: string,
   ): string => {
-    const userProfile = userProfiles.find(item => item.ownerId === facetValue)
+    const userProfile = userProfiles.find((item) => item.ownerId === facetValue)
     return userProfile?.userName || facetValue
   }
 
@@ -96,12 +109,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   ): FacetWithSelection[] => {
     const lookUpEntityHeaders = getStoredEntityHeaders()
     const lookUpUserProfiles = getStoredUserProfiles()
-    let filteredEnumWithSelectedValuesOnly: FacetWithSelection[] = []
-    facets.forEach(facet => {
+    const filteredEnumWithSelectedValuesOnly: FacetWithSelection[] = []
+    facets.forEach((facet) => {
       const columnModel = columnModels.find(
-        model => model.name === facet.columnName,
+        (model) => model.name === facet.columnName,
       )
-      facet.facetValues.forEach(facetValue => {
+      facet.facetValues.forEach((facetValue) => {
         if (facetValue.isSelected) {
           let displayValue = facetValue.value
           if (columnModel?.columnType === 'ENTITYID') {
@@ -134,7 +147,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
-      if (!parentLoading) {
+      if (parentLoading || total === undefined) {
         setIsLoading(true)
         SynapseClient.getQueryTableResults(cloneLastQueryRequest, token)
           .then((data) => {
@@ -146,14 +159,14 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
               data.facets!,
             )
             const rangeFacetsForDisplay = rangeFacetsWithSelections.map(
-              facet => ({ facet: facet }),
+              (facet) => ({ facet }),
             )
             const enumFacetsForDisplay = transformEnumFacetsForSelectionDisplay(
               enumFacetsWithSelections,
               data.columnModels!,
             )
 
-            setSelectedFacets([
+            setFacetsWithSelection([
               ...rangeFacetsForDisplay,
               ...enumFacetsForDisplay,
             ])
@@ -196,10 +209,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         {frontText} {total} {unitDescription}{' '}
       </span>
       <div className="TotalQueryResults__selections">
-        {selectedFacets.map((facet, index) => (
+        {facetsWithSelection.map((selectedFacet, index) => (
           <SelectionCriteriaPill
-          key='pill_index'
-            facet={facet}
+            key="pill_index"
+            facetWithSelection={selectedFacet}
             index={index}
             onRemove={removeSelection}
           ></SelectionCriteriaPill>

@@ -18,12 +18,11 @@ import {
 } from '../../../utils/synapseTypes'
 
 export type QueryFilterProps = {
-  //applyChanges: Function
   isLoading?: boolean
-  data: QueryResultBundle
+  data?: QueryResultBundle
   getLastQueryRequest?: Function
   executeQueryRequest?: Function
-  token: string
+  token?: string
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -32,8 +31,8 @@ const convertFacetToFacetColumnValuesRequest = (
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
   columnName: facet.columnName,
   facetValues: facet.facetValues
-    .filter(facet => facet.isSelected === true)
-    .map(facet => facet.value),
+    .filter((facet) => facet.isSelected === true)
+    .map((facet) => facet.value),
 })
 
 const convertFacetColumnRangeRequest = (
@@ -55,9 +54,9 @@ const patchRequestFacets = (
   changedFacet: FacetColumnRequest,
   lastRequest?: QueryBundleRequest,
 ): FacetColumnRequest[] => {
-  const selections = lastRequest ? lastRequest.query.selectedFacets || [] : []
+  const selections = lastRequest?.query?.selectedFacets ?? []
   const changedFacetIndex = selections.findIndex(
-    facet => facet.columnName === changedFacet.columnName,
+    (facet) => facet.columnName === changedFacet.columnName,
   )
 
   const isEmptyValuesFacet =
@@ -73,6 +72,7 @@ const patchRequestFacets = (
   } else {
     selections.push(changedFacet)
   }
+  console.log('selections = ', selections)
   return selections
 }
 
@@ -85,14 +85,14 @@ export const applyChangesToValuesColumn = (
   checked: boolean = false,
 ) => {
   if (facetName) {
-    facet.facetValues.forEach(facetValue => {
+    facet.facetValues.forEach((facetValue) => {
       if (facetValue.value === facetName) {
         facetValue.isSelected = checked
       }
     })
   } else {
     // else clear all
-    facet.facetValues.forEach(facet => {
+    facet.facetValues.forEach((facet) => {
       facet.isSelected = false
     })
   }
@@ -140,9 +140,9 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
     <div className="QueryFilter">
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
-        facets.map(facet => {
+        facets.map((facet) => {
           const columnModel = columnModels!.find(
-            model => model.name === facet.columnName,
+            (model) => model.name === facet.columnName,
           )
 
           return (

@@ -1,61 +1,65 @@
 import * as React from 'react'
-import { SynapseConstants } from '../../../lib/utils'
-import QueryWrapperPlotNav, { QueryWrapperPlotNavProps } from 'lib/containers/QueryWrapperPlotNav'
+import QueryWrapperPlotNav, {
+  QueryWrapperPlotNavProps,
+} from 'lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import { SynapseConstants } from 'lib'
 
 type DemoState = {
   ownerId: string
   isLoading: boolean
   showMarkdown: boolean
-  version: number
-  tableProps: QueryWrapperPlotNavProps
-  activeTab: number
+  propsWithTable: QueryWrapperPlotNavProps
+  propsWithCards: QueryWrapperPlotNavProps
+  showCards: boolean
 }
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-class QueryWrapperPlotNavDemo extends React.Component<{},
-  DemoState
-> {
+class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
   /**
    * Maintain internal state of user session
    */
   constructor(props: any) {
     super(props)
-    const sql:string =
-      "SELECT * FROM syn16858331"
+    const sql: string = 'SELECT * FROM syn16858331'
     this.state = {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      activeTab: 3,
-      version: 0,
-      tableProps: 
-      {
-        title: 'Test only',
+      showCards: false,
+      propsWithTable: {
+        tableConfiguration: {
+          loadingScreen: <> I'm loading as fast as I can!!!! </>,
+        },
+        rgbIndex: 1,
+        name: 'PlotNav Demo',
         sqlOperator: '=',
-        unitDescription: 'datum',
-        initQueryRequest:{
-          entityId: 'syn16858331',
-          concreteType:
-            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-          query: {
-            sql,
-            limit: 25,
-            offset: 0,
+        sql,
+        entityId: 'syn16858331',
+        // facetsToPlot: ['assay', 'dataType'],
+        loadingScreen: (
+          <div>
+            <div className="spinner"> </div>Im loading as fast I can !!!{' '}
+          </div>
+        ),
+        frontText: 'Showing',
+      },
+      propsWithCards: {
+        rgbIndex: 1,
+        name: 'PlotNav Demo',
+        sqlOperator: '=',
+        sql,
+        entityId: 'syn16858331',
+        cardConfiguration: {
+          type: SynapseConstants.GENERIC_CARD,
+          genericCardSchema: {
+            title: 'id',
+            type: SynapseConstants.STUDY,
           },
         },
-        enableLeftFacetFilter: true,
-        rgbIndex: 5,
-        // facetsToPlot: ['assay', 'dataType'],
-        loadingScreen:<div><div className='spinner'> </div>Im loading as fast I can !!! </div>
-      }
+        frontText: 'Showing',
+      },
     }
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
@@ -74,10 +78,21 @@ class QueryWrapperPlotNavDemo extends React.Component<{},
   }
 
   public render(): JSX.Element {
+    const { showCards } = this.state
+    const propsForPlotNav = this.state.showCards
+      ? this.state.propsWithCards
+      : this.state.propsWithTable
     return (
       <div className="container">
         <h2>Demo of plot nav table</h2>
-        <QueryWrapperPlotNav {...this.state.tableProps} />
+        <button
+          className="SRC-primary-background-color"
+          style={{ color: 'white', padding: 10 }}
+          onClick={() => this.setState({ showCards: !showCards })}
+        >
+          Switch to cards
+        </button>
+        <QueryWrapperPlotNav {...propsForPlotNav} />
       </div>
     )
   }

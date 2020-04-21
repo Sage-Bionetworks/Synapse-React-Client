@@ -90,7 +90,7 @@ const resolveAllPending = async (
   await act(
     async (): Promise<any> => {
       await Promise.resolve(wrapper)
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise((resolve) => setImmediate(resolve))
       wrapper.update()
       return wrapper
     },
@@ -110,7 +110,7 @@ describe('it performs the expected functionality', () => {
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
     token: '12345',
-    queryBundleRequest: queryBundleRequest,
+    lastQueryRequest: queryBundleRequest,
   }
 
   beforeEach(() => {
