@@ -5,6 +5,7 @@ import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
+import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import StackedBarChart from './containers/StackedBarChart'
 import HasAccess from './containers/HasAccess'
 import SynapseTable from './containers/table/SynapseTable'
@@ -45,6 +46,7 @@ const SynapseComponents = {
   DownloadListTable,
   ThemesPlot,
   ShowDownload,
+  QueryWrapperPlotNav,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

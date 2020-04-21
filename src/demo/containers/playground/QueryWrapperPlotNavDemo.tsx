@@ -43,7 +43,6 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
             <div className="spinner"> </div>Im loading as fast I can !!!{' '}
           </div>
         ),
-        frontText: 'Showing',
       },
       propsWithCards: {
         rgbIndex: 1,
@@ -58,7 +57,6 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
             type: SynapseConstants.STUDY,
           },
         },
-        frontText: 'Showing',
       },
     }
     this.handleChange = this.handleChange.bind(this)

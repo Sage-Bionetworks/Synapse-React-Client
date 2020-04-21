@@ -6,9 +6,9 @@ import {
   insertConditionsFromSearchParams,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
-import { SynapseConstants } from 'lib'
+import { SynapseConstants } from '../../utils/'
 import QueryCount from '../QueryCount'
-import { QueryBundleRequest } from 'lib/utils/synapseTypes'
+import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -30,11 +30,11 @@ type OwnProps = {
   name: string
   sql: string
   entityId: string
+  shouldDeepLink?: boolean
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
   token?: string
   rgbIndex?: number
-  frontText: string
 }
 
 type SearchParams = {
@@ -43,7 +43,7 @@ type SearchParams = {
   }
 }
 type Operator = {
-  sqlOperator: SQLOperator
+  sqlOperator?: SQLOperator
 }
 export type QueryWrapperPlotNavProps = SearchParams &
   Partial<FacetNavOwnProps> &
@@ -67,7 +67,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     name,
     token,
     cardConfiguration,
-    frontText,
     ...rest
   } = props
   let sqlUsed = sql
@@ -102,16 +101,22 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
         </div>
         <div className="QueryWrapperPlotNav__actions">
-          {/* <button onClick={() => setShowSearch(!showSearch)}>
+          {/* <button  className="SRC-primary-action-color"onClick={() => setShowSearch(!showSearch)}>
             <FontAwesomeIcon icon="search" size="1x" />
           </button> */}
-          <button onClick={() => setShowVisualization(!showVisualization)}>
+          <button
+            className="SRC-primary-action-color"
+            onClick={() => setShowVisualization(!showVisualization)}
+          >
             <FontAwesomeIcon icon="chart-bar" size="1x" />
           </button>
-          <button onClick={() => setShowFilter(!showFilter)}>
+          <button
+            className="SRC-primary-action-color"
+            onClick={() => setShowFilter(!showFilter)}
+          >
             <FontAwesomeIcon icon="filter" size="1x" />
           </button>
-          {/* <button onClick={() => setShowDownload(!showDownload)}>
+          {/* <button  className="SRC-primary-action-color"onClick={() => setShowDownload(!showDownload)}>
             <FontAwesomeIcon icon="download" size="1x" />
           </button> */}
         </div>
@@ -121,7 +126,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           show={showVisualization}
           facetsToPlot={facetsToPlot}
           loadingScreen={loadingScreen}
-          frontText={frontText}
         />
         <FilterAndView
           showFilter={showFilter}
