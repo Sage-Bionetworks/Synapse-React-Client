@@ -24,7 +24,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import Search, { SearchProps } from './Search'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
-
+import FacetNav from '../containers/widgets/facet-nav/FacetNav'
+import { QueryFilter } from '../containers/widgets/query-filter/QueryFilter'
 library.add(faPlus)
 library.add(faSearch)
 
@@ -292,7 +293,7 @@ export default class QueryWrapperMenu extends React.Component<
       accordionConfig = [],
       facetAliases = {},
       entityId,
-      shouldDeepLink
+      shouldDeepLink,
     } = this.props
     const {
       cardConfiguration,
@@ -404,6 +405,15 @@ export default class QueryWrapperMenu extends React.Component<
                 Using a conditional render fails here because QueryWrapper can't clone an undefined element
                 which will happen if either configuration is undefined.
             */}
+            {tableConfiguration ? <FacetNav></FacetNav> : <></>}
+
+            {tableConfiguration ? (
+              <QueryFilter
+               
+              />
+            ) : (
+              <React.Fragment />
+            )}
             {tableConfiguration ? (
               <SynapseTable
                 {...{
@@ -414,6 +424,7 @@ export default class QueryWrapperMenu extends React.Component<
             ) : (
               <React.Fragment />
             )}
+            {cardConfiguration ? <FacetNav></FacetNav> : <></>}
             {cardConfiguration ? (
               <CardContainer {...cardConfiguration} />
             ) : (

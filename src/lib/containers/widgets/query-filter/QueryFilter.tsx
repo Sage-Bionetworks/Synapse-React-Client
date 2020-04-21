@@ -14,17 +14,18 @@ import {
 } from '../../../utils/synapseTypes/Table/FacetColumnRequest'
 import {
   QueryBundleRequest,
-  QueryResultBundle,
+  //QueryResultBundle,
 } from '../../../utils/synapseTypes'
+import { QueryWrapperChildProps} from 'lib/containers/QueryWrapper'
 
-export type QueryFilterProps = {
+/*export type QueryFilterProps = {
   //applyChanges: Function
   isLoading?: boolean
   data: QueryResultBundle
   getLastQueryRequest?: Function
   executeQueryRequest?: Function
   token: string
-}
+}*/
 
 const convertFacetToFacetColumnValuesRequest = (
   facet: FacetColumnResultValues,
@@ -116,13 +117,13 @@ export const applyChangesToRangeColumn = (
   onChangeFn(result)
 }
 
-export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
+export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps> = ({
   data,
   isLoading = false,
   getLastQueryRequest,
   executeQueryRequest,
   token,
-}: QueryFilterProps): JSX.Element => {
+}: QueryWrapperChildProps): JSX.Element => {
   if (!data) {
     return <></>
   }
