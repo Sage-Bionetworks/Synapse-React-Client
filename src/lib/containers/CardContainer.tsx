@@ -20,6 +20,7 @@ export type CardContainerProps = {
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   title?: string
+  executeQueryRequest?: (param: QueryBundleRequest) => void
   facetAliases?: {}
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
@@ -171,6 +172,7 @@ export class CardContainer extends React.Component<
             token={token}
             isLoading={isLoading!}
             unitDescription={unitDescription}
+            executeQueryRequest={this.props.executeQueryRequest}
             lastQueryRequest={getLastQueryRequest!()}
             frontText={'Displaying'}
           />
