@@ -1,19 +1,23 @@
 .FacetNav {
-    padding-bottom: 16px;
-    border: 1px solid $gray-dark;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid $gray-dark;
 
-    &__row {
-        background-color: #fff;
+  &__row {
+    background-color: #fff;
 
-        div[class*=" col-"] {
-            min-height: 200px
-        }
+    div[class*=' col-'] {
+      min-height: 200px;
     }
+  }
 
-   &__showMore {
-       float:right;
-       
-       margin-right:15px;
-       margin-top:15px;
-   }
+  &__showMoreContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 15px;
+    &__showMore {
+      margin-right: 15px;
+      margin-top: 15px;
+    }
+  }
 }

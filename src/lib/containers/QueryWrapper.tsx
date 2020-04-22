@@ -185,14 +185,15 @@ export default class QueryWrapper extends React.Component<
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
+    const clonedQueryRequest = cloneDeep(queryRequest)
     this.setState({
       isLoading: true,
-      lastQueryRequest: cloneDeep(queryRequest),
+      lastQueryRequest: clonedQueryRequest,
     })
 
-    if (queryRequest.query) {
+    if (clonedQueryRequest.query) {
       const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(queryRequest.query),
+        JSON.stringify(clonedQueryRequest.query),
       )
       if (this.props.shouldDeepLink) {
         DeepLinkingUtils.updateUrlWithNewSearchParam(
@@ -203,7 +204,7 @@ export default class QueryWrapper extends React.Component<
       }
     }
     return SynapseClient.getQueryTableResults(
-      queryRequest,
+      clonedQueryRequest,
       this.props.token,
       this.updateParentState,
     )

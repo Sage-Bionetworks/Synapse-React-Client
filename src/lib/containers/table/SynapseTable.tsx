@@ -53,7 +53,6 @@ import {
   ExpandTable,
 } from './table-top/'
 import FacetFilter from './table-top/FacetFilter'
-import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import NoData from '../../assets/icons/file-dotted.svg'
 import { renderTableCell } from '../synapse_table_functions/renderTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
@@ -108,12 +107,11 @@ export type SynapseTableState = {
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
-  isShowLeftFilter?: boolean
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
-  title: string
+  title?: string
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
@@ -152,7 +150,6 @@ export default class SynapseTable extends React.Component<
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
-      isShowLeftFilter: this.props.enableLeftFacetFilter,
       isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -218,18 +215,18 @@ export default class SynapseTable extends React.Component<
     // Make call to resolve entity ids
     if (distinctEntityIds.size > 0) {
       const referenceList: ReferenceList = Array.from(distinctEntityIds).map(
-        (id) => {
+        id => {
           return { targetId: id }
         },
       )
       try {
         // initialize mapEntityIdToHeader
-        referenceList.forEach((el) => {
+        referenceList.forEach(el => {
           mapEntityIdToHeader[el.targetId] = EMPTY_HEADER
         })
         const data = await SynapseClient.getEntityHeader(referenceList, token)
         const { results } = data
-        results.forEach((el) => {
+        results.forEach(el => {
           mapEntityIdToHeader[el.id] = el
         })
       } catch (err) {
@@ -248,7 +245,7 @@ export default class SynapseTable extends React.Component<
     // TODO: Grab Team Badge
     try {
       const data = await SynapseClient.getGroupHeadersBatch(ids, token)
-      data.children.forEach((el) => {
+      data.children.forEach(el => {
         if (el.isIndividual) {
           userPorfileIds.push(el.ownerId)
         } else {
@@ -293,6 +290,7 @@ export default class SynapseTable extends React.Component<
       unitDescription,
       token,
       showBarChart,
+      enableLeftFacetFilter,
     } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
@@ -303,7 +301,7 @@ export default class SynapseTable extends React.Component<
     const queryRequest = this.props.getLastQueryRequest!()
     const { sql, selectedFacets } = queryRequest.query
 
-    let className = 'SRC-marginTopMinusTen'
+    let className = ''
     if (showBarChart) {
       className = 'SRC-marginBottomTop'
     }
@@ -321,51 +319,48 @@ export default class SynapseTable extends React.Component<
     const content = (
       <>
         <div className={className}>
-          <div
-            className={`SRC-centerContent text-left`}
-            style={{ minHeight: '20px' }}
-           
-          >
-            {unitDescription && !isGroupByInSql(queryRequest.query.sql) && (
-              <TotalQueryResults
-                isLoading={isLoading}
-                style={{ fontSize: 15 }}
-                unitDescription={unitDescription}
-                lastQueryRequest={this.props.getLastQueryRequest!()}
-                token={token}
-                frontText={'Showing'}
-                applyChanges={(newFacets: FacetColumnRequest[]) =>
-                  this.applyChangesFromQueryFilter(newFacets)
-                }
-              />
-            )}
-          </div>
-          {this.renderTableTop(headers, this.props.enableLeftFacetFilter)}
-          <div className="row ">
-            {this.state.isShowLeftFilter && (
+          {!enableLeftFacetFilter &&
+            unitDescription &&
+            !isGroupByInSql(queryRequest.query.sql) && (
               <div
-                className="col-xs-12 col-sm-3 col-lg-3"
-                style={{ paddingRight: '0px' }}
+                className={`SRC-centerContent text-left`}
+                style={{ minHeight: '20px' }}
               >
-                {
-                  <QueryFilter
-                    {...this.props}
-                    data={this.props.data!}
-                    token={this.props.token!}
-                  />
-                }
+                (
+                <TotalQueryResults
+                  isLoading={isLoading}
+                  style={{ fontSize: 15 }}
+                  unitDescription={unitDescription}
+                  lastQueryRequest={queryRequest}
+                  token={token}
+                  frontText={'Showing'}
+                  applyChanges={(newFacets: FacetColumnRequest[]) =>
+                    this.applyChangesFromQueryFilter(newFacets)
+                  }
+                />
+                )
               </div>
             )}
-            <div
-              className={`${
-                this.state.isShowLeftFilter
-                  ? 'col-xs-12 col-sm-9 col-lg-9'
-                  : 'col-xs-12'
-              }`}
-            >
+          {!enableLeftFacetFilter &&
+            this.renderTableTop(headers, enableLeftFacetFilter)}
+          {!enableLeftFacetFilter && (
+            <div className="row ">
+              <div
+                className={`${
+                  enableLeftFacetFilter
+                    ? 'col-xs-12 col-sm-9 col-lg-9'
+                    : 'col-xs-12'
+                }`}
+              >
+                {this.renderTable(headers, facets, rows)}
+              </div>
+            </div>
+          )}
+          {enableLeftFacetFilter && (
+            <div className={`${enableLeftFacetFilter ? '' : 'col-xs-12'}`}>
               {this.renderTable(headers, facets, rows)}
             </div>
-          </div>
+          )}
         </div>
       </>
     )
@@ -473,7 +468,7 @@ export default class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
-    const lastQueryRequest = this.props.getLastQueryRequest!()
+    const lastQueryRequest = this.props.getLastQueryRequest?.()!
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = lastQueryRequest.query.offset! > 0
@@ -555,7 +550,7 @@ export default class SynapseTable extends React.Component<
     return (
       <div
         className={`SRC-centerContent${
-          this.state.isShowLeftFilter ? ' SRC-marginBottomTen' : ''
+          enableLeftFacetFilter ? ' SRC-marginBottomTen' : ''
         }`}
         style={{ background, padding: 8 }}
       >
@@ -578,16 +573,6 @@ export default class SynapseTable extends React.Component<
                     image={faCog}
                     callbackFn={this.advancedSearch}
                     tooltipText={'Open Advanced Search in Synapse'}
-                  />
-                  <ElementWithTooltip
-                    idForToolTip={'filter'}
-                    image={faFilter}
-                    callbackFn={() =>
-                      this.setState({
-                        isShowLeftFilter: !this.state.isShowLeftFilter,
-                      })
-                    }
-                    tooltipText={'Toggle Search Panel'}
                   />
                 </>
               )}
@@ -625,8 +610,8 @@ export default class SynapseTable extends React.Component<
     const indexes: number[] = []
     if (isGroupByInSql(originalSql)) {
       const tokens: string[][] = lexer.tokenize(originalSql)
-      const selectIndex = tokens.findIndex((el) => el[0] === 'SELECT')
-      const fromIndex = tokens.findIndex((el) => el[0] === 'FROM')
+      const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
+      const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
       let columnIndex = 0
       for (
         let index = selectIndex + 1;
@@ -651,8 +636,8 @@ export default class SynapseTable extends React.Component<
     originalSql: string,
   ): { synId: string; newSql: string } {
     let tokens: string[][] = lexer.tokenize(originalSql)
-    const selectIndex = tokens.findIndex((el) => el[0] === 'SELECT')
-    const fromIndex = tokens.findIndex((el) => el[0] === 'FROM')
+    const selectIndex = tokens.findIndex(el => el[0] === 'SELECT')
+    const fromIndex = tokens.findIndex(el => el[0] === 'FROM')
 
     // gather all of the column names literals between select and from (and their indices)
     const columnReferences: ColumnReference[] = []
@@ -684,7 +669,7 @@ export default class SynapseTable extends React.Component<
     // remove all tokens after (and including) group
     tokens = tokens.slice(
       0,
-      tokens.findIndex((el) => el[0] === 'GROUP'),
+      tokens.findIndex(el => el[0] === 'GROUP'),
     )
     // replace all columns with *
     tokens.splice(selectIndex + 1, fromIndex - selectIndex - 1, [
@@ -697,7 +682,7 @@ export default class SynapseTable extends React.Component<
     if (this.props.data === undefined) {
       return { synId: '', newSql: '' }
     }
-    const whereIndex = tokens.findIndex((el) => el[0] === 'WHERE')
+    const whereIndex = tokens.findIndex(el => el[0] === 'WHERE')
     if (whereIndex === -1) {
       // does not contain a where clause
       tokens.push(['WHERE', 'WHERE', '1'])
@@ -729,7 +714,7 @@ export default class SynapseTable extends React.Component<
     // remove the last AND
     tokens.pop()
     // remove backtick from output sql (for table name): `syn1234` becomes syn1234
-    const synId = tokens[tokens.findIndex((el) => el[0] === 'FROM') + 1][1]
+    const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
     tokens.push(['EOF', '', '1'])
     return { synId, newSql: formatSQLFromParser(tokens) }
   }
@@ -977,7 +962,6 @@ export default class SynapseTable extends React.Component<
                 </span>
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
-                    !this.props.enableLeftFacetFilter &&
                     this.configureFacetDropdown(facets, facetIndex)}
                   <span
                     tabIndex={0}
