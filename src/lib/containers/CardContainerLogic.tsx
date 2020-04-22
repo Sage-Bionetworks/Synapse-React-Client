@@ -43,7 +43,6 @@ export type CommonCardProps = {
 }
 
 export type CardConfiguration = {
-  enableLeftFacetFilter?: boolean
   type: string
   hasInternalLink?: boolean
   iconOptions?: IconOptions
@@ -165,7 +164,7 @@ export default class CardContainerLogic extends React.Component<
       queryRequest,
       this.state.data!,
       this.props.token,
-    ).then((newState) => {
+    ).then(newState => {
       this.setState({
         ...newState,
         isLoading: false,
@@ -234,7 +233,7 @@ export default class CardContainerLogic extends React.Component<
         }
         this.setState(newState)
       })
-      .catch((err) => {
+      .catch(err => {
         console.log('Failed to get data ', err)
       })
   }
@@ -252,7 +251,6 @@ export default class CardContainerLogic extends React.Component<
         token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
-        lastQueryRequest={cloneDeep(this.state.queryRequest)}
         hasMoreData={this.state.hasMoreData}
         isLoading={this.state.isLoading}
       />

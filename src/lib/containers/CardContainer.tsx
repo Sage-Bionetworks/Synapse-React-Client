@@ -24,7 +24,6 @@ export type CardContainerProps = {
   facetAliases?: {}
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
-  lastQueryRequest?: QueryBundleRequest
   isLoading?: boolean
   facet?: string
   unitDescription?: string
