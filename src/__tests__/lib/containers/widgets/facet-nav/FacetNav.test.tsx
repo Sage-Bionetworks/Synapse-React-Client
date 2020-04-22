@@ -1,5 +1,5 @@
-import * as React from 'react'
 import FacetNav from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
+import * as React from 'react'
 import * as _ from 'lodash'
 import { render, fireEvent } from '@testing-library/react'
 import { QueryResultBundle, QueryBundleRequest } from 'lib/utils/synapseTypes'

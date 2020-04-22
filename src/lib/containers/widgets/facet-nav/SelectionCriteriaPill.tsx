@@ -19,28 +19,30 @@ export type FacetWithSelection = {
 }
 
 export type SelectionCriteriaPillProps = {
-  facet: FacetWithSelection
+  facetWithSelection: FacetWithSelection
   index: number
   className?: string
   onRemove: Function
 }
 
 const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
-  facet,
+  facetWithSelection,
   index,
   onRemove,
 }) => {
   let innerText,
     tooltipText: string | null = ''
-  if (facet.facet.facetType === 'enumeration') {
-    innerText = facet.displayValue || ''
+  if (facetWithSelection.facet.facetType === 'enumeration') {
+    innerText = facetWithSelection.displayValue || ''
   } else {
     innerText =
-      (facet.facet as FacetColumnResultRange).selectedMin +
+      (facetWithSelection.facet as FacetColumnResultRange).selectedMin +
       ' - ' +
-      (facet.facet as FacetColumnResultRange).selectedMax
+      (facetWithSelection.facet as FacetColumnResultRange).selectedMax
   }
-  tooltipText = `${unCamelCase(facet.facet.columnName)}: ${innerText}`
+  tooltipText = `${unCamelCase(
+    facetWithSelection.facet.columnName,
+  )}: ${innerText}`
   return (
     <ElementWithTooltip
       idForToolTip={`selectionCriteria_${+index}`}
@@ -53,7 +55,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
       >
         <span>{innerText}</span>
         <button
-          onClick={() => onRemove(facet)}
+          onClick={() => onRemove(facetWithSelection)}
           className="SelectionCriteriaPill__btnRemove"
         >
           <FontAwesomeIcon icon={faTimes} title="deselect" />

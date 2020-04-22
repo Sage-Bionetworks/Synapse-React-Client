@@ -10,12 +10,12 @@ import {
   QueryResultBundle,
 } from '../../../utils/synapseTypes'
 import { useState, useEffect } from 'react'
-import * as _ from 'lodash'
+import TotalQueryResults from '../../../containers/TotalQueryResults'
 
 export type FacetNavOwnProps = {
-  applyChanges: Function
   loadingScreen?: React.FunctionComponent | JSX.Element
-  facetsToPlot?: string[] | undefined
+  show: boolean
+  facetsToPlot?: string[]
 }
 
 type UiFacetState = {
@@ -41,7 +41,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   loadingScreen,
   isLoading,
   executeQueryRequest,
+  token,
   asyncJobStatus,
+  show,
   facetsToPlot,
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
@@ -49,28 +51,28 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   const [isFirstTime, setIsFirstTime] = useState(true)
 
   const request = getLastQueryRequest!()
-  const getFacets = (data: QueryResultBundle | undefined): FacetColumnResult[] =>  {
+  const getFacets = (
+    data: QueryResultBundle | undefined,
+  ): FacetColumnResult[] => {
     const result = data?.facets?.filter(
       item =>
         item.facetType === 'enumeration' &&
-        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
+        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
     )
     if (!result) {
       return []
     } else {
       return result
     }
-
   }
 
   useEffect(() => {
-    let result = data?.facets?.filter(
+    const result = data?.facets?.filter(
       item =>
         item.facetType === 'enumeration' &&
         (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
     )
     if (!result) {
-      console.log('no data')
       return
     }
     if (isFirstTime) {
@@ -83,7 +85,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       )
       setIsFirstTime(false)
     }
-  }, [data])
+  }, [data, isFirstTime])
 
   // when 'show more/less' is clicked
   const showMore = (shouldShowMore: boolean) => {
@@ -174,7 +176,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     propName: 'isHidden' | 'isExpanded',
     value: boolean,
   ) => {
-
     setFacetUiStateArray(facetUiStateArray =>
       facetUiStateArray.map(item =>
         item.name === columnName ? { ...item, [propName]: value } : item,
@@ -182,87 +183,105 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     )
   }
 
+  const lastQueryRequest = getLastQueryRequest?.()!
+  const hasSelectedFacets =
+    lastQueryRequest.query.selectedFacets !== undefined &&
+    lastQueryRequest.query.selectedFacets.length > 0
   if (isLoadingNewData || !data) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
-        {asyncJobStatus?.progressMessage && <div>{asyncJobStatus.progressMessage} </div>}
+        {asyncJobStatus?.progressMessage && (
+          <div>{asyncJobStatus.progressMessage} </div>
+        )}
       </div>
     )
   } else {
     return (
-      <div className="FacetNav">
-        <div className="FacetNav__expanded">
-          {expandedFacets.map(item => (
-            <div key={`facetPanel_${item.index}`}>
-              <FacetNavPanel
-                index={item.index}
-                data={data}
-                onHide={() => hideExpandedFacet(item.facet, item.index)}
-                onCollapse={() =>
-                  toggleExpandFacet(item.facet, item.index, false)
-                }
-                facetToPlot={item.facet as FacetColumnResultValues}
-                applyChanges={(
-                  facet: FacetColumnResultValues,
-                  value: FacetColumnResultValueCount,
-                ) =>
-                  applyChangesToValuesColumn(
-                    request,
-                    facet,
-                    applyChangesFromQueryFilter,
-                    value.value,
-                    !value.isSelected,
-                  )
-                }
-              ></FacetNavPanel>
-            </div>
-          ))}
+      <>
+        <div className={`FacetNav ${show ? '' : 'hidden'}`}>
+          <div className="FacetNav__expanded">
+            {expandedFacets.map(item => (
+              <div key={`facetPanel_${item.index}`}>
+                <FacetNavPanel
+                  index={item.index}
+                  data={data}
+                  onHide={() => hideExpandedFacet(item.facet, item.index)}
+                  onCollapse={() =>
+                    toggleExpandFacet(item.facet, item.index, false)
+                  }
+                  facetToPlot={item.facet as FacetColumnResultValues}
+                  applyChanges={(
+                    facet: FacetColumnResultValues,
+                    value: FacetColumnResultValueCount,
+                  ) =>
+                    applyChangesToValuesColumn(
+                      request,
+                      facet,
+                      applyChangesFromQueryFilter,
+                      value.value,
+                      !value.isSelected,
+                    )
+                  }
+                ></FacetNavPanel>
+              </div>
+            ))}
+          </div>
+          <div className="FacetNav__row clearfix">
+            {getFacets(data).map((item, index) => (
+              <div
+                className="col-sm-12 col-md-4"
+                style={{
+                  display: isFacetHiddenInGrid(item.columnName)
+                    ? 'none'
+                    : 'block',
+                }}
+                key={`facetPanel_${index}`}
+              >
+                <FacetNavPanel
+                  isLoading={isLoading}
+                  index={index}
+                  data={data}
+                  onHide={() => hideFacetInGrid(item.columnName)}
+                  onExpand={() => toggleExpandFacet(item, index, true)}
+                  facetToPlot={item as FacetColumnResultValues}
+                  applyChanges={(
+                    facet: FacetColumnResultValues,
+                    value: FacetColumnResultValueCount | undefined,
+                    isSelected: boolean,
+                  ) =>
+                    applyChangesToValuesColumn(
+                      request,
+                      facet,
+                      applyChangesFromQueryFilter,
+                      value?.value,
+                      isSelected,
+                    )
+                  }
+                ></FacetNavPanel>
+              </div>
+            ))}
+          </div>
+          <div className="FacetNav__showMoreContainer">
+            {getShowMoreState() !== 'NONE' && (
+              <button
+                className="btn btn-default FacetNav__showMore"
+                onClick={() => showMore(getShowMoreState() === 'MORE')}
+              >
+                {getShowMoreState() === 'LESS' ? 'Show Less' : 'Show More'}
+              </button>
+            )}
+          </div>
         </div>
-        <div className="FacetNav__row clearfix">
-          {getFacets(data).map((item, index) => (
-            <div
-              className="col-sm-12 col-md-6"
-              style={{
-                display: isFacetHiddenInGrid(item.columnName) ? 'none' : 'block',
-              }}
-              key={`facetPanel_${index}`}
-            >
-              <FacetNavPanel
-              isLoading={isLoading}
-                index={index}
-                data={data}
-                onHide={() => hideFacetInGrid(item.columnName)}
-                onExpand={() => toggleExpandFacet(item, index, true)}
-                facetToPlot={item as FacetColumnResultValues}
-                applyChanges={(
-                  facet: FacetColumnResultValues,
-                  value: FacetColumnResultValueCount | undefined,
-                  isSelected: boolean
-                ) =>
-                  applyChangesToValuesColumn(
-                    request,
-                    facet,
-                    applyChangesFromQueryFilter,
-                    value?.value,
-                    isSelected,
-                  )
-                }
-              ></FacetNavPanel>
-            </div>
-          ))}
-        </div>
-        <div className="clearfix">
-          {getShowMoreState() !== 'NONE' && (
-            <button
-              className="btn btn-default FacetNav__showMore"
-              onClick={() => showMore(getShowMoreState() === 'MORE')}
-            >
-              {getShowMoreState() === 'LESS' ? 'Show Less' : 'Show More'}
-            </button>
-          )}
-        </div>
-      </div>
+        <TotalQueryResults
+          isLoading={isLoading!}
+          executeQueryRequest={executeQueryRequest!}
+          lastQueryRequest={getLastQueryRequest?.()!}
+          token={token}
+          unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
+          frontText={'Showing'}
+        />
+      </>
     )
   }
 }

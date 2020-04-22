@@ -37,15 +37,15 @@ const lastQueryRequestResult = {
   },
 }
 
-const mockApplyChanges = jest.fn(() => null)
+const mockExecuteQueryRequest = jest.fn(_selectedFacets => null)
 const mockGetQueryRequest = jest.fn(() => _.cloneDeep(lastQueryRequestResult))
 
 function createTestProps(overrides?: QueryFilterProps): QueryFilterProps {
   return {
-    applyChanges: mockApplyChanges,
     isLoading: false,
     data: mockQueryResponseData as QueryResultBundle,
     getLastQueryRequest: mockGetQueryRequest,
+    executeQueryRequest: mockExecuteQueryRequest,
     token: '123',
 
     ...overrides,
@@ -60,6 +60,7 @@ let wrapper: ShallowWrapper<
 let props: QueryFilterProps
 
 function init(overrides?: QueryFilterProps) {
+  jest.clearAllMocks()
   props = createTestProps(overrides)
   wrapper = shallow(<QueryFilter {...props} />)
 }
@@ -99,8 +100,9 @@ describe('handling child component callbacks', () => {
 
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
     enumWrapper.simulate('change', 'Ford', true)
-
-    expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
+    const expected = _.cloneDeep(lastQueryRequestResult)
+    expected.query = { ...expected.query, selectedFacets: expectedResult }
+    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
 
   it('should propagate enum clear correctly', async () => {
@@ -115,7 +117,9 @@ describe('handling child component callbacks', () => {
     ]
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
     enumWrapper.simulate('clear')
-    expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
+    const expected = _.cloneDeep(lastQueryRequestResult)
+    expected.query = { ...expected.query, selectedFacets: expectedResult }
+    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
 
   it('should propagate range correctly', async () => {
@@ -133,9 +137,10 @@ describe('handling child component callbacks', () => {
         max: '1998',
         min: '1997',
       },
-    ]
+    ] 
     const enumWrapper = wrapper.find('RangeFacetFilter').at(0)
     enumWrapper.simulate('change', ['1997', '1998'])
-    expect(mockApplyChanges).toHaveBeenCalledWith(expectedResult)
-  })
+    const expected = _.cloneDeep(lastQueryRequestResult)
+    expected.query = { ...expected.query, selectedFacets: expectedResult }
+    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)})
 })

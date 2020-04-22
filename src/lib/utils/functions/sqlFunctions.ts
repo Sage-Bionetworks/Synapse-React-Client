@@ -51,6 +51,12 @@ export const insertConditionsFromSearchParams = (
   sql: string,
   operator: SQLOperator = 'LIKE',
 ) => {
+  // if there are no search params, or if all search params are QueryWrapper queries
+  const isQueryWrapperKey = (key:string) => key.startsWith('QueryWrapper')
+  let searchParamKeys = Object.keys(searchParams)
+  if (searchParamKeys.length == 0 || searchParamKeys.every(isQueryWrapperKey)) {
+    return sql
+  }
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
@@ -81,6 +87,12 @@ export const insertConditionsFromSearchParams = (
 export const formatSQLFromParser = (tokens: string[][]) => {
   // remove backtick from output sql (for table name): `syn1234` becomes syn1234
   const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
+  // replace all DBLSTRINGs (escaped strings) with LITERALs
+  tokens.forEach((value) => {
+    if (value[0] == 'DBLSTRING') {
+      value[0] = 'LITERAL'
+    }
+  })
   const newSql = parser.parse(tokens).toString()
   const splitString = `\`${synId}\``
   return newSql.split(splitString).join(synId)

@@ -110,7 +110,7 @@ describe('it performs the expected functionality', () => {
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
     token: '12345',
-    queryBundleRequest: queryBundleRequest,
+    queryBundleRequest,
   }
 
   beforeEach(() => {

@@ -73,7 +73,6 @@ function extractPlotDataArray(
   index: number,
   plotType: PlotType,
 ) {
-  console.log(columnType)
   const { colorPalette } = getColorPallette(
     index,
     facetToPlot.facetValues.length,
@@ -83,7 +82,7 @@ function extractPlotDataArray(
     facetValues: FacetColumnResultValueCount[],
     columnType?: ColumnType,
   ): string[] => {
-    return facetValues.map(facetValue => getLabel(facetValue, columnType))
+    return facetValues.map((facetValue) => getLabel(facetValue, columnType))
   }
 
   const getLabel = (
@@ -98,7 +97,7 @@ function extractPlotDataArray(
       const lookup = getStoredEntityHeaders()
 
       return (
-        lookup.find(item => item.id === facetValue.value)?.name ||
+        lookup.find((item) => item.id === facetValue.value)?.name ||
         facetValue.value
       )
     }
@@ -106,7 +105,7 @@ function extractPlotDataArray(
     if (columnType === 'USERID') {
       const lookup = getStoredUserProfiles()
       return (
-        lookup.find(item => item.ownerId === facetValue.value)?.userName ||
+        lookup.find((item) => item.ownerId === facetValue.value)?.userName ||
         facetValue.value
       )
     }
@@ -116,20 +115,20 @@ function extractPlotDataArray(
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
-        ? facetToPlot.facetValues.map(facet => facet.count)
+        ? facetToPlot.facetValues.map((facet) => facet.count)
         : undefined,
     labels: getLabels(facetToPlot.facetValues, columnType),
     x:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map(facet => getLabel(facet, columnType))
+        ? facetToPlot.facetValues.map((facet) => getLabel(facet, columnType))
         : undefined,
     y:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map(facet => facet.count)
+        ? facetToPlot.facetValues.map((facet) => facet.count)
         : undefined,
     // @ts-ignore
     facetEnumerationValues: facetToPlot.facetValues.map(
-      facetValue => facetValue.value,
+      (facetValue) => facetValue.value,
     ),
     name: facetToPlot.columnName,
     hovertemplate:
@@ -146,14 +145,14 @@ function extractPlotDataArray(
       colors: plotType === 'PIE' ? colorPalette : undefined,
       color: plotType === 'BAR' ? colorPalette : undefined,
       line: {
-        width: facetToPlot.facetValues.map(facetValue =>
+        width: facetToPlot.facetValues.map((facetValue) =>
           facetValue.isSelected ? 1 : 0,
         ),
       },
     },
     pull:
       plotType === 'PIE'
-        ? facetToPlot.facetValues.map(facetValue =>
+        ? facetToPlot.facetValues.map((facetValue) =>
             facetValue.isSelected ? 0.04 : 0,
           )
         : undefined,
@@ -167,7 +166,6 @@ function extractPlotDataArray(
         ? (singleChartData.marker?.colors as string[])
         : (singleChartData.marker?.color as string[]),
   }
-  console.log(result)
   return result
 }
 
@@ -181,7 +179,7 @@ const applyFacetFilter = (
     const facetValueClickedValue =
       plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]
     const facetValueClicked = allFacetValues.facetValues.find(
-      facet => facet.value === facetValueClickedValue,
+      (facet) => facet.value === facetValueClickedValue,
     )
     callbackApplyFn(
       allFacetValues,
@@ -198,7 +196,7 @@ const applyDropdownFilter = (
 ) => {
   if (evt.target.value) {
     const facetValueClicked = allFacetValues.facetValues.find(
-      facet => facet.value === evt.target.value,
+      (facet) => facet.value === evt.target.value,
     )
     callbackApplyFn(allFacetValues, facetValueClicked, evt.target.checked)
   }
@@ -273,7 +271,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
 
   const getColumnType = (): ColumnType | undefined =>
     data?.columnModels?.find(
-      columnModel => columnModel.name === facetToPlot.columnName,
+      (columnModel) => columnModel.name === facetToPlot.columnName,
     )?.columnType as ColumnType
 
   useEffect(() => {
@@ -353,7 +351,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 evt: React.ChangeEvent<HTMLInputElement>,
               ) => applyDropdownFilter(evt, facetToPlot, applyChanges)}
               isAllFilterSelectedForFacet={
-                facetToPlot.facetValues.filter(item => item.isSelected)
+                facetToPlot.facetValues.filter((item) => item.isSelected)
                   .length === 0
               }
               facetColumnResult={facetToPlot}
@@ -385,7 +383,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                   style={getPlotStyle(size.width, plotType)}
                   config={{ displayModeBar: false, responsive: true }}
                   useResizeHandler={true}
-                  onClick={evt =>
+                  onClick={(evt) =>
                     applyFacetFilter(evt, facetToPlot, applyChanges)
                   }
                 ></Plot>
