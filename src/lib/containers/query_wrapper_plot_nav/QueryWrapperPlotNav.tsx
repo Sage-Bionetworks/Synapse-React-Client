@@ -35,6 +35,7 @@ type OwnProps = {
   cardConfiguration?: CardConfiguration
   token?: string
   rgbIndex?: number
+  facetsToPlot?: string[]
 }
 
 type SearchParams = {
@@ -66,6 +67,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     name,
     token,
     cardConfiguration,
+    facetsToPlot,
     ...rest
   } = props
   let sqlUsed = sql
@@ -120,7 +122,11 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         </div>
       </h3>
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <FacetNav show={showVisualization} loadingScreen={loadingScreen} />
+        <FacetNav
+          show={showVisualization}
+          facetsToPlot={facetsToPlot}
+          loadingScreen={loadingScreen}
+        />
         <FilterAndView
           showFilter={showFilter}
           tableConfiguration={tableConfiguration}

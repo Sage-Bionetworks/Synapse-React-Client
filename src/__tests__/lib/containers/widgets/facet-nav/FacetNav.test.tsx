@@ -120,6 +120,17 @@ describe('facets display hide/show', () => {
       true,
     )
   })
+  it("should only show specified facets if 'facetsToPlot' are set", async () => {
+    init({
+      ...props,
+      facetsToPlot: ['Make', 'Color'],
+    })
+
+    expect(container.querySelector('.FacetNav__row')!.children.length).toBe(2)
+    expect(isHidden(container.querySelector('button.FacetNav__showMore'))).toBe(
+      true,
+    )
+  })
   it('hiding facet should hide it from facet grid', async () => {
     init(props)
     const icon = getButtonOnFacet(container, 'times', 0)

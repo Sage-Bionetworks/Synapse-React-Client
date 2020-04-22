@@ -15,6 +15,7 @@ import TotalQueryResults from '../../../containers/TotalQueryResults'
 export type FacetNavOwnProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
   show: boolean
+  facetsToPlot?: string[]
 }
 
 type UiFacetState = {
@@ -43,6 +44,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   token,
   asyncJobStatus,
   show,
+  facetsToPlot,
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [expandedFacets, setExpandedFacets] = useState<ExpandedFacet[]>([])
@@ -53,7 +55,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     data: QueryResultBundle | undefined,
   ): FacetColumnResult[] => {
     const result = data?.facets?.filter(
-      item => item.facetType === 'enumeration',
+      item =>
+        item.facetType === 'enumeration' &&
+        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
     )
     if (!result) {
       return []
@@ -64,10 +68,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   useEffect(() => {
     const result = data?.facets?.filter(
-      item => item.facetType === 'enumeration',
+      item =>
+        item.facetType === 'enumeration' &&
+        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
     )
     if (!result) {
-      console.log('no data')
       return
     }
     if (isFirstTime) {

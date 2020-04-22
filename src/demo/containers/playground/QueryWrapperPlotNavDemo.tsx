@@ -32,6 +32,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
         },
+        facetsToPlot: ['assay'],
         rgbIndex: 1,
         name: 'PlotNav Demo',
         sqlOperator: '=',
