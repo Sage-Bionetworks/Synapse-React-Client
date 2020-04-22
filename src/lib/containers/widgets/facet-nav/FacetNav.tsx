@@ -14,7 +14,6 @@ import TotalQueryResults from '../../../containers/TotalQueryResults'
 
 export type FacetNavOwnProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
-  facetsToPlot?: string[] | undefined
   show: boolean
 }
 

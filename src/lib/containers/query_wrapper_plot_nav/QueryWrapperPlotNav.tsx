@@ -60,7 +60,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     searchParams,
     sql,
     sqlOperator,
-    facetsToPlot,
     tableConfiguration,
     loadingScreen,
     entityId,
@@ -122,11 +121,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         </div>
       </h3>
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <FacetNav
-          show={showVisualization}
-          facetsToPlot={facetsToPlot}
-          loadingScreen={loadingScreen}
-        />
+        <FacetNav show={showVisualization} loadingScreen={loadingScreen} />
         <FilterAndView
           showFilter={showFilter}
           tableConfiguration={tableConfiguration}

@@ -1,5 +1,5 @@
-import * as React from 'react'
 import FacetNav from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
+import * as React from 'react'
 import * as _ from 'lodash'
 import { render, fireEvent } from '@testing-library/react'
 import { QueryResultBundle, QueryBundleRequest } from 'lib/utils/synapseTypes'
@@ -116,17 +116,6 @@ describe('facets display hide/show', () => {
       ...props,
       data: data,
     })
-    expect(isHidden(container.querySelector('button.FacetNav__showMore'))).toBe(
-      true,
-    )
-  })
-  it("should only show specified facets if 'facetsToPlot' are set", async () => {
-    init({
-      ...props,
-      facetsToPlot: ['Make', 'Color'],
-    })
-
-    expect(container.querySelector('.FacetNav__row')!.children.length).toBe(2)
     expect(isHidden(container.querySelector('button.FacetNav__showMore'))).toBe(
       true,
     )
