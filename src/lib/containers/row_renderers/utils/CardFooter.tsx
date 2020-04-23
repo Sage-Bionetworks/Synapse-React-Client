@@ -20,9 +20,6 @@ type CardFooterProps = {
   secondaryLabelLimit?: number
 }
 
-// regex to see if string is url - https://stackoverflow.com/a/3809435
-const URL_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi
-
 class CardFooter extends React.Component<CardFooterProps, State> {
   constructor(props: CardFooterProps) {
     super(props)
