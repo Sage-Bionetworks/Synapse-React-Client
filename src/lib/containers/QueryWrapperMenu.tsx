@@ -292,7 +292,7 @@ export default class QueryWrapperMenu extends React.Component<
       accordionConfig = [],
       facetAliases = {},
       entityId,
-      shouldDeepLink
+      shouldDeepLink,
     } = this.props
     const {
       cardConfiguration,
@@ -357,7 +357,7 @@ export default class QueryWrapperMenu extends React.Component<
         stackedBarChartConfiguration,
         tableConfiguration,
       )
-      let initQueryRequest: QueryBundleRequest = {
+      const initQueryRequest: QueryBundleRequest = {
         partMask,
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         entityId,
