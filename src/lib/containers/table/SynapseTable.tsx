@@ -326,7 +326,6 @@ export default class SynapseTable extends React.Component<
                 className={`SRC-centerContent text-left`}
                 style={{ minHeight: '20px' }}
               >
-                (
                 <TotalQueryResults
                   isLoading={isLoading}
                   style={{ fontSize: 15 }}
@@ -338,7 +337,6 @@ export default class SynapseTable extends React.Component<
                     this.applyChangesFromQueryFilter(newFacets)
                   }
                 />
-                )
               </div>
             )}
           {!enableLeftFacetFilter &&

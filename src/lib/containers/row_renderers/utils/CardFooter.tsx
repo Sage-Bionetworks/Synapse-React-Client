@@ -72,18 +72,6 @@ class CardFooter extends React.Component<CardFooterProps, State> {
           {value}
         </a>
       )
-    } else if (value.match(URL_REGEX)) {
-      return (
-        <a
-          className={textColorClass}
-          data-search-handle={columnName}
-          target="_blank"
-          rel="noopener noreferrer"
-          href={value}
-        >
-          {value}
-        </a>
-      )
     }
     return value
   }
