@@ -17,11 +17,8 @@ library.add(faSearch)
 library.add(faTimes)
 
 type SearchState = {
-  dropdownIndex: number
   show: boolean
   searchText: string
-  submittedSearchText: string
-  lastSearchedFacet: string
   columnName: string
 }
 
@@ -44,11 +41,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   constructor(props: InternalSearchProps) {
     super(props)
     this.state = {
-      dropdownIndex: 0,
       show: false,
       searchText: '',
-      submittedSearchText: '',
-      lastSearchedFacet: '',
       columnName: '',
     }
     this.searchFormRef = React.createRef()
@@ -98,15 +92,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     return escapedSearchText
   }
 
-  public clearSearchText = () => {
-    this.setState({
-      searchText: '',
-    })
-  }
-
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
+    this.setState({
+      show: false,
+    })
     const { searchText, columnName } = this.state
     const {
       updateParentState,
@@ -125,17 +116,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const newSql = insertConditionsFromSearchParams(searchParams, sql)
     lastQueryRequest.query.sql = newSql
-    this.setState({
-      submittedSearchText: searchText,
-      lastSearchedFacet: columnName,
-    })
     executeQueryRequest!(lastQueryRequest)
-    updateParentState!({
-      searchQuery: {
-        columnName,
-        searchText,
-      },
-    })
+    const searchQuery = {
+      columnName: !searchText ? '' : columnName,
+      searchText,
+    }
+    updateParentState!({ searchQuery })
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -146,12 +132,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   render() {
     const { data, topLevelControlsState } = this.props
-    const {
-      searchText,
-      show,
-      // submittedSearchText,
-      // lastSearchedFacet,
-    } = this.state
+    const { searchText, show } = this.state
     const outerClassName = `SearchV2 ${
       topLevelControlsState?.showSearchBar ? '' : 'hidden'
     }`
@@ -182,6 +163,22 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             value={searchText}
             type="text"
           />
+          {this.state.searchText.length > 0 && (
+            <button
+              className="SearchV2__searchbar__clearbutton"
+              type="button"
+              onClick={() => {
+                this.setState({
+                  searchText: '',
+                })
+              }}
+            >
+              <FontAwesomeIcon
+                className="SRC-primary-text-color"
+                icon="times"
+              />
+            </button>
+          )}
         </form>
         <div
           className={
@@ -194,7 +191,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             <p className="deemphasized">
               <i> Search In Field: </i>
             </p>
-            {data?.columnModels?.slice(0, 5).map(el => {
+            {data?.columnModels?.map(el => {
               const name = el.name
               const displayName = unCamelCase(el.name)
               return (

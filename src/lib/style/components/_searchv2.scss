@@ -1,10 +1,10 @@
 .SearchV2 {
-  margin-bottom: 25px;
-
   &__searchbar {
     height: 50px;
     background: #f9f9f9;
     border: 1px solid #dddddf;
+    display: flex;
+    align-items: center;
     &:focus-within {
       outline-color: $primary-action-color;
       outline-style: auto;
@@ -14,8 +14,12 @@
       color: #dcdcdc;
       margin-left: 10px;
       font-size: 17px;
+      flex: 1;
+      flex-grow: 0;
+      flex-shrink: 0;
     }
     input {
+      flex: 1;
       &:focus {
         outline-width: 0px;
       }
@@ -25,6 +29,11 @@
       display: inline-block;
       border: none;
       background: #f9f9f9;
+    }
+    &__clearbutton {
+      flex: 1;
+      flex-grow: 0;
+      flex-shrink: 0;
     }
   }
   &__form-container {

@@ -45,6 +45,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   topLevelControlsState,
   facetsToPlot,
   searchQuery,
+  getInitQueryRequest,
+  updateParentState,
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [expandedFacets, setExpandedFacets] = useState<ExpandedFacet[]>([])
@@ -278,6 +280,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           isLoading={isLoading!}
           executeQueryRequest={executeQueryRequest!}
           lastQueryRequest={getLastQueryRequest?.()!}
+          updateParentState={updateParentState}
+          getInitQueryRequest={getInitQueryRequest}
           token={token}
           unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
           frontText={'Showing'}

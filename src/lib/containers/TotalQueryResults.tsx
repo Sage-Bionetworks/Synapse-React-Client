@@ -25,19 +25,17 @@ import {
 } from '../containers/widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from '../containers/widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
-import { SearchQuery } from './QueryWrapper'
+import { QueryWrapperChildProps } from './QueryWrapper'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
   style?: React.CSSProperties
   lastQueryRequest: QueryBundleRequest
-  executeQueryRequest?: (param: QueryBundleRequest) => void
   token: string | undefined
   unitDescription: string
   frontText: string
   applyChanges?: Function
-  searchQuery?: SearchQuery
-}
+} & QueryWrapperChildProps
 
 // This is a stateful component so that during load the component can hold onto the previous
 // total instead of showing 0 results for the intermittent loading state.
@@ -50,6 +48,8 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   token,
   isLoading: parentLoading,
   executeQueryRequest,
+  getInitQueryRequest,
+  updateParentState,
   searchQuery,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
@@ -206,11 +206,37 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     }
   }
 
+  const removeSearchQuerySelection = () => {
+    const initQueryRequest = getInitQueryRequest!()
+    const firstSql = initQueryRequest.query.sql
+    const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
+    // reset the sql to original
+    cloneLastQueryRequest.query.sql = firstSql
+    executeQueryRequest!(cloneLastQueryRequest)
+    updateParentState!({
+      searchQuery: {
+        columnName: '',
+        searchText: '',
+      },
+    })
+  }
+
+  const clearAll = () => {
+    const initQueryRequest = cloneDeep(getInitQueryRequest!())
+    executeQueryRequest!(initQueryRequest)
+    updateParentState!({
+      searchQuery: {
+        columnName: '',
+        searchText: '',
+      },
+    })
+  }
+
   const searchSelectionCriteriaPill = searchQuery?.columnName ? (
     <SelectionCriteriaPill
       index={facetsWithSelection.length + 1}
       searchQuery={searchQuery}
-      onRemove={removeFacetSelection}
+      onRemove={removeSearchQuerySelection}
     />
   ) : (
     <></>
@@ -220,6 +246,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     <div className="TotalQueryResults" style={style}>
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
         {frontText} {total} {unitDescription}{' '}
+        {isLoading && (
+          <span style={{ marginLeft: '2px' }} className={'spinner'} />
+        )}
       </span>
       <div className="TotalQueryResults__selections">
         {searchSelectionCriteriaPill}
@@ -234,9 +263,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
           ></SelectionCriteriaPill>
         ))}
       </div>
-      {isLoading && (
-        <span style={{ marginLeft: '2px' }} className={'spinner'} />
-      )}
+      <button onClick={clearAll} className="TotalQueryResults__clearall">
+        Clear All
+      </button>
     </div>
   )
 }
