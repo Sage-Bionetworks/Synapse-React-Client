@@ -22,7 +22,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
    */
   constructor(props: any) {
     super(props)
-    const sql: string = 'SELECT * FROM syn16858331'
+    const sql: string = 'SELECT * FROM syn16858331 limit 10'
     this.state = {
       isLoading: true,
       ownerId: '',

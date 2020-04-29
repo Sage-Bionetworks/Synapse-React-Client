@@ -7,27 +7,14 @@ import {
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../utils/'
-import QueryCount from '../QueryCount'
 import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faSearch,
-  faFilter,
-  faChartBar,
-  faDownload,
-} from '@fortawesome/free-solid-svg-icons'
 import FilterAndView from './FilterAndView'
-// import { DownloadConfirmation } from '../download_list'
-
-library.add(faSearch)
-library.add(faFilter)
-library.add(faChartBar)
-library.add(faDownload)
+import { TopLevelControlsProps } from './TopLevelControls'
+import TopLevelControls from './TopLevelControls'
+import SearchV2 from '../SearchV2'
 
 type OwnProps = {
-  name: string
   sql: string
   entityId: string
   shouldDeepLink?: boolean
@@ -36,7 +23,7 @@ type OwnProps = {
   token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
-}
+} & TopLevelControlsProps
 
 type SearchParams = {
   searchParams?: {
@@ -52,11 +39,6 @@ export type QueryWrapperPlotNavProps = SearchParams &
   OwnProps
 
 const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = props => {
-  // const [showSearch, setShowSearch] = React.useState(true)
-  const [showVisualization, setShowVisualization] = React.useState(true)
-  const [showFilter, setShowFilter] = React.useState(true)
-  // const [showDownload, setShowDownload] = React.useState(false)
-
   const {
     searchParams,
     sql,
@@ -96,39 +78,16 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   }
   return (
     <div className="QueryWrapperPlotNav">
-      <h3 className="QueryWrapperPlotNav__title">
-        <div className="QueryWrapperPlotNav__querycount">
-          <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
-        </div>
-        <div className="QueryWrapperPlotNav__actions">
-          {/* <button  className="SRC-primary-action-color"onClick={() => setShowSearch(!showSearch)}>
-            <FontAwesomeIcon icon="search" size="1x" />
-          </button> */}
-          <button
-            className="SRC-primary-action-color"
-            onClick={() => setShowVisualization(!showVisualization)}
-          >
-            <FontAwesomeIcon icon="chart-bar" size="1x" />
-          </button>
-          <button
-            className="SRC-primary-action-color"
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <FontAwesomeIcon icon="filter" size="1x" />
-          </button>
-          {/* <button  className="SRC-primary-action-color"onClick={() => setShowDownload(!showDownload)}>
-            <FontAwesomeIcon icon="download" size="1x" />
-          </button> */}
-        </div>
-      </h3>
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <FacetNav
-          show={showVisualization}
-          facetsToPlot={facetsToPlot}
-          loadingScreen={loadingScreen}
+        <TopLevelControls
+          name={name}
+          token={token}
+          entityId={entityId}
+          sql={sqlUsed}
         />
+        <SearchV2 />
+        <FacetNav facetsToPlot={facetsToPlot} loadingScreen={loadingScreen} />
         <FilterAndView
-          showFilter={showFilter}
           tableConfiguration={tableConfiguration}
           cardConfiguration={cardConfiguration}
         />

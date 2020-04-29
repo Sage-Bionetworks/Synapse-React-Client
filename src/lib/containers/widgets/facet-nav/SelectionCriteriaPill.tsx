@@ -11,6 +11,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import _ from 'lodash'
+import { SearchQuery } from 'lib/containers/QueryWrapper'
 
 export type FacetWithSelection = {
   facet: FacetColumnResult
@@ -19,30 +20,38 @@ export type FacetWithSelection = {
 }
 
 export type SelectionCriteriaPillProps = {
-  facetWithSelection: FacetWithSelection
+  facetWithSelection?: FacetWithSelection
   index: number
   className?: string
   onRemove: Function
+  searchQuery?: SearchQuery
 }
 
 const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
   facetWithSelection,
   index,
   onRemove,
+  searchQuery,
 }) => {
   let innerText,
     tooltipText: string | null = ''
-  if (facetWithSelection.facet.facetType === 'enumeration') {
-    innerText = facetWithSelection.displayValue || ''
+  if (facetWithSelection) {
+    if (facetWithSelection.facet.facetType === 'enumeration') {
+      innerText = facetWithSelection.displayValue || ''
+    } else {
+      innerText =
+        (facetWithSelection.facet as FacetColumnResultRange).selectedMin +
+        ' - ' +
+        (facetWithSelection.facet as FacetColumnResultRange).selectedMax
+    }
+    tooltipText = `${unCamelCase(
+      facetWithSelection.facet.columnName,
+    )}: ${innerText}`
   } else {
-    innerText =
-      (facetWithSelection.facet as FacetColumnResultRange).selectedMin +
-      ' - ' +
-      (facetWithSelection.facet as FacetColumnResultRange).selectedMax
+    innerText = `"${searchQuery?.searchText}" in ${unCamelCase(
+      searchQuery?.columnName,
+    )}`
   }
-  tooltipText = `${unCamelCase(
-    facetWithSelection.facet.columnName,
-  )}: ${innerText}`
   return (
     <ElementWithTooltip
       idForToolTip={`selectionCriteria_${+index}`}

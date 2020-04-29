@@ -25,6 +25,7 @@ import {
 } from '../containers/widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from '../containers/widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
+import { SearchQuery } from './QueryWrapper'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -35,6 +36,7 @@ export type TotalQueryResultsProps = {
   unitDescription: string
   frontText: string
   applyChanges?: Function
+  searchQuery?: SearchQuery
 }
 
 // This is a stateful component so that during load the component can hold onto the previous
@@ -48,6 +50,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   token,
   isLoading: parentLoading,
   executeQueryRequest,
+  searchQuery,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
@@ -181,9 +184,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     calculateTotal()
   }, [parentLoading, token, lastQueryRequest])
 
-  const removeSelection = ({ facet, selectedValue }: FacetWithSelection) => {
-    console.log(facet)
-    console.log(selectedValue)
+  const removeFacetSelection = ({
+    facet,
+    selectedValue,
+  }: FacetWithSelection) => {
     if (facet.facetType === 'enumeration') {
       applyChangesToValuesColumn(
         lastQueryRequest,
@@ -202,12 +206,23 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     }
   }
 
+  const searchSelectionCriteriaPill = searchQuery?.columnName ? (
+    <SelectionCriteriaPill
+      index={facetsWithSelection.length + 1}
+      searchQuery={searchQuery}
+      onRemove={removeFacetSelection}
+    />
+  ) : (
+    <></>
+  )
+
   return (
     <div className="TotalQueryResults" style={style}>
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
         {frontText} {total} {unitDescription}{' '}
       </span>
       <div className="TotalQueryResults__selections">
+        {searchSelectionCriteriaPill}
         {facetsWithSelection.map((selectedFacet, index) => (
           <SelectionCriteriaPill
             key={
@@ -215,7 +230,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
             }
             facetWithSelection={selectedFacet}
             index={index}
-            onRemove={removeSelection}
+            onRemove={removeFacetSelection}
           ></SelectionCriteriaPill>
         ))}
       </div>

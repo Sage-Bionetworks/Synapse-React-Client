@@ -88,25 +88,23 @@ export const formatSQLFromParser = (tokens: string[][]) => {
 
 //parses synapse entity id from a sql query string
 //look for a pattern of 'from[some number of spaces]syn[somenumbers]` case insensitive
-export const parseEntityIdFromSqlStatement = (sql:string): string => {
+export const parseEntityIdFromSqlStatement = (sql: string): string => {
   const matches = sql.match(/(from)\s+(syn)\d+/gi)
-  return  (matches && matches[0])? matches[0].substr(5).trim() : ''
+  return matches && matches[0] ? matches[0].substr(5).trim() : ''
 }
 
-export const resultToJson = <T>(  
+export const resultToJson = <T>(
   headerColumns: SelectColumn[],
-     rowColumns: Row[]
-   ): T[] => {
-     const result: T[] = [];
-     const rows = rowColumns.map(row => row.values);
-     const headers = headerColumns.map(column => column.name);
-     rows.forEach((row, index) => {
-       result[index] = {} as T;
-       row.forEach((text, cellIndex) => {
-         result[index][headers[cellIndex]] = text;
-       });
-     });
-     return result;
-   };
-  
-
+  rowColumns: Row[],
+): T[] => {
+  const result: T[] = []
+  const rows = rowColumns.map(row => row.values)
+  const headers = headerColumns.map(column => column.name)
+  rows.forEach((row, index) => {
+    result[index] = {} as T
+    row.forEach((text, cellIndex) => {
+      result[index][headers[cellIndex]] = text
+    })
+  })
+  return result
+}
