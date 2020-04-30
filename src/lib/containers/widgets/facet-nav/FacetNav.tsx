@@ -14,7 +14,6 @@ import TotalQueryResults from '../../../containers/TotalQueryResults'
 
 export type FacetNavOwnProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
-  show: boolean
   facetsToPlot?: string[]
 }
 
@@ -30,7 +29,7 @@ type ExpandedFacet = {
   index: number
 }
 
-type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
+export type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
 
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 
@@ -43,12 +42,16 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   executeQueryRequest,
   token,
   asyncJobStatus,
-  show,
+  topLevelControlsState,
   facetsToPlot,
+  searchQuery,
+  getInitQueryRequest,
+  updateParentState,
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [expandedFacets, setExpandedFacets] = useState<ExpandedFacet[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
+  const { showFacetVisualization } = topLevelControlsState!
 
   const request = getLastQueryRequest!()
   const getFacets = (
@@ -199,7 +202,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else {
     return (
       <>
-        <div className={`FacetNav ${show ? '' : 'hidden'}`}>
+        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'}`}>
           <div className="FacetNav__expanded">
             {expandedFacets.map(item => (
               <div key={`facetPanel_${item.index}`}>
@@ -277,9 +280,12 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           isLoading={isLoading!}
           executeQueryRequest={executeQueryRequest!}
           lastQueryRequest={getLastQueryRequest?.()!}
+          updateParentState={updateParentState}
+          getInitQueryRequest={getInitQueryRequest}
           token={token}
           unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
           frontText={'Showing'}
+          searchQuery={searchQuery}
         />
       </>
     )

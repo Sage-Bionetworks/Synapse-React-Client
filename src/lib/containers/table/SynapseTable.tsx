@@ -1156,7 +1156,7 @@ export default class SynapseTable extends React.Component<
     isAllFilterSelectedForFacet![columnName] = selector === SELECT_ALL
     this.props.updateParentState!({
       lastFacetSelection,
-      isAllFilterSelectedForFacet,
+      isAllFilterSelectedForFacet: isAllFilterSelectedForFacet!,
     })
 
     this.props.executeQueryRequest!(newQueryRequest)

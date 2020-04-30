@@ -1,4 +1,6 @@
-import FacetNav from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
+import FacetNav, {
+  FacetNavProps,
+} from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import * as React from 'react'
 import * as _ from 'lodash'
 import { render, fireEvent } from '@testing-library/react'
@@ -18,17 +20,19 @@ const lastQueryRequest: QueryBundleRequest = {
   },
 }
 const mockGetLastQueryRequest = jest.fn(() => lastQueryRequest)
-const mockApplyCallback = jest.fn(() => null)
 
-type ComponentProps = React.ComponentProps<typeof FacetNav>
-
-function createTestProps(overrides?: ComponentProps): ComponentProps {
+function createTestProps(overrides?: FacetNavProps): FacetNavProps {
   return {
-    applyChanges: mockApplyCallback,
     getLastQueryRequest: mockGetLastQueryRequest,
     data: testData as QueryResultBundle,
     loadingScreen: <div className="loading"></div>,
     ...overrides,
+    topLevelControlsState: {
+      showFacetVisualization: true,
+      showFacetFilter: true,
+      showColumnFilter: true,
+      showSearchBar: true,
+    },
   }
 }
 
@@ -52,9 +56,9 @@ function getButtonOnFacet(
 }
 
 let container: HTMLElement
-let props: ComponentProps
+let props: FacetNavProps
 
-function init(overrides?: ComponentProps) {
+function init(overrides?: FacetNavProps) {
   props = createTestProps(overrides)
   const { container: _container, ...others } = render(<FacetNav {...props} />)
   container = _container

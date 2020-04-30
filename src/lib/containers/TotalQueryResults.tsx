@@ -25,17 +25,17 @@ import {
 } from '../containers/widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from '../containers/widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
+import { QueryWrapperChildProps } from './QueryWrapper'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
   style?: React.CSSProperties
   lastQueryRequest: QueryBundleRequest
-  executeQueryRequest?: (param: QueryBundleRequest) => void
   token: string | undefined
   unitDescription: string
   frontText: string
   applyChanges?: Function
-}
+} & QueryWrapperChildProps
 
 // This is a stateful component so that during load the component can hold onto the previous
 // total instead of showing 0 results for the intermittent loading state.
@@ -48,6 +48,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   token,
   isLoading: parentLoading,
   executeQueryRequest,
+  getInitQueryRequest,
+  updateParentState,
+  searchQuery,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
@@ -181,9 +184,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     calculateTotal()
   }, [parentLoading, token, lastQueryRequest])
 
-  const removeSelection = ({ facet, selectedValue }: FacetWithSelection) => {
-    console.log(facet)
-    console.log(selectedValue)
+  const removeFacetSelection = ({
+    facet,
+    selectedValue,
+  }: FacetWithSelection) => {
     if (facet.facetType === 'enumeration') {
       applyChangesToValuesColumn(
         lastQueryRequest,
@@ -202,12 +206,52 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     }
   }
 
+  const removeSearchQuerySelection = () => {
+    const initQueryRequest = getInitQueryRequest!()
+    const firstSql = initQueryRequest.query.sql
+    const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
+    // reset the sql to original
+    cloneLastQueryRequest.query.sql = firstSql
+    executeQueryRequest!(cloneLastQueryRequest)
+    updateParentState!({
+      searchQuery: {
+        columnName: '',
+        searchText: '',
+      },
+    })
+  }
+
+  const clearAll = () => {
+    const initQueryRequest = cloneDeep(getInitQueryRequest!())
+    executeQueryRequest!(initQueryRequest)
+    updateParentState!({
+      searchQuery: {
+        columnName: '',
+        searchText: '',
+      },
+    })
+  }
+
+  const searchSelectionCriteriaPill = searchQuery?.columnName ? (
+    <SelectionCriteriaPill
+      index={facetsWithSelection.length + 1}
+      searchQuery={searchQuery}
+      onRemove={removeSearchQuerySelection}
+    />
+  ) : (
+    <></>
+  )
+
   return (
     <div className="TotalQueryResults" style={style}>
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
         {frontText} {total} {unitDescription}{' '}
+        {isLoading && (
+          <span style={{ marginLeft: '2px' }} className={'spinner'} />
+        )}
       </span>
       <div className="TotalQueryResults__selections">
+        {searchSelectionCriteriaPill}
         {facetsWithSelection.map((selectedFacet, index) => (
           <SelectionCriteriaPill
             key={
@@ -215,13 +259,13 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
             }
             facetWithSelection={selectedFacet}
             index={index}
-            onRemove={removeSelection}
+            onRemove={removeFacetSelection}
           ></SelectionCriteriaPill>
         ))}
       </div>
-      {isLoading && (
-        <span style={{ marginLeft: '2px' }} className={'spinner'} />
-      )}
+      <button onClick={clearAll} className="TotalQueryResults__clearall">
+        Clear All
+      </button>
     </div>
   )
 }
