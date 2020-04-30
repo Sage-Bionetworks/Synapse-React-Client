@@ -28,12 +28,6 @@ export type SearchProps = {
 
 type InternalSearchProps = QueryWrapperChildProps & SearchProps
 
-/*
-  Do we want to encode the like clause in the URL?
-  How can we remove the clause?
-
-*/
-
 class Search extends React.Component<InternalSearchProps, SearchState> {
   public searchFormRef: React.RefObject<HTMLFormElement>
   public radioFormRef: React.RefObject<HTMLFormElement>
@@ -85,8 +79,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     // escape ' by adding additional '
     escapedSearchText = escapedSearchText.split("'").join("''")
     // escape % by adding \
-    // eslint-disable-next-line no-useless-escape
-    escapedSearchText = escapedSearchText.split('%').join('%')
+    escapedSearchText = escapedSearchText.split('%').join(`\%`)
     // escape \ by adding \
     escapedSearchText = escapedSearchText.split('\\').join('\\\\')
     return escapedSearchText
@@ -122,6 +115,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       searchText,
     }
     updateParentState!({ searchQuery })
+    this.setState({
+      columnName: '',
+      searchText: '',
+    })
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
