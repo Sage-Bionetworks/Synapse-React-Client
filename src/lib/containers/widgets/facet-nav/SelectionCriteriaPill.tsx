@@ -11,7 +11,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import _ from 'lodash'
-import { SearchQuery } from 'lib/containers/QueryWrapper'
+import { SearchQuery } from '../../../containers/QueryWrapper'
 
 export type FacetWithSelection = {
   facet: FacetColumnResult
