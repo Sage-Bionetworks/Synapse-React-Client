@@ -29,7 +29,7 @@ type ExpandedFacet = {
   index: number
 }
 
-type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
+export type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
 
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 

@@ -95,10 +95,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
+    const { searchText, columnName } = this.state
     this.setState({
       show: false,
     })
-    const { searchText, columnName } = this.state
     const {
       updateParentState,
       getInitQueryRequest,
