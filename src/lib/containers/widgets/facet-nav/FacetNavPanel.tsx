@@ -43,6 +43,8 @@ export type FacetNavPanelOwnProps = {
   onCollapse?: Function
 }
 
+const maxLabelLength:number = 19
+
 type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
 type PlotType = 'PIE' | 'BAR'
@@ -67,6 +69,12 @@ export type GraphData = {
   colors: string[]
 }
 
+function truncate(str:string|undefined, n:number){
+  if (!str) { return str }
+  const trimmedStr:string = str.trim()
+  return (trimmedStr.length > n) ? trimmedStr.substr(0, n-1) + '…' : str
+}
+
 function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
   columnType: ColumnType | undefined,
@@ -80,13 +88,15 @@ function extractPlotDataArray(
 
   const getLabels = (
     facetValues: FacetColumnResultValueCount[],
+    truncateFlag: boolean,
     columnType?: ColumnType,
   ): string[] => {
-    return facetValues.map((facetValue) => getLabel(facetValue, columnType))
+    return facetValues.map((facetValue) => getLabel(facetValue, truncateFlag, columnType))
   }
 
   const getLabel = (
     facetValue: FacetColumnResultValueCount,
+    truncateFlag: boolean,
     columnType?: ColumnType,
   ): string => {
     if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
@@ -95,32 +105,37 @@ function extractPlotDataArray(
 
     if (columnType === 'ENTITYID') {
       const lookup = getStoredEntityHeaders()
-
+      let value = lookup.find((item) => item.id === facetValue.value)?.name
+      if (truncateFlag) { value = truncate(value, maxLabelLength)}
       return (
-        lookup.find((item) => item.id === facetValue.value)?.name ||
+        value ||
         facetValue.value
       )
     }
 
     if (columnType === 'USERID') {
       const lookup = getStoredUserProfiles()
+      let value = lookup.find((item) => item.ownerId === facetValue.value)?.userName
+      if (truncateFlag) { value = truncate(value, maxLabelLength)}
       return (
-        lookup.find((item) => item.ownerId === facetValue.value)?.userName ||
+        value ||
         facetValue.value
       )
     }
-
-    return unCamelCase(facetValue.value)!
+    let value = unCamelCase(facetValue.value)!
+    return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
+
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map((facet) => facet.count)
         : undefined,
-    labels: getLabels(facetToPlot.facetValues, columnType),
+    labels: getLabels(facetToPlot.facetValues, false, columnType),
+    text: getLabels(facetToPlot.facetValues, true, columnType),
     x:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map((facet) => getLabel(facet, columnType))
+        ? facetToPlot.facetValues.map((facet) => getLabel(facet, false, columnType))
         : undefined,
     y:
       plotType === 'BAR'
@@ -133,11 +148,10 @@ function extractPlotDataArray(
     name: facetToPlot.columnName,
     hovertemplate:
       plotType === 'PIE'
-        ? '<b>%{label}</b><br>' +
+        ? '<b>%{text}</b><br>' +
           '%{value} (%{percent})<br>' +
           '<extra></extra>'
-        : '<b>%{label}: </b><br>' + '%{value} <br>' + '<extra></extra>',
-    textposition: 'inside',
+        : '<b>%{text}: </b><br>' + '%{value} <br>' + '<extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     // @ts-ignore
