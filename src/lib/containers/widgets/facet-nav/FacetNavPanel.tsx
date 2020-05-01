@@ -69,7 +69,7 @@ export type GraphData = {
   colors: string[]
 }
 
-function truncate(str:string|undefined, n:number){
+export function truncate(str:string|undefined, n:number){
   if (!str) { return str }
   const trimmedStr:string = str.trim()
   return (trimmedStr.length > n) ? trimmedStr.substr(0, n-1) + '…' : str
