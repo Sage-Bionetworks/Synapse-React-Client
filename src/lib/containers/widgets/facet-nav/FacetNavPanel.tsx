@@ -44,6 +44,7 @@ export type FacetNavPanelOwnProps = {
 }
 
 const maxLabelLength: number = 19
+const maxLegendLength: number = 30
 
 type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
@@ -283,17 +284,15 @@ const renderLegend = (
     >
       {labels.slice(0, numLegendItems).map((facetValue, index) => {
         const percent = formatPercent(facetValue.count / totalCount, 1)
-        const label = `${truncate(
-          facetValue.label,
-          maxLabelLength,
-        )} (${percent})`
+        const label = `(${percent}) ${facetValue.label}`
+        const labelDisplay = truncate(label, maxLegendLength)
         return (
           <div
             className="FacetNavPanel__body__legend__row"
             key={`legendLabel_${index}`}
           >
             <div style={{ backgroundColor: colors[index] }}></div>
-            <label>{label}</label>
+            <label>{labelDisplay}</label>
           </div>
         )
       })}
