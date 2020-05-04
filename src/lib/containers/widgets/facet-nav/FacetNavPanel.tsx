@@ -61,9 +61,24 @@ const layout: Partial<PlotlyTyped.Layout> = {
   },
 }
 
+// https://github.com/plotly/plotly.js/blob/fa51e33d3e1f8ca0c029b3029f3d006a5205c8f3/src/lib/index.js#L1173
+const formatPercent = (ratio: number, n: number) => {
+  n = n || 0
+  let str =
+    (Math.round(100 * ratio * Math.pow(10, n)) * Math.pow(0.1, n)).toFixed(n) +
+    '%'
+  for (let i = 0; i < n; i++) {
+    if (str.indexOf('.') !== -1) {
+      str = str.replace('0%', '%')
+      str = str.replace('.%', '%')
+    }
+  }
+  return str
+}
+
 export type GraphData = {
   data: PlotlyTyped.Data[]
-  labels: string[]
+  labels: FacetWithLabel[]
   colors: string[]
 }
 
@@ -81,8 +96,11 @@ function extractPlotDataArray(
   const getLabels = (
     facetValues: FacetColumnResultValueCount[],
     columnType?: ColumnType,
-  ): string[] => {
-    return facetValues.map((facetValue) => getLabel(facetValue, columnType))
+  ) => {
+    return facetValues.map(facetValue => ({
+      label: getLabel(facetValue, columnType),
+      count: facetValue.count,
+    }))
   }
 
   const getLabel = (
@@ -97,7 +115,7 @@ function extractPlotDataArray(
       const lookup = getStoredEntityHeaders()
 
       return (
-        lookup.find((item) => item.id === facetValue.value)?.name ||
+        lookup.find(item => item.id === facetValue.value)?.name ||
         facetValue.value
       )
     }
@@ -105,30 +123,33 @@ function extractPlotDataArray(
     if (columnType === 'USERID') {
       const lookup = getStoredUserProfiles()
       return (
-        lookup.find((item) => item.ownerId === facetValue.value)?.userName ||
+        lookup.find(item => item.ownerId === facetValue.value)?.userName ||
         facetValue.value
       )
     }
 
     return unCamelCase(facetValue.value)!
   }
+
+  const labels = getLabels(facetToPlot.facetValues, columnType)
+
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
-        ? facetToPlot.facetValues.map((facet) => facet.count)
+        ? facetToPlot.facetValues.map(facet => facet.count)
         : undefined,
-    labels: getLabels(facetToPlot.facetValues, columnType),
+    labels: labels.map(el => el.label),
     x:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map((facet) => getLabel(facet, columnType))
+        ? facetToPlot.facetValues.map(facet => getLabel(facet, columnType))
         : undefined,
     y:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map((facet) => facet.count)
+        ? facetToPlot.facetValues.map(facet => facet.count)
         : undefined,
     // @ts-ignore
     facetEnumerationValues: facetToPlot.facetValues.map(
-      (facetValue) => facetValue.value,
+      facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
     hovertemplate:
@@ -145,14 +166,14 @@ function extractPlotDataArray(
       colors: plotType === 'PIE' ? colorPalette : undefined,
       color: plotType === 'BAR' ? colorPalette : undefined,
       line: {
-        width: facetToPlot.facetValues.map((facetValue) =>
+        width: facetToPlot.facetValues.map(facetValue =>
           facetValue.isSelected ? 1 : 0,
         ),
       },
     },
     pull:
       plotType === 'PIE'
-        ? facetToPlot.facetValues.map((facetValue) =>
+        ? facetToPlot.facetValues.map(facetValue =>
             facetValue.isSelected ? 0.04 : 0,
           )
         : undefined,
@@ -160,7 +181,7 @@ function extractPlotDataArray(
 
   const result = {
     data: [singleChartData],
-    labels: singleChartData.labels as string[],
+    labels,
     colors:
       plotType === 'PIE'
         ? (singleChartData.marker?.colors as string[])
@@ -179,7 +200,7 @@ const applyFacetFilter = (
     const facetValueClickedValue =
       plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]
     const facetValueClicked = allFacetValues.facetValues.find(
-      (facet) => facet.value === facetValueClickedValue,
+      facet => facet.value === facetValueClickedValue,
     )
     callbackApplyFn(
       allFacetValues,
@@ -196,7 +217,7 @@ const applyDropdownFilter = (
 ) => {
   if (evt.target.value) {
     const facetValueClicked = allFacetValues.facetValues.find(
-      (facet) => facet.value === evt.target.value,
+      facet => facet.value === evt.target.value,
     )
     callbackApplyFn(allFacetValues, facetValueClicked, evt.target.checked)
   }
@@ -215,30 +236,51 @@ const getPlotStyle = (
     height: `${height}px`,
   }
 }
+
+type FacetWithLabel = {
+  label: string
+  count: number
+}
+
 const renderLegend = (
-  labels: string[] = [],
+  labels: FacetWithLabel[] | undefined,
   colors: string[] = [],
   isExpanded: boolean,
 ): JSX.Element => {
+  if (!labels) {
+    return <></>
+  }
   const numLegendItems = isExpanded
     ? Math.min(labels.length, 9)
     : Math.min(labels.length, 3)
   if (numLegendItems === 0) {
     return <></>
   }
+  const totalCount = labels.reduce(
+    (curValue, curFacet) => curValue + curFacet.count,
+    0,
+  )
   return (
     <div
       className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
     >
-      {labels.slice(0, numLegendItems).map((label, index) => (
-        <div
-          className="FacetNavPanel__body__legend__row"
-          key={`legendLabel_${index}`}
-        >
-          <div style={{ backgroundColor: colors[index] }}></div>
-          <label>{label}</label>
-        </div>
-      ))}
+      {labels.slice(0, numLegendItems).map((facetValue, index) => {
+        const percent = formatPercent(facetValue.count / totalCount, 1)
+        const label = `${facetValue.label} (${percent})`
+        const labelDisplay =
+          facetValue.label.length > 30
+            ? facetValue.label.slice(0, 30).concat('...')
+            : label
+        return (
+          <div
+            className="FacetNavPanel__body__legend__row"
+            key={`legendLabel_${index}`}
+          >
+            <div style={{ backgroundColor: colors[index] }}></div>
+            <label>{labelDisplay}</label>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -260,7 +302,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   isLoadingNewData,
   loadingScreen,
   index,
-  asyncJobStatus,
   facetToPlot,
   data,
   isLoading,
@@ -271,7 +312,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
 
   const getColumnType = (): ColumnType | undefined =>
     data?.columnModels?.find(
-      (columnModel) => columnModel.name === facetToPlot.columnName,
+      columnModel => columnModel.name === facetToPlot.columnName,
     )?.columnType as ColumnType
 
   useEffect(() => {
@@ -351,7 +392,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 evt: React.ChangeEvent<HTMLInputElement>,
               ) => applyDropdownFilter(evt, facetToPlot, applyChanges)}
               isAllFilterSelectedForFacet={
-                facetToPlot.facetValues.filter((item) => item.isSelected)
+                facetToPlot.facetValues.filter(item => item.isSelected)
                   .length === 0
               }
               facetColumnResult={facetToPlot}
@@ -379,11 +420,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
                 <Plot
                   layout={layout}
-                  data={plotData?.data || []}
+                  data={plotData?.data ?? []}
                   style={getPlotStyle(size.width, plotType)}
                   config={{ displayModeBar: false, responsive: true }}
                   useResizeHandler={true}
-                  onClick={(evt) =>
+                  onClick={evt =>
                     applyFacetFilter(evt, facetToPlot, applyChanges)
                   }
                 ></Plot>
