@@ -1,6 +1,6 @@
 import * as React from 'react'
 import FacetNavPanel, {
-  FacetNavPanelOwnProps,
+  FacetNavPanelOwnProps, truncate
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
 import { render} from '@testing-library/react'
 import {
@@ -95,5 +95,14 @@ describe('initialization', () => {
     const panelBody2= container.querySelectorAll('div.FacetNavPanel__body--expanded')
     expect(panelBody2.length).toBe(1)
 
+  })
+
+
+  it('should truncate values', async () => {
+    expect(truncate(undefined, 10)).toEqual(undefined)
+    expect(truncate('', 0)).toEqual('')
+    expect(truncate('', 5)).toEqual('')
+    expect(truncate('123456789', 5)).toEqual('1234…')
+    expect(truncate('12345', 5)).toEqual('12345')
   })
 })

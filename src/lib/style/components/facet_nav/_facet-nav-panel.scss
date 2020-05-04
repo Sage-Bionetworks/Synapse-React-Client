@@ -29,7 +29,7 @@
       position: relative;
     }
     &__plot {
-      width: 50%;
+      width: 60%;
       &--expandedPie {
         width: 50%;
         margin: 0 auto;
@@ -39,9 +39,9 @@
       }
     }
     &__legend {
-      width: 50%;
+      width: 40%;
       align-self: center;
-
+      margin-left: -25px;
       &--expanded {
         position: absolute;
         right: 0;
