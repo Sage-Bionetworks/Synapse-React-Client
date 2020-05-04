@@ -27,7 +27,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: false,
+      showCards: true,
       propsWithTable: {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
