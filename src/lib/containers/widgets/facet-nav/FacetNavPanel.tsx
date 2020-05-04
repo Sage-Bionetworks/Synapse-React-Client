@@ -43,6 +43,8 @@ export type FacetNavPanelOwnProps = {
   onCollapse?: Function
 }
 
+const maxLabelLength: number = 19
+
 type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
 type PlotType = 'PIE' | 'BAR'
@@ -82,6 +84,14 @@ export type GraphData = {
   colors: string[]
 }
 
+export function truncate(str: string | undefined, n: number) {
+  if (!str) {
+    return str
+  }
+  const trimmedStr: string = str.trim()
+  return trimmedStr.length > n ? trimmedStr.substr(0, n - 1) + '…' : str
+}
+
 function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
   columnType: ColumnType | undefined,
@@ -95,16 +105,18 @@ function extractPlotDataArray(
 
   const getLabels = (
     facetValues: FacetColumnResultValueCount[],
+    truncateFlag: boolean,
     columnType?: ColumnType,
   ) => {
     return facetValues.map(facetValue => ({
-      label: getLabel(facetValue, columnType),
+      label: getLabel(facetValue, truncateFlag, columnType),
       count: facetValue.count,
     }))
   }
 
   const getLabel = (
     facetValue: FacetColumnResultValueCount,
+    truncateFlag: boolean,
     columnType?: ColumnType,
   ): string => {
     if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
@@ -113,25 +125,30 @@ function extractPlotDataArray(
 
     if (columnType === 'ENTITYID') {
       const lookup = getStoredEntityHeaders()
-
-      return (
-        lookup.find(item => item.id === facetValue.value)?.name ||
-        facetValue.value
-      )
+      let value = lookup.find(item => item.id === facetValue.value)?.name
+      if (truncateFlag) {
+        value = truncate(value, maxLabelLength)
+      }
+      return value || facetValue.value
     }
 
     if (columnType === 'USERID') {
       const lookup = getStoredUserProfiles()
-      return (
-        lookup.find(item => item.ownerId === facetValue.value)?.userName ||
-        facetValue.value
-      )
+      let value = lookup.find(item => item.ownerId === facetValue.value)
+        ?.userName
+      if (truncateFlag) {
+        value = truncate(value, maxLabelLength)
+      }
+      return value || facetValue.value
     }
-
-    return unCamelCase(facetValue.value)!
+    const value = unCamelCase(facetValue.value)!
+    return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
 
-  const labels = getLabels(facetToPlot.facetValues, columnType)
+  const labels = getLabels(facetToPlot.facetValues, false, columnType)
+  const text = getLabels(facetToPlot.facetValues, true, columnType).map(
+    el => el.label,
+  )
 
   const singleChartData: PlotlyTyped.Data = {
     values:
@@ -139,9 +156,12 @@ function extractPlotDataArray(
         ? facetToPlot.facetValues.map(facet => facet.count)
         : undefined,
     labels: labels.map(el => el.label),
+    text,
     x:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map(facet => getLabel(facet, columnType))
+        ? facetToPlot.facetValues.map(facet =>
+            getLabel(facet, false, columnType),
+          )
         : undefined,
     y:
       plotType === 'BAR'
@@ -154,11 +174,8 @@ function extractPlotDataArray(
     name: facetToPlot.columnName,
     hovertemplate:
       plotType === 'PIE'
-        ? '<b>%{label}</b><br>' +
-          '%{value} (%{percent})<br>' +
-          '<extra></extra>'
-        : '<b>%{label}: </b><br>' + '%{value} <br>' + '<extra></extra>',
-    textposition: 'inside',
+        ? '<b>%{text}</b><br>' + '%{value} (%{percent})<br>' + '<extra></extra>'
+        : '<b>%{text}: </b><br>' + '%{value} <br>' + '<extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     // @ts-ignore
@@ -266,18 +283,17 @@ const renderLegend = (
     >
       {labels.slice(0, numLegendItems).map((facetValue, index) => {
         const percent = formatPercent(facetValue.count / totalCount, 1)
-        const label = `${facetValue.label} (${percent})`
-        const labelDisplay =
-          facetValue.label.length > 30
-            ? facetValue.label.slice(0, 30).concat('...')
-            : label
+        const label = `${truncate(
+          facetValue.label,
+          maxLabelLength,
+        )} (${percent})`
         return (
           <div
             className="FacetNavPanel__body__legend__row"
             key={`legendLabel_${index}`}
           >
             <div style={{ backgroundColor: colors[index] }}></div>
-            <label>{labelDisplay}</label>
+            <label>{label}</label>
           </div>
         )
       })}
