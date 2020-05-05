@@ -10,6 +10,8 @@ import {
 import DownloadDetails from './DownloadDetails'
 import DownloadListTable from './DownloadListTable'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { TopLevelControlsState, QueryWrapperState } from '../QueryWrapper'
+import SignInButton from '../SignInButton'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -17,6 +19,7 @@ enum StatusEnum {
   INFO,
   SUCCESS,
   ERROR,
+  SIGNED_OUT,
 }
 
 export type DownloadConfirmationState = {
@@ -28,9 +31,13 @@ export type DownloadConfirmationState = {
   ownerId?: string
 }
 export type DownloadConfirmationProps = {
-  fnClose: Function
-  token: string
-  queryBundleRequest: QueryBundleRequest
+  fnClose?: Function
+  token?: string
+  getLastQueryRequest?: () => QueryBundleRequest
+  topLevelControlsState?: TopLevelControlsState
+  updateParentState?: <K extends keyof QueryWrapperState>(
+    param: Pick<QueryWrapperState, K>,
+  ) => void
 }
 
 // add files to download list
@@ -55,7 +62,7 @@ async function addToDownload(
 type UiStateDictionary = {
   [key: string]: {
     className: string
-    infoText: string
+    infoText: string | JSX.Element
     closeText: string
   }
 }
@@ -85,6 +92,15 @@ const StatusConstruct: UiStateDictionary = {
     closeText: 'Close',
     infoText: '',
   },
+  [StatusEnum.SIGNED_OUT]: {
+    className: 'alert-danger',
+    closeText: 'Close',
+    infoText: (
+      <>
+        Please <SignInButton /> to add files to your download list.
+      </>
+    ),
+  },
   [StatusEnum.SUCCESS]: {
     className: 'alert-info',
     closeText: 'Close',
@@ -95,21 +111,30 @@ const StatusConstruct: UiStateDictionary = {
 //============= DownloadConfirmation component =============
 
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> = ({
-  queryBundleRequest,
+  getLastQueryRequest,
   token,
   fnClose,
+  updateParentState,
+  topLevelControlsState,
 }) => {
+  const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,
     fileSize: 0,
-    status: StatusEnum.LOADING_INFO,
+    status: token ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
   })
   const [showDownloadList, setShowDownloadList] = useState(false)
+  const queryBundleRequest = getLastQueryRequest!()
 
   const getFilesInformation = async (
     queryBundleRequest: QueryBundleRequest,
     token: string,
   ) => {
+    setState({
+      ...state,
+      status: StatusEnum.LOADING_INFO,
+    })
+
     const partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
@@ -139,15 +164,28 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }
 
   // UseEffect memoization only works for arguments where a direct === comparison can be made
-  // This fails drastically with queryBundleRequest object which is a complex object of many fields that
+  // This fails drastically with the queryBundleRequest object which is a complex object of many fields that
   // change, we could use a custom comparitor but this also introduces risk
   useDeepCompareEffect(() => {
-    getFilesInformation(queryBundleRequest, token)
+    token && getFilesInformation(queryBundleRequest, token)
   }, [queryBundleRequest, token])
 
-  const hideComponent = () => fnClose()
+  const onCancel = fnClose
+    ? () => fnClose()
+    : () => {
+        updateParentState!({
+          topLevelControlsState: {
+            ...topLevelControlsState!,
+            showDownloadConfirmation: false,
+          },
+        })
+      }
 
   const triggerAddToDownload = async () => {
+    if (!token) {
+      setState({ ...state, status: StatusEnum.SIGNED_OUT })
+      return
+    }
     setState({ ...state, status: StatusEnum.PROCESSING })
     const result = await addToDownload(queryBundleRequest.query, token)
     const status = result[0]
@@ -161,7 +199,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
 
   const getContent = (
     { status, fileCount, fileSize, errorMessage }: DownloadConfirmationState,
-    token: string,
+    token?: string,
   ): JSX.Element => {
     switch (status) {
       case StatusEnum.LOADING_INFO:
@@ -175,6 +213,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           </div>
         )
 
+      case StatusEnum.SIGNED_OUT:
+        return <>{StatusConstruct[status].infoText}</>
       case StatusEnum.ERROR:
         return <>{errorMessage}</>
 
@@ -212,19 +252,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       <div
         className={`alert download-confirmation ${
           StatusConstruct[state.status].className
-        }`}
+        } ${showDownloadConfirmation ? '' : 'hidden'}`}
       >
-        <div className="download-confirmation__section">
-          {getContent(state, token)}
-        </div>
-        <div
-          className="download-confirmation__section text-right"
-          style={{
-            width: '150px',
-          }}
-        >
+        <div>{getContent(state, token)}</div>
+        <div className="download-confirmation-action">
           {state.status !== StatusEnum.PROCESSING && (
-            <button className="btn btn-link" onClick={hideComponent}>
+            <button className="btn btn-link" onClick={onCancel}>
               {StatusConstruct[state.status].closeText}
             </button>
           )}

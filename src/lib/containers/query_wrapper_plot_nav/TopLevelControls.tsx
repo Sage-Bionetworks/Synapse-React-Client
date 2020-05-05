@@ -2,13 +2,15 @@ import * as React from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import QueryCount from '../QueryCount'
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library, IconProp } from '@fortawesome/fontawesome-svg-core'
 import {
   faSearch,
   faFilter,
   faChartBar,
 } from '@fortawesome/free-solid-svg-icons'
 import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
+import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import ReactTooltip from 'react-tooltip'
 
 library.add(faSearch)
 library.add(faFilter)
@@ -20,6 +22,35 @@ export type TopLevelControlsProps = {
   sql: string
   token?: string
 }
+
+type Control = {
+  key: keyof TopLevelControlsState
+  icon: IconProp
+  tooltipText: string
+}
+
+const controls: Control[] = [
+  {
+    icon: 'chart-bar',
+    key: 'showFacetVisualization',
+    tooltipText: 'Toggle Visualization',
+  },
+  {
+    icon: 'filter',
+    key: 'showFacetFilter',
+    tooltipText: 'Toggle Facet Filter',
+  },
+  {
+    icon: 'search',
+    key: 'showSearchBar',
+    tooltipText: 'Toggle Search',
+  },
+  {
+    icon: 'download',
+    key: 'showDownloadConfirmation',
+    tooltipText: 'Toggle Download',
+  },
+]
 
 const TopLevelControls = (
   props: QueryWrapperChildProps & TopLevelControlsProps,
@@ -38,6 +69,12 @@ const TopLevelControls = (
       ...topLevelControlsState!,
       [control]: !topLevelControlsState![control],
     }
+    if (control === 'showSearchBar') {
+      updatedTopLevelControlsState.showDownloadConfirmation = false
+    }
+    if (control === 'showDownloadConfirmation') {
+      updatedTopLevelControlsState.showSearchBar = false
+    }
     updateParentState!({
       topLevelControlsState: updatedTopLevelControlsState,
     })
@@ -49,33 +86,28 @@ const TopLevelControls = (
         <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
       </div>
       <div className="QueryWrapperPlotNav__actions">
-        {/* <button  className="SRC-primary-action-color"onClick={() => setShowSearch(!showSearch)}>
-            <FontAwesomeIcon icon="search" size="1x" />
-          </button> */}
-        <button
-          className="SRC-primary-action-color"
-          onClick={() => setControlState('showFacetVisualization')}
-        >
-          <FontAwesomeIcon icon="chart-bar" size="1x" />
-        </button>
-        <button
-          className="SRC-primary-action-color"
-          onClick={() => setControlState('showFacetFilter')}
-        >
-          <FontAwesomeIcon icon="filter" size="1x" />
-        </button>
-        <button
-          className="SRC-primary-action-color"
-          onClick={() => setControlState('showSearchBar')}
-        >
-          <FontAwesomeIcon icon="search" size="1x" />
-        </button>
-        {/* <button
-          className="SRC-primary-action-color"
-          onClick={() => setControlState('showColumnFilter')}
-        >
-          <FontAwesomeIcon icon="download" size="1x" />
-        </button> */}
+        {controls.map(control => {
+          const { key, icon, tooltipText } = control
+          return (
+            <React.Fragment key={key}>
+              <button
+                className="SRC-primary-action-color"
+                onClick={() => setControlState(key)}
+                data-for={key}
+                data-tip={tooltipText}
+              >
+                <FontAwesomeIcon icon={icon} size="1x" />
+              </button>
+              <ReactTooltip
+                place="top"
+                type="dark"
+                effect="solid"
+                delayShow={TOOLTIP_DELAY_SHOW}
+                id={key}
+              />
+            </React.Fragment>
+          )
+        })}
       </div>
     </h3>
   )

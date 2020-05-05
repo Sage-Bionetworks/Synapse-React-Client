@@ -29,6 +29,7 @@ export type TopLevelControlsState = {
   showFacetFilter: boolean
   showColumnFilter: boolean
   showSearchBar: boolean
+  showDownloadConfirmation: boolean
 }
 
 export type SearchQuery = {
@@ -36,7 +37,7 @@ export type SearchQuery = {
   searchText: string
 }
 
-type QueryWrapperState = {
+export type QueryWrapperState = {
   /*
     isAllFilterSelectedForFacet tracks whether for a particular
      facet if the 'All' button has been selected, this tracks the
@@ -135,6 +136,7 @@ export default class QueryWrapper extends React.Component<
         showFacetFilter: true,
         showFacetVisualization: true,
         showSearchBar: false,
+        showDownloadConfirmation: false,
       },
       searchQuery: {
         columnName: '',

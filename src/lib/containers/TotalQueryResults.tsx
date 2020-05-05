@@ -263,9 +263,11 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
           ></SelectionCriteriaPill>
         ))}
       </div>
-      <button onClick={clearAll} className="TotalQueryResults__clearall">
-        Clear All
-      </button>
+      {facetsWithSelection.length > 0 && (
+        <button onClick={clearAll} className="TotalQueryResults__clearall">
+          Clear All
+        </button>
+      )}
     </div>
   )
 }
