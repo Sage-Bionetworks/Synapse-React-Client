@@ -1,5 +1,4 @@
-import * as React from 'react'
-
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import QueryCount from '../QueryCount'
 import { library, IconProp } from '@fortawesome/fontawesome-svg-core'
@@ -11,6 +10,7 @@ import {
 import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import ReactTooltip from 'react-tooltip'
+import { SynapseClient } from '../../utils'
 
 library.add(faSearch)
 library.add(faFilter)
@@ -63,6 +63,7 @@ const TopLevelControls = (
     updateParentState,
     topLevelControlsState,
   } = props
+  const [isFileView, setIsFileView] = useState(false)
 
   const setControlState = (control: keyof TopLevelControlsState) => {
     const updatedTopLevelControlsState: TopLevelControlsState = {
@@ -80,6 +81,14 @@ const TopLevelControls = (
     })
   }
 
+  useEffect(() => {
+    const getIsFileView = async () => {
+      const entityData = await SynapseClient.getEntity(token, entityId)
+      setIsFileView(entityData.concreteType.includes('EntityView'))
+    }
+    getIsFileView()
+  }, [entityId, token])
+
   return (
     <h3 className="QueryWrapperPlotNav__title">
       <div className="QueryWrapperPlotNav__querycount">
@@ -88,6 +97,10 @@ const TopLevelControls = (
       <div className="QueryWrapperPlotNav__actions">
         {controls.map(control => {
           const { key, icon, tooltipText } = control
+          if (key === 'showDownloadConfirmation' && !isFileView) {
+            // needs to be a file view in order for download to make sense
+            return <></>
+          }
           return (
             <React.Fragment key={key}>
               <button
