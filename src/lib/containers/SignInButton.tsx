@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SRC_SIGN_IN_CLASS } from 'lib/utils/SynapseConstants'
+import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 
 export type SignInProps = {
   className?: string

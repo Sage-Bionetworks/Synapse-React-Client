@@ -73,7 +73,6 @@ class QueryWrapperMenuDemo extends React.Component<
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
-          enableDownloadConfirmation: true,
           showAccessColumn: true,
         },
         searchConfiguration: {
