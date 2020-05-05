@@ -287,10 +287,7 @@ describe('it renders an accordion config', () => {
 
     it("doesn't update url search string on facet selection if deepLinking flag is not set", async () => {
       const { instance, wrapper } = await createMountedComponent(wrapperProps)
-      await wrapper
-        .find('.SRC-hand-cursor')
-        .at(0)
-        .simulate('click')
+      await wrapper.find('.SRC-hand-cursor').at(0).simulate('click')
       expect(instance.props.menuConfig![0].facet).toBe('d')
       expect(window.location.search).not.toBe('?menuIndex=0&facet=d')
     })
@@ -300,10 +297,7 @@ describe('it renders an accordion config', () => {
         ...wrapperProps,
         shouldDeepLink: true,
       })
-      await wrapper
-        .find('.SRC-hand-cursor')
-        .at(0)
-        .simulate('click')
+      await wrapper.find('.SRC-hand-cursor').at(0).simulate('click')
       expect(instance.props.menuConfig![0].facet).toBe('d')
       expect(window.location.search).toBe('?menuIndex=0&facet=d')
     })

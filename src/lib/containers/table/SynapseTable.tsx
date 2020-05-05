@@ -115,8 +115,8 @@ export type SynapseTableProps = {
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
   markdownColumns?: string[] // array of column names which should render as markdown
-  enableDownloadConfirmation?: boolean
   enableLeftFacetFilter?: boolean
+  isFileAndViewChild?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -339,23 +339,18 @@ export default class SynapseTable extends React.Component<
                 />
               </div>
             )}
-          {!enableLeftFacetFilter &&
-            this.renderTableTop(headers, enableLeftFacetFilter)}
           {!enableLeftFacetFilter && (
-            <div className="row ">
-              <div
-                className={`${
-                  enableLeftFacetFilter
-                    ? 'col-xs-12 col-sm-9 col-lg-9'
-                    : 'col-xs-12'
-                }`}
-              >
-                {this.renderTable(headers, facets, rows)}
+            <>
+              {this.renderTableTop(headers)}
+              <div className="row">
+                <div className={'col-xs-12'}>
+                  {this.renderTable(headers, facets, rows)}
+                </div>
               </div>
-            </div>
+            </>
           )}
           {enableLeftFacetFilter && (
-            <div className={`${enableLeftFacetFilter ? '' : 'col-xs-12'}`}>
+            <div className={'col-xs-12'}>
               {this.renderTable(headers, facets, rows)}
             </div>
           )}
@@ -507,8 +502,12 @@ export default class SynapseTable extends React.Component<
         {this.state.isDownloadConfirmationOpen && (
           <DownloadConfirmation
             token={token!}
-            queryBundleRequest={this.props.getLastQueryRequest!()}
-            fnClose={() => this.setState({ isDownloadConfirmationOpen: false })}
+            getLastQueryRequest={this.props.getLastQueryRequest!}
+            fnClose={
+              this.props.isFileAndViewChild
+                ? undefined
+                : () => this.setState({ isDownloadConfirmationOpen: false })
+            }
           />
         )}
         <table className="table table-striped table-condensed">
@@ -529,10 +528,7 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderTableTop = (
-    headers: SelectColumn[],
-    enableLeftFacetFilter?: boolean,
-  ) => {
+  private renderTableTop = (headers: SelectColumn[]) => {
     const { title } = this.props
     const { isExpanded, isFileView } = this.state
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
@@ -546,34 +542,17 @@ export default class SynapseTable extends React.Component<
     }
     const queryRequest = this.props.getLastQueryRequest!()
     return (
-      <div
-        className={`SRC-centerContent${
-          enableLeftFacetFilter ? ' SRC-marginBottomTen' : ''
-        }`}
-        style={{ background, padding: 8 }}
-      >
+      <div className={'SRC-centerContent'} style={{ background, padding: 8 }}>
         <h3 className="SRC-tableHeader"> {title}</h3>
         <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
-              {!enableLeftFacetFilter /* without filter flag*/ && (
-                <ElementWithTooltip
-                  idForToolTip={'advancedSearch'}
-                  image={faFilter}
-                  callbackFn={this.advancedSearch}
-                  tooltipText={'Open Advanced Search in Synapse'}
-                />
-              )}
-              {enableLeftFacetFilter && (
-                <>
-                  <ElementWithTooltip
-                    idForToolTip={'advancedSearch'}
-                    image={faCog}
-                    callbackFn={this.advancedSearch}
-                    tooltipText={'Open Advanced Search in Synapse'}
-                  />
-                </>
-              )}
+              <ElementWithTooltip
+                idForToolTip={'advancedSearch'}
+                image={faCog}
+                callbackFn={this.advancedSearch}
+                tooltipText={'Open Advanced Search in Synapse'}
+              />
               {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}
             </>
@@ -881,7 +860,7 @@ export default class SynapseTable extends React.Component<
       // also push the access column value if we are showing user access for individual items (still shown if not logged in)
       if (isShowingAccessColumn) {
         const rowSynapseId = `syn${row.rowId}`
-        rowContent.push(
+        rowContent.unshift(
           <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
             <HasAccess
               entityId={rowSynapseId}
@@ -989,7 +968,7 @@ export default class SynapseTable extends React.Component<
     )
     // also push the access column if we are showing user access for individual items (must be logged in)
     if (isShowingAccessColumn) {
-      tableColumnHeaderElements.push(
+      tableColumnHeaderElements.unshift(
         <th key="accessColumn">
           <div className="SRC-centerContent">
             <span style={{ whiteSpace: 'nowrap' }}>Access</span>
@@ -1034,7 +1013,7 @@ export default class SynapseTable extends React.Component<
   }
 
   private showDownload(event: React.SyntheticEvent) {
-    if (this.props.enableDownloadConfirmation) {
+    if (!this.props.isFileAndViewChild) {
       this.setState({ isDownloadConfirmationOpen: true })
     } else {
       this.advancedSearch(event)
@@ -1156,7 +1135,7 @@ export default class SynapseTable extends React.Component<
     isAllFilterSelectedForFacet![columnName] = selector === SELECT_ALL
     this.props.updateParentState!({
       lastFacetSelection,
-      isAllFilterSelectedForFacet,
+      isAllFilterSelectedForFacet: isAllFilterSelectedForFacet!,
     })
 
     this.props.executeQueryRequest!(newQueryRequest)

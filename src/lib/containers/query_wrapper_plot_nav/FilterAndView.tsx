@@ -8,23 +8,33 @@ import { CardConfiguration } from '../CardContainerLogic'
 export type OwnProps = {
   tableConfiguration: SynapseTableProps | undefined
   cardConfiguration: CardConfiguration | undefined
-  showFilter: boolean
 }
 
 const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
-  const { showFilter, tableConfiguration, cardConfiguration, ...rest } = props
+  const {
+    topLevelControlsState,
+    tableConfiguration,
+    cardConfiguration,
+    ...rest
+  } = props
+  const { showFacetFilter } = topLevelControlsState!
   return (
     <div className="row">
       <div
-        className={showFilter ? 'col-xs-12 col-sm-3 col-lg-3' : 'hidden'}
+        className={showFacetFilter ? 'col-xs-12 col-sm-3 col-lg-3' : 'hidden'}
         style={{ paddingRight: '0px' }}
       >
         <QueryFilter {...rest} />
       </div>
-      <div className={showFilter ? 'col-xs-12 col-sm-9 col-lg-9' : 'col-xs-12'}>
+      <div
+        className={
+          showFacetFilter ? 'col-xs-12 col-sm-9 col-lg-9' : 'col-xs-12'
+        }
+      >
         {tableConfiguration ? (
           <SynapseTable
             enableLeftFacetFilter={true}
+            isFileAndViewChild={true}
             {...rest}
             {...tableConfiguration}
           />

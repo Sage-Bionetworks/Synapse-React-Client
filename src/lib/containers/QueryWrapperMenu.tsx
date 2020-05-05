@@ -310,7 +310,6 @@ export default class QueryWrapperMenu extends React.Component<
         facet: facetValueFromSearchParams = '',
       } = searchParams)
     }
-
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean =
         groupIndex === accordionGroupIndex &&

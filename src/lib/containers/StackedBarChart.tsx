@@ -6,7 +6,10 @@ import ReactMeasure from 'react-measure'
 import ReactTooltip from 'react-tooltip'
 import { getColorPallette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
-import { FacetColumnResultValueCount } from '../utils/synapseTypes/'
+import {
+  FacetColumnResultValueCount,
+  QueryResultBundle,
+} from '../utils/synapseTypes/'
 import { getIsValueSelected } from '../utils/functions/facetUtils'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 library.add(faAngleLeft)
@@ -341,11 +344,11 @@ export default class StackedBarChart extends React.Component<
       </React.Fragment>
     )
   }
-  public extractPropsData(data: any) {
+  public extractPropsData(data?: QueryResultBundle) {
     const xData: any[] = []
     const { facet } = this.props
     // pull out the data corresponding to the filter in question
-    data.facets.forEach((item: any) => {
+    data?.facets?.forEach((item: any) => {
       if (item.facetType === 'enumeration' && item.columnName === facet) {
         item.facetValues.forEach((facetValue: any) => {
           if (item.columnName) {

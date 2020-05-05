@@ -51,6 +51,9 @@ type EntityTypeIconProps = {
   type: string
 }
 const EntityTypeIcon: React.SFC<EntityTypeIconProps> = ({ type }) => {
+  if (!type) {
+    return <></>
+  }
   const splitType = type.split('.')
   const name = splitType[splitType.length - 1] as IconType
   const iconType = getIconTypeForEntity(name)

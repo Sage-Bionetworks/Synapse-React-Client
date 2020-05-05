@@ -34,7 +34,7 @@ type DemoProps = {
  */
 class Demo extends React.Component<DemoProps, DemoState> {
   entityFormRef: any
-  searchParamsProps: any 
+  searchParamsProps: any
   /**
    * Maintain internal state of user session
    */
@@ -52,7 +52,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
-          enableDownloadConfirmation: true,
           enableLeftFacetFilter: true,
         },
         entityId: 'syn16787123',
@@ -338,7 +337,10 @@ class Demo extends React.Component<DemoProps, DemoState> {
             stackedBarChartConfiguration={{
               loadingScreen: <div />,
             }}
-            searchParams = {{facet: this.searchParamsProps['facet'], facetValue: this.searchParamsProps['facetValue']}}
+            searchParams={{
+              facet: this.searchParamsProps['facet'],
+              facetValue: this.searchParamsProps['facetValue'],
+            }}
           />
         </div>
       </div>

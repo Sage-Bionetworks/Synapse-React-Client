@@ -98,8 +98,8 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
     tooltipTrigger = React.cloneElement(outerChild, {
       className: `${outerChild.props.className} SRC-hand-cursor`,
       id: idForToolTip,
-      ['data-for']: idForToolTip,
-      ['data-tip']: tooltipText,
+      'data-for': idForToolTip,
+      'data-tip': tooltipText,
     })
   }
 
