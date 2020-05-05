@@ -97,7 +97,8 @@ const StatusConstruct: UiStateDictionary = {
     closeText: 'Close',
     infoText: (
       <>
-        Please <SignInButton /> to add files to your download list.
+        Please <SignInButton style={{ color: '#337ab7' }} /> to add files to
+        your download list.
       </>
     ),
   },
