@@ -23,16 +23,15 @@
     display: flex;
     padding: 20px 0;
     &--expanded {
-      display: block;
+      display: flex;
       padding: 20px 0 40px 0;
-      text-align: center;
-      position: relative;
+      align-items: center;
     }
     &__plot {
       width: 60%;
       &--expandedPie {
+        flex: 1;
         width: 50%;
-        margin: 0 auto;
         .js-plotly-plot {
           margin: 0 auto;
         }
@@ -43,10 +42,8 @@
       align-self: center;
       margin-left: -25px;
       &--expanded {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
+        flex: 1;
+        width: 50%;
       }
     }
     &__legend__row {

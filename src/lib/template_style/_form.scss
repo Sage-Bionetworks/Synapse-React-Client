@@ -70,6 +70,7 @@ input[type='checkbox']:checked + span::before {
 .radio-inline input[type='radio'] + span {
   padding-left: 23px;
   margin-left: -23px;
+  color: #515359;
 }
 
 .checkbox label,

@@ -65,7 +65,9 @@ const App = ({
           <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/SingleNewsFeedPostDemo?tag=centenarians`}>SingleNewsFeedPostDemo</Link>
+          <Link to={`${match.url}/SingleNewsFeedPostDemo?tag=centenarians`}>
+            SingleNewsFeedPostDemo
+          </Link>
         </li>
         <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
@@ -107,7 +109,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/QueryWrapperPlotNavDemo`}
-        render={() => <QueryWrapperPlotNavDemo />}
+        render={() => <QueryWrapperPlotNavDemo token={token} />}
       />
 
       <Route

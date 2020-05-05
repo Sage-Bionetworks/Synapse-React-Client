@@ -16,7 +16,10 @@ type DemoState = {
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
+class QueryWrapperPlotNavDemo extends React.Component<
+  { token: string },
+  DemoState
+> {
   /**
    * Maintain internal state of user session
    */
@@ -27,7 +30,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: false,
+      showCards: true,
       propsWithTable: {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
@@ -91,7 +94,7 @@ class QueryWrapperPlotNavDemo extends React.Component<{}, DemoState> {
         >
           Switch to cards
         </button>
-        <QueryWrapperPlotNav {...propsForPlotNav} />
+        <QueryWrapperPlotNav token={this.props.token} {...propsForPlotNav} />
       </div>
     )
   }

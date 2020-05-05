@@ -13,6 +13,7 @@ import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
 import SearchV2 from '../SearchV2'
+import { DownloadConfirmation } from '../download_list'
 
 type OwnProps = {
   sql: string
@@ -47,7 +48,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     loadingScreen,
     entityId,
     name,
-    token,
     cardConfiguration,
     facetsToPlot,
     ...rest
@@ -79,13 +79,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   return (
     <div className="QueryWrapperPlotNav">
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <TopLevelControls
-          name={name}
-          token={token}
-          entityId={entityId}
-          sql={sqlUsed}
-        />
+        <TopLevelControls name={name} entityId={entityId} sql={sqlUsed} />
         <SearchV2 />
+        <DownloadConfirmation />
         <FacetNav facetsToPlot={facetsToPlot} loadingScreen={loadingScreen} />
         <FilterAndView
           tableConfiguration={tableConfiguration}
