@@ -68,9 +68,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // Get owner ids from download list by filtering to items that have a file handle
   // then map to ownerIds
   const ownerIds: string[] = requestedFiles
-    .filter(el => el.fileHandle && el.fileHandle.createdBy)
+    .filter((el) => el.fileHandle && el.fileHandle.createdBy)
     // use bang operator because filter function guarentee's that file handle will be defined
-    .map(el => el.fileHandle!.createdBy!)
+    .map((el) => el.fileHandle!.createdBy!)
   const userProfiles = useGetInfoFromIds<UserProfile>({
     ids: ownerIds,
     token,
@@ -112,14 +112,14 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // which can be determined by whether the batchFileResult has a failure code for the
       // corresponding download list item
       const referenceCall: Reference[] = filesToDownload
-        .filter(el => {
+        .filter((el) => {
           return (
             batchFileResult.requestedFiles.find(
-              batchFile => batchFile.fileHandleId === el.fileHandleId,
+              (batchFile) => batchFile.fileHandleId === el.fileHandleId,
             )!.failureCode !== undefined
           )
         })
-        .map(el => {
+        .map((el) => {
           return { targetId: el.associateObjectId }
         })
       // entity header is used to get the names of the files that the user
@@ -219,92 +219,134 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           </tr>
         </thead>
         <tbody className="download-list-table">
-          {filesToDownload.map(item => {
-            let createdBy = ''
-            let createdOn = ''
-            let fileName = ''
-            let contentSize = undefined
-            const synId = item.associateObjectId
-            const fileHandleId = item.fileHandleId
-            const isCurrentlyBeingDeletedClass =
-              fileBeingDeleted === fileHandleId ? 'SRC-inactive-bg' : ''
-            // See if batch file results has this fileHandleId
-            const fileResult = requestedFiles.find(
-              fileRes => fileRes.fileHandleId === fileHandleId,
-            )
-            const fileHandle = fileResult ? fileResult.fileHandle : undefined
-            const canDownload = fileHandle !== undefined
-            if (fileHandle) {
-              // fileHandle is defined, this file is downloadable, show its metadata
-              ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
-              createdOn = moment(createdOn).format('L LT')
-              if (
-                getDownloadTypeForFileHandle(fileHandle) ===
-                FileHandleDownloadTypeEnum.Accessible
-              ) {
-                numBytes += contentSize
-                numFiles += 1
+          {filesToDownload
+            .sort((itemA, itemB) => {
+              let fileNameA = ''
+              let fileNameB = ''
+
+              {
+                const fileHandleId = itemA.fileHandleId
+                // See if batch file results has this fileHandleId
+                const fileResult = requestedFiles.find(
+                  (fileRes) => fileRes.fileHandleId === fileHandleId,
+                )
+
+                const fileHandle = fileResult
+                  ? fileResult.fileHandle
+                  : undefined
+                if (fileHandle) {
+                  // fileHandle is defined, this file is downloadable, show its metadata
+                  fileNameA = fileHandle.fileName
+                }
               }
-            } else {
-              // file is not downloadable, only show its name from entity header info
-              const requestedFile = results.find(
-                req => req.id === item.associateObjectId,
-              )!
-              fileName = requestedFile.name
-            }
-            const userProfile = userProfiles.find(
-              el => el.ownerId === createdBy,
-            )
-            return (
-              <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
-                <td>
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://www.synapse.org/#!Synapse:${synId}`}
-                  >
-                    {fileName}
-                  </a>
-                </td>
-                <td>
-                  <HasAccess
-                    fileHandle={fileHandle}
-                    token={token}
-                    entityId={synId}
-                    isInDownloadList={true}
-                    forceSamePage={forceSamePage}
-                  />
-                </td>
-                <td>
-                  {userProfile && (
-                    <UserCard
-                      size={'SMALL USER CARD'}
-                      userProfile={userProfile}
-                      preSignedURL={userProfile.clientPreSignedURL}
+
+              {
+                const fileHandleId = itemB.fileHandleId
+                // See if batch file results has this fileHandleId
+                const fileResult = requestedFiles.find(
+                  (fileRes) => fileRes.fileHandleId === fileHandleId,
+                )
+
+                const fileHandle = fileResult
+                  ? fileResult.fileHandle
+                  : undefined
+                if (fileHandle) {
+                  // fileHandle is defined, this file is downloadable, show its metadata
+                  fileNameB = fileHandle.fileName
+                }
+              }
+              return fileNameA.localeCompare(fileNameB)
+            })
+            .map((item) => {
+              let createdBy = ''
+              let createdOn = ''
+              let fileName = ''
+              let contentSize = undefined
+              const synId = item.associateObjectId
+              const fileHandleId = item.fileHandleId
+              const isCurrentlyBeingDeletedClass =
+                fileBeingDeleted === fileHandleId ? 'SRC-inactive-bg' : ''
+              // See if batch file results has this fileHandleId
+              const fileResult = requestedFiles.find(
+                (fileRes) => fileRes.fileHandleId === fileHandleId,
+              )
+              const fileHandle = fileResult ? fileResult.fileHandle : undefined
+              const canDownload = fileHandle !== undefined
+              if (fileHandle) {
+                // fileHandle is defined, this file is downloadable, show its metadata
+                ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
+                createdOn = moment(createdOn).format('L LT')
+                if (
+                  getDownloadTypeForFileHandle(fileHandle) ===
+                  FileHandleDownloadTypeEnum.Accessible
+                ) {
+                  numBytes += contentSize
+                  numFiles += 1
+                }
+              } else {
+                // file is not downloadable, only show its name from entity header info
+                const requestedFile = results.find(
+                  (req) => req.id === item.associateObjectId,
+                )!
+                fileName = requestedFile.name
+              }
+              const userProfile = userProfiles.find(
+                (el) => el.ownerId === createdBy,
+              )
+              return (
+                <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
+                  <td>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://www.synapse.org/#!Synapse:${synId}`}
+                    >
+                      {fileName}
+                    </a>
+                  </td>
+                  <td>
+                    <HasAccess
+                      fileHandle={fileHandle}
+                      token={token}
+                      entityId={synId}
+                      isInDownloadList={true}
+                      forceSamePage={forceSamePage}
                     />
-                  )}
-                  {canDownload && !userProfile && <span className="spinner" />}
-                </td>
-                <td>{createdOn}</td>
-                <td>{contentSize && calculateFriendlyFileSize(contentSize)}</td>
-                <td>
-                  <button
-                    className={TESTING_TRASH_BTN_CLASS}
-                    onClick={
-                      fileBeingDeleted === ''
-                        ? () => deleteFileFromList(fileHandleId, synId)
-                        : undefined
-                    }
-                  >
-                    <FontAwesomeIcon
-                      className="SRC-primary-text-color"
-                      icon="trash"
-                    />
-                  </button>
-                </td>
-              </tr>
-            )
-          })}
+                  </td>
+                  <td>
+                    {userProfile && (
+                      <UserCard
+                        size={'SMALL USER CARD'}
+                        userProfile={userProfile}
+                        preSignedURL={userProfile.clientPreSignedURL}
+                      />
+                    )}
+                    {canDownload && !userProfile && (
+                      <span className="spinner" />
+                    )}
+                  </td>
+                  <td>{createdOn}</td>
+                  <td>
+                    {contentSize && calculateFriendlyFileSize(contentSize)}
+                  </td>
+                  <td>
+                    <button
+                      className={TESTING_TRASH_BTN_CLASS}
+                      onClick={
+                        fileBeingDeleted === ''
+                          ? () => deleteFileFromList(fileHandleId, synId)
+                          : undefined
+                      }
+                    >
+                      <FontAwesomeIcon
+                        className="SRC-primary-text-color"
+                        icon="trash"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
         </tbody>
       </ReactBootstrap.Table>
       <CreatePackage updateDownloadList={() => fetchData(token)} token={token}>
