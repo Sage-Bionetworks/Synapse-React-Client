@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { FacetFilterHeader} from './FacetFilterHeader'
+import { FacetFilterHeader } from './FacetFilterHeader'
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -18,6 +18,7 @@ export type EnumFacetFilterProps = {
   token?: string
   onChange: Function
   onClear: Function
+  facetAliases: {} | undefined
 }
 
 function valueToId(value: string): string {
@@ -74,6 +75,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   columnModel,
   onClear,
   onChange,
+  facetAliases,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
@@ -105,7 +107,12 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
 
   return (
     <div className="EnumFacetFilter">
-      <FacetFilterHeader  isCollapsed = {isCollapsed} label={columnModel.name} onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}></FacetFilterHeader>
+      <FacetFilterHeader
+        facetAliases={facetAliases}
+        isCollapsed={isCollapsed}
+        label={columnModel.name}
+        onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
+      ></FacetFilterHeader>
       <div style={{ display: isCollapsed ? 'none' : 'block' }}>
         <div className="EnumFacetFilter__checkboxContainer--forAll">
           <Checkbox

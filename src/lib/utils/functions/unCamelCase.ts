@@ -1,7 +1,13 @@
-export const unCamelCase = (str: string | undefined): string | undefined => {
+export const unCamelCase = (
+  str: string | undefined,
+  facetAliases?: {},
+): string | undefined => {
   // https://stackoverflow.com/questions/4149276/how-to-convert-camelcase-to-camel-case
   if (!str) {
     return str
+  }
+  if (facetAliases?.[str]) {
+    return facetAliases[str]
   }
   return (
     str

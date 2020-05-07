@@ -290,10 +290,12 @@ export default class QueryWrapper extends React.Component<
   public executeInitialQueryRequest(
     initQueryRequest: QueryBundleRequest = this.props.initQueryRequest,
   ) {
+    const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
     this.setState({
       isLoading: true,
       chartSelectionIndex: 0,
       loadNowStarted: true,
+      lastQueryRequest,
     })
     SynapseClient.getQueryTableResults(
       initQueryRequest,
@@ -301,7 +303,6 @@ export default class QueryWrapper extends React.Component<
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
-        const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE
@@ -338,7 +339,6 @@ export default class QueryWrapper extends React.Component<
           hasMoreData,
           data,
           chartSelectionIndex,
-          lastQueryRequest,
           asyncJobStatus: undefined,
         }
         this.setState(newState)

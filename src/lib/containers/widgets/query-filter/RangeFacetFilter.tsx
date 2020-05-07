@@ -18,6 +18,7 @@ export type RangeFacetFilterProps = {
   facetResult: FacetColumnResultRange
   columnModel: ColumnModel
   onChange: Function
+  facetAliases: {} | undefined
 }
 
 export type RangeFacetFilterState = {
@@ -29,6 +30,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
   facetResult,
   columnModel,
   onChange,
+  facetAliases,
 }: RangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const options = [
@@ -76,6 +78,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
         isCollapsed={isCollapsed}
         label={columnModel.name}
         onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
+        facetAliases={facetAliases}
       ></FacetFilterHeader>
 
       <RadioGroup

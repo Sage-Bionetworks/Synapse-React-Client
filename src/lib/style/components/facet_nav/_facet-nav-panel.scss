@@ -1,20 +1,26 @@
 .FacetNavPanel {
   padding: 5px 0;
   &__title {
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    &__name {
+      font-size: 14px;
+      font-weight: 700;
+    }
     padding-bottom: 10;
     border-bottom: 1px solid $gray-dark;
     display: flex;
     &__tools {
+      font-size: 16px;
       margin-left: auto;
       order: 2;
       text-align: right;
+      align-items: center;
       display: flex;
 
       .show button.dropdown-toggle,
       button.dropdown-toggle:hover {
         background: transparent;
-
         color: inherit;
       }
     }
@@ -29,8 +35,9 @@
     }
     &__plot {
       width: 60%;
-      &--expandedPie {
-        flex: 1;
+      &--expandedPie,
+      &--expandedBar {
+        flex: 2;
         width: 50%;
         .js-plotly-plot {
           margin: 0 auto;
@@ -65,5 +72,13 @@
 
   &--expanded {
     padding: 15px;
+    .chart-tools {
+      min-width: unset;
+      button {
+        display: block !important;
+        white-space: nowrap;
+        padding: 5px 12px;
+      }
+    }
   }
 }

@@ -51,7 +51,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   }
 
   renderRowValue = (columnName: string, value: string) => {
-    let textColorClass = this.props.isHeader ? 'SRC-lightLink' : ''
+    const textColorClass = this.props.isHeader ? 'SRC-lightLink' : ''
     if (!value.match) {
       // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't
       // see typeof return 'object' for that case which would be a better check.
@@ -116,12 +116,16 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   render() {
     const { values, secondaryLabelLimit = 3 } = this.props
     const { isShowMoreOn, isDesktop } = this.state
-    let valuesFiltered = values.filter(el => el[1])
+    const valuesFiltered = values.filter(el => el[1])
     const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
     const limit =
       !hasMoreValuesThanLimit || isShowMoreOn ? Infinity : secondaryLabelLimit
     return (
-      <div className="SRC-cardMetadata">
+      <div
+        className={`SRC-cardMetadata ${
+          this.props.isHeader ? 'SRC-card-footer-header' : ''
+        }`}
+      >
         <table>
           <tbody>
             {this.renderRows(valuesFiltered, limit, isDesktop)}
