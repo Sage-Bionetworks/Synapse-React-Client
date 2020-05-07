@@ -29,8 +29,9 @@
     }
     &__plot {
       width: 60%;
-      &--expandedPie {
-        flex: 1;
+      &--expandedPie,
+      &--expandedBar {
+        flex: 2;
         width: 50%;
         .js-plotly-plot {
           margin: 0 auto;
