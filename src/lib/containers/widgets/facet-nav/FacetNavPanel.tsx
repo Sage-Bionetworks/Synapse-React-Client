@@ -382,7 +382,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       <Dropdown.Toggle variant="light" id="plot-selector">
         <FontAwesomeIcon icon={faChartBar} title="expand" />
       </Dropdown.Toggle>
-      <Dropdown.Menu>
+      <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
           Bar Chart
         </Dropdown.Item>

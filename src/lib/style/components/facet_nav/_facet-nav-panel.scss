@@ -21,7 +21,6 @@
       .show button.dropdown-toggle,
       button.dropdown-toggle:hover {
         background: transparent;
-
         color: inherit;
       }
     }
@@ -73,5 +72,13 @@
 
   &--expanded {
     padding: 15px;
+    .chart-tools {
+      min-width: unset;
+      button {
+        display: block !important;
+        white-space: nowrap;
+        padding: 5px 12px;
+      }
+    }
   }
 }
