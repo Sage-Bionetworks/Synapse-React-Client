@@ -23,6 +23,7 @@ export type QueryFilterProps = {
   getLastQueryRequest?: Function
   executeQueryRequest?: Function
   token?: string
+  facetAliases?: {}
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -121,6 +122,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   getLastQueryRequest,
   executeQueryRequest,
   token,
+  facetAliases,
 }: QueryFilterProps): JSX.Element => {
   if (!data) {
     return <></>
@@ -151,6 +153,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
                   token={token}
+                  facetAliases={facetAliases}
                   onChange={(facetName: string, checked: boolean) =>
                     applyChangesToValuesColumn(
                       lastRequest,
@@ -174,6 +177,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                 <RangeFacetFilter
                   facetResult={facet as FacetColumnResultRange}
                   columnModel={columnModel}
+                  facetAliases={facetAliases}
                   onChange={(values: string[]) =>
                     applyChangesToRangeColumn(
                       lastRequest,

@@ -98,6 +98,7 @@ function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
+  facetAliases: {} | undefined,
 ) {
   const { colorPalette } = getColorPallette(
     index,
@@ -142,7 +143,7 @@ function extractPlotDataArray(
       }
       return value || facetValue.value
     }
-    const value = unCamelCase(facetValue.value)!
+    const value = unCamelCase(facetValue.value, facetAliases)!
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
 
@@ -320,6 +321,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   facetToPlot,
   data,
   isLoading,
+  facetAliases,
 }: FacetNavPanelProps): JSX.Element => {
   const [plotData, setPlotData] = useState<GraphData>()
   const [isExpanded, setIsExpanded] = useState(false)
@@ -339,6 +341,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'PIE',
+        facetAliases,
       )
       setPlotData(plotData)
     }
@@ -351,11 +354,23 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const changePlotType = (plotType: PlotType) => {
     if (plotType === 'BAR') {
       setPlotData(
-        extractPlotDataArray(facetToPlot, getColumnType(), index, 'BAR'),
+        extractPlotDataArray(
+          facetToPlot,
+          getColumnType(),
+          index,
+          'BAR',
+          facetAliases,
+        ),
       )
     } else {
       setPlotData(
-        extractPlotDataArray(facetToPlot, getColumnType(), index, 'PIE'),
+        extractPlotDataArray(
+          facetToPlot,
+          getColumnType(),
+          index,
+          'PIE',
+          facetAliases,
+        ),
       )
     }
     setPlotType(plotType)
@@ -388,7 +403,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     return (
       <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
         <div className="FacetNavPanel__title">
-          <span>{unCamelCase(facetToPlot.columnName)}</span>
+          <span>{unCamelCase(facetToPlot.columnName, facetAliases)}</span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
