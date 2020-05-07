@@ -24,6 +24,8 @@ type UiFacetState = {
   index?: number
 }
 
+const DEFAULT_VISIBLE_FACETS = 3
+
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
 at some point. As of the moment the portal doesn't have a case when the props will update,
@@ -75,7 +77,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       setFacetUiStateArray(
         result.map((item, index) => ({
           name: item.columnName,
-          isHidden: index > 2 ? true : false,
+          isHidden: index >= DEFAULT_VISIBLE_FACETS,
           isExpanded: false,
         })),
       )
@@ -92,7 +94,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           return { ...item, isHidden: false }
         }
         // otherwise hide everything except the first three items
-        return { ...item, isHidden: index > 3 }
+        return { ...item, isHidden: index >= DEFAULT_VISIBLE_FACETS }
       })
     })
   }
@@ -115,7 +117,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   }
 
   const getShowMoreState = (): ShowMoreState => {
-    if (facetUiStateArray.length <= 3) {
+    if (facetUiStateArray.length <= DEFAULT_VISIBLE_FACETS) {
       return 'NONE'
     }
     if (
