@@ -403,7 +403,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     return (
       <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
         <div className="FacetNavPanel__title">
-          <span>{unCamelCase(facetToPlot.columnName, facetAliases)}</span>
+          <span className="FacetNavPanel__title__name">
+            {unCamelCase(facetToPlot.columnName, facetAliases)}
+          </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
