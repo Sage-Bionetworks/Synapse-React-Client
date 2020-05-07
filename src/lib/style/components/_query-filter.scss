@@ -41,7 +41,7 @@
         color: $gray-regular;
       }
     }
-    input ~ span{
+    input ~ span {
       display: flex;
       &::before {
         flex: none;

@@ -32,6 +32,7 @@ function createTestProps(overrides?: FacetNavProps): FacetNavProps {
       showFacetFilter: true,
       showColumnFilter: true,
       showSearchBar: true,
+      showDownloadConfirmation: false,
     },
   }
 }
@@ -68,7 +69,7 @@ function init(overrides?: FacetNavProps) {
 beforeEach(() => init())
 
 describe('facets display hide/show', () => {
-  it("should display 4 facets with 'show more' button", async () => {
+  it("should display 3 facets with 'show more' button", async () => {
     const panel = container.querySelector<HTMLElement>('div.FacetNav')
     const expectedLength = props.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
@@ -78,10 +79,10 @@ describe('facets display hide/show', () => {
       expectedLength,
     )
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
     ).toBe(false)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[4]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
     ).toBe(true)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
@@ -93,20 +94,20 @@ describe('facets display hide/show', () => {
     const button = container.querySelector('button.FacetNav__showMore')
     fireEvent.click(button!)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
     ).toBe(false)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[4]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
     ).toBe(false)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
     ).toBe('Show Less')
     fireEvent.click(button!)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
     ).toBe(false)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[4]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
     ).toBe(true)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,

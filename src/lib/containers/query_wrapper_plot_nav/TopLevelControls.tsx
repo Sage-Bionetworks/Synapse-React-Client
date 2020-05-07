@@ -31,6 +31,11 @@ type Control = {
 
 const controls: Control[] = [
   {
+    icon: 'search',
+    key: 'showSearchBar',
+    tooltipText: 'Toggle Search',
+  },
+  {
     icon: 'chart-bar',
     key: 'showFacetVisualization',
     tooltipText: 'Toggle Visualization',
@@ -39,11 +44,6 @@ const controls: Control[] = [
     icon: 'filter',
     key: 'showFacetFilter',
     tooltipText: 'Toggle Facet Filter',
-  },
-  {
-    icon: 'search',
-    key: 'showSearchBar',
-    tooltipText: 'Toggle Search',
   },
   {
     icon: 'download',
