@@ -51,6 +51,12 @@ export const insertConditionsFromSearchParams = (
   sql: string,
   operator: SQLOperator = 'LIKE',
 ) => {
+  // if there are no search params, or if all search params are QueryWrapper queries
+  const isQueryWrapperKey = (key:string) => key.startsWith('QueryWrapper')
+  let searchParamKeys = Object.keys(searchParams)
+  if (searchParamKeys.length == 0 || searchParamKeys.every(isQueryWrapperKey)) {
+    return sql
+  }
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
@@ -81,6 +87,12 @@ export const insertConditionsFromSearchParams = (
 export const formatSQLFromParser = (tokens: string[][]) => {
   // remove backtick from output sql (for table name): `syn1234` becomes syn1234
   const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
+  // replace all DBLSTRINGs (escaped strings) with LITERALs
+  tokens.forEach((value) => {
+    if (value[0] == 'DBLSTRING') {
+      value[0] = 'LITERAL'
+    }
+  })
   const newSql = parser.parse(tokens).toString()
   const splitString = `\`${synId}\``
   return newSql.split(splitString).join(synId)
@@ -88,25 +100,23 @@ export const formatSQLFromParser = (tokens: string[][]) => {
 
 //parses synapse entity id from a sql query string
 //look for a pattern of 'from[some number of spaces]syn[somenumbers]` case insensitive
-export const parseEntityIdFromSqlStatement = (sql:string): string => {
+export const parseEntityIdFromSqlStatement = (sql: string): string => {
   const matches = sql.match(/(from)\s+(syn)\d+/gi)
-  return  (matches && matches[0])? matches[0].substr(5).trim() : ''
+  return matches && matches[0] ? matches[0].substr(5).trim() : ''
 }
 
-export const resultToJson = <T>(  
+export const resultToJson = <T>(
   headerColumns: SelectColumn[],
-     rowColumns: Row[]
-   ): T[] => {
-     const result: T[] = [];
-     const rows = rowColumns.map(row => row.values);
-     const headers = headerColumns.map(column => column.name);
-     rows.forEach((row, index) => {
-       result[index] = {} as T;
-       row.forEach((text, cellIndex) => {
-         result[index][headers[cellIndex]] = text;
-       });
-     });
-     return result;
-   };
-  
-
+  rowColumns: Row[],
+): T[] => {
+  const result: T[] = []
+  const rows = rowColumns.map(row => row.values)
+  const headers = headerColumns.map(column => column.name)
+  rows.forEach((row, index) => {
+    result[index] = {} as T
+    row.forEach((text, cellIndex) => {
+      result[index][headers[cellIndex]] = text
+    })
+  })
+  return result
+}

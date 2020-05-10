@@ -299,7 +299,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       <div className="SRC-syn-border-spacing">
         {!showBarChart && (
           <TotalQueryResults
-            getLastQueryRequest={this.props.getLastQueryRequest}
+            lastQueryRequest={this.props.getLastQueryRequest!()}
             token={this.props.token}
             unitDescription={unitDescription!}
             frontText={'Displaying'}

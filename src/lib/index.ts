@@ -5,9 +5,9 @@ import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
 import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
+import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import StackedBarChart from './containers/StackedBarChart'
 import HasAccess from './containers/HasAccess'
-import DownloadListTable from './containers/download_list/DownloadListTable'
 import SynapseTable from './containers/table/SynapseTable'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
@@ -18,6 +18,8 @@ import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWra
 import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
+import ShowDownload from './containers/download_list/ShowDownload'
+import DownloadListTable from './containers/download_list/DownloadListTable'
 import NewsFeedMenu from './containers/NewsFeedMenu'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import './style/main.scss'
@@ -43,6 +45,8 @@ const SynapseComponents = {
   HasAccess,
   DownloadListTable,
   ThemesPlot,
+  ShowDownload,
+  QueryWrapperPlotNav,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

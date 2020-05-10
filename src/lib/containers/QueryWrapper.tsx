@@ -1,6 +1,8 @@
 import * as React from 'react'
+
 import { SynapseClient, SynapseConstants } from '../utils/'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
+import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import {
   AsynchronousJobStatus,
   FacetColumnResultValues,
@@ -8,7 +10,6 @@ import {
   QueryResultBundle,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
-
 export type QueryWrapperProps = {
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
@@ -19,6 +20,21 @@ export type QueryWrapperProps = {
   facetAliases?: {}
   loadNow?: boolean
   showBarChart?: boolean
+  componentIndex?: number //used for deep linking
+  shouldDeepLink?: boolean
+}
+
+export type TopLevelControlsState = {
+  showFacetVisualization: boolean
+  showFacetFilter: boolean
+  showColumnFilter: boolean
+  showSearchBar: boolean
+  showDownloadConfirmation: boolean
+}
+
+export type SearchQuery = {
+  columnName: string
+  searchText: string
 }
 
 export type QueryWrapperState = {
@@ -38,6 +54,8 @@ export type QueryWrapperState = {
   asyncJobStatus?: AsynchronousJobStatus
   facetAliases?: {}
   loadNowStarted: boolean
+  topLevelControlsState?: TopLevelControlsState
+  searchQuery: SearchQuery
 }
 
 export type FacetSelection = {
@@ -60,7 +78,9 @@ export type QueryWrapperChildProps = {
   getInitQueryRequest?: () => QueryBundleRequest
   data?: QueryResultBundle
   facet?: string
-  updateParentState?: (param: any) => void
+  updateParentState?: <K extends keyof QueryWrapperState>(
+    param: Pick<QueryWrapperState, K>,
+  ) => void
   rgbIndex?: number
   unitDescription?: string
   facetAliases?: {}
@@ -69,6 +89,8 @@ export type QueryWrapperChildProps = {
   asyncJobStatus?: AsynchronousJobStatus
   showBarChart?: boolean
   hasMoreData?: boolean
+  topLevelControlsState?: TopLevelControlsState
+  searchQuery?: SearchQuery
 }
 
 /**
@@ -86,6 +108,7 @@ export default class QueryWrapper extends React.Component<
     token: '',
   }
 
+  private componentIndex: number
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -108,7 +131,19 @@ export default class QueryWrapper extends React.Component<
       isAllFilterSelectedForFacet: {},
       loadNowStarted: false,
       lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
+      topLevelControlsState: {
+        showColumnFilter: true,
+        showFacetFilter: true,
+        showFacetVisualization: true,
+        showSearchBar: false,
+        showDownloadConfirmation: false,
+      },
+      searchQuery: {
+        columnName: '',
+        searchText: '',
+      },
     }
+    this.componentIndex = props.componentIndex || 0
   }
 
   /**
@@ -118,8 +153,13 @@ export default class QueryWrapper extends React.Component<
    */
   public componentDidMount() {
     const { loadNow = true } = this.props
+    const query = DeepLinkingUtils.getQueryRequestFromLink(
+      'QueryWrapper',
+      this.componentIndex,
+    )
+
     if (loadNow) {
-      this.executeInitialQueryRequest()
+      this.executeInitialQueryRequest(query)
     }
   }
 
@@ -167,7 +207,6 @@ export default class QueryWrapper extends React.Component<
   public getInitQueryRequest(): QueryBundleRequest {
     return cloneDeep(this.props.initQueryRequest)
   }
-
   /**
    * Execute the given query
    *
@@ -176,12 +215,26 @@ export default class QueryWrapper extends React.Component<
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
+    const clonedQueryRequest = cloneDeep(queryRequest)
     this.setState({
       isLoading: true,
-      lastQueryRequest: cloneDeep(queryRequest),
+      lastQueryRequest: clonedQueryRequest,
     })
+
+    if (clonedQueryRequest.query) {
+      const stringifiedQuery = encodeURIComponent(
+        JSON.stringify(clonedQueryRequest.query),
+      )
+      if (this.props.shouldDeepLink) {
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          this.componentIndex,
+          stringifiedQuery,
+        )
+      }
+    }
     return SynapseClient.getQueryTableResults(
-      queryRequest,
+      clonedQueryRequest,
       this.props.token,
       this.updateParentState,
     )
@@ -189,7 +242,7 @@ export default class QueryWrapper extends React.Component<
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE
-        const newState: any = {
+        const newState = {
           hasMoreData,
           data,
           isLoading: false,
@@ -234,22 +287,21 @@ export default class QueryWrapper extends React.Component<
    *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
-  public executeInitialQueryRequest() {
+  public executeInitialQueryRequest(
+    initQueryRequest: QueryBundleRequest = this.props.initQueryRequest,
+  ) {
     this.setState({
       isLoading: true,
-      isLoadingNewData: true,
       chartSelectionIndex: 0,
       loadNowStarted: true,
     })
     SynapseClient.getQueryTableResults(
-      this.props.initQueryRequest,
+      initQueryRequest,
       this.props.token,
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
-        const lastQueryRequest: QueryBundleRequest = cloneDeep(
-          this.props.initQueryRequest!,
-        )
+        const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE
@@ -287,8 +339,6 @@ export default class QueryWrapper extends React.Component<
           data,
           chartSelectionIndex,
           lastQueryRequest,
-          isLoading: false,
-          isLoadingNewData: false,
           asyncJobStatus: undefined,
         }
         this.setState(newState)
@@ -296,9 +346,17 @@ export default class QueryWrapper extends React.Component<
       .catch(err => {
         console.log('Failed to get data ', err)
       })
+      .finally(() => {
+        this.setState({
+          isLoading: false,
+          isLoadingNewData: false,
+        })
+      })
   }
 
-  public updateParentState(update: QueryWrapperState) {
+  public updateParentState<K extends keyof QueryWrapperState>(
+    update: Pick<QueryWrapperState, K>,
+  ) {
     this.setState(update)
   }
 
@@ -307,36 +365,34 @@ export default class QueryWrapper extends React.Component<
    */
   public render() {
     const { isLoading } = this.state
-    const { facetAliases = {} } = this.props
+    const { facetAliases = {}, children, ...rest } = this.props
     // inject props in children of this component
-    const childrenWithProps = React.Children.map(
-      this.props.children,
-      (child: any) => {
-        const queryWrapperChildProps: QueryWrapperChildProps = {
-          facetAliases,
-          isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
-          data: this.state.data,
-          token: this.props.token,
-          executeInitialQueryRequest: this.executeInitialQueryRequest,
-          executeQueryRequest: this.executeQueryRequest,
-          getLastQueryRequest: this.getLastQueryRequest,
-          getNextPageOfData: this.getNextPageOfData,
-          isLoading: this.state.isLoading,
-          isLoadingNewData: this.state.isLoadingNewData,
-          facet: this.props.facet,
-          rgbIndex: this.props.rgbIndex,
-          unitDescription: this.props.unitDescription,
-          updateParentState: this.updateParentState,
-          hasMoreData: this.state.hasMoreData,
-          lastFacetSelection: this.state.lastFacetSelection,
-          chartSelectionIndex: this.state.chartSelectionIndex,
-          getInitQueryRequest: this.getInitQueryRequest,
-          asyncJobStatus: this.state.asyncJobStatus,
-          showBarChart: this.props.showBarChart,
-        }
-        return React.cloneElement(child, queryWrapperChildProps)
-      },
-    )
+    const childrenWithProps = React.Children.map(children, (child: any) => {
+      if (!child) {
+        return child
+      }
+      const queryWrapperChildProps: QueryWrapperChildProps = {
+        facetAliases,
+        isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
+        data: this.state.data,
+        hasMoreData: this.state.hasMoreData,
+        lastFacetSelection: this.state.lastFacetSelection,
+        chartSelectionIndex: this.state.chartSelectionIndex,
+        isLoading: this.state.isLoading,
+        isLoadingNewData: this.state.isLoadingNewData,
+        asyncJobStatus: this.state.asyncJobStatus,
+        topLevelControlsState: this.state.topLevelControlsState,
+        searchQuery: this.state.searchQuery,
+        executeInitialQueryRequest: this.executeInitialQueryRequest,
+        executeQueryRequest: this.executeQueryRequest,
+        getLastQueryRequest: this.getLastQueryRequest,
+        getNextPageOfData: this.getNextPageOfData,
+        updateParentState: this.updateParentState,
+        getInitQueryRequest: this.getInitQueryRequest,
+        ...rest,
+      }
+      return React.cloneElement(child, queryWrapperChildProps)
+    })
 
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     return (

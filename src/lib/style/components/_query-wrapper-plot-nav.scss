@@ -1,0 +1,20 @@
+.QueryWrapperPlotNav {
+  .QueryWrapperPlotNav__title {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: #515359;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    .QueryWrapperPlotNav__querycount {
+      display: inline;
+    }
+    .QueryWrapperPlotNav__actions {
+      display: inline;
+    }
+  }
+  .SRC-portalCard:first-child {
+    margin-top: 0px;
+  }
+}

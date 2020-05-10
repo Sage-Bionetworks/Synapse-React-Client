@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import {
@@ -8,6 +8,10 @@ import {
   QueryBundleRequest,
 } from '../../utils/synapseTypes/'
 import DownloadDetails from './DownloadDetails'
+import DownloadListTable from './DownloadListTable'
+import useDeepCompareEffect from 'use-deep-compare-effect'
+import { TopLevelControlsState, QueryWrapperState } from '../QueryWrapper'
+import SignInButton from '../SignInButton'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -15,6 +19,7 @@ enum StatusEnum {
   INFO,
   SUCCESS,
   ERROR,
+  SIGNED_OUT,
 }
 
 export type DownloadConfirmationState = {
@@ -26,39 +31,13 @@ export type DownloadConfirmationState = {
   ownerId?: string
 }
 export type DownloadConfirmationProps = {
-  fnClose: Function
-  token: string
-  queryBundleRequest: QueryBundleRequest
-}
-
-//get the info about the files stats
-async function getFilesInformation(
-  queryBundleRequest: QueryBundleRequest,
-  token: string,
-): Promise<DownloadConfirmationState> {
-  const partMask =
-    SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-    SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-
-  const queryBundleRequestSizeInformation: QueryBundleRequest = {
-    ...queryBundleRequest,
-    partMask,
-  }
-
-  const { queryCount, sumFileSizes } = await SynapseClient.getQueryTableResults(
-    queryBundleRequestSizeInformation,
-  )
-  const estimatedDownloadBytesPerSecond = await testDownloadSpeed(token)
-  const size = sumFileSizes ? sumFileSizes['sumFileSizesBytes'] : 0
-  const durationSeconds = size / estimatedDownloadBytesPerSecond
-  const duration = moment.duration(durationSeconds, 'seconds').humanize()
-
-  return {
-    fileCount: queryCount || 0,
-    fileSize: size,
-    downloadEstimate: duration,
-    status: StatusEnum.INFO,
-  }
+  fnClose?: Function
+  token?: string
+  getLastQueryRequest?: () => QueryBundleRequest
+  topLevelControlsState?: TopLevelControlsState
+  updateParentState?: <K extends keyof QueryWrapperState>(
+    param: Pick<QueryWrapperState, K>,
+  ) => void
 }
 
 // add files to download list
@@ -83,7 +62,7 @@ async function addToDownload(
 type UiStateDictionary = {
   [key: string]: {
     className: string
-    infoText: string
+    infoText: string | JSX.Element
     closeText: string
   }
 }
@@ -113,6 +92,16 @@ const StatusConstruct: UiStateDictionary = {
     closeText: 'Close',
     infoText: '',
   },
+  [StatusEnum.SIGNED_OUT]: {
+    className: 'alert-danger',
+    closeText: 'Close',
+    infoText: (
+      <>
+        Please <SignInButton style={{ color: '#337ab7' }} /> to add files to
+        your download list.
+      </>
+    ),
+  },
   [StatusEnum.SUCCESS]: {
     className: 'alert-info',
     closeText: 'Close',
@@ -123,26 +112,81 @@ const StatusConstruct: UiStateDictionary = {
 //============= DownloadConfirmation component =============
 
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> = ({
-  queryBundleRequest,
+  getLastQueryRequest,
   token,
   fnClose,
+  updateParentState,
+  topLevelControlsState,
 }) => {
+  const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,
     fileSize: 0,
-    status: StatusEnum.LOADING_INFO,
+    status: token ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
   })
+  const [showDownloadList, setShowDownloadList] = useState(false)
+  const queryBundleRequest = getLastQueryRequest!()
 
-  useEffect(() => {
-    ;(async function getDataOnLoad(query: QueryBundleRequest, token: string) {
-      const result = await getFilesInformation(query, token)
-      setState(result)
-    })(queryBundleRequest, token)
+  const getFilesInformation = async (
+    queryBundleRequest: QueryBundleRequest,
+    token: string,
+  ) => {
+    setState({
+      ...state,
+      status: StatusEnum.LOADING_INFO,
+    })
+
+    const partMask =
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
+
+    const queryBundleRequestSizeInformation: QueryBundleRequest = {
+      ...queryBundleRequest,
+      partMask,
+    }
+
+    const {
+      queryCount,
+      sumFileSizes,
+    } = await SynapseClient.getQueryTableResults(
+      queryBundleRequestSizeInformation,
+      token,
+    )
+    const estimatedDownloadBytesPerSecond = await testDownloadSpeed(token)
+    const size = sumFileSizes ? sumFileSizes['sumFileSizesBytes'] : 0
+    const durationSeconds = size / estimatedDownloadBytesPerSecond
+    const duration = moment.duration(durationSeconds, 'seconds').humanize()
+    setState({
+      fileCount: queryCount || 0,
+      fileSize: size,
+      downloadEstimate: duration,
+      status: StatusEnum.INFO,
+    })
+  }
+
+  // UseEffect memoization only works for arguments where a direct === comparison can be made
+  // This fails drastically with the queryBundleRequest object which is a complex object of many fields that
+  // change, we could use a custom comparitor but this also introduces risk
+  useDeepCompareEffect(() => {
+    token && getFilesInformation(queryBundleRequest, token)
   }, [queryBundleRequest, token])
 
-  const hideComponent = () => fnClose()
+  const onCancel = fnClose
+    ? () => fnClose()
+    : () => {
+        updateParentState!({
+          topLevelControlsState: {
+            ...topLevelControlsState!,
+            showDownloadConfirmation: false,
+          },
+        })
+      }
 
   const triggerAddToDownload = async () => {
+    if (!token) {
+      setState({ ...state, status: StatusEnum.SIGNED_OUT })
+      return
+    }
     setState({ ...state, status: StatusEnum.PROCESSING })
     const result = await addToDownload(queryBundleRequest.query, token)
     const status = result[0]
@@ -155,14 +199,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }
 
   const getContent = (
-    {
-      status,
-      fileCount,
-      fileSize,
-      errorMessage,
-      ownerId,
-    }: DownloadConfirmationState,
-    token: string,
+    { status, fileCount, fileSize, errorMessage }: DownloadConfirmationState,
+    token?: string,
   ): JSX.Element => {
     switch (status) {
       case StatusEnum.LOADING_INFO:
@@ -176,6 +214,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           </div>
         )
 
+      case StatusEnum.SIGNED_OUT:
+        return <>{StatusConstruct[status].infoText}</>
       case StatusEnum.ERROR:
         return <>{errorMessage}</>
 
@@ -194,13 +234,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       case StatusEnum.SUCCESS:
         return (
           <span>
-            <a
-              href={`https://www.synapse.org/#!Profile:${ownerId}/downloads`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              className="test-view-downloadlist"
+              onClick={() => setShowDownloadList(true)}
             >
               View Download List
-            </a>
+            </button>
           </span>
         )
 
@@ -210,36 +249,38 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }
 
   return (
-    <div
-      className={`alert download-confirmation ${
-        StatusConstruct[state.status].className
-      }`}
-    >
-      <div className="download-confirmation__section">
-        {getContent(state, token)}
-      </div>
+    <>
       <div
-        className="download-confirmation__section text-right"
-        style={{
-          width: '150px',
-        }}
+        className={`alert download-confirmation ${
+          StatusConstruct[state.status].className
+        } ${showDownloadConfirmation ? '' : 'hidden'}`}
       >
-        {state.status !== StatusEnum.PROCESSING && (
-          <button className="btn btn-link" onClick={hideComponent}>
-            {StatusConstruct[state.status].closeText}
-          </button>
-        )}
+        <div>{getContent(state, token)}</div>
+        <div className="download-confirmation-action">
+          {state.status !== StatusEnum.PROCESSING && (
+            <button className="btn btn-link" onClick={onCancel}>
+              {StatusConstruct[state.status].closeText}
+            </button>
+          )}
 
-        {state.status === StatusEnum.INFO && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={triggerAddToDownload}
-          >
-            Add
-          </button>
-        )}
+          {state.status === StatusEnum.INFO && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={triggerAddToDownload}
+            >
+              Add
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+      {showDownloadList && (
+        <DownloadListTable
+          token={token}
+          renderAsModal={true}
+          onHide={() => setShowDownloadList(false)}
+        />
+      )}
+    </>
   )
 }

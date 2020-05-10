@@ -11,13 +11,15 @@ describe('renders without crashing', () => {
       Promise.resolve(['']),
     )
   })
+  const mockOwnerId = 'mock_owner_id'
+  const mockWikiId = 'mock_wiki_id'
 
   it('renders a table of contents without crashing', async () => {
     SynapseClient.getEntityWiki = jest.fn(() =>
       Promise.resolve({ markdown: '${toc}\n#Heading1' }),
     )
     const tree = await mount(
-      <MarkdownSynapse token="" ownerId={''} wikiId={''} />,
+      <MarkdownSynapse token="" ownerId={mockOwnerId} wikiId={mockWikiId} />,
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)
@@ -31,7 +33,7 @@ describe('renders without crashing', () => {
       Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }),
     )
     const tree = await mount(
-      <MarkdownSynapse token="" ownerId={''} wikiId={''} />,
+      <MarkdownSynapse token="" ownerId={mockOwnerId} wikiId={mockWikiId} />,
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)

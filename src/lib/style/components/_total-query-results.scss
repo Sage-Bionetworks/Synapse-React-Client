@@ -1,0 +1,53 @@
+.TotalQueryResults {
+  background: $gray-light;
+  /* Divider */
+
+  border: 1px solid #dcdcdc;
+  padding: 1.6rem 2.4rem;
+  width: 100%;
+  margin-bottom: 2rem;
+  display: flex;
+
+  &__selections {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  &__clearall {
+    padding: 5px 10px;
+    margin-left: 5px;
+    flex: 1;
+    flex-grow: 0;
+    flex-shrink: 1;
+    color: #515359;
+    background: #ececec;
+    border-radius: 2px;
+    white-space: nowrap;
+    height: fit-content;
+  }
+}
+
+.SelectionCriteriaPill {
+  padding: 5px 10px;
+  display: inline-flex;
+  justify-content: center;
+  border-radius: 20px;
+  margin-left: 1rem;
+  font-size: 1.2rem;
+  line-height: 100%;
+  cursor: pointer;
+  background-color: $primary-action-color !important;
+  color: #fff;
+  font-weight: normal;
+  margin: 10px;
+  span {
+    margin: auto;
+  }
+
+  &__btnRemove {
+    padding: 0;
+    margin-left: 5px;
+    font-size: 1rem;
+  }
+}

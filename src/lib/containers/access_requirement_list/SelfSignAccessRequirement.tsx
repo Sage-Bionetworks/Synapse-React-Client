@@ -2,35 +2,25 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import {
   SelfSignAccessRequirement,
-  UserProfile,
   WikiPageKey,
   UserBundle,
-  AccessRequirementStatus,
 } from '../../utils/synapseTypes'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
-
-type Props = {
-  accessRequirement: SelfSignAccessRequirement
-  token: string | undefined
-  user: UserProfile | undefined
-  onHide?: Function
-}
+import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function SelfSignAccessRequirementComponent({
   accessRequirement,
   token,
   user,
   onHide,
-}: Props) {
+  accessRequirementStatus,
+}: AccessRequirementProps<SelfSignAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
     undefined,
   )
-  const [accessRequirementStatus, setAccessRequirementStatus] = useState<
-    AccessRequirementStatus | undefined
-  >(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -48,7 +38,7 @@ export default function SelfSignAccessRequirementComponent({
           SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
           SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
 
-        if (user && user.ownerId) {
+        if (user?.ownerId) {
           const bundle = await SynapseClient.getUserBundle(
             user.ownerId,
             certificationOrVerification,
@@ -56,12 +46,6 @@ export default function SelfSignAccessRequirementComponent({
           )
           setUserBundle(bundle)
         }
-
-        const selfSignAccessRequirement = await SynapseClient.getAccessRequirementStatus(
-          token,
-          accessRequirement.id,
-        )
-        setAccessRequirementStatus(selfSignAccessRequirement)
       } catch (err) {
         console.error('Error on get Self Sign Access Requirement: ', err)
       } finally {
@@ -91,7 +75,7 @@ export default function SelfSignAccessRequirementComponent({
 
             <p
               className={`self-sign-access-certified-success-text ${
-                userBundle?.isCertified ? 'show' : 'hide'
+                userBundle?.isCertified ? 'show' : 'hidden'
               }`}
             >
               You are a certified user
@@ -116,7 +100,7 @@ export default function SelfSignAccessRequirementComponent({
 
             <p
               className={`self-sign-access-verified-success-text ${
-                userBundle?.isVerified ? 'show' : 'hide'
+                userBundle?.isVerified ? 'show' : 'hidden'
               }`}
             >
               You have applied to have user profile valiadation successfully

@@ -34,6 +34,7 @@ type DemoProps = {
  */
 class Demo extends React.Component<DemoProps, DemoState> {
   entityFormRef: any
+  searchParamsProps: any
   /**
    * Maintain internal state of user session
    */
@@ -51,7 +52,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
-          enableDownloadConfirmation: true,
           enableLeftFacetFilter: true,
         },
         entityId: 'syn16787123',
@@ -122,6 +122,11 @@ class Demo extends React.Component<DemoProps, DemoState> {
     }
     this.getVersion = this.getVersion.bind(this)
     this.onRunDownloadSpeedTest = this.onRunDownloadSpeedTest.bind(this)
+    this.searchParamsProps = {}
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.forEach((value, key) => {
+      this.searchParamsProps[key] = value
+    })
   }
 
   public onSubmitEntityForm() {
@@ -331,6 +336,10 @@ class Demo extends React.Component<DemoProps, DemoState> {
             }
             stackedBarChartConfiguration={{
               loadingScreen: <div />,
+            }}
+            searchParams={{
+              facet: this.searchParamsProps['facet'],
+              facetValue: this.searchParamsProps['facetValue'],
             }}
           />
         </div>

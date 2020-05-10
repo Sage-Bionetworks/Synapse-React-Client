@@ -15,11 +15,15 @@ import {
   isGroupByInSql,
   insertConditionsFromSearchParams,
 } from '../utils/functions/sqlFunctions'
-import { FacetColumnValuesRequest } from '../utils/synapseTypes/'
+import {
+  FacetColumnValuesRequest,
+  QueryBundleRequest,
+} from '../utils/synapseTypes/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons'
 import Search, { SearchProps } from './Search'
+import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 
 library.add(faPlus)
 library.add(faSearch)
@@ -46,6 +50,7 @@ export const SEARCH_CLASS_CSS = 'SRC-search-component'
 interface MenuSearchParams {
   facetValue: string
   facet: string
+  menuIndex?: string
 }
 
 type CommonMenuProps = {
@@ -74,6 +79,8 @@ export type QueryWrapperMenuProps = {
   searchParams?: MenuSearchParams
   name?: string
   globalQueryCountSql?: string
+  componentIndex?: number //used for deep linking
+  shouldDeepLink?: boolean
 } & CommonMenuProps
 
 type Info = {
@@ -92,6 +99,9 @@ export default class QueryWrapperMenu extends React.Component<
     //  - https://stackoverflow.com/questions/40063468/react-component-initialize-state-from-props/47341539#47341539
     const { searchParams, accordionConfig, menuConfig } = this.props
     let activeMenuIndices = []
+    let accordionGroupIndex = searchParams?.menuIndex
+      ? Number.parseInt(searchParams?.menuIndex) || 0
+      : 0
     const facetIndexFromFacetSearchParam = menuConfig?.findIndex(
       el => el.facet && el.facet === searchParams?.facet,
     )
@@ -105,7 +115,7 @@ export default class QueryWrapperMenu extends React.Component<
     }
     this.state = {
       activeMenuIndices,
-      accordionGroupIndex: 0,
+      accordionGroupIndex,
     }
     this.handleHoverLogic = this.handleHoverLogic.bind(this)
     this.switchFacet = this.switchFacet.bind(this)
@@ -167,12 +177,28 @@ export default class QueryWrapperMenu extends React.Component<
     const isClickingCurrentSelection =
       accordionGroupIndex === accordionIndexIn &&
       activeMenuIndices[accordionIndexIn] === menuIndexIn
-    activeMenuIndices[accordionIndexIn] = menuIndexIn
     if (!isClickingCurrentSelection) {
+      activeMenuIndices[accordionIndexIn] = menuIndexIn
       this.setState({
         activeMenuIndices,
         accordionGroupIndex: accordionIndexIn,
       })
+
+      if (this.props.shouldDeepLink) {
+        const facetName = this.props.menuConfig?.[menuIndexIn].facet
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'menuIndex',
+          undefined,
+          accordionIndexIn.toString(),
+        )
+        if (facetName) {
+          DeepLinkingUtils.updateUrlWithNewSearchParam(
+            'facet',
+            undefined,
+            facetName,
+          )
+        }
+      }
     }
   }
 
@@ -266,6 +292,7 @@ export default class QueryWrapperMenu extends React.Component<
       accordionConfig = [],
       facetAliases = {},
       entityId,
+      shouldDeepLink,
     } = this.props
     const {
       cardConfiguration,
@@ -283,7 +310,6 @@ export default class QueryWrapperMenu extends React.Component<
         facet: facetValueFromSearchParams = '',
       } = searchParams)
     }
-
     return menuConfig.map((config: MenuConfig, index: number) => {
       const isSelected: boolean =
         groupIndex === accordionGroupIndex &&
@@ -330,29 +356,37 @@ export default class QueryWrapperMenu extends React.Component<
         stackedBarChartConfiguration,
         tableConfiguration,
       )
+      const initQueryRequest: QueryBundleRequest = {
+        partMask,
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        entityId,
+        query: {
+          sql,
+          selectedFacets,
+          isConsistent,
+          limit: 25,
+          offset: 0,
+        },
+      }
+
+      const queryFromUrl = DeepLinkingUtils.getQueryRequestFromLink(
+        'QueryWrapper',
+        index,
+      )
+
       return (
         <span key={(facet || 'nofacet') + index} className={searchClass}>
           <QueryWrapper
+            componentIndex={index}
             showBarChart={showBarChart}
             loadNow={isSelected}
-            initQueryRequest={{
-              partMask,
-              concreteType:
-                'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-              entityId,
-              query: {
-                sql,
-                selectedFacets,
-                isConsistent,
-                limit: 25,
-                offset: 0,
-              },
-            }}
+            initQueryRequest={queryFromUrl || initQueryRequest}
             unitDescription={usedUnitDescription}
             facet={facet}
             token={token}
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
+            shouldDeepLink={shouldDeepLink}
           >
             {showBarChart ? (
               <StackedBarChart {...stackedBarChartConfiguration!} />

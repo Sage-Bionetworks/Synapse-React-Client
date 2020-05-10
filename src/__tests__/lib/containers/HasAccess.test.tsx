@@ -22,23 +22,15 @@ import HasAccess, {
 import {
   mockOpenRestrictionInformation,
   mockUnmetControlledDataRestrictionInformationACT,
-  mockUnmetControlledDataRestrictionInformationRestricted,
 } from '../../../mocks/mock_has_access_data'
-import {
-  mockFileHandle
-} from '../../../mocks/mock_file_handle'
-import {
-  mockFolderEntity
-} from '../../../mocks/mock_folder_entity'
-import {
-  mockFileEntity
-} from '../../../mocks/mock_file_entity'
-
+import { mockFileHandle } from '../../../mocks/mock_file_handle'
+import { mockFolderEntity } from '../../../mocks/mock_folder_entity'
+import { mockFileEntity } from '../../../mocks/mock_file_entity'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const token: string = '123444'
 const entityId = 'syn9988882982'
-const isInDownloadList:boolean = true
+const isInDownloadList: boolean = true
 const externalFileHandle: FileHandle = {
   id: '',
   etag: '',
@@ -78,15 +70,17 @@ const createShallowComponent = async (
 const props: HasAccessProps = {
   token,
   entityId,
-  isInDownloadList
+  isInDownloadList,
 }
 
 describe('basic tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('works with open data no restrictions', async () => {
-    SynapseClient.getEntity = jest.fn(() => 
-      Promise.resolve(mockFileEntity),
-    )
-    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
+    SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
+    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
       Promise.resolve(mockFileHandle),
     )
 
@@ -98,6 +92,8 @@ describe('basic tests', () => {
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: entityId,
     }
+    // verify api calls and counts
+    expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledTimes(1)
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
       token,
@@ -105,20 +101,19 @@ describe('basic tests', () => {
     expect(instance.state.restrictionInformation).toEqual(
       mockOpenRestrictionInformation,
     )
+    expect(SynapseClient.getEntity).toHaveBeenCalledTimes(1)
+    expect(SynapseClient.getFileEntityFileHandle).toHaveBeenCalledTimes(1)
+    // verify UI
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works with a public folder', async () => {
-    SynapseClient.getEntity = jest.fn(() => 
-      Promise.resolve(mockFolderEntity),
-    )
-    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
-      Promise.reject('it is a folder'),
-    )
+    SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFolderEntity))
+    expect(SynapseClient.getFileEntityFileHandle).not.toHaveBeenCalled()
 
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
@@ -128,7 +123,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when an ExternalFileHandle is passed in - not in download list', async () => {
@@ -141,7 +136,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when an ExternalFileHandle is passed in - in Download List', async () => {
@@ -159,7 +154,7 @@ describe('basic tests', () => {
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when a cloud file handle is passed in - in Download List', async () => {
@@ -175,10 +170,8 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: 0,
     }
-    SynapseClient.getEntity = jest.fn(() => 
-      Promise.resolve(mockFileEntity),
-    )
-    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
+    SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
+    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
       Promise.resolve(cloudFileHandle),
     )
 
@@ -190,11 +183,13 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faLink)
     const tooltipSpan = wrapper.find(
-      `[data-tip="${HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalCloudFile]}"]`,
+      `[data-tip="${
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalCloudFile]
+      }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when the file is too large in Download List', async () => {
@@ -206,11 +201,13 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faDatabase)
     const tooltipSpan = wrapper.find(
-      `[data-tip="${HasAccess.tooltipText[FileHandleDownloadTypeEnum.TooLarge]}"]`,
+      `[data-tip="${
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.TooLarge]
+      }"]`,
     )
     expect(tooltipSpan).toHaveLength(1)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when the file is too large for Download List, but HasAccess is not in the Download List', async () => {
@@ -223,7 +220,7 @@ describe('basic tests', () => {
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
     // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 
   it('works when download is IsOpenNoRestrictions', async () => {
@@ -246,18 +243,10 @@ describe('basic tests', () => {
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
-    // no access restrictions
-    expect(wrapper.find('a')).toHaveLength(0)
   })
 
-  it('works with unmet controlled access data - controlled by act', async () => {
-    SynapseClient.getEntity = jest.fn(() => 
-      Promise.resolve(mockFileEntity),
-    )
-    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
-      Promise.reject('unmet restriction'),
-    )
-
+  it('works with unmet controlled access data AND an UNAUTHORIZED ACL', async () => {
+    SynapseClient.getEntity = jest.fn(() => Promise.reject('UNAUTHORIZED'))
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockUnmetControlledDataRestrictionInformationACT),
     )
@@ -274,30 +263,24 @@ describe('basic tests', () => {
     expect(wrapper.instance().state.restrictionInformation).toEqual(
       mockUnmetControlledDataRestrictionInformationACT,
     )
-    // const link = wrapper.find('a')
-    // expect(link).toHaveLength(1)
-    // const icons = wrapper.find(FontAwesomeIcon)
-    // expect(icons).toHaveLength(2)
-    // expect(icons.get(1).props.icon).toEqual(faLock)
-    // const tooltipSpan = wrapper.find(
-    //   `[data-tip="${
-    //     HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlocked]
-    //   }"]`,
-    // )
-    // expect(tooltipSpan).toHaveLength(1)
-    // // no access restrictions
-    // expect(wrapper.find('a').text()).toEqual('Request Access')
+
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.get(1).props.icon).toEqual(faLock)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${
+        HasAccess.tooltipText[
+          FileHandleDownloadTypeEnum.AccessBlockedByRestriction
+        ]
+      }"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
   })
 
-  it('works with unmet controlled access data - terms of use', async () => {
-    SynapseClient.getEntity = jest.fn(() => 
-      Promise.resolve(mockFileEntity),
-    )
-    SynapseClient.getFileEntityFileHandle = jest.fn(() => 
-      Promise.reject('unmet terms of use'),
-    )
+  it('works with an UNAUTHORIZED ACL but no unmet access restrictions', async () => {
+    SynapseClient.getEntity = jest.fn(() => Promise.reject('UNAUTHORIZED'))
     SynapseClient.getRestrictionInformation = jest.fn(() =>
-      Promise.resolve(mockUnmetControlledDataRestrictionInformationRestricted),
+      Promise.resolve(mockOpenRestrictionInformation),
     )
     const { wrapper } = await createShallowComponent(props)
     const request: RestrictionInformationRequest = {
@@ -309,20 +292,18 @@ describe('basic tests', () => {
       token,
     )
     expect(wrapper.instance().state.restrictionInformation).toEqual(
-      mockUnmetControlledDataRestrictionInformationRestricted,
+      mockOpenRestrictionInformation,
     )
-    // const link = wrapper.find('a')
-    // expect(link).toHaveLength(1)
-    // const icons = wrapper.find(FontAwesomeIcon)
-    // expect(icons).toHaveLength(2)
-    // expect(icons.get(1).props.icon).toEqual(faLock)
-    // const tooltipSpan = wrapper.find(
-    //   `[data-tip="${
-    //     HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlocked]
-    //   }"]`,
-    // )
-    // expect(tooltipSpan).toHaveLength(1)
-    // // no access restrictions
-    // expect(wrapper.find('a').text()).toEqual('Request Access')
+
+    const icons = wrapper.find(FontAwesomeIcon)
+    expect(icons).toHaveLength(2)
+    expect(icons.get(1).props.icon).toEqual(faLock)
+    const tooltipSpan = wrapper.find(
+      `[data-tip="${
+        HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlockedByACL]
+      }"]`,
+    )
+    expect(tooltipSpan).toHaveLength(1)
+    expect(wrapper.find('button')).toHaveLength(0)
   })
 })

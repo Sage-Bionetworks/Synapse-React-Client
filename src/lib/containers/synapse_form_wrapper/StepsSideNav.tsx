@@ -37,9 +37,9 @@ export default function StepsSideNav(props: StepsSideNavProps) {
     if (isExcluded) {
       iconDef = faBan
       flip = 'horizontal'
-    } else if (state == StepStateEnum.COMPLETED) {
+    } else if (state === StepStateEnum.COMPLETED) {
       iconDef = faCheckCircle
-    } else if (state == StepStateEnum.ERROR) {
+    } else if (state === StepStateEnum.ERROR) {
       iconDef = faExclamationCircle
     }
     return { iconDef, flip }

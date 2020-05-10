@@ -18,11 +18,11 @@ import {
 } from '../../../utils/synapseTypes'
 
 export type QueryFilterProps = {
-  applyChanges: Function
   isLoading?: boolean
-  data: QueryResultBundle
+  data?: QueryResultBundle
   getLastQueryRequest?: Function
-  token: string
+  executeQueryRequest?: Function
+  token?: string
 }
 
 const convertFacetToFacetColumnValuesRequest = (
@@ -54,7 +54,7 @@ const patchRequestFacets = (
   changedFacet: FacetColumnRequest,
   lastRequest?: QueryBundleRequest,
 ): FacetColumnRequest[] => {
-  const selections = lastRequest ? lastRequest.query.selectedFacets || [] : []
+  const selections = lastRequest?.query?.selectedFacets ?? []
   const changedFacetIndex = selections.findIndex(
     facet => facet.columnName === changedFacet.columnName,
   )
@@ -75,7 +75,7 @@ const patchRequestFacets = (
   return selections
 }
 
-const applyChangesToValuesColumn = (
+export const applyChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
 
   facet: FacetColumnResultValues,
@@ -102,7 +102,7 @@ const applyChangesToValuesColumn = (
 }
 
 //rangeChanges
-const applyChangesToRangeColumn = (
+export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultRange,
   onChangeFn: Function,
@@ -119,12 +119,21 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   data,
   isLoading = false,
   getLastQueryRequest,
+  executeQueryRequest,
   token,
-  applyChanges,
 }: QueryFilterProps): JSX.Element => {
+  if (!data) {
+    return <></>
+  }
   const columnModels = data.columnModels
   const facets = data.facets as FacetColumnResult[]
   const lastRequest = getLastQueryRequest ? getLastQueryRequest() : undefined
+
+  const applyChanges = (facets: FacetColumnRequest[]) => {
+    const queryRequest: QueryBundleRequest = getLastQueryRequest!()
+    queryRequest.query.selectedFacets = facets
+    executeQueryRequest!(queryRequest)
+  }
 
   return (
     <div className="QueryFilter">

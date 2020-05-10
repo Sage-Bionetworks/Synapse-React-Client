@@ -1,5 +1,5 @@
 import { ColumnType } from '../lib/utils/synapseTypes/'
-let mockData =  {
+const mockData = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   columnModels: [
     {
@@ -34,7 +34,7 @@ let mockData =  {
           isSelected: true,
         },
       ],
-    } 
+    },
   ],
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
