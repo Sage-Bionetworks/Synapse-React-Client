@@ -973,9 +973,7 @@ export default class SynapseTable extends React.Component<
    *
    * @memberof SynapseTable
    */
-  public toggleColumnSelection = (columnName: string) => (
-    _event: React.MouseEvent<HTMLLIElement>,
-  ) => {
+  public toggleColumnSelection = (columnName: string) => {
     let isColumnSelected = cloneDeep(this.props.isColumnSelected!)
     if (isColumnSelected.includes(columnName)) {
       isColumnSelected = isColumnSelected.filter(el => el !== columnName)
