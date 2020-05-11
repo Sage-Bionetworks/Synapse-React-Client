@@ -1,28 +1,23 @@
 .AccessRequirementList {
   color: #515359;
 
-  &__modal {
-    padding: 15px;
-  }
-
-  p {
-    margin-bottom: 0px;
-  }
-
   &__instruction {
     font-size: 18px;
     font-weight: bold;
     text-transform: uppercase;
+    padding-left: 15px;
   }
+
   &__access {
     margin-top: -10px;
   }
 
   &__title {
-    margin-left: -15px;
+    margin-left: -5px;
     font-size: 23px;
     font-weight: bold;
   }
+
   &__file {
     margin-right: 10px;
     color: #bbbbbc;
@@ -39,6 +34,7 @@
     color: $primary-action-color;
     margin-top: 20px;
     margin-bottom: 20px;
+    padding-left: 25px;
   }
 
   &__AccessRequirementList__signin .terms-of-use-content {
@@ -49,6 +45,9 @@
     &.hide {
       visibility: hidden;
     }
+  }
+  .sign-in-btn_access-requirement {
+    margin-left: -7px;
   }
 
   .view-terms-button {
@@ -70,14 +69,11 @@
 
   .not-accept-button-container {
     margin-top: 15px;
+    margin-bottom: 15px;
     align-content: center;
     justify-content: center;
     text-align: center;
     color: $primary-action-color;
-  }
-
-  .self-sign-access-title {
-    margin-top: 20px;
   }
 
   .get-access-requirement-button {
@@ -95,6 +91,7 @@
     color: white;
     border-radius: 50%;
     margin-right: 15px;
+    margin-left: 20px;
     padding: 15px;
     height: 15px;
     width: 15px;
@@ -103,5 +100,8 @@
     align-items: center;
     text-align: center;
     justify-content: center;
+  }
+  .mark-down {
+    padding-right: 15px;
   }
 }
