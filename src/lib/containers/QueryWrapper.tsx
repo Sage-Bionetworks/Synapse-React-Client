@@ -11,6 +11,7 @@ import {
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 export type QueryWrapperProps = {
+  visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
   token?: string
@@ -58,6 +59,7 @@ export type QueryWrapperState = {
   loadNowStarted: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery: SearchQuery
+  isColumnSelected: string[]
 }
 
 export type FacetSelection = {
@@ -93,6 +95,7 @@ export type QueryWrapperChildProps = {
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery?: SearchQuery
+  isColumnSelected?: string[]
 }
 
 /**
@@ -106,10 +109,6 @@ export default class QueryWrapper extends React.Component<
   QueryWrapperProps,
   QueryWrapperState
 > {
-  public static defaultProps = {
-    token: '',
-  }
-
   private componentIndex: number
   constructor(props: QueryWrapperProps) {
     super(props)
@@ -145,6 +144,7 @@ export default class QueryWrapper extends React.Component<
         columnName: '',
         searchText: '',
       },
+      isColumnSelected: [],
     }
     this.componentIndex = props.componentIndex || 0
   }
@@ -343,6 +343,10 @@ export default class QueryWrapper extends React.Component<
           data,
           chartSelectionIndex,
           asyncJobStatus: undefined,
+          isColumnSelected:
+            data?.selectColumns
+              ?.slice(0, this.props.visibleColumnCount ?? Infinity)
+              .map(el => el.name) ?? [],
         }
         this.setState(newState)
       })
@@ -386,6 +390,7 @@ export default class QueryWrapper extends React.Component<
         asyncJobStatus: this.state.asyncJobStatus,
         topLevelControlsState: this.state.topLevelControlsState,
         searchQuery: this.state.searchQuery,
+        isColumnSelected: this.state.isColumnSelected,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,

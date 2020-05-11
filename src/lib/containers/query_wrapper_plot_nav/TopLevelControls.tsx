@@ -11,6 +11,7 @@ import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
+import { cloneDeep } from 'lodash-es'
 
 library.add(faSearch)
 library.add(faFilter)
@@ -22,6 +23,7 @@ export type TopLevelControlsProps = {
   entityId: string
   sql: string
   token?: string
+  showColumnSelection?: boolean
 }
 
 type Control = {
@@ -37,12 +39,12 @@ const controls: Control[] = [
     tooltipText: 'Toggle Search',
   },
   {
-    icon: faFilter,
+    icon: faChartBar,
     key: 'showFacetVisualization',
     tooltipText: 'Toggle Visualization',
   },
   {
-    icon: faChartBar,
+    icon: faFilter,
     key: 'showFacetFilter',
     tooltipText: 'Toggle Facet Filter',
   },
@@ -64,6 +66,8 @@ const TopLevelControls = (
     updateParentState,
     topLevelControlsState,
     data,
+    showColumnSelection = false,
+    isColumnSelected,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -91,6 +95,24 @@ const TopLevelControls = (
     getIsFileView()
   }, [entityId, token])
 
+  /**
+   * Handles the toggle of a column select, this will cause the table to
+   * either show the column or hide depending on the prior state of the column
+   *
+   * @memberof SynapseTable
+   */
+  const toggleColumnSelection = (columnName: string) => {
+    let isColumnSelectedCopy = cloneDeep(isColumnSelected!)
+    if (isColumnSelectedCopy.includes(columnName)) {
+      isColumnSelectedCopy = isColumnSelectedCopy.filter(
+        el => el !== columnName,
+      )
+    } else {
+      isColumnSelectedCopy.push(columnName)
+    }
+    updateParentState!({ isColumnSelected: isColumnSelectedCopy })
+  }
+
   return (
     <h3 className="QueryWrapperPlotNav__title">
       <div className="QueryWrapperPlotNav__querycount">
@@ -115,14 +137,15 @@ const TopLevelControls = (
             />
           )
         })}
-        <ColumnSelection
-          headers={data?.selectColumns}
-          isColumnSelected={[]}
-          show={topLevelControlsState?.showColumnSelectDropdown ?? false}
-          // @ts-ignore
-          toggleColumnSelection={() => undefined}
-          darkTheme={true}
-        />
+        {showColumnSelection && (
+          <ColumnSelection
+            headers={data?.selectColumns}
+            isColumnSelected={isColumnSelected!}
+            show={topLevelControlsState?.showColumnSelectDropdown ?? false}
+            toggleColumnSelection={toggleColumnSelection}
+            darkTheme={true}
+          />
+        )}
       </div>
     </h3>
   )

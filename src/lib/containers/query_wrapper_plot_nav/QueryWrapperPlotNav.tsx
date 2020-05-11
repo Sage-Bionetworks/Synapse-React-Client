@@ -24,6 +24,7 @@ type OwnProps = {
   token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
+  visibleColumnCount?: number
 } & TopLevelControlsProps
 
 type SearchParams = {
@@ -79,7 +80,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   return (
     <div className="QueryWrapperPlotNav">
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <TopLevelControls name={name} entityId={entityId} sql={sqlUsed} />
+        <TopLevelControls
+          showColumnSelection={tableConfiguration !== undefined}
+          name={name}
+          entityId={entityId}
+          sql={sqlUsed}
+        />
         <SearchV2 />
         <DownloadConfirmation />
         <FacetNav facetsToPlot={facetsToPlot} loadingScreen={loadingScreen} />
