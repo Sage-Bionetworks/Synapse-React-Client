@@ -1,6 +1,8 @@
 import * as React from 'react'
-import ExpandSvg from '../../../assets/icons/expand.svg'
-import ShrinkSvg from '../../../assets/icons/shrink.svg'
+// import { ReactComponent as ExpandSvg } from '../../../assets/icons/expand.svg'
+// import { ReactComponent as ShrinkSvg } from '../../../assets/icons/shrink.svg'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faExpandAlt, faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 
 type ExpandTableProps = {
@@ -8,22 +10,21 @@ type ExpandTableProps = {
   isExpanded: boolean
 }
 
+library.add(faExpandAlt)
+library.add(faCompressAlt)
+
 export const ExpandTable: React.FunctionComponent<ExpandTableProps> = props => {
   const { onExpand, isExpanded } = props
 
   return (
-    <>
-      <ElementWithTooltip
-        idForToolTip={'expand'}
-        callbackFn={() => onExpand()}
-        tooltipText={
-          isExpanded ? 'Shrink table to fit' : 'Expand table in full screen'
-        }
-        image={{
-          svgImg: isExpanded ? ShrinkSvg : ExpandSvg,
-          altText: isExpanded ? 'shrink table' : 'expand table',
-        }}
-      />
-    </>
+    <ElementWithTooltip
+      idForToolTip={'expand'}
+      callbackFn={() => onExpand()}
+      tooltipText={
+        isExpanded ? 'Shrink table to fit' : 'Expand table in full screen'
+      }
+      image={isExpanded ? faCompressAlt : faExpandAlt}
+      size="lg"
+    />
   )
 }

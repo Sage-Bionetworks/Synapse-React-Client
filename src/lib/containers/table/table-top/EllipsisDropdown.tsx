@@ -30,11 +30,12 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
   const [showModal, setShowModal] = React.useState(false)
   return (
     <>
-      <Dropdown style={{ padding: 0 }}>
+      <Dropdown as="span">
         <ElementWithTooltip
           idForToolTip={tooltipEllipsis}
           tooltipText={'Table Options'}
           image={faEllipsisV}
+          size="lg"
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"

@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-import { Dropdown, Modal } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
 import { readFacetValues } from '../../utils/functions/facetUtils'
@@ -98,7 +98,7 @@ export interface Dictionary<T> {
 }
 export type SynapseTableState = {
   sortedColumnSelection: SortItem[]
-  isColumnSelected: boolean[]
+  isColumnSelected: string[]
   columnIconSortState: number[]
   isModalDownloadOpen: boolean
   isDownloadConfirmationOpen: boolean
@@ -129,9 +129,6 @@ export default class SynapseTable extends React.Component<
     this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
-    this.onToggleColumnSelectionShow = this.onToggleColumnSelectionShow.bind(
-      this,
-    )
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
@@ -419,30 +416,6 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  /* 
-    The ColumnSelection dropdown state is held in SynapseTable because the EllipsisDropdown has
-    an option to open the dropdown, 'show columns'
-  */
-  public onToggleColumnSelectionShow(
-    _show: boolean,
-    _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
-    metadata: any,
-  ) {
-    // Any click event for the Dropdown will close the dropdown (assuming its open), so we have
-    // to handle the onToggle event and manually manage the dropdown open state. If metadata
-    // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
-    // we close it.
-    if (metadata.source) {
-      this.setState({
-        showColumnSelection: true,
-      })
-    } else {
-      this.setState({
-        showColumnSelection: false,
-      })
-    }
-  }
-
   private renderColumnSelection = (headers: SelectColumn[]) => {
     return (
       <ColumnSelection
@@ -451,7 +424,7 @@ export default class SynapseTable extends React.Component<
         visibleColumnCount={this.props.visibleColumnCount}
         show={this.state.showColumnSelection}
         toggleColumnSelection={this.toggleColumnSelection}
-        onToggle={this.onToggleColumnSelectionShow}
+        // onToggle={this.onToggleColumnSelectionShow}
       />
     )
   }
@@ -542,9 +515,12 @@ export default class SynapseTable extends React.Component<
     }
     const queryRequest = this.props.getLastQueryRequest!()
     return (
-      <div className={'SRC-centerContent'} style={{ background, padding: 8 }}>
+      <div
+        className={'SRC-centerContent SRC-table-top'}
+        style={{ background, padding: 8 }}
+      >
         <h3 className="SRC-tableHeader"> {title}</h3>
-        <span className="SRC-inlineFlex" style={{ marginLeft: 'auto' }}>
+        <span className="SRC-table-tools" style={{ marginLeft: 'auto' }}>
           {!isGroupByInSql(queryRequest.query.sql) && (
             <>
               <ElementWithTooltip
@@ -552,6 +528,7 @@ export default class SynapseTable extends React.Component<
                 image={faCog}
                 callbackFn={this.advancedSearch}
                 tooltipText={'Open Advanced Search in Synapse'}
+                size="lg"
               />
               {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}
@@ -561,19 +538,19 @@ export default class SynapseTable extends React.Component<
             isExpanded={isExpanded}
             onExpand={() => this.setState(onExpandArguments)}
           />
+          <EllipsisDropdown
+            onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
+            onDownloadTableOnly={() =>
+              this.setState(onDownloadTableOnlyArguments)
+            }
+            onShowColumns={() => this.setState({ showColumnSelection: true })}
+            onFullScreen={() => this.setState(onExpandArguments)}
+            isExpanded={isExpanded}
+            isUnauthenticated={!this.props.token}
+            isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
+            isFileView={this.state.isFileView}
+          />
         </span>
-        <EllipsisDropdown
-          onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
-          onDownloadTableOnly={() =>
-            this.setState(onDownloadTableOnlyArguments)
-          }
-          onShowColumns={() => this.setState({ showColumnSelection: true })}
-          onFullScreen={() => this.setState(onExpandArguments)}
-          isExpanded={isExpanded}
-          isUnauthenticated={!this.props.token}
-          isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
-          isFileView={this.state.isFileView}
-        />
       </div>
     )
   }
@@ -816,7 +793,8 @@ export default class SynapseTable extends React.Component<
           // past the initial load -- when a user has started clicking items, then isColumnSelected is
           // not null and we verify that this column is part of the selection.
           const isColumnActivePastInitLoad =
-            isColumnSelectedLen !== 0 && this.state.isColumnSelected[colIndex]
+            isColumnSelectedLen !== 0 &&
+            this.state.isColumnSelected.includes[columnName]
           const isCountColumn = countColumnIndexes.includes(colIndex)
           const isBold = index === -1 ? '' : 'SRC-boldText'
           if (isColumnActiveInitLoad || isColumnActivePastInitLoad) {
@@ -1030,32 +1008,15 @@ export default class SynapseTable extends React.Component<
    *
    * @memberof SynapseTable
    */
-  public toggleColumnSelection = (index: number) => (
+  public toggleColumnSelection = (columnName: string) => (
     _event: React.MouseEvent<HTMLLIElement>,
   ) => {
-    let isColumnSelected: boolean[]
-    // lazily initialize isColumnSelected, at first it's empty
-    // and then on first column click we set it
-    if (this.state.isColumnSelected.length === 0) {
-      const { visibleColumnCount = Infinity } = this.props
-      // unpack all the data
-      const lengthOfPropsData = this.getLengthOfPropsData()
-      let defaultSelection
-      // fill up to visibleColumnCount with true and the rest as false
-      if (visibleColumnCount === Infinity) {
-        // if set to zero then its all true
-        defaultSelection = Array(lengthOfPropsData).fill(true)
-      } else {
-        // fill in whole array as false
-        defaultSelection = Array(lengthOfPropsData).fill(false)
-        // then fill in up until lengthOfPropsData with true
-        defaultSelection.fill(true, 0, visibleColumnCount)
-      }
-      isColumnSelected = defaultSelection
+    let isColumnSelected = cloneDeep(this.state.isColumnSelected)
+    if (isColumnSelected.includes(columnName)) {
+      isColumnSelected = isColumnSelected.filter(el => el !== columnName)
     } else {
-      isColumnSelected = cloneDeep(this.state.isColumnSelected)
+      isColumnSelected.push(columnName)
     }
-    isColumnSelected[index] = !isColumnSelected[index]
     this.setState({ isColumnSelected })
   }
 

@@ -22,6 +22,7 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
+  hiddenColumns?: string[]
 }
 
 export type TopLevelControlsState = {
@@ -30,6 +31,7 @@ export type TopLevelControlsState = {
   showColumnFilter: boolean
   showSearchBar: boolean
   showDownloadConfirmation: boolean
+  showColumnSelectDropdown: boolean
 }
 
 export type SearchQuery = {
@@ -137,6 +139,7 @@ export default class QueryWrapper extends React.Component<
         showFacetVisualization: true,
         showSearchBar: false,
         showDownloadConfirmation: false,
+        showColumnSelectDropdown: false,
       },
       searchQuery: {
         columnName: '',

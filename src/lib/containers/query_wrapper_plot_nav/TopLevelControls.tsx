@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import QueryCount from '../QueryCount'
-import { library, IconProp } from '@fortawesome/fontawesome-svg-core'
+import { library, IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   faSearch,
   faFilter,
   faChartBar,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons'
 import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
-import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
-import ReactTooltip from 'react-tooltip'
+import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
+import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 
 library.add(faSearch)
 library.add(faFilter)
 library.add(faChartBar)
+library.add(faDownload)
 
 export type TopLevelControlsProps = {
   name: string
@@ -25,28 +26,28 @@ export type TopLevelControlsProps = {
 
 type Control = {
   key: keyof TopLevelControlsState
-  icon: IconProp
+  icon: IconDefinition
   tooltipText: string
 }
 
 const controls: Control[] = [
   {
-    icon: 'search',
+    icon: faSearch,
     key: 'showSearchBar',
     tooltipText: 'Toggle Search',
   },
   {
-    icon: 'chart-bar',
+    icon: faFilter,
     key: 'showFacetVisualization',
     tooltipText: 'Toggle Visualization',
   },
   {
-    icon: 'filter',
+    icon: faChartBar,
     key: 'showFacetFilter',
     tooltipText: 'Toggle Facet Filter',
   },
   {
-    icon: 'download',
+    icon: faDownload,
     key: 'showDownloadConfirmation',
     tooltipText: 'Toggle Download',
   },
@@ -62,6 +63,7 @@ const TopLevelControls = (
     sql,
     updateParentState,
     topLevelControlsState,
+    data,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -102,25 +104,25 @@ const TopLevelControls = (
             return <></>
           }
           return (
-            <React.Fragment key={key}>
-              <button
-                className="SRC-primary-action-color"
-                onClick={() => setControlState(key)}
-                data-for={key}
-                data-tip={tooltipText}
-              >
-                <FontAwesomeIcon icon={icon} size="1x" />
-              </button>
-              <ReactTooltip
-                place="top"
-                type="dark"
-                effect="solid"
-                delayShow={TOOLTIP_DELAY_SHOW}
-                id={key}
-              />
-            </React.Fragment>
+            <ElementWithTooltip
+              idForToolTip={key}
+              tooltipText={tooltipText}
+              key={key}
+              image={icon}
+              callbackFn={() => setControlState(key)}
+              className="SRC-primary-color"
+              darkTheme={true}
+            />
           )
         })}
+        <ColumnSelection
+          headers={data?.selectColumns}
+          isColumnSelected={[]}
+          show={topLevelControlsState?.showColumnSelectDropdown ?? false}
+          // @ts-ignore
+          toggleColumnSelection={() => undefined}
+          darkTheme={true}
+        />
       </div>
     </h3>
   )
