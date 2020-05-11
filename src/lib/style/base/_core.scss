@@ -924,11 +924,6 @@ button {
   height: inherit;
 }
 
-a.SRC-lightLink {
-  color: white !important;
-  text-decoration: underline !important;
-}
-
 .SRC-standard-button-shape {
   display: inline-flex;
   justify-content: center;
@@ -1083,6 +1078,7 @@ hr ~ .SRC-wrapper {
 .SRC-card-footer-header {
   a {
     color: white !important;
+    font-weight: bold;
     text-decoration: underline;
   }
 }

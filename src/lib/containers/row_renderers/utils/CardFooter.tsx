@@ -51,7 +51,6 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   }
 
   renderRowValue = (columnName: string, value: string) => {
-    const textColorClass = this.props.isHeader ? 'SRC-lightLink' : ''
     if (!value.match) {
       // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't
       // see typeof return 'object' for that case which would be a better check.
@@ -60,7 +59,6 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     if (value.match(DOI_REGEX)) {
       return (
         <a
-          className={textColorClass}
           data-search-handle={columnName}
           target="_blank"
           rel="noopener noreferrer"

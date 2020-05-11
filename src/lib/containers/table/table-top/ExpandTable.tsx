@@ -1,6 +1,4 @@
 import * as React from 'react'
-// import { ReactComponent as ExpandSvg } from '../../../assets/icons/expand.svg'
-// import { ReactComponent as ShrinkSvg } from '../../../assets/icons/shrink.svg'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faExpandAlt, faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
