@@ -30,11 +30,12 @@ class QueryWrapperPlotNavDemo extends React.Component<
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: true,
+      showCards: false,
       propsWithTable: {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
         },
+        visibleColumnCount: 10,
         facetsToPlot: ['assay'],
         rgbIndex: 1,
         name: 'PlotNav Demo',

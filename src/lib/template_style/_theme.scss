@@ -6,7 +6,12 @@
 .SRC-primary-text-color {
   color: $primary-action-color !important;
 }
-
+.SRC-primary-fill-color {
+  fill: $primary-action-color;
+}
+.SRC-primary-stroke-color {
+  stroke: $primary-action-color;
+}
 .SRC-primary-color-hover:hover * {
   color: $primary-action-color !important;
   fill: $primary-action-color !important;
@@ -31,9 +36,11 @@
 .SRC-primary-background-color-hover:hover {
   background-color: $primary-action-color !important;
   color: white !important;
+  fill: white !important;
   * {
     background-color: $primary-action-color !important;
     color: white !important;
+    fill: white !important;
   }
 }
 
@@ -61,7 +68,8 @@
   }
 }
 
-.SRC-primary-button,  .SRC-primary-button.btn.btn-primary {
+.SRC-primary-button,
+.SRC-primary-button.btn.btn-primary {
   background: $primary-action-color;
   border: none;
   color: white !important;
@@ -207,6 +215,10 @@ button.dropdown-toggle:hover {
     fill: white;
   }
 }
-a, a:link, a:visited, a:hover, a:active {
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
   color: $primary-action-color;
 }

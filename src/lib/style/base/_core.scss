@@ -1086,3 +1086,19 @@ hr ~ .SRC-wrapper {
     text-decoration: underline;
   }
 }
+
+.SRC-table-top {
+  .SRC-table-tools {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    .ElementWithTooltip {
+      flex: 1;
+      flex-grow: 1;
+      width: 30px;
+      min-height: 30px;
+      height: fit-content;
+    }
+  }
+}
