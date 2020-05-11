@@ -204,6 +204,30 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }
 
+  const sortDownLoadList = (
+    itemA: FileHandleAssociation,
+    itemB: FileHandleAssociation,
+  ) => {
+    let fileNameA = ''
+    let fileNameB = ''
+
+    const fileHandleId = itemA ? itemA.fileHandleId : itemB.fileHandleId
+
+    const fileResult = requestedFiles.find(
+      fileRes => fileRes.fileHandleId === fileHandleId,
+    )
+
+    const fileHandle = fileResult ? fileResult.fileHandle : undefined
+
+    if (fileHandle && itemA) {
+      fileNameA = fileHandle.fileName
+    } else if (fileHandle && itemB) {
+      fileNameB = fileHandle.fileName
+    }
+
+    return fileNameA.localeCompare(fileNameB)
+  }
+
   const filesToDownload = downloadList?.filesToDownload ?? []
   const results = references?.results ?? []
   let numBytes = 0
@@ -237,148 +261,102 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             </tr>
           </thead>
           <tbody className="download-list-table">
-            {filesToDownload
-              .sort((itemA, itemB) => {
-                let fileNameA = ''
-                let fileNameB = ''
-
-                {
-                  const fileHandleId = itemA.fileHandleId
-                  // See if batch file results has this fileHandleId
-                  const fileResult = requestedFiles.find(
-                    fileRes => fileRes.fileHandleId === fileHandleId,
-                  )
-
-                  const fileHandle = fileResult
-                    ? fileResult.fileHandle
-                    : undefined
-                  if (fileHandle) {
-                    // fileHandle is defined, this file is downloadable, show its metadata
-                    fileNameA = fileHandle.fileName
-                  }
+            {filesToDownload.sort(sortDownLoadList).map(item => {
+              let createdBy: string | undefined = ''
+              let createdOn: string | undefined = ''
+              let fileName: string | undefined = ''
+              let contentSize = undefined
+              const synId = item.associateObjectId
+              const fileHandleId = item.fileHandleId
+              const isCurrentlyBeingDeletedClass =
+                fileBeingDeleted === fileHandleId ? 'SRC-inactive-bg' : ''
+              // See if batch file results has this fileHandleId
+              const fileResult = requestedFiles.find(
+                fileRes => fileRes.fileHandleId === fileHandleId,
+              )
+              const fileHandle = fileResult?.fileHandle
+              const canDownload = fileHandle !== undefined
+              if (fileHandle) {
+                // fileHandle is defined, this file is downloadable, show its metadata
+                ;({ createdBy, createdOn, fileName, contentSize } = fileHandle)
+                if (
+                  getDownloadTypeForFileHandle(fileHandle) ===
+                  FileHandleDownloadTypeEnum.Accessible
+                ) {
+                  numBytes += contentSize
+                  numFiles += 1
                 }
-
-                {
-                  const fileHandleId = itemB.fileHandleId
-                  // See if batch file results has this fileHandleId
-                  const fileResult = requestedFiles.find(
-                    fileRes => fileRes.fileHandleId === fileHandleId,
-                  )
-
-                  const fileHandle = fileResult
-                    ? fileResult.fileHandle
-                    : undefined
-                  if (fileHandle) {
-                    // fileHandle is defined, this file is downloadable, show its metadata
-                    fileNameB = fileHandle.fileName
-                  }
-                }
-                return fileNameA.localeCompare(fileNameB)
-              })
-              .map(item => {
-                let createdBy: string | undefined = ''
-                let createdOn: string | undefined = ''
-                let fileName: string | undefined = ''
-                let contentSize = undefined
-                const synId = item.associateObjectId
-                const fileHandleId = item.fileHandleId
-                const isCurrentlyBeingDeletedClass =
-                  fileBeingDeleted === fileHandleId ? 'SRC-inactive-bg' : ''
-                // See if batch file results has this fileHandleId
-                const fileResult = requestedFiles.find(
-                  fileRes => fileRes.fileHandleId === fileHandleId,
+              } else {
+                // file is not downloadable, only show its name from entity header info
+                const requestedFile = results.find(
+                  req => req.id === item.associateObjectId,
                 )
-                const fileHandle = fileResult?.fileHandle
-                const canDownload = fileHandle !== undefined
-                if (fileHandle) {
-                  // fileHandle is defined, this file is downloadable, show its metadata
-                  ;({
-                    createdBy,
-                    createdOn,
-                    fileName,
-                    contentSize,
-                  } = fileHandle)
-                  if (
-                    getDownloadTypeForFileHandle(fileHandle) ===
-                    FileHandleDownloadTypeEnum.Accessible
-                  ) {
-                    numBytes += contentSize
-                    numFiles += 1
-                  }
-                } else {
-                  // file is not downloadable, only show its name from entity header info
-                  const requestedFile = results.find(
-                    req => req.id === item.associateObjectId,
-                  )
-                  fileName = requestedFile?.name
-                  createdBy = requestedFile?.createdBy
-                  createdOn = requestedFile?.createdOn
-                }
-                createdOn = moment(createdOn).format('L LT')
-                const userProfile = userProfiles.find(
-                  el => el.ownerId === createdBy,
-                )
-                return (
-                  <tr
-                    className={isCurrentlyBeingDeletedClass}
-                    key={fileHandleId}
-                  >
-                    <td>
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`https://www.synapse.org/#!Synapse:${synId}`}
-                      >
-                        {fileName}
-                      </a>
-                    </td>
-                    <td>
-                      <HasAccess
-                        onHide={onHide}
-                        fileHandle={fileHandle}
+                fileName = requestedFile?.name
+                createdBy = requestedFile?.createdBy
+                createdOn = requestedFile?.createdOn
+              }
+              createdOn = moment(createdOn).format('L LT')
+              const userProfile = userProfiles.find(
+                el => el.ownerId === createdBy,
+              )
+              return (
+                <tr className={isCurrentlyBeingDeletedClass} key={fileHandleId}>
+                  <td>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://www.synapse.org/#!Synapse:${synId}`}
+                    >
+                      {fileName}
+                    </a>
+                  </td>
+                  <td>
+                    <HasAccess
+                      onHide={onHide}
+                      fileHandle={fileHandle}
+                      token={token}
+                      set_arPropsFromHasAccess={set_arPropsFromHasAccess}
+                      entityId={synId}
+                      isInDownloadList={true}
+                      forceSamePage={forceSamePage}
+                    />
+                  </td>
+                  <td>
+                    {userProfile && (
+                      <UserCard
+                        size={'SMALL USER CARD'}
+                        userProfile={userProfile}
+                        preSignedURL={userProfile.clientPreSignedURL}
                         token={token}
-                        set_arPropsFromHasAccess={set_arPropsFromHasAccess}
-                        entityId={synId}
-                        isInDownloadList={true}
-                        forceSamePage={forceSamePage}
+                        extraSmall={true}
                       />
-                    </td>
-                    <td>
-                      {userProfile && (
-                        <UserCard
-                          size={'SMALL USER CARD'}
-                          userProfile={userProfile}
-                          preSignedURL={userProfile.clientPreSignedURL}
-                          token={token}
-                          extraSmall={true}
-                        />
-                      )}
-                      {canDownload && !userProfile && (
-                        <span className="spinner" />
-                      )}
-                    </td>
-                    <td>{createdOn}</td>
-                    <td>
-                      {contentSize && calculateFriendlyFileSize(contentSize)}
-                    </td>
-                    <td>
-                      <button
-                        className={TESTING_TRASH_BTN_CLASS}
-                        onClick={
-                          fileBeingDeleted === ''
-                            ? () => deleteFileFromList(fileHandleId, synId)
-                            : undefined
-                        }
-                      >
-                        <FontAwesomeIcon
-                          className="SRC-primary-text-color"
-                          icon="trash"
-                        />
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
+                    )}
+                    {canDownload && !userProfile && (
+                      <span className="spinner" />
+                    )}
+                  </td>
+                  <td>{createdOn}</td>
+                  <td>
+                    {contentSize && calculateFriendlyFileSize(contentSize)}
+                  </td>
+                  <td>
+                    <button
+                      className={TESTING_TRASH_BTN_CLASS}
+                      onClick={
+                        fileBeingDeleted === ''
+                          ? () => deleteFileFromList(fileHandleId, synId)
+                          : undefined
+                      }
+                    >
+                      <FontAwesomeIcon
+                        className="SRC-primary-text-color"
+                        icon="trash"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </ReactBootstrap.Table>
         <CreatePackage updateDownloadList={fetchData} token={token}>
