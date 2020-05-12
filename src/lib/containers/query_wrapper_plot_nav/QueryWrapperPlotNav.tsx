@@ -88,7 +88,11 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <SearchV2 />
         <DownloadConfirmation />
-        <FacetNav facetsToPlot={facetsToPlot} loadingScreen={loadingScreen} />
+        <FacetNav
+          facetsToPlot={facetsToPlot}
+          showNotch={true}
+          loadingScreen={loadingScreen}
+        />
         <FilterAndView
           tableConfiguration={tableConfiguration}
           cardConfiguration={cardConfiguration}

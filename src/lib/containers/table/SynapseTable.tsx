@@ -420,7 +420,6 @@ export default class SynapseTable extends React.Component<
       <ColumnSelection
         headers={headers}
         isColumnSelected={this.props.isColumnSelected!}
-        visibleColumnCount={this.props.visibleColumnCount}
         show={this.state.showColumnSelection}
         toggleColumnSelection={this.toggleColumnSelection}
       />

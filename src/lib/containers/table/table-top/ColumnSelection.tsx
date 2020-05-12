@@ -11,7 +11,10 @@ import { useState } from 'react'
 type ColumnSelectionProps = {
   headers?: SelectColumn[]
   isColumnSelected: string[]
-  visibleColumnCount?: number
+  /* 
+      The dropdown state is held in SynapseTable because the EllipsisDropdown has
+      an option to open the dropdown, 'show columns'
+    */
   show: boolean
   toggleColumnSelection: (name: string) => void
   darkTheme?: boolean
@@ -19,21 +22,10 @@ type ColumnSelectionProps = {
 
 const tooltipColumnSelectionId = 'addAndRemoveColumns'
 
-/* 
-    The ColumnSelection dropdown state is held in SynapseTable because the EllipsisDropdown has
-    an option to open the dropdown, 'show columns'
-  */
-
 export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
   props: ColumnSelectionProps,
 ) => {
-  const {
-    headers,
-    isColumnSelected,
-    visibleColumnCount = Infinity,
-    toggleColumnSelection,
-    darkTheme,
-  } = props
+  const { headers, isColumnSelected, toggleColumnSelection, darkTheme } = props
 
   const [show, setShow] = useState(false)
   const onDropdownClick = (
@@ -78,18 +70,11 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       >
         {headers?.map((header, index) => {
           const { name } = header
-          let isCurrentColumnSelected:
-            | boolean
-            | undefined = isColumnSelected.includes(name)
-          if (isCurrentColumnSelected === undefined) {
-            isCurrentColumnSelected = index < visibleColumnCount
-          }
+          const isCurrentColumnSelected = isColumnSelected.includes(name)
           const iconStyle: React.CSSProperties = {
             width: '11px',
             marginRight: '10px',
-          }
-          if (!isCurrentColumnSelected) {
-            iconStyle.visibility = 'hidden'
+            visibility: isCurrentColumnSelected ? undefined : 'hidden',
           }
           const maybeShowPrimaryColor = isCurrentColumnSelected
             ? 'SRC-primary-text-color'
