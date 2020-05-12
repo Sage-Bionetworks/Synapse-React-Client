@@ -15,6 +15,7 @@ import TotalQueryResults from '../../../containers/TotalQueryResults'
 export type FacetNavOwnProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
   facetsToPlot?: string[]
+  showNotch?: boolean
 }
 
 type UiFacetState = {
@@ -50,6 +51,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   getInitQueryRequest,
   updateParentState,
   facetAliases,
+  showNotch = false,
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
@@ -287,6 +289,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
           frontText={'Showing'}
           searchQuery={searchQuery}
+          showNotch={showNotch}
         />
       </>
     )

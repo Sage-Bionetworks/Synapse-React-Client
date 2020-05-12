@@ -51,3 +51,36 @@
     font-size: 1rem;
   }
 }
+
+.notch-down {
+  position: relative;
+  &:after,
+  &::after {
+    position: absolute;
+    left: 2.4rem;
+    bottom: -10px;
+    content: '';
+    z-index: 10;
+    width: 0;
+    height: 0;
+    border-top: solid 10px;
+    border-top-color: #f9f9f9;
+    border-left: solid 10px transparent;
+    border-right: solid 10px transparent;
+  }
+  // https://stackoverflow.com/questions/9450733/css-triangle-custom-border-color
+  &:before,
+  &::before {
+    position: absolute;
+    left: calc(2.4rem - 2px);
+    bottom: -12px;
+    content: '';
+    z-index: 10;
+    width: 0;
+    height: 0;
+    border-top: solid 12px;
+    border-top-color: inherit;
+    border-left: solid 12px transparent;
+    border-right: solid 12px transparent;
+  }
+}
