@@ -1,0 +1,14 @@
+.ElementWithTooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  line-height: 0px;
+
+  &.dark-theme {
+    svg {
+      fill: $primary-action-color;
+      color: $primary-action-color !important;
+    }
+  }
+}

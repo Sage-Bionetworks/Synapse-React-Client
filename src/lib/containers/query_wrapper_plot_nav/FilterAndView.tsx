@@ -33,8 +33,8 @@ const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
       >
         {tableConfiguration ? (
           <SynapseTable
-            enableLeftFacetFilter={true}
-            isFileAndViewChild={true}
+            enableLeftFacetFilter={topLevelControlsState?.showFacetFilter}
+            isFilterAndViewChild={true}
             {...rest}
             {...tableConfiguration}
           />

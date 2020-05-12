@@ -143,7 +143,7 @@ function extractPlotDataArray(
       }
       return value || facetValue.value
     }
-    const value = unCamelCase(facetValue.value, facetAliases)!
+    const value = facetValue.value
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
 

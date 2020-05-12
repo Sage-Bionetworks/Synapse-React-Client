@@ -22,11 +22,12 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
 
   return (
     <React.Fragment>
-      <Dropdown style={{ padding: 0 }}>
+      <Dropdown as="span">
         <ElementWithTooltip
           idForToolTip={tooltipDownloadId}
           tooltipText={'Download Options'}
           image={faDownload}
+          size="lg"
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
