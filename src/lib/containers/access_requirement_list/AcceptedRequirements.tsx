@@ -115,10 +115,10 @@ export default function AcceptedRequirements({
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement &&
       actContactInfo
     ) {
-      return <div className="mark-down">{actContactInfo}</div>
+      return <div className="AcceptRequirementsMarkdown">{actContactInfo}</div>
     } else {
       return (
-        <div className="mark-down">
+        <div className="AcceptRequirementsMarkdown">
           <MarkdownSynapse
             token={token}
             wikiId={wikiPage?.wikiPageId}
