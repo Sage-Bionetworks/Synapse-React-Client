@@ -2,7 +2,7 @@ import * as React from 'react'
 import _ from 'lodash-es'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
-import { ReactComponent as TestSvg } from '../../../../lib/assets/icons/DNA.svg'
+import Columns from '../../../../lib/assets/icons/columns'
 import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 const mockCallback = jest.fn()
@@ -55,7 +55,7 @@ describe('basic function', () => {
     const props_: ElementWithTooltipProps = {
       ...props,
       image: {
-        svgImg: TestSvg,
+        svgImg: Columns,
         altText: 'test',
       },
     }
