@@ -89,10 +89,10 @@ export default function AcceptedRequirements({
         }
 
         SynapseClient.postAccessApproval(token, accessApprovalRequest)
-          .then((_) => {
+          .then(_ => {
             setIsApproved(true)
           })
-          .catch((err) => console.error('Error on post access approval: ', err))
+          .catch(err => console.error('Error on post access approval: ', err))
       }
     }
   }
@@ -115,15 +115,17 @@ export default function AcceptedRequirements({
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement &&
       actContactInfo
     ) {
-      return <p>{actContactInfo}</p>
+      return <div className="AcceptRequirementsMarkdown">{actContactInfo}</div>
     } else {
       return (
-        <MarkdownSynapse
-          token={token}
-          wikiId={wikiPage?.wikiPageId}
-          ownerId={wikiPage?.ownerObjectId}
-          objectType={wikiPage?.ownerObjectType}
-        />
+        <div className="AcceptRequirementsMarkdown">
+          <MarkdownSynapse
+            token={token}
+            wikiId={wikiPage?.wikiPageId}
+            ownerId={wikiPage?.ownerObjectId}
+            objectType={wikiPage?.ownerObjectType}
+          />
+        </div>
       )
     }
   }
