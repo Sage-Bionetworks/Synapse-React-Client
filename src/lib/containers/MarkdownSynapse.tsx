@@ -88,7 +88,10 @@ export default class MarkdownSynapse extends React.Component<
 
     const mathSuffix = ''
     // Update the internal markdownit object with the wrapped synapse object
-    md.use(markdownitSynapse, mathSuffix).use(markdownitMath, mathSuffix)
+    md.use(markdownitSynapse, mathSuffix, 'https://synapse.org').use(
+      markdownitMath,
+      mathSuffix,
+    )
     const data: any = {}
     if (this.props.markdown) {
       data.markdown = this.props.markdown
