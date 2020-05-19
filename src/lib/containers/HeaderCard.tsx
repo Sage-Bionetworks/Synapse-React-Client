@@ -18,6 +18,8 @@ export type HeaderCardProps = {
   values?: string[][]
   isAlignToLeftNav?: boolean
   descriptionLinkConfig?: MarkdownValue
+  linkDisplay?: string
+  target?: string
 }
 
 const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
@@ -32,6 +34,8 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   secondaryLabelLimit,
   isAlignToLeftNav,
   descriptionLinkConfig,
+  linkDisplay,
+  target,
 }) => {
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -66,8 +70,8 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   return (
     <div
       style={style}
-      className={`SRC-portalCardHeader${
-        isAlignToLeftNav ? ' isAlignToLeftNav' : ''
+      className={`SRC-portalCardHeader ${
+        isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
       <div className="container-fluid">
@@ -90,7 +94,13 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                 className="SRC-boldText SRC-blackText"
                 style={{ margin: 'none' }}
               >
-                {title}
+                {linkDisplay ? (
+                  <a target={target} href={linkDisplay}>
+                    {title}
+                  </a>
+                ) : (
+                  <span> {title} </span>
+                )}
               </h3>
             </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}

@@ -372,14 +372,13 @@ export default class QueryWrapper extends React.Component<
    */
   public render() {
     const { isLoading } = this.state
-    const { facetAliases = {}, children, ...rest } = this.props
+    const { children, ...rest } = this.props
     // inject props in children of this component
     const childrenWithProps = React.Children.map(children, (child: any) => {
       if (!child) {
         return child
       }
       const queryWrapperChildProps: QueryWrapperChildProps = {
-        facetAliases,
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.state.data,
         hasMoreData: this.state.hasMoreData,

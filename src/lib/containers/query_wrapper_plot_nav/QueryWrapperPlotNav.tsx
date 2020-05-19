@@ -25,6 +25,7 @@ type OwnProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
   visibleColumnCount?: number
+  facetAliases?: {}
 } & TopLevelControlsProps
 
 type SearchParams = {
