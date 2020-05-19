@@ -37,6 +37,7 @@ import {
   UserGroupHeader,
   UserProfile,
   FacetColumnRequest,
+  EntityColumnType,
 } from '../../utils/synapseTypes/'
 import { getColorPallette } from '../ColorGradient'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
@@ -191,11 +192,11 @@ export default class SynapseTable extends React.Component<
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'ENTITYID',
+      EntityColumnType.ENTITYID,
     )
     const userIdColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'USERID',
+      EntityColumnType.USERID,
     )
     const distinctEntityIds = getUniqueEntities(
       data,
@@ -736,28 +737,28 @@ export default class SynapseTable extends React.Component<
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
     const entityColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'ENTITYID',
+      EntityColumnType.ENTITYID,
     )
     const userColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'USERID',
+      EntityColumnType.USERID,
     )
     const dateColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'DATE',
+      EntityColumnType.DATE,
     )
     const dateListColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'DATE_LIST',
+      EntityColumnType.DATE_LIST,
     )
     const booleanListColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'BOOLEAN_LIST',
+      EntityColumnType.BOOLEAN_LIST,
     )
     const otherListColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      'STRING_LIST',
-      'INTEGER_LIST',
+      EntityColumnType.STRING_LIST,
+      EntityColumnType.INTEGER_LIST,
     )
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
@@ -856,10 +857,7 @@ export default class SynapseTable extends React.Component<
           // we have to figure out if the current column is a facet selection
           const facetIndex: number = facets.findIndex(
             (facetColumnResult: FacetColumnResult) => {
-              const facetDisplayValue =
-                facetAliases[facetColumnResult.columnName] ||
-                facetColumnResult.columnName
-              return facetDisplayValue === column.name
+              return facetColumnResult.columnName === column.name
             },
           )
           // the header must be included in the facets and it has to be enumerable for current rendering capabilities
@@ -872,7 +870,10 @@ export default class SynapseTable extends React.Component<
             ? 'SRC-selected-table-icon'
             : 'SRC-primary-text-color'
           const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
-          const displayColumnName: string | undefined = unCamelCase(column.name)
+          const displayColumnName: string | undefined = unCamelCase(
+            column.name,
+            facetAliases,
+          )
           return (
             <th key={column.name}>
               <div className="SRC-split">

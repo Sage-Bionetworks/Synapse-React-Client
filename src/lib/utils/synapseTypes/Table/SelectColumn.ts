@@ -1,18 +1,19 @@
-export type EntityColumnType =
-  | 'STRING'
-  | 'DOUBLE'
-  | 'BOOLEAN'
-  | 'INTEGER'
-  | 'DATE'
-  | 'FILEHANDLEID'
-  | 'ENTITYID'
-  | 'LINK'
-  | 'LARGETEXT'
-  | 'USERID'
-  | 'STRING_LIST'
-  | 'INTEGER_LIST'
-  | 'BOOLEAN_LIST'
-  | 'DATE_LIST'
+export enum EntityColumnType {
+  STRING = 'STRING',
+  DOUBLE = 'DOUBLE',
+  BOOLEAN = 'BOOLEAN',
+  INTEGER = 'INTEGER',
+  DATE = 'DATE',
+  FILEHANDLEID = 'FILEHANDLEID',
+  ENTITYID = 'ENTITYID',
+  LINK = 'LINK',
+  LARGETEXT = 'LARGETEXT',
+  USERID = 'USERID',
+  STRING_LIST = 'STRING_LIST',
+  INTEGER_LIST = 'INTEGER_LIST',
+  BOOLEAN_LIST = 'BOOLEAN_LIST',
+  DATE_LIST = 'DATE_LIST',
+}
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html
 export type SelectColumn = {
