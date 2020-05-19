@@ -24,6 +24,7 @@ export type TopLevelControlsProps = {
   sql: string
   token?: string
   showColumnSelection?: boolean
+  hideDownload?: boolean
 }
 
 type Control = {
@@ -68,6 +69,7 @@ const TopLevelControls = (
     data,
     showColumnSelection = false,
     isColumnSelected,
+    hideDownload = false,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -121,7 +123,10 @@ const TopLevelControls = (
       <div className="QueryWrapperPlotNav__actions">
         {controls.map(control => {
           const { key, icon, tooltipText } = control
-          if (key === 'showDownloadConfirmation' && !isFileView) {
+          if (
+            key === 'showDownloadConfirmation' &&
+            (!isFileView || hideDownload)
+          ) {
             // needs to be a file view in order for download to make sense
             return <></>
           }
