@@ -72,13 +72,12 @@ class QueryWrapperPlotNavDemo extends React.Component<
           isRowSelectionVisible: true
         },
         visibleColumnCount: 10,
-        facetsToPlot: ['assay'],
+        facetsToPlot: ['Ethnicity', 'Sex'],
         rgbIndex: 1,
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql: 'select * from syn22084217',
         entityId: 'syn22084217',
-        // facetsToPlot: ['assay', 'dataType'],
         loadingScreen: (
           <div>
             <div className="spinner"> </div>Im loading as fast I can !!!{' '}
