@@ -60,6 +60,7 @@ export type QueryWrapperState = {
   topLevelControlsState?: TopLevelControlsState
   searchQuery: SearchQuery
   isColumnSelected: string[]
+  selectedRowIndices?: number[]
 }
 
 export type FacetSelection = {
@@ -95,7 +96,8 @@ export type QueryWrapperChildProps = {
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery?: SearchQuery
-  isColumnSelected?: string[]
+  isColumnSelected?: string[],
+  selectedRowIndices?: number[],
 }
 
 /**
@@ -145,6 +147,7 @@ export default class QueryWrapper extends React.Component<
         searchText: '',
       },
       isColumnSelected: [],
+      selectedRowIndices: [],
     }
     this.componentIndex = props.componentIndex || 0
   }
@@ -390,12 +393,13 @@ export default class QueryWrapper extends React.Component<
         topLevelControlsState: this.state.topLevelControlsState,
         searchQuery: this.state.searchQuery,
         isColumnSelected: this.state.isColumnSelected,
+        selectedRowIndices: this.state.selectedRowIndices,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,
         getNextPageOfData: this.getNextPageOfData,
         updateParentState: this.updateParentState,
-        getInitQueryRequest: this.getInitQueryRequest,
+        getInitQueryRequest: this.getInitQueryRequest,        
         ...rest,
       }
       return React.cloneElement(child, queryWrapperChildProps)

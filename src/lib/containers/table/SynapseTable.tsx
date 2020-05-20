@@ -58,6 +58,7 @@ import NoData from '../../assets/icons/file-dotted.svg'
 import { renderTableCell } from '../synapse_table_functions/renderTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
+import { Checkbox } from '../widgets/Checkbox'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -117,6 +118,7 @@ export type SynapseTableProps = {
   markdownColumns?: string[] // array of column names which should render as markdown
   enableLeftFacetFilter?: boolean
   isFilterAndViewChild?: boolean
+  isRowSelectionVisible?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -287,7 +289,7 @@ export default class SynapseTable extends React.Component<
       token,
       showBarChart,
       enableLeftFacetFilter,
-      isFilterAndViewChild,
+      isFilterAndViewChild,      
     } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
@@ -436,7 +438,7 @@ export default class SynapseTable extends React.Component<
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = lastQueryRequest.query.offset! > 0
-    const { hasMoreData, showAccessColumn, token } = this.props
+    const { hasMoreData, showAccessColumn, token, isRowSelectionVisible } = this.props
 
     const zeroMarginRight: React.CSSProperties = {
       marginRight: 0,
@@ -484,11 +486,11 @@ export default class SynapseTable extends React.Component<
         <table className="table table-striped table-condensed">
           <thead className="SRC_bordered">
             <tr>
-              {this.createTableHeader(headers, facets, isShowingAccessColumn)}
+              {this.createTableHeader(headers, facets, isShowingAccessColumn, isRowSelectionVisible)}
             </tr>
           </thead>
           <tbody>
-            {this.createTableRows(rows, headers, isShowingAccessColumn)}
+            {this.createTableRows(rows, headers, isShowingAccessColumn, isRowSelectionVisible)}
           </tbody>
         </table>
         <div style={{ textAlign: 'right' }}>
@@ -731,9 +733,10 @@ export default class SynapseTable extends React.Component<
     rows: Row[],
     headers: SelectColumn[],
     isShowingAccessColumn: boolean | undefined,
+    isRowSelectionVisible: boolean | undefined,
   ) {
     const rowsFormatted: JSX.Element[] = []
-    const { token, isColumnSelected } = this.props
+    const { token, isColumnSelected, selectedRowIndices, updateParentState } = this.props
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
     const entityColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
@@ -828,6 +831,29 @@ export default class SynapseTable extends React.Component<
           </td>,
         )
       }
+      if (isRowSelectionVisible && selectedRowIndices) {
+        rowContent.unshift(
+          <td key={`(${rowIndex},rowSelectColumn)`} className="SRC_noBorderTop">
+            <Checkbox
+              label=""
+              id={`(${rowIndex},rowSelectColumnCheckbox)`}
+              checked={selectedRowIndices.includes(rowIndex)}
+              onChange={(checked: boolean) => {
+                const cloneSelectedRowIndices = [...selectedRowIndices];
+                if (checked) {
+                  cloneSelectedRowIndices.concat(rowIndex)
+                } else {
+                  cloneSelectedRowIndices.filter(item => item !== rowIndex)
+                }
+                // update parent state on change
+                updateParentState!({
+                  selectedRowIndices: cloneSelectedRowIndices
+                })
+              }}
+            ></Checkbox>
+          </td>,
+        )
+      }
 
       const rowFormatted = <tr key={row.rowId}>{rowContent}</tr>
       rowsFormatted.push(rowFormatted)
@@ -839,6 +865,7 @@ export default class SynapseTable extends React.Component<
     headers: SelectColumn[],
     facets: FacetColumnResult[],
     isShowingAccessColumn: boolean | undefined,
+    isRowSelectionVisible: boolean | undefined,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
     const { facetAliases = {}, isColumnSelected } = this.props
@@ -915,6 +942,14 @@ export default class SynapseTable extends React.Component<
         <th key="accessColumn">
           <div className="SRC-centerContent">
             <span style={{ whiteSpace: 'nowrap' }}>Access</span>
+          </div>
+        </th>,
+      )      
+    }
+    if (isRowSelectionVisible) {
+      tableColumnHeaderElements.unshift(<th key="rowSelectionColumn">
+          <div className="SRC-centerContent">
+            {/* checkboxes column */}
           </div>
         </th>,
       )

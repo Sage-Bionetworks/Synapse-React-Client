@@ -12,6 +12,7 @@ import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
+import { QueryResultBundle } from 'lib/utils/synapseTypes'
 
 library.add(faSearch)
 library.add(faFilter)
@@ -23,13 +24,26 @@ export type TopLevelControlsProps = {
   entityId: string
   sql: string
   token?: string
-  showColumnSelection?: boolean
+  showColumnSelection?: boolean,
+  customControls?: CustomControl[]
 }
 
 type Control = {
   key: keyof TopLevelControlsState
   icon: IconDefinition
   tooltipText: string
+}
+
+type CustomControlCallbackData = {
+  data: QueryResultBundle | undefined,
+  selectedRowIndices: number[] | undefined
+}
+
+type CustomControl = {
+  icon: IconDefinition
+  buttonText: string
+  onClick: (event: CustomControlCallbackData) => void
+  classNames?: string
 }
 
 const controls: Control[] = [
@@ -68,6 +82,8 @@ const TopLevelControls = (
     data,
     showColumnSelection = false,
     isColumnSelected,
+    selectedRowIndices,
+    customControls,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -119,6 +135,15 @@ const TopLevelControls = (
         <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
       </div>
       <div className="QueryWrapperPlotNav__actions">
+        {customControls && customControls.map(customControl => {
+            return (
+              <button className={customControl.classNames} onClick={() => customControl.onClick({data, selectedRowIndices})}>
+                {customControl.icon}&nbsp;
+                {customControl.buttonText}
+              </button>
+            )
+          })
+        }
         {controls.map(control => {
           const { key, icon, tooltipText } = control
           if (key === 'showDownloadConfirmation' && !isFileView) {
