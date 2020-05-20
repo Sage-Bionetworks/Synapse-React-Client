@@ -841,9 +841,12 @@ export default class SynapseTable extends React.Component<
               onChange={(checked: boolean) => {
                 const cloneSelectedRowIndices = [...selectedRowIndices];
                 if (checked) {
-                  cloneSelectedRowIndices.concat(rowIndex)
+                  cloneSelectedRowIndices.push(rowIndex)
                 } else {
-                  cloneSelectedRowIndices.filter(item => item !== rowIndex)
+                  const index = cloneSelectedRowIndices.indexOf(rowIndex);
+                  if (index > -1) {
+                    cloneSelectedRowIndices.splice(index, 1);
+                  }
                 }
                 // update parent state on change
                 updateParentState!({

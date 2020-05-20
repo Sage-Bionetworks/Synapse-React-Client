@@ -34,6 +34,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
       propsWithTable: {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
+          isRowSelectionVisible: true
         },
         visibleColumnCount: 10,
         facetsToPlot: ['assay'],
@@ -48,6 +49,16 @@ class QueryWrapperPlotNavDemo extends React.Component<
             <div className="spinner"> </div>Im loading as fast I can !!!{' '}
           </div>
         ),
+        customControls: [{
+          buttonText: 'Custom control 1',
+          onClick: (event => {
+            debugger
+            console.log('click event captured')
+            console.log('event.data' + event.data)
+            console.log('event.selectedRowIndices' + event.selectedRowIndices)
+          }),
+          
+        }]
       },
       propsWithCards: {
         rgbIndex: 1,

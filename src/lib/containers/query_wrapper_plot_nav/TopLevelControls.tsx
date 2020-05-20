@@ -40,10 +40,10 @@ type CustomControlCallbackData = {
 }
 
 type CustomControl = {
-  icon: IconDefinition
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
+  icon?: IconDefinition
 }
 
 const controls: Control[] = [
@@ -137,7 +137,10 @@ const TopLevelControls = (
       <div className="QueryWrapperPlotNav__actions">
         {customControls && customControls.map(customControl => {
             return (
-              <button className={customControl.classNames} onClick={() => customControl.onClick({data, selectedRowIndices})}>
+              <button className='btn SRC-primary-background-color SRC-roundBorder SRC-whiteText'
+                style={{marginRight: '5px'}}
+                type='button'
+                onClick={() => customControl.onClick({data, selectedRowIndices})}>
                 {customControl.icon}&nbsp;
                 {customControl.buttonText}
               </button>

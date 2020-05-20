@@ -225,6 +225,7 @@ export default class QueryWrapper extends React.Component<
     this.setState({
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
+      selectedRowIndices: [] // reset selected row indices any time the query is re-run
     })
 
     if (clonedQueryRequest.query) {
