@@ -35,6 +35,12 @@ import AccessRequirementList, {
   AccessRequirementListProps,
 } from '../access_requirement_list/AccessRequirementList'
 
+import {
+  faSort,
+  faSortAmountDown,
+  faSortAmountUp,
+} from '@fortawesome/free-solid-svg-icons'
+
 library.add(faTrash)
 
 type DownloadListTableData = {
@@ -62,6 +68,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     batchFileResult: undefined,
     downloadList: undefined,
   })
+  const [columns, setColumns] = useState<{}>({
+    file: false,
+    createdBy: false,
+    createdOn: false,
+    size: false,
+  })
+
   const [arPropsFromHasAccess, set_arPropsFromHasAccess] = useState<
     AccessRequirementListProps | undefined
   >()
@@ -189,6 +202,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       },
     ]
     setIsLoading(true)
+
     setFileBeingDeleted(fileHandleId)
     try {
       const downloadList = await deleteDownloadListFiles(list, token)
@@ -204,28 +218,99 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }
 
+  const sortColumn = async (column: string) => {
+    try {
+      setIsLoading(true)
+
+      setColumns({
+        file: column === 'file' ? !columns[column] : false,
+        createdBy: column === 'createdBy' ? !columns[column] : false,
+        createdOn: column === 'createdOn' ? !columns[column] : false,
+        size: column === 'size' ? !columns[column] : false,
+      })
+
+      const filesToDownload = downloadList?.filesToDownload ?? []
+
+      filesToDownload.sort((itemA, itemB) => {
+        return sortDownLoadList(itemA, itemB, column)
+      })
+      setData({
+        ...data,
+        downloadList,
+      })
+      listUpdatedCallback?.()
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const sortDownLoadList = (
     itemA: FileHandleAssociation,
     itemB: FileHandleAssociation,
+    column: string,
   ) => {
-    let fileNameA = ''
-    let fileNameB = ''
+    let fileName_A: string | undefined = ''
+    let fileName_B: string | undefined = ''
+
+    let createdBy_A: string | undefined = ''
+    let createdBy_B: string | undefined = ''
+    let createdOn_A: string | undefined = ''
+    let createdOn_B: string | undefined = ''
+    let contentSize_A: number | undefined = undefined
+    let contentSize_B: number | undefined = undefined
 
     const fileHandleId = itemA ? itemA.fileHandleId : itemB.fileHandleId
 
     const fileResult = requestedFiles.find(
       fileRes => fileRes.fileHandleId === fileHandleId,
     )
-
     const fileHandle = fileResult ? fileResult.fileHandle : undefined
 
+    // fileHandle is defined, this file is downloadable, show its metadata
     if (fileHandle && itemA) {
-      fileNameA = fileHandle.fileName
+      fileName_A = fileHandle.fileName
+      createdBy_A = fileHandle.createdBy
+      createdOn_A = fileHandle.createdOn
+      contentSize_A = fileHandle.contentSize
     } else if (fileHandle && itemB) {
-      fileNameB = fileHandle.fileName
+      fileName_B = fileHandle.fileName
+      createdBy_B = fileHandle.createdBy
+      createdOn_B = fileHandle.createdOn
+      contentSize_B = fileHandle.contentSize
+    } else {
+      // file is not downloadable, only show its name from entity header info
+      const requestId = itemA
+        ? itemA.associateObjectId
+        : itemB.associateObjectId
+      const requestedFile = results.find(req => req.id === requestId)
+
+      if (itemA) {
+        fileName_A = requestedFile?.name
+        createdBy_A = requestedFile?.createdBy
+        createdOn_A = requestedFile?.createdOn
+      } else if (itemB) {
+        fileName_B = requestedFile?.name
+        createdBy_B = requestedFile?.createdBy
+        createdOn_B = requestedFile?.createdOn
+      }
     }
 
-    return fileNameA.localeCompare(fileNameB)
+    switch (column) {
+      case 'file':
+        return fileName_B?.localeCompare(fileName_A!)!
+      case 'access':
+        return 1
+      case 'createdBy':
+        return createdBy_B?.localeCompare(createdBy_A!)!
+      case 'createdOn':
+        return createdOn_B?.localeCompare(createdOn_A!)!
+      case 'size':
+        return contentSize_B! - contentSize_A!
+      default:
+        return 1
+    }
   }
 
   const filesToDownload = downloadList?.filesToDownload ?? []
@@ -251,17 +336,74 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         <ReactBootstrap.Table striped={true} responsive={true}>
           <thead>
             <tr>
-              <th>File Name</th>
-              <th>Access</th>
-              <th>Created By</th>
-              <th>Created On</th>
-              <th>Size</th>
+              <th>
+                File
+                <button
+                  className="sort"
+                  onClick={() => {
+                    sortColumn('file')
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={columns['file'] ? faSortAmountUp : faSortAmountDown}
+                  />
+                </button>
+              </th>
+              <th>
+                Access
+                <button className="sort" onClick={() => sortColumn('access')}>
+                  <FontAwesomeIcon icon={faSort} />
+                </button>
+              </th>
+              <th>
+                Created By
+                <button
+                  className="sort"
+                  onClick={() => {
+                    sortColumn('createdBy')
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={
+                      columns['createdBy'] ? faSortAmountUp : faSortAmountDown
+                    }
+                  />
+                </button>
+              </th>
+              <th>
+                Created On
+                <button
+                  className="sort"
+                  onClick={() => {
+                    sortColumn('createdOn')
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={
+                      columns['createdOn'] ? faSortAmountUp : faSortAmountDown
+                    }
+                  />
+                </button>
+              </th>
+              <th>
+                Size
+                <button
+                  className="sort"
+                  onClick={() => {
+                    sortColumn('size')
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={columns['size'] ? faSortAmountUp : faSortAmountDown}
+                  />
+                </button>
+              </th>
               {/* th below is made for trash can icon but holds no content */}
               <th />
             </tr>
           </thead>
           <tbody className="download-list-table">
-            {filesToDownload.sort(sortDownLoadList).map(item => {
+            {filesToDownload.map(item => {
               let createdBy: string | undefined = ''
               let createdOn: string | undefined = ''
               let fileName: string | undefined = ''
