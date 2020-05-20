@@ -1,10 +1,10 @@
 import * as React from 'react'
 import QueryWrapperPlotNav, {
   QueryWrapperPlotNavProps,
-} from 'lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
-import { SynapseConstants, SynapseClient } from 'lib'
-import { TableUpdateTransactionRequest } from 'lib/utils/synapseTypes/Table/TableUpdate'
-import { Row } from 'lib/utils/synapseTypes'
+} from '../../../lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import { SynapseConstants, SynapseClient } from '../../../lib'
+import { TableUpdateTransactionRequest, PartialRow } from '../../../lib/utils/synapseTypes/Table/TableUpdate'
+import { Row } from '../../../lib/utils/synapseTypes'
 
 type DemoState = {
   ownerId: string
@@ -93,14 +93,14 @@ class QueryWrapperPlotNavDemo extends React.Component<
             // find target column
             const targetColumn = event.data?.columnModels!.find(cm => cm.name === 'WorkflowState')
             // collect all selected rows (create PartialRow objects)
-            const rowUpdates = []
+            const rowUpdates:PartialRow[] = []
             const rows:Row[] = event.data?.queryResult.queryResults!.rows
             for (let index = 0; index < event.selectedRowIndices!.length; index++) {
               rowUpdates.push({
                 rowId: rows[event.selectedRowIndices![index]].rowId,
                 values: [{
                   key: targetColumn?.id!,
-                  value: 'Deselected'
+                  value: 'Selected'
                 }]
               })
             }
