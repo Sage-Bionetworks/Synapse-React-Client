@@ -100,7 +100,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
                 rowId: rows[event.selectedRowIndices![index]].rowId,
                 values: [{
                   key: targetColumn?.id!,
-                  value: 'Selected'
+                  value: 'Deselected'
                 }]
               })
             }
@@ -120,8 +120,8 @@ class QueryWrapperPlotNavDemo extends React.Component<
             }
             SynapseClient.updateTable(request, props.token).then(() => {
               console.log('updated!')
-              // demo code, just reload the thing:
-              window.location.reload()
+              // refresh data after successful update
+              event.refresh()
             })
           }),
         }]

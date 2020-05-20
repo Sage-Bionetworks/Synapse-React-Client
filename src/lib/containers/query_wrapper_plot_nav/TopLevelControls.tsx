@@ -37,6 +37,7 @@ type Control = {
 type CustomControlCallbackData = {
   data: QueryResultBundle | undefined,
   selectedRowIndices: number[] | undefined
+  refresh: () => void
 }
 
 type CustomControl = {
@@ -84,6 +85,9 @@ const TopLevelControls = (
     isColumnSelected,
     selectedRowIndices,
     customControls,
+    executeQueryRequest,
+    getLastQueryRequest
+
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -111,6 +115,7 @@ const TopLevelControls = (
     getIsFileView()
   }, [entityId, token])
 
+  const refresh = () => { executeQueryRequest!(getLastQueryRequest!()) }
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
@@ -140,7 +145,7 @@ const TopLevelControls = (
               <button className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
                 style={{marginRight: '5px'}}
                 type='button'
-                onClick={() => customControl.onClick({data, selectedRowIndices})}>
+                onClick={() => customControl.onClick({data, selectedRowIndices, refresh})}>
                 {customControl.icon}&nbsp;
                 {customControl.buttonText}
               </button>
