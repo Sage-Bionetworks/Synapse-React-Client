@@ -24,7 +24,8 @@ export type TopLevelControlsProps = {
   entityId: string
   sql: string
   token?: string
-  showColumnSelection?: boolean,
+  hideDownload?: boolean
+  showColumnSelection?: boolean
   customControls?: CustomControl[]
 }
 
@@ -35,7 +36,7 @@ type Control = {
 }
 
 type CustomControlCallbackData = {
-  data: QueryResultBundle | undefined,
+  data: QueryResultBundle | undefined
   selectedRowIndices: number[] | undefined
   refresh: () => void
 }
@@ -83,11 +84,11 @@ const TopLevelControls = (
     data,
     showColumnSelection = false,
     isColumnSelected,
+    hideDownload = false,
     selectedRowIndices,
     customControls,
     executeQueryRequest,
-    getLastQueryRequest
-
+    getLastQueryRequest,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -115,7 +116,9 @@ const TopLevelControls = (
     getIsFileView()
   }, [entityId, token])
 
-  const refresh = () => { executeQueryRequest!(getLastQueryRequest!()) }
+  const refresh = () => {
+    executeQueryRequest!(getLastQueryRequest!())
+  }
   /**
    * Handles the toggle of a column select, this will cause the table to
    * either show the column or hide depending on the prior state of the column
@@ -140,21 +143,29 @@ const TopLevelControls = (
         <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
       </div>
       <div className="QueryWrapperPlotNav__actions">
-        {customControls && customControls.map(customControl => {
+        {customControls &&
+          customControls.map(customControl => {
             return (
-              <button className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
-                style={{marginRight: '5px'}}
-                type='button'
-                onClick={() => customControl.onClick({data, selectedRowIndices, refresh})}>
+              <button
+                key={customControl.buttonText}
+                className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
+                style={{ marginRight: '5px' }}
+                type="button"
+                onClick={() =>
+                  customControl.onClick({ data, selectedRowIndices, refresh })
+                }
+              >
                 {customControl.icon}&nbsp;
                 {customControl.buttonText}
               </button>
             )
-          })
-        }
+          })}
         {controls.map(control => {
           const { key, icon, tooltipText } = control
-          if (key === 'showDownloadConfirmation' && !isFileView) {
+          if (
+            key === 'showDownloadConfirmation' &&
+            (!isFileView || hideDownload)
+          ) {
             // needs to be a file view in order for download to make sense
             return <></>
           }

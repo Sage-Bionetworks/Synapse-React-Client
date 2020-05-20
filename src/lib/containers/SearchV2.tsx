@@ -10,6 +10,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertConditionsFromSearchParams } from '../utils/functions/sqlFunctions'
 import { unCamelCase } from '../utils/functions/unCamelCase'
+import { ColumnModel, ColumnType } from '../utils/synapseTypes'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -24,6 +25,7 @@ type SearchState = {
 
 export type SearchProps = {
   isQueryWrapperMenuChild?: boolean
+  defaultColumn?: string
 }
 
 type InternalSearchProps = QueryWrapperChildProps & SearchProps
@@ -37,7 +39,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.state = {
       show: false,
       searchText: '',
-      columnName: '',
+      columnName: this.props.defaultColumn ?? '',
     }
     this.searchFormRef = React.createRef()
     this.radioFormRef = React.createRef()
@@ -132,6 +134,19 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     })
   }
 
+  public isSupportedColumn = (columnModel: ColumnModel) => {
+    switch (columnModel.columnType) {
+      case ColumnType.FILEHANDLEID:
+      case ColumnType.ENTITYID:
+      case ColumnType.DATE:
+      case ColumnType.DATE_LIST:
+      case ColumnType.USERID:
+        return false
+      default:
+        return true
+    }
+  }
+
   render() {
     const { data, topLevelControlsState, facetAliases } = this.props
     const { searchText, show } = this.state
@@ -193,34 +208,36 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             <p className="deemphasized">
               <i> Search In Field: </i>
             </p>
-            {data?.columnModels?.map((el, index) => {
-              const name = el.name
-              const displayName = unCamelCase(el.name, facetAliases)
-              const selectedColumn = this.state.columnName
-              const isSelected =
-                (selectedColumn === '' && index === 0) ||
-                selectedColumn === name
-              return (
-                <div className="radio">
-                  <label>
-                    <span>
-                      <input
-                        id={name}
-                        type="radio"
-                        value={name}
-                        checked={isSelected}
-                        onClick={() => {
-                          this.setState({
-                            columnName: name,
-                          })
-                        }}
-                      />
-                      <span>{displayName}</span>
-                    </span>
-                  </label>
-                </div>
-              )
-            })}
+            {data?.columnModels
+              ?.filter(this.isSupportedColumn)
+              .map((el, index) => {
+                const name = el.name
+                const displayName = unCamelCase(el.name, facetAliases)
+                const selectedColumn = this.state.columnName
+                const isSelected =
+                  (selectedColumn === '' && index === 0) ||
+                  selectedColumn === name
+                return (
+                  <div className="radio">
+                    <label>
+                      <span>
+                        <input
+                          id={name}
+                          type="radio"
+                          value={name}
+                          checked={isSelected}
+                          onClick={() => {
+                            this.setState({
+                              columnName: name,
+                            })
+                          }}
+                        />
+                        <span>{displayName}</span>
+                      </span>
+                    </label>
+                  </div>
+                )
+              })}
           </form>
         </div>
       </div>
