@@ -27,6 +27,7 @@ type OwnProps = {
   visibleColumnCount?: number
   facetAliases?: {}
   hideDownload?: boolean
+  defaultColumn?: string
 } & TopLevelControlsProps
 
 type SearchParams = {
