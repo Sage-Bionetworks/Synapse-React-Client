@@ -12,7 +12,7 @@ import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
-import { QueryResultBundle } from 'lib/utils/synapseTypes/Table/QueryResultBundle'
+import { QueryResultBundle } from '../../utils/synapseTypes/'
 
 library.add(faSearch)
 library.add(faFilter)
