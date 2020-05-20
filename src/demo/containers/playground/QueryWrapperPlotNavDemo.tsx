@@ -92,7 +92,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
             const entityId:string = event.data?.queryResult.queryResults.tableId!
             // find target column
             const targetColumn = event.data?.columnModels!.find(cm => cm.name === 'WorkflowState')
-            // collect all selected rows
+            // collect all selected rows (create PartialRow objects)
             const rowUpdates = []
             const rows:Row[] = event.data?.queryResult.queryResults!.rows
             for (let index = 0; index < event.selectedRowIndices!.length; index++) {
@@ -104,7 +104,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
                 }]
               })
             }
-            // create PartialRows (one for each selected row)
             
             const request: TableUpdateTransactionRequest = {
               concreteType: 'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
