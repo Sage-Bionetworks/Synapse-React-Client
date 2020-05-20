@@ -13,6 +13,7 @@ import {
   MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
+import { EntityColumnType } from 'lib/utils/synapseTypes/Table/SelectColumn'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
@@ -25,17 +26,20 @@ describe('it renders the UI correctly', () => {
     'AMP-AD': 'MOCKED_IMG_SVG_STRING',
   }
 
+  const subTitleColumnName = 'subTitle'
+  const labelOneColumnName = 'labelOne'
+
   const commonProps = {
     type: 'PROGRAM',
     title: 'title',
-    subTitle: 'subtitle',
+    subTitle: subTitleColumnName,
     description: 'description',
     icon: 'icon',
     link: 'link',
   }
   const genericCardSchema: GenericCardSchema = {
     ...commonProps,
-    secondaryLabels: ['labelOne', 'labelTwo', 'labelThree'],
+    secondaryLabels: [labelOneColumnName, 'labelTwo', 'labelThree'],
   }
   const genericCardSchemaHeader: GenericCardSchema = {
     ...commonProps,
@@ -99,6 +103,75 @@ describe('it renders the UI correctly', () => {
       MOCKED_DESCRIPTION,
     )
     expect(wrapper.find(Utils.CardFooter)).toBeDefined()
+  })
+
+  it('renders correctly with multi value secondary label links', () => {
+    const renderValueOrMultiValueSpy = jest.spyOn(
+      GenericCard.prototype,
+      'renderValueOrMultiValue',
+    )
+    const renderLabelSpy = jest.spyOn(GenericCard.prototype, 'renderLabel')
+    const selectColumns = [
+      {
+        columnType: EntityColumnType.STRING_LIST,
+        name: subTitleColumnName,
+        id: '',
+      },
+      {
+        columnType: EntityColumnType.STRING_LIST,
+        name: labelOneColumnName,
+        id: '',
+      },
+    ]
+    const val1 = 'syn1'
+    const val2 = 'syn2'
+    const multiStringValue = `["${val1}","${val2}"]`
+    const jsonArray = JSON.parse(multiStringValue)
+    const str = jsonArray.join(', ')
+
+    const dataWithMultiValueStrings = data.slice()
+    dataWithMultiValueStrings[schema.subTitle] = multiStringValue
+    dataWithMultiValueStrings[schema.labelOne] = multiStringValue
+    const labelConfig = {
+      matchColumnName: labelOneColumnName,
+      baseURL: '',
+      URLColumnName: '',
+      isMarkdown: false,
+    }
+    createShallowComponent({
+      ...propsForNonHeaderMode,
+      data: dataWithMultiValueStrings,
+      selectColumns,
+      labelLinkConfig: [labelConfig],
+    })
+
+    expect(renderValueOrMultiValueSpy).toHaveBeenNthCalledWith(
+      1,
+      subTitleColumnName,
+      multiStringValue,
+      selectColumns,
+      undefined,
+    )
+
+    expect(renderValueOrMultiValueSpy).toHaveNthReturnedWith(1, {
+      str,
+      strList: jsonArray,
+    })
+
+    expect(renderLabelSpy).toHaveBeenNthCalledWith(
+      1,
+      val1,
+      labelConfig,
+      false,
+      true,
+    )
+    expect(renderLabelSpy).toHaveBeenNthCalledWith(
+      2,
+      val2,
+      labelConfig,
+      false,
+      true,
+    )
   })
 
   it('renders as a Header without crashing', () => {
@@ -189,9 +262,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], false)} </>)
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${value}`,
-    )
+    expect(link.props().href).toEqual(`/${datasetBaseURL}?${DATASETS}=${value}`)
     // double check the style
     expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
   })

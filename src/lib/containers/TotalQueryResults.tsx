@@ -35,6 +35,7 @@ export type TotalQueryResultsProps = {
   unitDescription: string
   frontText: string
   applyChanges?: Function
+  showNotch?: boolean
 } & QueryWrapperChildProps
 
 // This is a stateful component so that during load the component can hold onto the previous
@@ -51,6 +52,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   getInitQueryRequest,
   updateParentState,
   searchQuery,
+  showNotch = false,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
@@ -243,7 +245,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   )
 
   return (
-    <div className="TotalQueryResults" style={style}>
+    <div
+      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''}`}
+      style={style}
+    >
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
         {frontText} {total} {unitDescription}{' '}
         {isLoading && (

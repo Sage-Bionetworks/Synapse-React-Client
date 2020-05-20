@@ -1,12 +1,15 @@
 import React, { FunctionComponent } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  FontAwesomeIcon,
+  FontAwesomeIconProps,
+} from '@fortawesome/react-fontawesome'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { Dropdown } from 'react-bootstrap'
 
 type CustomImageProps = {
-  svgImg: string
+  svgImg: React.ComponentElement<any, any>
   altText: string
 }
 
@@ -33,17 +36,24 @@ type ElementWithTooltipProps = {
   callbackFn?: Function
   className?: string
   tooltipVisualProps?: TooltipVisualProps
+  darkTheme?: boolean
+  size?: FontAwesomeIconProps['size']
 }
 
 function getTooltipTriggerContents(
   image: IconDefinition | CustomImageProps,
-  imageColor?: string,
+  imageColor: string | undefined,
+  size: FontAwesomeIconProps['size'] | undefined,
 ): JSX.Element {
   if ('svgImg' in image) {
-    return <img src={image.svgImg} alt={image.altText} />
+    return image.svgImg
   } else {
     return (
-      <FontAwesomeIcon size="1x" color={imageColor || 'white'} icon={image} />
+      <FontAwesomeIcon
+        size={size ?? '1x'}
+        color={imageColor || 'white'}
+        icon={image}
+      />
     )
   }
 }
@@ -57,10 +67,12 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   imageColor,
   tooltipVisualProps = { place: 'top', type: 'dark', effect: 'solid' },
   children,
+  darkTheme,
+  size,
 }) => {
   const { place, type, effect, border } = tooltipVisualProps
   const tooltipTriggerContents = image
-    ? getTooltipTriggerContents(image, imageColor)
+    ? getTooltipTriggerContents(image, imageColor, size)
     : children || <></>
 
   //if there is no callbackFn - assume it's a toggle
@@ -69,14 +81,13 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   if (!children) {
     tooltipTrigger = callbackFn ? (
       <button
-        style={{ padding: '0 5px 0 5px' }}
         tabIndex={0}
         id={idForToolTip}
         data-for={idForToolTip}
         data-tip={tooltipText}
-        className={`SRC-hand-cursor ${
-          image ? 'SRC-primary-background-color-hover' : ''
-        } ${className}`}
+        className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
+          darkTheme ? 'dark-theme' : ''
+        } `}
         onKeyPress={() => callbackFn()}
         onClick={() => callbackFn()}
         aria-label={tooltipText}
@@ -88,6 +99,9 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
         data-for={idForToolTip}
         data-tip={tooltipText}
         id={idForToolTip}
+        className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
+          darkTheme ? 'dark-theme' : ''
+        } `}
         variant={'light'}
       >
         {tooltipTriggerContents}

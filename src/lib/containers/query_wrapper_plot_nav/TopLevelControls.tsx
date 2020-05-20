@@ -1,52 +1,55 @@
 import React, { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import QueryCount from '../QueryCount'
-import { library, IconProp } from '@fortawesome/fontawesome-svg-core'
+import { library, IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   faSearch,
   faFilter,
   faChartBar,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons'
 import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
-import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
-import ReactTooltip from 'react-tooltip'
+import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
+import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
+import { cloneDeep } from 'lodash-es'
 
 library.add(faSearch)
 library.add(faFilter)
 library.add(faChartBar)
+library.add(faDownload)
 
 export type TopLevelControlsProps = {
   name: string
   entityId: string
   sql: string
   token?: string
+  showColumnSelection?: boolean
 }
 
 type Control = {
   key: keyof TopLevelControlsState
-  icon: IconProp
+  icon: IconDefinition
   tooltipText: string
 }
 
 const controls: Control[] = [
   {
-    icon: 'chart-bar',
-    key: 'showFacetVisualization',
-    tooltipText: 'Toggle Visualization',
-  },
-  {
-    icon: 'filter',
-    key: 'showFacetFilter',
-    tooltipText: 'Toggle Facet Filter',
-  },
-  {
-    icon: 'search',
+    icon: faSearch,
     key: 'showSearchBar',
     tooltipText: 'Toggle Search',
   },
   {
-    icon: 'download',
+    icon: faChartBar,
+    key: 'showFacetVisualization',
+    tooltipText: 'Toggle Visualization',
+  },
+  {
+    icon: faFilter,
+    key: 'showFacetFilter',
+    tooltipText: 'Toggle Facet Filter',
+  },
+  {
+    icon: faDownload,
     key: 'showDownloadConfirmation',
     tooltipText: 'Toggle Download',
   },
@@ -62,6 +65,9 @@ const TopLevelControls = (
     sql,
     updateParentState,
     topLevelControlsState,
+    data,
+    showColumnSelection = false,
+    isColumnSelected,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -89,6 +95,24 @@ const TopLevelControls = (
     getIsFileView()
   }, [entityId, token])
 
+  /**
+   * Handles the toggle of a column select, this will cause the table to
+   * either show the column or hide depending on the prior state of the column
+   *
+   * @memberof SynapseTable
+   */
+  const toggleColumnSelection = (columnName: string) => {
+    let isColumnSelectedCopy = cloneDeep(isColumnSelected!)
+    if (isColumnSelectedCopy.includes(columnName)) {
+      isColumnSelectedCopy = isColumnSelectedCopy.filter(
+        el => el !== columnName,
+      )
+    } else {
+      isColumnSelectedCopy.push(columnName)
+    }
+    updateParentState!({ isColumnSelected: isColumnSelectedCopy })
+  }
+
   return (
     <h3 className="QueryWrapperPlotNav__title">
       <div className="QueryWrapperPlotNav__querycount">
@@ -102,25 +126,26 @@ const TopLevelControls = (
             return <></>
           }
           return (
-            <React.Fragment key={key}>
-              <button
-                className="SRC-primary-action-color"
-                onClick={() => setControlState(key)}
-                data-for={key}
-                data-tip={tooltipText}
-              >
-                <FontAwesomeIcon icon={icon} size="1x" />
-              </button>
-              <ReactTooltip
-                place="top"
-                type="dark"
-                effect="solid"
-                delayShow={TOOLTIP_DELAY_SHOW}
-                id={key}
-              />
-            </React.Fragment>
+            <ElementWithTooltip
+              idForToolTip={key}
+              tooltipText={tooltipText}
+              key={key}
+              image={icon}
+              callbackFn={() => setControlState(key)}
+              className="SRC-primary-color"
+              darkTheme={true}
+            />
           )
         })}
+        {showColumnSelection && (
+          <ColumnSelection
+            headers={data?.selectColumns}
+            isColumnSelected={isColumnSelected!}
+            show={topLevelControlsState?.showColumnSelectDropdown ?? false}
+            toggleColumnSelection={toggleColumnSelection}
+            darkTheme={true}
+          />
+        )}
       </div>
     </h3>
   )

@@ -88,7 +88,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
-    const { searchText, columnName } = this.state
+    const { searchText } = this.state
+    let { columnName } = this.state
+    if (columnName === '') {
+      // default to the first one, will always be defined
+      columnName = this.props.data?.columnModels?.[0].name ?? ''
+    }
     this.setState({
       show: false,
     })
@@ -128,7 +133,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   render() {
-    const { data, topLevelControlsState } = this.props
+    const { data, topLevelControlsState, facetAliases } = this.props
     const { searchText, show } = this.state
     const outerClassName = `SearchV2 ${
       topLevelControlsState?.showSearchBar ? '' : 'hidden'
@@ -188,9 +193,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             <p className="deemphasized">
               <i> Search In Field: </i>
             </p>
-            {data?.columnModels?.map(el => {
+            {data?.columnModels?.map((el, index) => {
               const name = el.name
-              const displayName = unCamelCase(el.name)
+              const displayName = unCamelCase(el.name, facetAliases)
+              const selectedColumn = this.state.columnName
+              const isSelected =
+                (selectedColumn === '' && index === 0) ||
+                selectedColumn === name
               return (
                 <div className="radio">
                   <label>
@@ -199,12 +208,10 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                         id={name}
                         type="radio"
                         value={name}
-                        checked={name === this.state.columnName}
-                        onClick={(
-                          event: React.MouseEvent<HTMLInputElement>,
-                        ) => {
+                        checked={isSelected}
+                        onClick={() => {
                           this.setState({
-                            columnName: event?.currentTarget.value,
+                            columnName: name,
                           })
                         }}
                       />

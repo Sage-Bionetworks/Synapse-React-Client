@@ -99,6 +99,13 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
+    isColumnSelected: [
+      'projectStatus',
+      'dataStatus',
+      'fundingAgency',
+      'tumorType',
+      'diseaseFocus',
+    ],
     facet: 'tumorType',
   } as SynapseTableProps & QueryWrapperChildProps
 
@@ -146,37 +153,6 @@ describe('basic functionality', () => {
       expect(wrapper.find(ColumnSelection).props().headers).toEqual(
         syn16787123Json.queryResult.queryResults.headers,
       )
-    })
-
-    it('toggle column selection works correctly', async () => {
-      const visibleColumnCount = 3
-      const propsWithVisibleColumnCountSet = {
-        ...props,
-        visibleColumnCount,
-      }
-      const { wrapper, instance } = createShallowComponent(
-        propsWithVisibleColumnCountSet,
-      )
-      const eventStub = {
-        preventDefault: jest.fn(),
-      } as any
-      // arbitrary value chosen for column selected
-      await instance.toggleColumnSelection(5)(eventStub)
-      expect(wrapper.state('isColumnSelected')).toEqual([
-        true,
-        true,
-        true,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-      ])
     })
   })
   describe('Download options dropdown works', () => {
@@ -284,8 +260,7 @@ describe('basic functionality', () => {
       // there are five facets for the dataset so there should be 5
       // faceted columns
       expect(wrapper.find(FacetFilter)).toHaveLength(5)
-      // if visible column count isn't set then nothing should be hidden
-      expect(wrapper.find('th.SRC-hidden')).toHaveLength(0)
+      expect(wrapper.find('th.SRC-hidden')).toHaveLength(8)
     })
 
     it('handle column sort press works', async () => {
@@ -640,12 +615,9 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('span')
-            .text()
-            .trim(),
-        ).toEqual('<FontAwesomeIcon /> All registered Synapse users')
+        expect(tableCell.find('span').text().trim()).toEqual(
+          '<FontAwesomeIcon /> All registered Synapse users',
+        )
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual(
           'globe-americas',
         )
@@ -669,12 +641,9 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('a')
-            .text()
-            .trim(),
-        ).toEqual(`<FontAwesomeIcon /> ${teamName}`)
+        expect(tableCell.find('a').text().trim()).toEqual(
+          `<FontAwesomeIcon /> ${teamName}`,
+        )
         expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('users')
       })
       it('renders a user card link', () => {
@@ -741,12 +710,7 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('p')
-            .text()
-            .trim(),
-        ).toEqual(mockColumnValue)
+        expect(tableCell.find('p').text().trim()).toEqual(mockColumnValue)
       })
 
       it('renders a date value', () => {
@@ -768,12 +732,9 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('p')
-            .text()
-            .trim(),
-        ).toEqual(new Date(Number(mockDateValue)).toLocaleString())
+        expect(tableCell.find('p').text().trim()).toEqual(
+          new Date(Number(mockDateValue)).toLocaleString(),
+        )
       })
 
       it('renders a date list value', () => {
@@ -795,12 +756,9 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('span')
-            .text()
-            .trim(),
-        ).toEqual(new Date(Number(MOCK_DATE_VALUE)).toLocaleString())
+        expect(tableCell.find('span').text().trim()).toEqual(
+          new Date(Number(MOCK_DATE_VALUE)).toLocaleString(),
+        )
       })
 
       it('renders a integer list value', () => {
@@ -822,20 +780,8 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('span')
-            .first()
-            .text()
-            .trim(),
-        ).toEqual('10,')
-        expect(
-          tableCell
-            .find('span')
-            .last()
-            .text()
-            .trim(),
-        ).toEqual('11')
+        expect(tableCell.find('span').first().text().trim()).toEqual('10,')
+        expect(tableCell.find('span').last().text().trim()).toEqual('11')
       })
 
       it('renders a boolean list value', () => {
@@ -857,20 +803,8 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(
-          tableCell
-            .find('span')
-            .first()
-            .text()
-            .trim(),
-        ).toEqual('true,')
-        expect(
-          tableCell
-            .find('span')
-            .last()
-            .text()
-            .trim(),
-        ).toEqual('false')
+        expect(tableCell.find('span').first().text().trim()).toEqual('true,')
+        expect(tableCell.find('span').last().text().trim()).toEqual('false')
       })
 
       it('renders an empty cell for null date', () => {

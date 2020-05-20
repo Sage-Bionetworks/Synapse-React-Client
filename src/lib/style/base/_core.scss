@@ -924,11 +924,6 @@ button {
   height: inherit;
 }
 
-a.SRC-lightLink {
-  color: white;
-  text-decoration: underline;
-}
-
 .SRC-standard-button-shape {
   display: inline-flex;
   justify-content: center;
@@ -1078,4 +1073,29 @@ hr ~ .SRC-wrapper {
   height: 23px;
   width: 23px;
   min-width: 23px;
+}
+
+.SRC-card-footer-header {
+  a,
+  button {
+    color: white !important;
+    font-weight: bold;
+    text-decoration: underline !important;
+  }
+}
+
+.SRC-table-top {
+  .SRC-table-tools {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    .ElementWithTooltip {
+      flex: 1;
+      flex-grow: 1;
+      width: 30px;
+      min-height: 30px;
+      height: fit-content;
+    }
+  }
 }

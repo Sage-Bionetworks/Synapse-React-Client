@@ -2,12 +2,11 @@ import * as React from 'react'
 import _ from 'lodash-es'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
+import Columns from '../../../../lib/assets/icons/columns'
 import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 const mockCallback = jest.fn()
-type ElementWithTooltipProps = React.ComponentProps<
-  typeof ElementWithTooltip
->
+type ElementWithTooltipProps = React.ComponentProps<typeof ElementWithTooltip>
 
 afterEach(cleanup)
 
@@ -56,21 +55,13 @@ describe('basic function', () => {
     const props_: ElementWithTooltipProps = {
       ...props,
       image: {
-        svgImg: '/path/to/img',
+        svgImg: Columns,
         altText: 'test',
       },
     }
     init(props_)
 
-    expect(imageButton.getElementsByTagName('svg')).toHaveLength(0)
-    expect(imageButton.getElementsByTagName('img')).toHaveLength(1)
-    expect(imageButton.getElementsByTagName('img').item(0)!.src).toContain(
-      (props_.image as { svgImg: string; altText: string }).svgImg,
-    )
-    expect(imageButton.getElementsByTagName('img').item(0)!.alt).toContain(
-      (props_.image as { svgImg: string; altText: string }).altText,
-    )
-    expect(imageButton.classList.contains('dropdown-toggle')).toBe(false)
+    expect(imageButton.getElementsByTagName('svg')).toHaveLength(1)
   })
 
   it('should create dropdown toggle element without callbackFn passed in', () => {
@@ -89,9 +80,7 @@ describe('basic function', () => {
       children: child,
       image: undefined,
     })
-    expect(imageButton).toBeNull
     const tooltipTrigger = container.getElementsByClassName('my_class').item(0)
-    expect(tooltipTrigger).toBeDefined
     expect(tooltipTrigger!.classList.contains('my_class')).toBe(true)
     expect(tooltipTrigger!.innerHTML).toBe('hello world')
     expect(tooltipTrigger!.attributes['data-tip'].value).toBe(props.tooltipText)

@@ -11,6 +11,7 @@ import {
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 export type QueryWrapperProps = {
+  visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
   token?: string
@@ -22,6 +23,7 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
+  hiddenColumns?: string[]
 }
 
 export type TopLevelControlsState = {
@@ -30,6 +32,7 @@ export type TopLevelControlsState = {
   showColumnFilter: boolean
   showSearchBar: boolean
   showDownloadConfirmation: boolean
+  showColumnSelectDropdown: boolean
 }
 
 export type SearchQuery = {
@@ -56,6 +59,7 @@ export type QueryWrapperState = {
   loadNowStarted: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery: SearchQuery
+  isColumnSelected: string[]
 }
 
 export type FacetSelection = {
@@ -91,6 +95,7 @@ export type QueryWrapperChildProps = {
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery?: SearchQuery
+  isColumnSelected?: string[]
 }
 
 /**
@@ -104,10 +109,6 @@ export default class QueryWrapper extends React.Component<
   QueryWrapperProps,
   QueryWrapperState
 > {
-  public static defaultProps = {
-    token: '',
-  }
-
   private componentIndex: number
   constructor(props: QueryWrapperProps) {
     super(props)
@@ -137,11 +138,13 @@ export default class QueryWrapper extends React.Component<
         showFacetVisualization: true,
         showSearchBar: false,
         showDownloadConfirmation: false,
+        showColumnSelectDropdown: false,
       },
       searchQuery: {
         columnName: '',
         searchText: '',
       },
+      isColumnSelected: [],
     }
     this.componentIndex = props.componentIndex || 0
   }
@@ -290,10 +293,12 @@ export default class QueryWrapper extends React.Component<
   public executeInitialQueryRequest(
     initQueryRequest: QueryBundleRequest = this.props.initQueryRequest,
   ) {
+    const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
     this.setState({
       isLoading: true,
       chartSelectionIndex: 0,
       loadNowStarted: true,
+      lastQueryRequest,
     })
     SynapseClient.getQueryTableResults(
       initQueryRequest,
@@ -301,7 +306,6 @@ export default class QueryWrapper extends React.Component<
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
-        const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           SynapseConstants.PAGE_SIZE
@@ -338,8 +342,11 @@ export default class QueryWrapper extends React.Component<
           hasMoreData,
           data,
           chartSelectionIndex,
-          lastQueryRequest,
           asyncJobStatus: undefined,
+          isColumnSelected:
+            data?.selectColumns
+              ?.slice(0, this.props.visibleColumnCount ?? Infinity)
+              .map(el => el.name) ?? [],
         }
         this.setState(newState)
       })
@@ -365,14 +372,13 @@ export default class QueryWrapper extends React.Component<
    */
   public render() {
     const { isLoading } = this.state
-    const { facetAliases = {}, children, ...rest } = this.props
+    const { children, ...rest } = this.props
     // inject props in children of this component
     const childrenWithProps = React.Children.map(children, (child: any) => {
       if (!child) {
         return child
       }
       const queryWrapperChildProps: QueryWrapperChildProps = {
-        facetAliases,
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.state.data,
         hasMoreData: this.state.hasMoreData,
@@ -383,6 +389,7 @@ export default class QueryWrapper extends React.Component<
         asyncJobStatus: this.state.asyncJobStatus,
         topLevelControlsState: this.state.topLevelControlsState,
         searchQuery: this.state.searchQuery,
+        isColumnSelected: this.state.isColumnSelected,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,
