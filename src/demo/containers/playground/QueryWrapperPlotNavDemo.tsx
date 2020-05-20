@@ -86,6 +86,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
         ),
         customControls: [{
           buttonText: 'Update WorkflowState',
+          classNames: 'exampleClassNameToAddToButton',
           onClick: (event => {
             // Demo custom control updates all values in a particular column for the selected rows (CRC)
             // test Updating a Synapse Table for the first time from SRC, by updating the WorkflowState column value

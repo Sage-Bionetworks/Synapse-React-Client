@@ -137,7 +137,7 @@ const TopLevelControls = (
       <div className="QueryWrapperPlotNav__actions">
         {customControls && customControls.map(customControl => {
             return (
-              <button className='btn SRC-primary-background-color SRC-roundBorder SRC-whiteText'
+              <button className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
                 style={{marginRight: '5px'}}
                 type='button'
                 onClick={() => customControl.onClick({data, selectedRowIndices})}>
