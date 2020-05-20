@@ -1,8 +1,10 @@
 import * as React from 'react'
 import QueryWrapperPlotNav, {
   QueryWrapperPlotNavProps,
-} from 'lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
-import { SynapseConstants } from 'lib'
+} from '../../../lib/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import { SynapseConstants, SynapseClient } from '../../../lib'
+import { TableUpdateTransactionRequest, PartialRow } from '../../../lib/utils/synapseTypes/Table/TableUpdate'
+import { Row } from '../../../lib/utils/synapseTypes'
 
 type DemoState = {
   ownerId: string
@@ -10,6 +12,7 @@ type DemoState = {
   showMarkdown: boolean
   propsWithTable: QueryWrapperPlotNavProps
   propsWithCards: QueryWrapperPlotNavProps
+  propsWithCustomCommands: QueryWrapperPlotNavProps
   showCards: boolean
 }
 /**
@@ -63,6 +66,66 @@ class QueryWrapperPlotNavDemo extends React.Component<
           },
         },
       },
+      propsWithCustomCommands: {
+        tableConfiguration: {
+          loadingScreen: <> I'm loading as fast as I can!!!! </>,
+          isRowSelectionVisible: true
+        },
+        visibleColumnCount: 10,
+        facetsToPlot: ['Ethnicity', 'Sex'],
+        rgbIndex: 1,
+        name: 'PlotNav Demo',
+        sqlOperator: '=',
+        sql: 'select * from syn22084217',
+        entityId: 'syn22084217',
+        loadingScreen: (
+          <div>
+            <div className="spinner"> </div>Im loading as fast I can !!!{' '}
+          </div>
+        ),
+        customControls: [{
+          buttonText: 'Update WorkflowState',
+          classNames: 'exampleClassNameToAddToButton',
+          onClick: (event => {
+            // Demo custom control updates all values in a particular column for the selected rows (CRC)
+            // test Updating a Synapse Table for the first time from SRC, by updating the WorkflowState column value
+            const entityId:string = event.data?.queryResult.queryResults.tableId!
+            // find target column
+            const targetColumn = event.data?.columnModels!.find(cm => cm.name === 'WorkflowState')
+            // collect all selected rows (create PartialRow objects)
+            const rowUpdates:PartialRow[] = []
+            const rows:Row[] = event.data?.queryResult.queryResults!.rows
+            for (let index = 0; index < event.selectedRowIndices!.length; index++) {
+              rowUpdates.push({
+                rowId: rows[event.selectedRowIndices![index]].rowId,
+                values: [{
+                  key: targetColumn?.id!,
+                  value: 'Selected'
+                }]
+              })
+            }
+            
+            const request: TableUpdateTransactionRequest = {
+              concreteType: 'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
+              entityId,
+              changes: [{
+                concreteType: 'org.sagebionetworks.repo.model.table.AppendableRowSetRequest',
+                entityId,
+                toAppend: {
+                  concreteType: 'org.sagebionetworks.repo.model.table.PartialRowSet',
+                  tableId: entityId,
+                  rows: rowUpdates
+                }
+              }]
+            }
+            SynapseClient.updateTable(request, props.token).then(() => {
+              console.log('updated!')
+              // refresh data after successful update
+              event.refresh()
+            })
+          }),
+        }]
+      },
     }
     this.handleChange = this.handleChange.bind(this)
     this.removeHandler = this.removeHandler.bind(this)
@@ -96,6 +159,9 @@ class QueryWrapperPlotNavDemo extends React.Component<
           Switch to cards
         </button>
         <QueryWrapperPlotNav token={this.props.token} {...propsForPlotNav} />
+        <hr></hr>
+        <h3>Now with custom commands</h3>
+        <QueryWrapperPlotNav token={this.props.token} {...this.state.propsWithCustomCommands} />
       </div>
     )
   }
