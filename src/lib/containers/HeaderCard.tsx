@@ -2,6 +2,7 @@ import { CardFooter, Icon } from './row_renderers/utils'
 import { MarkdownValue } from './CardContainerLogic'
 import MarkdownSynapse from './MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
+import getColorPallette from './ColorGradient'
 
 export type IconOptions = {
   [index: string]: string
@@ -9,6 +10,7 @@ export type IconOptions = {
 export type HeaderCardProps = {
   iconOptions?: IconOptions
   backgroundColor?: string
+  rgbIndex?: number
   type: string
   title: string
   subTitle: string
@@ -36,6 +38,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   descriptionLinkConfig,
   linkDisplay,
   target,
+  rgbIndex,
 }) => {
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -64,8 +67,12 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
     }
   })
 
+  const backgroundColorUsed =
+    rgbIndex !== undefined
+      ? getColorPallette(rgbIndex, 1).colorPalette[0]
+      : backgroundColor
   const style: React.CSSProperties = {
-    background: backgroundColor,
+    background: backgroundColorUsed,
   }
   return (
     <div
