@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
 import CardContainer from '../../../lib/containers/CardContainer'
+import * as GenericCardPackage from '../../../lib/containers/GenericCard'
 import GenericCard, {
   GenericCardProps,
   GenericCardSchema,
@@ -13,7 +14,7 @@ import {
   MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import { EntityColumnType } from 'lib/utils/synapseTypes/Table/SelectColumn'
+import { SelectColumn, EntityColumnType } from 'lib/utils/synapseTypes'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
@@ -105,75 +106,6 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find(Utils.CardFooter)).toBeDefined()
   })
 
-  it('renders correctly with multi value secondary label links', () => {
-    const renderValueOrMultiValueSpy = jest.spyOn(
-      GenericCard.prototype,
-      'renderValueOrMultiValue',
-    )
-    const renderLabelSpy = jest.spyOn(GenericCard.prototype, 'renderLabel')
-    const selectColumns = [
-      {
-        columnType: EntityColumnType.STRING_LIST,
-        name: subTitleColumnName,
-        id: '',
-      },
-      {
-        columnType: EntityColumnType.STRING_LIST,
-        name: labelOneColumnName,
-        id: '',
-      },
-    ]
-    const val1 = 'syn1'
-    const val2 = 'syn2'
-    const multiStringValue = `["${val1}","${val2}"]`
-    const jsonArray = JSON.parse(multiStringValue)
-    const str = jsonArray.join(', ')
-
-    const dataWithMultiValueStrings = data.slice()
-    dataWithMultiValueStrings[schema.subTitle] = multiStringValue
-    dataWithMultiValueStrings[schema.labelOne] = multiStringValue
-    const labelConfig = {
-      matchColumnName: labelOneColumnName,
-      baseURL: '',
-      URLColumnName: '',
-      isMarkdown: false,
-    }
-    createShallowComponent({
-      ...propsForNonHeaderMode,
-      data: dataWithMultiValueStrings,
-      selectColumns,
-      labelLinkConfig: [labelConfig],
-    })
-
-    expect(renderValueOrMultiValueSpy).toHaveBeenNthCalledWith(
-      1,
-      subTitleColumnName,
-      multiStringValue,
-      selectColumns,
-      undefined,
-    )
-
-    expect(renderValueOrMultiValueSpy).toHaveNthReturnedWith(1, {
-      str,
-      strList: jsonArray,
-    })
-
-    expect(renderLabelSpy).toHaveBeenNthCalledWith(
-      1,
-      val1,
-      labelConfig,
-      false,
-      true,
-    )
-    expect(renderLabelSpy).toHaveBeenNthCalledWith(
-      2,
-      val2,
-      labelConfig,
-      false,
-      true,
-    )
-  })
-
   it('renders as a Header without crashing', () => {
     const { wrapper } = createShallowComponent(propsForHeaderMode)
     expect(wrapper).toBeDefined()
@@ -241,7 +173,7 @@ describe('it makes the correct URL for the title', () => {
 })
 
 describe('it makes the correct URL for the secondary labels', () => {
-  const renderLabel = GenericCard.prototype.renderLabel
+  const renderLabel = GenericCardPackage.renderLabel
   const DATASETS = 'datasets'
   const datasetBaseURL = 'Explore/Datasets'
   const labelLinkConfig: LabelLinkConfig = [
@@ -256,10 +188,28 @@ describe('it makes the correct URL for the secondary labels', () => {
       matchColumnName: 'dataset',
     },
   ]
+  const selectColumns: SelectColumn[] = [
+    {
+      columnType: EntityColumnType.STRING,
+      id: 'a',
+      name: 'dataset',
+    },
+  ]
 
   it('works with a single value', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], false)} </>)
+    const wrapper = mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: labelLinkConfig[0],
+          isHeader: false,
+          selectColumns: selectColumns,
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}
+      </>,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(`/${datasetBaseURL}?${DATASETS}=${value}`)
@@ -269,10 +219,58 @@ describe('it makes the correct URL for the secondary labels', () => {
 
   it('works with a header', () => {
     const value = 'syn1234567'
-    const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], true)} </>)
+    const wrapper = mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: labelLinkConfig[0],
+          isHeader: true,
+          selectColumns,
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}
+      </>,
+    )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
+  })
+
+  it('works with a multi string value', () => {
+    // add commas to ensure its not piecing those out
+    const val1 = 'syn12,,34567'
+    const val2 = 'syn1234,568'
+    const val3 = 'syn,,12345,69'
+    const value = `["${val1}","${val2}","${val3}"]`
+    const wrapper = mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: labelLinkConfig[0],
+          isHeader: false,
+          selectColumns: [
+            {
+              columnType: EntityColumnType.STRING_LIST,
+              id: 'a',
+              name: DATASETS,
+            },
+          ],
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}
+      </>,
+    )
+    const links = wrapper.find('a')
+    expect(links).toHaveLength(3)
+    expect(links.at(0).props().href).toEqual(
+      `/${datasetBaseURL}?${DATASETS}=${val1}`,
+    )
+    expect(links.at(1).props().href).toEqual(
+      `/${datasetBaseURL}?${DATASETS}=${val2}`,
+    )
+    expect(links.at(2).props().href).toEqual(
+      `/${datasetBaseURL}?${DATASETS}=${val3}`,
+    )
   })
 
   it('works with a comma seperated value', () => {
@@ -280,7 +278,18 @@ describe('it makes the correct URL for the secondary labels', () => {
     const val2 = 'syn1234568'
     const val3 = 'syn1234569'
     const value = `${val1},${val2},${val3}`
-    const wrapper = mount(<>{renderLabel(value, labelLinkConfig[0], false)} </>)
+    const wrapper = mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: labelLinkConfig[0],
+          isHeader: false,
+          selectColumns,
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}{' '}
+      </>,
+    )
     const links = wrapper.find('a')
     expect(links).toHaveLength(3)
     expect(links.at(0).props().href).toEqual(
@@ -297,13 +306,49 @@ describe('it makes the correct URL for the secondary labels', () => {
   it('works with a markdown link ', async () => {
     const value = '[link](www.synapse.org)'
     const wrapper = await mount(
-      <>{renderLabel(value, labelLinkConfig[1], false)} </>,
+      <>
+        {renderLabel({
+          value,
+          labelLink: labelLinkConfig[1],
+          isHeader: false,
+          selectColumns: undefined,
+          columnModels: undefined,
+          columnName: '',
+        })}{' '}
+      </>,
     )
     const markdown = wrapper.find(MarkdownSynapse)
     expect(markdown).toHaveLength(1)
     // double check the html elements show up correctly from the markdown component
     expect(markdown.html().includes('<p>')).toBeFalsy()
     expect(markdown.html().includes('<a href=')).toBeTruthy()
+  })
+
+  it('works with a multi string markdown link ', async () => {
+    const selectColumnsMultiString: SelectColumn[] = [
+      {
+        name: DATASETS,
+        id: 'a',
+        columnType: EntityColumnType.STRING_LIST,
+      },
+    ]
+    // make sure it doesn't parse out the extra commas
+    const value =
+      '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/#!)"]'
+    const wrapper = await mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: labelLinkConfig[1],
+          isHeader: false,
+          selectColumns: selectColumnsMultiString,
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}
+      </>,
+    )
+    const markdown = wrapper.find(MarkdownSynapse)
+    expect(markdown).toHaveLength(2)
   })
 })
 

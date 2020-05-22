@@ -40,6 +40,7 @@ export type CommonCardProps = {
   titleLinkConfig?: CardLink
   labelLinkConfig?: LabelLinkConfig
   descriptionLinkConfig?: MarkdownValue
+  rgbIndex?: number
 }
 
 export type CardConfiguration = {
@@ -60,6 +61,7 @@ export type CardContainerLogicProps = {
   entityId: string
   facetAliases?: {}
   backgroundColor?: string
+  rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   sql: string
