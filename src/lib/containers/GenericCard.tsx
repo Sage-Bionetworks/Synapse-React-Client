@@ -152,9 +152,7 @@ export const renderLabel = (args: {
         return (
           <>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-            {index < strList.length - 1 && (
-              <span style={{ marginRight: 4 }}>, </span>
-            )}
+            {index < strList.length - 1 && ','}
           </>
         )
       })
