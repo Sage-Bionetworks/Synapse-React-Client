@@ -117,6 +117,7 @@ export type SynapseTableProps = {
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
   columnLinks?: LabelLinkConfig
+  hideDownload?: boolean
   enableLeftFacetFilter?: boolean
   isFilterAndViewChild?: boolean
   isRowSelectionVisible?: boolean
@@ -414,7 +415,7 @@ export default class SynapseTable extends React.Component<
         onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
         onExportMetadata={() => this.setState(partialState)}
         isUnauthenticated={!this.props.token}
-        isFileView={isFileView}
+        isFileView={isFileView && !this.props.hideDownload}
       />
     )
   }

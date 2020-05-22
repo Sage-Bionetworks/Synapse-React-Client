@@ -8,6 +8,7 @@ import { CardConfiguration } from '../CardContainerLogic'
 export type OwnProps = {
   tableConfiguration: SynapseTableProps | undefined
   cardConfiguration: CardConfiguration | undefined
+  hideDownload?: boolean
 }
 
 const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
@@ -15,6 +16,7 @@ const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
     topLevelControlsState,
     tableConfiguration,
     cardConfiguration,
+    hideDownload,
     ...rest
   } = props
   const { showFacetFilter } = topLevelControlsState!
@@ -37,6 +39,7 @@ const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
             isFilterAndViewChild={true}
             {...rest}
             {...tableConfiguration}
+            hideDownload={hideDownload}
           />
         ) : (
           <></>

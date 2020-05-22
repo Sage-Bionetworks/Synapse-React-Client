@@ -100,6 +100,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}
+          hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
         />
       </QueryWrapper>
