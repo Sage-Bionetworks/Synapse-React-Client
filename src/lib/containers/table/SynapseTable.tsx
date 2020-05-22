@@ -59,6 +59,7 @@ import { renderTableCell } from '../synapse_table_functions/renderTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
 import { Checkbox } from '../widgets/Checkbox'
+import { LabelLinkConfig } from '../CardContainerLogic'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -115,7 +116,7 @@ export type SynapseTableProps = {
   title?: string
   loadingScreen?: JSX.Element
   showAccessColumn?: boolean
-  markdownColumns?: string[] // array of column names which should render as markdown
+  columnLinks?: LabelLinkConfig
   enableLeftFacetFilter?: boolean
   isFilterAndViewChild?: boolean
   isRowSelectionVisible?: boolean
@@ -289,7 +290,7 @@ export default class SynapseTable extends React.Component<
       token,
       showBarChart,
       enableLeftFacetFilter,
-      isFilterAndViewChild,      
+      isFilterAndViewChild,
     } = this.props
     const { queryResult } = data
     const { queryResults } = queryResult
@@ -438,7 +439,12 @@ export default class SynapseTable extends React.Component<
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const pastZero: boolean = lastQueryRequest.query.offset! > 0
-    const { hasMoreData, showAccessColumn, token, isRowSelectionVisible } = this.props
+    const {
+      hasMoreData,
+      showAccessColumn,
+      token,
+      isRowSelectionVisible,
+    } = this.props
 
     const zeroMarginRight: React.CSSProperties = {
       marginRight: 0,
@@ -486,11 +492,21 @@ export default class SynapseTable extends React.Component<
         <table className="table table-striped table-condensed">
           <thead className="SRC_bordered">
             <tr>
-              {this.createTableHeader(headers, facets, isShowingAccessColumn, isRowSelectionVisible)}
+              {this.createTableHeader(
+                headers,
+                facets,
+                isShowingAccessColumn,
+                isRowSelectionVisible,
+              )}
             </tr>
           </thead>
           <tbody>
-            {this.createTableRows(rows, headers, isShowingAccessColumn, isRowSelectionVisible)}
+            {this.createTableRows(
+              rows,
+              headers,
+              isShowingAccessColumn,
+              isRowSelectionVisible,
+            )}
           </tbody>
         </table>
         <div style={{ textAlign: 'right' }}>
@@ -736,30 +752,38 @@ export default class SynapseTable extends React.Component<
     isRowSelectionVisible: boolean | undefined,
   ) {
     const rowsFormatted: JSX.Element[] = []
-    const { token, isColumnSelected, selectedRowIndices, updateParentState } = this.props
+    const {
+      token,
+      data,
+      isColumnSelected,
+      selectedRowIndices,
+      updateParentState,
+      columnLinks = [],
+    } = this.props
+    const { selectColumns = [], columnModels = [] } = data!
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
     const entityColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       EntityColumnType.ENTITYID,
     )
     const userColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       EntityColumnType.USERID,
     )
     const dateColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       EntityColumnType.DATE,
     )
     const dateListColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       EntityColumnType.DATE_LIST,
     )
     const booleanListColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       EntityColumnType.BOOLEAN_LIST,
     )
     const otherListColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       EntityColumnType.STRING_LIST,
       EntityColumnType.INTEGER_LIST,
     )
@@ -767,13 +791,14 @@ export default class SynapseTable extends React.Component<
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
       this.props.getLastQueryRequest!().query.sql,
     )
-    const { markdownColumns = [] } = this.props
     rows.forEach((row, rowIndex) => {
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
           const isColumnActive = isColumnSelected!.includes(columnName)
-          const isMarkdownColumn = markdownColumns.includes(columnName)
+          const columnLinkConfig = columnLinks.find(el => {
+            return el.matchColumnName === columnName
+          })
           const index = this.findSelectionIndex(
             this.state.sortedColumnSelection,
             columnName,
@@ -809,8 +834,11 @@ export default class SynapseTable extends React.Component<
                     isBold,
                     mapEntityIdToHeader,
                     mapUserIdToHeader,
-                    isMarkdownColumn,
+                    columnLinkConfig,
                     rowIndex,
+                    selectColumns,
+                    columnModels,
+                    columnName,
                   })}
               </td>
             )
@@ -839,18 +867,18 @@ export default class SynapseTable extends React.Component<
               id={`(${rowIndex},rowSelectColumnCheckbox)`}
               checked={selectedRowIndices.includes(rowIndex)}
               onChange={(checked: boolean) => {
-                const cloneSelectedRowIndices = [...selectedRowIndices];
+                const cloneSelectedRowIndices = [...selectedRowIndices]
                 if (checked) {
                   cloneSelectedRowIndices.push(rowIndex)
                 } else {
-                  const index = cloneSelectedRowIndices.indexOf(rowIndex);
+                  const index = cloneSelectedRowIndices.indexOf(rowIndex)
                   if (index > -1) {
-                    cloneSelectedRowIndices.splice(index, 1);
+                    cloneSelectedRowIndices.splice(index, 1)
                   }
                 }
                 // update parent state on change
                 updateParentState!({
-                  selectedRowIndices: cloneSelectedRowIndices
+                  selectedRowIndices: cloneSelectedRowIndices,
                 })
               }}
             ></Checkbox>
@@ -947,13 +975,12 @@ export default class SynapseTable extends React.Component<
             <span style={{ whiteSpace: 'nowrap' }}>Access</span>
           </div>
         </th>,
-      )      
+      )
     }
     if (isRowSelectionVisible) {
-      tableColumnHeaderElements.unshift(<th key="rowSelectionColumn">
-          <div className="SRC-centerContent">
-            {/* checkboxes column */}
-          </div>
+      tableColumnHeaderElements.unshift(
+        <th key="rowSelectionColumn">
+          <div className="SRC-centerContent">{/* checkboxes column */}</div>
         </th>,
       )
     }

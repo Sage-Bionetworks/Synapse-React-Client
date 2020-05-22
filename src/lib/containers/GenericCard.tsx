@@ -76,8 +76,109 @@ export const getCutoff = (summary: string) => {
   return { previewText }
 }
 
+export const renderValueOrMultiValue = ({
+  columnName,
+  value,
+  selectColumns,
+  columnModels,
+}: {
+  columnName: string | undefined
+  value: string
+  selectColumns?: SelectColumn[]
+  columnModels?: ColumnModel[]
+}): ValueOrMultiValue => {
+  const selectedColumnOrUndefined =
+    selectColumns?.find(el => el.name === columnName) ||
+    columnModels?.find(el => el.name === columnName)
+  const isMultiValue =
+    selectedColumnOrUndefined?.columnType === 'STRING_LIST' ||
+    selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
+
+  if (isMultiValue) {
+    let val: any = value
+    let strList: any
+    try {
+      strList = JSON.parse(val)
+      val = (strList as string[]).join(', ')
+      return {
+        strList,
+        str: val,
+      }
+    } catch (e) {
+      console.error(
+        'Could not parse multivalue string ',
+        val,
+        ' caught err ',
+        e,
+      )
+    }
+  }
+  return { str: value }
+}
+
+export const renderLabel = (args: {
+  value: string
+  columnName: string
+  labelLink: CardLink | MarkdownLink | undefined
+  selectColumns: SelectColumn[] | undefined
+  columnModels: ColumnModel[] | undefined
+  isHeader: boolean
+}) => {
+  const {
+    value,
+    columnName,
+    labelLink,
+    selectColumns,
+    columnModels,
+    isHeader,
+  } = args
+  if (!value) {
+    return value
+  }
+  const { strList, str } = renderValueOrMultiValue({
+    columnName,
+    value,
+    selectColumns,
+    columnModels,
+  })
+
+  if (!labelLink) {
+    return str
+  }
+
+  if (labelLink.isMarkdown) {
+    if (strList) {
+      return strList.map(el => {
+        return <MarkdownSynapse key={el} renderInline={true} markdown={el} />
+      })
+    } else {
+      return <MarkdownSynapse renderInline={true} markdown={value} />
+    }
+  }
+  const split = strList ? strList : str.split(',')
+  let className = ''
+  const style: React.CSSProperties = {}
+  if (isHeader) {
+    className = 'SRC-lightLink'
+  } else {
+    className = 'SRC-primary-text-color'
+  }
+  return split.map((el, index) => {
+    const { baseURL, URLColumnName } = labelLink
+    const href = `/${baseURL}?${URLColumnName}=${el}`
+    return (
+      <React.Fragment key={el}>
+        <a href={href} key={el} className={className} style={style}>
+          {el}
+        </a>
+        {index < split.length - 1 && <span style={{ marginRight: 4 }}>, </span>}
+      </React.Fragment>
+    )
+  })
+}
+
 type ValueOrMultiValue = {
-  str?: string
+  str: string
   strList?: string[]
 }
 
@@ -91,10 +192,8 @@ export default class GenericCard extends React.Component<
       hasClickedShowMore: false,
     }
     this.renderTitleLink = this.renderTitleLink.bind(this)
-    this.renderLabel = this.renderLabel.bind(this)
     this.renderLongDescription = this.renderLongDescription.bind(this)
     this.renderShortDescription = this.renderShortDescription.bind(this)
-    this.renderValueOrMultiValue = this.renderValueOrMultiValue.bind(this)
   }
 
   public renderTitleLink(
@@ -150,74 +249,6 @@ export default class GenericCard extends React.Component<
     })
   }
 
-  public renderLabel(
-    value: string,
-    labelLink: CardLink | MarkdownLink,
-    isHeader: boolean,
-    noSplit?: boolean,
-  ) {
-    if (labelLink.isMarkdown) {
-      return <MarkdownSynapse renderInline={true} markdown={value} />
-    }
-    const split = noSplit ? [value] : value.split(',')
-    let className = ''
-    const style: React.CSSProperties = {}
-    if (isHeader) {
-      className = 'SRC-lightLink'
-    } else {
-      className = 'SRC-primary-text-color'
-    }
-    return split.map((el, index) => {
-      const { baseURL, URLColumnName } = labelLink
-      const href = `/${baseURL}?${URLColumnName}=${el}`
-      return (
-        <React.Fragment key={el}>
-          <a href={href} key={el} className={className} style={style}>
-            {el}
-          </a>
-          {index < split.length - 1 && (
-            <span style={{ marginRight: 4 }}>, </span>
-          )}
-        </React.Fragment>
-      )
-    })
-  }
-
-  public renderValueOrMultiValue(
-    columnName: string | undefined,
-    value: string,
-    selectColumns?: SelectColumn[],
-    columnModels?: ColumnModel[],
-  ): ValueOrMultiValue {
-    const selectedColumnOrUndefined =
-      selectColumns?.find(el => el.name === columnName) ||
-      columnModels?.find(el => el.name === columnName)
-    const isMultiValue =
-      selectedColumnOrUndefined?.columnType === 'STRING_LIST' ||
-      selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
-
-    if (isMultiValue) {
-      let val: any = value
-      let strList: any
-      try {
-        strList = JSON.parse(val)
-        val = (strList as string[]).join(', ')
-        return {
-          strList,
-          str: val,
-        }
-      } catch (e) {
-        console.error(
-          'Could not parse multivalue string ',
-          val,
-          ' caught err ',
-          e,
-        )
-      }
-    }
-    return { str: value }
-  }
-
   render() {
     const {
       schema,
@@ -233,6 +264,7 @@ export default class GenericCard extends React.Component<
       labelLinkConfig,
       facetAliases = {},
       descriptionLinkConfig,
+      rgbIndex,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -244,12 +276,14 @@ export default class GenericCard extends React.Component<
     let subTitle =
       genericCardSchemaDefined.subTitle &&
       data[schema[genericCardSchemaDefined.subTitle]]
-    subTitle = this.renderValueOrMultiValue(
-      genericCardSchemaDefined?.subTitle,
-      subTitle,
-      selectColumns,
-      columnModels,
-    ).str
+    subTitle =
+      genericCardSchemaDefined?.subTitle &&
+      renderValueOrMultiValue({
+        value: genericCardSchemaDefined?.subTitle,
+        columnName: subTitle,
+        selectColumns,
+        columnModels,
+      }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
     // wrap link in parens because undefined would throw an error
@@ -265,33 +299,19 @@ export default class GenericCard extends React.Component<
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
       let value = data[schema[columnName]]
-      const { strList, str } = this.renderValueOrMultiValue(
-        columnName,
-        value,
-        selectColumns,
-        columnModels,
-      )
       if (value) {
         const labelLink = labelLinkConfig?.find(
           el => el.matchColumnName === columnName,
         )
-        if (labelLink && strList) {
-          value = strList.map((el, index) => {
-            return (
-              <>
-                {this.renderLabel(el, labelLink, isHeader, true)}
-                {index < strList.length - 1 && ', '}
-              </>
-            )
-          })
-        } else if (labelLink) {
-          // create link for this column
-          value = this.renderLabel(value, labelLink, isHeader)
-        } else {
-          value = str
-        }
-        const columnDisplayName =
-          facetAliases[columnName] || unCamelCase(columnName)
+        value = renderLabel({
+          value,
+          columnName,
+          labelLink,
+          isHeader,
+          selectColumns,
+          columnModels,
+        })
+        const columnDisplayName = unCamelCase(columnName, facetAliases)
         const keyValue = [columnDisplayName, value]
         values.push(keyValue)
       }
@@ -323,6 +343,7 @@ export default class GenericCard extends React.Component<
           target={target}
           isAlignToLeftNav={true}
           secondaryLabelLimit={secondaryLabelLimit}
+          rgbIndex={rgbIndex}
         />
       )
     }
