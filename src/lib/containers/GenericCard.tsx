@@ -148,8 +148,13 @@ export const renderLabel = (args: {
 
   if (labelLink.isMarkdown) {
     if (strList) {
-      return strList.map(el => {
-        return <MarkdownSynapse key={el} renderInline={true} markdown={el} />
+      return strList.map((el, index) => {
+        return (
+          <>
+            <MarkdownSynapse key={el} renderInline={true} markdown={el} />
+            {index < strList.length - 1 && ','}
+          </>
+        )
       })
     } else {
       return <MarkdownSynapse renderInline={true} markdown={value} />
@@ -279,8 +284,8 @@ export default class GenericCard extends React.Component<
     subTitle =
       genericCardSchemaDefined?.subTitle &&
       renderValueOrMultiValue({
-        value: genericCardSchemaDefined?.subTitle,
-        columnName: subTitle,
+        value: subTitle,
+        columnName: genericCardSchemaDefined?.subTitle,
         selectColumns,
         columnModels,
       }).str
