@@ -55,7 +55,7 @@ class QueryWrapperMenuDemo extends React.Component<
         entityId: 'syn21085100',
         tableConfiguration: {
           title: 'title',
-          markdownColumns: ['fruit', 'vegetable'],
+          // markdownColumns: ['fruit', 'vegetable'],
         },
         menuConfig: [
           {
