@@ -1,0 +1,12 @@
+
+$icon-size: 14px;
+
+.FacetFilterHeader__collapseToggleBtn {
+
+    .icon-plus, .icon-minus {
+        width: $icon-size;
+        height: $icon-size;
+        vertical-align: text-top;
+    }
+    
+}
