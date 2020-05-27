@@ -1,12 +1,34 @@
 
-$icon-size: 14px;
+@import '../../abstracts/variables';  // TODO: deleted this line if this file is already imported in _all.scss
 
-.FacetFilterHeader__collapseToggleBtn {
+$icon-size: 14px;  // component-specific variable 
 
-    .icon-plus, .icon-minus {
+.FacetFilterHeader {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid $border-color-gray;
+  
+    &__label {
+      font-weight: bold;
+    }
+  
+    &__collapseToggleBtn {
+      margin: 0;
+      padding: 0;
+      line-height: 14px;
+      font-size: 18px;
+      color: $primary-action-color !important;
+  
+      &:hover {
+        color: $primary-action-color !important;
+        text-decoration: underline;
+      }
+
+      .icon-plus, .icon-minus {
         width: $icon-size;
         height: $icon-size;
         vertical-align: text-top;
+     }
+
     }
-    
-}
+  }
