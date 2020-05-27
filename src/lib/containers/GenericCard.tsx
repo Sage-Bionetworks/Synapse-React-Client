@@ -354,12 +354,18 @@ export default class GenericCard extends React.Component<
       )
     }
 
-    const titleSearchHandle =
-      unCamelCase(genericCardSchemaDefined.title, facetAliases) ?? ''
-    const stubTitleSearchHandle =
-      unCamelCase(genericCardSchemaDefined.subTitle, facetAliases) ?? ''
-    const descriptionSubTitle =
-      unCamelCase(genericCardSchemaDefined.description, facetAliases) ?? ''
+    const titleSearchHandle = unCamelCase(
+      genericCardSchemaDefined.title,
+      facetAliases,
+    )
+    const stubTitleSearchHandle = unCamelCase(
+      genericCardSchemaDefined.subTitle,
+      facetAliases,
+    )
+    const descriptionSubTitle = unCamelCase(
+      genericCardSchemaDefined.description,
+      facetAliases,
+    )
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className="SRC-cardThumbnail">
