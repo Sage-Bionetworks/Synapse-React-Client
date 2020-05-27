@@ -142,7 +142,8 @@ export const renderLabel = (args: {
     columnModels,
   })
 
-  if (!labelLink) {
+  if (!labelLink || !str) {
+    // they either don't need a link or the array came back empty
     return str
   }
 
@@ -354,14 +355,11 @@ export default class GenericCard extends React.Component<
     }
 
     const titleSearchHandle =
-      facetAliases[genericCardSchemaDefined.title] ||
-      unCamelCase(genericCardSchemaDefined.title)
+      unCamelCase(genericCardSchemaDefined.title, facetAliases) ?? ''
     const stubTitleSearchHandle =
-      facetAliases[genericCardSchemaDefined.subTitle || ''] ||
-      unCamelCase(genericCardSchemaDefined.subTitle)
+      unCamelCase(genericCardSchemaDefined.subTitle, facetAliases) ?? ''
     const descriptionSubTitle =
-      facetAliases[genericCardSchemaDefined.description || ''] ||
-      unCamelCase(genericCardSchemaDefined.description)
+      unCamelCase(genericCardSchemaDefined.description, facetAliases) ?? ''
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className="SRC-cardThumbnail">
