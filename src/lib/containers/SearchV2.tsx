@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { CSSTransition } from 'react-transition-group'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -150,95 +151,101 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   render() {
     const { data, topLevelControlsState, facetAliases } = this.props
     const { searchText, show } = this.state
-    const outerClassName = `SearchV2 ${
-      topLevelControlsState?.showSearchBar ? '' : 'hidden'
-    }`
+
     return (
-      <div className={outerClassName}>
-        <form
-          className="SearchV2__searchbar"
-          onSubmit={this.search}
-          onClick={() => {
-            this.setState({ show: true })
-            this.searchFormRef.current?.focus()
-          }}
-          ref={this.searchFormRef}
+      <div>
+        <CSSTransition
+          in={topLevelControlsState?.showSearchBar}
+          classNames="SearchV2__animate_bar"
+          timeout={{ enter: 0, exit: 300 }}
         >
-          <FontAwesomeIcon
-            className="SearchV2__searchbar__searchicon"
-            size={'sm'}
-            icon={'search'}
-          />
-          <input
-            onChange={this.handleChange}
-            onClick={() => {
-              this.setState({
-                show: true,
-              })
-            }}
-            placeholder="Enter Search Terms"
-            value={searchText}
-            type="text"
-          />
-          {this.state.searchText.length > 0 && (
-            <button
-              className="SearchV2__searchbar__clearbutton"
-              type="button"
+
+          <div className="SearchV2__animate_height">
+            <form
+              className="SearchV2__searchbar"
+              onSubmit={this.search}
               onClick={() => {
-                this.setState({
-                  searchText: '',
-                })
+                this.setState({ show: true })
+                this.searchFormRef.current?.focus()
               }}
+              ref={this.searchFormRef}
             >
               <FontAwesomeIcon
-                className="SRC-primary-text-color"
-                icon="times"
+                className="SearchV2__searchbar__searchicon"
+                size={'sm'}
+                icon={'search'}
               />
-            </button>
-          )}
-        </form>
-        <div
-          className={
-            show
-              ? 'SearchV2__form-container'
-              : 'SearchV2__form-container hidden'
-          }
-        >
-          <form ref={this.radioFormRef} className="SearchV2__column-select">
-            <p className="deemphasized">
-              <i> Search In Field: </i>
-            </p>
-            {data?.columnModels
-              ?.filter(this.isSupportedColumn)
-              .map((el, index) => {
-                const name = el.name
-                const displayName = unCamelCase(el.name, facetAliases)
-                const selectedColumn = this.state.columnName
-                const isSelected =
-                  (selectedColumn === '' && index === 0) ||
-                  selectedColumn === name
-                return (
-                  <div className="radio">
-                    <label>
-                      <span>
-                        <input
-                          id={name}
-                          type="radio"
-                          value={name}
-                          checked={isSelected}
-                          onClick={() => {
-                            this.setState({
-                              columnName: name,
-                            })
-                          }}
-                        />
-                        <span>{displayName}</span>
-                      </span>
-                    </label>
-                  </div>
-                )
-              })}
-          </form>
+              <input
+                onChange={this.handleChange}
+                onClick={() => {
+                  this.setState({
+                    show: true,
+                  })
+                }}
+                placeholder="Enter Search Terms"
+                value={searchText}
+                type="text"
+              />
+              {this.state.searchText.length > 0 && (
+                <button
+                  className="SearchV2__searchbar__clearbutton"
+                  type="button"
+                  onClick={() => {
+                    this.setState({
+                      searchText: '',
+                    })
+                  }}
+                >
+                  <FontAwesomeIcon
+                    className="SRC-primary-text-color"
+                    icon="times"
+                  />
+                </button>
+              )}
+            </form>
+          </div>
+        </CSSTransition>
+        <div className="SearchV2__dropdown_pos">
+          <CSSTransition
+          in={show}
+          classNames="SearchV2__animate_dropdown"
+          timeout={{ enter: 0, exit: 300 }}
+          >
+
+              <form ref={this.radioFormRef} className="SearchV2__column-select SearchV2__animate_height">
+                <p className="deemphasized">
+                  <i> Search In Field: </i>
+                </p>
+                {data?.columnModels?.map((el, index) => {
+                  const name = el.name
+                  const displayName = unCamelCase(el.name, facetAliases)
+                  const selectedColumn = this.state.columnName
+                  const isSelected =
+                    (selectedColumn === '' && index === 0) ||
+                    selectedColumn === name
+                  return (
+                    <div className="radio">
+                      <label>
+                        <span>
+                          <input
+                            id={name}
+                            type="radio"
+                            value={name}
+                            checked={isSelected}
+                            onClick={() => {
+                              this.setState({
+                                columnName: name,
+                              })
+                            }}
+                          />
+                          <span>{displayName}</span>
+                        </span>
+                      </label>
+                    </div>
+                  )
+                })}
+              </form>
+          </CSSTransition>
         </div>
       </div>
     )
