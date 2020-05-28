@@ -2,12 +2,14 @@ import * as React from 'react'
 import { Dictionary } from '../table/SynapseTable'
 import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
 import { EntityLink } from '../EntityLink'
-import MarkdownSynapse from '../MarkdownSynapse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import UserCard from '../UserCard'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { noop } from 'lodash-es'
+import { MarkdownLink, CardLink } from '../CardContainerLogic'
+import { renderLabel } from '../GenericCard'
+import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
 
 // Render table cell, supports Entity's and User Icons
 export const renderTableCell = ({
@@ -22,8 +24,11 @@ export const renderTableCell = ({
   isBold,
   mapEntityIdToHeader,
   mapUserIdToHeader,
-  isMarkdownColumn,
+  columnLinkConfig,
   rowIndex,
+  columnName,
+  selectColumns,
+  columnModels,
 }: {
   entityColumnIndicies: number[]
   userColumnIndicies: number[]
@@ -36,8 +41,11 @@ export const renderTableCell = ({
   isBold: string
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<any>
-  isMarkdownColumn: boolean
+  columnLinkConfig?: MarkdownLink | CardLink
   rowIndex?: number
+  columnName: string
+  selectColumns: SelectColumn[] | undefined
+  columnModels: ColumnModel[] | undefined
 }): React.ReactNode => {
   const getShortString = (
     longString: string,
@@ -52,8 +60,15 @@ export const renderTableCell = ({
   if (!columnValue) {
     return <></>
   }
-  if (isMarkdownColumn) {
-    return <MarkdownSynapse renderInline={true} markdown={columnValue} />
+  if (columnLinkConfig) {
+    return renderLabel({
+      value: columnValue,
+      columnName,
+      selectColumns,
+      columnModels,
+      isHeader: false,
+      labelLink: columnLinkConfig,
+    })
   }
   if (
     entityColumnIndicies.includes(colIndex) &&
@@ -70,7 +85,7 @@ export const renderTableCell = ({
     const jsonData: number[] = JSON.parse(columnValue)
     return jsonData.map((val: number, index: number) => {
       return (
-        <span className={isBold}>
+        <span key={index} className={isBold}>
           {new Date(val).toLocaleString()}
           {index !== jsonData.length - 1 ? ', ' : ''}
         </span>
@@ -81,7 +96,7 @@ export const renderTableCell = ({
     const jsonData: boolean[] = JSON.parse(columnValue)
     return jsonData.map((val: boolean, index: number) => {
       return (
-        <span className={isBold}>
+        <span key={index} className={isBold}>
           {val ? 'true' : 'false'}
           {index !== jsonData.length - 1 ? ', ' : ''}
         </span>
@@ -92,7 +107,7 @@ export const renderTableCell = ({
     const jsonData: string[] = JSON.parse(columnValue)
     return jsonData.map((val: string, index: number) => {
       return (
-        <span className={isBold}>
+        <span key={val} className={isBold}>
           {val}
           {index !== jsonData.length - 1 ? ', ' : ''}
         </span>

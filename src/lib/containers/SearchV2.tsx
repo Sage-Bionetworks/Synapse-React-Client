@@ -11,6 +11,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertConditionsFromSearchParams } from '../utils/functions/sqlFunctions'
 import { unCamelCase } from '../utils/functions/unCamelCase'
+import { ColumnModel, ColumnType } from '../utils/synapseTypes'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -25,6 +26,7 @@ type SearchState = {
 
 export type SearchProps = {
   isQueryWrapperMenuChild?: boolean
+  defaultColumn?: string
 }
 
 type InternalSearchProps = QueryWrapperChildProps & SearchProps
@@ -38,7 +40,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.state = {
       show: false,
       searchText: '',
-      columnName: '',
+      columnName: this.props.defaultColumn ?? '',
     }
     this.searchFormRef = React.createRef()
     this.radioFormRef = React.createRef()
@@ -131,6 +133,19 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.setState({
       searchText: event.currentTarget.value,
     })
+  }
+
+  public isSupportedColumn = (columnModel: ColumnModel) => {
+    switch (columnModel.columnType) {
+      case ColumnType.FILEHANDLEID:
+      case ColumnType.ENTITYID:
+      case ColumnType.DATE:
+      case ColumnType.DATE_LIST:
+      case ColumnType.USERID:
+        return false
+      default:
+        return true
+    }
   }
 
   render() {

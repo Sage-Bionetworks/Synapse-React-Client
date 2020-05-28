@@ -25,6 +25,9 @@ type OwnProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
   visibleColumnCount?: number
+  facetAliases?: {}
+  hideDownload?: boolean
+  defaultColumn?: string
 } & TopLevelControlsProps
 
 type SearchParams = {
@@ -51,6 +54,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     name,
     cardConfiguration,
     facetsToPlot,
+    hideDownload,
     ...rest
   } = props
   let sqlUsed = sql
@@ -85,6 +89,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           name={name}
           entityId={entityId}
           sql={sqlUsed}
+          hideDownload={hideDownload}
         />
         <SearchV2 />
         <DownloadConfirmation />
@@ -95,6 +100,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}
+          hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
         />
       </QueryWrapper>

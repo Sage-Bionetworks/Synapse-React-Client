@@ -1,4 +1,4 @@
-import React, { FunctionComponent, SVGProps } from 'react'
+import React, { FunctionComponent } from 'react'
 import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
@@ -9,7 +9,7 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { Dropdown } from 'react-bootstrap'
 
 type CustomImageProps = {
-  svgImg: FunctionComponent<SVGProps<SVGSVGElement>>
+  svgImg: React.ComponentElement<any, any>
   altText: string
 }
 
@@ -46,8 +46,7 @@ function getTooltipTriggerContents(
   size: FontAwesomeIconProps['size'] | undefined,
 ): JSX.Element {
   if ('svgImg' in image) {
-    const Img = image.svgImg
-    return <Img />
+    return image.svgImg
   } else {
     return (
       <FontAwesomeIcon

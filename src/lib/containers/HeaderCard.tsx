@@ -2,6 +2,7 @@ import { CardFooter, Icon } from './row_renderers/utils'
 import { MarkdownValue } from './CardContainerLogic'
 import MarkdownSynapse from './MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
+import getColorPallette from './ColorGradient'
 
 export type IconOptions = {
   [index: string]: string
@@ -9,6 +10,7 @@ export type IconOptions = {
 export type HeaderCardProps = {
   iconOptions?: IconOptions
   backgroundColor?: string
+  rgbIndex?: number
   type: string
   title: string
   subTitle: string
@@ -18,6 +20,8 @@ export type HeaderCardProps = {
   values?: string[][]
   isAlignToLeftNav?: boolean
   descriptionLinkConfig?: MarkdownValue
+  linkDisplay?: string
+  target?: string
 }
 
 const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
@@ -32,6 +36,9 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   secondaryLabelLimit,
   isAlignToLeftNav,
   descriptionLinkConfig,
+  linkDisplay,
+  target,
+  rgbIndex,
 }) => {
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -60,14 +67,18 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
     }
   })
 
+  const backgroundColorUsed =
+    rgbIndex !== undefined
+      ? getColorPallette(rgbIndex, 1).colorPalette[0]
+      : backgroundColor
   const style: React.CSSProperties = {
-    background: backgroundColor,
+    background: backgroundColorUsed,
   }
   return (
     <div
       style={style}
-      className={`SRC-portalCardHeader${
-        isAlignToLeftNav ? ' isAlignToLeftNav' : ''
+      className={`SRC-portalCardHeader ${
+        isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
       <div className="container-fluid">
@@ -90,7 +101,13 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                 className="SRC-boldText SRC-blackText"
                 style={{ margin: 'none' }}
               >
-                {title}
+                {linkDisplay ? (
+                  <a target={target} href={linkDisplay}>
+                    {title}
+                  </a>
+                ) : (
+                  <span> {title} </span>
+                )}
               </h3>
             </div>
             {subTitle && <div className="SRC-author"> {subTitle} </div>}

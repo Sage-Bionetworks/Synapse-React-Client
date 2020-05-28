@@ -88,7 +88,10 @@ export default class MarkdownSynapse extends React.Component<
 
     const mathSuffix = ''
     // Update the internal markdownit object with the wrapped synapse object
-    md.use(markdownitSynapse, mathSuffix).use(markdownitMath, mathSuffix)
+    md.use(markdownitSynapse, mathSuffix, 'https://synapse.org').use(
+      markdownitMath,
+      mathSuffix,
+    )
     const data: any = {}
     if (this.props.markdown) {
       data.markdown = this.props.markdown
@@ -237,6 +240,7 @@ export default class MarkdownSynapse extends React.Component<
         'hr',
         'summary',
         'details',
+        'strong',
       ],
     })
     return { __html: cleanText }
@@ -256,7 +260,7 @@ export default class MarkdownSynapse extends React.Component<
       HTMLElement
     >('[id^="mathjax-"]')
     // go through all obtained elements and transform them with katex
-    mathExpressions.forEach((element) => {
+    mathExpressions.forEach(element => {
       element.textContent &&
         katex.render(element.textContent, element, {
           // @ts-ignore
@@ -324,10 +328,10 @@ export default class MarkdownSynapse extends React.Component<
       wikiId,
       objectType,
     )
-      .then((data) => {
+      .then(data => {
         return data
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({
           errorMessage: err.reason,
         })
@@ -525,7 +529,7 @@ export default class MarkdownSynapse extends React.Component<
     decodedWidgetParams
       .substring(questionIndex + 1)
       .split('&')
-      .forEach((keyPair) => {
+      .forEach(keyPair => {
         let [key, value] = keyPair.split('=')
         value = decodeURIComponent(value)
         widgetparamsMapped[key] = value

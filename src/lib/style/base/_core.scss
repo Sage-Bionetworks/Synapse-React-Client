@@ -1076,10 +1076,11 @@ hr ~ .SRC-wrapper {
 }
 
 .SRC-card-footer-header {
-  a {
+  a,
+  button {
     color: white !important;
     font-weight: bold;
-    text-decoration: underline;
+    text-decoration: underline !important;
   }
 }
 

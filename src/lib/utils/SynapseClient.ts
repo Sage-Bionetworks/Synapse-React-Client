@@ -63,6 +63,7 @@ import {
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
+import { TableUpdateTransactionRequest } from './synapseTypes/Table/TableUpdate'
 
 const cookies = new UniversalCookies()
 
@@ -2089,4 +2090,35 @@ export const deleteDownloadList = (sessionToken: string | undefined) => {
   ).then((_) => {
     dispatchDownloadListChangeEvent(undefined)
   })
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/POST/entity/id/table/transaction/async/start.html
+ * @param {*} tableUpdateRequest
+ * @param {*} sessionToken
+ * @param {*} endpoint
+ * // technically returns a TableUpdateTransactionResponse, but I don't see any reason we need this
+ */
+export const updateTable = (
+  tableUpdateRequest: TableUpdateTransactionRequest,
+  sessionToken: string | undefined = undefined,
+  updateParentState?: any,
+): Promise<any> => {
+  return doPost<AsyncJobId>(
+    `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/start`,
+    tableUpdateRequest,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((resp) => {
+      return getAsyncResultFromJobId<any>(
+        `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${resp.token}`,
+        sessionToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
 }

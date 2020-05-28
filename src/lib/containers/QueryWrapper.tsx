@@ -60,6 +60,7 @@ export type QueryWrapperState = {
   topLevelControlsState?: TopLevelControlsState
   searchQuery: SearchQuery
   isColumnSelected: string[]
+  selectedRowIndices?: number[]
 }
 
 export type FacetSelection = {
@@ -95,7 +96,8 @@ export type QueryWrapperChildProps = {
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery?: SearchQuery
-  isColumnSelected?: string[]
+  isColumnSelected?: string[],
+  selectedRowIndices?: number[],
 }
 
 /**
@@ -145,6 +147,7 @@ export default class QueryWrapper extends React.Component<
         searchText: '',
       },
       isColumnSelected: [],
+      selectedRowIndices: [],
     }
     this.componentIndex = props.componentIndex || 0
   }
@@ -222,6 +225,7 @@ export default class QueryWrapper extends React.Component<
     this.setState({
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
+      selectedRowIndices: [] // reset selected row indices any time the query is re-run
     })
 
     if (clonedQueryRequest.query) {
@@ -372,14 +376,13 @@ export default class QueryWrapper extends React.Component<
    */
   public render() {
     const { isLoading } = this.state
-    const { facetAliases = {}, children, ...rest } = this.props
+    const { children, ...rest } = this.props
     // inject props in children of this component
     const childrenWithProps = React.Children.map(children, (child: any) => {
       if (!child) {
         return child
       }
       const queryWrapperChildProps: QueryWrapperChildProps = {
-        facetAliases,
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.state.data,
         hasMoreData: this.state.hasMoreData,
@@ -391,12 +394,13 @@ export default class QueryWrapper extends React.Component<
         topLevelControlsState: this.state.topLevelControlsState,
         searchQuery: this.state.searchQuery,
         isColumnSelected: this.state.isColumnSelected,
+        selectedRowIndices: this.state.selectedRowIndices,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,
         getNextPageOfData: this.getNextPageOfData,
         updateParentState: this.updateParentState,
-        getInitQueryRequest: this.getInitQueryRequest,
+        getInitQueryRequest: this.getInitQueryRequest,        
         ...rest,
       }
       return React.cloneElement(child, queryWrapperChildProps)
