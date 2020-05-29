@@ -153,7 +153,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const { searchText, show } = this.state
 
     return (
-      <div>
+      <div className="SearchV2">
         <CSSTransition
           in={topLevelControlsState?.showSearchBar}
           classNames="SearchV2__animate_bar"
