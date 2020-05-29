@@ -154,7 +154,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   render() {
     const { data, topLevelControlsState, facetAliases, searchable } = this.props
-    const { searchText, show } = this.state
+    const { searchText, show, columnName } = this.state
 
     return (
       <div className="SearchV2">
@@ -226,13 +226,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 .map((el, index) => {
                   const name = el.name
                   const displayName = unCamelCase(el.name, facetAliases)
-                  const selectedColumn = this.state.columnName
                   const isSelected =
-                    (selectedColumn === '' && index === 0) ||
-                    selectedColumn === name
-                  const placeholder =
-                    searchable?.find(search => search.columnName === el.name)
-                      ?.hintText ?? ''
+                    (columnName === '' && index === 0) || columnName === name
                   return (
                     <div className="radio">
                       <label>
@@ -242,7 +237,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                             type="radio"
                             value={name}
                             checked={isSelected}
-                            placeholder={placeholder}
                             onClick={() => {
                               this.setState({
                                 columnName: name,
