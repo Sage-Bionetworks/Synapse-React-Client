@@ -19,5 +19,9 @@
       margin-right: 15px;
       margin-top: 15px;
     }
+    
+    .FacetNav__showMore:focus {  // somehow &__showMore:focus doesn't work
+      outline-color: $primary-action-color;
+    }
   }
 }
