@@ -14,6 +14,7 @@ import {
   QueryResultBundle,
   Row,
   QueryBundleRequest,
+  EntityColumnType,
 } from 'lib/utils/synapseTypes/'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
@@ -31,6 +32,7 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
+import { LabelLinkConfig } from 'lib/containers/CardContainerLogic'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -372,37 +374,37 @@ describe('basic functionality', () => {
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'ENTITYID',
+          columnType: EntityColumnType.ENTITYID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'USERID',
+          columnType: EntityColumnType.USERID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'DATE',
+          columnType: EntityColumnType.DATE,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'STRING_LIST',
+          columnType: EntityColumnType.STRING_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'DATE_LIST',
+          columnType: EntityColumnType.DATE_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'BOOLEAN_LIST',
+          columnType: EntityColumnType.BOOLEAN_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: 'INTEGER_LIST',
+          columnType: EntityColumnType.INTEGER_LIST,
         },
       ],
       queryResult: {
@@ -413,39 +415,39 @@ describe('basic functionality', () => {
           etag: MOCKED_STRING,
           headers: [
             {
-              columnType: 'ENTITYID',
+              columnType: EntityColumnType.ENTITYID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: 'USERID',
+              columnType: EntityColumnType.USERID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: 'DATE',
+              columnType: EntityColumnType.DATE,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: 'STRING_LIST',
+              columnType: EntityColumnType.STRING_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: 'DATE_LIST',
+              columnType: EntityColumnType.DATE_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: 'BOOLEAN_LIST',
+              columnType: EntityColumnType.BOOLEAN_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: 'INTEGER_LIST',
+              columnType: EntityColumnType.INTEGER_LIST,
             },
           ],
           rows: [
@@ -495,24 +497,42 @@ describe('basic functionality', () => {
     }
 
     it('gets column indicies correctly ', () => {
-      const entities = getColumnIndiciesWithType(mockData, 'ENTITYID')
+      const entities = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.ENTITYID,
+      )
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = getColumnIndiciesWithType(mockData, 'USERID')
+      const userIds = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.USERID,
+      )
       expect(userIds).toEqual([USERID_INDEX])
-      const dates = getColumnIndiciesWithType(mockData, 'DATE')
+      const dates = getColumnIndiciesWithType(mockData, EntityColumnType.DATE)
       expect(dates).toEqual([DATE_INDEX])
-      const stringLists = getColumnIndiciesWithType(mockData, 'STRING_LIST')
+      const stringLists = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.STRING_LIST,
+      )
       expect(stringLists).toEqual([STRING_LIST_INDEX])
-      const dateLists = getColumnIndiciesWithType(mockData, 'DATE_LIST')
+      const dateLists = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.DATE_LIST,
+      )
       expect(dateLists).toEqual([DATE_LIST_INDEX])
-      const booleanLists = getColumnIndiciesWithType(mockData, 'BOOLEAN_LIST')
+      const booleanLists = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.BOOLEAN_LIST,
+      )
       expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
-      const integerLists = getColumnIndiciesWithType(mockData, 'INTEGER_LIST')
+      const integerLists = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.INTEGER_LIST,
+      )
       expect(integerLists).toEqual([INTEGER_LIST_INDEX])
       const dateOrIntegerLists = getColumnIndiciesWithType(
         mockData,
-        'DATE_LIST',
-        'INTEGER_LIST',
+        EntityColumnType.DATE_LIST,
+        EntityColumnType.INTEGER_LIST,
       )
       expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
     })
@@ -590,7 +610,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader,
               mapUserIdToHeader: {},
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -611,7 +635,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -637,7 +665,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -661,7 +693,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -683,7 +719,16 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: true,
+              columnLinkConfig: {
+                isMarkdown: true,
+                matchColumnName: 'a',
+              },
+              rowIndex: undefined,
+              columnName: 'a',
+              selectColumns: [
+                { columnType: EntityColumnType.STRING, name: 'a', id: '' },
+              ],
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -706,7 +751,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -728,7 +777,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -752,7 +805,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -776,7 +833,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )
@@ -799,7 +860,11 @@ describe('basic functionality', () => {
               isBold: '',
               mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              isMarkdownColumn: false,
+              columnLinkConfig: undefined,
+              rowIndex: undefined,
+              columnName: '',
+              selectColumns: undefined,
+              columnModels: undefined,
             })}
           </div>,
         )

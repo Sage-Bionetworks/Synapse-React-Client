@@ -12,7 +12,7 @@ import { CardConfiguration } from '../CardContainerLogic'
 import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
-import SearchV2 from '../SearchV2'
+import SearchV2, { SearchV2Props } from '../SearchV2'
 import { DownloadConfirmation } from '../download_list'
 
 type OwnProps = {
@@ -21,11 +21,14 @@ type OwnProps = {
   shouldDeepLink?: boolean
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
+  searchConfiguration?: SearchV2Props
   token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   visibleColumnCount?: number
   facetAliases?: {}
+  hideDownload?: boolean
+  defaultColumn?: string
 } & TopLevelControlsProps
 
 type SearchParams = {
@@ -52,6 +55,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     name,
     cardConfiguration,
     facetsToPlot,
+    hideDownload,
+    searchConfiguration,
     ...rest
   } = props
   let sqlUsed = sql
@@ -86,8 +91,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           name={name}
           entityId={entityId}
           sql={sqlUsed}
+          hideDownload={hideDownload}
         />
-        <SearchV2 />
+        <SearchV2 {...searchConfiguration} />
         <DownloadConfirmation />
         <FacetNav
           facetsToPlot={facetsToPlot}
@@ -96,6 +102,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}
+          hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
         />
       </QueryWrapper>

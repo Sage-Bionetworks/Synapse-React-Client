@@ -44,9 +44,6 @@
   &__column-select {
     background: #ffffff;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    padding-left: 30px;
-    padding-top: 15px;
-    padding-bottom: 5px;
     color: #515359;
     max-height: 300px;
     position: absolute;
@@ -54,4 +51,56 @@
     z-index: 5;
     width: inherit;
   }
+
+  // Search bar height animation
+  &__animate_height {
+    max-height: 0;            
+    overflow-y: hidden;
+    -webkit-transition: max-height 0.3s ease-in-out;
+    -moz-transition: max-height 0.3s ease-in-out;
+    -o-transition: max-height 0.3s ease-in-out;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  &__animate_bar-enter-done {
+    max-height: 50px;  // fixed height required for css height animation
+  }
+
+  &__animate_bar-exit-done {
+    max-height: 0;
+  }
+
+  &__animate_dropdown-enter-done {
+    max-height: 300px;  // fixed height required for css height animation
+  }
+
+  &__animate_dropdown-exit-done {
+    max-height: 0;
+  }
+
+  &__dropdown_pos {
+    position: relative;
+    width: 100%;
+  }
+  
+  &__column-select.SearchV2__animate_height {
+    overflow: scroll;
+  }
+  
+  &__animate_dropdown-exit-active,
+  &__animate_dropdown-enter-done {
+    padding-left: 30px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+  }
+  
+  &__animate_dropdown-exit-done {
+    padding: 0
+  }
+
+  .radio {
+    padding: 4px 0;  
+  }
+
 }
+
