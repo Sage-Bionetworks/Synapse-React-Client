@@ -68,11 +68,15 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     batchFileResult: undefined,
     downloadList: undefined,
   })
-  const [columns, setColumns] = useState<{}>({
-    file: false,
-    createdBy: false,
-    createdOn: false,
-    size: false,
+
+  type SortedColumn = {
+    column: string
+    isDescending: boolean
+  }
+
+  const [sortedColumn, setSortedColumn] = useState<SortedColumn>({
+    column: '',
+    isDescending: false,
   })
 
   const [arPropsFromHasAccess, set_arPropsFromHasAccess] = useState<
@@ -222,17 +226,18 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     try {
       setIsLoading(true)
 
-      setColumns({
-        file: column === 'file' ? !columns[column] : false,
-        createdBy: column === 'createdBy' ? !columns[column] : false,
-        createdOn: column === 'createdOn' ? !columns[column] : false,
-        size: column === 'size' ? !columns[column] : false,
+      const isDescending =
+        column === sortedColumn.column ? !sortedColumn.isDescending : true
+
+      setSortedColumn({
+        column,
+        isDescending,
       })
 
       const filesToDownload = downloadList?.filesToDownload ?? []
 
       filesToDownload.sort((itemA, itemB) => {
-        return sortDownLoadList(itemA, itemB, column)
+        return sortDownLoadList(itemA, itemB, column, isDescending)
       })
       setData({
         ...data,
@@ -245,69 +250,68 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       setIsLoading(false)
     }
   }
+  const getFileHandleInfo = (item: FileHandleAssociation) => {
+    const fileResult = requestedFiles.find(
+      fileRes => fileRes.fileHandleId === item.fileHandleId,
+    )
+    const fileHandle = fileResult ? fileResult.fileHandle : undefined
+
+    let fileName: string | undefined = ''
+    let createdBy: string | undefined = ''
+    let createdOn: string | undefined = ''
+    let contentSize: number | undefined = undefined
+
+    if (fileHandle && item) {
+      fileName = fileHandle.fileName
+      createdBy = fileHandle.createdBy
+      createdOn = fileHandle.createdOn
+      contentSize = fileHandle.contentSize
+    } else {
+      const requestedFile = results.find(
+        req => req.id === item.associateObjectId,
+      )
+      if (requestedFiles) {
+        fileName = requestedFile?.name
+        createdBy = requestedFile?.createdBy
+        createdOn = requestedFile?.createdOn
+      }
+    }
+    return { fileName, createdBy, createdOn, contentSize }
+  }
 
   const sortDownLoadList = (
     itemA: FileHandleAssociation,
     itemB: FileHandleAssociation,
     column: string,
+    isDescending: boolean,
   ) => {
-    let fileName_A: string | undefined = ''
-    let fileName_B: string | undefined = ''
+    const {
+      fileName: fileName_A,
+      createdBy: createdBy_A,
+      createdOn: createdOn_A,
+      contentSize: contentSize_A,
+    } = getFileHandleInfo(itemA)
 
-    let createdBy_A: string | undefined = ''
-    let createdBy_B: string | undefined = ''
-    let createdOn_A: string | undefined = ''
-    let createdOn_B: string | undefined = ''
-    let contentSize_A: number | undefined = undefined
-    let contentSize_B: number | undefined = undefined
+    const {
+      fileName: fileName_B,
+      createdBy: createdBy_B,
+      createdOn: createdOn_B,
+      contentSize: contentSize_B,
+    } = getFileHandleInfo(itemB)
 
-    const fileHandleId = itemA ? itemA.fileHandleId : itemB.fileHandleId
-
-    const fileResult = requestedFiles.find(
-      fileRes => fileRes.fileHandleId === fileHandleId,
-    )
-    const fileHandle = fileResult ? fileResult.fileHandle : undefined
-
-    // fileHandle is defined, this file is downloadable, show its metadata
-    if (fileHandle && itemA) {
-      fileName_A = fileHandle.fileName
-      createdBy_A = fileHandle.createdBy
-      createdOn_A = fileHandle.createdOn
-      contentSize_A = fileHandle.contentSize
-    } else if (fileHandle && itemB) {
-      fileName_B = fileHandle.fileName
-      createdBy_B = fileHandle.createdBy
-      createdOn_B = fileHandle.createdOn
-      contentSize_B = fileHandle.contentSize
-    } else {
-      // file is not downloadable, only show its name from entity header info
-      const requestId = itemA
-        ? itemA.associateObjectId
-        : itemB.associateObjectId
-      const requestedFile = results.find(req => req.id === requestId)
-
-      if (itemA) {
-        fileName_A = requestedFile?.name
-        createdBy_A = requestedFile?.createdBy
-        createdOn_A = requestedFile?.createdOn
-      } else if (itemB) {
-        fileName_B = requestedFile?.name
-        createdBy_B = requestedFile?.createdBy
-        createdOn_B = requestedFile?.createdOn
-      }
-    }
+    const direction = isDescending ? 1 : -1
 
     switch (column) {
       case 'file':
-        return fileName_B?.localeCompare(fileName_A!)!
+        return fileName_B?.localeCompare(fileName_A!)! * direction
       case 'access':
         return 1
       case 'createdBy':
-        return createdBy_B?.localeCompare(createdBy_A!)!
+        return createdBy_B?.localeCompare(createdBy_A!)! * direction
       case 'createdOn':
-        return createdOn_B?.localeCompare(createdOn_A!)!
+        return createdOn_B?.localeCompare(createdOn_A!)! * direction
       case 'size':
-        return contentSize_B! - contentSize_A!
+        return (contentSize_B! - contentSize_A!) * direction
       default:
         return 1
     }
@@ -345,7 +349,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   }}
                 >
                   <FontAwesomeIcon
-                    icon={columns['file'] ? faSortAmountUp : faSortAmountDown}
+                    icon={
+                      sortedColumn.column === 'file'
+                        ? sortedColumn.isDescending === false
+                          ? faSortAmountDown
+                          : faSortAmountUp
+                        : faSortAmountDown
+                    }
                   />
                 </button>
               </th>
@@ -365,7 +375,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 >
                   <FontAwesomeIcon
                     icon={
-                      columns['createdBy'] ? faSortAmountUp : faSortAmountDown
+                      sortedColumn.column === 'createdBy'
+                        ? sortedColumn.isDescending === false
+                          ? faSortAmountDown
+                          : faSortAmountUp
+                        : faSortAmountDown
                     }
                   />
                 </button>
@@ -380,7 +394,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 >
                   <FontAwesomeIcon
                     icon={
-                      columns['createdOn'] ? faSortAmountUp : faSortAmountDown
+                      sortedColumn.column === 'createdOn'
+                        ? sortedColumn.isDescending === false
+                          ? faSortAmountDown
+                          : faSortAmountUp
+                        : faSortAmountDown
                     }
                   />
                 </button>
@@ -394,7 +412,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   }}
                 >
                   <FontAwesomeIcon
-                    icon={columns['size'] ? faSortAmountUp : faSortAmountDown}
+                    icon={
+                      sortedColumn.column === 'size'
+                        ? sortedColumn.isDescending === false
+                          ? faSortAmountDown
+                          : faSortAmountUp
+                        : faSortAmountDown
+                    }
                   />
                 </button>
               </th>
