@@ -95,9 +95,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     event.preventDefault()
     const { searchText } = this.state
     let { columnName } = this.state
+    const { searchable } = this.props
     if (columnName === '') {
       // default to the first one, will always be defined
-      columnName = this.props.data?.columnModels?.[0].name ?? ''
+      columnName =
+        this.props.data?.columnModels?.filter(el =>
+          this.isSupportedColumnAndInProps(el, searchable),
+        )?.[0].name ?? ''
     }
     this.setState({
       show: false,
