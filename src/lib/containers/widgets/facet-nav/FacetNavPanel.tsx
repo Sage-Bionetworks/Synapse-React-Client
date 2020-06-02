@@ -14,7 +14,6 @@ import {
   faCompressAlt,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import FacetFilter from '../../table/table-top/FacetFilter'
 
 import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
@@ -31,6 +30,8 @@ import {
   getStoredUserProfiles,
 } from '../../../utils/functions/getDataFromFromStorage'
 import { useEffect, useState } from 'react'
+import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetNavPanelOwnProps = {
@@ -162,8 +163,8 @@ function extractPlotDataArray(
     x:
       plotType === 'BAR'
         ? facetToPlot.facetValues.map(facet =>
-            getLabel(facet, false, columnType),
-          )
+          getLabel(facet, false, columnType),
+        )
         : undefined,
     y:
       plotType === 'BAR'
@@ -193,8 +194,8 @@ function extractPlotDataArray(
     pull:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facetValue =>
-            facetValue.isSelected ? 0.04 : 0,
-          )
+          facetValue.isSelected ? 0.04 : 0,
+        )
         : undefined,
   }
 
@@ -307,7 +308,7 @@ const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
   }
   return `FacetNavPanel__body__plot--expanded${
     plotType === 'BAR' ? 'Bar' : 'Pie'
-  }`
+    }`
 }
 
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
@@ -380,7 +381,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const renderChartSelectionToggle = (): JSX.Element => (
     <Dropdown>
       <Dropdown.Toggle variant="light" id="plot-selector">
-        <FontAwesomeIcon icon={faChartBar} title="expand" />
+        <ElementWithTooltip
+                idForToolTip="toggleChart"
+                tooltipText="Toggle chart type"
+                key="toggleChart"
+                image={faChartBar}
+                className="SRC-primary-color"
+                darkTheme={true}
+              />
       </Dropdown.Toggle>
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
@@ -392,6 +400,28 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       </Dropdown.Menu>
     </Dropdown>
   )
+
+  
+  const renderFacetFilter = (): JSX.Element => (
+    <FacetFilter
+      lastFacetSelection={{
+        columnName: '',
+        facetValue: '',
+        selector: '',
+      }}
+      isLoading={!!isLoading}
+      className=""
+      colorOnExpanded="#000"
+      applyChanges={(_: any) => (
+        evt: React.ChangeEvent<HTMLInputElement>,
+      ) => applyDropdownFilter(evt, facetToPlot, applyChanges)}
+      isAllFilterSelectedForFacet={
+        facetToPlot.facetValues.filter(item => item.isSelected)
+          .length === 0
+      }
+      facetColumnResult={facetToPlot}
+    />
+  ) 
 
   if (isLoadingNewData || !facetToPlot) {
     return (
@@ -410,39 +440,45 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
           <div className="FacetNavPanel__title__tools">
+
             {isExpanded && renderChartSelectionToggle()}
-            <FacetFilter
-              lastFacetSelection={{
-                columnName: '',
-                facetValue: '',
-                selector: '',
-              }}
-              isLoading={!!isLoading}
-              className=""
-              colorOnExpanded="#000"
-              applyChanges={(_: any) => (
-                evt: React.ChangeEvent<HTMLInputElement>,
-              ) => applyDropdownFilter(evt, facetToPlot, applyChanges)}
-              isAllFilterSelectedForFacet={
-                facetToPlot.facetValues.filter(item => item.isSelected)
-                  .length === 0
-              }
-              facetColumnResult={facetToPlot}
-            />
+
+            {renderFacetFilter()}
 
             {!isExpanded && (
-              <button onClick={() => onExpand!(index)}>
-                <FontAwesomeIcon icon={faExpandAlt} title="expand" />
-              </button>
+              <ElementWithTooltip
+                idForToolTip="expandGraph"
+                tooltipText="Expand to large graph"
+                key="expandGraph"
+                image={faExpandAlt}
+                callbackFn={() => onExpand!(index)}
+                className="SRC-primary-color"
+                darkTheme={true}
+              />
             )}
+
             {isExpanded && (
-              <button onClick={() => onCollapse!(index)}>
-                <FontAwesomeIcon icon={faCompressAlt} title="contract" />
-              </button>
+              <ElementWithTooltip
+                idForToolTip="collapseGraph"
+                tooltipText="Collapse to small graph"
+                key="collapseGraph"
+                image={faCompressAlt}
+                callbackFn={() => onCollapse!(index)}
+                className="SRC-primary-color"
+                darkTheme={true}
+              />
             )}
-            <button onClick={() => onHide(index)}>
-              <FontAwesomeIcon icon={faTimes} title="collapse" />
-            </button>
+
+            <ElementWithTooltip
+              idForToolTip="hideGraph"
+              tooltipText="Hide graph under Show More"
+              key="hideGraph"
+              image={faTimes}
+              callbackFn={() => onHide(index)}
+              className="SRC-primary-color"
+              darkTheme={true}
+            />
+
           </div>
         </div>
 

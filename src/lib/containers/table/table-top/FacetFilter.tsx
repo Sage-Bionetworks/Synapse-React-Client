@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Dropdown} from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
@@ -8,6 +7,8 @@ import {
 import { getIsValueSelected } from '../../../utils/functions/facetUtils'
 import { SELECT_ALL } from '../SynapseTableConstants'
 import { FacetSelection } from '../../../containers/QueryWrapper'
+import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+import { faFilter } from '@fortawesome/free-solid-svg-icons'
 
 type FacetFilterProps = {
   facetColumnResult: FacetColumnResultValues
@@ -72,12 +73,10 @@ export default class FacetFilter extends React.Component<
       isLoading,
       lastFacetSelection,
       className = 'SRC-primary-text-color SRC-primary-background-color-hover condenced',
-      colorOnExpanded= 'white',
       variant = 'light'
     } = this.props
     const { columnName } = facetColumnResult
     const { show } = this.state
-    const color = show ? colorOnExpanded : ''
     const allRef: React.Ref<HTMLInputElement> = React.createRef()
     return (
       <Dropdown show={show} onToggle={this.onToggle}>
@@ -86,12 +85,14 @@ export default class FacetFilter extends React.Component<
           id={facetColumnResult.columnName}
           variant={variant}
         >
-          <FontAwesomeIcon
-            style={{ margin: 'auto' }}
-            size={'1x'}
-            icon="filter"
-            color={color}
-          />
+          <ElementWithTooltip
+                idForToolTip="facetFilterTooltip"
+                tooltipText="Filter by specific facet"
+                key="facetFilterTooltip"
+                image={faFilter}
+                className="SRC-primary-color"
+                darkTheme={true}
+              />
         </Dropdown.Toggle>
         <Dropdown.Menu style={this.style}>
           <Dropdown.Item
