@@ -47,12 +47,6 @@ export default function AcceptedRequirements({
   )
 
   let acceptButtonText = ''
-
-  console.log('accessRequirement = ', accessRequirement)
-  console.log(
-    accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement,
-  )
   if (
     accessRequirement.concreteType ===
       SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
