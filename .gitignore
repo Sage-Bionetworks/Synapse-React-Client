@@ -23,6 +23,9 @@ yarn-error.log*
 jsconfig.json
 .vscode
 
+# jetbean specific
+.idea
+
 #rollup
 .rpt2_cache
 
