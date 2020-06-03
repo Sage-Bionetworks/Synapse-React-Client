@@ -48,9 +48,16 @@ export default function AcceptedRequirements({
 
   let acceptButtonText = ''
 
+  console.log('accessRequirement = ', accessRequirement)
+  console.log(
+    accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement,
+  )
   if (
     accessRequirement.concreteType ===
-    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
+    accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
   ) {
     if (
       window.location.hostname === 'www.synapse.org' ||
@@ -74,7 +81,9 @@ export default function AcceptedRequirements({
   const onAcceptClicked = () => {
     if (
       accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
+      accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
       window.open(
         `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
@@ -98,6 +107,18 @@ export default function AcceptedRequirements({
   }
 
   const RenderMarkdown = () => {
+    if (wikiPage) {
+      return (
+        <div className="AcceptRequirementsMarkdown">
+          <MarkdownSynapse
+            token={token}
+            wikiId={wikiPage?.wikiPageId}
+            ownerId={wikiPage?.ownerObjectId}
+            objectType={wikiPage?.ownerObjectType}
+          />
+        </div>
+      )
+    }
     const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
       .termsOfUse
 
@@ -116,18 +137,8 @@ export default function AcceptedRequirements({
       actContactInfo
     ) {
       return <div className="AcceptRequirementsMarkdown">{actContactInfo}</div>
-    } else {
-      return (
-        <div className="AcceptRequirementsMarkdown">
-          <MarkdownSynapse
-            token={token}
-            wikiId={wikiPage?.wikiPageId}
-            ownerId={wikiPage?.ownerObjectId}
-            objectType={wikiPage?.ownerObjectType}
-          />
-        </div>
-      )
     }
+    return <></>
   }
 
   const RenderAcceptedRequirements = () => {
