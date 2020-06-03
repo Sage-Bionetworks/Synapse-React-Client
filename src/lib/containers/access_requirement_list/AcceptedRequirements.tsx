@@ -119,18 +119,20 @@ export default function AcceptedRequirements({
     const actContactInfo = (accessRequirement as ACTAccessRequirement)
       .actContactInfo
 
-    if (
+    const isTermsOfUse =
       accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
-      termsOfUse
-    ) {
-      return <MarkdownSynapse markdown={termsOfUse} token={token} />
-    } else if (
+      SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement
+    const isActContactInfo =
       accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement &&
-      actContactInfo
-    ) {
-      return <div className="AcceptRequirementsMarkdown">{actContactInfo}</div>
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
+
+    if ((isTermsOfUse && termsOfUse) || (isActContactInfo && actContactInfo)) {
+      return (
+        <MarkdownSynapse
+          markdown={isTermsOfUse ? termsOfUse : actContactInfo}
+          token={token}
+        />
+      )
     }
     return <></>
   }

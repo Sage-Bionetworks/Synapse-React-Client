@@ -102,7 +102,7 @@ describe('facets display hide/show', () => {
     ).toBe(false)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Hide Optional Graphs')
+    ).toBe('Hide Default Graphs')
     fireEvent.click(button!)
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[2]),
