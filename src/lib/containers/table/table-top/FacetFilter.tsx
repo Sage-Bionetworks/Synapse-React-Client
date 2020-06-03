@@ -86,13 +86,13 @@ export default class FacetFilter extends React.Component<
           variant={variant}
         >
           <ElementWithTooltip
-                idForToolTip="facetFilterTooltip"
-                tooltipText="Filter by specific facet"
-                key="facetFilterTooltip"
-                image={faFilter}
-                className="SRC-primary-color"
-                darkTheme={true}
-              />
+            idForToolTip="facetFilterTooltip"
+            tooltipText="Filter by specific facet"
+            key="facetFilterTooltip"
+            image={faFilter}
+            className="SRC-primary-color"
+            darkTheme={true}
+          />
         </Dropdown.Toggle>
         <Dropdown.Menu style={this.style}>
           <Dropdown.Item
