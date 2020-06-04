@@ -23,14 +23,11 @@ export default function TermsOfUseAccessRequirementComponent({
       setIsLoading(true)
 
       try {
-        if (!accessRequirement.termsOfUse) {
-          const wikiPageRequirment = await SynapseClient.getWikiPageKey(
-            token,
-            accessRequirement.id,
-          )
-
-          setWikiPage(wikiPageRequirment)
-        }
+        const wikiPageRequirement = await SynapseClient.getWikiPageKey(
+          token,
+          accessRequirement.id,
+        )
+        setWikiPage(wikiPageRequirement)
       } catch (err) {
         console.error('Error on prepare terms of use ', err)
       } finally {

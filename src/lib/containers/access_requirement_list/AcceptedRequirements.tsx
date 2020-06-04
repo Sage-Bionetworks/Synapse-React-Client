@@ -47,10 +47,11 @@ export default function AcceptedRequirements({
   )
 
   let acceptButtonText = ''
-
   if (
     accessRequirement.concreteType ===
-    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
+    accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
   ) {
     if (
       window.location.hostname === 'www.synapse.org' ||
@@ -74,7 +75,9 @@ export default function AcceptedRequirements({
   const onAcceptClicked = () => {
     if (
       accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
+      accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
       window.open(
         `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
@@ -98,25 +101,7 @@ export default function AcceptedRequirements({
   }
 
   const RenderMarkdown = () => {
-    const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
-      .termsOfUse
-
-    const actContactInfo = (accessRequirement as ACTAccessRequirement)
-      .actContactInfo
-
-    if (
-      accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
-      termsOfUse
-    ) {
-      return <MarkdownSynapse markdown={termsOfUse} token={token} />
-    } else if (
-      accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement &&
-      actContactInfo
-    ) {
-      return <div className="AcceptRequirementsMarkdown">{actContactInfo}</div>
-    } else {
+    if (wikiPage) {
       return (
         <div className="AcceptRequirementsMarkdown">
           <MarkdownSynapse
@@ -128,6 +113,28 @@ export default function AcceptedRequirements({
         </div>
       )
     }
+    const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
+      .termsOfUse
+
+    const actContactInfo = (accessRequirement as ACTAccessRequirement)
+      .actContactInfo
+
+    const isTermsOfUse =
+      accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement
+    const isActContactInfo =
+      accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
+
+    if ((isTermsOfUse && termsOfUse) || (isActContactInfo && actContactInfo)) {
+      return (
+        <MarkdownSynapse
+          markdown={isTermsOfUse ? termsOfUse : actContactInfo}
+          token={token}
+        />
+      )
+    }
+    return <></>
   }
 
   const RenderAcceptedRequirements = () => {
