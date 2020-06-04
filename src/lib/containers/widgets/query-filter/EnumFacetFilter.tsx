@@ -11,6 +11,12 @@ import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import { FacetFilterHeader } from './FacetFilterHeader'
+import '../../../style/components/query_filter/_enum-facet-filter.scss'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+library.add(faArrowLeft)
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -79,6 +85,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
+  const [showSearch, setShowSearch] = useState<boolean>(false)
+  const [searchTerm, setSearchText] = useState<string>('')
   const visibleItemsCount = 5
 
   const userIds =
@@ -115,14 +123,64 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       ></FacetFilterHeader>
       <div style={{ display: isCollapsed ? 'none' : 'block' }}>
         <div className="EnumFacetFilter__checkboxContainer--forAll">
-          <Checkbox
-            className="EnumFacetFilter__checkbox"
-            onChange={() => onClear(columnModel.name)}
-            key="select_all"
-            checked={facetValues.filter(item => item.isSelected).length === 0}
-            label="All"
-            id="select_all"
-          ></Checkbox>
+          {showSearch && (
+            <div className="EnumFacetFilter__search">
+              <button
+                className="EnumFacetFilter__closeSearch"
+                onClick={() => {
+                  setShowSearch(false)
+                }}
+              >
+                <FontAwesomeIcon
+                  className="EnumFacetFilter__previous"
+                  icon={faArrowLeft}
+                />
+              </button>
+              <button
+                className="EnumFacetFilter__resetSearch"
+                onClick={() => {
+                  setSearchText('')
+                }}
+              >
+                <FontAwesomeIcon
+                  className="EnumFacetFilter__reset"
+                  icon={'times'}
+                />
+              </button>
+              <input
+                type="text"
+                placeholder="Find values"
+                value={searchTerm}
+                onChange={(el) => {
+                  setSearchText(el.target.value)
+                }}
+              />
+
+            </div>
+          )}
+          {!showSearch && (
+            <div className="EnumFacetFilter__checkAll">
+              <Checkbox
+                className="EnumFacetFilter__checkbox"
+                onChange={() => onClear(columnModel.name)}
+                key="select_all"
+                checked={facetValues.filter(item => item.isSelected).length === 0}
+                label="All"
+                id="select_all"
+              ></Checkbox>
+              <button
+                className="EnumFacetFilter__searchbtn"
+                onClick={() => {
+                  setShowSearch(true)
+                }}
+              >
+                <FontAwesomeIcon
+                  className="EnumFacetFilter__searchicon"
+                  icon={'search'}
+                />
+              </button>
+            </div>
+          )}
         </div>
         <div>
           {formatFacetValuesForDisplay(
