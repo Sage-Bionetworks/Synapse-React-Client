@@ -265,14 +265,10 @@ export default function AccessRequirementList({
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isSignedIn} />
         <div>
-          {!token && (
+          {!isSignedIn && (
             <p className="AccessRequirementList__signin">
               <button
-                className={`${
-                  SynapseConstants.SRC_SIGN_IN_CLASS
-                } sign-in-btn_access-requirement ${
-                  isSignedIn ? 'default' : 'blue'
-                }`}
+                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
               >
                 Sign in
               </button>

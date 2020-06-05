@@ -223,6 +223,7 @@ export default class HasAccess extends React.Component<
             )
             this.setState({
               fileHandleDownloadType,
+              isGettingEntityInformation: false,
             })
           })
         } else {
