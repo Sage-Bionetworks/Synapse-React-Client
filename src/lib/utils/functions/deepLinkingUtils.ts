@@ -3,7 +3,6 @@ import { Query } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { parseEntityIdFromSqlStatement } from './sqlFunctions'
 
-
 //id consists of a component class/function name and it's index
 function getComponentSearchHashId(
   componentName: string,
@@ -12,13 +11,13 @@ function getComponentSearchHashId(
   return `${componentName}${componentIndex}`
 }
 
-//returns updated search string with the component's info 
+//returns updated search string with the component's info
 function patchSearchString(
   componentSearchHashId: string,
   stringifiedQuery: string,
 ): string | undefined {
   const searchString = window.location.search
-  
+
   const searchFragment = `${componentSearchHashId}=${stringifiedQuery}`
   if (!searchString) {
     return searchFragment
@@ -72,13 +71,13 @@ export function getSearchParamValueFromUrl(
 //updates the url with the components new search params
 export function updateUrlWithNewSearchParam(
   componentName: string,
-  componentIndex: number|undefined,
+  componentIndex: number | undefined,
   stringifiedQuery: string,
 ) {
-  const componentSearchHashId = componentIndex !== undefined? getComponentSearchHashId(
-    componentName,
-    componentIndex,
-  ) : componentName
+  const componentSearchHashId =
+    componentIndex !== undefined
+      ? getComponentSearchHashId(componentName, componentIndex)
+      : componentName
   const searchString = patchSearchString(
     componentSearchHashId,
     stringifiedQuery,
@@ -92,28 +91,29 @@ export function updateUrlWithNewSearchParam(
 }
 
 export function getQueryRequestFromLink(
-    componentName: string,
-    componentIndex: number,
-  ): QueryBundleRequest | undefined {
-    const searchParamValue = getSearchParamValueFromUrl(
-      componentName,
-      componentIndex,
-    )
-  
-    let initQueryRequest: QueryBundleRequest | undefined = undefined
-    if (searchParamValue) {
-      const query = JSON.parse(searchParamValue) as Query
-      if (query.sql) {
-        initQueryRequest = {
-          concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-          entityId: parseEntityIdFromSqlStatement(query.sql),
-          query: query,
-        }
+  componentName: string,
+  componentIndex: number,
+): QueryBundleRequest | undefined {
+  const searchParamValue = getSearchParamValueFromUrl(
+    componentName,
+    componentIndex,
+  )
+
+  let initQueryRequest: QueryBundleRequest | undefined = undefined
+  if (searchParamValue) {
+    const query = JSON.parse(searchParamValue) as Query
+    if (query.sql) {
+      initQueryRequest = {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        partMask:
+          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+          SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+        entityId: parseEntityIdFromSqlStatement(query.sql),
+        query,
       }
     }
-    return initQueryRequest
   }
+  return initQueryRequest
+}
