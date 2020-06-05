@@ -151,7 +151,10 @@ export default function AccessRequirementList({
     getAccessRequirements()
   }, [token, entityId, accessRequirementFromProps, shouldUpdateData])
 
-  const isSignedIn: boolean = token !== undefined
+  // Using Boolean(value) converts undefined,null, 0,'',false -> false
+  // one alternative to using Boolean(value) is the double bang operator !!value,
+  // but doesn't ready well
+  const isSignedIn: boolean = Boolean(token)
 
   /**
    * Returns rendering for the access requirement.
