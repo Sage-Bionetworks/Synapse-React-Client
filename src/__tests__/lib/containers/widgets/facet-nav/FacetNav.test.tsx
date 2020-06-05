@@ -33,6 +33,7 @@ function createTestProps(overrides?: FacetNavProps): FacetNavProps {
       showColumnFilter: true,
       showSearchBar: true,
       showDownloadConfirmation: false,
+      showColumnSelectDropdown: false,
     },
   }
 }
@@ -86,7 +87,7 @@ describe('facets display hide/show', () => {
     ).toBe(true)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Show More')
+    ).toBe('Show All Graphs')
   })
 
   it('when show more is clicked', async () => {
@@ -101,7 +102,7 @@ describe('facets display hide/show', () => {
     ).toBe(false)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Show Less')
+    ).toBe('Hide Optional Graphs')
     fireEvent.click(button!)
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[2]),
@@ -111,7 +112,7 @@ describe('facets display hide/show', () => {
     ).toBe(true)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Show More')
+    ).toBe('Show All Graphs')
   })
 
   it('if there are only 4 facets show more button should not exist', async () => {

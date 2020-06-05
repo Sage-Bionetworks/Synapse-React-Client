@@ -151,7 +151,10 @@ export default function AccessRequirementList({
     getAccessRequirements()
   }, [token, entityId, accessRequirementFromProps, shouldUpdateData])
 
-  const isSignedIn: boolean = token !== undefined
+  // Using Boolean(value) converts undefined,null, 0,'',false -> false
+  // one alternative to using Boolean(value) is the double bang operator !!value,
+  // but doesn't ready well
+  const isSignedIn: boolean = Boolean(token)
 
   /**
    * Returns rendering for the access requirement.
@@ -262,14 +265,10 @@ export default function AccessRequirementList({
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isSignedIn} />
         <div>
-          {!token && (
+          {!isSignedIn && (
             <p className="AccessRequirementList__signin">
               <button
-                className={`${
-                  SynapseConstants.SRC_SIGN_IN_CLASS
-                } sign-in-btn_access-requirement ${
-                  isSignedIn ? 'default' : 'blue'
-                }`}
+                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
               >
                 Sign in
               </button>

@@ -36,7 +36,6 @@ export default function ACTAccessRequirementComponent({
       token={token}
       user={user}
       wikiPage={wikiPage}
-      showButton={false}
       onHide={onHide}
     />
   )
