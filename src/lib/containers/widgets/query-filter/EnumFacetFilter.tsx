@@ -73,6 +73,22 @@ function formatFacetValuesForDisplay(
   }
 }
 
+function updateFilteredView(
+  facetValues: FacetColumnResultValueCount[],
+  isSelected: boolean,
+  setFilteredValues: Function
+) {
+  if (facetValues.length) {
+    facetValues.map(obj => {
+      obj.isSelected = isSelected
+      return obj
+    })
+    console.log("What's in facet values", facetValues)
+  }
+  console.log("facet length: ", facetValues.length)
+  setFilteredValues(facetValues)
+}
+
 /************* QUERY ENUM CONMPONENT  *************/
 
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
@@ -87,6 +103,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
+  const [filteredValues, setFilteredValues] = useState(facetValues)
   const visibleItemsCount = 5
 
   const userIds =
@@ -140,6 +157,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 className="EnumFacetFilter__resetSearch"
                 onClick={() => {
                   setSearchText('')
+                  updateFilteredView(facetValues, false, setFilteredValues)
                 }}
               >
                 <FontAwesomeIcon
@@ -151,8 +169,27 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 type="text"
                 placeholder="Find values"
                 value={searchTerm}
-                onChange={(el) => {
-                  setSearchText(el.target.value)
+                onChange={(e) => {
+
+                  const inputValue:string = e.target.value.trim()
+                  setSearchText(inputValue)
+
+                  // after no match found, make sure reset filtered values back
+                  // to default list when onChange event fires
+                  if (filteredValues.length <= 0) {
+                    setFilteredValues(facetValues)
+                  }
+
+                  if (!inputValue) { // if input field is empty, display full facet values
+                    updateFilteredView(facetValues, false, setFilteredValues)
+                  } else {
+                    const filtered = filteredValues.filter((obj) => {
+                      const label = valueToLabel(obj, userProfiles, entityHeaders)
+                      return label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+                    })
+                    updateFilteredView(filtered, true, setFilteredValues)
+                  }
+
                 }}
               />
 
@@ -183,8 +220,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           )}
         </div>
         <div>
-          {formatFacetValuesForDisplay(
-            facetValues,
+          {filteredValues.length > 0 && formatFacetValuesForDisplay(
+            filteredValues,
             isShowAll,
             visibleItemsCount,
           ).map((facet, index: number) => {
@@ -208,7 +245,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               </div>
             )
           })}
-          {!isShowAll && facetValues.length > visibleItemsCount && (
+          {!isShowAll && (filteredValues.length > 0) && (filteredValues.length > visibleItemsCount) && (
             <button
               className="EnumFacetFilter__showMoreFacetsBtn"
               onClick={() => setIsShowAll(true)}
@@ -218,10 +255,15 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                   Show more
                 </div>
                 <div className="EnumFacetFilter__howMoreFacetsCount">
-                  {facetValues.length}
+                  {filteredValues.length}
                 </div>
               </div>
             </button>
+          )}
+          {filteredValues.length <= 0 && (
+            <div className="EnumFacetFilter__noMatch">
+              No match found
+            </div>
           )}
         </div>
       </div>

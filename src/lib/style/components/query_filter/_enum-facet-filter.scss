@@ -41,7 +41,6 @@ $input-icon-margin: 5px;
       top: 50%;
       transform: translateY(-50%);
     }
-
   }
 
   &__closeSearch {
@@ -99,6 +98,10 @@ $input-icon-margin: 5px;
     margin-left: 10px;
     align-self: center;
     color: $gray-deemphasized;
+  }
+
+  &__noMatch {
+    margin-top: 10px;
   }
 
 }
