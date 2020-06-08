@@ -226,7 +226,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       setIsLoading(true)
 
       const isDescending =
-        column === sortedColumn.column ? !sortedColumn.isDescending : true
+        column === sortedColumn.column ? !sortedColumn.isDescending : false
 
       setSortedColumn({
         column,
@@ -365,6 +365,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           : faSortAmountUp
                         : faSortAmountDown
                     }
+                    color={sortedColumn.column === 'file' ? 'white' : ''}
                   />
                 </button>
               </th>
@@ -389,6 +390,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           : faSortAmountUp
                         : faSortAmountDown
                     }
+                    color={sortedColumn.column === 'createdBy' ? 'white' : ''}
                   />
                 </button>
               </th>
@@ -412,6 +414,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           : faSortAmountUp
                         : faSortAmountDown
                     }
+                    color={sortedColumn.column === 'createdOn' ? 'white' : ''}
                   />
                 </button>
               </th>
@@ -435,6 +438,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           : faSortAmountUp
                         : faSortAmountDown
                     }
+                    color={sortedColumn.column === 'size' ? 'white' : ''}
                   />
                 </button>
               </th>
