@@ -36,7 +36,6 @@ import AccessRequirementList, {
 } from '../access_requirement_list/AccessRequirementList'
 
 import {
-  faSort,
   faSortAmountDown,
   faSortAmountUp,
 } from '@fortawesome/free-solid-svg-icons'
@@ -276,6 +275,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         createdOn = requestedFile?.createdOn
       }
     }
+    createdBy = userProfiles.find(el => el.ownerId === createdBy)?.userName
+
     return { fileName, createdBy, createdOn, contentSize }
   }
 
@@ -304,14 +305,18 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     switch (column) {
       case 'file':
         return fileName_B?.localeCompare(fileName_A!)! * direction
-      case 'access':
-        return 1
       case 'createdBy':
         return createdBy_B?.localeCompare(createdBy_A!)! * direction
       case 'createdOn':
         return createdOn_B?.localeCompare(createdOn_A!)! * direction
       case 'size':
-        return (contentSize_B! - contentSize_A!) * direction
+        if (contentSize_A && !contentSize_B) {
+          return -1
+        } else if (contentSize_B && !contentSize_A) {
+          return 1
+        } else {
+          return (contentSize_B! - contentSize_A!) * direction
+        }
       default:
         return 1
     }
@@ -343,7 +348,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               <th>
                 File
                 <button
-                  className="sort"
+                  className={`sort SRC-primary-background-color-hover ${
+                    sortedColumn.column === 'file'
+                      ? 'SRC-primary-background-color'
+                      : ''
+                  }`}
                   onClick={() => {
                     sortColumn('file')
                   }}
@@ -359,16 +368,15 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   />
                 </button>
               </th>
-              <th>
-                Access
-                <button className="sort" onClick={() => sortColumn('access')}>
-                  <FontAwesomeIcon icon={faSort} />
-                </button>
-              </th>
+              <th>Access</th>
               <th>
                 Created By
                 <button
-                  className="sort"
+                  className={`sort SRC-primary-background-color-hover ${
+                    sortedColumn.column === 'createdBy'
+                      ? 'SRC-primary-background-color'
+                      : ''
+                  }`}
                   onClick={() => {
                     sortColumn('createdBy')
                   }}
@@ -387,7 +395,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               <th>
                 Created On
                 <button
-                  className="sort"
+                  className={`sort SRC-primary-background-color-hover ${
+                    sortedColumn.column === 'createdOn'
+                      ? 'SRC-primary-background-color'
+                      : ''
+                  }`}
                   onClick={() => {
                     sortColumn('createdOn')
                   }}
@@ -406,7 +418,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               <th>
                 Size
                 <button
-                  className="sort"
+                  className={`sort SRC-primary-background-color-hover ${
+                    sortedColumn.column === 'size'
+                      ? 'SRC-primary-background-color'
+                      : ''
+                  }`}
                   onClick={() => {
                     sortColumn('size')
                   }}
