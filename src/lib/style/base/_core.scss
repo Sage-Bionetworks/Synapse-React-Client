@@ -941,26 +941,6 @@ button {
   margin: 10px;
 }
 
-.SRC-SIGN-IN-CLASS.sign-in-btn {
-  &.AccessRequirementList {
-    margin-top: 5px;
-
-    &.default {
-      padding: 15px 5px 0px 0px;
-      color: black;
-    }
-    &.blue {
-      padding: 15px 5px 0px 0px;
-      color: $primary-action-color;
-    }
-  }
-
-  &.default {
-    padding-left: 5px;
-    color: $primary-action-color;
-  }
-}
-
 a.dropdown-item {
   $color: #212529;
   display: block;

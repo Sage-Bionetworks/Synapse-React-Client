@@ -37,8 +37,10 @@
     padding-left: 25px;
   }
 
-  &__AccessRequirementList__signin .terms-of-use-content {
-    margin-top: 20px;
+  &__signin {
+    button {
+      padding-left: 0px;
+    }
   }
 
   .button-container {

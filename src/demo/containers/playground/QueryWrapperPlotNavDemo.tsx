@@ -31,7 +31,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
    */
   constructor(props: any) {
     super(props)
-    const sql: string = 'SELECT * FROM syn16858331'
+    const sql: string = 'SELECT * FROM syn11346063'
     this.state = {
       isLoading: true,
       ownerId: '',
@@ -40,6 +40,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
       propsWithTable: {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
+          showAccessColumn: true,
         },
         searchConfiguration: {
           searchable: [
@@ -63,7 +64,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        entityId: 'syn16858331',
+        entityId: 'syn11346063',
         // facetsToPlot: ['assay', 'dataType'],
         loadingScreen: (
           <div>
@@ -76,7 +77,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        entityId: 'syn16858331',
+        entityId: 'syn11346063',
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: {
@@ -195,11 +196,11 @@ class QueryWrapperPlotNavDemo extends React.Component<
         </button>
         <QueryWrapperPlotNav token={this.props.token} {...propsForPlotNav} />
         <hr></hr>
-        <h3>Now with custom commands</h3>
-        <QueryWrapperPlotNav
+        {/* <h3>Now with custom commands</h3> */}
+        {/* <QueryWrapperPlotNav
           token={this.props.token}
           {...this.state.propsWithCustomCommands}
-        />
+        /> */}
       </div>
     )
   }
