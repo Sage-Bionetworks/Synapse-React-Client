@@ -155,8 +155,7 @@ export default class HasAccess extends React.Component<
   }
 
   componentDidUpdate(prevProps: HasAccessProps) {
-    const forceRefresh =
-      prevProps.token === undefined && this.props.token !== undefined
+    const forceRefresh = prevProps.token !== this.props.token
     // if there token has updated then force refresh the component state
     this.refresh(forceRefresh)
   }
@@ -211,7 +210,7 @@ export default class HasAccess extends React.Component<
     // fileHandle was not passed to us, ask for it.
     // is this a FileEntity?
     return SynapseClient.getEntity(token, entityId, entityVersionNumber)
-      .then((entity) => {
+      .then(entity => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
           return SynapseClient.getFileEntityFileHandle(
@@ -224,6 +223,7 @@ export default class HasAccess extends React.Component<
             )
             this.setState({
               fileHandleDownloadType,
+              isGettingEntityInformation: false,
             })
           })
         } else {
@@ -235,7 +235,7 @@ export default class HasAccess extends React.Component<
           return Promise.resolve()
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error on get Entity = ', err)
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
@@ -258,12 +258,12 @@ export default class HasAccess extends React.Component<
       objectId: entityId,
     }
     return SynapseClient.getRestrictionInformation(request, token)
-      .then((restrictionInformation) => {
+      .then(restrictionInformation => {
         this.setState({
           restrictionInformation,
         })
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error on getRestrictionInformation: ', err)
       })
       .finally(() => {
@@ -326,7 +326,7 @@ export default class HasAccess extends React.Component<
   handleGetAccess = () => {
     const { token, entityId, set_arPropsFromHasAccess } = this.props
     SynapseClient.getAllAccessRequirements(token, entityId).then(
-      (requirements) => {
+      requirements => {
         if (checkHasUnsportedRequirement(requirements)) {
           window.open(
             `${getEndpoint(

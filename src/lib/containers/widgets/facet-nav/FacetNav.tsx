@@ -274,7 +274,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                 className="btn btn-default FacetNav__showMore"
                 onClick={() => onShowMoreClick(showMoreState === 'MORE')}
               >
-                {showMoreState === 'LESS' ? 'Hide Optional Graphs' : 'Show All Graphs'}
+                {showMoreState === 'LESS'
+                  ? 'Hide Optional Graphs'
+                  : 'Show All Graphs'}
               </button>
             )}
           </div>
