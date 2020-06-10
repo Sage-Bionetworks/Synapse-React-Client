@@ -73,16 +73,6 @@ function formatFacetValuesForDisplay(
   }
 }
 
-function resetFacetValues(
-  facetValues: FacetColumnResultValueCount[],
-  setFilteredSet: Function
-) {
-  facetValues.forEach((obj) => {
-    obj.isSelected = false
-  })
-  setFilteredSet(facetValues)
-}
-
 /************* QUERY ENUM CONMPONENT  *************/
 
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
@@ -119,6 +109,30 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     token,
     type: 'ENTITY_HEADER',
   })
+
+  const handleTextInputFilterEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue:string = e.target.value.trim()
+    const filtered: FacetColumnResultValueCount[] = []
+    setSearchText(inputValue)
+
+    if (!inputValue) { // if input field is empty, display all facet values
+      facetValues.forEach((obj) => {
+        obj.isSelected = false
+      })
+      setFilteredSet(facetValues)
+    } else { // display only facet values that contain text from the text input field
+      facetValues.forEach((obj) => {
+        const label = valueToLabel(obj, userProfiles, entityHeaders)
+        if (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) {
+          obj.isSelected = true
+          filtered.push(obj)
+        } else {
+          obj.isSelected = false
+        }
+      })
+      setFilteredSet(filtered)
+    }
+  }
 
   if (!columnModel) {
     return <></>
@@ -163,24 +177,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 placeholder="Find values"
                 value={searchTerm}
                 onChange={(e) => {
-                  const inputValue:string = e.target.value.trim()
-                  setSearchText(inputValue)
-                  const filtered: FacetColumnResultValueCount[] = []
-
-                  if (!inputValue) { // if input field is empty, display full facet values
-                    resetFacetValues(facetValues, setFilteredSet)
-                  } else {
-                    facetValues.forEach((obj) => {
-                      const label = valueToLabel(obj, userProfiles, entityHeaders)
-                      if (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) {
-                        obj.isSelected = true
-                        filtered.push(obj)
-                      } else {
-                        obj.isSelected = false
-                      }
-                    })
-                    setFilteredSet(filtered)
-                  }
+                  handleTextInputFilterEvent(e)
                 }}
               />
 
