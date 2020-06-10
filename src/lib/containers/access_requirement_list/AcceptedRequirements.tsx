@@ -57,9 +57,9 @@ export default function AcceptedRequirements({
       window.location.hostname === 'www.synapse.org' ||
       window.location.hostname === 'staging.synapse.org'
     ) {
-      acceptButtonText = 'Get access'
+      acceptButtonText = 'Request access'
     } else {
-      acceptButtonText = 'Get access via Synapse.org'
+      acceptButtonText = 'Request access via Synapse.org'
     }
   } else {
     acceptButtonText = 'I Accept Terms of Use'
@@ -169,7 +169,7 @@ export default function AcceptedRequirements({
           <RenderAcceptedRequirements />
         </div>
       </div>
-      {showButton ?? (
+      {token ? (showButton ?? (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
@@ -183,7 +183,8 @@ export default function AcceptedRequirements({
             </button>
           </div>
         </div>
-      )}
+        )) : <></>
+      }
     </div>
   )
 }
