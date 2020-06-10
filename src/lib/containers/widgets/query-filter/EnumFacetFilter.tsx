@@ -151,7 +151,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 className="EnumFacetFilter__resetSearch"
                 onClick={() => {
                   setSearchText('')
-                  resetFacetValues(facetValues, setFilteredSet)
                 }}
               >
                 <FontAwesomeIcon
