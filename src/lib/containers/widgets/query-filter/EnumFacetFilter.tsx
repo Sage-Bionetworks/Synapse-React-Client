@@ -73,20 +73,14 @@ function formatFacetValuesForDisplay(
   }
 }
 
-function updateFilteredView(
+function resetFacetValues(
   facetValues: FacetColumnResultValueCount[],
-  isSelected: boolean,
-  setFilteredValues: Function
+  setFilteredSet: Function
 ) {
-  if (facetValues.length) {
-    facetValues.map(obj => {
-      obj.isSelected = isSelected
-      return obj
-    })
-    console.log("What's in facet values", facetValues)
-  }
-  console.log("facet length: ", facetValues.length)
-  setFilteredValues(facetValues)
+  facetValues.forEach((obj) => {
+    obj.isSelected = false
+  })
+  setFilteredSet(facetValues)
 }
 
 /************* QUERY ENUM CONMPONENT  *************/
@@ -103,7 +97,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
-  const [filteredValues, setFilteredValues] = useState(facetValues)
+  const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(facetValues)
   const visibleItemsCount = 5
 
   const userIds =
@@ -157,7 +151,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 className="EnumFacetFilter__resetSearch"
                 onClick={() => {
                   setSearchText('')
-                  updateFilteredView(facetValues, false, setFilteredValues)
+                  resetFacetValues(facetValues, setFilteredSet)
                 }}
               >
                 <FontAwesomeIcon
@@ -170,26 +164,24 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 placeholder="Find values"
                 value={searchTerm}
                 onChange={(e) => {
-
                   const inputValue:string = e.target.value.trim()
                   setSearchText(inputValue)
-
-                  // after no match found, make sure reset filtered values back
-                  // to default list when onChange event fires
-                  if (filteredValues.length <= 0) {
-                    setFilteredValues(facetValues)
-                  }
+                  const filtered: FacetColumnResultValueCount[] = []
 
                   if (!inputValue) { // if input field is empty, display full facet values
-                    updateFilteredView(facetValues, false, setFilteredValues)
+                    resetFacetValues(facetValues, setFilteredSet)
                   } else {
-                    const filtered = filteredValues.filter((obj) => {
+                    facetValues.forEach((obj) => {
                       const label = valueToLabel(obj, userProfiles, entityHeaders)
-                      return label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+                      if (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) {
+                        obj.isSelected = true
+                        filtered.push(obj)
+                      } else {
+                        obj.isSelected = false
+                      }
                     })
-                    updateFilteredView(filtered, true, setFilteredValues)
+                    setFilteredSet(filtered)
                   }
-
                 }}
               />
 
@@ -220,8 +212,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           )}
         </div>
         <div>
-          {filteredValues.length > 0 && formatFacetValuesForDisplay(
-            filteredValues,
+          {filteredSet.length > 0 && formatFacetValuesForDisplay(
+            filteredSet,
             isShowAll,
             visibleItemsCount,
           ).map((facet, index: number) => {
@@ -245,7 +237,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               </div>
             )
           })}
-          {!isShowAll && (filteredValues.length > 0) && (filteredValues.length > visibleItemsCount) && (
+          {!isShowAll && filteredSet.length > visibleItemsCount && (
             <button
               className="EnumFacetFilter__showMoreFacetsBtn"
               onClick={() => setIsShowAll(true)}
@@ -255,12 +247,12 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                   Show more
                 </div>
                 <div className="EnumFacetFilter__howMoreFacetsCount">
-                  {filteredValues.length}
+                  {filteredSet.length}
                 </div>
               </div>
             </button>
           )}
-          {filteredValues.length <= 0 && (
+          {filteredSet.length <= 0 && (
             <div className="EnumFacetFilter__noMatch">
               No match found
             </div>
