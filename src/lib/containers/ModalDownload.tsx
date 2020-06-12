@@ -18,7 +18,7 @@ import {
   includeRowIdAndRowVersionOption,
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
-import { parseEntityIdFromSqlStatement } from 'lib/utils/functions/sqlFunctions'
+import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 
 library.add(faTimes)
 

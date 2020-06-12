@@ -8,7 +8,7 @@ import {
   QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import ProgrammaticOptions from './ProgrammaticOptions'
-import ModalDownload from 'lib/containers/ModalDownload'
+import ModalDownload from '../../../containers/ModalDownload'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 

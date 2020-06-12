@@ -1003,7 +1003,7 @@ export const setSessionTokenCookie = async (
 ) => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
-      cookies.remove(SESSION_TOKEN_COOKIE_KEY)
+      cookies.remove(SESSION_TOKEN_COOKIE_KEY, { path: '/' })
       // See - https://github.com/reactivestack/cookies/issues/189
       await delay(100)
     } else {
@@ -1011,6 +1011,7 @@ export const setSessionTokenCookie = async (
       cookies.set(SESSION_TOKEN_COOKIE_KEY, token, {
         // expires in a day
         maxAge: 60 * 60 * 24,
+        path: '/',
       })
     }
     sessionCallback()
