@@ -42,7 +42,6 @@ import {
 import { getColorPallette } from '../ColorGradient'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
-import ModalDownload from '../ModalDownload'
 import { FacetSelection, QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
@@ -110,6 +109,8 @@ export type SynapseTableState = {
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   showColumnSelection: boolean
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
+  isFetchingEntityHeaders: boolean
+  isFetchingEntityVersion: boolean
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -157,16 +158,18 @@ export default class SynapseTable extends React.Component<
       sortedColumnSelection: [],
       mapEntityIdToHeader: {},
       mapUserIdToHeader: {},
+      isFetchingEntityHeaders: false,
+      isFetchingEntityVersion: false,
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
 
   componentDidMount() {
-    this.getEntityHeadersInData()
+    this.getEntityHeadersInData(true)
   }
 
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
-    this.getEntityHeadersInData()
+    this.getEntityHeadersInData(prevProps.token !== this.props.token)
     this.getTableConcreteType(prevProps)
   }
 
@@ -176,22 +179,36 @@ export default class SynapseTable extends React.Component<
     const { data, token } = this.props
     if (!data) {
       return
+    } else if (
+      this.state.isFetchingEntityVersion &&
+      prevProps.token === this.props.token
+    ) {
+      return
     }
+    this.setState({
+      isFetchingEntityVersion: true,
+    })
     const currentTableId = data?.queryResult.queryResults.tableId
     const previousTableId = prevProps.data?.queryResult.queryResults.tableId
     if (currentTableId && previousTableId !== currentTableId) {
       const entityData = await SynapseClient.getEntity(token, currentTableId)
       this.setState({
         isFileView: entityData.concreteType.includes('EntityView'),
+        isFetchingEntityVersion: false,
       })
     }
   }
 
-  public async getEntityHeadersInData() {
+  public async getEntityHeadersInData(forceRefresh: boolean) {
     const { data, token } = this.props
     if (!data) {
       return
+    } else if (this.state.isFetchingEntityHeaders && !forceRefresh) {
+      return
     }
+    this.setState({
+      isFetchingEntityHeaders: true,
+    })
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = getColumnIndiciesWithType(
@@ -233,27 +250,23 @@ export default class SynapseTable extends React.Component<
         console.error('Error on retrieving entity header list , ', err)
       }
     }
-    if (distinctUserIds.size === 0) {
-      if (distinctEntityIds.size > 0) {
-        this.setState({ mapEntityIdToHeader })
-      }
-      return
-    }
-    // Make call to get group headers and user profiles
-    const ids = Array.from(distinctUserIds)
     const userPorfileIds: string[] = []
-    // TODO: Grab Team Badge
-    try {
-      const data = await SynapseClient.getGroupHeadersBatch(ids, token)
-      data.children.forEach(el => {
-        if (el.isIndividual) {
-          userPorfileIds.push(el.ownerId)
-        } else {
-          mapUserIdToHeader[el.ownerId] = el
-        }
-      })
-    } catch (err) {
-      console.error('Error on getGroupHeaders batch: ', err)
+    if (distinctUserIds.size > 0) {
+      // Make call to get group headers and user profiles
+      const ids = Array.from(distinctUserIds)
+      // TODO: Grab Team Badge
+      try {
+        const data = await SynapseClient.getGroupHeadersBatch(ids, token)
+        data.children.forEach(el => {
+          if (el.isIndividual) {
+            userPorfileIds.push(el.ownerId)
+          } else {
+            mapUserIdToHeader[el.ownerId] = el
+          }
+        })
+      } catch (err) {
+        console.error('Error on getGroupHeaders batch: ', err)
+      }
     }
     if (userPorfileIds.length > 0) {
       try {
@@ -272,6 +285,7 @@ export default class SynapseTable extends React.Component<
       this.setState({
         mapEntityIdToHeader,
         mapUserIdToHeader,
+        isFetchingEntityHeaders: false,
       })
     }
   }
@@ -298,9 +312,8 @@ export default class SynapseTable extends React.Component<
     const { rows } = queryResults
     const { headers } = queryResults
     const { facets = [] } = data
-    const { isModalDownloadOpen, isExpanded } = this.state
+    const { isExpanded } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
-    const { sql, selectedFacets } = queryRequest.query
 
     let className = ''
     if (showBarChart) {
@@ -360,18 +373,6 @@ export default class SynapseTable extends React.Component<
     )
     return (
       <React.Fragment>
-        {
-          // modal can render anywhere, this is not a particular location
-          isModalDownloadOpen && (
-            <ModalDownload
-              onClose={() => this.setState({ isModalDownloadOpen: false })}
-              sql={sql}
-              selectedFacets={selectedFacets}
-              token={token}
-              entityId={queryRequest.entityId}
-            />
-          )
-        }
         {isExpanded && (
           <Modal
             animation={false}
@@ -406,16 +407,13 @@ export default class SynapseTable extends React.Component<
   }
 
   private renderDropdownDownloadOptions = (isFileView?: boolean) => {
-    const partialState = {
-      isModalDownloadOpen: true,
-      isExpanded: false,
-    }
     return (
       <DownloadOptions
         onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
-        onExportMetadata={() => this.setState(partialState)}
-        isUnauthenticated={!this.props.token}
+        token={this.props.token}
         isFileView={isFileView && !this.props.hideDownload}
+        queryBundleRequest={this.props.getLastQueryRequest!()}
+        queryResultBundle={this.props.data!}
       />
     )
   }

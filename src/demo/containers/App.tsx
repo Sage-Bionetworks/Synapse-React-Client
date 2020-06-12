@@ -45,10 +45,12 @@ export default class App extends React.Component<{}, AppState> {
       })
   }
 
-  getSession = () => {
+  getSession = async () => {
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken => this.handleChange({ token: sessionToken }))
+      .then(sessionToken => {
+        this.handleChange({ token: sessionToken })
+      })
       .catch((error: any) => {
         console.error(error)
       })

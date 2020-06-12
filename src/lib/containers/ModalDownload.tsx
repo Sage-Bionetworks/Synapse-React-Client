@@ -8,8 +8,8 @@ import { SynapseClient } from '../utils'
 import {
   DownloadFromTableRequest,
   DownloadFromTableResult,
-  FacetColumnRequest,
   SortItem,
+  QueryBundleRequest,
 } from '../utils/synapseTypes/'
 import {
   csvOption,
@@ -18,6 +18,7 @@ import {
   includeRowIdAndRowVersionOption,
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
+import { parseEntityIdFromSqlStatement } from 'lib/utils/functions/sqlFunctions'
 
 library.add(faTimes)
 
@@ -29,12 +30,10 @@ export type ModalDownloadState = {
 }
 
 export type ModalDownloadProps = {
-  entityId: string
-  sql: string
   onClose: (...args: any[]) => void
   token?: string
   includeEntityEtag?: boolean
-  selectedFacets?: FacetColumnRequest[] // The selected facet filters.
+  queryBundleRequest: QueryBundleRequest
   isConsistent?: boolean
   offset?: number
   limit?: number
@@ -72,14 +71,17 @@ export default class ModalDownload extends React.Component<
     const { formData } = event
     const fileType = formData['File Type']
     const contents = formData.Contents as string[]
-    const { token, onClose, ...rest } = this.props
+    const { token, queryBundleRequest } = this.props
     const separator = fileType === csvOption ? ',' : '\t'
     const writeHeader = contents.includes(writeHeaderOption)
     const includeRowIdAndRowVersion = contents.includes(
       includeRowIdAndRowVersionOption,
     )
+    const sql = queryBundleRequest.query.sql
     const downloadFromTableRequest: DownloadFromTableRequest = {
-      ...rest,
+      sql,
+      entityId: parseEntityIdFromSqlStatement(sql),
+      selectedFacets: queryBundleRequest.query.selectedFacets,
       concreteType:
         'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
       writeHeader,
