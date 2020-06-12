@@ -101,7 +101,6 @@ export interface Dictionary<T> {
 export type SynapseTableState = {
   sortedColumnSelection: SortItem[]
   columnIconSortState: number[]
-  isModalDownloadOpen: boolean
   isDownloadConfirmationOpen: boolean
   isExpanded: boolean
   isFileView: boolean
@@ -147,7 +146,6 @@ export default class SynapseTable extends React.Component<
           2 - show ascending icon selected
       */
       columnIconSortState: [],
-      isModalDownloadOpen: false,
       isDownloadConfirmationOpen: false,
       isExpanded: false,
       showColumnSelection: false,
@@ -185,12 +183,12 @@ export default class SynapseTable extends React.Component<
     ) {
       return
     }
-    this.setState({
-      isFetchingEntityVersion: true,
-    })
     const currentTableId = data?.queryResult.queryResults.tableId
     const previousTableId = prevProps.data?.queryResult.queryResults.tableId
     if (currentTableId && previousTableId !== currentTableId) {
+      this.setState({
+        isFetchingEntityVersion: true,
+      })
       const entityData = await SynapseClient.getEntity(token, currentTableId)
       this.setState({
         isFileView: entityData.concreteType.includes('EntityView'),
@@ -523,7 +521,6 @@ export default class SynapseTable extends React.Component<
     const background = colorPalette[0]
     const onDownloadTableOnlyArguments = {
       isExpanded: false,
-      isModalDownloadOpen: true,
     }
     const onExpandArguments = {
       isExpanded: !isExpanded,
