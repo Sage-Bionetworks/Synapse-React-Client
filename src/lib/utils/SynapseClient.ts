@@ -64,6 +64,10 @@ import {
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import { TableUpdateTransactionRequest } from './synapseTypes/Table/TableUpdate'
+import {
+  TransformSqlWithFacetsRequest,
+  SqlTransformResponse,
+} from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 
 const cookies = new UniversalCookies()
 
@@ -95,7 +99,7 @@ export const getRootURL = () => {
  * @returns after t milliseconds
  */
 export function delay(t: number) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(resolve.bind(null, {}), t)
   })
 }
@@ -122,14 +126,14 @@ const fetchWithExponentialTimeout = <T>(
   retries: number = 5,
 ): Promise<T> => {
   return fetch(url, options)
-    .then((resp) => {
+    .then(resp => {
       if ((retries > 0 && resp.status === 429) || resp.status === 0) {
         // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
         return retryFetch<T>(url, options, delayMs)
       }
       return resp
         .text()
-        .then((text) => {
+        .then(text => {
           // try to parse it as json
           try {
             const json = JSON.parse(text)
@@ -161,7 +165,7 @@ const fetchWithExponentialTimeout = <T>(
           })
         })
     })
-    .catch((error) => {
+    .catch(error => {
       if (
         retries === 0 ||
         (error.status && error.status !== 429 && error.status !== 0)
@@ -314,7 +318,7 @@ export const addFilesToDownloadList = (
         requestUrl,
         sessionToken,
         updateParentState,
-      ).then((data) => {
+      ).then(data => {
         dispatchDownloadListChangeEvent(data.downloadList)
         return data
       })
@@ -417,7 +421,7 @@ export const getAsyncResultFromJobId = <T>(
       // these must be the query results!
       return resp
     })
-    .catch((error) => {
+    .catch(error => {
       throw error
     })
 }
@@ -440,7 +444,7 @@ export const getQueryTableResults = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((resp) => {
+    .then(resp => {
       return getAsyncResultFromJobId<QueryResultBundle>(
         `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${resp.token}`,
         sessionToken,
@@ -747,7 +751,7 @@ export const getBulkFiles = (
         sessionToken,
       )
     })
-    .catch((err) => {
+    .catch(err => {
       console.error('Error on getBulkFiles ', err)
       return err
     })
@@ -873,12 +877,12 @@ export const getEntityWiki = (
   const objectTypeString = getObjectTypeToString(objectType!)
 
   const url = `/repo/v1/${objectTypeString?.toLocaleLowerCase()}/${ownerId}/wiki/${wikiId}`
-  return doGet(
+  return doGet<WikiPage>(
     url,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<WikiPage>
+  )
 }
 
 /**
@@ -993,18 +997,21 @@ export const getWikiAttachmentsFromEvaluation = (
  *
  * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
-export const setSessionTokenCookie = (
+export const setSessionTokenCookie = async (
   token: string | undefined,
   sessionCallback: Function,
-): void => {
+) => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
-      cookies.remove(SESSION_TOKEN_COOKIE_KEY)
+      cookies.remove(SESSION_TOKEN_COOKIE_KEY, { path: '/' })
+      // See - https://github.com/reactivestack/cookies/issues/189
+      await delay(100)
     } else {
       // set's cookie in session storage
       cookies.set(SESSION_TOKEN_COOKIE_KEY, token, {
         // expires in a day
         maxAge: 60 * 60 * 24,
+        path: '/',
       })
     }
     sessionCallback()
@@ -1017,10 +1024,10 @@ export const setSessionTokenCookie = (
       'include',
       BackendDestinationEnum.PORTAL_ENDPOINT,
     )
-      .then((_) => {
+      .then(_ => {
         sessionCallback()
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error on setting session token ', err)
       })
   }
@@ -1276,7 +1283,7 @@ export const checkUploadComplete = (
 ) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
   if (
-    status.clientSidePartsState!.every((v) => {
+    status.clientSidePartsState!.every(v => {
       return v
     })
   ) {
@@ -1295,7 +1302,7 @@ export const checkUploadComplete = (
           fileName: fileHandleName,
         })
       })
-      .catch((error) => {
+      .catch(error => {
         fileUploadReject(error)
       })
   }
@@ -1337,7 +1344,7 @@ export const startMultipartUpload = (
       // keep track of the part state client-side
       const clientSidePartsState: boolean[] = status.partsState
         .split('')
-        .map((bit) => bit === '1')
+        .map(bit => bit === '1')
       status.clientSidePartsState = clientSidePartsState
       for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
         if (!clientSidePartsState[i]) {
@@ -1363,7 +1370,7 @@ export const startMultipartUpload = (
         fileUploadReject,
       )
     })
-    .catch((error) => {
+    .catch(error => {
       fileUploadReject(error)
     })
 }
@@ -1404,7 +1411,7 @@ export const getFileEntityContent = (
           },
         )
       })
-      .catch((err) => {
+      .catch(err => {
         reject(err)
       })
   })
@@ -1446,7 +1453,7 @@ export const getFileEntityFileHandle = (
           reject(data.requestedFiles[0].failureCode)
         }
       })
-      .catch((err) => {
+      .catch(err => {
         reject(err)
       })
   })
@@ -1468,7 +1475,7 @@ export const getFileHandleContentFromID = (
       sessionToken,
     )
     Promise.all([getFileHandleByIdPromise, getFileHandlePresignedUrlPromis])
-      .then((values) => {
+      .then(values => {
         const fileHandle: FileHandle = values[0]
         const presignedUrl: string = values[1]
         return getFileHandleContent(fileHandle, presignedUrl).then(
@@ -1477,7 +1484,7 @@ export const getFileHandleContentFromID = (
           },
         )
       })
-      .catch((err) => {
+      .catch(err => {
         reject(err)
       })
   })
@@ -1498,9 +1505,9 @@ export const getFileHandleContent = (
         headers: {
           'Content-Type': fileHandle.contentType,
         },
-      }).then((response) => {
+      }).then(response => {
         // the response is always decoded using UTF-8
-        response.text().then((text) => {
+        response.text().then(text => {
           resolve(text)
         })
       })
@@ -2073,7 +2080,7 @@ export const deleteDownloadListFiles = (
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ).then((data) => {
+  ).then(data => {
     dispatchDownloadListChangeEvent(data)
     return data
   })
@@ -2087,7 +2094,7 @@ export const deleteDownloadList = (sessionToken: string | undefined) => {
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ).then((_) => {
+  ).then(_ => {
     dispatchDownloadListChangeEvent(undefined)
   })
 }
@@ -2111,7 +2118,7 @@ export const updateTable = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((resp) => {
+    .then(resp => {
       return getAsyncResultFromJobId<any>(
         `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${resp.token}`,
         sessionToken,
@@ -2121,4 +2128,16 @@ export const updateTable = (
     .catch((error: any) => {
       throw error
     })
+}
+
+export const getTransformSqlWithFacetsRequest = (
+  transformSqlWithFacetsRequest: TransformSqlWithFacetsRequest,
+) => {
+  return doPost<SqlTransformResponse>(
+    '/repo/v1/table/sql/transform',
+    transformSqlWithFacetsRequest,
+    undefined, // no auth needed
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
