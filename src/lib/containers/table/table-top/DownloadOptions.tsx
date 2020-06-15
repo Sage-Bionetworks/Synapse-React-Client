@@ -3,22 +3,40 @@ import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
+import {
+  QueryResultBundle,
+  QueryBundleRequest,
+} from '../../../utils/synapseTypes'
+import ProgrammaticOptions from './ProgrammaticOptions'
+import ModalDownload from '../../../containers/ModalDownload'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
 type DownloadOptionsProps = {
   onDownloadFiles: Function
-  onExportMetadata: Function
   isUnauthenticated?: boolean
   isFileView?: boolean
+  darkTheme?: boolean
+  token: string | undefined
+  queryResultBundle?: QueryResultBundle
+  queryBundleRequest: QueryBundleRequest
 }
 
-export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
+export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download List'
 const tooltipDownloadId = 'download'
 
 export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = props => {
-  const [showModal, setShowModal] = React.useState(false)
-  const { onDownloadFiles, onExportMetadata } = props
+  const [showLoginModal, setShowLoginModal] = React.useState(false)
+  const [showExportMetadata, setShowExportMetadata] = React.useState(false)
+  const [showProgrammaticOptions, setShowProgrammaticOptions] = React.useState(
+    false,
+  )
+  const {
+    onDownloadFiles,
+    queryResultBundle,
+    queryBundleRequest,
+    token,
+  } = props
 
   return (
     <React.Fragment>
@@ -28,33 +46,58 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           tooltipText={'Download Options'}
           image={faDownload}
           size="lg"
+          darkTheme={true}
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
           <Dropdown.Item
-            // @ts-ignore
-            onClick={onExportMetadata}
+            onClick={() => {
+              setShowExportMetadata(true)
+            }}
           >
             Export Metadata
           </Dropdown.Item>
           {props.isFileView && (
             <Dropdown.Item
               onClick={() =>
-                props.isUnauthenticated ? setShowModal(true) : onDownloadFiles()
+                props.token ? onDownloadFiles() : setShowLoginModal(true)
               }
             >
               {DOWNLOAD_FILES_MENU_TEXT}
             </Dropdown.Item>
           )}
+          <Dropdown.Item
+            // @ts-ignore
+            onClick={() => setShowProgrammaticOptions(true)}
+          >
+            Programmatic Options
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      {showModal && (
+      {showLoginModal && (
         <DownloadLoginModal
-          showModal={showModal}
-          onHide={() => setShowModal(false)}
+          showModal={showLoginModal}
+          onHide={() => setShowLoginModal(false)}
         ></DownloadLoginModal>
+      )}
+      {
+        // modal can render anywhere, this is not a particular location
+        showExportMetadata && (
+          <ModalDownload
+            onClose={() => setShowExportMetadata(false)}
+            queryBundleRequest={queryBundleRequest}
+            token={token}
+          />
+        )
+      }
+      {showProgrammaticOptions && queryResultBundle && (
+        <ProgrammaticOptions
+          onHide={() => setShowProgrammaticOptions(false)}
+          queryBundleRequest={queryBundleRequest}
+          queryResultBundle={queryResultBundle}
+        ></ProgrammaticOptions>
       )}
     </React.Fragment>
   )

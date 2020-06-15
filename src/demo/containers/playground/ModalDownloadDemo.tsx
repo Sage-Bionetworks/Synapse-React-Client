@@ -35,8 +35,16 @@ class ModalDownloadDemo extends React.Component<{}, State> {
         </button>
         {this.state.showModal && (
           <ModalDownload
-            sql={'SELECT * from syn17328596'}
-            entityId={'syn17328596'}
+            queryBundleRequest={{
+              concreteType:
+                'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+              entityId: '',
+              // @ts-ignore
+              partMask: undefined,
+              query: {
+                sql: 'SELECT * from syn17328596',
+              },
+            }}
             onClose={this.onClose}
           />
         )}
