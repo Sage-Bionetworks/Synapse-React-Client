@@ -63,7 +63,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   idForToolTip,
   callbackFn,
   tooltipText,
-  className,
+  className = '',
   imageColor,
   tooltipVisualProps = { place: 'top', type: 'dark', effect: 'solid' },
   children,

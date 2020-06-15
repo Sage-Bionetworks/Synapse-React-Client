@@ -19,7 +19,6 @@ import {
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
-import ModalDownload from '../../../lib/containers/ModalDownload'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
 import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
@@ -32,7 +31,6 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
-import { LabelLinkConfig } from 'lib/containers/CardContainerLogic'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -117,6 +115,10 @@ describe('basic functionality', () => {
   })
 
   it('updates correctly', async () => {
+    const mockEntityCall = jest.fn().mockResolvedValue({
+      concreteType: 'EntityView',
+    })
+    SynapseClient.getEntity = mockEntityCall
     const { wrapper } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
     const newTableId = 'syn123'
@@ -124,10 +126,6 @@ describe('basic functionality', () => {
     const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
     dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
     // listen to function call
-    const mockEntityCall = jest.fn().mockResolvedValue({
-      concreteType: 'EntityView',
-    })
-    SynapseClient.getEntity = mockEntityCall
     await wrapper.setProps({
       data: dataWithNewTableId,
     })
@@ -155,16 +153,6 @@ describe('basic functionality', () => {
       expect(wrapper.find(ColumnSelection).props().headers).toEqual(
         syn16787123Json.queryResult.queryResults.headers,
       )
-    })
-  })
-  describe('Download options dropdown works', () => {
-    it('isModalDownloadOpen opens the ModalDownload', async () => {
-      const { wrapper } = await createShallowComponent(props)
-      // Verify its not showing by default
-      expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      await wrapper.setState({ isModalDownloadOpen: true })
-      // See that modal download is present
-      expect(wrapper.find(ModalDownload)).toHaveLength(1)
     })
   })
   describe('Expand modal opens when isExpanded is set to true', () => {

@@ -12,3 +12,13 @@
     }
   }
 }
+.show {
+  .ElementWithTooltip {
+    &.dark-theme {
+      svg {
+        fill: $primary-action-color;
+        color: white !important;
+      }
+    }
+  }
+}

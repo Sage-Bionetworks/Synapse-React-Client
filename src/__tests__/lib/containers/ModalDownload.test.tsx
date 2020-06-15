@@ -27,8 +27,14 @@ describe('it performs the expected functionality', () => {
   SynapseClient.getDownloadFromTableRequest = mockGetDownloadFromTableRequest
   SynapseClient.getFileHandleByIdURL = jest.fn(() => 'testurl')
   const props: ModalDownloadProps = {
-    sql: 'SELECT * FROM SYN123',
-    entityId: 'SYN123',
+    queryBundleRequest: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId: 'syn',
+      partMask: 1,
+      query: {
+        sql: 'syn',
+      },
+    },
     onClose: mockClose,
   }
 
@@ -70,10 +76,7 @@ describe('it performs the expected functionality', () => {
     // // step 2 - de-select write header option
     const writerHeaderInputElement = wrapper.find(`input[type="checkbox"]`)
     expect(writerHeaderInputElement.at(0).prop('checked')).toBe(true)
-    wrapper
-      .find(`input[type="checkbox"]`)
-      .at(0)
-      .props().checked = false
+    wrapper.find(`input[type="checkbox"]`).at(0).props().checked = false
     expect(writerHeaderInputElement.at(0).prop('checked')).toBe(false)
     await wrapper.find('button[type="submit"]').simulate('submit')
     // step 2 - verify UI has download button showing
