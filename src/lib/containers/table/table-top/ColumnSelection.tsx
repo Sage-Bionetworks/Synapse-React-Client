@@ -18,6 +18,7 @@ type ColumnSelectionProps = {
   show: boolean
   toggleColumnSelection: (name: string) => void
   darkTheme?: boolean
+  facetAliases?: {}
 }
 
 const tooltipColumnSelectionId = 'addAndRemoveColumns'
@@ -25,7 +26,13 @@ const tooltipColumnSelectionId = 'addAndRemoveColumns'
 export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
   props: ColumnSelectionProps,
 ) => {
-  const { headers, isColumnSelected, toggleColumnSelection, darkTheme } = props
+  const {
+    headers,
+    isColumnSelected,
+    toggleColumnSelection,
+    darkTheme,
+    facetAliases,
+  } = props
 
   const [show, setShow] = useState(false)
   const onDropdownClick = (
@@ -90,7 +97,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
                 className={maybeShowPrimaryColor}
                 icon="check"
               />
-              {unCamelCase(name)}
+              {unCamelCase(name, facetAliases)}
             </Dropdown.Item>
           )
         })}

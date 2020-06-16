@@ -90,6 +90,7 @@ const TopLevelControls = (
     customControls,
     executeQueryRequest,
     getLastQueryRequest,
+    facetAliases,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -206,6 +207,7 @@ const TopLevelControls = (
             show={topLevelControlsState?.showColumnSelectDropdown ?? false}
             toggleColumnSelection={toggleColumnSelection}
             darkTheme={true}
+            facetAliases={facetAliases}
           />
         )}
       </div>
