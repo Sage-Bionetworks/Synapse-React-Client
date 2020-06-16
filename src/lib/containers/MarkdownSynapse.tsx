@@ -190,7 +190,7 @@ export default class MarkdownSynapse extends React.Component<
       allowedAttributes: {
         a: ['href', 'target'],
         button: ['class'],
-        div: ['class', 'style'],
+        div: ['class'], // PORTALS-1450: whitelisting 'style' will cause string values to come through, which crashes the app when used.
         h1: ['toc'],
         h2: ['toc'],
         h3: ['toc'],
