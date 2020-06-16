@@ -72,6 +72,11 @@ export default function AcceptedRequirements({
     setIsApprovedValueFromProps(propsIsApproved)
   }, [propsIsApproved])
 
+  const gotoSynapseAccessRequirementPage = () => {
+    window.open(
+      `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
+    )
+  }
   const onAcceptClicked = () => {
     if (
       accessRequirement.concreteType ===
@@ -79,9 +84,7 @@ export default function AcceptedRequirements({
       accessRequirement.concreteType ===
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
-      window.open(
-        `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
-      )
+      gotoSynapseAccessRequirementPage()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
@@ -139,10 +142,23 @@ export default function AcceptedRequirements({
 
   const RenderAcceptedRequirements = () => {
     if (isApproved) {
+      // show link to Synapse AR page if Managed ACT AR
+      const isManagedActAr = accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
       return (
         <div>
           <p>
             You have accepted the terms of use.
+            { isManagedActAr &&
+              <button
+                className="update-request-button bold-text"
+                onClick={() => {
+                  gotoSynapseAccessRequirementPage()
+                }}
+              >
+                Update Request
+              </button>
+            }
             <button
               className="view-terms-button bold-text"
               onClick={() => {
