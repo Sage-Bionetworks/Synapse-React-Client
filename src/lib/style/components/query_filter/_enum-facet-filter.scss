@@ -33,7 +33,7 @@ $input-icon-margin: 5px;
         color: $gray-deemphasized;
       }
       &:focus {
-        outline: none;
+        outline-color: $primary-action-color;
       }
     }
     button {
