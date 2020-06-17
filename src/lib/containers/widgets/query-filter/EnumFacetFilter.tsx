@@ -125,11 +125,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       facetValues.forEach((obj) => {
         const label = valueToLabel(obj, userProfiles, entityHeaders)
         if (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) {
-          obj.isSelected = true
           filtered.push(obj)
-        } else {
-          obj.isSelected = false
-        }
+        } 
       })
       setFilteredSet(filtered)
     }
