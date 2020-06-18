@@ -288,13 +288,19 @@ const renderLegend = (
         const label = `(${percent}) ${facetValue.label}`
         const labelDisplay = truncate(label, maxLegendLength)
         return (
-          <div
-            className="FacetNavPanel__body__legend__row"
-            key={`legendLabel_${index}`}
+          <ElementWithTooltip
+            idForToolTip={facetValue.label}
+            tooltipText={facetValue.label}
+            key={facetValue.label}
           >
-            <div style={{ backgroundColor: colors[index] }}></div>
-            <label>{labelDisplay}</label>
-          </div>
+            <div
+              className="FacetNavPanel__body__legend__row"
+              key={`legendLabel_${index}`}
+            >
+              <div style={{ backgroundColor: colors[index] }}></div>
+              <label>{labelDisplay}</label>
+            </div>
+          </ElementWithTooltip>
         )
       })}
     </div>
