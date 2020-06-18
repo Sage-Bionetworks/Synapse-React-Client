@@ -102,6 +102,27 @@ export const applyChangesToValuesColumn = (
   onChangeFn(result)
 }
 
+// This handles multiple checkbox selection with delay refresh
+export const applyMultipleChangesToValuesColumn = (
+  lastRequest: QueryBundleRequest | undefined,
+  facet: FacetColumnResultValues,
+  onChangeFn: Function,
+  faceNameMap?: {}
+) => {
+  const facetNames = faceNameMap && Object.keys(faceNameMap) || []
+  if (facetNames.length) {
+    facet.facetValues.forEach(facetValue => {
+      if (facetNames.includes(facetValue.value)) {
+        facetValue.isSelected = faceNameMap ? faceNameMap[facetValue.value] : false
+      }
+    })
+  }
+
+  const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
+  const result = patchRequestFacets(changedFacet, lastRequest)
+  onChangeFn(result)
+}
+
 //rangeChanges
 export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
@@ -154,19 +175,17 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                   columnModel={columnModel!}
                   token={token}
                   facetAliases={facetAliases}
-                  onChange={(facetName: string, checked: boolean) =>
-                    applyChangesToValuesColumn(
+                  onChange={(facetNamesMap: {}) =>
+                    applyMultipleChangesToValuesColumn(
                       lastRequest,
                       facet as FacetColumnResultValues,
                       applyChanges,
-                      facetName,
-                      checked,
+                      facetNamesMap
                     )
                   }
                   onClear={() =>
                     applyChangesToValuesColumn(
                       lastRequest,
-
                       facet as FacetColumnResultValues,
                       applyChanges,
                     )

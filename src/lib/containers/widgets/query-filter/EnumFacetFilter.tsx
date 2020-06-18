@@ -89,9 +89,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [searchTerm, setSearchText] = useState<string>('')
   const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(facetValues)
   const visibleItemsCount = 5
+  const selectionDelay = 1000  // in ms
   const textInput:React.RefObject<HTMLInputElement> = React.createRef()
 
-  let timer:any
+  let timer:ReturnType<typeof setTimeout>
   const selectedValuesMap = {}
 
   const userIds =
@@ -129,7 +130,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         const label = valueToLabel(obj, userProfiles, entityHeaders)
         if (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) {
           filtered.push(obj)
-        } 
+        }
       })
       setFilteredSet(filtered)
     }
@@ -230,10 +231,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                       selectedValuesMap[facet.value] = isChecked
                       clearTimeout(timer)
                       timer = setTimeout(()=> {
-                        Object.keys(selectedValuesMap).forEach(item => {
-                          onChange(item, selectedValuesMap[item])
-                        })
-                      }, 1000)
+                        onChange(selectedValuesMap)
+                      }, selectionDelay)
                     }
                   }
                   key={id + index}
