@@ -156,6 +156,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               <button  // Close Search Button
                 className="EnumFacetFilter__closeSearch"
                 onClick={() => {
+                  setFilteredSet(facetValues)
                   setShowSearch(false)
                 }}
               >
@@ -200,6 +201,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               <button
                 className="EnumFacetFilter__searchbtn"
                 onClick={() => {
+                  setSearchText('')
                   setShowSearch(true)
                 }}
               >
@@ -226,11 +228,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 <Checkbox
                   className="EnumFacetFilter__checkbox"
                   onChange={(isChecked: boolean) =>
-                    // onChange(facet.value, isChecked)
                     {
                       selectedValuesMap[facet.value] = isChecked
                       clearTimeout(timer)
-                      timer = setTimeout(()=> {
+                      timer = setTimeout(() => {
                         onChange(selectedValuesMap)
                       }, selectionDelay)
                     }
