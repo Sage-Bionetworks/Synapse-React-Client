@@ -163,8 +163,8 @@ function extractPlotDataArray(
     x:
       plotType === 'BAR'
         ? facetToPlot.facetValues.map(facet =>
-          getLabel(facet, false, columnType),
-        )
+            getLabel(facet, false, columnType),
+          )
         : undefined,
     y:
       plotType === 'BAR'
@@ -181,7 +181,6 @@ function extractPlotDataArray(
         : '<b>%{text}: </b><br>' + '%{value} <br>' + '<extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
-    // @ts-ignore
     marker: {
       colors: plotType === 'PIE' ? colorPalette : undefined,
       color: plotType === 'BAR' ? colorPalette : undefined,
@@ -194,8 +193,8 @@ function extractPlotDataArray(
     pull:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facetValue =>
-          facetValue.isSelected ? 0.04 : 0,
-        )
+            facetValue.isSelected ? 0.04 : 0,
+          )
         : undefined,
   }
 
@@ -308,7 +307,7 @@ const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
   }
   return `FacetNavPanel__body__plot--expanded${
     plotType === 'BAR' ? 'Bar' : 'Pie'
-    }`
+  }`
 }
 
 const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
@@ -382,13 +381,13 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     <Dropdown>
       <Dropdown.Toggle variant="light" id="plot-selector">
         <ElementWithTooltip
-                idForToolTip="toggleChart"
-                tooltipText="Toggle chart type"
-                key="toggleChart"
-                image={faChartBar}
-                className="SRC-primary-color"
-                darkTheme={true}
-              />
+          idForToolTip="toggleChart"
+          tooltipText="Toggle chart type"
+          key="toggleChart"
+          image={faChartBar}
+          className="SRC-primary-color"
+          darkTheme={true}
+        />
       </Dropdown.Toggle>
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
@@ -401,7 +400,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     </Dropdown>
   )
 
-  
   const renderFacetFilter = (): JSX.Element => (
     <FacetFilter
       lastFacetSelection={{
@@ -412,16 +410,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       isLoading={!!isLoading}
       className=""
       colorOnExpanded="#000"
-      applyChanges={(_: any) => (
-        evt: React.ChangeEvent<HTMLInputElement>,
-      ) => applyDropdownFilter(evt, facetToPlot, applyChanges)}
+      applyChanges={(_: any) => (evt: React.ChangeEvent<HTMLInputElement>) =>
+        applyDropdownFilter(evt, facetToPlot, applyChanges)}
       isAllFilterSelectedForFacet={
-        facetToPlot.facetValues.filter(item => item.isSelected)
-          .length === 0
+        facetToPlot.facetValues.filter(item => item.isSelected).length === 0
       }
       facetColumnResult={facetToPlot}
     />
-  ) 
+  )
 
   if (isLoadingNewData || !facetToPlot) {
     return (
@@ -440,7 +436,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
           <div className="FacetNavPanel__title__tools">
-
             {isExpanded && renderChartSelectionToggle()}
 
             {renderFacetFilter()}
@@ -478,7 +473,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               className="SRC-primary-color"
               darkTheme={true}
             />
-
           </div>
         </div>
 
