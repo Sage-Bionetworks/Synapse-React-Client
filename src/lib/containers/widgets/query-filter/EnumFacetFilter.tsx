@@ -91,6 +91,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const visibleItemsCount = 5
   const textInput:React.RefObject<HTMLInputElement> = React.createRef()
 
+  let timer:any
+  const selectedValuesMap = {}
+
   const userIds =
     columnModel.columnType === 'USERID'
       ? facetValues.map(facet => facet.value)
@@ -222,7 +225,16 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 <Checkbox
                   className="EnumFacetFilter__checkbox"
                   onChange={(isChecked: boolean) =>
-                    onChange(facet.value, isChecked)
+                    // onChange(facet.value, isChecked)
+                    {
+                      selectedValuesMap[facet.value] = isChecked
+                      clearTimeout(timer)
+                      timer = setTimeout(()=> {
+                        Object.keys(selectedValuesMap).forEach(item => {
+                          onChange(item, selectedValuesMap[item])
+                        })
+                      }, 1000)
+                    }
                   }
                   key={id + index}
                   checked={facet.isSelected}
