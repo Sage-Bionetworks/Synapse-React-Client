@@ -118,6 +118,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     const inputValue:string = e.target.value.trim()
     const filtered: FacetColumnResultValueCount[] = []
     setSearchText(inputValue)
+    setIsShowAll(true)  // While in filter search mode, display all filtered values
 
     if (!inputValue) { // if input field is empty, display all facet values
       facetValues.forEach((obj) => {
@@ -156,6 +157,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               onClick={() => {
                 setFilteredSet(facetValues)
                 setShowSearch(false)
+                setIsShowAll(false)
               }}
             >
               <FontAwesomeIcon
