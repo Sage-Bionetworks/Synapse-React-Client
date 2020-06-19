@@ -89,11 +89,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [searchTerm, setSearchText] = useState<string>('')
   const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(facetValues)
   const visibleItemsCount = 5
-  const selectionDelay = 1000  // in ms
+  const selectionDelay = 1800  // in ms
   const textInput:React.RefObject<HTMLInputElement> = React.createRef()
-
-  let timer:ReturnType<typeof setTimeout>
   const selectedValuesMap = {}
+  let timer:ReturnType<typeof setTimeout>
 
   const userIds =
     columnModel.columnType === 'USERID'
@@ -151,43 +150,40 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       ></FacetFilterHeader>
       <div style={{ display: isCollapsed ? 'none' : 'block' }}>
         <div className="EnumFacetFilter__checkboxContainer--forAll">
-          {showSearch && (
-            <div className="EnumFacetFilter__search">
-              <button  // Close Search Button
-                className="EnumFacetFilter__closeSearch"
-                onClick={() => {
-                  setFilteredSet(facetValues)
-                  setShowSearch(false)
-                }}
-              >
-                <FontAwesomeIcon
-                  className="EnumFacetFilter__previous"
-                  icon={faArrowLeft}
-                />
-              </button>
-              <button  // Clear Search Filter Text Button
-                className="EnumFacetFilter__resetSearch"
-                onClick={() => {
-                  setSearchText('')
-                }}
-              >
-                <FontAwesomeIcon
-                  className="EnumFacetFilter__reset"
-                  icon={'times'}
-                />
-              </button>
-              <input  // Search Filter Text
-                type="text"
-                placeholder="Find values"
-                value={searchTerm}
-                ref={textInput}
-                onChange={(e) => {
-                  handleTextInputFilterEvent(e)
-                }}
+          <div className={showSearch ? 'EnumFacetFilter__search active' : 'EnumFacetFilter__search'}>
+            <button  // Close Search Button
+              className="EnumFacetFilter__closeSearch"
+              onClick={() => {
+                setFilteredSet(facetValues)
+                setShowSearch(false)
+              }}
+            >
+              <FontAwesomeIcon
+                className="EnumFacetFilter__previous"
+                icon={faArrowLeft}
               />
-
-            </div>
-          )}
+            </button>
+            <button  // Clear Search Filter Text Button
+              className="EnumFacetFilter__resetSearch"
+              onClick={() => {
+                setSearchText('')
+              }}
+            >
+              <FontAwesomeIcon
+                className="EnumFacetFilter__reset"
+                icon={'times'}
+              />
+            </button>
+            <input  // Search Filter Text
+              type="text"
+              placeholder="Find values"
+              value={searchTerm}
+              ref={textInput}
+              onChange={(e) => {
+                handleTextInputFilterEvent(e)
+              }}
+            />
+          </div>
           {!showSearch && (
             <div className="EnumFacetFilter__checkAll">
               <Checkbox
@@ -203,6 +199,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 onClick={() => {
                   setSearchText('')
                   setShowSearch(true)
+                  textInput.current?.focus()
                 }}
               >
                 <FontAwesomeIcon

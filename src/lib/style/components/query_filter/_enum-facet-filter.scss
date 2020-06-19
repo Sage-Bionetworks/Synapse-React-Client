@@ -24,7 +24,14 @@ $input-icon-margin: 5px;
 
   &__search {
     position: relative;
-    margin-top: 6px;
+    margin-top: 0;
+    height: 0;
+    overflow: hidden;
+    &.active {
+      margin-top: 6px;
+      height: auto;
+      overflow: visible;
+    }
     input {
       width: 100%;
       border: 1px solid #dcdcdc;
