@@ -89,7 +89,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [searchTerm, setSearchText] = useState<string>('')
   const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(facetValues)
   const visibleItemsCount = 5
-  const selectionDelay = 1800  // in ms
+  const selectionDelay = 1500  // in ms
   const textInput:React.RefObject<HTMLInputElement> = React.createRef()
   const selectedValuesMap = {}
   let timer:ReturnType<typeof setTimeout>
