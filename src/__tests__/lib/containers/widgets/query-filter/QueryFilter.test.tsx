@@ -104,7 +104,7 @@ describe('handling child component callbacks', () => {
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
-  
+
   it('should propagate enum clear correctly', async () => {
     const expectedResult = [
       {
