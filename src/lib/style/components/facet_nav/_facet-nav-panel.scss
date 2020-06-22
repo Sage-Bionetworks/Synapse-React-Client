@@ -1,4 +1,8 @@
 .FacetNavPanel {
+  .main-svg {
+    // https://sagebionetworks.jira.com/browse/PORTALS-1454
+    overflow: visible !important;
+  }
   padding: 5px 0;
   &__title {
     display: flex;
@@ -24,12 +28,13 @@
         color: inherit;
       }
 
-      .dropdown .btn {  // reset inherit margin/padding
-        margin: 0;
-        padding: 0
+      .dropdown .btn {
+        // reset inherit margin/padding
+        margin: 0px;
+        padding: 0px;
       }
 
-      .dropdown .btn .btn, 
+      .dropdown .btn .btn,
       .ElementWithTooltip {
         padding: 3px;
         margin: 0 3px 3px;
