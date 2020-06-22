@@ -26,6 +26,7 @@ import {
 import { RadioValuesEnum } from '../containers/widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps } from './QueryWrapper'
+import { ColumnSingleValueFilterOperator } from 'lib/utils/synapseTypes/Table/QueryFilter'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -50,8 +51,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   isLoading: parentLoading,
   executeQueryRequest,
   getInitQueryRequest,
-  updateParentState,
-  searchQuery,
   showNotch = false,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
@@ -208,40 +207,51 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     }
   }
 
-  const removeSearchQuerySelection = () => {
-    const initQueryRequest = getInitQueryRequest!()
-    const firstSql = initQueryRequest.query.sql
+  const removeSearchQuerySelection = (columnName: string, value: string) => {
     const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
-    // reset the sql to original
-    cloneLastQueryRequest.query.sql = firstSql
+    if (!cloneLastQueryRequest.query.additionalFilters) {
+      return
+    }
+    cloneLastQueryRequest.query.additionalFilters = cloneLastQueryRequest.query.additionalFilters
+      ?.map(el => {
+        return {
+          columnName: el.columnName,
+          values:
+            el.columnName === columnName
+              ? el.values.filter(el => el !== value)
+              : el.values,
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        }
+      })
+      .filter(el => el.values.length > 0)
     executeQueryRequest!(cloneLastQueryRequest)
-    updateParentState!({
-      searchQuery: {
-        columnName: '',
-        searchText: '',
-      },
-    })
   }
 
   const clearAll = () => {
     const initQueryRequest = cloneDeep(getInitQueryRequest!())
+    initQueryRequest.query.additionalFilters = []
     executeQueryRequest!(initQueryRequest)
-    updateParentState!({
-      searchQuery: {
-        columnName: '',
-        searchText: '',
-      },
-    })
   }
 
-  const searchSelectionCriteriaPill = searchQuery?.columnName ? (
-    <SelectionCriteriaPill
-      index={facetsWithSelection.length + 1}
-      searchQuery={searchQuery}
-      onRemove={removeSearchQuerySelection}
-    />
-  ) : (
-    <></>
+  const searchSelectionCriteriaPill = lastQueryRequest?.query.additionalFilters?.map(
+    el => {
+      const { columnName } = el
+      return el.values.map(value => {
+        return (
+          <SelectionCriteriaPill
+            key={value}
+            index={facetsWithSelection.length + 1}
+            filter={{
+              columnName,
+              value,
+            }}
+            onRemove={() => removeSearchQuerySelection(el.columnName, value)}
+          />
+        )
+      })
+    },
   )
 
   return (

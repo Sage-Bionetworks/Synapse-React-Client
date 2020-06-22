@@ -47,7 +47,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   asyncJobStatus,
   topLevelControlsState,
   facetsToPlot,
-  searchQuery,
   getInitQueryRequest,
   updateParentState,
   facetAliases,
@@ -285,12 +284,10 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           isLoading={isLoading!}
           executeQueryRequest={executeQueryRequest!}
           lastQueryRequest={getLastQueryRequest?.()!}
-          updateParentState={updateParentState}
           getInitQueryRequest={getInitQueryRequest}
           token={token}
           unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
           frontText={'Showing'}
-          searchQuery={searchQuery}
           showNotch={showNotch}
         />
       </>

@@ -58,7 +58,6 @@ export type QueryWrapperState = {
   facetAliases?: {}
   loadNowStarted: boolean
   topLevelControlsState?: TopLevelControlsState
-  searchQuery: SearchQuery
   isColumnSelected: string[]
   selectedRowIndices?: number[]
 }
@@ -95,7 +94,6 @@ export type QueryWrapperChildProps = {
   showBarChart?: boolean
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
-  searchQuery?: SearchQuery
   isColumnSelected?: string[]
   selectedRowIndices?: number[]
 }
@@ -141,10 +139,6 @@ export default class QueryWrapper extends React.Component<
         showSearchBar: false,
         showDownloadConfirmation: false,
         showColumnSelectDropdown: false,
-      },
-      searchQuery: {
-        columnName: '',
-        searchText: '',
       },
       isColumnSelected: [],
       selectedRowIndices: [],
@@ -392,7 +386,6 @@ export default class QueryWrapper extends React.Component<
         isLoadingNewData: this.state.isLoadingNewData,
         asyncJobStatus: this.state.asyncJobStatus,
         topLevelControlsState: this.state.topLevelControlsState,
-        searchQuery: this.state.searchQuery,
         isColumnSelected: this.state.isColumnSelected,
         selectedRowIndices: this.state.selectedRowIndices,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
