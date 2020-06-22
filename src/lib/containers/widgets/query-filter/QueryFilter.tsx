@@ -107,13 +107,13 @@ export const applyMultipleChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
   onChangeFn: Function,
-  faceNameMap?: {}
+  facetNameMap?: {}
 ) => {
-  const facetNames = faceNameMap && Object.keys(faceNameMap) || []
+  const facetNames = facetNameMap && Object.keys(facetNameMap) || []
   if (facetNames.length) {
     facet.facetValues.forEach(facetValue => {
       if (facetNames.includes(facetValue.value)) {
-        facetValue.isSelected = faceNameMap ? faceNameMap[facetValue.value] : false
+        facetValue.isSelected = facetNameMap ? facetNameMap[facetValue.value] : false
       }
     })
   }

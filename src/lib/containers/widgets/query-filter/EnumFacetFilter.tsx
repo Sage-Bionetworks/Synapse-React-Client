@@ -116,7 +116,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
 
   const handleTextInputFilterEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue:string = e.target.value.trim()
-    const filtered: FacetColumnResultValueCount[] = []
     setSearchText(inputValue)
     setIsShowAll(true)  // While in filter search mode, display all filtered values
 
@@ -126,11 +125,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       })
       setFilteredSet(facetValues)
     } else { // display only facet values that contain text from the text input field
-      facetValues.forEach((obj) => {
+      const filtered = facetValues.filter(obj => {
         const label = valueToLabel(obj, userProfiles, entityHeaders)
-        if (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) {
-          filtered.push(obj)
-        }
+        return (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) ? obj : null
       })
       setFilteredSet(filtered)
     }
