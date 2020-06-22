@@ -81,7 +81,7 @@ describe('initialization', () => {
 })
 
 describe('handling child component callbacks', () => {
-  it('should propagate enum update correctluy', async () => {
+  it('should propagate enum update correctly', async () => {
     const expectedResult = [
       {
         columnName: 'Make',
@@ -99,11 +99,24 @@ describe('handling child component callbacks', () => {
     ]
 
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    enumWrapper.simulate('change', 'Ford', true)
+    enumWrapper.simulate('change', {'Ford': true})
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   it('should propagate enum clear correctly', async () => {
     const expectedResult = [
