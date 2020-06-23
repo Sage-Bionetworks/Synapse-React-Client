@@ -35,7 +35,7 @@ import { cloneDeep } from 'lodash-es'
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
 ) => {
-  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />)
+  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />, {disableLifecycleMethods: true})
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -119,16 +119,21 @@ describe('basic functionality', () => {
       concreteType: 'EntityView',
     })
     SynapseClient.getEntity = mockEntityCall
-    const { wrapper } = createShallowComponent(props)
+    const { wrapper, instance } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
     const newTableId = 'syn123'
     // setup data
     const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
     dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
     // listen to function call
+    
     await wrapper.setProps({
       data: dataWithNewTableId,
     })
+    // since we now disable lifecycle methods during construction (because of DOM interaction for column-resizer), manually call update functions
+    instance.getEntityHeadersInData(true)
+    instance.getTableConcreteType(props)
+
     expect(mockEntityCall).toHaveBeenCalledWith(undefined, newTableId)
   })
 

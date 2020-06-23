@@ -96,6 +96,9 @@ export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 const RESIZER_OPTIONS:any = {
   resizeMode: 'overflow',
   partialRefresh: 'true',
+  liveDrag:true,
+  draggingClass: 'SRC-primary-background-color',
+  gripInnerHtml:'<div class=\'SRC-rangeGrip SRC-primary-background-color-hover\'></div>'
 }
 
 type Info = {
@@ -847,7 +850,7 @@ export default class SynapseTable extends React.Component<
           if (isColumnActive) {
             return (
               <td
-                className="SRC_noBorderTop SRC-truncate"
+                className="SRC_noBorderTop SRC-synapseTableTd"
                 key={`(${rowIndex}${columnValue}${colIndex})`}
               >
                 {isCountColumn && (

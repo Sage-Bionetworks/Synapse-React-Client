@@ -1079,12 +1079,14 @@ hr ~ .SRC-wrapper {
     }
   }
 }
-
-.SRC-truncate {
+.SRC-rangeGrip {
+  width: 2px;
+}
+.SRC-synapseTableTd {
   max-width: 250px;
   * { // all children
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }  
+  }
 }
