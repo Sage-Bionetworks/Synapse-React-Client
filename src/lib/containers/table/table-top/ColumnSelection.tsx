@@ -60,7 +60,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
     >
       <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}
-        tooltipText={'Add / Remove Columns'}
+        tooltipText={'Add / Remove Table Columns'}
         image={{
           svgImg: darkTheme ? ColumnsDarkThemeSvg : ColumnsSvg,
           altText: 'columns selection',
