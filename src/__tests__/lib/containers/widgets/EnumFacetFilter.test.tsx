@@ -222,14 +222,22 @@ describe('initialization', () => {
 })
 
 describe('callbacks', () => {
-  it('should trigger callback on checkbox change', () => {
+
+  it('should trigger callback on checkbox change after delay', () => {
     const checkboxes = container.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]:not(#select_all)',
     )
+
+    jest.useFakeTimers()
     fireEvent.click(checkboxes.item(0))
-    expect(mockCallback).toHaveBeenCalledWith(stringFacetValues[0].value, true)
-    fireEvent.click(checkboxes.item(0))
-    expect(mockCallback).toHaveBeenCalledWith(stringFacetValues[0].value, false)
+    fireEvent.click(checkboxes.item(1))
+    expect(setTimeout).toHaveBeenCalledTimes(2)
+    jest.runOnlyPendingTimers()
+    expect(mockCallback).toHaveBeenCalledWith({
+      [stringFacetValues[0].value]: true,
+      [stringFacetValues[1].value]: false
+    })
+
   })
 
   it('should trigger callback on clear', () => {
