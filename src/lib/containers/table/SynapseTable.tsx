@@ -14,8 +14,9 @@ import {
   faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, uniqueId } from 'lodash-es'
 import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 import { Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
@@ -59,6 +60,7 @@ import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
 import { Checkbox } from '../widgets/Checkbox'
 import { LabelLinkConfig } from '../CardContainerLogic'
+import ColumnResizer from "column-resizer"
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -91,6 +93,11 @@ const PREVIOUS = 'PREVIOUS'
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
+const RESIZER_OPTIONS:any = {
+  resizeMode: 'overflow',
+  partialRefresh: 'true',
+}
+
 type Info = {
   index: number
   name: string
@@ -110,6 +117,7 @@ export type SynapseTableState = {
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
+  tableElementId: string
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -158,17 +166,30 @@ export default class SynapseTable extends React.Component<
       mapUserIdToHeader: {},
       isFetchingEntityHeaders: false,
       isFetchingEntityVersion: false,
+      tableElementId: uniqueId()
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
+  }
+  
+  // instance variables
+  resizer:any
+  
+  componentWillUpdate() {
+    this.disableResize()
+  }
+  componentWillUnmount() {
+    this.disableResize()
   }
 
   componentDidMount() {
     this.getEntityHeadersInData(true)
+    this.enableResize()
   }
 
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData(prevProps.token !== this.props.token)
     this.getTableConcreteType(prevProps)
+    this.enableResize()
   }
 
   public async getTableConcreteType(
@@ -393,6 +414,28 @@ export default class SynapseTable extends React.Component<
     )
   }
 
+
+  enableResize() {
+    if (!this.resizer) {
+      if (ReactDOM) {
+        const domNode: Text | Element | null = ReactDOM!.findDOMNode(this)
+        if (domNode && domNode instanceof Element) {
+          this.resizer = new ColumnResizer(
+            domNode.querySelector(`#synapseTable${this.state.tableElementId}`),
+            RESIZER_OPTIONS
+          )
+        }
+      }
+    } else {
+      this.resizer.reset(RESIZER_OPTIONS);
+    }
+  }
+
+  disableResize() {
+    if (this.resizer) {
+      this.resizer.reset({ disable: true });
+    }
+  }
   private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = this.props.getLastQueryRequest!().query
@@ -486,7 +529,7 @@ export default class SynapseTable extends React.Component<
             }
           />
         )}
-        <table className="table table-striped table-condensed">
+        <table id={`synapseTable${this.state.tableElementId}`} className="table table-striped table-condensed">
           <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(
