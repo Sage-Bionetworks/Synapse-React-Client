@@ -423,10 +423,13 @@ export default class SynapseTable extends React.Component<
       if (ReactDOM) {
         const domNode: Text | Element | null = ReactDOM!.findDOMNode(this)
         if (domNode && domNode instanceof Element) {
-          this.resizer = new ColumnResizer(
-            domNode.querySelector(`#synapseTable${this.state.tableElementId}`),
-            RESIZER_OPTIONS
-          )
+          const tableElement = domNode.querySelector(`#synapseTable${this.state.tableElementId}`)
+          if (tableElement) {
+            this.resizer = new ColumnResizer(
+              tableElement,
+              RESIZER_OPTIONS
+            )
+          }
         }
       }
     } else {
