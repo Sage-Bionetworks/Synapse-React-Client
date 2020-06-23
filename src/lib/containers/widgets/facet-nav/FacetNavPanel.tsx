@@ -123,7 +123,7 @@ function extractPlotDataArray(
     columnType?: ColumnType,
   ): string => {
     if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-      return 'Unannotated'
+      return 'unannotated'
     }
 
     if (columnType === 'ENTITYID') {
