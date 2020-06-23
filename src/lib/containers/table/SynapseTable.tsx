@@ -16,7 +16,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cloneDeep, uniqueId } from 'lodash-es'
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
 import { Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
@@ -176,10 +175,8 @@ export default class SynapseTable extends React.Component<
   
   // instance variables
   resizer:any
+  tableElement:HTMLTableElement|null|undefined = undefined
   
-  componentWillUpdate() {
-    this.disableResize()
-  }
   componentWillUnmount() {
     this.disableResize()
   }
@@ -420,17 +417,11 @@ export default class SynapseTable extends React.Component<
 
   enableResize() {
     if (!this.resizer) {
-      if (ReactDOM) {
-        const domNode: Text | Element | null = ReactDOM!.findDOMNode(this)
-        if (domNode && domNode instanceof Element) {
-          const tableElement = domNode.querySelector(`#synapseTable${this.state.tableElementId}`)
-          if (tableElement) {
-            this.resizer = new ColumnResizer(
-              tableElement,
-              RESIZER_OPTIONS
-            )
-          }
-        }
+      if (this.tableElement) {
+        this.resizer = new ColumnResizer(
+          this.tableElement,
+          RESIZER_OPTIONS
+        )
       }
     } else {
       this.resizer.reset(RESIZER_OPTIONS);
@@ -535,7 +526,7 @@ export default class SynapseTable extends React.Component<
             }
           />
         )}
-        <table id={`synapseTable${this.state.tableElementId}`} className="table table-striped table-condensed">
+        <table ref={node => this.tableElement = node} className="table table-striped table-condensed">
           <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(
