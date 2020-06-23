@@ -15,12 +15,14 @@
     display: flex;
     justify-content: flex-end;
     padding-right: 15px;
+    padding-bottom: 10px;
     &__showMore {
       margin-right: 15px;
       margin-top: 15px;
     }
-    
-    .FacetNav__showMore:focus {  // somehow &__showMore:focus doesn't work
+
+    .FacetNav__showMore:focus {
+      // somehow &__showMore:focus doesn't work
       outline-color: $primary-action-color;
     }
   }
