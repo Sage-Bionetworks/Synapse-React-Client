@@ -69,7 +69,7 @@ class QueryWrapperMenuDemo extends React.Component<
         stackedBarChartConfiguration: {
           loadingScreen: <div> Im loading as fast I can! </div>,
         },
-        entityId: 'syn11346063',
+        entityId: 'syn22084217',
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
@@ -86,14 +86,14 @@ class QueryWrapperMenuDemo extends React.Component<
         menuConfig: [
           {
             facet: 'resourceType',
-            sql: 'SELECT id, name, resourceType FROM syn11346063 LIMIT 1000',
+            sql: 'SELECT * FROM syn22084217 LIMIT 1000',
           },
           {
             facet: 'study',
-            sql: 'SELECT * FROM syn11346063 limit 1000',
+            sql: 'SELECT * FROM syn22084217 limit 1000',
           },
           {
-            sql: 'SELECT * FROM syn11346063 limit 1000',
+            sql: 'SELECT * FROM syn22084217 limit 1000',
           },
         ] as MenuConfig[],
         rgbIndex: 5,

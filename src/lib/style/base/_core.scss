@@ -1079,3 +1079,12 @@ hr ~ .SRC-wrapper {
     }
   }
 }
+
+.SRC-truncate {
+  max-width: 250px;
+  * { // all children
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }  
+}

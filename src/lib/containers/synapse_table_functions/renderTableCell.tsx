@@ -47,15 +47,11 @@ export const renderTableCell = ({
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
 }): React.ReactNode => {
-  const getShortString = (
-    longString: string,
+  const isShortString = (
+    s: string,
     maxCharCount = 20,
-  ): [string, boolean] => {
-    if (!longString || longString.length <= maxCharCount) {
-      return [longString, false]
-    } else {
-      return [longString.substr(0, maxCharCount), true]
-    }
+  ): boolean => {
+    return (!s || s.length <= maxCharCount)
   }
   if (!columnValue) {
     return <></>
@@ -153,8 +149,8 @@ export const renderTableCell = ({
       )
     }
   } else {
-    const [displayString, isShortened] = getShortString(columnValue)
-    if (!isShortened) {
+    const isShort = isShortString(columnValue)
+    if (isShort) {
       return <p className={isBold}> {columnValue}</p>
     } else {
       return (
@@ -164,7 +160,7 @@ export const renderTableCell = ({
             callbackFn={noop}
             idForToolTip={`${colIndex}_${rowIndex}`}
           >
-            <p className={isBold}> {displayString}...</p>
+            <p className={isBold}> {columnValue}...</p>
           </ElementWithTooltip>
         </div>
       )

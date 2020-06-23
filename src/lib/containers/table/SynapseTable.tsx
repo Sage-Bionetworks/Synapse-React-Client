@@ -804,7 +804,7 @@ export default class SynapseTable extends React.Component<
           if (isColumnActive) {
             return (
               <td
-                className="SRC_noBorderTop"
+                className="SRC_noBorderTop SRC-truncate"
                 key={`(${rowIndex}${columnValue}${colIndex})`}
               >
                 {isCountColumn && (
