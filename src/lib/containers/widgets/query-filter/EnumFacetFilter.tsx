@@ -87,12 +87,14 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
-  const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(facetValues)
+  const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(
+    facetValues,
+  )
   const visibleItemsCount = 5
-  const selectionDelay = 1500  // in ms
-  const textInput:React.RefObject<HTMLInputElement> = React.createRef()
+  const selectionDelay = 1500 // in ms
+  const textInput: React.RefObject<HTMLInputElement> = React.createRef()
   const selectedValuesMap = {}
-  let timer:ReturnType<typeof setTimeout>
+  let timer: ReturnType<typeof setTimeout>
 
   const userIds =
     columnModel.columnType === 'USERID'
@@ -114,20 +116,26 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     type: 'ENTITY_HEADER',
   })
 
-  const handleTextInputFilterEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue:string = e.target.value.trim()
+  const handleTextInputFilterEvent = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const inputValue: string = e.target.value.trim()
     setSearchText(inputValue)
-    setIsShowAll(true)  // While in filter search mode, display all filtered values
+    setIsShowAll(true) // While in filter search mode, display all filtered values
 
-    if (!inputValue) { // if input field is empty, display all facet values
-      facetValues.forEach((obj) => {
+    if (!inputValue) {
+      // if input field is empty, display all facet values
+      facetValues.forEach(obj => {
         obj.isSelected = false
       })
       setFilteredSet(facetValues)
-    } else { // display only facet values that contain text from the text input field
+    } else {
+      // display only facet values that contain text from the text input field
       const filtered = facetValues.filter(obj => {
         const label = valueToLabel(obj, userProfiles, entityHeaders)
-        return (label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1) ? obj : null
+        return label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+          ? obj
+          : null
       })
       setFilteredSet(filtered)
     }
@@ -136,7 +144,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   if (!columnModel) {
     return <></>
   }
-
 
   return (
     <div className="EnumFacetFilter">
@@ -148,8 +155,14 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       ></FacetFilterHeader>
       <div style={{ display: isCollapsed ? 'none' : 'block' }}>
         <div className="EnumFacetFilter__checkboxContainer--forAll">
-          <div className={showSearch ? 'EnumFacetFilter__search active' : 'EnumFacetFilter__search'}>
-            <button  // Close Search Button
+          <div
+            className={
+              showSearch
+                ? 'EnumFacetFilter__search active'
+                : 'EnumFacetFilter__search'
+            }
+          >
+            <button // Close Search Button
               className="EnumFacetFilter__closeSearch"
               onClick={() => {
                 setFilteredSet(facetValues)
@@ -162,7 +175,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 icon={faArrowLeft}
               />
             </button>
-            <button  // Clear Search Filter Text Button
+            <button // Clear Search Filter Text Button
               className="EnumFacetFilter__resetSearch"
               onClick={() => {
                 setSearchText('')
@@ -174,12 +187,12 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 icon={'times'}
               />
             </button>
-            <input  // Search Filter Text
+            <input // Search Filter Text
               type="text"
               placeholder="Find values"
               value={searchTerm}
               ref={textInput}
-              onChange={(e) => {
+              onChange={e => {
                 handleTextInputFilterEvent(e)
               }}
             />
@@ -190,7 +203,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 className="EnumFacetFilter__checkbox"
                 onChange={() => onClear(columnModel.name)}
                 key="select_all"
-                checked={facetValues.filter(item => item.isSelected).length === 0}
+                checked={
+                  facetValues.filter(item => item.isSelected).length === 0
+                }
                 label="All"
                 id="select_all"
               ></Checkbox>
@@ -211,37 +226,36 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           )}
         </div>
         <div>
-          {filteredSet.length > 0 && formatFacetValuesForDisplay(
-            filteredSet,
-            isShowAll,
-            visibleItemsCount,
-          ).map((facet, index: number) => {
-            const id = valueToId(facet.value)
-            return (
-              <div
-                className="EnumFacetFilter__checkboxContainer"
-                key={`checkLabel${index}`}
-              >
-                <Checkbox
-                  className="EnumFacetFilter__checkbox"
-                  onChange={(isChecked: boolean) =>
-                    {
+          {filteredSet.length > 0 &&
+            formatFacetValuesForDisplay(
+              filteredSet,
+              isShowAll,
+              visibleItemsCount,
+            ).map((facet, index: number) => {
+              const id = valueToId(facet.value)
+              return (
+                <div
+                  className="EnumFacetFilter__checkboxContainer"
+                  key={`checkLabel${index}`}
+                >
+                  <Checkbox
+                    className="EnumFacetFilter__checkbox"
+                    onChange={(isChecked: boolean) => {
                       selectedValuesMap[facet.value] = isChecked
                       clearTimeout(timer)
                       timer = setTimeout(() => {
                         onChange(selectedValuesMap)
                       }, selectionDelay)
-                    }
-                  }
-                  key={id + index}
-                  checked={facet.isSelected}
-                  label={valueToLabel(facet, userProfiles, entityHeaders)}
-                  id={id}
-                ></Checkbox>
-                <div className="EnumFacetFilter__count">{facet.count}</div>
-              </div>
-            )
-          })}
+                    }}
+                    key={id + index}
+                    checked={facet.isSelected}
+                    label={valueToLabel(facet, userProfiles, entityHeaders)}
+                    id={id}
+                  ></Checkbox>
+                  <div className="EnumFacetFilter__count">{facet.count}</div>
+                </div>
+              )
+            })}
           {!isShowAll && filteredSet.length > visibleItemsCount && (
             <button
               className="EnumFacetFilter__showMoreFacetsBtn"
@@ -257,10 +271,20 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               </div>
             </button>
           )}
+          {isShowAll && filteredSet.length > visibleItemsCount && (
+            <button
+              className="EnumFacetFilter__showMoreFacetsBtn"
+              onClick={() => setIsShowAll(false)}
+            >
+              <div className="EnumFacetFilter__checkboxContainer">
+                <div className="EnumFacetFilter__showMoreFacetsLabel">
+                  Show Less
+                </div>
+              </div>
+            </button>
+          )}
           {filteredSet.length <= 0 && (
-            <div className="EnumFacetFilter__noMatch">
-              No match found
-            </div>
+            <div className="EnumFacetFilter__noMatch">No match found</div>
           )}
         </div>
       </div>
