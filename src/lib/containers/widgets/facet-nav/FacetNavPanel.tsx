@@ -296,6 +296,7 @@ const renderLegend = (
             <div
               className="FacetNavPanel__body__legend__row"
               key={`legendLabel_${index}`}
+              style={{ cursor: 'default' }}
             >
               <div style={{ backgroundColor: colors[index] }}></div>
               <label>{labelDisplay}</label>

@@ -53,22 +53,22 @@ const controls: Control[] = [
   {
     icon: faSearch,
     key: 'showSearchBar',
-    tooltipText: 'Toggle Search',
+    tooltipText: 'Show / Hide Search Bar',
   },
   {
     icon: faChartBar,
     key: 'showFacetVisualization',
-    tooltipText: 'Toggle Visualization',
+    tooltipText: 'Show / Hide Visualizations',
   },
   {
     icon: faFilter,
     key: 'showFacetFilter',
-    tooltipText: 'Toggle Facet Filter',
+    tooltipText: 'Show / Hide Filters',
   },
   {
     icon: faDownload,
     key: 'showDownloadConfirmation',
-    tooltipText: 'Toggle Download',
+    tooltipText: 'Add files in table to Download List',
   },
 ]
 
