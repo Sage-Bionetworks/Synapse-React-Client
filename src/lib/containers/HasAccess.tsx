@@ -382,7 +382,7 @@ export default class HasAccess extends React.Component<
           style={{
             fontSize: '14px',
             cursor: 'pointer',
-            marginLeft: '16px',
+            marginLeft: '10px',
           }}
           onClick={this.handleGetAccess}
           className="SRC-primary-text-color"
