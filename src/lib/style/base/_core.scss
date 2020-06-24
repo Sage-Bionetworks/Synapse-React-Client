@@ -1079,3 +1079,20 @@ hr ~ .SRC-wrapper {
     }
   }
 }
+.SRC-rangeGrip {
+  width: 2px;
+}
+
+.table>tbody>tr>td{
+  vertical-align: middle;
+  &.SRC-synapseTableTd {
+    max-width: 250px;
+    vertical-align: middle;
+    p { // all p children
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0px 5px;
+    }
+  }
+}
