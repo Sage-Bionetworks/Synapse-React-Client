@@ -59,7 +59,7 @@ import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
 import { Checkbox } from '../widgets/Checkbox'
 import { LabelLinkConfig } from '../CardContainerLogic'
-import ColumnResizer from "column-resizer"
+import ColumnResizer from 'column-resizer'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -92,12 +92,13 @@ const PREVIOUS = 'PREVIOUS'
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
-const RESIZER_OPTIONS:any = {
+const RESIZER_OPTIONS: any = {
   resizeMode: 'overflow',
   partialRefresh: 'true',
-  liveDrag:true,
+  liveDrag: true,
   draggingClass: 'SRC-primary-background-color',
-  gripInnerHtml:'<div class=\'SRC-rangeGrip SRC-primary-background-color-hover\'></div>'
+  gripInnerHtml:
+    "<div class='SRC-rangeGrip SRC-primary-background-color-hover'></div>",
 }
 
 type Info = {
@@ -166,15 +167,15 @@ export default class SynapseTable extends React.Component<
       mapEntityIdToHeader: {},
       mapUserIdToHeader: {},
       isFetchingEntityHeaders: false,
-      isFetchingEntityVersion: false      
+      isFetchingEntityVersion: false,
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
-  
+
   // instance variables
-  resizer:any
-  tableElement:HTMLTableElement|null|undefined = undefined
-  
+  resizer: any
+  tableElement: HTMLTableElement | null | undefined = undefined
+
   componentWillUnmount() {
     this.disableResize()
   }
@@ -412,23 +413,19 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-
   enableResize() {
     if (!this.resizer) {
       if (this.tableElement) {
-        this.resizer = new ColumnResizer(
-          this.tableElement,
-          RESIZER_OPTIONS
-        )
+        this.resizer = new ColumnResizer(this.tableElement, RESIZER_OPTIONS)
       }
     } else {
-      this.resizer.reset(RESIZER_OPTIONS);
+      this.resizer.reset(RESIZER_OPTIONS)
     }
   }
 
   disableResize() {
     if (this.resizer) {
-      this.resizer.reset({ disable: true });
+      this.resizer.reset({ disable: true })
     }
   }
   private showGroupRowData = (selectedRow: Row) => {
@@ -524,7 +521,10 @@ export default class SynapseTable extends React.Component<
             }
           />
         )}
-        <table ref={node => this.tableElement = node} className="table table-striped table-condensed">
+        <table
+          ref={node => (this.tableElement = node)}
+          className="table table-striped table-condensed"
+        >
           <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(
@@ -926,6 +926,17 @@ export default class SynapseTable extends React.Component<
     return rowsFormatted
   }
 
+  public isSortableColumn(column: EntityColumnType) {
+    switch (column) {
+      case EntityColumnType.USERID:
+      case EntityColumnType.ENTITYID:
+      case EntityColumnType.FILEHANDLEID:
+        return false
+      default:
+        return true
+    }
+  }
+
   private createTableHeader(
     headers: SelectColumn[],
     facets: FacetColumnResult[],
@@ -975,23 +986,25 @@ export default class SynapseTable extends React.Component<
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
                     this.configureFacetDropdown(facets, facetIndex)}
-                  <span
-                    tabIndex={0}
-                    className={sortSpanBackgoundClass}
-                    onKeyPress={this.handleColumnSortPress({
-                      index,
-                      name: column.name,
-                    })}
-                    onClick={this.handleColumnSortPress({
-                      index,
-                      name: column.name,
-                    })}
-                  >
-                    <FontAwesomeIcon
-                      className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
-                      icon={ICON_STATE[columnIndex] as IconProp}
-                    />
-                  </span>
+                  {this.isSortableColumn(column.columnType) && (
+                    <span
+                      tabIndex={0}
+                      className={sortSpanBackgoundClass}
+                      onKeyPress={this.handleColumnSortPress({
+                        index,
+                        name: column.name,
+                      })}
+                      onClick={this.handleColumnSortPress({
+                        index,
+                        name: column.name,
+                      })}
+                    >
+                      <FontAwesomeIcon
+                        className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
+                        icon={ICON_STATE[columnIndex] as IconProp}
+                      />
+                    </span>
+                  )}
                 </div>
               </div>
             </th>

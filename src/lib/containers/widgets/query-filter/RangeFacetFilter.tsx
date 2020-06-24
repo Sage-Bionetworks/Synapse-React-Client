@@ -80,51 +80,52 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
         onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
         facetAliases={facetAliases}
       ></FacetFilterHeader>
+      <div style={{ display: isCollapsed ? 'none' : 'block' }}>
+        <RadioGroup
+          value={radioValue}
+          id="rangeSelector"
+          options={options}
+          onChange={(radioValue: RadioValuesEnum) =>
+            handleRadioGroupChange(radioValue, onChange)
+          }
+        ></RadioGroup>
+        {radioValue === RadioValuesEnum.RANGE &&
+          (columnMin === columnMax ? (
+            <label>{columnMax}</label>
+          ) : (
+            <>
+              {columnModel.columnType === 'INTEGER' && (
+                <RangeSlider
+                  key="RangeSlider"
+                  domain={[columnMin, columnMax]}
+                  initialValues={{ min: selectedMin, max: selectedMax }}
+                  step={1}
+                  doUpdateOnApply={true}
+                  onChange={(values: RangeValues) =>
+                    onChange([values.min, values.max])
+                  }
+                >
+                  ) >
+                </RangeSlider>
+              )}
 
-      <RadioGroup
-        value={radioValue}
-        id="rangeSelector"
-        options={options}
-        onChange={(radioValue: RadioValuesEnum) =>
-          handleRadioGroupChange(radioValue, onChange)
-        }
-      ></RadioGroup>
-      {radioValue === RadioValuesEnum.RANGE &&
-        (columnMin === columnMax ? (
-          <label>{columnMax}</label>
-        ) : (
-          <>
-            {columnModel.columnType === 'INTEGER' && (
-              <RangeSlider
-                key="RangeSlider"
-                domain={[columnMin, columnMax]}
-                initialValues={{ min: selectedMin, max: selectedMax }}
-                step={1}
-                doUpdateOnApply={true}
-                onChange={(values: RangeValues) =>
-                  onChange([values.min, values.max])
-                }
-              >
-                ) >
-              </RangeSlider>
-            )}
-
-            {(columnModel.columnType === 'DATE' ||
-              columnModel.columnType === 'DOUBLE') && (
-              <Range
-                key="Range"
-                initialValues={{
-                  min: selectedMin,
-                  max: selectedMax,
-                }}
-                type={rangeType}
-                onChange={(values: RangeValues) =>
-                  onChange([values.min, values.max])
-                }
-              ></Range>
-            )}
-          </>
-        ))}
+              {(columnModel.columnType === 'DATE' ||
+                columnModel.columnType === 'DOUBLE') && (
+                <Range
+                  key="Range"
+                  initialValues={{
+                    min: selectedMin,
+                    max: selectedMax,
+                  }}
+                  type={rangeType}
+                  onChange={(values: RangeValues) =>
+                    onChange([values.min, values.max])
+                  }
+                ></Range>
+              )}
+            </>
+          ))}
+      </div>
     </div>
   )
   return result
