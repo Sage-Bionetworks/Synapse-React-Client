@@ -21,6 +21,13 @@ library.add(faTimes)
 
 type SearchState = {
   show: boolean
+  /* 
+    When the component is revealed in queryplotnav we want to focus on the input field and reveal the dropdown
+    there is an issue where the method handleClickOutsideForm will override the state from componentDidUpdate
+    so we track when componentDidUpdate just fired so that `show` is not overriden on the click event which
+    triggers componentDidUpdate 
+  */
+  didUpdateRanLast: boolean
   searchText: string
   columnName: string
 }
@@ -41,6 +48,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     super(props)
     this.state = {
       show: false,
+      didUpdateRanLast: false,
       searchText: '',
       columnName: this.props.defaultColumn ?? '',
     }
@@ -51,6 +59,19 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   componentDidMount() {
     // @ts-ignore
     document.addEventListener('click', this.handleClickOutsideForm)
+  }
+
+  componentDidUpdate(prevProps: InternalSearchProps) {
+    if (
+      !prevProps.topLevelControlsState?.showSearchBar &&
+      this.props.topLevelControlsState?.showSearchBar
+    ) {
+      this.setState({
+        show: true,
+        didUpdateRanLast: true,
+      })
+      this.searchFormRef?.current?.querySelector('input')?.focus()
+    }
   }
 
   componentWillUnmount() {
@@ -65,16 +86,16 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       // @ts-ignore
       !this.radioFormRef.current?.contains(event?.target)
     ) {
-      this.setState({
-        show: false,
-      })
+      if (this.state.didUpdateRanLast) {
+        this.setState({
+          didUpdateRanLast: false,
+        })
+      } else {
+        this.setState({
+          show: false,
+        })
+      }
     }
-  }
-
-  public toggleDropdown = (value: boolean) => (_: React.SyntheticEvent) => {
-    this.setState({
-      show: value,
-    })
   }
 
   public static addEscapeCharacters = (searchText: string) => {
@@ -173,7 +194,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
               onSubmit={this.search}
               onClick={() => {
                 this.setState({ show: true })
-                this.searchFormRef.current?.focus()
               }}
               ref={this.searchFormRef}
             >
