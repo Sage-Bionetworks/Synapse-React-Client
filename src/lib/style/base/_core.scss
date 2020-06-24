@@ -1082,11 +1082,14 @@ hr ~ .SRC-wrapper {
 .SRC-rangeGrip {
   width: 2px;
 }
-.SRC-synapseTableTd {
+.table>tbody>tr> td.SRC-synapseTableTd {
   max-width: 250px;
+  vertical-align: middle;
   * { // all children
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-left: 3px;
+    margin-right: 3px;
   }
 }

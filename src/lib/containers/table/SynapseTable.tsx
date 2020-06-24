@@ -14,7 +14,7 @@ import {
   faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { cloneDeep, uniqueId } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
@@ -119,7 +119,6 @@ export type SynapseTableState = {
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
-  tableElementId: string
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -167,8 +166,7 @@ export default class SynapseTable extends React.Component<
       mapEntityIdToHeader: {},
       mapUserIdToHeader: {},
       isFetchingEntityHeaders: false,
-      isFetchingEntityVersion: false,
-      tableElementId: uniqueId()
+      isFetchingEntityVersion: false      
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
