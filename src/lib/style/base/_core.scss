@@ -200,11 +200,15 @@ a.SRC-whiteText {
 
 .SRC-validatedProfileIcon {
   margin-left: 10px;
-  vertical-align: bottom;
+  svg {
+    vertical-align: bottom;
+  }
 }
 .SRC-certified-user-icon {
   margin-right: 5px;
-  vertical-align: bottom;
+  svg {
+    vertical-align: bottom;
+  }
 }
 .SRC-marginFifteen {
   margin-left: 15px;

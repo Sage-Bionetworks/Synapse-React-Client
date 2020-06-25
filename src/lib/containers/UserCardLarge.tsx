@@ -5,7 +5,7 @@ import {
   faEllipsisV,
   faCopy,
 } from '@fortawesome/free-solid-svg-icons'
-import { ReactComponent as CertifiedUserIcon } from '../assets/icons/CertifiedUser.svg'
+import CertifiedUserIcon from '../assets/icons/CertifiedUser'
 import { UserProfile } from '../utils/synapseTypes/'
 
 library.add(faCircle)
@@ -57,7 +57,7 @@ export function UserCardLarge({ userProfile, isCertified }: UserCardLargeProps) 
       {isCertified && (
         <div>
           <p className="SRC-card-metadata-title"> Access </p>
-          <p><CertifiedUserIcon className="SRC-certified-user-icon"/> Certified Account</p>
+          <p>{CertifiedUserIcon} Certified Account</p>
         </div>
       )}
     </div>

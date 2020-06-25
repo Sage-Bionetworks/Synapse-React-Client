@@ -12,7 +12,7 @@ import { UserProfile } from '../utils/synapseTypes/'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
 import IconCopy from '../assets/icons/IconCopy'
-import { ReactComponent as ValidatedProfileIcon } from '../assets/icons/ValidatedProfile.svg'
+import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
 import ReactTooltip from 'react-tooltip'
 
 library.add(faCircle)
@@ -217,7 +217,7 @@ export default class UserCardMedium extends React.Component<
                   effect="solid"
                   id={validatedUserProfileTooltipId}
                 />
-                <ValidatedProfileIcon className='SRC-validatedProfileIcon'/>
+                {ValidatedProfileIcon}
               </span>
             
               
