@@ -116,12 +116,14 @@ export default class UserBadgeSmallDemo extends React.Component<any, any> {
             <br />
             <UserCard
               ownerId={'3374422'}
+              isCertified={true}
               size={SynapseConstants.LARGE_USER_CARD}
             />
             <br />
             <br />
             <UserCard
               ownerId={'345424'}
+              isValidated={true}
               size={SynapseConstants.LARGE_USER_CARD}
               menuActions={[
                 {

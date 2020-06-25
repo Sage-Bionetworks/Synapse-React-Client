@@ -198,6 +198,18 @@ a.SRC-whiteText {
   text-decoration: underline;
 }
 
+.SRC-validatedProfileIcon {
+  margin-left: 10px;
+  svg {
+    vertical-align: bottom;
+  }
+}
+.SRC-certified-user-icon {
+  margin-right: 5px;
+  svg {
+    vertical-align: bottom;
+  }
+}
 .SRC-marginFifteen {
   margin-left: 15px;
   margin-right: 15px;
@@ -1096,3 +1108,5 @@ hr ~ .SRC-wrapper {
     }
   }
 }
+
+
