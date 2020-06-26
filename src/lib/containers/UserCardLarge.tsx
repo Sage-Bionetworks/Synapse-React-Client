@@ -5,6 +5,7 @@ import {
   faEllipsisV,
   faCopy,
 } from '@fortawesome/free-solid-svg-icons'
+import CertifiedUserIcon from '../assets/icons/CertifiedUser'
 import { UserProfile } from '../utils/synapseTypes/'
 
 library.add(faCircle)
@@ -13,6 +14,7 @@ library.add(faCopy)
 
 type UserCardLargeProps = {
   userProfile: UserProfile
+  isCertified?: boolean
 }
 
 /**
@@ -23,7 +25,7 @@ type UserCardLargeProps = {
  */
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
-export function UserCardLarge({ userProfile }: UserCardLargeProps) {
+export function UserCardLarge({ userProfile, isCertified }: UserCardLargeProps) {
   const { summary, industry, location, url } = userProfile
 
   return (
@@ -50,6 +52,12 @@ export function UserCardLarge({ userProfile }: UserCardLargeProps) {
         <div>
           <p className="SRC-card-metadata-title"> Location </p>
           <p>{location}</p>
+        </div>
+      )}
+      {isCertified && (
+        <div>
+          <p className="SRC-card-metadata-title"> Access </p>
+          <p>{CertifiedUserIcon} Certified Account</p>
         </div>
       )}
     </div>

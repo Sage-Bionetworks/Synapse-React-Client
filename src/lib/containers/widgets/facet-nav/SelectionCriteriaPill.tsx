@@ -11,6 +11,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import _ from 'lodash'
+import { SynapseConstants } from '../../../utils'
 
 export type FacetWithSelection = {
   facet: FacetColumnResult
@@ -39,7 +40,10 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     tooltipText: string | null = ''
   if (facetWithSelection) {
     if (facetWithSelection.facet.facetType === 'enumeration') {
-      innerText = facetWithSelection.displayValue || ''
+      innerText =
+        facetWithSelection.displayValue === SynapseConstants.VALUE_NOT_SET
+          ? 'unannotated'
+          : facetWithSelection.displayValue
     } else {
       innerText =
         (facetWithSelection.facet as FacetColumnResultRange).selectedMin +

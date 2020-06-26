@@ -198,6 +198,18 @@ a.SRC-whiteText {
   text-decoration: underline;
 }
 
+.SRC-validatedProfileIcon {
+  margin-left: 10px;
+  svg {
+    vertical-align: bottom;
+  }
+}
+.SRC-certified-user-icon {
+  margin-right: 5px;
+  svg {
+    vertical-align: bottom;
+  }
+}
 .SRC-marginFifteen {
   margin-left: 15px;
   margin-right: 15px;
@@ -1079,3 +1091,22 @@ hr ~ .SRC-wrapper {
     }
   }
 }
+.SRC-rangeGrip {
+  width: 2px;
+}
+
+.table>tbody>tr>td{
+  vertical-align: middle;
+  &.SRC-synapseTableTd {
+    max-width: 250px;
+    vertical-align: middle;
+    p { // all p children
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0px 5px;
+    }
+  }
+}
+
+

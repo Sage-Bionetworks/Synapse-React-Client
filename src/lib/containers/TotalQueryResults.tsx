@@ -95,7 +95,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     facetValue: string,
   ): string => {
     const entity = entityHeaders.find(item => item.id === facetValue)
-    return entity?.name || facetValue
+    return entity?.name ?? facetValue
   }
 
   const getDisplayValueUserIdColumn = (
@@ -133,9 +133,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
           }
 
           filteredEnumWithSelectedValuesOnly.push({
-            facet: facet,
+            facet,
+            displayValue,
             selectedValue: facetValue,
-            displayValue: displayValue,
           })
         }
       })
