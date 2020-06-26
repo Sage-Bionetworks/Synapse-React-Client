@@ -21,6 +21,7 @@ export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
   token: string | undefined
   wikiPage: WikiPageKey | undefined
+  entityId: string
   accessRequirement:
     | AccessRequirement
     | TermsOfUseAccessRequirement
@@ -38,6 +39,7 @@ export default function AcceptedRequirements({
   accessRequirement,
   accessRequirementStatus,
   showButton,
+  entityId,
   onHide,
 }: AcceptedRequirementsProps) {
   const [isHide, setIsHide] = useState<boolean>(true)
@@ -74,7 +76,7 @@ export default function AcceptedRequirements({
 
   const gotoSynapseAccessRequirementPage = () => {
     window.open(
-      `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
+      `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
     )
   }
   const onAcceptClicked = () => {
