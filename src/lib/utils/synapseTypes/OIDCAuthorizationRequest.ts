@@ -3,7 +3,22 @@
 export type OIDCAuthorizationRequest = {
   clientId: string
   scope: string
-  claims: string
+  claims: {
+    id_token: {
+      [key: string]: {
+        essential: boolean
+        value: string,
+        values: string[],
+      }
+    }
+    userinfo: {
+      [key: string]: {
+        essential: boolean
+        value: string,
+        values: string[],
+      }
+    }
+  }
   responseType: 'code'
   redirectUri: string
   nonce?: string
