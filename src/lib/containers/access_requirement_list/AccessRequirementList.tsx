@@ -176,6 +176,7 @@ export default function AccessRequirementList({
             token={token}
             user={user}
             onHide={onHide}
+            entityId={entityId}
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
@@ -186,6 +187,7 @@ export default function AccessRequirementList({
             token={token}
             user={user}
             onHide={onHide}
+            entityId={entityId}
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
@@ -196,6 +198,7 @@ export default function AccessRequirementList({
             token={token}
             user={user}
             onHide={onHide}
+            entityId={entityId}
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
@@ -206,6 +209,7 @@ export default function AccessRequirementList({
             token={token}
             user={user}
             onHide={onHide}
+            entityId={entityId}
           />
         )
       // case not supported yet

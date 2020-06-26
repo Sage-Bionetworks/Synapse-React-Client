@@ -10,6 +10,7 @@ export default function ACTAccessRequirementComponent({
   user,
   onHide,
   accessRequirementStatus,
+  entityId,
 }: AccessRequirementProps<ACTAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
 
@@ -37,6 +38,7 @@ export default function ACTAccessRequirementComponent({
       user={user}
       wikiPage={wikiPage}
       onHide={onHide}
+      entityId={entityId}
     />
   )
 }

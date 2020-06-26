@@ -13,6 +13,7 @@ export default function ManagedACTAccessRequirementComponent({
   user,
   onHide,
   accessRequirementStatus,
+  entityId,
 }: AccessRequirementProps<ManagedACTAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
 
@@ -36,6 +37,7 @@ export default function ManagedACTAccessRequirementComponent({
     <AcceptedRequirements
       accessRequirement={accessRequirement}
       accessRequirementStatus={accessRequirementStatus}
+      entityId={entityId}
       token={token}
       user={user}
       wikiPage={wikiPage}

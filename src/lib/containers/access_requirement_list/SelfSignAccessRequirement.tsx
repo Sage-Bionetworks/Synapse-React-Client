@@ -16,6 +16,7 @@ export default function SelfSignAccessRequirementComponent({
   user,
   onHide,
   accessRequirementStatus,
+  entityId,
 }: AccessRequirementProps<SelfSignAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
@@ -115,6 +116,7 @@ export default function SelfSignAccessRequirementComponent({
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}
         onHide={onHide}
+        entityId={entityId}
       />
     </div>
   )
