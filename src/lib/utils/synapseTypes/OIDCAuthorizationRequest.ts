@@ -3,19 +3,19 @@
 export type OIDCAuthorizationRequest = {
   clientId: string
   scope: string
-  claims: {
-    id_token: {
+  claims?: {
+    id_token?: {
       [key: string]: {
         essential: boolean
         value: string,
         values: string[],
       }
     }
-    userinfo: {
+    userinfo?: {
       [key: string]: {
-        essential: boolean
-        value: string,
-        values: string[],
+        essential?: boolean
+        value?: string,
+        values?: string[],
       }
     }
   }
