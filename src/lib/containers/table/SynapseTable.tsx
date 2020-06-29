@@ -59,7 +59,6 @@ import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
 import { Checkbox } from '../widgets/Checkbox'
 import { LabelLinkConfig } from '../CardContainerLogic'
-import ColumnResizer from 'column-resizer'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -92,14 +91,6 @@ const PREVIOUS = 'PREVIOUS'
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
-const RESIZER_OPTIONS: any = {
-  resizeMode: 'overflow',
-  partialRefresh: 'true',
-  liveDrag: true,
-  draggingClass: 'SRC-primary-background-color',
-  gripInnerHtml:
-    "<div class='SRC-rangeGrip SRC-primary-background-color-hover'></div>",
-}
 
 type Info = {
   index: number
@@ -172,23 +163,13 @@ export default class SynapseTable extends React.Component<
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
 
-  // instance variables
-  resizer: any
-  tableElement: HTMLTableElement | null | undefined = undefined
-
-  componentWillUnmount() {
-    this.disableResize()
-  }
-
   componentDidMount() {
     this.getEntityHeadersInData(true)
-    this.enableResize()
   }
 
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData(prevProps.token !== this.props.token)
     this.getTableConcreteType(prevProps)
-    this.enableResize()
   }
 
   public async getTableConcreteType(
@@ -413,21 +394,6 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  enableResize() {
-    if (!this.resizer) {
-      if (this.tableElement) {
-        this.resizer = new ColumnResizer(this.tableElement, RESIZER_OPTIONS)
-      }
-    } else {
-      this.resizer.reset(RESIZER_OPTIONS)
-    }
-  }
-
-  disableResize() {
-    if (this.resizer) {
-      this.resizer.reset({ disable: true })
-    }
-  }
   private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = this.props.getLastQueryRequest!().query
@@ -522,7 +488,6 @@ export default class SynapseTable extends React.Component<
           />
         )}
         <table
-          ref={node => (this.tableElement = node)}
           className="table table-striped table-condensed"
         >
           <thead className="SRC_bordered">
