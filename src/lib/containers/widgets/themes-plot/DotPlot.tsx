@@ -1,8 +1,8 @@
-import React, { FunctionComponent/*, useState , useEffect */ } from 'react' // importing FunctionComponent
+import React, { FunctionComponent /*, useState , useEffect */ } from 'react' // importing FunctionComponent
 import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
-import { GraphItem, PlotStyle, Dictionary} from './types'
+import { GraphItem, PlotStyle, Dictionary } from './types'
 import _ from 'lodash-es'
 const Plot = createPlotlyComponent(Plotly)
 
@@ -10,17 +10,16 @@ export type DotPlotProps = {
   plotData: GraphItem[]
   layoutConfig: Partial<PlotlyTyped.Layout>
   optionsConfig: Partial<PlotlyTyped.Config>
-  label?: string, 
+  label?: string
   style?: React.CSSProperties
-  id: string,
-  isLegend?: boolean,
-  isXAxis?: boolean,
-  xMax?: number,
-  plotStyle?: PlotStyle,
+  id: string
+  isLegend?: boolean
+  isXAxis?: boolean
+  xMax?: number
+  plotStyle?: PlotStyle
   markerSymbols?: Dictionary
   onClick?: Function
 }
-
 
 type LayoutOptions = {
   isLegend: boolean
@@ -98,12 +97,12 @@ function getPlotDataPoints(
   graphItems: GraphItem[],
   plotStyle: PlotStyle,
   ySorted?: string[],
-  markerSymbols?: Dictionary
+  markerSymbols?: Dictionary,
 ): any[] {
   const isFakeData = ySorted === undefined
   var groups = _.uniq(graphItems.map(item => item.group))
-  let data: any = []
-  let defaultSymbols = [
+  const data: any = []
+  const defaultSymbols = [
     'y-down',
     'triangle-up',
     'cross-thin-open',
@@ -117,7 +116,7 @@ function getPlotDataPoints(
       type: 'scatter',
 
       x: isFakeData
-        ? [-10]  // fake datavalue outside of the bounds
+        ? [-10] // fake datavalue outside of the bounds
         : createArrayOfGroupValues(
             ySorted!,
             graphItems.filter(row => row.group === group),
@@ -133,8 +132,8 @@ function getPlotDataPoints(
           color: plotStyle.markerLine,
           width: 1,
         },
-     
-        symbol: markerSymbols? markerSymbols[group] : defaultSymbols[i],
+
+        symbol: markerSymbols ? markerSymbols[group] : defaultSymbols[i],
         size: plotStyle.markerSize,
       },
     })
@@ -151,10 +150,17 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
   xMax,
   style = { width: '100%', height: '100%' },
   markerSymbols,
-  plotStyle= { markerFill: '#515359', markerLine: '#515359', markerSize: 9, backgroundColor: 'transparent'},
-  onClick, isLegend= false, isXAxis = false
+  plotStyle = {
+    markerFill: '#515359',
+    markerLine: '#515359',
+    markerSize: 9,
+    backgroundColor: 'transparent',
+  },
+  onClick,
+  isLegend = false,
+  isXAxis = false,
 }: DotPlotProps) => {
-  const pointsTypes = label? [label]: undefined
+  const pointsTypes = label ? [label] : undefined
 
   return (
     <Plot
@@ -163,12 +169,12 @@ const DotPlot: FunctionComponent<DotPlotProps> = ({
         isLegend: isLegend,
         isXAxis: isXAxis,
         maxValue: xMax,
-        backgroundColor: plotStyle.backgroundColor
+        backgroundColor: plotStyle.backgroundColor,
       })}
       style={style}
-      data={getPlotDataPoints(plotData, plotStyle, pointsTypes, markerSymbols )}
+      data={getPlotDataPoints(plotData, plotStyle, pointsTypes, markerSymbols)}
       config={optionsConfig}
-      onClick={(e: any) => onClick? onClick(e): _.noop}
+      onClick={(e: any) => (onClick ? onClick(e) : _.noop)}
     />
   )
 }

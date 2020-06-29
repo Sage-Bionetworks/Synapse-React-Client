@@ -36,7 +36,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: true,
+      showCards: false,
       propsWithTable: {
         tableConfiguration: {
           loadingScreen: <> I'm loading as fast as I can!!!! </>,
@@ -177,6 +177,20 @@ class QueryWrapperPlotNavDemo extends React.Component<
 
   public removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown })
+  }
+
+  componentDidMount() {
+    const log = (ev: any) => {
+      if (ev.target instanceof HTMLButtonElement) {
+        const buttonElement = ev.target as HTMLButtonElement
+        if (
+          buttonElement.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)
+        ) {
+          console.log('testing sign in button event captured')
+        }
+      }
+    }
+    window.document.addEventListener('click', log)
   }
 
   public render(): JSX.Element {
