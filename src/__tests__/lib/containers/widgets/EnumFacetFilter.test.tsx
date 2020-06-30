@@ -6,6 +6,7 @@ import {
 import {
   ColumnModel,
   FacetColumnResultValueCount,
+  ColumnType,
 } from '../../../../lib/utils/synapseTypes'
 import { render, fireEvent } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
@@ -22,10 +23,12 @@ SynapseClient.getUserProfiles = jest.fn().mockResolvedValue({
   ],
 })
 
-SynapseClient.getEntityHeader = jest.fn().mockResolvedValue({results: [
-  { id: '123', name: 'Entity1' },
-  { id: '1234', name: 'Entity2' },
-]})
+SynapseClient.getEntityHeader = jest.fn().mockResolvedValue({
+  results: [
+    { id: '123', name: 'Entity1' },
+    { id: '1234', name: 'Entity2' },
+  ],
+})
 
 const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },
@@ -48,7 +51,7 @@ const userEntityFacetValues: FacetColumnResultValueCount[] = [
 ]
 
 const columnModel: ColumnModel = {
-  columnType: 'STRING',
+  columnType: ColumnType.STRING,
   facetType: 'enumeration',
   id: '86423',
   name: 'Make',
@@ -78,6 +81,8 @@ function createTestProps(
     onChange: mockCallback,
     onClear: mockOnClear,
     ...overrides,
+    asCollapsible: true,
+    facetAliases: {},
   }
 }
 
@@ -159,7 +164,7 @@ describe('initialization', () => {
     it('should set labels correctly for ENTITYID type', async () => {
       const entityColumnModel: ColumnModel = {
         ...columnModel,
-        columnType: 'ENTITYID',
+        columnType: ColumnType.ENTITYID,
         name: 'File',
       }
 
@@ -194,7 +199,7 @@ describe('initialization', () => {
   it('should set labels correctly for USERID type', async () => {
     const userColumnModel: ColumnModel = {
       ...columnModel,
-      columnType: 'USERID',
+      columnType: ColumnType.USERID,
       name: 'Users',
     }
 
@@ -222,7 +227,6 @@ describe('initialization', () => {
 })
 
 describe('callbacks', () => {
-
   it('should trigger callback on checkbox change after delay', () => {
     const checkboxes = container.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]:not(#select_all)',
@@ -235,9 +239,8 @@ describe('callbacks', () => {
     jest.runOnlyPendingTimers()
     expect(mockCallback).toHaveBeenCalledWith({
       [stringFacetValues[0].value]: true,
-      [stringFacetValues[1].value]: false
+      [stringFacetValues[1].value]: false,
     })
-
   })
 
   it('should trigger callback on clear', () => {

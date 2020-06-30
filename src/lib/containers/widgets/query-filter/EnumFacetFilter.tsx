@@ -155,7 +155,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   if (!columnModel) {
     return <></>
   }
-
   const content = (
     <div className={asDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
       <div className="EnumFacetFilter__checkboxContainer--forAll">

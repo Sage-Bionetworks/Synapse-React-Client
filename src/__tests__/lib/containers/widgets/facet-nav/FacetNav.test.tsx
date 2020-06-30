@@ -73,7 +73,9 @@ describe('facets display hide/show', () => {
   it("should display 3 facets with 'show more' button", async () => {
     const panel = container.querySelector<HTMLElement>('div.FacetNav')
     const expectedLength = props.data?.facets?.filter(
-      facet => facet.facetType === 'enumeration',
+      facet =>
+        facet.facetType === 'enumeration' &&
+        props.data?.columnModels?.find(el => el.name === facet.columnName),
     ).length
     expect(panel).not.toBeNull()
     expect(container.querySelector('.FacetNav__row')!.children.length).toBe(
@@ -129,7 +131,7 @@ describe('facets display hide/show', () => {
   it("should only show specified facets if 'facetsToPlot' are set", async () => {
     init({
       ...props,
-      facetsToPlot: ['Make', 'Color'],
+      facetsToPlot: ['Make', 'Model'],
     })
 
     expect(container.querySelector('.FacetNav__row')!.children.length).toBe(2)

@@ -63,6 +63,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       data?.facets?.filter(
         item =>
           item.facetType === 'enumeration' &&
+          data.columnModels?.find(el => el.name === item.columnName) &&
           (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
       ) ?? []
     return result
