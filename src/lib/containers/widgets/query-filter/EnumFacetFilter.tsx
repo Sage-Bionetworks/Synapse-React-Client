@@ -252,11 +252,18 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                   label={valueToLabel(facet, userProfiles, entityHeaders)}
                   id={id}
                 ></Checkbox>
-                <div className="EnumFacetFilter__count">{facet.count}</div>
+                {isDropdown && (
+                  <span className="EnumFacetFilter__count">
+                    ({facet.count})
+                  </span>
+                )}
+                {!isDropdown && (
+                  <div className="EnumFacetFilter__count">({facet.count})</div>
+                )}
               </div>
             )
           })}
-        {isDropdown && (
+        {!isDropdown && (
           <>
             {!isShowAll && filteredSet.length > visibleItemsCount && (
               <button
@@ -317,19 +324,13 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         show={isShowDropdown}
         onToggle={onToggle}
       >
-        <Dropdown.Toggle
-          className={'condenced'}
-          id={columnModel.name}
-          variant={'light'}
-        >
-          <ElementWithTooltip
-            idForToolTip="facetFilterTooltip"
-            tooltipText="Filter by specific facet"
-            key="facetFilterTooltip"
-            image={faFilter}
-            darkTheme={true}
-          />
-        </Dropdown.Toggle>
+        <ElementWithTooltip
+          idForToolTip="facetFilterTooltip"
+          tooltipText="Filter by specific facet"
+          key="facetFilterTooltip"
+          image={faFilter}
+          darkTheme={true}
+        />
         <Dropdown.Menu>{content}</Dropdown.Menu>
       </Dropdown>
     )

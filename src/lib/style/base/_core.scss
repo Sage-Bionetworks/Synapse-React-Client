@@ -437,20 +437,6 @@ button.SRC-roundBorder {
   left: 0;
 }
 
-.SRC-menu-wall {
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-  position: fixed;
-  z-index: 900;
-  background: none;
-  border: none;
-  &:focus {
-    outline: none;
-  }
-}
 .dropdown:focus ul.dropdown-menu {
   display: block;
 }
@@ -1095,12 +1081,13 @@ hr ~ .SRC-wrapper {
   width: 2px;
 }
 
-.table>tbody>tr>td{
+.table > tbody > tr > td {
   vertical-align: middle;
   &.SRC-synapseTableTd {
     max-width: 250px;
     vertical-align: middle;
-    p { // all p children
+    p {
+      // all p children
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1108,5 +1095,3 @@ hr ~ .SRC-wrapper {
     }
   }
 }
-
-
