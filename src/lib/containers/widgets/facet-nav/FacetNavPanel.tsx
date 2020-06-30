@@ -419,7 +419,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       onClear={() => {
         applyChangesToValuesColumn(lastQueryRequest, facetToPlot, applyChanges)
       }}
-      asDropdown={true}
+      containerAs="Dropdown"
     />
   )
 

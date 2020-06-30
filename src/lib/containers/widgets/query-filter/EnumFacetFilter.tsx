@@ -26,8 +26,7 @@ export type EnumFacetFilterProps = {
   onChange: Function
   onClear: Function
   facetAliases: {} | undefined
-  asDropdown?: boolean
-  asCollapsible?: boolean
+  containerAs?: 'Collapsible' | 'Dropdown'
 }
 
 function valueToId(value: string): string {
@@ -85,8 +84,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onClear,
   onChange,
   facetAliases,
-  asCollapsible,
-  asDropdown = false,
+  containerAs = 'Collapsible',
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
@@ -155,8 +153,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   if (!columnModel) {
     return <></>
   }
+  const isDropdown = containerAs === 'Dropdown'
   const content = (
-    <div className={asDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
+    <div className={isDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
       <div className="EnumFacetFilter__checkboxContainer--forAll">
         <div
           className={
@@ -230,7 +229,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         {filteredSet.length > 0 &&
           formatFacetValuesForDisplay(
             filteredSet,
-            isShowAll || asDropdown,
+            isShowAll || containerAs === 'Dropdown',
             visibleItemsCount,
           ).map((facet, index: number) => {
             const id = valueToId(facet.value)
@@ -257,7 +256,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               </div>
             )
           })}
-        {asCollapsible && (
+        {isDropdown && (
           <>
             {!isShowAll && filteredSet.length > visibleItemsCount && (
               <button
@@ -311,24 +310,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     }
   }
 
-  if (asCollapsible) {
-    return (
-      <>
-        <FacetFilterHeader
-          facetAliases={facetAliases}
-          isCollapsed={isCollapsed}
-          label={columnModel.name}
-          onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
-        />
-        <div
-          className="EnumFacetFilter"
-          style={{ display: isCollapsed ? 'none' : 'block' }}
-        >
-          {content}
-        </div>
-      </>
-    )
-  } else if (asDropdown) {
+  if (isDropdown) {
     return (
       <Dropdown
         className="EnumFacetFilter"
@@ -352,6 +334,21 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       </Dropdown>
     )
   } else {
-    return <></>
+    return (
+      <>
+        <FacetFilterHeader
+          facetAliases={facetAliases}
+          isCollapsed={isCollapsed}
+          label={columnModel.name}
+          onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
+        />
+        <div
+          className="EnumFacetFilter"
+          style={{ display: isCollapsed ? 'none' : 'block' }}
+        >
+          {content}
+        </div>
+      </>
+    )
   }
 }

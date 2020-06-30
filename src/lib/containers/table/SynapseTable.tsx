@@ -1093,7 +1093,7 @@ export default class SynapseTable extends React.Component<
   ) {
     return (
       <EnumFacetFilter
-        asDropdown={true}
+        containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel!}
         token={token}

@@ -72,7 +72,7 @@ function generateManyFacetColumnResultValueCounts(): FacetColumnResultValueCount
 }
 
 function createTestProps(
-  overrides?: EnumFacetFilterProps,
+  overrides?: Partial<EnumFacetFilterProps>,
 ): EnumFacetFilterProps {
   return {
     facetValues: stringFacetValues,
@@ -81,7 +81,7 @@ function createTestProps(
     onChange: mockCallback,
     onClear: mockOnClear,
     ...overrides,
-    asCollapsible: true,
+    containerAs: 'Collapsible',
     facetAliases: {},
   }
 }
@@ -89,7 +89,7 @@ function createTestProps(
 let container: HTMLElement
 let props: EnumFacetFilterProps
 
-function init(overrides?: EnumFacetFilterProps) {
+function init(overrides?: Partial<EnumFacetFilterProps>) {
   props = createTestProps(overrides)
   container = render(<EnumFacetFilter {...props} />).container
 }
@@ -97,6 +97,25 @@ function init(overrides?: EnumFacetFilterProps) {
 beforeEach(() => init())
 
 describe('initialization', () => {
+  it('should render as a dropdown if containerAs = Dropdown', async () => {
+    await act(
+      async () =>
+        await init({
+          containerAs: 'Dropdown',
+        }),
+    )
+    expect(container.querySelector('.dropdown')).toBeDefined()
+  })
+  it('should render as a dropdown if containerAs = Collapsible', async () => {
+    await act(
+      async () =>
+        await init({
+          containerAs: 'Collapsible',
+        }),
+    )
+    expect(container.querySelector('div.FacetFilterHeader')).toBeDefined()
+  })
+
   it('should initiate selected items correctly', async () => {
     const checkboxes = container.querySelectorAll<HTMLInputElement>(
       'input[type="checkbox"]:not(#select_all)',

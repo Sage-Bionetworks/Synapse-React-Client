@@ -172,7 +172,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             <div className="QueryFilter__facet" key={facet.columnName}>
               {facet.facetType === 'enumeration' && columnModel && (
                 <EnumFacetFilter
-                  asCollapsible={true}
+                  containerAs="Collapsible"
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
                   token={token}
