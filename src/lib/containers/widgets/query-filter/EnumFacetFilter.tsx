@@ -1,5 +1,5 @@
 import * as React from 'react'
-
+import { Dropdown } from 'react-bootstrap'
 import {
   FacetColumnResultValueCount,
   ColumnModel,
@@ -10,11 +10,12 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { FacetFilterHeader } from './FacetFilterHeader'
-import '../../../style/components/query_filter/_enum-facet-filter.scss'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faFilter } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import { FacetFilterHeader } from './FacetFilterHeader'
+import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 library.add(faArrowLeft)
 
@@ -25,6 +26,8 @@ export type EnumFacetFilterProps = {
   onChange: Function
   onClear: Function
   facetAliases: {} | undefined
+  asDropdown?: boolean
+  asCollapsible?: boolean
 }
 
 function valueToId(value: string): string {
@@ -82,14 +85,22 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onClear,
   onChange,
   facetAliases,
+  asCollapsible,
+  asDropdown = false,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
+  const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
   const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(
     facetValues,
   )
+
+  useDeepCompareEffect(() => {
+    setFilteredSet(facetValues)
+  }, [facetValues])
+
   const visibleItemsCount = 5
   const selectionDelay = 1500 // in ms
   const textInput: React.RefObject<HTMLInputElement> = React.createRef()
@@ -119,7 +130,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const handleTextInputFilterEvent = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const inputValue: string = e.target.value.trim()
+    const inputValue: string = e.target.value
     setSearchText(inputValue)
     setIsShowAll(true) // While in filter search mode, display all filtered values
 
@@ -133,7 +144,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       // display only facet values that contain text from the text input field
       const filtered = facetValues.filter(obj => {
         const label = valueToLabel(obj, userProfiles, entityHeaders)
-        return label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+        return label.toLowerCase().indexOf(inputValue.trim().toLowerCase()) > -1
           ? obj
           : null
       })
@@ -145,149 +156,203 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     return <></>
   }
 
-  return (
-    <div className="EnumFacetFilter">
-      <FacetFilterHeader
-        facetAliases={facetAliases}
-        isCollapsed={isCollapsed}
-        label={columnModel.name}
-        onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
-      ></FacetFilterHeader>
-      <div style={{ display: isCollapsed ? 'none' : 'block' }}>
-        <div className="EnumFacetFilter__checkboxContainer--forAll">
-          <div
-            className={
-              showSearch
-                ? 'EnumFacetFilter__search active'
-                : 'EnumFacetFilter__search'
-            }
+  const content = (
+    <div className={asDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
+      <div className="EnumFacetFilter__checkboxContainer--forAll">
+        <div
+          className={
+            showSearch
+              ? 'EnumFacetFilter__search active'
+              : 'EnumFacetFilter__search'
+          }
+        >
+          <button // Close Search Button
+            className="EnumFacetFilter__closeSearch"
+            onClick={() => {
+              setFilteredSet(facetValues)
+              setShowSearch(false)
+              setIsShowAll(false)
+            }}
           >
-            <button // Close Search Button
-              className="EnumFacetFilter__closeSearch"
-              onClick={() => {
-                setFilteredSet(facetValues)
-                setShowSearch(false)
-                setIsShowAll(false)
-              }}
-            >
-              <FontAwesomeIcon
-                className="EnumFacetFilter__previous"
-                icon={faArrowLeft}
-              />
-            </button>
-            <button // Clear Search Filter Text Button
-              className="EnumFacetFilter__resetSearch"
+            <FontAwesomeIcon
+              className="EnumFacetFilter__previous"
+              icon={faArrowLeft}
+            />
+          </button>
+          <button // Clear Search Filter Text Button
+            className="EnumFacetFilter__resetSearch"
+            onClick={() => {
+              setSearchText('')
+              textInput.current?.focus()
+            }}
+          >
+            <FontAwesomeIcon
+              className="EnumFacetFilter__reset"
+              icon={'times'}
+            />
+          </button>
+          <input // Search Filter Text
+            type="text"
+            placeholder="Find values"
+            value={searchTerm}
+            ref={textInput}
+            onChange={e => {
+              handleTextInputFilterEvent(e)
+            }}
+          />
+        </div>
+        {!showSearch && (
+          <div className="EnumFacetFilter__checkAll">
+            <Checkbox
+              className="EnumFacetFilter__checkbox"
+              onChange={() => onClear(columnModel.name)}
+              key="select_all"
+              checked={facetValues.filter(item => item.isSelected).length === 0}
+              label="All"
+              id="select_all"
+            ></Checkbox>
+            <button
+              className="EnumFacetFilter__searchbtn"
               onClick={() => {
                 setSearchText('')
+                setShowSearch(true)
                 textInput.current?.focus()
               }}
             >
               <FontAwesomeIcon
-                className="EnumFacetFilter__reset"
-                icon={'times'}
+                className="EnumFacetFilter__searchicon"
+                icon={'search'}
               />
             </button>
-            <input // Search Filter Text
-              type="text"
-              placeholder="Find values"
-              value={searchTerm}
-              ref={textInput}
-              onChange={e => {
-                handleTextInputFilterEvent(e)
-              }}
-            />
           </div>
-          {!showSearch && (
-            <div className="EnumFacetFilter__checkAll">
-              <Checkbox
-                className="EnumFacetFilter__checkbox"
-                onChange={() => onClear(columnModel.name)}
-                key="select_all"
-                checked={
-                  facetValues.filter(item => item.isSelected).length === 0
-                }
-                label="All"
-                id="select_all"
-              ></Checkbox>
-              <button
-                className="EnumFacetFilter__searchbtn"
-                onClick={() => {
-                  setSearchText('')
-                  setShowSearch(true)
-                  textInput.current?.focus()
-                }}
+        )}
+      </div>
+      <div>
+        {filteredSet.length > 0 &&
+          formatFacetValuesForDisplay(
+            filteredSet,
+            isShowAll || asDropdown,
+            visibleItemsCount,
+          ).map((facet, index: number) => {
+            const id = valueToId(facet.value)
+            return (
+              <div
+                className="EnumFacetFilter__checkboxContainer"
+                key={`checkLabel${index}`}
               >
-                <FontAwesomeIcon
-                  className="EnumFacetFilter__searchicon"
-                  icon={'search'}
-                />
+                <Checkbox
+                  className="EnumFacetFilter__checkbox"
+                  onChange={(isChecked: boolean) => {
+                    selectedValuesMap[facet.value] = isChecked
+                    clearTimeout(timer)
+                    timer = setTimeout(() => {
+                      onChange(selectedValuesMap)
+                    }, selectionDelay)
+                  }}
+                  key={id + index}
+                  checked={facet.isSelected}
+                  label={valueToLabel(facet, userProfiles, entityHeaders)}
+                  id={id}
+                ></Checkbox>
+                <div className="EnumFacetFilter__count">{facet.count}</div>
+              </div>
+            )
+          })}
+        {asCollapsible && (
+          <>
+            {!isShowAll && filteredSet.length > visibleItemsCount && (
+              <button
+                className="EnumFacetFilter__showMoreFacetsBtn"
+                onClick={() => setIsShowAll(true)}
+              >
+                <div className="EnumFacetFilter__checkboxContainer">
+                  <div className="EnumFacetFilter__showMoreFacetsLabel">
+                    Show more
+                  </div>
+                  <div className="EnumFacetFilter__howMoreFacetsCount">
+                    {filteredSet.length}
+                  </div>
+                </div>
               </button>
-            </div>
-          )}
-        </div>
-        <div>
-          {filteredSet.length > 0 &&
-            formatFacetValuesForDisplay(
-              filteredSet,
-              isShowAll,
-              visibleItemsCount,
-            ).map((facet, index: number) => {
-              const id = valueToId(facet.value)
-              return (
-                <div
-                  className="EnumFacetFilter__checkboxContainer"
-                  key={`checkLabel${index}`}
-                >
-                  <Checkbox
-                    className="EnumFacetFilter__checkbox"
-                    onChange={(isChecked: boolean) => {
-                      selectedValuesMap[facet.value] = isChecked
-                      clearTimeout(timer)
-                      timer = setTimeout(() => {
-                        onChange(selectedValuesMap)
-                      }, selectionDelay)
-                    }}
-                    key={id + index}
-                    checked={facet.isSelected}
-                    label={valueToLabel(facet, userProfiles, entityHeaders)}
-                    id={id}
-                  ></Checkbox>
-                  <div className="EnumFacetFilter__count">{facet.count}</div>
+            )}
+            {isShowAll && filteredSet.length > visibleItemsCount && (
+              <button
+                className="EnumFacetFilter__showMoreFacetsBtn"
+                onClick={() => setIsShowAll(false)}
+              >
+                <div className="EnumFacetFilter__checkboxContainer">
+                  <div className="EnumFacetFilter__showMoreFacetsLabel">
+                    Show Less
+                  </div>
                 </div>
-              )
-            })}
-          {!isShowAll && filteredSet.length > visibleItemsCount && (
-            <button
-              className="EnumFacetFilter__showMoreFacetsBtn"
-              onClick={() => setIsShowAll(true)}
-            >
-              <div className="EnumFacetFilter__checkboxContainer">
-                <div className="EnumFacetFilter__showMoreFacetsLabel">
-                  Show more
-                </div>
-                <div className="EnumFacetFilter__howMoreFacetsCount">
-                  {filteredSet.length}
-                </div>
-              </div>
-            </button>
-          )}
-          {isShowAll && filteredSet.length > visibleItemsCount && (
-            <button
-              className="EnumFacetFilter__showMoreFacetsBtn"
-              onClick={() => setIsShowAll(false)}
-            >
-              <div className="EnumFacetFilter__checkboxContainer">
-                <div className="EnumFacetFilter__showMoreFacetsLabel">
-                  Show Less
-                </div>
-              </div>
-            </button>
-          )}
-          {filteredSet.length <= 0 && (
-            <div className="EnumFacetFilter__noMatch">No match found</div>
-          )}
-        </div>
+              </button>
+            )}
+          </>
+        )}
+        {filteredSet.length <= 0 && (
+          <div className="EnumFacetFilter__noMatch">No match found</div>
+        )}
       </div>
     </div>
   )
+
+  // Any click event for the Dropdown will close the dropdown (assuming its open), so we have
+  // to handle the onToggle event and manually manage the dropdown open state. If metadata
+  // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
+  // we close it.
+  const onToggle = (
+    _show: boolean,
+    _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
+    metadata: any,
+  ) => {
+    if (metadata.source) {
+      setIsShowDropdown(true)
+    } else {
+      setIsShowDropdown(false)
+    }
+  }
+
+  if (asCollapsible) {
+    return (
+      <>
+        <FacetFilterHeader
+          facetAliases={facetAliases}
+          isCollapsed={isCollapsed}
+          label={columnModel.name}
+          onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
+        />
+        <div
+          className="EnumFacetFilter"
+          style={{ display: isCollapsed ? 'none' : 'block' }}
+        >
+          {content}
+        </div>
+      </>
+    )
+  } else if (asDropdown) {
+    return (
+      <Dropdown
+        className="EnumFacetFilter"
+        show={isShowDropdown}
+        onToggle={onToggle}
+      >
+        <Dropdown.Toggle
+          className={'condenced'}
+          id={columnModel.name}
+          variant={'light'}
+        >
+          <ElementWithTooltip
+            idForToolTip="facetFilterTooltip"
+            tooltipText="Filter by specific facet"
+            key="facetFilterTooltip"
+            image={faFilter}
+            darkTheme={true}
+          />
+        </Dropdown.Toggle>
+        <Dropdown.Menu>{content}</Dropdown.Menu>
+      </Dropdown>
+    )
+  } else {
+    return <></>
+  }
 }

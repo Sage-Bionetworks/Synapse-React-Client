@@ -1,8 +1,12 @@
-@import '../../abstracts/variables';
-
-$input-icon-margin: 5px;
-
 .EnumFacetFilter {
+  $input-icon-margin: 5px;
+
+  &__dropdown_menu {
+    overflow-y: auto;
+    max-height: 300px;
+    z-index: 10;
+    padding: 10px;
+  }
   &__checkboxContainer {
     display: flex;
     justify-content: space-between;
@@ -114,5 +118,4 @@ $input-icon-margin: 5px;
   button {
     color: $primary-action-color;
   }
-
 }

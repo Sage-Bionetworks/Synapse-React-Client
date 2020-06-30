@@ -19,7 +19,6 @@ import * as React from 'react'
 import { Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
-import { readFacetValues } from '../../utils/functions/facetUtils'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
 import {
   formatSQLFromParser,
@@ -38,21 +37,21 @@ import {
   UserProfile,
   FacetColumnRequest,
   EntityColumnType,
+  ColumnModel,
 } from '../../utils/synapseTypes/'
 import { getColorPallette } from '../ColorGradient'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
-import { FacetSelection, QueryWrapperChildProps } from '../QueryWrapper'
+import { QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
-import { ICON_STATE, SELECT_ALL } from './SynapseTableConstants'
+import { ICON_STATE } from './SynapseTableConstants'
 import {
   ColumnSelection,
   DownloadOptions,
   EllipsisDropdown,
   ExpandTable,
 } from './table-top/'
-import FacetFilter from './table-top/FacetFilter'
 import NoData from '../../assets/icons/file-dotted.svg'
 import { renderTableCell } from '../synapse_table_functions/renderTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
@@ -60,6 +59,11 @@ import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnI
 import { Checkbox } from '../widgets/Checkbox'
 import { LabelLinkConfig } from '../CardContainerLogic'
 import ColumnResizer from 'column-resizer'
+import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
+import {
+  applyMultipleChangesToValuesColumn,
+  applyChangesToValuesColumn,
+} from '../widgets/query-filter/QueryFilter'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -146,7 +150,6 @@ export default class SynapseTable extends React.Component<
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
-    this.applyChanges = this.applyChanges.bind(this)
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -325,7 +328,7 @@ export default class SynapseTable extends React.Component<
       enableLeftFacetFilter,
       isFilterAndViewChild,
     } = this.props
-    const { queryResult } = data
+    const { queryResult, columnModels = [] } = data
     const { queryResults } = queryResult
     const { rows } = queryResults
     const { headers } = queryResults
@@ -376,14 +379,14 @@ export default class SynapseTable extends React.Component<
               {!isFilterAndViewChild && this.renderTableTop(headers)}
               <div className="row">
                 <div className={'col-xs-12'}>
-                  {this.renderTable(headers, facets, rows)}
+                  {this.renderTable(headers, columnModels, facets, rows)}
                 </div>
               </div>
             </>
           )}
           {enableLeftFacetFilter && (
             <div className={'col-xs-12'}>
-              {this.renderTable(headers, facets, rows)}
+              {this.renderTable(headers, columnModels, facets, rows)}
             </div>
           )}
         </div>
@@ -464,6 +467,7 @@ export default class SynapseTable extends React.Component<
 
   private renderTable = (
     headers: SelectColumn[],
+    columnModels: ColumnModel[],
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
@@ -529,9 +533,11 @@ export default class SynapseTable extends React.Component<
             <tr>
               {this.createTableHeader(
                 headers,
+                columnModels,
                 facets,
                 isShowingAccessColumn,
                 isRowSelectionVisible,
+                lastQueryRequest,
               )}
             </tr>
           </thead>
@@ -939,12 +945,14 @@ export default class SynapseTable extends React.Component<
 
   private createTableHeader(
     headers: SelectColumn[],
+    columnModels: ColumnModel[],
     facets: FacetColumnResult[],
     isShowingAccessColumn: boolean | undefined,
     isRowSelectionVisible: boolean | undefined,
+    lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
-    const { facetAliases = {}, isColumnSelected } = this.props
+    const { facetAliases = {}, isColumnSelected, token } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
         const isHeaderSelected = isColumnSelected!.includes(column.name)
@@ -966,6 +974,7 @@ export default class SynapseTable extends React.Component<
           // the header must be included in the facets and it has to be enumerable for current rendering capabilities
           const isFacetSelection: boolean =
             facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
+          const facet = facets[facetIndex] as FacetColumnResultValues
           const isSelectedSpanClass = isSelected
             ? 'SRC-primary-background-color SRC-anchor-light'
             : ''
@@ -977,6 +986,7 @@ export default class SynapseTable extends React.Component<
             column.name,
             facetAliases,
           )
+          const columnModel = columnModels.find(el => el.name === column.name)!
           return (
             <th key={column.name}>
               <div className="SRC-split">
@@ -985,7 +995,13 @@ export default class SynapseTable extends React.Component<
                 </span>
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
-                    this.configureFacetDropdown(facets, facetIndex)}
+                    this.configureFacetDropdown(
+                      facet,
+                      columnModel,
+                      lastQueryRequest,
+                      token,
+                      facetAliases,
+                    )}
                   {this.isSortableColumn(column.columnType) && (
                     <span
                       tabIndex={0}
@@ -1106,23 +1122,34 @@ export default class SynapseTable extends React.Component<
    * @memberof SynapseTable
    */
   public configureFacetDropdown(
-    facetColumnResults: FacetColumnResult[],
-    facetIndex: number,
+    facetColumnResult: FacetColumnResultValues,
+    columnModel: ColumnModel,
+    lastQueryRequest: QueryBundleRequest,
+    token?: string,
+    facetAliases?: {},
   ) {
-    // this grabs the specific facet selection
-    const facetColumnResult = facetColumnResults[
-      facetIndex
-    ] as FacetColumnResultValues
-    const isChecked = this.props.isAllFilterSelectedForFacet![
-      facetColumnResult.columnName
-    ]
     return (
-      <FacetFilter
-        lastFacetSelection={this.props.lastFacetSelection!}
-        isLoading={this.props.isLoading!}
-        applyChanges={this.applyChanges}
-        isAllFilterSelectedForFacet={isChecked}
-        facetColumnResult={facetColumnResult}
+      <EnumFacetFilter
+        asDropdown={true}
+        facetValues={facetColumnResult.facetValues}
+        columnModel={columnModel!}
+        token={token}
+        facetAliases={facetAliases}
+        onChange={(facetNamesMap: {}) => {
+          applyMultipleChangesToValuesColumn(
+            lastQueryRequest,
+            facetColumnResult,
+            this.applyChangesFromQueryFilter,
+            facetNamesMap,
+          )
+        }}
+        onClear={() => {
+          applyChangesToValuesColumn(
+            lastQueryRequest,
+            facetColumnResult,
+            this.applyChangesFromQueryFilter,
+          )
+        }}
       />
     )
   }
@@ -1132,50 +1159,6 @@ export default class SynapseTable extends React.Component<
     queryRequest.query.selectedFacets = facets
     this.setState({ isUserModifiedQuery: true })
     this.props.executeQueryRequest!(queryRequest)
-  }
-
-  /**
-   * When the user decides to submit their changes for the dropdown menu with the facet, they have an
-   * apply button, this method handles that submission.
-   *
-   * @memberof SynapseTable
-   */
-  public applyChanges = ({
-    ref,
-    columnName,
-    facetValue = '',
-    selector = '',
-  }: {
-    ref: React.RefObject<HTMLSpanElement>
-    columnName: string
-    facetValue?: string
-    selector?: string
-  }) => (_: React.SyntheticEvent<HTMLElement>) => {
-    const htmlCheckboxes = Array.from(
-      ref.current!.querySelectorAll('.SRC-facet-checkboxes'),
-    ) as HTMLInputElement[]
-    const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
-    const { isAllFilterSelectedForFacet } = this.props
-    const { newQueryRequest } = readFacetValues({
-      htmlCheckboxes,
-      queryRequest,
-      selector,
-      facet: columnName,
-    })
-
-    const lastFacetSelection = {
-      columnName,
-      facetValue,
-      selector,
-    } as FacetSelection
-    isAllFilterSelectedForFacet![columnName] = selector === SELECT_ALL
-    this.props.updateParentState!({
-      lastFacetSelection,
-      isAllFilterSelectedForFacet: isAllFilterSelectedForFacet!,
-    })
-
-    this.props.executeQueryRequest!(newQueryRequest)
-    this.setState({ isUserModifiedQuery: true })
   }
 }
 type ColumnReference = {

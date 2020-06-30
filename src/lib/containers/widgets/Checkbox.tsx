@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 export type CheckboxProps = {
-  label: string
+  label: string | JSX.Element
   id: string
   checked?: boolean
   className?: string
@@ -11,11 +11,12 @@ export type CheckboxProps = {
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
-  const [checked, setChecked] = useState<boolean>(props.checked || false)
+  const { checked: propsChecked = false } = props
+  const [checked, setChecked] = useState<boolean>(propsChecked ?? false)
 
   useEffect(() => {
-    setChecked(props.checked || false)
-  }, [props.checked])
+    setChecked(propsChecked)
+  }, [propsChecked])
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked)

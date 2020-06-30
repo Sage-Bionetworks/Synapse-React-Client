@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Dropdown} from 'react-bootstrap'
+import { Dropdown } from 'react-bootstrap'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
@@ -17,8 +17,7 @@ type FacetFilterProps = {
   lastFacetSelection: FacetSelection
   isLoading: boolean
   className?: string
-  variant?: 'light'|'dark'|'primary'
-  colorOnExpanded?: string
+  variant?: 'light' | 'dark' | 'primary'
 }
 
 type FacetFilterState = {
@@ -73,7 +72,7 @@ export default class FacetFilter extends React.Component<
       isLoading,
       lastFacetSelection,
       className = 'SRC-primary-text-color SRC-primary-background-color-hover condenced',
-      variant = 'light'
+      variant = 'light',
     } = this.props
     const { columnName } = facetColumnResult
     const { show } = this.state
@@ -155,11 +154,13 @@ export default class FacetFilter extends React.Component<
                       <label className="dropdownList SRC-overflowWrap SRC-base-font SRC-fullWidth">
                         <input
                           ref={inputRef}
-                          onChange={(event) => applyChanges({
-                            ref: this.ref,
-                            columnName,
-                            facetValue,
-                          })(event)}
+                          onChange={event =>
+                            applyChanges({
+                              ref: this.ref,
+                              columnName,
+                              facetValue,
+                            })(event)
+                          }
                           checked={isValueSelected}
                           className="SRC-facet-checkboxes"
                           type="checkbox"
