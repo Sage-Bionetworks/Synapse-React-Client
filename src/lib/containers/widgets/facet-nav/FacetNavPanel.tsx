@@ -232,19 +232,6 @@ const applyFacetFilter = (
   }
 }
 
-// const applyDropdownFilter = (
-//   evt: React.ChangeEvent<HTMLInputElement>,
-//   allFacetValues: FacetColumnResultValues,
-//   callbackApplyFn: Function,
-// ) => {
-//   if (evt.target.value) {
-//     const facetValueClicked = allFacetValues.facetValues.find(
-//       facet => facet.value === evt.target.value,
-//     )
-//     callbackApplyFn(allFacetValues, facetValueClicked, evt.target.checked)
-//   }
-// }
-
 const getPlotStyle = (
   parentWidth: number | null,
   plotType: PlotType,
@@ -339,7 +326,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [plotType, setPlotType] = useState<PlotType>('PIE')
 
-  const lastQueryRequest = getLastQueryRequest && getLastQueryRequest!()
+  const lastQueryRequest = getLastQueryRequest?.()
   const getColumnType = (): ColumnType | undefined =>
     data?.columnModels?.find(
       columnModel => columnModel.name === facetToPlot.columnName,
@@ -379,16 +366,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   /* rendering functions */
   const renderChartSelectionToggle = (): JSX.Element => (
     <Dropdown>
-      <Dropdown.Toggle variant="light" id="plot-selector">
-        <ElementWithTooltip
-          idForToolTip="toggleChart"
-          tooltipText="Toggle chart type"
-          key="toggleChart"
-          image={faChartBar}
-          className="SRC-primary-color"
-          darkTheme={true}
-        />
-      </Dropdown.Toggle>
+      <ElementWithTooltip
+        idForToolTip="toggleChart"
+        tooltipText="Toggle chart type"
+        key="toggleChart"
+        image={faChartBar}
+        className="SRC-primary-color"
+        darkTheme={true}
+      />
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
           Bar Chart

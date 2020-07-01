@@ -106,7 +106,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   let timer: ReturnType<typeof setTimeout>
 
   const userIds =
-    columnModel.columnType === 'USERID'
+    columnModel?.columnType === 'USERID'
       ? facetValues.map(facet => facet.value)
       : []
   const userProfiles = useGetInfoFromIds<UserProfile>({
@@ -116,7 +116,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   })
 
   const entityIds =
-    columnModel.columnType === 'ENTITYID'
+    columnModel?.columnType === 'ENTITYID'
       ? facetValues.map(facet => facet.value)
       : []
   const entityHeaders = useGetInfoFromIds<EntityHeader>({

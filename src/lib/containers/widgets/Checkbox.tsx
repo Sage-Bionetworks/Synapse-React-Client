@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 export type CheckboxProps = {
-  label: string | JSX.Element
+  label: string
   id: string
   checked?: boolean
   className?: string
@@ -12,7 +12,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
   const { checked: propsChecked = false } = props
-  const [checked, setChecked] = useState<boolean>(propsChecked ?? false)
+  const [checked, setChecked] = useState<boolean>(propsChecked)
 
   useEffect(() => {
     setChecked(propsChecked)
