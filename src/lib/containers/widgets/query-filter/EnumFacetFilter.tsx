@@ -260,7 +260,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                   </span>
                 )}
                 {!isDropdown && (
-                  <div className="EnumFacetFilter__count">({facet.count})</div>
+                  <div className="EnumFacetFilter__count">{facet.count}</div>
                 )}
               </div>
             )
