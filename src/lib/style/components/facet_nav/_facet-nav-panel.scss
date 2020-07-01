@@ -22,10 +22,16 @@
       text-align: right;
       align-items: center;
       display: flex;
+      .ElementWithTooltip {
+        flex: 1;
+        flex-grow: 1;
+        width: 25px;
+        min-height: 25px;
+        height: fit-content;
+      }
 
       .show button.dropdown-toggle,
       button.dropdown-toggle:hover {
-        background: transparent;
         color: inherit;
       }
 

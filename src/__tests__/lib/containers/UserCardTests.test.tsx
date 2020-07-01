@@ -87,12 +87,9 @@ describe('it creates the correct UI for the small card', () => {
   it('displays a div with text for a user without an img', () => {
     const { wrapper } = createSmallComponent({ ...props })
     expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
-    expect(
-      wrapper
-        .render()
-        .find('div.SRC-userImgSmall')
-        .text(),
-    ).toEqual(firstName[0])
+    expect(wrapper.render().find('div.SRC-userImgSmall').text()).toEqual(
+      firstName[0],
+    )
   })
 
   it('displays an img for a user with an img set', () => {
@@ -131,12 +128,9 @@ describe('it creates the correct UI for the medium card', () => {
     const { wrapper } = createMediumComponent({ ...props })
     // one svg is for the clipboard icon, the other is for the user
     expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
-    expect(
-      wrapper
-        .render()
-        .find('div.SRC-userImg')
-        .text(),
-    ).toEqual(firstName[0])
+    expect(wrapper.render().find('div.SRC-userImg').text()).toEqual(
+      firstName[0],
+    )
   })
 
   it('displays an img for a user with an img set', () => {
@@ -165,7 +159,6 @@ describe('it creates the correct UI for the medium card', () => {
       },
     ] as MenuAction[]
     const { wrapper } = createMediumComponent({ ...props, menuActions })
-    expect(wrapper.render().find('.SRC-menu-wall')).toHaveLength(0)
     const instance = wrapper.instance() as UserCardMedium
     const _event = {} as any
     await instance.toggleContextMenu(_event)
@@ -222,10 +215,7 @@ describe('it creates the correct UI for the large card', () => {
     // only two fields are set for the mock profile, so there should only be two
     // fields shown
     expect(
-      wrapper
-        .render()
-        .find('div.SRC-cardMetaData')
-        .children(),
+      wrapper.render().find('div.SRC-cardMetaData').children(),
     ).toHaveLength(2)
   })
 })

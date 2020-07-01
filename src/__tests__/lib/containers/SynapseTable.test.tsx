@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import { EntityLink } from 'lib/containers/EntityLink'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 import { ColumnSelection } from 'lib/containers/table/table-top'
-import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
+import { EnumFacetFilter } from 'lib/containers/widgets/query-filter/EnumFacetFilter'
 import UserCard from 'lib/containers/UserCard'
 import { unCamelCase } from 'lib/utils/functions/unCamelCase'
 import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
@@ -35,7 +35,9 @@ import { cloneDeep } from 'lodash-es'
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
 ) => {
-  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />, {disableLifecycleMethods: true})
+  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />, {
+    disableLifecycleMethods: true,
+  })
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -126,7 +128,7 @@ describe('basic functionality', () => {
     const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
     dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
     // listen to function call
-    
+
     await wrapper.setProps({
       data: dataWithNewTableId,
     })
@@ -254,7 +256,7 @@ describe('basic functionality', () => {
       expect(wrapper.find('th')).toHaveLength(totalColumns)
       // there are five facets for the dataset so there should be 5
       // faceted columns
-      expect(wrapper.find(FacetFilter)).toHaveLength(5)
+      expect(wrapper.find(EnumFacetFilter)).toHaveLength(5)
       expect(wrapper.find('th.SRC-hidden')).toHaveLength(8)
     })
 

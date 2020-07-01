@@ -52,6 +52,7 @@ export type QueryWrapperState = {
   isLoading: boolean // occurs when state changes
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
+  // TODO: Delete lastFacetSelection once StackedBarChart.tsx/Facets.tsx are deleted
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
