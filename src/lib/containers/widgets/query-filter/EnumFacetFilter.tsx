@@ -177,18 +177,20 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               icon={faArrowLeft}
             />
           </button>
-          <button // Clear Search Filter Text Button
-            className="EnumFacetFilter__resetSearch"
-            onClick={() => {
-              setSearchText('')
-              textInput.current?.focus()
-            }}
-          >
-            <FontAwesomeIcon
-              className="EnumFacetFilter__reset"
-              icon={'times'}
-            />
-          </button>
+          {searchTerm.length > 0 && (
+            <button // Clear Search Filter Text Button
+              className="EnumFacetFilter__resetSearch"
+              onClick={() => {
+                setSearchText('')
+                textInput.current?.focus()
+              }}
+            >
+              <FontAwesomeIcon
+                className="EnumFacetFilter__reset"
+                icon={'times'}
+              />
+            </button>
+          )}
           <input // Search Filter Text
             type="text"
             placeholder="Find values"
