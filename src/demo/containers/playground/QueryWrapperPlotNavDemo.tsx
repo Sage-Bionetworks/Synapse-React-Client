@@ -31,7 +31,8 @@ class QueryWrapperPlotNavDemo extends React.Component<
    */
   constructor(props: any) {
     super(props)
-    const sql: string = 'SELECT * FROM syn11346063'
+    const sql: string =
+      "SELECT assay FROM syn11346063 where assay = 'rnaSeq' or assay = 'rnaArray' or assay = 'snpArray' limit 3"
     this.state = {
       isLoading: true,
       ownerId: '',

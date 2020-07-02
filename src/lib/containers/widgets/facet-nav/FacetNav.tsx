@@ -1,10 +1,8 @@
 import * as React from 'react'
 import FacetNavPanel from './FacetNavPanel'
-import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import { QueryWrapperChildProps } from '../../QueryWrapper'
 import {
   FacetColumnResultValues,
-  FacetColumnResultValueCount,
   FacetColumnRequest,
   FacetColumnResult,
   QueryResultBundle,
@@ -212,19 +210,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideExpandedFacet(facet)}
                   onCollapse={() => toggleExpandFacet(facet, false)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={(
-                    facet: FacetColumnResultValues,
-                    value: FacetColumnResultValueCount,
-                  ) =>
-                    applyChangesToValuesColumn(
-                      request,
-                      facet,
-                      applyChangesFromQueryFilter,
-                      value.value,
-                      !value.isSelected,
-                    )
-                  }
+                  applyChanges={applyChangesFromQueryFilter}
                   facetAliases={facetAliases}
+                  getLastQueryRequest={getLastQueryRequest}
                 ></FacetNavPanel>
               </div>
             ))}
@@ -250,19 +238,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideFacetInGrid(facet.columnName)}
                   onExpand={() => toggleExpandFacet(facet, true)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={(
-                    facet: FacetColumnResultValues,
-                    value: FacetColumnResultValueCount | undefined,
-                    isSelected: boolean,
-                  ) =>
-                    applyChangesToValuesColumn(
-                      request,
-                      facet,
-                      applyChangesFromQueryFilter,
-                      value?.value,
-                      isSelected,
-                    )
-                  }
+                  applyChanges={applyChangesFromQueryFilter}
                   facetAliases={facetAliases}
                 ></FacetNavPanel>
               </div>
