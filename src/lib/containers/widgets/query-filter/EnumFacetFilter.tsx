@@ -231,7 +231,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
         {filteredSet.length > 0 &&
           formatFacetValuesForDisplay(
             filteredSet,
-            isShowAll || containerAs === 'Dropdown',
+            isShowAll || isDropdown,
             visibleItemsCount,
           ).map((facet, index: number) => {
             const id = valueToId(facet.value)
