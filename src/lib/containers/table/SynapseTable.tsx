@@ -195,10 +195,7 @@ export default class SynapseTable extends React.Component<
 
   shouldComponentUpdate(nextProps: QueryWrapperChildProps & SynapseTableProps, nextState: Readonly<SynapseTableState>, nextContext: any): boolean {
     this.disableResize()
-    if (super.shouldComponentUpdate) {
-      return super.shouldComponentUpdate(nextProps, nextState, nextContext)
-    }
-    return true
+    return super.shouldComponentUpdate ? super.shouldComponentUpdate(nextProps, nextState, nextContext) : true
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData(prevProps.token !== this.props.token)
