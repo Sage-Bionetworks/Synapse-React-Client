@@ -6,9 +6,11 @@ import {
   FacetColumnRequest,
   FacetColumnResult,
   QueryResultBundle,
+  FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 import { useState, useEffect } from 'react'
 import TotalQueryResults from '../../../containers/TotalQueryResults'
+import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 
 export type FacetNavOwnProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
@@ -238,7 +240,19 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideFacetInGrid(facet.columnName)}
                   onExpand={() => toggleExpandFacet(facet, true)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={applyChangesFromQueryFilter}
+                  applyChanges={(
+                    facet: FacetColumnResultValues,
+                    value: FacetColumnResultValueCount | undefined,
+                    isSelected: boolean,
+                  ) =>
+                    applyChangesToValuesColumn(
+                      request,
+                      facet,
+                      applyChangesFromQueryFilter,
+                      value?.value,
+                      isSelected,
+                    )
+                  }
                   facetAliases={facetAliases}
                 ></FacetNavPanel>
               </div>
