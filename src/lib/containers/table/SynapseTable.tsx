@@ -63,6 +63,7 @@ import {
   applyMultipleChangesToValuesColumn,
   applyChangesToValuesColumn,
 } from '../widgets/query-filter/QueryFilter'
+import ColumnResizer from 'column-resizer'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -95,7 +96,12 @@ const PREVIOUS = 'PREVIOUS'
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
-
+const RESIZER_OPTIONS:any = {
+  resizeMode: 'overflow',
+  partialRefresh: 'true',
+  liveDrag:true,
+  headerOnly: 'true',
+}
 type Info = {
   index: number
   name: string
@@ -134,6 +140,10 @@ export default class SynapseTable extends React.Component<
 > {
   constructor(props: QueryWrapperChildProps & SynapseTableProps) {
     super(props)
+    this.componentDidMount = this.componentDidMount.bind(this)
+    this.componentWillUnmount = this.componentWillUnmount.bind(this)
+    this.componentDidUpdate = this.componentDidUpdate.bind(this)
+    this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this)
     this.handleColumnSortPress = this.handleColumnSortPress.bind(this)
     this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
@@ -141,6 +151,9 @@ export default class SynapseTable extends React.Component<
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
+    this.enableResize = this.enableResize.bind(this);
+    this.disableResize = this.disableResize.bind(this);
+    
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -165,14 +178,29 @@ export default class SynapseTable extends React.Component<
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
+  
+  // instance variables
+  resizer:any
+  tableElement:HTMLTableElement|null|undefined = undefined
+
+
+  componentWillUnmount() {
+    this.disableResize()
+  }
 
   componentDidMount() {
     this.getEntityHeadersInData(true)
+    this.enableResize()
   }
 
+  shouldComponentUpdate(nextProps: QueryWrapperChildProps & SynapseTableProps, nextState: Readonly<SynapseTableState>, nextContext: any): boolean {
+    this.disableResize()
+    return super.shouldComponentUpdate ? super.shouldComponentUpdate(nextProps, nextState, nextContext) : true
+  }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData(prevProps.token !== this.props.token)
     this.getTableConcreteType(prevProps)
+    this.enableResize()
   }
 
   public async getTableConcreteType(
@@ -198,6 +226,25 @@ export default class SynapseTable extends React.Component<
         isFileView: entityData.concreteType.includes('EntityView'),
         isFetchingEntityVersion: false,
       })
+    }
+  }
+
+  enableResize() {
+    if (!this.resizer) {
+      if (this.tableElement) {
+        this.resizer = new ColumnResizer(
+          this.tableElement,
+          RESIZER_OPTIONS
+        )
+      }
+    } else {
+      this.resizer.reset(RESIZER_OPTIONS);
+    }
+  }
+
+  disableResize() {
+    if (this.resizer) {
+      this.resizer.reset({ disable: true });
     }
   }
 
@@ -491,7 +538,7 @@ export default class SynapseTable extends React.Component<
             }
           />
         )}
-        <table className="table table-striped table-condensed">
+        <table ref={node => this.tableElement = node} className="table table-striped table-condensed">
           <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(
