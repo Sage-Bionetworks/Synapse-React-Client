@@ -27,7 +27,6 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
          but clicking it off is a no-op
       */
       setChecked(true)
-      return
     } else {
       setChecked(event.target.checked)
     }
