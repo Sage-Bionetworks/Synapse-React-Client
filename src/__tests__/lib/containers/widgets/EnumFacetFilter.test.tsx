@@ -266,7 +266,8 @@ describe('callbacks', () => {
     const clear = container.querySelector<HTMLInputElement>(
       'input[type="checkbox"]#select_all',
     )
+
     fireEvent.click(clear!)
-    expect(mockOnClear).toHaveBeenCalledWith(props.columnModel.name)
+    expect(mockOnClear).toHaveBeenCalled()
   })
 })

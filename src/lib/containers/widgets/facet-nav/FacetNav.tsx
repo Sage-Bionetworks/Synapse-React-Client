@@ -212,7 +212,20 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideExpandedFacet(facet)}
                   onCollapse={() => toggleExpandFacet(facet, false)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={applyChangesFromQueryFilter}
+                  applyChangesToFacetFilter={applyChangesFromQueryFilter}
+                  applyChangesToGraphSlice={(
+                    facet: FacetColumnResultValues,
+                    value: FacetColumnResultValueCount | undefined,
+                    isSelected: boolean,
+                  ) =>
+                    applyChangesToValuesColumn(
+                      request,
+                      facet,
+                      applyChangesFromQueryFilter,
+                      value?.value,
+                      isSelected,
+                    )
+                  }
                   facetAliases={facetAliases}
                   getLastQueryRequest={getLastQueryRequest}
                 ></FacetNavPanel>
@@ -240,7 +253,12 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideFacetInGrid(facet.columnName)}
                   onExpand={() => toggleExpandFacet(facet, true)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={(
+                  /*
+                    TODO: Simplify the nested functions below, all the logic should be contained
+                    in the EnumFacetFilter component.
+                  */
+                  applyChangesToFacetFilter={applyChangesFromQueryFilter}
+                  applyChangesToGraphSlice={(
                     facet: FacetColumnResultValues,
                     value: FacetColumnResultValueCount | undefined,
                     isSelected: boolean,
