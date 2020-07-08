@@ -29,7 +29,8 @@ const stringFacetValues: FacetColumnResultValues = {
 
 function createTestProps(overrides?: FacetNavPanelOwnProps): FacetNavProps {
   return {
-    applyChanges: mockApplyCallback,
+    applyChangesToGraphSlice: mockApplyCallback,
+    applyChangesToFacetFilter: mockApplyCallback,
     index: 1,
     loadingScreen: <div className="loading"></div>,
     facetToPlot: stringFacetValues,

@@ -39,7 +39,8 @@ import {
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetNavPanelOwnProps = {
-  applyChanges: Function
+  applyChangesToGraphSlice: Function
+  applyChangesToFacetFilter: Function
   index: number
   loadingScreen?: React.FunctionComponent | JSX.Element
   facetToPlot: FacetColumnResultValues
@@ -311,7 +312,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   onHide,
   onExpand,
   onCollapse,
-  applyChanges,
+  applyChangesToFacetFilter,
+  applyChangesToGraphSlice,
   isLoadingNewData,
   loadingScreen,
   index,
@@ -385,29 +387,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     </Dropdown>
   )
 
-  const renderFacetFilter = (): JSX.Element => (
-    <EnumFacetFilter
-      facetValues={facetToPlot.facetValues}
-      columnModel={
-        data?.columnModels!.find(el => el.name === facetToPlot.columnName)!
-      }
-      token={token}
-      facetAliases={facetAliases}
-      onChange={(facetNamesMap: {}) => {
-        applyMultipleChangesToValuesColumn(
-          lastQueryRequest,
-          facetToPlot,
-          applyChanges,
-          facetNamesMap,
-        )
-      }}
-      onClear={() => {
-        applyChangesToValuesColumn(lastQueryRequest, facetToPlot, applyChanges)
-      }}
-      containerAs="Dropdown"
-    />
-  )
-
   if (isLoadingNewData || !facetToPlot) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
@@ -426,7 +405,32 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
           )}
           <div className="FacetNavPanel__title__tools">
             {isExpanded && renderChartSelectionToggle()}
-            {renderFacetFilter()}
+            <EnumFacetFilter
+              facetValues={facetToPlot.facetValues}
+              columnModel={
+                data?.columnModels!.find(
+                  el => el.name === facetToPlot.columnName,
+                )!
+              }
+              token={token}
+              facetAliases={facetAliases}
+              onChange={(facetNamesMap: {}) => {
+                applyMultipleChangesToValuesColumn(
+                  lastQueryRequest,
+                  facetToPlot,
+                  applyChangesToFacetFilter,
+                  facetNamesMap,
+                )
+              }}
+              onClear={() => {
+                applyChangesToValuesColumn(
+                  lastQueryRequest,
+                  facetToPlot,
+                  applyChangesToFacetFilter,
+                )
+              }}
+              containerAs="Dropdown"
+            />
             {!isExpanded && (
               <ElementWithTooltip
                 idForToolTip="expandGraph"
@@ -472,7 +476,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                   config={{ displayModeBar: false, responsive: true }}
                   useResizeHandler={true}
                   onClick={evt =>
-                    applyFacetFilter(evt, facetToPlot, applyChanges)
+                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
                   }
                 ></Plot>
               </div>
