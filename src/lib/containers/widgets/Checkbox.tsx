@@ -28,8 +28,9 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
       */
       setChecked(true)
       return
+    } else {
+      setChecked(event.target.checked)
     }
-    setChecked(event.target.checked)
   }
 
   const className = props.className ? `checkbox ${props.className}` : `checkbox`
