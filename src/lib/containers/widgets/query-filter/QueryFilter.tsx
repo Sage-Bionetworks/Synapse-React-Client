@@ -76,13 +76,13 @@ const patchRequestFacets = (
   return selections
 }
 
-export const applyChangesToValuesColumn = (
+export function applyChangesToValuesColumn(
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
   onChangeFn: Function,
   facetName?: string,
   checked: boolean = false,
-) => {
+) {
   if (facetName) {
     facet.facetValues.forEach(facetValue => {
       if (facetValue.value === facetName) {

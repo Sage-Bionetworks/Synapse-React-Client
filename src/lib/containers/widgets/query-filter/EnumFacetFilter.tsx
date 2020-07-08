@@ -205,11 +205,14 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           <div className="EnumFacetFilter__checkAll">
             <Checkbox
               className="EnumFacetFilter__checkbox"
-              onChange={() => onClear(columnModel.name)}
+              onChange={() => {
+                onClear()
+              }}
               key="select_all"
               checked={facetValues.filter(item => item.isSelected).length === 0}
               label="All"
               id="select_all"
+              isSelectAll={true}
             ></Checkbox>
             <button
               className="EnumFacetFilter__searchbtn"
