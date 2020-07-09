@@ -118,7 +118,6 @@ export const applyMultipleChangesToValuesColumn = (
       }
     })
   }
-
   const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
   const result = patchRequestFacets(changedFacet, lastRequest)
   onChangeFn(result)
