@@ -166,7 +166,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   const hasSelectedFacets =
     lastQueryRequest?.query.selectedFacets !== undefined &&
-    lastQueryRequest?.query.selectedFacets.length > 0
+    lastQueryRequest.query.selectedFacets.length > 0
 
   const expandedFacets = getFacets(data).filter(el => {
     return facetUiStateArray.find(uiState => {
