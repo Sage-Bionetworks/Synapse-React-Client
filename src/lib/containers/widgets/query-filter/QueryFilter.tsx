@@ -118,9 +118,13 @@ export const applyMultipleChangesToValuesColumn = (
       }
     })
   }
-
+  console.log(
+    'lastRequest?.query.selectedFacets = ',
+    lastRequest?.query.selectedFacets,
+  )
   const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
   const result = patchRequestFacets(changedFacet, lastRequest)
+  console.log('result = ', result)
   onChangeFn(result)
 }
 

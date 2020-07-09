@@ -57,7 +57,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
               setShowExportMetadata(true)
             }}
           >
-            Export Metadata
+            Export Table
           </Dropdown.Item>
           {props.isFileView && (
             <Dropdown.Item
