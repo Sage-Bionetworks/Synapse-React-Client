@@ -20,6 +20,7 @@ import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
   ColumnType,
+  QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import getColorPallette from '../../../containers/ColorGradient'
 
@@ -47,6 +48,7 @@ export type FacetNavPanelOwnProps = {
   onHide: Function
   onExpand?: Function
   onCollapse?: Function
+  lastQueryRequest: QueryBundleRequest | undefined
 }
 
 const maxLabelLength: number = 19
@@ -322,13 +324,12 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   isLoading,
   facetAliases,
   token,
-  getLastQueryRequest,
+  lastQueryRequest,
 }: FacetNavPanelProps): JSX.Element => {
   const [plotData, setPlotData] = useState<GraphData>()
   const [isExpanded, setIsExpanded] = useState(false)
   const [plotType, setPlotType] = useState<PlotType>('PIE')
 
-  const lastQueryRequest = getLastQueryRequest?.()
   const getColumnType = (): ColumnType | undefined =>
     data?.columnModels?.find(
       columnModel => columnModel.name === facetToPlot.columnName,
