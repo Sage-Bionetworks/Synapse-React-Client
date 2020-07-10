@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import CardContainer from '../../../lib/containers/CardContainer'
 import * as GenericCardPackage from '../../../lib/containers/GenericCard'
 import GenericCard, {
   GenericCardProps,
@@ -14,11 +13,16 @@ import {
   MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import { SelectColumn, EntityColumnType } from 'lib/utils/synapseTypes'
+import {
+  SelectColumn,
+  EntityColumnType,
+  FileHandleAssociateType,
+  ColumnType,
+} from 'lib/utils/synapseTypes'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
-  const instance = wrapper.instance() as CardContainer
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
@@ -79,6 +83,10 @@ describe('it renders the UI correctly', () => {
     genericCardSchema,
     schema,
     secondaryLabelLimit: 3,
+    selectColumns: [],
+    columnModels: [],
+    tableEntityType: '',
+    tableId: '',
   }
 
   const propsForHeaderMode: GenericCardProps = {
@@ -88,6 +96,10 @@ describe('it renders the UI correctly', () => {
     genericCardSchema: genericCardSchemaHeader,
     backgroundColor: 'purple',
     isHeader: true,
+    selectColumns: [],
+    columnModels: [],
+    tableEntityType: '',
+    tableId: '',
   }
 
   it('renders without crashing in non header mode', () => {
@@ -126,23 +138,41 @@ describe('it renders the UI correctly', () => {
 })
 
 describe('it makes the correct URL for the title', () => {
-  const createTitleLink = GenericCard.prototype.renderTitleLink
+  const getTitleParams = GenericCard.prototype.getTitleParams
   const SELF = '_self'
   const BLANK = '_blank'
 
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { linkDisplay, target } = createTitleLink(synId)
-    expect(linkDisplay).toEqual(synLink)
+    const { href, target } = getTitleParams(
+      synId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    )
+    expect(href).toEqual(synLink)
     expect(target).toEqual(SELF)
   })
 
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { linkDisplay, target } = createTitleLink(doi)
-    expect(linkDisplay).toEqual(doiLink)
+    const { href, target } = getTitleParams(
+      doi,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+    )
+    expect(href).toEqual(doiLink)
     expect(target).toEqual(BLANK)
   })
 
@@ -161,14 +191,91 @@ describe('it makes the correct URL for the title', () => {
       URLColumnName,
     }
     const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-    const { linkDisplay, target } = createTitleLink(
+    const { href, target } = getTitleParams(
       '',
       titleLinkConfig,
       data,
       schema,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
     )
-    expect(linkDisplay).toEqual(expectedLink)
+    expect(href).toEqual(expectedLink)
     expect(target).toEqual(SELF)
+  })
+
+  describe.only('creates a link for a file handle ', () => {
+    const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
+    it('creates a link for a file handle inside a file view', () => {
+      const id = '123'
+      const schema = {
+        id: 0,
+      }
+      const data = [id]
+      const value = 'link'
+      const token = 'token'
+      const { titleOnClick } = getTitleParams(
+        value,
+        undefined,
+        data,
+        schema,
+        FILE_HANDLE_COLUMN_TYPE,
+        'EntityView',
+        id,
+        token,
+      )
+      expect(titleOnClick).toBeDefined()
+
+      // mock function call
+      const mockEntityCall = jest.fn()
+      const SynapseClient = require('../../../lib/utils/SynapseClient')
+      SynapseClient.getActualFileHandleByIdURL = mockEntityCall
+
+      titleOnClick!()
+      expect(mockEntityCall).toHaveBeenCalledWith(
+        value,
+        token,
+        FileHandleAssociateType.FileEntity,
+        id,
+        false,
+      )
+    })
+
+    it.only('creates a link for a file handle inside a table', () => {
+      const id = '123'
+      const schema = {
+        id: 0,
+      }
+      const data = [id]
+      const value = 'link'
+      const token = 'token'
+      const { titleOnClick } = getTitleParams(
+        value,
+        undefined,
+        data,
+        schema,
+        FILE_HANDLE_COLUMN_TYPE,
+        'Table',
+        id,
+        token,
+      )
+      expect(titleOnClick).toBeDefined()
+
+      // mock function call
+      const mockEntityCall = jest.fn()
+      const SynapseClient = require('../../../lib/utils/SynapseClient')
+      SynapseClient.getActualFileHandleByIdURL = mockEntityCall
+
+      titleOnClick!()
+      expect(mockEntityCall).toHaveBeenCalledWith(
+        value,
+        token,
+        FileHandleAssociateType.TableEntity,
+        id,
+        false,
+      )
+    })
   })
 })
 

@@ -9,7 +9,14 @@ import {
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
-import { SelectColumn, ColumnModel } from '../utils/synapseTypes'
+import {
+  SelectColumn,
+  ColumnModel,
+  ColumnType,
+  FileHandleAssociateType,
+} from '../utils/synapseTypes'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { SynapseClient, SynapseConstants } from '../utils'
 
 export type KeyToAlias = {
   key: string
@@ -46,6 +53,8 @@ export type GenericCardProps = {
   schema: any
   data: any
   token?: string
+  tableEntityType: string | undefined
+  tableId: string | undefined
 } & CommonCardProps
 
 export type GenericCardState = {
@@ -197,26 +206,56 @@ export default class GenericCard extends React.Component<
     this.state = {
       hasClickedShowMore: false,
     }
-    this.renderTitleLink = this.renderTitleLink.bind(this)
+    this.getTitleParams = this.getTitleParams.bind(this)
     this.renderLongDescription = this.renderLongDescription.bind(this)
     this.renderShortDescription = this.renderShortDescription.bind(this)
   }
 
-  public renderTitleLink(
+  public getTitleParams(
     link: string,
-    titleLink?: CardLink,
-    data?: string[],
-    schema?: any,
-  ) {
-    let linkDisplay = link
+    titleLink: CardLink | undefined,
+    data: string[] | undefined,
+    schema: any | undefined,
+    titleColumnType: ColumnType | undefined,
+    tableEntityType: string | undefined,
+    tableId: string | undefined,
+    token: string | undefined,
+  ): {
+    href: string
+    target: string
+    titleOnClick: undefined | Function
+  } {
+    let href = link
     let target = '_self'
+    let titleOnClick = undefined
     if (link.match(SYNAPSE_REGX)) {
       // its a synId
-      linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
+      href = `https://www.synapse.org/#!Synapse:${link}`
     } else if (link.match(DOI_REGEX)) {
       target = '_blank'
-      linkDisplay = `https://dx.doi.org/${link}`
+      href = `https://dx.doi.org/${link}`
     } else if (!titleLink) {
+      if (titleColumnType === ColumnType.FILEHANDLEID) {
+        if (tableEntityType) {
+          const isFileView = tableEntityType?.includes('EntityView')
+          const fileAssociateType: FileHandleAssociateType = isFileView
+            ? FileHandleAssociateType.FileEntity
+            : FileHandleAssociateType.TableEntity
+          const fileAssociateId = isFileView ? data![schema.id] : tableId
+          titleOnClick = () => {
+            if (token) {
+              SynapseClient.getActualFileHandleByIdURL(
+                link,
+                token,
+                fileAssociateType,
+                fileAssociateId!,
+                false,
+              )
+            }
+          }
+        }
+        // else its still loading
+      }
       target = '_blank'
     } else if (titleLink) {
       if (!data || !schema) {
@@ -230,10 +269,10 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        linkDisplay = `/${titleLink.baseURL}?${URLColumnName}=${value}`
+        href = `/${titleLink.baseURL}?${URLColumnName}=${value}`
       }
     }
-    return { linkDisplay, target }
+    return { href, target, titleOnClick }
   }
 
   getCutoff = (summary: string) => {
@@ -255,6 +294,57 @@ export default class GenericCard extends React.Component<
     })
   }
 
+  renderTitle = ({
+    href,
+    target,
+    titleSearchHandle,
+    titleColumnType,
+    title,
+    titleOnClick,
+    type,
+  }: {
+    target: string
+    titleSearchHandle: string | undefined
+    titleColumnType: string | undefined
+    title: string
+    href: string
+    titleOnClick: Function | undefined
+    type: string
+  }) => {
+    if (titleOnClick) {
+      return (
+        <>
+          <button
+            // @ts-ignore
+            onClick={titleOnClick}
+            className={`SRC-primary-text-color ${SynapseConstants.SRC_SIGN_IN_CLASS}`}
+            type="button"
+            style={{ padding: 0 }}
+          >
+            {title}
+            {titleColumnType === ColumnType.FILEHANDLEID &&
+              type !== SynapseConstants.EXPERIMENTAL && (
+                <FontAwesomeIcon style={{ marginLeft: 5 }} icon="download" />
+              )}
+          </button>
+        </>
+      )
+    } else if (href) {
+      return (
+        <a
+          data-search-handle={titleSearchHandle}
+          className="SRC-primary-text-color"
+          target={target}
+          href={href}
+        >
+          {title}
+        </a>
+      )
+    } else {
+      return <span data-search-handle={titleSearchHandle}> {title} </span>
+    }
+  }
+
   render() {
     const {
       schema,
@@ -271,6 +361,9 @@ export default class GenericCard extends React.Component<
       facetAliases = {},
       descriptionLinkConfig,
       rgbIndex,
+      tableId,
+      tableEntityType,
+      token,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -292,13 +385,21 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
+    const titleColumnModel = columnModels?.find(
+      el => genericCardSchemaDefined.link === el.name,
+    )
+    const titleColumnType = titleColumnModel?.columnType
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.renderTitleLink(
+    const { href, target, titleOnClick } = this.getTitleParams(
       linkValue,
       titleLinkConfig,
       data,
       schema,
+      titleColumnType,
+      tableEntityType,
+      tableId,
+      token,
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
@@ -345,7 +446,7 @@ export default class GenericCard extends React.Component<
           iconValue={iconValue}
           iconOptions={iconOptions}
           values={values}
-          linkDisplay={linkDisplay}
+          href={href}
           target={target}
           isAlignToLeftNav={true}
           secondaryLabelLimit={secondaryLabelLimit}
@@ -378,18 +479,15 @@ export default class GenericCard extends React.Component<
               className="SRC-boldText SRC-blackText"
               style={{ margin: 'none' }}
             >
-              {linkDisplay ? (
-                <a
-                  data-search-handle={titleSearchHandle}
-                  className="SRC-primary-text-color"
-                  target={target}
-                  href={linkDisplay}
-                >
-                  {title}
-                </a>
-              ) : (
-                <span data-search-handle={titleSearchHandle}> {title} </span>
-              )}
+              {this.renderTitle({
+                href,
+                target,
+                titleSearchHandle,
+                title,
+                titleOnClick,
+                titleColumnType,
+                type,
+              })}
             </h3>
           </div>
           {subTitle && (

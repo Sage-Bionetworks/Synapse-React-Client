@@ -375,7 +375,35 @@ export const getFileHandleById = (
 }
 
 /**
+ * http://rest-docs.synapse.org/rest/GET/file/id.html
+ * Get the actual URL of the file from with an associated object .
+ * @return a short lived presignedURL to be redirected with
+ **/
+export const getActualFileHandleByIdURL = (
+  handleId: string,
+  sessionToken: string | undefined = undefined,
+  fileAssociateType: FileHandleAssociateType,
+  fileAssociateId: string,
+  redirect: boolean = true,
+) => {
+  // get the presigned URL for this file handle and open it in a new tab
+  doGet<string>(
+    `/file/v1/file/${handleId}?fileAssociateType=${fileAssociateType}&fileAssociateId=${fileAssociateId}&redirect=${redirect}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then(url => {
+      window.open(url, '_blank')
+    })
+    .catch(err => {
+      console.error('Error on retrieving file handle url ', err)
+    })
+}
+
+/**
  * https://docs.synapse.org/rest/GET/fileHandle/handleId/url.html
+ * Note: Only the user that created the FileHandle can use this method for download.
  * @return a short lived presignedURL to be redirected with
  **/
 export const getFileHandleByIdURL = (

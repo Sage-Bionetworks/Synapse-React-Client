@@ -10,7 +10,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
   ids: string[]
-  token?: string
+  token: string | undefined
   type: HookType
 }
 
