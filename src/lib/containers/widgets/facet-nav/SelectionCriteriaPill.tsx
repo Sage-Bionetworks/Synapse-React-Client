@@ -55,6 +55,9 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     innerText = `"${searchQuery?.searchText}" in ${unCamelCase(
       searchQuery?.columnName,
     )}`
+    tooltipText = `${unCamelCase(
+      searchQuery?.columnName,
+    )}: ${searchQuery?.searchText}`
   }
   return (
     <ElementWithTooltip
