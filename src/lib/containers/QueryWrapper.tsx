@@ -52,6 +52,7 @@ export type QueryWrapperState = {
   isLoading: boolean // occurs when state changes
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
+  // TODO: Delete lastFacetSelection once StackedBarChart.tsx/Facets.tsx are deleted
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
@@ -96,8 +97,8 @@ export type QueryWrapperChildProps = {
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
   searchQuery?: SearchQuery
-  isColumnSelected?: string[],
-  selectedRowIndices?: number[],
+  isColumnSelected?: string[]
+  selectedRowIndices?: number[]
 }
 
 /**
@@ -181,7 +182,7 @@ export default class QueryWrapper extends React.Component<
     const { loadNow = true } = this.props
     if (loadNow && !this.state.loadNowStarted) {
       this.executeInitialQueryRequest()
-    } else if (loadNow && this.props.token && !prevProps.token) {
+    } else if (loadNow && this.props.token !== prevProps.token) {
       // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
       this.executeQueryRequest(this.getLastQueryRequest())
     } else if (
@@ -225,7 +226,7 @@ export default class QueryWrapper extends React.Component<
     this.setState({
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
-      selectedRowIndices: [] // reset selected row indices any time the query is re-run
+      selectedRowIndices: [], // reset selected row indices any time the query is re-run
     })
 
     if (clonedQueryRequest.query) {
@@ -400,7 +401,7 @@ export default class QueryWrapper extends React.Component<
         getLastQueryRequest: this.getLastQueryRequest,
         getNextPageOfData: this.getNextPageOfData,
         updateParentState: this.updateParentState,
-        getInitQueryRequest: this.getInitQueryRequest,        
+        getInitQueryRequest: this.getInitQueryRequest,
         ...rest,
       }
       return React.cloneElement(child, queryWrapperChildProps)

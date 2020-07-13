@@ -6,20 +6,30 @@ export type CheckboxProps = {
   checked?: boolean
   className?: string
   onChange: Function
+  isSelectAll?: boolean
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
-  const [checked, setChecked] = useState<boolean>(props.checked || false)
+  const { checked: propsChecked = false, isSelectAll = false } = props
+  const [checked, setChecked] = useState<boolean>(propsChecked)
 
   useEffect(() => {
-    setChecked(props.checked || false)
-  }, [props.checked])
+    setChecked(propsChecked)
+  }, [propsChecked])
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked)
     props.onChange(event.target.checked)
+    if (isSelectAll && event.target.checked === false) {
+      /* 
+         You can click the all checkbox from off -> on
+         but clicking it off is a no-op
+      */
+      setChecked(true)
+    } else {
+      setChecked(event.target.checked)
+    }
   }
 
   const className = props.className ? `checkbox ${props.className}` : `checkbox`

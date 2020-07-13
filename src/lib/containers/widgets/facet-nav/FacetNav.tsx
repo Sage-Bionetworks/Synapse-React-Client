@@ -1,16 +1,16 @@
 import * as React from 'react'
 import FacetNavPanel from './FacetNavPanel'
-import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import { QueryWrapperChildProps } from '../../QueryWrapper'
 import {
   FacetColumnResultValues,
-  FacetColumnResultValueCount,
   FacetColumnRequest,
   FacetColumnResult,
   QueryResultBundle,
+  FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 import { useState, useEffect } from 'react'
 import TotalQueryResults from '../../../containers/TotalQueryResults'
+import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 
 export type FacetNavOwnProps = {
   loadingScreen?: React.FunctionComponent | JSX.Element
@@ -57,7 +57,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   const [isFirstTime, setIsFirstTime] = useState(true)
   const { showFacetVisualization } = topLevelControlsState!
 
-  const request = getLastQueryRequest!()
+  const lastQueryRequest = getLastQueryRequest?.()
   const getFacets = (
     data: QueryResultBundle | undefined,
   ): FacetColumnResult[] => {
@@ -103,8 +103,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   // what needs to happen after the filters are adjusted from the plot
   const applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
-    request.query.selectedFacets = facets
-    executeQueryRequest!(request)
+    lastQueryRequest!.query.selectedFacets = facets
+    executeQueryRequest!(lastQueryRequest!)
   }
 
   // don't show expanded or hidden facets
@@ -164,9 +164,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     )
   }
 
-  const lastQueryRequest = getLastQueryRequest?.()!
   const hasSelectedFacets =
-    lastQueryRequest.query.selectedFacets !== undefined &&
+    lastQueryRequest?.query.selectedFacets !== undefined &&
     lastQueryRequest.query.selectedFacets.length > 0
 
   const expandedFacets = getFacets(data).filter(el => {
@@ -212,19 +211,22 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideExpandedFacet(facet)}
                   onCollapse={() => toggleExpandFacet(facet, false)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={(
+                  applyChangesToFacetFilter={applyChangesFromQueryFilter}
+                  applyChangesToGraphSlice={(
                     facet: FacetColumnResultValues,
-                    value: FacetColumnResultValueCount,
+                    value: FacetColumnResultValueCount | undefined,
+                    isSelected: boolean,
                   ) =>
                     applyChangesToValuesColumn(
-                      request,
+                      lastQueryRequest,
                       facet,
                       applyChangesFromQueryFilter,
-                      value.value,
-                      !value.isSelected,
+                      value?.value,
+                      isSelected,
                     )
                   }
                   facetAliases={facetAliases}
+                  lastQueryRequest={lastQueryRequest}
                 ></FacetNavPanel>
               </div>
             ))}
@@ -250,13 +252,19 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   onHide={() => hideFacetInGrid(facet.columnName)}
                   onExpand={() => toggleExpandFacet(facet, true)}
                   facetToPlot={facet as FacetColumnResultValues}
-                  applyChanges={(
+                  lastQueryRequest={lastQueryRequest}
+                  /*
+                    TODO: Simplify the nested functions below, all the logic should be contained
+                    in the EnumFacetFilter component.
+                  */
+                  applyChangesToFacetFilter={applyChangesFromQueryFilter}
+                  applyChangesToGraphSlice={(
                     facet: FacetColumnResultValues,
                     value: FacetColumnResultValueCount | undefined,
                     isSelected: boolean,
                   ) =>
                     applyChangesToValuesColumn(
-                      request,
+                      lastQueryRequest,
                       facet,
                       applyChangesFromQueryFilter,
                       value?.value,
@@ -274,7 +282,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                 className="btn btn-default FacetNav__showMore"
                 onClick={() => onShowMoreClick(showMoreState === 'MORE')}
               >
-                {showMoreState === 'LESS' ? 'Hide Optional Graphs' : 'Show All Graphs'}
+                {showMoreState === 'LESS'
+                  ? 'Hide Optional Graphs'
+                  : 'Show All Graphs'}
               </button>
             )}
           </div>

@@ -12,6 +12,8 @@ import { UserProfile } from '../utils/synapseTypes/'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
 import IconCopy from '../assets/icons/IconCopy'
+import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
+import ReactTooltip from 'react-tooltip'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -30,6 +32,8 @@ export type UserCardMediumProps = {
   isLarge?: boolean
   link?: string
   disableLink?: boolean
+  isCertified?: boolean
+  isValidated?: boolean
 }
 
 export default class UserCardMedium extends React.Component<
@@ -107,6 +111,8 @@ export default class UserCardMedium extends React.Component<
       hideEmail = false,
       disableLink = false,
       link,
+      isValidated,
+      isCertified
     } = this.props
     const { isContextMenuOpen, showModal } = this.state
     const {
@@ -117,6 +123,7 @@ export default class UserCardMedium extends React.Component<
       position,
       company,
     } = userProfile
+    const validatedUserProfileTooltipId = `${userName}-tooltip`
     let img
     let name = ''
     const linkLocation = link
@@ -197,6 +204,23 @@ export default class UserCardMedium extends React.Component<
               >
                 {name}
               </a>
+            )}
+            {isValidated && (
+              <span
+                data-for={validatedUserProfileTooltipId}
+                data-tip="This user profile has been validated."
+              >
+                <ReactTooltip
+                  delayShow={300}
+                  place="bottom"
+                  type="dark"
+                  effect="solid"
+                  id={validatedUserProfileTooltipId}
+                />
+                {ValidatedProfileIcon}
+              </span>
+            
+              
             )}
           </p>
           {(position || company) && (
@@ -287,7 +311,7 @@ export default class UserCardMedium extends React.Component<
         >
           {mediumCard}
         </div>
-        {isLarge ? <UserCardLarge userProfile={userProfile} /> : false}
+        {isLarge ? <UserCardLarge userProfile={userProfile} isCertified={isCertified} /> : false}
       </div>
     )
   }

@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import { EntityLink } from 'lib/containers/EntityLink'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 import { ColumnSelection } from 'lib/containers/table/table-top'
-import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
+import { EnumFacetFilter } from 'lib/containers/widgets/query-filter/EnumFacetFilter'
 import UserCard from 'lib/containers/UserCard'
 import { unCamelCase } from 'lib/utils/functions/unCamelCase'
 import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
@@ -19,7 +19,6 @@ import {
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
-import ModalDownload from '../../../lib/containers/ModalDownload'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
 import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
@@ -32,12 +31,13 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
-import { LabelLinkConfig } from 'lib/containers/CardContainerLogic'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
 ) => {
-  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />)
+  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />, {
+    disableLifecycleMethods: true,
+  })
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -117,20 +117,25 @@ describe('basic functionality', () => {
   })
 
   it('updates correctly', async () => {
-    const { wrapper } = createShallowComponent(props)
+    const mockEntityCall = jest.fn().mockResolvedValue({
+      concreteType: 'EntityView',
+    })
+    SynapseClient.getEntity = mockEntityCall
+    const { wrapper, instance } = createShallowComponent(props)
     expect(wrapper).toBeDefined()
     const newTableId = 'syn123'
     // setup data
     const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
     dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
     // listen to function call
-    const mockEntityCall = jest.fn().mockResolvedValue({
-      concreteType: 'EntityView',
-    })
-    SynapseClient.getEntity = mockEntityCall
+
     await wrapper.setProps({
       data: dataWithNewTableId,
     })
+    // since we now disable lifecycle methods during construction (because of DOM interaction for column-resizer), manually call update functions
+    instance.getEntityHeadersInData(true)
+    instance.getTableConcreteType(props)
+
     expect(mockEntityCall).toHaveBeenCalledWith(undefined, newTableId)
   })
 
@@ -155,16 +160,6 @@ describe('basic functionality', () => {
       expect(wrapper.find(ColumnSelection).props().headers).toEqual(
         syn16787123Json.queryResult.queryResults.headers,
       )
-    })
-  })
-  describe('Download options dropdown works', () => {
-    it('isModalDownloadOpen opens the ModalDownload', async () => {
-      const { wrapper } = await createShallowComponent(props)
-      // Verify its not showing by default
-      expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      await wrapper.setState({ isModalDownloadOpen: true })
-      // See that modal download is present
-      expect(wrapper.find(ModalDownload)).toHaveLength(1)
     })
   })
   describe('Expand modal opens when isExpanded is set to true', () => {
@@ -261,7 +256,7 @@ describe('basic functionality', () => {
       expect(wrapper.find('th')).toHaveLength(totalColumns)
       // there are five facets for the dataset so there should be 5
       // faceted columns
-      expect(wrapper.find(FacetFilter)).toHaveLength(5)
+      expect(wrapper.find(EnumFacetFilter)).toHaveLength(5)
       expect(wrapper.find('th.SRC-hidden')).toHaveLength(8)
     })
 

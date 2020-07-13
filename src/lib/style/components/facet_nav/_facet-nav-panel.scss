@@ -1,4 +1,9 @@
 .FacetNavPanel {
+  &--expanded .main-svg,
+  .main-svg {
+    // https://sagebionetworks.jira.com/browse/PORTALS-1454
+    overflow: visible !important;
+  }
   padding: 5px 0;
   &__title {
     display: flex;
@@ -17,19 +22,26 @@
       text-align: right;
       align-items: center;
       display: flex;
+      .ElementWithTooltip {
+        flex: 1;
+        flex-grow: 1;
+        width: 25px;
+        min-height: 25px;
+        height: fit-content;
+      }
 
       .show button.dropdown-toggle,
       button.dropdown-toggle:hover {
-        background: transparent;
         color: inherit;
       }
 
-      .dropdown .btn {  // reset inherit margin/padding
-        margin: 0;
-        padding: 0
+      .dropdown .btn {
+        // reset inherit margin/padding
+        margin: 0px;
+        padding: 0px;
       }
 
-      .dropdown .btn .btn, 
+      .dropdown .btn .btn,
       .ElementWithTooltip {
         padding: 3px;
         margin: 0 3px 3px;

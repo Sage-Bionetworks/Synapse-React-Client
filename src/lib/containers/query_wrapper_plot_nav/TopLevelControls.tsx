@@ -13,6 +13,7 @@ import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
 import { QueryResultBundle } from '../../utils/synapseTypes/'
+import { DownloadOptions } from '../table/table-top'
 
 library.add(faSearch)
 library.add(faFilter)
@@ -52,22 +53,22 @@ const controls: Control[] = [
   {
     icon: faSearch,
     key: 'showSearchBar',
-    tooltipText: 'Toggle Search',
+    tooltipText: 'Show / Hide Search Bar',
   },
   {
     icon: faChartBar,
     key: 'showFacetVisualization',
-    tooltipText: 'Toggle Visualization',
+    tooltipText: 'Show / Hide Visualizations',
   },
   {
     icon: faFilter,
     key: 'showFacetFilter',
-    tooltipText: 'Toggle Facet Filter',
+    tooltipText: 'Show / Hide Filters',
   },
   {
     icon: faDownload,
     key: 'showDownloadConfirmation',
-    tooltipText: 'Toggle Download',
+    tooltipText: 'Add files in table to Download List',
   },
 ]
 
@@ -89,6 +90,7 @@ const TopLevelControls = (
     customControls,
     executeQueryRequest,
     getLastQueryRequest,
+    facetAliases,
   } = props
   const [isFileView, setIsFileView] = useState(false)
 
@@ -168,6 +170,24 @@ const TopLevelControls = (
           ) {
             // needs to be a file view in order for download to make sense
             return <></>
+          } else if (key === 'showDownloadConfirmation') {
+            return (
+              <DownloadOptions
+                darkTheme={true}
+                onDownloadFiles={() =>
+                  updateParentState!({
+                    topLevelControlsState: {
+                      ...topLevelControlsState!,
+                      showDownloadConfirmation: true,
+                    },
+                  })
+                }
+                token={token}
+                queryResultBundle={data}
+                queryBundleRequest={getLastQueryRequest!()}
+                isFileView={isFileView && !hideDownload}
+              />
+            )
           }
           return (
             <ElementWithTooltip
@@ -176,7 +196,6 @@ const TopLevelControls = (
               key={key}
               image={icon}
               callbackFn={() => setControlState(key)}
-              className="SRC-primary-color"
               darkTheme={true}
             />
           )
@@ -188,6 +207,7 @@ const TopLevelControls = (
             show={topLevelControlsState?.showColumnSelectDropdown ?? false}
             toggleColumnSelection={toggleColumnSelection}
             darkTheme={true}
+            facetAliases={facetAliases}
           />
         )}
       </div>

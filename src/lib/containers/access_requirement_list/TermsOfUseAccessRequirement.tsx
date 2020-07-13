@@ -14,6 +14,7 @@ export default function TermsOfUseAccessRequirementComponent({
   user,
   onHide,
   accessRequirementStatus,
+  entityId,
 }: AccessRequirementProps<TermsOfUseAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -23,14 +24,11 @@ export default function TermsOfUseAccessRequirementComponent({
       setIsLoading(true)
 
       try {
-        if (!accessRequirement.termsOfUse) {
-          const wikiPageRequirment = await SynapseClient.getWikiPageKey(
-            token,
-            accessRequirement.id,
-          )
-
-          setWikiPage(wikiPageRequirment)
-        }
+        const wikiPageRequirement = await SynapseClient.getWikiPageKey(
+          token,
+          accessRequirement.id,
+        )
+        setWikiPage(wikiPageRequirement)
       } catch (err) {
         console.error('Error on prepare terms of use ', err)
       } finally {
@@ -51,6 +49,7 @@ export default function TermsOfUseAccessRequirementComponent({
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}
         onHide={onHide}
+        entityId={entityId}
       />
     </div>
   )

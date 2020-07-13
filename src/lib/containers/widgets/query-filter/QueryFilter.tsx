@@ -76,14 +76,13 @@ const patchRequestFacets = (
   return selections
 }
 
-export const applyChangesToValuesColumn = (
+export function applyChangesToValuesColumn(
   lastRequest: QueryBundleRequest | undefined,
-
   facet: FacetColumnResultValues,
   onChangeFn: Function,
   facetName?: string,
   checked: boolean = false,
-) => {
+) {
   if (facetName) {
     facet.facetValues.forEach(facetValue => {
       if (facetValue.value === facetName) {
@@ -97,6 +96,28 @@ export const applyChangesToValuesColumn = (
     })
   }
 
+  const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
+  const result = patchRequestFacets(changedFacet, lastRequest)
+  onChangeFn(result)
+}
+
+// This handles multiple checkbox selection with delay refresh
+export const applyMultipleChangesToValuesColumn = (
+  lastRequest: QueryBundleRequest | undefined,
+  facet: FacetColumnResultValues,
+  onChangeFn: Function,
+  facetNameMap?: {},
+) => {
+  const facetNames = (facetNameMap && Object.keys(facetNameMap)) || []
+  if (facetNames.length) {
+    facet.facetValues.forEach(facetValue => {
+      if (facetNames.includes(facetValue.value)) {
+        facetValue.isSelected = facetNameMap
+          ? facetNameMap[facetValue.value]
+          : false
+      }
+    })
+  }
   const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
   const result = patchRequestFacets(changedFacet, lastRequest)
   onChangeFn(result)
@@ -150,23 +171,22 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             <div className="QueryFilter__facet" key={facet.columnName}>
               {facet.facetType === 'enumeration' && columnModel && (
                 <EnumFacetFilter
+                  containerAs="Collapsible"
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
                   token={token}
                   facetAliases={facetAliases}
-                  onChange={(facetName: string, checked: boolean) =>
-                    applyChangesToValuesColumn(
+                  onChange={(facetNamesMap: {}) =>
+                    applyMultipleChangesToValuesColumn(
                       lastRequest,
                       facet as FacetColumnResultValues,
                       applyChanges,
-                      facetName,
-                      checked,
+                      facetNamesMap,
                     )
                   }
                   onClear={() =>
                     applyChangesToValuesColumn(
                       lastRequest,
-
                       facet as FacetColumnResultValues,
                       applyChanges,
                     )

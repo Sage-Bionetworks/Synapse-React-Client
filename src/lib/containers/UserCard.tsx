@@ -34,6 +34,8 @@ export type UserCardProps = {
   token?: string
   disableLink?: boolean
   extraSmall?: boolean
+  isCertified?: boolean
+  isValidated?: boolean
 }
 
 export default class UserCard extends React.Component<

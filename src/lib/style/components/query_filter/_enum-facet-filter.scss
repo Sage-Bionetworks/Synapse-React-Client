@@ -1,0 +1,122 @@
+.EnumFacetFilter {
+  $input-icon-margin: 5px;
+
+  &__dropdown_menu {
+    overflow-y: auto;
+    max-height: 300px;
+    z-index: 10;
+    padding: 10px;
+    max-width: 300px;
+  }
+  &__checkboxContainer {
+    display: flex;
+    justify-content: space-between;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &--forAll {
+      border-bottom: dotted 1px $border-color-gray;
+      padding: 0;
+    }
+  }
+
+  &__checkAll {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__search {
+    position: relative;
+    margin-top: 0;
+    height: 0;
+    overflow: hidden;
+    &.active {
+      margin-top: 6px;
+      height: auto;
+      overflow: visible;
+    }
+    input {
+      width: 100%;
+      border: 1px solid #dcdcdc;
+      padding: 6px 30px;
+      &::placeholder {
+        color: $gray-deemphasized;
+      }
+      &:focus {
+        outline-color: $primary-action-color;
+      }
+    }
+    button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &__closeSearch {
+    left: $input-icon-margin;
+  }
+
+  &__resetSearch {
+    right: $input-icon-margin;
+  }
+
+  &__checkbox {
+    > label {
+      display: flex;
+      flex-wrap: nowrap;
+      &::before {
+        flex: none;
+        align-self: center;
+      }
+
+      > span {
+        margin-left: 2px;
+        color: $gray-regular;
+      }
+    }
+    input ~ span {
+      display: flex;
+      &::before {
+        flex: none;
+        align-self: center;
+      }
+    }
+  }
+
+  &__showMoreFacetsLabel {
+    margin-left: 25px;
+  }
+
+  &__showMoreFacetsBtn {
+    width: 100%;
+    margin: 10px 0 0 0;
+    padding: 0;
+    color: $primary-action-color !important;
+
+    &:hover {
+      color: $primary-action-color !important;
+      text-decoration: underline;
+    }
+  }
+
+  &__showMoreFacetsCount {
+    align-self: center;
+  }
+
+  &__count {
+    margin-left: 10px;
+    align-self: center;
+    color: $gray-deemphasized;
+  }
+
+  &__noMatch {
+    margin-top: 10px;
+  }
+
+  button {
+    color: $primary-action-color;
+  }
+}

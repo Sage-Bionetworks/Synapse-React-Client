@@ -44,6 +44,11 @@
   }
 }
 
+.grip-handle:hover {
+  background-color: $primary-action-color !important;
+  width: 3px;
+}
+
 // TODO: Need design for focus states
 .SRC-menu-button-base:focus {
   outline: none;

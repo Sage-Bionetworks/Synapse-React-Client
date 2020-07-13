@@ -23,7 +23,7 @@ yarn-error.log*
 jsconfig.json
 .vscode
 
-# jetbean specific
+# webstorm specific
 .idea
 
 #rollup

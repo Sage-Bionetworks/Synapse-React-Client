@@ -28,6 +28,7 @@ import AccessRequirementList, {
   checkHasUnsportedRequirement,
   AccessRequirementListProps,
 } from './access_requirement_list/AccessRequirementList'
+import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -155,8 +156,7 @@ export default class HasAccess extends React.Component<
   }
 
   componentDidUpdate(prevProps: HasAccessProps) {
-    const forceRefresh =
-      prevProps.token === undefined && this.props.token !== undefined
+    const forceRefresh = prevProps.token !== this.props.token
     // if there token has updated then force refresh the component state
     this.refresh(forceRefresh)
   }
@@ -211,7 +211,7 @@ export default class HasAccess extends React.Component<
     // fileHandle was not passed to us, ask for it.
     // is this a FileEntity?
     return SynapseClient.getEntity(token, entityId, entityVersionNumber)
-      .then((entity) => {
+      .then(entity => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
           return SynapseClient.getFileEntityFileHandle(
@@ -224,6 +224,7 @@ export default class HasAccess extends React.Component<
             )
             this.setState({
               fileHandleDownloadType,
+              isGettingEntityInformation: false,
             })
           })
         } else {
@@ -235,7 +236,7 @@ export default class HasAccess extends React.Component<
           return Promise.resolve()
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error on get Entity = ', err)
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
@@ -258,12 +259,12 @@ export default class HasAccess extends React.Component<
       objectId: entityId,
     }
     return SynapseClient.getRestrictionInformation(request, token)
-      .then((restrictionInformation) => {
+      .then(restrictionInformation => {
         this.setState({
           restrictionInformation,
         })
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error on getRestrictionInformation: ', err)
       })
       .finally(() => {
@@ -326,7 +327,7 @@ export default class HasAccess extends React.Component<
   handleGetAccess = () => {
     const { token, entityId, set_arPropsFromHasAccess } = this.props
     SynapseClient.getAllAccessRequirements(token, entityId).then(
-      (requirements) => {
+      requirements => {
         if (checkHasUnsportedRequirement(requirements)) {
           window.open(
             `${getEndpoint(
@@ -382,7 +383,7 @@ export default class HasAccess extends React.Component<
           style={{
             fontSize: '14px',
             cursor: 'pointer',
-            marginLeft: '16px',
+            marginLeft: '10px',
           }}
           onClick={this.handleGetAccess}
           className="SRC-primary-text-color"
@@ -428,13 +429,46 @@ export default class HasAccess extends React.Component<
     const entityId = this.props.entityId
     const icon = this.renderIcon(fileHandleDownloadType, restrictionInformation)
     const viewARsLink: React.ReactElement = this.renderARsLink()
+    const iconContainer =
+      fileHandleDownloadType ===
+      FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
+        <button
+          type="button"
+          className={SRC_SIGN_IN_CLASS}
+          onClick={ev => {
+            if (ev.isTrusted) {
+              /*
+                There is a tricky problem - 
+                The portals listens to click events for buttons with the class SRC_SIGN_IN_CLASS set, it listens to this event
+                so that it can display the login modal.
+
+                This button has an svg inside of it which is problematic because more often than not clicking this button will 
+                instead click that svg. The event listener in the portals will break as a result.
+
+                Though the svg may get the actual click event, because of event bubbling this button will get its onClick called.
+                Once onClick is called we can manually dispatch an event off of this button. This does pose a problem, we end up in a 
+                infinite loop because this button keeps disptaching click events, so we can use the isTrusted to recognize if onClick was
+                triggered programmatically or by user click. Lastly, using { bubbles: true } ensures the event bubbles up to the document level.
+
+              */
+              const clickEvent = new MouseEvent('click', { bubbles: true })
+              ev.currentTarget.dispatchEvent(clickEvent)
+            }
+          }}
+        >
+          {icon}
+        </button>
+      ) : (
+        <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
+          {icon}
+        </span>
+      )
+
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         {tooltipText && (
           <>
-            <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
-              {icon}
-            </span>
+            {iconContainer}
             <ReactTooltip
               delayShow={TOOLTIP_DELAY_SHOW}
               place="top"

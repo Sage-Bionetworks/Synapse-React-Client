@@ -21,6 +21,7 @@ export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
   token: string | undefined
   wikiPage: WikiPageKey | undefined
+  entityId: string
   accessRequirement:
     | AccessRequirement
     | TermsOfUseAccessRequirement
@@ -38,6 +39,7 @@ export default function AcceptedRequirements({
   accessRequirement,
   accessRequirementStatus,
   showButton,
+  entityId,
   onHide,
 }: AcceptedRequirementsProps) {
   const [isHide, setIsHide] = useState<boolean>(true)
@@ -47,18 +49,19 @@ export default function AcceptedRequirements({
   )
 
   let acceptButtonText = ''
-
   if (
     accessRequirement.concreteType ===
-    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
+    accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
   ) {
     if (
       window.location.hostname === 'www.synapse.org' ||
       window.location.hostname === 'staging.synapse.org'
     ) {
-      acceptButtonText = 'Get access'
+      acceptButtonText = 'Request access'
     } else {
-      acceptButtonText = 'Get access via Synapse.org'
+      acceptButtonText = 'Request access via Synapse.org'
     }
   } else {
     acceptButtonText = 'I Accept Terms of Use'
@@ -71,14 +74,19 @@ export default function AcceptedRequirements({
     setIsApprovedValueFromProps(propsIsApproved)
   }, [propsIsApproved])
 
+  const gotoSynapseAccessRequirementPage = () => {
+    window.open(
+      `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
+    )
+  }
   const onAcceptClicked = () => {
     if (
       accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
+      accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
-      window.open(
-        `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}`,
-      )
+      gotoSynapseAccessRequirementPage()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
@@ -98,25 +106,7 @@ export default function AcceptedRequirements({
   }
 
   const RenderMarkdown = () => {
-    const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
-      .termsOfUse
-
-    const actContactInfo = (accessRequirement as ACTAccessRequirement)
-      .actContactInfo
-
-    if (
-      accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement &&
-      termsOfUse
-    ) {
-      return <MarkdownSynapse markdown={termsOfUse} token={token} />
-    } else if (
-      accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement &&
-      actContactInfo
-    ) {
-      return <div className="AcceptRequirementsMarkdown">{actContactInfo}</div>
-    } else {
+    if (wikiPage) {
       return (
         <div className="AcceptRequirementsMarkdown">
           <MarkdownSynapse
@@ -128,14 +118,49 @@ export default function AcceptedRequirements({
         </div>
       )
     }
+    const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
+      .termsOfUse
+
+    const actContactInfo = (accessRequirement as ACTAccessRequirement)
+      .actContactInfo
+
+    const isTermsOfUse =
+      accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement
+    const isActContactInfo =
+      accessRequirement.concreteType ===
+      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
+
+    if ((isTermsOfUse && termsOfUse) || (isActContactInfo && actContactInfo)) {
+      return (
+        <MarkdownSynapse
+          markdown={isTermsOfUse ? termsOfUse : actContactInfo}
+          token={token}
+        />
+      )
+    }
+    return <></>
   }
 
   const RenderAcceptedRequirements = () => {
     if (isApproved) {
+      // show link to Synapse AR page if Managed ACT AR
+      const isManagedActAr = accessRequirement.concreteType ===
+        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
       return (
         <div>
           <p>
             You have accepted the terms of use.
+            { isManagedActAr &&
+              <button
+                className="update-request-button bold-text"
+                onClick={() => {
+                  gotoSynapseAccessRequirementPage()
+                }}
+              >
+                Update Request
+              </button>
+            }
             <button
               className="view-terms-button bold-text"
               onClick={() => {
@@ -162,7 +187,7 @@ export default function AcceptedRequirements({
           <RenderAcceptedRequirements />
         </div>
       </div>
-      {showButton ?? (
+      {token ? (showButton ?? (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
@@ -176,7 +201,8 @@ export default function AcceptedRequirements({
             </button>
           </div>
         </div>
-      )}
+        )) : <></>
+      }
     </div>
   )
 }

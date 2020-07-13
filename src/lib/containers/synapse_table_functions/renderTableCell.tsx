@@ -47,15 +47,11 @@ export const renderTableCell = ({
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
 }): React.ReactNode => {
-  const getShortString = (
-    longString: string,
+  const isShortString = (
+    s: string,
     maxCharCount = 20,
-  ): [string, boolean] => {
-    if (!longString || longString.length <= maxCharCount) {
-      return [longString, false]
-    } else {
-      return [longString.substr(0, maxCharCount), true]
-    }
+  ): boolean => {
+    return (!s || s.length <= maxCharCount)
   }
   if (!columnValue) {
     return <></>
@@ -83,36 +79,36 @@ export const renderTableCell = ({
   }
   if (dateListColumnIndicies.includes(colIndex)) {
     const jsonData: number[] = JSON.parse(columnValue)
-    return jsonData.map((val: number, index: number) => {
+    return <p>{jsonData.map((val: number, index: number) => {
       return (
         <span key={index} className={isBold}>
           {new Date(val).toLocaleString()}
           {index !== jsonData.length - 1 ? ', ' : ''}
         </span>
       )
-    })
+    })} </p>
   }
   if (booleanListColumnIndicies.includes(colIndex)) {
     const jsonData: boolean[] = JSON.parse(columnValue)
-    return jsonData.map((val: boolean, index: number) => {
+    return <p>{jsonData.map((val: boolean, index: number) => {
       return (
         <span key={index} className={isBold}>
           {val ? 'true' : 'false'}
           {index !== jsonData.length - 1 ? ', ' : ''}
         </span>
       )
-    })
+    })}</p>
   }
   if (otherListColumnIndicies.includes(colIndex)) {
     const jsonData: string[] = JSON.parse(columnValue)
-    return jsonData.map((val: string, index: number) => {
+    return <p>{jsonData.map((val: string, index: number) => {
       return (
         <span key={val} className={isBold}>
           {val}
           {index !== jsonData.length - 1 ? ', ' : ''}
         </span>
       )
-    })
+    })}</p>
   }
   if (dateColumnIndicies.includes(colIndex)) {
     return (
@@ -153,8 +149,8 @@ export const renderTableCell = ({
       )
     }
   } else {
-    const [displayString, isShortened] = getShortString(columnValue)
-    if (!isShortened) {
+    const isShort = isShortString(columnValue)
+    if (isShort) {
       return <p className={isBold}> {columnValue}</p>
     } else {
       return (
@@ -164,7 +160,7 @@ export const renderTableCell = ({
             callbackFn={noop}
             idForToolTip={`${colIndex}_${rowIndex}`}
           >
-            <p className={isBold}> {displayString}...</p>
+            <p className={isBold}> {columnValue}</p>
           </ElementWithTooltip>
         </div>
       )
