@@ -205,7 +205,7 @@ describe('it makes the correct URL for the title', () => {
     expect(target).toEqual(SELF)
   })
 
-  describe.only('creates a link for a file handle ', () => {
+  describe('creates a link for a file handle ', () => {
     const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
     it('creates a link for a file handle inside a file view', () => {
       const id = '123'
@@ -242,7 +242,7 @@ describe('it makes the correct URL for the title', () => {
       )
     })
 
-    it.only('creates a link for a file handle inside a table', () => {
+    it('creates a link for a file handle inside a table', () => {
       const id = '123'
       const schema = {
         id: 0,
