@@ -16,9 +16,9 @@ import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
 import {
   SelectColumn,
   EntityColumnType,
-  FileHandleAssociateType,
   ColumnType,
 } from 'lib/utils/synapseTypes'
+import { FileHandleLink } from 'lib/containers/widgets/FileHandleLink'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
@@ -44,7 +44,7 @@ describe('it renders the UI correctly', () => {
   }
   const genericCardSchema: GenericCardSchema = {
     ...commonProps,
-    secondaryLabels: [labelOneColumnName, 'labelTwo', 'labelThree'],
+    secondaryLabels: [labelOneColumnName, 'labelTwo'],
   }
   const genericCardSchemaHeader: GenericCardSchema = {
     ...commonProps,
@@ -57,7 +57,7 @@ describe('it renders the UI correctly', () => {
     labelOne: 4,
     labelTwo: 5,
     link: 6,
-    labelThree: 7,
+    id: 7,
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -67,6 +67,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_LABELONE = 'MOCKED_LABELONE'
   const MOCKED_LABELTWO = 'MOCKED_LABELONE'
   const MOCKED_LINK = 'MOCKED_LINK'
+  const MOCKED_ID = 'MOCKED_ID'
 
   const data = [
     MOCKED_TITLE,
@@ -76,6 +77,7 @@ describe('it renders the UI correctly', () => {
     MOCKED_LABELONE,
     MOCKED_LABELTWO,
     MOCKED_LINK,
+    MOCKED_ID,
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
@@ -135,6 +137,60 @@ describe('it renders the UI correctly', () => {
       commonProps.title,
     )
   })
+
+  describe('Renders a FileHandleLin when the title is a file handle ', () => {
+    const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
+    const tableId = 'TABLE_ID_MOCK'
+    const columnModelWithFileHandleTitle = [
+      {
+        columnType: FILE_HANDLE_COLUMN_TYPE,
+        id: 'MOCKID',
+        name: 'link',
+      },
+    ]
+
+    it('Renders a FileHandleLink with an EntityView associate type', () => {
+      const tableEntityType = 'EntityView'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        tableEntityType,
+        columnModels: columnModelWithFileHandleTitle,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(FileHandleLink)).toHaveLength(1)
+      expect(wrapper.find(FileHandleLink).props()).toEqual({
+        token: undefined,
+        fileHandleId: MOCKED_LINK,
+        showDownloadIcon: true,
+        tableEntityType,
+        rowId: MOCKED_ID,
+        tableId,
+        displayValue: MOCKED_TITLE,
+      })
+    })
+
+    it('Renders a FileHandleLink with a table associate type', () => {
+      const tableEntityType = 'Table'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        tableEntityType,
+        columnModels: columnModelWithFileHandleTitle,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(FileHandleLink)).toHaveLength(1)
+      expect(wrapper.find(FileHandleLink).props()).toEqual({
+        token: undefined,
+        fileHandleId: MOCKED_LINK,
+        showDownloadIcon: true,
+        tableEntityType,
+        rowId: MOCKED_ID,
+        tableId,
+        displayValue: MOCKED_TITLE,
+      })
+    })
+  })
 })
 
 describe('it makes the correct URL for the title', () => {
@@ -150,10 +206,6 @@ describe('it makes the correct URL for the title', () => {
       undefined,
       undefined,
       undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
     )
     expect(href).toEqual(synLink)
     expect(target).toEqual(SELF)
@@ -164,10 +216,6 @@ describe('it makes the correct URL for the title', () => {
     const doiLink = `https://dx.doi.org/${doi}`
     const { href, target } = getTitleParams(
       doi,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
       undefined,
       undefined,
       undefined,
@@ -191,91 +239,9 @@ describe('it makes the correct URL for the title', () => {
       URLColumnName,
     }
     const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-    const { href, target } = getTitleParams(
-      '',
-      titleLinkConfig,
-      data,
-      schema,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-    )
+    const { href, target } = getTitleParams('', titleLinkConfig, data, schema)
     expect(href).toEqual(expectedLink)
     expect(target).toEqual(SELF)
-  })
-
-  describe('creates a link for a file handle ', () => {
-    const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
-    it('creates a link for a file handle inside a file view', () => {
-      const id = '123'
-      const schema = {
-        id: 0,
-      }
-      const data = [id]
-      const value = 'link'
-      const token = 'token'
-      const { titleOnClick } = getTitleParams(
-        value,
-        undefined,
-        data,
-        schema,
-        FILE_HANDLE_COLUMN_TYPE,
-        'EntityView',
-        id,
-        token,
-      )
-      expect(titleOnClick).toBeDefined()
-
-      // mock function call
-      const mockEntityCall = jest.fn()
-      const SynapseClient = require('../../../lib/utils/SynapseClient')
-      SynapseClient.getActualFileHandleByIdURL = mockEntityCall
-
-      titleOnClick!()
-      expect(mockEntityCall).toHaveBeenCalledWith(
-        value,
-        token,
-        FileHandleAssociateType.FileEntity,
-        id,
-        false,
-      )
-    })
-
-    it('creates a link for a file handle inside a table', () => {
-      const id = '123'
-      const schema = {
-        id: 0,
-      }
-      const data = [id]
-      const value = 'link'
-      const token = 'token'
-      const { titleOnClick } = getTitleParams(
-        value,
-        undefined,
-        data,
-        schema,
-        FILE_HANDLE_COLUMN_TYPE,
-        'Table',
-        id,
-        token,
-      )
-      expect(titleOnClick).toBeDefined()
-
-      // mock function call
-      const mockEntityCall = jest.fn()
-      const SynapseClient = require('../../../lib/utils/SynapseClient')
-      SynapseClient.getActualFileHandleByIdURL = mockEntityCall
-
-      titleOnClick!()
-      expect(mockEntityCall).toHaveBeenCalledWith(
-        value,
-        token,
-        FileHandleAssociateType.TableEntity,
-        id,
-        false,
-      )
-    })
   })
 })
 
