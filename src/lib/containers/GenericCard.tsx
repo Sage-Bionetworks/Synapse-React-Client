@@ -48,7 +48,7 @@ export type GenericCardProps = {
   schema: any
   data: any
   token?: string
-  tableEntityType: string | undefined
+  tableEntityConcreteType: string | undefined
   tableId: string | undefined
 } & CommonCardProps
 
@@ -306,7 +306,7 @@ export default class GenericCard extends React.Component<
       descriptionLinkConfig,
       rgbIndex,
       tableId,
-      tableEntityType,
+      tableEntityConcreteType,
       token,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
@@ -425,7 +425,7 @@ export default class GenericCard extends React.Component<
                 <FileHandleLink
                   token={token}
                   fileHandleId={linkValue}
-                  tableEntityType={tableEntityType}
+                  tableEntityConcreteType={tableEntityConcreteType}
                   showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
                   rowId={data![schema.id]}
                   tableId={tableId}

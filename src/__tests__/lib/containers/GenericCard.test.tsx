@@ -87,7 +87,7 @@ describe('it renders the UI correctly', () => {
     secondaryLabelLimit: 3,
     selectColumns: [],
     columnModels: [],
-    tableEntityType: '',
+    tableEntityConcreteType: '',
     tableId: '',
   }
 
@@ -100,7 +100,7 @@ describe('it renders the UI correctly', () => {
     isHeader: true,
     selectColumns: [],
     columnModels: [],
-    tableEntityType: '',
+    tableEntityConcreteType: '',
     tableId: '',
   }
 
@@ -150,10 +150,10 @@ describe('it renders the UI correctly', () => {
     ]
 
     it('Renders a FileHandleLink with an EntityView associate type', () => {
-      const tableEntityType = 'EntityView'
+      const tableEntityConcreteType = 'EntityView'
       const { wrapper } = createShallowComponent({
         ...propsForNonHeaderMode,
-        tableEntityType,
+        tableEntityConcreteType,
         columnModels: columnModelWithFileHandleTitle,
         titleLinkConfig: undefined,
         tableId,
@@ -163,7 +163,7 @@ describe('it renders the UI correctly', () => {
         token: undefined,
         fileHandleId: MOCKED_LINK,
         showDownloadIcon: true,
-        tableEntityType,
+        tableEntityConcreteType,
         rowId: MOCKED_ID,
         tableId,
         displayValue: MOCKED_TITLE,
@@ -171,10 +171,10 @@ describe('it renders the UI correctly', () => {
     })
 
     it('Renders a FileHandleLink with a table associate type', () => {
-      const tableEntityType = 'Table'
+      const tableEntityConcreteType = 'Table'
       const { wrapper } = createShallowComponent({
         ...propsForNonHeaderMode,
-        tableEntityType,
+        tableEntityConcreteType,
         columnModels: columnModelWithFileHandleTitle,
         titleLinkConfig: undefined,
         tableId,
@@ -184,7 +184,7 @@ describe('it renders the UI correctly', () => {
         token: undefined,
         fileHandleId: MOCKED_LINK,
         showDownloadIcon: true,
-        tableEntityType,
+        tableEntityConcreteType,
         rowId: MOCKED_ID,
         tableId,
         displayValue: MOCKED_TITLE,
