@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect } from 'react'
 import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
@@ -116,6 +116,10 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       'data-tip': tooltipText,
     })
   }
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  });
 
   return (
     <>

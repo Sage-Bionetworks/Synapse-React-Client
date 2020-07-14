@@ -11,6 +11,7 @@ import {
   COMPUTATIONAL,
   CLINICAL,
   PROJECT,
+  GRANT,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -49,6 +50,7 @@ const defaultIcons = {
   [COMPUTATIONAL]: ToolComputational,
   [CLINICAL]: ToolClinical,
   [PROJECT]: Project,
+  [GRANT]: Project,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
