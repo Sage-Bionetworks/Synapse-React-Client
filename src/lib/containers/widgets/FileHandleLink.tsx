@@ -8,7 +8,7 @@ type FileHandleLinkProps = {
   fileHandleId: string
   redirect?: boolean
   showDownloadIcon: boolean
-  tableEntityType: string | undefined
+  tableEntityConcreteType: string | undefined
   rowId: string | undefined
   tableId: string | undefined
   displayValue: string | undefined
@@ -18,18 +18,18 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
     token,
     fileHandleId,
     showDownloadIcon,
-    tableEntityType,
+    tableEntityConcreteType,
     rowId,
     tableId,
     redirect = false,
     displayValue,
   } = props
 
-  if (!tableEntityType) {
+  if (!tableEntityConcreteType) {
     // still loading
     return <></>
   }
-  const isFileView = tableEntityType.includes('EntityView')
+  const isFileView = tableEntityConcreteType.includes('EntityView')
   const fileAssociateType: FileHandleAssociateType = isFileView
     ? FileHandleAssociateType.FileEntity
     : FileHandleAssociateType.TableEntity

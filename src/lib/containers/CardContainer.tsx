@@ -68,7 +68,7 @@ export const CardContainer = (props: CardContainerProps) => {
   const ids = props.data?.queryResult.queryResults.tableId
     ? [props.data?.queryResult.queryResults.tableId]
     : []
-  const tableEntityType = useGetInfoFromIds<EntityHeader>({
+  const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
     ids,
     type: 'ENTITY_HEADER',
     token: props.token,
@@ -153,7 +153,8 @@ export const CardContainer = (props: CardContainerProps) => {
           data: rowData.values,
           selectColumns: data.selectColumns,
           columnModels: data.columnModels,
-          tableEntityType: tableEntityType[0] && tableEntityType[0].type,
+          tableEntityConcreteType:
+            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
           tableId: props.data?.queryResult.queryResults.tableId,
           token,
           ...rest,
