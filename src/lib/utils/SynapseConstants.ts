@@ -40,6 +40,7 @@ export const COMPUTATIONAL: string = 'computational'
 export const EXPERIMENTAL: string = 'experimental'
 export const CLINICAL: string = 'clinical'
 export const PROJECT: string = 'Project'
+export const GRANT: string = 'Grant'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'
@@ -52,12 +53,12 @@ export const _TIME_DELAY = 75
 export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'
 
 // UserBundle constants
-export const USER_BUNDLE_MASK_USER_PROFILE = 0X1;
-export const USER_BUNDLE_MASK_ORCID = 0X2;
-export const USER_BUNDLE_MASK_VERIFICATION_SUBMISSION = 0X4;
-export const USER_BUNDLE_MASK_IS_CERTIFIED = 0X8;
-export const USER_BUNDLE_MASK_IS_VERIFIED = 0X10;
-export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0X2;
+export const USER_BUNDLE_MASK_USER_PROFILE = 0x1
+export const USER_BUNDLE_MASK_ORCID = 0x2
+export const USER_BUNDLE_MASK_VERIFICATION_SUBMISSION = 0x4
+export const USER_BUNDLE_MASK_IS_CERTIFIED = 0x8
+export const USER_BUNDLE_MASK_IS_VERIFIED = 0x10
+export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x2
 // SessionStorage keys for info from ids
-export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE';
-export const ENTITY_HEADER_STORAGE_KEY = 'INFO_FROM_IDS_ENTITY_HEADER';
+export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE'
+export const ENTITY_HEADER_STORAGE_KEY = 'INFO_FROM_IDS_ENTITY_HEADER'

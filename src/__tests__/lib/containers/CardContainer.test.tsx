@@ -14,7 +14,7 @@ import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(<CardContainer {...props} />)
-  const instance = wrapper.instance() as CardContainer
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
@@ -24,6 +24,7 @@ describe('it performs all functionality', () => {
   const sql = 'SELECT * FROM syn16787123'
   const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: 'syn16787123',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -75,9 +76,9 @@ describe('it performs all functionality', () => {
   })
 
   it('handleViewMore works', () => {
-    const { instance } = createShallowComponent(props)
+    const { wrapper } = createShallowComponent(props)
     // go through calling handle view more
-    instance.handleViewMore()
+    wrapper.find('button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
   })

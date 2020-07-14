@@ -1,3 +1,4 @@
+// http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileHandleAssociateType.html
 export enum FileHandleAssociateType {
   FileEntity = 'FileEntity',
   TableEntity = 'TableEntity',
