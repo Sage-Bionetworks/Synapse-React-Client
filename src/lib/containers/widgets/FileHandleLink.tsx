@@ -1,6 +1,6 @@
 import { FileHandleAssociateType } from '../../utils/synapseTypes'
 import React from 'react'
-import { SynapseConstants, SynapseClient } from '../../'
+import { SynapseConstants, SynapseClient } from '../../utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type FileHandleLinkProps = {
