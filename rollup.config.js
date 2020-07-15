@@ -6,8 +6,8 @@ import svg from 'rollup-plugin-svg'
 import json from '@rollup/plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from '@rollup/plugin-commonjs'
+import minify from 'rollup-plugin-babel-minify'
 
-// import minify from 'rollup-plugin-babel-minify'
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
 export default {
@@ -93,12 +93,8 @@ export default {
       ],
     ]),
     // minify the bundle
-    // minify(),
+    minify(),
   ],
-  buildEnd: e => {
-    console.log('buildend')
-    console.log('e')
-  },
   output: {
     globals: {
       react: 'React',
