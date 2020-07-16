@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SynapseClientError } from 'lib/utils/SynapseClient'
+import { SynapseClientError } from '../utils/SynapseClient'
 import SignInButton from './SignInButton'
 import Alert from 'react-bootstrap/Alert'
 type ErrorProps = {

@@ -113,6 +113,13 @@ export type SynapseClientError = {
   status: number
 }
 
+/*
+  0 - no internet connection
+  429 - too many concurrent requests
+  500 >= any status code of 500 or more is a server side error
+*/
+const RETRY_STATUS_CODES = [0, 429, 500, 502, 503, 504]
+
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
   options: RequestInit,
@@ -159,9 +166,8 @@ const fetchWithExponentialTimeout = <T>(
       if (
         retries > 0 &&
         error.status &&
-        (error.status === 429 || error.status === 0)
+        RETRY_STATUS_CODES.indexOf(error.status) !== -1
       ) {
-        // If the client has enough retries and the error is a 429 or the network is offline
         return delay(delayMs).then(() => {
           return fetchWithExponentialTimeout<T>(
             url,
