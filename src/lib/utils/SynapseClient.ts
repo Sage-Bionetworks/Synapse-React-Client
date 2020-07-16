@@ -108,29 +108,19 @@ type SynapseError = {
   reason: string
 }
 
-const retryFetch = <T>(
-  url: RequestInfo,
-  options: RequestInit,
-  delayMs: number,
-) => {
-  return delay(delayMs).then(() => {
-    return fetchWithExponentialTimeout<T>(url, options, delayMs * 2)
-  })
+export type SynapseClientError = {
+  reason: string
+  status: number
 }
 
-// remove parseJson, combine ok and not okay response, except for 0 and 429..., make sure string responses got through
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
   options: RequestInit,
   delayMs: number = 1000,
-  retries: number = 5,
+  retries: number = 3,
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
-      if ((retries > 0 && resp.status === 429) || resp.status === 0) {
-        // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        return retryFetch<T>(url, options, delayMs)
-      }
       return resp
         .text()
         .then(text => {
@@ -167,14 +157,22 @@ const fetchWithExponentialTimeout = <T>(
     })
     .catch(error => {
       if (
-        retries === 0 ||
-        (error.status && error.status !== 429 && error.status !== 0)
+        retries > 0 &&
+        error.status &&
+        (error.status === 429 || error.status === 0)
       ) {
-        // If there is an error response and the error is nether a throttled response
-        // or disconnected network
+        // If the client has enough retries and the error is a 429 or the network is offline
+        return delay(delayMs).then(() => {
+          return fetchWithExponentialTimeout<T>(
+            url,
+            options,
+            delayMs * 2,
+            retries - 1,
+          )
+        })
+      } else {
         return Promise.reject(error)
       }
-      return retryFetch(url, options, delayMs)
     })
 }
 

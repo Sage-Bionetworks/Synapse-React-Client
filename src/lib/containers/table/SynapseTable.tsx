@@ -96,10 +96,10 @@ const PREVIOUS = 'PREVIOUS'
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
-const RESIZER_OPTIONS:any = {
+const RESIZER_OPTIONS: any = {
   resizeMode: 'overflow',
   partialRefresh: 'true',
-  liveDrag:true,
+  liveDrag: true,
   headerOnly: 'true',
 }
 type Info = {
@@ -151,9 +151,9 @@ export default class SynapseTable extends React.Component<
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
-    this.enableResize = this.enableResize.bind(this);
-    this.disableResize = this.disableResize.bind(this);
-    
+    this.enableResize = this.enableResize.bind(this)
+    this.disableResize = this.disableResize.bind(this)
+
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -178,11 +178,10 @@ export default class SynapseTable extends React.Component<
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
-  
-  // instance variables
-  resizer:any
-  tableElement:HTMLTableElement|null|undefined = undefined
 
+  // instance variables
+  resizer: any
+  tableElement: HTMLTableElement | null | undefined = undefined
 
   componentWillUnmount() {
     this.disableResize()
@@ -193,9 +192,15 @@ export default class SynapseTable extends React.Component<
     this.enableResize()
   }
 
-  shouldComponentUpdate(nextProps: QueryWrapperChildProps & SynapseTableProps, nextState: Readonly<SynapseTableState>, nextContext: any): boolean {
+  shouldComponentUpdate(
+    nextProps: QueryWrapperChildProps & SynapseTableProps,
+    nextState: Readonly<SynapseTableState>,
+    nextContext: any,
+  ): boolean {
     this.disableResize()
-    return super.shouldComponentUpdate ? super.shouldComponentUpdate(nextProps, nextState, nextContext) : true
+    return super.shouldComponentUpdate
+      ? super.shouldComponentUpdate(nextProps, nextState, nextContext)
+      : true
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData(prevProps.token !== this.props.token)
@@ -232,19 +237,16 @@ export default class SynapseTable extends React.Component<
   enableResize() {
     if (!this.resizer) {
       if (this.tableElement) {
-        this.resizer = new ColumnResizer(
-          this.tableElement,
-          RESIZER_OPTIONS
-        )
+        this.resizer = new ColumnResizer(this.tableElement, RESIZER_OPTIONS)
       }
     } else {
-      this.resizer.reset(RESIZER_OPTIONS);
+      this.resizer.reset(RESIZER_OPTIONS)
     }
   }
 
   disableResize() {
     if (this.resizer) {
-      this.resizer.reset({ disable: true });
+      this.resizer.reset({ disable: true })
     }
   }
 
@@ -343,8 +345,10 @@ export default class SynapseTable extends React.Component<
    * Display the view
    */
   public render() {
-    if (this.props.data === undefined) {
+    if (this.props.isLoadingNewData) {
       return this.props.loadingScreen ?? <div />
+    } else if (!this.props.data) {
+      return <></>
     }
     // unpack all the data
     const {
@@ -538,7 +542,10 @@ export default class SynapseTable extends React.Component<
             }
           />
         )}
-        <table ref={node => this.tableElement = node} className="table table-striped table-condensed">
+        <table
+          ref={node => (this.tableElement = node)}
+          className="table table-striped table-condensed"
+        >
           <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(
