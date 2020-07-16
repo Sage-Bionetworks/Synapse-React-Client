@@ -7,6 +7,7 @@ import {
   QueryResultBundle,
   RowSet,
   QueryBundleRequest,
+  ColumnType,
 } from '../../../lib/utils/synapseTypes/'
 import { SynapseConstants } from 'lib'
 import { act } from 'react-dom/test-utils'
@@ -46,14 +47,14 @@ describe('it works', () => {
       {
         id: '111488',
         name: 'studyStatus',
-        columnType: 'STRING',
+        columnType: ColumnType.STRING,
         maximumSize: 50,
         facetType: 'enumeration',
       },
       {
         id: '111489',
         name: 'dataStatus',
-        columnType: 'STRING',
+        columnType: ColumnType.STRING,
         maximumSize: 20,
         facetType: 'enumeration',
       },
@@ -117,7 +118,7 @@ describe('it works', () => {
     const { wrapper } = await createMountedComponent(props)
     await actions(wrapper, () => {
       expect(wrapper.find('.SRC-boldText').text()).toContain(
-        `${displayText} ${mockQueryReturn.queryCount} ${unitDescription} `,
+        `${displayText} ${mockQueryReturn.queryCount} ${unitDescription}`,
       )
       expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
         expect.objectContaining({
