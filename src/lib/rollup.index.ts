@@ -17,4 +17,4 @@ const SynapseComponents = {
   DownloadListTable,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents }
+export { SynapseComponents, SynapseConstants, SynapseClient }

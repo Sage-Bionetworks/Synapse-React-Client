@@ -71,10 +71,6 @@ export interface IRulesValidationEvent extends IRulesEvent {
   }
 }
 
-export type RulesResult = {
-  events: IRulesNavigationEvent[] | IRulesValidationEvent[]
-}
-
 export interface IAdditionalError {
   screen: string
   field: string
