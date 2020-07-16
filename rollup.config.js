@@ -1,12 +1,13 @@
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 import scss from 'rollup-plugin-scss'
-import image from 'rollup-plugin-image'
-import resolve from 'rollup-plugin-node-resolve'
+import image from '@rollup/plugin-image'
+import resolve from '@rollup/plugin-node-resolve'
 import svg from 'rollup-plugin-svg'
-import json from 'rollup-plugin-json'
+import json from '@rollup/plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
-import commonjs from 'rollup-plugin-commonjs'
+import commonjs from '@rollup/plugin-commonjs'
 import minify from 'rollup-plugin-babel-minify'
+
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
 export default {
@@ -42,15 +43,20 @@ export default {
     'sql-parser',
     'universal-cookie',
   ],
-  onwarn: function(warning) {
+  onwarn: function (args) {
     // Skip certain warnings
-
+    // console.log('args = ', args)
+    const { loc, frame, message, code } = args
     // Skip warning about AOT compiler (babel) use of the 'this' keyword
-    if (warning.code === 'THIS_IS_UNDEFINED') {
+    if (code === 'THIS_IS_UNDEFINED') {
       return
     }
-
-    console.warn(warning.message)
+    if (loc) {
+      console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message}`)
+      if (frame) console.warn(frame)
+    } else {
+      console.warn(message)
+    }
     // console.warn everything else
   },
   // NOTE - the order matters for the extensions below
