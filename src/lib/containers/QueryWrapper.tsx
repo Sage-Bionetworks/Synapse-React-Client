@@ -363,7 +363,7 @@ export default class QueryWrapper extends React.Component<
         this.setState(newState)
       })
       .catch(error => {
-        console.log('Failed to get data ', error)
+        console.error('Failed to get data ', error)
         this.setState({
           error,
         })
