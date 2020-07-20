@@ -523,11 +523,8 @@ export default class SynapseTable extends React.Component<
       </button>
     )
 
-    let isShowingAccessColumn: boolean | undefined = showAccessColumn
-    if (showAccessColumn && rows.length > 0) {
-      // PORTALS-924: verify that row actualy contains a defined rowId
-      isShowingAccessColumn = rows[0].rowId !== undefined
-    }
+    let isShowingAccessColumn: boolean | undefined =
+      showAccessColumn && this.state.isFileView
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
