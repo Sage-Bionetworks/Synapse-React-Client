@@ -53,6 +53,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   updateParentState,
   searchQuery,
   showNotch = false,
+  error,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
@@ -244,13 +245,16 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     <></>
   )
 
+  if (error) {
+    return <></>
+  }
   return (
     <div
       className={`TotalQueryResults ${showNotch ? 'notch-down' : ''}`}
       style={style}
     >
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
-        {frontText} {total} {unitDescription}{' '}
+        {frontText} {total} {unitDescription}
         {isLoading && (
           <span style={{ marginLeft: '2px' }} className={'spinner'} />
         )}
