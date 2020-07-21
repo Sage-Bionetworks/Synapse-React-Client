@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
@@ -15,7 +15,8 @@ type ColumnSelectionProps = {
       The dropdown state is held in SynapseTable because the EllipsisDropdown has
       an option to open the dropdown, 'show columns'
     */
-  show: boolean
+  show?: boolean
+  onChange?: Function
   toggleColumnSelection: (name: string) => void
   darkTheme?: boolean
   facetAliases?: {}
@@ -32,9 +33,15 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
     toggleColumnSelection,
     darkTheme,
     facetAliases,
+    show: showFromProps,
+    onChange,
   } = props
 
-  const [show, setShow] = useState(false)
+  let [show, setShow] = useState(false)
+
+  let [usedShow, usedSetShow] =
+    showFromProps !== undefined ? [showFromProps, onChange!] : [show, setShow]
+
   const onDropdownClick = (
     _show: boolean,
     _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
@@ -45,9 +52,9 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
     // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
     // we close it.
     if (metadata.source) {
-      setShow(true)
+      usedSetShow(true)
     } else {
-      setShow(false)
+      usedSetShow(false)
     }
   }
   return (
@@ -56,7 +63,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       onToggle={(show: boolean, event: any, metadata: any) =>
         onDropdownClick(show, event, metadata)
       }
-      show={show}
+      show={usedShow}
     >
       <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}

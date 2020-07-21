@@ -240,7 +240,10 @@ export default class HasAccess extends React.Component<
         }
       })
       .catch(err => {
-        console.error('Error on get Entity = ', err)
+        // this could be a self-imposed error or one from the backend, only log the latter
+        if (err.reason) {
+          console.error('Error on get Entity = ', err)
+        }
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
         this.setState({

@@ -64,6 +64,7 @@ import {
   applyChangesToValuesColumn,
 } from '../widgets/query-filter/QueryFilter'
 import ColumnResizer from 'column-resizer'
+import ModalDownload from '../ModalDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -113,11 +114,12 @@ export type SynapseTableState = {
   sortedColumnSelection: SortItem[]
   columnIconSortState: number[]
   isDownloadConfirmationOpen: boolean
+  isExportTableDownloadOpen: boolean
   isExpanded: boolean
   isFileView: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
-  showColumnSelection: boolean
+  isColumnSelectionOpen: boolean
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
@@ -164,8 +166,9 @@ export default class SynapseTable extends React.Component<
       */
       columnIconSortState: [],
       isDownloadConfirmationOpen: false,
+      isExportTableDownloadOpen: false,
       isExpanded: false,
-      showColumnSelection: false,
+      isColumnSelectionOpen: false,
       isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -365,7 +368,7 @@ export default class SynapseTable extends React.Component<
     const { rows } = queryResults
     const { headers } = queryResults
     const { facets = [] } = data
-    const { isExpanded } = this.state
+    const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
 
     let className = ''
@@ -383,9 +386,25 @@ export default class SynapseTable extends React.Component<
         </div>
       )
     }
+    const table = (
+      <div className="col-xs-12">
+        {this.renderTable(headers, columnModels, facets, rows)}
+      </div>
+    )
     const content = (
       <>
         <div className={className}>
+          {isExportTableDownloadOpen && (
+            <ModalDownload
+              onClose={() => {
+                this.setState({
+                  isExportTableDownloadOpen: false,
+                })
+              }}
+              queryBundleRequest={queryRequest}
+              token={token}
+            />
+          )}
           {!enableLeftFacetFilter &&
             unitDescription &&
             !isGroupByInSql(queryRequest.query.sql) && (
@@ -406,21 +425,14 @@ export default class SynapseTable extends React.Component<
                 />
               </div>
             )}
+
+          {!isFilterAndViewChild && this.renderTableTop(headers)}
           {!enableLeftFacetFilter && (
             <>
-              {!isFilterAndViewChild && this.renderTableTop(headers)}
-              <div className="row">
-                <div className={'col-xs-12'}>
-                  {this.renderTable(headers, columnModels, facets, rows)}
-                </div>
-              </div>
+              <div className="row">{table}</div>
             </>
           )}
-          {enableLeftFacetFilter && (
-            <div className={'col-xs-12'}>
-              {this.renderTable(headers, columnModels, facets, rows)}
-            </div>
-          )}
+          {enableLeftFacetFilter && <div className={'col-xs-12'}>{table}</div>}
         </div>
       </>
     )
@@ -467,6 +479,7 @@ export default class SynapseTable extends React.Component<
         isFileView={isFileView && !this.props.hideDownload}
         queryBundleRequest={this.props.getLastQueryRequest!()}
         queryResultBundle={this.props.data!}
+        darkTheme={false}
       />
     )
   }
@@ -476,7 +489,12 @@ export default class SynapseTable extends React.Component<
       <ColumnSelection
         headers={headers}
         isColumnSelected={this.props.isColumnSelected!}
-        show={this.state.showColumnSelection}
+        show={this.state.isColumnSelectionOpen}
+        onChange={(val: boolean) => {
+          this.setState({
+            isColumnSelectionOpen: val,
+          })
+        }}
         toggleColumnSelection={this.toggleColumnSelection}
       />
     )
@@ -577,12 +595,6 @@ export default class SynapseTable extends React.Component<
     const { isExpanded, isFileView } = this.state
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
-    const onDownloadTableOnlyArguments = {
-      isExpanded: false,
-    }
-    const onExpandArguments = {
-      isExpanded: !isExpanded,
-    }
     const queryRequest = this.props.getLastQueryRequest!()
     return (
       <div
@@ -606,15 +618,21 @@ export default class SynapseTable extends React.Component<
           )}
           <ExpandTable
             isExpanded={isExpanded}
-            onExpand={() => this.setState(onExpandArguments)}
+            onExpand={() =>
+              this.setState({
+                isExpanded: !isExpanded,
+              })
+            }
           />
           <EllipsisDropdown
             onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
             onDownloadTableOnly={() =>
-              this.setState(onDownloadTableOnlyArguments)
+              this.setState({
+                isExportTableDownloadOpen: true,
+              })
             }
-            onShowColumns={() => this.setState({ showColumnSelection: true })}
-            onFullScreen={() => this.setState(onExpandArguments)}
+            onShowColumns={() => this.setState({ isColumnSelectionOpen: true })}
+            onFullScreen={() => this.setState({ isExpanded: !isExpanded })}
             isExpanded={isExpanded}
             isUnauthenticated={!this.props.token}
             isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
@@ -624,7 +642,6 @@ export default class SynapseTable extends React.Component<
       </div>
     )
   }
-
   /**
    * Return the select column indexes for columns that use the aggregate count function.
    * If sql does not have a GROUP BY, this returns an empty array.
@@ -904,8 +921,9 @@ export default class SynapseTable extends React.Component<
       if (isShowingAccessColumn) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.unshift(
-          <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
+          <td key={rowSynapseId} className="SRC_noBorderTop">
             <HasAccess
+              key={rowSynapseId}
               entityId={rowSynapseId}
               entityVersionNumber={row.versionNumber?.toString()}
               token={token}

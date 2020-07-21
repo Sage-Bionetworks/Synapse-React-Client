@@ -86,7 +86,7 @@ class QueryWrapperMenuDemo extends React.Component<
         menuConfig: [
           {
             facet: 'resourceType',
-            sql: 'SELECT id, name, resourceType FROM syn11346063 LIMIT 1000',
+            sql: 'SELECT id, name, resourceType FROM syn11346063 LIMIT 1',
           },
           {
             facet: 'study',
