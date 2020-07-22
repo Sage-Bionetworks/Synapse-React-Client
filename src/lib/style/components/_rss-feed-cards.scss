@@ -1,0 +1,40 @@
+.RssFeed {
+  padding: 25px 0px;
+  .RssFeedItems {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    .RssFeedItem {
+      max-width: 385px;
+      border: 1px solid #DDDDDF;
+      padding: 20px;
+      margin: 10px;
+      .RssFeedItemCategories {
+        margin-bottom: 10px;
+      }
+      .RssFeedItemDate {
+        color: #ABABAC;
+        margin-bottom: 0px;
+      }
+      .RssFeedItemTitle {
+        font-size: 16px;
+        line-height: 144%;
+        color: #1A1C29;
+        font-weight: bold;
+      }
+      .RssFeedItemDescription {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 100px;
+      }
+      .RssFeedItemLink {
+  
+      }
+    }
+
+  }
+  .RssFeedViewAllNewsButtonContainer {
+    padding-top: 20px;
+    text-align: center;
+  }
+}

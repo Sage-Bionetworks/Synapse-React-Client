@@ -58,7 +58,8 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
 
   render() {
     return (
-      <div className="srcRssFeed row">
+      <div className="RssFeed">
+        <div className="RssFeedItems">
         {this.state.rssFeed.items &&
           this.state.rssFeed.items.map((item: any, index: any) => {
             // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
@@ -89,31 +90,32 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
             return (
               <div
                 key={item.guid}
-                className={`srcRssFeedItem col-xs-12 col-sm-4 ${isItemVisible ? '' : 'hidden'}`}
+                className={`RssFeedItem ${isItemVisible ? '' : 'hidden'}`}
               >
                 <div>
-                  <div className="srcRssFeedItemCategories">
+                  <div className="RssFeedItemCategories">
                     {item['categories']}
                   </div>
-                  <p className="srcRssFeedItemDate">{item['isoDate']}</p>
-                  <h3>{item['title']}</h3>
-                  <div
+                  <p className="RssFeedItemDate">{item['isoDate']}</p>
+                  <p className="RssFeedItemTitle">{item['title']}</p>
+                  <div className="RssFeedItemDescription"
                     id={item.guid}
                     dangerouslySetInnerHTML={{
                       __html: parsedHtml.documentElement.innerHTML,
                     }}
                   ></div>
-                  <a className="srcRssFeedItemLink" href={item['link']} target="_blank">Continue reading</a>
+                  <a className="RssFeedItemLink" href={item['link']} target="_blank">Continue reading</a>
                 </div>
               </div>
             )
           })}
+        </div>
         {this.state.rssFeed.items &&
           this.state.rssFeed.items.length > this.props.defaultItemsToShow &&
           !this.state.isShowingMoreItems && (
-            <div className="clearfix">
+            <div className="RssFeedViewAllNewsButtonContainer">
               <button
-                className="btn SRC-roundBorder"
+                className="btn btn-primary SRC-roundBorder"
                 onClick={this.onClickShowMoreItems()}
               >
                 VIEW ALL NEWS
