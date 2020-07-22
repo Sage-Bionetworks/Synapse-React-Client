@@ -1,18 +1,24 @@
 import * as React from 'react'
 import Parser from 'rss-parser'
 import moment from 'moment'
+import subscribePlus from '../assets/icons/subscribe_plus.svg'
+import MailchimpSubscribe from 'react-mailchimp-subscribe'
+
 let rssParser = new Parser()
 type RssState = {
   rssFeed: any
   isLoadingError: boolean
   isShowingMoreItems: boolean
   itemId2MoreItem: {}
+  isShowingSubscribeUI: boolean
 }
 
 export type RssFeedProps = {
   url: string
   defaultItemsToShow: number
   showMoreElements: boolean
+  mailChimpListName?: string
+  mailChimpUrl?: string
 }
 const parser = new DOMParser()
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
@@ -26,6 +32,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
       isLoadingError: false,
       isShowingMoreItems: false,
       itemId2MoreItem: {},
+      isShowingSubscribeUI: false,
     }
   }
   
@@ -57,10 +64,40 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
     this.setState({ isShowingMoreItems: true })
   }
 
+
+  public onClickSubscribe = () => {
+    this.setState({ isShowingSubscribeUI: true })
+  }
+
   render() {
     return (
       <>
         <h3 className="RssFeedWhatsNew text-center">What's New?</h3>
+        {this.props.mailChimpUrl && (
+          <div className="RssFeedSubscribe text-center">
+            {!this.state.isShowingSubscribeUI && (
+              <a className="RssFeedSubscribeToNewsLink" onClick={this.onClickSubscribe}>
+                <img src={subscribePlus} alt="Subscribe to News" />
+                Subscribe to News
+              </a>
+            )}
+            {this.state.isShowingSubscribeUI && (
+                <div className="MailchimpSubscribeContainer">
+                  <img src={subscribePlus} alt="Subscribe to News" />
+                  <p>
+                    Subscribe to receive the {this.props.mailChimpListName} by e-mail,
+                    which provides information and updates related to the
+                    Portal. You can opt out at any time by using the unsubscribe
+                    link within the e-mail. We will not share your information
+                    with any third parties or use it for any other purposes.
+                  </p>
+                  <div className="SRC-marginBottomTop">
+                    <MailchimpSubscribe url={this.props.mailChimpUrl} />
+                  </div>
+                </div>
+            )}
+          </div>
+        )}
         <div className="RssFeed">
           <div className="RssFeedItems">
           {this.state.rssFeed.items &&
@@ -98,7 +135,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
                   <div>
                     <div className="RssFeedItemCategories">
                     {item['categories'].map((categoryName: any, index: any) => {
-                      return <div className="RssFeedItemCategory">{categoryName}</div>
+                      return <div key={`${item.guid}_${categoryName}`} className="RssFeedItemCategory">{categoryName}</div>
                     })}
                     </div>
                     <p className="RssFeedItemDate">

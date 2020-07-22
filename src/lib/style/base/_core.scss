@@ -1106,5 +1106,7 @@ hr ~ .SRC-wrapper {
   text-transform: uppercase;
   padding: 5px 34px;
   color: white;
-  
+  &:hover {
+    color: white;
+  }
 }
