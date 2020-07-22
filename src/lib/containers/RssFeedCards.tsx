@@ -60,7 +60,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   render() {
     return (
       <>
-        <h3 className="text-center">What's New?</h3>
+        <h3 className="RssFeedWhatsNew text-center">What's New?</h3>
         <div className="RssFeed">
           <div className="RssFeedItems">
           {this.state.rssFeed.items &&
@@ -118,7 +118,7 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
             !this.state.isShowingMoreItems && (
               <div className="RssFeedViewAllNewsButtonContainer">
                 <button
-                  className="btn btn-primary SRC-roundBorder"
+                  className="btn homepage-button"
                   onClick={this.onClickShowMoreItems()}
                 >
                   VIEW ALL NEWS
