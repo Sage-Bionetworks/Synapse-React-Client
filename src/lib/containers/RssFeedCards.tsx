@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Parser from 'rss-parser'
+import moment from 'moment'
 let rssParser = new Parser()
 type RssState = {
   rssFeed: any
@@ -58,74 +59,77 @@ export default class RssFeed extends React.Component<RssFeedProps, RssState> {
 
   render() {
     return (
-      <div className="RssFeed">
-        <div className="RssFeedItems">
-        {this.state.rssFeed.items &&
-          this.state.rssFeed.items.map((item: any, index: any) => {
-            // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-            let parsedHtml = parser.parseFromString(
-              item['content:encoded'],
-              'text/html',
-            )
-            let bodyElement = parsedHtml.querySelector('body')
-            let moreElement = this.props.showMoreElements && parsedHtml.querySelector('[id^="more-"]')
-            if (moreElement && bodyElement) {
-              let foundMoreElement = false
-              const children = bodyElement.children
-              
-              for (let i = 0; i < children.length; i++) {
-                let child = children[i]
-                if (foundMoreElement) {
-                  child.innerHTML=''
-                }
-                if (child === moreElement) {
-                  foundMoreElement = true
+      <>
+        <h3 className="text-center">What's New?</h3>
+        <div className="RssFeed">
+          <div className="RssFeedItems">
+          {this.state.rssFeed.items &&
+            this.state.rssFeed.items.map((item: any, index: any) => {
+              // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
+              let parsedHtml = parser.parseFromString(
+                item['content:encoded'],
+                'text/html',
+              )
+              let bodyElement = parsedHtml.querySelector('body')
+              let moreElement = this.props.showMoreElements && parsedHtml.querySelector('[id^="more-"]')
+              if (moreElement && bodyElement) {
+                let foundMoreElement = false
+                const children = bodyElement.children
+                
+                for (let i = 0; i < children.length; i++) {
+                  let child = children[i]
+                  if (foundMoreElement) {
+                    child.innerHTML=''
+                  }
+                  if (child === moreElement) {
+                    foundMoreElement = true
+                  }
                 }
               }
-            }
-            let isItemVisible: boolean =
-              index < this.props.defaultItemsToShow ||
-              this.state.isShowingMoreItems
+              let isItemVisible: boolean =
+                index < this.props.defaultItemsToShow ||
+                this.state.isShowingMoreItems
 
-            return (
-              <div
-                key={item.guid}
-                className={`RssFeedItem ${isItemVisible ? '' : 'hidden'}`}
-              >
-                <div>
-                  <div className="RssFeedItemCategories">
-                    {item['categories']}
+              return (
+                <div
+                  key={item.guid}
+                  className={`RssFeedItem ${isItemVisible ? '' : 'hidden'}`}
+                >
+                  <div>
+                    <div className="RssFeedItemCategories">
+                    {item['categories'].map((categoryName: any, index: any) => {
+                      return <div className="RssFeedItemCategory">{categoryName}</div>
+                    })}
+                    </div>
+                    <p className="RssFeedItemDate">
+                      {moment(item['isoDate']).format('MMMM YYYY')}
+                    </p>
+                    <p className="RssFeedItemTitle">{item['title']}</p>
+                    <div className="RssFeedItemDescription"
+                    >{parsedHtml.documentElement.innerText}</div>
+                    <a className="RssFeedItemLink" href={item['link']} target="_blank">Continue reading</a>
                   </div>
-                  <p className="RssFeedItemDate">{item['isoDate']}</p>
-                  <p className="RssFeedItemTitle">{item['title']}</p>
-                  <div className="RssFeedItemDescription"
-                    id={item.guid}
-                    dangerouslySetInnerHTML={{
-                      __html: parsedHtml.documentElement.innerHTML,
-                    }}
-                  ></div>
-                  <a className="RssFeedItemLink" href={item['link']} target="_blank">Continue reading</a>
                 </div>
+              )
+            })}
+          </div>
+          {this.state.rssFeed.items &&
+            this.state.rssFeed.items.length > this.props.defaultItemsToShow &&
+            !this.state.isShowingMoreItems && (
+              <div className="RssFeedViewAllNewsButtonContainer">
+                <button
+                  className="btn btn-primary SRC-roundBorder"
+                  onClick={this.onClickShowMoreItems()}
+                >
+                  VIEW ALL NEWS
+                </button>
               </div>
-            )
-          })}
-        </div>
-        {this.state.rssFeed.items &&
-          this.state.rssFeed.items.length > this.props.defaultItemsToShow &&
-          !this.state.isShowingMoreItems && (
-            <div className="RssFeedViewAllNewsButtonContainer">
-              <button
-                className="btn btn-primary SRC-roundBorder"
-                onClick={this.onClickShowMoreItems()}
-              >
-                VIEW ALL NEWS
-              </button>
-            </div>
+            )}
+          {this.state.isLoadingError && (
+            <div>Unable to load feed: {this.props.url}</div>
           )}
-        {this.state.isLoadingError && (
-          <div>Unable to load feed: {this.props.url}</div>
-        )}
-      </div>
+        </div>
+      </>
     )
   }
 }

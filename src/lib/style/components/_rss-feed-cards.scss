@@ -10,7 +10,17 @@
       padding: 20px;
       margin: 10px;
       .RssFeedItemCategories {
-        margin-bottom: 10px;
+        margin-bottom: 25px;
+        .RssFeedItemCategory {
+          border: 1px solid $primary-action-color;
+          border-radius: 100px;
+          display: inline;
+          padding: 5px 20px;
+          text-transform: uppercase;
+          color: $primary-action-color;
+          margin-right: 5px;
+          font-size: 12px;
+        }
       }
       .RssFeedItemDate {
         color: #ABABAC;
@@ -21,11 +31,13 @@
         line-height: 144%;
         color: #1A1C29;
         font-weight: bold;
+        margin-bottom: 5px;
       }
       .RssFeedItemDescription {
         overflow: hidden;
         text-overflow: ellipsis;
         height: 100px;
+        color: #515359;
       }
       .RssFeedItemLink {
   
