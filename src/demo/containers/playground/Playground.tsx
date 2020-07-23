@@ -16,6 +16,7 @@ import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
+import { ThemesPlotDemo } from './ThemesPlotDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -97,6 +98,9 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
         </li>
       </ul>
 
@@ -196,6 +200,12 @@ const App = ({
         exact={true}
         path={`${match.url}/ShowDownloadDemo`}
         component={() => <ShowDownloadDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ThemesPlotDemo`}
+        component={ThemesPlotDemo}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

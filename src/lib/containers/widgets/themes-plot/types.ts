@@ -31,6 +31,7 @@ export type PlotProps = {
 }
 
 export type ClickCallbackParams = {
+  event: MouseEvent
   facetValue: string | number | Date | PlotlyTyped.Datum[] | null
   type: string | number | Date | PlotlyTyped.Datum[] | null
 }

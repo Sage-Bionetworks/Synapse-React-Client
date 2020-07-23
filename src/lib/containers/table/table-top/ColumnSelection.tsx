@@ -64,6 +64,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
         onDropdownClick(show, event, metadata)
       }
       show={usedShow}
+      drop="down"
     >
       <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}
@@ -82,7 +83,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
         className="SRC-primary-color-hover-dropdown"
         alignRight={true}
       >
-        {headers?.map((header, index) => {
+        {headers?.map(header => {
           const { name } = header
           const isCurrentColumnSelected = isColumnSelected.includes(name)
           const iconStyle: React.CSSProperties = {

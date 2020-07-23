@@ -425,14 +425,8 @@ export default class SynapseTable extends React.Component<
                 />
               </div>
             )}
-
           {!isFilterAndViewChild && this.renderTableTop(headers)}
-          {!enableLeftFacetFilter && (
-            <>
-              <div className="row">{table}</div>
-            </>
-          )}
-          {enableLeftFacetFilter && <div className={'col-xs-12'}>{table}</div>}
+          {enableLeftFacetFilter ? table : <div className="row">{table}</div>}
         </div>
       </>
     )

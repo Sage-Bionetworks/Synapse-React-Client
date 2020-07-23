@@ -36,7 +36,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           tooltipText={'Table Options'}
           image={faEllipsisV}
           size="lg"
-        ></ElementWithTooltip>
+        />
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
@@ -62,10 +62,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
             </Dropdown.Item>,
             <Dropdown.Divider key="divider1" />,
           ]}
-          <Dropdown.Item
-            key="Add/Remove Columns"
-            onClick={() => onShowColumns()}
-          >
+          <Dropdown.Item key="ColumnSelection" onClick={() => onShowColumns()}>
             Add/Remove Columns
           </Dropdown.Item>
           <Dropdown.Item key="expand" onClick={() => onFullScreen()}>

@@ -24,7 +24,7 @@ import BarPlot from './BarPlot'
 
 export type ThemesPlotProps = {
   token?: string
-  onPointClick: ({ facetValue, type }: ClickCallbackParams) => void
+  onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
   sideBarPlot: PlotProps
@@ -132,12 +132,16 @@ function fetchData(
 
 function getTotalsByProp<T>(data: GraphItem[], prop: string): T[] {
   const resultObject = data.reduce((res, obj) => {
-    res[obj[prop]] = (obj[prop] in res ? Number(res[obj[prop]]) : 0) + Number(obj.x)
+    res[obj[prop]] =
+      (obj[prop] in res ? Number(res[obj[prop]]) : 0) + Number(obj.x)
     return res
   }, {})
   const result = []
   for (const property in resultObject) {
-    result.push({ [prop]: property, count: resultObject[property] as number } as unknown as T)
+    result.push(({
+      [prop]: property,
+      count: resultObject[property] as number,
+    } as unknown) as T)
   }
   return result
 }
@@ -152,7 +156,7 @@ const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent, swap: boolean) => {
     // @ts-ignore
     ;[facetValue, type] = [type, facetValue]
   }
-  return { facetValue, type }
+  return { facetValue, type, event: e.event }
 }
 
 const renderTopBarLegend = (
@@ -197,7 +201,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   sideBarPlot,
   tooltipProps = tooltipVisualProps,
   onPointClick,
-  dotPlotYAxisLabel = 'Research Themes'
+  dotPlotYAxisLabel = 'Research Themes',
 }: ThemesPlotProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
@@ -233,8 +237,13 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
       .map(item => item.y)
     xMaxForSideBarPlot = Math.max(...totalsByDotPlotY.map(item => item.count))
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
-    topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), ['y'])
-   xLabelsForTopBarPlot = _.orderBy(getTotalsByProp<TotalsGroupByGroup>(topBarPlotData, 'group'), ['group']).map(item => item.group)
+    topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), [
+      'y',
+    ])
+    xLabelsForTopBarPlot = _.orderBy(
+      getTotalsByProp<TotalsGroupByGroup>(topBarPlotData, 'group'),
+      ['group'],
+    ).map(item => item.group)
   }
 
   return (
@@ -295,7 +304,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
               </div>
             </div>
           ))}
-          <div style={{ display: 'flex', position: 'relative'}}>
+          <div style={{ display: 'flex', position: 'relative' }}>
             <div className="ThemesPlot__dotPlotYLabel">{dotPlotYAxisLabel}</div>
             <div className="ThemesPlot__dotPlot">
               {yLabelsForDotPlot.map((label, i) => (
