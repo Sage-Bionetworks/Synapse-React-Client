@@ -146,10 +146,13 @@ function getTotalsByProp<T>(data: GraphItem[], prop: string): T[] {
   return result
 }
 
-const getClickTargetData = (e: PlotlyTyped.PlotMouseEvent, swap: boolean) => {
+const getClickTargetData = (
+  e: PlotlyTyped.PlotMouseEvent,
+  swap: boolean,
+): ClickCallbackParams => {
   const pointData = e.points[0].data
 
-  let facetValue = pointData.y[0]
+  let facetValue = pointData.y[0] as string
   let type = pointData.name
 
   if (swap) {
