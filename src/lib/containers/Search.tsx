@@ -156,6 +156,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const newSql = insertConditionsFromSearchParams(searchParams, sql)
     lastQueryRequestDeepCopy.query.sql = newSql
+    lastQueryRequestDeepCopy.query.offset = 0
     this.setState({
       submittedSearchText: searchText,
       lastSearchedFacet: searchItem.columnName,

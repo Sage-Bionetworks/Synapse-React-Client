@@ -105,6 +105,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   // what needs to happen after the filters are adjusted from the plot
   const applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
     lastQueryRequest!.query.selectedFacets = facets
+    lastQueryRequest!.query.offset = 0
     executeQueryRequest!(lastQueryRequest!)
   }
 

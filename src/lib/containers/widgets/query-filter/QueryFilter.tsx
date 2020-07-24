@@ -155,6 +155,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   const applyChanges = (facets: FacetColumnRequest[]) => {
     const queryRequest: QueryBundleRequest = getLastQueryRequest!()
     queryRequest.query.selectedFacets = facets
+    queryRequest.query.offset = 0
     executeQueryRequest!(queryRequest)
   }
 

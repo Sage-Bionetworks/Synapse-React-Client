@@ -64,6 +64,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   const applyChanges = (facets: FacetColumnRequest[]) => {
     const queryRequest: QueryBundleRequest = cloneDeep(lastQueryRequest)
     queryRequest.query.selectedFacets = facets
+    queryRequest.query.offset = 0
     executeQueryRequest!(queryRequest)
   }
 
