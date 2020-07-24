@@ -525,6 +525,61 @@ Launches the test runner in the interactive watch mode.<br>
 
 Launches the test runner in the non-interactive mode to run all tests and calculate test coverage.<br>
 
+The client has its configuration file for tests in `src/setupTests.js`.
+
+- Any predefined functionality must be defined there and CDN dependencies must be imported as npm modules.
+
+Links to Resources on Testing:
+
+- Testing Framework: https://jestjs.io/
+- React Class Testing: https://enzymejs.github.io/enzyme/
+- React Hooks Testing: https://testing-library.com/docs/react-testing-library/intro
+
+### Common issues with failed tests -
+
+#### React state isn't being updated.
+
+Wrap your code that updates the component inside [https://testing-library.com/docs/preact-testing-library/api#act](act)
+
+#### Enzyme isn't finding the component
+
+If using a class component:
+
+1. Try using [https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/mount.html](mount) - this recursively renders all child components.
+2. Try using [https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html](update) - this will sync the enzyme component tree snapshot with the react component tree, useful to use after running a stateful action on a component.
+
+#### Debugging the tests
+
+There are open issues in the microsoft vscode repository that block the ability to run debug mode on our tests.
+
+1. Update launch.json with the json snippet below.
+2. The command will fail because of the way vscode treats quotations inside launch.json, re-run the failed command by replacing the text `node_modules/(?!(lodash-es|jest\*)/)` with `"node_modules\/(?!(lodash-es|jest\*)/\)"` and append the command `set -H+` to the front e.g.
+   `set -H+ && command with modified text "node_modules\/(?!(lodash-es|jest\*)/\)"`
+
+```json
+{
+  "name": "Debug CRA Tests",
+  "type": "node",
+  "request": "launch",
+  "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
+  "args": [
+    "test",
+    "--runInBand",
+    "--no-cache",
+    "--env=jsdom",
+    "--transformIgnorePatterns",
+    // https://github.com/microsoft/vscode/issues/81944
+    "node_modules/(?!(lodash-es|jest*)/)",
+    "--setupFiles",
+    "./src/setupTests.js"
+  ],
+  "cwd": "${workspaceRoot}",
+  "protocol": "inspector",
+  "console": "integratedTerminal",
+  "internalConsoleOptions": "neverOpen"
+}
+```
+
 ### `yarn run build`
 
 Builds the app for production to the `build` folder.<br>
