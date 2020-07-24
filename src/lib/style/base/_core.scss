@@ -1095,3 +1095,12 @@ hr ~ .SRC-wrapper {
     }
   }
 }
+
+.SignInButton {
+  padding: 0px;
+}
+
+#addAndRemoveColumns ~ div.dropdown-menu {
+  max-height: 300px;
+  overflow: auto;
+}

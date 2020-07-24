@@ -52,6 +52,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   updateParentState,
   facetAliases,
   showNotch = false,
+  error,
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
@@ -186,7 +187,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   })
   const showMoreState = getShowMoreState()
 
-  if (isLoadingNewData || !data) {
+  if (error) {
+    return <></>
+  } else if (isLoadingNewData) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}

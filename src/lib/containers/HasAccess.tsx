@@ -52,6 +52,7 @@ type HasAccessState = {
   accessRequirements?: Array<AccessRequirement>
   isGettingRestrictionInformation: boolean
   isGettingEntityInformation: boolean
+  errorOnGetRestrictionInformation: boolean
 }
 
 export enum ExternalFileHandleConcreteTypeEnum {
@@ -148,6 +149,7 @@ export default class HasAccess extends React.Component<
       accessRequirements: [],
       isGettingEntityInformation: false,
       isGettingRestrictionInformation: false,
+      errorOnGetRestrictionInformation: false,
     }
   }
 
@@ -164,7 +166,8 @@ export default class HasAccess extends React.Component<
   refresh = (forceRefresh?: boolean) => {
     if (
       this.state.isGettingEntityInformation ||
-      this.state.isGettingRestrictionInformation
+      this.state.isGettingRestrictionInformation ||
+      this.state.errorOnGetRestrictionInformation
     ) {
       return
     }
@@ -237,7 +240,10 @@ export default class HasAccess extends React.Component<
         }
       })
       .catch(err => {
-        console.error('Error on get Entity = ', err)
+        // this could be a self-imposed error or one from the backend, only log the latter
+        if (err.reason) {
+          console.error('Error on get Entity = ', err)
+        }
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
         this.setState({
@@ -265,7 +271,13 @@ export default class HasAccess extends React.Component<
         })
       })
       .catch(err => {
-        console.error('Error on getRestrictionInformation: ', err)
+        console.error(
+          'Error on getRestrictionInformation. This should not happen: ',
+          err,
+        )
+        this.setState({
+          errorOnGetRestrictionInformation: true,
+        })
       })
       .finally(() => {
         this.setState({

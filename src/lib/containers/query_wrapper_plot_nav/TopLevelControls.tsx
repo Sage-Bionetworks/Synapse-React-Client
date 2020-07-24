@@ -204,7 +204,6 @@ const TopLevelControls = (
           <ColumnSelection
             headers={data?.selectColumns}
             isColumnSelected={isColumnSelected!}
-            show={topLevelControlsState?.showColumnSelectDropdown ?? false}
             toggleColumnSelection={toggleColumnSelection}
             darkTheme={true}
             facetAliases={facetAliases}

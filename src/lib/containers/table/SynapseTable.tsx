@@ -64,6 +64,7 @@ import {
   applyChangesToValuesColumn,
 } from '../widgets/query-filter/QueryFilter'
 import ColumnResizer from 'column-resizer'
+import ModalDownload from '../ModalDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -96,10 +97,10 @@ const PREVIOUS = 'PREVIOUS'
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
-const RESIZER_OPTIONS:any = {
+const RESIZER_OPTIONS: any = {
   resizeMode: 'overflow',
   partialRefresh: 'true',
-  liveDrag:true,
+  liveDrag: true,
   headerOnly: 'true',
 }
 type Info = {
@@ -113,11 +114,12 @@ export type SynapseTableState = {
   sortedColumnSelection: SortItem[]
   columnIconSortState: number[]
   isDownloadConfirmationOpen: boolean
+  isExportTableDownloadOpen: boolean
   isExpanded: boolean
   isFileView: boolean
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
-  showColumnSelection: boolean
+  isColumnSelectionOpen: boolean
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
@@ -151,9 +153,9 @@ export default class SynapseTable extends React.Component<
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
-    this.enableResize = this.enableResize.bind(this);
-    this.disableResize = this.disableResize.bind(this);
-    
+    this.enableResize = this.enableResize.bind(this)
+    this.disableResize = this.disableResize.bind(this)
+
     // store the offset and sorted selection that is currently held
     this.state = {
       /* columnIconSortState tells what icon to display for a table
@@ -164,8 +166,9 @@ export default class SynapseTable extends React.Component<
       */
       columnIconSortState: [],
       isDownloadConfirmationOpen: false,
+      isExportTableDownloadOpen: false,
       isExpanded: false,
-      showColumnSelection: false,
+      isColumnSelectionOpen: false,
       isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
@@ -178,11 +181,10 @@ export default class SynapseTable extends React.Component<
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
-  
-  // instance variables
-  resizer:any
-  tableElement:HTMLTableElement|null|undefined = undefined
 
+  // instance variables
+  resizer: any
+  tableElement: HTMLTableElement | null | undefined = undefined
 
   componentWillUnmount() {
     this.disableResize()
@@ -193,9 +195,15 @@ export default class SynapseTable extends React.Component<
     this.enableResize()
   }
 
-  shouldComponentUpdate(nextProps: QueryWrapperChildProps & SynapseTableProps, nextState: Readonly<SynapseTableState>, nextContext: any): boolean {
+  shouldComponentUpdate(
+    nextProps: QueryWrapperChildProps & SynapseTableProps,
+    nextState: Readonly<SynapseTableState>,
+    nextContext: any,
+  ): boolean {
     this.disableResize()
-    return super.shouldComponentUpdate ? super.shouldComponentUpdate(nextProps, nextState, nextContext) : true
+    return super.shouldComponentUpdate
+      ? super.shouldComponentUpdate(nextProps, nextState, nextContext)
+      : true
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
     this.getEntityHeadersInData(prevProps.token !== this.props.token)
@@ -232,19 +240,16 @@ export default class SynapseTable extends React.Component<
   enableResize() {
     if (!this.resizer) {
       if (this.tableElement) {
-        this.resizer = new ColumnResizer(
-          this.tableElement,
-          RESIZER_OPTIONS
-        )
+        this.resizer = new ColumnResizer(this.tableElement, RESIZER_OPTIONS)
       }
     } else {
-      this.resizer.reset(RESIZER_OPTIONS);
+      this.resizer.reset(RESIZER_OPTIONS)
     }
   }
 
   disableResize() {
     if (this.resizer) {
-      this.resizer.reset({ disable: true });
+      this.resizer.reset({ disable: true })
     }
   }
 
@@ -343,8 +348,10 @@ export default class SynapseTable extends React.Component<
    * Display the view
    */
   public render() {
-    if (this.props.data === undefined) {
+    if (this.props.isLoadingNewData) {
       return this.props.loadingScreen ?? <div />
+    } else if (!this.props.data) {
+      return <></>
     }
     // unpack all the data
     const {
@@ -361,7 +368,7 @@ export default class SynapseTable extends React.Component<
     const { rows } = queryResults
     const { headers } = queryResults
     const { facets = [] } = data
-    const { isExpanded } = this.state
+    const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
 
     let className = ''
@@ -379,9 +386,25 @@ export default class SynapseTable extends React.Component<
         </div>
       )
     }
+    const table = (
+      <div className="col-xs-12">
+        {this.renderTable(headers, columnModels, facets, rows)}
+      </div>
+    )
     const content = (
       <>
         <div className={className}>
+          {isExportTableDownloadOpen && (
+            <ModalDownload
+              onClose={() => {
+                this.setState({
+                  isExportTableDownloadOpen: false,
+                })
+              }}
+              queryBundleRequest={queryRequest}
+              token={token}
+            />
+          )}
           {!enableLeftFacetFilter &&
             unitDescription &&
             !isGroupByInSql(queryRequest.query.sql) && (
@@ -402,21 +425,8 @@ export default class SynapseTable extends React.Component<
                 />
               </div>
             )}
-          {!enableLeftFacetFilter && (
-            <>
-              {!isFilterAndViewChild && this.renderTableTop(headers)}
-              <div className="row">
-                <div className={'col-xs-12'}>
-                  {this.renderTable(headers, columnModels, facets, rows)}
-                </div>
-              </div>
-            </>
-          )}
-          {enableLeftFacetFilter && (
-            <div className={'col-xs-12'}>
-              {this.renderTable(headers, columnModels, facets, rows)}
-            </div>
-          )}
+          {!isFilterAndViewChild && this.renderTableTop(headers)}
+          {enableLeftFacetFilter ? table : <div className="row">{table}</div>}
         </div>
       </>
     )
@@ -463,6 +473,7 @@ export default class SynapseTable extends React.Component<
         isFileView={isFileView && !this.props.hideDownload}
         queryBundleRequest={this.props.getLastQueryRequest!()}
         queryResultBundle={this.props.data!}
+        darkTheme={false}
       />
     )
   }
@@ -472,7 +483,12 @@ export default class SynapseTable extends React.Component<
       <ColumnSelection
         headers={headers}
         isColumnSelected={this.props.isColumnSelected!}
-        show={this.state.showColumnSelection}
+        show={this.state.isColumnSelectionOpen}
+        onChange={(val: boolean) => {
+          this.setState({
+            isColumnSelectionOpen: val,
+          })
+        }}
         toggleColumnSelection={this.toggleColumnSelection}
       />
     )
@@ -519,11 +535,8 @@ export default class SynapseTable extends React.Component<
       </button>
     )
 
-    let isShowingAccessColumn: boolean | undefined = showAccessColumn
-    if (showAccessColumn && rows.length > 0) {
-      // PORTALS-924: verify that row actualy contains a defined rowId
-      isShowingAccessColumn = rows[0].rowId !== undefined
-    }
+    let isShowingAccessColumn: boolean | undefined =
+      showAccessColumn && this.state.isFileView
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
@@ -538,7 +551,10 @@ export default class SynapseTable extends React.Component<
             }
           />
         )}
-        <table ref={node => this.tableElement = node} className="table table-striped table-condensed">
+        <table
+          ref={node => (this.tableElement = node)}
+          className="table table-striped table-condensed"
+        >
           <thead className="SRC_bordered">
             <tr>
               {this.createTableHeader(
@@ -573,12 +589,6 @@ export default class SynapseTable extends React.Component<
     const { isExpanded, isFileView } = this.state
     const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
     const background = colorPalette[0]
-    const onDownloadTableOnlyArguments = {
-      isExpanded: false,
-    }
-    const onExpandArguments = {
-      isExpanded: !isExpanded,
-    }
     const queryRequest = this.props.getLastQueryRequest!()
     return (
       <div
@@ -602,15 +612,21 @@ export default class SynapseTable extends React.Component<
           )}
           <ExpandTable
             isExpanded={isExpanded}
-            onExpand={() => this.setState(onExpandArguments)}
+            onExpand={() =>
+              this.setState({
+                isExpanded: !isExpanded,
+              })
+            }
           />
           <EllipsisDropdown
             onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
             onDownloadTableOnly={() =>
-              this.setState(onDownloadTableOnlyArguments)
+              this.setState({
+                isExportTableDownloadOpen: true,
+              })
             }
-            onShowColumns={() => this.setState({ showColumnSelection: true })}
-            onFullScreen={() => this.setState(onExpandArguments)}
+            onShowColumns={() => this.setState({ isColumnSelectionOpen: true })}
+            onFullScreen={() => this.setState({ isExpanded: !isExpanded })}
             isExpanded={isExpanded}
             isUnauthenticated={!this.props.token}
             isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
@@ -620,7 +636,6 @@ export default class SynapseTable extends React.Component<
       </div>
     )
   }
-
   /**
    * Return the select column indexes for columns that use the aggregate count function.
    * If sql does not have a GROUP BY, this returns an empty array.
@@ -900,8 +915,9 @@ export default class SynapseTable extends React.Component<
       if (isShowingAccessColumn) {
         const rowSynapseId = `syn${row.rowId}`
         rowContent.unshift(
-          <td key={`(${rowIndex},accessColumn)`} className="SRC_noBorderTop">
+          <td key={rowSynapseId} className="SRC_noBorderTop">
             <HasAccess
+              key={rowSynapseId}
               entityId={rowSynapseId}
               entityVersionNumber={row.versionNumber?.toString()}
               token={token}

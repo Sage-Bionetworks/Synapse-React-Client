@@ -9,6 +9,7 @@ import {
 import { SynapseConstants } from '../../utils/'
 import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
+import { Error } from '../Error'
 import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
@@ -94,6 +95,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           hideDownload={hideDownload}
         />
         <SearchV2 {...searchConfiguration} />
+        <Error />
         <DownloadConfirmation />
         <FacetNav
           facetsToPlot={facetsToPlot}

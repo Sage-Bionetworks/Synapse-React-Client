@@ -114,10 +114,10 @@ export const CardContainer = (props: CardContainerProps) => {
   showViewMore = showViewMore && props.hasMoreData!
 
   const showViewMoreButton = showViewMore && (
-    <div>
+    <div className="SRC-viewMore">
       <button
         onClick={handleViewMore}
-        className="pull-right SRC-standard-button-shape SRC-light-button"
+        className="SRC-standard-button-shape SRC-light-button"
       >
         View More
       </button>

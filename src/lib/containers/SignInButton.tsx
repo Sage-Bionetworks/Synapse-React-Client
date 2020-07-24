@@ -12,7 +12,7 @@ const SignInButton = ({ className, style }: SignInProps) => {
     <button
       type="button"
       style={style}
-      className={`${SRC_SIGN_IN_CLASS} ${className}`}
+      className={`SignInButton ${SRC_SIGN_IN_CLASS} SRC-primary-text-color ${className}`}
     >
       Sign In
     </button>
