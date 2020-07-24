@@ -803,6 +803,7 @@ export default class SynapseTable extends React.Component<
     }
     const queryRequest = this.props.getLastQueryRequest!()
     queryRequest.query.sort = sortedColumnSelection
+    queryRequest.query.offset = 0
     this.props.executeQueryRequest!(queryRequest)
     this.setState({
       columnIconSortState,
@@ -1183,6 +1184,7 @@ export default class SynapseTable extends React.Component<
   public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     queryRequest.query.selectedFacets = facets
+    queryRequest.query.offset = 0
     this.setState({ isUserModifiedQuery: true })
     this.props.executeQueryRequest!(queryRequest)
   }
