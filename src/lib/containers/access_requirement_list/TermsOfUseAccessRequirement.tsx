@@ -40,7 +40,7 @@ export default function TermsOfUseAccessRequirementComponent({
   }, [token, accessRequirement])
 
   return (
-    <div>
+    <>
       {isLoading && <span className="spinner" />}
       <AcceptedRequirements
         user={user}
@@ -51,6 +51,6 @@ export default function TermsOfUseAccessRequirementComponent({
         onHide={onHide}
         entityId={entityId}
       />
-    </div>
+    </>
   )
 }
