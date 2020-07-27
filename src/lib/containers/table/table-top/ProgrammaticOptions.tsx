@@ -78,7 +78,7 @@ function ProgrammaticOptions({
           interact with the system via a number of clients. The
           <a
             className="ProgrammaticOptions__docslink"
-            href="https://docs.synapse.org/articles/api_documentation.html"
+            href="https://python-docs.synapse.org/build/html/CommandLineClient.html"
             target="_blank"
             rel="noopener noreferrer"
           >
