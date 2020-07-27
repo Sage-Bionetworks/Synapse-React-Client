@@ -13,9 +13,7 @@
     .QueryWrapperPlotNav__actions {
       display: inline-flex;
       align-items: center;
-      .ElementWithTooltip,
-      .dropdown {
-        flex: 1;
+      .ElementWithTooltip {
         width: 35px;
       }
     }
