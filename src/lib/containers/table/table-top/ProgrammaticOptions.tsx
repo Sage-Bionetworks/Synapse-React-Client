@@ -75,16 +75,17 @@ function ProgrammaticOptions({
         </p>
         <p>
           Synapse is built on a number of RESTful web APIs that allow users to
-          interact with the system via a number of clients. The
+          interact with the system via a number of clients. Read the
           <a
             className="ProgrammaticOptions__docslink"
             href="https://python-docs.synapse.org/build/html/CommandLineClient.html"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Synapse API documentation
+            {' '}
+            Synapse Command Line Documentation{' '}
           </a>
-          is available online.
+          online.
         </p>
         <div className="ProgrammaticOptions__cli">
           <p> synapse get -q "{generatedSql}" </p>
