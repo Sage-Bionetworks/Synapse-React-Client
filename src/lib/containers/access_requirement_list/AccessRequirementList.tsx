@@ -242,59 +242,62 @@ export default function AccessRequirementList({
   }
 
   const content = (
-    <div>
+    <>
       <ReactBootstrap.Modal.Header closeButton={true}>
         <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
           Data Access Request
         </ReactBootstrap.Modal.Title>
       </ReactBootstrap.Modal.Header>
-      <ReactBootstrap.Modal.Body></ReactBootstrap.Modal.Body>
-      <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
-        Access For:
-      </h4>
-      <a
-        className="AccessRequirementList__register-text-link"
-        href={`https://www.synapse.org/#!Synapse:${entityId}`}
-      >
-        <FontAwesomeIcon
-          size="lg"
-          icon="file"
-          className="AccessRequirementList__file"
-        />{' '}
-        &nbsp;{entityInformation[0]?.name}
-      </a>
-      <h4 className="AccessRequirementList__instruction">
-        What do I need to do?
-      </h4>
-      <div className="requirement-container">
-        <AccessApprovalCheckMark isCompleted={isSignedIn} />
+      <ReactBootstrap.Modal.Body>
         <div>
-          {!isSignedIn && (
-            <p className="AccessRequirementList__signin">
-              <button
-                className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
-              >
-                Sign in
-              </button>
-              with a Sage Platform (Synapse) user account.
-            </p>
-          )}
-          <SignedIn />
-        </div>
-      </div>
-      {accessRequirements?.map(
-        ({ accessRequirement, accessRequirementStatus }) => {
-          return (
-            <React.Fragment key={accessRequirement.id}>
-              {renderAccessRequirement(
-                accessRequirement,
-                accessRequirementStatus,
+          <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
+            Access For:
+          </h4>
+          <a
+            className="AccessRequirementList__register-text-link"
+            href={`https://www.synapse.org/#!Synapse:${entityId}`}
+          >
+            <FontAwesomeIcon
+              size="lg"
+              icon="file"
+              className="AccessRequirementList__file"
+            />
+            &nbsp;{entityInformation[0]?.name}
+          </a>
+          <h4 className="AccessRequirementList__instruction">
+            What do I need to do?
+          </h4>
+          <div className="requirement-container">
+            <AccessApprovalCheckMark isCompleted={isSignedIn} />
+            <div>
+              {!isSignedIn && (
+                <p className="AccessRequirementList__signin">
+                  <button
+                    className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
+                  >
+                    Sign in
+                  </button>
+                  with a Sage Platform (Synapse) user account.
+                </p>
               )}
-            </React.Fragment>
-          )
-        },
-      )}
-    </div>
+              <SignedIn />
+            </div>
+          </div>
+          {accessRequirements?.map(
+            ({ accessRequirement, accessRequirementStatus }) => {
+              return (
+                <React.Fragment key={accessRequirement.id}>
+                  {renderAccessRequirement(
+                    accessRequirement,
+                    accessRequirementStatus,
+                  )}
+                </React.Fragment>
+              )
+            },
+          )}
+        </div>
+      </ReactBootstrap.Modal.Body>
+    </>
   )
 
   if (renderAsModal) {
@@ -304,6 +307,8 @@ export default function AccessRequirementList({
         onHide={() => onHide?.()}
         show={true}
         animation={false}
+        centered={true}
+        scrollable={true}
       >
         {content}
       </ReactBootstrap.Modal>
