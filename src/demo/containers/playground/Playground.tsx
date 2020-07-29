@@ -17,6 +17,7 @@ import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
+import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -101,6 +102,11 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/ExternalFileHandleLink`}>
+            ExternalFileHandleLink
+          </Link>
         </li>
       </ul>
 
@@ -206,6 +212,14 @@ const App = ({
         exact={true}
         path={`${match.url}/ThemesPlotDemo`}
         component={ThemesPlotDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ExternalFileHandleLink`}
+        component={() => (
+          <ExternalFileHandleLink synId={'syn22276050'} token={token} />
+        )}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
