@@ -238,10 +238,15 @@ const applyFacetFilter = (
 const getPlotStyle = (
   parentWidth: number | null,
   plotType: PlotType,
+  maxHeight: number,
 ): { width: string; height: string } => {
   const quotient = plotType === 'BAR' ? 0.8 : 0.6
   const width = parentWidth ? parentWidth * quotient : 200
-  const height = plotType === 'PIE' ? width : width / 3
+  let height = plotType === 'PIE' ? width : width / 3
+  // max height of .FacetNav row col* is 200px, so the effective plot height max is around 150 unless it's expanded
+  if (height > maxHeight) {
+    height = maxHeight
+  }
 
   return {
     width: `${width}px`,
@@ -471,11 +476,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
             {({ size }) => (
               <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
                 <Plot
+                  key={`${facetToPlot.columnName}-${size.width}`}
                   layout={layout}
                   data={plotData?.data ?? []}
-                  style={getPlotStyle(size.width, plotType)}
-                  config={{ displayModeBar: false, responsive: true }}
-                  useResizeHandler={true}
+                  style={getPlotStyle(size.width, plotType, isExpanded ? 300 : 150)}
+                  config={{ displayModeBar: false}}
                   onClick={evt =>
                     applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
                   }
