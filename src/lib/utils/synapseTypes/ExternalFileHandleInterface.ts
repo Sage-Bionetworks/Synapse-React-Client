@@ -52,7 +52,9 @@ export type ProxyFileHandle = ExternalFileHandleInterface & {
 export function implementsExternalFileHandleInterface(
   x: ExternalFileHandleInterface,
 ): x is ExternalFileHandleInterface {
-  return x.concreteType in ExternalFileHandleConcreteTypeEnum
+  return Object.values(ExternalFileHandleConcreteTypeEnum).includes(
+    x.concreteType,
+  )
 }
 
 /* 
