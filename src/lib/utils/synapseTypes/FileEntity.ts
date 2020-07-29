@@ -15,6 +15,8 @@ export interface FileEntity extends Entity {
 
 export function assertIsFileEntity(val: Entity): asserts val is FileEntity {
   if (val.concreteType !== 'org.sagebionetworks.repo.model.FileEntity') {
-    throw new AssertionError({ message: 'This is not a File Entity!' })
+    throw new AssertionError({
+      message: `File Entity exepcted but found ${val}`,
+    })
   }
 }

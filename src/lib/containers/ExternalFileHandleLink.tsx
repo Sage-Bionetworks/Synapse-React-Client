@@ -22,18 +22,24 @@ export type ExternalFileHandleLinkProps = {
 
 export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
   const { synId, token, className } = props
-  const [file, setFile] = useState<ExternalFileHandle | undefined>(undefined)
+  const [data, setData] = useState<
+    | { fileEntity: FileEntity; externalFileHandle: ExternalFileHandle }
+    | undefined
+  >(undefined)
   useEffect(() => {
     const getEntity = async () => {
       try {
-        const entity = await SynapseClient.getEntity<FileEntity>(token, synId)
-        assertIsFileEntity(entity)
+        const fileEntity = await SynapseClient.getEntity<FileEntity>(
+          token,
+          synId,
+        )
+        assertIsFileEntity(fileEntity)
         const batchFileRequest: BatchFileRequest = {
           requestedFiles: [
             {
               associateObjectId: synId,
               associateObjectType: FileHandleAssociateType.FileEntity,
-              fileHandleId: entity.dataFileHandleId,
+              fileHandleId: fileEntity.dataFileHandleId,
             },
           ],
           includeFileHandles: true,
@@ -43,7 +49,10 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
         const file = await SynapseClient.getFiles(batchFileRequest, token)
         const externalFileHandle = file.requestedFiles[0].fileHandle
         assertIsExternalFileHandle(externalFileHandle)
-        setFile(externalFileHandle)
+        setData({
+          externalFileHandle,
+          fileEntity,
+        })
       } catch (e) {
         console.error('Error on getting external file handle = ', e)
       }
@@ -51,10 +60,17 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
     getEntity()
   }, [synId, token])
 
-  return file ? (
-    <a href={file.externalURL} className={className} target="_blank">
+  const externalFileHandle = data?.externalFileHandle
+  const fileEntity = data?.fileEntity
+
+  return externalFileHandle ? (
+    <a
+      href={externalFileHandle.externalURL}
+      className={className}
+      target="_blank"
+    >
       <span>
-        {file?.fileName}
+        {fileEntity?.name}
         <FontAwesomeIcon style={{ marginLeft: 5 }} icon="external-link-alt" />
       </span>
     </a>

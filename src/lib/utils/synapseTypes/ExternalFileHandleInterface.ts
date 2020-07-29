@@ -25,7 +25,7 @@ export function assertIsExternalFileHandle(
     x?.concreteType !== ExternalFileHandleConcreteTypeEnum.ExternalFileHandle
   ) {
     throw new AssertionError({
-      message: 'This is not an External File Handle!',
+      message: ` ExternalFileHandle expected but found ${x}`,
     })
   }
 }
