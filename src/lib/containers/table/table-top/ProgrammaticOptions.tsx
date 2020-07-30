@@ -48,7 +48,7 @@ function ProgrammaticOptions({
         const res = await getTransformSqlWithFacetsRequest(
           transformSqlWithFacetsRequest,
         )
-        setGeneratedSql(res.transformedSql)
+        setGeneratedSql(res.transformedSql.replace(/"/g, '\\"'))
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
       }
@@ -74,17 +74,17 @@ function ProgrammaticOptions({
           Command Line Instructions
         </p>
         <p>
-          Synapse is built on a number of RESTful web APIs that allow users to
-          interact with the system via a number of clients. The
+          Use the Synapse command line client to download data. Installation
+          instructions are available
           <a
             className="ProgrammaticOptions__docslink"
-            href="https://docs.synapse.org/articles/api_documentation.html"
+            href="https://python-docs.synapse.org/build/html/CommandLineClient.html"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Synapse API documentation
+            {' '}
+            here.
           </a>
-          is available online.
         </p>
         <div className="ProgrammaticOptions__cli">
           <p> synapse get -q "{generatedSql}" </p>

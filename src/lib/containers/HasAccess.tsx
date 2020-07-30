@@ -22,6 +22,7 @@ import {
   RestrictionLevel,
   FileEntity,
   AccessRequirement,
+  implementsExternalFileHandleInterface,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import AccessRequirementList, {
@@ -53,12 +54,6 @@ type HasAccessState = {
   isGettingRestrictionInformation: boolean
   isGettingEntityInformation: boolean
   errorOnGetRestrictionInformation: boolean
-}
-
-export enum ExternalFileHandleConcreteTypeEnum {
-  ProxyFileHandle = 'org.sagebionetworks.repo.model.file.ProxyFileHandle',
-  ExternalObjectStoreFileHandle = 'org.sagebionetworks.repo.model.file.ExternalObjectStoreFileHandle',
-  ExternalFileHandle = 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
 }
 
 export enum GoogleCloudFileHandleEnum {
@@ -95,10 +90,7 @@ export const getDownloadTypeForFileHandle = (
     return FileHandleDownloadTypeEnum.ExternalCloudFile
   }
   // check if it's an external file handle
-  const isExternalFileHandle = Object.values<string>(
-    ExternalFileHandleConcreteTypeEnum,
-  ).includes(concreteType)
-  if (isExternalFileHandle) {
+  if (implementsExternalFileHandleInterface(fileHandle)) {
     return FileHandleDownloadTypeEnum.ExternalFileLink
   }
   // otherwise its available

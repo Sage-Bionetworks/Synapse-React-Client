@@ -331,7 +331,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       <div style={{ display: arPropsFromHasAccess ? 'none' : '' }}>
         <div className="SRC-split download-list-table-top SRC-primary-background-color SRC-border-bottom-only">
           <span className="create-package-text">
-            Download List &nbsp;&nbsp;{' '}
+            Download List &nbsp;&nbsp;
             {isLoading && <span className="spinner" />}
           </span>
           <button
