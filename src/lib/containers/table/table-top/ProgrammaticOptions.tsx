@@ -59,7 +59,6 @@ function ProgrammaticOptions({
   return (
     <Modal
       animation={false}
-      centered={true}
       show={true}
       onHide={() => onHide()}
       className="ProgrammaticOptions"
