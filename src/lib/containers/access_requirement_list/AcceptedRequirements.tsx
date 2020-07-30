@@ -145,13 +145,14 @@ export default function AcceptedRequirements({
   const RenderAcceptedRequirements = () => {
     if (isApproved) {
       // show link to Synapse AR page if Managed ACT AR
-      const isManagedActAr = accessRequirement.concreteType ===
+      const isManagedActAr =
+        accessRequirement.concreteType ===
         SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
       return (
         <div>
           <p>
             You have accepted the terms of use.
-            { isManagedActAr &&
+            {isManagedActAr && (
               <button
                 className="update-request-button bold-text"
                 onClick={() => {
@@ -160,7 +161,7 @@ export default function AcceptedRequirements({
               >
                 Update Request
               </button>
-            }
+            )}
             <button
               className="view-terms-button bold-text"
               onClick={() => {
@@ -180,29 +181,34 @@ export default function AcceptedRequirements({
   }
 
   return (
-    <div>
+    <>
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isApproved} />
         <div className="terms-of-use-content">
           <RenderAcceptedRequirements />
         </div>
       </div>
-      {token ? (showButton ?? (
-        <div className={`button-container ${isApproved ? `hide` : `default`}`}>
-          <div className="accept-button-container">
-            <button className="accept-button" onClick={onAcceptClicked}>
-              {acceptButtonText}
-            </button>
-          </div>
+      {token ? (
+        showButton ?? (
+          <div
+            className={`button-container ${isApproved ? `hide` : `default`}`}
+          >
+            <div className="accept-button-container">
+              <button className="accept-button" onClick={onAcceptClicked}>
+                {acceptButtonText}
+              </button>
+            </div>
 
-          <div className="not-accept-button-container">
-            <button className="not-accpet-button" onClick={() => onHide?.()}>
-              I do not accept
-            </button>
+            <div className="not-accept-button-container">
+              <button className="not-accpet-button" onClick={() => onHide?.()}>
+                I do not accept
+              </button>
+            </div>
           </div>
-        </div>
-        )) : <></>
-      }
-    </div>
+        )
+      ) : (
+        <></>
+      )}
+    </>
   )
 }

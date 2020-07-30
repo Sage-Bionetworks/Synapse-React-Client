@@ -58,7 +58,7 @@ export default function SelfSignAccessRequirementComponent({
   }, [accessRequirement, token, user])
 
   return (
-    <div>
+    <>
       {accessRequirement.isCertifiedUserRequired && (
         <div className="requirement-container">
           <AccessApprovalCheckMark isCompleted={userBundle?.isCertified} />
@@ -118,6 +118,6 @@ export default function SelfSignAccessRequirementComponent({
         onHide={onHide}
         entityId={entityId}
       />
-    </div>
+    </>
   )
 }
