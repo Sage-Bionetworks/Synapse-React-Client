@@ -260,9 +260,6 @@ export default class SynapseTable extends React.Component<
     } else if (this.state.isFetchingEntityHeaders && !forceRefresh) {
       return
     }
-    this.setState({
-      isFetchingEntityHeaders: true,
-    })
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = getColumnIndiciesWithType(
@@ -283,6 +280,12 @@ export default class SynapseTable extends React.Component<
       mapUserIdToHeader,
       userIdColumnIndicies,
     )
+    if (distinctEntityIds.size === 0 && distinctUserIds.size === 0) {
+      return
+    }
+    this.setState({
+      isFetchingEntityHeaders: true,
+    })
     // Make call to resolve entity ids
     if (distinctEntityIds.size > 0) {
       const referenceList: ReferenceList = Array.from(distinctEntityIds).map(
@@ -335,13 +338,11 @@ export default class SynapseTable extends React.Component<
         console.error('Error on getUserProfile : ', err)
       }
     }
-    if (distinctEntityIds.size > 0 || distinctUserIds.size > 0) {
-      this.setState({
-        mapEntityIdToHeader,
-        mapUserIdToHeader,
-        isFetchingEntityHeaders: false,
-      })
-    }
+    this.setState({
+      mapEntityIdToHeader,
+      mapUserIdToHeader,
+      isFetchingEntityHeaders: false,
+    })
   }
 
   /**
