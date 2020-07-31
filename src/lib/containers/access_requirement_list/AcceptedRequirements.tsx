@@ -68,10 +68,7 @@ export default function AcceptedRequirements({
   }
 
   useEffect(() => {
-    const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
-      setIsApproved(propsIsApproved)
-    }
-    setIsApprovedValueFromProps(propsIsApproved)
+    setIsApproved(propsIsApproved)
   }, [propsIsApproved])
 
   const gotoSynapseAccessRequirementPage = () => {
