@@ -118,7 +118,7 @@ export default class MarkdownSynapseDemo extends React.Component<
           Video
         </button>
         {/* footnotes with html */}
-        <MarkdownSynapse {...props} />
+        <MarkdownSynapse token={this.props.token} {...props} />
       </div>
     )
   }

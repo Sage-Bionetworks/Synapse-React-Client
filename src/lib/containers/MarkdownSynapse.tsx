@@ -7,6 +7,8 @@ import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import SynapseVideo from './widgets/SynapseVideo'
 import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
+import { Error } from '../containers/Error'
+import { SynapseClientError } from '../utils/SynapseClient'
 
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -36,7 +38,6 @@ declare var sanitizeHtml: any
 declare var markdownitMath: any
 
 export type MarkdownSynapseProps = {
-  errorMessageView?: React.FunctionComponent
   token?: string
   ownerId?: string
   wikiId?: string
@@ -50,7 +51,7 @@ type MarkdownSynapseState = {
   md: any
   data: Partial<WikiPage>
   fileHandles?: FileHandleResults
-  errorMessage: string
+  error: SynapseClientError | undefined
   isLoading: boolean
 }
 /**
@@ -98,7 +99,7 @@ export default class MarkdownSynapse extends React.Component<
     }
     this.state = {
       md,
-      errorMessage: '',
+      error: undefined,
       fileHandles: undefined,
       data,
       isLoading: true,
@@ -119,7 +120,6 @@ export default class MarkdownSynapse extends React.Component<
     this.renderVideo = this.renderVideo.bind(this)
     this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
     this.renderSynapseTOC = this.renderSynapseTOC.bind(this)
-    this.getErrorView = this.getErrorView.bind(this)
     this.createHTML = this.createHTML.bind(this)
     this.addBookmarks = this.addBookmarks.bind(this)
     this.addIdsToReferenceWidgets = this.addIdsToReferenceWidgets.bind(this)
@@ -128,7 +128,9 @@ export default class MarkdownSynapse extends React.Component<
 
   public componentWillUnmount() {
     // @ts-ignore TODO: find better documentation on typescript/react event params
-    this.markupRef.current!.removeEventListener('click', this.handleLinkClicks)
+    this.markupRef.current &&
+      // @ts-ignore TODO: find better documentation on typescript/react event params
+      this.markupRef.current.removeEventListener('click', this.handleLinkClicks)
   }
 
   // Manually handle clicks to anchor tags where the scrollto isn't handled by page hash
@@ -288,7 +290,7 @@ export default class MarkdownSynapse extends React.Component<
    * Get wiki page markdown and file attachment handles
    */
   public async getWikiPageMarkdown() {
-    const { ownerId, wikiId = '', token, objectType } = this.props
+    const { ownerId, wikiId, token, objectType } = this.props
     if (!ownerId && !wikiId) {
       return
     }
@@ -306,12 +308,16 @@ export default class MarkdownSynapse extends React.Component<
         this.setState({
           data: wikiPage,
           fileHandles,
+          error: undefined,
         })
       } catch (fileHandlesErr) {
         console.error('fileHandlesErr = ', fileHandlesErr)
       }
     } catch (err) {
       console.error('Error on wiki markdown load\n', err)
+      this.setState({
+        error: err,
+      })
     }
   }
   public async getWikiAttachments(wikiId: string) {
@@ -332,25 +338,9 @@ export default class MarkdownSynapse extends React.Component<
         return data
       })
       .catch(err => {
-        this.setState({
-          errorMessage: err.reason,
-        })
         console.error('Error on wiki attachment load ', err)
         return undefined
       })
-  }
-  /**
-   * If theres an error loading the wiki page show an informative message
-   * likely a priveledge issue -- (e.g. not signed-in)
-   *
-   * @returns view that presents error message on error, otherwise null
-   */
-  public getErrorView() {
-    if (this.state.errorMessage && this.props.errorMessageView) {
-      const ErrorView = this.props.errorMessageView as React.FC
-      return <ErrorView>{this.state.errorMessage}</ErrorView>
-    }
-    return
   }
 
   public addIdsToReferenceWidgets(text: string) {
@@ -725,9 +715,12 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public render() {
-    const { renderInline } = this.props
-    const { isLoading } = this.state
+    const { renderInline, token } = this.props
+    const { isLoading, error } = this.state
 
+    if (error) {
+      return <Error token={token} error={error} />
+    }
     const bookmarks = this.addBookmarks()
     const content = (
       <>
