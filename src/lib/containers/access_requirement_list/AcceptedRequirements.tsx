@@ -68,10 +68,7 @@ export default function AcceptedRequirements({
   }
 
   useEffect(() => {
-    const setIsApprovedValueFromProps = (propsIsApproved?: boolean) => {
-      setIsApproved(propsIsApproved)
-    }
-    setIsApprovedValueFromProps(propsIsApproved)
+    setIsApproved(propsIsApproved)
   }, [propsIsApproved])
 
   const gotoSynapseAccessRequirementPage = () => {
@@ -105,109 +102,99 @@ export default function AcceptedRequirements({
     }
   }
 
-  const RenderMarkdown = () => {
-    if (wikiPage) {
-      return (
-        <div className="AcceptRequirementsMarkdown">
-          <MarkdownSynapse
-            token={token}
-            wikiId={wikiPage?.wikiPageId}
-            ownerId={wikiPage?.ownerObjectId}
-            objectType={wikiPage?.ownerObjectType}
-          />
-        </div>
-      )
-    }
-    const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
-      .termsOfUse
+  const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
+    .termsOfUse
 
-    const actContactInfo = (accessRequirement as ACTAccessRequirement)
-      .actContactInfo
+  const actContactInfo = (accessRequirement as ACTAccessRequirement)
+    .actContactInfo
 
-    const isTermsOfUse =
-      accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement
-    const isActContactInfo =
-      accessRequirement.concreteType ===
-      SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
+  const isTermsOfUse =
+    accessRequirement.concreteType ===
+    SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement
+  const isActContactInfo =
+    accessRequirement.concreteType ===
+    SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
 
-    if ((isTermsOfUse && termsOfUse) || (isActContactInfo && actContactInfo)) {
-      return (
+  const isActOrTermsOfUse =
+    (isTermsOfUse && termsOfUse) || (isActContactInfo && actContactInfo)
+
+  let markdown = <></>
+
+  if (wikiPage) {
+    markdown = (
+      <div className="AcceptRequirementsMarkdown">
         <MarkdownSynapse
-          markdown={isTermsOfUse ? termsOfUse : actContactInfo}
           token={token}
+          wikiId={wikiPage?.wikiPageId}
+          ownerId={wikiPage?.ownerObjectId}
+          objectType={wikiPage?.ownerObjectType}
         />
-      )
-    }
-    return <></>
+      </div>
+    )
+  } else if (isActOrTermsOfUse) {
+    markdown = (
+      <MarkdownSynapse
+        markdown={isTermsOfUse ? termsOfUse : actContactInfo}
+        token={token}
+      />
+    )
   }
 
-  const RenderAcceptedRequirements = () => {
-    if (isApproved) {
-      // show link to Synapse AR page if Managed ACT AR
-      const isManagedActAr =
-        accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-      return (
-        <div>
-          <p>
-            You have accepted the terms of use.
-            {isManagedActAr && (
-              <button
-                className="update-request-button bold-text"
-                onClick={() => {
-                  gotoSynapseAccessRequirementPage()
-                }}
-              >
-                Update Request
-              </button>
-            )}
-            <button
-              className="view-terms-button bold-text"
-              onClick={() => {
-                setIsHide(!isHide)
-              }}
-            >
-              View Terms
-            </button>
-          </p>
-          <div className={`view-terms ${isHide ? 'hidden' : 'show'}`}>
-            <RenderMarkdown />
-          </div>
-        </div>
-      )
-    }
-    return <RenderMarkdown />
-  }
+  const isManagedActAr =
+    accessRequirement.concreteType ===
+    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
 
   return (
     <>
       <div className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isApproved} />
         <div className="terms-of-use-content">
-          <RenderAcceptedRequirements />
+          {isApproved ? (
+            <div>
+              <p>
+                You have accepted the terms of use.
+                {isManagedActAr && (
+                  <button
+                    className="update-request-button bold-text"
+                    onClick={() => {
+                      gotoSynapseAccessRequirementPage()
+                    }}
+                  >
+                    Update Request
+                  </button>
+                )}
+                <button
+                  className="view-terms-button bold-text"
+                  onClick={() => {
+                    setIsHide(!isHide)
+                  }}
+                >
+                  View Terms
+                </button>
+              </p>
+              <div className={`view-terms ${isHide ? 'hidden' : 'show'}`}>
+                {markdown}
+              </div>
+            </div>
+          ) : (
+            markdown
+          )}
         </div>
       </div>
-      {token ? (
-        showButton ?? (
-          <div
-            className={`button-container ${isApproved ? `hide` : `default`}`}
-          >
-            <div className="accept-button-container">
-              <button className="accept-button" onClick={onAcceptClicked}>
-                {acceptButtonText}
-              </button>
-            </div>
-
-            <div className="not-accept-button-container">
-              <button className="not-accpet-button" onClick={() => onHide?.()}>
-                I do not accept
-              </button>
-            </div>
+      {token && showButton && (
+        <div className={`button-container ${isApproved ? `hide` : `default`}`}>
+          <div className="accept-button-container">
+            <button className="accept-button" onClick={onAcceptClicked}>
+              {acceptButtonText}
+            </button>
           </div>
-        )
-      ) : (
-        <></>
+
+          <div className="not-accept-button-container">
+            <button className="not-accpet-button" onClick={() => onHide?.()}>
+              I do not accept
+            </button>
+          </div>
+        </div>
       )}
     </>
   )

@@ -217,30 +217,6 @@ export default function AccessRequirementList({
         return undefined
     }
   }
-
-  const SignedIn = () => {
-    if (token) {
-      return (
-        <p>
-          You have signed with Sage Platform (Synapse) user account as{' '}
-          <b className="SRC-primary-text-color">{user?.userName}@synapse.org</b>
-        </p>
-      )
-    } else {
-      return (
-        <p>
-          If you do not have a Sage Account, you can
-          <a
-            className="register-text-link bold-text"
-            href="https://www.synapse.org/#!RegisterAccount:0"
-          >
-            &nbsp;Register for free.
-          </a>
-        </p>
-      )
-    }
-  }
-
   const content = (
     <>
       <ReactBootstrap.Modal.Header closeButton={true}>
@@ -271,16 +247,34 @@ export default function AccessRequirementList({
             <AccessApprovalCheckMark isCompleted={isSignedIn} />
             <div>
               {!isSignedIn && (
-                <p className="AccessRequirementList__signin">
-                  <button
-                    className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
-                  >
-                    Sign in
-                  </button>
-                  with a Sage Platform (Synapse) user account.
+                <>
+                  <p className="AccessRequirementList__signin">
+                    <button
+                      className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
+                    >
+                      Sign in
+                    </button>
+                    with a Sage Platform (Synapse) user account.
+                  </p>
+                  <p>
+                    If you do not have a Sage Account, you can
+                    <a
+                      className="register-text-link bold-text"
+                      href="https://www.synapse.org/#!RegisterAccount:0"
+                    >
+                      &nbsp;Register for free.
+                    </a>
+                  </p>
+                </>
+              )}
+              {isSignedIn && (
+                <p>
+                  You have signed with Sage Platform (Synapse) user account as{' '}
+                  <b className="SRC-primary-text-color">
+                    {user?.userName}@synapse.org
+                  </b>
                 </p>
               )}
-              <SignedIn />
             </div>
           </div>
           {accessRequirements?.map(

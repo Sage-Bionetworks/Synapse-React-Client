@@ -437,7 +437,6 @@ export default class SynapseTable extends React.Component<
         {isExpanded && (
           <Modal
             animation={false}
-            centered={true}
             show={true}
             // @ts-ignore
             onHide={() => this.setState({ isExpanded: false })}
