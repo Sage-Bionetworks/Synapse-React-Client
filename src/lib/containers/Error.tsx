@@ -31,9 +31,7 @@ export const Error = (props: ErrorProps) => {
               Please <SignInButton /> to view this resource.
             </>
           )}
-          {accessDenied && (
-            <>You are not authorized to access the page requested.</>
-          )}
+          {accessDenied && <>You are not authorized to access this resource.</>}
           {
             // if we don't have a friendly error message then show the error
             !accessDenied && !loginError && <>{error.reason}</>
