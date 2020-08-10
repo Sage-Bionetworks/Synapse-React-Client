@@ -500,6 +500,7 @@ export const getFullQueryTableResults = async (
   sessionToken: string | undefined = undefined,
   maxPageSize: number = 2500,
 ): Promise<QueryResultBundle> => {
+  // TODO: update maxPageSize to the actual max page size that the Table/View allows!
   let data: QueryResultBundle
   // get first page
   let offset = 0
