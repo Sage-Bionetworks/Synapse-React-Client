@@ -53,8 +53,9 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       } = await SynapseClient.getFullQueryTableResults(
         queryRequest,
         token,
-        1000  
+        1000
       )
+      debugger
       // transform query data into plot data, and store.
       // collect all values for each key
       const keyValuesMap={}
@@ -69,7 +70,10 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           keyValuesMap[key].name = key
 
           keyValuesMap[key].sets = keyValuesMap[key].sets || []
-          keyValuesMap[key].sets.push(newValue)
+          const found = keyValuesMap[key].sets.find((v:any) => v == newValue)
+          if (!found) {
+            keyValuesMap[key].sets.push(newValue)  
+          }          
         }
       }
       // now create the expected elems set
@@ -82,7 +86,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         limit: maxBarCount,
         order: 'cardinality:desc',
       })
-  
       if (!isCancelled) {
         setSets(sets)
         setCombinations(combinations)

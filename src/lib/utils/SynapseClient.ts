@@ -68,6 +68,7 @@ import {
   TransformSqlWithFacetsRequest,
   SqlTransformResponse,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
+import { SynapseConstants } from '.'
 
 const cookies = new UniversalCookies()
 
@@ -508,15 +509,19 @@ export const getFullQueryTableResults = async (
   const queryRequest: QueryBundleRequest = {
     ...rest,
     query: { ...query, limit: maxPageSize, offset: offset },
+    partMask: queryBundleRequest.partMask | SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE
   }
   let response = await getQueryTableResults(queryRequest, sessionToken)
   data = response
   //we are done if we return less than a pagesize
   let isDone = response.queryResult.queryResults.rows.length < maxPageSize
-
+  
   while (!isDone) {
     offset += maxPageSize
     queryRequest.query.offset = offset
+    // update the maxPageSize to the largest possible value after the first page is complete.  This is a no-op after the second page.
+    maxPageSize = data.maxRowsPerPage!
+    queryRequest.query.limit = maxPageSize
     let response = await getQueryTableResults(queryRequest, sessionToken)
 
     data.queryResult.queryResults.rows.push(
