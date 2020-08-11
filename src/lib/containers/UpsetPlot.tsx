@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import UpSetJS, { extractSets, generateCombinations, ISetLike } from '@upsetjs/react'
+import UpSetJS, { extractSets, generateCombinations, ISetLike, UpSetFontSizes } from '@upsetjs/react'
 import { QueryBundleRequest } from 'lib/utils/synapseTypes'
 import { SynapseConstants, SynapseClient } from 'lib/utils'
 import { SizeMe } from 'react-sizeme'
@@ -11,6 +11,7 @@ export type UpsetPlotProps = {
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
+  height?: number
   token?: string
 }
 
@@ -24,6 +25,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   maxBarCount,
   setName,
   combinationName,
+  height = 700,
   token,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -32,6 +34,10 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   const [selection, setSelection] = React.useState(null as ISetLike<any> | null)
   
   const { colorPalette } = getColorPallette(0, 1)
+  const updateFontSizes:UpSetFontSizes= {
+    setLabel: '14px'
+  }
+  
   useEffect(() => {
     let isCancelled:boolean = false    
     const getPlotData = async () => {
@@ -55,7 +61,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         token,
         1000
       )
-      debugger
       // transform query data into plot data, and store.
       // collect all values for each key
       const keyValuesMap={}
@@ -97,7 +102,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       isCancelled = true
     }
   }, [entityId, sql, token])
-
+  
   return (
     <>
       {isLoading && <div>Loading...</div>}
@@ -107,14 +112,16 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
             <UpSetJS 
               sets={sets}
               combinations={combinations}
-              width={size.width!} height={600}
+              width={size.width!} height={height}
               selection={selection} onHover={setSelection}
               color={colorPalette[0]}
               selectionColor={colorPalette[0]}
               hasSelectionOpacity={0.6}
-              alternatingBackgroundColor={false}
+              // alternatingBackgroundColor={false}
               setName={setName}
               combinationName={combinationName}
+              fontFamily='Lato sans-serif'
+              fontSizes={updateFontSizes}
             />
           )}
       </SizeMe>
