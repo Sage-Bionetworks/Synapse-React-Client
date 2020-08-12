@@ -117,20 +117,24 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       {!isLoading && sets && combinations &&
         <SizeMe>
           {({ size }) => (
-            <UpSetJS
-              sets={sets}
-              combinations={combinations}
-              width={size.width!} height={height}
-              selection={selection} onHover={setSelection}
-              color={colorPalette[0]}
-              selectionColor={colorPalette[0]}
-              hasSelectionOpacity={0.6}
-              // alternatingBackgroundColor={false}
-              setName={setName}
-              combinationName={combinationName}
-              fontFamily='Lato sans-serif'
-              fontSizes={updateFontSizes}
-            />
+            <div className='UpsetPlot'>
+              <UpSetJS
+                sets={sets}
+                combinations={combinations}
+                width={size.width!} height={height}
+                onHover={setSelection}
+                // onClick={gotoFilesRoute()}
+                selection={selection} 
+                color={colorPalette[0]}
+                selectionColor={colorPalette[1]}
+                hasSelectionOpacity={1.0}
+                // alternatingBackgroundColor={false}
+                setName={setName}
+                combinationName={combinationName}
+                fontFamily='Lato sans-serif'
+                fontSizes={updateFontSizes}
+              />
+            </div>            
           )}
         </SizeMe>
       }

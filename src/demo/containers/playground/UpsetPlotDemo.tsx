@@ -6,7 +6,7 @@ export const UpsetPlotDemo = () => {
     <UpsetPlot
       entityId='syn20821313'
       sql={"SELECT distinct individualID, assay FROM syn20821313 where individualID is not null"}
-      // maxBarCount={20}
+      maxBarCount={20}
       setName='Individuals (#) per Assay'
       combinationName='Individuals (#)'
       loadingScreen={<div>Custom loading screen for upset plot</div>}
