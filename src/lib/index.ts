@@ -23,6 +23,7 @@ import ShowDownload from './containers/download_list/ShowDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
 import NewsFeedMenu from './containers/NewsFeedMenu'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
+import UpsetPlot from './containers/UpsetPlot'
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
 import './style/components/_spinner.scss'
@@ -51,6 +52,7 @@ const SynapseComponents = {
   ShowDownload,
   QueryWrapperPlotNav,
   ExternalFileHandleLink,
+  UpsetPlot
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
