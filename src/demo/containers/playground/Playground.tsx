@@ -17,6 +17,7 @@ import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
+import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 
 /**
@@ -102,6 +103,9 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/UpsetPlotDemo`}>UpsetPlotDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/ExternalFileHandleLink`}>
@@ -212,6 +216,12 @@ const App = ({
         exact={true}
         path={`${match.url}/ThemesPlotDemo`}
         component={ThemesPlotDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/UpsetPlotDemo`}
+        component={UpsetPlotDemo}
       />
 
       <Route
