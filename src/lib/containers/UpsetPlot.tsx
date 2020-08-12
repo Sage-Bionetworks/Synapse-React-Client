@@ -58,8 +58,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         queryResult
       } = await SynapseClient.getFullQueryTableResults(
         queryRequest,
-        token,
-        1000
+        token
       )
       // transform query data into plot data, and store.
       // collect all values for each key

@@ -499,7 +499,7 @@ export const getQueryTableResults = (
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
-  maxPageSize: number = 2500,
+  initMaxPageSize: number = 2500,
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -507,27 +507,28 @@ export const getFullQueryTableResults = async (
   const { query, ...rest } = queryBundleRequest
   const queryRequest: QueryBundleRequest = {
     ...rest,
-    query: { ...query, limit: maxPageSize, offset: offset },
+    query: { ...query, limit: initMaxPageSize, offset: offset },
     partMask: queryBundleRequest.partMask | SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE
   }
   let response = await getQueryTableResults(queryRequest, sessionToken)
   data = response
-  //we are done if we return less than a pagesize
-  let isDone = response.queryResult.queryResults.rows.length < maxPageSize
+  // we are done if we return less than a pagesize.
+  // however, if the initMaxPageSize provided by the caller is larger than the maxRowsPerPage that the backend is willing to return for this Table/View,
+  // then the first page length will be less than the initMaxPageSize but we should keep going.
+  let isDone = response.queryResult.queryResults.rows.length < initMaxPageSize && initMaxPageSize <= data.maxRowsPerPage!
+  offset += response.queryResult.queryResults.rows.length
+  queryRequest.query.limit = data.maxRowsPerPage // set the limit to the actual max rows per page
   
   while (!isDone) {
-    offset += maxPageSize
     queryRequest.query.offset = offset
     // update the maxPageSize to the largest possible value after the first page is complete.  This is a no-op after the second page.
-    maxPageSize = data.maxRowsPerPage!
-    queryRequest.query.limit = maxPageSize
+    
     let response = await getQueryTableResults(queryRequest, sessionToken)
-
     data.queryResult.queryResults.rows.push(
       ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
     )
-
-    isDone = response.queryResult.queryResults.rows.length < maxPageSize
+    isDone = response.queryResult.queryResults.rows.length < queryRequest.query.limit!
+    offset += response.queryResult.queryResults.rows.length
   }
   return data
 }
