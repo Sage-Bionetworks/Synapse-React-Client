@@ -136,6 +136,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
                 combinationName={combinationName}
                 fontFamily='Lato sans-serif'
                 fontSizes={updateFontSizes}
+                exportButtons={false}
               />
             </div>            
           )}
