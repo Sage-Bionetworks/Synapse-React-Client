@@ -12,6 +12,7 @@ export type UpsetPlotProps = {
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
   height?: number
+  loadingScreen: JSX.Element
   token?: string
 }
 
@@ -26,25 +27,25 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   setName,
   combinationName,
   height = 700,
+  loadingScreen,
   token,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>()
   const [sets, setSets] = useState<any>()
   const [combinations, setCombinations] = useState<any>()
   const [selection, setSelection] = React.useState(null as ISetLike<any> | null)
-  
+
   const { colorPalette } = getColorPallette(0, 1)
-  const updateFontSizes:UpSetFontSizes= {
+  const updateFontSizes: UpSetFontSizes = {
     setLabel: '14px'
   }
-  
+
   useEffect(() => {
-    let isCancelled:boolean = false    
+    let isCancelled: boolean = false
     const getPlotData = async () => {
       setIsLoading(true)
-  
+
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-  
       const queryRequest: QueryBundleRequest = {
         partMask,
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -53,7 +54,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           sql
         },
       }
-  
       const {
         queryResult
       } = await SynapseClient.getFullQueryTableResults(
@@ -62,7 +62,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       )
       // transform query data into plot data, and store.
       // collect all values for each key
-      const keyValuesMap={}
+      const keyValuesMap = {}
       // keyValuesMap looks like { 'A': {name: 'A', sets: ['S1', 'S2'] }, 'B': { name: 'B', sets: ['S1'] }, ... }
       // It's a little redudant, but makes the next step much easier.
       for (const row of queryResult.queryResults.rows) {
@@ -74,14 +74,14 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           keyValuesMap[key].name = key
 
           keyValuesMap[key].sets = keyValuesMap[key].sets || []
-          const found = keyValuesMap[key].sets.find((v:any) => v == newValue)
+          const found = keyValuesMap[key].sets.find((v: any) => v == newValue)
           if (!found) {
-            keyValuesMap[key].sets.push(newValue)  
-          }          
+            keyValuesMap[key].sets.push(newValue)
+          }
         }
       }
       // now create the expected elems set
-      const elems:any[] = Object.values(keyValuesMap)
+      const elems: any[] = Object.values(keyValuesMap)
       // elems looks like [{ name: 'A', sets: ['S1', 'S2'] }, { name: 'B', sets: ['S1'] }, ...]
       const sets = extractSets(elems);
       const combinations = generateCombinations(sets, {
@@ -101,14 +101,14 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       isCancelled = true
     }
   }, [entityId, sql, token])
-  
+
   return (
     <>
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && sets && combinations && 
+      {isLoading && loadingScreen}
+      {!isLoading && sets && combinations &&
         <SizeMe>
           {({ size }) => (
-            <UpSetJS 
+            <UpSetJS
               sets={sets}
               combinations={combinations}
               width={size.width!} height={height}
@@ -123,7 +123,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
               fontSizes={updateFontSizes}
             />
           )}
-      </SizeMe>
+        </SizeMe>
       }
     </>
   )

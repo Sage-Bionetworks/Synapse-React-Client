@@ -22,9 +22,10 @@ const createShallowComponent = async (
 
 describe('basic tests', () => {
   const props: UpsetPlotProps = {
-    entityId:'syn16787123',
+    entityId: 'syn16787123',
     sql: 'select * from syn16787123',
-    token,    
+    token,
+    loadingScreen: <div>loading...</div>
   }
 
   beforeEach(() => {
