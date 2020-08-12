@@ -41,6 +41,7 @@ export const EXPERIMENTAL: string = 'experimental'
 export const CLINICAL: string = 'clinical'
 export const PROJECT: string = 'Project'
 export const GRANT: string = 'Grant'
+export const ORGANIZATION: string = 'ORGANIZATION'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'

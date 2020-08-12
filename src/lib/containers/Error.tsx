@@ -1,17 +1,21 @@
 import * as React from 'react'
 import { SynapseClientError } from '../utils/SynapseClient'
 import SignInButton from './SignInButton'
-import Alert from 'react-bootstrap/Alert'
+import { Alert } from 'react-bootstrap'
 type ErrorProps = {
   error?: SynapseClientError
+  token?: string
 }
 
 export const Error = (props: ErrorProps) => {
-  const { error } = props
+  const { error, token } = props
 
   if (!error) {
     return <></>
   }
+
+  const loginError = error.status === 403 && !token
+  const accessDenied = error.status === 403 && token
 
   return (
     <div className="Error">
@@ -21,12 +25,18 @@ export const Error = (props: ErrorProps) => {
         variant={'danger'}
         transition={'div'}
       >
-        {error.status === 403 && (
-          <p>
-            Please <SignInButton /> to view this resource.
-          </p>
-        )}
-        <p>{error.reason}</p>
+        <p>
+          {loginError && (
+            <>
+              Please <SignInButton /> to view this resource.
+            </>
+          )}
+          {accessDenied && <>You are not authorized to access this resource.</>}
+          {
+            // if we don't have a friendly error message then show the error
+            !accessDenied && !loginError && <>{error.reason}</>
+          }
+        </p>
       </Alert>
     </div>
   )

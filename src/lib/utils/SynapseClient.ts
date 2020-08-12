@@ -893,7 +893,7 @@ function getObjectTypeToString(key: ObjectType) {
 export const getEntityWiki = (
   sessionToken: string | undefined,
   ownerId: string | undefined,
-  wikiId: string | undefined,
+  wikiId: string | undefined = '',
   objectType: ObjectType = ObjectType.ENTITY,
 ) => {
   const objectTypeString = getObjectTypeToString(objectType!)
