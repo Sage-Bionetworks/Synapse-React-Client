@@ -65,17 +65,26 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       const keyValuesMap = {}
       // keyValuesMap looks like { 'A': {name: 'A', sets: ['S1', 'S2'] }, 'B': { name: 'B', sets: ['S1'] }, ... }
       // It's a little redudant, but makes the next step much easier.
+      
+      const caseInsensitiveSetNames = {}
+      // caseInsensitiveSetNames looks like { 'RNASEQ': 'rnaSeq', 'NOMe-SEQ': 'NOMe-seq'}.
+
       for (const row of queryResult.queryResults.rows) {
         for (let j = 1; j < row.values.length; j += 1) {
           const rowValues: any = row.values
           const key = rowValues[0]
-          const newValue = rowValues[j]
+          let newValue = rowValues[j]
           keyValuesMap[key] = keyValuesMap[key] || {}
           keyValuesMap[key].name = key
 
           keyValuesMap[key].sets = keyValuesMap[key].sets || []
           const found = keyValuesMap[key].sets.find((v: any) => v == newValue)
           if (!found) {
+            if (caseInsensitiveSetNames[newValue.toUpperCase()]) {
+              newValue = caseInsensitiveSetNames[newValue.toUpperCase()]
+            } else {
+              caseInsensitiveSetNames[newValue.toUpperCase()] = newValue
+            }
             keyValuesMap[key].sets.push(newValue)
           }
         }
