@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import UpSetJS, { extractSets, generateCombinations, ISetLike, UpSetFontSizes } from '@upsetjs/react'
+import UpSetJS, { extractSets, generateCombinations, ISetLike, UpSetFontSizes, ISetCombinations, ISets } from '@upsetjs/react'
 import { QueryBundleRequest } from 'lib/utils/synapseTypes'
 import { SynapseConstants, SynapseClient } from 'lib/utils'
 import { SizeMe } from 'react-sizeme'
 import getColorPallette from './ColorGradient'
+import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 
 export type UpsetPlotProps = {
-  entityId: string, // table/view entity ID
   sql: string, // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
+  rgbIndex: number // color plot based on portal
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
@@ -16,13 +17,17 @@ export type UpsetPlotProps = {
   token?: string
 }
 
+export type UpsetPlotData = {
+  sets: ISets<any>
+  combinations: ISetCombinations<any>
+}
 /**
  * Upset plot.  See https://medium.com/@sgratzl/upset-js-javascript-tutorial-1b84bfd6896d
  * Currently this is driven by a Synapse Table/View, but we may want to alter it to read in the data from a flat file instead.
  */
 const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
-  entityId,
   sql,
+  rgbIndex,
   maxBarCount,
   setName,
   combinationName,
@@ -31,11 +36,10 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   token,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>()
-  const [sets, setSets] = useState<any>()
-  const [combinations, setCombinations] = useState<any>()
-  const [selection, setSelection] = React.useState(null as ISetLike<any> | null)
+  const [data, setData] = useState<UpsetPlotData>()
+  const [selection, setSelection] = useState(null as ISetLike<any> | null)
 
-  const { colorPalette } = getColorPallette(0, 1)
+  const { colorPalette } = getColorPallette(rgbIndex, 2)
   const updateFontSizes: UpSetFontSizes = {
     setLabel: '14px'
   }
@@ -44,7 +48,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
     let isCancelled: boolean = false
     const getPlotData = async () => {
       setIsLoading(true)
-
+      const entityId = parseEntityIdFromSqlStatement(sql)
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       const queryRequest: QueryBundleRequest = {
         partMask,
@@ -71,7 +75,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
 
       for (const row of queryResult.queryResults.rows) {
         for (let j = 1; j < row.values.length; j += 1) {
-          const rowValues: any = row.values
+          const rowValues:string[] = row.values
           const key = rowValues[0]
           let newValue = rowValues[j]
           keyValuesMap[key] = keyValuesMap[key] || {}
@@ -100,8 +104,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         order: 'cardinality:desc',
       })
       if (!isCancelled) {
-        setSets(sets)
-        setCombinations(combinations)
+        setData({sets, combinations})
         setIsLoading(false)
       }
     }
@@ -109,24 +112,24 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
     return () => {
       isCancelled = true
     }
-  }, [entityId, sql, token])
+  }, [sql, token])
 
   return (
     <>
       {isLoading && loadingScreen}
-      {!isLoading && sets && combinations &&
+      {!isLoading && data &&
         <SizeMe>
           {({ size }) => (
             <div className='UpsetPlot'>
               <UpSetJS
-                sets={sets}
-                combinations={combinations}
+                sets={data.sets}
+                combinations={data.combinations}
                 width={size.width!} height={height}
                 onHover={setSelection}
                 // onClick={gotoFilesRoute()}
                 selection={selection} 
-                color={colorPalette[0]}
-                selectionColor={colorPalette[1]}
+                color={colorPalette[1]}
+                selectionColor={colorPalette[0]}
                 hasSelectionOpacity={1.0}
                 // alternatingBackgroundColor={false}
                 setName={setName}
