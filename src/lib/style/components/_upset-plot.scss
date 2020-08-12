@@ -2,6 +2,6 @@
   // select any <line> element that has a class name that starts with "upsetLine-upset-".  
   // Upset.js authors use a unique class name (React.useMemo + random number generator), which makes it more difficult to target.
   line[class^='upsetLine-upset-'], line[class*=' upsetLine-upset-']{
-    stroke-width: 2;
-}
+    stroke-width: 0;
+  }
 }
