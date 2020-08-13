@@ -16,6 +16,14 @@ export type GoalsProps = {
   token?: string
 }
 
+export enum ExpectedColumns {
+  TABLEID = 'TableId',
+  TITLE = 'Title',
+  SUMMARY = 'Summary',
+  LINK = 'Link',
+  ASSET = 'Asset',
+}
+
 export default function (props: GoalsProps) {
   const { entityId, token } = props
 
@@ -36,13 +44,13 @@ export default function (props: GoalsProps) {
     )
   }
 
-  const isValidData = () => {
+  const isValidData = (queryResult: QueryResultBundle) => {
     return (
-      getFieldIndex('TableId', queryResult) !== -1 &&
-      getFieldIndex('Title', queryResult) !== -1 &&
-      getFieldIndex('Summary', queryResult) !== -1 &&
-      getFieldIndex('Link', queryResult) !== -1 &&
-      getFieldIndex('Asset', queryResult) !== -1
+      getFieldIndex(ExpectedColumns.TABLEID, queryResult) !== -1 &&
+      getFieldIndex(ExpectedColumns.TITLE, queryResult) !== -1 &&
+      getFieldIndex(ExpectedColumns.SUMMARY, queryResult) !== -1 &&
+      getFieldIndex(ExpectedColumns.LINK, queryResult) !== -1 &&
+      getFieldIndex(ExpectedColumns.ASSET, queryResult) !== -1
     )
   }
 
@@ -60,7 +68,7 @@ export default function (props: GoalsProps) {
       }
       try {
         const data = await SynapseClient.getQueryTableResults(request, token)
-        if (!isValidData()) {
+        if (!isValidData(data)) {
           setError({
             reason: `Goals component must have columns: TableId, Title, Summary, Link, and Asset. Please validate ${entityId} has the correct columns.`,
             status: -1,
@@ -69,7 +77,7 @@ export default function (props: GoalsProps) {
         }
         setQueryResult(data)
 
-        const assetColumnIndex = getFieldIndex('Asset', data)
+        const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, data)
         const assets = data.queryResult.queryResults.rows.map(
           el => el.values[assetColumnIndex],
         )
@@ -103,10 +111,10 @@ export default function (props: GoalsProps) {
     getData()
   }, [entityId, token])
 
-  const tableIdColumnIndex = getFieldIndex('TableId', queryResult)
-  const titleColumnIndex = getFieldIndex('Title', queryResult)
-  const summaryColumnIndex = getFieldIndex('Summary', queryResult)
-  const linkColumnIndex = getFieldIndex('Link', queryResult)
+  const tableIdColumnIndex = getFieldIndex(ExpectedColumns.TABLEID, queryResult)
+  const titleColumnIndex = getFieldIndex(ExpectedColumns.TITLE, queryResult)
+  const summaryColumnIndex = getFieldIndex(ExpectedColumns.SUMMARY, queryResult)
+  const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResult)
 
   return (
     <div className="Goals">

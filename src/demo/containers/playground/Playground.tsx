@@ -224,10 +224,14 @@ const App = ({
 
       <Route
         exact={true}
-        path={`${match.url}/GoalsDemo`}
-        component={() => <GoalsDemo entityId="syn22300779" token={token} />}
         path={`${match.url}/UpsetPlotDemo`}
         component={() => <UpsetPlotDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/GoalsDemo`}
+        component={() => <GoalsDemo entityId="syn22300779" token={token} />}
       />
 
       <Route
