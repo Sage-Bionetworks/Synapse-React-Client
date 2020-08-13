@@ -221,7 +221,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/UpsetPlotDemo`}
-        component={UpsetPlotDemo}
+        component={() => <UpsetPlotDemo token={token} />}
       />
 
       <Route
