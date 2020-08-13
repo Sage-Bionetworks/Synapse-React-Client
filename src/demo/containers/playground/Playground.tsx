@@ -18,6 +18,7 @@ import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
 import GoalsDemo from './GoalsDemo'
+import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 
 /**
@@ -103,6 +104,9 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/UpsetPlotDemo`}>UpsetPlotDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/ExternalFileHandleLink`}>
@@ -222,6 +226,8 @@ const App = ({
         exact={true}
         path={`${match.url}/GoalsDemo`}
         component={() => <GoalsDemo entityId="syn22300779" token={token} />}
+        path={`${match.url}/UpsetPlotDemo`}
+        component={() => <UpsetPlotDemo token={token} />}
       />
 
       <Route
