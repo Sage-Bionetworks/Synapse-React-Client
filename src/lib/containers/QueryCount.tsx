@@ -9,6 +9,7 @@ export type QueryCountProps = {
   sql: string
   selectedFacets?: FacetColumnValuesRequest[]
   entityId: string
+  parens?: boolean
   name: string
   token?: string
 }
@@ -80,12 +81,13 @@ export default class QueryCount extends React.Component<
   }
 
   render() {
-    const { sql, name } = this.props
+    const { sql, name, parens = true } = this.props
     const count = this.state.storedSqlQueryCount[sql]
+    const localCount = count?.toLocaleString()
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
     return (
       <React.Fragment>
-        {name} ({count && count.toLocaleString()})
+        {name} {count && (parens ? `(${localCount})` : localCount)}
       </React.Fragment>
     )
   }

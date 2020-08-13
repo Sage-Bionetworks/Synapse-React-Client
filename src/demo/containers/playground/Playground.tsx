@@ -17,6 +17,7 @@ import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
+import GoalsDemo from './GoalsDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 
 /**
@@ -107,6 +108,9 @@ const App = ({
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
         </li>
       </ul>
 
@@ -212,6 +216,12 @@ const App = ({
         exact={true}
         path={`${match.url}/ThemesPlotDemo`}
         component={ThemesPlotDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/GoalsDemo`}
+        component={() => <GoalsDemo entityId="syn22300779" token={token} />}
       />
 
       <Route

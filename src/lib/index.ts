@@ -21,6 +21,7 @@ import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import ShowDownload from './containers/download_list/ShowDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
+import Goals from './containers/Goals'
 import NewsFeedMenu from './containers/NewsFeedMenu'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 // we exclude this from main.scss because react doesn't like importing an svg
@@ -51,6 +52,7 @@ const SynapseComponents = {
   ShowDownload,
   QueryWrapperPlotNav,
   ExternalFileHandleLink,
+  Goals,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
