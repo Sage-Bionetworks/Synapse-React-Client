@@ -30,7 +30,7 @@ export default function (props: GoalsProps) {
   const [queryResult, setQueryResult] = useState<
     QueryResultBundle | undefined
   >()
-  const [error, setError] = useState<SynapseClientError | undefined>()
+  const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [assets, setAssets] = useState<string[] | undefined>()
 
   const getFieldIndex = (
@@ -69,10 +69,9 @@ export default function (props: GoalsProps) {
       try {
         const data = await SynapseClient.getQueryTableResults(request, token)
         if (!isValidData(data)) {
-          setError({
-            reason: `Goals component must have columns: TableId, Title, Summary, Link, and Asset. Please validate ${entityId} has the correct columns.`,
-            status: -1,
-          })
+          setError(
+            `Goals component must have columns: TableId, Title, Summary, Link, and Asset. Please validate ${entityId} has the correct columns.`,
+          )
           return
         }
         setQueryResult(data)
@@ -91,7 +90,7 @@ export default function (props: GoalsProps) {
           },
         )
         const batchFileRequest: BatchFileRequest = {
-          includeFileHandles: true,
+          includeFileHandles: false,
           includePreSignedURLs: true,
           includePreviewPreSignedURLs: false,
           requestedFiles: fileHandleAssociationList,
