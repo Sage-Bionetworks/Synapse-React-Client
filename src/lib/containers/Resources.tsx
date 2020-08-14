@@ -14,7 +14,6 @@ export type ResourcesProps = {
 enum ExpectedColumns {
   TABNAME = 'TabName',
   WIKI = 'Wiki',
-  SUBWIKI = 'SubWiki',
 }
 
 export default function Resources(props: ResourcesProps) {
@@ -34,7 +33,7 @@ export default function Resources(props: ResourcesProps) {
           SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
         query: {
-          sql: `SELECT TabName, Wiki, SubWiki FROM ${entityId} ORDER BY ItemOrder`,
+          sql: `SELECT TabName, Wiki FROM ${entityId} ORDER BY ItemOrder`,
         },
       }
 
@@ -52,16 +51,13 @@ export default function Resources(props: ResourcesProps) {
 
   const tabNameIndex = getFieldIndex(ExpectedColumns.TABNAME, queryResult)
   const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResult)
-  const subWikiIndex = getFieldIndex(ExpectedColumns.SUBWIKI, queryResult)
   const data = queryResult?.queryResult.queryResults.rows.map(el => {
     const values = el.values
     const tabName = values[tabNameIndex]
     const wikiValue = values[wikiIndex] ?? ''
-    const subWikiValue = values[subWikiIndex] ?? ''
     return {
       tabName,
       wikiValue,
-      subWikiValue,
     }
   })
 
@@ -84,10 +80,10 @@ export default function Resources(props: ResourcesProps) {
         </div>
         <div className="content-container">
           {data?.map((el, curIndex) => {
-            const { wikiValue, subWikiValue } = el
-            const split = subWikiValue.split('/')
-            const ownerId = wikiValue ? wikiValue : split[0]
-            const wikiId = split?.[2]
+            const { wikiValue } = el
+            const split = wikiValue.split('/')
+            const ownerId = split[0]
+            const wikiId = split[2]
             return (
               <span key={ownerId} className={index === curIndex ? '' : 'hide'}>
                 <MarkdownSynapse
