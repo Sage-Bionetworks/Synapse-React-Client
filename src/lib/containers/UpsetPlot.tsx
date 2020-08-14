@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import UpSetJS, { extractSets, generateCombinations, ISetLike, UpSetFontSizes, ISetCombinations, ISets } from '@upsetjs/react'
+import UpSetJS, {
+  extractSets,
+  generateCombinations,
+  ISetLike,
+  UpSetFontSizes,
+  ISetCombinations,
+  ISets,
+} from '@upsetjs/react'
 import { QueryBundleRequest } from '../utils/synapseTypes'
 import { SynapseConstants, SynapseClient } from '../utils'
 import { SizeMe } from 'react-sizeme'
 import getColorPallette from './ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
-import { Alert } from 'react-bootstrap'
+import { Error } from './Error'
 
 export type UpsetPlotProps = {
-  sql: string, // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
+  sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
   rgbIndex: number // color plot based on portal
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
@@ -43,7 +50,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
 
   const { colorPalette } = getColorPallette(rgbIndex, 2)
   const updateFontSizes: UpSetFontSizes = {
-    setLabel: '14px'
+    setLabel: '14px',
   }
 
   useEffect(() => {
@@ -55,30 +62,29 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
         const queryRequest: QueryBundleRequest = {
           partMask,
-          concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           entityId,
           query: {
-            sql
+            sql,
           },
         }
-        const {
-          queryResult
-        } = await SynapseClient.getFullQueryTableResults(
+        const { queryResult } = await SynapseClient.getFullQueryTableResults(
           queryRequest,
-          token
+          token,
         )
         // transform query data into plot data, and store.
         // collect all values for each key
         const keyValuesMap = {}
         // keyValuesMap looks like { 'A': {name: 'A', sets: ['S1', 'S2'] }, 'B': { name: 'B', sets: ['S1'] }, ... }
         // It's a little redudant, but makes the next step much easier.
-        
+
         const caseInsensitiveSetNames = {}
         // caseInsensitiveSetNames looks like { 'RNASEQ': 'rnaSeq', 'NOMe-SEQ': 'NOMe-seq'}.
 
         for (const row of queryResult.queryResults.rows) {
           for (let j = 1; j < row.values.length; j += 1) {
-            const rowValues:string[] = row.values
+            const rowValues: string[] = row.values
             const key = rowValues[0]
             let newValue = rowValues[j]
             keyValuesMap[key] = keyValuesMap[key] || {}
@@ -99,7 +105,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         // now create the expected elems set
         const elems: any[] = Object.values(keyValuesMap)
         // elems looks like [{ name: 'A', sets: ['S1', 'S2'] }, { name: 'B', sets: ['S1'] }, ...]
-        const sets = extractSets(elems);
+        const sets = extractSets(elems)
         const combinations = generateCombinations(sets, {
           type: 'intersection',
           min: 1,
@@ -107,7 +113,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           order: 'cardinality:desc',
         })
         if (!isCancelled) {
-          setData({sets, combinations})
+          setData({ sets, combinations })
           setIsLoading(false)
         }
       } catch (err) {
@@ -115,7 +121,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           setIsLoading(false)
           setError(err.toString())
         }
-      }      
+      }
     }
     getPlotData()
     return () => {
@@ -126,40 +132,33 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   return (
     <>
       {isLoading && loadingScreen}
-      {!isLoading && data &&
+      {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <div className='UpsetPlot'>
+            <div className="UpsetPlot">
               <UpSetJS
                 sets={data.sets}
                 combinations={data.combinations}
-                width={size.width!} height={height}
+                width={size.width!}
+                height={height}
                 onHover={setSelection}
                 // onClick={gotoFilesRoute()}
-                selection={selection} 
+                selection={selection}
                 color={colorPalette[1]}
                 selectionColor={colorPalette[0]}
                 hasSelectionOpacity={1.0}
                 // alternatingBackgroundColor={false}
                 setName={setName}
                 combinationName={combinationName}
-                fontFamily='Lato sans-serif'
+                fontFamily="Lato sans-serif"
                 fontSizes={updateFontSizes}
                 exportButtons={false}
               />
-            </div>            
+            </div>
           )}
         </SizeMe>
-      }
-      {error && 
-        <Alert
-          transition={'div'}
-          variant={'danger'}
-          show={true}
-        >
-          {error}
-        </Alert>      
-      }
+      )}
+      <Error error={error} token={token} />
     </>
   )
 }

@@ -17,6 +17,7 @@ import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
+import GoalsDemo from './GoalsDemo'
 import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 
@@ -111,6 +112,9 @@ const App = ({
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
         </li>
       </ul>
 
@@ -222,6 +226,17 @@ const App = ({
         exact={true}
         path={`${match.url}/UpsetPlotDemo`}
         component={() => <UpsetPlotDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/GoalsDemo`}
+        component={() => (
+          <GoalsDemo
+            sql="select * from syn22300779 ORDER BY ItemOrder"
+            token={token}
+          />
+        )}
       />
 
       <Route
