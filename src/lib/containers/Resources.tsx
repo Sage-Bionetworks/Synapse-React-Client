@@ -77,6 +77,11 @@ export default function Resources(props: ResourcesProps) {
               </button>
             )
           })}
+          {/* 
+            This button keeps the border line in the button container running from top to bottom,
+            it doesn't have any functionality.
+          */}
+          <button className="gap-fill" />
         </div>
         <div className="content-container">
           {data?.map((el, curIndex) => {
