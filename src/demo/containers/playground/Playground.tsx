@@ -241,7 +241,12 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ResourcesDemo`}
-        component={() => <Resources entityId="syn22307746" token={token} />}
+        component={() => (
+          <div className="container">
+            {' '}
+            <Resources entityId="syn22307746" token={token} />{' '}
+          </div>
+        )}
       />
 
       <Route
