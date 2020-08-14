@@ -18,6 +18,7 @@ import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
 import GoalsDemo from './GoalsDemo'
+import Resources from 'lib/containers/Resources'
 import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 
@@ -115,6 +116,9 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
       </ul>
 
@@ -231,12 +235,13 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/GoalsDemo`}
-        component={() => (
-          <GoalsDemo
-            sql="select * from syn22300779 ORDER BY ItemOrder"
-            token={token}
-          />
-        )}
+        component={() => <GoalsDemo entityId={'syn22300779'} token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ResourcesDemo`}
+        component={() => <Resources entityId="syn22307746" token={token} />}
       />
 
       <Route

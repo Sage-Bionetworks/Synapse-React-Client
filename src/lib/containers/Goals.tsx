@@ -10,10 +10,9 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { SynapseClientError, getFiles } from '../utils/SynapseClient'
 import { Error } from '../containers/Error'
 import QueryCount from './QueryCount'
-import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 
 export type GoalsProps = {
-  sql: string
+  entityId: string
   token?: string
 }
 
@@ -25,35 +24,24 @@ enum ExpectedColumns {
   ASSET = 'Asset',
 }
 
+export const getFieldIndex = (
+  name: string,
+  result: QueryResultBundle | undefined,
+) => {
+  return (
+    result?.selectColumns?.findIndex(el => {
+      return el.name === name
+    }) ?? -1
+  )
+}
+
 export default function (props: GoalsProps) {
-  const { sql, token } = props
-  const entityId = parseEntityIdFromSqlStatement(sql)
+  const { entityId, token } = props
   const [queryResult, setQueryResult] = useState<
     QueryResultBundle | undefined
   >()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [assets, setAssets] = useState<string[] | undefined>()
-
-  const getFieldIndex = (
-    name: string,
-    result: QueryResultBundle | undefined,
-  ) => {
-    return (
-      result?.columnModels?.findIndex(el => {
-        return el.name === name
-      }) ?? -1
-    )
-  }
-
-  const isValidData = (queryResult: QueryResultBundle) => {
-    return (
-      getFieldIndex(ExpectedColumns.TABLEID, queryResult) !== -1 &&
-      getFieldIndex(ExpectedColumns.TITLE, queryResult) !== -1 &&
-      getFieldIndex(ExpectedColumns.SUMMARY, queryResult) !== -1 &&
-      getFieldIndex(ExpectedColumns.LINK, queryResult) !== -1 &&
-      getFieldIndex(ExpectedColumns.ASSET, queryResult) !== -1
-    )
-  }
 
   useEffect(() => {
     const getData = async () => {
@@ -61,20 +49,14 @@ export default function (props: GoalsProps) {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         entityId,
         partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+          SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
         query: {
-          sql,
+          sql: `select TableId, Title, Summary, Link, Asset from ${entityId} order by ItemOrder`,
         },
       }
       try {
         const data = await SynapseClient.getQueryTableResults(request, token)
-        if (!isValidData(data)) {
-          setError(
-            `Goals component must have columns: TableId, Title, Summary, Link, and Asset. Please validate ${entityId} has the correct columns.`,
-          )
-          return
-        }
         setQueryResult(data)
 
         const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, data)
