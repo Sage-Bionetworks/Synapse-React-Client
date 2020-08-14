@@ -12,7 +12,7 @@ export type ResourcesProps = {
 }
 
 enum ExpectedColumns {
-  TABNAME = 'TabName',
+  NAME = 'Name',
   WIKI = 'Wiki',
 }
 
@@ -33,7 +33,7 @@ export default function Resources(props: ResourcesProps) {
           SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
         query: {
-          sql: `SELECT TabName, Wiki FROM ${entityId} ORDER BY ItemOrder`,
+          sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
         },
       }
 
@@ -49,14 +49,14 @@ export default function Resources(props: ResourcesProps) {
     getData()
   }, [entityId, token])
 
-  const tabNameIndex = getFieldIndex(ExpectedColumns.TABNAME, queryResult)
+  const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResult)
   const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResult)
   const data = queryResult?.queryResult.queryResults.rows.map(el => {
     const values = el.values
-    const tabName = values[tabNameIndex]
+    const name = values[nameIndex]
     const wikiValue = values[wikiIndex] ?? ''
     return {
-      tabName,
+      name,
       wikiValue,
     }
   })
@@ -71,9 +71,9 @@ export default function Resources(props: ResourcesProps) {
               <button
                 className={index === curIndex ? 'isSelected' : ''}
                 onClick={() => setIndex(curIndex)}
-                key={el.tabName}
+                key={el.name}
               >
-                {el.tabName}
+                {el.name}
               </button>
             )
           })}
