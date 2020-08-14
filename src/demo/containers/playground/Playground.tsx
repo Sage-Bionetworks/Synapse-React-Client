@@ -231,7 +231,12 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/GoalsDemo`}
-        component={() => <GoalsDemo entityId="syn22300779" token={token} />}
+        component={() => (
+          <GoalsDemo
+            sql="select * from syn22300779 ORDER BY ItemOrder"
+            token={token}
+          />
+        )}
       />
 
       <Route

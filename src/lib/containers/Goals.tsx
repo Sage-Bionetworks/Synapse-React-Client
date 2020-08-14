@@ -10,13 +10,14 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { SynapseClientError, getFiles } from '../utils/SynapseClient'
 import { Error } from '../containers/Error'
 import QueryCount from './QueryCount'
+import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 
 export type GoalsProps = {
-  entityId: string
+  sql: string
   token?: string
 }
 
-export enum ExpectedColumns {
+enum ExpectedColumns {
   TABLEID = 'TableId',
   TITLE = 'Title',
   SUMMARY = 'Summary',
@@ -25,8 +26,8 @@ export enum ExpectedColumns {
 }
 
 export default function (props: GoalsProps) {
-  const { entityId, token } = props
-
+  const { sql, token } = props
+  const entityId = parseEntityIdFromSqlStatement(sql)
   const [queryResult, setQueryResult] = useState<
     QueryResultBundle | undefined
   >()
@@ -63,7 +64,7 @@ export default function (props: GoalsProps) {
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
         query: {
-          sql: `SELECT * FROM ${entityId}`,
+          sql,
         },
       }
       try {
