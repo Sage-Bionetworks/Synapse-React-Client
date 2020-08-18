@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.2",
+  "version": "1.15.3",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -70,7 +70,7 @@
     "react-plotly.js": "^2.3.0",
     "react-plotlyjs-ts": "^2.2.1",
     "react-router-dom": "5.1.2",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^3.4.3",
     "react-sizeme": "^2.6.12",
     "react-switch": "^5.0.1",
     "react-test-renderer": "^16.4.2",

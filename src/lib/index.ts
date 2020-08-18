@@ -21,6 +21,8 @@ import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
 import ShowDownload from './containers/download_list/ShowDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
+import Goals from './containers/Goals'
+import Resources from './containers/Resources'
 import NewsFeedMenu from './containers/NewsFeedMenu'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
@@ -52,7 +54,9 @@ const SynapseComponents = {
   ShowDownload,
   QueryWrapperPlotNav,
   ExternalFileHandleLink,
-  UpsetPlot
+  Goals,
+  Resources,
+  UpsetPlot,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

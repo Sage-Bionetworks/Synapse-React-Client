@@ -1,0 +1,80 @@
+// have space between items
+%space-between {
+  display: flex;
+  justify-content: space-between;
+}
+// horizontally and vertically center
+%hv-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+%side-padding {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.Goals {
+  @extend %space-between;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  p {
+    margin: 0px;
+  }
+  &__Card {
+    flex: 1;
+    box-shadow: 0px 3px 10px rgba(93, 105, 171, 0.1);
+    background: #ffffff;
+    margin: 10px;
+    &:first-child {
+      margin-left: 0px;
+    }
+    &:last-child {
+      margin-right: 0px;
+    }
+    margin: 10px;
+    &__header {
+      @extend %side-padding;
+      background: $primary-action-color;
+      height: 75px;
+      display: flex;
+      justify-content: center;
+      p {
+        @extend %space-between;
+        align-items: center;
+        width: 100%;
+        color: white;
+      }
+      &__title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      &__count {
+        border: 1px solid white;
+        border-radius: 50%;
+        @extend %hv-center;
+        min-height: 50px;
+        min-width: 50px;
+        padding: 5px;
+      }
+    }
+    &__summary {
+      @extend %side-padding;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      min-height: 150px;
+      @extend %space-between;
+      flex-direction: column;
+      &__link {
+        @extend %hv-center;
+        width: 120px;
+        height: 33px;
+        padding: 20px;
+        background: $primary-action-color;
+        border-radius: 24px;
+        color: white !important;
+      }
+    }
+  }
+}
