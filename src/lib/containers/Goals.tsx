@@ -67,7 +67,7 @@ export default function (props: GoalsProps) {
           fileId => {
             return {
               associateObjectId: entityId!,
-              associateObjectType: FileHandleAssociateType.FileEntity,
+              associateObjectType: FileHandleAssociateType.TableEntity,
               fileHandleId: fileId,
             }
           },
