@@ -18,6 +18,7 @@ import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
+import { PeopleProfileDemo } from './PeopleProfileDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -107,6 +108,9 @@ const App = ({
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/People`}>PeopleDemo</Link>
         </li>
       </ul>
 
@@ -220,6 +224,12 @@ const App = ({
         component={() => (
           <ExternalFileHandleLink synId={'syn22276050'} token={token} />
         )}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/People`}
+        component={PeopleProfileDemo}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

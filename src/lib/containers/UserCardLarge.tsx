@@ -30,36 +30,38 @@ export function UserCardLarge({ userProfile, isCertified }: UserCardLargeProps) 
 
   return (
     <div className="SRC-cardMetaData">
-      {summary && (
-        <div>
-          <p className="SRC-card-metadata-title"> Bio </p>
-          <p>{summary}</p>
-        </div>
-      )}
-      {url && (
-        <div>
-          <p className="SRC-card-metadata-title"> More Info </p>
-          <p>{url}</p>
-        </div>
-      )}
-      {industry && (
-        <div>
-          <p className="SRC-card-metadata-title"> Industry </p>
-          <p>{industry}</p>
-        </div>
-      )}
-      {location && (
-        <div>
-          <p className="SRC-card-metadata-title"> Location </p>
-          <p>{location}</p>
-        </div>
-      )}
-      {isCertified && (
-        <div>
-          <p className="SRC-card-metadata-title"> Access </p>
-          <p>{CertifiedUserIcon} Certified Account</p>
-        </div>
-      )}
+      <div className="SRC-cardMetaData-scroll">
+        {summary && (
+          <div>
+            <p className="SRC-card-metadata-title"> Bio </p>
+            <p>{summary}</p>
+          </div>
+        )}
+        {url && (
+          <div>
+            <p className="SRC-card-metadata-title"> More Info </p>
+            <p>{url}</p>
+          </div>
+        )}
+        {industry && (
+          <div>
+            <p className="SRC-card-metadata-title"> Industry </p>
+            <p>{industry}</p>
+          </div>
+        )}
+        {location && (
+          <div>
+            <p className="SRC-card-metadata-title"> Location </p>
+            <p>{location}</p>
+          </div>
+        )}
+        {isCertified && (
+          <div>
+            <p className="SRC-card-metadata-title"> Access </p>
+            <p>{CertifiedUserIcon} Certified Account</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
