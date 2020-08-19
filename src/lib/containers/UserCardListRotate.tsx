@@ -39,11 +39,10 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({s
         return newIds
       } else {
         localStorage.removeItem(STORED_UID_KEY)
-        const part = (filtered.length === 0) ? ids.slice(0, count) : ids.slice(0, filtered.length)
+        const part = ids.slice(0, count - filtered.length)
         localStorage.setItem(STORED_UID_KEY, JSON.stringify(part))
-        return (filtered.length === 0) ? ids.slice(0, count) : filtered.concat(part)  // TODO Bugs here
+        return filtered.concat(part)
       }
-
     }
   }
 
