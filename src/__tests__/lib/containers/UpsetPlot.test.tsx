@@ -1,20 +1,14 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import UpsetPlot, {
-  UpsetPlotProps,
-} from '../../../lib/containers/UpsetPlot'
-import {
-  QueryResultBundle,
-} from 'lib/utils/synapseTypes/'
+import UpsetPlot, { UpsetPlotProps } from '../../../lib/containers/UpsetPlot'
+import { QueryResultBundle } from 'lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const data = syn16787123Json as QueryResultBundle
 const token: string = '123444'
 
-const createShallowComponent = async (
-  props: UpsetPlotProps,
-) => {
+const createShallowComponent = async (props: UpsetPlotProps) => {
   const wrapper = shallow(<UpsetPlot {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
@@ -22,10 +16,10 @@ const createShallowComponent = async (
 
 describe('basic tests', () => {
   const props: UpsetPlotProps = {
-    entityId: 'syn16787123',
+    rgbIndex: 0,
     sql: 'select * from syn16787123',
     token,
-    loadingScreen: <div>loading...</div>
+    loadingScreen: <div>loading...</div>,
   }
 
   beforeEach(() => {
