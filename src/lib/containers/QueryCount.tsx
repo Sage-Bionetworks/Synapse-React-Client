@@ -4,11 +4,11 @@ import {
   QueryBundleRequest,
   FacetColumnValuesRequest,
 } from '../utils/synapseTypes/'
+import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 
 export type QueryCountProps = {
   sql: string
   selectedFacets?: FacetColumnValuesRequest[]
-  entityId: string
   parens?: boolean
   name: string
   token?: string
@@ -50,7 +50,8 @@ export default class QueryCount extends React.Component<
   }
 
   calculateRowCount() {
-    const { sql, token, entityId, selectedFacets } = this.props
+    const { sql, token, selectedFacets } = this.props
+    const entityId = parseEntityIdFromSqlStatement(sql)
     if (
       this.state.isCalculatingQueryCountForSql[sql] ||
       this.state.storedSqlQueryCount[sql]
