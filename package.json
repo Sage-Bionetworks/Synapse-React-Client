@@ -112,7 +112,7 @@
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "latest",
+    "eslint": "6.6.0",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "^2.5.0",
     "npm": "^6.9.0",
@@ -155,7 +155,8 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "@types/react": "16.9.34",
-    "@types/react-tooltip": "^3.11.0"
+    "@types/react-tooltip": "^3.11.0",
+    "eslint": "6.6.0"
   },
   "browserslist": {
     "production": [

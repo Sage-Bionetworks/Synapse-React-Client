@@ -310,11 +310,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   // to handle the onToggle event and manually manage the dropdown open state. If metadata
   // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
   // we close it.
-  const onToggle = (
-    _show: boolean,
-    _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
-    metadata: any,
-  ) => {
+  const onToggle = (_show: boolean, _event: any, metadata: any) => {
     if (metadata.source) {
       setIsShowDropdown(true)
     } else {
