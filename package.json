@@ -102,7 +102,7 @@
     "@rollup/plugin-image": "^2.0.5",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
-    "@testing-library/react": "^9.4.0",
+    "@testing-library/react": "^10.4.8",
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.2",
     "@types/react": "16.9.34",
