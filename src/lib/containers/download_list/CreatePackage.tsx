@@ -122,7 +122,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
     <>
       {alert.message && (
         <ReactBoostrap.Alert
-          transition={'div'}
+          transition={false}
           variant={alert.variant}
           show={true}
           className={alert.className}
