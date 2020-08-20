@@ -1,4 +1,4 @@
-$card-margin: 21px;
+$card-rotate-margin: 21px;
 
 .UserCardListRotate .SRC-card-grid-row{
   display: grid;
@@ -7,15 +7,15 @@ $card-margin: 21px;
   & > .SRC-grid-item {
     width: auto;
     height: auto;
-    margin-left: $card-margin;
-    margin-right: $card-margin;
+    margin-left: $card-rotate-margin;
+    margin-right: $card-rotate-margin;
   }
 
   & > .SRC-grid-item:first-child {
-    margin-right: $card-margin;
+    margin-right: $card-rotate-margin;
   }
   & > .SRC-grid-item:last-child {
-    margin-left: $card-margin;
+    margin-left: $card-rotate-margin;
   }
 
   .SRC-cardMetaData-scroll {
