@@ -87,7 +87,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({s
 
   return (
     <div className="UserCardListRotate">
-      <UserCardList list={userIds} size={LARGE_USER_CARD} />
+      {userIds.length && <UserCardList list={userIds} size={LARGE_USER_CARD} />}
     </div>
   )
 
