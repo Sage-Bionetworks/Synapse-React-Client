@@ -15,7 +15,14 @@ type SynapseImageProps = {
   token?: string
   fileName?: string
   fileResults?: FileHandle[]
-  params: any
+  params: {
+    align: string
+    scale: string
+    // this should be treated as a boolean, but the actual type that will come through
+    // is a string which I don't want to mis-represent
+    responsive: string
+    altText: string
+  }
 }
 
 type SynapseImageState = {
@@ -37,7 +44,6 @@ class SynapseImage extends React.Component<
 
   public getEntity() {
     const { token, synapseId } = this.props
-
     if (synapseId) {
       getEntity<FileEntity>(token, synapseId).then(
         // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
@@ -100,9 +106,9 @@ class SynapseImage extends React.Component<
   }
 
   public render() {
-    const imgStyle: React.CSSProperties = {}
-    const { params = {} } = this.props
-    const { align = '' } = params
+    const { params } = this.props
+    const { align = '', altText = 'synapse image' } = params
+    let scale = `${Number(params.scale) ?? 100}%`
     const alignLowerCase = align.toLowerCase()
     let className = ''
     if (alignLowerCase === 'left') {
@@ -114,16 +120,20 @@ class SynapseImage extends React.Component<
     if (alignLowerCase === 'center') {
       className = 'align-center'
     }
+    let style: React.CSSProperties = {
+      width: scale,
+      height: scale,
+    }
     if (!this.state.preSignedURL) {
       return null
     }
     return (
       <React.Fragment>
         <img
-          alt="synapse"
+          alt={altText}
           className={'img-fluid  ' + className}
           src={this.state.preSignedURL}
-          style={imgStyle}
+          style={style}
         />
       </React.Fragment>
     )

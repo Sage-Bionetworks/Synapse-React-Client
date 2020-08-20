@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.3",
+  "version": "1.15.4",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -102,7 +102,7 @@
     "@rollup/plugin-image": "^2.0.5",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
-    "@testing-library/react": "^9.4.0",
+    "@testing-library/react": "^10.4.8",
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.2",
     "@types/react": "16.9.34",
@@ -112,7 +112,7 @@
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "latest",
+    "eslint": "6.6.0",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "^2.5.0",
     "npm": "^6.9.0",
@@ -155,7 +155,8 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "@types/react": "16.9.34",
-    "@types/react-tooltip": "^3.11.0"
+    "@types/react-tooltip": "^3.11.0",
+    "eslint": "6.6.0"
   },
   "browserslist": {
     "production": [
