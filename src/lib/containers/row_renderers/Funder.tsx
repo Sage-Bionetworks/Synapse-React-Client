@@ -23,7 +23,6 @@ export default class Funder extends React.Component<FunderProps, {}> {
     const summary = data[schema.summary]
     const website = data[schema.website]
     const logoHref: string = data[schema.logo]
-    const orgPath = `${window.location.origin}/#${organizationPath}`
     // remove leading http(s):// and trailing /
     let websiteDisplayName = website.replace('https://', '')
     websiteDisplayName = websiteDisplayName.replace('http://', '')
@@ -39,9 +38,7 @@ export default class Funder extends React.Component<FunderProps, {}> {
     if (!isOnOrgPath) {
       showOrgLink = (
         <div className="SRC-marginAuto SRC-cardAction">
-          <button onClick={this.handleLinkClick(orgPath)} type="button">
-            View Funded Research
-          </button>
+          <a href={organizationPath}>View Funded Research</a>
         </div>
       )
     } else {
@@ -59,7 +56,9 @@ export default class Funder extends React.Component<FunderProps, {}> {
           <div>
             <h3>
               {isOnOrgPath && organizationName}
-              {!isOnOrgPath && <a href={orgPath}>{organizationName}</a>}
+              {!isOnOrgPath && (
+                <a href={organizationPath}>{organizationName}</a>
+              )}
             </h3>
           </div>
           <div className="SRC-website">

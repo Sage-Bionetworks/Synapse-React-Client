@@ -46,15 +46,12 @@ class QueryWrapperPlotNavDemo extends React.Component<
           searchable: [
             {
               columnName: 'assay',
-              hintText: 'RNASeq',
             },
             {
               columnName: 'name',
-              hintText: 'SynOdos',
             },
             {
               columnName: 'consortium',
-              hintText: 'amp-ad',
             },
           ],
         },

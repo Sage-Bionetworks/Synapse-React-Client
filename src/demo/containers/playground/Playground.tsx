@@ -17,6 +17,9 @@ import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
+import GoalsDemo from './GoalsDemo'
+import Resources from 'lib/containers/Resources'
+import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
 
@@ -105,12 +108,21 @@ const App = ({
           <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
         </li>
         <li>
+          <Link to={`${match.url}/UpsetPlotDemo`}>UpsetPlotDemo</Link>
+        </li>
+        <li>
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
           </Link>
         </li>
         <li>
           <Link to={`${match.url}/People`}>PeopleDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
       </ul>
 
@@ -216,6 +228,29 @@ const App = ({
         exact={true}
         path={`${match.url}/ThemesPlotDemo`}
         component={ThemesPlotDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/UpsetPlotDemo`}
+        component={() => <UpsetPlotDemo token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/GoalsDemo`}
+        component={() => <GoalsDemo entityId={'syn22300779'} token={token} />}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ResourcesDemo`}
+        component={() => (
+          <div className="container">
+            {' '}
+            <Resources entityId="syn22307746" token={token} />{' '}
+          </div>
+        )}
       />
 
       <Route
