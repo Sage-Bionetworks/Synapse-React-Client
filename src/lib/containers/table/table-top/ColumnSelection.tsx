@@ -42,11 +42,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
   let [usedShow, usedSetShow] =
     showFromProps !== undefined ? [showFromProps, onChange!] : [show, setShow]
 
-  const onDropdownClick = (
-    _show: boolean,
-    _event: React.SyntheticEvent<Dropdown<'div'>, Event>,
-    metadata: any,
-  ) => {
+  const onDropdownClick = (_show: boolean, _event: any, metadata: any) => {
     // Any click event for the Dropdown will close the dropdown (assuming its open), so we have
     // to handle the onToggle event and manually manage the dropdown open state. If metadata
     // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise

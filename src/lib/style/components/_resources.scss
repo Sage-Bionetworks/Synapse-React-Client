@@ -5,13 +5,13 @@
     background: white;
     display: flex;
     border: 1px solid #dcdcdc;
+    padding: 15px;
     height: 450px;
     .button-container {
       flex: 1;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      margin: 15px;
       button {
         max-height: 60px;
         text-align: left;
@@ -37,7 +37,7 @@
     .content-container {
       overflow-y: auto;
       flex: 3;
-      padding-left: 30px;
+      padding-left: 40px;
       padding-right: 20px;
     }
     .markdown {

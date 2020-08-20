@@ -68,7 +68,7 @@ export const Error = (props: ErrorProps) => {
         dismissible={false}
         show={true}
         variant={'danger'}
-        transition={'div'}
+        transition={false}
       >
         <p>
           {synapseClientError && (
