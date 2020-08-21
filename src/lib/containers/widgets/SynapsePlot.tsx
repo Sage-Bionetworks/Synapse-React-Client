@@ -3,11 +3,14 @@ import * as React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants } from '../../utils/'
 import { getFullQueryTableResults } from '../../utils/SynapseClient'
-import { QueryResultBundle, QueryBundleRequest } from '../../utils/synapseTypes/'
-import {parseEntityIdFromSqlStatement} from '../../utils/functions/sqlFunctions'
+import {
+  QueryResultBundle,
+  QueryBundleRequest,
+} from '../../utils/synapseTypes/'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
 const Plot = createPlotlyComponent(Plotly)
 
-type SynapsePlotProps = {
+export type SynapsePlotProps = {
   token?: string
   ownerId?: string
   wikiId?: string
