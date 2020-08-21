@@ -115,7 +115,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
               )
               // collect all selected rows (create PartialRow objects)
               const rowUpdates: PartialRow[] = []
-              const rows: Row[] = event.data?.queryResult.queryResults!.rows
+              const rows: Row[] = event.data?.queryResult.queryResults!.rows!
               for (
                 let index = 0;
                 index < event.selectedRowIndices!.length;
