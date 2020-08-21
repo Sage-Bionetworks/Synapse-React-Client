@@ -20,6 +20,7 @@ import { ThemesPlotDemo } from './ThemesPlotDemo'
 import GoalsDemo from './GoalsDemo'
 import Resources from 'lib/containers/Resources'
 import { UpsetPlotDemo } from './UpsetPlotDemo'
+import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
 
@@ -106,6 +107,9 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/SynapsePlotDemo`}>SynapsePlotDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/UpsetPlotDemo`}>UpsetPlotDemo</Link>
@@ -229,7 +233,11 @@ const App = ({
         path={`${match.url}/ThemesPlotDemo`}
         component={ThemesPlotDemo}
       />
-
+      <Route
+        exact={true}
+        path={`${match.url}/SynapsePlotDemo`}
+        component={() => <SynapsePlotDemo token={token} />}
+      />
       <Route
         exact={true}
         path={`${match.url}/UpsetPlotDemo`}
