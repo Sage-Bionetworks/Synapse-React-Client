@@ -52,7 +52,6 @@ class QueryWrapperMenuDemo extends React.Component<
           loadingScreen: <div> Im loading as fast I can! </div>,
         },
         unitDescription: 'apples',
-        entityId: 'syn21085100',
         tableConfiguration: {
           title: 'title',
           // markdownColumns: ['fruit', 'vegetable'],
@@ -69,7 +68,6 @@ class QueryWrapperMenuDemo extends React.Component<
         stackedBarChartConfiguration: {
           loadingScreen: <div> Im loading as fast I can! </div>,
         },
-        entityId: 'syn11346063',
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
@@ -112,7 +110,6 @@ class QueryWrapperMenuDemo extends React.Component<
         facetAliases: {
           grant: 'Grant',
         },
-        entityId: 'syn20337467',
         accordionConfig: [
           {
             name: 'Compuational',
@@ -169,7 +166,6 @@ class QueryWrapperMenuDemo extends React.Component<
         tableConfiguration: {
           title: 'title',
         },
-        entityId: 'syn11346063',
         searchConfiguration: {
           searchable: [
             {

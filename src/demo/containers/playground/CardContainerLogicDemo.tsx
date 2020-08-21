@@ -28,7 +28,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
       'MODEL-AD': mouseSvg,
       'Resilience-AD': resilienceadSvg,
     }
-    
+
     const genericCardSchema: CardConfiguration = {
       type: SynapseConstants.GENERIC_CARD,
       genericCardSchema: {
@@ -72,7 +72,6 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
           <CardContainerLogic
             type={SynapseConstants.GENERIC_CARD}
             sql={'SELECT * FROM syn17024173'}
-            entityId={'syn17024173'}
             searchParams={{ Program: 'AMP-AD' }}
             genericCardSchema={{
               type: 'Program',
@@ -89,7 +88,6 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
           <CardContainerLogic
             type={SynapseConstants.MEDIUM_USER_CARD}
             sql={'SELECT ownerID as ownerId FROM syn13897207'}
-            entityId={'syn13897207'}
             loadingScreen={<div> Im loading as fast I can !!! </div>}
           />
         )}
@@ -98,9 +96,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
             <div className="row">
               <div className="col-md-10 col-md-offset-1">
                 <CardContainerLogic
-                  type={SynapseConstants.GENERIC_CARD}
                   sql={'SELECT * FROM syn18488466 group by externalLink'}
-                  entityId={'syn18488466'}
                   unitDescription="studies"
                   {...genericCardSchema}
                   secondaryLabelLimit={3}
