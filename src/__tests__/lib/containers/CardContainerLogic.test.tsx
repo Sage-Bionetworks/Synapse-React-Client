@@ -59,6 +59,7 @@ describe('it performs basic functionality', () => {
       data: syn16787123Json,
       queryRequest: {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        entityId: 'syn16787123',
         partMask:
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
@@ -86,6 +87,7 @@ describe('it performs basic functionality', () => {
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      entityId: 'syn16787123',
       query: {
         sql,
         isConsistent: false,
@@ -111,6 +113,7 @@ describe('it performs basic functionality', () => {
 
     expect(instance.getLastQueryRequest()).toEqual({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId: 'syn16787123',
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
