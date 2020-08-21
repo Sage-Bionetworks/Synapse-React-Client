@@ -122,7 +122,6 @@ export default function (props: GoalsProps) {
                   <QueryCount
                     parens={false}
                     sql={`SELECT * FROM ${tableId}`}
-                    entityId={tableId}
                     token={token}
                     name=""
                   />

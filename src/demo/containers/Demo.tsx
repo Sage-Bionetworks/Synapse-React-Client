@@ -54,7 +54,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
           title: 'title',
           enableLeftFacetFilter: true,
         },
-        entityId: 'syn16787123',
         menuConfig: [
           {
             facet: 'dataStatus',
@@ -91,7 +90,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
         rgbIndex: 2,
       },
       tabTwo: {
-        entityId: 'syn16858331',
         tableConfiguration: {
           title: 'title',
           showAccessColumn: true,
@@ -306,11 +304,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
           <QueryWrapperMenu
             isConsistent={true}
             name={'Demo'}
-            entityId={
-              this.state.showTabOne
-                ? this.state.tabOne.entityId
-                : this.state.tabTwo.entityId
-            }
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
             }
