@@ -21,6 +21,7 @@ import GoalsDemo from './GoalsDemo'
 import Resources from 'lib/containers/Resources'
 import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
+import { PeopleProfileDemo } from './PeopleProfileDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -113,6 +114,9 @@ const App = ({
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/People`}>PeopleDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
@@ -255,6 +259,12 @@ const App = ({
         component={() => (
           <ExternalFileHandleLink synId={'syn22276050'} token={token} />
         )}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/People`}
+        component={PeopleProfileDemo}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

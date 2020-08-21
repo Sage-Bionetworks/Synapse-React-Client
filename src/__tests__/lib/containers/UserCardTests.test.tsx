@@ -215,7 +215,7 @@ describe('it creates the correct UI for the large card', () => {
     // only two fields are set for the mock profile, so there should only be two
     // fields shown
     expect(
-      wrapper.render().find('div.SRC-cardMetaData').children(),
+      wrapper.render().find('div.SRC-cardMetaData-scroll').children(),
     ).toHaveLength(2)
   })
 })
