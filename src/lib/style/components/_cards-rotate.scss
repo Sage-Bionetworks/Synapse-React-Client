@@ -22,16 +22,16 @@ $card-rotate-margin: 21px;
     height: 220px;
     overflow: scroll;
   }
+
+  p {
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+
 }
 
 @media (min-width: 980px) {
   .UserCardListRotate .SRC-card-grid-row{
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .UserCardListRotate .SRC-card-grid-row {
     grid-template-columns: repeat(3, 1fr);
   }
 }
