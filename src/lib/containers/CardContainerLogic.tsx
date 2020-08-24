@@ -5,6 +5,7 @@ import {
   insertConditionsFromSearchParams,
   KeyValue,
   SQLOperator,
+  parseEntityIdFromSqlStatement,
 } from '../utils/functions/sqlFunctions'
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
@@ -58,7 +59,6 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  entityId: string
   facetAliases?: {}
   backgroundColor?: string
   rgbIndex?: number
@@ -194,7 +194,7 @@ export default class CardContainerLogic extends React.Component<
         this.props.sqlOperator,
       )
     }
-    const entityId = this.props.entityId
+    const entityId = parseEntityIdFromSqlStatement(sqlUsed)
 
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change

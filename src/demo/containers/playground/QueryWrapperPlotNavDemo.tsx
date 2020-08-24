@@ -61,7 +61,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        entityId: 'syn11346063',
         // facetsToPlot: ['assay', 'dataType'],
         loadingScreen: (
           <div>
@@ -74,7 +73,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        entityId: 'syn11346063',
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: {
@@ -94,7 +92,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql: 'select * from syn22084217',
-        entityId: 'syn22084217',
         loadingScreen: (
           <div>
             <div className="spinner"> </div>Im loading as fast I can !!!{' '}
