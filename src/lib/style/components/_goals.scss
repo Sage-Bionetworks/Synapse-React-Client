@@ -40,6 +40,8 @@
       min-height: 75px;
       @extend %side-padding;
       background: $primary-action-color;
+      background-size: cover !important;
+      background-repeat: no-repeat !important;
       display: flex;
       justify-content: center;
       p {

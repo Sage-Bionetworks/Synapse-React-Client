@@ -247,7 +247,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/GoalsDemo`}
-        component={() => <GoalsDemo entityId={'syn22300779'} token={token} />}
+        component={() => <GoalsDemo entityId={'syn22315959'} token={token} />}
       />
 
       <Route
@@ -256,7 +256,7 @@ const App = ({
         component={() => (
           <div className="container">
             {' '}
-            <Resources entityId="syn22307746" token={token} />{' '}
+            <Resources entityId="syn22311127" token={token} />{' '}
           </div>
         )}
       />
