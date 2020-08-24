@@ -1,0 +1,87 @@
+.RssFeedWhatsNew {
+  font-weight: bold;
+}
+.RssFeedSubscribe {
+  .RssFeedSubscribeToNewsLink {
+    color: #404B63;
+    margin-right: 15px;
+    &:hover {
+      color: #404B63;
+      cursor: pointer;
+    }
+  }
+  .MailchimpSubscribeContainer {
+    max-width: 600px;
+    padding: 0px 30px;
+    margin: 0 auto;
+    input {
+      width: 100%;
+      max-width: 570px;
+      height: 45px;
+      margin-top: 10px;
+      padding-left: 8px;
+    }
+    button {
+      display: block;
+      margin-top: 20px;
+      padding: 6px 25px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 24px;
+      background-color: $primary-action-color;
+      color: white;
+    }
+  }
+}
+.RssFeed {
+  padding: 15px 0px;
+  .RssFeedItems {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    .RssFeedItem {
+      max-width: 385px;
+      border: 1px solid #DDDDDF;
+      padding: 20px;
+      margin: 10px;
+      .RssFeedItemCategories {
+        margin-bottom: 25px;
+        .RssFeedItemCategory {
+          border: 1px solid $primary-action-color;
+          border-radius: 100px;
+          display: inline;
+          padding: 5px 20px;
+          text-transform: uppercase;
+          color: $primary-action-color;
+          margin-right: 5px;
+          font-size: 12px;
+        }
+      }
+      .RssFeedItemDate {
+        color: #ABABAC;
+        margin-bottom: 0px;
+      }
+      .RssFeedItemTitle {
+        font-size: 16px;
+        line-height: 144%;
+        color: #1A1C29;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .RssFeedItemDescription {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 100px;
+        color: #515359;
+      }
+      .RssFeedItemLink {
+  
+      }
+    }
+
+  }
+  .RssFeedViewAllNewsButtonContainer {
+    padding-top: 20px;
+    text-align: center;
+  }
+}
