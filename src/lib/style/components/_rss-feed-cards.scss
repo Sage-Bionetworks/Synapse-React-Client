@@ -37,7 +37,7 @@
   padding: 15px 0px;
   .RssFeedItems {
     display: flex;
-    flex-flow: row wrap;
+    flex-wrap: wrap;
     justify-content: center;
     .RssFeedItem {
       max-width: 385px;
@@ -45,16 +45,23 @@
       padding: 20px;
       margin: 10px;
       .RssFeedItemCategories {
+        display: flex;
+        flex-direction: row;
         margin-bottom: 25px;
+        justify-content: flex-start;
+        flex-wrap: wrap;
         .RssFeedItemCategory {
           border: 1px solid $primary-action-color;
+          display: inline-flex;
+          align-content: flex-start;
           border-radius: 100px;
-          display: inline;
           padding: 5px 20px;
           text-transform: uppercase;
           color: $primary-action-color;
           margin-right: 5px;
+          margin-bottom: 5px;
           font-size: 12px;
+          white-space: nowrap;
         }
       }
       .RssFeedItemDate {
