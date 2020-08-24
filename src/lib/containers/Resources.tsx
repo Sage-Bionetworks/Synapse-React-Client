@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes'
-import { SynapseClientError } from '../utils/SynapseClient'
-import { SynapseClient, SynapseConstants } from '../utils'
+import React, { useState } from 'react'
+import { QueryBundleRequest } from '../utils/synapseTypes'
+import { SynapseConstants } from '../utils'
 import { Error } from './Error'
 import MarkdownSynapse from './MarkdownSynapse'
 import { getFieldIndex } from './Goals'
+import useGetQueryResultBundle from 'lib/utils/hooks/useGetQueryResultBundle'
 
 export type ResourcesProps = {
   entityId: string
@@ -19,35 +19,21 @@ enum ExpectedColumns {
 export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
   const [index, setIndex] = useState(0)
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
-  const [queryResult, setQueryResult] = useState<
-    QueryResultBundle | undefined
-  >()
 
-  useEffect(() => {
-    const getData = async () => {
-      const request: QueryBundleRequest = {
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId,
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
-        },
-      }
-
-      try {
-        const data = await SynapseClient.getQueryTableResults(request, token)
-        setQueryResult(data)
-        setError(undefined)
-      } catch (e) {
-        console.error('Error on get data', e)
-        setError(e)
-      }
-    }
-    getData()
-  }, [entityId, token])
+  const request: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {
+      sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
+    },
+  }
+  const { queryResultBundle: queryResult, error } = useGetQueryResultBundle({
+    token,
+    queryBundleRequest: request,
+  })
 
   const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResult)
   const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResult)
@@ -63,7 +49,7 @@ export default function Resources(props: ResourcesProps) {
 
   return (
     <div className="Resources">
-      {error && <Error error={error} token={token} />}
+      <Error error={error} token={token} />
       <div className="control-container">
         <div className="button-container">
           {data?.map((el, curIndex) => {
