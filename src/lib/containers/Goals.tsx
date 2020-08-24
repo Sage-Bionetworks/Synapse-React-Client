@@ -6,10 +6,11 @@ import {
   FileHandleAssociateType,
   BatchFileRequest,
 } from '../utils/synapseTypes'
-import { SynapseClient, SynapseConstants } from '../utils'
+import { SynapseConstants } from '../utils'
 import { SynapseClientError, getFiles } from '../utils/SynapseClient'
 import { Error } from '../containers/Error'
 import QueryCount from './QueryCount'
+import useGetQueryResultBundle from 'lib/utils/hooks/useGetQueryResultBundle'
 
 export type GoalsProps = {
   entityId: string
@@ -37,32 +38,38 @@ export const getFieldIndex = (
 
 export default function (props: GoalsProps) {
   const { entityId, token } = props
-  const [queryResult, setQueryResult] = useState<
-    QueryResultBundle | undefined
-  >()
-  const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [assets, setAssets] = useState<string[] | undefined>()
+  const [error, setError] = useState<string | SynapseClientError | undefined>()
+  const request: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {
+      sql: `select TableId, Title, Summary, Link, Asset from ${entityId} order by ItemOrder`,
+    },
+  }
+  const { queryResultBundle: queryResult } = useGetQueryResultBundle({
+    token,
+    queryBundleRequest: request,
+  })
 
   useEffect(() => {
     const getData = async () => {
-      const request: QueryBundleRequest = {
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId,
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql: `select TableId, Title, Summary, Link, Asset from ${entityId} order by ItemOrder`,
-        },
-      }
       try {
-        const data = await SynapseClient.getQueryTableResults(request, token)
-        setQueryResult(data)
-
-        const assetColumnIndex = getFieldIndex(ExpectedColumns.ASSET, data)
-        const assets = data.queryResult.queryResults.rows.map(
-          el => el.values[assetColumnIndex],
+        const assetColumnIndex = getFieldIndex(
+          ExpectedColumns.ASSET,
+          queryResult,
         )
+        const assets =
+          queryResult?.queryResult.queryResults.rows.map(
+            el => el.values[assetColumnIndex],
+          ) ?? []
+        if (assets.length === 0) {
+          // wait for data to load
+          return
+        }
         const fileHandleAssociationList: FileHandleAssociation[] = assets.map(
           fileId => {
             return {
@@ -91,7 +98,7 @@ export default function (props: GoalsProps) {
       }
     }
     getData()
-  }, [entityId, token])
+  }, [entityId, token, queryResult])
 
   const tableIdColumnIndex = getFieldIndex(ExpectedColumns.TABLEID, queryResult)
   const titleColumnIndex = getFieldIndex(ExpectedColumns.TITLE, queryResult)
