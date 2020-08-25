@@ -6,8 +6,7 @@ export const NewsFeedDemo:React.SFC = () => {
   return (
     <RssFeedCards
       url='https://portalnewsdev.wpengine.com/?feed=rss2'
-      defaultItemsToShow={3}
-      showMoreElements={true}
+      itemsToShow={3}
       mailChimpListName='AMP-AD quarterly newsletter'
       mailChimpUrl='https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a'
     />
