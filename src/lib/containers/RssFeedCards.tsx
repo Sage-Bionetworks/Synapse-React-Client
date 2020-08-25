@@ -8,15 +8,13 @@ let rssParser = new Parser()
 type RssState = {
   rssFeed: any
   isLoadingError: boolean
-  isShowingMoreItems: boolean
   itemId2MoreItem: {}
   isShowingSubscribeUI: boolean
 }
 
 export type RssFeedCardsProps = {
   url: string
-  defaultItemsToShow: number
-  showMoreElements: boolean
+  itemsToShow: number  
   mailChimpListName?: string
   mailChimpUrl?: string
 }
@@ -30,7 +28,6 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
     this.state = {
       rssFeed: {},
       isLoadingError: false,
-      isShowingMoreItems: false,
       itemId2MoreItem: {},
       isShowingSubscribeUI: false,
     }
@@ -57,13 +54,6 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
   componentWillUnmount() {
     this._isMounted = false
   }
-
-  public onClickShowMoreItems = () => (
-    event: React.SyntheticEvent<HTMLButtonElement>,
-  ) => {
-    this.setState({ isShowingMoreItems: true })
-  }
-
 
   public onClickSubscribe = () => {
     this.setState({ isShowingSubscribeUI: true })
@@ -108,7 +98,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                 'text/html',
               )
               let bodyElement = parsedHtml.querySelector('body')
-              let moreElement = this.props.showMoreElements && parsedHtml.querySelector('[id^="more-"]')
+              let moreElement = parsedHtml.querySelector('[id^="more-"]')
               if (moreElement && bodyElement) {
                 let foundMoreElement = false
                 const children = bodyElement.children
@@ -124,8 +114,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                 }
               }
               let isItemVisible: boolean =
-                index < this.props.defaultItemsToShow ||
-                this.state.isShowingMoreItems
+                index < this.props.itemsToShow
 
               return (
                 <div
@@ -151,15 +140,15 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
             })}
           </div>
           {this.state.rssFeed.items &&
-            this.state.rssFeed.items.length > this.props.defaultItemsToShow &&
-            !this.state.isShowingMoreItems && (
+            this.state.rssFeed.items.length > this.props.itemsToShow && (
               <div className="RssFeedViewAllNewsButtonContainer">
-                <button
-                  className="btn homepage-button"
-                  onClick={this.onClickShowMoreItems()}
-                >
-                  VIEW ALL NEWS
-                </button>
+                <a href={this.state.rssFeed.link} target="_blank">
+                  <button
+                    className="btn homepage-button"
+                  >
+                    VIEW ALL NEWS
+                  </button>
+                </a>
               </div>
             )}
           {this.state.isLoadingError && (
