@@ -1111,9 +1111,17 @@ hr ~ .SRC-wrapper {
   }
 }
 
-.homepage-background {
-  background-color: rgba(38, 153, 167, 0.03);
-  padding: 40px 0;
+.homepage-button-link {
+  border-radius: 24px;
+  padding: 10px 24px;
+  background-color: $primary-action-color;
+  color: #fff;
+  font-size: 16px;
+  display: inline-block;
+
+  &:link, &:visited, &:hover, &:active {
+    color: #fff;
+  }
 }
 
 #addAndRemoveColumns ~ div.dropdown-menu {
