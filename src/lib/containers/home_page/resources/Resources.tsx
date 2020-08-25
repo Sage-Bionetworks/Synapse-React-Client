@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 import { Error } from '../../Error'
@@ -6,6 +6,7 @@ import { getFieldIndex } from '../goals/Goals'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
 import ResourcesLaptop from './Resources.Laptop'
 import ResourcesMobile from './Resources.Mobile'
+import useShowDesktop from 'lib/utils/hooks/useShowDesktop'
 
 export type ResourcesProps = {
   entityId: string
@@ -25,6 +26,9 @@ export type Data = {
 
 export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
+  const showDesktop = useShowDesktop(600)
+
+  useEffect(() => {})
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -57,11 +61,10 @@ export default function Resources(props: ResourcesProps) {
         wikiId,
       }
     }) ?? []
-  const width = window.outerWidth
   return (
     <div className="Resources">
       <Error error={error} token={token} />
-      {width > 600 ? (
+      {showDesktop ? (
         <ResourcesLaptop data={data} token={token} />
       ) : (
         <ResourcesMobile data={data} token={token} />
