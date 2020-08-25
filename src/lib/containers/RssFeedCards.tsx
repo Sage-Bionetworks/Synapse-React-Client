@@ -13,7 +13,7 @@ type RssState = {
   isShowingSubscribeUI: boolean
 }
 
-export type RssFeedProps = {
+export type RssFeedCardsProps = {
   url: string
   defaultItemsToShow: number
   showMoreElements: boolean
@@ -21,11 +21,11 @@ export type RssFeedProps = {
   mailChimpUrl?: string
 }
 const parser = new DOMParser()
-export default class RssFeed extends React.Component<RssFeedProps, RssState> {
+export default class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
   // only update the state if this component is mounted
   _isMounted = false
   
-  constructor(props: RssFeedProps) {
+  constructor(props: RssFeedCardsProps) {
     super(props)
     this.state = {
       rssFeed: {},

@@ -24,6 +24,7 @@ import DownloadListTable from './containers/download_list/DownloadListTable'
 import Goals from './containers/Goals'
 import Resources from './containers/Resources'
 import NewsFeedMenu from './containers/NewsFeedMenu'
+import RssFeedCards from './containers/RssFeedCards'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
@@ -60,6 +61,7 @@ const SynapseComponents = {
   Resources,
   UpsetPlot,
   SynapsePlot,
+  RssFeedCards,
   UserCardListRotate,
 }
 
