@@ -6,7 +6,7 @@ import { getFieldIndex } from '../goals/Goals'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
 import ResourcesLaptop from './Resources.Laptop'
 import ResourcesMobile from './Resources.Mobile'
-import useShowDesktop from 'lib/utils/hooks/useShowDesktop'
+import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 
 export type ResourcesProps = {
   entityId: string
@@ -27,7 +27,6 @@ export type Data = {
 export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
   const showDesktop = useShowDesktop(900)
-  console.log('showDesktop = ', showDesktop)
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -60,7 +59,6 @@ export default function Resources(props: ResourcesProps) {
         wikiId,
       }
     }) ?? []
-  console.log('rendering')
   return (
     <div className="Resources">
       <Error error={error} token={token} />

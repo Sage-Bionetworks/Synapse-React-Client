@@ -1,14 +1,31 @@
+$gutter: 15px;
+
 .ExpandableContent {
+  background: #ffffff;
+  box-shadow: 0px 3px 10px rgba(93, 105, 171, 0.1);
+  margin-top: 5px;
+  margin-bottom: 5px;
   &__button__container {
     display: flex;
-    justify-content: center;
-    align-content: center;
+    height: 50px;
+    justify-content: space-between;
+    align-items: center;
     button {
+      height: 100%;
+      width: 100%;
       display: flex;
-      padding-left: 10px;
-      padding-right: 10px;
+      margin-left: $gutter;
+      margin-right: $gutter;
       justify-content: space-between;
-      align-content: center;
+      align-items: center;
+      word-break: keep-all;
+      &.expanded {
+        border-bottom: 1px solid rgba(93, 105, 171, 0.1);
+      }
     }
+  }
+  &__content__container {
+    padding: $gutter;
+    padding-top: 0px;
   }
 }
