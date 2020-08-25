@@ -3,7 +3,7 @@ import UserCardListRotate from '../../../lib/containers/UserCardListRotate'
 
 export const PeopleProfileDemo = () => {
   return (
-    <div className="homepage-background">
+    <div className="homepage-color-background">
       <div className="container-fluid">
         <div className="row">
           <UserCardListRotate

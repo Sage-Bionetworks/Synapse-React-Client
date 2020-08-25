@@ -98,7 +98,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({s
       {!isLoading && userIds.length && <UserCardList list={userIds} size={LARGE_USER_CARD} />}
       <div className="UserCardListRotate__summary">
         <p>
-          <a className="UserCardListRotate__summary__link btn homepage-button" href={summaryLink}>
+          <a className="homepage-button-link" href={summaryLink}>
             EXPLORE ALL PEOPLE
           </a>
         </p>
