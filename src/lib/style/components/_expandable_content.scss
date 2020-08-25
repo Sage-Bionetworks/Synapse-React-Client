@@ -1,0 +1,14 @@
+.ExpandableContent {
+  &__button__container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    button {
+      display: flex;
+      padding-left: 10px;
+      padding-right: 10px;
+      justify-content: space-between;
+      align-content: center;
+    }
+  }
+}
