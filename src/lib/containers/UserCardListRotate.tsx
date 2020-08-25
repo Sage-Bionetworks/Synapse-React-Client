@@ -12,6 +12,8 @@ export type UserCardListRotateProps = {
   sql: string
   count: number
   token?: string
+  loadingScreen: JSX.Element
+  summaryLink: string
 }
 
 export const getDisplayIds = (ids: string[] = [], count: number = DEFAULT_DISPLAY_COUNT) => {
@@ -41,15 +43,17 @@ export const getDisplayIds = (ids: string[] = [], count: number = DEFAULT_DISPLA
   }
 }
 
-const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({sql, count, token}) => {
+const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({sql, count, token, loadingScreen, summaryLink}) => {
 
   // const [isLoading, setIsLoading] = useState<boolean>()
   const [userIds, setUserIds] = useState<string []>([])
+  const [isLoading, setIsLoading] = useState<boolean>()
   let mounted = true
 
   useEffect(() => {
 
     const fetchData = async function() {
+      setIsLoading(true)
       const entityId = parseEntityIdFromSqlStatement(sql)
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       const request: QueryBundleRequest = {
@@ -73,7 +77,10 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({s
         if (mounted) {
           const newIds = getDisplayIds(ids)
           setUserIds(newIds)
+          setIsLoading(false)
         }
+      } else {
+        console.log("UserCardListRotate: Error getting data")
       }
     }
 
@@ -87,7 +94,15 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({s
 
   return (
     <div className="UserCardListRotate">
-      {userIds.length && <UserCardList list={userIds} size={LARGE_USER_CARD} />}
+      {isLoading && loadingScreen}
+      {!isLoading && userIds.length && <UserCardList list={userIds} size={LARGE_USER_CARD} />}
+      <div className="UserCardListRotate__summary">
+        <p>
+          <a className="UserCardListRotate__summary__link btn homepage-button" href={summaryLink}>
+            EXPLORE ALL PEOPLE
+          </a>
+        </p>
+      </div>
     </div>
   )
 
