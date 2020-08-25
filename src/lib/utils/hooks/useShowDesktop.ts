@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-export type UseShowDesktopProps = {
-  breakpoint: number
-}
+export type UseShowDesktopProps = number
 
-export default function useShowDesktop({ breakpoint }: UseShowDesktopProps) {
+export default function useShowDesktop(breakpoint: UseShowDesktopProps) {
   const [showDesktop, setShowDesktop] = useState(true)
   useEffect(() => {
     document.addEventListener('resize', () => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 import { Error } from '../../Error'
@@ -26,9 +26,8 @@ export type Data = {
 
 export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
-  const showDesktop = useShowDesktop(600)
-
-  useEffect(() => {})
+  const showDesktop = useShowDesktop(900)
+  console.log('showDesktop = ', showDesktop)
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -61,6 +60,7 @@ export default function Resources(props: ResourcesProps) {
         wikiId,
       }
     }) ?? []
+  console.log('rendering')
   return (
     <div className="Resources">
       <Error error={error} token={token} />

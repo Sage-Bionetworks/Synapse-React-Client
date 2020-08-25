@@ -31,10 +31,7 @@ export default function ResourcesLaptop({ data, token }: ResourcesLaptopProps) {
       </div>
       <div className="content-container">
         {data?.map((el, curIndex) => {
-          const { wikiValue } = el
-          const split = wikiValue.split('/')
-          const ownerId = split[0]
-          const wikiId = split[2]
+          const { ownerId, wikiId } = el
           return (
             <span key={ownerId} className={index === curIndex ? '' : 'hide'}>
               <MarkdownSynapse
