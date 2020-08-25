@@ -13,6 +13,7 @@ export type UserCardListRotateProps = {
   count: number
   token?: string
   loadingScreen: JSX.Element
+  summaryLink: string
 }
 
 export const getDisplayIds = (ids: string[] = [], count: number = DEFAULT_DISPLAY_COUNT) => {
@@ -42,7 +43,7 @@ export const getDisplayIds = (ids: string[] = [], count: number = DEFAULT_DISPLA
   }
 }
 
-const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({sql, count, token, loadingScreen}) => {
+const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({sql, count, token, loadingScreen, summaryLink}) => {
 
   // const [isLoading, setIsLoading] = useState<boolean>()
   const [userIds, setUserIds] = useState<string []>([])
@@ -97,7 +98,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({s
       {!isLoading && userIds.length && <UserCardList list={userIds} size={LARGE_USER_CARD} />}
       <div className="UserCardListRotate__summary">
         <p>
-          <a className="UserCardListRotate__summary__link btn homepage-button" href="/Explore/People">
+          <a className="UserCardListRotate__summary__link btn homepage-button" href={summaryLink}>
             EXPLORE ALL PEOPLE
           </a>
         </p>
