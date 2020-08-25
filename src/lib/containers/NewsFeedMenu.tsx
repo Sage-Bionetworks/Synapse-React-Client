@@ -1,3 +1,4 @@
+
 import * as React from 'react'
 import RssFeed from './RssFeed'
 import TwitterFeed from './TwitterFeed'
@@ -22,6 +23,9 @@ export type NewsFeedMenuProps = {
   routeToNewsFeed: string // news feed nav bar links are hardcoded to this route, with query params set to the selected menu config key/value
 }
 
+/**
+ * Deprecated, use RssFeedCards instead
+ */
 export default class NewsFeedMenu extends React.Component<
   NewsFeedMenuProps,
   {}
