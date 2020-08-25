@@ -10,7 +10,7 @@ import { SynapseConstants } from '../utils'
 import { SynapseClientError, getFiles } from '../utils/SynapseClient'
 import { Error } from '../containers/Error'
 import QueryCount from './QueryCount'
-import useGetQueryResultBundle from 'lib/utils/hooks/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../utils/hooks/useGetQueryResultBundle'
 
 export type GoalsProps = {
   entityId: string
@@ -40,7 +40,7 @@ export default function (props: GoalsProps) {
   const { entityId, token } = props
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
-  const request: QueryBundleRequest = {
+  const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
     partMask:
@@ -50,9 +50,9 @@ export default function (props: GoalsProps) {
       sql: `select TableId, Title, Summary, Link, Asset from ${entityId} order by ItemOrder`,
     },
   }
-  const { queryResultBundle: queryResult } = useGetQueryResultBundle({
+  const { queryResultBundle } = useGetQueryResultBundle({
     token,
-    queryBundleRequest: request,
+    queryBundleRequest,
   })
 
   useEffect(() => {
@@ -60,10 +60,10 @@ export default function (props: GoalsProps) {
       try {
         const assetColumnIndex = getFieldIndex(
           ExpectedColumns.ASSET,
-          queryResult,
+          queryResultBundle,
         )
         const assets =
-          queryResult?.queryResult.queryResults.rows.map(
+          queryResultBundle?.queryResult.queryResults.rows.map(
             el => el.values[assetColumnIndex],
           ) ?? []
         if (assets.length === 0) {

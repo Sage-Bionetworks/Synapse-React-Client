@@ -4,7 +4,7 @@ import { SynapseConstants } from '../utils'
 import { Error } from './Error'
 import MarkdownSynapse from './MarkdownSynapse'
 import { getFieldIndex } from './Goals'
-import useGetQueryResultBundle from 'lib/utils/hooks/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../utils/hooks/useGetQueryResultBundle'
 
 export type ResourcesProps = {
   entityId: string
@@ -20,7 +20,7 @@ export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
   const [index, setIndex] = useState(0)
 
-  const request: QueryBundleRequest = {
+  const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
     partMask:
@@ -30,14 +30,14 @@ export default function Resources(props: ResourcesProps) {
       sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
     },
   }
-  const { queryResultBundle: queryResult, error } = useGetQueryResultBundle({
+  const { queryResultBundle, error } = useGetQueryResultBundle({
     token,
-    queryBundleRequest: request,
+    queryBundleRequest,
   })
 
-  const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResult)
-  const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResult)
-  const data = queryResult?.queryResult.queryResults.rows.map(el => {
+  const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
+  const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)
+  const data = queryResultBundle?.queryResult.queryResults.rows.map(el => {
     const values = el.values
     const name = values[nameIndex]
     const wikiValue = values[wikiIndex] ?? ''
