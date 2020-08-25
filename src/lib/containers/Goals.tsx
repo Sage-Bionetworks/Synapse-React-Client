@@ -98,17 +98,26 @@ export default function (props: GoalsProps) {
       }
     }
     getData()
-  }, [entityId, token, queryResult])
+  }, [entityId, token, queryResultBundle])
 
-  const tableIdColumnIndex = getFieldIndex(ExpectedColumns.TABLEID, queryResult)
-  const titleColumnIndex = getFieldIndex(ExpectedColumns.TITLE, queryResult)
-  const summaryColumnIndex = getFieldIndex(ExpectedColumns.SUMMARY, queryResult)
-  const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResult)
+  const tableIdColumnIndex = getFieldIndex(
+    ExpectedColumns.TABLEID,
+    queryResultBundle,
+  )
+  const titleColumnIndex = getFieldIndex(
+    ExpectedColumns.TITLE,
+    queryResultBundle,
+  )
+  const summaryColumnIndex = getFieldIndex(
+    ExpectedColumns.SUMMARY,
+    queryResultBundle,
+  )
+  const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
   return (
     <div className="Goals">
       {error && <Error error={error} token={token} />}
-      {queryResult?.queryResult.queryResults.rows.map((el, index) => {
+      {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
         const values = el.values
         const tableId = values[tableIdColumnIndex]
         const title = values[titleColumnIndex]
