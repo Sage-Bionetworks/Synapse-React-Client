@@ -4,6 +4,9 @@ export type TwitterFeedProps = {
   href: string
 }
 
+/**
+ * Deprecated, UI clashes with rest of site.
+ */
 export default class TwitterFeed extends React.Component<TwitterFeedProps> {
   constructor(props: TwitterFeedProps) {
     super(props)

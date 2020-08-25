@@ -1100,6 +1100,17 @@ hr ~ .SRC-wrapper {
   padding: 0px;
 }
 
+.homepage-button {
+  border-radius: 24px;
+  background: #3C4A63;
+  text-transform: uppercase;
+  padding: 5px 34px;
+  color: white;
+  &:hover {
+    color: white;
+  }
+}
+
 #addAndRemoveColumns ~ div.dropdown-menu {
   max-height: 300px;
   overflow: auto;
