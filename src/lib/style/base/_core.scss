@@ -1111,6 +1111,11 @@ hr ~ .SRC-wrapper {
   }
 }
 
+.homepage-background {
+  background-color: rgba(38, 153, 167, 0.03);
+  padding: 40px 0;
+}
+
 #addAndRemoveColumns ~ div.dropdown-menu {
   max-height: 300px;
   overflow: auto;
