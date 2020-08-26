@@ -1,6 +1,11 @@
+// TODO: These colors to be configurable for the other portals.
+$resources-bg-color: RGBA(0, 81, 86, 1);
+$resources-bg-color-light: RGBA(0, 81, 86, 0.1);
 .Resources {
   background-color: rgba(64, 123, 160, 0.05);
-  // padding-bottom: 50px;
+  a {
+    color: RGBA(0, 81, 86, 1);
+  }
   .control-container {
     background: white;
     display: flex;
@@ -20,9 +25,9 @@
         padding: 10px;
         &.isSelected,
         &:not(.gap-fill):hover {
-          color: $primary-action-color;
-          background-color: rgba(71, 51, 125, 0.1);
-          border-right: 2px solid $primary-action-color;
+          color: $resources-bg-color;
+          background-color: $resources-bg-color-light;
+          border-right: 2px solid $resources-bg-color;
         }
         border-right: 2px solid #dcdcdc;
         font-weight: bold;
