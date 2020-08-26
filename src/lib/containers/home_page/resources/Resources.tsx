@@ -26,7 +26,7 @@ export type Data = {
 
 export default function Resources(props: ResourcesProps) {
   const { entityId, token } = props
-  const showDesktop = useShowDesktop(900)
+  const showDesktop = useShowDesktop()
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

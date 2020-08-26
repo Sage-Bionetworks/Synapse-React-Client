@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-// import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export type ExpandableContentProps = {
@@ -22,7 +21,10 @@ export default function ExpandableContent({
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <span>{title}</span>
-          <FontAwesomeIcon icon={isExpanded ? 'times' : 'plus'} />
+          <FontAwesomeIcon
+            className="SRC-primary-action-color"
+            icon={isExpanded ? 'times' : 'plus'}
+          />
         </button>
       </div>
       <div
@@ -32,19 +34,6 @@ export default function ExpandableContent({
       >
         {content}
       </div>
-      {/* <TransitionGroup component={null}>
-        {isExpanded && (
-          <CSSTransition
-            // The component doesn't run a transition on mount, we override this
-            // by setting appear to true because otherwise the triangle indicator wouldn't show
-            appear={true}
-            classNames="SRC-accordion-menu"
-            key={key}
-            timeout={{ enter: 1000, exit: 500 }}
-          >
-          </CSSTransition>
-        )}
-      </TransitionGroup> */}
     </div>
   )
 }
