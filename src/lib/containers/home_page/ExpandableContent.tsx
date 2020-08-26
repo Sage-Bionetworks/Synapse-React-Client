@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 export type ExpandableContentProps = {
   title: JSX.Element
   content: JSX.Element
-  key: string
 }
 
 export default function ExpandableContent({

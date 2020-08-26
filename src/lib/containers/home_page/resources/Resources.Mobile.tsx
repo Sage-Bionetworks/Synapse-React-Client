@@ -16,7 +16,7 @@ export default function ResourcesMobile({ data, token }: ResourcesMobileProps) {
         let markdown = (
           <MarkdownSynapse token={token} ownerId={ownerId} wikiId={wikiId} />
         )
-        return <ExpandableContent key={name} title={title} content={markdown} />
+        return <ExpandableContent title={title} content={markdown} />
       })}
     </div>
   )

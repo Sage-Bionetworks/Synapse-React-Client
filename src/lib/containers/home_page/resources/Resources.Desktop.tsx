@@ -1,13 +1,16 @@
 import { Data } from './Resources'
 import React, { useState } from 'react'
-import MarkdownSynapse from '../../../containers/MarkdownSynapse'
+import MarkdownSynapse from '../../MarkdownSynapse'
 
-export type ResourcesLaptopProps = {
+export type ResourcesDesktopProps = {
   data: Data
   token?: string
 }
 
-export default function ResourcesLaptop({ data, token }: ResourcesLaptopProps) {
+export default function ResourcesDesktop({
+  data,
+  token,
+}: ResourcesDesktopProps) {
   const [index, setIndex] = useState(0)
   return (
     <div className="control-container">

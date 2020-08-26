@@ -4,7 +4,7 @@ import { SynapseConstants } from '../../../utils'
 import { Error } from '../../Error'
 import { getFieldIndex } from '../goals/Goals'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
-import ResourcesLaptop from './Resources.Laptop'
+import ResourcesDesktop from './Resources.Desktop'
 import ResourcesMobile from './Resources.Mobile'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 
@@ -63,7 +63,7 @@ export default function Resources(props: ResourcesProps) {
     <div className="Resources">
       <Error error={error} token={token} />
       {showDesktop ? (
-        <ResourcesLaptop data={data} token={token} />
+        <ResourcesDesktop data={data} token={token} />
       ) : (
         <ResourcesMobile data={data} token={token} />
       )}
