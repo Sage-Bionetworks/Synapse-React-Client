@@ -9,6 +9,7 @@ export const PeopleProfileDemo = () => {
           <UserCardListRotate
             sql={"SELECT * FROM syn22096112 where feature=true"}
             count={3}
+            summaryLinkText={"EXPLORE ALL PEOPLE"}
             summaryLink={"/Explore/People"}
             loadingScreen={<div>Loading...</div>}
           />
