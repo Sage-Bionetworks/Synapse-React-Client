@@ -1,7 +1,7 @@
 import React from 'react'
 import { GoalsDataProps } from './Goals'
 import ExpandableContent from '../ExpandableContent'
-import QueryCount from 'lib/containers/QueryCount'
+import QueryCount from '../../../containers/QueryCount'
 
 export default function ({
   link,
