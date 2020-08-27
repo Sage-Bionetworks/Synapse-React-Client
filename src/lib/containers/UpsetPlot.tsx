@@ -146,17 +146,19 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
                 width={size.width!}
                 height={height}
                 onHover={setSelection}
-                // onClick={gotoFilesRoute()}
+                // onClick={setSelection}
                 selection={selection}
-                color={colorPalette[1]}
+                color={colorPalette[0]}
                 selectionColor={colorPalette[0]}
-                hasSelectionOpacity={1.0}
+                hasSelectionOpacity={0.3}
                 // alternatingBackgroundColor={false}
-                setName={setName}
-                combinationName={combinationName}
+                setName={setName?.toUpperCase()}
+                combinationName={combinationName?.toUpperCase()}
                 fontFamily="Lato sans-serif"
                 fontSizes={updateFontSizes}
                 exportButtons={false}
+                notMemberColor="transparent"
+
               />
               {summaryLink && summaryLinkText && (
                 <div className="UpsetPlot__summary">
