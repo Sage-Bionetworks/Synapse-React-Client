@@ -41,7 +41,7 @@ function valueToLabel(
   const { value } = facet
   let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
-    displayValue = 'Not Set'
+    displayValue = 'Unannotated'
   }
   const profile = profiles.find(profile => profile.ownerId === value)
   if (profile) {
