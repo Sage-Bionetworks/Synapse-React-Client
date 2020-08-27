@@ -21,10 +21,11 @@ $gutter: 15px;
       justify-content: space-between;
       align-items: center;
       word-break: keep-all;
+      padding: 0px;
     }
   }
   &__content__container {
     padding: $gutter;
-    padding-top: 0px;
+    padding-top: 10px;
   }
 }
