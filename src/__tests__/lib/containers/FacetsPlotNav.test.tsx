@@ -23,7 +23,7 @@ describe('it performs basic functionality', () => {
   /*
     Looking at the data the facet values for tumorType and their
     respective counts are:
-      - Unannotated (3)
+      - unannotated (3)
       - Cutaneous Neurofibroma (12)
       - JMML (1)
       - Low Grade Glioma (4)
@@ -41,7 +41,7 @@ describe('it performs basic functionality', () => {
       - Cutaneous Neurofibroma (12)
       - MPNST (6)
       - Low Grade Glioma (4)
-      - Unannotated (3)
+      - unannotated (3)
       - JMML (1)
       - Plexiform Neurofibroma | MPNST (1)
       - Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma (1)
