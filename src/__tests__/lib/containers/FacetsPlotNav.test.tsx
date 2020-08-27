@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow } from 'enzyme'
 import FacetsPlotNav, {
   FacetsPlotNavProps,
-  Plot
+  Plot,
 } from '../../../lib/containers/FacetsPlotNav'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
@@ -23,7 +23,7 @@ describe('it performs basic functionality', () => {
   /*
     Looking at the data the facet values for tumorType and their
     respective counts are:
-      - Not set (3)
+      - unannotated (3)
       - Cutaneous Neurofibroma (12)
       - JMML (1)
       - Low Grade Glioma (4)
@@ -41,7 +41,7 @@ describe('it performs basic functionality', () => {
       - Cutaneous Neurofibroma (12)
       - MPNST (6)
       - Low Grade Glioma (4)
-      - Not set (3)
+      - unannotated (3)
       - JMML (1)
       - Plexiform Neurofibroma | MPNST (1)
       - Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma (1)
@@ -106,7 +106,7 @@ describe('it performs basic functionality', () => {
     chartSelectionIndex: 0,
     updateParentState,
     executeInitialQueryRequest,
-    executeQueryRequest
+    executeQueryRequest,
   } as FacetsPlotNavProps & QueryWrapperChildProps
 
   it('renders without crashing', () => {
@@ -121,14 +121,24 @@ describe('it performs basic functionality', () => {
     expect(plotData).toHaveLength(facetsToPlot.length)
 
     expect(plotData[0].name).toEqual('projectStatus')
-    expect(plotData[0].domain).toEqual({row:0, column:0})
+    expect(plotData[0].domain).toEqual({ row: 0, column: 0 })
     // verify second subplot data is accurate
     expect(plotData[1].name).toEqual('tumorType')
     expect(plotData[1].values).toEqual([3, 12, 1, 4, 6, 28, 1, 1, 1, 1, 1])
-    expect(plotData[1].labels).toEqual(['unannotated', 'Cutaneous Neurofibroma', 'JMML', 'Low Grade Glioma', 'MPNST', 
-      'Plexiform Neurofibroma', 'Plexiform Neurofibroma | MPNST', 'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
-      'Schwannoma', 'Schwannoma | Meningioma', 'SMN'])
-    expect(plotData[1].domain).toEqual({row:0, column:1})
+    expect(plotData[1].labels).toEqual([
+      'unannotated',
+      'Cutaneous Neurofibroma',
+      'JMML',
+      'Low Grade Glioma',
+      'MPNST',
+      'Plexiform Neurofibroma',
+      'Plexiform Neurofibroma | MPNST',
+      'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
+      'Schwannoma',
+      'Schwannoma | Meningioma',
+      'SMN',
+    ])
+    expect(plotData[1].domain).toEqual({ row: 0, column: 1 })
     expect(wrapper.find(Plot)).toHaveLength(1)
     expect(wrapper.find('.SRC-loadingContainer')).toHaveLength(0)
   })
@@ -136,15 +146,19 @@ describe('it performs basic functionality', () => {
   it('click does not cause error', async () => {
     let { instance } = createShallowComponent(props)
     let event = {
-      event:{}, // MouseEvent
-      points:[{
-        //plot point data
-        pointNumber: 0,
-        data: {
-          name: 'tumorType',
-          facetEnumerationValues: ['org.sagebionetworks.UNDEFINED_NULL_NOTSET']
-        }
-      }]
+      event: {}, // MouseEvent
+      points: [
+        {
+          //plot point data
+          pointNumber: 0,
+          data: {
+            name: 'tumorType',
+            facetEnumerationValues: [
+              'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+            ],
+          },
+        },
+      ],
     }
     instance.handleClick(event)
   })

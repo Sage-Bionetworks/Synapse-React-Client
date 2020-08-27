@@ -69,24 +69,14 @@ describe('basic function', () => {
       const radios = wrapper.find('input[type="radio"]')
       expect(radios).toHaveLength(3)
       expect(radios.at(1).props().checked).toBe(true)
-      expect(
-        radios
-          .at(1)
-          .parents('span')
-          .text(),
-      ).toBe('Any')
+      expect(radios.at(1).parents('span').text()).toBe('Any')
     })
 
-    it('should set for not set', () => {
+    it('should set for unannotated', () => {
       init({ ...props, facetResult: notSetFacetResult })
       const radios = wrapper.find('input[type="radio"]')
       expect(radios.at(0).props().checked).toBe(true)
-      expect(
-        radios
-          .at(0)
-          .parents('span')
-          .text(),
-      ).toBe('Not Set')
+      expect(radios.at(0).parents('span').text()).toBe('unannotated')
     })
 
     it('interval', () => {
@@ -94,12 +84,7 @@ describe('basic function', () => {
       const radios = wrapper.find('input[type="radio"]')
 
       expect(radios.at(2).props().checked).toBe(true)
-      expect(
-        radios
-          .at(2)
-          .parents('span')
-          .text(),
-      ).toBe('Range')
+      expect(radios.at(2).parents('span').text()).toBe('Range')
     })
   })
 
@@ -193,7 +178,9 @@ describe('basic function', () => {
     })
 
     it('should update from a range  slider control', () => {
-      const wrapperShallow = shallow(<RangeFacetFilter { ...{...props, facetResult: rangeFacetResult} } />)
+      const wrapperShallow = shallow(
+        <RangeFacetFilter {...{ ...props, facetResult: rangeFacetResult }} />,
+      )
       const slider = wrapperShallow.find('RangeSlider')
       slider.simulate('change', { min: '22', max: '23' })
       expect(mockCallback).toHaveBeenCalledWith(['22', '23'])
