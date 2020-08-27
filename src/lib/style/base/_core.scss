@@ -2,6 +2,20 @@
 // Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 // from // from SWC.scss and core.scss
+
+// Fix scrollbar not showing for some people when css set to scroll: auto
+// Ref: https://stackoverflow.com/questions/7492062/css-overflow-scroll-always-show-vertical-scroll-bar
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
 svg.SRC-hoverBox {
   &:hover {
     -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
@@ -767,6 +781,7 @@ div.SRC-userImg {
   padding: 10px 33px;
   max-height: 558px;
   overflow-y: auto;
+  background-color: #fff;
 }
 
 .SRC-emailText:hover {
@@ -1111,9 +1126,17 @@ hr ~ .SRC-wrapper {
   }
 }
 
-.homepage-background {
-  background-color: rgba(38, 153, 167, 0.03);
-  padding: 40px 0;
+.homepage-button-link {
+  border-radius: 24px;
+  padding: 10px 24px;
+  background-color: $primary-action-color;
+  color: #fff;
+  font-size: 16px;
+  display: inline-block;
+
+  &:link, &:visited, &:hover, &:active {
+    color: #fff;
+  }
 }
 
 #addAndRemoveColumns ~ div.dropdown-menu {

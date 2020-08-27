@@ -22,7 +22,9 @@ export type UpsetPlotProps = {
   combinationName?: string // instead of "Intersection Size"
   height?: number
   loadingScreen: JSX.Element
-  token?: string
+  summaryLinkText?: string  // text for home page link below chart
+  summaryLink?: string // url for home page link below chart  
+  token?: string  
 }
 
 export type UpsetPlotData = {
@@ -41,6 +43,8 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   combinationName,
   height = 700,
   loadingScreen,
+  summaryLinkText,
+  summaryLink,
   token,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -142,18 +146,30 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
                 width={size.width!}
                 height={height}
                 onHover={setSelection}
-                // onClick={gotoFilesRoute()}
+                // onClick={setSelection}
                 selection={selection}
-                color={colorPalette[1]}
+                color={colorPalette[0]}
                 selectionColor={colorPalette[0]}
-                hasSelectionOpacity={1.0}
+                hasSelectionOpacity={0.3}
                 // alternatingBackgroundColor={false}
-                setName={setName}
-                combinationName={combinationName}
+                setName={setName?.toUpperCase()}
+                combinationName={combinationName?.toUpperCase()}
                 fontFamily="Lato sans-serif"
                 fontSizes={updateFontSizes}
                 exportButtons={false}
+                notMemberColor="transparent"
+
               />
+              {summaryLink && summaryLinkText && (
+                <div className="UpsetPlot__summary">
+                  <p>
+                    <a className="homepage-button-link" href={summaryLink}>
+                      {summaryLinkText}
+                    </a>
+                  </p>
+                </div>      
+              )}
+
             </div>
           )}
         </SizeMe>
