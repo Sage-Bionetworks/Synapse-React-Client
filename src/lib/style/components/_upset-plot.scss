@@ -15,16 +15,10 @@
     stroke: #d3d3d3;
     stroke-width: 1;
   }
-  
-  // rotate axis label (so that it's vertical), and it move down by 12%
-  text[class^='cChartTextStyle-upset-'], text[class*=' cChartTextStyle-upset-']{
-    text-transform: uppercase;
-  }
-  
+    
   // rotate axis label (so that it's vertical), and it move down by 12%
   text[class^='sChartTextStyle-upset-'], text[class*=' sChartTextStyle-upset-']{
     transform: rotate(270deg) translateX(-12%);
-    text-transform: uppercase;
   }
   g[class^='interactive-upset-'], text[class*=' interactive-upset-']{
     &:hover {
