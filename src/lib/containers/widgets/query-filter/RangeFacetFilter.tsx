@@ -34,7 +34,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
 }: RangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const options = [
-    { label: 'Unannotated', value: RadioValuesEnum.NOT_SET },
+    { label: 'unannotated', value: RadioValuesEnum.NOT_SET },
     { label: 'Any', value: RadioValuesEnum.ANY },
     { label: 'Range', value: RadioValuesEnum.RANGE },
   ]
