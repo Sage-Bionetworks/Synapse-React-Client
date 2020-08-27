@@ -9,11 +9,22 @@ import {
 import { SynapseConstants } from '../../../utils'
 import { SynapseClientError, getFiles } from '../../../utils/SynapseClient'
 import { Error } from '../../Error'
-import QueryCount from '../../QueryCount'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
+import useShowDesktop from '../../../utils/hooks/useShowDesktop'
+import GoalsMobile from './Goals.Mobile'
+import GoalsDesktop from './Goals.Desktop'
 
 export type GoalsProps = {
   entityId: string
+  token?: string
+}
+
+export type GoalsDataProps = {
+  tableId: string
+  title: string
+  summary: string
+  link: string
+  asset: string
   token?: string
 }
 
@@ -40,6 +51,7 @@ export default function (props: GoalsProps) {
   const { entityId, token } = props
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
+  const showDesktop = useShowDesktop()
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -115,7 +127,7 @@ export default function (props: GoalsProps) {
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
   return (
-    <div className="Goals">
+    <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
       {error && <Error error={error} token={token} />}
       {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
         const values = el.values
@@ -125,34 +137,18 @@ export default function (props: GoalsProps) {
         const link = values[linkColumnIndex]
         // assume that we recieve assets in order of rows and there is an asset for each item
         // can revisit if this isn't the case.
-        const asset = assets?.[index]
-        return (
-          <div className="Goals__Card">
-            <div
-              className="Goals__Card__header"
-              style={{ background: `url('${asset}')` }}
-            >
-              <p>
-                <span className="Goals__Card__header__title"> {title} </span>
-                <span className="Goals__Card__header__count">
-                  <QueryCount
-                    parens={false}
-                    sql={`SELECT * FROM ${tableId}`}
-                    token={token}
-                    name=""
-                  />
-                </span>
-              </p>
-            </div>
-            <div className="Goals__Card__summary">
-              <p> {summary} </p>
-              <p>
-                <a className="Goals__Card__summary__link" href={link}>
-                  EXPLORE
-                </a>
-              </p>
-            </div>
-          </div>
+        const asset = assets?.[index] ?? ''
+        const goalsDataProps: GoalsDataProps = {
+          tableId,
+          title,
+          summary,
+          link,
+          asset,
+        }
+        return showDesktop ? (
+          <GoalsDesktop {...goalsDataProps} />
+        ) : (
+          <GoalsMobile {...goalsDataProps} />
         )
       })}
     </div>

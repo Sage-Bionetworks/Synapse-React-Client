@@ -14,11 +14,12 @@
   padding-left: 25px;
   padding-right: 25px;
 }
+$goals-border-color: #2699a7;
 
 .Goals {
-  @extend %space-between;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  &__Desktop {
+    @extend %space-between;
+  }
   p {
     margin: 0px;
   }
@@ -71,6 +72,41 @@
       @extend %space-between;
       flex-direction: column;
       &__link {
+        @extend %hv-center;
+        width: 120px;
+        height: 33px;
+        padding: 20px;
+        margin-top: 20px;
+        background: $primary-action-color;
+        border-radius: 24px;
+        color: white !important;
+      }
+    }
+  }
+  &__Mobile {
+    @extend %hv-center;
+    &__Header {
+      @extend %hv-center;
+      &__Count {
+        @extend %hv-center;
+        border: 1px solid $goals-border-color;
+        color: $goals-border-color;
+        border-radius: 50%;
+        min-height: 50px;
+        min-width: 50px;
+        padding: 3px;
+        margin-right: 5px;
+      }
+      &__Title {
+        font-weight: bold;
+        font-size: 18px;
+        margin-left: 5px;
+      }
+    }
+
+    &__Content {
+      padding: 10px;
+      &__Link {
         @extend %hv-center;
         width: 120px;
         height: 33px;
