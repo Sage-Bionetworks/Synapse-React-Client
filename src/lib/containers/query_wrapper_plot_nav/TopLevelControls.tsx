@@ -14,6 +14,7 @@ import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
 import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { DownloadOptions } from '../table/table-top'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
 
 library.add(faSearch)
 library.add(faFilter)
@@ -76,7 +77,6 @@ const TopLevelControls = (
   props: QueryWrapperChildProps & TopLevelControlsProps,
 ) => {
   const {
-    entityId,
     token,
     name,
     sql,
@@ -92,6 +92,7 @@ const TopLevelControls = (
     getLastQueryRequest,
     facetAliases,
   } = props
+  const entityId = parseEntityIdFromSqlStatement(sql)
   const [isFileView, setIsFileView] = useState(false)
 
   const setControlState = (control: keyof TopLevelControlsState) => {
@@ -142,7 +143,7 @@ const TopLevelControls = (
   return (
     <h3 className="QueryWrapperPlotNav__title">
       <div className="QueryWrapperPlotNav__querycount">
-        <QueryCount entityId={entityId} token={token} name={name} sql={sql} />
+        <QueryCount token={token} name={name} sql={sql} />
       </div>
       <div className="QueryWrapperPlotNav__actions">
         {customControls &&
@@ -204,7 +205,6 @@ const TopLevelControls = (
           <ColumnSelection
             headers={data?.selectColumns}
             isColumnSelected={isColumnSelected!}
-            show={topLevelControlsState?.showColumnSelectDropdown ?? false}
             toggleColumnSelection={toggleColumnSelection}
             darkTheme={true}
             facetAliases={facetAliases}

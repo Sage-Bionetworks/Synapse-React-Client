@@ -24,6 +24,9 @@ export type RssFeedProps = {
 
 const parser = new DOMParser()
 
+/**
+ * Deprecated, use RssFeedCards instead
+ */
 export default class RssFeed extends React.Component<RssFeedProps, RssState> {
   // only update the state if this component is mounted
   _isMounted = false

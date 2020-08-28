@@ -2,6 +2,20 @@
 // Synapse React Client (SRC) Core scss                     //
 //////////////////////////////////////////////////////////////
 // from // from SWC.scss and core.scss
+
+// Fix scrollbar not showing for some people when css set to scroll: auto
+// Ref: https://stackoverflow.com/questions/7492062/css-overflow-scroll-always-show-vertical-scroll-bar
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
 svg.SRC-hoverBox {
   &:hover {
     -webkit-filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
@@ -437,20 +451,6 @@ button.SRC-roundBorder {
   left: 0;
 }
 
-.SRC-menu-wall {
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-  position: fixed;
-  z-index: 900;
-  background: none;
-  border: none;
-  &:focus {
-    outline: none;
-  }
-}
 .dropdown:focus ul.dropdown-menu {
   display: block;
 }
@@ -781,6 +781,7 @@ div.SRC-userImg {
   padding: 10px 33px;
   max-height: 558px;
   overflow-y: auto;
+  background-color: #fff;
 }
 
 .SRC-emailText:hover {
@@ -1092,15 +1093,16 @@ hr ~ .SRC-wrapper {
   }
 }
 .SRC-rangeGrip {
-  width: 2px;
+  width: 3px;
 }
 
-.table>tbody>tr>td{
+.table > tbody > tr > td {
   vertical-align: middle;
   &.SRC-synapseTableTd {
     max-width: 250px;
     vertical-align: middle;
-    p { // all p children
+    p {
+      // all p children
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1109,4 +1111,61 @@ hr ~ .SRC-wrapper {
   }
 }
 
+.SignInButton {
+  padding: 0px;
+}
 
+.homepage-button {
+  border-radius: 24px;
+  background: #3C4A63;
+  text-transform: uppercase;
+  padding: 5px 34px;
+  color: white;
+  &:hover {
+    color: white;
+  }
+}
+
+.homepage-button-link {
+  border-radius: 24px;
+  padding: 10px 24px;
+  background-color: $primary-action-color;
+  color: #fff;
+  font-size: 16px;
+  display: inline-block;
+
+  &:link, &:visited, &:hover, &:active {
+    color: #fff;
+  }
+}
+
+#addAndRemoveColumns ~ div.dropdown-menu {
+  max-height: 300px;
+  overflow: auto;
+}
+
+// https://github.com/twbs/bootstrap/blob/c140347bd26851c79e76766ae381e91c159b3f48/scss/_modal.scss
+.modal-dialog-scrollable {
+  height: 100%;
+
+  .modal-content {
+    height: 90%;
+    overflow: hidden;
+  }
+
+  .modal-body {
+    height: 90%;
+    overflow-y: auto;
+    padding: 15px;
+    h4 {
+      margin: 0px;
+    }
+  }
+}
+
+.modal-dialog-centered {
+  margin-top: 0px;
+  display: flex;
+  align-items: center;
+  min-height: 90%;
+}

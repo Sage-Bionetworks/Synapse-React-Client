@@ -11,12 +11,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnModel, ColumnType } from '../utils/synapseTypes'
-import { Searchable } from './Search'
-import {
-  ColumnSingleValueQueryFilter,
-  QueryFilter,
-  ColumnSingleValueFilterOperator,
-} from 'lib/utils/synapseTypes/Table/QueryFilter'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -36,10 +30,14 @@ type SearchState = {
   columnName: string
 }
 
+export type SearchableV2 = {
+  columnName: string
+}[]
+
 export type SearchV2Props = {
   isQueryWrapperMenuChild?: boolean
   defaultColumn?: string
-  searchable?: Searchable
+  searchable?: SearchableV2
 }
 
 type InternalSearchProps = QueryWrapperChildProps & SearchV2Props
@@ -120,12 +118,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     event.preventDefault()
     const { searchText } = this.state
     let { columnName } = this.state
-    const { searchable } = this.props
     if (columnName === '') {
       // default to the first one, will always be defined
       columnName =
         this.props.data?.columnModels?.filter(el =>
-          this.isSupportedColumnAndInProps(el, searchable),
+          this.isSupportedColumnAndInProps(el),
         )?.[0].name ?? ''
     }
     this.setState({
@@ -175,11 +172,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     })
   }
 
-  public isSupportedColumnAndInProps = (
-    columnModel: ColumnModel,
-    searchable?: Searchable,
-  ) => {
-    switch (columnModel.columnType) {
+  public isSupportedColumnAndInProps = (columnModel?: ColumnModel) => {
+    switch (columnModel?.columnType) {
       case ColumnType.FILEHANDLEID:
       case ColumnType.ENTITYID:
       case ColumnType.DATE:
@@ -187,9 +181,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       case ColumnType.USERID:
         return false
       default:
-        if (searchable) {
-          return searchable.find(el => el.columnName === columnModel.name)
-        }
         return true
     }
   }
@@ -197,6 +188,22 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   render() {
     const { data, topLevelControlsState, facetAliases, searchable } = this.props
     const { searchText, show, columnName } = this.state
+    let searchColumns: string[] = []
+
+    // searchable specifies the order of the columns to search
+    if (searchable) {
+      searchColumns = searchable
+        .map(el =>
+          data?.columnModels?.find(model => model.name === el.columnName),
+        )
+        .filter(el => el)
+        .filter(this.isSupportedColumnAndInProps)
+        .map(el => el!.name)
+    } else if (data?.columnModels) {
+      searchColumns = data.columnModels
+        ?.filter(this.isSupportedColumnAndInProps)
+        .map(el => el.name)
+    }
 
     return (
       <div className="SearchV2">
@@ -262,34 +269,31 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
               <p className="deemphasized">
                 <i> Search In Field: </i>
               </p>
-              {data?.columnModels
-                ?.filter(el => this.isSupportedColumnAndInProps(el, searchable))
-                .map((el, index) => {
-                  const name = el.name
-                  const displayName = unCamelCase(el.name, facetAliases)
-                  const isSelected =
-                    (columnName === '' && index === 0) || columnName === name
-                  return (
-                    <div className="radio">
-                      <label>
-                        <span>
-                          <input
-                            id={name}
-                            type="radio"
-                            value={name}
-                            checked={isSelected}
-                            onClick={() => {
-                              this.setState({
-                                columnName: name,
-                              })
-                            }}
-                          />
-                          <span>{displayName}</span>
-                        </span>
-                      </label>
-                    </div>
-                  )
-                })}
+              {searchColumns.map((name, index) => {
+                const displayName = unCamelCase(name, facetAliases)
+                const isSelected =
+                  (columnName === '' && index === 0) || columnName === name
+                return (
+                  <div className="radio">
+                    <label>
+                      <span>
+                        <input
+                          id={name}
+                          type="radio"
+                          value={name}
+                          checked={isSelected}
+                          onClick={() => {
+                            this.setState({
+                              columnName: name,
+                            })
+                          }}
+                        />
+                        <span>{displayName}</span>
+                      </span>
+                    </label>
+                  </div>
+                )
+              })}
             </form>
           </CSSTransition>
         </div>

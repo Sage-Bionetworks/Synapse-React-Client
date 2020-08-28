@@ -36,6 +36,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
     queryResultBundle,
     queryBundleRequest,
     token,
+    darkTheme = true,
   } = props
 
   return (
@@ -46,7 +47,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           tooltipText={'Download Options'}
           image={faDownload}
           size="lg"
-          darkTheme={true}
+          darkTheme={darkTheme}
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
@@ -57,7 +58,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
               setShowExportMetadata(true)
             }}
           >
-            Export Metadata
+            Export Table
           </Dropdown.Item>
           {props.isFileView && (
             <Dropdown.Item

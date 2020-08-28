@@ -1,6 +1,6 @@
 import * as React from 'react'
 import _ from 'lodash-es'
-import { Engine } from 'json-rules-engine'
+import { Engine, EngineResult } from 'json-rules-engine'
 import {
   default as Form,
   UiSchema,
@@ -14,7 +14,6 @@ import {
   NavActionEnum,
   StatusEnum,
   FormSchema,
-  RulesResult,
   IRulesValidationEvent,
   IRulesNavigationEvent,
 } from './types'
@@ -253,7 +252,7 @@ export default class SynapseForm extends React.Component<
     const engine = new Engine(currentStep.rules)
 
     try {
-      const result: RulesResult = await engine.run(formData)
+      const result: EngineResult = await engine.run(formData)
       if (result.events.length > 0) {
         return (result.events[0] as IRulesNavigationEvent).params.next
       } else {
@@ -723,7 +722,7 @@ export default class SynapseForm extends React.Component<
     })
 
     try {
-      const result: RulesResult = await engine.run(data)
+      const result: EngineResult = await engine.run(data)
       const validationEvents = result.events as IRulesValidationEvent[]
       validationEvents.forEach(event => {
         const err: AjvError = {

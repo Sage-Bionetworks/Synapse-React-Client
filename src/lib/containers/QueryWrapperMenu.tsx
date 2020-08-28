@@ -14,6 +14,7 @@ import { StackedBarChartProps } from './StackedBarChart'
 import {
   isGroupByInSql,
   insertConditionsFromSearchParams,
+  parseEntityIdFromSqlStatement,
 } from '../utils/functions/sqlFunctions'
 import {
   FacetColumnValuesRequest,
@@ -74,7 +75,6 @@ export type QueryWrapperMenuProps = {
   accordionConfig?: AccordionConfig[]
   isConsistent?: boolean
   token?: string
-  entityId: string
   rgbIndex: number
   searchParams?: MenuSearchParams
   name?: string
@@ -227,7 +227,6 @@ export default class QueryWrapperMenu extends React.Component<
       menuConfig,
       token,
       globalQueryCountSql = '',
-      entityId,
     } = this.props
     const { activeMenuIndices } = this.state
 
@@ -247,12 +246,7 @@ export default class QueryWrapperMenu extends React.Component<
       <React.Fragment>
         {name && sql && !hasGroupByInSql && (
           <h3 id="exploreCount" className="SRC-boldText">
-            <QueryCount
-              entityId={entityId}
-              token={token}
-              name={name}
-              sql={sql}
-            />
+            <QueryCount token={token} name={name} sql={sql} />
           </h3>
         )}
         {hasGroupByInSql && (
@@ -291,7 +285,6 @@ export default class QueryWrapperMenu extends React.Component<
       searchParams,
       accordionConfig = [],
       facetAliases = {},
-      entityId,
       shouldDeepLink,
     } = this.props
     const {
@@ -359,7 +352,7 @@ export default class QueryWrapperMenu extends React.Component<
       const initQueryRequest: QueryBundleRequest = {
         partMask,
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId,
+        entityId: parseEntityIdFromSqlStatement(sql),
         query: {
           sql,
           selectedFacets,

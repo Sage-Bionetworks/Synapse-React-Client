@@ -10,11 +10,11 @@ import {
   FileHandle,
   RestrictableObjectType,
   RestrictionInformationRequest,
+  ExternalFileHandleConcreteTypeEnum,
 } from 'lib/utils/synapseTypes/'
 import * as React from 'react'
 import HasAccess, {
   FileHandleDownloadTypeEnum,
-  ExternalFileHandleConcreteTypeEnum,
   GIGABYTE_SIZE,
   GoogleCloudFileHandleEnum,
   HasAccessProps,

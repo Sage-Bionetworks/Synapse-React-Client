@@ -4,6 +4,10 @@ import { FacetColumnValuesRequest } from '../synapseTypes/'
 import { SELECT_SINGLE_FACET } from '../../containers/Facets'
 import { FacetColumnResultValueCount } from '../synapseTypes/'
 
+/*
+  TODO: This code is deprecated, delete once stackedbarchart.tsx and facets.tsx are no longer used
+*/
+
 /**
  *  Calculates the state of a specific facet value given the current state
  *  of the application.

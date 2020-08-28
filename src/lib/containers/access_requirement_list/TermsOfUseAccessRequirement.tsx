@@ -14,6 +14,7 @@ export default function TermsOfUseAccessRequirementComponent({
   user,
   onHide,
   accessRequirementStatus,
+  entityId,
 }: AccessRequirementProps<TermsOfUseAccessRequirement>) {
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -39,7 +40,7 @@ export default function TermsOfUseAccessRequirementComponent({
   }, [token, accessRequirement])
 
   return (
-    <div>
+    <>
       {isLoading && <span className="spinner" />}
       <AcceptedRequirements
         user={user}
@@ -48,7 +49,8 @@ export default function TermsOfUseAccessRequirementComponent({
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}
         onHide={onHide}
+        entityId={entityId}
       />
-    </div>
+    </>
   )
 }

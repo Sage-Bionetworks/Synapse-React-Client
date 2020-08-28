@@ -1,4 +1,3 @@
-import * as PlotlyTyped from 'plotly.js'
 export type GraphItem = {
   x: number
   y: string
@@ -31,6 +30,7 @@ export type PlotProps = {
 }
 
 export type ClickCallbackParams = {
-  facetValue: string | number | Date | PlotlyTyped.Datum[] | null
-  type: string | number | Date | PlotlyTyped.Datum[] | null
+  event: MouseEvent
+  facetValue: string
+  type: string
 }

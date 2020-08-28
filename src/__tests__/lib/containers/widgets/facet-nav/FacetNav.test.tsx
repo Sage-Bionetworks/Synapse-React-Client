@@ -129,7 +129,7 @@ describe('facets display hide/show', () => {
   it("should only show specified facets if 'facetsToPlot' are set", async () => {
     init({
       ...props,
-      facetsToPlot: ['Make', 'Color'],
+      facetsToPlot: ['Make', 'Model'],
     })
 
     expect(container.querySelector('.FacetNav__row')!.children.length).toBe(2)

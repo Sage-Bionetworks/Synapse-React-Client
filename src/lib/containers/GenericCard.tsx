@@ -9,7 +9,9 @@ import {
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
-import { SelectColumn, ColumnModel } from '../utils/synapseTypes'
+import { SelectColumn, ColumnModel, ColumnType } from '../utils/synapseTypes'
+import { SynapseConstants } from '../utils'
+import { FileHandleLink } from './widgets/FileHandleLink'
 
 export type KeyToAlias = {
   key: string
@@ -46,6 +48,8 @@ export type GenericCardProps = {
   schema: any
   data: any
   token?: string
+  tableEntityConcreteType: string | undefined
+  tableId: string | undefined
 } & CommonCardProps
 
 export type GenericCardState = {
@@ -58,7 +62,7 @@ export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
 
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second slash in the regex above
-export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/
+export const DOI_REGEX = /^10.\d{4,9}\/[-._;()/:a-z0-9]+$/i
 // check for 'syn' followed and ended by a digit of unlimited length, must also begin the line
 export const SYNAPSE_REGX = /^syn\d+$/
 
@@ -197,25 +201,28 @@ export default class GenericCard extends React.Component<
     this.state = {
       hasClickedShowMore: false,
     }
-    this.renderTitleLink = this.renderTitleLink.bind(this)
+    this.getTitleParams = this.getTitleParams.bind(this)
     this.renderLongDescription = this.renderLongDescription.bind(this)
     this.renderShortDescription = this.renderShortDescription.bind(this)
   }
 
-  public renderTitleLink(
+  public getTitleParams(
     link: string,
-    titleLink?: CardLink,
-    data?: string[],
-    schema?: any,
-  ) {
-    let linkDisplay = link
+    titleLink: CardLink | undefined,
+    data: string[] | undefined,
+    schema: any | undefined,
+  ): {
+    href: string
+    target: string
+  } {
+    let href = link
     let target = '_self'
     if (link.match(SYNAPSE_REGX)) {
       // its a synId
-      linkDisplay = `https://www.synapse.org/#!Synapse:${link}`
+      href = `https://www.synapse.org/#!Synapse:${link}`
     } else if (link.match(DOI_REGEX)) {
       target = '_blank'
-      linkDisplay = `https://dx.doi.org/${link}`
+      href = `https://dx.doi.org/${link}`
     } else if (!titleLink) {
       target = '_blank'
     } else if (titleLink) {
@@ -230,10 +237,10 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        linkDisplay = `/${titleLink.baseURL}?${URLColumnName}=${value}`
+        href = `/${titleLink.baseURL}?${URLColumnName}=${value}`
       }
     }
-    return { linkDisplay, target }
+    return { href, target }
   }
 
   getCutoff = (summary: string) => {
@@ -255,6 +262,33 @@ export default class GenericCard extends React.Component<
     })
   }
 
+  renderTitle = ({
+    href,
+    target,
+    titleSearchHandle,
+    title,
+  }: {
+    target: string
+    titleSearchHandle: string | undefined
+    title: string
+    href: string
+  }) => {
+    if (href) {
+      return (
+        <a
+          data-search-handle={titleSearchHandle}
+          className="SRC-primary-text-color"
+          target={target}
+          href={href}
+        >
+          {title}
+        </a>
+      )
+    } else {
+      return <span data-search-handle={titleSearchHandle}> {title} </span>
+    }
+  }
+
   render() {
     const {
       schema,
@@ -271,6 +305,9 @@ export default class GenericCard extends React.Component<
       facetAliases = {},
       descriptionLinkConfig,
       rgbIndex,
+      tableId,
+      tableEntityConcreteType,
+      token,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -292,9 +329,13 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
+    const titleColumnModel = columnModels?.find(
+      el => genericCardSchemaDefined.link === el.name,
+    )
+    const titleColumnType = titleColumnModel?.columnType
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { linkDisplay, target } = this.renderTitleLink(
+    const { href, target } = this.getTitleParams(
       linkValue,
       titleLinkConfig,
       data,
@@ -345,7 +386,7 @@ export default class GenericCard extends React.Component<
           iconValue={iconValue}
           iconOptions={iconOptions}
           values={values}
-          linkDisplay={linkDisplay}
+          href={href}
           target={target}
           isAlignToLeftNav={true}
           secondaryLabelLimit={secondaryLabelLimit}
@@ -366,6 +407,7 @@ export default class GenericCard extends React.Component<
       genericCardSchemaDefined.description,
       facetAliases,
     )
+
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className="SRC-cardThumbnail">
@@ -378,17 +420,24 @@ export default class GenericCard extends React.Component<
               className="SRC-boldText SRC-blackText"
               style={{ margin: 'none' }}
             >
-              {linkDisplay ? (
-                <a
-                  data-search-handle={titleSearchHandle}
-                  className="SRC-primary-text-color"
-                  target={target}
-                  href={linkDisplay}
-                >
-                  {title}
-                </a>
+              {!titleLinkConfig &&
+              titleColumnType === ColumnType.FILEHANDLEID ? (
+                <FileHandleLink
+                  token={token}
+                  fileHandleId={linkValue}
+                  tableEntityConcreteType={tableEntityConcreteType}
+                  showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
+                  rowId={data![schema.id]}
+                  tableId={tableId}
+                  displayValue={title}
+                />
               ) : (
-                <span data-search-handle={titleSearchHandle}> {title} </span>
+                this.renderTitle({
+                  href,
+                  target,
+                  titleSearchHandle,
+                  title,
+                })
               )}
             </h3>
           </div>

@@ -76,14 +76,13 @@ const patchRequestFacets = (
   return selections
 }
 
-export const applyChangesToValuesColumn = (
+export function applyChangesToValuesColumn(
   lastRequest: QueryBundleRequest | undefined,
-
   facet: FacetColumnResultValues,
   onChangeFn: Function,
   facetName?: string,
   checked: boolean = false,
-) => {
+) {
   if (facetName) {
     facet.facetValues.forEach(facetValue => {
       if (facetValue.value === facetName) {
@@ -107,17 +106,18 @@ export const applyMultipleChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
   onChangeFn: Function,
-  facetNameMap?: {}
+  facetNameMap?: {},
 ) => {
-  const facetNames = facetNameMap && Object.keys(facetNameMap) || []
+  const facetNames = (facetNameMap && Object.keys(facetNameMap)) || []
   if (facetNames.length) {
     facet.facetValues.forEach(facetValue => {
       if (facetNames.includes(facetValue.value)) {
-        facetValue.isSelected = facetNameMap ? facetNameMap[facetValue.value] : false
+        facetValue.isSelected = facetNameMap
+          ? facetNameMap[facetValue.value]
+          : false
       }
     })
   }
-
   const changedFacet = convertFacetToFacetColumnValuesRequest(facet)
   const result = patchRequestFacets(changedFacet, lastRequest)
   onChangeFn(result)
@@ -155,6 +155,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   const applyChanges = (facets: FacetColumnRequest[]) => {
     const queryRequest: QueryBundleRequest = getLastQueryRequest!()
     queryRequest.query.selectedFacets = facets
+    queryRequest.query.offset = 0
     executeQueryRequest!(queryRequest)
   }
 
@@ -171,6 +172,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             <div className="QueryFilter__facet" key={facet.columnName}>
               {facet.facetType === 'enumeration' && columnModel && (
                 <EnumFacetFilter
+                  containerAs="Collapsible"
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
                   token={token}
@@ -180,7 +182,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                       lastRequest,
                       facet as FacetColumnResultValues,
                       applyChanges,
-                      facetNamesMap
+                      facetNamesMap,
                     )
                   }
                   onClear={() =>

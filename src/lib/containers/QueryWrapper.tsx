@@ -10,6 +10,7 @@ import {
   QueryResultBundle,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
+import { SynapseClientError } from '../utils/SynapseClient'
 export type QueryWrapperProps = {
   visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
@@ -52,6 +53,7 @@ export type QueryWrapperState = {
   isLoading: boolean // occurs when state changes
   lastQueryRequest: QueryBundleRequest
   hasMoreData: boolean
+  // TODO: Delete lastFacetSelection once StackedBarChart.tsx/Facets.tsx are deleted
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
@@ -60,6 +62,7 @@ export type QueryWrapperState = {
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected: string[]
   selectedRowIndices?: number[]
+  error: SynapseClientError | undefined
 }
 
 export type FacetSelection = {
@@ -96,6 +99,7 @@ export type QueryWrapperChildProps = {
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected?: string[]
   selectedRowIndices?: number[]
+  error?: SynapseClientError | undefined
 }
 
 /**
@@ -142,6 +146,7 @@ export default class QueryWrapper extends React.Component<
       },
       isColumnSelected: [],
       selectedRowIndices: [],
+      error: undefined,
     }
     this.componentIndex = props.componentIndex || 0
   }
@@ -246,13 +251,16 @@ export default class QueryWrapper extends React.Component<
         const newState = {
           hasMoreData,
           data,
-          isLoading: false,
           asyncJobStatus: undefined,
         }
         this.setState(newState)
       })
-      .catch((err: string) => {
-        console.log('Failed to get data ', err)
+      .catch(error => {
+        console.error('Failed to get data ', error)
+        this.setState(error)
+      })
+      .finally(() => {
+        this.setState({ isLoading: false, isLoadingNewData: false })
       })
   }
 
@@ -348,8 +356,11 @@ export default class QueryWrapper extends React.Component<
         }
         this.setState(newState)
       })
-      .catch(err => {
-        console.log('Failed to get data ', err)
+      .catch(error => {
+        console.error('Failed to get data ', error)
+        this.setState({
+          error,
+        })
       })
       .finally(() => {
         this.setState({
@@ -388,6 +399,7 @@ export default class QueryWrapper extends React.Component<
         topLevelControlsState: this.state.topLevelControlsState,
         isColumnSelected: this.state.isColumnSelected,
         selectedRowIndices: this.state.selectedRowIndices,
+        error: this.state.error,
         executeInitialQueryRequest: this.executeInitialQueryRequest,
         executeQueryRequest: this.executeQueryRequest,
         getLastQueryRequest: this.getLastQueryRequest,

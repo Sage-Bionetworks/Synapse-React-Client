@@ -31,7 +31,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
    */
   constructor(props: any) {
     super(props)
-    const sql: string = 'SELECT * FROM syn11346063'
+    const sql: string = 'SELECT assay, id FROM syn11346063 limit 1000'
     this.state = {
       isLoading: true,
       ownerId: '',
@@ -46,15 +46,12 @@ class QueryWrapperPlotNavDemo extends React.Component<
           searchable: [
             {
               columnName: 'assay',
-              hintText: 'RNASeq',
             },
             {
               columnName: 'name',
-              hintText: 'SynOdos',
             },
             {
               columnName: 'consortium',
-              hintText: 'amp-ad',
             },
           ],
         },
@@ -64,7 +61,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        entityId: 'syn11346063',
         // facetsToPlot: ['assay', 'dataType'],
         loadingScreen: (
           <div>
@@ -77,7 +73,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        entityId: 'syn11346063',
         cardConfiguration: {
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: {
@@ -97,7 +92,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql: 'select * from syn22084217',
-        entityId: 'syn22084217',
         loadingScreen: (
           <div>
             <div className="spinner"> </div>Im loading as fast I can !!!{' '}
@@ -118,7 +112,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
               )
               // collect all selected rows (create PartialRow objects)
               const rowUpdates: PartialRow[] = []
-              const rows: Row[] = event.data?.queryResult.queryResults!.rows
+              const rows: Row[] = event.data?.queryResult.queryResults!.rows!
               for (
                 let index = 0;
                 index < event.selectedRowIndices!.length;
@@ -177,6 +171,20 @@ class QueryWrapperPlotNavDemo extends React.Component<
 
   public removeHandler(): void {
     this.setState({ showMarkdown: !this.state.showMarkdown })
+  }
+
+  componentDidMount() {
+    const log = (ev: any) => {
+      if (ev.target instanceof HTMLButtonElement) {
+        const buttonElement = ev.target as HTMLButtonElement
+        if (
+          buttonElement.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)
+        ) {
+          console.log('testing sign in button event captured')
+        }
+      }
+    }
+    window.document.addEventListener('click', log)
   }
 
   public render(): JSX.Element {

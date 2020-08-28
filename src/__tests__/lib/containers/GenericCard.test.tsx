@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import CardContainer from '../../../lib/containers/CardContainer'
 import * as GenericCardPackage from '../../../lib/containers/GenericCard'
 import GenericCard, {
   GenericCardProps,
@@ -14,11 +13,16 @@ import {
   MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import { SelectColumn, EntityColumnType } from 'lib/utils/synapseTypes'
+import {
+  SelectColumn,
+  EntityColumnType,
+  ColumnType,
+} from 'lib/utils/synapseTypes'
+import { FileHandleLink } from 'lib/containers/widgets/FileHandleLink'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
-  const instance = wrapper.instance() as CardContainer
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
@@ -40,7 +44,7 @@ describe('it renders the UI correctly', () => {
   }
   const genericCardSchema: GenericCardSchema = {
     ...commonProps,
-    secondaryLabels: [labelOneColumnName, 'labelTwo', 'labelThree'],
+    secondaryLabels: [labelOneColumnName, 'labelTwo'],
   }
   const genericCardSchemaHeader: GenericCardSchema = {
     ...commonProps,
@@ -53,7 +57,7 @@ describe('it renders the UI correctly', () => {
     labelOne: 4,
     labelTwo: 5,
     link: 6,
-    labelThree: 7,
+    id: 7,
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -63,6 +67,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_LABELONE = 'MOCKED_LABELONE'
   const MOCKED_LABELTWO = 'MOCKED_LABELONE'
   const MOCKED_LINK = 'MOCKED_LINK'
+  const MOCKED_ID = 'MOCKED_ID'
 
   const data = [
     MOCKED_TITLE,
@@ -72,6 +77,7 @@ describe('it renders the UI correctly', () => {
     MOCKED_LABELONE,
     MOCKED_LABELTWO,
     MOCKED_LINK,
+    MOCKED_ID,
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
@@ -79,6 +85,10 @@ describe('it renders the UI correctly', () => {
     genericCardSchema,
     schema,
     secondaryLabelLimit: 3,
+    selectColumns: [],
+    columnModels: [],
+    tableEntityConcreteType: '',
+    tableId: '',
   }
 
   const propsForHeaderMode: GenericCardProps = {
@@ -88,6 +98,10 @@ describe('it renders the UI correctly', () => {
     genericCardSchema: genericCardSchemaHeader,
     backgroundColor: 'purple',
     isHeader: true,
+    selectColumns: [],
+    columnModels: [],
+    tableEntityConcreteType: '',
+    tableId: '',
   }
 
   it('renders without crashing in non header mode', () => {
@@ -123,26 +137,90 @@ describe('it renders the UI correctly', () => {
       commonProps.title,
     )
   })
+
+  describe('Renders a FileHandleLin when the title is a file handle ', () => {
+    const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
+    const tableId = 'TABLE_ID_MOCK'
+    const columnModelWithFileHandleTitle = [
+      {
+        columnType: FILE_HANDLE_COLUMN_TYPE,
+        id: 'MOCKID',
+        name: 'link',
+      },
+    ]
+
+    it('Renders a FileHandleLink with an EntityView associate type', () => {
+      const tableEntityConcreteType = 'EntityView'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        tableEntityConcreteType,
+        columnModels: columnModelWithFileHandleTitle,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(FileHandleLink)).toHaveLength(1)
+      expect(wrapper.find(FileHandleLink).props()).toEqual({
+        token: undefined,
+        fileHandleId: MOCKED_LINK,
+        showDownloadIcon: true,
+        tableEntityConcreteType,
+        rowId: MOCKED_ID,
+        tableId,
+        displayValue: MOCKED_TITLE,
+      })
+    })
+
+    it('Renders a FileHandleLink with a table associate type', () => {
+      const tableEntityConcreteType = 'Table'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        tableEntityConcreteType,
+        columnModels: columnModelWithFileHandleTitle,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(FileHandleLink)).toHaveLength(1)
+      expect(wrapper.find(FileHandleLink).props()).toEqual({
+        token: undefined,
+        fileHandleId: MOCKED_LINK,
+        showDownloadIcon: true,
+        tableEntityConcreteType,
+        rowId: MOCKED_ID,
+        tableId,
+        displayValue: MOCKED_TITLE,
+      })
+    })
+  })
 })
 
 describe('it makes the correct URL for the title', () => {
-  const createTitleLink = GenericCard.prototype.renderTitleLink
+  const getTitleParams = GenericCard.prototype.getTitleParams
   const SELF = '_self'
   const BLANK = '_blank'
 
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { linkDisplay, target } = createTitleLink(synId)
-    expect(linkDisplay).toEqual(synLink)
+    const { href, target } = getTitleParams(
+      synId,
+      undefined,
+      undefined,
+      undefined,
+    )
+    expect(href).toEqual(synLink)
     expect(target).toEqual(SELF)
   })
 
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { linkDisplay, target } = createTitleLink(doi)
-    expect(linkDisplay).toEqual(doiLink)
+    const { href, target } = getTitleParams(
+      doi,
+      undefined,
+      undefined,
+      undefined,
+    )
+    expect(href).toEqual(doiLink)
     expect(target).toEqual(BLANK)
   })
 
@@ -161,13 +239,8 @@ describe('it makes the correct URL for the title', () => {
       URLColumnName,
     }
     const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-    const { linkDisplay, target } = createTitleLink(
-      '',
-      titleLinkConfig,
-      data,
-      schema,
-    )
-    expect(linkDisplay).toEqual(expectedLink)
+    const { href, target } = getTitleParams('', titleLinkConfig, data, schema)
+    expect(href).toEqual(expectedLink)
     expect(target).toEqual(SELF)
   })
 })

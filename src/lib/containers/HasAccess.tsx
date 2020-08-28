@@ -22,12 +22,14 @@ import {
   RestrictionLevel,
   FileEntity,
   AccessRequirement,
+  implementsExternalFileHandleInterface,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import AccessRequirementList, {
   checkHasUnsportedRequirement,
   AccessRequirementListProps,
 } from './access_requirement_list/AccessRequirementList'
+import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -51,12 +53,7 @@ type HasAccessState = {
   accessRequirements?: Array<AccessRequirement>
   isGettingRestrictionInformation: boolean
   isGettingEntityInformation: boolean
-}
-
-export enum ExternalFileHandleConcreteTypeEnum {
-  ProxyFileHandle = 'org.sagebionetworks.repo.model.file.ProxyFileHandle',
-  ExternalObjectStoreFileHandle = 'org.sagebionetworks.repo.model.file.ExternalObjectStoreFileHandle',
-  ExternalFileHandle = 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+  errorOnGetRestrictionInformation: boolean
 }
 
 export enum GoogleCloudFileHandleEnum {
@@ -93,10 +90,7 @@ export const getDownloadTypeForFileHandle = (
     return FileHandleDownloadTypeEnum.ExternalCloudFile
   }
   // check if it's an external file handle
-  const isExternalFileHandle = Object.values<string>(
-    ExternalFileHandleConcreteTypeEnum,
-  ).includes(concreteType)
-  if (isExternalFileHandle) {
+  if (implementsExternalFileHandleInterface(fileHandle)) {
     return FileHandleDownloadTypeEnum.ExternalFileLink
   }
   // otherwise its available
@@ -147,6 +141,7 @@ export default class HasAccess extends React.Component<
       accessRequirements: [],
       isGettingEntityInformation: false,
       isGettingRestrictionInformation: false,
+      errorOnGetRestrictionInformation: false,
     }
   }
 
@@ -163,7 +158,8 @@ export default class HasAccess extends React.Component<
   refresh = (forceRefresh?: boolean) => {
     if (
       this.state.isGettingEntityInformation ||
-      this.state.isGettingRestrictionInformation
+      this.state.isGettingRestrictionInformation ||
+      this.state.errorOnGetRestrictionInformation
     ) {
       return
     }
@@ -236,7 +232,10 @@ export default class HasAccess extends React.Component<
         }
       })
       .catch(err => {
-        console.error('Error on get Entity = ', err)
+        // this could be a self-imposed error or one from the backend, only log the latter
+        if (err.reason) {
+          console.error('Error on get Entity = ', err)
+        }
         // could not get entity
         this.updateStateFileHandleAccessBlocked()
         this.setState({
@@ -264,7 +263,13 @@ export default class HasAccess extends React.Component<
         })
       })
       .catch(err => {
-        console.error('Error on getRestrictionInformation: ', err)
+        console.error(
+          'Error on getRestrictionInformation. This should not happen: ',
+          err,
+        )
+        this.setState({
+          errorOnGetRestrictionInformation: true,
+        })
       })
       .finally(() => {
         this.setState({
@@ -428,13 +433,46 @@ export default class HasAccess extends React.Component<
     const entityId = this.props.entityId
     const icon = this.renderIcon(fileHandleDownloadType, restrictionInformation)
     const viewARsLink: React.ReactElement = this.renderARsLink()
+    const iconContainer =
+      fileHandleDownloadType ===
+      FileHandleDownloadTypeEnum.AccessBlockedToAnonymous ? (
+        <button
+          type="button"
+          className={SRC_SIGN_IN_CLASS}
+          onClick={ev => {
+            if (ev.isTrusted) {
+              /*
+                There is a tricky problem - 
+                The portals listens to click events for buttons with the class SRC_SIGN_IN_CLASS set, it listens to this event
+                so that it can display the login modal.
+
+                This button has an svg inside of it which is problematic because more often than not clicking this button will 
+                instead click that svg. The event listener in the portals will break as a result.
+
+                Though the svg may get the actual click event, because of event bubbling this button will get its onClick called.
+                Once onClick is called we can manually dispatch an event off of this button. This does pose a problem, we end up in a 
+                infinite loop because this button keeps disptaching click events, so we can use the isTrusted to recognize if onClick was
+                triggered programmatically or by user click. Lastly, using { bubbles: true } ensures the event bubbles up to the document level.
+
+              */
+              const clickEvent = new MouseEvent('click', { bubbles: true })
+              ev.currentTarget.dispatchEvent(clickEvent)
+            }
+          }}
+        >
+          {icon}
+        </button>
+      ) : (
+        <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
+          {icon}
+        </span>
+      )
+
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         {tooltipText && (
           <>
-            <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
-              {icon}
-            </span>
+            {iconContainer}
             <ReactTooltip
               delayShow={TOOLTIP_DELAY_SHOW}
               place="top"

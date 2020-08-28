@@ -55,6 +55,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     )}: ${innerText}`
   } else {
     innerText = `"${filter?.value}" in ${unCamelCase(filter?.columnName)}`
+    tooltipText = `${unCamelCase(filter?.columnName)}: ${filter?.value}`
   }
   return (
     <ElementWithTooltip

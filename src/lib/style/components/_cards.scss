@@ -184,6 +184,16 @@ $text-color-lighter: #898989;
     }
     .SRC-cardAction {
       margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
+      a {
+        display: inline-flex;
+        background: $primary-action-color;
+        padding: 5px 20px;
+        justify-content: center;
+        align-items: center;
+        border-radius: 20px;
+        height: 40px;
+        color: white;
+      }
     }
   }
 
@@ -241,6 +251,7 @@ img.iconImg.SRC-datasetIcon {
   h3 {
     margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
     color: white;
+    line-height: 125%;
     padding: 0;
     font-size: $text-size-title !important;
     a {
@@ -292,4 +303,9 @@ img.iconImg.SRC-datasetIcon {
       }
     }
   }
+}
+
+.SRC-viewMore {
+  display: flex;
+  justify-content: flex-end;
 }

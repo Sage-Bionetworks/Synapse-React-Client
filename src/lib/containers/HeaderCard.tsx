@@ -20,7 +20,7 @@ export type HeaderCardProps = {
   values?: string[][]
   isAlignToLeftNav?: boolean
   descriptionLinkConfig?: MarkdownValue
-  linkDisplay?: string
+  href?: string
   target?: string
 }
 
@@ -36,7 +36,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   secondaryLabelLimit,
   isAlignToLeftNav,
   descriptionLinkConfig,
-  linkDisplay,
+  href,
   target,
   rgbIndex,
 }) => {
@@ -101,8 +101,8 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                 className="SRC-boldText SRC-blackText"
                 style={{ margin: 'none' }}
               >
-                {linkDisplay ? (
-                  <a target={target} href={linkDisplay}>
+                {href ? (
+                  <a target={target} href={href}>
                     {title}
                   </a>
                 ) : (

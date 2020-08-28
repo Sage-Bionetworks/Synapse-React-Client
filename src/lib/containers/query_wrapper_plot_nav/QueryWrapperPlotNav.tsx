@@ -5,10 +5,12 @@ import { SynapseTableProps } from '../table/SynapseTable'
 import {
   insertConditionsFromSearchParams,
   SQLOperator,
+  parseEntityIdFromSqlStatement,
 } from '../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../utils/'
 import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
+import { Error } from '../Error'
 import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
@@ -17,7 +19,6 @@ import { DownloadConfirmation } from '../download_list'
 
 type OwnProps = {
   sql: string
-  entityId: string
   shouldDeepLink?: boolean
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
@@ -29,7 +30,7 @@ type OwnProps = {
   facetAliases?: {}
   hideDownload?: boolean
   defaultColumn?: string
-} & TopLevelControlsProps
+} & Omit<TopLevelControlsProps, 'entityId'>
 
 type SearchParams = {
   searchParams?: {
@@ -51,7 +52,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     sqlOperator,
     tableConfiguration,
     loadingScreen,
-    entityId,
     name,
     cardConfiguration,
     facetsToPlot,
@@ -69,6 +69,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
       )
     }
   }
+  const entityId = parseEntityIdFromSqlStatement(sqlUsed)
   const initQueryRequest: QueryBundleRequest = {
     entityId,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -94,6 +95,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           hideDownload={hideDownload}
         />
         <SearchV2 {...searchConfiguration} />
+        <Error />
         <DownloadConfirmation />
         <FacetNav
           facetsToPlot={facetsToPlot}

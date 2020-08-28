@@ -1,9 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 import { EntityLink } from 'lib/containers/EntityLink'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import { ColumnSelection } from 'lib/containers/table/table-top'
-import FacetFilter from 'lib/containers/table/table-top/FacetFilter'
+import {
+  ColumnSelection,
+  EllipsisDropdown,
+  ExpandTable,
+} from 'lib/containers/table/table-top'
+import { EnumFacetFilter } from 'lib/containers/widgets/query-filter/EnumFacetFilter'
 import UserCard from 'lib/containers/UserCard'
 import { unCamelCase } from 'lib/utils/functions/unCamelCase'
 import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
@@ -31,11 +35,14 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
+import { act } from '@testing-library/react'
+import HasAccess from 'lib/containers/HasAccess'
+import ModalDownload from 'lib/containers/ModalDownload'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
 ) => {
-  const wrapper = shallow<SynapseTable>(<SynapseTable {...props} />, {disableLifecycleMethods: true})
+  const wrapper = mount<SynapseTable>(<SynapseTable {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -114,6 +121,16 @@ describe('basic functionality', () => {
     expect(wrapper).toBeDefined()
   })
 
+  it('Does not renders HasAccess when the entity type is not EntityView', async () => {
+    const { wrapper, instance } = createShallowComponent({
+      ...props,
+      showAccessColumn: true,
+    })
+    expect(wrapper).toBeDefined()
+    expect(instance.state.isFileView).toEqual(false)
+    expect(wrapper.find(HasAccess)).toHaveLength(0)
+  })
+
   it('updates correctly', async () => {
     const mockEntityCall = jest.fn().mockResolvedValue({
       concreteType: 'EntityView',
@@ -126,7 +143,7 @@ describe('basic functionality', () => {
     const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
     dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
     // listen to function call
-    
+
     await wrapper.setProps({
       data: dataWithNewTableId,
     })
@@ -152,22 +169,86 @@ describe('basic functionality', () => {
     })
   })
 
-  describe('Dropdown column menu works', () => {
+  describe('Dropdown column menu works when opened from the icon or ellipsis dreopdown', () => {
     it('renders with the correct props', async () => {
       const { wrapper } = createShallowComponent(props)
       expect(wrapper.find(ColumnSelection).props().headers).toEqual(
         syn16787123Json.queryResult.queryResults.headers,
       )
     })
+    it('opens from primary icon', () => {
+      const { wrapper } = createShallowComponent(props)
+      const columnSelection = wrapper.find(ColumnSelection)
+      expect(columnSelection.props().show).toEqual(false)
+      // click the dropdown menu open
+      act(() => {
+        columnSelection.find('button').simulate('click')
+      })
+      // see that the column selection is now open
+      expect(wrapper.update().find(ColumnSelection).props().show).toEqual(true)
+    })
+    it('opens from clicking the ellipsis dropdown menu', () => {
+      const { wrapper } = createShallowComponent(props)
+      const columnSelection = wrapper.find(ColumnSelection)
+      expect(columnSelection.props().show).toEqual(false)
+      const ellipsisDropdown = wrapper.find(EllipsisDropdown)
+      // click the dropdown menu open
+      act(() => {
+        ellipsisDropdown.find('button').simulate('click')
+      })
+      // click the column selection button
+      act(() => {
+        ellipsisDropdown.update().find('a').at(1).simulate('click')
+      })
+      // see that the column selection is now open
+      expect(wrapper.update().find(ColumnSelection).props().show).toEqual(true)
+    })
   })
-  describe('Expand modal opens when isExpanded is set to true', () => {
-    it('works', async () => {
-      const { wrapper } = await createShallowComponent(props)
+  describe('Expand modal opens from ExpandTable and the EllipsisDropdown', () => {
+    it('opens when clicking the expand icon', () => {
+      const { wrapper } = createShallowComponent(props)
       // No modal to start
       expect(wrapper.find(Modal)).toHaveLength(0)
-      await wrapper.setState({ isExpanded: true })
+      const expandTable = wrapper.find(ExpandTable)
+      act(() => {
+        expandTable.find('button').simulate('click')
+      })
       // Modal is open now
-      expect(wrapper.find(Modal)).toHaveLength(1)
+      expect(wrapper.update().find(Modal)).toHaveLength(1)
+    })
+    it('opens when clicking the ellipsis dropdown menu', () => {
+      const { wrapper } = createShallowComponent(props)
+      // No modal to start
+      expect(wrapper.find(Modal)).toHaveLength(0)
+      const ellipsisDropdown = wrapper.find(EllipsisDropdown)
+      // click the dropdown menu open
+      act(() => {
+        ellipsisDropdown.find('button').simulate('click')
+      })
+      // click the full screen button
+      act(() => {
+        ellipsisDropdown.update().find('a').at(2).simulate('click')
+      })
+      // Modal is open now
+      expect(wrapper.update().find(Modal)).toHaveLength(1)
+    })
+  })
+  describe('Export table works', () => {
+    it('works', () => {
+      const { wrapper } = createShallowComponent(props)
+      // No modal to start
+      expect(wrapper.find(ModalDownload)).toHaveLength(0)
+      const ellipsisDropdown = wrapper.find(EllipsisDropdown)
+      // click the dropdown menu open
+      act(() => {
+        ellipsisDropdown.find('button').simulate('click')
+      })
+      // click the downlaod table only button
+      act(() => {
+        ellipsisDropdown.update().find('a').at(0).simulate('click')
+      })
+      // Modal is open now
+      expect(wrapper.update().find(ModalDownload)).toHaveLength(1)
     })
   })
   describe('PORTALS-527: aggregate query support (show underlying data)', () => {
@@ -254,7 +335,7 @@ describe('basic functionality', () => {
       expect(wrapper.find('th')).toHaveLength(totalColumns)
       // there are five facets for the dataset so there should be 5
       // faceted columns
-      expect(wrapper.find(FacetFilter)).toHaveLength(5)
+      expect(wrapper.find(EnumFacetFilter)).toHaveLength(5)
       expect(wrapper.find('th.SRC-hidden')).toHaveLength(8)
     })
 

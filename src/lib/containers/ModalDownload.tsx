@@ -137,12 +137,7 @@ export default class ModalDownload extends React.Component<
       backgroundSize: 50,
     }
     return (
-      <Modal
-        animation={false}
-        centered={true}
-        show={true}
-        onHide={this.props.onClose}
-      >
+      <Modal animation={false} show={true} onHide={this.props.onClose}>
         <Modal.Header>
           <button style={closeBtn} onClick={this.props.onClose}>
             <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />

@@ -14,13 +14,13 @@ import {
   faCompressAlt,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
-import FacetFilter from '../../table/table-top/FacetFilter'
 
 import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnResultValueCount,
   ColumnType,
+  QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import getColorPallette from '../../../containers/ColorGradient'
 
@@ -31,17 +31,24 @@ import {
 } from '../../../utils/functions/getDataFromFromStorage'
 import { useEffect, useState } from 'react'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
+import {
+  applyMultipleChangesToValuesColumn,
+  applyChangesToValuesColumn,
+} from '../query-filter/QueryFilter'
 
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetNavPanelOwnProps = {
-  applyChanges: Function
+  applyChangesToGraphSlice: Function
+  applyChangesToFacetFilter: Function
   index: number
   loadingScreen?: React.FunctionComponent | JSX.Element
   facetToPlot: FacetColumnResultValues
   onHide: Function
   onExpand?: Function
   onCollapse?: Function
+  lastQueryRequest: QueryBundleRequest | undefined
 }
 
 const maxLabelLength: number = 19
@@ -99,7 +106,6 @@ function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
-  facetAliases: {} | undefined,
 ) {
   const { colorPalette } = getColorPallette(
     index,
@@ -229,26 +235,18 @@ const applyFacetFilter = (
   }
 }
 
-const applyDropdownFilter = (
-  evt: React.ChangeEvent<HTMLInputElement>,
-  allFacetValues: FacetColumnResultValues,
-  callbackApplyFn: Function,
-) => {
-  if (evt.target.value) {
-    const facetValueClicked = allFacetValues.facetValues.find(
-      facet => facet.value === evt.target.value,
-    )
-    callbackApplyFn(allFacetValues, facetValueClicked, evt.target.checked)
-  }
-}
-
 const getPlotStyle = (
   parentWidth: number | null,
   plotType: PlotType,
+  maxHeight: number,
 ): { width: string; height: string } => {
   const quotient = plotType === 'BAR' ? 0.8 : 0.6
   const width = parentWidth ? parentWidth * quotient : 200
-  const height = plotType === 'PIE' ? width : width / 3
+  let height = plotType === 'PIE' ? width : width / 3
+  // max height of .FacetNav row col* is 200px, so the effective plot height max is around 150 unless it's expanded
+  if (height > maxHeight) {
+    height = maxHeight
+  }
 
   return {
     width: `${width}px`,
@@ -321,7 +319,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   onHide,
   onExpand,
   onCollapse,
-  applyChanges,
+  applyChangesToFacetFilter,
+  applyChangesToGraphSlice,
   isLoadingNewData,
   loadingScreen,
   index,
@@ -329,6 +328,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   data,
   isLoading,
   facetAliases,
+  token,
+  lastQueryRequest,
 }: FacetNavPanelProps): JSX.Element => {
   const [plotData, setPlotData] = useState<GraphData>()
   const [isExpanded, setIsExpanded] = useState(false)
@@ -348,7 +349,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'PIE',
-        facetAliases,
       )
       setPlotData(plotData)
     }
@@ -361,23 +361,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const changePlotType = (plotType: PlotType) => {
     if (plotType === 'BAR') {
       setPlotData(
-        extractPlotDataArray(
-          facetToPlot,
-          getColumnType(),
-          index,
-          'BAR',
-          facetAliases,
-        ),
+        extractPlotDataArray(facetToPlot, getColumnType(), index, 'BAR'),
       )
     } else {
       setPlotData(
-        extractPlotDataArray(
-          facetToPlot,
-          getColumnType(),
-          index,
-          'PIE',
-          facetAliases,
-        ),
+        extractPlotDataArray(facetToPlot, getColumnType(), index, 'PIE'),
       )
     }
     setPlotType(plotType)
@@ -386,16 +374,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   /* rendering functions */
   const renderChartSelectionToggle = (): JSX.Element => (
     <Dropdown>
-      <Dropdown.Toggle variant="light" id="plot-selector">
-        <ElementWithTooltip
-          idForToolTip="toggleChart"
-          tooltipText="Toggle chart type"
-          key="toggleChart"
-          image={faChartBar}
-          className="SRC-primary-color"
-          darkTheme={true}
-        />
-      </Dropdown.Toggle>
+      <ElementWithTooltip
+        idForToolTip="toggleChart"
+        tooltipText="Toggle chart type"
+        key="toggleChart"
+        image={faChartBar}
+        className="SRC-primary-color"
+        darkTheme={true}
+      />
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
           Bar Chart
@@ -405,25 +391,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
-  )
-
-  const renderFacetFilter = (): JSX.Element => (
-    <FacetFilter
-      lastFacetSelection={{
-        columnName: '',
-        facetValue: '',
-        selector: '',
-      }}
-      isLoading={!!isLoading}
-      className=""
-      colorOnExpanded="#000"
-      applyChanges={(_: any) => (evt: React.ChangeEvent<HTMLInputElement>) =>
-        applyDropdownFilter(evt, facetToPlot, applyChanges)}
-      isAllFilterSelectedForFacet={
-        facetToPlot.facetValues.filter(item => item.isSelected).length === 0
-      }
-      facetColumnResult={facetToPlot}
-    />
   )
 
   if (isLoadingNewData || !facetToPlot) {
@@ -444,9 +411,32 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
           )}
           <div className="FacetNavPanel__title__tools">
             {isExpanded && renderChartSelectionToggle()}
-
-            {renderFacetFilter()}
-
+            <EnumFacetFilter
+              facetValues={facetToPlot.facetValues}
+              columnModel={
+                data?.columnModels!.find(
+                  el => el.name === facetToPlot.columnName,
+                )!
+              }
+              token={token}
+              facetAliases={facetAliases}
+              onChange={(facetNamesMap: {}) => {
+                applyMultipleChangesToValuesColumn(
+                  lastQueryRequest,
+                  facetToPlot,
+                  applyChangesToFacetFilter,
+                  facetNamesMap,
+                )
+              }}
+              onClear={() => {
+                applyChangesToValuesColumn(
+                  lastQueryRequest,
+                  facetToPlot,
+                  applyChangesToFacetFilter,
+                )
+              }}
+              containerAs="Dropdown"
+            />
             {!isExpanded && (
               <ElementWithTooltip
                 idForToolTip="expandGraph"
@@ -458,7 +448,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 darkTheme={true}
               />
             )}
-
             {isExpanded && (
               <ElementWithTooltip
                 idForToolTip="collapseGraph"
@@ -470,7 +459,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 darkTheme={true}
               />
             )}
-
             <ElementWithTooltip
               idForToolTip="hideGraph"
               tooltipText="Hide graph under Show More"
@@ -488,13 +476,13 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
             {({ size }) => (
               <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
                 <Plot
+                  key={`${facetToPlot.columnName}-${size.width}`}
                   layout={layout}
                   data={plotData?.data ?? []}
-                  style={getPlotStyle(size.width, plotType)}
-                  config={{ displayModeBar: false, responsive: true }}
-                  useResizeHandler={true}
+                  style={getPlotStyle(size.width, plotType, isExpanded ? 300 : 150)}
+                  config={{ displayModeBar: false}}
                   onClick={evt =>
-                    applyFacetFilter(evt, facetToPlot, applyChanges)
+                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
                   }
                 ></Plot>
               </div>

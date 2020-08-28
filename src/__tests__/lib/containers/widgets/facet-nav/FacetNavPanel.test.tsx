@@ -1,12 +1,12 @@
 import * as React from 'react'
 import FacetNavPanel, {
-  FacetNavPanelOwnProps, truncate
+  FacetNavPanelOwnProps,
+  truncate,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
-import { render} from '@testing-library/react'
-import {
-
-  FacetColumnResultValues,
-} from 'lib/utils/synapseTypes'
+import { render } from '@testing-library/react'
+import { FacetColumnResultValues } from 'lib/utils/synapseTypes'
+import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
+import { FacetNavProps } from 'lib/containers/widgets/facet-nav/FacetNav'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -27,16 +27,18 @@ const stringFacetValues: FacetColumnResultValues = {
   ],
 }
 
-function createTestProps(overrides?: FacetNavPanelOwnProps): FacetNavPanelOwnProps {
+function createTestProps(overrides?: FacetNavPanelOwnProps): FacetNavProps {
   return {
-    applyChanges: mockApplyCallback,
+    applyChangesToGraphSlice: mockApplyCallback,
+    applyChangesToFacetFilter: mockApplyCallback,
     index: 1,
     loadingScreen: <div className="loading"></div>,
     facetToPlot: stringFacetValues,
     onHide: mockHideCallback,
     onExpand: mockExpandCallback,
-
     ...overrides,
+    // @ts-ignore
+    data: testData,
   }
 }
 
@@ -52,51 +54,49 @@ beforeEach(() => init())
 
 describe('initialization', () => {
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
-    const panel = container.querySelectorAll<HTMLElement>(
-      'div.FacetNavPanel',
-    )
+    const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
     expect(panel).toHaveLength(1)
 
-    const buttons =  container.querySelectorAll<HTMLElement>('button > svg')
+    const buttons = container.querySelectorAll<HTMLElement>('button > svg')
     expect(buttons.length).toBe(3)
-    expect((buttons[0].getAttribute('data-icon'))).toBe('filter')
-    expect((buttons[1].getAttribute('data-icon'))).toBe('expand-alt')
-    expect((buttons[2].getAttribute('data-icon'))).toBe('times')
+    expect(buttons[0].getAttribute('data-icon')).toBe('filter')
+    expect(buttons[1].getAttribute('data-icon')).toBe('expand-alt')
+    expect(buttons[2].getAttribute('data-icon')).toBe('times')
 
     const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
     expect(panelBody.length).toBe(1)
-    const panelBody2= container.querySelectorAll('div.FacetNavPanel__body--expanded')
+    const panelBody2 = container.querySelectorAll(
+      'div.FacetNavPanel__body--expanded',
+    )
     expect(panelBody2.length).toBe(0)
-
   })
 
-
   it('should initiate the panel with correct buttons and clases when expanded', async () => {
-      //when expanded the onCollapse callback is passed but onExpand is not
-      init({
-        ...props,
-        onCollapse: mockExpandCallback,
-        onExpand: undefined
-      })
+    //when expanded the onCollapse callback is passed but onExpand is not
+    init({
+      ...props,
+      onCollapse: mockExpandCallback,
+      onExpand: undefined,
+    })
     const panel = container.querySelectorAll<HTMLElement>(
       'div.FacetNavPanel--expanded',
     )
     expect(panel).toHaveLength(1)
 
-    const buttons =  container.querySelectorAll<HTMLElement>('button > svg')
+    const buttons = container.querySelectorAll<HTMLElement>('button > svg')
     expect(buttons.length).toBe(4)
-    expect((buttons[0].getAttribute('data-icon'))).toBe('chart-bar')
-    expect((buttons[1].getAttribute('data-icon'))).toBe('filter')
-    expect((buttons[2].getAttribute('data-icon'))).toBe('compress-alt')
-    expect((buttons[3].getAttribute('data-icon'))).toBe('times')
+    expect(buttons[0].getAttribute('data-icon')).toBe('chart-bar')
+    expect(buttons[1].getAttribute('data-icon')).toBe('filter')
+    expect(buttons[2].getAttribute('data-icon')).toBe('compress-alt')
+    expect(buttons[3].getAttribute('data-icon')).toBe('times')
 
     const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
     expect(panelBody.length).toBe(0)
-    const panelBody2= container.querySelectorAll('div.FacetNavPanel__body--expanded')
+    const panelBody2 = container.querySelectorAll(
+      'div.FacetNavPanel__body--expanded',
+    )
     expect(panelBody2.length).toBe(1)
-
   })
-
 
   it('should truncate values', async () => {
     expect(truncate(undefined, 10)).toEqual(undefined)

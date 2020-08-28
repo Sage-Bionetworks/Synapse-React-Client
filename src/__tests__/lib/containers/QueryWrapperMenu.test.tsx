@@ -39,7 +39,6 @@ describe('it renders with basic functionality', () => {
   const props: QueryWrapperMenuProps = {
     token,
     name,
-    entityId: synapseId,
     menuConfig: [{ sql, facet }],
     rgbIndex: 3,
     stackedBarChartConfiguration: {
@@ -57,7 +56,6 @@ describe('it renders with basic functionality', () => {
       token,
       name,
       rgbIndex: 3,
-      entityId: synapseId,
       tableConfiguration: {
         title: 'title',
       },
@@ -79,7 +77,6 @@ describe('it renders with basic functionality', () => {
       token,
       name,
       rgbIndex: 3,
-      entityId: synapseId,
       cardConfiguration: {
         type: SynapseConstants.STUDY,
       },
@@ -146,7 +143,6 @@ describe('it renders an accordion config', () => {
     secondaryLabels: ['labelOne', 'labelTwo'],
   }
   const props: QueryWrapperMenuProps = {
-    entityId: 'syn5604373',
     accordionConfig: [
       {
         name: 'Computational',
@@ -326,7 +322,6 @@ describe('it renders with search correctly configured ', () => {
     secondaryLabels: ['labelOne', 'labelTwo'],
   }
   const props: QueryWrapperMenuProps = {
-    entityId: 'syn5604373',
     accordionConfig: [
       {
         name: 'Computational',

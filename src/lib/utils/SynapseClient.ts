@@ -68,6 +68,7 @@ import {
   TransformSqlWithFacetsRequest,
   SqlTransformResponse,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
+import { SynapseConstants } from '.'
 
 const cookies = new UniversalCookies()
 
@@ -108,29 +109,25 @@ type SynapseError = {
   reason: string
 }
 
-const retryFetch = <T>(
-  url: RequestInfo,
-  options: RequestInit,
-  delayMs: number,
-) => {
-  return delay(delayMs).then(() => {
-    return fetchWithExponentialTimeout<T>(url, options, delayMs * 2)
-  })
+export type SynapseClientError = {
+  reason: string
+  status: number
 }
 
-// remove parseJson, combine ok and not okay response, except for 0 and 429..., make sure string responses got through
+/*
+  0 - no internet connection
+  429 - too many concurrent requests
+  500>= - any status code of 500 or more is a server side error
+*/
+const RETRY_STATUS_CODES = [0, 429, 500, 502, 503, 504]
+
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
   options: RequestInit,
   delayMs: number = 1000,
-  retries: number = 5,
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
-      if ((retries > 0 && resp.status === 429) || resp.status === 0) {
-        // TOO_MANY_REQUESTS_STATUS_CODE, or network connection is down.  Retry after a couple of seconds.
-        return retryFetch<T>(url, options, delayMs)
-      }
       return resp
         .text()
         .then(text => {
@@ -166,15 +163,13 @@ const fetchWithExponentialTimeout = <T>(
         })
     })
     .catch(error => {
-      if (
-        retries === 0 ||
-        (error.status && error.status !== 429 && error.status !== 0)
-      ) {
-        // If there is an error response and the error is nether a throttled response
-        // or disconnected network
+      if (error.status && RETRY_STATUS_CODES.indexOf(error.status) !== -1) {
+        return delay(delayMs).then(() => {
+          return fetchWithExponentialTimeout<T>(url, options, delayMs * 2)
+        })
+      } else {
         return Promise.reject(error)
       }
-      return retryFetch(url, options, delayMs)
     })
 }
 
@@ -375,7 +370,35 @@ export const getFileHandleById = (
 }
 
 /**
+ * http://rest-docs.synapse.org/rest/GET/file/id.html
+ * Get the actual URL of the file from with an associated object .
+ * @return a short lived presignedURL to be redirected with
+ **/
+export const getActualFileHandleByIdURL = (
+  handleId: string,
+  sessionToken: string | undefined = undefined,
+  fileAssociateType: FileHandleAssociateType,
+  fileAssociateId: string,
+  redirect: boolean = true,
+) => {
+  // get the presigned URL for this file handle and open it in a new tab
+  doGet<string>(
+    `/file/v1/file/${handleId}?fileAssociateType=${fileAssociateType}&fileAssociateId=${fileAssociateId}&redirect=${redirect}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then(url => {
+      window.open(url, '_blank')
+    })
+    .catch(err => {
+      console.error('Error on retrieving file handle url ', err)
+    })
+}
+
+/**
  * https://docs.synapse.org/rest/GET/fileHandle/handleId/url.html
+ * Note: Only the user that created the FileHandle can use this method for download.
  * @return a short lived presignedURL to be redirected with
  **/
 export const getFileHandleByIdURL = (
@@ -476,7 +499,7 @@ export const getQueryTableResults = (
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
   sessionToken: string | undefined = undefined,
-  maxPageSize: number = 2500,
+  initMaxPageSize: number = 2500,
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -484,23 +507,28 @@ export const getFullQueryTableResults = async (
   const { query, ...rest } = queryBundleRequest
   const queryRequest: QueryBundleRequest = {
     ...rest,
-    query: { ...query, limit: maxPageSize, offset: offset },
+    query: { ...query, limit: initMaxPageSize, offset: offset },
+    partMask: queryBundleRequest.partMask | SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE
   }
   let response = await getQueryTableResults(queryRequest, sessionToken)
   data = response
-  //we are done if we return less than a pagesize
-  let isDone = response.queryResult.queryResults.rows.length < maxPageSize
-
+  // we are done if we return less than a pagesize.
+  // however, if the initMaxPageSize provided by the caller is larger than the maxRowsPerPage that the backend is willing to return for this Table/View,
+  // then the first page length will be less than the initMaxPageSize but we should keep going.
+  let isDone = response.queryResult.queryResults.rows.length < initMaxPageSize && initMaxPageSize <= data.maxRowsPerPage!
+  offset += response.queryResult.queryResults.rows.length
+  queryRequest.query.limit = data.maxRowsPerPage // set the limit to the actual max rows per page
+  
   while (!isDone) {
-    offset += maxPageSize
     queryRequest.query.offset = offset
+    // update the maxPageSize to the largest possible value after the first page is complete.  This is a no-op after the second page.
+    
     let response = await getQueryTableResults(queryRequest, sessionToken)
-
     data.queryResult.queryResults.rows.push(
       ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
     )
-
-    isDone = response.queryResult.queryResults.rows.length < maxPageSize
+    isDone = response.queryResult.queryResults.rows.length < queryRequest.query.limit!
+    offset += response.queryResult.queryResults.rows.length
   }
   return data
 }
@@ -871,7 +899,7 @@ function getObjectTypeToString(key: ObjectType) {
 export const getEntityWiki = (
   sessionToken: string | undefined,
   ownerId: string | undefined,
-  wikiId: string | undefined,
+  wikiId: string | undefined = '',
   objectType: ObjectType = ObjectType.ENTITY,
 ) => {
   const objectTypeString = getObjectTypeToString(objectType!)
