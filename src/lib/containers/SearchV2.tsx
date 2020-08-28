@@ -11,6 +11,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnModel, ColumnType } from '../utils/synapseTypes'
+import {
+  ColumnSingleValueQueryFilter,
+  ColumnSingleValueFilterOperator,
+  QueryFilter,
+} from '../utils/synapseTypes/Table/QueryFilter'
 
 library.add(faCaretDown)
 library.add(faCaretUp)

@@ -18,15 +18,15 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { cloneDeep } from 'lodash-es'
 import SelectionCriteriaPill, {
   FacetWithSelection,
-} from '../containers/widgets/facet-nav/SelectionCriteriaPill'
+} from './widgets/facet-nav/SelectionCriteriaPill'
 import {
   applyChangesToValuesColumn,
   applyChangesToRangeColumn,
-} from '../containers/widgets/query-filter/QueryFilter'
-import { RadioValuesEnum } from '../containers/widgets/query-filter/RangeFacetFilter'
+} from './widgets/query-filter/QueryFilter'
+import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps } from './QueryWrapper'
-import { ColumnSingleValueFilterOperator } from 'lib/utils/synapseTypes/Table/QueryFilter'
+import { ColumnSingleValueFilterOperator } from '../utils/synapseTypes/Table/QueryFilter'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
