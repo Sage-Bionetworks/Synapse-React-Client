@@ -108,7 +108,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                         const allowCategories = this.props.allowCategories
                         if (allowCategories.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
                           return <></>
-                        else
+                        // else
                         return <a 
                           href={`${this.state.rssFeed.link}/?tag=${categoryName.replace(' ', '-')}`}
                           className="SRC-no-underline-on-hover"
