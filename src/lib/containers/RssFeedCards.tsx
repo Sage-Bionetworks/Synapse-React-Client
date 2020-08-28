@@ -4,8 +4,6 @@ import moment from 'moment'
 import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 
-// max number of "tags" to be shown per post
-const MAX_CATEGORIES = 3
 let rssParser = new Parser()
 type RssState = {
   rssFeed: any
@@ -16,7 +14,8 @@ type RssState = {
 
 export type RssFeedCardsProps = {
   url: string
-  itemsToShow: number  
+  itemsToShow: number
+  allowCategories: string[]
   mailChimpListName?: string
   mailChimpUrl?: string
 }
@@ -103,12 +102,20 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                 >
                   <div>
                     <div className="RssFeedItemCategories">
-                    {item['categories'].map((categoryName: any, index: any) => {
-                      if (index >= MAX_CATEGORIES)
-                        return <></>
-                      // else
-                      return <div key={`${item.guid}_${categoryName}`} className="RssFeedItemCategory">{categoryName}</div>
-                    })}
+                      {item['categories'].map((categoryName: any,) => {
+                        // are we allowed to show this category/tag?
+                        const categoryNameLowerCase = categoryName.toLowerCase()
+                        const allowCategories = this.props.allowCategories
+                        if (allowCategories.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
+                          return <></>
+                        else
+                        return <a 
+                          href={`${this.state.rssFeed.link}/?tag=${categoryName.replace(' ', '-')}`}
+                          className="SRC-no-underline-on-hover"
+                          target="_blank" rel="noopener noreferrer">
+                            <div key={`${item.guid}_${categoryName}`} className="RssFeedItemCategory">{categoryName}</div>
+                        </a>
+                      })}
                     </div>
                     <p className="RssFeedItemDate">
                       {moment(item['isoDate']).format('MMMM YYYY')}
