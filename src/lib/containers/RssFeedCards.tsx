@@ -102,7 +102,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                 >
                   <div>
                     <div className="RssFeedItemCategories">
-                      {item['categories'].map((categoryName: any,) => {
+                      {item['categories'].map((categoryName: string,) => {
                         // are we allowed to show this category/tag?
                         const categoryNameLowerCase = categoryName.toLowerCase()
                         const allowCategories = this.props.allowCategories
