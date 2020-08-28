@@ -5,6 +5,7 @@ export const NewsFeedDemo:React.SFC = () => {
   // in the portal, search params should be filled in based on URL query parameters.
   return (
     <RssFeedCards
+      // url='http://padknowdev.wpengine.com/?feed=rss2'
       url='https://portalnewsdev.wpengine.com/?feed=rss2'
       itemsToShow={3}
       mailChimpListName='AMP-AD quarterly newsletter'
