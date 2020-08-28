@@ -4,6 +4,8 @@ import moment from 'moment'
 import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 
+// max number of "tags" to be shown per post
+const MAX_CATEGORIES = 3
 let rssParser = new Parser()
 type RssState = {
   rssFeed: any
@@ -18,7 +20,6 @@ export type RssFeedCardsProps = {
   mailChimpListName?: string
   mailChimpUrl?: string
 }
-const parser = new DOMParser()
 export default class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
   // only update the state if this component is mounted
   _isMounted = false
@@ -61,8 +62,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
 
   render() {
     return (
-      <>
-        <h3 className="RssFeedWhatsNew text-center">What's New?</h3>
+      <>        
         {this.props.mailChimpUrl && (
           <div className="RssFeedSubscribe text-center">
             {!this.state.isShowingSubscribeUI && (
@@ -93,26 +93,6 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
           {this.state.rssFeed.items &&
             this.state.rssFeed.items.map((item: any, index: any) => {
               // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-              let parsedHtml = parser.parseFromString(
-                item['content:encoded'],
-                'text/html',
-              )
-              let bodyElement = parsedHtml.querySelector('body')
-              let moreElement = parsedHtml.querySelector('[id^="more-"]')
-              if (moreElement && bodyElement) {
-                let foundMoreElement = false
-                const children = bodyElement.children
-                
-                for (let i = 0; i < children.length; i++) {
-                  let child = children[i]
-                  if (foundMoreElement) {
-                    child.innerHTML=''
-                  }
-                  if (child === moreElement) {
-                    foundMoreElement = true
-                  }
-                }
-              }
               let isItemVisible: boolean =
                 index < this.props.itemsToShow
 
@@ -124,6 +104,9 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                   <div>
                     <div className="RssFeedItemCategories">
                     {item['categories'].map((categoryName: any, index: any) => {
+                      if (index >= MAX_CATEGORIES)
+                        return <></>
+                      // else
                       return <div key={`${item.guid}_${categoryName}`} className="RssFeedItemCategory">{categoryName}</div>
                     })}
                     </div>
@@ -132,7 +115,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                     </p>
                     <p className="RssFeedItemTitle">{item['title']}</p>
                     <div className="RssFeedItemDescription"
-                    >{parsedHtml.documentElement.innerText}</div>
+                    >{item['contentSnippet'].replace(/\[...\]|\[…\]/gm, '…')}</div>
                     <a className="RssFeedItemLink" href={item['link']} target="_blank">Continue reading</a>
                   </div>
                 </div>

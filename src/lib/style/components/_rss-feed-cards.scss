@@ -40,7 +40,7 @@
     flex-wrap: wrap;
     justify-content: center;
     .RssFeedItem {
-      max-width: 385px;
+      max-width: 340px;
       border: 1px solid #DDDDDF;
       padding: 20px;
       margin: 10px;
@@ -78,11 +78,10 @@
       .RssFeedItemDescription {
         overflow: hidden;
         text-overflow: ellipsis;
-        height: 100px;
         color: #515359;
+        margin-bottom: 10px;
       }
       .RssFeedItemLink {
-  
       }
     }
 
