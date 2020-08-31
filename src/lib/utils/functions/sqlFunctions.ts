@@ -35,7 +35,8 @@ const generateTokenUsingOperator = (
         ['OPERATOR', operator, '1'],
         ['STRING', `%${usedMatchForLike}%`, '1'],
       ]
-    case '=':
+    default:
+      // default use operator as-is
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
@@ -52,7 +53,7 @@ export const insertConditionsFromSearchParams = (
   operator: SQLOperator = 'LIKE',
 ) => {
   // if there are no search params, or if all search params are QueryWrapper queries
-  const isQueryWrapperKey = (key:string) => key.startsWith('QueryWrapper')
+  const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
   let searchParamKeys = Object.keys(searchParams)
   if (searchParamKeys.length == 0 || searchParamKeys.every(isQueryWrapperKey)) {
     return sql
@@ -85,17 +86,46 @@ export const insertConditionsFromSearchParams = (
 }
 
 export const formatSQLFromParser = (tokens: string[][]) => {
-  // remove backtick from output sql (for table name): `syn1234` becomes syn1234
-  const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
   // replace all DBLSTRINGs (escaped strings) with LITERALs
-  tokens.forEach((value) => {
+  tokens.forEach(value => {
     if (value[0] == 'DBLSTRING') {
       value[0] = 'LITERAL'
     }
   })
-  const newSql = parser.parse(tokens).toString()
-  const splitString = `\`${synId}\``
-  return newSql.split(splitString).join(synId)
+  // if synId has a DOT (e.g. 'syn123.2') then we have to alter the sql produced
+  const dotIndex = tokens.findIndex(val => val[0] === 'DOT')
+  if (dotIndex !== -1) {
+    // Given sql with a versioned entity, e.g. "select * from syn123.2"
+    // Tokens has the form:
+    /*
+    [
+      ["SELECT" , "select"],
+      ..
+      ["FROM", "from"],
+      ["LITERAL", "syn123"],
+      ["DOT", "."],
+      ["LITERAL", "2"],
+
+      which we need to transform to
+
+      ["SELECT" , "select"],
+      ..
+      ["FROM", "from"],
+      ["LITERAL", "syn123.2"],
+    */
+
+    const synId = tokens[dotIndex - 1][1]
+    const version = tokens[dotIndex + 1][1]
+    const synIdWithVersion = `${synId}.${version}`
+    tokens.splice(dotIndex, 2)
+    tokens[dotIndex - 1] = ['LITERAL', synIdWithVersion]
+  }
+  const newSql = parser.parse(tokens).toString() as string
+  // construct the sql using their formatter and then alter it to remove erroneous
+  // backticks from the table identifier: e.g. (their output) `syn1234` ->  (our output) syn1234
+  const synId = tokens[tokens.findIndex(el => el[0] === 'FROM') + 1][1]
+  const synIdWithBackticks = `\`${synId}\``
+  return newSql.replace(synIdWithBackticks, synId)
 }
 
 //parses synapse entity id from a sql query string
