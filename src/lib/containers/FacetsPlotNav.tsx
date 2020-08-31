@@ -300,7 +300,7 @@ export default class FacetsPlotNav extends React.Component<
           singlePieChartData.values.push(facetValue.count)
           const displayValue =
             facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-              ? 'unannotated'
+              ? 'Unannotated'
               : facetValue.value
 
           singlePieChartData.labels.push(displayValue)
