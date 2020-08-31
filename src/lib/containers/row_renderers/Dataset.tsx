@@ -2,11 +2,15 @@ import * as React from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
+import { renderValueOrMultiValue } from '../GenericCard'
+import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
 
 type DatasetProps = {
   data?: any
   schema?: any
   secondaryLabelLimit?: number
+  selectColumns?: SelectColumn[]
+  columnModels?: ColumnModel[]
 }
 
 class Dataset extends React.Component<DatasetProps, {}> {
@@ -23,17 +27,35 @@ class Dataset extends React.Component<DatasetProps, {}> {
   }
 
   public render() {
-    const { data, schema } = this.props
+    const { data, schema, selectColumns, columnModels } = this.props
     const datasetName = data[schema.datasetName]
     const summary = data[schema.summary]
-    const tumorType = data[schema.tumorType]
-    const diseaseFocus = data[schema.diseaseFocus]
+    const tumorType = renderValueOrMultiValue({
+      columnName: 'tumorType',
+      value: data[schema.tumorType],
+      selectColumns,
+      columnModels,
+    }).str
+    const diseaseFocus = renderValueOrMultiValue({
+      columnName: 'diseaseFocus',
+      value: data[schema.diseaseFocus],
+      selectColumns,
+      columnModels,
+    }).str
     const id = data[schema.id]
     const fundingAgency = data[schema.fundingAgency]
     const fileCount = data[schema.fileCount]
     const fileSize = calculateFriendlyFileSize(data[schema.fileSize])
     const values = [
-      ['FUNDER', fundingAgency],
+      [
+        'FUNDER',
+        renderValueOrMultiValue({
+          columnName: 'fundingAgency',
+          value: fundingAgency,
+          selectColumns,
+          columnModels,
+        }).str,
+      ],
       ['SIZE', fileSize],
       ['FILES', fileCount],
     ]

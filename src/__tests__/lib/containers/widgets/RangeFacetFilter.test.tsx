@@ -72,11 +72,11 @@ describe('basic function', () => {
       expect(radios.at(1).parents('span').text()).toBe('Any')
     })
 
-    it('should set for unannotated', () => {
+    it('should set for Unannotated', () => {
       init({ ...props, facetResult: notSetFacetResult })
       const radios = wrapper.find('input[type="radio"]')
       expect(radios.at(0).props().checked).toBe(true)
-      expect(radios.at(0).parents('span').text()).toBe('unannotated')
+      expect(radios.at(0).parents('span').text()).toBe('Unannotated')
     })
 
     it('interval', () => {
