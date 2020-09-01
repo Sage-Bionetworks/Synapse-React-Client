@@ -11,7 +11,6 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import _ from 'lodash'
-import { SearchQuery } from '../../../containers/QueryWrapper'
 import { SynapseConstants } from '../../../utils'
 
 export type FacetWithSelection = {
@@ -25,14 +24,17 @@ export type SelectionCriteriaPillProps = {
   index: number
   className?: string
   onRemove: Function
-  searchQuery?: SearchQuery
+  filter?: {
+    columnName: string
+    value: string
+  }
 }
 
 const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
   facetWithSelection,
   index,
   onRemove,
-  searchQuery,
+  filter,
 }) => {
   let innerText,
     tooltipText: string | null = ''
@@ -52,12 +54,8 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
       facetWithSelection.facet.columnName,
     )}: ${innerText}`
   } else {
-    innerText = `"${searchQuery?.searchText}" in ${unCamelCase(
-      searchQuery?.columnName,
-    )}`
-    tooltipText = `${unCamelCase(searchQuery?.columnName)}: ${
-      searchQuery?.searchText
-    }`
+    innerText = `"${filter?.value}" in ${unCamelCase(filter?.columnName)}`
+    tooltipText = `${unCamelCase(filter?.columnName)}: ${filter?.value}`
   }
   return (
     <ElementWithTooltip

@@ -18,14 +18,15 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { cloneDeep } from 'lodash-es'
 import SelectionCriteriaPill, {
   FacetWithSelection,
-} from '../containers/widgets/facet-nav/SelectionCriteriaPill'
+} from './widgets/facet-nav/SelectionCriteriaPill'
 import {
   applyChangesToValuesColumn,
   applyChangesToRangeColumn,
-} from '../containers/widgets/query-filter/QueryFilter'
-import { RadioValuesEnum } from '../containers/widgets/query-filter/RangeFacetFilter'
+} from './widgets/query-filter/QueryFilter'
+import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps } from './QueryWrapper'
+import { ColumnSingleValueFilterOperator } from '../utils/synapseTypes/Table/QueryFilter'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -50,8 +51,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   isLoading: parentLoading,
   executeQueryRequest,
   getInitQueryRequest,
-  updateParentState,
-  searchQuery,
   showNotch = false,
   error,
 }) => {
@@ -210,40 +209,51 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     }
   }
 
-  const removeSearchQuerySelection = () => {
-    const initQueryRequest = getInitQueryRequest!()
-    const firstSql = initQueryRequest.query.sql
+  const removeSearchQuerySelection = (columnName: string, value: string) => {
     const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
-    // reset the sql to original
-    cloneLastQueryRequest.query.sql = firstSql
+    if (!cloneLastQueryRequest.query.additionalFilters) {
+      return
+    }
+    cloneLastQueryRequest.query.additionalFilters = cloneLastQueryRequest.query.additionalFilters
+      ?.map(el => {
+        return {
+          columnName: el.columnName,
+          values:
+            el.columnName === columnName
+              ? el.values.filter(el => el !== value)
+              : el.values,
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        }
+      })
+      .filter(el => el.values.length > 0)
     executeQueryRequest!(cloneLastQueryRequest)
-    updateParentState!({
-      searchQuery: {
-        columnName: '',
-        searchText: '',
-      },
-    })
   }
 
   const clearAll = () => {
     const initQueryRequest = cloneDeep(getInitQueryRequest!())
+    initQueryRequest.query.additionalFilters = []
     executeQueryRequest!(initQueryRequest)
-    updateParentState!({
-      searchQuery: {
-        columnName: '',
-        searchText: '',
-      },
-    })
   }
 
-  const searchSelectionCriteriaPill = searchQuery?.columnName ? (
-    <SelectionCriteriaPill
-      index={facetsWithSelection.length + 1}
-      searchQuery={searchQuery}
-      onRemove={removeSearchQuerySelection}
-    />
-  ) : (
-    <></>
+  const searchSelectionCriteriaPill = lastQueryRequest?.query.additionalFilters?.map(
+    el => {
+      const { columnName } = el
+      return el.values.map(value => {
+        return (
+          <SelectionCriteriaPill
+            key={value}
+            index={facetsWithSelection.length + 1}
+            filter={{
+              columnName,
+              value,
+            }}
+            onRemove={() => removeSearchQuerySelection(el.columnName, value)}
+          />
+        )
+      })
+    },
   )
 
   if (error) {
