@@ -19,6 +19,7 @@ import { RouteChildrenProps } from 'react-router'
 
 type AppState = {
   token: string
+  getSessionCalled: boolean
 }
 export const TokenContext = React.createContext('')
 
@@ -27,6 +28,7 @@ export default class App extends React.Component<{}, AppState> {
     super(props)
     this.state = {
       token: '',
+      getSessionCalled: false,
     }
   }
 
@@ -39,9 +41,14 @@ export default class App extends React.Component<{}, AppState> {
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken => this.handleChange({ token: sessionToken }))
+      .then(sessionToken =>
+        this.handleChange({ token: sessionToken, getSessionCalled: true }),
+      )
       .catch((error: any) => {
         console.error(error)
+        this.setState({
+          getSessionCalled: true,
+        })
       })
   }
 
@@ -99,7 +106,20 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   public render(): JSX.Element {
-    const { token } = this.state
+    const { token, getSessionCalled } = this.state
+    if (!getSessionCalled) {
+      // This lets us keep better track of API calls made, it avoids having the token cause an unecessary
+      // component update
+      return (
+        <div>
+          <div className="App-header text-center">
+            <img src={logoSvg} className="App-logo" alt="logo" />
+            <h4 className="white-text">Synapse React Client Demo</h4>
+          </div>
+          <p> Getting session token... </p>
+        </div>
+      )
+    }
     return (
       <TokenContext.Provider value={token}>
         <Router basename={process.env.PUBLIC_URL}>
@@ -125,7 +145,6 @@ export default class App extends React.Component<{}, AppState> {
                 </Link>
               </li>
             </ul>
-
             <Route exact={true} path="/" component={Demo} />
             <Route
               path="/Playground"
