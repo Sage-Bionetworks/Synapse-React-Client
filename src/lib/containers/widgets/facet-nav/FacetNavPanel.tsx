@@ -129,7 +129,7 @@ function extractPlotDataArray(
     columnType?: ColumnType,
   ): string => {
     if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-      return 'unannotated'
+      return 'Unannotated'
     }
 
     if (columnType === 'ENTITYID') {
@@ -479,8 +479,12 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                   key={`${facetToPlot.columnName}-${size.width}`}
                   layout={layout}
                   data={plotData?.data ?? []}
-                  style={getPlotStyle(size.width, plotType, isExpanded ? 300 : 150)}
-                  config={{ displayModeBar: false}}
+                  style={getPlotStyle(
+                    size.width,
+                    plotType,
+                    isExpanded ? 300 : 150,
+                  )}
+                  config={{ displayModeBar: false }}
                   onClick={evt =>
                     applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
                   }

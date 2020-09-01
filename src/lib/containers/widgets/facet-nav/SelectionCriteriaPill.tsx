@@ -42,7 +42,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     if (facetWithSelection.facet.facetType === 'enumeration') {
       innerText =
         facetWithSelection.displayValue === SynapseConstants.VALUE_NOT_SET
-          ? 'unannotated'
+          ? 'Unannotated'
           : facetWithSelection.displayValue
     } else {
       innerText =

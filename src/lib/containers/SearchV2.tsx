@@ -136,39 +136,29 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const { executeQueryRequest, getLastQueryRequest } = this.props
 
     const lastQueryRequestDeepClone = getLastQueryRequest!()
-    const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
-      columnName,
-      operator: ColumnSingleValueFilterOperator.LIKE,
-      values: [searchText],
-      concreteType:
-        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+
+    const { additionalFilters = [] } = lastQueryRequestDeepClone.query
+
+    const indexOfColumn = additionalFilters.findIndex((el: QueryFilter) => {
+      if (el.columnName === columnName) {
+        return true
+      }
+      return false
+    })
+    if (indexOfColumn === -1) {
+      const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+        columnName,
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: [searchText],
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      }
+      additionalFilters.push(columnSingleValueQueryFilter)
+    } else {
+      additionalFilters[indexOfColumn].values.push(searchText)
     }
-    const additionalFilters: QueryFilter[] = [columnSingleValueQueryFilter]
     lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
     executeQueryRequest!(lastQueryRequestDeepClone)
-    // TODO: Once design is unblocked AND the custom sql is unblocked uncomment this line
-    // const { additionalFilters = [] } = lastQueryRequestDeepClone.query
-
-    // const indexOfColumn = additionalFilters.findIndex((el: QueryFilter) => {
-    //   if (el.columnName === columnName) {
-    //     return true
-    //   }
-    //   return false
-    // })
-    // if (indexOfColumn === -1) {
-    //   const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
-    //     columnName,
-    //     operator: ColumnSingleValueFilterOperator.LIKE,
-    //     values: [searchText],
-    //     concreteType:
-    //       'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-    //   }
-    //   additionalFilters.push(columnSingleValueQueryFilter)
-    // } else {
-    //   additionalFilters[indexOfColumn].values.push(searchText)
-    // }
-    // lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
-    // executeQueryRequest!(lastQueryRequestDeepClone)
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {

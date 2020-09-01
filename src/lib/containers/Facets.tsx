@@ -100,7 +100,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
       const { value, count } = facetColumnResultValues
       const displayValue =
         value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-          ? 'unannotated'
+          ? 'Unannotated'
           : value
 
       children.push(

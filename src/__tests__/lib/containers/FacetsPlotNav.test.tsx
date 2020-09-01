@@ -23,7 +23,7 @@ describe('it performs basic functionality', () => {
   /*
     Looking at the data the facet values for tumorType and their
     respective counts are:
-      - unannotated (3)
+      - Unannotated (3)
       - Cutaneous Neurofibroma (12)
       - JMML (1)
       - Low Grade Glioma (4)
@@ -41,7 +41,7 @@ describe('it performs basic functionality', () => {
       - Cutaneous Neurofibroma (12)
       - MPNST (6)
       - Low Grade Glioma (4)
-      - unannotated (3)
+      - Unannotated (3)
       - JMML (1)
       - Plexiform Neurofibroma | MPNST (1)
       - Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma (1)
@@ -126,7 +126,7 @@ describe('it performs basic functionality', () => {
     expect(plotData[1].name).toEqual('tumorType')
     expect(plotData[1].values).toEqual([3, 12, 1, 4, 6, 28, 1, 1, 1, 1, 1])
     expect(plotData[1].labels).toEqual([
-      'unannotated',
+      'Unannotated',
       'Cutaneous Neurofibroma',
       'JMML',
       'Low Grade Glioma',
