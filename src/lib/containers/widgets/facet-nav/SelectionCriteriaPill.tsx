@@ -40,7 +40,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     if (facetWithSelection.facet.facetType === 'enumeration') {
       innerText =
         facetWithSelection.displayValue === SynapseConstants.VALUE_NOT_SET
-          ? 'unannotated'
+          ? 'Unannotated'
           : facetWithSelection.displayValue
     } else {
       innerText =
@@ -55,9 +55,9 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     innerText = `"${searchQuery?.searchText}" in ${unCamelCase(
       searchQuery?.columnName,
     )}`
-    tooltipText = `${unCamelCase(
-      searchQuery?.columnName,
-    )}: ${searchQuery?.searchText}`
+    tooltipText = `${unCamelCase(searchQuery?.columnName)}: ${
+      searchQuery?.searchText
+    }`
   }
   return (
     <ElementWithTooltip

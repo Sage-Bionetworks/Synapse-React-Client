@@ -147,7 +147,7 @@ export default class StackedBarChart extends React.Component<
         :
         <span className="SRC-facet-view SRC-text-title">
           {facetValueDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-            ? 'unannotated'
+            ? 'Unannotated'
             : facetValueDisplay}
         </span>
       </span>
