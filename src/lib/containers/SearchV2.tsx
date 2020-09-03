@@ -9,9 +9,13 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { insertConditionsFromSearchParams } from '../utils/functions/sqlFunctions'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnModel, ColumnType } from '../utils/synapseTypes'
+import {
+  ColumnSingleValueQueryFilter,
+  ColumnSingleValueFilterOperator,
+  QueryFilter,
+} from '../utils/synapseTypes/Table/QueryFilter'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -129,29 +133,32 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     this.setState({
       show: false,
     })
-    const {
-      updateParentState,
-      getInitQueryRequest,
-      executeQueryRequest,
-      getLastQueryRequest,
-    } = this.props
+    const { executeQueryRequest, getLastQueryRequest } = this.props
 
-    const lastQueryRequest = getLastQueryRequest!()
+    const lastQueryRequestDeepClone = getLastQueryRequest!()
 
-    // Always grabs initQueryRequest to get version of the sql
-    const initQueryRequestDeepCopy = getInitQueryRequest!()
-    const { sql } = initQueryRequestDeepCopy.query
-    const searchParams = {
-      [columnName]: Search.addEscapeCharacters(searchText),
+    const { additionalFilters = [] } = lastQueryRequestDeepClone.query
+
+    const indexOfColumn = additionalFilters.findIndex((el: QueryFilter) => {
+      if (el.columnName === columnName) {
+        return true
+      }
+      return false
+    })
+    if (indexOfColumn === -1) {
+      const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+        columnName,
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: [searchText],
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      }
+      additionalFilters.push(columnSingleValueQueryFilter)
+    } else {
+      additionalFilters[indexOfColumn].values.push(searchText)
     }
-    const newSql = insertConditionsFromSearchParams(searchParams, sql)
-    lastQueryRequest.query.sql = newSql
-    executeQueryRequest!(lastQueryRequest)
-    const searchQuery = {
-      columnName: !searchText ? '' : columnName,
-      searchText,
-    }
-    updateParentState!({ searchQuery })
+    lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
+    executeQueryRequest!(lastQueryRequestDeepClone)
   }
 
   public handleChange = (event: React.FormEvent<HTMLInputElement>) => {
