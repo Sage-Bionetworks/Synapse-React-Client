@@ -78,3 +78,34 @@ describe('inserting into WHERE clause from URL works with an equals operator', (
     )
   })
 })
+describe('it works with a HAS clause', () => {
+  const operator = 'HAS'
+  it('works with a single condition in the HAS operator', () => {
+    const searchParams = {
+      APPLE: 'SMITH',
+    }
+    const sqlWithWhere = 'SELECT * FROM syn1234567'
+    const sql = insertConditionsFromSearchParams(
+      searchParams,
+      sqlWithWhere,
+      operator,
+    )
+    expect(sql).toEqual(
+      "SELECT *\n  FROM syn1234567\n  WHERE (`APPLE` HAS ('SMITH'))",
+    )
+  })
+  it('works with multiple conditions in the HAS clause', () => {
+    const searchParams = {
+      APPLE: 'SMITH,FUJI',
+    }
+    const sqlWithWhere = 'SELECT * FROM syn1234567'
+    const sql = insertConditionsFromSearchParams(
+      searchParams,
+      sqlWithWhere,
+      operator,
+    )
+    expect(sql).toEqual(
+      "SELECT *\n  FROM syn1234567\n  WHERE (`APPLE` HAS ('SMITH','FUJI'))",
+    )
+  })
+})

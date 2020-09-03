@@ -28,6 +28,12 @@ const generateTokenUsingOperator = (
     // parse this out. This will cause a bug if something matches the synId regex but is in free text.
     usedMatchForLike = match.substring(WITHOUT_SYN_PREFIX)
   }
+  // form the has clause, e.g sql = ".... HAS ('condition1', 'condition2',...,'conditionN')
+  const matchForHas = match
+    .split(',')
+    // NOTE - Using single quotes to surround the search term is necessary for the backend parser.
+    .map(el => `'${el}'`)
+    .join(',')
   switch (operator) {
     case 'LIKE':
       return [
@@ -39,7 +45,10 @@ const generateTokenUsingOperator = (
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
-        ['STRING', `%${usedMatchForLike}%`, '1'],
+        // Using parameter as hack, the parser will use the exact value for a parameter value,
+        // it won't add quotes around the argument or remove parens (which is the standard behavior
+        // for type STRING)
+        ['PARAMETER', `(${matchForHas})`, '1'],
       ]
     default:
       // default use operator as-is
@@ -92,40 +101,12 @@ export const insertConditionsFromSearchParams = (
 }
 
 export const formatSQLFromParser = (tokens: string[][]) => {
-  let i = 0
   // replace all DBLSTRINGs (escaped strings) with LITERALs
-  while (i < tokens.length) {
-    let token = tokens[i]
-    if (token[0] == 'DBLSTRING') {
-      token[0] = 'LITERAL'
+  tokens.forEach(value => {
+    if (value[0] == 'DBLSTRING') {
+      value[0] = 'LITERAL'
     }
-    if (token[1] == 'HAS') {
-      token[0] = 'OPERATOR'
-      // grab left paren and right parenleftParenToken
-      const leftParenToken = tokens[i + 1]
-      if (leftParenToken[0] !== 'LEFT_PAREN') {
-        console.error('Unexpected input')
-      }
-      let value = `\'${tokens[i + 2][1]}\'`
-      let iter = i + 3
-      let deleteCount = 2 // delete the value and right paren
-      // check for commas
-      while (tokens[iter][0] !== 'RIGHT_PAREN') {
-        if (tokens[iter][0] !== 'SEPERATOR') {
-          console.error('Unexpected input', tokens[iter])
-        }
-        value += `,\'${tokens[iter + 1][1]}\'`
-        iter += 2
-        deleteCount += 2 // delete current value and the comma seperator
-      }
-      // now we combine the input all together
-      tokens[i + 1] = ['PARAMETER', `(${value})`]
-      // starting from the first value seen, splice out all values
-      tokens.splice(i + 2, deleteCount)
-      i += 1
-    }
-    i += 1
-  }
+  })
   // if synId has a DOT (e.g. 'syn123.2') then we have to alter the sql produced
   const dotIndex = tokens.findIndex(val => val[0] === 'DOT')
   if (dotIndex !== -1) {
