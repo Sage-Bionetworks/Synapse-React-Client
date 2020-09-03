@@ -45,9 +45,11 @@ const generateTokenUsingOperator = (
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
-        // Using parameter as hack, the parser will use the exact value for a parameter value,
-        // it won't add quotes around the argument or remove parens (which is the standard behavior
-        // for type STRING)
+        /* 
+          Using PARAMETER as hack, the parser will use the exact value for a PARAMETER value,
+          it won't add quotes around the argument or remove parens (which is the standard behavior
+          for type STRING) that would cause an error on the backend
+        */
         ['PARAMETER', `(${matchForHas})`, '1'],
       ]
     default:
@@ -142,8 +144,6 @@ export const formatSQLFromParser = (tokens: string[][]) => {
   const synIdWithBackticks = `\`${synId}\``
   return newSql.replace(synIdWithBackticks, synId)
 }
-// @ts-ignore
-window.formatSQLFromParser = formatSQLFromParser
 
 //parses synapse entity id from a sql query string
 //look for a pattern of 'from[some number of spaces]syn[somenumbers]` case insensitive
