@@ -123,7 +123,12 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       } catch (err) {
         if (!isCancelled) {
           setIsLoading(false)
-          setError(err.toString())
+          let errorMessage = err['reason']
+          if (!errorMessage) {
+            console.error(err)
+            errorMessage = 'Error retrieving data'
+          }
+          setError(errorMessage)
         }
       }
     }

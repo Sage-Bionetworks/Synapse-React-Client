@@ -6,7 +6,7 @@ export type KeyValue = {
   [index: string]: string
 }
 
-export type SQLOperator = 'LIKE' | '='
+export type SQLOperator = 'LIKE' | '=' | 'HAS'
 
 // look for "group by", multi-line and case insensitive
 const GROUP_BY_REGEX = /group by/im
@@ -28,12 +28,29 @@ const generateTokenUsingOperator = (
     // parse this out. This will cause a bug if something matches the synId regex but is in free text.
     usedMatchForLike = match.substring(WITHOUT_SYN_PREFIX)
   }
+  // form the has clause, e.g sql = ".... HAS ('condition1', 'condition2',...,'conditionN')
+  const matchForHas = match
+    .split(',')
+    // NOTE - Using single quotes to surround the search term is necessary for the backend parser.
+    .map(el => `'${el}'`)
+    .join(',')
   switch (operator) {
     case 'LIKE':
       return [
         ['LITERAL', literal, '1'],
         ['OPERATOR', operator, '1'],
         ['STRING', `%${usedMatchForLike}%`, '1'],
+      ]
+    case 'HAS':
+      return [
+        ['LITERAL', literal, '1'],
+        ['OPERATOR', operator, '1'],
+        /* 
+          Using PARAMETER as hack, the parser will use the exact value for a PARAMETER value,
+          it won't add quotes around the argument or remove parens (which is the standard behavior
+          for type STRING) that would cause an error on the backend
+        */
+        ['PARAMETER', `(${matchForHas})`, '1'],
       ]
     default:
       // default use operator as-is
