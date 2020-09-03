@@ -472,7 +472,7 @@ Motivation for dependencies-
 
 - Typescript is a superset of Javascript that provides static typing. This catches many bugs at compile time and makes the client much more self-documenting.
 
-- rollup allows the client to be built as a UMD bundle **without** having to eject the application from react's built in webpack configuation. The primary motivation for bunlding the package as a UMD build is using the package in synapse.org.
+- rollup allows the client to be built as a UMD bundle **without** having to eject the application from react's built in webpack configuation. The primary motivation for bundling the package as a UMD build is using the package in synapse.org.
 
 Caveats of these dependencies-
 When rollup bundles the app and resolves an `import module from 'library'` statement it will attempt to include the module in the final output. This is done by looking through the `node_modules/` folder and attempting to copy the code for the library, it's done via [rollup-plugin-node-resolve](https://github.com/rollup/rollup-plugin-node-resolve). This doesn't work for every library nor should it be done for every library. `React`, if bundled in this fashion would bloat the bundle to 100k plus lines, its prefereable to include `React` via CDN. Additionally, some bundles don't resolve well (e.g. they have circular dependencies). If this happens you have to use a CDN for the code and tell rollup to recognize the import as a global in the final output file. In the [rollup config](./rollup.config.js),
@@ -493,8 +493,7 @@ All proposed changes (to be merged into develop or master) must be via a Pull Re
 
 To expose a component from the library you must export it from [index.ts](src/lib/index.ts).
 
-To expose a component for use in synapse.org, you must export it from [rollup.index.ts](src/lib/rollup.index.ts).
-See
+To expose a component for use in synapse.org, you must export it from [rollup.index.ts](src/lib/rollup.index.ts). See [Project Development](#project-development) for more information on rollup and synapse.org.
 
 To release the react-client, bump the [package version](https://next.yarnpkg.com/cli/version), merge into main,
 and run `yarn publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command.
