@@ -489,6 +489,15 @@ Notes:
 On a regular basis develop will be merged into master and a new release will be published from master
 All proposed changes (to be merged into develop or master) must be via a Pull Request with a code review
 
+## Publishing and Releasing a new component
+
+To expose a component from the library you must export it from [index.ts](src/lib/index.ts).
+
+To expose a component for use in synapse.org, you must export it from [rollup.index.ts](src/lib/rollup.index.ts)
+
+To release the react-client, bump the [package version](https://next.yarnpkg.com/cli/version), merge into main
+and run `yarn publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command.
+
 ## Updating this Project to New Releases
 
 - `react-scripts` is a development dependency in this project.
