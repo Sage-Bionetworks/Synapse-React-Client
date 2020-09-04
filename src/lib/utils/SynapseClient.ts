@@ -144,7 +144,7 @@ const fetchWithExponentialTimeout = <T>(
           if (resp.ok) {
             // possible empty response
             return Promise.resolve({
-              ...error,
+              reason: error,
               status: resp.status,
             })
           }
