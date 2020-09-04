@@ -144,20 +144,21 @@ const fetchWithExponentialTimeout = <T>(
           if (resp.ok) {
             // possible empty response
             return Promise.resolve({
-              reason: error,
+              ...error,
               status: resp.status,
             })
           }
           if (error.reason && resp.status) {
-            // successfull return from server but invalid call
+            // successful return from server but invalid call
             return Promise.reject({
-              reason: error.reason,
+              ...error,
               status: resp.status,
             })
           }
           // This occurs if the response is not ok and does not have json or is empty
+          // retain any other fields the original error has
           return Promise.reject({
-            reason: error,
+            ...error,
             status: resp.status,
           })
         })

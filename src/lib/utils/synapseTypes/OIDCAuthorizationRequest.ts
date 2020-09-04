@@ -19,7 +19,7 @@ export type OIDCAuthorizationRequest = {
       }
     }
   }
-  responseType: 'code'
+  responseType: string
   redirectUri: string
   nonce?: string
   userId?: string
