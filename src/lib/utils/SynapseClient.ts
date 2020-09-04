@@ -149,9 +149,9 @@ const fetchWithExponentialTimeout = <T>(
             })
           }
           if (error.reason && resp.status) {
-            // successfull return from server but invalid call
+            // successful return from server but invalid call
             return Promise.reject({
-              reason: error.reason,
+              ...error,
               status: resp.status,
             })
           }
