@@ -156,9 +156,8 @@ const fetchWithExponentialTimeout = <T>(
             })
           }
           // This occurs if the response is not ok and does not have json or is empty
-          // retain any other fields the original error has
           return Promise.reject({
-            ...error,
+            reason: error,
             status: resp.status,
           })
         })
