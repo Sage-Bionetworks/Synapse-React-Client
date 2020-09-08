@@ -31,6 +31,11 @@ $card-rotate-margin: 21px;
       word-wrap: break-word;
       word-break: break-word;
     }
+
+    .cardContainer {
+      box-shadow: $box-shadow-soft;
+    }
+
   }
 
   .UserCardListRotate__summary {

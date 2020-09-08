@@ -300,8 +300,7 @@ export default class UserCardMedium extends React.Component<
     // when the component is large we have to set the click handler to wrap both the top and bottom portion
     return (
       <div
-        style={{ boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }}
-        className={isContextMenuOpen ? 'SRC-hand-cursor' : ''}
+        className={isContextMenuOpen ? 'SRC-hand-cursor cardContainer' : 'cardContainer'}
         onClick={isContextMenuOpen ? this.toggleContextMenu : undefined}
       >
         <div
