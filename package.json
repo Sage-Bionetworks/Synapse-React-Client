@@ -128,7 +128,7 @@
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
-    "prepublishOnly": "yarn run build && yarn run test:noPrompt",
+    "prepublishOnly": "yarn install && run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
     "build-gh": "react-scripts build",
     "deploy": "gh-pages -d build && gh-pages -d build -o upstream",

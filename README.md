@@ -496,7 +496,7 @@ To expose a component from the library you must export it from [index.ts](src/li
 To expose a component for use in synapse.org, you must export it from [rollup.index.ts](src/lib/rollup.index.ts). See [Project Development](#project-development) for more information on rollup and synapse.org.
 
 To release the react-client, bump the [package version](https://next.yarnpkg.com/cli/version), merge into main,
-and run `yarn publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command.
+and run `yarn publish`. Note - you must have access to the synapse-react-client [npm package](https://www.npmjs.com/package/synapse-react-client) to be able to run the command. Publising the package will also release a new version of the rollup build, it can be pulled down using unpkg.com, the URL is available [here](https://unpkg.com/browse/synapse-react-client@latest/dist/umd/synapse-react-client.production.min.js)
 
 ## Updating this Project to New Releases
 
