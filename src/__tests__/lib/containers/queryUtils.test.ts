@@ -15,7 +15,6 @@ describe('get next page of data', () => {
     entityId: 'syn16787123',
     query: {
       sql,
-      isConsistent: false,
       limit: 25,
       offset: 25,
     },

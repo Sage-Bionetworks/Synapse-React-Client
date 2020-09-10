@@ -302,7 +302,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
             toggle config for query wrapper menu
           </button>
           <QueryWrapperMenu
-            isConsistent={true}
             name={'Demo'}
             token={
               SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!

@@ -598,7 +598,7 @@ It produces a build for npm distribution and umd. <br>
 
 ### `yarn run build:rollup`
 
-This project can be built as a umd bundle. It produces two files `synapse-react-client.production.min.js` and `synapse-react-client.production.min.styles.css`.
+This project can be built as a umd bundle. It produces two files `synapse-react-client.production.min.js` and `synapse-react-client.production.min.styles.css`. Note - this script is run automatically as part of the build command.
 
 ### `npm run eject`
 

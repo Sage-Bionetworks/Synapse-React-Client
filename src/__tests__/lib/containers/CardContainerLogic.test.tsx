@@ -67,7 +67,6 @@ describe('it performs basic functionality', () => {
         // NOTE: queryCount has been removed from the partMask here
         query: {
           sql,
-          isConsistent: false,
           limit: 25,
           offset: 0,
         },
@@ -90,7 +89,6 @@ describe('it performs basic functionality', () => {
       entityId: 'syn16787123',
       query: {
         sql,
-        isConsistent: false,
         limit: 25,
         offset: 25,
       },
@@ -120,7 +118,6 @@ describe('it performs basic functionality', () => {
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
       query: {
         sql,
-        isConsistent: false,
         limit: 25,
         offset: 0,
       },
