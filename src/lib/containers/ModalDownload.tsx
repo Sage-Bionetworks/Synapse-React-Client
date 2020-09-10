@@ -34,7 +34,6 @@ export type ModalDownloadProps = {
   token?: string
   includeEntityEtag?: boolean
   queryBundleRequest: QueryBundleRequest
-  isConsistent?: boolean
   offset?: number
   limit?: number
   sort?: SortItem[]

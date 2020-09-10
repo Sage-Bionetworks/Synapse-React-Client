@@ -31,7 +31,6 @@ const lastQueryRequestResult = {
         max: 1999,
       },
     ],
-    isConsistent: true,
     limit: 25,
     offset: 0,
   },
@@ -99,7 +98,7 @@ describe('handling child component callbacks', () => {
     ]
 
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    enumWrapper.simulate('change', {'Ford': true})
+    enumWrapper.simulate('change', { Ford: true })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
@@ -137,10 +136,11 @@ describe('handling child component callbacks', () => {
         max: '1998',
         min: '1997',
       },
-    ] 
+    ]
     const enumWrapper = wrapper.find('RangeFacetFilter').at(0)
     enumWrapper.simulate('change', ['1997', '1998'])
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
-    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)})
+    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+  })
 })

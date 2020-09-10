@@ -73,7 +73,6 @@ export type QueryWrapperMenuProps = {
   facetAliases?: {}
   menuConfig?: MenuConfig[]
   accordionConfig?: AccordionConfig[]
-  isConsistent?: boolean
   token?: string
   rgbIndex: number
   searchParams?: MenuSearchParams
@@ -281,7 +280,6 @@ export default class QueryWrapperMenu extends React.Component<
     const {
       token,
       rgbIndex = 0,
-      isConsistent = false,
       searchParams,
       accordionConfig = [],
       facetAliases = {},
@@ -356,7 +354,6 @@ export default class QueryWrapperMenu extends React.Component<
         query: {
           sql,
           selectedFacets,
-          isConsistent,
           limit: 25,
           offset: 0,
         },

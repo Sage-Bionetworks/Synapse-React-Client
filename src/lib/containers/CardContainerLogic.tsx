@@ -208,7 +208,6 @@ export default class CardContainerLogic extends React.Component<
       entityId,
       query: {
         sql: sqlUsed,
-        isConsistent: false,
         limit: 25,
         offset: 0,
       },

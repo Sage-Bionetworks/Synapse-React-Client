@@ -14,7 +14,6 @@ const lastQueryRequest: QueryBundleRequest = {
   entityId: '123',
   query: {
     sql: '',
-    isConsistent: false,
     limit: 25,
     offset: 0,
   },
