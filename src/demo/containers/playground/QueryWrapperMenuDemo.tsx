@@ -48,6 +48,7 @@ class QueryWrapperMenuDemo extends React.Component<
       showMarkdown: true,
       activeTab: 2,
       tabFour: {
+        stackedBarChartConfiguration: {},
         unitDescription: 'apples',
         tableConfiguration: {
           title: 'title',
@@ -62,6 +63,7 @@ class QueryWrapperMenuDemo extends React.Component<
         rgbIndex: 3,
       },
       tabThree: {
+        stackedBarChartConfiguration: {},
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
