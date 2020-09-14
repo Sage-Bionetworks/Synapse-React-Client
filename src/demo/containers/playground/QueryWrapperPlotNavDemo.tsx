@@ -39,7 +39,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
       showCards: false,
       propsWithTable: {
         tableConfiguration: {
-          loadingScreen: <> I'm loading as fast as I can!!!! </>,
           showAccessColumn: true,
         },
         searchConfiguration: {
@@ -61,12 +60,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        // facetsToPlot: ['assay', 'dataType'],
-        loadingScreen: (
-          <div>
-            <div className="spinner"> </div>Im loading as fast I can !!!{' '}
-          </div>
-        ),
+        // facetsToPlot: ['assay', 'dataType'],        
       },
       propsWithCards: {
         rgbIndex: 1,
@@ -83,7 +77,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
       },
       propsWithCustomCommands: {
         tableConfiguration: {
-          loadingScreen: <> I'm loading as fast as I can!!!! </>,
           isRowSelectionVisible: true,
         },
         visibleColumnCount: 10,
@@ -92,11 +85,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql: 'select * from syn22084217',
-        loadingScreen: (
-          <div>
-            <div className="spinner"> </div>Im loading as fast I can !!!{' '}
-          </div>
-        ),
         customControls: [
           {
             buttonText: 'Update WorkflowState',

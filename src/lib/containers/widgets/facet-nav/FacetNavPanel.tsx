@@ -36,6 +36,7 @@ import {
   applyMultipleChangesToValuesColumn,
   applyChangesToValuesColumn,
 } from '../query-filter/QueryFilter'
+import loadingScreen from '../../LoadingScreen'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -43,7 +44,6 @@ export type FacetNavPanelOwnProps = {
   applyChangesToGraphSlice: Function
   applyChangesToFacetFilter: Function
   index: number
-  loadingScreen?: React.FunctionComponent | JSX.Element
   facetToPlot: FacetColumnResultValues
   onHide: Function
   onExpand?: Function
@@ -322,7 +322,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   applyChangesToFacetFilter,
   applyChangesToGraphSlice,
   isLoadingNewData,
-  loadingScreen,
   index,
   facetToPlot,
   data,

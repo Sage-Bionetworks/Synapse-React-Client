@@ -16,7 +16,6 @@ export const UpsetPlotDemo: React.FunctionComponent<UpsetPlotDemoProps> = ({toke
       combinationName='Individuals (#)'
       summaryLink='/Synapse-React-Client/Playground/UpsetPlotDemo'
       summaryLinkText='EXPLORE ALL OF SOMETHING'
-      loadingScreen={<div>Custom loading screen for upset plot</div>}
     />
   )
 }

@@ -4,6 +4,7 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { QueryBundleRequest } from '../utils/synapseTypes/Table'
 import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 import UserCardList from './UserCardList'
+import loadingScreen from './LoadingScreen'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -12,7 +13,6 @@ export type UserCardListRotateProps = {
   sql: string
   count: number
   token?: string
-  loadingScreen: JSX.Element
   summaryLink: string
   summaryLinkText: string
 }
@@ -48,7 +48,6 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     sql,
     count,
     token,
-    loadingScreen,
     summaryLink,
     summaryLinkText
   }) => {

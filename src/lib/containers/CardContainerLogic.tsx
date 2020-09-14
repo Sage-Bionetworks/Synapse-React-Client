@@ -48,7 +48,6 @@ export type CardConfiguration = {
   type: string
   hasInternalLink?: boolean
   iconOptions?: IconOptions
-  loadingScreen?: React.FunctionComponent | JSX.Element
 } & CommonCardProps
 
 export type CardContainerLogicProps = {

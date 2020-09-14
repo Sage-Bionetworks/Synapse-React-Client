@@ -72,6 +72,7 @@
     "react-router-dom": "5.1.2",
     "react-scripts": "^3.4.3",
     "react-sizeme": "^2.6.12",
+    "react-spinners": "^0.9.0",
     "react-switch": "^5.0.1",
     "react-test-renderer": "^16.4.2",
     "react-tooltip": "4.2.1",

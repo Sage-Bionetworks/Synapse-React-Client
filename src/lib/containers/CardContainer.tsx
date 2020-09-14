@@ -16,6 +16,7 @@ import { Dataset, Funder } from './row_renderers'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
+import loadingScreen from './LoadingScreen'
 
 const PAGE_SIZE: number = 25
 
@@ -81,7 +82,6 @@ export const CardContainer = (props: CardContainerProps) => {
     unitDescription,
     type,
     isLoading,
-    loadingScreen,
     secondaryLabelLimit = 3,
     showBarChart = true,
     title,

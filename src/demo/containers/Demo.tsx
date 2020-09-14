@@ -327,7 +327,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
                 : this.state.tabTwo.rgbIndex
             }
             stackedBarChartConfiguration={{
-              loadingScreen: <div />,
             }}
             searchParams={{
               facet: this.searchParamsProps['facet'],

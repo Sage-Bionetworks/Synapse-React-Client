@@ -121,8 +121,7 @@ export default class QueryWrapperMenu extends React.Component<
     this.getUnitDescription = this.getUnitDescription.bind(this)
     this.getPartMask = this.getPartMask.bind(this)
     this.getSelectedFacets = this.getSelectedFacets.bind(this)
-    this.getSqlWithAdditionalClause = this.getSqlWithAdditionalClause.bind(this)
-    this.getTableLoadingScreen = this.getTableLoadingScreen.bind(this)
+    this.getSqlWithAdditionalClause = this.getSqlWithAdditionalClause.bind(this)    
   }
 
   componentDidUpdate(prevProps: QueryWrapperMenuProps, _prevState: MenuState) {
@@ -342,11 +341,6 @@ export default class QueryWrapperMenu extends React.Component<
         facetValue,
       )
       const partMask = this.getPartMask(facet, hasGroupByInSql)
-      const tableLoadingScreen = this.getTableLoadingScreen(
-        hasGroupByInSql,
-        stackedBarChartConfiguration,
-        tableConfiguration,
-      )
       const initQueryRequest: QueryBundleRequest = {
         partMask,
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -396,8 +390,7 @@ export default class QueryWrapperMenu extends React.Component<
             {tableConfiguration ? (
               <SynapseTable
                 {...{
-                  ...tableConfiguration,
-                  loadingScreen: tableLoadingScreen,
+                  ...tableConfiguration
                 }}
               />
             ) : (
@@ -478,19 +471,6 @@ export default class QueryWrapperMenu extends React.Component<
       )
     }
     return sql
-  }
-
-  public getTableLoadingScreen(
-    hasGroupByInSql: boolean,
-    stackedBarChartConfiguration: StackedBarChartProps | undefined,
-    tableConfiguration: SynapseTableProps | undefined,
-  ): JSX.Element {
-    if (hasGroupByInSql && stackedBarChartConfiguration && tableConfiguration) {
-      // Since the bar chart doesnt show when theres a a groupy statement we use the
-      // loadingScreen from the chart configuration
-      return stackedBarChartConfiguration.loadingScreen
-    }
-    return <></>
   }
 
   private renderQueryChildren() {

@@ -48,9 +48,7 @@ class QueryWrapperMenuDemo extends React.Component<
       showMarkdown: true,
       activeTab: 2,
       tabFour: {
-        stackedBarChartConfiguration: {
-          loadingScreen: <div> Im loading as fast I can! </div>,
-        },
+        stackedBarChartConfiguration: {},
         unitDescription: 'apples',
         tableConfiguration: {
           title: 'title',
@@ -65,9 +63,7 @@ class QueryWrapperMenuDemo extends React.Component<
         rgbIndex: 3,
       },
       tabThree: {
-        stackedBarChartConfiguration: {
-          loadingScreen: <div> Im loading as fast I can! </div>,
-        },
+        stackedBarChartConfiguration: {},
         unitDescription: 'datum',
         tableConfiguration: {
           title: 'title',
@@ -101,10 +97,7 @@ class QueryWrapperMenuDemo extends React.Component<
         unitDescription: 'persons',
         cardConfiguration: {
           genericCardSchema,
-          type: SynapseConstants.MEDIUM_USER_CARD,
-          loadingScreen: (
-            <div style={{ height: 450 }}> I'm loading as fast I can! </div>
-          ),
+          type: SynapseConstants.MEDIUM_USER_CARD,          
         },
         rgbIndex: 1,
         facetAliases: {
@@ -115,10 +108,7 @@ class QueryWrapperMenuDemo extends React.Component<
             name: 'Compuational',
             cardConfiguration: {
               genericCardSchema,
-              type: SynapseConstants.GENERIC_CARD,
-              loadingScreen: (
-                <div style={{ height: 450 }}> I'm loading as fast I can! </div>
-              ),
+              type: SynapseConstants.GENERIC_CARD,              
             },
             menuConfig: [
               {
@@ -139,10 +129,7 @@ class QueryWrapperMenuDemo extends React.Component<
             name: 'Experimental',
             cardConfiguration: {
               genericCardSchema,
-              type: SynapseConstants.GENERIC_CARD,
-              loadingScreen: (
-                <div style={{ height: 450 }}> I'm loading as fast I can! </div>
-              ),
+              type: SynapseConstants.GENERIC_CARD,              
             },
             menuConfig: [
               {

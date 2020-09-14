@@ -9,14 +9,10 @@ import QueryWrapperMenu, {
   MenuConfig,
 } from '../../../lib/containers/QueryWrapperMenu'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
-import StackedBarChart, {
-  StackedBarChartProps,
-} from '../../../lib/containers/StackedBarChart'
+import StackedBarChart from '../../../lib/containers/StackedBarChart'
 import { Facets } from '../../../lib/containers/Facets'
 import CardContainer from '../../../lib/containers/CardContainer'
-import SynapseTable, {
-  SynapseTableProps,
-} from '../../../lib/containers/table/SynapseTable'
+import SynapseTable from '../../../lib/containers/table/SynapseTable'
 import { SynapseConstants } from '../../../lib/'
 import { GenericCardSchema } from 'lib/containers/GenericCard'
 import Search from 'lib/containers/Search'
@@ -33,7 +29,6 @@ describe('it renders with basic functionality', () => {
   SynapseClient.getQueryTableResults = jest.fn(() => Promise.resolve(mockData))
   const sql: string = 'SELECT * FROM syn5604373'
   const facet: string = 'name'
-  const synapseId: string = 'syn5604373'
   const token: string = ''
   const name = 'Studies'
   const props: QueryWrapperMenuProps = {
@@ -42,7 +37,6 @@ describe('it renders with basic functionality', () => {
     menuConfig: [{ sql, facet }],
     rgbIndex: 3,
     stackedBarChartConfiguration: {
-      loadingScreen: <div />,
     },
   }
 
@@ -60,7 +54,6 @@ describe('it renders with basic functionality', () => {
         title: 'title',
       },
       stackedBarChartConfiguration: {
-        loadingScreen: <div />,
       },
       menuConfig: [{ sql, facet }],
     }
@@ -97,7 +90,6 @@ describe('it renders with basic functionality', () => {
         type: SynapseConstants.STUDY,
       },
       stackedBarChartConfiguration: {
-        loadingScreen: <div />,
       },
     }
     const { wrapper } = await createMountedComponent(propsWithType)
@@ -116,7 +108,6 @@ describe('it renders with basic functionality', () => {
         type: SynapseConstants.STUDY,
       },
       stackedBarChartConfiguration: {
-        loadingScreen: <div />,
       },
     }
     const { wrapper } = await createMountedComponent(propsWithType)
@@ -460,32 +451,6 @@ describe('Passing down props works correctly ', () => {
       const facet = 'MOCK_FACET'
       const selectedFacets = getSelectedFacets(true, facet, undefined)
       expect(selectedFacets).toHaveLength(0)
-    })
-  })
-  describe('table loading screen is calculated correctly', () => {
-    const getTableLoadingScreen =
-      QueryWrapperMenu.prototype.getTableLoadingScreen
-    it('returns a loading screen ', () => {
-      const hasGroupByInSql = true
-      const loadingScreen = <div></div>
-      const stackedBarChartConfiguration = {
-        loadingScreen,
-      } as StackedBarChartProps
-      const tableConfiguration = {} as SynapseTableProps
-      const tableLoadingScreen = getTableLoadingScreen(
-        hasGroupByInSql,
-        stackedBarChartConfiguration,
-        tableConfiguration,
-      )
-      expect(tableLoadingScreen).toEqual(loadingScreen)
-    })
-    it('returns empty ', () => {
-      const tableLoadingScreen = getTableLoadingScreen(
-        false,
-        undefined,
-        undefined,
-      )
-      expect(tableLoadingScreen).toEqual(<></>)
     })
   })
 })
