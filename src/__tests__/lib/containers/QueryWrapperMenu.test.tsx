@@ -35,7 +35,9 @@ describe('it renders with basic functionality', () => {
     token,
     name,
     menuConfig: [{ sql, facet }],
-    rgbIndex: 3
+    rgbIndex: 3,
+    stackedBarChartConfiguration: {
+    },
   }
 
   it('renders without crashing', () => {
@@ -50,6 +52,8 @@ describe('it renders with basic functionality', () => {
       rgbIndex: 3,
       tableConfiguration: {
         title: 'title',
+      },
+      stackedBarChartConfiguration: {
       },
       menuConfig: [{ sql, facet }],
     }
@@ -85,6 +89,8 @@ describe('it renders with basic functionality', () => {
       cardConfiguration: {
         type: SynapseConstants.STUDY,
       },
+      stackedBarChartConfiguration: {
+      },
     }
     const { wrapper } = await createMountedComponent(propsWithType)
 
@@ -100,6 +106,8 @@ describe('it renders with basic functionality', () => {
       ...props,
       cardConfiguration: {
         type: SynapseConstants.STUDY,
+      },
+      stackedBarChartConfiguration: {
       },
     }
     const { wrapper } = await createMountedComponent(propsWithType)
