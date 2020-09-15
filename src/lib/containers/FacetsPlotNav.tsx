@@ -12,6 +12,7 @@ import {
 import getColorPallette from './ColorGradient'
 import { SELECT_SINGLE_FACET } from './Facets'
 import { FacetSelection, QueryWrapperChildProps } from './QueryWrapper'
+import loadingScreen from './LoadingScreen'
 
 export const Plot = createPlotlyComponent(Plotly)
 const ROW_HEIGHT: number = 160
@@ -23,7 +24,6 @@ export type FacetsPlotNavState = {
 }
 
 export type FacetsPlotNavProps = {
-  loadingScreen?: React.FunctionComponent | JSX.Element
   facetsToPlot?: string[]
 }
 
@@ -147,7 +147,6 @@ export default class FacetsPlotNav extends React.Component<
     const {
       data,
       isLoadingNewData,
-      loadingScreen,
       // rgbIndex,
       asyncJobStatus,
     } = this.props
@@ -159,7 +158,7 @@ export default class FacetsPlotNav extends React.Component<
             check loading screen is not undefined or null and show
             it if so
           */}
-          {!!loadingScreen && loadingScreen}
+          {loadingScreen}
           <div>{asyncJobStatus && asyncJobStatus.progressMessage}</div>
         </div>
       )

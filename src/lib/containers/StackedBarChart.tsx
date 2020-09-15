@@ -12,6 +12,7 @@ import {
 } from '../utils/synapseTypes/'
 import { getIsValueSelected } from '../utils/functions/facetUtils'
 import { unCamelCase } from '../utils/functions/unCamelCase'
+import loadingScreen from './LoadingScreen'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -37,7 +38,6 @@ export type StackedBarChartState = {
 }
 
 export type StackedBarChartProps = {
-  loadingScreen: JSX.Element
   link?: string
   linkText?: string
 }
@@ -163,7 +163,6 @@ export default class StackedBarChart extends React.Component<
     const {
       data,
       isLoadingNewData,
-      loadingScreen,
       rgbIndex,
       facet = '',
       unitDescription,
@@ -177,11 +176,7 @@ export default class StackedBarChart extends React.Component<
     if (isLoadingNewData) {
       return (
         <div className="SRC-loadingContainer SRC-centerContentColumn">
-          {/*
-            check loading screen is not undefined or null and show
-            it if so
-          */}
-          {!!loadingScreen && loadingScreen}
+          {loadingScreen}
           <div>{asyncJobStatus && asyncJobStatus.progressMessage}</div>
         </div>
       )

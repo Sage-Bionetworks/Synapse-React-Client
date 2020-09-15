@@ -11,7 +11,6 @@ export const PeopleProfileDemo = () => {
             count={3}
             summaryLinkText={"EXPLORE ALL PEOPLE"}
             summaryLink={"/Explore/People"}
-            loadingScreen={<div>Loading...</div>}
           />
         </div>
       </div>

@@ -13,6 +13,7 @@ import { SizeMe } from 'react-sizeme'
 import getColorPallette from './ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { Error } from './Error'
+import loadingScreen from './LoadingScreen'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -21,7 +22,6 @@ export type UpsetPlotProps = {
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
   height?: number
-  loadingScreen: JSX.Element
   summaryLinkText?: string  // text for home page link below chart
   summaryLink?: string // url for home page link below chart  
   token?: string  
@@ -42,7 +42,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   setName,
   combinationName,
   height = 700,
-  loadingScreen,
   summaryLinkText,
   summaryLink,
   token,

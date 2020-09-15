@@ -51,7 +51,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     sql,
     sqlOperator,
     tableConfiguration,
-    loadingScreen,
     name,
     cardConfiguration,
     facetsToPlot,
@@ -99,8 +98,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         <DownloadConfirmation />
         <FacetNav
           facetsToPlot={facetsToPlot}
-          showNotch={true}
-          loadingScreen={loadingScreen}
+          showNotch={true}          
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}

@@ -17,7 +17,6 @@ export type QueryWrapperProps = {
   rgbIndex?: number
   token?: string
   facet?: string
-  loadingScreen?: JSX.Element
   unitDescription?: string
   facetAliases?: {}
   loadNow?: boolean

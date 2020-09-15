@@ -21,6 +21,7 @@ import {
 import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
+import loadingScreen from '../../LoadingScreen'
 
 export type ThemesPlotProps = {
   token?: string
@@ -252,9 +253,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   return (
     <>
       {!isLoaded && (
-        <div className="text-center">
-          <span className="spinner" />
-        </div>
+        loadingScreen
       )}
 
       {isLoaded && (
