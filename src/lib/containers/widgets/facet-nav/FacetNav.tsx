@@ -13,7 +13,6 @@ import TotalQueryResults from '../../../containers/TotalQueryResults'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 
 export type FacetNavOwnProps = {
-  loadingScreen?: React.FunctionComponent | JSX.Element
   facetsToPlot?: string[]
   showNotch?: boolean
 }
@@ -40,7 +39,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   data,
   getLastQueryRequest,
   isLoadingNewData,
-  loadingScreen,
   isLoading,
   executeQueryRequest,
   token,
@@ -192,9 +190,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else if (isLoadingNewData) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
-        {loadingScreen}
         {asyncJobStatus?.progressMessage && (
-          <div>{asyncJobStatus.progressMessage} </div>
+          <div> <span className="spinner" /> {asyncJobStatus.progressMessage} </div>
         )}
       </div>
     )

@@ -32,7 +32,6 @@ describe('it performs all functionality', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
     query: {
       sql,
-      isConsistent: false,
       limit: 25,
       offset: 0,
     },

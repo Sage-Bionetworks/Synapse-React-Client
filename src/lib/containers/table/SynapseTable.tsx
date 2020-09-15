@@ -65,6 +65,7 @@ import {
 } from '../widgets/query-filter/QueryFilter'
 import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
+import loadingScreen from '../LoadingScreen'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -127,7 +128,6 @@ export type SynapseTableState = {
 export type SynapseTableProps = {
   visibleColumnCount?: number
   title?: string
-  loadingScreen?: JSX.Element
   showAccessColumn?: boolean
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
@@ -350,7 +350,7 @@ export default class SynapseTable extends React.Component<
    */
   public render() {
     if (this.props.isLoadingNewData) {
-      return this.props.loadingScreen ?? <div />
+      return loadingScreen
     } else if (!this.props.data) {
       return <></>
     }
@@ -540,7 +540,7 @@ export default class SynapseTable extends React.Component<
       showAccessColumn && this.state.isFileView
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
-      <div style={{ minHeight: '300px' }} className="SRC-overflowAuto">
+      <div style={{ minHeight: '400px' }} className="SRC-overflowAuto">
         {this.state.isDownloadConfirmationOpen && (
           <DownloadConfirmation
             token={token!}

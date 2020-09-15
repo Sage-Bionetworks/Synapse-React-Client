@@ -87,8 +87,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
         {tabIndex === 1 && (
           <CardContainerLogic
             type={SynapseConstants.MEDIUM_USER_CARD}
-            sql={'SELECT ownerID as ownerId FROM syn13897207'}
-            loadingScreen={<div> Im loading as fast I can !!! </div>}
+            sql={'SELECT ownerID as ownerId FROM syn13897207'}            
           />
         )}
         {tabIndex === 2 && (

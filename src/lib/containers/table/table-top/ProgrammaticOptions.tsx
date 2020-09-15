@@ -77,7 +77,7 @@ function ProgrammaticOptions({
           instructions are available
           <a
             className="ProgrammaticOptions__docslink"
-            href="https://python-docs.synapse.org/build/html/CommandLineClient.html"
+            href="https://docs.synapse.org/articles/tutorial-download-data-portal.html#command-line"
             target="_blank"
             rel="noopener noreferrer"
           >

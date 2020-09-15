@@ -57,7 +57,6 @@ describe('it performs basic functionality', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
       sql: 'SELECT * FROM syn16787123',
-      isConsistent: false,
       limit: 25,
       offset: 0,
       selectedFacets: [

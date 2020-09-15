@@ -36,7 +36,6 @@ describe('it performs basic functionality', () => {
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
       sql: 'SELECT * FROM syn16787123',
-      isConsistent: false,
       limit: 25,
       offset: 0,
       selectedFacets: [
@@ -125,10 +124,7 @@ describe('it performs basic functionality', () => {
     const labels = checkbox.find('label')
     // only 5 shown by default
     expect(wrapper.find('input')).toHaveLength(5)
-    await labels
-      .at(0)
-      .find('input')
-      .simulate('change')
+    await labels.at(0).find('input').simulate('change')
     // after click event it expands to show all 11 per the mocked data above
     expect(wrapper.find('input')).toHaveLength(11)
   })

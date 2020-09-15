@@ -21,7 +21,6 @@ export type UserCardSize =
 export type UserCardProps = {
   // Note - either specify userProfile OR (alias or ownerId)
   userProfile?: UserProfile
-  loadingScreen?: JSX.Element
   hideEmail?: boolean
   preSignedURL?: string
   alias?: string
@@ -79,7 +78,6 @@ export default class UserCard extends React.Component<
   public render() {
     const {
       userProfile,
-      loadingScreen = <span />,
       preSignedURL,
       size,
       ...rest
@@ -87,10 +85,10 @@ export default class UserCard extends React.Component<
     let userProfileAtRender
     let preSignedURLAtRender
     if (!userProfile) {
-      // userProfile wans't passed in from props
+      // userProfile wasn't passed in from props
       if (this.state.isLoading) {
         // still making the API call
-        return loadingScreen
+        return <></>
       }
       userProfileAtRender = this.state.userProfile
       preSignedURLAtRender = this.state.preSignedURL

@@ -44,7 +44,6 @@ const lastQueryRequest: QueryBundleRequest = {
   entityId: 'syn16787123',
   query: {
     sql: 'SELECT * FROM syn16787123',
-    isConsistent: false,
     limit: 25,
     offset: 0,
   },
