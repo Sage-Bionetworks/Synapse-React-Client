@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { QueryBundleRequest } from '../utils/synapseTypes/Table'
-import { LARGE_USER_CARD } from '../utils/SynapseConstants'
+import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/Table'
 import UserCardList from './UserCardList'
 import loadingScreen from './LoadingScreen'
+import { UserCardSize } from './UserCard'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -13,6 +13,8 @@ export type UserCardListRotateProps = {
   sql: string
   count: number
   token?: string
+  useQueryResultUserData?: boolean
+  size?: UserCardSize
   summaryLink: string
   summaryLinkText: string
 }
@@ -48,12 +50,15 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     sql,
     count,
     token,
+    useQueryResultUserData,
+    size = 'LARGE USER CARD',
     summaryLink,
     summaryLinkText
   }) => {
 
   // const [isLoading, setIsLoading] = useState<boolean>()
   const [userIds, setUserIds] = useState<string []>([])
+  const [queryData, setQueryData] = useState<QueryResultBundle>()
   const [isLoading, setIsLoading] = useState<boolean>()
   let mounted = true
 
@@ -72,18 +77,23 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         }
       }
 
-      const {
-        queryResult
-      } = await SynapseClient.getFullQueryTableResults(
+      const queryResultBundle = await SynapseClient.getFullQueryTableResults(
         request,
         token
       )
-
+      const { queryResult } = queryResultBundle
       if (queryResult.queryResults.rows) {
-        const ids: string[] = queryResult.queryResults.rows.map( d => d.values[0] )
+        // find the column that has the USER_ID in it.
+        const ownerIdColumnIndex = queryResult.queryResults.headers.findIndex(
+          el => el.columnType === 'USERID',
+        )
+        const ids: string[] = queryResult.queryResults.rows.map( d => d.values[ownerIdColumnIndex] )
         if (mounted) {
           const newIds = getDisplayIds(ids)
           setUserIds(newIds)
+          if (useQueryResultUserData) {
+            setQueryData(queryResultBundle)
+          }
           setIsLoading(false)
         }
       } else {
@@ -102,7 +112,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   return (
     <div className="UserCardListRotate">
       {isLoading && loadingScreen}
-      {!isLoading && userIds.length && <UserCardList list={userIds} size={LARGE_USER_CARD} />}
+      {!isLoading && userIds.length > 0 && <UserCardList list={userIds} size={size} data={queryData} />}
       <div className="UserCardListRotate__summary">
         <p>
           <a className="homepage-button-link" href={summaryLink}>
