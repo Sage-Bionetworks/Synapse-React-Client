@@ -5,6 +5,7 @@ import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/Tab
 import UserCardList from './UserCardList'
 import loadingScreen from './LoadingScreen'
 import { UserCardSize } from './UserCard'
+import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -51,7 +52,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     count,
     token,
     useQueryResultUserData = false,
-    size = 'LARGE USER CARD',
+    size = LARGE_USER_CARD,
     summaryLink,
     summaryLinkText
   }) => {
