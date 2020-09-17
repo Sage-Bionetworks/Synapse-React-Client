@@ -176,7 +176,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       case ColumnType.USERID:
         return false
       default:
-        return true
+        // return true if the searchable array contains this column name
+        const { searchable } = this.props
+        return searchable?.some(e => e.columnName === columnModel?.name)
     }
   }
 
