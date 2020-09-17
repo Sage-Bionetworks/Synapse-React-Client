@@ -286,7 +286,7 @@ export default class UserCardMedium extends React.Component<
     if (!isLarge) {
       return (
         <div
-          style={{ border: '1px solid #DDDDDF' }}
+          style={{ border: '1px solid #DDDDDF', backgroundColor: 'white' }}
           className={`SRC-userCard SRC-userCardMediumUp ${
             isContextMenuOpen ? 'SRC-hand-cursor' : ''
           }`}
