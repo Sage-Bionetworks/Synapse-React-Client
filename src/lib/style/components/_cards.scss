@@ -279,7 +279,7 @@ img.iconImg.SRC-datasetIcon {
     svg {
       padding-top: $baseline-grid;
       overflow: visible;
-      width: 100%;
+      max-width: 100%;
     }
   }
 
