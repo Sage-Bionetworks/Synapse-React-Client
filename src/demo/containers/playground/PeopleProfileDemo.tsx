@@ -16,7 +16,7 @@ export const PeopleProfileDemo = () => {
         </div>
         <div className="row">
           <UserCardListRotate
-            sql={"SELECT * FROM syn13897207 where feature=true"}
+            sql={"SELECT * FROM syn13897207 where isFeatured=true"}
             count={3}
             useQueryResultUserData={true}
             size={MEDIUM_USER_CARD}

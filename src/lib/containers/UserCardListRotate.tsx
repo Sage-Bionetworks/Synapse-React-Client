@@ -50,7 +50,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     sql,
     count,
     token,
-    useQueryResultUserData,
+    useQueryResultUserData = false,
     size = 'LARGE USER CARD',
     summaryLink,
     summaryLinkText
