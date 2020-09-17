@@ -4,7 +4,6 @@ import {
   faCheck,
   faColumns,
   faDownload,
-  faCog,
   faFilter,
   faGlobeAmericas,
   faSort,
@@ -66,6 +65,7 @@ import {
 import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
+import { Settings } from '@material-ui/icons'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -87,7 +87,6 @@ library.add(faSortAmountDown)
 library.add(faCheck)
 library.add(faTimes)
 library.add(faFilter)
-library.add(faCog)
 library.add(faDownload)
 library.add(faUsers)
 library.add(faGlobeAmericas)
@@ -602,10 +601,10 @@ export default class SynapseTable extends React.Component<
             <>
               <ElementWithTooltip
                 idForToolTip={'advancedSearch'}
-                image={faCog}
                 callbackFn={this.advancedSearch}
                 tooltipText={'Open Advanced Search in Synapse'}
                 size="lg"
+                muiIcon={<Settings />}
               />
               {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}

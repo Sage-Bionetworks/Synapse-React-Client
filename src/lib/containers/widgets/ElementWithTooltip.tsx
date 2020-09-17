@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, ReactElement } from 'react'
 import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
@@ -23,7 +23,7 @@ export type TooltipVisualProps = {
 
 /*****************************************
  *  The control needs to either have a child element or needs to have an image supplied
- *  If the child element is supplied the control renders the child applying additional proiperties
+ *  If the child element is supplied the control renders the child applying additional properties
  *  If the image is supplied the control renders a clickable image
  *  If there are no children and callback Fn is not supplied it is assumed to be a a dropdown trigger
  */
@@ -38,6 +38,7 @@ type ElementWithTooltipProps = {
   tooltipVisualProps?: TooltipVisualProps
   darkTheme?: boolean
   size?: FontAwesomeIconProps['size']
+  muiIcon?: ReactElement
 }
 
 function getTooltipTriggerContents(
@@ -69,9 +70,10 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   children,
   darkTheme,
   size,
+  muiIcon
 }) => {
   const { place, type, effect, border } = tooltipVisualProps
-  const tooltipTriggerContents = image
+  const tooltipTriggerContents = muiIcon ? muiIcon : image
     ? getTooltipTriggerContents(image, imageColor, size)
     : children || <></>
 
