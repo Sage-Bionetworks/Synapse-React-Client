@@ -123,11 +123,12 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     event.preventDefault()
     const { searchText } = this.state
     let { columnName } = this.state
+    const { searchable } = this.props
     if (columnName === '') {
       // default to the first one, will always be defined
       columnName =
         this.props.data?.columnModels?.filter(el =>
-          this.isSupportedColumnAndInProps(el),
+          searchable ? this.isSupportedColumnAndInProps(el) : this.isSupportedColumn(el),
         )?.[0].name ?? ''
     }
     this.setState({
@@ -149,7 +150,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
         columnName,
         operator: ColumnSingleValueFilterOperator.LIKE,
-        values: [searchText],
+        values: [`%${searchText}%`],
         concreteType:
           'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
       }
@@ -167,7 +168,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     })
   }
 
-  public isSupportedColumnAndInProps = (columnModel?: ColumnModel) => {
+  public isSupportedColumn = (columnModel?: ColumnModel) => {
     switch (columnModel?.columnType) {
       case ColumnType.FILEHANDLEID:
       case ColumnType.ENTITYID:
@@ -176,10 +177,17 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       case ColumnType.USERID:
         return false
       default:
+        return true
+    }
+  }
+
+  public isSupportedColumnAndInProps = (columnModel?: ColumnModel) => {
+    if (this.isSupportedColumn(columnModel)) {
         // return true if the searchable array contains this column name
         const { searchable } = this.props
         return searchable?.some(e => e.columnName === columnModel?.name)
     }
+    return false
   }
 
   render() {
@@ -198,7 +206,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         .map(el => el!.name)
     } else if (data?.columnModels) {
       searchColumns = data.columnModels
-        ?.filter(this.isSupportedColumnAndInProps)
+        ?.filter(this.isSupportedColumn)
         .map(el => el.name)
     }
 
