@@ -1,5 +1,5 @@
 import { SynapseConstants, SynapseClient } from '../utils/'
-import * as React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   QueryBundleRequest,
   FacetColumnValuesRequest,
@@ -14,82 +14,71 @@ export type QueryCountProps = {
   token?: string
 }
 
-type QueryCountState = {
-  storedSqlQueryCount: {}
+const QueryCount: React.FunctionComponent<QueryCountProps> = ({
+  sql,
+  selectedFacets,
+  parens,
+  name,
+  token,
+}) => {
+  const [storedSqlQueryCount, setStoredSqlQueryCount] = useState<{}>({})
   // maps sql string to true/false, true if already made a request for this sql's query count
   // false or undefined if not
-  isCalculatingQueryCountForSql: {}
+  const [isCalculatingQueryCountForSql, setIsCalculatingQueryCountForSql] = useState<{}>({})
+  let mounted = true
+
+  useEffect(() => {
+    const calculateRowCount = () => {
+      if (mounted) {
+        const entityId = parseEntityIdFromSqlStatement(sql)
+        if (
+          isCalculatingQueryCountForSql[`${sql}-${token}`] ||
+          storedSqlQueryCount[`${sql}-${token}`]
+        ) {
+          // its either in progress or its already been calculated
+          return
+        }
+        const request: QueryBundleRequest = {
+          concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          query: {
+            sql,
+            selectedFacets,
+          },
+          entityId,
+          partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+        }
+        const newIsCalculatingQueryCountForSql = {
+          ...isCalculatingQueryCountForSql,  
+        }
+        newIsCalculatingQueryCountForSql[`${sql}-${token}`] = true
+        setIsCalculatingQueryCountForSql(newIsCalculatingQueryCountForSql)
+        debugger
+        SynapseClient.getQueryTableResults(request, token).then(data => {
+          debugger
+          const newStoredSqlQueryCount = {
+            ...storedSqlQueryCount
+          }
+          newStoredSqlQueryCount[`${sql}-${token}`] = data!.queryCount
+          setStoredSqlQueryCount(newStoredSqlQueryCount)
+        })
+      }
+    }
+
+    calculateRowCount()
+
+    return () => {
+      mounted = false
+    }
+
+  }, [sql, selectedFacets, token])
+
+  const count = storedSqlQueryCount[`${sql}-${token}`]
+  const localCount = count?.toLocaleString()
+  /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
+  return (
+    <React.Fragment>
+      {name} {count && (parens ? `(${localCount})` : localCount)}
+    </React.Fragment>
+  )
 }
-
-/**
- * QueryCount shows a query count
- *
- * @export
- * @class QueryCount
- * @extends {React.Component<QueryCountProps, QueryCountState>}
- */
-export default class QueryCount extends React.Component<
-  QueryCountProps,
-  QueryCountState
-> {
-  constructor(props: QueryCountProps) {
-    super(props)
-    this.state = {
-      storedSqlQueryCount: {},
-      isCalculatingQueryCountForSql: {},
-    }
-    this.calculateRowCount = this.calculateRowCount.bind(this)
-  }
-
-  componentDidMount() {
-    this.calculateRowCount()
-  }
-
-  componentDidUpdate() {
-    this.calculateRowCount()
-  }
-
-  calculateRowCount() {
-    const { sql, token, selectedFacets } = this.props
-    const entityId = parseEntityIdFromSqlStatement(sql)
-    if (
-      this.state.isCalculatingQueryCountForSql[sql] ||
-      this.state.storedSqlQueryCount[sql]
-    ) {
-      // its either in progress or its already been calculated
-      return
-    }
-    const request: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      query: {
-        sql,
-        selectedFacets,
-      },
-      entityId,
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
-    }
-    const { isCalculatingQueryCountForSql, storedSqlQueryCount } = this.state
-    isCalculatingQueryCountForSql[sql] = true
-    this.setState({
-      isCalculatingQueryCountForSql,
-    })
-    SynapseClient.getQueryTableResults(request, token).then(data => {
-      storedSqlQueryCount[sql] = data!.queryCount
-      this.setState({
-        storedSqlQueryCount,
-      })
-    })
-  }
-
-  render() {
-    const { sql, name, parens = true } = this.props
-    const count = this.state.storedSqlQueryCount[sql]
-    const localCount = count?.toLocaleString()
-    /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
-    return (
-      <React.Fragment>
-        {name} {count && (parens ? `(${localCount})` : localCount)}
-      </React.Fragment>
-    )
-  }
-}
+export default QueryCount
