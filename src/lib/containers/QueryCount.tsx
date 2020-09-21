@@ -52,9 +52,7 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
         }
         newIsCalculatingQueryCountForSql[`${sql}-${token}`] = true
         setIsCalculatingQueryCountForSql(newIsCalculatingQueryCountForSql)
-        debugger
         SynapseClient.getQueryTableResults(request, token).then(data => {
-          debugger
           const newStoredSqlQueryCount = {
             ...storedSqlQueryCount
           }
