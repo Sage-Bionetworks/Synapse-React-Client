@@ -56,7 +56,7 @@ const maxLegendLength: number = 30
 
 type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
-type PlotType = 'PIE' | 'BAR'
+export type PlotType = 'PIE' | 'BAR'
 
 const layout: Partial<PlotlyTyped.Layout> = {
   showlegend: false,
@@ -101,7 +101,7 @@ export function truncate(str: string | undefined, n: number) {
   return trimmedStr.length > n ? trimmedStr.substr(0, n - 1) + '…' : str
 }
 
-function extractPlotDataArray(
+export function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
   columnType: ColumnType | undefined,
   index: number,
@@ -235,11 +235,11 @@ const applyFacetFilter = (
   }
 }
 
-const getPlotStyle = (
+export function getPlotStyle (
   parentWidth: number | null,
   plotType: PlotType,
   maxHeight: number,
-): { width: string; height: string } => {
+): { width: string; height: string } {
   const quotient = plotType === 'BAR' ? 0.8 : 0.6
   const width = parentWidth ? parentWidth * quotient : 200
   let height = plotType === 'PIE' ? width : width / 3
@@ -254,16 +254,16 @@ const getPlotStyle = (
   }
 }
 
-type FacetWithLabel = {
+export type FacetWithLabel = {
   label: string
   count: number
 }
 
-const renderLegend = (
+export function renderLegend (
   labels: FacetWithLabel[] | undefined,
   colors: string[] = [],
   isExpanded: boolean,
-): JSX.Element => {
+): JSX.Element {
   if (!labels) {
     return <></>
   }
