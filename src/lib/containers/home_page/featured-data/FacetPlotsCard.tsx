@@ -8,7 +8,6 @@ import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import {
   FacetColumnResultValues,
   ColumnType,
-  QueryBundleRequest,
   FacetColumnResult,
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
@@ -24,9 +23,8 @@ import { getFacets } from '../../widgets/facet-nav/FacetNav'
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardOwnProps = {
-  index: number
+  rgbIndex?: number
   facetsToPlot?: string[]
-  lastQueryRequest: QueryBundleRequest | undefined
 }
 
 type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
@@ -47,7 +45,7 @@ const layout: Partial<PlotlyTyped.Layout> = {
 
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   isLoadingNewData,
-  index,
+  // rgbIndex,
   facetsToPlot,
   data,
   isLoading,
@@ -106,26 +104,31 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
         </div>
-{/* TODO: create a plot for every facet to be plotted */}
         <div className="FacetPlotsCard__body">
-          <SizeMe monitorHeight>
-            {({ size }) => (
-              <div className="FacetPlotsCard__body__plot">
-                <Plot
-                  key={`${facetToPlot.columnName}-${size.width}`}
-                  layout={layout}
-                  data={plotData?.data ?? []}
-                  style={getPlotStyle(
-                    size.width,
-                    'BAR',
-                    150,
-                  )}
-                  config={{ displayModeBar: false }}                  
-                ></Plot>
-              </div>
-            )}
-          </SizeMe>
-          {renderLegend(plotData?.labels, plotData?.colors, false)}
+          {/* create a plot for every facet to be plotted */}
+          {facetPlotDataArray.map((plotData, index) => {
+            return <div>
+              <SizeMe monitorHeight>
+                {({ size }) => (
+                  <div className="FacetPlotsCard__body__plot">
+                    <Plot
+                      key={`${facetsToPlot![index]}-${size.width}`}
+                      layout={layout}
+                      data={plotData?.data ?? []}
+                      style={getPlotStyle(
+                        size.width,
+                        'BAR',
+                        150,
+                      )}
+                      config={{ displayModeBar: false }}                  
+                    ></Plot>
+                  </div>
+                )}
+              </SizeMe>
+              {renderLegend(plotData?.labels, plotData?.colors, false)}
+            </div>
+          })}
+
         </div>
       </div>
     )

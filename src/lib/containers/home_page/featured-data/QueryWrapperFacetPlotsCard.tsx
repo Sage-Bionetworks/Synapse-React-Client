@@ -1,21 +1,11 @@
 import * as React from 'react'
-import QueryWrapper from '../QueryWrapper'
-import FacetNav, { FacetNavOwnProps } from '../widgets/facet-nav/FacetNav'
-import { SynapseTableProps } from '../table/SynapseTable'
+import QueryWrapper from '../../QueryWrapper'
 import {
-  insertConditionsFromSearchParams,
-  SQLOperator,
   parseEntityIdFromSqlStatement,
-} from '../../utils/functions/sqlFunctions'
-import { SynapseConstants } from '../../utils/'
-import { QueryBundleRequest } from '../../utils/synapseTypes'
-import { CardConfiguration } from '../CardContainerLogic'
-import { Error } from '../Error'
-import FilterAndView from './FilterAndView'
-import { TopLevelControlsProps } from './TopLevelControls'
-import TopLevelControls from './TopLevelControls'
-import SearchV2, { SearchV2Props } from '../SearchV2'
-import { DownloadConfirmation } from '../download_list'
+} from '../../../utils/functions/sqlFunctions'
+import { SynapseConstants } from '../../../utils/'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
+import { Error } from '../../Error'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryWrapperFacetPlotsCardProps = {
@@ -24,12 +14,17 @@ export type QueryWrapperFacetPlotsCardProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
   facetAliases?: {}
+  selectFacetColumnName: string
+  selectFacetColumnValue: string
 }
 
 const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlotsCardProps> = props => {
   const {
     sql,
-    facetsToPlot,    
+    facetsToPlot,
+    rgbIndex,  
+    selectFacetColumnName,
+    selectFacetColumnValue,
     ...rest
   } = props
   let sqlUsed = sql
@@ -40,12 +35,18 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS,
-    query: {
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {      
       sql: sqlUsed,
-      limit: 25,
       offset: 0,
-    },
+      limit: 0,
+      selectedFacets: [{
+        columnName: selectFacetColumnName,
+        facetValues: [selectFacetColumnValue],
+        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'        
+      }],
+    },    
   }
   return (
     <div className="QueryWrapperFacetPlotsCard">
@@ -53,7 +54,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
         <Error />
         <FacetPlotsCard
           facetsToPlot={facetsToPlot}
-          showNotch={true}          
+          rgbIndex={rgbIndex}
         />
       </QueryWrapper>
     </div>
