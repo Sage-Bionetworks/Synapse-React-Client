@@ -1,5 +1,5 @@
 import * as React from 'react'
-import QueryWrapper from '../QueryWrapper'
+import QueryWrapper, { LockedFacet } from '../QueryWrapper'
 import FacetNav, { FacetNavOwnProps } from '../widgets/facet-nav/FacetNav'
 import { SynapseTableProps } from '../table/SynapseTable'
 import {
@@ -30,6 +30,7 @@ type OwnProps = {
   facetAliases?: {}
   hideDownload?: boolean
   defaultColumn?: string
+  lockedFacet?: LockedFacet
 } & Omit<TopLevelControlsProps, 'entityId'>
 
 type SearchParams = {
@@ -40,6 +41,7 @@ type SearchParams = {
 type Operator = {
   sqlOperator?: SQLOperator
 }
+
 export type QueryWrapperPlotNavProps = SearchParams &
   Partial<FacetNavOwnProps> &
   Operator &
@@ -56,6 +58,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     facetsToPlot,
     hideDownload,
     searchConfiguration,
+    lockedFacet,
     ...rest
   } = props
   let sqlUsed = sql
@@ -85,7 +88,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   }
   return (
     <div className="QueryWrapperPlotNav">
-      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+      <QueryWrapper {...rest} lockedFacet={lockedFacet} initQueryRequest={initQueryRequest}>
         <TopLevelControls
           showColumnSelection={tableConfiguration !== undefined}
           name={name}
@@ -98,7 +101,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         <DownloadConfirmation />
         <FacetNav
           facetsToPlot={facetsToPlot}
-          showNotch={true}          
+          showNotch={true}
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}

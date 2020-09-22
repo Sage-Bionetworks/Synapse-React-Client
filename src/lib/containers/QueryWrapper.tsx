@@ -24,6 +24,7 @@ export type QueryWrapperProps = {
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
   hiddenColumns?: string[]
+  lockedFacet?: LockedFacet
 }
 
 export type TopLevelControlsState = {
@@ -64,6 +65,11 @@ export type QueryWrapperState = {
   error: SynapseClientError | undefined
 }
 
+export type LockedFacet = {
+  facet: string,
+  value: string
+}
+
 export type FacetSelection = {
   columnName: string
   facetValue: string
@@ -98,7 +104,8 @@ export type QueryWrapperChildProps = {
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected?: string[]
   selectedRowIndices?: number[]
-  error?: SynapseClientError | undefined
+  error?: SynapseClientError | undefined,
+  lockedFacet?: LockedFacet
 }
 
 /**
@@ -376,6 +383,24 @@ export default class QueryWrapper extends React.Component<
   }
 
   /**
+   * remove a particular facet name (e.g. study) and its all possible values based on the parameter specified in the url
+   * this is to remove the facet from the charts, search and filter.
+   * @return data: QueryResultBundle
+   * TODO: fix search dropdown
+   */
+  removeLockedFacetData (){
+    const lockedFacet = this.props.lockedFacet?.facet
+    if (lockedFacet && this.state.data) {  // return data without the "locked" facet
+      const data = cloneDeep(this.state.data)
+      const facets = data.facets?.filter( item => item.columnName !== lockedFacet)
+      data.facets = facets
+      return data
+    } else {
+      return this.state.data
+    }
+  }
+
+  /**
    * Render the children without any formatting
    */
   public render() {
@@ -388,7 +413,8 @@ export default class QueryWrapper extends React.Component<
       }
       const queryWrapperChildProps: QueryWrapperChildProps = {
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
-        data: this.state.data,
+        data: this.removeLockedFacetData(),
+        // data: this.state.data,
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
         chartSelectionIndex: this.state.chartSelectionIndex,
