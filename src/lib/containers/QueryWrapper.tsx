@@ -386,7 +386,6 @@ export default class QueryWrapper extends React.Component<
    * remove a particular facet name (e.g. study) and its all possible values based on the parameter specified in the url
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
-   * TODO: fix search dropdown
    */
   removeLockedFacetData (){
     const lockedFacet = this.props.lockedFacet?.facet

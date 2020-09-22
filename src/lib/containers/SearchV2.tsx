@@ -123,12 +123,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     event.preventDefault()
     const { searchText } = this.state
     let { columnName } = this.state
-    const { searchable } = this.props
+    const { searchable, lockedFacet } = this.props
     if (columnName === '') {
       // default to the first one, will always be defined
+      // For study details page: if lockedFacet is defined, remove it from the search
       columnName =
-        this.props.data?.columnModels?.filter(el =>
-          searchable ? this.isSupportedColumnAndInProps(el) : this.isSupportedColumn(el),
+        this.props.data?.columnModels?.filter(el => el.name !== lockedFacet?.facet)
+          .filter(el => searchable ? this.isSupportedColumnAndInProps(el) : this.isSupportedColumn(el),
         )?.[0].name ?? ''
     }
     this.setState({
@@ -191,7 +192,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   }
 
   render() {
-    const { data, topLevelControlsState, facetAliases, searchable } = this.props
+    const { data, topLevelControlsState, facetAliases, searchable, lockedFacet } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []
 
@@ -207,6 +208,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       searchColumns = data.columnModels
         ?.filter(this.isSupportedColumn)
         .map(el => el.name)
+    }
+
+    // For study details page: if lockedFacet is defined, remove it from the radio dropdown
+    if (searchColumns.length && lockedFacet?.facet) {
+      searchColumns = searchColumns.filter(el => el !== lockedFacet?.facet)
     }
 
     return (
