@@ -201,7 +201,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         .map(el =>
           data?.columnModels?.find(model => model.name === el.columnName),
         )
-        .filter(el => el)
         .filter(this.isSupportedColumnAndInProps)
         .map(el => el!.name)
     } else if (data?.columnModels) {
