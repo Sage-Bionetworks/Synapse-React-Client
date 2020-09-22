@@ -1,0 +1,19 @@
+.FacetPlotsCard {
+  &__title {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 25px;    
+  }
+  &__body {    
+    background-color: white;
+    &__row {
+      display: flex;      
+    }
+    &__name {
+
+    }
+    &__plot {
+      height: 300px;
+    }  
+  }
+}

@@ -52,6 +52,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   facetAliases
 }: FacetPlotsCardProps): JSX.Element => {
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
+  const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
   
   const getColumnType = (facetToPlot:FacetColumnResult): ColumnType | undefined =>
@@ -75,7 +76,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         newPlotData[index] = plotData
       })
       setFacetPlotDataArray(newPlotData)
-      // ASSUMPTION: One facet column value is selected (locked down).  For example, facet column "study" with value "ROSMAP"
+      setFacetDataArray(facetsDataToPlot)
+      // ASSUMPTION: exactly one facet column value is selected (locked down).  For example, facet column "study" with value "ROSMAP"
       const selectedFacet:FacetColumnResultValueCount|undefined = data?.facets?.map(item => {
         return (item as FacetColumnResultValues).facetValues.filter(facetValue => {
           return facetValue.isSelected
@@ -87,7 +89,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     }
   }, [facetsToPlot, data])
 
-  if (isLoadingNewData || !facetPlotDataArray) {
+  if (isLoadingNewData || !facetPlotDataArray || !facetDataArray) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -96,8 +98,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   } else {
     return (
       <div className="FacetPlotsCard">
-        <div className="FacetPlotsCard__title">
-          <span className="FacetNavPanel__title__name">
+        <div>
+          <span className="FacetPlotsCard__title">
             {unCamelCase(selectedFacetValue, facetAliases)}
           </span>
           {isLoading && (
@@ -108,24 +110,32 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           {/* create a plot for every facet to be plotted */}
           {facetPlotDataArray.map((plotData, index) => {
             return <div>
-              <SizeMe monitorHeight>
-                {({ size }) => (
-                  <div className="FacetPlotsCard__body__plot">
-                    <Plot
-                      key={`${facetsToPlot![index]}-${size.width}`}
-                      layout={layout}
-                      data={plotData?.data ?? []}
-                      style={getPlotStyle(
-                        size.width,
-                        'BAR',
-                        150,
-                      )}
-                      config={{ displayModeBar: false }}                  
-                    ></Plot>
-                  </div>
-                )}
-              </SizeMe>
-              {renderLegend(plotData?.labels, plotData?.colors, false)}
+              {index != 0 ? <hr></hr> : <></>}
+              <div className="FacetPlotsCard__body_facet">
+                <span>
+                  {unCamelCase(facetDataArray[index].columnName, facetAliases)}
+                </span>
+              </div>
+              <div className="FacetPlotsCard__body__row">
+                <SizeMe monitorHeight>
+                  {({ size }) => (
+                    <div className="FacetNavPanel__body__plot">
+                      <Plot
+                        key={`${facetsToPlot![index]}-${size.width}`}
+                        layout={layout}                      
+                        data={plotData?.data ?? []}
+                        style={getPlotStyle(
+                          size.width,
+                          'BAR',
+                          150,
+                        )}
+                        config={{ displayModeBar: false }}                  
+                      ></Plot>
+                    </div>
+                  )}
+                </SizeMe>
+                {renderLegend(plotData?.labels, plotData?.colors, false)}
+                </div>            
             </div>
           })}
 

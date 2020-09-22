@@ -36,7 +36,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS, // like to remove, but query wrapper assumes queryResult is in the response, so include for now (with limit 0)
     query: {      
       sql: sqlUsed,
       offset: 0,
