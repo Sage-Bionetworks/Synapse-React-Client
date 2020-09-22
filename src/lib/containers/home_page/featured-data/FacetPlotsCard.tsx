@@ -9,19 +9,23 @@ import {
   FacetColumnResultValues,
   ColumnType,
   QueryBundleRequest,
+  FacetColumnResult,
+  FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
+
 // import getColorPallette from '../../../containers/ColorGradient'
 
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
 import { GraphData, extractPlotDataArray, getPlotStyle, renderLegend } from '../../widgets/facet-nav/FacetNavPanel'
+import { getFacets } from '../../widgets/facet-nav/FacetNav'
 
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardOwnProps = {
   index: number
-  facetToPlot: FacetColumnResultValues
+  facetsToPlot?: string[]
   lastQueryRequest: QueryBundleRequest | undefined
 }
 
@@ -44,35 +48,48 @@ const layout: Partial<PlotlyTyped.Layout> = {
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   isLoadingNewData,
   index,
-  facetToPlot,
+  facetsToPlot,
   data,
   isLoading,
-  facetAliases,
-  token,
-  lastQueryRequest,
+  facetAliases
 }: FacetPlotsCardProps): JSX.Element => {
-  const [plotData, setPlotData] = useState<GraphData>()
+  const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
+  const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
   
-  const getColumnType = (): ColumnType | undefined =>
+  const getColumnType = (facetToPlot:FacetColumnResult): ColumnType | undefined =>
     data?.columnModels?.find(
       columnModel => columnModel.name === facetToPlot.columnName,
     )?.columnType as ColumnType
 
   useEffect(() => {
-    if (!facetToPlot) {
+    if (!facetsToPlot || !data) {
       return
     } else {
-      const plotData = extractPlotDataArray(
-        facetToPlot,
-        getColumnType(),
-        index,
-        'PIE',
-      )
-      setPlotData(plotData)
+      const facetsDataToPlot = getFacets(data, facetsToPlot)
+      const newPlotData = new Array(facetsDataToPlot.length).fill({})
+      facetsDataToPlot.map((item, index) => {
+        const plotData = extractPlotDataArray(
+          item as FacetColumnResultValues,
+          getColumnType(item),
+          index,
+          'PIE',
+        )
+        newPlotData[index] = plotData
+      })
+      setFacetPlotDataArray(newPlotData)
+      // ASSUMPTION: One facet column value is selected (locked down).  For example, facet column "study" with value "ROSMAP"
+      const selectedFacet:FacetColumnResultValueCount|undefined = data?.facets?.map(item => {
+        return (item as FacetColumnResultValues).facetValues.filter(facetValue => {
+          return facetValue.isSelected
+        })[0]
+      })[0]
+      if (selectedFacet && selectedFacet.value) {
+        setSelectedFacetValue(selectedFacet?.value)
+      }
     }
-  }, [facetToPlot, data])
+  }, [facetsToPlot, data])
 
-  if (isLoadingNewData || !facetToPlot) {
+  if (isLoadingNewData || !facetPlotDataArray) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -83,13 +100,13 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       <div className="FacetPlotsCard">
         <div className="FacetPlotsCard__title">
           <span className="FacetNavPanel__title__name">
-            {unCamelCase(facetToPlot.columnName, facetAliases)}
+            {unCamelCase(selectedFacetValue, facetAliases)}
           </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
         </div>
-
+{/* TODO: create a plot for every facet to be plotted */}
         <div className="FacetPlotsCard__body">
           <SizeMe monitorHeight>
             {({ size }) => (
