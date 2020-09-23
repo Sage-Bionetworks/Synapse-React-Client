@@ -66,8 +66,8 @@ export type QueryWrapperState = {
 }
 
 export type LockedFacet = {
-  facet: string,
-  value: string
+  facet?: string,
+  value?: string
 }
 
 export type FacetSelection = {

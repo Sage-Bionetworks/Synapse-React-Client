@@ -9,11 +9,6 @@ import {
 } from '../../../lib/utils/synapseTypes/Table/TableUpdate'
 import { Row } from '../../../lib/utils/synapseTypes'
 
-const emmaTest = {
-  facet: 'study',
-  value: 'ROSMAP'
-}
-
 type DemoState = {
   ownerId: string
   isLoading: boolean
@@ -44,7 +39,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
       showMarkdown: true,
       showCards: true,
       propsWithTable: {
-        lockedFacet: emmaTest,
         tableConfiguration: {
           showAccessColumn: true,
         },
@@ -70,7 +64,6 @@ class QueryWrapperPlotNavDemo extends React.Component<
         // facetsToPlot: ['assay', 'dataType'],
       },
       propsWithCards: {
-        lockedFacet: emmaTest,
         rgbIndex: 1,
         name: 'PlotNav Demo',
         sqlOperator: '=',

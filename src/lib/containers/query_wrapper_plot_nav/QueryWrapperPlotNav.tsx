@@ -30,7 +30,6 @@ type OwnProps = {
   facetAliases?: {}
   hideDownload?: boolean
   defaultColumn?: string
-  lockedFacet?: LockedFacet
 } & Omit<TopLevelControlsProps, 'entityId'>
 
 type SearchParams = {
@@ -58,19 +57,32 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     facetsToPlot,
     hideDownload,
     searchConfiguration,
-    lockedFacet,
     ...rest
   } = props
   let sqlUsed = sql
+  let lockedFacet: LockedFacet = {}
+  // let lockedFacet: LockedFacet = {
+  //   facet: 'study',
+  //   value: 'MSBB'
+  // }
+
   if (searchParams) {
-    if (searchParams) {
-      sqlUsed = insertConditionsFromSearchParams(
-        searchParams,
-        sqlUsed,
-        sqlOperator,
-      )
+    sqlUsed = insertConditionsFromSearchParams(
+      searchParams,
+      sqlUsed,
+      sqlOperator,
+    )
+
+    // For study details page: set locked facet name/value from search param, only assign if the key is 'study'
+    const facetKeys = Object.keys(searchParams)
+    if (facetKeys.length && facetKeys[0] === 'study') {
+      lockedFacet = {
+        facet: 'study',
+        value: Object.values(searchParams)[0]
+      }
     }
   }
+
   const entityId = parseEntityIdFromSqlStatement(sqlUsed)
   const initQueryRequest: QueryBundleRequest = {
     entityId,
