@@ -17,9 +17,18 @@
     &__facetname {
       text-align: center;
       padding-bottom: 20px;
+      font-weight: bold;
     }
     &__plot {
       width: 60%;
-    }  
+    }
+    &__footer {
+      display: flex;
+      text-align: center;
+      white-space: nowrap;
+      &__link {
+        width: 35%;
+      }
+    }
   }
 }

@@ -105,12 +105,16 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       const stringifiedQuery = encodeURIComponent(
         JSON.stringify(getInitQueryRequest!().query),
       )
-      exploreLink = <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-        View {friendlyFacetValue} Data
-      </a>
+      exploreLink = <div className="FacetPlotsCard__body__footer">
+        <div className="FacetPlotsCard__body__footer__link">
+          <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
+            View {friendlyFacetValue} Data
+          </a>
+        </div>
+      </div>
     }
     return (
-      <div className="FacetPlotsCard">
+      <div className="FacetPlotsCard cardContainer">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
             {friendlyFacetValue}
