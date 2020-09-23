@@ -102,8 +102,11 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     let exploreLink = <></>
     if (explorePagePath) {
       // modify explore page url to point to a customized query
+      const updatedQuery = {...getInitQueryRequest!().query}
+      updatedQuery.offset = 0
+      updatedQuery.limit = 25
       const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(getInitQueryRequest!().query),
+        JSON.stringify(updatedQuery),
       )
       exploreLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">
