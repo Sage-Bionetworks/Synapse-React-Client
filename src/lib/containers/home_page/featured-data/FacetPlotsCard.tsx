@@ -24,6 +24,7 @@ const Plot = createPlotlyComponent(Plotly)
 export type FacetPlotsCardOwnProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
+  explorePagePath?: string
 }
 
 type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
@@ -46,9 +47,11 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   isLoadingNewData,
   rgbIndex,
   facetsToPlot,
+  explorePagePath,
   data,
   isLoading,
-  facetAliases
+  facetAliases,
+  getInitQueryRequest
 }: FacetPlotsCardProps): JSX.Element => {
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
@@ -58,7 +61,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     data?.columnModels?.find(
       columnModel => columnModel.name === facetToPlot.columnName,
     )?.columnType as ColumnType
-
+  
   useEffect(() => {
     if (!facetsToPlot || !data) {
       return
@@ -95,11 +98,22 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       </div>
     )
   } else {
+    const friendlyFacetValue = unCamelCase(selectedFacetValue, facetAliases)
+    let exploreLink = <></>
+    if (explorePagePath) {
+      // modify explore page url to point to a customized query
+      const stringifiedQuery = encodeURIComponent(
+        JSON.stringify(getInitQueryRequest!().query),
+      )
+      exploreLink = <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
+        View {friendlyFacetValue} Data
+      </a>
+    }
     return (
       <div className="FacetPlotsCard">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
-            {unCamelCase(selectedFacetValue, facetAliases)}
+            {friendlyFacetValue}
           </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
@@ -137,7 +151,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 </div>            
             </div>
           })}
-
+          {exploreLink}
         </div>
       </div>
     )

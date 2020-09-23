@@ -16,6 +16,7 @@ export type QueryWrapperFacetPlotsCardProps = {
   facetAliases?: {}
   selectFacetColumnName: string
   selectFacetColumnValue: string
+  explorePagePath?: string
 }
 
 const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlotsCardProps> = props => {
@@ -25,6 +26,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
     rgbIndex,  
     selectFacetColumnName,
     selectFacetColumnValue,
+    explorePagePath,
     ...rest
   } = props
   let sqlUsed = sql
@@ -55,6 +57,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
         <FacetPlotsCard
           facetsToPlot={facetsToPlot}
           rgbIndex={rgbIndex}
+          explorePagePath={explorePagePath}
         />
       </QueryWrapper>
     </div>
