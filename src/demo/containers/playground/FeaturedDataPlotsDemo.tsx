@@ -29,7 +29,6 @@ export const FeaturedDataPlotsDemo = () => {
           rgbIndex:0,
           explorePagePath:'/Explore/Data',
         },
-
       ]
     }
     ></FeaturedDataPlots>

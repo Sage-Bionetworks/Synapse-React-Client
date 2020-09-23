@@ -29,6 +29,8 @@ import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
+import FeaturedDataPlots from './containers/home_page/featured-data/FeaturedDataPlots'
+
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
 import './style/components/_spinner.scss'
@@ -63,6 +65,7 @@ const SynapseComponents = {
   SynapsePlot,
   RssFeedCards,
   UserCardListRotate,
+  FeaturedDataPlots,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
