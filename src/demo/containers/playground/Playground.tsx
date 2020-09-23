@@ -23,7 +23,7 @@ import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
-import { QueryWrapperFacetPlotsCardDemo } from './QueryWrapperFacetPlotsCardDemo'
+import { FeaturedDataPlotsDemo } from './FeaturedDataPlotsDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -130,7 +130,7 @@ const App = ({
           <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/QueryWrapperFacetPlotsCardDemo`}>Home Page Facet Plots Card Demo</Link>
+          <Link to={`${match.url}/FeaturedDataPlotsDemo`}>Featured Data Plots Demo</Link>
         </li>        
       </ul>
 
@@ -280,8 +280,8 @@ const App = ({
       />
       <Route
         exact={true}
-        path={`${match.url}/QueryWrapperFacetPlotsCardDemo`}
-        component={QueryWrapperFacetPlotsCardDemo}
+        path={`${match.url}/FeaturedDataPlotsDemo`}
+        component={FeaturedDataPlotsDemo}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

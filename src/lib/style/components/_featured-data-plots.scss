@@ -1,0 +1,17 @@
+@media (max-width: 400px) {
+  .FeaturedDataPlots {
+    display: block;
+    &__card {
+      width: 100%;
+    }
+  }
+}
+.FeaturedDataPlots {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0px;
+  &__card {
+    width: 32%;
+    padding: 0px 5px;
+  }
+}
