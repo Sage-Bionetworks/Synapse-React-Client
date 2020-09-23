@@ -1,19 +1,25 @@
 .FacetPlotsCard {
+  &__titlebar {
+    height: 46px;
+    padding: 12px 25px;
+  }
   &__title {
     font-size: 16px;
-    font-weight: bold;
-    padding: 10px 25px;    
+    font-weight: bold;    
   }
-  &__body {    
+  &__body {
     background-color: white;
+    padding: 33px 44px;
     &__row {
-      display: flex;      
+      display: flex;
+      padding-bottom: 20px;
     }
-    &__name {
-
+    &__facetname {
+      text-align: center;
+      padding-bottom: 20px;
     }
     &__plot {
-      height: 300px;
+      width: 60%;
     }  
   }
 }

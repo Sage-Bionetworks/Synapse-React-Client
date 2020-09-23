@@ -12,8 +12,7 @@ import {
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 
-// import getColorPallette from '../../../containers/ColorGradient'
-
+import getColorPallette from '../../../containers/ColorGradient'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
@@ -45,7 +44,7 @@ const layout: Partial<PlotlyTyped.Layout> = {
 
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   isLoadingNewData,
-  // rgbIndex,
+  rgbIndex,
   facetsToPlot,
   data,
   isLoading,
@@ -54,7 +53,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
-  
+  const { colorPalette } = getColorPallette(rgbIndex ?? 0, 2)
   const getColumnType = (facetToPlot:FacetColumnResult): ColumnType | undefined =>
     data?.columnModels?.find(
       columnModel => columnModel.name === facetToPlot.columnName,
@@ -98,7 +97,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   } else {
     return (
       <div className="FacetPlotsCard">
-        <div>
+        <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
             {unCamelCase(selectedFacetValue, facetAliases)}
           </span>
@@ -111,7 +110,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           {facetPlotDataArray.map((plotData, index) => {
             return <div>
               {index != 0 ? <hr></hr> : <></>}
-              <div className="FacetPlotsCard__body_facet">
+              <div className="FacetPlotsCard__body__facetname">
                 <span>
                   {unCamelCase(facetDataArray[index].columnName, facetAliases)}
                 </span>
@@ -119,14 +118,14 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
               <div className="FacetPlotsCard__body__row">
                 <SizeMe monitorHeight>
                   {({ size }) => (
-                    <div className="FacetNavPanel__body__plot">
+                    <div className="FacetPlotsCard__body__plot">
                       <Plot
                         key={`${facetsToPlot![index]}-${size.width}`}
                         layout={layout}                      
                         data={plotData?.data ?? []}
                         style={getPlotStyle(
                           size.width,
-                          'BAR',
+                          'PIE',
                           150,
                         )}
                         config={{ displayModeBar: false }}                  

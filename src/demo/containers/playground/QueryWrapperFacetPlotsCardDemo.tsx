@@ -11,12 +11,14 @@ export const QueryWrapperFacetPlotsCardDemo = () => {
             facetsToPlot={['dataType', 'assay']}
             selectFacetColumnName='study'
             selectFacetColumnValue='ROSMAP'
+            rgbIndex={0}
           />
           <QueryWrapperFacetPlotsCard
             sql={"SELECT * FROM syn11346063"}
             facetsToPlot={['dataType', 'assay']}
             selectFacetColumnName='study'
             selectFacetColumnValue='MSBB'
+            rgbIndex={0}
           />
         </div>
       </div>
