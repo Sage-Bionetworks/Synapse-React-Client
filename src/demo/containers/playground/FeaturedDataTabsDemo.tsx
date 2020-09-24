@@ -32,7 +32,7 @@ export const FeaturedDataTabsDemo = () => {
             }
           },
           {
-            title: 'Mouse Studies',
+            title: 'Animal Model Studies',
             icon: 'MOUSE',
             exploreFacetColumnName: 'species',
             exploreFacetColumnValue: 'Mouse',
@@ -56,6 +56,6 @@ export const FeaturedDataTabsDemo = () => {
           }
         ]
     }
-    ></FeaturedDataTabs>
+    />
   )
 }
