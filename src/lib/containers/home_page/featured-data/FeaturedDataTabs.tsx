@@ -10,10 +10,11 @@ export type FeatureDataTabProps = {
   icon?: string,
   plotsConfig: FeaturedDataPlotsProps,
   exploreFacetColumnName: string,
-  exploreFacetColumnValue: string,  
+  exploreFacetColumnValue: string,
 }
 
 export type FeaturedDataTabsProps = {
+  token?: string
   configs: FeatureDataTabProps[],
   rgbIndex:number,
   exploreSql: string,
@@ -26,7 +27,8 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
     configs,
     rgbIndex,
     exploreSql,
-    explorePagePath
+    explorePagePath,
+    token
   } = props
   const { colorPalette } = getColorPallette(rgbIndex ?? 0, 1)
   // explore all data button
@@ -62,7 +64,8 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
             {...selectedTabProps.plotsConfig}
               rgbIndex={rgbIndex}
               exploreSql={exploreSql}
-              explorePagePath={explorePagePath} />              
+              explorePagePath={explorePagePath}
+              token={token} />              
           <div className="FeaturedDataTabs__explore-all">
             <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
               <button

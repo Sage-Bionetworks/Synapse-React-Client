@@ -3,6 +3,7 @@ import QueryWrapperFacetPlotsCard, { QueryWrapperFacetPlotsCardProps } from './Q
 import { useEffect, useState } from 'react'
 
 export type FeaturedDataPlotsProps = {
+  token?: string
   configs: QueryWrapperFacetPlotsCardProps[]
   rgbIndex?: number
   exploreSql?: string,
@@ -15,6 +16,7 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
     rgbIndex,
     exploreSql,
     explorePagePath,
+    token,
   } = props
   // listen to changes to the configs that we should use.
   const [currentConfigs, setCurrentConfigs] = useState<QueryWrapperFacetPlotsCardProps[]>(configs)
@@ -29,7 +31,8 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
         <QueryWrapperFacetPlotsCard {...config}
           rgbIndex={rgbIndex}
           exploreSql={exploreSql}
-          explorePagePath={explorePagePath} />        
+          explorePagePath={explorePagePath}
+          token={token} />
       </div>
     })}
   </div>)

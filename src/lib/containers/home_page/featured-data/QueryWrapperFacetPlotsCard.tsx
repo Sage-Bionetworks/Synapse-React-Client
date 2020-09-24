@@ -48,12 +48,13 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
     selectFacetColumnName,
     selectFacetColumnValue,
     explorePagePath,
+    token,
     ...rest
   } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(exploreSql!, selectFacetColumnName, selectFacetColumnValue)
   return (
     <div className="QueryWrapperFacetPlotsCard">
-      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+      <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
         <Error />
         <FacetPlotsCard
           facetsToPlot={facetsToPlot}
