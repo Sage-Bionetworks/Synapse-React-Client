@@ -18,7 +18,28 @@ export type QueryWrapperFacetPlotsCardProps = {
   selectFacetColumnValue: string
   explorePagePath?: string
 }
-
+export function getQueryRequest(sql: string, selectFacetColumnName: string, selectFacetColumnValue: string):QueryBundleRequest {
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  return {
+    entityId,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {      
+      sql,
+      offset: 0,
+      limit: 25,
+      selectedFacets: [{
+        columnName: selectFacetColumnName,
+        facetValues: [selectFacetColumnValue],
+        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'        
+      }],
+    }, 
+  }
+}
 const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlotsCardProps> = props => {
   const {
     sql,
@@ -29,27 +50,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
     explorePagePath,
     ...rest
   } = props
-  let sqlUsed = sql
-  const entityId = parseEntityIdFromSqlStatement(sqlUsed)
-  const initQueryRequest: QueryBundleRequest = {
-    entityId,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS, // like to remove, but query wrapper assumes queryResult is in the response, so include for now (with limit 0)
-    query: {      
-      sql: sqlUsed,
-      offset: 0,
-      limit: 0,
-      selectedFacets: [{
-        columnName: selectFacetColumnName,
-        facetValues: [selectFacetColumnValue],
-        concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'        
-      }],
-    },    
-  }
+  const initQueryRequest: QueryBundleRequest = getQueryRequest(sql, selectFacetColumnName, selectFacetColumnValue)
   return (
     <div className="QueryWrapperFacetPlotsCard">
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>

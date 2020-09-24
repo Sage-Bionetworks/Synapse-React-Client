@@ -93,7 +93,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
 
   if (isLoadingNewData || !facetPlotDataArray || !facetDataArray) {
     return (
-      <div className="SRC-loadingContainer SRC-centerContentColumn">
+      <div className="FacetPlotsCard__loading SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
       </div>
     )
@@ -101,12 +101,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     const friendlyFacetValue = unCamelCase(selectedFacetValue, facetAliases)
     let exploreLink = <></>
     if (explorePagePath) {
-      // modify explore page url to point to a customized query
-      const updatedQuery = {...getInitQueryRequest!().query}
-      updatedQuery.offset = 0
-      updatedQuery.limit = 25
       const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(updatedQuery),
+        JSON.stringify(getInitQueryRequest!().query),
       )
       exploreLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">

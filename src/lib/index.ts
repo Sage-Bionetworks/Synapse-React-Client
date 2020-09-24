@@ -29,7 +29,7 @@ import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
-import FeaturedDataPlots from './containers/home_page/featured-data/FeaturedDataPlots'
+import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -65,7 +65,7 @@ const SynapseComponents = {
   SynapsePlot,
   RssFeedCards,
   UserCardListRotate,
-  FeaturedDataPlots,
+  FeaturedDataTabs,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

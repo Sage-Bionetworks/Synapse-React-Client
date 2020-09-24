@@ -1,0 +1,21 @@
+.FeaturedDataTabs {
+  &__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    height: 50px;
+    align-items: center;
+    &__tab {
+      width: 200px;
+      text-transform: uppercase;
+      text-align: center;
+      &__selected {
+        font-weight: bold;
+      }
+    }    
+  }
+  &__explore-all {
+    text-align: center;
+    padding: 20px 0;
+  }
+}
