@@ -9,10 +9,12 @@
 @media (min-width: 801px) {
   .FeaturedDataPlots {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
     padding: 15px 20px;
     &__card {
-      width: 32%;
+      width: 30%;
+      margin: 15px 10px;
     }
   }
 }

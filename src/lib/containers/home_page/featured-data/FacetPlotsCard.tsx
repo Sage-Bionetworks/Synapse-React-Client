@@ -98,7 +98,6 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       </div>
     )
   } else {
-    const friendlyFacetValue = unCamelCase(selectedFacetValue, facetAliases)
     let exploreLink = <></>
     if (explorePagePath) {
       const stringifiedQuery = encodeURIComponent(
@@ -107,7 +106,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       exploreLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">
           <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-            View {friendlyFacetValue} Data
+            View {selectedFacetValue} Data
           </a>
         </div>
       </div>
@@ -116,7 +115,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       <div className="FacetPlotsCard cardContainer">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
-            {friendlyFacetValue}
+            {selectedFacetValue}
           </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
