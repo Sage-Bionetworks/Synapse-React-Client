@@ -9,15 +9,15 @@ export type FeatureDataTabProps = {
   title: string, // type of data being shown, used for the tab title and explore all button
   icon?: string,
   plotsConfig: FeaturedDataPlotsProps,
-  exploreSql: string,
   exploreFacetColumnName: string,
-  exploreFacetColumnValue: string,
-  explorePagePath: string,
+  exploreFacetColumnValue: string,  
 }
 
 export type FeaturedDataTabsProps = {
   configs: FeatureDataTabProps[],
   rgbIndex:number,
+  exploreSql: string,
+  explorePagePath: string,
 }
 
 const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
@@ -25,6 +25,8 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
   const {
     configs,
     rgbIndex,
+    exploreSql,
+    explorePagePath
   } = props
   const { colorPalette } = getColorPallette(rgbIndex ?? 0, 1)
   // explore all data button
@@ -32,7 +34,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
   let stringifiedQuery = ''
   if (selectedTabProps) {
     const queryRequest = getQueryRequest(
-      selectedTabProps.exploreSql,
+      exploreSql,
       selectedTabProps.exploreFacetColumnName,
       selectedTabProps.exploreFacetColumnValue)
     stringifiedQuery = encodeURIComponent(
@@ -56,10 +58,13 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
       {/* tab content */}
       {
         selectedTabProps && <>
-          <FeaturedDataPlots key={`${selectedTabProps.exploreSql}-${selectedTabProps.exploreFacetColumnName}-${selectedTabProps.exploreFacetColumnValue}`}
-            {...selectedTabProps.plotsConfig}></FeaturedDataPlots>
+          <FeaturedDataPlots key={`${exploreSql}-${selectedTabProps.exploreFacetColumnName}-${selectedTabProps.exploreFacetColumnValue}`}
+            {...selectedTabProps.plotsConfig}
+              rgbIndex={rgbIndex}
+              exploreSql={exploreSql}
+              explorePagePath={explorePagePath} />              
           <div className="FeaturedDataTabs__explore-all">
-            <a href={`${selectedTabProps.explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
+            <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
               <button
                 className="btn homepage-button"
               >

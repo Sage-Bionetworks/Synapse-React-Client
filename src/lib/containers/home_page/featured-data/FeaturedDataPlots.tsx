@@ -4,11 +4,17 @@ import { useEffect, useState } from 'react'
 
 export type FeaturedDataPlotsProps = {
   configs: QueryWrapperFacetPlotsCardProps[]
+  rgbIndex?: number
+  exploreSql?: string,
+  explorePagePath?: string,
 }
 
 const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props => {
   const {
-    configs
+    configs,
+    rgbIndex,
+    exploreSql,
+    explorePagePath,
   } = props
   // listen to changes to the configs that we should use.
   const [currentConfigs, setCurrentConfigs] = useState<QueryWrapperFacetPlotsCardProps[]>(configs)
@@ -20,7 +26,10 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
   <div className="FeaturedDataPlots">
     {currentConfigs.map(config => {
       return <div className="FeaturedDataPlots__card">
-        <QueryWrapperFacetPlotsCard {...config}></QueryWrapperFacetPlotsCard>
+        <QueryWrapperFacetPlotsCard {...config}
+          rgbIndex={rgbIndex}
+          exploreSql={exploreSql}
+          explorePagePath={explorePagePath} />        
       </div>
     })}
   </div>)

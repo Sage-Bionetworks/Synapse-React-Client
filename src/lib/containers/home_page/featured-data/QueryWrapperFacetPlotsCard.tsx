@@ -9,13 +9,13 @@ import { Error } from '../../Error'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryWrapperFacetPlotsCardProps = {
-  sql: string
   token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   facetAliases?: {}
   selectFacetColumnName: string
   selectFacetColumnValue: string
+  exploreSql?: string
   explorePagePath?: string
 }
 export function getQueryRequest(sql: string, selectFacetColumnName: string, selectFacetColumnValue: string):QueryBundleRequest {
@@ -42,7 +42,7 @@ export function getQueryRequest(sql: string, selectFacetColumnName: string, sele
 }
 const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlotsCardProps> = props => {
   const {
-    sql,
+    exploreSql,
     facetsToPlot,
     rgbIndex,  
     selectFacetColumnName,
@@ -50,7 +50,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
     explorePagePath,
     ...rest
   } = props
-  const initQueryRequest: QueryBundleRequest = getQueryRequest(sql, selectFacetColumnName, selectFacetColumnValue)
+  const initQueryRequest: QueryBundleRequest = getQueryRequest(exploreSql!, selectFacetColumnName, selectFacetColumnValue)
   return (
     <div className="QueryWrapperFacetPlotsCard">
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>

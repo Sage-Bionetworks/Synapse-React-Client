@@ -72,7 +72,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         const plotData = extractPlotDataArray(
           item as FacetColumnResultValues,
           getColumnType(item),
-          index,
+          index+1, //individual plot rgbIndex
           'PIE',
         )
         newPlotData[index] = plotData
@@ -146,7 +146,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                           150,
                         )}
                         config={{ displayModeBar: false }}                  
-                      ></Plot>
+                      />
                     </div>
                   )}
                 </SizeMe>
