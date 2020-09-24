@@ -5,7 +5,7 @@ export const FeaturedDataTabsDemo = () => {
   const selectDataSql = 'select * from syn11346063'
   const exploreDataPath = '/Explore/Data'
   return (
-    <FeaturedDataTabs configs={
+    <FeaturedDataTabs rgbIndex={0} configs={
       [
         {
           title: 'Human Studies',

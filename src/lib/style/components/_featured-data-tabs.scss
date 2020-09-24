@@ -5,12 +5,21 @@
     justify-content: center;
     height: 50px;
     align-items: center;
-    &__tab {
-      width: 200px;
+    border-bottom: 4px solid #DCDCDC;
+    &__tab {      
+      height: 50px;
+      width: 250px;
       text-transform: uppercase;
       text-align: center;
+      margin-top: 4px;
+      a {color: #ABABAC;}
+      a:hover {
+        text-decoration: none;
+      }
       &__selected {
         font-weight: bold;
+        border-bottom: 5px solid;
+        // a {color: #1A1C29;}
       }
     }    
   }

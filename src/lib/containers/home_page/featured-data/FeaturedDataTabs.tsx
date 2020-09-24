@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 import { getQueryRequest } from './QueryWrapperFacetPlotsCard'
-import { Icon } from 'lib/containers/row_renderers/utils'
+import { Icon } from '../../../containers/row_renderers/utils'
+import getColorPallette from '../../../containers/ColorGradient'
 
 export type FeatureDataTabProps = {
   title: string, // type of data being shown, used for the tab title and explore all button
@@ -15,19 +16,19 @@ export type FeatureDataTabProps = {
 }
 
 export type FeaturedDataTabsProps = {
-  configs: FeatureDataTabProps[]
+  configs: FeatureDataTabProps[],
+  rgbIndex:number,
 }
 
 const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
-  const [selectedTabProps, setSelectedTabProps] = useState<FeatureDataTabProps>()
   const {
-    configs
+    configs,
+    rgbIndex,
   } = props
-  useEffect(() => {
-    setSelectedTabProps(configs[selectedTabIndex])
-  }, [selectedTabIndex])
+  const { colorPalette } = getColorPallette(rgbIndex ?? 0, 1)
   // explore all data button
+  const selectedTabProps:FeatureDataTabProps = configs[selectedTabIndex]
   let stringifiedQuery = ''
   if (selectedTabProps) {
     const queryRequest = getQueryRequest(
@@ -43,9 +44,10 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
       {/* tabs */}
       <div className="FeaturedDataTabs__tabs">
         {configs.map((config, index) => {
-          return <div className={`FeaturedDataTabs__tabs__tab ${index == selectedTabIndex ? 'FeaturedDataTabs__tabs__tab__selected' : ''}`}>
+          return <div className={`FeaturedDataTabs__tabs__tab ${index == selectedTabIndex ? 'FeaturedDataTabs__tabs__tab__selected' : ''}`}
+            style={{borderBottomColor:index == selectedTabIndex ? colorPalette[0]:''}}>
             <a onClick={() => setSelectedTabIndex(index)}>
-              {config.icon && <Icon type={config.icon}></Icon>}
+              {config.icon && <Icon type={config.icon}></Icon>}&nbsp;
               {config.title}
             </a>
           </div>
