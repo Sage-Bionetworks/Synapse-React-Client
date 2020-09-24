@@ -150,7 +150,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                   )}
                 </SizeMe>
                 {renderLegend(plotData?.labels, plotData?.colors, false)}
-                </div>            
+                </div>
             </div>
           })}
           {exploreLink}

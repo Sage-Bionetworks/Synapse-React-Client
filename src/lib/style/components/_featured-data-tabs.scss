@@ -13,7 +13,10 @@
       text-transform: uppercase;
       text-align: center;
       margin-top: 4px;
-      a {color: #ABABAC;}
+      a {
+        color: #ABABAC;
+        padding: 20px; //increase click area
+      }
       a:hover {
         text-decoration: none;
       }
