@@ -57,15 +57,16 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
   const { colorPalette } = getColorPallette(rgbIndex ?? 0, 2)
-  const getColumnType = (facetToPlot:FacetColumnResult): ColumnType | undefined =>
-    data?.columnModels?.find(
-      columnModel => columnModel.name === facetToPlot.columnName,
-    )?.columnType as ColumnType
   
   useEffect(() => {
     if (!facetsToPlot || !data) {
       return
     } else {
+      const getColumnType = (facetToPlot:FacetColumnResult): ColumnType | undefined =>
+        data?.columnModels?.find(
+          columnModel => columnModel.name === facetToPlot.columnName,
+        )?.columnType as ColumnType
+  
       const facetsDataToPlot = getFacets(data, facetsToPlot)
       const newPlotData = new Array(facetsDataToPlot.length).fill({})
       facetsDataToPlot.map((item, index) => {
@@ -76,6 +77,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           'PIE',
         )
         newPlotData[index] = plotData
+        return item
       })
       setFacetPlotDataArray(newPlotData)
       setFacetDataArray(facetsDataToPlot)
@@ -125,7 +127,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           {/* create a plot for every facet to be plotted */}
           {facetPlotDataArray.map((plotData, index) => {
             return <div>
-              {index != 0 ? <hr></hr> : <></>}
+              {index !== 0 && <hr></hr>}
               <div className="FacetPlotsCard__body__facetname">
                 <span>
                   {unCamelCase(facetDataArray[index].columnName, facetAliases)}

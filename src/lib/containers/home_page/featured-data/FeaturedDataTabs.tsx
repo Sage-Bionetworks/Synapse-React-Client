@@ -48,12 +48,13 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
       {/* tabs */}
       <div className="FeaturedDataTabs__tabs">
         {configs.map((config, index) => {
-          return <div className={`FeaturedDataTabs__tabs__tab ${index == selectedTabIndex ? 'FeaturedDataTabs__tabs__tab__selected' : ''}`}
-            style={{borderBottomColor:index == selectedTabIndex ? colorPalette[0]:''}}>
-            <a onClick={() => setSelectedTabIndex(index)}>
+          const isSelectedTabIndex:boolean = index === selectedTabIndex
+          return <div className={`FeaturedDataTabs__tabs__tab ${isSelectedTabIndex ? 'FeaturedDataTabs__tabs__tab__selected' : ''}`}
+            style={{borderBottomColor:isSelectedTabIndex ? colorPalette[0]:''}}>
+            <button onClick={() => setSelectedTabIndex(index)}>
               {config.icon && <Icon type={config.icon}></Icon>}&nbsp;
               {config.title}
-            </a>
+            </button>
           </div>
         })}
       </div>

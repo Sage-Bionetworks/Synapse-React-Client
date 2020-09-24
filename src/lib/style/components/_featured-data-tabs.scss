@@ -13,17 +13,17 @@
       text-transform: uppercase;
       text-align: center;
       margin-top: 4px;
-      a {
+      button {
         color: #ABABAC;
-        padding: 20px; //increase click area
-      }
-      a:hover {
-        text-decoration: none;
+        //increase click area
+        width: 100%;
+        height: 100%;
+        padding-bottom: 10px;
       }
       &__selected {
         font-weight: bold;
         border-bottom: 5px solid;
-        // a {color: #1A1C29;}
+        // button {color: #1A1C29;}
       }
     }    
   }

@@ -183,8 +183,8 @@ export function extractPlotDataArray(
     name: facetToPlot.columnName,
     hovertemplate:
       plotType === 'PIE'
-        ? '<b>%{text}</b><br>' + '%{value} (%{percent})<br>' + '<extra></extra>'
-        : '<b>%{text}: </b><br>' + '%{value} <br>' + '<extra></extra>',
+        ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'
+        : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     marker: {
@@ -351,7 +351,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       )
       setPlotData(plotData)
     }
-  }, [facetToPlot, data])
+  }, [facetToPlot, data, index])
 
   useEffect(() => {
     setIsExpanded(onCollapse !== undefined)
