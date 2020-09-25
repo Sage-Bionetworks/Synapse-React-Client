@@ -23,7 +23,9 @@ export default function ProgramsDesktop({
         <div className="Programs__Card__header__info">
           <span className="Programs__Card__header__info__title"> {title} </span>
           <p>
-            <a className="Programs__Card__header__info__link" href={link}>
+            <a className="Programs__Card__header__info__link"
+            style={{borderBottom: `1px solid ${color}`}}
+            href={link}>
               Visit website
             </a>
           </p>

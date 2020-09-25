@@ -49,7 +49,7 @@ export const getFieldIndex = (
 export default function (props: ProgramsProps) {
   const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkInfo, token, rgbIndex, iconOptions } = props
   const showDesktop = useShowDesktop()
-  const { colorPalette } = getColorPallette(rgbIndex ?? 0, 2)
+  const color:string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -91,7 +91,7 @@ export default function (props: ProgramsProps) {
           title,
           summary,
           link,
-          color: colorPalette[0],
+          color,
           exploreLink: `${baseExploreUrl}${matchValue}`,
           iconValue,
           iconOptions,

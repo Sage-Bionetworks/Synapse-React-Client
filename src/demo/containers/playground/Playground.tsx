@@ -263,7 +263,7 @@ const App = ({
         path={`${match.url}/ProgramsDemo`}
         component={() => <ProgramsDemo
           entityId={'syn17024173'}
-          rgbIndex={0}
+          rgbIndex={1}
           titleColumnName={'Program'}
           summaryColumnName={'Short Description'}
           linkColumnName={'Website'}
