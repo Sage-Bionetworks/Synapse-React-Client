@@ -68,16 +68,14 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         )?.columnType as ColumnType
   
       const facetsDataToPlot = getFacets(data, facetsToPlot)
-      const newPlotData = new Array(facetsDataToPlot.length).fill({})
-      facetsDataToPlot.map((item, index) => {
+      const newPlotData = facetsDataToPlot.map((item, index) => {
         const plotData = extractPlotDataArray(
           item as FacetColumnResultValues,
           getColumnType(item),
           index+1, //individual plot rgbIndex
           'PIE',
         )
-        newPlotData[index] = plotData
-        return item
+        return plotData
       })
       setFacetPlotDataArray(newPlotData)
       setFacetDataArray(facetsDataToPlot)
