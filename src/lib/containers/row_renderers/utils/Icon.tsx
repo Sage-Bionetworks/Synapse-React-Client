@@ -13,6 +13,8 @@ import {
   PROJECT,
   GRANT,
   ORGANIZATION,
+  PERSON,
+  MOUSE
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -20,6 +22,8 @@ import studyActiveSvg from '../../../assets/icons/study-active.svg'
 import studyCompleteSvg from '../../../assets/icons/study-complete.svg'
 import DNA_TwoSvg from '../../../assets/icons/DNA_Two.svg'
 import organizationsSvg from '../../../assets/icons/organizations.svg'
+import personSvg from '../../../assets/icons/person.svg'
+import mouseSvg from '../../../assets/icons/mouse.svg'
 
 import {
   Project,
@@ -54,6 +58,8 @@ const defaultIcons = {
   [PROJECT]: Project,
   [GRANT]: Project,
   [ORGANIZATION]: organizationsSvg,
+  [PERSON]: personSvg,
+  [MOUSE]: mouseSvg
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
