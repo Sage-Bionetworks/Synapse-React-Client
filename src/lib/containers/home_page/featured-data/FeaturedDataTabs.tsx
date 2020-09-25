@@ -66,7 +66,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
               rgbIndex={rgbIndex}
               exploreSql={exploreSql}
               explorePagePath={explorePagePath}
-              token={token} />              
+              token={token} /> 
           <div className="FeaturedDataTabs__explore-all">
             <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
               <button
