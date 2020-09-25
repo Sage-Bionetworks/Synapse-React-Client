@@ -1,0 +1,34 @@
+.FeaturedDataTabs {
+  padding-top: 20px;
+  &__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    height: 50px;
+    align-items: center;
+    border-bottom: 4px solid #DCDCDC;
+    &__tab {      
+      height: 50px;
+      width: 250px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: 4px;
+      button {
+        color: #ABABAC;
+        //increase click area
+        width: 100%;
+        height: 100%;
+        padding-bottom: 10px;
+      }
+      &__selected {
+        font-weight: bold;
+        border-bottom: 5px solid;
+        // button {color: #1A1C29;}
+      }
+    }    
+  }
+  &__explore-all {
+    text-align: center;
+    padding: 20px 0;
+  }
+}

@@ -35,6 +35,19 @@ export type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
 
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 
+export function getFacets (
+  data: QueryResultBundle | undefined,
+  facetsToPlot?: string[],
+): FacetColumnResult[] {
+  const result =
+    data?.facets?.filter(
+      item =>
+        item.facetType === 'enumeration' &&
+        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
+    ) ?? []
+  return result
+}
+
 const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   data,
   getLastQueryRequest,
@@ -56,20 +69,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   const { showFacetVisualization } = topLevelControlsState!
 
   const lastQueryRequest = getLastQueryRequest?.()
-  const getFacets = (
-    data: QueryResultBundle | undefined,
-  ): FacetColumnResult[] => {
-    const result =
-      data?.facets?.filter(
-        item =>
-          item.facetType === 'enumeration' &&
-          (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
-      ) ?? []
-    return result
-  }
 
   useEffect(() => {
-    const result = getFacets(data)
+    const result = getFacets(data, facetsToPlot)
     if (result.length === 0) {
       return
     }
@@ -167,17 +169,17 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     lastQueryRequest?.query.selectedFacets !== undefined &&
     lastQueryRequest.query.selectedFacets.length > 0
 
-  const expandedFacets = getFacets(data).filter(el => {
+  const expandedFacets = getFacets(data, facetsToPlot).filter(el => {
     return facetUiStateArray.find(uiState => {
       return uiState.name === el.columnName
     })?.isExpanded
   })
-  const restOfFacets = getFacets(data).filter(el => {
+  const restOfFacets = getFacets(data, facetsToPlot).filter(el => {
     return !facetUiStateArray.find(uiState => uiState.name === el.columnName)
       ?.isExpanded
   })
 
-  const colorTracker = getFacets(data).map((el, index) => {
+  const colorTracker = getFacets(data, facetsToPlot).map((el, index) => {
     return {
       columnName: el.columnName,
       colorIndex: index,

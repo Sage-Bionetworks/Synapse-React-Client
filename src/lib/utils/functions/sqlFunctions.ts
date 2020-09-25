@@ -95,7 +95,7 @@ export const insertConditionsFromSearchParams = (
   // if there are no search params, or if all search params are QueryWrapper queries
   const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
   let searchParamKeys = Object.keys(searchParams)
-  if (searchParamKeys.length == 0 || searchParamKeys.every(isQueryWrapperKey)) {
+  if (searchParamKeys.length === 0 || searchParamKeys.every(isQueryWrapperKey)) {
     return sql
   }
   const tokens: string[][] = lexer.tokenize(sql)
@@ -125,7 +125,7 @@ export const insertConditionsFromSearchParams = (
 export const formatSQLFromParser = (tokens: string[][]) => {
   // replace all DBLSTRINGs (escaped strings) with LITERALs
   tokens.forEach(value => {
-    if (value[0] == 'DBLSTRING') {
+    if (value[0] === 'DBLSTRING') {
       value[0] = 'LITERAL'
     }
   })
