@@ -19,8 +19,8 @@ export type ProgramsProps = {
   titleColumnName: string
   linkColumnName: string
   summaryColumnName: string
+  iconColumnName: string
   linkInfo: CardLink
-  iconType: string
   iconOptions: IconOptions
   token?: string  
 }
@@ -31,9 +31,8 @@ export type ProgramsDataProps = {
   link: string
   exploreLink: string
   color: string
-  iconType: string
+  iconValue: string
   iconOptions: IconOptions
-  token?: string
 }
 
 export const getFieldIndex = (
@@ -48,7 +47,7 @@ export const getFieldIndex = (
 }
 
 export default function (props: ProgramsProps) {
-  const { entityId, titleColumnName, linkColumnName, summaryColumnName, linkInfo, token, rgbIndex, iconType, iconOptions } = props
+  const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkInfo, token, rgbIndex, iconOptions } = props
   const showDesktop = useShowDesktop()
   const { colorPalette } = getColorPallette(rgbIndex ?? 0, 2)
   const queryBundleRequest: QueryBundleRequest = {
@@ -75,7 +74,7 @@ export default function (props: ProgramsProps) {
     queryResultBundle,
   )
   const linkColumnIndex = getFieldIndex(linkColumnName, queryResultBundle)
-
+  const iconColumnIndex = getFieldIndex(iconColumnName, queryResultBundle)
   const matchColIndex = getFieldIndex(linkInfo.matchColumnName, queryResultBundle)
   const baseExploreUrl = `/${linkInfo.baseURL}?${linkInfo.URLColumnName}=`
   return (
@@ -85,6 +84,7 @@ export default function (props: ProgramsProps) {
         const title = values[titleColumnIndex]
         const summary = values[summaryColumnIndex]
         const link = values[linkColumnIndex]
+        const iconValue = values[iconColumnIndex]
         const matchValue = values[matchColIndex]
         
         const ProgramsDataProps: ProgramsDataProps = {
@@ -93,9 +93,8 @@ export default function (props: ProgramsProps) {
           link,
           color: colorPalette[0],
           exploreLink: `${baseExploreUrl}${matchValue}`,
-          iconType,
+          iconValue,
           iconOptions,
-          token,
         }
         return showDesktop ? (
           <ProgramsDesktop {...ProgramsDataProps} />

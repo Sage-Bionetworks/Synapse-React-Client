@@ -7,7 +7,7 @@ export default function ProgramsDesktop({
   summary,
   title,
   color,
-  iconType,
+  iconValue,
   iconOptions, 
 }: ProgramsDataProps) {
   return (
@@ -17,7 +17,7 @@ export default function ProgramsDesktop({
         style={{backgroundColor: color.replace(')', ',.05)')}}
       >
         <p>
-          <Icon type={iconType} iconOptions={iconOptions} />
+          <Icon type={iconValue} iconOptions={iconOptions} />
           <span className="Programs__Card__header__title"> {title} </span>
         </p>
       </div>

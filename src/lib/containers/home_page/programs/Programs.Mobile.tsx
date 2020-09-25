@@ -7,12 +7,12 @@ export default function ({
   link,
   summary,
   title,
-  iconType,
+  iconValue,
   iconOptions,
 }: ProgramsDataProps) {
   const titleElement = (
     <div className="Programs__Mobile__Header">
-      <Icon type={iconType} iconOptions={iconOptions} />
+      <Icon type={iconValue} iconOptions={iconOptions} />
       <span className="Programs__Mobile__Header__Title"> {title} </span>
     </div>
   )

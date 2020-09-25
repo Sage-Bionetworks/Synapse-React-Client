@@ -267,7 +267,7 @@ const App = ({
           titleColumnName={'Program'}
           summaryColumnName={'Short Description'}
           linkColumnName={'Website'}
-          iconType={'Program'}
+          iconColumnName={'Program'}
           iconOptions={iconOptions}
           linkInfo={{
             isMarkdown: false,
