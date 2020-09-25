@@ -9,6 +9,7 @@ export default function ({
   title,
   iconValue,
   iconOptions,
+  exploreLink,
 }: ProgramsDataProps) {
   const titleElement = (
     <div className="Programs__Mobile__Header">
@@ -19,8 +20,12 @@ export default function ({
   const content = (
     <div className="Programs__Mobile__Content">
       <p>{summary}</p>
-      <a className="Programs__Mobile__Content__Link" href={link}>
-        EXPLORE
+      <a href={exploreLink}>
+          <button
+            className="btn homepage-button"
+          >
+            EXPLORE
+          </button>
       </a>
     </div>
   )

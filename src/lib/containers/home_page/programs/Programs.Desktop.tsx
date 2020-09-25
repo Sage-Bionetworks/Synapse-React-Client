@@ -3,12 +3,13 @@ import { ProgramsDataProps } from './Programs'
 import { Icon } from '../../../../lib/containers/row_renderers/utils'
 
 export default function ProgramsDesktop({
-  link,
+  link,  
   summary,
   title,
   color,
   iconValue,
   iconOptions, 
+  exploreLink,
 }: ProgramsDataProps) {
   return (
     <div className="Programs__Card">
@@ -16,16 +17,28 @@ export default function ProgramsDesktop({
         className="Programs__Card__header"
         style={{backgroundColor: color.replace(')', ',.05)')}}
       >
-        <p>
+        <div className="Programs__Card__header__icon">
           <Icon type={iconValue} iconOptions={iconOptions} />
-          <span className="Programs__Card__header__title"> {title} </span>
-        </p>
+        </div>
+        <div className="Programs__Card__header__info">
+          <span className="Programs__Card__header__info__title"> {title} </span>
+          <p>
+            <a className="Programs__Card__header__info__link" href={link}>
+              Visit website
+            </a>
+          </p>
+        </div>
+        
       </div>
       <div className="Programs__Card__summary">
         <p> {summary} </p>
         <p>
-          <a className="Programs__Card__summary__link" href={link}>
-            EXPLORE
+          <a href={exploreLink}>
+              <button
+                className="btn homepage-button"
+              >
+                EXPLORE
+              </button>
           </a>
         </p>
       </div>
