@@ -40,6 +40,46 @@ describe('insertConditionsFromSearchParams', () => {
       sql,
     )
   })
+  it('should insert correctly in versioned query', () => {
+    let sql =
+      'SELECT * FROM syn21783965.1'
+    let searchParams = {
+      study:
+        'syn21754060',
+    }
+    let operator: SQLOperator = '='
+    // if no search params are there, then it should return the input sql
+    const result = insertConditionsFromSearchParams(searchParams, sql, operator)
+    const expectedResult = 'SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = \'syn21754060\')'
+    expect(result).toBe(expectedResult)
+  })
+  it('should insert correctly in versioned query with group by', () => {
+    let sql =
+      'SELECT * FROM syn21783965.1 GROUP BY x'
+    let searchParams = {
+      study:
+        'syn21754060',
+    }
+    let operator: SQLOperator = '='
+    // if no search params are there, then it should return the input sql
+    const result = insertConditionsFromSearchParams(searchParams, sql, operator)
+    const expectedResult = 'SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = \'syn21754060\')\n  GROUP BY `x`'
+    expect(result).toBe(expectedResult)
+  })
+  it('should insert correctly in versioned query with ORDER BY', () => {
+    let sql =
+      'SELECT * FROM syn21783965.1 ORDER BY study'
+    let searchParams = {
+      study:
+        'syn21754060',
+    }
+    let operator: SQLOperator = '='
+    // if no search params are there, then it should return the input sql
+    const result = insertConditionsFromSearchParams(searchParams, sql, operator)
+    const expectedResult = 'SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = \'syn21754060\')\n  ORDER BY `study` ASC'
+    expect(result).toBe(expectedResult)
+  })
+
 })
 
 describe('formatSQLFromParser tests', () => {

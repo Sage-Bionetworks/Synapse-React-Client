@@ -144,6 +144,7 @@ export default function (props: GoalsProps) {
           summary,
           link,
           asset,
+          token,
         }
         return showDesktop ? (
           <GoalsDesktop {...goalsDataProps} />

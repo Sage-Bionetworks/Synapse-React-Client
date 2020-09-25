@@ -143,7 +143,7 @@ const TopLevelControls = (
   return (
     <h3 className="QueryWrapperPlotNav__title">
       <div className="QueryWrapperPlotNav__querycount">
-        <QueryCount token={token} name={name} sql={sql} />
+        <QueryCount token={token} name={name} sql={sql} parens={true} />
       </div>
       <div className="QueryWrapperPlotNav__actions">
         {customControls &&

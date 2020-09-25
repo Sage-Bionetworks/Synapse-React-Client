@@ -62,6 +62,29 @@ const generateTokenUsingOperator = (
   }
 }
 
+export const getWhereInsertIndex = (
+  tokens: string[][]
+):number => {
+  const existingWhereIndex = tokens.findIndex(el => el[0] === 'WHERE')
+  if (existingWhereIndex !== -1) {
+    return existingWhereIndex
+  }
+  let targetIndex = tokens.findIndex(el => el[0] === 'GROUP')
+  if (targetIndex !== -1) {
+    return targetIndex
+  }
+  targetIndex = tokens.findIndex(el => el[0] === 'HAVING')
+  if (targetIndex !== -1) {
+    return targetIndex
+  }
+  targetIndex = tokens.findIndex(el => el[0] === 'ORDER')
+  if (targetIndex !== -1) {
+    return targetIndex
+  }
+  //else insert it at the end
+  targetIndex = tokens.findIndex(el => el[0] === 'EOF')
+  return targetIndex
+}
 // This will construct a sql query by adding the conditions in searchParams
 // to the WHERE clause, preserving all other clauses
 export const insertConditionsFromSearchParams = (
@@ -72,16 +95,13 @@ export const insertConditionsFromSearchParams = (
   // if there are no search params, or if all search params are QueryWrapper queries
   const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
   let searchParamKeys = Object.keys(searchParams)
-  if (searchParamKeys.length == 0 || searchParamKeys.every(isQueryWrapperKey)) {
+  if (searchParamKeys.length === 0 || searchParamKeys.every(isQueryWrapperKey)) {
     return sql
   }
   const tokens: string[][] = lexer.tokenize(sql)
   // we want to either create a where clause or insert into the where clause
   const foundIndex = tokens.findIndex(el => el[0] === 'WHERE')
-  const whereClauseIndex =
-    foundIndex === -1
-      ? tokens.findIndex(el => el[0] === 'FROM') + 2
-      : foundIndex
+  const whereClauseIndex = getWhereInsertIndex(tokens)
   const indexAfterWhereClause = whereClauseIndex + 1
   if (foundIndex === -1) {
     // insert a where clause
@@ -105,7 +125,7 @@ export const insertConditionsFromSearchParams = (
 export const formatSQLFromParser = (tokens: string[][]) => {
   // replace all DBLSTRINGs (escaped strings) with LITERALs
   tokens.forEach(value => {
-    if (value[0] == 'DBLSTRING') {
+    if (value[0] === 'DBLSTRING') {
       value[0] = 'LITERAL'
     }
   })
