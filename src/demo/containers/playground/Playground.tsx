@@ -269,7 +269,7 @@ const App = ({
           linkColumnName={'Website'}
           iconColumnName={'Program'}
           iconOptions={iconOptions}
-          linkInfo={{
+          linkConfig={{
             isMarkdown: false,
             baseURL: 'Explore/Programs/DetailsPage',
             URLColumnName: 'Program',

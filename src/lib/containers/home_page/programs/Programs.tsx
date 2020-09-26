@@ -9,7 +9,7 @@ import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundl
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import ProgramsMobile from './Programs.Mobile'
 import ProgramsDesktop from './Programs.Desktop'
-import getColorPallette from '../../../../lib/containers/ColorGradient'
+import { getColorPallette } from '../../../../lib/containers/ColorGradient'
 import { CardLink } from '../../../../lib/containers/CardContainerLogic'
 import { IconOptions } from '../../../../lib/containers/GenericCard'
 
@@ -20,7 +20,7 @@ export type ProgramsProps = {
   linkColumnName: string
   summaryColumnName: string
   iconColumnName: string
-  linkInfo: CardLink
+  linkConfig: CardLink
   iconOptions: IconOptions
   token?: string  
 }
@@ -47,7 +47,7 @@ export const getFieldIndex = (
 }
 
 export default function (props: ProgramsProps) {
-  const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkInfo, token, rgbIndex, iconOptions } = props
+  const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkConfig, token, rgbIndex, iconOptions } = props
   const showDesktop = useShowDesktop()
   const color:string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
   const queryBundleRequest: QueryBundleRequest = {
@@ -75,8 +75,8 @@ export default function (props: ProgramsProps) {
   )
   const linkColumnIndex = getFieldIndex(linkColumnName, queryResultBundle)
   const iconColumnIndex = getFieldIndex(iconColumnName, queryResultBundle)
-  const matchColIndex = getFieldIndex(linkInfo.matchColumnName, queryResultBundle)
-  const baseExploreUrl = `/${linkInfo.baseURL}?${linkInfo.URLColumnName}=`
+  const matchColIndex = getFieldIndex(linkConfig.matchColumnName, queryResultBundle)
+  const baseExploreUrl = `/${linkConfig.baseURL}?${linkConfig.URLColumnName}=`
   return (
     <div className={`Programs${showDesktop ? '__Desktop' : ''}`}>
       {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
