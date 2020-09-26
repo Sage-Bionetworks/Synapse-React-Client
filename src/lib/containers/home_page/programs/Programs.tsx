@@ -9,9 +9,9 @@ import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundl
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import ProgramsMobile from './Programs.Mobile'
 import ProgramsDesktop from './Programs.Desktop'
-import { getColorPallette } from '../../../../lib/containers/ColorGradient'
-import { CardLink } from '../../../../lib/containers/CardContainerLogic'
-import { IconOptions } from '../../../../lib/containers/GenericCard'
+import { getColorPallette } from '../../../containers/ColorGradient'
+import { CardLink } from '../../../containers/CardContainerLogic'
+import { IconOptions } from '../../../containers/GenericCard'
 
 export type ProgramsProps = {
   entityId: string

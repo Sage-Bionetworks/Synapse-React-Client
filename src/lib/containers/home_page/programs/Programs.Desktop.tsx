@@ -1,9 +1,9 @@
 import React from 'react'
 import { ProgramsDataProps } from './Programs'
-import { Icon } from '../../../../lib/containers/row_renderers/utils'
+import { Icon } from '../../../containers/row_renderers/utils'
 
 export default function ProgramsDesktop({
-  link,  
+  link,
   summary,
   title,
   color,

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProgramsDataProps } from './Programs'
 import ExpandableContent from '../ExpandableContent'
-import { Icon } from '../../../../lib/containers/row_renderers/utils'
+import { Icon } from '../../../containers/row_renderers/utils'
 
 export default function ({
   link,
