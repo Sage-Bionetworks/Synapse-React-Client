@@ -68,12 +68,8 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
               explorePagePath={explorePagePath}
               token={token} /> 
           <div className="FeaturedDataTabs__explore-all">
-            <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-              <button
-                className="btn homepage-button"
-              >
+            <a className="homepage-button-link" href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
                 EXPLORE ALL {selectedTabProps.title}
-              </button>
             </a>
           </div>
         </>

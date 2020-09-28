@@ -35,12 +35,8 @@ export default function ProgramsDesktop({
       <div className="Programs__Card__summary">
         <p> {summary} </p>
         <p>
-          <a href={exploreLink}>
-              <button
-                className="btn homepage-button"
-              >
-                EXPLORE
-              </button>
+          <a href={exploreLink} className="homepage-button-link">
+              EXPLORE
           </a>
         </p>
       </div>
