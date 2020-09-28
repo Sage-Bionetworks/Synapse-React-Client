@@ -15,16 +15,19 @@ export const FeaturedDataTabsDemo = () => {
             exploreFacetColumnValue: 'Human',
             plotsConfig: {
               configs: [{
+                title:'The Religious Orders Study and Memory and Aging Project (ROSMAP) Study',
                 facetsToPlot:['dataType', 'assay'],
                 selectFacetColumnName:'study',
                 selectFacetColumnValue:'ROSMAP',                            
               },
               {
+                title:'The Mount Sinai Brain Bank (MSBB) Study',
                 facetsToPlot:['dataType', 'assay'],
                 selectFacetColumnName:'study',
                 selectFacetColumnValue:'MSBB',
               },
               {
+                title:'Mayo RNAseq Study',
                 facetsToPlot:['dataType', 'assay'],
                 selectFacetColumnName:'study',
                 selectFacetColumnValue:'MayoRNAseq',
