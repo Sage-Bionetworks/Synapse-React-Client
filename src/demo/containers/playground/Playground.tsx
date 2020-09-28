@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
-import CardContainerLogicDemo from './CardContainerLogicDemo'
+import CardContainerLogicDemo, { iconOptions } from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
@@ -18,6 +18,7 @@ import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
 import GoalsDemo from './GoalsDemo'
+import ProgramsDemo from './ProgramsDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
 import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
@@ -126,6 +127,9 @@ const App = ({
         <li>
           <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
         </li>
+        <li>
+          <Link to={`${match.url}/ProgramsDemo`}>ProgramsDemo</Link>
+        </li>        
         <li>
           <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
@@ -254,6 +258,25 @@ const App = ({
         component={() => <GoalsDemo entityId={'syn22315959'} token={token} />}
       />
 
+      <Route
+        exact={true}
+        path={`${match.url}/ProgramsDemo`}
+        component={() => <ProgramsDemo
+          entityId={'syn17024173'}
+          rgbIndex={1}
+          titleColumnName={'Program'}
+          summaryColumnName={'Short Description'}
+          linkColumnName={'Website'}
+          iconColumnName={'Program'}
+          iconOptions={iconOptions}
+          linkConfig={{
+            isMarkdown: false,
+            baseURL: 'Explore/Programs/DetailsPage',
+            URLColumnName: 'Program',
+            matchColumnName: 'Program',
+          }}
+          token={token} />}
+      />
       <Route
         exact={true}
         path={`${match.url}/ResourcesDemo`}
