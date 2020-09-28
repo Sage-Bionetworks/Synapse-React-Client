@@ -11,7 +11,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: flex-start;
-    justify-content: center;
     padding-bottom: 50px;
   }
   &__Card {
@@ -20,12 +19,11 @@
     }
     width: 23%;
     display: flex;
-    min-width: 250px;
     min-height: 300px;
     flex-direction: column;
     box-shadow: $box-shadow-soft;
     background: #ffffff;
-    margin: 10px;
+    margin: 5px;
     &__header {
       min-height: 75px;
       @extend %side-padding;
