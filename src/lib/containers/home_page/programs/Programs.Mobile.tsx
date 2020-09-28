@@ -20,8 +20,8 @@ export default function ({
   )
   const content = (
     <div className="Programs__Mobile__Content">
-      <p>
-        <a className="Programs__Card__header__info__link"
+      <p className="Programs__Card__header__info__link">
+        <a
         style={{borderBottom: `1px solid ${color}`}}
         href={link}>
           Visit website
