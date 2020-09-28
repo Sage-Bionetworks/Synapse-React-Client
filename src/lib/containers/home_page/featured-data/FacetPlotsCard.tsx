@@ -12,7 +12,7 @@ import {
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 
-import getColorPallette from '../../../containers/ColorGradient'
+import { getColorPallette } from '../../../containers/ColorGradient'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
