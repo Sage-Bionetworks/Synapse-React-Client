@@ -69,7 +69,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
               token={token} /> 
           <div className="FeaturedDataTabs__explore-all">
             <a className="homepage-button-link" href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-                EXPLORE ALL {selectedTabProps.title}
+                EXPLORE ALL {selectedTabProps.title.toUpperCase()}
             </a>
           </div>
         </>
