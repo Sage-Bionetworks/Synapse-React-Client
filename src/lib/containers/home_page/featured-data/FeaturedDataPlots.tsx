@@ -5,7 +5,7 @@ export type FeaturedDataPlotsProps = {
   token?: string
   configs: QueryWrapperFacetPlotsCardProps[]
   rgbIndex?: number
-  exploreSql?: string,
+  sql?: string,
   explorePagePath?: string,
 }
 
@@ -13,8 +13,7 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
   const {
     configs,
     rgbIndex,
-    exploreSql,
-    explorePagePath,
+    sql,
     token,
   } = props
   return (
@@ -24,8 +23,7 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
         <QueryWrapperFacetPlotsCard 
           {...config}
           rgbIndex={rgbIndex}
-          exploreSql={exploreSql}
-          explorePagePath={explorePagePath}
+          sql={sql}
           token={token} />
       </div>
     })}

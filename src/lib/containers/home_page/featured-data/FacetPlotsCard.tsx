@@ -25,7 +25,7 @@ export type FacetPlotsCardOwnProps = {
   title?:string
   rgbIndex?: number
   facetsToPlot?: string[]
-  explorePagePath?: string
+  detailsPagePath: string
 }
 
 type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
@@ -49,11 +49,10 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   isLoadingNewData,
   rgbIndex,
   facetsToPlot,
-  explorePagePath,
+  detailsPagePath,
   data,
   isLoading,
   facetAliases,
-  getInitQueryRequest
 }: FacetPlotsCardProps): JSX.Element => {
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
@@ -100,15 +99,12 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       </div>
     )
   } else {
-    let exploreLink = <></>
-    if (explorePagePath) {
-      const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(getInitQueryRequest!().query),
-      )
-      exploreLink = <div className="FacetPlotsCard__body__footer">
+    let detailsPageLink = <></>
+    if (detailsPagePath) {
+      detailsPageLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">
-          <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-            View {selectedFacetValue} Data
+          <a href={detailsPagePath}>
+            View {selectedFacetValue}
           </a>
         </div>
       </div>
@@ -155,7 +151,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 </div>
             </div>
           })}
-          {exploreLink}
+          {detailsPageLink}
         </div>
       </div>
     )
