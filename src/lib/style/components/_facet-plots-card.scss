@@ -1,7 +1,9 @@
 .FacetPlotsCard {
   &__titlebar {
-    height: 46px;
+    height: 64px;
     padding: 12px 25px;
+    display:flex;
+    align-items: center;
   }
   &__title {
     font-size: 16px;

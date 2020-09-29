@@ -20,13 +20,13 @@ export default function ({
   )
   const content = (
     <div className="Programs__Mobile__Content">
-      <p className="Programs__Card__header__info__link">
+      {link && <p className="Programs__Card__header__info__link">
         <a
         style={{borderBottom: `1px solid ${color}`}}
         href={link}>
           Visit website
         </a>
-      </p>
+      </p>}
       <p>{summary}</p>
       <p>
         <a href={exploreLink} className="homepage-button-link">

@@ -22,6 +22,7 @@ import { getFacets } from '../../widgets/facet-nav/FacetNav'
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardOwnProps = {
+  title?:string
   rgbIndex?: number
   facetsToPlot?: string[]
   explorePagePath?: string
@@ -44,6 +45,7 @@ const layout: Partial<PlotlyTyped.Layout> = {
 }
 
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
+  title,
   isLoadingNewData,
   rgbIndex,
   facetsToPlot,
@@ -115,7 +117,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       <div className="FacetPlotsCard cardContainer">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
-            {selectedFacetValue}
+            {title ?? selectedFacetValue}
           </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
