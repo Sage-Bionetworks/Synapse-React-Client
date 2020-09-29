@@ -18,8 +18,9 @@ describe('basic tests', () => {
   const props: FeaturedDataTabsProps = {
     rgbIndex: 0,
     token,
-    exploreSql: 'select * from syn11346063',
-    explorePagePath: '/Explore/Data',
+    sql: 'select * from syn11346063',
+    explorePagePath:'/Explore/Studies',
+    exploreObjectType:'Studies',
     configs:
       [
         {
@@ -27,16 +28,20 @@ describe('basic tests', () => {
           icon: 'PERSON',
           exploreFacetColumnName: 'species',
           exploreFacetColumnValue: 'Human',
+
           plotsConfig: {
             configs: [{
+
               facetsToPlot:['dataType', 'assay'],
               selectFacetColumnName:'study',
-              selectFacetColumnValue:'ROSMAP',                            
+              selectFacetColumnValue:'ROSMAP',
+              detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn3219045'
             },
             {
               facetsToPlot:['dataType', 'assay'],
               selectFacetColumnName:'study',
               selectFacetColumnValue:'MSBB',
+              detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn3159438'
             },]
           }
         }]
