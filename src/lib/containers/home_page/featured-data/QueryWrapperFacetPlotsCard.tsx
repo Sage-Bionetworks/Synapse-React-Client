@@ -10,13 +10,14 @@ import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryWrapperFacetPlotsCardProps = {
   token?: string
+  title?:string
   rgbIndex?: number
   facetsToPlot?: string[]
   facetAliases?: {}
   selectFacetColumnName: string
   selectFacetColumnValue: string
-  exploreSql?: string
-  explorePagePath?: string
+  sql?: string
+  detailsPagePath: string
 }
 export function getQueryRequest(sql: string, selectFacetColumnName: string, selectFacetColumnValue: string):QueryBundleRequest {
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -42,24 +43,26 @@ export function getQueryRequest(sql: string, selectFacetColumnName: string, sele
 }
 const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlotsCardProps> = props => {
   const {
-    exploreSql,
+    title,
+    sql,
     facetsToPlot,
     rgbIndex,  
     selectFacetColumnName,
     selectFacetColumnValue,
-    explorePagePath,
+    detailsPagePath,
     token,
     ...rest
   } = props
-  const initQueryRequest: QueryBundleRequest = getQueryRequest(exploreSql!, selectFacetColumnName, selectFacetColumnValue)
+  const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!, selectFacetColumnName, selectFacetColumnValue)
   return (
     <div className="QueryWrapperFacetPlotsCard">
       <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
         <Error />
         <FacetPlotsCard
+          title={title}
           facetsToPlot={facetsToPlot}
           rgbIndex={rgbIndex}
-          explorePagePath={explorePagePath}
+          detailsPagePath={detailsPagePath}
         />
       </QueryWrapper>
     </div>

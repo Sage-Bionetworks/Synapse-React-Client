@@ -22,9 +22,10 @@ import { getFacets } from '../../widgets/facet-nav/FacetNav'
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardOwnProps = {
+  title?:string
   rgbIndex?: number
   facetsToPlot?: string[]
-  explorePagePath?: string
+  detailsPagePath: string
 }
 
 type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
@@ -44,14 +45,14 @@ const layout: Partial<PlotlyTyped.Layout> = {
 }
 
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
+  title,
   isLoadingNewData,
   rgbIndex,
   facetsToPlot,
-  explorePagePath,
+  detailsPagePath,
   data,
   isLoading,
   facetAliases,
-  getInitQueryRequest
 }: FacetPlotsCardProps): JSX.Element => {
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
@@ -98,15 +99,12 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       </div>
     )
   } else {
-    let exploreLink = <></>
-    if (explorePagePath) {
-      const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(getInitQueryRequest!().query),
-      )
-      exploreLink = <div className="FacetPlotsCard__body__footer">
+    let detailsPageLink = <></>
+    if (detailsPagePath) {
+      detailsPageLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">
-          <a href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-            View {selectedFacetValue} Data
+          <a href={detailsPagePath}>
+            View {selectedFacetValue}
           </a>
         </div>
       </div>
@@ -115,7 +113,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       <div className="FacetPlotsCard cardContainer">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
-            {selectedFacetValue}
+            {title ?? selectedFacetValue}
           </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
@@ -153,7 +151,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 </div>
             </div>
           })}
-          {exploreLink}
+          {detailsPageLink}
         </div>
       </div>
     )

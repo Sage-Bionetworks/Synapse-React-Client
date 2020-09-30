@@ -22,15 +22,14 @@ export default function ProgramsDesktop({
         </div>
         <div className="Programs__Card__header__info">
           <span className="Programs__Card__header__info__title"> {title} </span>
-          <p className="Programs__Card__header__info__link">
+          {link && <p className="Programs__Card__header__info__link">
             <a
             style={{borderBottom: `1px solid ${color}`}}
             href={link}>
               Visit website
             </a>
-          </p>
+          </p>}
         </div>
-        
       </div>
       <div className="Programs__Card__summary">
         <p> {summary} </p>
