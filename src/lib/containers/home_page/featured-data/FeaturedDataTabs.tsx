@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
-import { getQueryRequest } from './QueryWrapperFacetPlotsCard'
 import { Icon } from '../../../containers/row_renderers/utils'
 import getColorPallette from '../../../containers/ColorGradient'
 
@@ -17,7 +16,8 @@ export type FeaturedDataTabsProps = {
   token?: string
   configs: FeatureDataTabProps[],
   rgbIndex:number,
-  exploreSql: string,
+  sql: string,
+  exploreObjectType: string,
   explorePagePath: string,
 }
 
@@ -26,23 +26,14 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
   const {
     configs,
     rgbIndex,
-    exploreSql,
+    sql,
+    exploreObjectType,
     explorePagePath,
     token
   } = props
   const { colorPalette } = getColorPallette(rgbIndex ?? 0, 1)
   // explore all data button
   const selectedTabProps:FeatureDataTabProps = configs[selectedTabIndex]
-  let stringifiedQuery = ''
-  if (selectedTabProps) {
-    const queryRequest = getQueryRequest(
-      exploreSql,
-      selectedTabProps.exploreFacetColumnName,
-      selectedTabProps.exploreFacetColumnValue)
-    stringifiedQuery = encodeURIComponent(
-      JSON.stringify(queryRequest.query),
-    )
-  }
   return (
     <div className="FeaturedDataTabs">
       {/* tabs */}
@@ -61,15 +52,15 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
       {/* tab content */}
       {
         selectedTabProps && <>
-          <FeaturedDataPlots key={`${exploreSql}-${selectedTabProps.exploreFacetColumnName}-${selectedTabProps.exploreFacetColumnValue}`}
+          <FeaturedDataPlots key={`${sql}-${selectedTabProps.exploreFacetColumnName}-${selectedTabProps.exploreFacetColumnValue}`}
             {...selectedTabProps.plotsConfig}
               rgbIndex={rgbIndex}
-              exploreSql={exploreSql}
+              sql={sql}
               explorePagePath={explorePagePath}
               token={token} /> 
           <div className="FeaturedDataTabs__explore-all">
-            <a className="homepage-button-link" href={`${explorePagePath}?QueryWrapper0=${stringifiedQuery}`}>
-                EXPLORE ALL {selectedTabProps.title.toUpperCase()}
+            <a className="homepage-button-link" href={explorePagePath}>
+                EXPLORE ALL {exploreObjectType.toUpperCase()}
             </a>
           </div>
         </>
