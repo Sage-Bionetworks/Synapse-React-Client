@@ -419,7 +419,6 @@ export default class QueryWrapper extends React.Component<
       const queryWrapperChildProps: QueryWrapperChildProps = {
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
         data: this.removeLockedFacetData(),
-        // data: this.state.data,
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
         chartSelectionIndex: this.state.chartSelectionIndex,
