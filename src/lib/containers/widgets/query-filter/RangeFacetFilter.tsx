@@ -105,7 +105,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
                     onChange([values.min, values.max])
                   }
                 >
-                  ) >
+                  ) {'>'}
                 </RangeSlider>
               )}
 

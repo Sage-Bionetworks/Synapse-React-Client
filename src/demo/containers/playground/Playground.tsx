@@ -25,6 +25,7 @@ import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
 import { FeaturedDataTabsDemo } from './FeaturedDataTabsDemo'
+import { EvaluationQueueDemo } from './EvaluationQueueDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -129,13 +130,20 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ProgramsDemo`}>ProgramsDemo</Link>
-        </li>        
+        </li>
         <li>
           <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/FeaturedDataTabsDemo`}>Featured Data Tabs Demo</Link>
-        </li>        
+          <Link to={`${match.url}/FeaturedDataTabsDemo`}>
+            Featured Data Tabs Demo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/EvaluationQueueDemo`}>
+            EvaluationQueueDemo
+          </Link>
+        </li>
       </ul>
 
       <Route
@@ -261,21 +269,24 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ProgramsDemo`}
-        component={() => <ProgramsDemo
-          entityId={'syn17024173'}
-          rgbIndex={1}
-          titleColumnName={'Program'}
-          summaryColumnName={'Short Description'}
-          linkColumnName={'Website'}
-          iconColumnName={'Program'}
-          iconOptions={iconOptions}
-          linkConfig={{
-            isMarkdown: false,
-            baseURL: 'Explore/Programs/DetailsPage',
-            URLColumnName: 'Program',
-            matchColumnName: 'Program',
-          }}
-          token={token} />}
+        component={() => (
+          <ProgramsDemo
+            entityId={'syn17024173'}
+            rgbIndex={1}
+            titleColumnName={'Program'}
+            summaryColumnName={'Short Description'}
+            linkColumnName={'Website'}
+            iconColumnName={'Program'}
+            iconOptions={iconOptions}
+            linkConfig={{
+              isMarkdown: false,
+              baseURL: 'Explore/Programs/DetailsPage',
+              URLColumnName: 'Program',
+              matchColumnName: 'Program',
+            }}
+            token={token}
+          />
+        )}
       />
       <Route
         exact={true}
@@ -308,6 +319,12 @@ const App = ({
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
+
+      <Route
+        exact={true}
+        path={`${match.url}/EvaluationQueueDemo`}
+        component={() => <EvaluationQueueDemo />}
+      />
     </div>
   )
 }

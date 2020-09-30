@@ -60,6 +60,8 @@ import {
   ObjectType,
   AccessRequirementStatus,
   FileHandleAssociateType,
+  Evaluation,
+  EvaluationRound,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -69,6 +71,8 @@ import {
   SqlTransformResponse,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { SynapseConstants } from '.'
+import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
+import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
 
 const cookies = new UniversalCookies()
 
@@ -1592,9 +1596,96 @@ export const submitToEvaluation = (
 export const getEvaluation = (
   evalId: string,
   sessionToken: string | undefined,
-) => {
+): Promise<Evaluation> => {
   return doGet(
     `/repo/v1/evaluation/${evalId}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get an evaluation round
+ * https://docs.synapse.org/rest/GET/evaluation/evalId/round/evalRoundId.html
+ */
+export const getEvaluationRound = (
+  evalId: string,
+  evalRoundId: string,
+  sessionToken: string | undefined,
+): Promise<EvaluationRound> => {
+  return doGet(
+    `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get all evaluation rounds
+ * https://docs.synapse.org/rest/GET/evaluation/evalId/round/list.html
+ */
+export const getEvaluationRoundsList = (
+  evalId: string,
+  evaluationRoundListRequest: EvaluationRoundListRequest | undefined,
+  sessionToken: string | undefined,
+): Promise<EvaluationRoundListResponse> => {
+  return doPost(
+    `/repo/v1/evaluation/${evalId}/round/list`,
+    evaluationRoundListRequest || {},
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Create an evaluation round
+ * https://docs.synapse.org/rest/POST/evaluation/evalId/round/evalRoundId.html
+ */
+export const createEvaluationRound = (
+  evaluationRound: EvaluationRound,
+  sessionToken: string | undefined,
+): Promise<EvaluationRound> => {
+  return doPost(
+    `/repo/v1/evaluation/${evaluationRound.evaluationId}/round`,
+    evaluationRound,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an evaluation round
+ * https://docs.synapse.org/rest/PUT/evaluation/evalId/round/evalRoundId.html
+ */
+export const updateEvaluationRound = (
+  evaluationRound: EvaluationRound,
+  sessionToken: string | undefined,
+): Promise<EvaluationRound> => {
+  return doPut(
+    `/repo/v1/evaluation/${evaluationRound.evaluationId}/round/${evaluationRound.id}`,
+    evaluationRound,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Delete an evaluation round
+ * https://docs.synapse.org/rest/DELETE/evaluation/evalId/round/evalRoundId.html
+ */
+export const deleteEvaluationRound = (
+  evalId: string,
+  evalRoundId: string,
+  sessionToken: string | undefined,
+) => {
+  return doDelete(
+    `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
+    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
