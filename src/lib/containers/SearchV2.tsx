@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { LockedFacet, QueryWrapperChildProps } from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCaretDown,
@@ -43,6 +43,7 @@ export type SearchV2Props = {
   isQueryWrapperMenuChild?: boolean
   defaultColumn?: string
   searchable?: SearchableV2
+  lockedFacet?: LockedFacet
 }
 
 type InternalSearchProps = QueryWrapperChildProps & SearchV2Props

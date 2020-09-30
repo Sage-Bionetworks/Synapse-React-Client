@@ -1,5 +1,5 @@
 import * as React from 'react'
-import QueryWrapper, { LockedFacet } from '../QueryWrapper'
+import QueryWrapper from '../QueryWrapper'
 import FacetNav, { FacetNavOwnProps } from '../widgets/facet-nav/FacetNav'
 import { SynapseTableProps } from '../table/SynapseTable'
 import {
@@ -60,11 +60,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     ...rest
   } = props
   let sqlUsed = sql
-  let lockedFacet: LockedFacet = {}
-  // let lockedFacet: LockedFacet = {
-  //   facet: 'study',
-  //   value: 'MSBB'
-  // }
 
   if (searchParams) {
     sqlUsed = insertConditionsFromSearchParams(
@@ -72,15 +67,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
       sqlUsed,
       sqlOperator,
     )
-
-    // For study details page: set locked facet name/value from search param, only assign if the key is 'study'
-    const facetKeys = Object.keys(searchParams)
-    if (facetKeys.length && facetKeys[0] === 'study') {
-      lockedFacet = {
-        facet: 'study',
-        value: Object.values(searchParams)[0]
-      }
-    }
   }
 
   const entityId = parseEntityIdFromSqlStatement(sqlUsed)
@@ -100,7 +86,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   }
   return (
     <div className="QueryWrapperPlotNav">
-      <QueryWrapper {...rest} lockedFacet={lockedFacet} initQueryRequest={initQueryRequest}>
+      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
         <TopLevelControls
           showColumnSelection={tableConfiguration !== undefined}
           name={name}

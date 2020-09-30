@@ -65,6 +65,12 @@ export type QueryWrapperState = {
   error: SynapseClientError | undefined
 }
 
+/*
+  For details page: to lock a facet name (e.g. study, grant) so that the facet name
+  and its all possible values will not appear on the details page. The facet name is
+  given by the url's search param. The type is defined here so that other child components
+  in SRC won't generate type errors.
+ */
 export type LockedFacet = {
   facet?: string,
   value?: string
