@@ -393,14 +393,14 @@ export default class QueryWrapper extends React.Component<
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  removeLockedFacetData (){
+  public removeLockedFacetData (){
     const lockedFacet = this.props.lockedFacet?.facet
-    if (lockedFacet && this.state.data) {  // return data without the "locked" facet
+    if (lockedFacet && this.state.data) {  // for details page, return data without the "locked" facet
       const data = cloneDeep(this.state.data)
       const facets = data.facets?.filter( item => item.columnName !== lockedFacet)
       data.facets = facets
       return data
-    } else {
+    } else {  // for other pages, just return the data
       return this.state.data
     }
   }
