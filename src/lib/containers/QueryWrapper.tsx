@@ -24,6 +24,7 @@ export type QueryWrapperProps = {
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
   hiddenColumns?: string[]
+  lockedFacet?: LockedFacet
 }
 
 export type TopLevelControlsState = {
@@ -64,6 +65,17 @@ export type QueryWrapperState = {
   error: SynapseClientError | undefined
 }
 
+/*
+  For details page: to lock a facet name (e.g. study, grant) so that the facet name
+  and its all possible values will not appear on the details page. The facet name is
+  given by the url's search param. The type is defined here so that other child components
+  in SRC won't generate type errors.
+ */
+export type LockedFacet = {
+  facet?: string,
+  value?: string
+}
+
 export type FacetSelection = {
   columnName: string
   facetValue: string
@@ -98,7 +110,8 @@ export type QueryWrapperChildProps = {
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected?: string[]
   selectedRowIndices?: number[]
-  error?: SynapseClientError | undefined
+  error?: SynapseClientError | undefined,
+  lockedFacet?: LockedFacet
 }
 
 /**
@@ -376,6 +389,23 @@ export default class QueryWrapper extends React.Component<
   }
 
   /**
+   * remove a particular facet name (e.g. study) and its all possible values based on the parameter specified in the url
+   * this is to remove the facet from the charts, search and filter.
+   * @return data: QueryResultBundle
+   */
+  public removeLockedFacetData (){
+    const lockedFacet = this.props.lockedFacet?.facet
+    if (lockedFacet && this.state.data) {  // for details page, return data without the "locked" facet
+      const data = cloneDeep(this.state.data)
+      const facets = data.facets?.filter( item => item.columnName !== lockedFacet)
+      data.facets = facets
+      return data
+    } else {  // for other pages, just return the data
+      return this.state.data
+    }
+  }
+
+  /**
    * Render the children without any formatting
    */
   public render() {
@@ -388,7 +418,7 @@ export default class QueryWrapper extends React.Component<
       }
       const queryWrapperChildProps: QueryWrapperChildProps = {
         isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
-        data: this.state.data,
+        data: this.removeLockedFacetData(),
         hasMoreData: this.state.hasMoreData,
         lastFacetSelection: this.state.lastFacetSelection,
         chartSelectionIndex: this.state.chartSelectionIndex,
