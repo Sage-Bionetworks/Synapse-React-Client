@@ -41,6 +41,15 @@ class QueryWrapperPlotNavDemo extends React.Component<
       propsWithTable: {
         tableConfiguration: {
           showAccessColumn: true,
+          columnLinks: [
+            {
+              matchColumnName: 'study',
+              isMarkdown: false,
+              baseURL: 'Explore/Studies/DetailsPage',
+              URLColumnName: 'Study_Name',
+              wrapValueWithParens: true,
+            },
+          ],
         },
         searchConfiguration: {
           searchable: [
@@ -189,7 +198,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
           style={{ color: 'white', padding: 10 }}
           onClick={() => this.setState({ showCards: !showCards })}
         >
-          Switch to cards
+          Switch to table/cards
         </button>
         <QueryWrapperPlotNav token={this.props.token} {...propsForPlotNav} />
         <hr></hr>
