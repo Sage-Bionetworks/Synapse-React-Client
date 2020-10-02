@@ -40,6 +40,7 @@ type SearchParams = {
 type Operator = {
   sqlOperator?: SQLOperator
 }
+
 export type QueryWrapperPlotNavProps = SearchParams &
   Partial<FacetNavOwnProps> &
   Operator &
@@ -59,15 +60,15 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     ...rest
   } = props
   let sqlUsed = sql
+
   if (searchParams) {
-    if (searchParams) {
-      sqlUsed = insertConditionsFromSearchParams(
-        searchParams,
-        sqlUsed,
-        sqlOperator,
-      )
-    }
+    sqlUsed = insertConditionsFromSearchParams(
+      searchParams,
+      sqlUsed,
+      sqlOperator,
+    )
   }
+
   const entityId = parseEntityIdFromSqlStatement(sqlUsed)
   const initQueryRequest: QueryBundleRequest = {
     entityId,
@@ -98,7 +99,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         <DownloadConfirmation />
         <FacetNav
           facetsToPlot={facetsToPlot}
-          showNotch={true}          
+          showNotch={true}
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}

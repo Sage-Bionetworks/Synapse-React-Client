@@ -18,6 +18,7 @@ type DemoState = {
   propsWithCustomCommands: QueryWrapperPlotNavProps
   showCards: boolean
 }
+
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -31,15 +32,24 @@ class QueryWrapperPlotNavDemo extends React.Component<
    */
   constructor(props: any) {
     super(props)
-    const sql: string = 'SELECT assay, id FROM syn11346063 limit 1000'
+    const sql: string = 'SELECT study, assay, id FROM syn11346063 limit 1000'
     this.state = {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: false,
+      showCards: true,
       propsWithTable: {
         tableConfiguration: {
           showAccessColumn: true,
+          columnLinks: [
+            {
+              matchColumnName: 'study',
+              isMarkdown: false,
+              baseURL: 'Explore/Studies/DetailsPage',
+              URLColumnName: 'Study_Name',
+              wrapValueWithParens: true,
+            },
+          ],
         },
         searchConfiguration: {
           searchable: [
@@ -60,7 +70,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
         name: 'PlotNav Demo',
         sqlOperator: '=',
         sql,
-        // facetsToPlot: ['assay', 'dataType'],        
+        // facetsToPlot: ['assay', 'dataType'],
       },
       propsWithCards: {
         rgbIndex: 1,
@@ -188,7 +198,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
           style={{ color: 'white', padding: 10 }}
           onClick={() => this.setState({ showCards: !showCards })}
         >
-          Switch to cards
+          Switch to table/cards
         </button>
         <QueryWrapperPlotNav token={this.props.token} {...propsForPlotNav} />
         <hr></hr>
