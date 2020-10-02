@@ -4,6 +4,7 @@ import { Study } from './Study'
 import { ToolClinical } from './ToolClinical'
 import { ToolComputational } from './ToolComputational'
 import { ToolExperimental } from './ToolExperimental'
+import { Database } from './Database'
 
 export {
   Project,
@@ -12,4 +13,5 @@ export {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
+  Database,
 }

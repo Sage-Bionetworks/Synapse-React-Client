@@ -30,6 +30,7 @@ export const VALUE_NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
 // for study icons
 export const STUDY_ACTIVE: string = 'study active'
 export const STUDY_COMPLETE: string = 'study complete'
+export const DATABASE: string = 'database'
 export const DATASET: string = 'dataset'
 export const AMP_CONSORTIUM: string = 'AMP_Consortium'
 export const FUNDER: string = 'funder'

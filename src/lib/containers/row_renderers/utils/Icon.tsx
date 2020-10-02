@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  DATABASE,
   DATASET,
   FUNDER,
   PUBLICATION,
@@ -32,6 +33,7 @@ import {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
+  Database,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -44,7 +46,8 @@ type IconProps = {
 }
 
 const defaultIcons = {
-  [DATASET]: Data2Svg,
+  [DATABASE]: Database,  // this returns svg tag
+  [DATASET]: Data2Svg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
   [STUDY_ACTIVE]: studyActiveSvg,
