@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  DATABASE,
   DATASET,
   FUNDER,
   PUBLICATION,
@@ -14,7 +15,8 @@ import {
   GRANT,
   ORGANIZATION,
   PERSON,
-  MOUSE
+  MOUSE,
+  EXPLORE
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -32,6 +34,8 @@ import {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
+  Database,
+  Explore,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -44,7 +48,8 @@ type IconProps = {
 }
 
 const defaultIcons = {
-  [DATASET]: Data2Svg,
+  [DATABASE]: Database,  // this returns svg tag
+  [DATASET]: Data2Svg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
   [STUDY_ACTIVE]: studyActiveSvg,
@@ -59,7 +64,8 @@ const defaultIcons = {
   [GRANT]: Project,
   [ORGANIZATION]: organizationsSvg,
   [PERSON]: personSvg,
-  [MOUSE]: mouseSvg
+  [MOUSE]: mouseSvg,
+  [EXPLORE]: Explore,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
