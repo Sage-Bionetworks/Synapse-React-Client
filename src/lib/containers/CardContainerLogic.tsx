@@ -20,6 +20,9 @@ export interface CardLink {
   // the column name who's value will be used
   matchColumnName: string
   isMarkdown: false
+  // the value that will go into the url link should be surrounded with parenthesis, making the search
+  // param study=(ROSMAP) instead of study=ROSMAP
+  wrapValueWithParens?: boolean
 }
 
 export type MarkdownLink = {
