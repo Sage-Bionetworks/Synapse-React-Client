@@ -38,6 +38,7 @@ export type DownloadConfirmationProps = {
   updateParentState?: <K extends keyof QueryWrapperState>(
     param: Pick<QueryWrapperState, K>,
   ) => void
+  onExportTable?: () => void
 }
 
 // add files to download list
@@ -117,6 +118,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   fnClose,
   updateParentState,
   topLevelControlsState,
+  onExportTable,
 }) => {
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [state, setState] = useState<DownloadConfirmationState>({
@@ -240,6 +242,17 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             >
               View Download List
             </button>
+            
+            {onExportTable && <span>
+                or 
+                <button
+                  className="test-download-metadata"
+                  onClick={onExportTable}
+                >
+                  Download File Metadata
+                </button>
+              </span>
+            }
           </span>
         )
 
