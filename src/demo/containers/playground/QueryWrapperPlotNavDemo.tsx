@@ -52,17 +52,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
           ],
         },
         searchConfiguration: {
-          searchable: [
-            {
-              columnName: 'assay',
-            },
-            {
-              columnName: 'name',
-            },
-            {
-              columnName: 'consortium',
-            },
-          ],
+          searchable: ['assay','name','consortium'],
         },
         visibleColumnCount: 10,
         facetsToPlot: ['assay'],

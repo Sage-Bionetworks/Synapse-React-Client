@@ -35,14 +35,12 @@ type SearchState = {
   columnName: string
 }
 
-export type SearchableV2 = {
-  columnName: string
-}[]
+export type SearchableColumnsV2 = string[]
 
 export type SearchV2Props = {
   isQueryWrapperMenuChild?: boolean
   defaultColumn?: string
-  searchable?: SearchableV2
+  searchable?: SearchableColumnsV2
   lockedFacet?: LockedFacet
 }
 
@@ -187,7 +185,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (this.isSupportedColumn(columnModel)) {
         // return true if the searchable array contains this column name
         const { searchable } = this.props
-        return searchable?.some(e => e.columnName === columnModel?.name)
+        return searchable?.some(e => e === columnModel?.name)
     }
     return false
   }
@@ -201,7 +199,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (searchable) {
       searchColumns = searchable
         .map(el =>
-          data?.columnModels?.find(model => model.name === el.columnName),
+          data?.columnModels?.find(model => model.name === el),
         )
         .filter(this.isSupportedColumnAndInProps)
         .map(el => el!.name)
