@@ -15,7 +15,8 @@ import {
   GRANT,
   ORGANIZATION,
   PERSON,
-  MOUSE
+  MOUSE,
+  EXPLORE
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -34,6 +35,7 @@ import {
   ToolComputational,
   ToolExperimental,
   Database,
+  Explore,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -62,7 +64,8 @@ const defaultIcons = {
   [GRANT]: Project,
   [ORGANIZATION]: organizationsSvg,
   [PERSON]: personSvg,
-  [MOUSE]: mouseSvg
+  [MOUSE]: mouseSvg,
+  [EXPLORE]: Explore,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
