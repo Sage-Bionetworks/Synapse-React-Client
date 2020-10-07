@@ -33,7 +33,8 @@ export type ModalDownloadProps = {
   onClose: (...args: any[]) => void
   token?: string
   includeEntityEtag?: boolean
-  queryBundleRequest: QueryBundleRequest
+  queryBundleRequest?: QueryBundleRequest  // either the query bundle request needs to be provided, or getLastQueryRequest
+  getLastQueryRequest?: () => QueryBundleRequest
   offset?: number
   limit?: number
   sort?: SortItem[]
@@ -70,17 +71,18 @@ export default class ModalDownload extends React.Component<
     const { formData } = event
     const fileType = formData['File Type']
     const contents = formData.Contents as string[]
-    const { token, queryBundleRequest } = this.props
+    const { token, queryBundleRequest, getLastQueryRequest } = this.props
     const separator = fileType === csvOption ? ',' : '\t'
     const writeHeader = contents.includes(writeHeaderOption)
     const includeRowIdAndRowVersion = contents.includes(
       includeRowIdAndRowVersionOption,
     )
-    const sql = queryBundleRequest.query.sql
+    const queryRequest = queryBundleRequest ?? getLastQueryRequest!()
+    const sql = queryRequest.query.sql
     const downloadFromTableRequest: DownloadFromTableRequest = {
       sql,
       entityId: parseEntityIdFromSqlStatement(sql),
-      selectedFacets: queryBundleRequest.query.selectedFacets,
+      selectedFacets: queryRequest.query.selectedFacets,
       concreteType:
         'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
       writeHeader,

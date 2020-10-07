@@ -111,7 +111,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         {showExportMetadata && (
           <ModalDownload
             onClose={() => setShowExportMetadata(false)}
-            queryBundleRequest={initQueryRequest}            
           />
         )}
       </QueryWrapper>

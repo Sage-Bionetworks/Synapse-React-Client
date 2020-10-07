@@ -237,7 +237,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return (
           <span>
             <button
-              className="test-view-downloadlist"
+              className="test-view-downloadlist btn-link"
               onClick={() => setShowDownloadList(true)}
             >
               View Download List
@@ -246,7 +246,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             {onExportTable && <span>
                 or 
                 <button
-                  className="test-download-metadata"
+                  className="test-download-metadata btn-link"
                   onClick={onExportTable}
                 >
                   Download File Metadata
