@@ -35,15 +35,30 @@
 }
 .RssFeed {
   padding: 15px 0px;
+
+  @media (min-width: 801px) {
   .RssFeedItems {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     .RssFeedItem {
-      max-width: 340px;
+      width: 30%;
+    }
+  }}  
+  @media (max-width: 800px) {
+    .RssFeedItems {
+      display: block;
+      .RssFeedItem {
+        width: 100%;
+      }
+    }}  
+    
+  .RssFeedItems {
+    .RssFeedItem {      
       border: 1px solid #DDDDDF;
       padding: 20px;
       margin: 10px;
+      background-color: white;
       .RssFeedItemCategories {
         display: flex;
         flex-direction: row;

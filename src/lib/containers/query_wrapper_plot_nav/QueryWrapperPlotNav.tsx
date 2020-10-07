@@ -15,6 +15,7 @@ import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
 import SearchV2, { SearchV2Props } from '../SearchV2'
+import ModalDownload from '../ModalDownload'
 import { DownloadConfirmation } from '../download_list'
 
 type OwnProps = {
@@ -40,12 +41,14 @@ type SearchParams = {
 type Operator = {
   sqlOperator?: SQLOperator
 }
+
 export type QueryWrapperPlotNavProps = SearchParams &
   Partial<FacetNavOwnProps> &
   Operator &
   OwnProps
 
 const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = props => {
+  const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const {
     searchParams,
     sql,
@@ -59,15 +62,15 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     ...rest
   } = props
   let sqlUsed = sql
+
   if (searchParams) {
-    if (searchParams) {
-      sqlUsed = insertConditionsFromSearchParams(
-        searchParams,
-        sqlUsed,
-        sqlOperator,
-      )
-    }
+    sqlUsed = insertConditionsFromSearchParams(
+      searchParams,
+      sqlUsed,
+      sqlOperator,
+    )
   }
+
   const entityId = parseEntityIdFromSqlStatement(sqlUsed)
   const initQueryRequest: QueryBundleRequest = {
     entityId,
@@ -95,16 +98,21 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <SearchV2 {...searchConfiguration} />
         <Error />
-        <DownloadConfirmation />
+        <DownloadConfirmation onExportTable={() => setShowExportMetadata(true)}/>
         <FacetNav
           facetsToPlot={facetsToPlot}
-          showNotch={true}          
+          showNotch={true}
         />
         <FilterAndView
           tableConfiguration={tableConfiguration}
           hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
         />
+        {showExportMetadata && (
+          <ModalDownload
+            onClose={() => setShowExportMetadata(false)}
+          />
+        )}
       </QueryWrapper>
     </div>
   )

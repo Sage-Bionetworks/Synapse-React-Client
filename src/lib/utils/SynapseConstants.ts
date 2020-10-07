@@ -30,6 +30,7 @@ export const VALUE_NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
 // for study icons
 export const STUDY_ACTIVE: string = 'study active'
 export const STUDY_COMPLETE: string = 'study complete'
+export const DATABASE: string = 'database'
 export const DATASET: string = 'dataset'
 export const AMP_CONSORTIUM: string = 'AMP_Consortium'
 export const FUNDER: string = 'funder'
@@ -42,6 +43,9 @@ export const CLINICAL: string = 'clinical'
 export const PROJECT: string = 'Project'
 export const GRANT: string = 'Grant'
 export const ORGANIZATION: string = 'ORGANIZATION'
+export const PERSON: string = 'PERSON'
+export const MOUSE: string = 'MOUSE'
+export const EXPLORE: string = 'explore'
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'

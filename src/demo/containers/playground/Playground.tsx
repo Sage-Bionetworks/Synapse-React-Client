@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
-import CardContainerLogicDemo from './CardContainerLogicDemo'
+import CardContainerLogicDemo, { iconOptions } from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import UserCardDemo from './UserCardDemo'
@@ -18,11 +18,13 @@ import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import { ThemesPlotDemo } from './ThemesPlotDemo'
 import GoalsDemo from './GoalsDemo'
+import ProgramsDemo from './ProgramsDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
 import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
+import { FeaturedDataTabsDemo } from './FeaturedDataTabsDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -126,8 +128,14 @@ const App = ({
           <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
         </li>
         <li>
+          <Link to={`${match.url}/ProgramsDemo`}>ProgramsDemo</Link>
+        </li>        
+        <li>
           <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
+        <li>
+          <Link to={`${match.url}/FeaturedDataTabsDemo`}>Featured Data Tabs Demo</Link>
+        </li>        
       </ul>
 
       <Route
@@ -252,6 +260,25 @@ const App = ({
 
       <Route
         exact={true}
+        path={`${match.url}/ProgramsDemo`}
+        component={() => <ProgramsDemo
+          entityId={'syn17024173'}
+          rgbIndex={1}
+          titleColumnName={'Program'}
+          summaryColumnName={'Short Description'}
+          linkColumnName={'Website'}
+          iconColumnName={'Program'}
+          iconOptions={iconOptions}
+          linkConfig={{
+            isMarkdown: false,
+            baseURL: 'Explore/Programs/DetailsPage',
+            URLColumnName: 'Program',
+            matchColumnName: 'Program',
+          }}
+          token={token} />}
+      />
+      <Route
+        exact={true}
         path={`${match.url}/ResourcesDemo`}
         component={() => (
           <div className="container">
@@ -273,6 +300,11 @@ const App = ({
         exact={true}
         path={`${match.url}/People`}
         component={PeopleProfileDemo}
+      />
+      <Route
+        exact={true}
+        path={`${match.url}/FeaturedDataTabsDemo`}
+        component={FeaturedDataTabsDemo}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

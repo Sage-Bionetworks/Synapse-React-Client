@@ -11,6 +11,12 @@ import resilienceadSvg from './icons/resiliencead.svg'
 type State = {
   tabIndex: Number
 }
+export const iconOptions = {
+  'AMP-AD': circleSvg,
+  'M2OVE-AD': brainSvg,
+  'MODEL-AD': mouseSvg,
+  'Resilience-AD': resilienceadSvg,
+}
 
 export default class CardContainerLogicDemo extends React.Component<{}, State> {
   constructor(props: any) {
@@ -22,13 +28,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
 
   render() {
     const { tabIndex } = this.state
-    const iconOptions = {
-      'AMP-AD': circleSvg,
-      'M2OVE-AD': brainSvg,
-      'MODEL-AD': mouseSvg,
-      'Resilience-AD': resilienceadSvg,
-    }
-
+    
     const genericCardSchema: CardConfiguration = {
       type: SynapseConstants.GENERIC_CARD,
       genericCardSchema: {

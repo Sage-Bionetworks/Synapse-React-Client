@@ -22,6 +22,7 @@ import ModalDownload from './containers/ModalDownload'
 import ShowDownload from './containers/download_list/ShowDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
 import Goals from './containers/home_page/goals/Goals'
+import Programs from './containers/home_page/programs/Programs'
 import Resources from './containers/home_page/resources/Resources'
 import NewsFeedMenu from './containers/NewsFeedMenu'
 import RssFeedCards from './containers/RssFeedCards'
@@ -29,6 +30,8 @@ import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
+import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
+
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
 import './style/components/_spinner.scss'
@@ -57,12 +60,14 @@ const SynapseComponents = {
   ShowDownload,
   QueryWrapperPlotNav,
   ExternalFileHandleLink,
+  Programs,
   Goals,
   Resources,
   UpsetPlot,
   SynapsePlot,
   RssFeedCards,
   UserCardListRotate,
+  FeaturedDataTabs,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

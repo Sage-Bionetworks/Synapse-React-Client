@@ -54,8 +54,13 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
       facetWithSelection.facet.columnName,
     )}: ${innerText}`
   } else {
-    innerText = `"${filter?.value}" in ${unCamelCase(filter?.columnName)}`
-    tooltipText = `${unCamelCase(filter?.columnName)}: ${filter?.value}`
+    let filterValue = filter?.value
+    if (filterValue?.startsWith('%') && filterValue?.endsWith('%')) {
+      // strip '%' wildcard character when using a LIKE condition
+      filterValue = filterValue.substring(1, filterValue.length-1)
+    }
+    innerText = `"${filterValue}" in ${unCamelCase(filter?.columnName)}`
+    tooltipText = `${unCamelCase(filter?.columnName)}: ${filterValue}`
   }
   return (
     <ElementWithTooltip

@@ -132,12 +132,8 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
           {this.state.rssFeed.items &&
             this.state.rssFeed.items.length > this.props.itemsToShow && (
               <div className="RssFeedViewAllNewsButtonContainer">
-                <a href={this.state.rssFeed.link} target="_blank" rel="noopener noreferrer">
-                  <button
-                    className="btn homepage-button"
-                  >
+                <a className="homepage-button-link" href={this.state.rssFeed.link} target="_blank" rel="noopener noreferrer">
                     VIEW ALL NEWS
-                  </button>
                 </a>
               </div>
             )}
