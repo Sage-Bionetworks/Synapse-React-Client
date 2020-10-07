@@ -1,23 +1,12 @@
 import { EvaluationRound } from 'lib/utils/synapseTypes'
 import * as React from 'react'
 import { EvaluationRoundEditor } from '../../../lib/containers/evaluation_queues/EvaluationRoundEditor'
-import { Range } from '../../../lib/containers/widgets/Range'
 
 export const EvaluationQueueDemo: React.FunctionComponent = () => {
   const evaluationRound: EvaluationRound = {
-    roundStart: '69',
-    roundEnd: '1234',
+    roundStart: '2020-10-03T01:48:28Z',
+    roundEnd: '2020-10-03T01:48:28Z',
     evaluationId: '123123',
   }
-  return (
-    <div>
-      <EvaluationRoundEditor evaluationRound={evaluationRound} />
-      <Range
-        type="date"
-        onChange={(data: any) => {
-          console.log(data)
-        }}
-      ></Range>
-    </div>
-  )
+  return <EvaluationRoundEditor evaluationRound={evaluationRound} />
 }

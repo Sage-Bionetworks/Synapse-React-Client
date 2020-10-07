@@ -1,5 +1,7 @@
 //https://docs.synapse.org/rest/org/sagebionetworks/evaluation/model/EvaluationRoundLimit.html
+export type EvaluationRoundLimitType = 'TOTAL' | 'DAILY' | 'WEEKLY' | 'MONTHLY'
+
 export type EvaluationRoundLimit = {
-  limitType: 'TOTAL' | 'DAILY' | 'WEEKLY' | 'MONTHLY'
+  limitType: EvaluationRoundLimitType
   maximumSubmissions: number // integer
 }
