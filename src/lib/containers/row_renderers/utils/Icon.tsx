@@ -16,7 +16,11 @@ import {
   ORGANIZATION,
   PERSON,
   MOUSE,
-  EXPLORE
+  EXPLORE,
+  SEARCH,
+  CHART,
+  FILTER,
+  DOWNLOAD,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -36,6 +40,10 @@ import {
   ToolExperimental,
   Database,
   Explore,
+  Search,
+  Chart,
+  Filter,
+  Download,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -45,6 +53,7 @@ type IconProps = {
   iconOptions?: KeyValue
   value?: string
   isHeader?: boolean
+  cssClass?: string
 }
 
 const defaultIcons = {
@@ -66,11 +75,16 @@ const defaultIcons = {
   [PERSON]: personSvg,
   [MOUSE]: mouseSvg,
   [EXPLORE]: Explore,
+  [SEARCH]: Search,
+  [CHART]: Chart,
+  [FILTER]: Filter,
+  [DOWNLOAD]: Download,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
   value = '',
   iconOptions,
+  cssClass
 }) => {
   const iconSet = { ...defaultIcons, ...iconOptions }
   // see if the value has a corresponding icon, e.g. 'Active' in a studies table
@@ -80,7 +94,7 @@ const Icon: React.FunctionComponent<IconProps> = ({
   const datasetIconClass =
     value === DATASET || type === DATASET ? 'SRC-datasetIcon' : ''
   if (typeof Icon == 'function') {
-    return <Icon />
+    return <span className={cssClass}><Icon /></span>
   }
   return <img src={Icon} className={`iconImg ${datasetIconClass}`} />
 }

@@ -9,6 +9,10 @@
     svg {
       fill: $primary-action-color;
       color: $primary-action-color !important;
+
+      path {
+        fill: $primary-action-color;
+      }
     }
   }
 }
@@ -18,6 +22,10 @@
       svg {
         fill: $primary-action-color;
         color: white !important;
+
+        path {
+          fill: white;
+        }
       }
     }
   }

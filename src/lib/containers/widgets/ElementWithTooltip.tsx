@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactElement } from 'react'
+import React, { FunctionComponent } from 'react'
 import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
@@ -7,6 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { Dropdown } from 'react-bootstrap'
+import { Icon } from '../row_renderers/utils'
 
 type CustomImageProps = {
   svgImg: React.ComponentElement<any, any>
@@ -38,7 +39,7 @@ type ElementWithTooltipProps = {
   tooltipVisualProps?: TooltipVisualProps
   darkTheme?: boolean
   size?: FontAwesomeIconProps['size']
-  muiIcon?: ReactElement
+  icon?: string
 }
 
 function getTooltipTriggerContents(
@@ -70,10 +71,11 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   children,
   darkTheme,
   size,
-  muiIcon
+  icon
 }) => {
   const { place, type, effect, border } = tooltipVisualProps
-  const tooltipTriggerContents = muiIcon ? muiIcon : image
+  const iconComponent = icon ? (<Icon type={icon}></Icon>) : undefined
+  const tooltipTriggerContents = iconComponent ? iconComponent : image
     ? getTooltipTriggerContents(image, imageColor, size)
     : children || <></>
 

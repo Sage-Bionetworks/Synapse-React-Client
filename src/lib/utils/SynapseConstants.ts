@@ -46,6 +46,11 @@ export const ORGANIZATION: string = 'ORGANIZATION'
 export const PERSON: string = 'PERSON'
 export const MOUSE: string = 'MOUSE'
 export const EXPLORE: string = 'explore'
+export const SEARCH: string = 'search'
+export const CHART: string = 'chart'
+export const FILTER: string = 'filter'
+export const DOWNLOAD: string = 'download'
+
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
 export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'

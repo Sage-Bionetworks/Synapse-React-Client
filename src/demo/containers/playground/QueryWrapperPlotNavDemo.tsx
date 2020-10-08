@@ -32,12 +32,12 @@ class QueryWrapperPlotNavDemo extends React.Component<
    */
   constructor(props: any) {
     super(props)
-    const sql: string = 'SELECT study, assay, id FROM syn11346063 limit 1000'
+    const sql: string = 'SELECT assay, id FROM syn11346063 limit 1000'
     this.state = {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: true,
+      showCards: false,
       propsWithTable: {
         tableConfiguration: {
           showAccessColumn: true,

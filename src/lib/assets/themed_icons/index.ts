@@ -6,6 +6,10 @@ import { ToolComputational } from './ToolComputational'
 import { ToolExperimental } from './ToolExperimental'
 import { Database } from './Database'
 import { Explore } from './Explore'
+import { Search } from './Search'
+import { Chart } from './Chart'
+import { Filter } from './Filter'
+import { Download } from './Download'
 
 export {
   Project,
@@ -16,4 +20,8 @@ export {
   ToolExperimental,
   Database,
   Explore,
+  Search,
+  Chart,
+  Filter,
+  Download,
 }
