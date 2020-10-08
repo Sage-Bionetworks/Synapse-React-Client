@@ -131,8 +131,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         // Otherwise, get the first column model that can be searched.
         // And for study details page: if lockedFacet is defined, remove it from the search
         const searchableColumnModels = this.props.data?.columnModels?.filter(el => el.name !== lockedFacet?.facet)
-            .filter(el => this.isSupportedColumn(el),
-          )
+            .filter(el => this.isSupportedColumn(el))
         columnName = searchableColumnModels?.[0].name ?? ''
       }
     }
