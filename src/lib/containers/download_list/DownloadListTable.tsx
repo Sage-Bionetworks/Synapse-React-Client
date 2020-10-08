@@ -574,15 +574,26 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   }, [arPropsFromHasAccess, onHide])
 
   if (renderAsModal) {
+    const closeBtn: React.CSSProperties = {
+      position: 'absolute',
+      top: 5,
+      right: 20,
+      zIndex: 10,
+    }
+    
     return (
       <ReactBootstrap.Modal
         centered={true}
-        animation={false}
+        animation={false}        
         size={'lg'}
         dialogClassName={'download-list-modal-container'}
         show={true}
-        onHide={onHideModal}
       >
+        <ReactBootstrap.Modal.Header>
+          <button style={closeBtn} onClick={onHideModal}>
+            <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />
+          </button>
+        </ReactBootstrap.Modal.Header>
         {content}
       </ReactBootstrap.Modal>
     )

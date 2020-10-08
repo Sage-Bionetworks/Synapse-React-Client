@@ -15,6 +15,7 @@ import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
 import SearchV2, { SearchV2Props } from '../SearchV2'
+import ModalDownload from '../ModalDownload'
 import { DownloadConfirmation } from '../download_list'
 
 type OwnProps = {
@@ -47,6 +48,7 @@ export type QueryWrapperPlotNavProps = SearchParams &
   OwnProps
 
 const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = props => {
+  const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const {
     searchParams,
     sql,
@@ -96,7 +98,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <SearchV2 {...searchConfiguration} />
         <Error />
-        <DownloadConfirmation />
+        <DownloadConfirmation onExportTable={() => setShowExportMetadata(true)}/>
         <FacetNav
           facetsToPlot={facetsToPlot}
           showNotch={true}
@@ -106,6 +108,11 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
         />
+        {showExportMetadata && (
+          <ModalDownload
+            onClose={() => setShowExportMetadata(false)}
+          />
+        )}
       </QueryWrapper>
     </div>
   )
