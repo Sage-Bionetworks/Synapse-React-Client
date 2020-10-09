@@ -10,6 +10,9 @@ import { Search } from './Search'
 import { Chart } from './Chart'
 import { Filter } from './Filter'
 import { Download } from './Download'
+import { Expand } from './Expand'
+import { Collapse } from './Collapse'
+import { Close } from './Close'
 
 export {
   Project,
@@ -24,4 +27,7 @@ export {
   Chart,
   Filter,
   Download,
+  Expand,
+  Collapse,
+  Close,
 }

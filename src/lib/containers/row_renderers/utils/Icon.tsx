@@ -21,6 +21,9 @@ import {
   CHART,
   FILTER,
   DOWNLOAD,
+  EXPAND,
+  COLLAPSE,
+  CLOSE,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -44,6 +47,9 @@ import {
   Chart,
   Filter,
   Download,
+  Expand,
+  Collapse,
+  Close,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -79,6 +85,9 @@ const defaultIcons = {
   [CHART]: Chart,
   [FILTER]: Filter,
   [DOWNLOAD]: Download,
+  [EXPAND]: Expand,
+  [COLLAPSE]: Collapse,
+  [CLOSE]: Close,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
