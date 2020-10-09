@@ -18,14 +18,14 @@ export default function GoalsDesktop({
       >
         <p>
           <span className="Goals__Card__header__title"> {title} </span>
-          <span className="Goals__Card__header__count">
+          {tableId && <span className="Goals__Card__header__count">
             <QueryCount
               parens={false}
               sql={`SELECT * FROM ${tableId}`}
               token={token}
               name=""
             />
-          </span>
+          </span>}
         </p>
       </div>
       <div className="Goals__Card__summary">

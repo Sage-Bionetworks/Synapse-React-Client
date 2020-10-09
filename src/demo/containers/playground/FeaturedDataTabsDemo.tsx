@@ -12,8 +12,6 @@ export const FeaturedDataTabsDemo = () => {
           {
             title: 'Human Studies',
             icon: 'PERSON',
-            exploreFacetColumnName: 'species',
-            exploreFacetColumnValue: 'Human',
             plotsConfig: {
               configs: [{
                 title:'The Religious Orders and Memory and Aging Project Study',
@@ -41,8 +39,6 @@ export const FeaturedDataTabsDemo = () => {
           {
             title: 'Animal Model Studies',
             icon: 'MOUSE',
-            exploreFacetColumnName: 'species',
-            exploreFacetColumnValue: 'Mouse',
             plotsConfig: {
               configs: [{
                 title:'The UCI MODEL-AD 5XFAD Study',
