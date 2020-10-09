@@ -12,14 +12,14 @@ export default function ({
 }: GoalsDataProps) {
   const titleElement = (
     <div className="Goals__Mobile__Header">
-      <span className="Goals__Mobile__Header__Count">
+      {tableId && <span className="Goals__Mobile__Header__Count">
         <QueryCount
           parens={false}
           sql={`SELECT * FROM ${tableId}`}
           token={token}
           name=""
         />
-      </span>
+      </span>}
       <span className="Goals__Mobile__Header__Title"> {title} </span>
     </div>
   )

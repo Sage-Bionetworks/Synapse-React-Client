@@ -8,8 +8,6 @@ export type FeatureDataTabProps = {
   title: string, // type of data being shown, used for the tab title and explore all button
   icon?: string,
   plotsConfig: FeaturedDataPlotsProps,
-  exploreFacetColumnName: string,
-  exploreFacetColumnValue: string,
 }
 
 export type FeaturedDataTabsProps = {
@@ -52,7 +50,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
       {/* tab content */}
       {
         selectedTabProps && <>
-          <FeaturedDataPlots key={`${sql}-${selectedTabProps.exploreFacetColumnName}-${selectedTabProps.exploreFacetColumnValue}`}
+          <FeaturedDataPlots key={`${sql}-${selectedTabIndex}`}
             {...selectedTabProps.plotsConfig}
               rgbIndex={rgbIndex}
               sql={sql}
