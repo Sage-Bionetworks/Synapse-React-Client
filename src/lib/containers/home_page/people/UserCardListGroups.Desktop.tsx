@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import UserCardListRotate from '../../../../lib/containers/UserCardListRotate'
-import { FacetColumnValuesRequest } from '../../../../lib/utils/synapseTypes'
+import UserCardListRotate from '../../../containers/UserCardListRotate'
+import { FacetColumnValuesRequest } from '../../../utils/synapseTypes'
 import { UserCardListGroupsProps } from './UserCardListGroups'
 
 
