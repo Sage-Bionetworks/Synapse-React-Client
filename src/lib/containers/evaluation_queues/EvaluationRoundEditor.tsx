@@ -1,12 +1,11 @@
-import {
-  EvaluationRound,
-  EvaluationRoundLimitType,
-} from 'lib/utils/synapseTypes'
-import React, { useEffect, useState } from 'react'
-import { Col, Form, InputGroup } from 'react-bootstrap'
+import { EvaluationRound } from 'lib/utils/synapseTypes'
+import React, { useState } from 'react'
+import { Col, Form, InputGroup, Row } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
 import { Moment } from 'moment'
 import { CalendarWithIconInputGroup } from './CalendarWithIconInputGroup'
+import { EvaluationRoundLimitInput } from './round_limits/EvaluationRoundLimitOptions'
+import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitsList'
 
 export type EvaluationRoundEditorProps = {
   evaluationRound: EvaluationRound
@@ -23,39 +22,36 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
     evaluationRound.roundEnd,
   )
 
-  const [evaluationLimits, setEvaluationLimits] = useState<
-    Partial<Record<EvaluationRoundLimitType, number>>
-  >(
-    (evaluationRound.limits || []).reduce((dict, evaluationLimit) => {
-      dict[evaluationLimit.limitType] = evaluationLimit.maximumSubmissions
-      return dict
-    }, {}),
+  // Mapping of limit type to its maxSubmissionLimit (e.g. {TOTAL: 123, MONTHLY: 456} )
+  const initialTotalLimit: string = (evaluationRound.limits || [])
+    .filter(evaluationLimit => evaluationLimit.limitType === 'TOTAL')
+    .reduce((ignorePrevValue, evaluationLimit) => {
+      //after filtering there should exist at most one evaluationLimit
+      return evaluationLimit.maximumSubmissions.toString()
+    }, '')
+
+  const [totalSubmissionLimit, setTotalSubmissionLimit] = useState<string>(
+    initialTotalLimit,
   )
 
   const [advancedMode, setAdvancedMode] = useState<boolean>(false)
 
-  useEffect(() => {
-    console.log(startDate)
-    console.log(endDate)
-  }, [startDate, endDate])
+  const initialAdvancedLimits: EvaluationRoundLimitInput[] = (
+    evaluationRound.limits || []
+  )
+    .filter(evaluationLimit => evaluationLimit.limitType !== 'TOTAL')
+    .reduce<EvaluationRoundLimitInput[]>((limitInputList, evaluationLimit) => {
+      limitInputList.push({
+        type: evaluationLimit.limitType,
+        maxSubmissionString: evaluationLimit.maximumSubmissions.toString(),
+      })
+      //after filtering there should exist at most one evaluationLimit
+      return limitInputList
+    }, [])
 
-  function handleEvaluationLimitTypeChange(
-    type: EvaluationRoundLimitType,
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void {
-    const newLimits = { ...evaluationLimits }
-    const value = parseInt(event.target.value)
-    newLimits[type] = isNaN(value) ? undefined : value
-    setEvaluationLimits(newLimits)
-  }
-
-  function generateAdvancedLimits() {
-    return Object.entries(evaluationLimits)
-      .filter(([limitType]) => limitType !== 'TOTAL')
-      .map(([limitType, maxSubmissionLimit]) => (
-        <input key={limitType} value={maxSubmissionLimit} />
-      ))
-  }
+  const [advancedLimits, setAdvancedLimits] = useState<
+    EvaluationRoundLimitInput[]
+  >(initialAdvancedLimits)
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
@@ -63,7 +59,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
       <Form>
         <h2>ROUND STATUS</h2>
         <h2>DURATION</h2>
-        <Form.Row>
+        <Row>
           <Col>
             <CalendarWithIconInputGroup
               value={startDate}
@@ -82,27 +78,28 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               disabled={true}
             />
           </Col>
-        </Form.Row>
+        </Row>
 
         <h2>SUBMISSION LIMITS</h2>
-        <Form.Row>
-          <Col>
-            <label>Total Submissions / Round</label>
-            <InputGroup>
-              <input
-                value={evaluationLimits['MONTHLY']}
-                type="text"
-                pattern="[0-9]*"
-                onChange={event =>
-                  handleEvaluationLimitTypeChange('MONTHLY', event)
-                }
-              />
-            </InputGroup>
-          </Col>
-        </Form.Row>
+        <Row>
+          <label>Total Submissions / Round</label>
+          <InputGroup>
+            <input
+              value={totalSubmissionLimit}
+              type="text"
+              pattern="[0-9]*"
+              onChange={event => setTotalSubmissionLimit(event.target.value)}
+            />
+          </InputGroup>
+        </Row>
 
         <a onClick={() => setAdvancedMode(!advancedMode)}>Advanced Limits</a>
-        <div>{advancedMode && generateAdvancedLimits()}</div>
+        {advancedMode && (
+          <EvaluationRoundLimitOptionsList
+            limitInputs={advancedLimits}
+            onChange={setAdvancedLimits}
+          />
+        )}
       </Form>
     </div>
   )

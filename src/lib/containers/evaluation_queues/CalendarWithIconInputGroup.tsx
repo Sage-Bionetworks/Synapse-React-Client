@@ -1,6 +1,6 @@
 import React from 'react'
 import { Moment } from 'moment'
-import { InputGroup } from 'react-bootstrap'
+import { Form, InputGroup } from 'react-bootstrap'
 import calendarDateIcon from '../../assets/icons/calendar-date.svg'
 import Datetime from 'react-datetime'
 
@@ -18,7 +18,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
   disabled = false,
 }) => {
   return (
-    <React.Fragment>
+    <Form.Group>
       {/*TODO: color synapse gray??*/}
       {label && <label style={{ fontWeight: 'normal' }}>{label}</label>}
       <InputGroup>
@@ -35,6 +35,6 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
           inputProps={{ disabled: disabled }}
         />
       </InputGroup>
-    </React.Fragment>
+    </Form.Group>
   )
 }
