@@ -2,71 +2,56 @@
   a {
     color: $primary-action-color;
   }
-  .control-container {
-    background: white;
-    border: 1px solid #dcdcdc;
-    display: flex;    
-    padding: 15px;
-    height: 500px;
-    margin: 0px 15px;
-    .button-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      button {
-        max-height: 120px;
-        text-align: left;
-        color: #515359;
-        font-size: 16px;
-        padding: 10px;
-        &.isSelected,
-        &:not(.gap-fill):hover {
-          color: $primary-action-color;
-          // Hex value can also set opacity, using two extra values at the end
-          background-color: #{$primary-action-color}0a;
-          border-right: 2px solid $primary-action-color;
-        }
-        border-right: 2px solid #dcdcdc;
-        font-weight: bold;
+  &__Desktop {
+    .control-container {
+      background: white;
+      border: 1px solid #dcdcdc;
+      display: flex;    
+      padding: 15px;
+      height: 500px;
+      margin: 0px 15px;
+      .button-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
-        flex-shrink: 1;
-      }
-      .gap-fill {
-        max-height: unset;
-        cursor: default;
-      }
-    }
-    .content-container {
-      overflow-y: auto;
-      flex: 3;
-      padding-left: 40px;
-      padding-right: 40px;
-      @media (min-width: 1200px) {
-        .SRC-card-grid-row {
-          grid-template-columns: repeat(2, 1fr);
+        button {
+          max-height: 120px;
+          text-align: left;
+          color: #515359;
+          font-size: 16px;
+          padding: 10px;
+          &.isSelected,
+          &:not(.gap-fill):hover {
+            color: $primary-action-color;
+            // Hex value can also set opacity, using two extra values at the end
+            background-color: #{$primary-action-color}0a;
+            border-right: 2px solid $primary-action-color;
+          }
+          border-right: 2px solid #dcdcdc;
+          font-weight: bold;
+          flex-grow: 1;
+          flex-shrink: 1;
+        }
+        .gap-fill {
+          max-height: unset;
+          cursor: default;
         }
       }
-      @media (max-width: 1199px) {
-        .SRC-card-grid-row {
-          grid-template-columns: repeat(1, 1fr);
+      .content-container {
+        overflow-y: auto;
+        flex: 3;
+        padding-left: 40px;
+        padding-right: 40px;
+        @media (min-width: 1200px) {
+          .SRC-card-grid-row {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
-      }
-    }
-    .markdown {
-      p {
-        border-bottom: 1px solid #dcdcdc;
-        padding-bottom: 10px;
-        &:last-child {
-          border-bottom: 1px solid transparent;
-        }
-      }
-      h4 {
-        padding-top: 17px;
-        margin-bottom: 10px;
-        margin-top: 5px;
-        &:first-child {
-          margin-top: 0px;
+        @media (max-width: 1199px) {
+          .SRC-card-grid-row {
+            grid-template-columns: repeat(1, 1fr);
+          }
         }
       }
     }

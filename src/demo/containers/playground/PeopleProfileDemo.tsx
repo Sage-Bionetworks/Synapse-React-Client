@@ -1,6 +1,6 @@
 import * as React from 'react'
 import UserCardListRotate from '../../../lib/containers/UserCardListRotate'
-import UserCardListGroups from '../../../lib/containers/UserCardListGroups'
+import UserCardListGroups from '../../../lib/containers/home_page/people/UserCardListGroups'
 import { MEDIUM_USER_CARD } from '../../../lib/utils/SynapseConstants'
 
 export const PeopleProfileDemo = () => {
