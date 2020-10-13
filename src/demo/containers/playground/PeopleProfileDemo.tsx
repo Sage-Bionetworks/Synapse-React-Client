@@ -14,7 +14,7 @@ export const PeopleProfileDemo = () => {
           'Role of brain somatic mosaicism in autism, schizophrenia, and bipolar disorder'
         ]}
         size={MEDIUM_USER_CARD}
-        summaryLinkText={'Explore All People'}
+        summaryLinkText={'EXPLORE ALL PEOPLE'}
         summaryLink={'/Explore/People'}
         count={6}
       ></UserCardListGroups>

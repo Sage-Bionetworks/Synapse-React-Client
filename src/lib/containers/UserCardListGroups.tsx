@@ -16,7 +16,7 @@ export type UserCardListGroupsProps = {
 
 export default function UserCardListGroups(props: UserCardListGroupsProps) {
   const [selectedGroupIndex, setSelectedGroupIndex] = useState<number>(0)
-  const { columnName, facetValues, ...rest } = props
+  const { columnName, facetValues, summaryLink, summaryLinkText, ...rest } = props
   const selectedFacet:FacetColumnValuesRequest = {
     columnName,
     facetValues:[facetValues[selectedGroupIndex]],
@@ -50,6 +50,13 @@ export default function UserCardListGroups(props: UserCardListGroupsProps) {
             />
         </div>
       </div>
+      {summaryLink && summaryLinkText && <div className="UserCardListGroups__summary">
+          <p>
+            <a className="homepage-button-link" href={summaryLink}>
+              {summaryLinkText}
+            </a>
+          </p>
+        </div>}
     </div>
   )
 }

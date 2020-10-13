@@ -1,14 +1,14 @@
 .UserCardListGroups {
-  background-color: rgba(64, 123, 160, 0.05);
   a {
     color: $primary-action-color;
   }
   .control-container {
     background: white;
-    display: flex;
     border: 1px solid #dcdcdc;
+    display: flex;    
     padding: 15px;
-    height: 450px;
+    height: 500px;
+    margin: 0px 15px;
     .button-container {
       flex: 1;
       display: flex;
@@ -42,9 +42,14 @@
       flex: 3;
       padding-left: 40px;
       padding-right: 140px;
-      @media (min-width: 980px) {
+      @media (min-width: 1200px) {
         .SRC-card-grid-row {
-          grid-template-columns: repeat(2, 1fr)
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 1199px) {
+        .SRC-card-grid-row {
+          grid-template-columns: repeat(1, 1fr);
         }
       }
     }
@@ -65,5 +70,9 @@
         }
       }
     }
+  }
+  &__summary {
+    text-align: center;
+    padding: 20px;
   }
 }
