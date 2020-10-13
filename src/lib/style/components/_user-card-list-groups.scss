@@ -1,4 +1,5 @@
 .UserCardListGroups {
+  margin: 0px 15px;
   a {
     color: $primary-action-color;
   }
@@ -8,7 +9,7 @@
       border: 1px solid #dcdcdc;
       display: flex;    
       padding: 15px;
-      height: 500px;
+      height: 500px;  
       margin: 0px 15px;
       .button-container {
         flex: 1;

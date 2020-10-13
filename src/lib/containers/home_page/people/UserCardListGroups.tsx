@@ -27,7 +27,6 @@ export default function (props: UserCardListGroupsProps) {
           ) : (
             <UserCardListGroupsMobile {...rest} />
           )}
-
       {summaryLink && summaryLinkText && <div className="UserCardListGroups__summary">
             <p>
               <a className="homepage-button-link" href={summaryLink}>
@@ -36,7 +35,6 @@ export default function (props: UserCardListGroupsProps) {
             </p>
           </div>}
       </div>
-
     </div>
   )
 }

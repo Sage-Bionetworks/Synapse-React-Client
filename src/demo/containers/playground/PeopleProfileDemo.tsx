@@ -21,7 +21,7 @@ export const PeopleProfileDemo = () => {
           '3/3-Schizophrenia Genetics and Brain Somatic Mosaicism',
         ]}
         size={MEDIUM_USER_CARD}
-        useQueryResultUserData={true}
+        useQueryResultUserData={false}
         summaryLinkText={'EXPLORE ALL PEOPLE'}
         summaryLink={'/Explore/People'}
         count={6}
