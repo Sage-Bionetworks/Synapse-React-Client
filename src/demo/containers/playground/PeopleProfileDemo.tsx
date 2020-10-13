@@ -1,10 +1,23 @@
 import * as React from 'react'
 import UserCardListRotate from '../../../lib/containers/UserCardListRotate'
-import { MEDIUM_USER_CARD } from 'lib/utils/SynapseConstants'
+import UserCardListGroups from '../../../lib/containers/UserCardListGroups'
+import { MEDIUM_USER_CARD } from '../../../lib/utils/SynapseConstants'
 
 export const PeopleProfileDemo = () => {
   return (
     <div className="homepage-color-background">
+      <UserCardListGroups
+        sql={'SELECT * FROM syn21781196'}
+        columnName='Project Title'
+        facetValues={[
+          'Somatic Mosaicism in the brain of Tourette syndrome',
+          'Role of brain somatic mosaicism in autism, schizophrenia, and bipolar disorder'
+        ]}
+        size={MEDIUM_USER_CARD}
+        summaryLinkText={'Explore All People'}
+        summaryLink={'/Explore/People'}
+        count={6}
+      ></UserCardListGroups>
       <div className="container-fluid">
         <div className="row">
           <UserCardListRotate

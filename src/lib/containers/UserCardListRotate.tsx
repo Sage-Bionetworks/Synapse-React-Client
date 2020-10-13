@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/Table'
+import { FacetColumnRequest, QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/Table'
 import UserCardList from './UserCardList'
 import loadingScreen from './LoadingScreen'
 import { UserCardSize } from './UserCard'
@@ -16,8 +16,9 @@ export type UserCardListRotateProps = {
   token?: string
   useQueryResultUserData?: boolean
   size?: UserCardSize
-  summaryLink: string
-  summaryLinkText: string
+  summaryLink?: string
+  summaryLinkText?: string
+  selectedFacets?: FacetColumnRequest[]
 }
 
 export const getDisplayIds = (ids: string[] = [], count: number = DEFAULT_DISPLAY_COUNT) => {
@@ -54,7 +55,8 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     useQueryResultUserData = false,
     size = LARGE_USER_CARD,
     summaryLink,
-    summaryLinkText
+    summaryLinkText,
+    selectedFacets
   }) => {
 
   // const [isLoading, setIsLoading] = useState<boolean>()
@@ -75,7 +77,8 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         entityId,
         query: {
           sql,
-        }
+          selectedFacets
+        }        
       }
 
       const queryResultBundle = await SynapseClient.getFullQueryTableResults(
@@ -90,7 +93,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         )
         const ids: string[] = queryResult.queryResults.rows.map( d => d.values[ownerIdColumnIndex] )
         if (mounted) {
-          const newIds = getDisplayIds(ids)
+          const newIds = getDisplayIds(ids, count)
           setUserIds(newIds)
           if (useQueryResultUserData) {
             setQueryData(queryResultBundle)
@@ -114,13 +117,13 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     <div className="UserCardListRotate">
       {isLoading && loadingScreen}
       {!isLoading && userIds.length > 0 && <UserCardList list={userIds} size={size} data={queryData} />}
-      <div className="UserCardListRotate__summary">
+      {summaryLink && summaryLinkText && <div className="UserCardListRotate__summary">
         <p>
           <a className="homepage-button-link" href={summaryLink}>
             {summaryLinkText}
           </a>
         </p>
-      </div>
+      </div>}
     </div>
   )
 
