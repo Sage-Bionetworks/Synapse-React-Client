@@ -13,6 +13,8 @@ import { Download } from './Download'
 import { Expand } from './Expand'
 import { Collapse } from './Collapse'
 import { Close } from './Close'
+import { SortUp } from './SortUp'
+import { SortDown } from './SortDown'
 
 export {
   Project,
@@ -30,4 +32,6 @@ export {
   Expand,
   Collapse,
   Close,
+  SortUp,
+  SortDown,
 }

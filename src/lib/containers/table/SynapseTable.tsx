@@ -1,5 +1,5 @@
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
-import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
+import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCheck,
   faColumns,
@@ -12,7 +12,6 @@ import {
   faTimes,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
@@ -65,7 +64,7 @@ import {
 import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
-import { Settings } from '@material-ui/icons'
+import { Icon } from '../row_renderers/utils'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -604,7 +603,7 @@ export default class SynapseTable extends React.Component<
                 callbackFn={this.advancedSearch}
                 tooltipText={'Open Advanced Search in Synapse'}
                 size="lg"
-                muiIcon={<Settings />}
+                // muiIcon={<Settings />}
               />
               {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}
@@ -1006,8 +1005,8 @@ export default class SynapseTable extends React.Component<
             ? 'SRC-primary-background-color SRC-anchor-light'
             : ''
           const isSelectedIconClass = isSelected
-            ? 'SRC-selected-table-icon'
-            : 'SRC-primary-text-color'
+            ? 'SRC-selected-table-icon tool-icon'
+            : 'SRC-primary-text-color tool-icon'
           const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
           const displayColumnName: string | undefined = unCamelCase(
             column.name,
@@ -1042,10 +1041,7 @@ export default class SynapseTable extends React.Component<
                         name: column.name,
                       })}
                     >
-                      <FontAwesomeIcon
-                        className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
-                        icon={ICON_STATE[columnIndex] as IconProp}
-                      />
+                      <Icon type={ICON_STATE[columnIndex]} cssClass={isSelectedIconClass}></Icon>
                     </span>
                   )}
                 </div>

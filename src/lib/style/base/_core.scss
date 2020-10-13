@@ -88,6 +88,38 @@ svg.SRC-hoverBox {
   border: 1px solid #dddddd !important;
 }
 
+.table {
+  .SRC-primary-text-color {
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+    svg, path {
+      fill: $primary-action-color;
+    }
+  }
+  .SRC-selected-table-icon {
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+    svg, path {
+      fill: #fff;
+    }
+  }
+  .dropdown button.btn {
+    margin: 0 1px;
+    border: 0;
+  }
+  .SRC-sortPadding {
+    padding: 3px;
+    margin: 0 1px;
+  }
+  .tool-icon {
+    display: flex;
+  }
+}
+
 .SRC-facets {
   padding: 4px 12px;
   border-radius: 20px;

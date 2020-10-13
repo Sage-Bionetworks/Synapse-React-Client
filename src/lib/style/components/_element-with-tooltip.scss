@@ -32,3 +32,9 @@
     }
   }
 }
+
+button.ElementWithTooltip {
+  &:active:focus, &:focus {
+    outline: none;
+  }
+}

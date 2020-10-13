@@ -53,6 +53,8 @@ export const DOWNLOAD: string = 'download'
 export const EXPAND: string = 'expand'
 export const COLLAPSE: string = 'collapse'
 export const CLOSE: string = 'close'
+export const SORTUP: string = 'sortup'
+export const SORTDOWN: string = 'sortdown'
 
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
