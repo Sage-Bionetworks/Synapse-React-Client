@@ -15,7 +15,7 @@
       flex-direction: column;
       flex-grow: 1;
       button {
-        max-height: 100px;
+        max-height: 120px;
         text-align: left;
         color: #515359;
         font-size: 16px;
@@ -41,7 +41,7 @@
       overflow-y: auto;
       flex: 3;
       padding-left: 40px;
-      padding-right: 140px;
+      padding-right: 40px;
       @media (min-width: 1200px) {
         .SRC-card-grid-row {
           grid-template-columns: repeat(2, 1fr);
