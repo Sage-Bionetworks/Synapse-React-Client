@@ -7,7 +7,7 @@ export const PeopleProfileDemo = () => {
   return (
     <div className="homepage-color-background">
       <UserCardListGroups
-        sql={'SELECT * FROM syn21781196'}
+        sql={'SELECT * FROM syn21781196 WHERE isFeatured=\'true\''}
         columnName='Project Title'
         facetValues={[
           'Somatic Mosaicism in the brain of Tourette syndrome',

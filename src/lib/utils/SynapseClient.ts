@@ -513,12 +513,9 @@ export const getFullQueryTableResults = async (
   }
   let response = await getQueryTableResults(queryRequest, sessionToken)
   data = response
-  // we are done if we return less than a pagesize.
-  // however, if the initMaxPageSize provided by the caller is larger than the maxRowsPerPage that the backend is willing to return for this Table/View,
-  // then the first page length will be less than the initMaxPageSize but we should keep going.
+  // we are done if we return less than a max pagesize that the backend is willing to return.
   let isDone =
-    response.queryResult.queryResults.rows.length < initMaxPageSize &&
-    initMaxPageSize <= data.maxRowsPerPage!
+    response.queryResult.queryResults.rows.length < data.maxRowsPerPage!
   offset += response.queryResult.queryResults.rows.length
   queryRequest.query.limit = data.maxRowsPerPage // set the limit to the actual max rows per page
 
