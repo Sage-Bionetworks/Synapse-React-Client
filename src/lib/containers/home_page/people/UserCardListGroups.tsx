@@ -12,6 +12,7 @@ export type UserCardListGroupsProps = {
   summaryLink?: string
   summaryLinkText?: string
   count: number
+  useQueryResultUserData?: boolean
   token?: string
 }
 
