@@ -23,7 +23,7 @@ export default function UserCardListGroups(props: UserCardListGroupsProps) {
     concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
   }
   return (
-    <div className="Resources">
+    <div className="UserCardListGroups">
       <div className="control-container">
         <div className="button-container">
           {facetValues?.map((el, curIndex) => {
