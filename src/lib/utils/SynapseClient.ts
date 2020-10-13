@@ -497,8 +497,7 @@ export const getQueryTableResults = (
 
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
-  sessionToken: string | undefined = undefined,
-  initMaxPageSize: number = 2500,
+  sessionToken: string | undefined = undefined
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -506,7 +505,7 @@ export const getFullQueryTableResults = async (
   const { query, ...rest } = queryBundleRequest
   const queryRequest: QueryBundleRequest = {
     ...rest,
-    query: { ...query, limit: initMaxPageSize, offset: offset },
+    query: { ...query, offset: offset },
     partMask:
       queryBundleRequest.partMask |
       SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
