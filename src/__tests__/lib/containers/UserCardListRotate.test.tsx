@@ -5,7 +5,7 @@ import UserCardListRotate, {
   UserCardListRotateProps, getDisplayIds
 } from '../../../lib/containers/UserCardListRotate'
 
-
+const STORED_UID_KEY = 'sage_rotate_uids'
 const createShallowComponent = async (props: UserCardListRotateProps) => {
   const wrapper = await shallow(<UserCardListRotate {...props} />)
   const instance = wrapper.instance()
@@ -34,19 +34,19 @@ describe('UserCardListRotate Component Testing', () => {
   })
 
   it('Should save the correct ids in storage', () => {
-    const saved = getDisplayIds(data, set)
+    const saved = getDisplayIds(data, set, STORED_UID_KEY)
     expect(saved).toEqual(["1", "2", "3"])
   })
 
   it('Should rotate back to the beginning once it reaches the end - case 1', () => {
     localStorage.setItem(storage_name, JSON.stringify(["1", "2", "3", "4", "5", "6"]))
-    const saved = getDisplayIds(data_even, set)
+    const saved = getDisplayIds(data_even, set, STORED_UID_KEY)
     expect(saved).toEqual(["1", "2", "3",])
   })
 
   it('Should rotate back to the beginning once it reaches the end - case 2', () => {
     localStorage.setItem(storage_name, JSON.stringify(["1", "2", "3", "4", "5", "6"]))
-    const saved = getDisplayIds(data, set)
+    const saved = getDisplayIds(data, set, STORED_UID_KEY)
     expect(saved).toEqual(["7", "1", "2",])
   })
 
