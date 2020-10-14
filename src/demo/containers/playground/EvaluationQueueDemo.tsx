@@ -8,5 +8,12 @@ export const EvaluationQueueDemo: React.FunctionComponent = () => {
     roundEnd: '2020-10-03T01:48:28Z',
     evaluationId: '123123',
   }
-  return <EvaluationRoundEditor evaluationRound={evaluationRound} />
+  return (
+    <EvaluationRoundEditor
+      evaluationRound={evaluationRound}
+      onSave={savedEvaluationRound =>
+        console.log(JSON.stringify(savedEvaluationRound))
+      }
+    />
+  )
 }

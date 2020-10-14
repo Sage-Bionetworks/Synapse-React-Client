@@ -36,8 +36,8 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
         <FormControl
           as="select"
           custom
+          value={limitInput.type}
           onChange={event => {
-            console.log(event.target.value)
             onChange({
               type: event.target.value as EvaluationRoundLimitType,
               maxSubmissionString: limitInput.maxSubmissionString,
@@ -53,7 +53,7 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
                   disabled={
                     allSelectedTypes.has(
                       displayLimitType as EvaluationRoundLimitType,
-                    ) && displayLimitType !== limitInput.type
+                    ) && displayLimitType === limitInput.type
                   }
                 >
                   {displayName}

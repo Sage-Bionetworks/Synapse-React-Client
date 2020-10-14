@@ -1,18 +1,20 @@
-import { EvaluationRound } from 'lib/utils/synapseTypes'
+import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
 import React, { useState } from 'react'
-import { Col, Form, InputGroup, Row } from 'react-bootstrap'
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
-import { Moment } from 'moment'
+import moment, { Moment } from 'moment'
 import { CalendarWithIconInputGroup } from './CalendarWithIconInputGroup'
 import { EvaluationRoundLimitInput } from './round_limits/EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitsList'
 
 export type EvaluationRoundEditorProps = {
   evaluationRound: EvaluationRound
+  onSave: (evaluationRound: EvaluationRound) => void
 }
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
   evaluationRound,
+  onSave,
 }) => {
   //TODO: use UTC or local time?????
   const [startDate, setStartDate] = useState<string | Moment>(
@@ -53,6 +55,44 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
     EvaluationRoundLimitInput[]
   >(initialAdvancedLimits)
 
+  const convertInputsToEvaluationRound = (): EvaluationRound => {
+    const limits: EvaluationRoundLimit[] = []
+    if (totalSubmissionLimit) {
+      limits.push({
+        limitType: 'TOTAL',
+        maximumSubmissions: parseInt(totalSubmissionLimit),
+      })
+    }
+    advancedLimits.forEach(limitInput => {
+      if (limitInput.maxSubmissionString) {
+        limits.push({
+          limitType: limitInput.type,
+          maximumSubmissions: parseInt(limitInput.maxSubmissionString),
+        })
+      }
+    })
+
+    return {
+      id: evaluationRound.id,
+      etag: evaluationRound.etag,
+      evaluationId: evaluationRound.evaluationId,
+      roundStart: moment.utc(startDate).toJSON(),
+      roundEnd: moment.utc(endDate).toJSON(),
+      limits: limits,
+    }
+  }
+
+  const handleSave = () => {
+    try {
+      const evaluationRound = convertInputsToEvaluationRound()
+      onSave(evaluationRound)
+    } catch (e) {
+      //TODO: figure out what error types are thrown when saved
+      //TODO: figure out error message display
+      console.log(e)
+    }
+  }
+
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
     <div className="EvaluationRoundEditor bootstrap-4-backport">
@@ -66,7 +106,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               setterCallback={setStartDate}
               label="Round Start"
               // todo: disabled should use start date
-              disabled={true}
             />
           </Col>
           <Col>
@@ -75,7 +114,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               label="Round End"
               setterCallback={setEndDate}
               // todo: disabled should use start date
-              disabled={true}
             />
           </Col>
         </Row>
@@ -100,6 +138,9 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             onChange={setAdvancedLimits}
           />
         )}
+        <Button variant="primary" onClick={handleSave}>
+          Save
+        </Button>
       </Form>
     </div>
   )

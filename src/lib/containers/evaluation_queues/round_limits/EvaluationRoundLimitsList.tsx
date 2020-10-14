@@ -5,7 +5,10 @@ import {
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
-import { Col, Row } from 'react-bootstrap'
+import { Button, Col, Row } from 'react-bootstrap'
+import { ReactComponent as IconPlus } from '../../../assets/icons/icon_plus.svg'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export type EvaluationRoundLimitOptionsListProps = {
   limitInputs: EvaluationRoundLimitInput[]
@@ -74,14 +77,18 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
               onChange={handleChange(index)}
             />
             <Col>
-              <button onClick={handleDeleteLimit(index)}>remove</button>
+              <button onClick={handleDeleteLimit(index)}>
+                <FontAwesomeIcon icon={faTimes} title="deselect" />
+              </button>
             </Col>
             <Col>
               {/*if last element*/}
               {index === limitInputs.length - 1 &&
                 limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
                   // todo: use add icon
-                  <button onClick={addNewLimit}>add</button>
+                  <Button variant="primary" onClick={addNewLimit}>
+                    <IconPlus fill="white" />
+                  </Button>
                 )}
             </Col>
           </Row>
