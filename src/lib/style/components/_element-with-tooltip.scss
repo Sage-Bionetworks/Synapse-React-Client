@@ -16,6 +16,12 @@
         fill: $primary-action-color;
       }
     }
+
+    &:hover {
+      svg, path {
+        fill: #fff;
+      }
+    }
   }
 }
 .show {

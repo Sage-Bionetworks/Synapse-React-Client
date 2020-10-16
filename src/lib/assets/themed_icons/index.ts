@@ -17,6 +17,8 @@ import { SortUp } from './SortUp'
 import { SortDown } from './SortDown'
 import { Settings } from './Settings'
 import { Options } from './Options'
+import { Columns } from './Columns'
+import { ColumnsDark } from './ColumnsDark'
 
 export {
   Project,
@@ -38,4 +40,6 @@ export {
   SortDown,
   Settings,
   Options,
+  Columns,
+  ColumnsDark,
 }

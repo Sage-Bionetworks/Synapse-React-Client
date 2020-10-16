@@ -28,6 +28,8 @@ import {
   SORTDOWN,
   SETTINGS,
   OPTIONS,
+  COLUMNS,
+  COLUMNSDARK,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -58,6 +60,8 @@ import {
   SortDown,
   Settings,
   Options,
+  Columns,
+  ColumnsDark,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -100,6 +104,8 @@ const defaultIcons = {
   [SORTDOWN]: SortDown,
   [SETTINGS]: Settings,
   [OPTIONS]: Options,
+  [COLUMNS]: Columns,
+  [COLUMNSDARK]: ColumnsDark,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,

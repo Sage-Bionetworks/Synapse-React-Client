@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
-import { MoreVert } from '@material-ui/icons'
 
 type EllipsisDropdownProps = {
   onDownloadFiles: Function
@@ -32,7 +31,7 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           idForToolTip={tooltipEllipsis}
           tooltipText={'Table Options'}
           size="lg"
-          muiIcon={<MoreVert />}
+          icon={"options"}
         />
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"

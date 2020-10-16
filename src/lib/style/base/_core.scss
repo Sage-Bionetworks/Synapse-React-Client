@@ -118,6 +118,11 @@ svg.SRC-hoverBox {
   .tool-icon {
     display: flex;
   }
+  .SRC-primary-background-color-hover:hover {
+    svg, path {
+      fill: #fff;
+    }
+  }
 }
 
 .SRC-facets {
