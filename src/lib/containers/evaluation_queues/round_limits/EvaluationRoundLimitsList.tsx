@@ -5,10 +5,9 @@ import {
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
-import { Button, Col, Row } from 'react-bootstrap'
-import { ReactComponent as IconPlus } from '../../../assets/icons/icon_plus.svg'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Col, Row } from 'react-bootstrap'
+import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
+import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
 
 export type EvaluationRoundLimitOptionsListProps = {
   limitInputs: EvaluationRoundLimitInput[]
@@ -76,19 +75,19 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
               allSelectedTypes={selectedTypes}
               onChange={handleChange(index)}
             />
-            <Col>
+            <Col sm="auto" className="remove-button-col">
               <button onClick={handleDeleteLimit(index)}>
-                <FontAwesomeIcon icon={faTimes} title="deselect" />
+                <IconTimes />
               </button>
             </Col>
-            <Col>
+            <Col className="add-button-col">
               {/*if last element*/}
               {index === limitInputs.length - 1 &&
                 limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
                   // todo: use add icon
-                  <Button variant="primary" onClick={addNewLimit}>
-                    <IconPlus fill="white" />
-                  </Button>
+                  <button onClick={addNewLimit}>
+                    <IconPlusSquareFilled />
+                  </button>
                 )}
             </Col>
           </Row>

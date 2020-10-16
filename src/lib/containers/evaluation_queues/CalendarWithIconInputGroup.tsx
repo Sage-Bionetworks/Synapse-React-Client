@@ -9,6 +9,7 @@ export type CalendarWithIconInputGroupProps = {
   setterCallback: (value: string | Moment) => void
   label?: string
   disabled?: boolean
+  utc: boolean
 }
 
 export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIconInputGroupProps> = ({
@@ -16,6 +17,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
   setterCallback,
   label,
   disabled = false,
+  utc,
 }) => {
   return (
     <Form.Group>
@@ -29,8 +31,9 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
         </InputGroup.Prepend>
         <Datetime
           value={value}
-          utc={true}
-          timeFormat={'HH:mm:ss'}
+          utc={utc}
+          // using 24-hour time format
+          timeFormat={'HH:mm'}
           onChange={setterCallback}
           inputProps={{ disabled: disabled }}
         />

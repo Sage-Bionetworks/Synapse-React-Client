@@ -11,6 +11,7 @@ export const EvaluationQueueDemo: React.FunctionComponent = () => {
   return (
     <EvaluationRoundEditor
       evaluationRound={evaluationRound}
+      utc={false}
       onSave={savedEvaluationRound =>
         console.log(JSON.stringify(savedEvaluationRound))
       }

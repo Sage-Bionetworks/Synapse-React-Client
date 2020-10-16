@@ -63,11 +63,12 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
           )}
         </FormControl>
       </Col>
-      <Col>
+      <Col xs={6}>
         <input
           type="text"
           pattern="[0-9]*"
           value={limitInput.maxSubmissionString}
+          style={{ width: '100%' }}
           onChange={event => {
             onChange({
               type: limitInput.type,
