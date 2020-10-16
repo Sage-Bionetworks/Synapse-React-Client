@@ -55,6 +55,8 @@ export const COLLAPSE: string = 'collapse'
 export const CLOSE: string = 'close'
 export const SORTUP: string = 'sortup'
 export const SORTDOWN: string = 'sortdown'
+export const SETTINGS: string = 'settings'
+export const OPTIONS: string = 'options'
 
 export const PAGE_SIZE: number = 25
 // For User Profile Cards

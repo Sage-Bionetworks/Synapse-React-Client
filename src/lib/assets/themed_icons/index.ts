@@ -15,6 +15,8 @@ import { Collapse } from './Collapse'
 import { Close } from './Close'
 import { SortUp } from './SortUp'
 import { SortDown } from './SortDown'
+import { Settings } from './Settings'
+import { Options } from './Options'
 
 export {
   Project,
@@ -34,4 +36,6 @@ export {
   Close,
   SortUp,
   SortDown,
+  Settings,
+  Options,
 }

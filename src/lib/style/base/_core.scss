@@ -1127,11 +1127,9 @@ hr ~ .SRC-wrapper {
 
       svg {
         color: #fff;
-        font-size: 24px; // to be consistent with mui icon svg that has 24x24 viewport
-        width: 24px;
-        path {
-          fill: #fff;
-        }
+      }
+      svg, path {
+        fill: #fff;
       }
     }
   }

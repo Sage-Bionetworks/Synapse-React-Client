@@ -26,6 +26,8 @@ import {
   CLOSE,
   SORTUP,
   SORTDOWN,
+  SETTINGS,
+  OPTIONS,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -54,6 +56,8 @@ import {
   Close,
   SortUp,
   SortDown,
+  Settings,
+  Options,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -94,6 +98,8 @@ const defaultIcons = {
   [CLOSE]: Close,
   [SORTUP]: SortUp,
   [SORTDOWN]: SortDown,
+  [SETTINGS]: Settings,
+  [OPTIONS]: Options,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,

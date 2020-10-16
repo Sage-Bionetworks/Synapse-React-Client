@@ -1,7 +1,5 @@
 import * as React from 'react'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import { ReactComponent as ExpandSvg } from '../../../assets/icons/icon_expand.svg'  // MUI has no similar icon, import svg from design
-import { ReactComponent as CollapseSvg } from '../../../assets/icons/icon_collapse.svg' // MUI has no similar icon, import svg from design
 
 type ExpandTableProps = {
   onExpand: Function
@@ -19,7 +17,7 @@ export const ExpandTable: React.FunctionComponent<ExpandTableProps> = props => {
         isExpanded ? 'Shrink table to fit' : 'Expand table in full screen'
       }
       size="lg"
-      muiIcon={isExpanded ? <CollapseSvg /> : <ExpandSvg /> }
+      icon={isExpanded ? "collapse": "expand"}
     />
   )
 }
