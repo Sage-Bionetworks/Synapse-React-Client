@@ -2081,6 +2081,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/shortid@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/shortid/-/shortid-0.0.29.tgz#8093ee0416a6e2bf2aa6338109114b3fbffa0e9b"
+  integrity sha1-gJPuBBam4r8qpjOBCRFLP7/6Dps=
+
 "@types/sinon@^7.0.2":
   version "7.5.2"
   resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-7.5.2.tgz#5e2f1d120f07b9cda07e5dedd4f3bf8888fccdb9"

@@ -11,13 +11,21 @@ import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.sv
 
 export type EvaluationRoundLimitOptionsListProps = {
   limitInputs: EvaluationRoundLimitInput[]
-  onChange: (limits: EvaluationRoundLimitInput[]) => void
+  handleChange: (
+    index: number,
+  ) => (limitInput: EvaluationRoundLimitInput) => void
+
+  handleDeleteLimit: (index: number) => () => void
+
+  onAddNewLimit: (limit: EvaluationRoundLimitInput) => void
 }
 
 const AVAILABLE_LIMIT_TYPES = Object.keys(LIMIT_TYPE_DISPLAY_NAME)
 export const EvaluationRoundLimitOptionsList: React.FunctionComponent<EvaluationRoundLimitOptionsListProps> = ({
   limitInputs,
-  onChange,
+  handleChange,
+  handleDeleteLimit,
+  onAddNewLimit,
 }) => {
   // all types that are currently being used
   const selectedTypes: Set<EvaluationRoundLimitType> = new Set(
@@ -32,33 +40,12 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
     ) as EvaluationRoundLimitType
   }
 
-  // function generator to handle a single limit change in the list
-  const handleChange = (index: number) => (
-    limitInput: EvaluationRoundLimitInput,
-  ): void => {
-    //copy limits from props
-    const limitsList = [...limitInputs]
-    limitsList[index] = limitInput
-    onChange(limitsList)
-  }
-
-  const handleDeleteLimit = (index: number) => (): void => {
-    //copy limits from props
-    const limitsList = limitInputs.filter(
-      (value, arr_index) => index !== arr_index,
-    )
-    onChange(limitsList)
-  }
-
   const addNewLimit = () => {
-    const limitsList: EvaluationRoundLimitInput[] = [...limitInputs]
-    limitsList.push({
+    onAddNewLimit({
       type: selectUnusedType(selectedTypes),
       maxSubmissionString: '',
     })
-    onChange(limitsList)
   }
-
   //display some input even if no limits currently exist
   if (limitInputs.length === 0) {
     addNewLimit()

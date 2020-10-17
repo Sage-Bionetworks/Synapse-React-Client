@@ -4,7 +4,7 @@ export interface ListStateReturn<T> {
   list: T[]
   handleListChange: (index: number) => (changedValue: T) => void
   handleListRemove: (index: number) => () => void
-  handleListPush: () => (newItem: T) => void
+  appendToList: (newItem: T) => void
 }
 /**
  * This is used when a component's state uses a List<T> and has child components
@@ -12,8 +12,12 @@ export interface ListStateReturn<T> {
  *
  *
  * This should be used in conjunction with list.map() to generate child elements.
- * calling any of the handle*() functions will generate a callback function for
- * the child to use to perform an item change, push, or removal on the list.
+ *
+ * The handle*() functions will generate a callback function for
+ * the child to use to perform an item change, or removal on the list.
+ *
+ * Generally, appending items to the list will be handled by the parent
+ * so appendToList() is just a regular function instead of a function generator
  * For Example:
  *
  * ```
@@ -29,10 +33,10 @@ export interface ListStateReturn<T> {
             return <ChildComponent
               value={item}
               onChange={handleMyListChange(index)}
-              onPush={handleMyListPush()}
               onRemove={handleMyListRemove(index)}
             />
           })
+          <button onClick={(event) => {appendToList("some new value")} }> >Add Child</button>
  *      </div>
  *    )
  *
@@ -57,10 +61,11 @@ export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
     setList(modifiedList)
   }
 
-  const handleListPush = () => (newItem: T): void => {
+  const appendToList = (newItem: T): void => {
+    console.log(newItem)
     const modifiedList = [...list]
     modifiedList.push(newItem)
     setList(modifiedList)
   }
-  return { list, handleListChange, handleListRemove, handleListPush }
+  return { list, handleListChange, handleListRemove, appendToList }
 }

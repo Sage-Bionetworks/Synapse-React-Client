@@ -8,12 +8,29 @@ import { EvaluationRoundLimitInput } from './round_limits/EvaluationRoundLimitOp
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitsList'
 import { faSyncAlt, faClipboardCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useListState } from '../../utils/hooks/useListState'
 
 export type EvaluationRoundEditorProps = {
   evaluationRound: EvaluationRound
-  onSave: (evaluationRound: EvaluationRound) => void
   //If true, dates for start/end are displayed in UTC instead of local time
   utc: boolean
+  onDelete: () => void
+  onSave: (evaluationRound: EvaluationRound) => void
+}
+
+const convertToRoundToInput = (
+  evaluationRoundLimits?: EvaluationRoundLimit[],
+): EvaluationRoundLimitInput[] => {
+  return (evaluationRoundLimits || [])
+    .filter(evaluationLimit => evaluationLimit.limitType !== 'TOTAL')
+    .reduce<EvaluationRoundLimitInput[]>((limitInputList, evaluationLimit) => {
+      limitInputList.push({
+        type: evaluationLimit.limitType,
+        maxSubmissionString: evaluationLimit.maximumSubmissions.toString(),
+      })
+      //after filtering there should exist at most one evaluationLimit
+      return limitInputList
+    }, [])
 }
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
@@ -42,22 +59,15 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
 
   const [advancedMode, setAdvancedMode] = useState<boolean>(false)
 
-  const initialAdvancedLimits: EvaluationRoundLimitInput[] = (
-    evaluationRound.limits || []
+  const initialAdvancedLimits: EvaluationRoundLimitInput[] = convertToRoundToInput(
+    evaluationRound.limits,
   )
-    .filter(evaluationLimit => evaluationLimit.limitType !== 'TOTAL')
-    .reduce<EvaluationRoundLimitInput[]>((limitInputList, evaluationLimit) => {
-      limitInputList.push({
-        type: evaluationLimit.limitType,
-        maxSubmissionString: evaluationLimit.maximumSubmissions.toString(),
-      })
-      //after filtering there should exist at most one evaluationLimit
-      return limitInputList
-    }, [])
-
-  const [advancedLimits, setAdvancedLimits] = useState<
-    EvaluationRoundLimitInput[]
-  >(initialAdvancedLimits)
+  const {
+    list: advancedLimits,
+    handleListRemove: handleAdvancedLimitsRemove,
+    handleListChange: handleAdvancedLimitsChange,
+    appendToList: addAdvancedLimit,
+  } = useListState<EvaluationRoundLimitInput>(initialAdvancedLimits)
 
   const convertInputsToEvaluationRound = (): EvaluationRound => {
     const limits: EvaluationRoundLimit[] = []
@@ -169,7 +179,9 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
         {advancedMode && (
           <EvaluationRoundLimitOptionsList
             limitInputs={advancedLimits}
-            onChange={setAdvancedLimits}
+            handleChange={handleAdvancedLimitsChange}
+            handleDeleteLimit={handleAdvancedLimitsRemove}
+            onAddNewLimit={addAdvancedLimit}
           />
         )}
         <Row>
