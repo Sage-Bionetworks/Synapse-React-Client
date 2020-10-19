@@ -21,6 +21,7 @@ export type RssFeedCardsProps = {
   allowCategories?: string[]
   mailChimpListName?: string
   mailChimpUrl?: string
+  viewAllNewsButtonText?: string
 }
 export default class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
   // only update the state if this component is mounted
@@ -68,6 +69,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
   }
 
   render() {
+    const { viewAllNewsButtonText } = this.props
     return (
       <>        
         {this.props.mailChimpUrl && (
@@ -141,7 +143,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
             this.state.rssFeed.items.length > this.props.itemsToShow && this.state.allItemsUrl && (
               <div className="RssFeedViewAllNewsButtonContainer">
                 <a className="homepage-button-link" href={this.state.allItemsUrl} target="_blank" rel="noopener noreferrer">
-                    VIEW ALL POSTS
+                    { viewAllNewsButtonText ?? 'VIEW ALL NEWS' }
                 </a>
               </div>
             )}
