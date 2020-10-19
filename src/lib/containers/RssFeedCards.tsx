@@ -4,6 +4,7 @@ import moment from 'moment'
 import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { LockedFacet } from './QueryWrapper'
+import NoData from '../assets/icons/file-dotted.svg'
 
 let rssParser = new Parser()
 type RssState = {
@@ -70,6 +71,17 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
 
   render() {
     const { viewAllNewsButtonText } = this.props
+    
+    if (this.state.rssFeed.items?.length === 0) {
+      return (
+        <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+          <img src={NoData} alt="no data"></img>
+          <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+            There are no items currently available
+          </div>
+        </div>
+      )
+    }
     return (
       <>        
         {this.props.mailChimpUrl && (
