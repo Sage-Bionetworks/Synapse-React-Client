@@ -14,6 +14,7 @@ type RssState = {
 
 export type RssFeedCardsProps = {
   url: string
+  tag?: string // optional tag to filter by
   itemsToShow: number
   allowCategories: string[]
   mailChimpListName?: string
@@ -35,8 +36,10 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
   
   componentDidMount() {
     this._isMounted = true
-    const { url } = this.props
-    fetch(url)
+    const { url, tag } = this.props
+    const tagPath = tag ? `/tag/${tag.replace(' ', '-')}` : ''
+    const feedUrl = `${url}${tagPath}/feed`
+    fetch(feedUrl)
       .then(response => response.text())
       .then(responseData => rssParser.parseString(responseData))
       .then(rss => {
