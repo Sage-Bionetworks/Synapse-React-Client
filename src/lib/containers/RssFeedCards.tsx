@@ -11,6 +11,7 @@ type RssState = {
   isLoadingError: boolean
   itemId2MoreItem: {}
   isShowingSubscribeUI: boolean
+  allItemsUrl?: string
 }
 
 export type RssFeedCardsProps = {
@@ -40,13 +41,15 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
     const { url, lockedFacet } = this.props
     const lockedFacetValue = lockedFacet?.value
     const tagPath = lockedFacetValue ? `/tag/${lockedFacetValue.replace(' ', '-')}` : ''
-    const feedUrl = `${url}${tagPath}/feed/`
+    const allItems = `${url}${tagPath}`
+    const feedUrl = `${allItems}/feed/`
     fetch(feedUrl)
       .then(response => response.text())
       .then(responseData => rssParser.parseString(responseData))
       .then(rss => {
         if (this._isMounted) {
-          this.setState({ rssFeed: rss })
+          this.setState({ rssFeed: rss,
+          allItemsUrl: allItems })
         }
       })
       .catch(err => {
@@ -135,9 +138,9 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
             })}
           </div>
           {this.state.rssFeed.items &&
-            this.state.rssFeed.items.length > this.props.itemsToShow && (
+            this.state.rssFeed.items.length > this.props.itemsToShow && this.state.allItemsUrl && (
               <div className="RssFeedViewAllNewsButtonContainer">
-                <a className="homepage-button-link" href={this.state.rssFeed.link} target="_blank" rel="noopener noreferrer">
+                <a className="homepage-button-link" href={this.state.allItemsUrl} target="_blank" rel="noopener noreferrer">
                     VIEW ALL POSTS
                 </a>
               </div>
