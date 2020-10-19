@@ -3,6 +3,7 @@ import Parser from 'rss-parser'
 import moment from 'moment'
 import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
+import { LockedFacet } from './QueryWrapper'
 
 let rssParser = new Parser()
 type RssState = {
@@ -14,9 +15,9 @@ type RssState = {
 
 export type RssFeedCardsProps = {
   url: string
-  tag?: string // optional tag to filter by
+  lockedFacet?: LockedFacet // optional tag to filter by, typically set by using this component on a DetailsPage
   itemsToShow: number
-  allowCategories: string[]
+  allowCategories?: string[]
   mailChimpListName?: string
   mailChimpUrl?: string
 }
@@ -36,9 +37,10 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
   
   componentDidMount() {
     this._isMounted = true
-    const { url, tag } = this.props
-    const tagPath = tag ? `/tag/${tag.replace(' ', '-')}` : ''
-    const feedUrl = `${url}${tagPath}/feed`
+    const { url, lockedFacet } = this.props
+    const lockedFacetValue = lockedFacet?.value
+    const tagPath = lockedFacetValue ? `/tag/${lockedFacetValue.replace(' ', '-')}` : ''
+    const feedUrl = `${url}${tagPath}/feed/`
     fetch(feedUrl)
       .then(response => response.text())
       .then(responseData => rssParser.parseString(responseData))
@@ -109,7 +111,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                         // are we allowed to show this category/tag?
                         const categoryNameLowerCase = categoryName.toLowerCase()
                         const allowCategories = this.props.allowCategories
-                        if (allowCategories.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
+                        if (allowCategories?.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
                           return <></>
                         // else
                         return <a 
@@ -136,7 +138,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
             this.state.rssFeed.items.length > this.props.itemsToShow && (
               <div className="RssFeedViewAllNewsButtonContainer">
                 <a className="homepage-button-link" href={this.state.rssFeed.link} target="_blank" rel="noopener noreferrer">
-                    VIEW ALL NEWS
+                    VIEW ALL POSTS
                 </a>
               </div>
             )}
