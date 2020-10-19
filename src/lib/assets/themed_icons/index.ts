@@ -16,9 +16,9 @@ import { Close } from './Close'
 import { SortUp } from './SortUp'
 import { SortDown } from './SortDown'
 import { Settings } from './Settings'
-import { Options } from './Options'
 import { Columns } from './Columns'
 import { ColumnsDark } from './ColumnsDark'
+import { VerticalDots } from './VerticalDots'
 
 export {
   Project,
@@ -39,7 +39,7 @@ export {
   SortUp,
   SortDown,
   Settings,
-  Options,
   Columns,
   ColumnsDark,
+  VerticalDots,
 }

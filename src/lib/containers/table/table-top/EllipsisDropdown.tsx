@@ -31,7 +31,8 @@ export const EllipsisDropdown: React.FunctionComponent<EllipsisDropdownProps> = 
           idForToolTip={tooltipEllipsis}
           tooltipText={'Table Options'}
           size="lg"
-          icon={"options"}
+          icon={"verticaldots"}
+          className={"icon-vertical-dots"}
         />
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"

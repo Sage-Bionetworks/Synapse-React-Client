@@ -603,7 +603,7 @@ export default class SynapseTable extends React.Component<
                 callbackFn={this.advancedSearch}
                 tooltipText={'Open Advanced Search in Synapse'}
                 size="lg"
-                // muiIcon={<Settings />}
+                icon={"settings"}
               />
               {this.renderDropdownDownloadOptions(isFileView)}
               {this.renderColumnSelection(headers)}

@@ -56,9 +56,9 @@ export const CLOSE: string = 'close'
 export const SORTUP: string = 'sortup'
 export const SORTDOWN: string = 'sortdown'
 export const SETTINGS: string = 'settings'
-export const OPTIONS: string = 'options'
 export const COLUMNS: string = 'columns'
 export const COLUMNSDARK: string = 'columnsdark'
+export const VERTICAL_DOTS: string = 'verticaldots'
 
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
