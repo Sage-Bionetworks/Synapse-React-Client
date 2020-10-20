@@ -5,9 +5,17 @@
 
   &__row {
     background-color: #fff;
+    display: flex;
+    flex-wrap: wrap;
 
     div[class*=' col-'] {
       height: 200px;
+    }
+
+    > div {
+      height: 200px;
+      flex: 0 0 380px;
+      margin: 0 15px;
     }
   }
 
