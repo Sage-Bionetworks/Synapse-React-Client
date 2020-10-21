@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  EvaluationRoundLimitInput,
   EvaluationRoundLimitOptions,
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
@@ -8,6 +7,7 @@ import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation
 import { Col, Row } from 'react-bootstrap'
 import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
 import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
+import { EvaluationRoundLimitInput } from '../input_models/models'
 
 export type EvaluationRoundLimitOptionsListProps = {
   limitInputs: EvaluationRoundLimitInput[]

@@ -1,11 +1,7 @@
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
 import React from 'react'
 import { Col, FormControl } from 'react-bootstrap'
-
-export type EvaluationRoundLimitInput = {
-  type: EvaluationRoundLimitType
-  maxSubmissionString: string
-}
+import { EvaluationRoundLimitInput } from '../input_models/models'
 
 export type EvaluationRoundLimitOptionsProps = {
   limitInput: EvaluationRoundLimitInput

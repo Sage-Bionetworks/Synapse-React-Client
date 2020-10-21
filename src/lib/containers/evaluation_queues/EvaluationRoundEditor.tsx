@@ -4,70 +4,54 @@ import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
 import moment, { Moment } from 'moment'
 import { CalendarWithIconInputGroup } from './CalendarWithIconInputGroup'
-import { EvaluationRoundLimitInput } from './round_limits/EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitsList'
-import { faSyncAlt, faClipboardCheck } from '@fortawesome/free-solid-svg-icons'
+import { faClipboardCheck, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useListState } from '../../utils/hooks/useListState'
+import {
+  convertEvaluationRoundToInput,
+  EvaluationRoundInput,
+  EvaluationRoundLimitInput,
+} from './input_models/models'
+import {
+  updateEvaluationRound,
+  createEvaluationRound,
+} from '../../utils/SynapseClient'
 
 export type EvaluationRoundEditorProps = {
-  evaluationRound: EvaluationRound
+  sessionToken: string
+  evaluationRoundInput: EvaluationRoundInput
   //If true, dates for start/end are displayed in UTC instead of local time
   utc: boolean
   onDelete: () => void
-  onSave: (evaluationRound: EvaluationRound) => void
-}
-
-const convertToRoundToInput = (
-  evaluationRoundLimits?: EvaluationRoundLimit[],
-): EvaluationRoundLimitInput[] => {
-  return (evaluationRoundLimits || [])
-    .filter(evaluationLimit => evaluationLimit.limitType !== 'TOTAL')
-    .reduce<EvaluationRoundLimitInput[]>((limitInputList, evaluationLimit) => {
-      limitInputList.push({
-        type: evaluationLimit.limitType,
-        maxSubmissionString: evaluationLimit.maximumSubmissions.toString(),
-      })
-      //after filtering there should exist at most one evaluationLimit
-      return limitInputList
-    }, [])
+  onSave: (evaluationRound: EvaluationRoundInput) => void
 }
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
-  evaluationRound,
+  sessionToken,
+  evaluationRoundInput,
   onSave,
   utc,
 }) => {
   const [startDate, setStartDate] = useState<string | Moment>(
-    moment(evaluationRound.roundStart),
+    moment(evaluationRoundInput.roundStart),
   )
   const [endDate, setEndDate] = useState<string | Moment>(
-    moment(evaluationRound.roundEnd),
+    moment(evaluationRoundInput.roundEnd),
   )
 
-  // Mapping of limit type to its maxSubmissionLimit (e.g. {TOTAL: 123, MONTHLY: 456} )
-  const initialTotalLimit: string = (evaluationRound.limits || [])
-    .filter(evaluationLimit => evaluationLimit.limitType === 'TOTAL')
-    .reduce((ignorePrevValue, evaluationLimit) => {
-      //after filtering there should exist at most one evaluationLimit
-      return evaluationLimit.maximumSubmissions.toString()
-    }, '')
-
   const [totalSubmissionLimit, setTotalSubmissionLimit] = useState<string>(
-    initialTotalLimit,
+    evaluationRoundInput.totalSubmissionLimit,
   )
 
   const [advancedMode, setAdvancedMode] = useState<boolean>(false)
 
-  const initialAdvancedLimits: EvaluationRoundLimitInput[] = convertToRoundToInput(
-    evaluationRound.limits,
-  )
   const {
     list: advancedLimits,
     handleListRemove: handleAdvancedLimitsRemove,
     handleListChange: handleAdvancedLimitsChange,
     appendToList: addAdvancedLimit,
-  } = useListState<EvaluationRoundLimitInput>(initialAdvancedLimits)
+  } = useListState<EvaluationRoundLimitInput>(evaluationRoundInput.otherLimits)
 
   const convertInputsToEvaluationRound = (): EvaluationRound => {
     const limits: EvaluationRoundLimit[] = []
@@ -87,9 +71,9 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
     })
 
     return {
-      id: evaluationRound.id,
-      etag: evaluationRound.etag,
-      evaluationId: evaluationRound.evaluationId,
+      id: evaluationRoundInput.id,
+      etag: evaluationRoundInput.etag,
+      evaluationId: evaluationRoundInput.evaluationId,
       roundStart: moment.utc(startDate).toJSON(),
       roundEnd: moment.utc(endDate).toJSON(),
       limits: limits,
@@ -99,7 +83,18 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   const handleSave = () => {
     try {
       const evaluationRound = convertInputsToEvaluationRound()
-      onSave(evaluationRound)
+
+      const promise = evaluationRound.id
+        ? updateEvaluationRound(evaluationRound, sessionToken)
+        : createEvaluationRound(evaluationRound, sessionToken)
+
+      promise.then(createdOrUpdatedRound => {
+        const newInput = convertEvaluationRoundToInput(
+          createdOrUpdatedRound,
+          evaluationRoundInput.reactListKey,
+        )
+        onSave(newInput)
+      })
     } catch (e) {
       //TODO: figure out what error types are thrown when saved
       //TODO: figure out error message display

@@ -323,7 +323,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/EvaluationQueueDemo`}
-        component={() => <EvaluationQueueDemo />}
+        component={() => <EvaluationQueueDemo token={token} />}
       />
     </div>
   )
