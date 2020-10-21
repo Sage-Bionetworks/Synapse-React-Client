@@ -3,6 +3,8 @@ import Parser from 'rss-parser'
 import moment from 'moment'
 import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
+import { LockedFacet } from './QueryWrapper'
+import NoData from '../assets/icons/file-dotted.svg'
 
 let rssParser = new Parser()
 type RssState = {
@@ -10,14 +12,17 @@ type RssState = {
   isLoadingError: boolean
   itemId2MoreItem: {}
   isShowingSubscribeUI: boolean
+  allItemsUrl?: string
 }
 
 export type RssFeedCardsProps = {
   url: string
+  lockedFacet?: LockedFacet // optional tag to filter by, typically set by using this component on a DetailsPage
   itemsToShow: number
-  allowCategories: string[]
+  allowCategories?: string[]
   mailChimpListName?: string
   mailChimpUrl?: string
+  viewAllNewsButtonText?: string
 }
 export default class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
   // only update the state if this component is mounted
@@ -35,13 +40,18 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
   
   componentDidMount() {
     this._isMounted = true
-    const { url } = this.props
-    fetch(url)
+    const { url, lockedFacet } = this.props
+    const lockedFacetValue = lockedFacet?.value
+    const tagPath = lockedFacetValue ? `/tag/${lockedFacetValue.replace(' ', '-')}` : ''
+    const allItems = `${url}${tagPath}`
+    const feedUrl = `${allItems}/feed/`
+    fetch(feedUrl)
       .then(response => response.text())
       .then(responseData => rssParser.parseString(responseData))
       .then(rss => {
         if (this._isMounted) {
-          this.setState({ rssFeed: rss })
+          this.setState({ rssFeed: rss,
+          allItemsUrl: allItems })
         }
       })
       .catch(err => {
@@ -60,6 +70,18 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
   }
 
   render() {
+    const { viewAllNewsButtonText } = this.props
+    
+    if (this.state.rssFeed.items?.length === 0) {
+      return (
+        <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+          <img src={NoData} alt="no data"></img>
+          <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+            There are no items currently available
+          </div>
+        </div>
+      )
+    }
     return (
       <>        
         {this.props.mailChimpUrl && (
@@ -106,7 +128,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                         // are we allowed to show this category/tag?
                         const categoryNameLowerCase = categoryName.toLowerCase()
                         const allowCategories = this.props.allowCategories
-                        if (allowCategories.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
+                        if (allowCategories?.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
                           return <></>
                         // else
                         return <a 
@@ -130,10 +152,10 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
             })}
           </div>
           {this.state.rssFeed.items &&
-            this.state.rssFeed.items.length > this.props.itemsToShow && (
+            this.state.rssFeed.items.length > this.props.itemsToShow && this.state.allItemsUrl && (
               <div className="RssFeedViewAllNewsButtonContainer">
-                <a className="homepage-button-link" href={this.state.rssFeed.link} target="_blank" rel="noopener noreferrer">
-                    VIEW ALL NEWS
+                <a className="homepage-button-link" href={this.state.allItemsUrl} target="_blank" rel="noopener noreferrer">
+                    { viewAllNewsButtonText ?? 'VIEW ALL NEWS' }
                 </a>
               </div>
             )}
