@@ -181,7 +181,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
       ? this.state.propsWithCards
       : this.state.propsWithTable
     return (
-      <div className="container-fluid container-full-width">
+      <div className="container-fluid">
         <h2>Demo of plot nav table</h2>
         <button
           className="SRC-primary-background-color"

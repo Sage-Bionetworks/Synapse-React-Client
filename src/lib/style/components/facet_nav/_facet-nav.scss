@@ -33,12 +33,11 @@
     &__row {
       display: flex;
       flex-wrap: wrap;
-    }
 
-    > div {
-      height: 200px;
-      flex: 0 0 380px;
-      margin: 0 15px;
+      > div {
+        flex: 0 0 380px;
+        margin: 0 15px;
+      }
     }
   }
 }

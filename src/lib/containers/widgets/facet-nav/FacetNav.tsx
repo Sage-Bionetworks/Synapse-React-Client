@@ -236,6 +236,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           <div className="FacetNav__row clearfix">
             {restOfFacets.map((facet, index) => (
               <div
+                className="col-sm-12 col-md-4"
                 style={{
                   display: isFacetHiddenInGrid(facet.columnName)
                     ? 'none'
