@@ -8,7 +8,6 @@ import UserCardDemo from './UserCardDemo'
 import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
 import { NewsFeedDemo } from './NewsFeedDemo'
-import { SingleNewsFeedPostDemo } from './SingleNewsFeedPostDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
@@ -72,11 +71,6 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/SingleNewsFeedPostDemo?tag=centenarians`}>
-            SingleNewsFeedPostDemo
-          </Link>
         </li>
         <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
@@ -178,11 +172,6 @@ const App = ({
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
         component={() => <NewsFeedDemo />}
-      />
-      <Route
-        exact={true}
-        path={`${match.url}/SingleNewsFeedPostDemo`}
-        component={() => <SingleNewsFeedPostDemo />}
       />
       <Route
         exact={true}
