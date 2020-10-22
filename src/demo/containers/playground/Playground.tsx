@@ -171,7 +171,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
-        component={() => <NewsFeedDemo />}
+        component={() => <NewsFeedDemo token={token}/>}
       />
       <Route
         exact={true}
