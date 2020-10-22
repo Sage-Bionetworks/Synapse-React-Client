@@ -25,6 +25,7 @@ import Goals from './containers/home_page/goals/Goals'
 import Programs from './containers/home_page/programs/Programs'
 import Resources from './containers/home_page/resources/Resources'
 import RssFeedCards from './containers/RssFeedCards'
+import TableFeedCards from './containers/TableFeedCards'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
@@ -65,6 +66,7 @@ const SynapseComponents = {
   UpsetPlot,
   SynapsePlot,
   RssFeedCards,
+  TableFeedCards,
   UserCardListRotate,
   FeaturedDataTabs,
   UserCardListGroups,

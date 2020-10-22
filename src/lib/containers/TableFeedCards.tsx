@@ -29,7 +29,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
         const request: QueryBundleRequest = {
           concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           query: {
-            sql: `SELECT "categories", "date", "title", "mdDescription" FROM ${tableEntityId}`,
+            sql: `SELECT "categories", "date", "title", "mdDescription" FROM ${tableEntityId} ORDER BY "date" desc`,
           },
           entityId: tableEntityId,
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,

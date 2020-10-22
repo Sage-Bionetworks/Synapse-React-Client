@@ -13,7 +13,7 @@ export const NewsFeedDemo: React.FunctionComponent<NewsFeedDemoProps> = ({
   // in the portal, search params should be filled in based on URL query parameters.
   return (
     <Container>
-      <h3>RSS</h3>
+      <h3>RSSFeedCards</h3>
       <RssFeedCards
         url='https://news.adknowledgeportal.org'
         itemsToShow={3}
@@ -23,7 +23,7 @@ export const NewsFeedDemo: React.FunctionComponent<NewsFeedDemoProps> = ({
         lockedFacet={{value: 'MSBB'}} // optional
         // viewAllNewsButtonText='VIEW ALL AD NEWS' // optional        
       />
-      <h3>Table</h3>
+      <h3>TableFeedCards</h3>
       <TableFeedCards
         tableEntityId='syn23519444'
         token={token}
