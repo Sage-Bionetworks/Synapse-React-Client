@@ -5,6 +5,7 @@ import {
   QueryBundleRequest, RowSet, SelectColumn,
 } from '../utils/synapseTypes/'
 import MarkdownSynapse from './MarkdownSynapse'
+import loadingScreen from './LoadingScreen'
 
 export type TableFeedCardsProps = {
   tableEntityId: string
@@ -45,7 +46,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
   }, [tableEntityId, token])
   
   if (!rowSet) {
-    return <></>
+    return loadingScreen
   }
   const headers:SelectColumn[] = rowSet.headers
   const categoriesColIndex = headers.findIndex((col) => col.name === 'categories')
