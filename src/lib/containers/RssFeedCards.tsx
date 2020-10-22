@@ -145,7 +145,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
                     <p className="FeedItemTitle">{item['title']}</p>
                     <div className="FeedItemDescription"
                     >{item['contentSnippet'].replace(/\[...\]|\[…\]/gm, '…')}</div>
-                    <a className="FeedItemLink" href={item['link']} target="_blank">Continue reading</a>
+                    <a className="FeedItemLink" href={item['link']} target="_blank" rel="noopener noreferrer">Continue reading</a>
                   </div>
                 </div>
               )
