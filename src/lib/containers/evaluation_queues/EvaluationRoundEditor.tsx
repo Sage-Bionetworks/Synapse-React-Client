@@ -27,6 +27,10 @@ export type EvaluationRoundEditorProps = {
   onSave: (evaluationRound: EvaluationRoundInput) => void
 }
 
+//unfortnuately the date time picker we use does not have types
+const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
+  currentDate.isAfter(date)
+
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
   sessionToken,
   evaluationRoundInput,
@@ -81,25 +85,22 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   }
 
   const handleSave = () => {
-    try {
-      const evaluationRound = convertInputsToEvaluationRound()
+    const evaluationRound = convertInputsToEvaluationRound()
 
-      const promise = evaluationRound.id
-        ? updateEvaluationRound(evaluationRound, sessionToken)
-        : createEvaluationRound(evaluationRound, sessionToken)
+    const promise = evaluationRound.id
+      ? updateEvaluationRound(evaluationRound, sessionToken)
+      : createEvaluationRound(evaluationRound, sessionToken)
 
-      promise.then(createdOrUpdatedRound => {
+    promise
+      //TODO: error handling
+      .then(createdOrUpdatedRound => {
         const newInput = convertEvaluationRoundToInput(
           createdOrUpdatedRound,
           evaluationRoundInput.reactListKey,
         )
         onSave(newInput)
       })
-    } catch (e) {
-      //TODO: figure out what error types are thrown when saved
-      //TODO: figure out error message display
-      console.log(e)
-    }
+      .catch(error => alert(error.reason))
   }
 
   const determineRoundStatus = () => {
@@ -126,6 +127,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
       )
     }
   }
+  const disallowDatesBeforeNow = disallowCalendarDateBefore(moment())
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
@@ -141,7 +143,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               setterCallback={setStartDate}
               label="Round Start"
               utc={utc}
-              // todo: disabled should use start date
+              isValidDate={disallowDatesBeforeNow}
             />
           </Col>
           <Col xs="auto">
@@ -150,7 +152,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               label="Round End"
               setterCallback={setEndDate}
               utc={utc}
-              // todo: disabled should use start date
+              isValidDate={disallowDatesBeforeNow}
             />
           </Col>
         </Row>

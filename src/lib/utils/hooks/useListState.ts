@@ -61,10 +61,9 @@ export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
     setList(modifiedList)
   }
 
-  const appendToList = (newItem: T): void => {
-    console.log(newItem)
+  const appendToList = (...newItem: T[]): void => {
     const modifiedList = [...list]
-    modifiedList.push(newItem)
+    modifiedList.push(...newItem)
     setList(modifiedList)
   }
   return { list, handleListChange, handleListRemove, appendToList }

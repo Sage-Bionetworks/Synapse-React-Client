@@ -10,6 +10,7 @@ export type CalendarWithIconInputGroupProps = {
   label?: string
   disabled?: boolean
   utc: boolean
+  isValidDate?: (currentDate: any) => boolean
 }
 
 export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIconInputGroupProps> = ({
@@ -18,6 +19,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
   label,
   disabled = false,
   utc,
+  isValidDate,
 }) => {
   return (
     <Form.Group>
@@ -36,6 +38,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
           timeFormat={'HH:mm'}
           onChange={setterCallback}
           inputProps={{ disabled: disabled }}
+          isValidDate={isValidDate}
         />
       </InputGroup>
     </Form.Group>

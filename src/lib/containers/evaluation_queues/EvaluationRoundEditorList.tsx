@@ -1,10 +1,14 @@
-import { EvaluationRound } from '../../utils/synapseTypes/Evaluation'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useListState } from '../../utils/hooks/useListState'
 import { EvaluationRoundEditor } from './EvaluationRoundEditor'
 import { Button } from 'react-bootstrap'
-import { convertEvaluationRoundToInput } from './input_models/models'
+import {
+  convertEvaluationRoundToInput,
+  EvaluationRoundInput,
+} from './input_models/models'
 import { getEvaluationRoundsList } from '../../utils/SynapseClient'
+import shortid from 'shortid'
+import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
 
 export type EvaluationRoundEditorListProps = {
   //session token to make authenticated calls
@@ -17,8 +21,8 @@ export type EvaluationRoundEditorListProps = {
 const fetchEvaluationList = (
   evaluationId: string,
   sessionToken: string,
-): EvaluationRound[] => {
-  const list: EvaluationRound[] = []
+  appendToListCallback: (...items: EvaluationRoundInput[]) => void,
+): void => {
   let nextPageToken: string | undefined = undefined
   do {
     getEvaluationRoundsList(
@@ -27,15 +31,18 @@ const fetchEvaluationList = (
       sessionToken,
       // eslint-disable-next-line no-loop-func
     )
-      .then(response => {
+      .then((response: EvaluationRoundListResponse) => {
         nextPageToken = response.nextPageToken
-        list.push(...response.page)
+        const convertedToInput: EvaluationRoundInput[] = response.page.map(
+          evaluationRound => convertEvaluationRoundToInput(evaluationRound),
+        )
+        appendToListCallback(...convertedToInput)
       })
-      .catch(error => alert(error))
-    //TODO: error handling
+      //TODO: error handling
+      .catch(error => {
+        alert(error.reason)
+      })
   } while (nextPageToken)
-
-  return list
 }
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
   sessionToken,
@@ -43,41 +50,51 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   utc,
 }) => {
   const {
-    list: evaluationList,
-    appendToList: appendToEvaluationList,
-    handleListChange: handleEvaluationListChange,
-    handleListRemove: handleEvaluationListRemove,
-  } = useListState<EvaluationRound>(
-    fetchEvaluationList(evaluationId, sessionToken),
+    list: evaluationRoundInputList,
+    appendToList: appendToEvaluationRoundInputList,
+    handleListChange: handleEvaluationRoundInputListChange,
+    handleListRemove: handleEvaluationRoundInputListRemove,
+  } = useListState<EvaluationRoundInput>([])
+
+  //run only once
+  useEffect(
+    () =>
+      fetchEvaluationList(
+        evaluationId,
+        sessionToken,
+        appendToEvaluationRoundInputList,
+      ),
+    [],
   )
 
   return (
     <div className="EvaluationRoundEditorList">
       <div>
-        {/*TODO: convertEvaluationRoundToInput() before doing the mapping so we can use the key*/}
-        {evaluationList.map((evaluationRound, index) => {
+        {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (
             <EvaluationRoundEditor
               sessionToken={sessionToken}
-              key={evaluationRound.id}
-              evaluationRoundInput={convertEvaluationRoundToInput(
-                evaluationRound,
-              )}
-              onSave={handleEvaluationListChange(index)}
-              onDelete={handleEvaluationListRemove(index)}
+              key={evaluationRoundInput.reactListKey}
+              evaluationRoundInput={evaluationRoundInput}
+              onSave={handleEvaluationRoundInputListChange(index)}
+              onDelete={handleEvaluationRoundInputListRemove(index)}
               utc={utc}
             />
           )
         })}
       </div>
+
       <div>
         <Button
           variant="primary"
           onClick={() => {
-            appendToEvaluationList({
+            appendToEvaluationRoundInputList({
+              reactListKey: shortid(),
               evaluationId: evaluationId,
               roundStart: '',
               roundEnd: '',
+              totalSubmissionLimit: '',
+              otherLimits: [],
             })
           }}
         >
