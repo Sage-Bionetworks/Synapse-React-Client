@@ -77,6 +77,17 @@ describe('initialization', () => {
     expect(wrapper.find('EnumFacetFilter')).toHaveLength(enumFacets.length)
     expect(wrapper.find('RangeFacetFilter')).toHaveLength(rangeFacets.length)
   })
+
+  it('should only expand the first three collapsible facets', async () => {
+    const facets = wrapper.children();
+    facets.forEach((facet, index) => {
+      if (index < 3) {
+        expect(facet.childAt(0).props().collapsed).toEqual(false);
+      } else {
+        expect(facet.childAt(0).props().collapsed).toEqual(true);
+      }
+    })
+  })
 })
 
 describe('handling child component callbacks', () => {
