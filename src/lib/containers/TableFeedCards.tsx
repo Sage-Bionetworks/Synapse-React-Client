@@ -73,8 +73,8 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
                     <div>
                       {categoriesList && 
                         <div className="FeedItemCategories">
-                          {(categoriesList as string[]).map((categoryName: string,) => {
-                            return <div className="FeedItemCategory">{categoryName}</div>
+                          {(categoriesList as string[]).map((categoryName: string, categoryIndex) => {
+                            return <div key={`row-${index},categoryIndex-${categoryIndex}`} className="FeedItemCategory">{categoryName}</div>
                           })}
                         </div>
                       }
