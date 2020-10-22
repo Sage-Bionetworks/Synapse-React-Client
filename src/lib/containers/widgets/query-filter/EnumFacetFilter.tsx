@@ -86,10 +86,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onChange,
   facetAliases,
   containerAs = 'Collapsible',
-  collapsed,
+  collapsed = false,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed || false)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')

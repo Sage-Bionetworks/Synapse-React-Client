@@ -19,7 +19,7 @@ export type RangeFacetFilterProps = {
   columnModel: ColumnModel
   onChange: Function
   facetAliases: {} | undefined
-  collapsed: boolean
+  collapsed?: boolean
 }
 
 export type RangeFacetFilterState = {
@@ -32,7 +32,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
   columnModel,
   onChange,
   facetAliases,
-  collapsed,
+  collapsed = false,
 }: RangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const options = [

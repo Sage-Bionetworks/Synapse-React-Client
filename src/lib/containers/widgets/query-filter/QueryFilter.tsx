@@ -168,7 +168,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             model => model.name === facet.columnName,
           )
 
-          const shouldStartCollapsed: boolean = index > 2;
+          const shouldStartCollapsed = index > 2
 
           return (
             <div className="QueryFilter__facet" key={facet.columnName}>
