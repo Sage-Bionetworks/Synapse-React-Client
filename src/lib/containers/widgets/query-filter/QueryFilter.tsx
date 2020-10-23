@@ -163,16 +163,19 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
     <div className="QueryFilter">
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
-        facets.map(facet => {
+        facets.map((facet, index) => {
           const columnModel = columnModels!.find(
             model => model.name === facet.columnName,
           )
+
+          const shouldStartCollapsed = index > 2
 
           return (
             <div className="QueryFilter__facet" key={facet.columnName}>
               {facet.facetType === 'enumeration' && columnModel && (
                 <EnumFacetFilter
                   containerAs="Collapsible"
+                  collapsed={shouldStartCollapsed}
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
                   token={token}
@@ -199,6 +202,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                   facetResult={facet as FacetColumnResultRange}
                   columnModel={columnModel}
                   facetAliases={facetAliases}
+                  collapsed={shouldStartCollapsed}
                   onChange={(values: string[]) =>
                     applyChangesToRangeColumn(
                       lastRequest,

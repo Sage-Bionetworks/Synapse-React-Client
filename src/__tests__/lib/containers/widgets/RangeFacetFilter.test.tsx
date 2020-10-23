@@ -88,6 +88,44 @@ describe('basic function', () => {
     })
   })
 
+  describe('collapsible', () => {
+    it('should hide content when toggled', () => {
+      init({ ...props, collapsed: false })
+      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
+        'display',
+        'block',
+      )
+
+      // toggle collapse via button
+      wrapper
+        .find('button.FacetFilterHeader__collapseToggleBtn')
+        .simulate('click')
+
+      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
+        'display',
+        'none',
+      )
+    })
+
+    it('should start collapsed when specified via prop', () => {
+      init({ ...props, collapsed: true })
+      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
+        'display',
+        'none',
+      )
+
+      // toggle collapse via button
+      wrapper
+        .find('button.FacetFilterHeader__collapseToggleBtn')
+        .simulate('click')
+
+      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
+        'display',
+        'block',
+      )
+    })
+  })
+
   describe('displaying  correct range control', () => {
     const dateColumnModel: ColumnModel = {
       ...columnModel,

@@ -27,6 +27,7 @@ export type EnumFacetFilterProps = {
   onClear: Function
   facetAliases: {} | undefined
   containerAs?: 'Collapsible' | 'Dropdown'
+  collapsed?: boolean
 }
 
 function valueToId(value: string): string {
@@ -85,9 +86,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onChange,
   facetAliases,
   containerAs = 'Collapsible',
+  collapsed = false,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
