@@ -1,6 +1,6 @@
 import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
 import React, { useState } from 'react'
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
+import { Button, Card, Col, InputGroup, Row } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
 import moment, { Moment } from 'moment'
 import { CalendarWithIconInputGroup } from './CalendarWithIconInputGroup'
@@ -16,7 +16,9 @@ import {
 import {
   updateEvaluationRound,
   createEvaluationRound,
+  deleteEvaluationRound,
 } from '../../utils/SynapseClient'
+import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 
 export type EvaluationRoundEditorProps = {
   sessionToken: string
@@ -29,12 +31,13 @@ export type EvaluationRoundEditorProps = {
 
 //unfortnuately the date time picker we use does not have types
 const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
-  currentDate.isAfter(date)
+  currentDate.isSameOrAfter(date)
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
   sessionToken,
   evaluationRoundInput,
   onSave,
+  onDelete,
   utc,
 }) => {
   const [startDate, setStartDate] = useState<string | Moment>(
@@ -103,96 +106,138 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
       .catch(error => alert(error.reason))
   }
 
+  const handleDelete = () => {
+    if (evaluationRoundInput.id) {
+      deleteEvaluationRound(
+        evaluationRoundInput.evaluationId,
+        evaluationRoundInput.id,
+        sessionToken,
+      )
+        .then(onDelete)
+        .catch(error => alert(error.reason))
+    } else {
+      onDelete()
+    }
+  }
+
   const determineRoundStatus = () => {
     const now = moment()
-    if (now.isSameOrAfter(startDate)) {
-      if (now.isBefore(endDate)) {
+    // based off of start/end datetime from props so that users making
+    // unsaved changes to the start/end dates do not change the status
+    if (now.isSameOrAfter(evaluationRoundInput.roundStart)) {
+      if (now.isBefore(evaluationRoundInput.roundEnd)) {
         return (
-          <div className="in-progress">
+          <div className="status-in-progress">
             <FontAwesomeIcon icon={faSyncAlt} /> <span>IN PROGRESS</span>
           </div>
         )
       } else {
         return (
-          <div className="completed">
+          <div className="status-completed">
             <FontAwesomeIcon icon={faClipboardCheck} /> <span>COMPLETED</span>
           </div>
         )
       }
     } else {
       return (
-        <div className="not-yet-started">
+        <div className="status-not-yet-started">
           <span>NOT YET STARTED</span>{' '}
         </div>
       )
     }
   }
-  const disallowDatesBeforeNow = disallowCalendarDateBefore(moment())
+  const disallowDatesBeforeNow = disallowCalendarDateBefore(
+    moment().startOf('day'),
+  )
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
-    <div className="EvaluationRoundEditor bootstrap-4-backport">
-      <Form>
-        <h2>ROUND STATUS</h2>
-        <div className="round-status">{determineRoundStatus()}</div>
-        <h2>DURATION</h2>
-        <Row>
-          <Col xs="auto">
-            <CalendarWithIconInputGroup
-              value={startDate}
-              setterCallback={setStartDate}
-              label="Round Start"
-              utc={utc}
-              isValidDate={disallowDatesBeforeNow}
-            />
-          </Col>
-          <Col xs="auto">
-            <CalendarWithIconInputGroup
-              value={endDate}
-              label="Round End"
-              setterCallback={setEndDate}
-              utc={utc}
-              isValidDate={disallowDatesBeforeNow}
-            />
-          </Col>
-        </Row>
-
-        <h2>SUBMISSION LIMITS</h2>
-        <Row>
-          <Col>
-            <label>Total Submissions / Round</label>
-            <InputGroup>
-              <input
-                value={totalSubmissionLimit}
-                type="text"
-                pattern="[0-9]*"
-                onChange={event => setTotalSubmissionLimit(event.target.value)}
+    <div className="EvaluationRoundEditor">
+      <Card>
+        <Card.Body>
+          <Row>
+            <Col>
+              <h2>ROUND STATUS</h2>
+            </Col>
+            <Col>
+              <EvaluationRoundEditorDropdown
+                onDelete={handleDelete}
+                onSave={handleSave}
               />
-            </InputGroup>
-          </Col>
-        </Row>
+            </Col>
+          </Row>
 
-        <a onClick={() => setAdvancedMode(!advancedMode)}>Advanced Limits</a>
-        {advancedMode && (
-          <EvaluationRoundLimitOptionsList
-            limitInputs={advancedLimits}
-            handleChange={handleAdvancedLimitsChange}
-            handleDeleteLimit={handleAdvancedLimitsRemove}
-            onAddNewLimit={addAdvancedLimit}
-          />
-        )}
-        <Row>
-          <Col xs={1}>
-            <Button
-              className="float-right"
-              variant="primary"
-              onClick={handleSave}
-            >
-              Save
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+          <div className="round-status">{determineRoundStatus()}</div>
+          <h2>DURATION</h2>
+          <Row>
+            <Col xs="auto">
+              <CalendarWithIconInputGroup
+                value={startDate}
+                setterCallback={setStartDate}
+                label="Round Start"
+                utc={utc}
+                isValidDate={disallowDatesBeforeNow}
+              />
+            </Col>
+            <Col xs="auto">
+              <CalendarWithIconInputGroup
+                value={endDate}
+                label="Round End"
+                setterCallback={setEndDate}
+                utc={utc}
+                isValidDate={disallowDatesBeforeNow}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <h2>SUBMISSION LIMITS</h2>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <label>Total Submissions / Round</label>
+              <InputGroup>
+                <input
+                  value={totalSubmissionLimit}
+                  type="text"
+                  pattern="[0-9]*"
+                  onChange={event =>
+                    setTotalSubmissionLimit(event.target.value)
+                  }
+                />
+              </InputGroup>
+            </Col>
+          </Row>
+
+          <a
+            className="advancedLimits"
+            onClick={() => setAdvancedMode(!advancedMode)}
+          >
+            Advanced Limits
+          </a>
+          {advancedMode && (
+            <EvaluationRoundLimitOptionsList
+              limitInputs={advancedLimits}
+              handleChange={handleAdvancedLimitsChange}
+              handleDeleteLimit={handleAdvancedLimitsRemove}
+              onAddNewLimit={addAdvancedLimit}
+            />
+          )}
+          <Row>
+            <Col>
+              <Button
+                className="float-right"
+                variant="primary"
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
     </div>
   )
 }

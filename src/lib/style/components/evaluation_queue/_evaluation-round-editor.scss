@@ -1,0 +1,29 @@
+//TODO: not quite sure where these colors are stored yet so I will list them as variables here for now
+$synapse-gray: #ababac;
+$synapse-blue: #1c76af;
+$green: #35bf7d;
+.EvaluationRoundEditor {
+  .status-in-progress {
+    color: $green;
+  }
+  .status-completed {
+    svg {
+      color: $green;
+    }
+    span {
+      color: $synapse-gray;
+    }
+  }
+  .status-not-yet-started {
+    color: $synapse-gray;
+  }
+
+  label {
+    color: $synapse-gray;
+    font-weight: normal;
+  }
+
+  .advancedLimits {
+    color: $synapse-blue;
+  }
+}

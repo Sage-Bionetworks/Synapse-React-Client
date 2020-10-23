@@ -68,7 +68,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   )
 
   return (
-    <div className="EvaluationRoundEditorList">
+    <div className="EvaluationRoundEditorList bootstrap-4-backport">
       <div>
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (

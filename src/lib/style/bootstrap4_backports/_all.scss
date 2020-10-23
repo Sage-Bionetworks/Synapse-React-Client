@@ -3,4 +3,13 @@
 // Any component with the class name "bootstrap-4-backport" will have bootstrap4 styles
 .bootstrap-4-backport {
   @import 'node_modules/bootstrap/scss/bootstrap';
+  //overrides/ utilities
+
+  .dropdown-no-caret {
+    // https://stackoverflow.com/a/50550069
+    &::after,
+    &::before {
+      display: none;
+    }
+  }
 }

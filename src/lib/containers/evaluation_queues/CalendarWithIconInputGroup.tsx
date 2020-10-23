@@ -24,7 +24,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
   return (
     <Form.Group>
       {/*TODO: color synapse gray??*/}
-      {label && <label style={{ fontWeight: 'normal' }}>{label}</label>}
+      {label && <label>{label}</label>}
       <InputGroup>
         <InputGroup.Prepend>
           <InputGroup.Text>
