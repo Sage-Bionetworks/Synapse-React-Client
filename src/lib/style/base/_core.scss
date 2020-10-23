@@ -1063,6 +1063,11 @@ a.dropdown-item {
 // PORTALS-965: add a max-width to the bootstrap container-fluid class
 .container-fluid {
   max-width: 1440px;
+
+  // PORTALS-1339: remove max-width restriction for big tables and charts
+  &.container-full-width {
+    max-width: none;
+  }
 }
 
 .plotly .slice {

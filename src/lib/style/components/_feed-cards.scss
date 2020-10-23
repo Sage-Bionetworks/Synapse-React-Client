@@ -1,8 +1,8 @@
-.RssFeedWhatsNew {
+.FeedWhatsNew {
   font-weight: bold;
 }
-.RssFeedSubscribe {
-  .RssFeedSubscribeToNewsLink {
+.FeedSubscribe {
+  .FeedSubscribeToNewsLink {
     color: #404B63;
     margin-right: 15px;
     &:hover {
@@ -33,39 +33,39 @@
     }
   }
 }
-.RssFeed {
+.Feed {
   padding: 15px 0px;
 
   @media (min-width: 801px) {
-  .RssFeedItems {
+  .FeedItems {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    .RssFeedItem {
+    .FeedItem {
       width: 30%;
     }
   }}  
   @media (max-width: 800px) {
-    .RssFeedItems {
+    .FeedItems {
       display: block;
-      .RssFeedItem {
+      .FeedItem {
         width: 100%;
       }
     }}  
     
-  .RssFeedItems {
-    .RssFeedItem {      
+  .FeedItems {
+    .FeedItem {      
       border: 1px solid #DDDDDF;
       padding: 20px;
       margin: 10px;
       background-color: white;
-      .RssFeedItemCategories {
+      .FeedItemCategories {
         display: flex;
         flex-direction: row;
         margin-bottom: 25px;
         justify-content: flex-start;
         flex-wrap: wrap;
-        .RssFeedItemCategory {
+        .FeedItemCategory {
           border: 1px solid $primary-action-color;
           display: inline-flex;
           align-content: flex-start;
@@ -79,29 +79,27 @@
           white-space: nowrap;
         }
       }
-      .RssFeedItemDate {
+      .FeedItemDate {
         color: #ABABAC;
         margin-bottom: 0px;
       }
-      .RssFeedItemTitle {
+      .FeedItemTitle {
         font-size: 16px;
         line-height: 144%;
         color: #1A1C29;
         font-weight: bold;
         margin-bottom: 5px;
       }
-      .RssFeedItemDescription {
+      .FeedItemDescription {
         overflow: hidden;
         text-overflow: ellipsis;
         color: #515359;
         margin-bottom: 10px;
       }
-      .RssFeedItemLink {
-      }
     }
 
   }
-  .RssFeedViewAllNewsButtonContainer {
+  .FeedViewAllNewsButtonContainer {
     padding-top: 20px;
     text-align: center;
   }

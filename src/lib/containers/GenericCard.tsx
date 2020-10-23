@@ -161,10 +161,10 @@ export const renderLabel = (args: {
     if (strList) {
       return strList.map((el, index) => {
         return (
-          <>
+          <span>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
             {index < strList.length - 1 && ','}
-          </>
+          </span>
         )
       })
     } else {
