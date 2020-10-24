@@ -9,10 +9,12 @@ export const EvaluationQueueDemo: React.FunctionComponent<EvaluationQueueDemoPro
   token,
 }) => {
   return (
-    <EvaluationRoundEditorList
-      sessionToken={token}
-      evaluationId={'9614644'}
-      utc={false}
-    />
+    <div style={{ maxWidth: '1000px', padding: '30px' }}>
+      <EvaluationRoundEditorList
+        sessionToken={token}
+        evaluationId={'9614644'}
+        utc={false}
+      />
+    </div>
   )
 }

@@ -3,6 +3,12 @@ $synapse-gray: #ababac;
 $synapse-blue: #1c76af;
 $green: #35bf7d;
 .EvaluationRoundEditor {
+  margin-top: 25px;
+
+  input {
+    width: 100%;
+  }
+
   .status-in-progress {
     color: $green;
   }
@@ -23,7 +29,28 @@ $green: #35bf7d;
     font-weight: normal;
   }
 
-  .advancedLimits {
-    color: $synapse-blue;
+  .EvaluationRoundEditorDropdown {
+    &:hover,
+    &:focus {
+      background-color: transparent;
+    }
+  }
+
+  .remove-button-col {
+    padding: 0;
+    button {
+      padding: 0;
+    }
+  }
+
+  .add-button-col {
+    padding-left: 0;
+    button {
+      padding: 0;
+    }
+  }
+
+  .max-submission-input-col {
+    padding-right: 0;
   }
 }

@@ -18,11 +18,11 @@
 }
 
 .SRC-primary-background-color {
-  background-color: $primary-action-color;
+  background-color: $primary-action-color !important;
 }
 
 .SRC-primary-background-color-border-left {
-  border-left-color: $primary-action-color;
+  border-left-color: $primary-action-color !important;
 }
 
 %hoverFade {

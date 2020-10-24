@@ -27,7 +27,7 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
 }) => {
   return (
     <React.Fragment>
-      <Col>
+      <Col xs={3}>
         {/*TODO: use single caret instead of double caret for custom-select*/}
         <FormControl
           as="select"
@@ -59,12 +59,11 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
           )}
         </FormControl>
       </Col>
-      <Col xs={6}>
+      <Col className="max-submission-input-col">
         <input
           type="text"
           pattern="[0-9]*"
           value={limitInput.maxSubmissionString}
-          style={{ width: '100%' }}
           onChange={event => {
             onChange({
               type: limitInput.type,

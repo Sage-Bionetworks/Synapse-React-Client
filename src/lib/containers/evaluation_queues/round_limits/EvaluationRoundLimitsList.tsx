@@ -64,16 +64,16 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
             />
             <Col sm="auto" className="remove-button-col">
               <button onClick={handleDeleteLimit(index)}>
-                <IconTimes />
+                <IconTimes className="SRC-icon-fill" />
               </button>
             </Col>
-            <Col className="add-button-col">
+            <Col className="add-button-col" xs={1}>
               {/*if last element*/}
               {index === limitInputs.length - 1 &&
                 limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
                   // todo: use add icon
                   <button onClick={addNewLimit}>
-                    <IconPlusSquareFilled />
+                    <IconPlusSquareFilled className="SRC-icon-fill" />
                   </button>
                 )}
             </Col>

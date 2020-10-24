@@ -15,10 +15,13 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<EvaluationRo
   return (
     <>
       <Dropdown className="EvaluationRoundEditorDropdown float-right">
-        <Dropdown.Toggle variant="link" className="dropdown-no-caret">
+        <Dropdown.Toggle
+          variant="link"
+          className="dropdown-no-caret SRC-primary-text-color EvaluationRoundEditorDropdown"
+        >
           <FontAwesomeIcon icon={faEllipsisV} />
         </Dropdown.Toggle>
-        <Dropdown.Menu>
+        <Dropdown.Menu alignRight={true}>
           <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
           <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>
         </Dropdown.Menu>

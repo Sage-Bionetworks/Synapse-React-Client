@@ -1,6 +1,6 @@
 import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
 import React, { useState } from 'react'
-import { Button, Card, Col, InputGroup, Row } from 'react-bootstrap'
+import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
 import moment, { Moment } from 'moment'
 import { CalendarWithIconInputGroup } from './CalendarWithIconInputGroup'
@@ -33,6 +33,7 @@ export type EvaluationRoundEditorProps = {
 const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
   currentDate.isSameOrAfter(date)
 
+//TODO: maybe use flexbox instead of bootstrap grid
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
   sessionToken,
   evaluationRoundInput,
@@ -155,87 +156,91 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
     <div className="EvaluationRoundEditor">
       <Card>
         <Card.Body>
-          <Row>
-            <Col>
-              <h2>ROUND STATUS</h2>
-            </Col>
-            <Col>
-              <EvaluationRoundEditorDropdown
-                onDelete={handleDelete}
-                onSave={handleSave}
-              />
-            </Col>
-          </Row>
-
-          <div className="round-status">{determineRoundStatus()}</div>
-          <h2>DURATION</h2>
-          <Row>
-            <Col xs="auto">
-              <CalendarWithIconInputGroup
-                value={startDate}
-                setterCallback={setStartDate}
-                label="Round Start"
-                utc={utc}
-                isValidDate={disallowDatesBeforeNow}
-              />
-            </Col>
-            <Col xs="auto">
-              <CalendarWithIconInputGroup
-                value={endDate}
-                label="Round End"
-                setterCallback={setEndDate}
-                utc={utc}
-                isValidDate={disallowDatesBeforeNow}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <h2>SUBMISSION LIMITS</h2>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <label>Total Submissions / Round</label>
-              <InputGroup>
-                <input
-                  value={totalSubmissionLimit}
-                  type="text"
-                  pattern="[0-9]*"
-                  onChange={event =>
-                    setTotalSubmissionLimit(event.target.value)
-                  }
+          <Form>
+            <Row>
+              <Col>
+                <h2>ROUND STATUS</h2>
+              </Col>
+              <Col>
+                <EvaluationRoundEditorDropdown
+                  onDelete={handleDelete}
+                  onSave={handleSave}
                 />
-              </InputGroup>
-            </Col>
-          </Row>
+              </Col>
+            </Row>
 
-          <a
-            className="advancedLimits"
-            onClick={() => setAdvancedMode(!advancedMode)}
-          >
-            Advanced Limits
-          </a>
-          {advancedMode && (
-            <EvaluationRoundLimitOptionsList
-              limitInputs={advancedLimits}
-              handleChange={handleAdvancedLimitsChange}
-              handleDeleteLimit={handleAdvancedLimitsRemove}
-              onAddNewLimit={addAdvancedLimit}
-            />
-          )}
-          <Row>
-            <Col>
-              <Button
-                className="float-right"
-                variant="primary"
-                onClick={handleSave}
-              >
-                Save
-              </Button>
-            </Col>
-          </Row>
+            <div className="round-status">{determineRoundStatus()}</div>
+            <h2>DURATION</h2>
+            <Row>
+              <Col xs="auto">
+                <CalendarWithIconInputGroup
+                  value={startDate}
+                  setterCallback={setStartDate}
+                  label="Round Start"
+                  utc={utc}
+                  isValidDate={disallowDatesBeforeNow}
+                  disabled={moment().isSameOrAfter(
+                    evaluationRoundInput.roundStart,
+                  )}
+                />
+              </Col>
+              <Col xs="auto">
+                <CalendarWithIconInputGroup
+                  value={endDate}
+                  label="Round End"
+                  setterCallback={setEndDate}
+                  utc={utc}
+                  isValidDate={disallowDatesBeforeNow}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h2>SUBMISSION LIMITS</h2>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col xs="11">
+                <label>Total Submissions / Round</label>
+                <InputGroup>
+                  <input
+                    value={totalSubmissionLimit}
+                    type="text"
+                    pattern="[0-9]*"
+                    onChange={event =>
+                      setTotalSubmissionLimit(event.target.value)
+                    }
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+
+            <a
+              className="font-weight-bold SRC-primary-text-color"
+              onClick={() => setAdvancedMode(!advancedMode)}
+            >
+              Advanced Limits
+            </a>
+            {advancedMode && (
+              <EvaluationRoundLimitOptionsList
+                limitInputs={advancedLimits}
+                handleChange={handleAdvancedLimitsChange}
+                handleDeleteLimit={handleAdvancedLimitsRemove}
+                onAddNewLimit={addAdvancedLimit}
+              />
+            )}
+            <Row>
+              <Col>
+                <Button
+                  className="float-right SRC-primary-background-color border-0"
+                  onClick={handleSave}
+                >
+                  Save
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </Card.Body>
       </Card>
     </div>
