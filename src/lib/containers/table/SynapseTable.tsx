@@ -1,17 +1,4 @@
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheck,
-  faColumns,
-  faDownload,
-  faFilter,
-  faGlobeAmericas,
-  faSort,
-  faSortAmountDown,
-  faSortAmountUp,
-  faTimes,
-  faUsers,
-} from '@fortawesome/free-solid-svg-icons'
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
@@ -78,17 +65,7 @@ export const EMPTY_HEADER: EntityHeader = {
   modifiedBy: '',
   modifiedOn: '',
 }
-// Add all icons to the library so you can use it in your page
-library.add(faColumns)
-library.add(faSort)
-library.add(faSortAmountUp)
-library.add(faSortAmountDown)
-library.add(faCheck)
-library.add(faTimes)
-library.add(faFilter)
-library.add(faDownload)
-library.add(faUsers)
-library.add(faGlobeAmericas)
+
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
