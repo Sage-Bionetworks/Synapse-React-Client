@@ -1080,7 +1080,9 @@ hr ~ .SRC-wrapper {
   button {
     color: white !important;
     font-weight: bold;
-    text-decoration: underline !important;
+  }
+  button {
+    text-decoration: underline;
   }
 }
 
