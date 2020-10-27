@@ -161,10 +161,9 @@ export function extractPlotDataArray(
 
   const anyFacetsSelected = facetToPlot.facetValues.some(value => value.isSelected)
 
-  const opacity = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
-    facetValue.isSelected ? 1.0 : 0.25,
-  ) : Array(facetToPlot.facetValues.length).fill(1.0)
-  debugger
+  const selectionAwareColorPalette = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
+    facetValue.isSelected ? colorPalette[index] : colorPalette[index].replace('rgb(', 'rgba(').replace(')', ', 0.25)'),
+  ) : colorPalette
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
@@ -194,9 +193,8 @@ export function extractPlotDataArray(
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     marker: {
-      colors: plotType === 'PIE' ? colorPalette : undefined,
-      color: plotType === 'BAR' ? colorPalette : undefined,
-      opacity: opacity,
+      colors: plotType === 'PIE' ? selectionAwareColorPalette : undefined,
+      color: plotType === 'BAR' ? selectionAwareColorPalette : undefined,
     },    
   }
 
