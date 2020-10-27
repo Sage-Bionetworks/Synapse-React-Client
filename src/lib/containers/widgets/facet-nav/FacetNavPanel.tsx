@@ -159,6 +159,12 @@ export function extractPlotDataArray(
     el => el.label,
   )
 
+  const anyFacetsSelected = facetToPlot.facetValues.some(value => value.isSelected)
+
+  const opacity = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
+    facetValue.isSelected ? 1.0 : 0.25,
+  ) : Array(facetToPlot.facetValues.length).fill(1.0)
+  debugger
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
@@ -190,18 +196,8 @@ export function extractPlotDataArray(
     marker: {
       colors: plotType === 'PIE' ? colorPalette : undefined,
       color: plotType === 'BAR' ? colorPalette : undefined,
-      line: {
-        width: facetToPlot.facetValues.map(facetValue =>
-          facetValue.isSelected ? 1 : 0,
-        ),
-      },
-    },
-    pull:
-      plotType === 'PIE'
-        ? facetToPlot.facetValues.map(facetValue =>
-            facetValue.isSelected ? 0.04 : 0,
-          )
-        : undefined,
+      opacity: opacity,
+    },    
   }
 
   const result = {
@@ -210,7 +206,7 @@ export function extractPlotDataArray(
     colors:
       plotType === 'PIE'
         ? (singleChartData.marker?.colors as string[])
-        : (singleChartData.marker?.color as string[]),
+        : (singleChartData.marker?.color as string[]),    
   }
   return result
 }
