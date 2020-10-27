@@ -37,7 +37,7 @@ class QueryWrapperPlotNavDemo extends React.Component<
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      showCards: true,
+      showCards: false,
       propsWithTable: {
         tableConfiguration: {
           showAccessColumn: true,

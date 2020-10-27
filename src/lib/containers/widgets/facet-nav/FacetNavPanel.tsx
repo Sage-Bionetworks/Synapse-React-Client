@@ -107,7 +107,7 @@ export function extractPlotDataArray(
   index: number,
   plotType: PlotType,
 ) {
-  const { colorPalette } = getColorPallette(
+  const { colorPalette, textColors } = getColorPallette(
     index,
     facetToPlot.facetValues.length,
   )
@@ -191,6 +191,7 @@ export function extractPlotDataArray(
       colors: plotType === 'PIE' ? colorPalette : undefined,
       color: plotType === 'BAR' ? colorPalette : undefined,
       line: {
+        color: textColors,
         width: facetToPlot.facetValues.map(facetValue =>
           facetValue.isSelected ? 1 : 0,
         ),
