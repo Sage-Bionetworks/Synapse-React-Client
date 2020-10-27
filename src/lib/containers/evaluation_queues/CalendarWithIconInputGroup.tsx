@@ -28,7 +28,11 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
       <InputGroup>
         <InputGroup.Prepend>
           <InputGroup.Text>
-            <img src={calendarDateIcon} alt="calendar-date-icon" />
+            <img
+              height="14px"
+              src={calendarDateIcon}
+              alt="calendar-date-icon"
+            />
           </InputGroup.Text>
         </InputGroup.Prepend>
         <Datetime
@@ -37,7 +41,11 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
           // using 24-hour time format
           timeFormat={'HH:mm'}
           onChange={setterCallback}
-          inputProps={{ disabled: disabled }}
+          inputProps={{
+            disabled: disabled,
+            className: 'form-control',
+            style: { borderBottomLeftRadius: 0, borderTopLeftRadius: 0 },
+          }}
           isValidDate={isValidDate}
         />
       </InputGroup>

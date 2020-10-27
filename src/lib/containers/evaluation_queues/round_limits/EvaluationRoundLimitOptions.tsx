@@ -1,6 +1,6 @@
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
 import React from 'react'
-import { Col, FormControl } from 'react-bootstrap'
+import { FormControl, FormGroup } from 'react-bootstrap'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 
 export type EvaluationRoundLimitOptionsProps = {
@@ -27,8 +27,9 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
 }) => {
   return (
     <React.Fragment>
-      <Col xs={3}>
-        {/*TODO: use single caret instead of double caret for custom-select*/}
+      {/*TODO: use single caret instead of double caret for custom-select*/}
+      <FormGroup className="limit-type">
+        <label>Limit Type</label>
         <FormControl
           as="select"
           custom
@@ -58,9 +59,11 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
             },
           )}
         </FormControl>
-      </Col>
-      <Col className="max-submission-input-col">
-        <input
+      </FormGroup>
+
+      <FormGroup className="limit-input">
+        <label>Maximum Submissions</label>
+        <FormControl
           type="text"
           pattern="[0-9]*"
           value={limitInput.maxSubmissionString}
@@ -71,7 +74,7 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
             })
           }}
         />
-      </Col>
+      </FormGroup>
     </React.Fragment>
   )
 }

@@ -4,7 +4,6 @@ import {
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
-import { Col, Row } from 'react-bootstrap'
 import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
 import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
 import { EvaluationRoundLimitInput } from '../input_models/models'
@@ -52,34 +51,33 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
   }
 
   return (
-    <React.Fragment>
+    <div className="advanced-limits-grid">
       {limitInputs.map((limit, index) => {
         return (
           //TODO: using type as key has weird change behavior and using using index as key cause page refresh upon removing from the top of the list ( causes index change)
-          <Row key={limit.type}>
+          <React.Fragment key={limit.type}>
             <EvaluationRoundLimitOptions
               limitInput={limit}
               allSelectedTypes={selectedTypes}
               onChange={handleChange(index)}
             />
-            <Col sm="auto" className="remove-button-col">
-              <button onClick={handleDeleteLimit(index)}>
-                <IconTimes className="SRC-icon-fill" />
-              </button>
-            </Col>
-            <Col className="add-button-col" xs={1}>
-              {/*if last element*/}
-              {index === limitInputs.length - 1 &&
-                limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
-                  // todo: use add icon
-                  <button onClick={addNewLimit}>
-                    <IconPlusSquareFilled className="SRC-icon-fill" />
-                  </button>
-                )}
-            </Col>
-          </Row>
+            <button
+              className="remove-button"
+              onClick={handleDeleteLimit(index)}
+            >
+              <IconTimes className="SRC-icon-fill" />
+            </button>
+            {/*if last element*/}
+            {index === limitInputs.length - 1 &&
+              limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
+                // todo: use add icon
+                <button onClick={addNewLimit} className="add-button">
+                  <IconPlusSquareFilled className="SRC-icon-fill" />
+                </button>
+              )}
+          </React.Fragment>
         )
       })}
-    </React.Fragment>
+    </div>
   )
 }

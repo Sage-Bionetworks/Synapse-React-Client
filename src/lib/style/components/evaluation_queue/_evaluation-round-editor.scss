@@ -3,6 +3,7 @@ $synapse-gray: #ababac;
 $synapse-blue: #1c76af;
 $green: #35bf7d;
 .EvaluationRoundEditor {
+  font-size: 1rem;
   margin-top: 25px;
 
   input {
@@ -27,6 +28,7 @@ $green: #35bf7d;
   label {
     color: $synapse-gray;
     font-weight: normal;
+    font-size: 1rem;
   }
 
   .EvaluationRoundEditorDropdown {
@@ -36,21 +38,39 @@ $green: #35bf7d;
     }
   }
 
-  .remove-button-col {
-    padding: 0;
-    button {
-      padding: 0;
-    }
-  }
-
-  .add-button-col {
-    padding-left: 0;
-    button {
-      padding: 0;
-    }
-  }
-
   .max-submission-input-col {
     padding-right: 0;
+  }
+
+  .advanced-limits-grid {
+    display: grid;
+    // We need a fixed size for the add-button
+    // or else the alignment will slightly change once the add-button disappears upon reaching the max number of rows
+    grid-template-columns: [limit-type] 32% [spacer] 3.5% [limit-input] 57% [remove-button] auto [add-button] 26px [end];
+    grid-auto-rows: auto;
+    row-gap: 15px;
+
+    .form-group {
+      // rely on grid's row gap instead of built-in bottom margin for spacing
+      margin-bottom: 0;
+    }
+    .remove-button,
+    .add-button {
+      padding: 0;
+      align-self: end;
+    }
+
+    .limit-type {
+      grid-column-start: limit-type;
+    }
+    .limit-input {
+      grid-column-start: limit-input;
+    }
+    .remove-button {
+      grid-column-start: remove-button;
+    }
+    .add-button {
+      grid-column-start: add-button;
+    }
   }
 }
