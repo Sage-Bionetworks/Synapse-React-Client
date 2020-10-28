@@ -163,7 +163,8 @@ export const renderLabel = (args: {
         return (
           <span>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-            {index < strList.length - 1 && ','}
+            {/* \u00a0 is a nbsp; */}
+            {index < strList.length - 1 && ",\u00a0\u00a0"}
           </span>
         )
       })
