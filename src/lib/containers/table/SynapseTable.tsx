@@ -1,4 +1,3 @@
-import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
@@ -24,19 +23,12 @@ import {
   EntityColumnType,
   ColumnModel,
 } from '../../utils/synapseTypes/'
-import { getColorPallette } from '../ColorGradient'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
 import { QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
 import { ICON_STATE } from './SynapseTableConstants'
-import {
-  ColumnSelection,
-  DownloadOptions,
-  EllipsisDropdown,
-  ExpandTable,
-} from './table-top/'
 import NoData from '../../assets/icons/file-dotted.svg'
 import { renderTableCell } from '../synapse_table_functions/renderTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
@@ -107,7 +99,6 @@ export type SynapseTableProps = {
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
   enableLeftFacetFilter?: boolean
-  isFilterAndViewChild?: boolean
   isRowSelectionVisible?: boolean
 }
 
@@ -337,7 +328,6 @@ export default class SynapseTable extends React.Component<
       token,
       showBarChart,
       enableLeftFacetFilter,
-      isFilterAndViewChild,
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { queryResults } = queryResult
@@ -401,7 +391,6 @@ export default class SynapseTable extends React.Component<
                 />
               </div>
             )}
-          {!isFilterAndViewChild && this.renderTableTop(headers)}
           {/* FRAGILE, CHANGE WITH CAUTION, see - https://sagebionetworks.jira.com/browse/PORTALS-1539 */}
           <div className={enableLeftFacetFilter ? '' : 'row'}>{table}</div>
         </div>
@@ -439,35 +428,6 @@ export default class SynapseTable extends React.Component<
     // encode this copy of the query (json)
     const encodedQuery = btoa(queryJSON)
     return `https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`
-  }
-
-  private renderDropdownDownloadOptions = (isFileView?: boolean) => {
-    return (
-      <DownloadOptions
-        onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
-        token={this.props.token}
-        isFileView={isFileView && !this.props.hideDownload}
-        queryBundleRequest={this.props.getLastQueryRequest!()}
-        queryResultBundle={this.props.data!}
-        darkTheme={false}
-      />
-    )
-  }
-
-  private renderColumnSelection = (headers: SelectColumn[]) => {
-    return (
-      <ColumnSelection
-        headers={headers}
-        isColumnSelected={this.props.isColumnSelected!}
-        show={this.state.isColumnSelectionOpen}
-        onChange={(val: boolean) => {
-          this.setState({
-            isColumnSelectionOpen: val,
-          })
-        }}
-        toggleColumnSelection={this.toggleColumnSelection}
-      />
-    )
   }
 
   private renderTable = (
@@ -520,11 +480,6 @@ export default class SynapseTable extends React.Component<
           <DownloadConfirmation
             token={token!}
             getLastQueryRequest={this.props.getLastQueryRequest!}
-            fnClose={
-              this.props.isFilterAndViewChild
-                ? undefined
-                : () => this.setState({ isDownloadConfirmationOpen: false })
-            }
           />
         )}
         <table
@@ -560,58 +515,6 @@ export default class SynapseTable extends React.Component<
     )
   }
 
-  private renderTableTop = (headers: SelectColumn[]) => {
-    const { title } = this.props
-    const { isExpanded, isFileView } = this.state
-    const { colorPalette } = getColorPallette(this.props.rgbIndex!, 1)
-    const background = colorPalette[0]
-    const queryRequest = this.props.getLastQueryRequest!()
-    return (
-      <div
-        className={'SRC-centerContent SRC-table-top'}
-        style={{ background, padding: 8 }}
-      >
-        <h3 className="SRC-tableHeader"> {title}</h3>
-        <span className="SRC-table-tools" style={{ marginLeft: 'auto' }}>
-          {!isGroupByInSql(queryRequest.query.sql) && (
-            <>
-              <ElementWithTooltip
-                idForToolTip={'advancedSearch'}
-                callbackFn={this.advancedSearch}
-                tooltipText={'Open Advanced Search in Synapse'}
-                size="lg"
-                icon={"settings"}
-              />
-              {this.renderDropdownDownloadOptions(isFileView)}
-              {this.renderColumnSelection(headers)}
-            </>
-          )}
-          <ExpandTable
-            isExpanded={isExpanded}
-            onExpand={() =>
-              this.setState({
-                isExpanded: !isExpanded,
-              })
-            }
-          />
-          <EllipsisDropdown
-            onDownloadFiles={(e: React.SyntheticEvent) => this.showDownload(e)}
-            onDownloadTableOnly={() =>
-              this.setState({
-                isExportTableDownloadOpen: true,
-              })
-            }
-            onShowColumns={() => this.setState({ isColumnSelectionOpen: true })}
-            onFullScreen={() => this.setState({ isExpanded: !isExpanded })}
-            isExpanded={isExpanded}
-            isUnauthenticated={!this.props.token}
-            isGroupedQuery={isGroupByInSql(queryRequest.query.sql)}
-            isFileView={this.state.isFileView}
-          />
-        </span>
-      </div>
-    )
-  }
   /**
    * Return the select column indexes for columns that use the aggregate count function.
    * If sql does not have a GROUP BY, this returns an empty array.
@@ -1081,14 +984,6 @@ export default class SynapseTable extends React.Component<
       `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`,
       '_blank',
     )
-  }
-
-  private showDownload(event: React.SyntheticEvent) {
-    if (!this.props.isFilterAndViewChild) {
-      this.setState({ isDownloadConfirmationOpen: true })
-    } else {
-      this.advancedSearch(event)
-    }
   }
 
   private getLengthOfPropsData() {
