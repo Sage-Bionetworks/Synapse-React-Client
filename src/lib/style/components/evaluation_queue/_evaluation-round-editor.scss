@@ -1,6 +1,5 @@
 //TODO: not quite sure where these colors are stored yet so I will list them as variables here for now
 $synapse-gray: #ababac;
-$synapse-blue: #1c76af;
 $green: #35bf7d;
 .EvaluationRoundEditor {
   font-size: 1rem;
@@ -10,19 +9,31 @@ $green: #35bf7d;
     width: 100%;
   }
 
-  .status-in-progress {
-    color: $green;
+  .input-group {
+    margin-bottom: 1rem !important;
   }
-  .status-completed {
-    svg {
+
+  h5 {
+    font-weight: bold;
+  }
+
+  .round-status {
+    margin-bottom: 1rem;
+
+    .status-in-progress {
       color: $green;
     }
-    span {
+    .status-completed {
+      svg {
+        color: $green;
+      }
+      span {
+        color: $synapse-gray;
+      }
+    }
+    .status-not-yet-started {
       color: $synapse-gray;
     }
-  }
-  .status-not-yet-started {
-    color: $synapse-gray;
   }
 
   label {
@@ -62,6 +73,12 @@ $green: #35bf7d;
 
     .limit-type {
       grid-column-start: limit-type;
+      select {
+        background-color: #f9f9f9;
+        option {
+          background-color: white;
+        }
+      }
     }
     .limit-input {
       grid-column-start: limit-input;
@@ -72,5 +89,9 @@ $green: #35bf7d;
     .add-button {
       grid-column-start: add-button;
     }
+  }
+
+  .save-button {
+    margin-top: 1rem;
   }
 }

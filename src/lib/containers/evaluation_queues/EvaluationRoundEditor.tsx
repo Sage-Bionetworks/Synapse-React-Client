@@ -11,7 +11,7 @@ import {
 } from 'react-bootstrap'
 import 'react-datetime/css/react-datetime.css'
 import moment, { Moment } from 'moment'
-import { CalendarWithIconInputGroup } from './CalendarWithIconInputGroup'
+import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitsList'
 import { faClipboardCheck, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -177,11 +177,20 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               </Col>
             </Row>
 
-            <div className="round-status">{determineRoundStatus()}</div>
-            <h5>DURATION</h5>
             <Row>
-              <Col xs="auto">
-                <CalendarWithIconInputGroup
+              <Col>
+                <div className="round-status">{determineRoundStatus()}</div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <h5>DURATION</h5>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <CalendarWithIconFormGroup
                   value={startDate}
                   setterCallback={setStartDate}
                   label="Round Start"
@@ -192,8 +201,8 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                   )}
                 />
               </Col>
-              <Col xs="auto">
-                <CalendarWithIconInputGroup
+              <Col>
+                <CalendarWithIconFormGroup
                   value={endDate}
                   label="Round End"
                   setterCallback={setEndDate}
@@ -208,19 +217,21 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               </Col>
             </Row>
 
-            <div>
-              <label>Total Submissions / Round</label>
-              <InputGroup>
-                <FormControl
-                  value={totalSubmissionLimit}
-                  type="text"
-                  pattern="[0-9]*"
-                  onChange={event =>
-                    setTotalSubmissionLimit(event.target.value)
-                  }
-                />
-              </InputGroup>
-            </div>
+            <Row>
+              <Col>
+                <label>Total Submissions / Round</label>
+                <InputGroup>
+                  <FormControl
+                    value={totalSubmissionLimit}
+                    type="text"
+                    pattern="[0-9]*"
+                    onChange={event =>
+                      setTotalSubmissionLimit(event.target.value)
+                    }
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
 
             <a
               className="font-weight-bold SRC-primary-text-color"
@@ -241,7 +252,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             <Row>
               <Col>
                 <Button
-                  className="float-right SRC-primary-background-color border-0"
+                  className="save-button float-right SRC-primary-background-color border-0"
                   onClick={handleSave}
                 >
                   Save

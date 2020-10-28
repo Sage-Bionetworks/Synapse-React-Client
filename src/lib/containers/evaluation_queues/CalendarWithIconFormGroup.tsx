@@ -4,7 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap'
 import calendarDateIcon from '../../assets/icons/calendar-date.svg'
 import Datetime from 'react-datetime'
 
-export type CalendarWithIconInputGroupProps = {
+export type CalendarWithIconFormGroupProps = {
   value: string | Moment
   setterCallback: (value: string | Moment) => void
   label?: string
@@ -13,7 +13,7 @@ export type CalendarWithIconInputGroupProps = {
   isValidDate?: (currentDate: any) => boolean
 }
 
-export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIconInputGroupProps> = ({
+export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIconFormGroupProps> = ({
   value,
   setterCallback,
   label,
@@ -22,7 +22,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
   isValidDate,
 }) => {
   return (
-    <Form.Group>
+    <Form.Group className="calendar-with-icon-form-group">
       {/*TODO: color synapse gray??*/}
       {label && <label>{label}</label>}
       <InputGroup>
@@ -39,7 +39,7 @@ export const CalendarWithIconInputGroup: React.FunctionComponent<CalendarWithIco
           value={value}
           utc={utc}
           // using 24-hour time format
-          timeFormat={'HH:mm'}
+          timeFormat={'HH:mm Z zz'}
           onChange={setterCallback}
           inputProps={{
             disabled: disabled,
