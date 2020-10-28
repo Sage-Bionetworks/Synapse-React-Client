@@ -138,7 +138,7 @@ describe('facets display hide/show', () => {
   })
   it('hiding facet should hide it from facet grid', async () => {
     init(props)
-    const icon = getButtonOnFacet(container, 'times', 0)
+    const icon = getButtonOnFacet(container, 'close', 0)
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[0]),
     ).toBe(false)
@@ -156,7 +156,7 @@ describe('facets display hide/show', () => {
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[2]),
     ).toBe(false)
-    const icon = getButtonOnFacet(container, 'expand-alt', 2)
+    const icon = getButtonOnFacet(container, 'expand', 2)
     fireEvent.click(icon?.parentNode as HTMLElement)
     expandedFacets = container.querySelector('.FacetNav__expanded')?.children
     expect(expandedFacets?.length).toBe(1)
