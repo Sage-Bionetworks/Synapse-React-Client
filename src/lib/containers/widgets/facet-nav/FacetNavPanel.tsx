@@ -192,10 +192,16 @@ export function extractPlotDataArray(
         : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
+    pull:
+      plotType === 'PIE'
+        ? facetToPlot.facetValues.map(facetValue =>
+            facetValue.isSelected ? 0.10 : 0,
+          )
+        : undefined,
     marker: {
       colors: plotType === 'PIE' ? selectionAwareColorPalette : undefined,
       color: plotType === 'BAR' ? selectionAwareColorPalette : undefined,
-    },    
+    },
   }
 
   const result = {
