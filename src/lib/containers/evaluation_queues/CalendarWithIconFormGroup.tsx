@@ -39,7 +39,7 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
           value={value}
           utc={utc}
           // using 24-hour time format
-          timeFormat={'HH:mm Z zz'}
+          timeFormat={'HH:mm [UTC]Z'}
           onChange={setterCallback}
           inputProps={{
             disabled: disabled,

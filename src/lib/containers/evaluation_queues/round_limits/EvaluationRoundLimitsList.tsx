@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   EvaluationRoundLimitOptions,
   LIMIT_TYPE_DISPLAY_NAME,
@@ -7,6 +7,8 @@ import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation
 import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
 import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
 import { EvaluationRoundLimitInput } from '../input_models/models'
+
+const AVAILABLE_LIMIT_TYPES = Object.keys(LIMIT_TYPE_DISPLAY_NAME)
 
 export type EvaluationRoundLimitOptionsListProps = {
   limitInputs: EvaluationRoundLimitInput[]
@@ -19,7 +21,14 @@ export type EvaluationRoundLimitOptionsListProps = {
   onAddNewLimit: (limit: EvaluationRoundLimitInput) => void
 }
 
-const AVAILABLE_LIMIT_TYPES = Object.keys(LIMIT_TYPE_DISPLAY_NAME)
+const selectUnusedType = (
+  selectedTypes: Set<EvaluationRoundLimitType>,
+): EvaluationRoundLimitType => {
+  return AVAILABLE_LIMIT_TYPES.find(
+    key => !selectedTypes.has(key as EvaluationRoundLimitType),
+  ) as EvaluationRoundLimitType
+}
+
 export const EvaluationRoundLimitOptionsList: React.FunctionComponent<EvaluationRoundLimitOptionsListProps> = ({
   limitInputs,
   handleChange,
@@ -30,14 +39,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
   const selectedTypes: Set<EvaluationRoundLimitType> = new Set(
     limitInputs.map(limit => limit.type),
   )
-
-  function selectUnusedType(
-    selectedTypes: Set<EvaluationRoundLimitType>,
-  ): EvaluationRoundLimitType {
-    return AVAILABLE_LIMIT_TYPES.find(
-      key => !selectedTypes.has(key as EvaluationRoundLimitType),
-    ) as EvaluationRoundLimitType
-  }
+  console.log(selectedTypes)
 
   const addNewLimit = () => {
     onAddNewLimit({
@@ -45,10 +47,13 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
       maxSubmissionString: '',
     })
   }
+
   //display some input even if no limits currently exist
-  if (limitInputs.length === 0) {
-    addNewLimit()
-  }
+  useEffect(() => {
+    if (limitInputs.length === 0) {
+      addNewLimit()
+    }
+  })
 
   return (
     <div className="advanced-limits-grid">

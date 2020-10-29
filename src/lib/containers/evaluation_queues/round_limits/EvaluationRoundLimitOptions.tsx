@@ -50,7 +50,7 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
                   disabled={
                     allSelectedTypes.has(
                       displayLimitType as EvaluationRoundLimitType,
-                    ) && displayLimitType === limitInput.type
+                    ) && displayLimitType !== limitInput.type
                   }
                 >
                   {displayName}

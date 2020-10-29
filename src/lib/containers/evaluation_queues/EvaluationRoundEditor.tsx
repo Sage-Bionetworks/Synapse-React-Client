@@ -161,7 +161,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
-    <div className="EvaluationRoundEditor">
+    <div className="evaluation-round-editor">
       <Card>
         <Card.Body>
           <Form>
@@ -234,7 +234,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             </Row>
 
             <a
-              className="font-weight-bold SRC-primary-text-color"
+              className="advanced-limits-link font-weight-bold SRC-primary-text-color"
               onClick={() => setAdvancedMode(!advancedMode)}
             >
               Advanced Limits

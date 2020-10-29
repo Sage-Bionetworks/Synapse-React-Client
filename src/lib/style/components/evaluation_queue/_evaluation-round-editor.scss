@@ -1,9 +1,8 @@
 //TODO: not quite sure where these colors are stored yet so I will list them as variables here for now
 $synapse-gray: #ababac;
 $green: #35bf7d;
-.EvaluationRoundEditor {
+.evaluation-round-editor {
   font-size: 1rem;
-  margin-top: 25px;
 
   input {
     width: 100%;
@@ -51,6 +50,10 @@ $green: #35bf7d;
 
   .max-submission-input-col {
     padding-right: 0;
+  }
+
+  .advanced-limits-link {
+    margin-bottom: 1rem;
   }
 
   .advanced-limits-grid {

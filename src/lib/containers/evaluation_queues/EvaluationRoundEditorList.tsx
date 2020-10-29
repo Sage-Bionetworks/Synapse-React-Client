@@ -68,7 +68,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   )
 
   return (
-    <div className="EvaluationRoundEditorList bootstrap-4-backport">
+    <div className="evaluation-round-editor-list bootstrap-4-backport">
       <div>
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (
@@ -86,6 +86,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
 
       <div>
         <Button
+          className="add-round-button SRC-primary-background-color border-0"
           variant="primary"
           onClick={() => {
             appendToEvaluationRoundInputList({
