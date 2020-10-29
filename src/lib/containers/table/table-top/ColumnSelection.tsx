@@ -3,8 +3,6 @@ import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ColumnsSvg from '../../../assets/icons/columns'
-import ColumnsDarkThemeSvg from '../../../assets/icons/columnsDarkTheme'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useState } from 'react'
 
@@ -65,10 +63,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
       <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}
         tooltipText={'Add / Remove Table Columns'}
-        image={{
-          svgImg: darkTheme ? ColumnsDarkThemeSvg : ColumnsSvg,
-          altText: 'columns selection',
-        }}
+        icon={darkTheme ? "columnsdark": "columns"}
         darkTheme={darkTheme}
       ></ElementWithTooltip>
 

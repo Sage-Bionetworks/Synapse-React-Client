@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 export const Study = () => (
-  <svg width="61" height="76" viewBox="0 0 61 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg data-icon="study" width="61" height="76" viewBox="0 0 61 76" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M39.456 57.627a2.799 2.799 0 0 0 2.79 2.801 2.798 2.798 0 0 0 2.787-2.8 2.798 2.798 0 0 0-2.788-2.803 2.8 2.8 0 0 0-2.789 2.802zm3.628 0a.843.843 0 0 1-.84.844.843.843 0 0 1-.84-.844c0-.467.376-.845.84-.845.464 0 .84.379.84.845z"
       fill="#DCDCDC"
